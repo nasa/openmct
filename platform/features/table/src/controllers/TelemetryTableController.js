@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -64,15 +64,18 @@ define(
             $scope.rows = [];
             this.table = new TableConfiguration($scope.domainObject,
                 openmct);
-            this.lastBounds = this.openmct.conductor.bounds();
+            this.lastBounds = this.openmct.time.bounds();
             this.lastRequestTime = 0;
             this.telemetry = new TelemetryCollection();
+            if (this.lastBounds) {
+                this.telemetry.bounds(this.lastBounds);
+            }
 
             /*
              * Create a new format object from legacy object, and replace it
              * when it changes
              */
-            this.newObject = objectUtils.toNewFormat($scope.domainObject.getModel(),
+            this.domainObject = objectUtils.toNewFormat($scope.domainObject.getModel(),
                 $scope.domainObject.getId());
 
             _.bindAll(this, [
@@ -82,7 +85,7 @@ define(
                 'getHistoricalData',
                 'subscribeToNewData',
                 'changeBounds',
-                'setScroll',
+                'setClock',
                 'addRowsToTable',
                 'removeRowsFromTable'
             ]);
@@ -95,7 +98,7 @@ define(
                 this.registerChangeListeners();
             }.bind(this));
 
-            this.setScroll(this.openmct.conductor.follow());
+            this.setClock(this.openmct.time.clock());
 
             this.$scope.$on("$destroy", this.destroy);
         }
@@ -104,8 +107,8 @@ define(
          * @private
          * @param {boolean} scroll
          */
-        TelemetryTableController.prototype.setScroll = function (scroll) {
-            this.$scope.autoScroll = scroll;
+        TelemetryTableController.prototype.setClock = function (clock) {
+            this.$scope.autoScroll = clock !== undefined;
         };
 
         /**
@@ -120,9 +123,9 @@ define(
             var sortColumn;
             scope.defaultSort = undefined;
 
-            if (timeSystem) {
+            if (timeSystem !== undefined) {
                 this.table.columns.forEach(function (column) {
-                    if (column.getKey() === timeSystem.metadata.key) {
+                    if (column.getKey() === timeSystem.key) {
                         sortColumn = column;
                     }
                 });
@@ -144,16 +147,16 @@ define(
                 this.unobserveObject();
             }
 
-            this.unobserveObject = this.openmct.objects.observe(this.newObject, "*",
+            this.unobserveObject = this.openmct.objects.observe(this.domainObject, "*",
                     function (domainObject) {
-                        this.newObject = domainObject;
+                        this.domainObject = domainObject;
                         this.getData();
                     }.bind(this)
                 );
 
-            this.openmct.conductor.on('timeSystem', this.sortByTimeSystem);
-            this.openmct.conductor.on('bounds', this.changeBounds);
-            this.openmct.conductor.on('follow', this.setScroll);
+            this.openmct.time.on('timeSystem', this.sortByTimeSystem);
+            this.openmct.time.on('bounds', this.changeBounds);
+            this.openmct.time.on('clock', this.setClock);
 
             this.telemetry.on('added', this.addRowsToTable);
             this.telemetry.on('discarded', this.removeRowsFromTable);
@@ -187,12 +190,7 @@ define(
          * will be removed from the table.
          * @param {openmct.TimeConductorBounds~TimeConductorBounds} bounds
          */
-        TelemetryTableController.prototype.changeBounds = function (bounds) {
-            var follow = this.openmct.conductor.follow();
-            var isTick = follow &&
-                bounds.start !== this.lastBounds.start &&
-                bounds.end !== this.lastBounds.end;
-
+        TelemetryTableController.prototype.changeBounds = function (bounds, isTick) {
             if (isTick) {
                 this.telemetry.bounds(bounds);
             } else {
@@ -207,9 +205,9 @@ define(
          */
         TelemetryTableController.prototype.destroy = function () {
 
-            this.openmct.conductor.off('timeSystem', this.sortByTimeSystem);
-            this.openmct.conductor.off('bounds', this.changeBounds);
-            this.openmct.conductor.off('follow', this.setScroll);
+            this.openmct.time.off('timeSystem', this.sortByTimeSystem);
+            this.openmct.time.off('bounds', this.changeBounds);
+            this.openmct.time.off('clock', this.setClock);
 
             this.subscriptions.forEach(function (subscription) {
                 subscription();
@@ -248,7 +246,7 @@ define(
 
                 this.table.populateColumns(allColumns);
 
-                var domainColumns = telemetryApi.commonValuesForHints(metadatas, ['x']);
+                var domainColumns = telemetryApi.commonValuesForHints(metadatas, ['domain']);
                 this.timeColumns = domainColumns.map(function (metadatum) {
                     return metadatum.name;
                 });
@@ -260,8 +258,8 @@ define(
                 // if data matches selected time system
                 this.telemetry.sort(undefined);
 
-                var timeSystem = this.openmct.conductor.timeSystem();
-                if (timeSystem) {
+                var timeSystem = this.openmct.time.timeSystem();
+                if (timeSystem !== undefined) {
                     this.sortByTimeSystem(timeSystem);
                 }
 
@@ -278,7 +276,7 @@ define(
         TelemetryTableController.prototype.getHistoricalData = function (objects) {
             var self = this;
             var openmct = this.openmct;
-            var bounds = openmct.conductor.bounds();
+            var bounds = openmct.time.bounds();
             var scope = this.$scope;
             var rowData = [];
             var processedObjects = 0;
@@ -364,11 +362,8 @@ define(
             var telemetryApi = this.openmct.telemetry;
             var telemetryCollection = this.telemetry;
             //Set table max length to avoid unbounded growth.
-            //var maxRows = 100000;
-            var maxRows = Number.MAX_VALUE;
             var limitEvaluator;
             var added = false;
-            var scope = this.$scope;
             var table = this.table;
 
             this.subscriptions.forEach(function (subscription) {
@@ -379,16 +374,6 @@ define(
             function newData(domainObject, datum) {
                 limitEvaluator = telemetryApi.limitEvaluator(domainObject);
                 added = telemetryCollection.add([table.getRowValues(limitEvaluator, datum)]);
-
-                //Inform table that a new row has been added
-                if (scope.rows.length > maxRows) {
-                    scope.$broadcast('remove:rows', scope.rows[0]);
-                    scope.rows.shift();
-                }
-                if (!scope.loading && added) {
-                    scope.$broadcast('add:row',
-                        scope.rows.length - 1);
-                }
             }
 
             objects.forEach(function (object) {
@@ -400,19 +385,52 @@ define(
         };
 
         /**
+         * Return an array of telemetry objects in this view that should be
+         * subscribed to.
+         * @private
+         * @returns {Promise<Array>} a promise that resolves with an array of
+         * telemetry objects in this view.
+         */
+        TelemetryTableController.prototype.getTelemetryObjects = function () {
+            var telemetryApi = this.openmct.telemetry;
+            var compositionApi = this.openmct.composition;
+
+            function filterForTelemetry(objects) {
+                return objects.filter(telemetryApi.canProvideTelemetry.bind(telemetryApi));
+            }
+
+            /*
+             * If parent object is a telemetry object, subscribe to it. Do not
+             * test composees.
+             */
+            if (telemetryApi.canProvideTelemetry(this.domainObject)) {
+                return Promise.resolve([this.domainObject]);
+            } else {
+                /*
+                 * If parent object is not a telemetry object, subscribe to all
+                 * composees that are telemetry producing objects.
+                 */
+                var composition = compositionApi.get(this.domainObject);
+
+                if (composition) {
+                    return composition
+                        .load()
+                        .then(filterForTelemetry);
+                }
+            }
+        };
+
+        /**
          * Request historical data, and subscribe to for real-time data.
          * @private
          * @returns {Promise} A promise that is resolved once subscription is
          * established, and historical telemetry is received and processed.
          */
         TelemetryTableController.prototype.getData = function () {
-            var telemetryApi = this.openmct.telemetry;
-            var compositionApi = this.openmct.composition;
             var scope = this.$scope;
-            var newObject = this.newObject;
 
             this.telemetry.clear();
-            this.telemetry.bounds(this.openmct.conductor.bounds());
+            this.telemetry.bounds(this.openmct.time.bounds());
 
             this.$scope.loading = true;
 
@@ -421,28 +439,9 @@ define(
                 console.error(e.stack);
             }
 
-            function filterForTelemetry(objects) {
-                return objects.filter(telemetryApi.canProvideTelemetry.bind(telemetryApi));
-            }
-
-            function getDomainObjects() {
-                var objects = [newObject];
-                var composition = compositionApi.get(newObject);
-
-                if (composition) {
-                    return composition
-                        .load()
-                        .then(function (children) {
-                            return objects.concat(children);
-                        });
-                } else {
-                    return Promise.resolve(objects);
-                }
-            }
             scope.rows = [];
 
-            return getDomainObjects()
-                .then(filterForTelemetry)
+            return this.getTelemetryObjects()
                 .then(this.loadColumns)
                 .then(this.subscribeToNewData)
                 .then(this.getHistoricalData)

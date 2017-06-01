@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,6 +24,7 @@ define([
     "./src/LayoutController",
     "./src/FixedController",
     "./src/LayoutCompositionPolicy",
+    './src/MCTTriggerModal',
     "text!./res/templates/layout.html",
     "text!./res/templates/fixed.html",
     "text!./res/templates/frame.html",
@@ -37,6 +38,7 @@ define([
     LayoutController,
     FixedController,
     LayoutCompositionPolicy,
+    MCTTriggerModal,
     layoutTemplate,
     fixedTemplate,
     frameTemplate,
@@ -222,6 +224,15 @@ define([
                     "template": frameTemplate
                 }
             ],
+            "directives": [
+                {
+                    "key": "mctTriggerModal",
+                    "implementation": MCTTriggerModal,
+                    "depends": [
+                        "$document"
+                    ]
+                }
+            ],
             "controllers": [
                 {
                     "key": "LayoutController",
@@ -237,9 +248,7 @@ define([
                         "$scope",
                         "$q",
                         "dialogService",
-                        "telemetryHandler",
-                        "telemetryFormatter",
-                        "throttle"
+                        "openmct"
                     ]
                 }
             ],

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -42,14 +42,19 @@ define(
          * @param REMS_WS_URL The location of the REMS telemetry data.
          * @constructor
          */
-        function RemsTelemetryServerAdapter($q, $http, $log, REMS_WS_URL) {
+        function RemsTelemetryServerAdapter($http, $log, REMS_WS_URL) {
             this.localDataURI = module.uri.substring(0, module.uri.lastIndexOf('/') + 1) + LOCAL_DATA;
-            this.deferreds = {};
             this.REMS_WS_URL = REMS_WS_URL;
-            this.$q = $q;
             this.$http = $http;
             this.$log = $log;
-            this.cache = undefined;
+            this.promise = undefined;
+
+            this.dataTransforms = {
+                //Convert from pascals to millibars
+                'pressure': function pascalsToMillibars(pascals) {
+                    return pascals / 100;
+                }
+            };
         }
 
         /**
@@ -65,15 +70,12 @@ define(
          */
         RemsTelemetryServerAdapter.prototype.requestHistory = function(request) {
             var self = this,
-                id = request.key,
-                deferred = this.$q.defer();
+                id = request.key;
+
+            var dataTransforms = this.dataTransforms;
 
             function processResponse(response){
                 var data = [];
-                /*
-                 * Currently all data is returned for entire history of the mission. Cache response to avoid unnecessary re-queries.
-                 */
-                self.cache = response;
                 /*
                  * History data is organised by Sol. Iterate over sols...
                  */
@@ -82,13 +84,14 @@ define(
                      * Check that valid data exists
                      */
                     if (!isNaN(solData[id])) {
+                        var dataTransform = dataTransforms[id];
                         /*
                          * Append each data point to the array of values
                          * for this data point property (min. temp, etc).
                          */
                         data.unshift({
                             date: Date.parse(solData[TERRESTRIAL_DATE]),
-                            value: solData[id]
+                            value: dataTransform ? dataTransform(solData[id]) : solData[id]
                         });
                     }
                 });
@@ -110,17 +113,15 @@ define(
             }
 
             function packageAndResolve(results){
-                deferred.resolve({id: id, values: results});
+                return {id: id, values: results};
             }
 
 
-            this.$q.when(this.cache || this.$http.get(this.REMS_WS_URL))
+            return (this.promise = this.promise || this.$http.get(this.REMS_WS_URL))
                 .catch(fallbackToLocal)
                 .then(processResponse)
                 .then(filterResults)
                 .then(packageAndResolve);
-
-            return deferred.promise;
         };
 
         /**
@@ -132,7 +133,6 @@ define(
          * @returns {Promise | Array<RemsTelemetryValue>} that resolves with an Array of {@link RemsTelemetryValue} objects for the request data key.
          */
         RemsTelemetryServerAdapter.prototype.history = function(request) {
-            var id = request.key;
             return this.requestHistory(request);
         };
 

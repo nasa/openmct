@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    [],
-    function () {
+    ['./ContextualDomainObject'],
+    function (ContextualDomainObject) {
 
         /**
          * Implements the `instantiation` capability. This allows new domain
@@ -70,11 +70,7 @@ define(
 
             var newObject = this.instantiateFn(model, id);
 
-            this.contextualizeFn = this.contextualizeFn ||
-                this.$injector.get("contextualize");
-
-
-            return this.contextualizeFn(newObject, this.domainObject);
+            return new ContextualDomainObject(newObject, this.domainObject);
         };
 
         /**

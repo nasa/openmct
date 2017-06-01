@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global console*/
 
 define(['./Type'], function (Type) {
     /**
@@ -44,7 +45,7 @@ define(['./Type'], function (Type) {
     }
 
     /**
-     * Register a new type of view.
+     * Register a new object type.
      *
      * @param {string} typeKey a string identifier for this type
      * @param {module:openmct.Type} type the type to add
@@ -52,7 +53,28 @@ define(['./Type'], function (Type) {
      * @memberof module:openmct.TypeRegistry#
      */
     TypeRegistry.prototype.addType = function (typeKey, typeDef) {
+        this.standardizeType(typeDef);
         this.types[typeKey] = new Type(typeDef);
+    };
+
+    /**
+     * Takes a typeDef, standardizes it, and logs warnings about unsupported
+     * usage.
+     * @private
+     */
+    TypeRegistry.prototype.standardizeType = function (typeDef) {
+        if (typeDef.hasOwnProperty('label')) {
+            console.warn(
+                'DEPRECATION WARNING typeDef: ' + typeDef.label + '.  ' +
+                '`label` is deprecated in type definitions.  Please use ' +
+                '`name` instead.  This will cause errors in a future version ' +
+                'of Open MCT.  For more information, see ' +
+                'https://github.com/nasa/openmct/issues/1568');
+            if (!typeDef.name) {
+                typeDef.name = typeDef.label;
+            }
+            delete typeDef.label;
+        }
     };
 
     /**

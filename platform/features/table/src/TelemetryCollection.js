@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -72,9 +72,12 @@ define(
             var added;
             var testValue;
 
+            this.lastBounds = bounds;
+
             // If collection is not sorted by a time field, we cannot respond to
             // bounds events
             if (this.sortField === undefined) {
+                this.lastBounds = bounds;
                 return;
             }
 
@@ -94,7 +97,7 @@ define(
 
             if (discarded && discarded.length > 0) {
                 /**
-                 * A `discarded` event is thrown when telemetry data fall out of
+                 * A `discarded` event is emitted when telemetry data fall out of
                  * bounds due to a bounds change event
                  * @type {object[]} discarded the telemetry data
                  * discarded as a result of the bounds change
@@ -103,29 +106,12 @@ define(
             }
             if (added && added.length > 0) {
                 /**
-                 * An `added` event is thrown when a bounds change results in
+                 * An `added` event is emitted when a bounds change results in
                  * received telemetry falling within the new bounds.
                  * @type {object[]} added the telemetry data that is now within bounds
                  */
                 this.emit('added', added);
             }
-            this.lastBounds = bounds;
-        };
-
-        /**
-         * Determines is a given telemetry datum is within the bounds currently
-         * defined for this telemetry collection.
-         * @private
-         * @param datum
-         * @returns {boolean}
-         */
-        TelemetryCollection.prototype.inBounds = function (datum) {
-            var noBoundsDefined = !this.lastBounds || (this.lastBounds.start === undefined && this.lastBounds.end === undefined);
-            var withinBounds =
-                _.get(datum, this.sortField) >= this.lastBounds.start &&
-                _.get(datum, this.sortField) <= this.lastBounds.end;
-
-            return noBoundsDefined || withinBounds;
         };
 
         /**
@@ -173,9 +159,10 @@ define(
                 // based on time stamp because the array is guaranteed ordered due
                 // to sorted insertion.
                 var startIx = _.sortedIndex(array, item, this.sortField);
+                var endIx;
 
                 if (startIx !== array.length) {
-                    var endIx = _.sortedLastIndex(array, item, this.sortField);
+                    endIx = _.sortedLastIndex(array, item, this.sortField);
 
                     // Create an array of potential dupes, based on having the
                     // same time stamp
@@ -185,7 +172,7 @@ define(
                 }
 
                 if (!isDuplicate) {
-                    array.splice(startIx, 0, item);
+                    array.splice(endIx || startIx, 0, item);
 
                     //Return true if it was added and in bounds
                     return array === this.telemetry;
@@ -209,11 +196,14 @@ define(
          */
         TelemetryCollection.prototype.clear = function () {
             this.telemetry = [];
+            this.highBuffer = [];
         };
 
         /**
          * Sorts the telemetry collection based on the provided sort field
-         * specifier.
+         * specifier. Subsequent inserts are sorted to maintain specified sport
+         * order.
+         *
          * @example
          * // First build some mock telemetry for the purpose of an example
          * let now = Date.now();

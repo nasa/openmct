@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,23 +21,49 @@
  *****************************************************************************/
 
 define([
-    'lodash'
-], function (_) {
+    'lodash',
+    './utcTimeSystem/plugin',
+    '../../example/generator/plugin',
+    '../../platform/features/autoflow/plugin',
+    './timeConductor/plugin'
+], function (
+    _,
+    UTCTimeSystem,
+    GeneratorPlugin,
+    AutoflowPlugin,
+    TimeConductorPlugin
+) {
     var bundleMap = {
-        couchDB: 'platform/persistence/couch',
-        elasticsearch: 'platform/persistence/elastic',
-        espresso: 'platform/commonUI/themes/espresso',
-        localStorage: 'platform/persistence/local',
-        myItems: 'platform/features/my-items',
-        snow: 'platform/commonUI/themes/snow',
-        utcTimeSystem: 'platform/features/conductor/utcTimeSystem'
+        CouchDB: 'platform/persistence/couch',
+        Elasticsearch: 'platform/persistence/elastic',
+        Espresso: 'platform/commonUI/themes/espresso',
+        LocalStorage: 'platform/persistence/local',
+        MyItems: 'platform/features/my-items',
+        Snow: 'platform/commonUI/themes/snow'
     };
 
     var plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
-        return function (openmct) {
-            openmct.legacyRegistry.enable(bundleName);
+        return function pluginConstructor() {
+            return function (openmct) {
+                openmct.legacyRegistry.enable(bundleName);
+            };
         };
     });
+
+    plugins.UTCTimeSystem = UTCTimeSystem;
+
+    /**
+     * A tabular view showing the latest values of multiple telemetry points at
+     * once. Formatted so that labels and values are aligned.
+     *
+     * @param {Object} [options] Optional settings to apply to the autoflow
+     * tabular view. Currently supports one option, 'type'.
+     * @param {string} [options.type] The key of an object type to apply this view
+     * to exclusively.
+     */
+    plugins.AutoflowView = AutoflowPlugin;
+
+    plugins.Conductor = TimeConductorPlugin;
 
     plugins.CouchDB = function (url) {
         return function (openmct) {
@@ -57,7 +83,7 @@ define([
                 openmct.legacyRegistry.enable(bundleName);
             }
 
-            openmct.legacyRegistry.enable(bundleMap.couchDB);
+            openmct.legacyRegistry.enable(bundleMap.CouchDB);
         };
     };
 
@@ -79,8 +105,12 @@ define([
                 openmct.legacyRegistry.enable(bundleName);
             }
 
-            openmct.legacyRegistry.enable(bundleMap.elasticsearch);
+            openmct.legacyRegistry.enable(bundleMap.Elasticsearch);
         };
+    };
+
+    plugins.Generator = function () {
+        return GeneratorPlugin;
     };
 
     return plugins;

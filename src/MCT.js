@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -83,7 +83,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name conductor
          */
-        this.conductor = new api.TimeConductor();
+        this.time = new api.TimeAPI();
 
         /**
          * An interface for interacting with the composition of domain objects.
@@ -194,15 +194,13 @@ define([
          */
         this.telemetry = new api.TelemetryAPI(this);
 
-        this.TimeConductor = this.conductor; // compatibility for prototype
+        this.Dialog = api.Dialog;
+
         this.on('navigation', this.selection.clear.bind(this.selection));
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
 
-    Object.keys(api).forEach(function (k) {
-        MCT.prototype[k] = api[k];
-    });
     MCT.prototype.MCT = MCT;
 
     MCT.prototype.legacyExtension = function (category, extension) {

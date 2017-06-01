@@ -1,8 +1,8 @@
 {
   "metadata": {
     "name": "openmct-symbols-16px",
-    "lastOpened": 1481575258437,
-    "created": 1481575255265
+    "lastOpened": 1487197651675,
+    "created": 1487194069058
   },
   "iconSets": [
     {
@@ -541,12 +541,20 @@
           "tempChar": ""
         },
         {
+          "order": 120,
+          "id": 105,
+          "name": "icon-reset",
+          "prevSize": 24,
+          "code": 921655,
+          "tempChar": ""
+        },
+        {
           "order": 121,
           "id": 103,
           "name": "icon-x-in-circle",
           "prevSize": 24,
           "code": 921656,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 118,
@@ -554,7 +562,7 @@
           "name": "icon-brightness",
           "prevSize": 24,
           "code": 921657,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 119,
@@ -562,15 +570,15 @@
           "name": "icon-contrast",
           "prevSize": 24,
           "code": 921664,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
-          "order": 120,
-          "id": 105,
-          "name": "icon-reset",
+          "order": 122,
+          "id": 106,
+          "name": "icon-expand",
           "prevSize": 24,
-          "code": 921655,
-          "tempChar": ""
+          "code": 921665,
+          "tempChar": ""
         },
         {
           "order": 37,
@@ -578,7 +586,7 @@
           "name": "icon-activity",
           "id": 32,
           "code": 921856,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 36,
@@ -586,7 +594,7 @@
           "name": "icon-activity-mode",
           "id": 31,
           "code": 921857,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 52,
@@ -594,7 +602,7 @@
           "name": "icon-autoflow-tabular",
           "id": 47,
           "code": 921858,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 55,
@@ -602,7 +610,7 @@
           "name": "icon-clock",
           "id": 50,
           "code": 921859,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 58,
@@ -610,7 +618,7 @@
           "name": "icon-database",
           "id": 53,
           "code": 921860,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 57,
@@ -618,7 +626,7 @@
           "name": "icon-database-query",
           "id": 52,
           "code": 921861,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 17,
@@ -626,7 +634,7 @@
           "name": "icon-dataset",
           "id": 12,
           "code": 921862,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 22,
@@ -634,7 +642,7 @@
           "name": "icon-datatable",
           "id": 17,
           "code": 921863,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 59,
@@ -642,7 +650,7 @@
           "name": "icon-dictionary",
           "id": 54,
           "code": 921864,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 62,
@@ -650,7 +658,7 @@
           "name": "icon-folder",
           "id": 57,
           "code": 921865,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 66,
@@ -658,7 +666,7 @@
           "name": "icon-image",
           "id": 61,
           "code": 921872,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 68,
@@ -666,7 +674,7 @@
           "name": "icon-layout",
           "id": 63,
           "code": 921873,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 77,
@@ -674,7 +682,7 @@
           "name": "icon-object",
           "id": 72,
           "code": 921874,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 78,
@@ -682,7 +690,7 @@
           "name": "icon-object-unknown",
           "id": 73,
           "code": 921875,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 79,
@@ -690,7 +698,7 @@
           "name": "icon-packet",
           "id": 74,
           "code": 921876,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 80,
@@ -698,7 +706,7 @@
           "name": "icon-page",
           "id": 75,
           "code": 921877,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 114,
@@ -706,7 +714,7 @@
           "name": "icon-plot-overlay",
           "prevSize": 24,
           "code": 921878,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 113,
@@ -714,7 +722,7 @@
           "name": "icon-plot-stacked",
           "prevSize": 24,
           "code": 921879,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 10,
@@ -722,7 +730,7 @@
           "name": "icon-session",
           "id": 5,
           "code": 921880,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 24,
@@ -730,7 +738,7 @@
           "name": "icon-tabular",
           "id": 19,
           "code": 921881,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 7,
@@ -738,7 +746,7 @@
           "name": "icon-tabular-lad",
           "id": 2,
           "code": 921888,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 6,
@@ -746,7 +754,7 @@
           "name": "icon-tabular-lad-set",
           "id": 1,
           "code": 921889,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 8,
@@ -754,7 +762,7 @@
           "name": "icon-tabular-realtime",
           "id": 3,
           "code": 921890,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 23,
@@ -762,7 +770,7 @@
           "name": "icon-tabular-scrolling",
           "id": 18,
           "code": 921891,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 112,
@@ -770,7 +778,7 @@
           "name": "icon-telemetry",
           "id": 86,
           "code": 921892,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 90,
@@ -778,7 +786,7 @@
           "name": "icon-telemetry-panel",
           "id": 85,
           "code": 921893,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 93,
@@ -786,7 +794,7 @@
           "name": "icon-timeline",
           "id": 88,
           "code": 921894,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 116,
@@ -794,7 +802,7 @@
           "name": "icon-timer-v1.5",
           "prevSize": 24,
           "code": 921895,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 11,
@@ -802,7 +810,7 @@
           "name": "icon-topic",
           "id": 6,
           "code": 921896,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 115,
@@ -810,7 +818,7 @@
           "name": "icon-box-with-dashed-lines",
           "id": 29,
           "code": 921897,
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "metadata": {
@@ -2184,6 +2192,30 @@
           }
         },
         {
+          "id": 104,
+          "paths": [
+            "M460.8 460.8l-187.8-187.8c57.2-42.8 128-68.2 204.8-68.2 188.2 0 341.6 153.2 341.6 341.4s-153.2 341.2-341.4 341.2c-165 0-302.8-117.6-334.6-273h-138.4c14.2 101.8 61 195.6 135 269.6 90.2 90.2 210.4 140 338 140s247.6-49.8 338-140 140-210.4 140-338-49.8-247.6-140-338-210.4-140-338-140c-111.4 0-217 38-302 107.6l-176-175.6v460.8h460.8z"
+          ],
+          "attrs": [
+            {
+              "fill": "rgb(0, 161, 75)"
+            }
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-reset"
+          ],
+          "colorPermutations": {
+            "1161751207457516161751": [
+              {
+                "f": 1
+              }
+            ]
+          }
+        },
+        {
           "paths": [
             "M512 0c-282.8 0-512 229.2-512 512s229.2 512 512 512 512-229.2 512-512-229.2-512-512-512zM832 704l-128 128-192-192-192 192-128-128 192-192-192-192 128-128 192 192 192-192 128 128-192 192 192 192z"
           ],
@@ -2303,26 +2335,31 @@
           }
         },
         {
-          "id": 104,
+          "id": 106,
           "paths": [
-            "M460.8 460.8l-187.8-187.8c57.2-42.8 128-68.2 204.8-68.2 188.2 0 341.6 153.2 341.6 341.4s-153.2 341.2-341.4 341.2c-165 0-302.8-117.6-334.6-273h-138.4c14.2 101.8 61 195.6 135 269.6 90.2 90.2 210.4 140 338 140s247.6-49.8 338-140 140-210.4 140-338-49.8-247.6-140-338-210.4-140-338-140c-111.4 0-217 38-302 107.6l-176-175.6v460.8h460.8z"
+            "M960 0c0 0 0 0 0 0h-320v128h165.4l-210.6 210.8c-25 25-25 65.6 0 90.6 12.4 12.4 28.8 18.8 45.2 18.8s32.8-6.2 45.2-18.8l210.8-210.8v165.4h128v-384h-64z",
+            "M896 805.4l-210.8-210.6c-25-25-65.6-25-90.6 0s-25 65.6 0 90.6l210.8 210.6h-165.4v128h384v-384h-128v165.4z",
+            "M218.6 128h165.4v-128h-320c0 0 0 0 0 0h-64v384h128v-165.4l210.8 210.8c12.4 12.4 28.8 18.8 45.2 18.8s32.8-6.2 45.2-18.8c25-25 25-65.6 0-90.6l-210.6-210.8z",
+            "M338.8 594.8l-210.8 210.6v-165.4h-128v384h384v-128h-165.4l210.8-210.8c25-25 25-65.6 0-90.6-25.2-24.8-65.6-24.8-90.6 0.2z"
           ],
           "attrs": [
-            {
-              "fill": "rgb(0, 161, 75)"
-            }
+            {},
+            {},
+            {},
+            {}
+          ],
+          "grid": 16,
+          "tags": [
+            "icon-expand"
           ],
           "isMulticolor": false,
           "isMulticolor2": false,
-          "grid": 16,
-          "tags": [
-            "icon-reset"
-          ],
           "colorPermutations": {
             "1161751207457516161751": [
-              {
-                "f": 1
-              }
+              {},
+              {},
+              {},
+              {}
             ]
           }
         },

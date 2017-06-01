@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -55,13 +55,13 @@ define(
                 };
                 mockConductor = jasmine.createSpyObj("conductor", [
                     "bounds",
-                    "follow",
+                    "clock",
                     "on",
                     "off",
                     "timeSystem"
                 ]);
                 mockConductor.bounds.andReturn(mockBounds);
-                mockConductor.follow.andReturn(false);
+                mockConductor.clock.andReturn(undefined);
 
                 mockDomainObject = jasmine.createSpyObj("domainObject", [
                     "getModel",
@@ -101,7 +101,21 @@ define(
                 ]);
                 mockTelemetryAPI.commonValuesForHints.andReturn([]);
                 mockTelemetryAPI.request.andReturn(Promise.resolve([]));
-
+                mockTelemetryAPI.getValueFormatter.andCallFake(function (metadata) {
+                    var formatter = jasmine.createSpyObj(
+                        'telemetryFormatter:' + metadata.key,
+                        [
+                            'format',
+                            'parse'
+                        ]
+                    );
+                    var getter = function (datum) {
+                        return datum[metadata.key];
+                    };
+                    formatter.format.andCallFake(getter);
+                    formatter.parse.andCallFake(getter);
+                    return formatter;
+                });
 
                 mockTelemetryAPI.canProvideTelemetry.andReturn(false);
 
@@ -110,7 +124,7 @@ define(
                 mockTimeout.cancel = jasmine.createSpy("cancel");
 
                 mockAPI = {
-                    conductor: mockConductor,
+                    time: mockConductor,
                     objects: mockObjectAPI,
                     telemetry: mockTelemetryAPI,
                     composition: mockCompositionAPI
@@ -131,21 +145,21 @@ define(
                 it('conductor changes', function () {
                     expect(mockConductor.on).toHaveBeenCalledWith("timeSystem", jasmine.any(Function));
                     expect(mockConductor.on).toHaveBeenCalledWith("bounds", jasmine.any(Function));
-                    expect(mockConductor.on).toHaveBeenCalledWith("follow", jasmine.any(Function));
+                    expect(mockConductor.on).toHaveBeenCalledWith("clock", jasmine.any(Function));
                 });
             });
 
             describe('deregisters all listeners on scope destruction', function () {
                 var timeSystemListener,
                     boundsListener,
-                    followListener;
+                    clockListener;
 
                 beforeEach(function () {
                     controller.registerChangeListeners();
 
                     timeSystemListener = getCallback(mockConductor.on, "timeSystem");
                     boundsListener = getCallback(mockConductor.on, "bounds");
-                    followListener = getCallback(mockConductor.on, "follow");
+                    clockListener = getCallback(mockConductor.on, "clock");
 
                     var destroy = getCallback(mockScope.$on, "$destroy");
                     destroy();
@@ -157,11 +171,11 @@ define(
                 it('conductor changes', function () {
                     expect(mockConductor.off).toHaveBeenCalledWith("timeSystem", timeSystemListener);
                     expect(mockConductor.off).toHaveBeenCalledWith("bounds", boundsListener);
-                    expect(mockConductor.off).toHaveBeenCalledWith("follow", followListener);
+                    expect(mockConductor.off).toHaveBeenCalledWith("clock", clockListener);
                 });
             });
 
-            describe ('Subscribes to new data', function () {
+            describe ('when getting telemetry', function () {
                 var mockComposition,
                     mockTelemetryObject,
                     mockChildren,
@@ -173,9 +187,7 @@ define(
                         "load"
                     ]);
 
-                    mockTelemetryObject = jasmine.createSpyObj("mockTelemetryObject", [
-                        "something"
-                    ]);
+                    mockTelemetryObject = {};
                     mockTelemetryObject.identifier = {
                         key: "mockTelemetryObject"
                     };
@@ -192,22 +204,12 @@ define(
                     });
 
                     done = false;
-                    controller.getData().then(function () {
-                        done = true;
-                    });
-                });
-
-                it('fetches historical data', function () {
-                    waitsFor(function () {
-                        return done;
-                    }, "getData to return", 100);
-
-                    runs(function () {
-                        expect(mockTelemetryAPI.request).toHaveBeenCalledWith(mockTelemetryObject, jasmine.any(Object));
-                    });
                 });
 
                 it('fetches historical data for the time period specified by the conductor bounds', function () {
+                    controller.getData().then(function () {
+                        done = true;
+                    });
                     waitsFor(function () {
                         return done;
                     }, "getData to return", 100);
@@ -217,17 +219,11 @@ define(
                     });
                 });
 
-                it('subscribes to new data', function () {
-                    waitsFor(function () {
-                        return done;
-                    }, "getData to return", 100);
-
-                    runs(function () {
-                        expect(mockTelemetryAPI.subscribe).toHaveBeenCalledWith(mockTelemetryObject, jasmine.any(Function), {});
+                it('unsubscribes on view destruction', function () {
+                    controller.getData().then(function () {
+                        done = true;
                     });
 
-                });
-                it('and unsubscribes on view destruction', function () {
                     waitsFor(function () {
                         return done;
                     }, "getData to return", 100);
@@ -239,17 +235,98 @@ define(
                         expect(unsubscribe).toHaveBeenCalled();
                     });
                 });
+                it('fetches historical data for the time period specified by the conductor bounds', function () {
+                    controller.getData().then(function () {
+                        done = true;
+                    });
+                    waitsFor(function () {
+                        return done;
+                    }, "getData to return", 100);
+
+                    runs(function () {
+                        expect(mockTelemetryAPI.request).toHaveBeenCalledWith(mockTelemetryObject, mockBounds);
+                    });
+                });
+
+                it('fetches data for, and subscribes to parent object if it is a telemetry object', function () {
+                    controller.getData().then(function () {
+                        done = true;
+                    });
+                    waitsFor(function () {
+                        return done;
+                    }, "getData to return", 100);
+
+                    runs(function () {
+                        expect(mockTelemetryAPI.subscribe).toHaveBeenCalledWith(mockTelemetryObject, jasmine.any(Function), {});
+                        expect(mockTelemetryAPI.request).toHaveBeenCalledWith(mockTelemetryObject, jasmine.any(Object));
+                    });
+                });
+                it('fetches data for, and subscribes to parent object if it is a telemetry object', function () {
+                    controller.getData().then(function () {
+                        done = true;
+                    });
+                    waitsFor(function () {
+                        return done;
+                    }, "getData to return", 100);
+
+                    runs(function () {
+                        expect(mockTelemetryAPI.subscribe).toHaveBeenCalledWith(mockTelemetryObject, jasmine.any(Function), {});
+                        expect(mockTelemetryAPI.request).toHaveBeenCalledWith(mockTelemetryObject, jasmine.any(Object));
+                    });
+                });
+
+                it('fetches data for, and subscribes to any composees that are telemetry objects if parent is not', function () {
+                    mockChildren = [
+                        {name: "child 1"}
+                    ];
+                    var mockTelemetryChildren = [
+                        {name: "child 2"},
+                        {name: "child 3"},
+                        {name: "child 4"}
+                    ];
+                    mockChildren = mockChildren.concat(mockTelemetryChildren);
+                    mockComposition.load.andReturn(Promise.resolve(mockChildren));
+
+                    mockTelemetryAPI.canProvideTelemetry.andCallFake(function (object) {
+                        if (object === mockTelemetryObject) {
+                            return false;
+                        } else {
+                            return mockTelemetryChildren.indexOf(object) !== -1;
+                        }
+                    });
+
+                    controller.getData().then(function () {
+                        done = true;
+                    });
+
+                    waitsFor(function () {
+                        return done;
+                    }, "getData to return", 100);
+
+                    runs(function () {
+                        mockTelemetryChildren.forEach(function (child) {
+                            expect(mockTelemetryAPI.subscribe).toHaveBeenCalledWith(child, jasmine.any(Function), {});
+                        });
+
+                        mockTelemetryChildren.forEach(function (child) {
+                            expect(mockTelemetryAPI.request).toHaveBeenCalledWith(child, jasmine.any(Object));
+                        });
+
+                        expect(mockTelemetryAPI.subscribe).not.toHaveBeenCalledWith(mockChildren[0], jasmine.any(Function), {});
+                        expect(mockTelemetryAPI.subscribe).not.toHaveBeenCalledWith(mockTelemetryObject[0], jasmine.any(Function), {});
+                    });
+                });
             });
 
             it('When in real-time mode, enables auto-scroll', function () {
                 controller.registerChangeListeners();
 
-                var followCallback = getCallback(mockConductor.on, "follow");
+                var clockCallback = getCallback(mockConductor.on, "clock");
                 //Confirm pre-condition
                 expect(mockScope.autoScroll).toBeFalsy();
 
-                //Mock setting the conductor to 'follow' mode
-                followCallback(true);
+                //Mock setting the a clock in the Time API
+                clockCallback({});
                 expect(mockScope.autoScroll).toBe(true);
             });
 
@@ -280,13 +357,11 @@ define(
                     }];
 
                     mockTimeSystem = {
-                        metadata: {
-                            key: "column1"
-                        }
+                        key: "column1"
                     };
 
                     mockTelemetryAPI.commonValuesForHints.andCallFake(function (metadata, hints) {
-                        if (_.eq(hints, ["x"])) {
+                        if (_.eq(hints, ["domain"])) {
                             return domainMetadata;
                         } else if (_.eq(hints, [])) {
                             return allMetadata;

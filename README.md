@@ -55,7 +55,7 @@ Documentation is available on the [Open MCT website](https://nasa.github.io/open
 ### Examples
 
 The clearest examples for developing Open MCT plugins are in the
-[tutorials](https://nasa.github.io/openmct/docs/tutorials/) provided in
+[tutorials](https://github.com/nasa/openmct-tutorial) provided in
 our documentation.
 
 For a practical example of a telemetry adapter, see David Hudson's
@@ -136,20 +136,6 @@ naming convention is otherwise the same.)
 
 When `npm test` is run, test results will be written as HTML to
 `target/tests`. Code coverage information is written to `target/coverage`.
-
-
-### Functional Testing
-
-The tests described above are all at the unit-level; an additional
-test suite using [Protractor](https://angular.github.io/protractor/)
-is under development, in the `protractor` folder.
-
-To run:
-
-* Install protractor following the instructions above.
-* `cd protractor`
-* `npm install`
-* `npm run all`
 
 # Glossary
 

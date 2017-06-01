@@ -1,143 +1,258 @@
-# Open MCT API
+# Building Applications With Open MCT
 
-The Open MCT framework public api can be utilized by building the application
-(`gulp install`) and then copying the file from `dist/main.js` to your
-directory of choice.
+## Scope and purpose of this document
 
-Open MCT supports AMD, CommonJS, and loading via a script tag; it's easy to use
-in your project. The [`openmct`]{@link module:openmct} module is exported
-via AMD and CommonJS, and is also exposed as `openmct` in the global scope
-if loaded via a script tag.
+This document is intended to serve as a reference for developing an application 
+based on Open MCT. It will provide details of the API functions necessary to 
+extend the Open MCT platform meet common use cases such as integrating with a telemetry source. 
 
-## Overview
+The best place to start is with the [Open MCT Tutorials](https://github.com/nasa/openmct-tutorial). 
+These will walk you through the process of getting up and running with Open 
+MCT, as well as addressing some common developer use cases.
 
-Open MCT's goal is to allow you to browse, create, edit, and visualize all of
-the domain knowledge you need on a daily basis.
+## Building From Source 
 
-To do this, the main building block provided by Open MCT is the _domain object_.
-The temperature sensor on the starboard solar panel,
-an overlay plot comparing the results of all temperature sensor,
-the command dictionary for a spacecraft,
-the individual commands in that dictionary, your "my documents" folder:
-All of these things are domain objects.
+The latest version of Open MCT is available from [our GitHub repository](https://github.com/nasa/openmct). 
+If you have `git`, and `node` installed, you can build Open MCT with the
+commands 
 
-Domain objects have Types, so a specific instrument temperature sensor is a
-"Telemetry Point," and turning on a drill for a certain duration of time is
-an "Activity".  Types allow you to form an ontology of knowledge and provide
-an abstraction for grouping, visualizing, and interpreting data.
-
-And then we have Views. Views allow you to visualize domain objects. Views can
-apply to specific domain objects; they may also apply to certain types of
-domain objects, or they may apply to everything.  Views are simply a method
-of visualizing domain objects.
-
-Regions allow you to specify what views are displayed for specific types of
-domain objects in response to different user actions. For instance, you may
-want to display a different view while editing, or you may want to update the
-toolbar display when objects are selected.  Regions allow you to map views to
-specific user actions.
-
-Domain objects can be mutated and persisted, developers can create custom
-actions and apply them to domain objects, and many more things can be done.
-For more information, read on!
-
-## Running Open MCT
-
-Once the [`openmct`](@link module:openmct) module has been loaded, you can
-simply invoke [`start`]{@link module:openmct.MCT#start} to run Open MCT:
-
-
-```
-openmct.start();
+```bash
+git clone https://github.com/nasa/openmct.git
+cd openmct
+npm install
 ```
 
-Generally, however, you will want to configure Open MCT by adding plugins
-before starting it. It is important to install plugins and configure Open MCT
-_before_ calling [`start`]{@link module:openmct.MCT#start}; Open MCT is not
-designed to be reconfigured once started.
+These commands will fetch the Open MCT source from our GitHub repository, and 
+build a minified version that can be included in your application. The output 
+of the build process is placed in a `dist` folder under the openmct source 
+directory, which can be copied out to another location as needed. The contents 
+of this folder will include a minified javascript file named `openmct.js` as 
+well as assets such as html, css, and images necessary for the UI. 
 
-## Configuring Open MCT
+## Starting an Open MCT application
 
-The [`openmct`]{@link module:openmct} module (more specifically, the
-[`MCT`]{@link module:openmct.MCT} class, of which `openmct` is an instance)
-exposes a variety of methods to allow the application to be configured,
-extended, and customized before running.
+To start a minimally functional Open MCT application, it is necessary to 
+include the Open MCT distributable, enable some basic plugins, and bootstrap 
+the application. The tutorials walk through the process of getting Open MCT up 
+and running from scratch, but provided below is a minimal HTML template that 
+includes Open MCT, installs some basic plugins, and bootstraps the application. 
+It assumes that Open MCT is installed under an `openmct` subdirectory, as 
+described in [Building From Source](#building-from-source). 
 
-Short examples follow; see the linked documentation for further details.
+This approach includes openmct using a simple script tag, resulting in a global 
+variable named `openmct`. This `openmct` object is used subsequently to make 
+API calls. 
 
-### Adding Domain Object Types
+Open MCT is packaged as a UMD (Universal Module Definition) module, so common 
+script loaders are also supported.
 
-Custom types may be registered via
-[`openmct.types`]{@link module:openmct.MCT#types}:
-
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Open MCT</title>
+    <script src="openmct.js"></script>
+</head>
+<body>
+    <script>
+        openmct.setAssetPath('openmct/dist');
+        openmct.install(openmct.plugins.LocalStorage());
+        openmct.install(openmct.plugins.MyItems());
+        openmct.install(openmct.plugins.UTCTimeSystem());
+        openmct.install(openmct.plugins.Espresso());
+        openmct.start();
+    </script>
+</body>
+</html>
 ```
+
+The Open MCT library included above requires certain assets such as html 
+templates, images, and css. If you installed Open MCT from GitHub as described 
+in the section on [Building from Source](#building-from-source) then these
+assets will have been downloaded along with the Open MCT javascript library. 
+You can specify the location of these assets by calling `openmct.setAssetPath()`. 
+Typically this will be the same location as the `openmct.js` library is 
+included from.
+
+There are some plugins bundled with the application that provide UI, 
+persistence, and other default configuration which are necessary to be able to 
+do anything with the application initially. Any of these plugins can, in 
+principle, be replaced with a custom plugin. The included plugins are 
+documented in the [Included Plugins](#included-plugins) section.  
+
+## Plugins
+
+### Defining and Installing a New Plugin
+
+```javascript
+openmct.install(function install(openmctAPI) {
+    // Do things here
+    // ...
+});
+```
+
+New plugins are installed in Open MCT by calling `openmct.install`, and
+providing a plugin installation function. This function will be invoked on 
+application startup with one parameter - the openmct API object. A common 
+approach used in the Open MCT codebase is to define a plugin as a function that 
+returns this installation function. This allows configuration to be specified 
+when the plugin is included.
+
+eg.
+
+```javascript
+openmct.install(openmct.plugins.Elasticsearch("http://localhost:8002/openmct"));
+```
+
+This approach can be seen in all of the [plugins provided with Open MCT](https://github.com/nasa/openmct/blob/master/src/plugins/plugins.js).
+
+## Domain Objects and Identifiers
+
+_Domain Objects_ are the basic entities that represent domain knowledge in Open 
+MCT.  The temperature sensor on a solar panel, an overlay plot comparing the 
+results of all temperature sensors, the command dictionary for a spacecraft, 
+the individual commands in that dictionary, the "My Items" folder: All of these 
+things are domain objects.
+
+A _Domain Object_ is simply a javascript object with some standard attributes.  
+An example of a _Domain Object_ is the "My Items" object which is a folder in 
+which a user can persist any objects that they create. The My Items object 
+looks like this: 
+
+```javascript
+{
+    identifier: {
+        namespace: ""
+        key: "mine"
+    }
+    name:"My Items",
+    type:"folder",
+    location:"ROOT",
+    composition: []
+}
+```
+
+### Object Attributes
+
+The main attributes to note are the `identifier`, and `type` attributes.
+
+* `identifier`: A composite key that provides a universally unique identifier 
+  for this object. The `namespace` and `key` are used to identify the object.
+  The `key` must be unique within the namespace. 
+* `type`: All objects in Open MCT have a type. Types allow you to form an 
+  ontology of knowledge and provide an abstraction for grouping, visualizing, 
+  and interpreting data. Details on how to define a new object type are 
+  provided below. 
+
+Open MCT uses a number of builtin types. Typically you are going to want to 
+define your own when extending Open MCT.
+
+### Domain Object Types
+
+Custom types may be registered via the `addType` function on the Open MCT Type 
+registry.
+
+eg.
+```javascript
 openmct.types.addType('my-type', {
-    label: "My Type",
+    name: "My Type",
     description: "This is a type that I added!",
     creatable: true
 });
 ```
 
-### Adding Views
+The `addType` function accepts two arguments:
+* A `string` key identifying the type. This key is used when specifying a type 
+for an object.
+* An object type specification. An object type definition supports the following 
+attributes      
+    * `name`: a `string` naming this object type
+    * `description`: a `string` specifying a longer-form description of this type
+    * `initialize`: a `function` which initializes the model for new domain objects 
+    of this type. This can be used for setting default values on an object when 
+    it is instantiated.
+    * `creatable`: A `boolean` indicating whether users should be allowed to create 
+    this type (default: `false`). This will determine whether the type appears 
+    in the `Create` menu.
+    * `cssClass`: A `string` specifying a CSS class to apply to each representation 
+    of this object. This is used for specifying an icon to appear next to each 
+    object of this type.
 
-Custom views may be registered based on the region in the application
-where they should appear:
+The [Open MCT Tutorials](https://github.com/openmct/openmct-tutorial) provide a 
+step-by-step examples of writing code for Open MCT that includes a [section on 
+defining a new object type](https://github.com/nasa/openmct-tutorial#step-3---providing-objects).
 
-* [`openmct.mainViews`]{@link module:openmct.MCT#mainViews} is a registry
-  of views of domain objects which should appear in the main viewing area.
-* [`openmct.inspectors`]{@link module:openmct.MCT#inspectors} is a registry
-  of views of domain objects and/or active selections, which should appear in
-  the Inspector.
-* [`openmct.toolbars`]{@link module:openmct.MCT#toolbars} is a registry
-  of views of domain objects and/or active selections, which should appear in
-  the toolbar area while editing.
-* [`openmct.indicators`]{@link module:openmct.MCT#inspectors} is a registry
-  of views which should appear in the status area of the application.
+## Root Objects
 
-Example:
+In many cases, you'd like a certain object (or a certain hierarchy of objects) 
+to be accessible from the top level of the application (the tree on the left-hand 
+side of Open MCT.) For example, it is typical to expose a telemetry dictionary 
+as a hierarchy of telemetry-providing domain objects in this fashion.
 
+To do so, use the `addRoot` method of the object API.
+
+eg.
+```javascript
+openmct.objects.addRoot({
+        namespace: "my-namespace",
+        key: "my-key"
+    });
 ```
-openmct.mainViews.addProvider({
-    canView: function (domainObject) {
-        return domainObject.type === 'my-type';
-    },
-    view: function (domainObject) {
-        return new MyView(domainObject);
-    }
-});
-```
 
-### Adding a Root-level Object
-
-In many cases, you'd like a certain object (or a certain hierarchy of
-objects) to be accessible from the top level of the application (the
-tree on the left-hand side of Open MCT.) It is typical to expose a telemetry
-dictionary as a hierarchy of telemetry-providing domain objects in this
-fashion.
-
-To do so, use the [`addRoot`]{@link module:openmct.ObjectAPI#addRoot} method
-of the [object API]{@link module:openmct.ObjectAPI}:
-
-```
-openmct.objects.addRoot({ key: "my-key", namespace: "my-namespace" });
-```
+The `addRoot` function takes a single [object identifier](#domain-objects-and-identifiers) 
+as an argument. 
 
 Root objects are loaded just like any other objects, i.e. via an object
 provider.
 
-### Adding Composition Providers
+## Object Providers
 
-The "composition" of a domain object is the list of objects it contains,
-as shown (for example) in the tree for browsing. Open MCT provides a
+An Object Provider is used to build _Domain Objects_, typically retrieved from 
+some source such as a persistence store or telemetry dictionary. In order to 
+integrate telemetry from a new source an object provider will need to be created 
+that can build objects representing telemetry points exposed by the telemetry 
+source. The API call to define a new object provider is fairly straightforward. 
+Here's a very simple example:
+
+```javascript
+openmct.objects.addProvider('example.namespace', {
+    get: function (identifier) {
+        return Promise.resolve({
+            identifier: identifier,
+            name: 'Example Object',
+            type: 'example-object-type'
+        });
+    }
+});
+```
+The `addProvider` function takes two arguments:
+
+* `namespace`: A `string` representing the namespace that this object provider 
+will provide objects for.
+* `provider`: An `object` with a single function, `get`. This function accepts an 
+[Identifier](#domain-objects-and-identifiers) for the object to be provided. 
+It is expected that the `get` function will return a 
+[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) 
+that resolves with the object being requested.
+
+In future, object providers will support other methods to enable other operations 
+with persistence stores, such as creating, updating, and deleting objects.
+
+## Composition Providers
+
+The _composition_ of a domain object is the list of objects it contains, as shown 
+(for example) in the tree for browsing. Open MCT provides a
 [default solution](#default-composition-provider) for composition, but there
 may be cases where you want to provide the composition of a certain object
 (or type of object) dynamically.
 
-For instance, you may want to populate a hierarchy under a custom root-level
-object based on the contents of a telemetry dictionary.
-To do this, you can add a new CompositionProvider:
+### Adding Composition Providers
 
-```
+You may want to populate a hierarchy under a custom root-level object based on 
+the contents of a telemetry dictionary. To do this, you can add a new 
+Composition Provider:
+
+```javascript
 openmct.composition.addProvider({
     appliesTo: function (domainObject) {
         return domainObject.type === 'my-type';
@@ -147,20 +262,27 @@ openmct.composition.addProvider({
     }
 });
 ```
+The `addProvider` function accepts a Composition Provider object as its sole 
+argument. A Composition Provider is a javascript object exposing two functions:
+* `appliesTo`: A `function` that accepts a `domainObject` argument, and returns 
+a `boolean` value indicating whether this composition provider applies to the 
+given object.
+* `load`: A `function` that accepts a `domainObject` as an argument, and returns
+a `Promise` that resolves with an array of [Identifier](#domain-objects-and-identifiers).
+These identifiers will be used to fetch Domain Objects from an [Object Provider](#object-provider)
 
-#### Default Composition Provider
+### Default Composition Provider
 
-The default composition provider applies to any domain object with
-a `composition` property. The value of `composition` should be an
-array of identifiers, e.g.:
+The default composition provider applies to any domain object with a `composition` 
+property. The value of `composition` should be an array of identifiers, e.g.:
 
-```js
+```javascript
 var domainObject = {
     name: "My Object",
     type: 'folder',
     composition: [
         {
-            key: '412229c3-922c-444b-8624-736d85516247',
+            id: '412229c3-922c-444b-8624-736d85516247',
             namespace: 'foo'
         },
         {
@@ -171,169 +293,605 @@ var domainObject = {
 };
 ```
 
-### Adding Telemetry Providers
+## Telemetry API
 
-When connecting to a new telemetry source, you will want to register a new
-[telemetry provider]{@link module:openmct.TelemetryAPI~TelemetryProvider}
-with the [telemetry API]{@link module:openmct.TelemetryAPI#addProvider}:
+The Open MCT telemetry API provides two main sets of interfaces-- one for integrating telemetry data into Open MCT, and another for developing Open MCT visualization plugins utilizing telemetry API.  
 
+The APIs for visualization plugins are still a work in progress and docs may change at any time.  However, the APIs for integrating telemetry metadata into Open MCT are stable and documentation is included below.
+
+### Integrating Telemetry Sources
+
+There are two main tasks for integrating telemetry sources-- describing telemetry objects with relevant metadata, and then providing telemetry data for those objects.  You'll use an [Object Provider](#object-providers) to provide objects with the necessary [Telemetry Metadata](#telemetry-metadata), and then register a [Telemetry Provider](#telemetry-providers) to retrieve telemetry data for those objects.
+
+For a step-by-step guide to building a telemetry adapter, please see the 
+[Open MCT Tutorials](https://github.com/nasa/openmct-tutorial).
+
+#### Telemetry Metadata
+
+A telemetry object is a domain object with a telemetry property.  To take an example from the tutorial, here is the telemetry object for the "fuel" measurement of the spacecraft:
+
+```json
+{
+    "identifier": {
+        "namespace": "example.taxonomy",
+        "key": "prop.fuel"
+    },
+    "name": "Fuel",
+    "type": "example.telemetry",
+    "telemetry": {
+        "values": [
+            {
+                "key": "value",
+                "name": "Value",
+                "units": "kilograms",
+                "format": "float",
+                "min": 0,
+                "max": 100,
+                "hints": {
+                    "range": 1
+                }
+            },
+            {
+                "key": "utc",
+                "source": "timestamp",
+                "name": "Timestamp",
+                "format": "utc",
+                "hints": {
+                    "domain": 1
+                }
+            }
+        ]
+    }
+}
 ```
+
+The most important part of the telemetry metadata is the `values` property-- this describes the attributes of telemetry datums (objects) that a telemetry provider returns.  These descriptions must be provided for telemetry views to work properly.
+
+##### Values
+
+`telemetry.values` is an array of value description objects, which have the following fields:
+
+attribute      | type   | flags    | notes
+---            |  ---   |  ---     | ---
+`key`          | string | required | unique identifier for this field.  
+`hints`        | object | required | Hints allow views to intelligently select relevant attributes for display, and are required for most views to function.  See section on "Value Hints" below.
+`name`         | string | optional | a human readible label for this field.  If omitted, defaults to `key`.
+`source`       | string | optional | identifies the property of a datum where this value is stored.  If omitted, defaults to `key`.
+`format`       | string | optional | a specific format identifier, mapping to a formatter.  If omitted, uses a default formatter.  For enumerations, use `enum`.  For timestamps, use `utc` if you are using utc dates, otherwise use a key mapping to your custom date format.  
+`units`        | string | optional | the units of this value, e.g. `km`, `seconds`, `parsecs`
+`min`          | number | optional | the minimum possible value of this measurement.  Will be used by plots, gauges, etc to automatically set a min value.
+`max`          | number | optional | the maximum possible value of this measurement.  Will be used by plots, gauges, etc to automatically set a max value.
+`enumerations` | array  | optional | for objects where `format` is `"enum"`, this array tracks all possible enumerations of the value.  Each entry in this array is an object, with a `value` property that is the numerical value of the enumeration, and a `string` property that is the text value of the enumeration.  ex: `{"value": 0, "string": "OFF"}`.  If you use an enumerations array, `min` and `max` will be set automatically for you.
+
+
+###### Value Hints
+
+Each telemetry value description has an object defining hints.  Keys in this this object represent the hint itself, and the value represents the weight of that hint.  A lower weight means the hint has a higher priority.  For example, multiple values could be hinted for use as the y axis of a plot (raw, engineering), but the highest priority would be the default choice.  Likewise, a table will use hints to determine the default order of columns.
+
+Known hints:
+
+* `domain`: Indicates that the value represents the "input" of a datum. Values with a `domain` hint will be used for the x-axis of a plot, and tables will render columns for these values first.
+* `range`: Indicates that the value is the "output" of a datum.  Values with a `range` hint will be used as the y-axis on a plot, and tables will render columns for these values after the `domain` values.
+
+##### The Time Conductor and Telemetry 
+
+Open MCT provides a number of ways to pivot through data and link data via time.  The Time Conductor helps synchronize multiple views around the same time.
+
+In order for the time conductor to work, there will always be an active "time system".  All telemetry metadata *must* have a telemetry value with a `key` that matches the `key` of the active time system.  You can use the `source` attribute on the value metadata to remap this to a different field in the telemetry datum-- especially useful if you are working with disparate datasources that have different field mappings.
+
+
+#### Telemetry Providers
+
+Telemetry providers are responsible for providing historical and real time telemetry data for telemetry objects.  Each telemetry provider determines which objects it can provide telemetry for, and then must implement methods to provide telemetry for those objects.
+
+A telemetry provider is a javascript object with up to four methods:
+
+* `supportsSubscribe(domainObject, callback, options)` optional.  Must be implemented to provide realtime telemetry.  Should return `true` if the provider supports subscriptions for the given domain object (and request options).
+* `subscribe(domainObject, callback, options)` required if `supportsSubscribe` is implemented.  Establish a subscription for realtime data for the given domain object.  Should invoke `callback` with a single telemetry datum every time data is received.  Must return an unsubscribe function.  Multiple views can subscribe to the same telemetry object, so it should always return a new unsubscribe function.
+* `supportsRequest(domainObject, options)` optional.  Must be implemented to provide historical telemetry.  Should return `true` if the provider supports historical requests for the given domain object.
+* `request(domainObject, options)` required if `supportsRequest` is implemented.  Must return a promise for an array of telemetry datums that fulfills the request.  The `options` argument will include a `start`, `end`, and `domain` attribute representing the query bounds.  For more request properties, see Request Properties below.
+
+Telemetry providers are registered by calling `openmct.telemetry.addProvider(provider)`, e.g.
+
+```javascript
 openmct.telemetry.addProvider({
-    canProvideTelemetry: function (domainObject) {
-        return domainObject.type === 'my-type';
+    supportsRequest: function (domainObject, options) { /*...*/ },
+    request: function (domainObject, options) { /*...*/ },
+    supportsSubscribe: function (domainObject, callback, options) { /*...*/ },
+    subscribe: function (domainObject, callback, options) { /*...*/ }
+})
+```
+
+#### Telemetry Requests
+
+Telemetry requests support time bounded queries. A call to a _Telemetry Provider_'s `request` function will include an `options` argument. These are simply javascript objects with attributes for the request parameters. An example of a telemetry request object with a start and end time is included below:
+```javascript
+{
+    start: 1487981997240,
+    end: 1487982897240,
+    domain: 'utc'
+}
+```
+
+#### Telemetry Formats
+
+Telemetry format objects define how to interpret and display telemetry data. 
+They have a simple structure:
+
+* `key`: A `string` that uniquely identifies this formatter.
+* `format`: A `function` that takes a raw telemetry value, and returns a 
+  human-readable `string` representation of that value. It has one required 
+  argument, and three optional arguments that provide context and can be used 
+  for returning scaled representations of a value. An example of this is 
+  representing time values in a scale such as the time conductor scale. There 
+  are multiple ways of representing a point in time, and by providing a minimum
+  scale value, maximum scale value, and a count, it's possible to provide more
+  useful representations of time given the provided limitations.  
+    * `value`: The raw telemetry value in its native type.
+    * `minValue`: An __optional__ argument specifying the minimum displayed 
+      value.
+    * `maxValue`: An __optional__ argument specifying the maximum displayed 
+      value.
+    * `count`: An __optional__ argument specifying the number of displayed 
+      values.
+* `parse`: A `function` that takes a `string` representation of a telemetry 
+  value, and returns the value in its native type. **Note** parse might receive an already-parsed value.  This function should be idempotent.
+* `validate`: A `function` that takes a `string` representation of a telemetry 
+  value, and returns a `boolean` value indicating whether the provided string
+  can be parsed.
+
+##### Registering Formats
+
+Formats are registered with the Telemetry API using the `addFormat` function. eg.
+
+``` javascript
+openmct.telemetry.addFormat({
+    key: 'number-to-string',
+    format: function (number) {
+        return number + '';
     },
-    properties: function (domainObject) {
-        return [
-            { key: 'value', name: "Temperature", units: "degC" },
-            { key: 'time', name: "UTC" }
-        ];
+    parse: function (text) {
+        return Number(text);
     },
-    request: function (domainObject, options) {
-        var telemetryId = domainObject.myTelemetryId;
-        return myAdapter.request(telemetryId, options.start, options.end);
-    },
-    subscribe: function (domainObject, callback) {
-        var telemetryId = domainObject.myTelemetryId;
-        myAdapter.subscribe(telemetryId, callback);
-        return myAdapter.unsubscribe.bind(myAdapter, telemetryId, callback);
+    validate: function (text) {
+        return !isNaN(text);
     }
 });
 ```
 
-The implementations for `request` and `subscribe` can vary depending on the
-nature of the endpoint which will provide telemetry. In the example above,
-it is assumed that `myAdapter` contains the specific implementations
-(HTTP requests, WebSocket connections, etc.) associated with some telemetry
-source.
+#### Telemetry Data
 
-## Using Open MCT
+A single telemetry point is considered a Datum, and is represented by a standard
+javascript object.  Realtime subscriptions (obtained via __subscribe__) will 
+invoke the supplied callback once for each telemetry datum recieved.  Telemetry
+requests (obtained via __request__) will return a promise for an array of 
+telemetry datums.
 
-When implementing new features, it is useful and sometimes necessary to
-utilize functionality exposed by Open MCT.
+##### Telemetry Datums
 
-### Retrieving Composition
+A telemetry datum is a simple javascript object, e.g.:
 
-To limit which objects are loaded at any given time, the composition of
-a domain object must be requested asynchronously:
-
+```json
+{
+    "timestamp": 1491267051538,
+    "value": 77,
+    "id": "prop.fuel"
+}
 ```
-openmct.composition(myObject).load().then(function (childObjects) {
-    childObjects.forEach(doSomething);
+
+The key-value pairs of this object are described by the telemetry metadata of
+a domain object, as discussed in the [Telemetry Metadata](#telemetry-metadata)
+section.
+
+## Time API
+
+Open MCT provides API for managing the temporal state of the application.
+Central to this is the concept of "time bounds". Views in Open MCT will 
+typically show telemetry data for some prescribed date range, and the Time API 
+provides a way to centrally manage these bounds.
+
+The Time API exposes a number of methods for querying and setting the temporal 
+state of the application, and emits events to inform listeners when the state changes.
+
+Because the data displayed tends to be time domain data, Open MCT must always 
+have at least one time system installed and activated. When you download Open
+MCT, it will be pre-configured to use the UTC time system, which is installed and activated, along with other default plugins, in `index.html`. Installing and activating a time system is simple, and is covered 
+[in the next section](#defining-and-registering-time-systems). 
+
+### Time Systems and Bounds
+
+#### Defining and Registering Time Systems
+
+The time bounds of an Open MCT application are defined as numbers, and a Time 
+System gives meaning and context to these numbers so that they can be correctly 
+interpreted. Time Systems are javscript objects that provide some information 
+about the current time reference frame. An example of defining and registering 
+a new time system is given below:
+
+``` javascript
+openmct.time.addTimeSystem({
+    key: 'utc',
+    name: 'UTC Time',
+    cssClass = 'icon-clock',
+    timeFormat = 'utc',
+    durationFormat = 'duration',
+    isUTCBased = true
 });
 ```
 
-### Support Common Gestures
+The example above defines a new utc based time system. In fact, this time system 
+is configured and activated by default from `index.html` in the default 
+installation of Open MCT if you download the source from GitHub. Some details of 
+each of the required properties is provided below.
 
-Custom views may also want to support common gestures using the
-[gesture API]{@link module:openmct.GestureAPI}. For instance, to make
-a view (or part of a view) selectable:
+* `key`: A `string` that uniquely identifies this time system.
+* `name`: A `string` providing a brief human readable label. If the [Time Conductor](#the-time-conductor) 
+plugin is enabled, this name will identify the time system in a dropdown menu.
+* `cssClass`: A class name `string` that will be applied to the time system when 
+it appears in the UI. This will be used to represent the time system with an icon. 
+There are a number of built-in icon classes [available in Open MCT](https://github.com/nasa/openmct/blob/master/platform/commonUI/general/res/sass/_glyphs.scss), 
+or a custom class can be used here. 
+* `timeFormat`: A `string` corresponding to the key of a registered 
+[telemetry time format](#telemetry-formats). The format will be used for 
+displaying discrete timestamps from telemetry streams when this time system is 
+activated. If the [UTCTimeSystem](#included-plugins) is enabled, then the `utc` 
+format can be used if this is a utc-based time system
+* `durationFormat`: A `string` corresponding to the key of a registered 
+[telemetry time format](#telemetry-formats). The format will be used for 
+displaying time ranges, for example `00:15:00` might be used to represent a time 
+period of fifteen minutes. These are used by the Time Conductor plugin to specify
+relative time offsets. If the [UTCTimeSystem](#included-plugins) is enabled, 
+then the `duration` format can be used if this is a utc-based time system
+* `isUTCBased`: A `boolean` that defines whether this time system represents 
+numbers in UTC terrestrial time. 
+
+#### Getting and Setting the Active Time System
+
+Once registered, a time system can be activated by calling `timeSystem` with
+the timeSystem `key` or an instance of the time system.  If you are not using a
+[clock](#clocks), you must also specify valid [bounds](#time-bounds) for the
+timeSystem.
+
+```javascript
+openmct.time.timeSystem('utc', bounds);
+```
+
+A time system can be immediately activated after registration: 
+
+```javascript
+openmct.time.addTimeSystem(utcTimeSystem);
+openmct.time.timeSystem(utcTimeSystem, bounds);
+```
+
+Setting the active time system will trigger a [`'timeSystem'`](#time-events) 
+event.  If you supplied bounds, a [`'bounds'`](#time-events) event will be triggered afterwards with your newly supplied bounds.
+
+### Time Bounds
+
+The TimeAPI provides a getter/setter for querying and setting time bounds. Time 
+bounds are simply an object with a `start` and an end `end` attribute.
+
+* `start`: A `number` representing a moment in time in the active [Time System](#defining-and-registering-time-systems). 
+This will be used as the beginning of the time period displayed by time-responsive
+telemetry views.
+* `end`: A `number` representing a moment in time in the active [Time System](#defining-and-registering-time-systems).
+This will be used as the end of the time period displayed by time-responsive
+telemetry views.
+
+If invoked with bounds, it will set the new time bounds system-wide. If invoked 
+without any parameters, it will return the current application-wide time bounds. 
+
+``` javascript
+const ONE_HOUR = 60 * 60 * 1000;
+let now = Date.now();
+openmct.time.bounds({start: now - ONE_HOUR, now);
+```
+
+To respond to bounds change events, listen for the [`'bounds'`](#time-events)
+event.
+
+## Clocks
+
+The Time API can be set to follow a clock source which will cause the bounds
+to be updated automatically whenever the clock source "ticks". A clock is simply
+an object that supports registration of listeners and periodically invokes its 
+listeners with a number. Open MCT supports registration of new clock sources that 
+tick on almost anything. A tick occurs when the clock invokes callback functions 
+registered by its listeners with a new time value.
+
+An example of a clock source is the [LocalClock](https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/LocalClock.js) 
+which emits the current time in UTC every 100ms. Clocks can tick on anything. For 
+example, a clock could be defined to provide the timestamp of any new data 
+received via a telemetry subscription. This would have the effect of advancing 
+the bounds of views automatically whenever data is received. A clock could also 
+be defined to tick on some remote timing source.
+
+The values provided by clocks are simple `number`s, which are interpreted in the
+context of the active [Time System](#defining-and-registering-time-systems).
+
+### Defining and registering clocks
+
+A clock is an object that defines certain required metadata and functions:
+
+* `key`: A `string` uniquely identifying this clock. This can be used later to 
+reference the clock in places such as the [Time Conductor configuration](#time-conductor-configuration)
+* `cssClass`: A `string` identifying a CSS class to apply to this clock when it's 
+displayed in the UI. This will be used to represent the time system with an icon. 
+There are a number of built-in icon classes [available in Open MCT](https://github.com/nasa/openmct/blob/master/platform/commonUI/general/res/sass/_glyphs.scss), 
+or a custom class can be used here. 
+* `name`: A `string` providing a human-readable identifier for the clock source. 
+This will be displayed in the clock selector menu in the Time Conductor UI 
+component, if active. 
+* `description`: An __optional__ `string` providing a longer description of the 
+clock. The description will be visible in the clock selection menu in the Time 
+Conductor plugin.
+* `on`: A `function` supporting registration of a new callback that will be 
+invoked when the clock next ticks. It will be invoked with two arguments:
+    * `eventName`: A `string` specifying the event to listen on. For now, clocks 
+    support one event - `tick`.
+    * `callback`: A `function` that will be invoked when this clock ticks. The 
+    function must be invoked with one parameter - a `number` representing a valid
+    time in the current time system.
+* `off`: A `function` that allows deregistration of a tick listener. It accepts 
+the same arguments as `on`.
+* `currentValue`: A `function` that returns a `number` representing a point in 
+time in the active time system. It should be the last value provided by a tick, 
+or some default value if no ticking has yet occurred.
+
+A new clock can be registered using the `addClock` function exposed by the Time 
+API:
+
+```javascript
+var someClock = {
+    key: 'someClock',
+    cssClass: 'icon-clock',
+    name: 'Some clock',
+    description: "Presumably does something useful",
+    on: function (event, callback) {
+        // Some function that registers listeners, and updates them on a tick
+    },
+    off: function (event, callback) {
+        // Some function that unregisters listeners.
+    },
+    currentValue: function () {
+        // A function that returns the last ticked value for the clock
+    }
+}
+
+openmct.time.addClock(someClock);
+```
+
+An example clock implementation is provided in the form of the [LocalClock](https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/LocalClock.js)
+
+#### Getting and setting active clock
+
+Once registered a clock can be activated by calling the `clock` function on the 
+Time API passing in the key or instance of a registered clock. Only one clock 
+may be active at once, so activating a clock will deactivate any currently 
+active clock. [`clockOffsets`](#clock-offsets) must be specified when changing a clock.
+
+Setting the clock triggers a [`'clock'`](#time-events) event, followed by a [`'clockOffsets'`](#time-events) event, and then a [`'bounds'`](#time-events) event as the offsets are applied to the clock's currentValue().
+
 
 ```
-openmct.gestures.selectable(myHtmlElement, myDomainObject);
+openmct.time.clock(someClock, clockOffsets);
 ```
 
-### Working with Domain Objects
+Upon being activated, the time API will listen for tick events on the clock by calling `clock.on`.
 
-The [object API]{@link module:openmct.ObjectAPI} provides useful methods
-for working with domain objects.
+The currently active clock (if any) can be retrieved by calling the same 
+function without any arguments.
 
-To make changes to a domain object, use the
-[`mutate`]{@link module:openmct.ObjectAPI#mutate} method:
+#### Stopping an active clock
 
+The `stopClock` method can be used to stop an active clock, and to clear it. It 
+will stop the clock from ticking, and set the active clock to `undefined`.
+
+``` javascript
+openmct.time.stopClock();
 ```
-openmct.objects.mutate(myDomainObject, "name", "New name!");
+
+#### Clock Offsets
+
+When a clock is active, the time bounds of the application will be updated 
+automatically each time the clock "ticks". The bounds are calculated based on 
+the current value provided by the active clock (via its `tick` event, or its 
+`currentValue()` method). 
+
+Unlike bounds, which represent absolute time values, clock offsets represent
+relative time spans. Offsets are defined as an object with two properties:
+
+* `start`: A `number` that must be < 0 and which is used to calculate the start 
+bounds on each clock tick. The start offset will be calculated relative to the 
+value provided by a clock's tick callback, or its `currentValue()` function.
+* `end`: A `number` that must be >= 0 and which is used to calculate the end 
+bounds on each clock tick.
+
+The `clockOffsets` function can be used to get or set clock offsets. For example, 
+to show the last fifteen minutes in a ms-based time system: 
+
+```javascript
+var FIFTEEN_MINUTES = 15 * 60 * 1000;
+
+openmct.time.clockOffsets({
+    start: -FIFTEEN_MINUTES,
+    end: 0
+})
 ```
 
-Making modifications in this fashion allows other usages of the domain
-object to remain up to date using the
-[`observe`]{@link module:openmct.ObjectAPI#observe} method:
+__Note:__ Setting the clock offsets will trigger an immediate bounds change, as 
+new bounds will be calculated based on the `currentValue()` of the active clock. 
+Clock offsets are only relevant when a clock source is active.
 
-```
-openmct.objects.observe(myDomainObject, "name", function (newName) {
-    myLabel.textContent = newName;
+## Time Events
+
+The Time API is a standard event emitter; you can register callbacks for events using the `on` method and remove callbacks for events with the `off` method.
+
+For example:
+
+``` javascript
+openmct.time.on('bounds', function callback (newBounds, tick) {
+    // Do something with new bounds
 });
 ```
 
-### Using Telemetry
+#### List of Time Events
 
-Very often in Open MCT, you wish to work with telemetry data (for instance,
-to display it in a custom visualization.)
+The events emitted by the Time API are:
+
+* `bounds`: emitted whenever the bounds change.  The callback will be invoked 
+  with two arguments:
+  * `bounds`: A [bounds](#getting-and-setting-bounds) bounds object
+    representing a new time period bound by the specified start and send times.
+  * `tick`: A `boolean` indicating whether or not this bounds change is due to
+    a "tick" from a [clock source](#clocks). This information can be useful 
+    when determining a strategy for fetching telemetry data in response to a 
+    bounds change event. For example, if the bounds change was automatic, and 
+    is due to a tick then it's unlikely that you would need to perform a 
+    historical data query. It should be sufficient to just show any new 
+    telemetry received via subscription since the last tick, and optionally to 
+    discard any older data that now falls outside of the currently set bounds. 
+    If `tick` is false,then the bounds change was not due to an automatic tick, 
+    and a query for historical data may be necessary, depending on your data 
+    caching strategy, and how significantly the start bound has changed.
+* `timeSystem`: emitted whenever the active time system changes.  The callback will be invoked with a single argument:
+  * `timeSystem`: The newly active [time system](#defining-and-registering-time-systems).
+* `clock`: emitted whenever the clock changes.  The callback will be invoked 
+  with a single argument:
+  * `clock`: The newly active [clock](#clocks), or `undefined` if an active 
+    clock has been deactivated.
+* `clockOffsets`: emitted whenever the active clock offsets change.  The 
+  callback will be invoked with a single argument:
+  * `clockOffsets`: The new [clock offsets](#clock-offsets).
 
 
-### Synchronizing with the Time Conductor
+## The Time Conductor
 
-Views which wish to remain synchronized with the state of Open MCT's
-time conductor should utilize
-[`openmct.conductor`]{@link module:openmct.TimeConductor}:
+The Time Conductor provides a user interface for managing time bounds in Open 
+MCT. It allows a user to select from configured time systems and clocks, and to set bounds and clock offsets.
 
+If activated, the time conductor must be provided with configuration options, 
+detailed below.
+
+#### Time Conductor Configuration
+
+The time conductor is configured by specifying the options that will be 
+available to the user from the menus in the time conductor. These will determine 
+the clocks available from the conductor, the time systems available for each 
+clock, and some default bounds and clock offsets for each combination of clock 
+and time system. By default, the conductor always supports a `fixed` mode where 
+no clock is active. To specify configuration for fixed mode, simply leave out a
+`clock` attribute in the configuration entry object.
+
+Configuration is provided as an `array` of menu options. Each entry of the 
+array is an object with some properties specifying configuration. The configuration
+options specified are slightly different depending on whether or not it is for 
+an active clock mode.
+
+__Configuration for Fixed Time Mode (no active clock)__
+
+* `timeSystem`: A `string`, the key for the time system that this configuration 
+relates to.
+* `bounds`: A [`Time Bounds`](#time-bounds) object. These bounds will be applied 
+when the user selects the time system specified in the previous `timeSystem` 
+property.
+* `zoomOutLimit`: An __optional__ `number` specifying the longest period of time 
+that can be represented by the conductor when zooming. If a `zoomOutLimit` is 
+provided, then a `zoomInLimit` must also be provided. If provided, the zoom 
+slider will automatically become available in the Time Conductor UI.
+* `zoomInLimit`: An __optional__ `number` specifying the shortest period of time 
+that can be represented by the conductor when zooming. If a `zoomInLimit` is 
+provided, then a `zoomOutLimit` must also be provided. If provided, the zoom 
+slider will automatically become available in the Time Conductor UI.
+
+__Configuration for Active Clock__
+
+* `clock`: A `string`, the `key` of the clock that this configuration applies to. 
+* `timeSystem`: A `string`, the key for the time system that this configuration 
+relates to. Separate configuration must be provided for each time system that you 
+wish to be available to users when they select the specified clock.
+* `clockOffsets`: A [`clockOffsets`](#clock-offsets) object that will be 
+automatically applied when the combination of clock and time system specified in 
+this configuration is selected from the UI.
+
+#### Example conductor configuration
+
+An example time conductor configuration is provided below. It sets up some 
+default options for the [UTCTimeSystem](https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/UTCTimeSystem.js) 
+and [LocalTimeSystem](https://github.com/nasa/openmct/blob/master/src/plugins/localTimeSystem/LocalTimeSystem.js), 
+in both fixed mode, and for the [LocalClock](https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/LocalClock.js) 
+source. In this configutation, the local clock supports both the UTCTimeSystem 
+and LocalTimeSystem. Configuration for fixed bounds mode is specified by omitting 
+a clock key.
+
+``` javascript
+const ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
+const ONE_MINUTE = 60 * 1000;
+
+openmct.install(openmct.plugins.Conductor({
+    menuOptions: [
+        // 'Fixed' bounds mode configuation for the UTCTimeSystem
+        {
+            timeSystem: 'utc',
+            bounds: {start: Date.now() - 30 * ONE_MINUTE, end: Date.now()},
+            zoomOutLimit: ONE_YEAR,
+            zoomInLimit: ONE_MINUTE
+        },
+        // Configuration for the LocalClock in the UTC time system
+        {
+            clock: 'local',
+            timeSystem: 'utc',
+            clockOffsets: {start: - 30 * ONE_MINUTE, end: 0},
+            zoomOutLimit: ONE_YEAR,
+            zoomInLimit: ONE_MINUTE
+        },
+        //Configuration for the LocaLClock in the Local time system
+        {
+            clock: 'local',
+            timeSystem: 'local',
+            clockOffsets: {start: - 15 * ONE_MINUTE, end: 0}
+        }
+    ]
+}));
 ```
-openmct.conductor.on('bounds', function (newBounds) {
-    requestTelemetry(newBounds.start, newBounds.end).then(displayTelemetry);
-});
-```
 
-## Plugins
-
-While you can register new features with Open MCT directly, it is generally
-more useful to package these as a plugin. A plugin is a function that takes
-[`openmct`]{@link module:openmct} as an argument, and performs configuration
-upon `openmct` when invoked.
-
-### Installing Plugins
-
-To install plugins, use the [`install`]{@link module:openmct.MCT#install}
-method:
-
-```
-openmct.install(myPlugin);
-```
-
-The plugin will be invoked to configure Open MCT before it is started.
-
-### Included Plugins
+## Included Plugins
 
 Open MCT is packaged along with a few general-purpose plugins:
 
+* `openmct.plugins.Conductor` provides a user interface for working with time
+within the application. If activated, configuration must be provided. This is 
+detailed in the section on [Time Conductor Configuration](#time-conductor-configuration).
 * `openmct.plugins.CouchDB` is an adapter for using CouchDB for persistence
   of user-created objects. This is a constructor that takes the URL for the
   CouchDB database as a parameter, e.g.
-  `openmct.install(new openmct.plugins.CouchDB('http://localhost:5984/openmct'))`
+```javascript
+openmct.install(openmct.plugins.CouchDB('http://localhost:5984/openmct'))
+```
 * `openmct.plugins.Elasticsearch` is an adapter for using Elasticsearch for
   persistence of user-created objects. This is a
   constructor that takes the URL for the Elasticsearch instance as a
-  parameter, e.g.
-  `openmct.install(new openmct.plugins.CouchDB('http://localhost:9200'))`.
-  Domain objects will be indexed at `/mct/domain_object`.
-* `openmct.plugins.espresso` and `openmct.plugins.snow` are two different
+  parameter. eg.
+```javascript
+openmct.install(openmct.plugins.CouchDB('http://localhost:9200'))
+```
+* `openmct.plugins.Espresso` and `openmct.plugins.Snow` are two different
   themes (dark and light) available for Open MCT. Note that at least one
   of these themes must be installed for Open MCT to appear correctly.
-* `openmct.plugins.localStorage` provides persistence of user-created
+* `openmct.plugins.LocalStorage` provides persistence of user-created
   objects in browser-local storage. This is particularly useful in
   development environments.
-* `openmct.plugins.myItems` adds a top-level folder named "My Items"
+* `openmct.plugins.MyItems` adds a top-level folder named "My Items"
   when the application is first started, providing a place for a
   user to store created items.
-* `openmct.plugins.utcTimeSystem` provides support for using the time
-  conductor with UTC time.
+* `openmct.plugins.UTCTimeSystem` provides a default time system for Open MCT.
 
 Generally, you will want to either install these plugins, or install
 different plugins that provide persistence and an initial folder
-hierarchy. Installation is as described [above](#installing-plugins):
+hierarchy.
 
+eg.
+```javascript
+openmct.install(openmct.plugins.LocalStorage());
+openmct.install(openmct.plugins.MyItems());
 ```
-openmct.install(openmct.plugins.localStorage);
-openmct.install(openmct.plugins.myItems);
-```
-
-### Writing Plugins
-
-Plugins configure Open MCT, and should utilize the
-[`openmct`]{@link module:openmct} module to do so, as summarized above in
-"Configuring Open MCT" and "Using Open MCT" above.
-
-### Distributing Plugins
-
-Hosting or downloading plugins is outside of the scope of this documentation.
-We recommend distributing plugins as UMD modules which export a single
-function.
-

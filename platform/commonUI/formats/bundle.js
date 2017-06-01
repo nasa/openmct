@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -33,8 +33,8 @@ define([
 ) {
 
     legacyRegistry.register("platform/commonUI/formats", {
-        "name": "Time services bundle",
-        "description": "Defines interfaces and provides default implementations for handling different time systems.",
+        "name": "Format Registry",
+        "description": "Provides a registry for formats, which allow parsing and formatting of values.",
         "extensions": {
             "components": [
                 {

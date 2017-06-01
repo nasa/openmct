@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -285,13 +285,14 @@
 
 @mixin containerBase($bg: $colorBodyBg, $fg: $colorBodyFg) {
 	background-color: $bg;
-	border-radius: $controlCr;
+	//border-radius: $controlCr;
 	box-sizing: border-box;
 	color: $fg;
 }
 
 @mixin btnBase($bg: $colorBtnBg, $bgHov: $colorBtnBgHov, $fg: $colorBtnFg, $fgHov: $colorBtnFgHov, $ic: $colorBtnIcon, $icHov: $colorBtnIconHov) {
 	@include user-select(none);
+    border-radius: $controlCr;
     color: $fg;
 	.icon,
     &:before {

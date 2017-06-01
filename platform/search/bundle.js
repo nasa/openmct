@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -100,7 +100,8 @@ define([
                         "modelService",
                         "workerService",
                         "topic",
-                        "GENERIC_SEARCH_ROOTS"
+                        "GENERIC_SEARCH_ROOTS",
+                        "openmct"
                     ]
                 },
                 {

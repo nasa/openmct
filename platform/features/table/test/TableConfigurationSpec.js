@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,7 +30,6 @@ define(
             var mockDomainObject,
                 mockAPI,
                 mockTelemetryAPI,
-                mockTelemetryFormatter,
                 table,
                 mockModel;
 
@@ -48,21 +47,27 @@ define(
                     };
                 });
 
-                mockTelemetryFormatter = jasmine.createSpyObj('telemetryFormatter',
-                    [
-                        'format'
-                    ]);
-                mockTelemetryFormatter.format.andCallFake(function (valueIn) {
-                    return valueIn;
-                });
-
                 mockTelemetryAPI = jasmine.createSpyObj('telemetryAPI', [
                     'getValueFormatter'
                 ]);
                 mockAPI = {
                     telemetry: mockTelemetryAPI
                 };
-                mockTelemetryAPI.getValueFormatter.andReturn(mockTelemetryFormatter);
+                mockTelemetryAPI.getValueFormatter.andCallFake(function (metadata) {
+                    var formatter = jasmine.createSpyObj(
+                        'telemetryFormatter:' + metadata.key,
+                        [
+                            'format',
+                            'parse'
+                        ]
+                    );
+                    var getter = function (datum) {
+                        return datum[metadata.key];
+                    };
+                    formatter.format.andCallFake(getter);
+                    formatter.parse.andCallFake(getter);
+                    return formatter;
+                });
 
                 table = new Table(mockDomainObject, mockAPI);
             });
@@ -176,10 +181,6 @@ define(
                         expect(rowValues['Range 1'].cssClass).toEqual("alarm-class");
                     });
 
-                    it("Uses telemetry formatter to appropriately format" +
-                        " telemetry values", function () {
-                        expect(mockTelemetryFormatter.format).toHaveBeenCalled();
-                    });
                 });
             });
         });

@@ -1,0 +1,168 @@
+<!--
+ Open MCT, Copyright (c) 2014-2016, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<div class="l-style-guide s-text">
+    <p class="doc-title">Open MCT Style Guide</p>
+    <h1>Menus</h1>
+
+    <div class="l-section">
+        <h2>Context Menus</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Context menus are used extensively in Open MCT. They are created dynamically upon a contextual click and positioned at the user's cursor position coincident with the element that invoked them. Context menus must use absolute position and utilize a z-index that places them above other in-page elements.</p>
+                <p>See <a class="link" href="http://localhost:8080/#/browse/styleguide:home/controls?view=styleguide.standards">User Interface Standards</a> for more details on z-indexing in Open MCT. Context menus should be destroyed if the user clicks outside the menu element.</p>
+            </div>
+            <mct-example><div style="height: 120px">
+    <div class="menu-element context-menu-wrapper mobile-disable-select">
+        <div class="menu context-menu">
+            <ul>
+                <li onclick="alert('Perform an action')" title="Open in a new browser tab" class="icon-new-window">Open In New Tab</li>
+                <li onclick="alert('Perform an action')" title="Remove this object from its containing object." class="icon-trash">Remove</li>
+                <li onclick="alert('Perform an action')" title="Create Link to object in another location." class="icon-link">Create Link</li>
+            </ul>
+        </div>
+    </div>
+</div></mct-example>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Dropdown Menus</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Dropdown menus are a dedicated, more discoverable context menu for a given object. Like context menus, dropdown menus are used extensively in Open MCT, and are most often associated with object header elements. They visually manifest as a downward pointing arrow <span class="context-available"></span> associated with an element, and when clicked displays a context menu at that location. See guidelines above about context menus in regards to z-indexing and element lifecycle.</p>
+                <p>Use a dropdown menu to encapsulate important the actions of an object in the object's header, or in a place that you'd use a context menu, but want to make the availability of the menu more apparent.</p>
+            </div>
+<mct-example><div style="height: 220px" title="Ignore me, I'm just here to provide space for this example.">
+
+<div class="l-flex-row flex-elem grows object-header">
+    <span class="type-icon flex-elem icon-layout"></span>
+    <span class="l-elem-wrapper l-flex-row flex-elem grows">
+        <span class="title-label flex-elem holder flex-can-shrink ng-binding">Object Header</span>
+        <span class="flex-elem context-available-w">
+            <span ng-controller="MenuArrowController as menuArrow" class="ng-scope">
+                <a class="context-available" ng-click="menuArrow.showMenu($event)"></a>
+            </span>
+        </span>
+    </span>
+</div>
+
+</div></mct-example>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Checkbox Menus</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Checkbox menus add checkbox options to each item of a dropdown menu. Use this to </p>
+                <p>Use a dropdown menu to encapsulate important the actions of an object in the object's header, or in a place that you'd use a context menu, but want to make the availability of the menu more apparent.</p>
+            </div>
+<mct-example><div style="height: 220px" title="Ignore me, I'm just here to provide space for this example.">
+<div ng-controller="SearchMenuController as controller" class="ng-scope">
+    <div class="menu checkbox-menu" mct-click-elsewhere="parameters.menuVisible(false)">
+        <ul>
+            <!-- First element is special - it's a reset option -->
+            <li class="search-menu-item special icon-asterisk" title="Select all filters" ng-click="ngModel.checkAll = !ngModel.checkAll; controller.checkAll()">
+                <label class="checkbox custom no-text">
+                    <input type="checkbox" class="checkbox ng-untouched ng-valid ng-dirty" ng-model="ngModel.checkAll" ng-change="controller.checkAll()">
+                    <em></em>
+                </label>
+                All
+            </li>
+            <li class="search-menu-item icon-folder">
+                <label class="checkbox custom no-text">
+                    <input type="checkbox" class="checkbox">
+                    <em></em>
+                </label>
+                Folder
+            </li>
+            <li class="search-menu-item icon-layout">
+                <label class="checkbox custom no-text">
+                    <input type="checkbox" class="checkbox">
+                    <em></em>
+                </label>
+                Display Layout
+            </li>
+            <li class="search-menu-item icon-box-with-dashed-lines">
+                <label class="checkbox custom no-text">
+                    <input type="checkbox" class="checkbox">
+                    <em></em>
+                </label>
+                Fixed Position Display
+            </li>
+        </ul>
+    </div>
+</div>
+</div>
+</mct-example>
+    </div>
+</div>
+
+    <div class="l-section">
+        <h2>Palettes</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Use a palette to provide color choices. Similar to context menus and dropdowns, palettes should be dismissed when a choice is made within them, or if the user clicks outside one.</p>
+                <p>Note that while this example uses static markup for illustrative purposes, don't do this - use a front-end framework with repeaters to build the color choices.</p>
+            </div>
+            <mct-example><div style="height: 220px" title="Ignore me, I'm just here to provide space for this example.">
+
+<div class="s-button s-menu-button menu-element t-color-palette icon-paint-bucket" ng-controller="ClickAwayController as toggle">
+    <span class="l-click-area" ng-click="toggle.toggle()"></span>
+    <span class="color-swatch" style="background: rgb(255, 0, 0);"></span>
+    <div class="menu l-color-palette" ng-show="toggle.isActive()">
+        <div class="l-palette-row l-option-row">
+            <div class="l-palette-item s-palette-item " ng-click="ngModel[field] = 'transparent'"></div>
+            <span class="l-palette-item-label">None</span>
+        </div>
+        <div class="l-palette-row">
+            <div class="l-palette-item s-palette-item" style="background: rgb(0, 0, 0);"></div>
+            <div class="l-palette-item s-palette-item" style="background: rgb(28, 28, 28);"></div>
+            <div class="l-palette-item s-palette-item" style="background: rgb(57, 57, 57);"></div>
+            <div class="l-palette-item s-palette-item" style="background: rgb(85, 85, 85);"></div>
+            <div class="l-palette-item s-palette-item" style="background: rgb(113, 113, 113);"></div>
+            <div class="l-palette-item s-palette-item" style="background: rgb(142, 142, 142);"></div>
+            <div class="l-palette-item s-palette-item" style="background: rgb(170, 170, 170);"></div>
+            <div class="l-palette-item s-palette-item" style="background: rgb(198, 198, 198);"></div>
+            <div class="l-palette-item s-palette-item" style="background: rgb(227, 227, 227);"></div>
+            <div class="l-palette-item s-palette-item" style="background: rgb(255, 255, 255);"></div>
+        </div>
+        <div class="l-palette-row">
+            <div class="l-palette-item s-palette-item" style="background: rgb(136, 32, 32);"></div>
+            <div class="l-palette-item s-palette-item" style="background: rgb(224, 64, 64);"></div>
+            <div class="l-palette-item s-palette-item" style="background: rgb(240, 160, 72);"></div>
+            <div class="l-palette-item s-palette-item" style="background: rgb(255, 248, 96);"></div>
+            <div class="l-palette-item s-palette-item" style="background: rgb(128, 240, 72);"></div>
+            <div class="l-palette-item s-palette-item" style="background: rgb(128, 248, 248);"></div>
+            <div class="l-palette-item s-palette-item" style="background: rgb(88, 144, 224);"></div>
+            <div class="l-palette-item s-palette-item" style="background: rgb(0, 72, 240);"></div>
+            <div class="l-palette-item s-palette-item" style="background: rgb(136, 80, 240);"></div>
+            <div class="l-palette-item s-palette-item" style="background: rgb(224, 96, 248);"></div>
+        </div>
+    </div>
+</div>
+
+</div></mct-example>
+        </div>
+    </div>
+
+</div>

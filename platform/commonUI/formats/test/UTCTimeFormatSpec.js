@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,47 +14,49 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT includes source code licensed under additional open source
+ * Open MCT Web includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    ['../src/UTCTimeFormat', 'moment'],
-    function (UTCTimeFormat, moment) {
+define([
+    "../src/UTCTimeFormat",
+    "moment"
+], function (
+    UTCTimeFormat,
+    moment
+) {
+    describe("The UTCTimeFormat class", function () {
+        var format;
+        var scale;
 
-        describe("The UTCTimeFormat", function () {
-            var format;
-
-            beforeEach(function () {
-                format = new UTCTimeFormat();
-            });
-
-            it("formats UTC timestamps", function () {
-                var timestamp = 12345670000,
-                    formatted = format.format(timestamp);
-                expect(formatted).toEqual(jasmine.any(String));
-                expect(moment.utc(formatted).valueOf()).toEqual(timestamp);
-            });
-
-            it("displays with millisecond precision", function () {
-                var timestamp = 12345670789,
-                    formatted = format.format(timestamp);
-                expect(moment.utc(formatted).valueOf()).toEqual(timestamp);
-            });
-
-            it("validates time inputs", function () {
-                expect(format.validate("1977-05-25 11:21:22")).toBe(true);
-                expect(format.validate("garbage text")).toBe(false);
-            });
-
-            it("parses valid input", function () {
-                var text = "1977-05-25 11:21:22",
-                    parsed = format.parse(text);
-                expect(parsed).toEqual(jasmine.any(Number));
-                expect(parsed).toEqual(moment.utc(text).valueOf());
-            });
+        beforeEach(function () {
+            format = new UTCTimeFormat();
+            scale = {min: 0, max: 0};
         });
-    }
-);
+
+        it("Provides an appropriately scaled time format based on the input" +
+            " time", function () {
+            var TWO_HUNDRED_MS = 200;
+            var THREE_SECONDS = 3000;
+            var FIVE_MINUTES = 5 * 60 * 1000;
+            var ONE_HOUR_TWENTY_MINS = (1 * 60 * 60 * 1000) + (20 * 60 * 1000);
+            var TEN_HOURS = (10 * 60 * 60 * 1000);
+
+            var JUNE_THIRD = moment.utc("2016-06-03", "YYYY-MM-DD");
+            var APRIL = moment.utc("2016-04", "YYYY-MM");
+            var TWENTY_SIXTEEN = moment.utc("2016", "YYYY");
+
+            expect(format.format(TWO_HUNDRED_MS, scale)).toBe(".200");
+            expect(format.format(THREE_SECONDS, scale)).toBe(":03");
+            expect(format.format(FIVE_MINUTES, scale)).toBe("00:05");
+            expect(format.format(ONE_HOUR_TWENTY_MINS, scale)).toBe("01:20");
+            expect(format.format(TEN_HOURS, scale)).toBe("10");
+
+            expect(format.format(JUNE_THIRD, scale)).toBe("Fri 03");
+            expect(format.format(APRIL, scale)).toBe("April");
+            expect(format.format(TWENTY_SIXTEEN, scale)).toBe("2016");
+        });
+    });
+});
