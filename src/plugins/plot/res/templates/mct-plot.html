@@ -17,9 +17,9 @@
                     </span>
                     <span class="plot-series-name">{{ series.get('name') }}</span>
                 </div>
-                <div class="plot-series-value"
-                     ng-class="{ 'hover-value-enabled': legend.get('valueToShowWhenCollapsed').indexOf('nearest') != -1 }"
-                     ng-show="!!highlights.length">
+                <div class="plot-series-value hover-value-enabled value-to-display-{{ legend.get('valueToShowWhenCollapsed') }}"
+                     ng-class="{ 'cursor-hover': (legend.get('valueToShowWhenCollapsed').indexOf('nearest') != -1) }"
+                     ng-show="!!highlights.length && legend.get('valueToShowWhenCollapsed') !== 'none'">
                     {{ legend.get('valueToShowWhenCollapsed') === 'nearestValue' ?
                         series.format(series.closest, yAxis.get('key')) :
                         legend.get('valueToShowWhenCollapsed') === 'nearestTimestamp' ?
@@ -36,8 +36,9 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th ng-repeat="name in legend.get('niceValuesToShowWhenExpanded')">
-                            {{ name }}
+                        <th ng-repeat="name in legend.get('valuesToShowWhenExpanded')"
+                            ng-class="{ 'mobile-hide': name.indexOf('nearest') != -1 }">
+                            {{ legend.get('niceValuesToShowWhenExpanded')[name] }}
                         </th>
                     </tr>
                 </thead>
@@ -48,9 +49,9 @@
                         </span>
                         <span class="plot-series-name">{{ series.get('name') }}</span>
                     </td>
-                    <td ng-repeat="name in legend.get('valuesToShowWhenExpanded')">
-                        <span class="plot-series-value"
-                            ng-class="{ 'hover-value-enabled': name.indexOf('nearest') != -1 }">
+                    <td ng-repeat="name in legend.get('valuesToShowWhenExpanded')"
+                        ng-class="{ 'mobile-hide': name.indexOf('nearest') != -1 }">
+                        <span class="plot-series-value {{ (name.indexOf('nearest') != -1)? 'cursor-hover hover-value-enabled' : '' }}">
                               {{ name === 'nearestValue' ?
                             series.format(series.closest, yAxis.get('key')) :
                             name === 'nearestTimestamp' ?

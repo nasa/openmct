@@ -240,6 +240,12 @@ a.disabled {
     color: rgba(#fff, 0.2);
 }
 
+.comma-list span {
+    &:not(:first-child) {
+        &:before { content: ', '; }
+    }
+}
+
 .test-stripes {
     @include bgDiagonalStripes();
 }

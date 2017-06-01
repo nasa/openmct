@@ -47,10 +47,24 @@
                 background-color: $legendHoverValueBg;
                 border-radius: $smallCr;
                 padding: 0 $interiorMarginSm;
-                @extend .icon-crosshair-12px;
                 &:before {
-                    font-size: 9px;
                     opacity: 0.5;
+                }
+                &.cursor-hover,
+                .value-to-display-nearestTimestamp,
+                .value-to-display-nearestValue
+                {
+                    @extend .icon-crosshair-12px;
+                    &:before {
+                        font-size: 9px;
+                    }
+                }
+
+                &.value-to-display-min:before {
+                    content: 'MIN ';
+                }
+                &.value-to-display-max:before {
+                    content: 'MAX ';
                 }
             }
         }

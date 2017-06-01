@@ -57,19 +57,18 @@
                              <div class="inspector-properties">
                                  <div class="label">Color</div>
                                  <div class="value">
-                                         <span class="color-swatch"
-                                               ng-style="{
-                                                  'background': series.get('color').asHexString(),
-                                                  'display': 'inline-block',
-                                                  'border': '1px solid rgba(255, 255, 255, 0.2)',
-                                                  'height': '10px',
-                                                  'width': '10px',
-                                                  'vertical-align': 'middle',
-                                                  'margin-left': '3px',
-                                                  'margin-top': -'2px'
-                                               }">
-                                         </span>
-                                     {{series.get('color').asHexString()}}
+                                     <span class="color-swatch"
+                                           ng-style="{
+                                              'background': series.get('color').asHexString(),
+                                              'display': 'inline-block',
+                                              'border': '1px solid rgba(255, 255, 255, 0.2)',
+                                              'height': '10px',
+                                              'width': '10px',
+                                              'vertical-align': 'middle',
+                                              'margin-left': '3px',
+                                              'margin-top': -'2px'
+                                           }">
+                                     </span>
                                  </div>
                              </div>
                          </div>
@@ -113,11 +112,13 @@
              </div>
              <div class="inspector-properties">
                  <div class="label">Show when collapsed:</div>
-                 <div class="value">{{ config.legend.get('valueToShowWhenCollapsed') }}</div>
+                 <div class="value">{{ config.legend.get('niceValuesToShowWhenExpanded')[config.legend.get('valueToShowWhenCollapsed')] }}</div>
              </div>
              <div class="inspector-properties">
-                 <div class="label">Visible when expanded:</div>
-                 <div class="value">{{ config.legend.get('valuesToShowWhenExpanded').join(', ') }}</div>
+                 <div class="label">Show when expanded:</div>
+                 <div class="value comma-list">
+                     <span ng-repeat="name in config.legend.get('valuesToShowWhenExpanded')">{{ config.legend.get('niceValuesToShowWhenExpanded')[name] }}</span>
+                 </div>
              </div>
          </li>
     </ul>
