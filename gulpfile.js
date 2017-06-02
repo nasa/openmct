@@ -78,15 +78,7 @@ gulp.task('scripts', function () {
     var requirejsOptimize = require('gulp-requirejs-optimize');
     var replace = require('gulp-replace-task');
     var header = require('gulp-header');
-    var comment = [
-      '/**',
-      ' * Open MCT https://nasa.github.io/openmct/',
-      ' * Version: ${version}',
-      ' * Built: ${timestamp}',
-      ' * Revision: ${revision}',
-      ' * Branch: ${branch}',
-      ' */\n'
-    ].join('\n');
+    var comment = fs.readFileSync('src/about.frag');
 
     return gulp.src(paths.main)
         .pipe(sourcemaps.init())
