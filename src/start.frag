@@ -20,14 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/**
- * Open MCT https://nasa.github.io/openmct/
- * Version @@version
- * Built @@timestamp
- * Revision @@revision
- * Branch @@branch
- */
-
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define([], factory);
