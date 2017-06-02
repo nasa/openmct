@@ -85,7 +85,7 @@ gulp.task('scripts', function () {
       ' * Built: ${timestamp}',
       ' * Revision: ${revision}',
       ' * Branch: ${branch}',
-      '*/\n'
+      ' */\n'
     ].join('\n');
 
     return gulp.src(paths.main)
