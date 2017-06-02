@@ -32,6 +32,7 @@ define(
                 unsubscribe,
                 callback,
                 metadata,
+                prefix,
                 controller;
 
             beforeEach(function () {
@@ -60,6 +61,7 @@ define(
                     'value',
                     'valuesForHints'
                 ]);
+                prefix = "formatted ";
                 unsubscribe = jasmine.createSpy('unsubscribe');
                 openmct.telemetry.subscribe.andReturn(unsubscribe);
                 openmct.time.timeSystem.andReturn({
@@ -68,7 +70,17 @@ define(
                 $scope.domainObject = oldDomainObject;
                 openmct.objects.get.andReturn(Promise.resolve(newDomainObject));
                 openmct.telemetry.getMetadata.andReturn(metadata);
-                metadata.valuesForHints.andReturn([]);
+                openmct.telemetry.getValueFormatter.andCallFake(function (property) {
+                    var formatter =
+                        jasmine.createSpyObj("formatter-" + property, ['format']);
+                    var isTime = (property === "timestamp");
+                    formatter.format.andCallFake(function (datum) {
+                        return (isTime ? prefix : "") + datum[property];
+                    });
+                    return formatter;
+                });
+                metadata.value.andReturn("timestamp");
+                metadata.valuesForHints.andReturn(["value"]);
 
                 controller = new ImageryController($scope, openmct);
 
@@ -111,16 +123,12 @@ define(
                 // Call back with telemetry data
                 callback({ timestamp: testTimestamp, value: testUrl });
 
-                expect(controller.getTime()).toEqual("04:04:18.123");
-                expect(controller.getDate()).toEqual("2015-06-18");
-                expect(controller.getZone()).toEqual("UTC");
+                expect(controller.getTime()).toEqual(prefix + testTimestamp);
                 expect(controller.getImageUrl()).toEqual(testUrl);
 
                 callback({ timestamp: nextTimestamp, value: nextUrl });
 
-                expect(controller.getTime()).toEqual("04:04:19.456");
-                expect(controller.getDate()).toEqual("2015-06-18");
-                expect(controller.getZone()).toEqual("UTC");
+                expect(controller.getTime()).toEqual(prefix + nextTimestamp);
                 expect(controller.getImageUrl()).toEqual(nextUrl);
             });
 
@@ -134,9 +142,7 @@ define(
                 // Call back with telemetry data
                 callback({ timestamp: testTimestamp, value: testUrl });
 
-                expect(controller.getTime()).toEqual("04:04:18.123");
-                expect(controller.getDate()).toEqual("2015-06-18");
-                expect(controller.getZone()).toEqual("UTC");
+                expect(controller.getTime()).toEqual(prefix + testTimestamp);
                 expect(controller.getImageUrl()).toEqual(testUrl);
 
                 expect(controller.paused()).toBeFalsy();
@@ -145,18 +151,14 @@ define(
 
                 callback({ timestamp: nextTimestamp, value: nextUrl });
 
-                expect(controller.getTime()).toEqual("04:04:18.123");
-                expect(controller.getDate()).toEqual("2015-06-18");
-                expect(controller.getZone()).toEqual("UTC");
+                expect(controller.getTime()).toEqual(prefix + testTimestamp);
                 expect(controller.getImageUrl()).toEqual(testUrl);
             });
 
             it("initially shows an empty string for date/time", function () {
                 // Do not invoke callback...
                 expect(controller.getTime()).toEqual("");
-                expect(controller.getDate()).toEqual("");
-                expect(controller.getZone()).toEqual("");
-                expect(controller.getImageUrl()).toBeUndefined();
+                expect(controller.getImageUrl()).toEqual("");
             });
         });
     }
