@@ -77,11 +77,23 @@ if (process.env.NODE_ENV === 'development') {
 gulp.task('scripts', function () {
     var requirejsOptimize = require('gulp-requirejs-optimize');
     var replace = require('gulp-replace-task');
+    var header = require('gulp-header');
+    var comment = [
+      '/**',
+      ' * Open MCT https://nasa.github.io/openmct/',
+      ' * Version: ${pkg.version}',
+      ' * Built: ${pkg.timestamp}',
+      ' * Revision: ${pkg.revision}',
+      ' * Branch: ${pkg.branch}',
+      '*/\n'
+    ].join('\n');
+
     return gulp.src(paths.main)
         .pipe(sourcemaps.init())
         .pipe(requirejsOptimize(options.requirejsOptimize))
         .pipe(sourcemaps.write('.'))
         .pipe(replace(options.replace))
+        .pipe(header(comment, { pkg: options.replace.variables}))
         .pipe(gulp.dest(paths.dist));
 });
 
