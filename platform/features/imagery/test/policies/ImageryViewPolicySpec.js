@@ -26,14 +26,17 @@ define(
 
         describe("Imagery view policy", function () {
             var testView,
+                openmct,
                 mockDomainObject,
                 mockTelemetry,
-                testMetadata,
+                mockMetadata,
                 policy;
 
             beforeEach(function () {
                 testView = { key: "imagery" };
-                testMetadata = {};
+                mockMetadata = jasmine.createSpyObj('metadata', [
+                    "valuesForHints"
+                ]);
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
                     ['getId', 'getModel', 'getCapability']
@@ -45,30 +48,33 @@ define(
                 mockDomainObject.getCapability.andCallFake(function (c) {
                     return c === 'telemetry' ? mockTelemetry : undefined;
                 });
-                mockTelemetry.getMetadata.andReturn(testMetadata);
+                mockDomainObject.getId.andReturn("some-id");
+                mockDomainObject.getModel.andReturn({ name: "foo" });
+                mockTelemetry.getMetadata.andReturn(mockMetadata);
+                mockMetadata.valuesForHints.andReturn(["bar"]);
 
-                policy = new ImageryViewPolicy();
+                openmct = { telemetry: mockTelemetry };
+
+                policy = new ImageryViewPolicy(openmct);
+            });
+
+            it("checks for hints indicating image telemetry", function () {
+                policy.allow(testView, mockDomainObject);
+                expect(mockMetadata.valuesForHints)
+                    .toHaveBeenCalledWith(["image"]);
             });
 
             it("allows the imagery view for domain objects with image telemetry", function () {
-                testMetadata.ranges = [{ key: "foo", format: "imageUrl" }];
                 expect(policy.allow(testView, mockDomainObject)).toBeTruthy();
             });
 
             it("disallows the imagery view for domain objects without image telemetry", function () {
-                testMetadata.ranges = [{ key: "foo", format: "somethingElse" }];
-                expect(policy.allow(testView, mockDomainObject)).toBeFalsy();
-            });
-
-            it("disallows the imagery view for domain objects without telemetry", function () {
-                testMetadata.ranges = [{ key: "foo", format: "imageUrl" }];
-                mockDomainObject.getCapability.andReturn(undefined);
+                mockMetadata.valuesForHints.andReturn([]);
                 expect(policy.allow(testView, mockDomainObject)).toBeFalsy();
             });
 
             it("allows other views", function () {
                 testView.key = "somethingElse";
-                testMetadata.ranges = [{ key: "foo", format: "somethingElse" }];
                 expect(policy.allow(testView, mockDomainObject)).toBeTruthy();
             });
 
