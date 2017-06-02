@@ -344,6 +344,32 @@ body.desktop {
 }
 
 .s-status-editing {
+    .l-object-wrapper::after {
+        // Do last
+        @include keyframes(pulseNew) {
+            from  { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        display: block;
+        pointer-events: none;
+        background: none;
+        border-radius: $controlCr;
+        border: 1px dotted rgba($colorEditAreaFg, 1.0);
+        @include animation-name(pulseNew);
+        @include animation-duration($editBorderPulseMs);
+        @include animation-delay($browseToEditAnimMs * 1.50);
+        @include animation-direction(alternate);
+        @include animation-fill-mode(none);
+        @include animation-iteration-count(infinite);
+        @include animation-timing-function(linear);
+    },
     .l-object-wrapper {
         $t2Dur: $browseToEditAnimMs;
         $t1Dur: $t2Dur / 2;
@@ -353,27 +379,21 @@ body.desktop {
 
         background-color: $colorEditAreaBg;
         border-radius: $controlCr;
-        border: 1px dotted $bC0;
+        border: 1px dotted transparent;
 
         // Transition 1
         @include keyframes(wrapperIn) {
             from { border: 0px dotted transparent; padding: 0; }
-            to { border: 1px dotted $bC0; padding: 5px; }
+            to { border: 1px dotted transparent; padding: 5px; }
         }
 
-        // Do last
-        @include keyframes(pulseNew) {
-            from  { border-color: $bC0; }
-            to { border-color: $bC100; }
-        }
-
-        @include animation-name(wrapperIn, pulseNew);
-        @include animation-duration($t1Dur, $pulseDur);
-        @include animation-delay(0s, $t1Dur + $t2Dur);
-        @include animation-direction(normal, alternate);
-        @include animation-fill-mode(both, none);
-        @include animation-iteration-count(1, infinite);
-        @include animation-timing-function(ease-in-out, linear);
+        @include animation-name(wrapperIn);
+        @include animation-duration($t1Dur);
+        @include animation-delay(0s);
+        @include animation-direction(normal);
+        @include animation-fill-mode(both);
+        @include animation-iteration-count(1);
+        @include animation-timing-function(ease-in-out);
 
 
         .l-edit-controls {
