@@ -81,10 +81,10 @@ gulp.task('scripts', function () {
     var comment = [
       '/**',
       ' * Open MCT https://nasa.github.io/openmct/',
-      ' * Version: ${pkg.version}',
-      ' * Built: ${pkg.timestamp}',
-      ' * Revision: ${pkg.revision}',
-      ' * Branch: ${pkg.branch}',
+      ' * Version: ${version}',
+      ' * Built: ${timestamp}',
+      ' * Revision: ${revision}',
+      ' * Branch: ${branch}',
       '*/\n'
     ].join('\n');
 
@@ -93,7 +93,7 @@ gulp.task('scripts', function () {
         .pipe(requirejsOptimize(options.requirejsOptimize))
         .pipe(sourcemaps.write('.'))
         .pipe(replace(options.replace))
-        .pipe(header(comment, { pkg: options.replace.variables}))
+        .pipe(header(comment, options.replace.variables))
         .pipe(gulp.dest(paths.dist));
 });
 
