@@ -31,6 +31,7 @@ define(
                 newDomainObject,
                 unsubscribe,
                 callback,
+                metadata,
                 controller;
 
             beforeEach(function () {
@@ -50,9 +51,15 @@ define(
                         'timeSystem'
                     ]),
                     telemetry: jasmine.createSpyObj('telemetryAPI', [
-                        'subscribe'
+                        'subscribe',
+                        'getValueFormatter',
+                        'getMetadata'
                     ])
                 };
+                metadata = jasmine.createSpyObj('metadata', [
+                    'value',
+                    'valuesForHints'
+                ]);
                 unsubscribe = jasmine.createSpy('unsubscribe');
                 openmct.telemetry.subscribe.andReturn(unsubscribe);
                 openmct.time.timeSystem.andReturn({
@@ -60,23 +67,22 @@ define(
                 });
                 $scope.domainObject = oldDomainObject;
                 openmct.objects.get.andReturn(Promise.resolve(newDomainObject));
+                openmct.telemetry.getMetadata.andReturn(metadata);
+                metadata.valuesForHints.andReturn([]);
 
-                controller = new ImageryController(
-                    $scope,
-                    openmct
-                );
+                controller = new ImageryController($scope, openmct);
 
+                waitsFor(function () {
+                    return openmct.telemetry.subscribe.calls.length > 0;
+                }, 100);
 
-//                runs(function () {
-//                    callback =
-//                        openmct.telemetry.subscribe.mostRecentCall.args[1];
-//                });
+                runs(function () {
+                    callback =
+                        openmct.telemetry.subscribe.mostRecentCall.args[1];
+                });
             });
 
             it("subscribes to telemetry", function () {
-                waitsFor(function () {
-                    return !!(openmct.telemetry.subscribe.mostRecentCall);
-                });
                 expect(openmct.telemetry.subscribe).toHaveBeenCalledWith(
                     newDomainObject,
                     jasmine.any(Function)
