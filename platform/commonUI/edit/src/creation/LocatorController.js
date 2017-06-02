@@ -86,7 +86,7 @@ define(
                 $scope.canCreateNewFolder = $scope.treeModel.selectedObject 
                     ? policyService.allow(
                         "composition", 
-                        typeService.getType($scope.treeModel.selectedObject.model.type), 
+                        $scope.treeModel.selectedObject, 
                         typeService.getType('folder'))
                     : false;
             }
