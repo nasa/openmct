@@ -68,7 +68,9 @@ define(
             }
 
             function fillInputWithIndexedOption() {
-                $scope.ngModel[$scope.field] = $scope.filteredOptions[$scope.optionIndex].name;
+                if($scope.filteredOptions[$scope.optionIndex]) {
+                    $scope.ngModel[$scope.field] = $scope.filteredOptions[$scope.optionIndex].name;
+                }
             }
 
             $scope.keyDown = function($event) {
