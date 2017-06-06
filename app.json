@@ -1,0 +1,10 @@
+{
+  "name": "NASA Open MCT",
+  "description": "Open Mission Control Technologies is a next-generation mission control framework.",
+  "env": {
+    "NPM_CONFIG_PRODUCTION": {
+        "description": "Set to false to install devDependencies",
+        "value": "false"
+    }
+  }
+}
