@@ -30,13 +30,13 @@ define(
          * @memberof platform/forms
          * @constructor
          */
-        function AutocompleteController($scope) {
+        function AutocompleteController($scope, $element) {
 
             var key = {
-                down: 40,
-                up: 38,
-                enter: 13
-            }
+                    down: 40,
+                    up: 38,
+                    enter: 13
+                }
 
             if($scope.options[0].name) {
                 // If "options" include name, value pair
@@ -71,6 +71,12 @@ define(
                 if($scope.filteredOptions[$scope.optionIndex]) {
                     $scope.ngModel[$scope.field] = $scope.filteredOptions[$scope.optionIndex].name;
                 }
+            }
+
+            function showOptions(string) {
+                $scope.hideOptions = false;
+                $scope.filterOptions(string);
+                $scope.optionIndex = 0;
             }
 
             $scope.keyDown = function($event) {
@@ -109,9 +115,13 @@ define(
             $scope.inputClicked = function($event) {
                 var target = $event.target;
                 target.select();
-                $scope.hideOptions = false;
-                $scope.filterOptions(target.value);
-                $scope.optionIndex = 0;
+                showOptions(target.value);
+            }
+
+            $scope.arrowClicked = function() {
+                var autocompleteInputElement = $element[0].getElementsByClassName('autocompleteInput')[0];
+                autocompleteInputElement.select();
+                showOptions('');
             }
             
             $scope.fillInput = function(string) {

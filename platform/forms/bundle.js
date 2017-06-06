@@ -152,7 +152,8 @@ define([
                     "key": "AutocompleteController",
                     "implementation": AutocompleteController,
                     "depends": [
-                        "$scope"
+                        "$scope",
+                        "$element"
                     ]
                 },
                 {

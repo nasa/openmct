@@ -21,13 +21,15 @@
 -->
 
 <div ng-controller="AutocompleteController"
-     class='form-control autocomplete' >  
-    <input type="text"
+     class='form-control autocomplete'>
+    <input class="autocompleteInput"
+           type="text"
            ng-model="ngModel[field]"
            ng-change="filterOptions(ngModel[field])"
            ng-click="inputClicked($event)"
            ng-keydown="keyDown($event)"/>
-    <span class="icon-arrow-down"></span>
+    <span class="icon-arrow-down"
+          ng-click="arrowClicked()"></span>
     <div class="autocompleteOptions"
          onload="hideOptions = false"
          ng-hide="hideOptions"
