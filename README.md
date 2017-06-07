@@ -41,6 +41,7 @@ Building and running Open MCT in your local dev environment is very easy. Be sur
 2. Install development dependencies
 
  `npm install`
+ `bower install`
 
 3. Run a local development server
 
