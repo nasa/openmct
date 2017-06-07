@@ -13,6 +13,7 @@
     var BUNDLE_FILE = 'bundles.json',
         options = require('minimist')(process.argv.slice(2)),
         express = require('express'),
+        helmet = require('helmet'),
         app = express(),
         fs = require('fs'),
         request = require('request');
@@ -42,7 +43,7 @@
         process.exit(0);
     }
 
-    app.disable('x-powered-by');
+    app.use(helmet());
 
     // Override bundles.json for HTTP requests
     app.use('/' + BUNDLE_FILE, function (req, res) {

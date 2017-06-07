@@ -14,6 +14,7 @@
     "d3-time": "^1.0.4",
     "d3-time-format": "^2.0.3",
     "express": "^4.13.1",
+    "helmet": "^2.3.0",
     "minimist": "^1.1.1",
     "request": "^2.69.0"
   },
