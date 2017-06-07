@@ -1,0 +1,25 @@
+<div ng-controller="ListViewController">
+  <table>
+    <!-- Table Header -->
+    <tr>
+      <th>Icon</th>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Created Date</th>
+      <th>Updated Date</th>
+    </tr>
+
+    <!-- Table Contents -->
+    <tr ng-repeat="composition in composees">
+      <th>
+        <span class="t-item-icon" >
+          <span class="t-item-icon-glyph ng-binding {{composition.icon}}"></span>
+        </span>
+      </th>
+      <th>{{composition.title}}</th>
+      <th>{{composition.type}}</th>
+      <th>{{composition.persisted}}</th>
+      <th>{{composition.modified}}</th>
+    </tr>
+  </table>
+</div>
