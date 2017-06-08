@@ -25,10 +25,10 @@ define(
     function () {
 
         /**
-         * Implements the "Restart at 0" action.
+         * Implements the "Stop" action for timers.
          *
-         * Behaves the same as (and delegates functionality to)
-         * the "Start" action.
+         * Sets the reference timestamp in a timer undefined,
+         * such that it is reset and makes no movements.
          *
          * @implements {Action}
          * @memberof platform/features/clock
@@ -37,31 +37,32 @@ define(
          *        time (typically wrapping `Date.now`)
          * @param {ActionContext} context the context for this action
          */
-        function RestartTimerAction(now, context) {
+        function StopTimerAction(now, context) {
             this.domainObject = context.domainObject;
             this.now = now;
         }
 
-        RestartTimerAction.appliesTo = function (context) {
+        StopTimerAction.appliesTo = function (context) {
             var model =
                 (context.domainObject && context.domainObject.getModel()) ||
                 {};
 
-            // We show this variant for timers which already have a target time.
+
+            // We show this variant for timers which do not yet have
+            // a target time.
             return model.type === 'timer' &&
-                model.timerState !== 'stopped';
+                    model.timerState !== 'stopped';
         };
 
-        RestartTimerAction.prototype.perform = function () {
-            var domainObject = this.domainObject,
-                now = this.now;
+        StopTimerAction.prototype.perform = function () {
+            var domainObject = this.domainObject;
 
             function setTimestamp(model) {
-                model.timestamp = now();
+                model.timestamp = undefined;
             }
 
             function setTimerState(model) {
-                model.timerState = 'started';
+                model.timerState = 'stopped';
             }
 
             function setPausedTime(model) {
@@ -73,6 +74,6 @@ define(
                 domainObject.useCapability('mutation', setPausedTime);
         };
 
-        return RestartTimerAction;
+        return StopTimerAction;
     }
 );
