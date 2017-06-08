@@ -48,7 +48,7 @@ define([
             function update() {
                 var m = zoneName ?
                     moment.utc(lastTimestamp).tz(zoneName) : moment.utc(lastTimestamp);
-                self.zoneAbbr = zoneName ? m.zoneAbbr() : "UTC";
+                self.zoneAbbr = m.zoneAbbr();
                 self.textValue = timeFormat && m.format(timeFormat);
                 self.ampmValue = m.format("A"); // Just the AM or PM part
             }
@@ -69,8 +69,8 @@ define([
                     // If wrong timezone is provided, the UTC will be used
                     zoneName = momentTimezone.tz.names().includes(model.timezone) ? 
                         model.timezone : "UTC";
+                    update();
                 }
-                update();
             }
 
             // Pull in the model (clockFormat and timezone) from the domain object model

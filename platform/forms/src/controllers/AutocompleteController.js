@@ -33,10 +33,11 @@ define(
         function AutocompleteController($scope, $element) {
 
             var key = {
-                    down: 40,
-                    up: 38,
-                    enter: 13
-                }
+                        down: 40,
+                        up: 38,
+                        enter: 13
+                    },
+                autocompleteInputElement = $element[0].getElementsByClassName('autocompleteInput')[0];
 
             if($scope.options[0].name) {
                 // If "options" include name, value pair
@@ -53,6 +54,7 @@ define(
                     $scope.optionIndex = $scope.filteredOptions.length;
                 }
                 $scope.optionIndex--;
+                fillInputWithIndexedOption();
             }
 
             function incrementOptionIndex() {
@@ -60,6 +62,7 @@ define(
                     $scope.optionIndex = -1;
                 }
                 $scope.optionIndex++;
+                fillInputWithIndexedOption();
             }
 
             function fillInputWithString(string) {
@@ -85,12 +88,10 @@ define(
                     switch(keyCode) {
                         case key.down:
                             incrementOptionIndex();
-                            fillInputWithIndexedOption();
                             break;
                         case key.up:
                             $event.preventDefault();    // Prevents cursor jumping back and forth
                             decrementOptionIndex();
-                            fillInputWithIndexedOption();
                             break;
                         case key.enter:
                             if($scope.filteredOptions[$scope.optionIndex]) {
@@ -112,14 +113,12 @@ define(
                 });
             }
 
-            $scope.inputClicked = function($event) {
-                var target = $event.target;
-                target.select();
-                showOptions(target.value);
+            $scope.inputClicked = function() {
+                autocompleteInputElement.select();
+                showOptions(autocompleteInputElement.value);
             }
 
             $scope.arrowClicked = function() {
-                var autocompleteInputElement = $element[0].getElementsByClassName('autocompleteInput')[0];
                 autocompleteInputElement.select();
                 showOptions('');
             }

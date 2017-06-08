@@ -26,12 +26,12 @@
            type="text"
            ng-model="ngModel[field]"
            ng-change="filterOptions(ngModel[field])"
-           ng-click="inputClicked($event)"
+           ng-click="inputClicked()"
            ng-keydown="keyDown($event)"/>
     <span class="icon-arrow-down"
           ng-click="arrowClicked()"></span>
     <div class="autocompleteOptions"
-         onload="hideOptions = false"
+         ng-init="hideOptions = true"
          ng-hide="hideOptions"
          mct-click-elsewhere="hideOptions = true">
         <ul>  
