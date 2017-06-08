@@ -1,61 +1,24 @@
 define([
     'openmct',
-    './src/controllers/ListViewController'
+    './src/controllers/ListViewController',
+    './src/directives/MCTGesture'
 ], function (
     openmct,
-    ListViewController
+    ListViewController,
+    MCTGesture
 ) {
     openmct.legacyRegistry.register("listview", {
         "name": "List View Plugin",
         "description": "Allows folder contents to be shown in list format",
         "extensions":
         {
-          "types":[
-            {
-              "key": "folder.listview",
-              "name": "List View",
-              "cssClass": "icon-check",
-              "description": "List Format for folders",
-              "features": ["creation"],
-              "model":{
-                "tasks":[
-                  {"description":"Add a type","completed": true},
-                  {"description":"Add a view"}
-                ]
-              }
-            }
-          ],
           "views": [
             {
-              "key": "example.todo",
+              "key": "list",
               "type": "folder",
               "name": "List",
               "cssClass": "icon-check",
-              "templateUrl": "templates/listview.html",
-              "editable": true,
-              "toolbar":{
-                "sections":[
-                  {
-                    "items":[
-                      {
-                         "text": "Add Task",
-                         "cssClass": "icon-plus",
-                         "method": "addTask",
-                         "control": "button"
-                      }
-                    ]
-                  },
-                  {
-                    "items": [
-                     {
-                         "cssClass": "icon-trash",
-                         "method": "removeTask",
-                         "control": "button"
-                     }
-                    ]
-                  }
-                ]
-              }
+              "templateUrl": "templates/listview.html"
             }
           ],
           "controllers":[
@@ -64,7 +27,14 @@ define([
               "implementation": ListViewController,
               "depends": ["$scope"]
             }
-          ]
+        ],
+        "directives":[
+            {
+                "key": "mctGesture",
+                "implementation" : MCTGesture,
+                "depends": ["gestureService"]
+            }
+        ]
         }
     });
 });

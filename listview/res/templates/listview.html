@@ -3,14 +3,47 @@
     <!-- Table Header -->
     <tr>
       <th>Icon</th>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Created Date</th>
-      <th>Updated Date</th>
+
+      <th>
+        <a href="" ng-click="orderByField='title'; reverseSort = !reverseSort">
+          Name
+          <span ng-show="orderByField == 'title'">
+            <span ng-show="!reverseSort">^</span><span ng-show="reverseSort">v</span>
+          </span>
+        </a>
+      </th>
+
+      <th>
+        <a href="" ng-click="orderByField='type'; reverseSort = !reverseSort">
+          Type
+          <span ng-show="orderByField == 'type'">
+            <span ng-show="!reverseSort">^</span><span ng-show="reverseSort">v</span>
+          </span>
+        </a>
+      </th>
+
+      <th>
+        <a href="" ng-click="orderByField='persisted'; reverseSort = !reverseSort">
+          Created Date
+          <span ng-show="orderByField == 'persisted'">
+            <span ng-show="!reverseSort">^</span><span ng-show="reverseSort">v</span>
+          </span>
+        </a>
+      </th>
+
+      <th>
+        <a href="" ng-click="orderByField='modified'; reverseSort = !reverseSort">
+          Update Date
+          <span ng-show="orderByField == 'modified'">
+            <span ng-show="!reverseSort">^</span><span ng-show="reverseSort">v</span>
+          </span>
+        </a>
+      </th>
     </tr>
 
     <!-- Table Contents -->
-    <tr ng-repeat="composition in composees">
+    <tr ng-repeat="composition in composees|orderBy:orderByField:reverseSort"
+        mct-gesture="menu,info">
       <th>
         <span class="t-item-icon" >
           <span class="t-item-icon-glyph ng-binding {{composition.icon}}"></span>

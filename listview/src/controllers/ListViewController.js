@@ -1,14 +1,26 @@
 define(function () {
   function ListViewController($scope){
-    
-    $scope.domainObject.useCapability('composition')
-      .then(function (composees){
-        var formattedComposees = formatComposees(composees);
-        $scope.composees = formattedComposees;
-      }
-    );
+      this.$scope = $scope;
+    $scope.orderByField = 'title';
+    $scope.reverseSort = false;
 
-    function formatComposees(composees){
+    this.updateView()
+
+    this.unlisten = $scope.domainObject.getCapability('mutation')
+        .listen(this.updateView.bind(this));
+
+  }
+  ListViewController.prototype.updateView = function(){
+      this.$scope.domainObject.useCapability('composition')
+        .then(function (composees){
+          var formattedComposees = this.formatComposees(composees);
+          this.$scope.composees = formattedComposees;
+          this.$scope.data = {composees: formattedComposees}
+      }.bind(this)
+      );
+  }
+
+  ListViewController.prototype.formatComposees = function(composees){
       var formatted = []
       composees.forEach(function (composition){
         formatted.push({
@@ -16,12 +28,13 @@ define(function () {
           title: composition.model.name,
           type: composition.getCapability('type').getName(),
           persisted: new Date(composition.model.persisted).toUTCString(),
-          modified: new Date(composition.model.modified).toUTCString()
+          modified: new Date(composition.model.modified).toUTCString(),
+          asDomainObject: composition
         });
       });
-      return formatted;
-    }
 
+      return formatted;
   }
+
   return ListViewController;
 });
