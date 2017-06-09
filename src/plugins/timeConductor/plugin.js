@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([], () => {
 
     function isTruthy(a) {
         return !!a;
@@ -28,13 +28,99 @@ define([], function () {
 
     function validateMenuOption(menuOption, index) {
         if (menuOption.clock && !menuOption.clockOffsets) {
-            return "clock-based menuOption at index " + index + " is " +
-                "missing required property 'clockOffsets'.";
+            return `clock-based menuOption at index ${index} is missing required property 'clockOffsets'.`;
         }
         if (!menuOption.timeSystem) {
-            return "menuOption at index " + index + " is missing " +
-                "required property 'timeSystem'.";
+            return `menuOption at index ${index} is missing required property 'timeSystem'.`;
         }
+        if (!menuOption.bounds && !menuOption.clock) {
+            return `fixed-bounds menuOption at index ${index} is missing required property 'bounds'`;
+        }
+    }
+
+    function validateConfiguration(config) {
+        if (config === undefined ||
+            config.menuOptions === undefined ||
+            config.menuOptions.length === 0) {
+            return "You must specify one or more 'menuOptions'.";
+        }
+        if (config.menuOptions.some(validateMenuOption)) {
+            return config.menuOptions.map(validateMenuOption)
+                .filter(isTruthy)
+                .join('\n');
+        }
+        return undefined;
+    }
+
+    function validateRuntimeConfiguration(config, openmct) {
+        const systems = openmct.time.getAllTimeSystems()
+            .reduce((m, ts) => {
+                m[ts.key] = ts;
+                return m;
+            }, {});
+        const clocks = openmct.time.getAllClocks()
+            .reduce((m, c) => {
+                m[c.key] = c;
+                return m;
+            }, {});
+
+        return config.menuOptions.map((menuOption, index) => {
+                if (menuOption.timeSystem && !systems[menuOption.timeSystem]) {
+                    return `menuOption at index ${index} specifies a timeSystem that does not exist: ${menuOption.timeSystem}`;
+                }
+                if (menuOption.clock && !clocks[menuOption.clock]) {
+                    return `menuOption at index ${index} specifies a clock that does not exist: ${menuOption.clock}`;
+                }
+            })
+            .filter(isTruthy)
+            .join('\n');
+    }
+
+    function throwConfigErrorIfExists(error) {
+        if (error) {
+            throw new Error(`Invalid Time Conductor Configuration: \n${error}\nhttps://github.com/nasa/openmct/blob/master/API.md#the-time-conductor`);
+        }
+    }
+
+    return config => {
+
+        throwConfigErrorIfExists(validateConfiguration(config));
+
+        return openmct => {
+
+            openmct.legacyExtension('constants', {
+                key: 'CONDUCTOR_CONFIG',
+                value: config,
+                priority: 'mandatory'
+            });
+
+            openmct.legacyRegistry.enable('platform/features/conductor/core');
+            openmct.legacyRegistry.enable('platform/features/conductor/compatibility');
+
+            openmct.on('start', () => {
+
+                throwConfigErrorIfExists(validateRuntimeConfiguration(config, openmct));
+
+                /*
+                 On app startup, default the conductor if not already set.
+                 */
+                if (openmct.time.timeSystem() !== undefined) {
+                    return;
+                }
+
+                const defaults = config.menuOptions[0];
+                if (defaults.clock) {
+                    openmct.time.clock(defaults.clock, defaults.clockOffsets);
+                    openmct.time.timeSystem(defaults.timeSystem, openmct.time.bounds());
+                } else {
+                    openmct.time.timeSystem(defaults.timeSystem, defaults.bounds);
+                }
+
+            });
+        };
+    };
+});
+   }
         if (!menuOption.bounds && !menuOption.clock) {
             return "fixed-bounds menuOption at index " + index + " is " +
                 "missing required property 'bounds'";
