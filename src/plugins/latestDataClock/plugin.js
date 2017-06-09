@@ -22,12 +22,6 @@
 
 define([
     "./LADClock"
-], function (
-    LADClock
-) {
-    return function () {
-        return function (openmct) {
-            openmct.time.addClock(new LADClock());
-        };
-    };
+], LADClock => () => openmct => {
+    openmct.time.addClock(new LADClock());
 });
