@@ -22,17 +22,15 @@
 
 define([
     'moment'
-], function (
-    moment
-) {
+], moment => {
+    const DATE_FORMAT = "YYYY-MM-DD h:mm:ss.SSS a";
 
-    var DATE_FORMAT = "YYYY-MM-DD h:mm:ss.SSS a",
-        DATE_FORMATS = [
-            DATE_FORMAT,
-            "YYYY-MM-DD h:mm:ss a",
-            "YYYY-MM-DD h:mm a",
-            "YYYY-MM-DD"
-        ];
+    const DATE_FORMATS = [
+        DATE_FORMAT,
+        "YYYY-MM-DD h:mm:ss a",
+        "YYYY-MM-DD h:mm a",
+        "YYYY-MM-DD"
+    ];
 
     /**
      * @typedef Scale
@@ -48,7 +46,31 @@ define([
      * @constructor
      * @memberof platform/commonUI/formats
      */
-    function LocalTimeFormat() {
+    class LocalTimeFormat {
+        /**
+         *
+         * @param value
+         * @param {Scale} [scale] Optionally provides context to the
+         * format request, allowing for scale-appropriate formatting.
+         * @returns {string} the formatted date
+         */
+        format(value, scale) {
+            if (scale !== undefined) {
+                const scaledFormat = getScaledFormat(value, scale);
+                if (scaledFormat) {
+                    return moment.utc(value).format(scaledFormat);
+                }
+            }
+            return moment(value).format(DATE_FORMAT);
+        }
+
+        parse(text) {
+            return moment(text, DATE_FORMATS).valueOf();
+        }
+
+        validate(text) {
+            return moment(text, DATE_FORMATS).isValid();
+        }
     }
 
     /**
@@ -57,7 +79,7 @@ define([
      * @private
      */
     function getScaledFormat(d) {
-        var momentified = moment.utc(d);
+        const momentified = moment.utc(d);
         /**
          * Uses logic from d3 Time-Scales, v3 of the API. See
          * https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Scales.md
@@ -65,60 +87,17 @@ define([
          * Licensed
          */
         return [
-            [".SSS", function (m) {
-                return m.milliseconds();
-            }],
-            [":ss", function (m) {
-                return m.seconds();
-            }],
-            ["hh:mma", function (m) {
-                return m.minutes();
-            }],
-            ["hha", function (m) {
-                return m.hours();
-            }],
-            ["ddd DD", function (m) {
-                return m.days() &&
-                    m.date() !== 1;
-            }],
-            ["MMM DD", function (m) {
-                return m.date() !== 1;
-            }],
-            ["MMMM", function (m) {
-                return m.month();
-            }],
-            ["YYYY", function () {
-                return true;
-            }]
-        ].filter(function (row) {
-            return row[1](momentified);
-        })[0][0];
+            [".SSS", m => m.milliseconds()],
+            [":ss", m => m.seconds()],
+            ["hh:mma", m => m.minutes()],
+            ["hha", m => m.hours()],
+            ["ddd DD", m => m.days() &&
+                m.date() !== 1],
+            ["MMM DD", m => m.date() !== 1],
+            ["MMMM", m => m.month()],
+            ["YYYY", () => true]
+        ].filter(row => row[1](momentified))[0][0];
     }
-
-    /**
-     *
-     * @param value
-     * @param {Scale} [scale] Optionally provides context to the
-     * format request, allowing for scale-appropriate formatting.
-     * @returns {string} the formatted date
-     */
-    LocalTimeFormat.prototype.format = function (value, scale) {
-        if (scale !== undefined) {
-            var scaledFormat = getScaledFormat(value, scale);
-            if (scaledFormat) {
-                return moment.utc(value).format(scaledFormat);
-            }
-        }
-        return moment(value).format(DATE_FORMAT);
-    };
-
-    LocalTimeFormat.prototype.parse = function (text) {
-        return moment(text, DATE_FORMATS).valueOf();
-    };
-
-    LocalTimeFormat.prototype.validate = function (text) {
-        return moment(text, DATE_FORMATS).isValid();
-    };
 
     return LocalTimeFormat;
 });
