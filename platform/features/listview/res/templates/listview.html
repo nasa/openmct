@@ -1,58 +1,68 @@
 <div ng-controller="ListViewController">
   <table>
     <!-- Table Header -->
-    <tr>
-      <th>Icon</th>
+    <thead>
+        <tr>
+          <th>Icon</th>
 
-      <th>
-        <a href="" ng-click="orderByField='title'; reverseSort = !reverseSort">
-          Name
-          <span ng-show="orderByField == 'title'">
-            <span ng-show="!reverseSort">^</span><span ng-show="reverseSort">v</span>
-          </span>
-        </a>
-      </th>
+          <th>
+            <a href="" ng-click="orderByField='title'; reverseSort = !reverseSort">
+              Name
+              <span ng-show="orderByField == 'title'">
+                <span ng-show="!reverseSort">^</span>
+                <span ng-show="reverseSort">v</span>
+              </span>
+            </a>
+          </th>
 
-      <th>
-        <a href="" ng-click="orderByField='type'; reverseSort = !reverseSort">
-          Type
-          <span ng-show="orderByField == 'type'">
-            <span ng-show="!reverseSort">^</span><span ng-show="reverseSort">v</span>
-          </span>
-        </a>
-      </th>
+          <th>
+            <a href="" ng-click="orderByField='type'; reverseSort = !reverseSort">
+              Type
+              <span ng-show="orderByField == 'type'">
+                <span ng-show="!reverseSort">^</span>
+                <span ng-show="reverseSort">v</span>
+              </span>
+            </a>
+          </th>
 
-      <th>
-        <a href="" ng-click="orderByField='persisted'; reverseSort = !reverseSort">
-          Created Date
-          <span ng-show="orderByField == 'persisted'">
-            <span ng-show="!reverseSort">^</span><span ng-show="reverseSort">v</span>
-          </span>
-        </a>
-      </th>
+          <th>
+            <a href="" ng-click="orderByField='persisted'; reverseSort = !reverseSort">
+              Created Date
+              <span ng-show="orderByField == 'persisted'">
+                <span ng-show="!reverseSort">^</span>
+                <span ng-show="reverseSort">v</span>
+              </span>
+            </a>
+          </th>
 
-      <th>
-        <a href="" ng-click="orderByField='modified'; reverseSort = !reverseSort">
-          Update Date
-          <span ng-show="orderByField == 'modified'">
-            <span ng-show="!reverseSort">^</span><span ng-show="reverseSort">v</span>
-          </span>
-        </a>
-      </th>
-    </tr>
+          <th>
+            <a href="" ng-click="orderByField='modified'; reverseSort = !reverseSort">
+              Update Date
+              <span ng-show="orderByField == 'modified'">
+                <span ng-show="!reverseSort">^</span>
+                <span ng-show="reverseSort">v</span>
+              </span>
+            </a>
+          </th>
+        </tr>
+    </thead>
 
     <!-- Table Contents -->
-    <tr ng-repeat="composition in composees|orderBy:orderByField:reverseSort"
-        mct-gesture="menu,info">
-      <th>
-        <span class="t-item-icon" >
-          <span class="t-item-icon-glyph ng-binding {{composition.icon}}"></span>
-        </span>
-      </th>
-      <th>{{composition.title}}</th>
-      <th>{{composition.type}}</th>
-      <th>{{composition.persisted}}</th>
-      <th>{{composition.modified}}</th>
-    </tr>
+    <tbody>
+        <tr ng-repeat="composition in composees|orderBy:orderByField:reverseSort"
+            mct-gesture="menu,info"
+            mct-object="composition.asDomainObject">
+            <td>
+                <span class="t-item-icon" >
+                    <span class="t-item-icon-glyph ng-binding
+                                {{composition.icon}}"></span>
+                </span>
+            </td>
+            <td>{{composition.title}}</td>
+            <td>{{composition.type}}</td>
+            <td>{{composition.persisted}}</td>
+            <td>{{composition.modified}}</td>
+        </tr>
+    </tbody>
   </table>
 </div>

@@ -1,15 +1,22 @@
 define(function () {
-    function MCTGesture(gestureService){
+    function MCTGesture(gestureService) {
         return {
             restrict : 'A',
-            link : function($scope, $element, attrs){
-                gestureService.attachGestures(
+            scope: {
+                domainObject: '=mctObject'
+            },
+            link : function ($scope, $element, attrs) {
+                this.activeGestures = gestureService.attachGestures(
                     $element,
-                    $scope.composition.asDomainObject,
+                    $scope.domainObject,
                     attrs.mctGesture.split(",")
-                )
+                );
+                $scope.$on('$destroy', function () {
+                    this.activeGestures.destroy();
+                    delete this.activeGestures;
+                });
             }
-        }
+        };
     }
-    return MCTGesture
-})
+    return MCTGesture;
+});
