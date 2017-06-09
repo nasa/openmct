@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['../../../src/plugins/utcTimeSystem/LocalClock'], function (LocalClock) {
+define(['../../../src/plugins/utcTimeSystem/LocalClock'], LocalClock => {
     /**
      * A {@link Clock} that mocks a "latest available data" type tick source.
      * This is for testing purposes only, and behaves identically to a local clock.
