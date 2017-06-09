@@ -28,22 +28,19 @@ define([
     './ui/Dialog',
     './ui/GestureAPI',
     './telemetry/TelemetryAPI'
-], function (
+], (
     TimeAPI,
     ObjectAPI,
     CompositionAPI,
     TypeRegistry,
     Dialog,
     GestureAPI,
+    TelemetryAPI) => ({
+    TimeAPI,
+    ObjectAPI,
+    CompositionAPI,
+    Dialog,
+    TypeRegistry,
+    GestureAPI,
     TelemetryAPI
-) {
-    return {
-        TimeAPI: TimeAPI,
-        ObjectAPI: ObjectAPI,
-        CompositionAPI: CompositionAPI,
-        Dialog: Dialog,
-        TypeRegistry: TypeRegistry,
-        GestureAPI: GestureAPI,
-        TelemetryAPI: TelemetryAPI
-    };
-});
+}));
