@@ -26,14 +26,8 @@ define([
     '../../example/generator/plugin',
     '../../platform/features/autoflow/plugin',
     './timeConductor/plugin'
-], function (
-    _,
-    UTCTimeSystem,
-    GeneratorPlugin,
-    AutoflowPlugin,
-    TimeConductorPlugin
-) {
-    var bundleMap = {
+], (_, UTCTimeSystem, GeneratorPlugin, AutoflowPlugin, TimeConductorPlugin) => {
+    const bundleMap = {
         CouchDB: 'platform/persistence/couch',
         Elasticsearch: 'platform/persistence/elastic',
         Espresso: 'platform/commonUI/themes/espresso',
@@ -42,11 +36,9 @@ define([
         Snow: 'platform/commonUI/themes/snow'
     };
 
-    var plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
-        return function pluginConstructor() {
-            return function (openmct) {
-                openmct.legacyRegistry.enable(bundleName);
-            };
+    const plugins = _.mapValues(bundleMap, (bundleName, pluginName) => function pluginConstructor() {
+        return openmct => {
+            openmct.legacyRegistry.enable(bundleName);
         };
     });
 
@@ -65,53 +57,47 @@ define([
 
     plugins.Conductor = TimeConductorPlugin;
 
-    plugins.CouchDB = function (url) {
-        return function (openmct) {
-            if (url) {
-                var bundleName = "config/couch";
-                openmct.legacyRegistry.register(bundleName, {
-                    "extensions": {
-                        "constants": [
-                            {
-                                "key": "COUCHDB_PATH",
-                                "value": url,
-                                "priority": "mandatory"
-                            }
-                        ]
-                    }
-                });
-                openmct.legacyRegistry.enable(bundleName);
-            }
+    plugins.CouchDB = url => openmct => {
+        if (url) {
+            const bundleName = "config/couch";
+            openmct.legacyRegistry.register(bundleName, {
+                "extensions": {
+                    "constants": [
+                        {
+                            "key": "COUCHDB_PATH",
+                            "value": url,
+                            "priority": "mandatory"
+                        }
+                    ]
+                }
+            });
+            openmct.legacyRegistry.enable(bundleName);
+        }
 
-            openmct.legacyRegistry.enable(bundleMap.CouchDB);
-        };
+        openmct.legacyRegistry.enable(bundleMap.CouchDB);
     };
 
-    plugins.Elasticsearch = function (url) {
-        return function (openmct) {
-            if (url) {
-                var bundleName = "config/elastic";
-                openmct.legacyRegistry.register(bundleName, {
-                    "extensions": {
-                        "constants": [
-                            {
-                                "key": "ELASTIC_ROOT",
-                                "value": url,
-                                "priority": "mandatory"
-                            }
-                        ]
-                    }
-                });
-                openmct.legacyRegistry.enable(bundleName);
-            }
+    plugins.Elasticsearch = url => openmct => {
+        if (url) {
+            const bundleName = "config/elastic";
+            openmct.legacyRegistry.register(bundleName, {
+                "extensions": {
+                    "constants": [
+                        {
+                            "key": "ELASTIC_ROOT",
+                            "value": url,
+                            "priority": "mandatory"
+                        }
+                    ]
+                }
+            });
+            openmct.legacyRegistry.enable(bundleName);
+        }
 
-            openmct.legacyRegistry.enable(bundleMap.Elasticsearch);
-        };
+        openmct.legacyRegistry.enable(bundleMap.Elasticsearch);
     };
 
-    plugins.Generator = function () {
-        return GeneratorPlugin;
-    };
+    plugins.Generator = () => GeneratorPlugin;
 
     return plugins;
 });
