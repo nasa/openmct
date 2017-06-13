@@ -15,26 +15,26 @@ define(function () {
     }
     ListViewController.prototype.updateView = function () {
         this.$scope.domainObject.useCapability('composition')
-            .then(function (composees) {
-                var formattedComposees = this.formatComposees(composees);
-                this.$scope.composees = formattedComposees;
-                this.$scope.data = {composees: formattedComposees};
+            .then(function (children) {
+                var formattedChildren = this.formatChildren(children);
+                this.$scope.children = formattedChildren;
+                this.$scope.data = {children: formattedChildren};
             }.bind(this)
         );
     };
-    ListViewController.prototype.formatComposees = function (composees) {
-        return composees.map(function (composition) {
+    ListViewController.prototype.formatChildren = function (children) {
+        return children.map(function (child) {
             return {
-                icon: composition.getCapability('type').getCssClass(),
-                title: composition.getModel().name,
-                type: composition.getCapability('type').getName(),
+                icon: child.getCapability('type').getCssClass(),
+                title: child.getModel().name,
+                type: child.getCapability('type').getName(),
                 persisted: new Date(
-                    composition.getModel().persisted
+                    child.getModel().persisted
                 ).toUTCString(),
                 modified: new Date(
-                    composition.getModel().modified
+                    child.getModel().modified
                 ).toUTCString(),
-                asDomainObject: composition
+                asDomainObject: child
             };
         });
     };

@@ -5,9 +5,9 @@ define(
             var scope,
                 unlistenFunc,
                 domainObject,
-                compositionObject,
+                childObject,
                 controller,
-                compositionModel,
+                childModel,
                 typeCapability,
                 mutationCapability;
             beforeEach(function () {
@@ -27,22 +27,22 @@ define(
                 typeCapability.getName.andReturn("Folder");
 
 
-                compositionModel = jasmine.createSpyObj(
-                    "compositionModel",
+                childModel = jasmine.createSpyObj(
+                    "childModel",
                     ["persisted", "modified", "name"]
                 );
-                compositionModel.persisted = 1496867697303;
-                compositionModel.modified = 1496867697303;
-                compositionModel.name = "Battery Charge Status";
+                childModel.persisted = 1496867697303;
+                childModel.modified = 1496867697303;
+                childModel.name = "Battery Charge Status";
 
-                compositionObject = jasmine.createSpyObj(
-                    "compositionObject",
+                childObject = jasmine.createSpyObj(
+                    "childObject",
                     ["getModel", "getCapability"]
                 );
-                compositionObject.getModel.andReturn(
-                    compositionModel
+                childObject.getModel.andReturn(
+                    childModel
                 );
-                compositionObject.getCapability.andReturn(
+                childObject.getCapability.andReturn(
                     typeCapability
                 );
 
@@ -51,7 +51,7 @@ define(
                     ["getCapability", "useCapability"]
                 );
                 domainObject.useCapability.andReturn(
-                    Promise.resolve([compositionObject])
+                    Promise.resolve([childObject])
                 );
                 domainObject.getCapability.andReturn(
                     mutationCapability
@@ -66,18 +66,18 @@ define(
                 controller  = new ListViewController(scope);
 
                 waitsFor(function () {
-                    return scope.composees;
+                    return scope.children;
                 });
             });
             it("updates the view", function () {
-                expect(scope.composees[0]).toEqual(
+                expect(scope.children[0]).toEqual(
                     {
                         icon: "icon-folder",
                         title: "Battery Charge Status",
                         type: "Folder",
                         persisted: "Wed, 07 Jun 2017 20:34:57 GMT",
                         modified: "Wed, 07 Jun 2017 20:34:57 GMT",
-                        asDomainObject: compositionObject
+                        asDomainObject: childObject
                     }
                 );
             });
@@ -88,10 +88,10 @@ define(
                 expect(mutationCapability.listen).toHaveBeenCalledWith(jasmine.any(Function));
                 mutationCapability.listen.mostRecentCall.args[0]();
                 waitsFor(function () {
-                    return scope.composees.length !== 1;
+                    return scope.children.length !== 1;
                 });
                 runs(function () {
-                    expect(scope.composees.length).toEqual(0);
+                    expect(scope.children.length).toEqual(0);
                 });
             });
             it("releases listeners on $destroy", function () {

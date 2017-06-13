@@ -49,19 +49,19 @@
 
     <!-- Table Contents -->
     <tbody>
-        <tr ng-repeat="composition in composees|orderBy:orderByField:reverseSort"
+        <tr ng-repeat="child in children|orderBy:orderByField:reverseSort"
             mct-gesture="menu,info"
-            mct-object="composition.asDomainObject">
+            mct-object="child.asDomainObject">
             <td>
                 <span class="t-item-icon" >
                     <span class="t-item-icon-glyph ng-binding
-                                {{composition.icon}}"></span>
+                                {{child.icon}}"></span>
                 </span>
             </td>
-            <td>{{composition.title}}</td>
-            <td>{{composition.type}}</td>
-            <td>{{composition.persisted}}</td>
-            <td>{{composition.modified}}</td>
+            <td>{{child.title}}</td>
+            <td>{{child.type}}</td>
+            <td>{{child.persisted}}</td>
+            <td>{{child.modified}}</td>
         </tr>
     </tbody>
   </table>
