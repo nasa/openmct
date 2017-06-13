@@ -61,7 +61,7 @@ define(
                 );
                 //console.log(scope.$on.mostRecentCall.args[1])
                 scope.$on.mostRecentCall.args[1]();
-                execpt(gestureService.destroy).toHaveBeenCalled()
+                expect(attachedGesture.destroy).toHaveBeenCalled()
             })
 
         });

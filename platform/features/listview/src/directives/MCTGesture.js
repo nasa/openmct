@@ -11,7 +11,6 @@ define(function () {
                     $scope.domainObject,
                     attrs.mctGesture.split(",")
                 );
-                console.log(activeGestures);
                 $scope.$on('$destroy', function () {
                     activeGestures.destroy();
                     delete this.activeGestures;
