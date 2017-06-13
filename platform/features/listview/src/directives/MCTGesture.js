@@ -6,13 +6,14 @@ define(function () {
                 domainObject: '=mctObject'
             },
             link : function ($scope, $element, attrs) {
-                this.activeGestures = gestureService.attachGestures(
+                var activeGestures = gestureService.attachGestures(
                     $element,
                     $scope.domainObject,
                     attrs.mctGesture.split(",")
                 );
+                console.log(activeGestures);
                 $scope.$on('$destroy', function () {
-                    this.activeGestures.destroy();
+                    activeGestures.destroy();
                     delete this.activeGestures;
                 });
             }

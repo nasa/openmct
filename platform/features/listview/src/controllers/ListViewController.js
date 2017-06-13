@@ -6,14 +6,11 @@ define(function () {
 
         this.updateView();
 
-        this.unlisten = $scope.domainObject.getCapability('mutation')
-        .listen(this.updateView.bind(this));
+        var unlisten = $scope.domainObject.getCapability('mutation')
+            .listen(this.updateView.bind(this));
 
         $scope.$on('$destroy', function () {
-            if (this.unlisten) {
-                this.unlisten();
-                delete this.unlisten;
-            }
+            unlisten();
         });
 
     }
