@@ -1,60 +1,73 @@
 define(
     ["../../src/controllers/ListViewController"],
     function (ListViewController) {
-        describe("The Controller for the ListView", function (){
+        describe("The Controller for the ListView", function () {
             var scope,
                 unlistenFunc,
                 domainObject,
                 compositionObject,
                 controller,
-                updateViewSpy;
+                compositionModel,
+                typeCapability,
+                mutationCapability;
             beforeEach(function () {
-                scope = jasmine.createSpyObj(
-                    "$scope",
-                    ["$on"]
-                );
-                domainObject = jasmine.createSpyObj(
-                    "domainObject",
-                    ["getCapability", "useCapability"]
-                );
-                compositionObject = jasmine.createSpyObj(
-                    "compositionObject",
-                    ["getModel", "getCapability"]
-                );
-                compositionModelObject = jasmine.createSpyObj(
-                    "compositionModelObject",
-                    ["persisted", "modified", "name"]
-                );
-                typeCapability = jasmine.createSpyObj(
-                    "typeCapability",
-                    ["getCssClass", "getName"]
-                );
+                unlistenFunc = jasmine.createSpy("unlisten");
+
                 mutationCapability = jasmine.createSpyObj(
                     "mutationCapability",
                     ["listen"]
                 );
-                unlistenFunc = jasmine.createSpy("unlisten");
                 mutationCapability.listen.andReturn(unlistenFunc);
+
+                typeCapability = jasmine.createSpyObj(
+                    "typeCapability",
+                    ["getCssClass", "getName"]
+                );
                 typeCapability.getCssClass.andReturn("icon-folder");
                 typeCapability.getName.andReturn("Folder");
+
+
+                compositionModel = jasmine.createSpyObj(
+                    "compositionModel",
+                    ["persisted", "modified", "name"]
+                );
+                compositionModel.persisted = 1496867697303;
+                compositionModel.modified = 1496867697303;
+                compositionModel.name = "Battery Charge Status";
+
+                compositionObject = jasmine.createSpyObj(
+                    "compositionObject",
+                    ["getModel", "getCapability"]
+                );
+                compositionObject.getModel.andReturn(
+                    compositionModel
+                );
                 compositionObject.getCapability.andReturn(
                     typeCapability
                 );
-                compositionModelObject.persisted = 1496867697303
-                compositionModelObject.modified = 1496867697303
-                compositionModelObject.name = "Battery Charge Status"
-                compositionObject.model = compositionModelObject
+
+                domainObject = jasmine.createSpyObj(
+                    "domainObject",
+                    ["getCapability", "useCapability"]
+                );
                 domainObject.useCapability.andReturn(
                     Promise.resolve([compositionObject])
                 );
                 domainObject.getCapability.andReturn(
                     mutationCapability
-                )
+                );
+
+                scope = jasmine.createSpyObj(
+                    "$scope",
+                    ["$on"]
+                );
                 scope.domainObject = domainObject;
+
                 controller  = new ListViewController(scope);
+
                 waitsFor(function () {
-                    return scope.composees
-                })
+                    return scope.composees;
+                });
             });
             it("updates the view", function () {
                 expect(scope.composees[0]).toEqual(
@@ -76,10 +89,10 @@ define(
                 mutationCapability.listen.mostRecentCall.args[0]();
                 waitsFor(function () {
                     return scope.composees.length !== 1;
-                })
+                });
                 runs(function () {
-                    expect(scope.composees.length).toEqual(0)
-                })
+                    expect(scope.composees.length).toEqual(0);
+                });
             });
             it("releases listeners on $destroy", function () {
                 expect(scope.$on).toHaveBeenCalledWith('$destroy', jasmine.any(Function));

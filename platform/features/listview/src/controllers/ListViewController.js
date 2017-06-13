@@ -5,7 +5,6 @@ define(function () {
         $scope.reverseSort = false;
 
         this.updateView();
-
         var unlisten = $scope.domainObject.getCapability('mutation')
             .listen(this.updateView.bind(this));
 
@@ -27,10 +26,14 @@ define(function () {
         return composees.map(function (composition) {
             return {
                 icon: composition.getCapability('type').getCssClass(),
-                title: composition.model.name,
+                title: composition.getModel().name,
                 type: composition.getCapability('type').getName(),
-                persisted: new Date(composition.model.persisted).toUTCString(),
-                modified: new Date(composition.model.modified).toUTCString(),
+                persisted: new Date(
+                    composition.getModel().persisted
+                ).toUTCString(),
+                modified: new Date(
+                    composition.getModel().modified
+                ).toUTCString(),
                 asDomainObject: composition
             };
         });
