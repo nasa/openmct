@@ -89,7 +89,7 @@ define(
         // Update displayable values to reflect latest image telemetry
         ImageryController.prototype.updateValues = function (datum) {
             if (this.isPaused) {
-                this.nextValue = datum;
+                this.nextDatum = datum;
                 return;
             }
             this.time = this.timeFormat.format(datum);
@@ -122,8 +122,10 @@ define(
         ImageryController.prototype.paused = function (state) {
             if (arguments.length > 0 && state !== this.isPaused) {
                 this.isPaused = state;
-                this.updateValues(this.nextValue);
-                delete this.nextValue;
+                if (this.nextDatum) {
+                    this.updateValues(this.nextDatum);
+                    delete this.nextDatum;
+                }
             }
             return this.isPaused;
         };
