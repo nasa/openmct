@@ -31,35 +31,56 @@ define(['lodash'], function (_) {
         END_DELTA: 'tc.endDelta'
     };
 
-    function TimeConductorURLHandler(tcViewService) {
-        this.tcViewService = tcViewService;
+    /**
+     * Communicates settings from the URL to the time conductor,
+     * and vice versa.
+     */
+    function TimeConductorURLHandler(tcService) {
+        this.tcService = tcService;
     }
 
     TimeConductorURLHandler.prototype.updateParams = function () {
+        var mode = this.tcService.mode();
+        var timeSystem = this.tcService.timeSystem();
+        var fixed = (mode === 'fixed');
+        var deltas = fixed ? [ null, null ] : this.tcService.deltas();
+        var bounds = fixed ? this.tcService.bounds() : [ null, null ];
 
+        $location.search(searchParams[SEARCH.MODE], mode);
+        $location.search(searchParams[SEARCH.TIME_SYSTEM], timeSystem);
+        $location.search(searchParams[SEARCH.START_DELTA], deltas[0]);
+        $location.search(searchParams[SEARCH.END_DELTA], deltas[1]);
+        $location.search(searchParams[SEARCH.START_BOUND], bounds[0]);
+        $location.search(searchParams[SEARCH.END_BOUND], bounds[1]);
     };
 
     TimeConductorURLHandler.prototype.updateView = function (searchParams) {
         if (searchParams[SEARCH.MODE] !== undefined) {
-            // TODO: How to communicate this to/from TC?
+            this.tcService.mode(searchParams[SEARCH.MODE]);
         }
 
         if (searchParams[SEARCH.TIME_SYSTEM] !== undefined) {
-            // TODO: Update time system
+            this.tcService.timeSystem(searchParams[SEARCH.TIME_SYSTEM]);
         }
 
         var hasDelta =
             _.isFinite(searchParams[SEARCH.START_DELTA]) &&
             _.isFinite(searchParams[SEARCH.END_DELTA]);
         if (hasDelta) {
-            // TODO Update delta
+            this.tcService.deltas(
+                searchParams[SEARCH.START_DELTA],
+                searchParams[SEARCH.END_DELTA]
+            );
         }
 
         var hasBounds =
             _.isFinite(searchParams[SEARCH.START_BOUNDS]) &&
             _.isFinite(searchParams[SEARCH.END_BOUNDS]);
         if (hasDelta) {
-            // TODO Update bounds
+            this.tcService.bounds(
+                searchParams[SEARCH.START_DELTA],
+                searchParams[SEARCH.END_DELTA]
+            );
         }
     };
 
