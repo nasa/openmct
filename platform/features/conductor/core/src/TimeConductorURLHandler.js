@@ -74,12 +74,12 @@ define(['lodash'], function (_) {
         }
 
         var hasBounds =
-            _.isFinite(searchParams[SEARCH.START_BOUNDS]) &&
-            _.isFinite(searchParams[SEARCH.END_BOUNDS]);
+            _.isFinite(searchParams[SEARCH.START_BOUND]) &&
+            _.isFinite(searchParams[SEARCH.END_BOUND]);
         if (hasDelta) {
             this.tcService.bounds(
-                searchParams[SEARCH.START_DELTA],
-                searchParams[SEARCH.END_DELTA]
+                searchParams[SEARCH.START_BOUND],
+                searchParams[SEARCH.END_BOUND]
             );
         }
     };
