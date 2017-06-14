@@ -30,6 +30,7 @@ define(['lodash'], function (_) {
         START_DELTA: 'tc.startDelta',
         END_DELTA: 'tc.endDelta'
     };
+    var NULL_SPAN = { start: null, end: null };
 
     /**
      * Communicates settings from the URL to the time conductor,
@@ -43,15 +44,15 @@ define(['lodash'], function (_) {
         var mode = this.tcService.mode();
         var timeSystem = this.tcService.timeSystem();
         var fixed = (mode === 'fixed');
-        var deltas = fixed ? [ null, null ] : this.tcService.deltas();
-        var bounds = fixed ? this.tcService.bounds() : [ null, null ];
+        var deltas = fixed ? NULL_SPAN : this.tcService.deltas();
+        var bounds = fixed ? this.tcService.bounds() : NULL_SPAN;
 
         $location.search(searchParams[SEARCH.MODE], mode);
         $location.search(searchParams[SEARCH.TIME_SYSTEM], timeSystem);
-        $location.search(searchParams[SEARCH.START_DELTA], deltas[0]);
-        $location.search(searchParams[SEARCH.END_DELTA], deltas[1]);
-        $location.search(searchParams[SEARCH.START_BOUND], bounds[0]);
-        $location.search(searchParams[SEARCH.END_BOUND], bounds[1]);
+        $location.search(searchParams[SEARCH.START_DELTA], deltas.start);
+        $location.search(searchParams[SEARCH.END_DELTA], deltas.end);
+        $location.search(searchParams[SEARCH.START_BOUND], bounds.start);
+        $location.search(searchParams[SEARCH.END_BOUND], bounds.end);
     };
 
     TimeConductorURLHandler.prototype.updateView = function (searchParams) {
@@ -67,20 +68,20 @@ define(['lodash'], function (_) {
             _.isFinite(searchParams[SEARCH.START_DELTA]) &&
             _.isFinite(searchParams[SEARCH.END_DELTA]);
         if (hasDelta) {
-            this.tcService.deltas(
-                searchParams[SEARCH.START_DELTA],
-                searchParams[SEARCH.END_DELTA]
-            );
+            this.tcService.deltas({
+                start: searchParams[SEARCH.START_DELTA],
+                end: searchParams[SEARCH.END_DELTA]
+            });
         }
 
         var hasBounds =
             _.isFinite(searchParams[SEARCH.START_BOUND]) &&
             _.isFinite(searchParams[SEARCH.END_BOUND]);
         if (hasDelta) {
-            this.tcService.bounds(
-                searchParams[SEARCH.START_BOUND],
-                searchParams[SEARCH.END_BOUND]
-            );
+            this.tcService.bounds({
+                start: searchParams[SEARCH.START_BOUND],
+                end: searchParams[SEARCH.END_BOUND]
+            });
         }
     };
 
