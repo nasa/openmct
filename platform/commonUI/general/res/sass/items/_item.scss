@@ -137,12 +137,13 @@
 table.list-view {
     $s: 1.2em;
     width: 100%;
+    th, td {
+        cursor: pointer;
+    }
     tr:hover td {
         background-color: $colorItemBg;
         color: $colorItemFg;
-        cursor: pointer;
     }
-
     td {
         $p: $interiorMargin;
         @include ellipsize;
@@ -157,7 +158,6 @@ table.list-view {
         font-size: $s;
         margin-right: $interiorMargin;
     }
-
     .t-title-label {
         @include ellipsize; // Yep, need it here too as well as the <td>
     }
