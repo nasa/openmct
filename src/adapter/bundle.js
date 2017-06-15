@@ -125,7 +125,13 @@ define([
                     depends: ["openmct"]
                 },
                 {
-                    implementation: TimeSettingsURLHandler,
+                    implementation: function (openmct, $location, $rootScope) {
+                        return new TimeSettingsURLHandler(
+                            openmct.time,
+                            $location,
+                            $rootScope
+                        );
+                    },
                     depends: ["openmct", "$location", "$rootScope"]
                 }
             ],
