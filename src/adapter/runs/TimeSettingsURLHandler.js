@@ -44,23 +44,25 @@ define(['lodash'], function (_) {
         $rootScope.$on('$locationChangeSuccess', this.updateTime.bind(this));
 
         TIME_EVENTS.forEach(function (event) {
-            time.on(event, this.updateQueryParams.bind(this));
-        });
+            this.time.on(event, this.updateQueryParams.bind(this));
+        }, this);
     }
 
     TimeSettingsURLHandler.prototype.updateQueryParams = function () {
-        var mode = this.time.clock() || 'fixed';
+        var clock = this.time.clock();
+        var fixed = !clock;
+        var mode = fixed ? 'fixed' : clock.key;
         var timeSystem = this.time.timeSystem().key;
-        var fixed = (mode === 'fixed');
+
         var deltas = fixed ? NULL_SPAN : this.time.clockOffsets;
         var bounds = fixed ? this.time.bounds() : NULL_SPAN;
 
-        this.$location.search(searchParams[SEARCH.MODE], mode);
-        this.$location.search(searchParams[SEARCH.TIME_SYSTEM], timeSystem);
-        this.$location.search(searchParams[SEARCH.START_DELTA], -deltas.start);
-        this.$location.search(searchParams[SEARCH.END_DELTA], deltas.end);
-        this.$location.search(searchParams[SEARCH.START_BOUND], bounds.start);
-        this.$location.search(searchParams[SEARCH.END_BOUND], bounds.end);
+        this.$location.search(SEARCH.MODE, mode);
+        this.$location.search(SEARCH.TIME_SYSTEM, timeSystem);
+        this.$location.search(SEARCH.START_DELTA, -deltas.start);
+        this.$location.search(SEARCH.END_DELTA, deltas.end);
+        this.$location.search(SEARCH.START_BOUND, bounds.start);
+        this.$location.search(SEARCH.END_BOUND, bounds.end);
     };
 
     TimeSettingsURLHandler.prototype.updateTime = function () {
