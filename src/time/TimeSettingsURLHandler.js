@@ -36,8 +36,9 @@ define(['lodash'], function (_) {
      * Communicates settings from the URL to the time API,
      * and vice versa.
      */
-    function TimeSettingsURLHandler(tcService) {
-        this.tcService = tcService;
+    function TimeSettingsURLHandler(time, $location) {
+        this.time = time;
+        this.$location = $location;
     }
 
     TimeSettingsURLHandler.prototype.updateParams = function () {
@@ -47,28 +48,28 @@ define(['lodash'], function (_) {
         var deltas = fixed ? NULL_SPAN : this.tcService.deltas();
         var bounds = fixed ? this.tcService.bounds() : NULL_SPAN;
 
-        $location.search(searchParams[SEARCH.MODE], mode);
-        $location.search(searchParams[SEARCH.TIME_SYSTEM], timeSystem);
-        $location.search(searchParams[SEARCH.START_DELTA], deltas.start);
-        $location.search(searchParams[SEARCH.END_DELTA], deltas.end);
-        $location.search(searchParams[SEARCH.START_BOUND], bounds.start);
-        $location.search(searchParams[SEARCH.END_BOUND], bounds.end);
+        this.$location.search(searchParams[SEARCH.MODE], mode);
+        this.$location.search(searchParams[SEARCH.TIME_SYSTEM], timeSystem);
+        this.$location.search(searchParams[SEARCH.START_DELTA], deltas.start);
+        this.$location.search(searchParams[SEARCH.END_DELTA], deltas.end);
+        this.$location.search(searchParams[SEARCH.START_BOUND], bounds.start);
+        this.$location.search(searchParams[SEARCH.END_BOUND], bounds.end);
     };
 
     TimeSettingsURLHandler.prototype.updateView = function (searchParams) {
         if (searchParams[SEARCH.MODE] !== undefined) {
-            this.tcService.mode(searchParams[SEARCH.MODE]);
+            //this.time.clock(...);
         }
 
         if (searchParams[SEARCH.TIME_SYSTEM] !== undefined) {
-            this.tcService.timeSystem(searchParams[SEARCH.TIME_SYSTEM]);
+            //this.time.timeSystem(...)
         }
 
         var hasDelta =
             _.isFinite(searchParams[SEARCH.START_DELTA]) &&
             _.isFinite(searchParams[SEARCH.END_DELTA]);
         if (hasDelta) {
-            this.tcService.deltas({
+            this.time.clockOffsets({
                 start: searchParams[SEARCH.START_DELTA],
                 end: searchParams[SEARCH.END_DELTA]
             });
@@ -77,8 +78,8 @@ define(['lodash'], function (_) {
         var hasBounds =
             _.isFinite(searchParams[SEARCH.START_BOUND]) &&
             _.isFinite(searchParams[SEARCH.END_BOUND]);
-        if (hasDelta) {
-            this.tcService.bounds({
+        if (hasBounds) {
+            this.time.bounds({
                 start: searchParams[SEARCH.START_BOUND],
                 end: searchParams[SEARCH.END_BOUND]
             });
