@@ -31,17 +31,24 @@ define(['lodash'], function (_) {
         END_DELTA: 'tc.endDelta'
     };
     var NULL_SPAN = { start: null, end: null };
+    var TIME_EVENTS = ['bounds', 'timeSystem', 'clock', 'clockOffsets'];
 
     /**
      * Communicates settings from the URL to the time API,
      * and vice versa.
      */
-    function TimeSettingsURLHandler(time, $location) {
+    function TimeSettingsURLHandler(time, $location, $rootScope) {
         this.time = time;
         this.$location = $location;
+
+        $rootScope.$on('$locationChangeSuccess', this.updateTime.bind(this));
+
+        TIME_EVENTS.forEach(function (event) {
+            time.on(event, this.updateQueryParams.bind(this));
+        });
     }
 
-    TimeSettingsURLHandler.prototype.updateParams = function () {
+    TimeSettingsURLHandler.prototype.updateQueryParams = function () {
         var mode = this.time.clock() || 'fixed';
         var timeSystem = this.time.timeSystem().key;
         var fixed = (mode === 'fixed');
@@ -56,7 +63,8 @@ define(['lodash'], function (_) {
         this.$location.search(searchParams[SEARCH.END_BOUND], bounds.end);
     };
 
-    TimeSettingsURLHandler.prototype.updateView = function (searchParams) {
+    TimeSettingsURLHandler.prototype.updateTime = function () {
+        var searchParams = this.$location.search();
         var clock = searchParams[SEARCH.MODE];
         var clockOffsets = {
             start: -searchParams[SEARCH.START_DELTA],
