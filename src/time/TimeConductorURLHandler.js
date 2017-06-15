@@ -33,14 +33,14 @@ define(['lodash'], function (_) {
     var NULL_SPAN = { start: null, end: null };
 
     /**
-     * Communicates settings from the URL to the time conductor,
+     * Communicates settings from the URL to the time API,
      * and vice versa.
      */
-    function TimeConductorURLHandler(tcService) {
+    function TimeSettingsURLHandler(tcService) {
         this.tcService = tcService;
     }
 
-    TimeConductorURLHandler.prototype.updateParams = function () {
+    TimeSettingsURLHandler.prototype.updateParams = function () {
         var mode = this.tcService.mode();
         var timeSystem = this.tcService.timeSystem();
         var fixed = (mode === 'fixed');
@@ -55,7 +55,7 @@ define(['lodash'], function (_) {
         $location.search(searchParams[SEARCH.END_BOUND], bounds.end);
     };
 
-    TimeConductorURLHandler.prototype.updateView = function (searchParams) {
+    TimeSettingsURLHandler.prototype.updateView = function (searchParams) {
         if (searchParams[SEARCH.MODE] !== undefined) {
             this.tcService.mode(searchParams[SEARCH.MODE]);
         }
@@ -85,5 +85,5 @@ define(['lodash'], function (_) {
         }
     };
 
-    return TimeConductorURLHandler;
+    return TimeSettingsURLHandler;
 });
