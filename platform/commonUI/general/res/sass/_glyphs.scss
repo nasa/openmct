@@ -85,6 +85,7 @@ $glyph-icon-x-in-circle: '\e1038';
 $glyph-icon-brightness: '\e1039';
 $glyph-icon-contrast: '\e1040';
 $glyph-icon-expand: '\e1041';
+$glyph-icon-list-view: '\e1042';
 $glyph-icon-activity: '\e1100';
 $glyph-icon-activity-mode: '\e1101';
 $glyph-icon-autoflow-tabular: '\e1102';
@@ -189,6 +190,7 @@ $glyph-icon-box-with-dashed-lines: '\e1129';
 .icon-brightness {  @include glyphBefore($glyph-icon-brightness); }
 .icon-contrast {  @include glyphBefore($glyph-icon-contrast); }
 .icon-expand {  @include glyphBefore($glyph-icon-expand); }
+.icon-list-view {  @include glyphBefore($glyph-icon-list-view); }
 .icon-activity {  @include glyphBefore($glyph-icon-activity); }
 .icon-activity-mode {  @include glyphBefore($glyph-icon-activity-mode); }
 .icon-autoflow-tabular {  @include glyphBefore($glyph-icon-autoflow-tabular); }

@@ -41,7 +41,7 @@
                     "key": "list",
                     "type": "folder",
                     "name": "List",
-                    "cssClass": "icon-menu-hamburger",
+                    "cssClass": "icon-list-view",
                     "template": listViewTemplate
                 }
             ],

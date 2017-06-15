@@ -20,72 +20,69 @@
  at runtime from the About dialog for additional information.
 -->
 <div ng-controller="ListViewController">
-<table>
-<!-- Table Header -->
-<thead>
-<tr>
-<th class="sortable"
-    ng-click="
-        orderByField='title';
-        reverseSort = !reverseSort"
-    ng-class="{
-         sort: orderByField == 'title',
-         asc: !reverseSort,
-         desc: reverseSort
-    }">
-    Name
-</th>
+    <table class="list-view">
+        <thead>
+        <tr>
+            <th class="sortable"
+                ng-click="reverseSort = (orderByField === 'title')? !reverseSort:false; orderByField='title';"
+                ng-class="{
+                 sort: orderByField == 'title',
+                 asc: !reverseSort,
+                 desc: reverseSort
+                }">
+                Name
+            </th>
 
 
-<th class="sortable"
-    ng-click="orderByField='type'; reverseSort = !reverseSort"
-    ng-class="{
-        sort: orderByField == 'type',
-        asc: !reverseSort,
-        desc: reverseSort
-    }">
-    Type
-</th>
+            <th class="sortable"
+                ng-click="reverseSort = (orderByField === 'type')? !reverseSort:false; orderByField='type';"
+                ng-class="{
+                sort: orderByField == 'type',
+                asc: !reverseSort,
+                desc: reverseSort
+                }">
+                Type
+            </th>
 
-<th class="sortable"
-    ng-click="orderByField='persisted'; reverseSort = !reverseSort"
-    ng-class= "{
-        sort: orderByField == 'persisted',
-        asc: !reverseSort,
-        desc: reverseSort
-    }">
-    Created Date
-</th>
+            <th class="sortable"
+                ng-click="reverseSort = (orderByField === 'persisted')? !reverseSort:true; orderByField='persisted';"
+                ng-class="{
+                sort: orderByField == 'persisted',
+                asc: !reverseSort,
+                desc: reverseSort
+                }">
+                Created Date
+            </th>
 
-<th class="sortable"
-    ng-click= "orderByField='modified'; reverseSort = !reverseSort"
-    ng-class= "{
-        sort: orderByField == 'modified',
-        asc: !reverseSort,
-        desc: reverseSort
-    }">
-    Update Date
-</th>
+            <th class="sortable"
+                ng-click="reverseSort = (orderByField === 'modified')? !reverseSort:true; orderByField='modified';"
+                ng-class="{
+                sort: orderByField == 'modified',
+                asc: !reverseSort,
+                desc: reverseSort
+                }">
+                Update Date
+            </th>
 
-</tr>
-</thead>
-
-<!-- Table Contents -->
-<tbody>
-<tr ng-repeat="child in children|orderBy:orderByField:reverseSort"
-    mct-gesture="['menu','info']"
-    mct-object="child.asDomainObject"
-    ng-click='a'>
-    <td>
-        <span class="t-item-icon" ng-class="{ 'l-icon-link': child.location.isLink()}">
-            <span class="t-item-icon ng-binding {{child.icon}}"></span>
-            {{child.title}}
-        </span>
-    </td>
-    <td>{{child.type}}</td>
-    <td>{{child.persisted}}</td>
-    <td>{{child.modified}}</td>
-</tr>
-</tbody>
-</table>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="child in children|orderBy:orderByField:reverseSort"
+            mct-gesture="['menu','info']"
+            mct-object="child.asDomainObject"
+            ng-click="child.action.perform('navigate')">
+            <td>
+                <div class="l-flex-row">
+                    <span class="flex-elem t-item-icon" ng-class="{ 'l-icon-link': child.location.isLink()}">
+                        <span class="t-item-icon-glyph {{child.icon}}"></span>
+                    </span>
+                    <span class="t-title-label flex-elem grows">{{child.title}}</span>
+                </div>
+            </td>
+            <td>{{child.type}}</td>
+            <td>{{child.persisted}}</td>
+            <td>{{child.modified}}</td>
+        </tr>
+        </tbody>
+    </table>
 </div>

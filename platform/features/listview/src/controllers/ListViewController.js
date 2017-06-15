@@ -57,7 +57,8 @@ define(function () {
                     child.getModel().modified
                 ).toUTCString(),
                 asDomainObject: child,
-                location: child.getCapability('location')
+                location: child.getCapability('location'),
+                action: child.getCapability('action')
             };
         });
     };
