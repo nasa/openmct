@@ -98,7 +98,7 @@ define(['lodash'], function (_) {
             if (timeSystem && hasBounds) {
                 this.time.timeSystem(timeSystem, bounds);
             }
-            this.time.clock(undefined);
+            this.time.stopClock();
         } else {
             if (hasDeltas) {
                 this.time.clock(clock, clockOffsets)
