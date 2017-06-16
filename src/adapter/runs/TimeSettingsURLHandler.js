@@ -94,15 +94,13 @@ define([], function () {
             !isNaN(parseInt(searchParams[SEARCH.START_BOUND], 0xA)) &&
             !isNaN(parseInt(searchParams[SEARCH.END_BOUND], 0xA));
 
-        if (fixed) {
-            if (timeSystem && hasBounds) {
-                this.time.timeSystem(timeSystem, bounds);
-            }
+        if (fixed && timeSystem && hasBounds) {
+            this.time.timeSystem(timeSystem, bounds);
             this.time.stopClock();
-        } else {
-            if (hasDeltas) {
-                this.time.clock(clock, clockOffsets)
-            }
+        }
+
+        if (!fixed && clock && hasDeltas) {
+            this.time.clock(clock, clockOffsets)
             this.time.timeSystem(timeSystem);
         }
 
