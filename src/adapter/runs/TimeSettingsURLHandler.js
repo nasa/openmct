@@ -77,11 +77,11 @@ define(['lodash'], function (_) {
         var timeSystem = searchParams[SEARCH.TIME_SYSTEM];
         var clockOffsets = {
             start: -searchParams[SEARCH.START_DELTA],
-            end: searchParams[SEARCH.END_DELTA]
+            end: +searchParams[SEARCH.END_DELTA]
         };
         var bounds = {
-            start: searchParams[SEARCH.START_BOUND],
-            end: searchParams[SEARCH.END_BOUND]
+            start: +searchParams[SEARCH.START_BOUND],
+            end: +searchParams[SEARCH.END_BOUND]
         };
         var isFixed = !clock;
         var hasDelta =
@@ -108,17 +108,11 @@ define(['lodash'], function (_) {
         }
 
         if (hasDelta && !isFixed) {
-            this.time.clockOffsets({
-                start: -searchParams[SEARCH.START_DELTA],
-                end: +searchParams[SEARCH.END_DELTA]
-            });
+            this.time.clockOffsets(clockOffsets);
         }
 
         if (hasBounds && isFixed) {
-            this.time.bounds({
-                start: +searchParams[SEARCH.START_BOUND],
-                end: +searchParams[SEARCH.END_BOUND]
-            });
+            this.time.bounds(bounds);
         }
     };
 
