@@ -30,7 +30,6 @@ define(['lodash'], function (_) {
         START_DELTA: 'tc.startDelta',
         END_DELTA: 'tc.endDelta'
     };
-    var NULL_SPAN = { start: null, end: null };
     var TIME_EVENTS = ['bounds', 'timeSystem', 'clock', 'clockOffsets'];
 
     /**
@@ -54,15 +53,22 @@ define(['lodash'], function (_) {
         var mode = fixed ? 'fixed' : clock.key;
         var timeSystem = this.time.timeSystem().key;
 
-        var deltas = fixed ? NULL_SPAN : this.time.clockOffsets;
-        var bounds = fixed ? this.time.bounds() : NULL_SPAN;
-
         this.$location.search(SEARCH.MODE, mode);
         this.$location.search(SEARCH.TIME_SYSTEM, timeSystem);
-        this.$location.search(SEARCH.START_DELTA, -deltas.start);
-        this.$location.search(SEARCH.END_DELTA, deltas.end);
-        this.$location.search(SEARCH.START_BOUND, bounds.start);
-        this.$location.search(SEARCH.END_BOUND, bounds.end);
+
+        if (fixed) {
+            var bounds = this.time.bounds();
+            this.$location.search(SEARCH.START_BOUND, bounds.start);
+            this.$location.search(SEARCH.END_BOUND, bounds.end);
+            this.$location.search(SEARCH.START_DELTA, null);
+            this.$location.search(SEARCH.END_DELTA, null);
+        } else {
+            var deltas = this.time.clockOffsets();
+            this.$location.search(SEARCH.START_BOUND, null);
+            this.$location.search(SEARCH.END_BOUND, null);
+            this.$location.search(SEARCH.START_DELTA, -deltas.start);
+            this.$location.search(SEARCH.END_DELTA, deltas.end);
+        }
     };
 
     TimeSettingsURLHandler.prototype.updateTime = function () {
