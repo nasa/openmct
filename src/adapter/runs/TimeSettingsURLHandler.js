@@ -109,15 +109,15 @@ define(['lodash'], function (_) {
 
         if (hasDelta && !isFixed) {
             this.time.clockOffsets({
-                start: searchParams[SEARCH.START_DELTA],
-                end: searchParams[SEARCH.END_DELTA]
+                start: -searchParams[SEARCH.START_DELTA],
+                end: +searchParams[SEARCH.END_DELTA]
             });
         }
 
         if (hasBounds && isFixed) {
             this.time.bounds({
-                start: searchParams[SEARCH.START_BOUND],
-                end: searchParams[SEARCH.END_BOUND]
+                start: +searchParams[SEARCH.START_BOUND],
+                end: +searchParams[SEARCH.END_BOUND]
             });
         }
     };
