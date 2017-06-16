@@ -128,5 +128,58 @@ define(['./TimeSettingsURLHandler'], function (TimeSettingsURLHandler) {
                 .toHaveBeenCalledWith('$locationChangeSuccess', jasmine.any(Function));
         });
 
+        [false, true].forEach(function (fixed) {
+            var name = fixed ? "fixed-time" : "real-time";
+            var suffix = fixed ? 'Bound' : 'Delta';
+            describe("when " + name + " location changes occur", function () {
+                beforeEach(function () {
+                    search['tc.mode'] = fixed ? 'fixed' : 'clocky';
+                    search['tc.timeSystem'] = 'some-time-system';
+                    search['tc.start' + suffix] = '12321';
+                    search['tc.end' + suffix] = '32123';
+                    $rootScope.$on.mostRecentCall.args[1]();
+                });
+
+                if (fixed) {
+                    var bounds = { start: 12321, end: 32123 };
+                    it("stops the clock", function () {
+                        expect(time.stopClock).toHaveBeenCalled();
+                    });
+
+                    it("sets the bounds", function () {
+                        expect(time.bounds).toHaveBeenCalledWith(bounds);
+                    });
+
+                    it("sets the time system with bounds", function () {
+                        expect(time.timeSystem).toHaveBeenCalledWith(
+                            search['tc.timeSystem'],
+                            bounds
+                        );
+                    });
+                } else {
+                    var clockOffsets = { start: -12321, end: 32123 };
+
+                    it("sets the clock", function () {
+                        expect(time.stopClock).not.toHaveBeenCalled();
+                        expect(time.clock).toHaveBeenCalledWith(
+                            search['tc.mode'],
+                            clockOffsets
+                        );
+                    });
+
+                    it("sets clock offsets", function () {
+                        expect(time.clockOffsets)
+                            .toHaveBeenCalledWith(clockOffsets);
+                    });
+
+                    it("sets the time system without bounds", function () {
+                        expect(time.timeSystem).toHaveBeenCalledWith(
+                            search['tc.timeSystem']
+                        );
+                    });
+                }
+            });
+        });
+
     });
 });
