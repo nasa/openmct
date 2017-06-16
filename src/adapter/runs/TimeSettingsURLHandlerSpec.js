@@ -52,7 +52,7 @@ define(['./TimeSettingsURLHandler'], function (TimeSettingsURLHandler) {
                     return search;
                 }
                 if (value === null) {
-                    delete search[key]
+                    delete search[key];
                 } else {
                     search[key] = String(value);
                 }

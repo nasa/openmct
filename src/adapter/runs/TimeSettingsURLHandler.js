@@ -100,7 +100,7 @@ define([], function () {
         }
 
         if (!fixed && clock && hasDeltas) {
-            this.time.clock(clock, clockOffsets)
+            this.time.clock(clock, clockOffsets);
             this.time.timeSystem(timeSystem);
         }
 
