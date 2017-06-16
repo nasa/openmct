@@ -30,7 +30,12 @@ define(['./TimeSettingsURLHandler'], function (TimeSettingsURLHandler) {
 
         beforeEach(function () {
             time = jasmine.createSpyObj('time', [
-                'on'
+                'on',
+                'bounds',
+                'clockOffsets',
+                'timeSystem',
+                'clock',
+                'stopClock'
             ]);
             $location = jasmine.createSpyObj('$location', [
                 'search'
@@ -39,8 +44,20 @@ define(['./TimeSettingsURLHandler'], function (TimeSettingsURLHandler) {
                 '$on'
             ]);
 
+            time.timeSystem.andReturn({ key: 'test-time-system' });
+
             search = {};
-            $location.search.andReturn(search);
+            $location.search.andCallFake(function (key, value) {
+                if (arguments.length === 0) {
+                    return search;
+                }
+                if (value === null) {
+                    delete search[key]
+                } else {
+                    search[key] = String(value);
+                }
+                return this;
+            });
 
             handler = new TimeSettingsURLHandler(
                 time,
@@ -53,6 +70,31 @@ define(['./TimeSettingsURLHandler'], function (TimeSettingsURLHandler) {
             it("listens for " + event + " time events", function () {
                 expect(time.on)
                     .toHaveBeenCalledWith(event, jasmine.any(Function));
+            });
+
+            describe("when " + event + " time event occurs with no clock", function () {
+                var expected;
+
+                beforeEach(function () {
+                    expected = {
+                        'tc.mode': 'fixed',
+                        'tc.timeSystem': 'test-time-system',
+                        'tc.startBound': '123',
+                        'tc.endBound': '456'
+                    };
+                    time.clock.andReturn(undefined);
+                    time.bounds.andReturn({ start: 123, end: 456 });
+
+                    time.on.calls.forEach(function (call) {
+                        if (call.args[0] === event) {
+                            call.args[1]();
+                        }
+                    });
+                });
+
+                it("updates query parameters for fixed mode", function () {
+                    expect(search).toEqual(expected);
+                });
             });
         });
 
