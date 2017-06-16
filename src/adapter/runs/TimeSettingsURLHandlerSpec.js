@@ -96,6 +96,31 @@ define(['./TimeSettingsURLHandler'], function (TimeSettingsURLHandler) {
                     expect(search).toEqual(expected);
                 });
             });
+
+            describe("when " + event + " time event occurs with a clock", function () {
+                var expected;
+
+                beforeEach(function () {
+                    expected = {
+                        'tc.mode': 'clocky',
+                        'tc.timeSystem': 'test-time-system',
+                        'tc.startDelta': '123',
+                        'tc.endDelta': '456'
+                    };
+                    time.clock.andReturn({ key: 'clocky' });
+                    time.clockOffsets.andReturn({ start: -123, end: 456 });
+
+                    time.on.calls.forEach(function (call) {
+                        if (call.args[0] === event) {
+                            call.args[1]();
+                        }
+                    });
+                });
+
+                it("updates query parameters for realtime mode", function () {
+                    expect(search).toEqual(expected);
+                });
+            });
         });
 
         it("listens for location changes", function () {
