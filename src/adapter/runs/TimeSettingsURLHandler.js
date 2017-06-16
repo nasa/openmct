@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['lodash'], function (_) {
+define([], function () {
     // Parameter names in query string
     var SEARCH = {
         MODE: 'tc.mode',
@@ -88,11 +88,11 @@ define(['lodash'], function (_) {
         var fixed = (mode === 'fixed');
         var clock = fixed ? undefined : mode;
         var hasDeltas =
-            _.isFinite(searchParams[SEARCH.START_DELTA]) &&
-            _.isFinite(searchParams[SEARCH.END_DELTA]);
+            !isNaN(parseInt(searchParams[SEARCH.START_DELTA], 0xA)) &&
+            !isNaN(parseInt(searchParams[SEARCH.END_DELTA], 0xA));
         var hasBounds =
-            _.isFinite(searchParams[SEARCH.START_BOUND]) &&
-            _.isFinite(searchParams[SEARCH.END_BOUND]);
+            !isNaN(parseInt(searchParams[SEARCH.START_BOUND], 0xA)) &&
+            !isNaN(parseInt(searchParams[SEARCH.END_BOUND], 0xA));
 
         if (fixed) {
             if (timeSystem && hasBounds) {
