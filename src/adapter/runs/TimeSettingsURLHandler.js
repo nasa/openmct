@@ -45,6 +45,8 @@ define(['lodash'], function (_) {
         TIME_EVENTS.forEach(function (event) {
             this.time.on(event, this.updateQueryParams.bind(this));
         }, this);
+
+        this.updateTime(); // Initialize
     }
 
     TimeSettingsURLHandler.prototype.updateQueryParams = function () {
@@ -73,7 +75,7 @@ define(['lodash'], function (_) {
 
     TimeSettingsURLHandler.prototype.updateTime = function () {
         var searchParams = this.$location.search();
-        var clock = searchParams[SEARCH.MODE];
+        var mode = searchParams[SEARCH.MODE];
         var timeSystem = searchParams[SEARCH.TIME_SYSTEM];
         var clockOffsets = {
             start: -searchParams[SEARCH.START_DELTA],
@@ -83,35 +85,32 @@ define(['lodash'], function (_) {
             start: +searchParams[SEARCH.START_BOUND],
             end: +searchParams[SEARCH.END_BOUND]
         };
-        var isFixed = !clock;
-        var hasDelta =
+        var fixed = (mode === 'fixed');
+        var clock = fixed ? undefined : mode;
+        var hasDeltas =
             _.isFinite(searchParams[SEARCH.START_DELTA]) &&
             _.isFinite(searchParams[SEARCH.END_DELTA]);
         var hasBounds =
             _.isFinite(searchParams[SEARCH.START_BOUND]) &&
             _.isFinite(searchParams[SEARCH.END_BOUND]);
 
-        if (clock) {
-            if (isFixed) {
-                this.time.clock(undefined);
-            } else {
-                this.time.clock(clock, clockOffsets);
-            }
-        }
-
-        if (timeSystem) {
-            if (isFixed) {
+        if (fixed) {
+            if (timeSystem && hasBounds) {
                 this.time.timeSystem(timeSystem, bounds);
-            } else {
-                this.time.timeSystem(timeSystem);
             }
+            this.time.clock(undefined);
+        } else {
+            if (hasDeltas) {
+                this.time.clock(clock, clockOffsets)
+            }
+            this.time.timeSystem(timeSystem);
         }
 
-        if (hasDelta && !isFixed) {
+        if (hasDeltas && !fixed) {
             this.time.clockOffsets(clockOffsets);
         }
 
-        if (hasBounds && isFixed) {
+        if (hasBounds && fixed) {
             this.time.bounds(bounds);
         }
     };
