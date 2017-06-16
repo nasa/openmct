@@ -74,6 +74,7 @@ define(['lodash'], function (_) {
     TimeSettingsURLHandler.prototype.updateTime = function () {
         var searchParams = this.$location.search();
         var clock = searchParams[SEARCH.MODE];
+        var timeSystem = searchParams[SEARCH.TIME_SYSTEM];
         var clockOffsets = {
             start: -searchParams[SEARCH.START_DELTA],
             end: searchParams[SEARCH.END_DELTA]
@@ -82,7 +83,7 @@ define(['lodash'], function (_) {
             start: searchParams[SEARCH.START_BOUND],
             end: searchParams[SEARCH.END_BOUND]
         };
-        var isFixed = (clock === 'fixed');
+        var isFixed = !clock;
         var hasDelta =
             _.isFinite(searchParams[SEARCH.START_DELTA]) &&
             _.isFinite(searchParams[SEARCH.END_DELTA]);
