@@ -132,5 +132,33 @@
 	        }
         }
     }
+}
 
+table.list-view {
+    $s: 1.2em;
+    width: 100%;
+    th, td {
+        cursor: pointer;
+    }
+    tr:hover td {
+        background-color: $colorItemBg;
+        color: $colorItemFg;
+    }
+    td {
+        $p: $interiorMargin;
+        @include ellipsize;
+        color: $colorItemFg;
+        font-size: 1em;
+        line-height: $s;
+        max-width: 0;
+        padding-top: $p;
+        padding-bottom: $p;
+    }
+    .t-item-icon {
+        font-size: $s;
+        margin-right: $interiorMargin;
+    }
+    .t-title-label {
+        @include ellipsize; // Yep, need it here too as well as the <td>
+    }
 }

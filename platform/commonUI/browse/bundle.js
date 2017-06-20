@@ -240,7 +240,7 @@ define([
             "views": [
                 {
                     "key": "items",
-                    "name": "Items",
+                    "name": "Grid",
                     "cssClass": "icon-thumbs-strip",
                     "description": "Grid of available items",
                     "template": itemsTemplate,
