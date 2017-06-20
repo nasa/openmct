@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['./AbstractStartTimerAction'],
-    function (AbstractStartTimerAction) {
+    [],
+    function () {
 
         /**
          * Implements the "Restart at 0" action.
@@ -30,7 +30,6 @@ define(
          * Behaves the same as (and delegates functionality to)
          * the "Start" action.
          *
-         * @extends {platform/features/clock.AbstractTimerAction}
          * @implements {Action}
          * @memberof platform/features/clock
          * @constructor
@@ -39,24 +38,33 @@ define(
          * @param {ActionContext} context the context for this action
          */
         function RestartTimerAction(now, context) {
-            AbstractStartTimerAction.apply(this, [now, context]);
+            this.domainObject = context.domainObject;
+            this.now = now;
         }
-
-        RestartTimerAction.prototype =
-            Object.create(AbstractStartTimerAction.prototype);
 
         RestartTimerAction.appliesTo = function (context) {
             var model =
                 (context.domainObject && context.domainObject.getModel()) ||
                 {};
 
-            // We show this variant for timers which already have
-            // a target time.
+            // We show this variant for timers which already have a target time.
             return model.type === 'timer' &&
-                    model.timestamp !== undefined;
+                model.timerState !== 'stopped';
+        };
+
+        RestartTimerAction.prototype.perform = function () {
+            var domainObject = this.domainObject,
+                now = this.now;
+
+            function updateModel(model) {
+                model.timestamp = now();
+                model.timerState = 'started';
+                model.pausedTime = undefined;
+            }
+
+            return domainObject.useCapability('mutation', updateModel);
         };
 
         return RestartTimerAction;
-
     }
 );

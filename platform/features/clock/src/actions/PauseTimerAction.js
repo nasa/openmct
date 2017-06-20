@@ -25,10 +25,10 @@ define(
     function () {
 
         /**
-         * Implements the "Start" action for timers.
+         * Implements the "Pause" action for timers.
          *
-         * Sets the reference timestamp in a timer to the current
-         * time, such that it begins counting up.
+         * Sets the reference pausedTime in a timer to the current
+         * time, such that it stops counting up.
          *
          * @implements {Action}
          * @memberof platform/features/clock
@@ -37,41 +37,35 @@ define(
          *        time (typically wrapping `Date.now`)
          * @param {ActionContext} context the context for this action
          */
-        function StartTimerAction(now, context) {
+        function PauseTimerAction(now, context) {
             this.domainObject = context.domainObject;
             this.now = now;
         }
 
-        StartTimerAction.appliesTo = function (context) {
+        PauseTimerAction.appliesTo = function (context) {
             var model =
                 (context.domainObject && context.domainObject.getModel()) ||
                 {};
 
-            // We show this variant for timers which do not yet have
-            // a target time.
+
+            // We show this variant for timers which have
+            // a target time, or is in a playing state.
             return model.type === 'timer' &&
-                    model.timerState !== 'started';
+                    model.timerState === 'started';
         };
 
-        StartTimerAction.prototype.perform = function () {
+        PauseTimerAction.prototype.perform = function () {
             var domainObject = this.domainObject,
                 now = this.now;
 
             function updateModel(model) {
-                //if we are resuming
-                if (model.pausedTime) {
-                    var timeShift = now() - model.pausedTime;
-                    model.timestamp = model.timestamp + timeShift;
-                } else {
-                    model.timestamp = now();
-                }
-                model.timerState = 'started';
-                model.pausedTime = undefined;
+                model.timerState = 'paused';
+                model.pausedTime = now();
             }
 
             return domainObject.useCapability('mutation', updateModel);
         };
 
-        return StartTimerAction;
+        return PauseTimerAction;
     }
 );
