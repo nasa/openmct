@@ -67,7 +67,7 @@ define([
                     timeFormat = self.use24 ?
                             baseFormat.replace('hh', "HH") : baseFormat;
                     // If wrong timezone is provided, the UTC will be used
-                    zoneName = momentTimezone.tz.names().includes(model.timezone) ? 
+                    zoneName = momentTimezone.tz.names().includes(model.timezone) ?
                         model.timezone : "UTC";
                     update();
                 }

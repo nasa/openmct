@@ -41,18 +41,18 @@ define(
 
             it("filters options by returning array containing optionId and name", function () {
                 mockScope.filterOptions('Asia');
-                var filteredOptions = [ { optionId : 0, name : 'Asia/Dhaka' },
-                                        { optionId : 1, name : 'Asia/Shanghai' } ];
+                var filteredOptions = [{ optionId : 0, name : 'Asia/Dhaka' },
+                                        { optionId : 1, name : 'Asia/Shanghai' }];
                 expect(mockScope.filteredOptions).toEqual(filteredOptions);
             });
-            
+
             it("fills input with given string", function () {
                 var str = "UTC";
                 mockScope.fillInput(str);
                 expect(mockScope.hideOptions).toEqual(true);
                 expect(mockScope.ngModel[4]).toEqual(str);
             });
-            
+
             it("sets a new optionIndex on mouse hover", function () {
                 mockScope.optionMouseover(1);
                 expect(mockScope.optionIndex).toEqual(1);
