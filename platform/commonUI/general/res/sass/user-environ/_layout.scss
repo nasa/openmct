@@ -227,8 +227,13 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
     top: $ueTopBarH + $interiorMarginLg;
 }
 
-.l-object-wrapper-inner {
-    @include trans-prop-nice-resize(0.25s);
+.l-object-wrapper {
+    padding: 0;
+    @include trans-prop-nice((padding), 0.25s);
+    .l-edit-controls {
+        @include trans-prop-nice((height), 0.5s);
+        height: 0;
+    }
 }
 
 .object-browse-bar .s-button,
@@ -345,46 +350,14 @@ body.desktop {
 
 .s-status-editing {
     .l-object-wrapper {
-        $t2Dur: $browseToEditAnimMs;
-        $t1Dur: $t2Dur / 2;
-        $pulseDur: $editBorderPulseMs;
-        $bC0: rgba($colorEditAreaFg, 0.5);
-        $bC100: rgba($colorEditAreaFg, 1);
-
         background-color: $colorEditAreaBg;
         border-radius: $controlCr;
-        border: 1px dotted $bC0;
-
-        // Transition 1
-        @include keyframes(wrapperIn) {
-            from { border: 0px dotted transparent; padding: 0; }
-            to { border: 1px dotted $bC0; padding: 5px; }
-        }
-
-        // Do last
-        @include keyframes(pulseNew) {
-            from  { border-color: $bC0; }
-            to { border-color: $bC100; }
-        }
-
-        @include animation-name(wrapperIn, pulseNew);
-        @include animation-duration($t1Dur, $pulseDur);
-        @include animation-delay(0s, $t1Dur + $t2Dur);
-        @include animation-direction(normal, alternate);
-        @include animation-fill-mode(both, none);
-        @include animation-iteration-count(1, infinite);
-        @include animation-timing-function(ease-in-out, linear);
-
+        border: 1px dotted $colorEditAreaFg;
+        padding: $interiorMargin;
 
         .l-edit-controls {
-            height: 0;
+            height: $ueEditToolBarH + $interiorMargin; margin-bottom: $interiorMargin;
             border-bottom: 1px solid $colorInteriorBorder;
-            // Transition 2: reveal edit controls
-            @include keyframes(editIn) {
-                from { border-bottom: 0px solid transparent; height: 0; margin-bottom: 0; }
-                to { border-bottom: 1px solid $colorInteriorBorder; height: $ueEditToolBarH + $interiorMargin; margin-bottom: $interiorMargin; }
-            }
-            @include animToParams(editIn, $dur: $t2Dur, $delay: $t1Dur);
             .tool-bar {
                 right: $interiorMargin;
             }
