@@ -98,7 +98,7 @@ define([
                             url: IMAGE_SAMPLES[index]
                         });
                         index += 1;
-                    }, 1000);
+                    }, 5000);
 
                     return function (interval) {
                         clearInterval(interval);
