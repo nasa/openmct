@@ -30,10 +30,10 @@ define(
                 oldDomainObject,
                 newDomainObject,
                 unsubscribe,
-                callback,
                 metadata,
                 prefix,
-                controller;
+                controller,
+                hasLoaded;
 
             beforeEach(function () {
                 $scope = jasmine.createSpyObj('$scope', ['$on', '$watch']);
@@ -53,6 +53,7 @@ define(
                     ]),
                     telemetry: jasmine.createSpyObj('telemetryAPI', [
                         'subscribe',
+                        'request',
                         'getValueFormatter',
                         'getMetadata'
                     ])
@@ -79,84 +80,104 @@ define(
                     });
                     return formatter;
                 });
+                hasLoaded = false;
+                openmct.telemetry.request.andCallFake(function () {
+                    setTimeout(function () {
+                        hasLoaded = true;
+                    }, 10);
+                    return Promise.resolve([{
+                            timestamp: 1434600258123,
+                            value: 'some/url'
+                        }]);
+                });
                 metadata.value.andReturn("timestamp");
                 metadata.valuesForHints.andReturn(["value"]);
 
                 controller = new ImageryController($scope, openmct);
 
-                waitsFor(function () {
-                    return openmct.telemetry.subscribe.calls.length > 0;
-                }, 100);
+            });
 
-                runs(function () {
-                    callback =
-                        openmct.telemetry.subscribe.mostRecentCall.args[1];
+            describe("when loaded", function () {
+                var callback;
+                beforeEach(function () {
+                    waitsFor(function () {
+                        return hasLoaded;
+                    }, 500);
+
+
+                    runs(function () {
+                        callback =
+                            openmct.telemetry.subscribe.mostRecentCall.args[1];
+                    });
                 });
-            });
 
-            it("subscribes to telemetry", function () {
-                expect(openmct.telemetry.subscribe).toHaveBeenCalledWith(
-                    newDomainObject,
-                    jasmine.any(Function)
-                );
-            });
 
-            it("unsubscribes when scope is destroyed", function () {
-                expect(unsubscribe).not.toHaveBeenCalled();
-
-                // Find the $destroy listener and call it
-                $scope.$on.calls.forEach(function (call) {
-                    if (call.args[0] === '$destroy') {
-                        call.args[1]();
-                    }
+                it("uses LAD telemetry", function () {
+                    expect(openmct.telemetry.request).toHaveBeenCalledWith(
+                        newDomainObject,
+                        {
+                            strategy: 'latest',
+                            size: 1
+                        }
+                    );
+                    expect(controller.getTime()).toEqual(prefix + 1434600258123);
+                    expect(controller.getImageUrl()).toEqual('some/url');
                 });
-                expect(unsubscribe).toHaveBeenCalled();
-            });
 
-            it("exposes the latest telemetry values", function () {
-                // 06/18/2015 4:04am UTC
-                var testTimestamp = 1434600258123,
-                    testUrl = "some/url",
-                    nextTimestamp = 1434600259456, // 4:05.456
-                    nextUrl = "some/other/url";
 
-                // Call back with telemetry data
-                callback({ timestamp: testTimestamp, value: testUrl });
+                it("exposes the latest telemetry values", function () {
+                    callback({
+                        timestamp: 1434600259456,
+                        value: "some/other/url"
+                    });
 
-                expect(controller.getTime()).toEqual(prefix + testTimestamp);
-                expect(controller.getImageUrl()).toEqual(testUrl);
+                    expect(controller.getTime()).toEqual(prefix + 1434600259456);
+                    expect(controller.getImageUrl()).toEqual("some/other/url");
+                });
 
-                callback({ timestamp: nextTimestamp, value: nextUrl });
+                it("allows updates to be paused and unpaused", function () {
+                    var newTimestamp = 1434600259456,
+                        newUrl = "some/other/url",
+                        initialTimestamp = controller.getTime(),
+                        initialUrl = controller.getImageUrl();
 
-                expect(controller.getTime()).toEqual(prefix + nextTimestamp);
-                expect(controller.getImageUrl()).toEqual(nextUrl);
-            });
+                    expect(initialTimestamp).not.toBe(prefix + newTimestamp);
+                    expect(initialUrl).not.toBe(newUrl);
+                    expect(controller.paused()).toBeFalsy();
 
-            it("allows updates to be paused", function () {
-                // 06/18/2015 4:04am UTC
-                var testTimestamp = 1434600258123,
-                    testUrl = "some/url",
-                    nextTimestamp = 1434600259456, // 4:05.456
-                    nextUrl = "some/other/url";
+                    controller.paused(true);
+                    expect(controller.paused()).toBeTruthy();
+                    callback({ timestamp: newTimestamp, value: newUrl });
 
-                // Call back with telemetry data
-                callback({ timestamp: testTimestamp, value: testUrl });
+                    expect(controller.getTime()).toEqual(initialTimestamp);
+                    expect(controller.getImageUrl()).toEqual(initialUrl);
 
-                expect(controller.getTime()).toEqual(prefix + testTimestamp);
-                expect(controller.getImageUrl()).toEqual(testUrl);
+                    controller.paused(false);
+                    expect(controller.paused()).toBeFalsy();
+                    expect(controller.getTime()).toEqual(prefix + newTimestamp);
+                    expect(controller.getImageUrl()).toEqual(newUrl);
+                });
 
-                expect(controller.paused()).toBeFalsy();
-                controller.paused(true); // Pause!
-                expect(controller.paused()).toBeTruthy();
+                it("subscribes to telemetry", function () {
+                    expect(openmct.telemetry.subscribe).toHaveBeenCalledWith(
+                        newDomainObject,
+                        jasmine.any(Function)
+                    );
+                });
 
-                callback({ timestamp: nextTimestamp, value: nextUrl });
+                it("unsubscribes when scope is destroyed", function () {
+                    expect(unsubscribe).not.toHaveBeenCalled();
 
-                expect(controller.getTime()).toEqual(prefix + testTimestamp);
-                expect(controller.getImageUrl()).toEqual(testUrl);
+                    $scope.$on.calls.forEach(function (call) {
+                        if (call.args[0] === '$destroy') {
+                            call.args[1]();
+                        }
+                    });
+                    expect(unsubscribe).toHaveBeenCalled();
+                });
             });
 
             it("initially shows an empty string for date/time", function () {
-                // Do not invoke callback...
                 expect(controller.getTime()).toEqual("");
                 expect(controller.getImageUrl()).toEqual("");
             });

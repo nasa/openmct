@@ -141,4 +141,3 @@ define(
         return ImageryController;
     }
 );
-
