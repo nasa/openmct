@@ -1,0 +1,27 @@
+.imagery-timeline {
+	height: auto;
+	background-color: black;
+	overflow: auto;	
+	white-space: nowrap;
+	padding:5px;
+	padding-bottom: 15px;
+
+	border-radius: 10px;
+}
+
+.timeline-img {
+	height: 100px;
+	display: inline-block;
+}
+
+.timeline-entry {
+	white-space: nowrap;
+	display: inline;
+}
+
+.timeline-entry p {
+	font-size: 12px;
+	padding: 0px;
+	margin: 0px;
+	color: white;
+}
