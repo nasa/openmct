@@ -32,6 +32,7 @@ define([
     './policies/AdapterCompositionPolicy',
     './policies/AdaptedViewPolicy',
     './runs/AlternateCompositionInitializer',
+    './runs/TimeSettingsURLHandler',
     'text!./templates/adapted-view-template.html'
 ], function (
     legacyRegistry,
@@ -45,6 +46,7 @@ define([
     AdapterCompositionPolicy,
     AdaptedViewPolicy,
     AlternateCompositionInitializer,
+    TimeSettingsURLHandler,
     adaptedViewTemplate
 ) {
     legacyRegistry.register('src/adapter', {
@@ -121,6 +123,16 @@ define([
                 {
                     implementation: AlternateCompositionInitializer,
                     depends: ["openmct"]
+                },
+                {
+                    implementation: function (openmct, $location, $rootScope) {
+                        return new TimeSettingsURLHandler(
+                            openmct.time,
+                            $location,
+                            $rootScope
+                        );
+                    },
+                    depends: ["openmct", "$location", "$rootScope"]
                 }
             ],
             views: [
