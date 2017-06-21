@@ -26,7 +26,7 @@
              ng-class="{ holder: !(ngModel.input === '' || ngModel.input === undefined) }">
             <div class="holder flex-elem grows">
                 <input class="search-input"
-                       type="text"
+                       type="text" tabindex="10000"
                        ng-model="ngModel.input"
                        ng-keyup="controller.search()"/>
                 <a class="clear-icon clear-input icon-x-in-circle"
