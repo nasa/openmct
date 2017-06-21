@@ -20,44 +20,50 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    ["../../src/controllers/AutocompleteController"],
-    function (AutocompleteController) {
+define([
+    "../../src/controllers/AutocompleteController",
+    "angular"
+], function (
+    AutocompleteController,
+    angular
+) {
 
-        describe("The autocomplete controller", function () {
-            var mockScope,
-                controller;
+    describe("The autocomplete controller", function () {
+        var mockScope,
+            mockElement,
+            controller;
 
-            beforeEach(function () {
-                mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
-                mockScope.options = ['Asia/Dhaka', 'UTC', 'Toronto', 'Asia/Shanghai', 'Hotel California'];
-                mockScope.ngModel = [null, null, null, null, null];
-                controller = new AutocompleteController(mockScope);
-            });
-
-            it("makes optionNames array equal to options if options is an array of string", function () {
-                expect(mockScope.optionNames).toEqual(mockScope.options);
-            });
-
-            it("filters options by returning array containing optionId and name", function () {
-                mockScope.filterOptions('Asia');
-                var filteredOptions = [{ optionId : 0, name : 'Asia/Dhaka' },
-                                        { optionId : 1, name : 'Asia/Shanghai' }];
-                expect(mockScope.filteredOptions).toEqual(filteredOptions);
-            });
-
-            it("fills input with given string", function () {
-                var str = "UTC";
-                mockScope.fillInput(str);
-                expect(mockScope.hideOptions).toEqual(true);
-                expect(mockScope.ngModel[4]).toEqual(str);
-            });
-
-            it("sets a new optionIndex on mouse hover", function () {
-                mockScope.optionMouseover(1);
-                expect(mockScope.optionIndex).toEqual(1);
-            });
-
+        beforeEach(function () {
+            mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
+            mockScope.options = ['Asia/Dhaka', 'UTC', 'Toronto', 'Asia/Shanghai', 'Hotel California'];
+            mockScope.ngModel = [null, null, null, null, null];
+            mockScope.field = 4;
+            mockElement = angular.element("<div></div>");
+            controller = new AutocompleteController(mockScope, mockElement);
         });
-    }
-);
+
+        it("makes optionNames array equal to options if options is an array of string", function () {
+            expect(mockScope.optionNames).toEqual(mockScope.options);
+        });
+
+        it("filters options by returning array containing optionId and name", function () {
+            mockScope.filterOptions('Asia');
+            var filteredOptions = [{ optionId : 0, name : 'Asia/Dhaka' },
+                                    { optionId : 1, name : 'Asia/Shanghai' }];
+            expect(mockScope.filteredOptions).toEqual(filteredOptions);
+        });
+
+        it("fills input with given string", function () {
+            var str = "UTC";
+            mockScope.fillInput(str);
+            expect(mockScope.hideOptions).toEqual(true);
+            expect(mockScope.ngModel[mockScope.field]).toEqual(str);
+        });
+
+        it("sets a new optionIndex on mouse hover", function () {
+            mockScope.optionMouseover(1);
+            expect(mockScope.optionIndex).toEqual(1);
+        });
+
+    });
+});
