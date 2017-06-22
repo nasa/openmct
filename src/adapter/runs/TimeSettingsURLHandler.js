@@ -31,6 +31,7 @@ define([], function () {
         END_DELTA: 'tc.endDelta'
     };
     var TIME_EVENTS = ['bounds', 'timeSystem', 'clock', 'clockOffsets'];
+    // Used to shorthand calls to $location, which clears null parameters
     var NULL_PARAMETERS = { key: null, start: null, end: null };
 
     /**
