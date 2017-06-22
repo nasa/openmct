@@ -31,6 +31,8 @@ define([], function () {
         END_DELTA: 'tc.endDelta'
     };
     var TIME_EVENTS = ['bounds', 'timeSystem', 'clock', 'clockOffsets'];
+    // Used to shorthand calls to $location, which clears null parameters
+    var NULL_PARAMETERS = { key: null, start: null, end: null };
 
     /**
      * Communicates settings from the URL to the time API,
@@ -53,24 +55,22 @@ define([], function () {
         var clock = this.time.clock();
         var fixed = !clock;
         var mode = fixed ? 'fixed' : clock.key;
-        var timeSystem = this.time.timeSystem().key;
+        var timeSystem = this.time.timeSystem() || NULL_PARAMETERS;
+        var bounds = fixed ? this.time.bounds() : NULL_PARAMETERS;
+        var deltas = fixed ? NULL_PARAMETERS : this.time.clockOffsets();
+
+        bounds = bounds || NULL_PARAMETERS;
+        deltas = deltas || NULL_PARAMETERS;
+        if (deltas.start) {
+            deltas = { start: -deltas.start, end: deltas.end };
+        }
 
         this.$location.search(SEARCH.MODE, mode);
-        this.$location.search(SEARCH.TIME_SYSTEM, timeSystem);
-
-        if (fixed) {
-            var bounds = this.time.bounds();
-            this.$location.search(SEARCH.START_BOUND, bounds.start);
-            this.$location.search(SEARCH.END_BOUND, bounds.end);
-            this.$location.search(SEARCH.START_DELTA, null);
-            this.$location.search(SEARCH.END_DELTA, null);
-        } else {
-            var deltas = this.time.clockOffsets();
-            this.$location.search(SEARCH.START_BOUND, null);
-            this.$location.search(SEARCH.END_BOUND, null);
-            this.$location.search(SEARCH.START_DELTA, -deltas.start);
-            this.$location.search(SEARCH.END_DELTA, deltas.end);
-        }
+        this.$location.search(SEARCH.TIME_SYSTEM, timeSystem.key);
+        this.$location.search(SEARCH.START_BOUND, bounds.start);
+        this.$location.search(SEARCH.END_BOUND, bounds.end);
+        this.$location.search(SEARCH.START_DELTA, deltas.start);
+        this.$location.search(SEARCH.END_DELTA, deltas.end);
     };
 
     TimeSettingsURLHandler.prototype.updateTime = function () {
