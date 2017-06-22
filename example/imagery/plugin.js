@@ -48,6 +48,56 @@ define([
                 "https://www.hq.nasa.gov/alsj/a16/AS16-117-18748.jpg"
             ];
 
+        function pointForTimestamp(timestamp) {
+            return {
+                utc: Math.floor(timestamp / 5000) * 5000,
+                url: IMAGE_SAMPLES[Math.floor(timestamp / 5000) % IMAGE_SAMPLES.length]
+            };
+        }
+
+        var realtimeProvider = {
+            supportsSubscribe: function (domainObject) {
+                return domainObject.type === 'example.imagery';
+            },
+            subscribe: function (domainObject, callback) {
+                var interval = setInterval(function () {
+                    callback(pointForTimestamp(Date.now()));
+                }, 5000);
+
+                return function (interval) {
+                    clearInterval(interval);
+                };
+            }
+        };
+
+        var historicalProvider = {
+            supportsRequest: function (domainObject, options) {
+                return domainObject.type === 'example.imagery'
+                    && options.strategy !== 'latest';
+            },
+            request: function (domainObject, options) {
+                var start = options.start;
+                var end = options.end;
+                var data = [];
+                while (start < end) {
+                    data.push(pointForTimestamp(start));
+                    start += 5000;
+                }
+                return Promise.resolve(data);
+            }
+        };
+
+        var ladProvider = {
+            supportsRequest: function (domainObject, options) {
+                return domainObject.type === 'example.imagery' &&
+                    options.strategy === 'latest';
+            },
+            request: function (domainObject, options) {
+                return Promise.resolve([pointForTimestamp(Date.now())]);
+            }
+        };
+
+
         return function install(openmct) {
             openmct.types.addType('example.imagery', {
                 key: 'example.imagery',
@@ -80,31 +130,9 @@ define([
                 }
             });
 
-            openmct.telemetry.addProvider({
-                supportsSubscribe: function (domainObject) {
-                    return domainObject.type === 'example.imagery';
-                },
-                subscribe: function (domainObject, callback) {
-                    var index = 0,
-                        end = IMAGE_SAMPLES.length,
-                        interval;
-
-                    interval = setInterval(function () {
-                        if (index >= end) {
-                            index = 0;
-                        }
-                        callback({
-                            utc: Date.now(),
-                            url: IMAGE_SAMPLES[index]
-                        });
-                        index += 1;
-                    }, 1000);
-
-                    return function (interval) {
-                        clearInterval(interval);
-                    };
-                }
-            });
+            openmct.telemetry.addProvider(realtimeProvider);
+            openmct.telemetry.addProvider(historicalProvider);
+            openmct.telemetry.addProvider(ladProvider);
         };
     }
 

@@ -76,6 +76,14 @@ define(
                         .getValueFormatter(metadata.valuesForHints(['image'])[0]);
                     this.unsubscribe = this.openmct.telemetry
                         .subscribe(this.domainObject, this.updateValues);
+                    this.openmct.telemetry
+                        .request(this.domainObject, {
+                            strategy: 'latest',
+                            size: 1
+                        })
+                        .then(function (values) {
+                            this.updateValues(values[0]);
+                        }.bind(this));
                 }.bind(this));
         };
 
@@ -133,4 +141,3 @@ define(
         return ImageryController;
     }
 );
-
