@@ -97,6 +97,21 @@ define(['./TimeSettingsURLHandler'], function (TimeSettingsURLHandler) {
                 });
             });
 
+            describe("when " + event + " time event occurs with no time system", function () {
+                beforeEach(function () {
+                    time.timeSystem.andReturn(undefined);
+                    time.on.calls.forEach(function (call) {
+                        if (call.args[0] === event) {
+                            call.args[1]();
+                        }
+                    });
+                });
+
+                it("clears the time system from the URL", function () {
+                    expect(search['tc.timeSystem']).toBeUndefined();
+                });
+            });
+
             describe("when " + event + " time event occurs with a clock", function () {
                 var expected;
 
