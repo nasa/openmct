@@ -329,6 +329,13 @@ textarea.lg { position: relative; height: 300px; }
             color: $colorInspectorSectionHeaderFg;
         }
     }
+    .autocompleteWarning {
+        color: $colorFormInvalid;
+        position: absolute;
+        font-size: 11px;
+        left: 235px;
+        bottom: 7px;
+    }
 }
 
 /******************************************************** OBJECT-HEADER */
