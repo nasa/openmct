@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['./TextProxy'],
-    function (TextProxy) {
+    ['./TextProxy','./AccessorMutator'],
+    function (TextProxy,AccessorMutator) {
 
         // Method names to expose from this proxy
         var HIDE = 'hideTitle', SHOW = 'showTitle';

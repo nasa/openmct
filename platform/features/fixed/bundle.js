@@ -142,7 +142,73 @@ define([
                                             "cssClass": "l-input-lg",
                                             "required": true
                                         }
+                                    }
+                                ]
+                            },
+                            {
+                                "items": [
+                                    {
+                                        "property": "x",
+                                        "text": "X",
+                                        "name": "X",
+                                        "cssClass": "l-input-sm",
+                                        "control": "textfield"
                                     },
+                                    {
+                                        "property":"y",
+                                        "text": "Y",
+                                        "name": "Y",
+                                        "cssClass": "l-input-sm",
+                                        "control": "textfield"
+                                    },
+                                    {
+                                        "method": "y1",
+                                        "text": "X1",
+                                        "name": "X1",
+                                        "cssClass": "l-input-sm",
+                                        "control" : "textfield"
+                                    },
+                                    {
+                                        "property": "y1",
+                                        "text": "Y1",
+                                        "name": "Y1",
+                                        "cssClass": "l-input-sm",
+                                        "control" : "textfield"
+                                    },
+                                    {
+                                        "property": "x2",
+                                        "text": "X2",
+                                        "name": "X2",
+                                        "cssClass": "l-input-sm",
+                                        "control" : "textfield"
+                                    },
+                                    {
+                                        "property": "y2",
+                                        "text": "Y2",
+                                        "name": "Y2",
+                                        "cssClass": "l-input-sm",
+                                        "control" : "textfield"
+                                    },
+                                    {
+                                        "property": "editHeight",
+                                        "text": "H",
+                                        "name": "H",
+                                        "cssClass": "l-input-sm numerical",
+                                        "control": "textfield",
+                                        "description": "Resize change object height"
+                                    },
+                                    {
+                                        "property": "editWidth",
+                                        "text": "W",
+                                        "name": "W",
+                                        "cssClass": "l-input-sm numerical",
+                                        "control": "textfield",
+                                    }
+                                ]
+
+                            },
+                            {
+                                    "items":[
                                     {
                                         "property": "text",
                                         "cssClass": "icon-gear",

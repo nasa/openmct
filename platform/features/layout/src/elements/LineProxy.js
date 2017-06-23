@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['./ElementProxy', './LineHandle'],
-    function (ElementProxy, LineHandle) {
+    ['./ElementProxy', './LineHandle','./AccessorMutator'],
+    function (ElementProxy, LineHandle,AccessorMutator) {
 
         /**
          * Selection/diplay proxy for line elements of a fixed position

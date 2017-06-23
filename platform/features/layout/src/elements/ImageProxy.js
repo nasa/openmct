@@ -49,6 +49,10 @@ define(
              */
             proxy.url = new AccessorMutator(element, 'url');
 
+            //Expose width and height properties for editing
+            proxy.editWidth = new AccessorMutator(element, 'width', proxy.checkNumeric);
+            proxy.editHeight = new AccessorMutator(element, 'height', proxy.checkNumeric);
+
             return proxy;
         }
 
