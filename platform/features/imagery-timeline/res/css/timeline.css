@@ -1,27 +1,39 @@
-.imagery-timeline {
-	height: auto;
-	background-color: black;
-	overflow: auto;	
-	white-space: nowrap;
-	padding:5px;
-	padding-bottom: 15px;
-
-	border-radius: 10px;
+.timeline-container {
 }
 
+.imagery-timeline {
+	height: auto;
+	background-color: #333;
+	overflow-x: scroll;
+	white-space: nowrap;
+    padding-bottom:10px;
+}
+
+
 .timeline-img {
-	height: 100px;
-	display: inline-block;
+	height: 125px;
+/*	display: inline;*/
 }
 
 .timeline-entry {
-	white-space: nowrap;
-	display: inline;
+	display: inline-block;
+	background-color: #333;
 }
+
+.timeline-entry:hover {
+	background-color:#0099cc;
+}
+
 
 .timeline-entry p {
 	font-size: 12px;
 	padding: 0px;
+	padding-left: 5px;
 	margin: 0px;
-	color: white;
+	color: #fff;
+	cursor: default;
+}
+
+.timstamp {
+	display: inline;
 }

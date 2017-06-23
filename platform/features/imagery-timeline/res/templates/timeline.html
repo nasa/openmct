@@ -1,5 +1,9 @@
-<div class="imagery-timeline">
-	<img class="timeline-img"
-		src="https://www.jpl.nasa.gov/images/msl/20140203/pia17931-640.jpg"
-		ng-repeat="n in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]">
+
+<div class="l-image-thumbs-wrapper"ng-controller="ImageryTimelineController">
+	<div class="l-image-thumb-item" ng-repeat="image in images">
+		<img class="l-thumb"
+			src={{image['url']}}>
+			<div class="l-date">{{image['utc']}}</div>
+			<!-- <div class="l-time">16:03:0{{$index}}</div> -->
+	</div>
 </div>

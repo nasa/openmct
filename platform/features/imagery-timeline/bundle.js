@@ -1,7 +1,10 @@
 define([
-	'openmct'
+	'openmct',
+	'./src/controllers/ImageryTimelineController',
+	
 ], function (
-	openmct
+	openmct,
+	ImageryTimelineController
 ) {
 	openmct.legacyRegistry.register("platform/features/imagery-timeline", {
 		"name" : "Imagery Timeline",
@@ -20,6 +23,13 @@ define([
 			"stylesheets": [
 				{
 					"stylesheetUrl": "css/timeline.css"
+				}
+			],
+			"controllers": [
+				{
+					"key": "ImageryTimelineController",
+                    "implementation": ImageryTimelineController,
+                    "depends": ["$scope", "openmct"]
 				}
 			]
 		}
