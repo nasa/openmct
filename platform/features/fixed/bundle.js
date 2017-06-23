@@ -148,21 +148,21 @@ define([
                             {
                                 "items": [
                                     {
-                                        "property": "x",
+                                        "property": "editX",
                                         "text": "X",
                                         "name": "X",
                                         "cssClass": "l-input-sm",
                                         "control": "textfield"
                                     },
                                     {
-                                        "property":"y",
+                                        "property":"editY",
                                         "text": "Y",
                                         "name": "Y",
                                         "cssClass": "l-input-sm",
                                         "control": "textfield"
                                     },
                                     {
-                                        "property": "x1",
+                                        "method": "editX1",
                                         "text": "X1",
                                         "name": "X1",
                                         "cssClass": "l-input-sm",

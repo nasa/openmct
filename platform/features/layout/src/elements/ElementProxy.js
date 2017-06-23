@@ -164,17 +164,17 @@ define(
           *         or the current value of the new value is invalid.
           */
         ElementProxy.prototype.checkNumeric = function(value, current) {
-            // Allow field to be empty
+            var intValue = parseInt(value);
+            // Handle case of empty field by swapping in 0
             if (value === ''){
                 return 0;
             }
             // Else, check if the input is integral, and not, return current value
             // of the field
-            value = parseInt(value);
-            if ( isNaN(value) ){
+            if ( isNaN(intValue) ){
                 return current;
             } else {
-                return value;
+                return intValue;
             }
         };
 
