@@ -162,7 +162,7 @@ define([
                                         "control": "textfield"
                                     },
                                     {
-                                        "method": "y1",
+                                        "property": "x1",
                                         "text": "X1",
                                         "name": "X1",
                                         "cssClass": "l-input-sm",

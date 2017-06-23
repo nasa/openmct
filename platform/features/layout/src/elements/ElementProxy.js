@@ -166,7 +166,7 @@ define(
         ElementProxy.prototype.checkNumeric = function(value, current) {
             // Allow field to be empty
             if (value === ''){
-                return value;
+                return 0;
             }
             // Else, check if the input is integral, and not, return current value
             // of the field
