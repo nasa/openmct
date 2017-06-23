@@ -53,10 +53,10 @@ define(
             proxy.fill = new AccessorMutator(element, 'fill');
 
             //Expose x,y, width and height for editing
-            proxy.editWidth = new AccessorMutator(element,'width', proxy.checkNumeric);
-            proxy.editHeight = new AccessorMutator(element,'height', proxy.checkNumeric);
-            proxy.editX = new AccessorMutator(element,'x',proxy.checkNumeric);
-            proxy.editY = new AccessorMutator(element,'y', proxy.checkNumeric);
+            proxy.editWidth = new AccessorMutator(element, 'width', proxy.checkNumeric);
+            proxy.editHeight = new AccessorMutator(element, 'height', proxy.checkNumeric);
+            proxy.editX = new AccessorMutator(element, 'x', proxy.checkNumeric);
+            proxy.editY = new AccessorMutator(element,' y',  proxy.checkNumeric);
 
             return proxy;
         }

@@ -155,7 +155,7 @@ define([
                                         "control": "textfield"
                                     },
                                     {
-                                        "property":"editY",
+                                        "property": "editY",
                                         "text": "Y",
                                         "name": "Y",
                                         "cssClass": "l-input-sm",
@@ -202,13 +202,12 @@ define([
                                         "text": "W",
                                         "name": "W",
                                         "cssClass": "l-input-sm numerical",
-                                        "control": "textfield",
+                                        "control": "textfield"
                                     }
                                 ]
-
                             },
                             {
-                                    "items":[
+                                "items": [
                                     {
                                         "property": "text",
                                         "cssClass": "icon-gear",
