@@ -224,10 +224,21 @@ textarea {
 
 /******************************************************** INPUTS */
 input[type="text"],
-input[type="search"] {
+input[type="search"],
+input[type="number"] {
     @include nice-input();
+    vertical-align: baseline;
+    padding: $inputTextP;
     &.numeric {
         text-align: right;
+    }
+}
+
+.l-input-sm {
+    input[type="text"],
+    input[type="search"],
+    input[type="number"] {
+        width: 50px !important;
     }
 }
 
@@ -235,7 +246,6 @@ input[type="search"] {
 input[type="text"].lg {  width: 100% !important; }
 .l-input-med input[type="text"],
 input[type="text"].med { width: 200px !important; }
-.l-input-sm input[type="text"],
 input[type="text"].sm {  width: 50px !important; }
 .l-numeric input[type="text"],
 input[type="text"].numeric { text-align: right; }
