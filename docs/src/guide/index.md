@@ -933,9 +933,10 @@ Note that `templateUrl` is not supported for `containers`.
 
 Controls provide options for the `mct-control` directive. 
  
-Ten standard control types are included in the forms bundle:
+These standard control types are included in the forms bundle:
 
-* `textfield`: An area to enter plain text.
+* `textfield`: A text input to enter plain text.
+* `numberfield`: A text input to enter numbers.
 * `select`: A drop-down list of options.
 * `checkbox`: A box which may be checked/unchecked.
 * `color`: A color picker.

@@ -100,9 +100,10 @@ a form appropriate to pass to a `RegExp` constructor.
 
 ## Adding controls
 
-Four standard control types are included in the forms bundle:
+These control types are included in the forms bundle:
 
-* `textfield`: An area to enter plain text.
+* `textfield`: A text input to enter plain text.
+* `numberfield`: A text input to enter numbers.
 * `select`: A drop-down list of options.
 * `checkbox`: A box which may be checked/unchecked.
 * `color`: A color picker.
