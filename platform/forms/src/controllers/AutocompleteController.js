@@ -111,7 +111,6 @@ define(
                         name: option
                     };
                 });
-                $scope.invalidOption = $scope.filteredOptions.length === 0;
             };
 
             $scope.inputClicked = function () {

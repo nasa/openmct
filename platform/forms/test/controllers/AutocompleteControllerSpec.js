@@ -53,11 +53,6 @@ define([
             expect(mockScope.filteredOptions).toEqual(filteredOptions);
         });
 
-        it("checks if invalid option was typed", function () {
-            mockScope.filterOptions('openmct');
-            expect(mockScope.invalidOption).toEqual(true);
-        });
-
         it("fills input with given string", function () {
             var str = "UTC";
             mockScope.fillInput(str);
