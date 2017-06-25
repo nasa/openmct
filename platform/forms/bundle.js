@@ -32,6 +32,7 @@ define([
     "text!./res/templates/controls/datetime.html",
     "text!./res/templates/controls/select.html",
     "text!./res/templates/controls/textfield.html",
+    "text!./res/templates/controls/numberfield.html",
     "text!./res/templates/controls/textarea.html",
     "text!./res/templates/controls/button.html",
     "text!./res/templates/controls/color.html",
@@ -52,6 +53,7 @@ define([
     datetimeTemplate,
     selectTemplate,
     textfieldTemplate,
+    numberfieldTemplate,
     textareaTemplate,
     buttonTemplate,
     colorTemplate,
@@ -104,6 +106,10 @@ define([
                 {
                     "key": "textfield",
                     "template": textfieldTemplate
+                },
+                {
+                    "key": "numberfield",
+                    "template": numberfieldTemplate
                 },
                 {
                     "key": "textarea",

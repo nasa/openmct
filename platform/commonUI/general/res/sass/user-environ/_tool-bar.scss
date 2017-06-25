@@ -26,9 +26,11 @@
 	.l-control-group {
 		height: $btnToolbarH;
 	}
-	input[type="text"] {
+	input[type="text"],
+    input[type="search"],
+    input[type="number"] {
 		box-sizing: border-box;
-		font-size: .9em;
+		font-size: .8em;
 		height: $btnToolbarH;
 		margin-bottom: 1px;
 		position: relative;
