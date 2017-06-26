@@ -152,65 +152,100 @@ define([
                                         "text": "X",
                                         "name": "X",
                                         "cssClass": "l-input-sm",
+<<<<<<< HEAD
                                         "control": "numberfield",
                                         "min": "0"
+=======
+                                        "control": "textfield"
+>>>>>>> 39fe2fd7b6f0fd79e7f75ae9d04ba20d74d8e2c5
                                     },
                                     {
                                         "property": "editY",
                                         "text": "Y",
                                         "name": "Y",
                                         "cssClass": "l-input-sm",
+<<<<<<< HEAD
                                         "control": "numberfield",
                                         "min": "0"
+=======
+                                        "control": "textfield"
+>>>>>>> 39fe2fd7b6f0fd79e7f75ae9d04ba20d74d8e2c5
                                     },
                                     {
                                         "property": "editX1",
                                         "text": "X1",
                                         "name": "X1",
                                         "cssClass": "l-input-sm",
+<<<<<<< HEAD
                                         "control" : "numberfield",
                                         "min": "0"
+=======
+                                        "control" : "textfield"
+>>>>>>> 39fe2fd7b6f0fd79e7f75ae9d04ba20d74d8e2c5
                                     },
                                     {
                                         "property": "editY1",
                                         "text": "Y1",
                                         "name": "Y1",
                                         "cssClass": "l-input-sm",
+<<<<<<< HEAD
                                         "control" : "numberfield",
                                         "min": 0
+=======
+                                        "control" : "textfield"
+>>>>>>> 39fe2fd7b6f0fd79e7f75ae9d04ba20d74d8e2c5
                                     },
                                     {
                                         "property": "editX2",
                                         "text": "X2",
                                         "name": "X2",
                                         "cssClass": "l-input-sm",
+<<<<<<< HEAD
                                         "control" : "numberfield",
                                         "min": "0"
+=======
+                                        "control" : "textfield"
+>>>>>>> 39fe2fd7b6f0fd79e7f75ae9d04ba20d74d8e2c5
                                     },
                                     {
                                         "property": "editY2",
                                         "text": "Y2",
                                         "name": "Y2",
                                         "cssClass": "l-input-sm",
+<<<<<<< HEAD
                                         "control" : "numberfield",
                                         "min": "0"
+=======
+                                        "control" : "textfield"
+>>>>>>> 39fe2fd7b6f0fd79e7f75ae9d04ba20d74d8e2c5
                                     },
                                     {
                                         "property": "editHeight",
                                         "text": "H",
                                         "name": "H",
+<<<<<<< HEAD
                                         "cssClass": "l-input-sm",
                                         "control": "numberfield",
                                         "description": "Resize change object height",
                                         "min": "1"
+=======
+                                        "cssClass": "l-input-sm numerical",
+                                        "control": "textfield",
+                                        "description": "Resize change object height"
+>>>>>>> 39fe2fd7b6f0fd79e7f75ae9d04ba20d74d8e2c5
                                     },
                                     {
                                         "property": "editWidth",
                                         "text": "W",
                                         "name": "W",
+<<<<<<< HEAD
                                         "cssClass": "l-input-sm",
                                         "control": "numberfield",
                                         "min": "1"
+=======
+                                        "cssClass": "l-input-sm numerical",
+                                        "control": "textfield"
+>>>>>>> 39fe2fd7b6f0fd79e7f75ae9d04ba20d74d8e2c5
                                     }
                                 ]
                             },
