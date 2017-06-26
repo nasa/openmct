@@ -83,7 +83,7 @@
 
 .l-image-thumbs-wrapper {
 	//@include test(green);
-	direction: rtl;
+	//direction: rtl;
 	overflow-x: auto;
 	overflow-y: hidden;
 	padding-bottom: $interiorMargin;
@@ -114,7 +114,7 @@
 	width: $imageThumbsD + $imageThumbPad*2;
 	white-space: normal;
 	&:hover {
-		background: rgba(#fff, 0.2);
+		background: $colorThumbHoverBg;
 		.l-date,
 		.l-time {
 			color: #fff;

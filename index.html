@@ -30,10 +30,14 @@
     <script>
         var THIRTY_MINUTES = 30 * 60 * 1000;
 
-        require(['openmct'], function (openmct) {
+        require([
+            'openmct',
+            'platform/features/imagery-timeline/bundle'
+        ], function (openmct) {
             [
                 'example/eventGenerator',
-                'example/styleguide'
+                'example/styleguide',
+                'platform/features/imagery-timeline'
             ].forEach(
                 openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
             );
