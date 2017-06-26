@@ -154,7 +154,6 @@ define(
             proxy.editX2 = new AccessorMutator(element, 'x2');
             proxy.editY2 = new AccessorMutator(element, 'y2');
 
-
             return proxy;
         }
 
