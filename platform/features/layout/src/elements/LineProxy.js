@@ -149,17 +149,11 @@ define(
             };
 
             // Expose endpoint coordinates for editing
-<<<<<<< HEAD
             proxy.editX1 = new AccessorMutator(element, 'x');
             proxy.editY1 = new AccessorMutator(element, 'y');
             proxy.editX2 = new AccessorMutator(element, 'x2');
             proxy.editY2 = new AccessorMutator(element, 'y2');
-=======
-            proxy.editX1 = new AccessorMutator(element, 'x', proxy.checkNumeric);
-            proxy.editY1 = new AccessorMutator(element, 'y', proxy.checkNumeric);
-            proxy.editX2 = new AccessorMutator(element, 'x2', proxy.checkNumeric);
-            proxy.editY2 = new AccessorMutator(element, 'y2', proxy.checkNumeric);
->>>>>>> 39fe2fd7b6f0fd79e7f75ae9d04ba20d74d8e2c5
+
 
             return proxy;
         }
