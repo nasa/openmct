@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 define([
+    "moment-timezone",
     "./src/indicators/ClockIndicator",
     "./src/services/TickerService",
     "./src/controllers/ClockController",
@@ -34,6 +35,7 @@ define([
     "text!./res/templates/timer.html",
     'legacyRegistry'
 ], function (
+    MomentTimezone,
     ClockIndicator,
     TickerService,
     ClockController,
@@ -226,13 +228,20 @@ define([
                                     "cssClass": "l-inline"
                                 }
                             ]
+                        },
+                        {
+                            "key": "timezone",
+                            "name": "Timezone",
+                            "control": "autocomplete",
+                            "options": MomentTimezone.tz.names()
                         }
                     ],
                     "model": {
                         "clockFormat": [
                             "YYYY/MM/DD hh:mm:ss",
                             "clock12"
-                        ]
+                        ],
+                        "timezone": "UTC"
                     }
                 },
                 {

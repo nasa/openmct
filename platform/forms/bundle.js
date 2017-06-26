@@ -24,10 +24,12 @@ define([
     "./src/MCTForm",
     "./src/MCTToolbar",
     "./src/MCTControl",
+    "./src/controllers/AutocompleteController",
     "./src/controllers/DateTimeController",
     "./src/controllers/CompositeController",
     "./src/controllers/ColorController",
     "./src/controllers/DialogButtonController",
+    "text!./res/templates/controls/autocomplete.html",
     "text!./res/templates/controls/checkbox.html",
     "text!./res/templates/controls/datetime.html",
     "text!./res/templates/controls/select.html",
@@ -45,10 +47,12 @@ define([
     MCTForm,
     MCTToolbar,
     MCTControl,
+    AutocompleteController,
     DateTimeController,
     CompositeController,
     ColorController,
     DialogButtonController,
+    autocompleteTemplate,
     checkboxTemplate,
     datetimeTemplate,
     selectTemplate,
@@ -87,6 +91,10 @@ define([
                 }
             ],
             "controls": [
+                {
+                    "key": "autocomplete",
+                    "template": autocompleteTemplate
+                },
                 {
                     "key": "checkbox",
                     "template": checkboxTemplate
@@ -137,6 +145,14 @@ define([
                 }
             ],
             "controllers": [
+                {
+                    "key": "AutocompleteController",
+                    "implementation": AutocompleteController,
+                    "depends": [
+                        "$scope",
+                        "$element"
+                    ]
+                },
                 {
                     "key": "DateTimeController",
                     "implementation": DateTimeController,

@@ -32,6 +32,7 @@ requirejs.config({
         "html2canvas": "bower_components/html2canvas/build/html2canvas.min",
         "moment": "bower_components/moment/moment",
         "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
+        "moment-timezone": "bower_components/moment-timezone/builds/moment-timezone-with-data",
         "saveAs": "bower_components/FileSaver.js/FileSaver.min",
         "screenfull": "bower_components/screenfull/dist/screenfull.min",
         "text": "bower_components/text/text",
