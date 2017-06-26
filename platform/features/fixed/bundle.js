@@ -152,57 +152,65 @@ define([
                                         "text": "X",
                                         "name": "X",
                                         "cssClass": "l-input-sm",
-                                        "control": "textfield"
+                                        "control": "numberfield",
+                                        "min": "0"
                                     },
                                     {
                                         "property": "editY",
                                         "text": "Y",
                                         "name": "Y",
                                         "cssClass": "l-input-sm",
-                                        "control": "textfield"
+                                        "control": "numberfield",
+                                        "min": "0"
                                     },
                                     {
                                         "property": "editX1",
                                         "text": "X1",
                                         "name": "X1",
                                         "cssClass": "l-input-sm",
-                                        "control" : "textfield"
+                                        "control" : "numberfield",
+                                        "min": "0"
                                     },
                                     {
                                         "property": "editY1",
                                         "text": "Y1",
                                         "name": "Y1",
                                         "cssClass": "l-input-sm",
-                                        "control" : "textfield"
+                                        "control" : "numberfield",
+                                        "min": 0
                                     },
                                     {
                                         "property": "editX2",
                                         "text": "X2",
                                         "name": "X2",
                                         "cssClass": "l-input-sm",
-                                        "control" : "textfield"
+                                        "control" : "numberfield",
+                                        "min": "0"
                                     },
                                     {
                                         "property": "editY2",
                                         "text": "Y2",
                                         "name": "Y2",
                                         "cssClass": "l-input-sm",
-                                        "control" : "textfield"
+                                        "control" : "numberfield",
+                                        "min": "0"
                                     },
                                     {
                                         "property": "editHeight",
                                         "text": "H",
                                         "name": "H",
-                                        "cssClass": "l-input-sm numerical",
-                                        "control": "textfield",
-                                        "description": "Resize change object height"
+                                        "cssClass": "l-input-sm",
+                                        "control": "numberfield",
+                                        "description": "Resize change object height",
+                                        "min": "1"
                                     },
                                     {
                                         "property": "editWidth",
                                         "text": "W",
                                         "name": "W",
-                                        "cssClass": "l-input-sm numerical",
-                                        "control": "textfield"
+                                        "cssClass": "l-input-sm",
+                                        "control": "numberfield",
+                                        "min": "1"
                                     }
                                 ]
                             },
