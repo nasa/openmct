@@ -25,7 +25,7 @@
 
     <div class="l-section">
         <h2>Context Menus</h2>
-        <div class="cols cols1-1">
+        <div class="cols cols1-2">
             <div class="col">
                 <p>Context menus are used extensively in Open MCT. They are created dynamically upon a contextual click and positioned at the user's cursor position coincident with the element that invoked them. Context menus must use absolute position and utilize a z-index that places them above other in-page elements.</p>
                 <p>See <a class="link" href="http://localhost:8080/#/browse/styleguide:home/controls?view=styleguide.standards">User Interface Standards</a> for more details on z-indexing in Open MCT. Context menus should be destroyed if the user clicks outside the menu element.</p>
@@ -46,7 +46,7 @@
 
     <div class="l-section">
         <h2>Dropdown Menus</h2>
-        <div class="cols cols1-1">
+        <div class="cols cols1-2">
             <div class="col">
                 <p>Dropdown menus are a dedicated, more discoverable context menu for a given object. Like context menus, dropdown menus are used extensively in Open MCT, and are most often associated with object header elements. They visually manifest as a downward pointing arrow <span class="context-available"></span> associated with an element, and when clicked displays a context menu at that location. See guidelines above about context menus in regards to z-indexing and element lifecycle.</p>
                 <p>Use a dropdown menu to encapsulate the important actions of an object in its header, or in a place that you'd normally use a context menu, but want to make the availability of the menu more apparent.</p>
@@ -71,7 +71,7 @@
 
     <div class="l-section">
         <h2>Checkbox Menus</h2>
-        <div class="cols cols1-1">
+        <div class="cols cols1-2">
             <div class="col">
                 <p>Checkbox menus add checkbox options to each item of a dropdown menu. Use this interface when you need to provide a quickly accessible multi-selection interface that disappears when not needed. For example, this element is used currently in our Search menu that allows users to filter results by a specific object type.</p>
             </div>
@@ -118,7 +118,7 @@
 
     <div class="l-section">
         <h2>Palettes</h2>
-        <div class="cols cols1-1">
+        <div class="cols cols1-2">
             <div class="col">
                 <p>Use a palette to provide color choices. Similar to context menus and dropdowns, palettes should be dismissed when a choice is made within them, or if the user clicks outside one.</p>
                 <p>Note that while this example uses static markup for illustrative purposes, we recommend that you use a front-end library with repeaters to build the color choices instead.</p>
