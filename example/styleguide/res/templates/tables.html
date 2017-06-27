@@ -28,10 +28,11 @@
         <div class="cols cols1-2">
             <div class="col">
                 <p>Tables in Open MCT are used to display data in a rows and columns format. There's no need to add any CSS classes to markup to effect the proper look, but be sure to use <code>&lt;th&gt;</code>'s in the <code>&lt;thead&gt;</code> section to get the proper look.</p>
+                <p>We recommend using class <code>numeric</code> in columns that display numbers: this class right-aligns the text and allows numbers to be compared more easily.</p>
             </div>
-<mct-example><table style="width: 100%">
+<mct-example><table>
     <thead>
-        <tr><th>Telemetry ID</th><th>Title</th><th class='sortable numeric'>DN</th><th class='sortable numeric'>EU</th><th>Status</th></tr>
+        <tr><th>Telemetry ID</th><th>Title</th><th>DN</th><th>EU</th><th>Status</th></tr>
     </thead>
     <tbody>
         <tr><td>ECA-250-28-E</td><td>Data Power Conduit A</td><td class='numeric'>3.440</td><td class='numeric'></td><td>stale</td></tr>
@@ -54,9 +55,9 @@
                 <p>Use the following CSS classes: add <code>sortable</code> to each <code>&lt;th&gt;</code> that is capable of sorting. The column that is currently driving the sort order should also be given the <code>sort</code> class. Finally, the sort direction is indicated with the addition of <code>asc</code> or <code>desc</code>. For example, a column that is currently sorting descending would have these classes attached to it: <code>sortable sort desc</code>.</p>
                 <p>Attach click handlers to the entire <code>&lt;th&gt;</code> element (not just to a link within) in order to maximize the usable click area in the header.</p>
             </div>
-<mct-example><table style="width: 100%">
+<mct-example><table>
     <thead>
-        <tr><th class='sortable sort asc'>Telemetry ID</th><th class='sortable'>Title</th><th class='sortable numeric'>DN</th><th class='sortable numeric'>EU</th><th class='sortable'>Status</th></tr>
+        <tr><th class='sortable sort asc'>Telemetry ID</th><th class='sortable'>Title</th><th class='sortable'>DN</th><th class='sortable'>EU</th><th class='sortable'>Status</th></tr>
     </thead>
     <tbody>
         <tr><td>ECA-250-28-E</td><td>Data Power Conduit A</td><td class='numeric'>3.440</td><td class='numeric'></td><td>stale</td></tr>
@@ -76,10 +77,10 @@
             <div class="col">
                 <p>Table styles also support the addition of column filters. Simply add <code>filterable</code> to the table's class attribute, and add text or number inputs to a row in the <code>&lt;thead&gt;</code> for each column that is filterable. Filtering should take place for each key press in a given field.</p>
             </div>
-<mct-example><table class="filterable" style="width: 100%">
+<mct-example><table class="filterable">
     <thead>
-        <tr><th class='sortable sort asc'>Telemetry ID</th><th class='sortable'>Title</th><th class='sortable numeric'>DN</th><th class='sortable numeric'>EU</th><th class='sortable'>Status</th></tr>
-        <tr><th><input type='text' /></th><th><input type='text' /></th><th><input type='number' /></th><th><input type='number' /></th><th><input type='text' /></th></tr>
+        <tr><th class='sortable sort asc'>Telemetry ID</th><th class='sortable'>Title</th><th class='sortable'>DN</th><th class='sortable'>EU</th><th class='sortable'>Status</th></tr>
+        <tr><th><input type='text' /></th><th><input type='text' /></th><th><input type='number' step="0.001" /></th><th><input type='number' step="0.001" /></th><th><input type='text' /></th></tr>
     </thead>
     <tbody>
         <tr><td>ECA-250-28-E</td><td>Data Power Conduit A</td><td class='numeric'>3.440</td><td class='numeric'></td><td>stale</td></tr>

@@ -21,7 +21,6 @@
  *****************************************************************************/
 .l-style-guide {
     font-size: 0.9em;
-    text-align: justify;
     margin: auto 10%;
 
     a.link {
@@ -66,6 +65,10 @@
         padding: 1px $interiorMargin;
     }
 
+    p {
+        text-align: justify;
+    }
+
     pre {
         display: block;
         margin: 0;
@@ -77,7 +80,6 @@
 
     table, ul {
         margin-bottom: $interiorMarginLg;
-        width: auto;
     }
 
     .themed {
