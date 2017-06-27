@@ -242,11 +242,40 @@ input[type="number"] {
     }
 }
 
-.l-input-lg input[type="text"],
-input[type="text"].lg {  width: 100% !important; }
-.l-input-med input[type="text"],
-input[type="text"].med { width: 200px !important; }
-input[type="text"].sm {  width: 50px !important; }
+.l-input-med {
+    input[type="text"],
+    input[type="search"],
+    input[type="number"] {
+        width: 200px !important;
+    }
+}
+
+.l-input-lg {
+    input[type="text"],
+    input[type="search"],
+    input[type="number"] {
+        width: 100% !important;
+    }
+}
+
+input[type="search"].sm,
+input[type="number"].sm,
+input[type="text"].sm {
+    width: 50px !important;
+}
+
+input[type="search"].med,
+input[type="number"].med,
+input[type="text"].med {
+    width: 200px !important;
+}
+
+input[type="search"].lg,
+input[type="number"].lg,
+input[type="text"].lg {
+    width: 100% !important;
+}
+
 .l-numeric input[type="text"],
 input[type="text"].numeric { text-align: right; }
 
