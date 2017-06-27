@@ -1,0 +1,97 @@
+<!--
+ Open MCT, Copyright (c) 2014-2016, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<div class="l-style-guide s-text">
+    <p class="doc-title">Open MCT Style Guide</p>
+    <h1>Tables</h1>
+
+    <div class="l-section">
+        <h2>Simple Table</h2>
+        <div class="cols cols1-2">
+            <div class="col">
+                <p>Tables in Open MCT are used to display data in a rows and columns format. There's no need to add any CSS classes to markup to effect the proper look, but be sure to use <code>&lt;th&gt;</code>'s in the <code>&lt;thead&gt;</code> section to get the proper look.</p>
+            </div>
+<mct-example><table style="width: 100%">
+    <thead>
+        <tr><th>Telemetry ID</th><th>Title</th><th class='sortable numeric'>DN</th><th class='sortable numeric'>EU</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>ECA-250-28-E</td><td>Data Power Conduit A</td><td class='numeric'>3.440</td><td class='numeric'></td><td>stale</td></tr>
+        <tr><td>ECG-841-04-E</td><td>Containment Power Bus B</td><td class='numeric'>97.710</td><td class='numeric'></td><td>alert</td></tr>
+        <tr><td>ECH-526-13-D</td><td>Containment Pressure Bus B</td><td class='numeric'>9.510</td><td class='numeric'></td><td>ok</td></tr>
+        <tr><td>ECL-498-70-C</td><td>Monitors Fuel Side Bus C</td><td class='numeric'>41.300</td><td class='numeric'></td><td>ok</td></tr>
+        <tr><td>ECN-545-31-A</td><td>Containment Power Side Bus C</td><td class='numeric'>73.390</td><td class='numeric'>6.116</td><td>alert</td></tr>
+    </tbody>
+</table>
+            </mct-example>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Sortable Table</h2>
+        <div class="cols cols1-2">
+            <div class="col">
+                <p>Table headers typically enable users to sort the table by a given column either ascending or descending. Clicking on the header sorts by that column, first ascending, then toggling to descending. Sometimes, particularly with data, there is a use case to display and maintain the &quot;original&quot; no-sorted order: however the data arrives, display it in that order. In that case, we recommend that clicking a header repeatedly would first sort ascending, then descending, then back to the original order - no sort.</p>
+                <p>Note that this table illustrates sorting by Telemetry ID ascending and isn't functional: clicking the headers won't do anything. </p>
+                <p>Use the following CSS classes: add <code>sortable</code> to each <code>&lt;th&gt;</code> that is capable of sorting. The column that is currently driving the sort order should also be given the <code>sort</code> class. Finally, the sort direction is indicated with the addition of <code>asc</code> or <code>desc</code>. For example, a column that is currently sorting descending would have these classes attached to it: <code>sortable sort desc</code>.</p>
+                <p>Attach click handlers to the entire <code>&lt;th&gt;</code> element (not just to a link within) in order to maximize the usable click area in the header.</p>
+            </div>
+<mct-example><table style="width: 100%">
+    <thead>
+        <tr><th class='sortable sort asc'>Telemetry ID</th><th class='sortable'>Title</th><th class='sortable numeric'>DN</th><th class='sortable numeric'>EU</th><th class='sortable'>Status</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>ECA-250-28-E</td><td>Data Power Conduit A</td><td class='numeric'>3.440</td><td class='numeric'></td><td>stale</td></tr>
+        <tr><td>ECG-841-04-E</td><td>Containment Power Bus B</td><td class='numeric'>97.710</td><td class='numeric'></td><td>alert</td></tr>
+        <tr><td>ECH-526-13-D</td><td>Containment Pressure Bus B</td><td class='numeric'>9.510</td><td class='numeric'></td><td>ok</td></tr>
+        <tr><td>ECL-498-70-C</td><td>Monitors Fuel Side Bus C</td><td class='numeric'>41.300</td><td class='numeric'></td><td>ok</td></tr>
+        <tr><td>ECN-545-31-A</td><td>Containment Power Side Bus C</td><td class='numeric'>73.390</td><td class='numeric'>6.116</td><td>alert</td></tr>
+    </tbody>
+</table>
+            </mct-example>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Table with Filters</h2>
+        <div class="cols cols1-2">
+            <div class="col">
+                <p>Table styles also support the addition of column filters. Simply add <code>filterable</code> to the table's class attribute, and add text or number inputs to a row in the <code>&lt;thead&gt;</code> for each column that is filterable. Filtering should take place for each key press in a given field.</p>
+            </div>
+<mct-example><table class="filterable" style="width: 100%">
+    <thead>
+        <tr><th class='sortable sort asc'>Telemetry ID</th><th class='sortable'>Title</th><th class='sortable numeric'>DN</th><th class='sortable numeric'>EU</th><th class='sortable'>Status</th></tr>
+        <tr><th><input type='text' /></th><th><input type='text' /></th><th><input type='number' /></th><th><input type='number' /></th><th><input type='text' /></th></tr>
+    </thead>
+    <tbody>
+        <tr><td>ECA-250-28-E</td><td>Data Power Conduit A</td><td class='numeric'>3.440</td><td class='numeric'></td><td>stale</td></tr>
+        <tr><td>ECG-841-04-E</td><td>Containment Power Bus B</td><td class='numeric'>97.710</td><td class='numeric'></td><td>alert</td></tr>
+        <tr><td>ECH-526-13-D</td><td>Containment Pressure Bus B</td><td class='numeric'>9.510</td><td class='numeric'></td><td>ok</td></tr>
+        <tr><td>ECL-498-70-C</td><td>Monitors Fuel Side Bus C</td><td class='numeric'>41.300</td><td class='numeric'></td><td>ok</td></tr>
+        <tr><td>ECN-545-31-A</td><td>Containment Power Side Bus C</td><td class='numeric'>73.390</td><td class='numeric'>6.116</td><td>alert</td></tr>
+    </tbody>
+</table>
+            </mct-example>
+        </div>
+    </div>
+</div>
+
+

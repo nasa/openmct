@@ -37,6 +37,7 @@ define(
             pages['controls'] = { name: "Controls", type: "styleguide.controls", location: "styleguide:ui-elements" };
             pages['input'] = { name: "Text Inputs", type: "styleguide.input", location: "styleguide:ui-elements" };
             pages['menus'] = { name: "Menus", type: "styleguide.menus", location: "styleguide:ui-elements" };
+            pages['tables'] = { name: "Tables", type: "styleguide.tables", location: "styleguide:ui-elements" };
 
             return {
                 getModels: function () {
