@@ -20,7 +20,8 @@ define([
                 { "key": "styleguide.controls", "name": "Controls", "cssClass": "icon-page", "description": "Buttons, selects, HTML controls" },
                 { "key": "styleguide.input", "name": "Text Inputs", "cssClass": "icon-page", "description": "Various text inputs" },
                 { "key": "styleguide.menus", "name": "Menus", "cssClass": "icon-page", "description": "Context menus, dropdowns" },
-                { "key": "styleguide.tables", "name": "Tables", "cssClass": "icon-page", "description": "" }
+                { "key": "styleguide.tables", "name": "Tables", "cssClass": "icon-page", "description": "" },
+                { "key": "styleguide.forms", "name": "Forms", "cssClass": "icon-page", "description": "" }
             ],
             "views": [
                 { "key": "styleguide.intro", "type": "styleguide.intro", "templateUrl": "templates/intro.html", "editable": false },
@@ -30,7 +31,8 @@ define([
                 { "key": "styleguide.controls", "type": "styleguide.controls", "templateUrl": "templates/controls.html", "editable": false },
                 { "key": "styleguide.input", "type": "styleguide.input", "templateUrl": "templates/input.html", "editable": false },
                 { "key": "styleguide.menus", "type": "styleguide.menus", "templateUrl": "templates/menus.html", "editable": false },
-                { "key": "styleguide.tables", "type": "styleguide.tables", "templateUrl": "templates/tables.html", "editable": false }
+                { "key": "styleguide.tables", "type": "styleguide.tables", "templateUrl": "templates/tables.html", "editable": false },
+                { "key": "styleguide.forms", "type": "styleguide.forms", "templateUrl": "templates/forms.html", "editable": false }
             ],
             "roots": [
                 {
@@ -65,7 +67,8 @@ define([
                             "controls",
                             "input",
                             "menus",
-                            "tables"
+                            "tables",
+                            "forms"
                         ]
                     }
                 }

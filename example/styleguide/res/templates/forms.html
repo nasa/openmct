@@ -1,0 +1,175 @@
+<!--
+ Open MCT, Copyright (c) 2014-2016, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<div class="l-style-guide s-text">
+    <p class="doc-title">Open MCT Style Guide</p>
+    <h1>Forms</h1>
+
+    <div class="l-section">
+        <h2>Forms</h2>
+        <div class="cols cols1-2">
+            <div class="col">
+                <p>Tables in Open MCT are used to display data in a rows and columns format. There's no need to add any CSS classes to markup to effect the proper look, but be sure to use <code>&lt;th&gt;</code>'s in the <code>&lt;thead&gt;</code> section to get the proper look.</p>
+                <p>We recommend using class <code>numeric</code> in columns that display numbers: this class right-aligns the text and allows numbers to be compared more easily.</p>
+            </div>
+<mct-example><form class="form validates l-flex-col">
+    <span class="l-form-section l-flex-col flex-elem"><div class="section-header flex-elem">Properties</div>
+        <ng-form class="form-row validates l-flex-row flex-elem first req">
+            <div class="label flex-elem">
+                Title
+            </div>
+            <div class="controls flex-elem">
+                <div class="wrapper">
+                    <span class="form-control shell ng-scope">
+                        <span class="field control l-input-lg">
+                            <input type="text" name="mctControl" required="required">
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </ng-form>
+        <ng-form class="form-row validates l-flex-row flex-elem">
+            <div class="label flex-elem">
+                Notes
+            </div>
+            <div class="controls flex-elem">
+                <div class="wrapper">
+                    <span class="form-control shell ng-scope">
+                        <span class="field control l-textarea-sm">
+                            <textarea></textarea>
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </ng-form><!-- end ngRepeat: row in section.rows -->
+    </span><!-- end ngRepeat: section in structure.sections --><span ng-repeat="section in structure.sections" class="l-form-section l-flex-col flex-elem grows">
+        <!-- ngIf: section.name --><div class="section-header flex-elem ng-binding ng-scope" ng-if="section.name">
+            Location
+        </div><!-- end ngIf: section.name -->
+                    <!-- ngRepeat: row in section.rows --><ng-form class="form-row validates l-flex-row flex-elem grows first ng-valid-required ng-valid-pattern ng-invalid ng-invalid-composition" ng-class="{
+                 first:$index < 1,
+                 req: row.required,
+                 valid: mctFormInner.$dirty &amp;&amp; mctFormInner.$valid,
+                 invalid: mctFormInner.$dirty &amp;&amp; !mctFormInner.$valid,
+                 first: $index < 1,
+                'l-controls-first': row.layout === 'control-first',
+                'l-controls-under': row.layout === 'controls-under'
+                 }" name="mctFormInner" ng-repeat="row in section.rows">
+            <div class="label flex-elem ng-binding" title="">
+                Save In
+            </div>
+            <div class="controls flex-elem">
+                <!-- ngIf: row.control --><div class="wrapper ng-scope" ng-if="row.control">
+                    <mct-control key="row.control" ng-model="ngModel" ng-required="row.required" ng-pattern="/\S/" options="row.options" structure="row" field="row.key" class="ng-pristine ng-untouched ng-isolate-scope ng-valid-required ng-valid-pattern ng-invalid ng-invalid-composition"><!--
+ Open MCT, Copyright (c) 2014-2017, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<div ng-controller="LocatorController" class="selector-list ng-scope">
+    <div class="wrapper">
+        <mct-representation key="'tree'" mct-object="rootObject" ng-model="treeModel" class="ng-pristine ng-untouched ng-valid ng-isolate-scope"><!--
+ Open MCT, Copyright (c) 2014-2017, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<mct-tree root-object="domainObject" selected-object="ngModel.selectedObject" on-selection="ngModel.onSelection" allow-selection="ngModel.allowSelection" class="ng-scope ng-isolate-scope">
+<ul class="tree"><li><span class="tree-item menus-to-left">
+<span class="ui-symbol view-control flex-elem has-children">
+</span><span class="rep-object-label" draggable="true">
+    <div class="t-object-label l-flex-row flex-elem grows">
+        <div class="t-item-icon flex-elem icon-folder"></div>
+        <div class="t-title-label flex-elem grows">Style Guide Home</div>
+    </div>
+</span></span>
+<span class="tree-item-subtree">
+</span></li><li><span class="tree-item menus-to-left">
+<span class="ui-symbol view-control flex-elem has-children">
+</span><span class="rep-object-label" draggable="true">
+    <div class="t-object-label l-flex-row flex-elem grows">
+        <div class="t-item-icon flex-elem icon-folder"></div>
+        <div class="t-title-label flex-elem grows">My Items</div>
+    </div>
+</span></span>
+<span class="tree-item-subtree">
+</span></li></ul></mct-tree>
+
+</mct-representation>
+    </div>
+</div>
+</mct-control>
+                </div><!-- end ngIf: row.control -->
+            </div>
+        </ng-form><!-- end ngRepeat: row in section.rows -->
+    </span><!-- end ngRepeat: section in structure.sections -->
+                </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            </mct-example>
+        </div>
+    </div>
+
+</div>
+
+
