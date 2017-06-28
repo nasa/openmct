@@ -46,6 +46,7 @@
 
     .w-markup {
         //Wrap markup example "pre" element
+        @include box-sizing(border-box);
         background-color: $colorCode;
         border-radius: $interiorMargin;
         display: block;
@@ -64,6 +65,7 @@
         display: inline-block;
         padding: 1px $interiorMargin;
         &.block {
+            @include box-sizing(border-box);
             display: block;
             margin-bottom: $interiorMarginLg;
             padding: $interiorMarginLg;
@@ -103,50 +105,49 @@
         border-top: 1px solid rgba(#999, 0.3);
         margin-top: 2em;
         padding-top: 1em;
+    }
 
-        .cols {
-            @include display(flex);
-            @include flex-direction(row);
+    .cols {
+        @include display(flex);
+        @include flex-direction(row);
 
+        .col {
+            @include flex(1 1 auto);
+            @include box-sizing(border-box);
+            &:not(:last-child) {
+                border-right: 1px solid $colorInteriorBorder;
+                margin-right: $colGutter;
+                padding-right: $colGutter;
+            }
+            img {
+                width: 100%;
+            }
+        }
+
+        &.cols1-1 {
+            // 2 cols, equal width
             .col {
-                @include flex(1 1 auto);
-                &:not(:last-child) {
-                    $v: $interiorMargin * 4;
-                    border-right: 1px solid $colorInteriorBorder;
-                    margin-right: $v;
-                    padding-right: $v;
-                }
-                min-width: 300px;
-                img {
-                    width: 100%;
-                }
+                width: 50%;
             }
+        }
 
-            &.cols1-1 {
-                // 2 cols, equal width
-                .col {
-                    width: 50%;
-                }
+        &.cols1-2 {
+            // 3 cols, first is 1/3 of the width
+            .col:first-child {
+                width: 33%;
             }
-
-            &.cols1-2 {
-                // 3 cols, first is 1/3 of the width
-                .col:first-child {
-                    width: 33%;
-                }
-                .col:last-child {
-                    width: 66%;
-                }
+            .col:last-child {
+                width: 66%;
             }
+        }
 
-            &.cols2-1 {
-                // 3 cols, first is 2/3 of the width
-                .col:first-child {
-                    width: 66%;
-                }
-                .col:last-child {
-                    width: 33%;
-                }
+        &.cols2-1 {
+            // 3 cols, first is 2/3 of the width
+            .col:first-child {
+                width: 66%;
+            }
+            .col:last-child {
+                width: 33%;
             }
         }
     }
@@ -202,6 +203,22 @@
                 position: absolute;
                 left: 50%;
                 @include transform(translateX(-50%));
+            }
+        }
+    }
+}
+
+body.mobile {
+    .l-style-guide {
+        margin: auto $interiorMarginLg;
+        .cols {
+            @include flex-direction(column);
+            .col {
+                border-right: none;
+                margin-bottom: $colGutter;
+                margin-right: 0;
+                padding-right: 0;
+                width: auto !important;
             }
         }
     }

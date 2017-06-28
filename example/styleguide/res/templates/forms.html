@@ -29,7 +29,8 @@
             <div class="col">
                 <p>Content TK</p>
             </div>
-<mct-example><form class="form validates l-flex-col">
+<mct-example><div class="hint" style="margin-bottom: 5px;">All fields marked <span class="req icon-asterisk"></span> are required.</div>
+<form class="form validates l-flex-col">
     <span class="l-form-section l-flex-col flex-elem">
         <div class="section-header flex-elem">Properties</div>
         <div class="form-row validates l-flex-row flex-elem first req">
@@ -38,16 +39,16 @@
             </div>
             <div class="controls flex-elem">
                 <div class="wrapper">
-                    <span class="form-control shell">
+                    <span class="form-control">
                         <span class="field control l-input-lg">
-                            <input type="text" name="mctControl" required="required">
+                            <input type="text">
                         </span>
                     </span>
                 </div>
             </div>
         </div>
 
-        <div class="form-row l-flex-row flex-elem validates req">
+        <div class="form-row l-flex-row flex-elem validates req invalid">
             <div class="label flex-elem">
                 Target
             </div>
@@ -63,7 +64,7 @@
                         </div>
                         <div class="fields">
                             <span class="field control date">
-                                <input type="text" name="date" placeholder="YYYY-MM-DD" ng-pattern="/\d\d\d\d-\d\d-\d\d/">
+                                <input type="text" name="date" placeholder="YYYY-MM-DD" ng-pattern="/\d\d\d\d-\d\d-\d\d/" value="foo">
                             </span>
                             <span class="field control time sm">
                                 <input type="number" name="hour" maxlength="2" min="0" max="23" integer="" ng-pattern="/\d+/">
@@ -83,7 +84,7 @@
             </div>
         </div>
 
-        <div class="form-row l-flex-row flex-elem">
+        <div class="form-row l-flex-row flex-elem validates valid">
             <div class="label flex-elem">
                 Layout Grid
             </div>
@@ -92,7 +93,7 @@
                     <div class="l-composite-control l-textfield l-input-sm l-numeric">
                         <span class="form-control shell ng-scope">
                             <span class="field control ">
-                                <input type="text">
+                                <input type="number" min="1" value="10">
                             </span>
                         </span>
                         <span class="composite-control-label ng-binding">
@@ -102,7 +103,7 @@
                     <div class="l-composite-control l-textfield l-input-sm l-numeric">
                         <span class="form-control shell ng-scope">
                             <span class="field control ">
-                                <input type="text">
+                                <input type="number" min="1" value="10">
                             </span>
                         </span>
                         <span class="composite-control-label ng-binding">
