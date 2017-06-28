@@ -95,31 +95,9 @@
                 min-width: 520px;
                 max-width: $max; max-height: $max;
             }
+
             @include phone {
                 overflow: auto;
-
-                .editor .form .form-row.l-flex-row  {
-                    // Display elements in a columnar view
-                    @include flex-direction(column);
-                    > .flex-elem {
-                        &:not(:first-child) {
-                            margin-top: $interiorMargin;
-                        }
-                        &.label {
-                            width: 100%;
-                        }
-                        &.controls {
-                            overflow: auto;
-                        }
-                    }
-
-                    &.validates > .label:before {
-                        position: relative;
-                        right: auto;
-                        line-height: inherit;
-                        margin-right: $interiorMargin;
-                    }
-                }
             }
 
             @include containerSubtle($colorOvrBg, $colorOvrFg);

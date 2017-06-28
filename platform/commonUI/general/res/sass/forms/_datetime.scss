@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 @mixin complexFieldHolder($myW) {
-	width: $myW + $interiorMargin;
+	width: $myW;
 	input[type="text"],
     input[type="number"] {
 		width: $myW;
@@ -30,8 +30,13 @@
 .complex.datetime {
 	span {
 		display: inline-block;
-		margin-right: $interiorMargin;
+		margin-right: $interiorMarginSm;
 	}
+
+    .field-hints,
+    .fields {
+        white-space: nowrap;
+    }
 
 	.fields {
 		margin-top: $interiorMarginSm 0;

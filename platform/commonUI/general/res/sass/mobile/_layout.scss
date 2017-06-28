@@ -131,16 +131,41 @@ body.mobile {
     }
 }
 
-body.phone.portrait {
-    .pane-tree-showing {
-        .pane.left.treeview {
-            width: $proporMenuOnly !important;
+body.phone {
+    .form .form-row.l-flex-row  {
+        // Display elements in a columnar view
+        @include flex-direction(column);
+        > .flex-elem {
+            &:not(:first-child) {
+                margin-top: $interiorMargin;
+            }
+            &.label {
+                width: 100%;
+            }
+            &.controls {
+                overflow: auto;
+            }
         }
-        .pane.right.items {
-            left: 0 !important;
-            @include transform(translateX($proporMenuOnly));
-            .holder-object-and-inspector {
-                opacity: 0;
+
+        &.validates > .label:before {
+            position: relative;
+            right: auto;
+            line-height: inherit;
+            margin-right: $interiorMargin;
+        }
+    }
+
+    &.portrait {
+        .pane-tree-showing {
+            .pane.left.treeview {
+                width: $proporMenuOnly !important;
+            }
+            .pane.right.items {
+                left: 0 !important;
+                @include transform(translateX($proporMenuOnly));
+                .holder-object-and-inspector {
+                    opacity: 0;
+                }
             }
         }
     }

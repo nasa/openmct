@@ -234,6 +234,13 @@ input[type="number"] {
     }
 }
 
+body.desktop {
+    input[type="number"] {
+        // Desktop-only, don't pad the side of the input with the spinner
+        padding: $inputTextPVert 0 $inputTextPVert $inputTextPHorz;
+    }
+}
+
 .l-input-sm {
     input[type="text"],
     input[type="search"],
