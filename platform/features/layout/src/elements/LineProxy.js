@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['./ElementProxy', './LineHandle','./AccessorMutator'],
-    function (ElementProxy, LineHandle,AccessorMutator) {
+    ['./ElementProxy', './LineHandle', './AccessorMutator'],
+    function (ElementProxy, LineHandle, AccessorMutator) {
 
         /**
          * Selection/diplay proxy for line elements of a fixed position
@@ -33,13 +33,14 @@ define(
          *        configuration
          * @param index the element's index within its array
          * @param {Array} elements the full array of elements
+         * @param {number[]} gridSize the current layout grid size in [x,y] from
          * @augments {platform/features/layout.ElementProxy}
          */
-        function LineProxy(element, index, elements) {
-            var proxy = new ElementProxy(element, index, elements),
+        function LineProxy(element, index, elements, gridSize) {
+            var proxy = new ElementProxy(element, index, elements, gridSize),
                 handles = [
-                    new LineHandle(element, 'x', 'y', 'x2', 'y2'),
-                    new LineHandle(element, 'x2', 'y2', 'x', 'y')
+                    new LineHandle(element, 'x', 'y', 'x2', 'y2', proxy.getGridSize()),
+                    new LineHandle(element, 'x2', 'y2', 'x', 'y', proxy.getGridSize())
                 ];
 
             /**

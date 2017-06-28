@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['./TextProxy','./AccessorMutator'],
-    function (TextProxy,AccessorMutator) {
+    ['./TextProxy'],
+    function (TextProxy) {
 
         // Method names to expose from this proxy
         var HIDE = 'hideTitle', SHOW = 'showTitle';
@@ -39,10 +39,11 @@ define(
          *        configuration
          * @param index the element's index within its array
          * @param {Array} elements the full array of elements
+         * @param {number[]} gridSize the current layout grid size in [x,y] form
          * @augments {platform/features/layout.ElementProxy}
          */
-        function TelemetryProxy(element, index, elements) {
-            var proxy = new TextProxy(element, index, elements);
+        function TelemetryProxy(element, index, elements, gridSize) {
+            var proxy = new TextProxy(element, index, elements, gridSize);
 
             // Toggle the visibility of the title
             function toggle() {

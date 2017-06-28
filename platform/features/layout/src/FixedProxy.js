@@ -61,6 +61,7 @@ define(
                 element.width = element.width || 1;
                 element.height = element.height || 1;
                 element.type = type;
+                element.useGrid = true;
 
                 // Finally, add it to the view's configuration
                 addElementCallback(element);

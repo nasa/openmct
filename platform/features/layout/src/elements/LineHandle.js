@@ -35,14 +35,16 @@ define(
          * @param {string} yProperty field which stores x position
          * @param {string} xOther field which stores x of other end
          * @param {string} yOther field which stores y of other end
+         * @param {number[]} gridSize the current layout grid size in [x,y] from
          * @implements {platform/features/layout.ElementHandle}
          */
-        function LineHandle(element, xProperty, yProperty, xOther, yOther) {
+        function LineHandle(element, xProperty, yProperty, xOther, yOther, gridSize) {
             this.element = element;
             this.xProperty = xProperty;
             this.yProperty = yProperty;
             this.xOther = xOther;
             this.yOther = yOther;
+            this.gridSize = gridSize;
         }
 
         LineHandle.prototype.x = function (value) {
@@ -81,6 +83,10 @@ define(
                 }
             }
             return element[yProperty];
+        };
+
+        LineHandle.prototype.getGridSize = function () {
+            return this.gridSize;
         };
 
         return LineHandle;

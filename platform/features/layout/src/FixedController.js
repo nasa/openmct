@@ -75,7 +75,7 @@ define(
             // Convert from element x/y/width/height to an
             // appropriate ng-style argument, to position elements.
             function convertPosition(elementProxy) {
-                var gridSize = self.gridSize;
+                var gridSize = elementProxy.getGridSize();
                 // Multiply position/dimensions by grid size
                 return {
                     left: (gridSize[0] * elementProxy.x()) + 'px',
@@ -114,6 +114,7 @@ define(
                 self.gridSize = layoutGrid;
 
                 self.elementProxies.forEach(function (elementProxy) {
+                    elementProxy.setGridSize(self.gridSize);
                     elementProxy.style = convertPosition(elementProxy);
                 });
             }
@@ -121,7 +122,7 @@ define(
             // Decorate an element for display
             function makeProxyElement(element, index, elements) {
                 var ElementProxy = ElementProxies[element.type],
-                    e = ElementProxy && new ElementProxy(element, index, elements);
+                    e = ElementProxy && new ElementProxy(element, index, elements, self.gridSize);
 
                 if (e) {
                     // Provide a displayable position (convert from grid to px)
@@ -254,7 +255,8 @@ define(
                     color: "",
                     titled: true,
                     width: DEFAULT_DIMENSIONS[0],
-                    height: DEFAULT_DIMENSIONS[1]
+                    height: DEFAULT_DIMENSIONS[1],
+                    useGrid: true
                 });
 
                 //Re-initialize objects, and subscribe to new object
@@ -518,4 +520,3 @@ define(
         return FixedController;
     }
 );
-

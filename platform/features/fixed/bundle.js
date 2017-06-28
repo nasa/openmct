@@ -177,7 +177,7 @@ define([
                                         "name": "Y1",
                                         "cssClass": "l-input-sm",
                                         "control" : "numberfield",
-                                        "min": 0
+                                        "min": "0"
                                     },
                                     {
                                         "property": "editX2",
@@ -212,6 +212,21 @@ define([
                                         "control": "numberfield",
                                         "description": "Resize object width",
                                         "min": "1"
+                                    },
+                                    {
+                                        "method": "setUnits",
+                                        "name": "Units",
+                                        "control": "menu-button",
+                                        "options": [
+                                            {
+                                                "name": "px",
+                                                "key": "px"
+                                            },
+                                            {
+                                                "name": "grid",
+                                                "key": "grid"
+                                            }
+                                        ]
                                     }
                                 ]
                             },
