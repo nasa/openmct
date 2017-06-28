@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['./AccessorMutator', './ResizeHandle'],
-    function (AccessorMutator, ResizeHandle) {
+    ['./AccessorMutator', './ResizeHandle', './UnitAccessorMutator'],
+    function (AccessorMutator, ResizeHandle, UnitAccessorMutator) {
 
         // Index deltas for changes in order
         var ORDERS = {
@@ -122,9 +122,10 @@ define(
              */
             this.height = new AccessorMutator(element, 'height');
 
+            this.useGrid = new UnitAccessorMutator(this);
+
             this.index = index;
             this.elements = elements;
-            this.useGrid = element.useGrid;
         }
 
         /**

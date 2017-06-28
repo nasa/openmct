@@ -212,21 +212,15 @@ define([
                                         "control": "numberfield",
                                         "description": "Resize object width",
                                         "min": "1"
-                                    },
+                                    }
+                                ]
+                            },
+                            {
+                                "items": [
                                     {
-                                        "method": "setUnits",
-                                        "name": "Units",
-                                        "control": "menu-button",
-                                        "options": [
-                                            {
-                                                "name": "px",
-                                                "key": "px"
-                                            },
-                                            {
-                                                "name": "grid",
-                                                "key": "grid"
-                                            }
-                                        ]
+                                        "property": "useGrid",
+                                        "name": "Snap to Grid",
+                                        "control": "checkbox"
                                     }
                                 ]
                             },
