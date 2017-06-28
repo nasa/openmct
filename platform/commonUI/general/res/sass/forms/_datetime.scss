@@ -21,7 +21,8 @@
  *****************************************************************************/
 @mixin complexFieldHolder($myW) {
 	width: $myW + $interiorMargin;
-	input[type="text"] {
+	input[type="text"],
+    input[type="number"] {
 		width: $myW;
 	}
 }
@@ -31,17 +32,6 @@
 		display: inline-block;
 		margin-right: $interiorMargin;
 	}
-
-/*
-	.field-hints,
-	.fields {
-	}
-
-	
-	.field-hints {
-
-	}
-	*/
 
 	.fields {
 		margin-top: $interiorMarginSm 0;

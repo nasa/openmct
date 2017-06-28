@@ -27,42 +27,150 @@
         <h2>Forms</h2>
         <div class="cols cols1-2">
             <div class="col">
-                <p>Tables in Open MCT are used to display data in a rows and columns format. There's no need to add any CSS classes to markup to effect the proper look, but be sure to use <code>&lt;th&gt;</code>'s in the <code>&lt;thead&gt;</code> section to get the proper look.</p>
-                <p>We recommend using class <code>numeric</code> in columns that display numbers: this class right-aligns the text and allows numbers to be compared more easily.</p>
+                <p>Content TK</p>
             </div>
 <mct-example><form class="form validates l-flex-col">
-    <span class="l-form-section l-flex-col flex-elem"><div class="section-header flex-elem">Properties</div>
-        <ng-form class="form-row validates l-flex-row flex-elem first req">
+    <span class="l-form-section l-flex-col flex-elem">
+        <div class="section-header flex-elem">Properties</div>
+        <div class="form-row validates l-flex-row flex-elem first req">
             <div class="label flex-elem">
                 Title
             </div>
             <div class="controls flex-elem">
                 <div class="wrapper">
-                    <span class="form-control shell ng-scope">
+                    <span class="form-control shell">
                         <span class="field control l-input-lg">
                             <input type="text" name="mctControl" required="required">
                         </span>
                     </span>
                 </div>
             </div>
-        </ng-form>
-        <ng-form class="form-row validates l-flex-row flex-elem">
+        </div>
+
+        <div class="form-row l-flex-row flex-elem validates req">
+            <div class="label flex-elem">
+                Target
+            </div>
+            <div class="controls flex-elem">
+                <div class="wrapper">
+                    <div class="form-control complex datetime">
+                        <div class="field-hints">
+                            <span class="hint date">Date</span>
+                            <span class="hint time sm">Hour</span>
+                            <span class="hint time sm">Min</span>
+                            <span class="hint time sm">Sec</span>
+                            <span class="hint timezone">Timezone</span>
+                        </div>
+                        <div class="fields">
+                            <span class="field control date">
+                                <input type="text" name="date" placeholder="YYYY-MM-DD" ng-pattern="/\d\d\d\d-\d\d-\d\d/">
+                            </span>
+                            <span class="field control time sm">
+                                <input type="number" name="hour" maxlength="2" min="0" max="23" integer="" ng-pattern="/\d+/">
+                            </span>
+                            <span class="field control time sm">
+                                <input type="number" name="min" maxlength="2" min="0" max="59" integer="" ng-pattern="/\d+/">
+                            </span>
+                            <span class="field control time sm">
+                                <input type="number" name="sec" maxlength="2" min="0" max="59" integer="" ng-pattern="/\d+/">
+                            </span>
+                            <span class="field control timezone">
+                                UTC
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row l-flex-row flex-elem">
+            <div class="label flex-elem">
+                Layout Grid
+            </div>
+            <div class="controls flex-elem">
+                <div class="wrapper">
+                    <div class="l-composite-control l-textfield l-input-sm l-numeric">
+                        <span class="form-control shell ng-scope">
+                            <span class="field control ">
+                                <input type="text">
+                            </span>
+                        </span>
+                        <span class="composite-control-label ng-binding">
+                            Horizontal grid (px)
+                        </span>
+                    </div>
+                    <div class="l-composite-control l-textfield l-input-sm l-numeric">
+                        <span class="form-control shell ng-scope">
+                            <span class="field control ">
+                                <input type="text">
+                            </span>
+                        </span>
+                        <span class="composite-control-label ng-binding">
+                            Vertical grid (px)
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row l-flex-row flex-elem">
             <div class="label flex-elem">
                 Notes
             </div>
             <div class="controls flex-elem">
                 <div class="wrapper">
-                    <span class="form-control shell ng-scope">
+                    <span class="form-control shell">
                         <span class="field control l-textarea-sm">
                             <textarea></textarea>
                         </span>
                     </span>
                 </div>
             </div>
-        </ng-form><!-- end ngRepeat: row in section.rows -->
-    </span><!-- end ngRepeat: section in structure.sections --><span ng-repeat="section in structure.sections" class="l-form-section l-flex-col flex-elem grows">
-        <!-- ngIf: section.name --><div class="section-header flex-elem ng-binding ng-scope" ng-if="section.name">
-            Location
+        </div>
+
+    </span>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span ng-repeat="section in structure.sections" class="l-form-section l-flex-col flex-elem grows">
+        <div class="section-header flex-elem">Location
         </div><!-- end ngIf: section.name -->
                     <!-- ngRepeat: row in section.rows --><ng-form class="form-row validates l-flex-row flex-elem grows first ng-valid-required ng-valid-pattern ng-invalid ng-invalid-composition" ng-class="{
                  first:$index < 1,
@@ -73,11 +181,11 @@
                 'l-controls-first': row.layout === 'control-first',
                 'l-controls-under': row.layout === 'controls-under'
                  }" name="mctFormInner" ng-repeat="row in section.rows">
-            <div class="label flex-elem ng-binding" title="">
+            <div class="label flex-elem" title="">
                 Save In
             </div>
             <div class="controls flex-elem">
-                <!-- ngIf: row.control --><div class="wrapper ng-scope" ng-if="row.control">
+                <!-- ngIf: row.control --><div class="wrapper" ng-if="row.control">
                     <mct-control key="row.control" ng-model="ngModel" ng-required="row.required" ng-pattern="/\S/" options="row.options" structure="row" field="row.key" class="ng-pristine ng-untouched ng-isolate-scope ng-valid-required ng-valid-pattern ng-invalid ng-invalid-composition"><!--
  Open MCT, Copyright (c) 2014-2017, United States Government
  as represented by the Administrator of the National Aeronautics and Space
@@ -99,7 +207,7 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div ng-controller="LocatorController" class="selector-list ng-scope">
+<div ng-controller="LocatorController" class="selector-list">
     <div class="wrapper">
         <mct-representation key="'tree'" mct-object="rootObject" ng-model="treeModel" class="ng-pristine ng-untouched ng-valid ng-isolate-scope"><!--
  Open MCT, Copyright (c) 2014-2017, United States Government
