@@ -157,9 +157,9 @@ define(
                 };
                 testValues = { a: 10, b: 42, c: 31.42 };
                 testConfiguration = { elements: [
-                    { type: "fixed.telemetry", id: 'a', x: 1, y: 1 },
-                    { type: "fixed.telemetry", id: 'b', x: 1, y: 1 },
-                    { type: "fixed.telemetry", id: 'c', x: 1, y: 1 }
+                    { type: "fixed.telemetry", id: 'a', x: 1, y: 1, useGrid: true},
+                    { type: "fixed.telemetry", id: 'b', x: 1, y: 1, useGrid: true},
+                    { type: "fixed.telemetry", id: 'c', x: 1, y: 1, useGrid: true}
                 ]};
 
                 mockChildren = testModel.composition.map(makeMockDomainObject);
