@@ -29,6 +29,8 @@
 
 // Thematic constants
 $colorCode: rgba(black, 0.1);
+$colorCodeBad: rgba(red, 0.2);
+$colorCodeGood: rgba(green, 0.2);
 $colorGlyphExample: darken($colorBodyBg, 30%);
 
 @import "style-guide-base";

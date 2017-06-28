@@ -63,6 +63,14 @@
         border-radius: $controlCr;
         display: inline-block;
         padding: 1px $interiorMargin;
+        &.block {
+            display: block;
+            margin-bottom: $interiorMarginLg;
+            padding: $interiorMarginLg;
+            white-space: pre;
+            &.bad { background-color: $colorCodeBad; }
+            &.good { background-color: $colorCodeGood; }
+        }
     }
 
     p {
