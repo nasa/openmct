@@ -24,7 +24,8 @@ define(
     ['../../src/elements/ResizeHandle'],
     function (ResizeHandle) {
 
-        var TEST_MIN_WIDTH = 4, TEST_MIN_HEIGHT = 2;
+        var TEST_MIN_WIDTH = 4, TEST_MIN_HEIGHT = 2,
+            GRID_SIZE = [34,81];
 
         describe("A fixed position drag handle", function () {
             var testElement,
@@ -35,13 +36,15 @@ define(
                     x: 3,
                     y: 42,
                     width: 30,
-                    height: 36
+                    height: 36,
+                    useGrid: true
                 };
 
                 handle = new ResizeHandle(
                     testElement,
                     TEST_MIN_WIDTH,
-                    TEST_MIN_HEIGHT
+                    TEST_MIN_HEIGHT,
+                    GRID_SIZE
                 );
             });
 
@@ -71,6 +74,10 @@ define(
                 expect(testElement.y).toEqual(42);
                 expect(testElement.width).toEqual(TEST_MIN_WIDTH);
                 expect(testElement.height).toEqual(TEST_MIN_HEIGHT);
+            });
+
+            it("returns the correct grid size", function () {
+                expect(handle.getGridSize()).toEqual([34,81]);
             });
 
         });
