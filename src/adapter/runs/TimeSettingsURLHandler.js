@@ -20,7 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([
+    'lodash'
+], function (
+    _
+) {
     // Parameter names in query string
     var SEARCH = {
         MODE: 'tc.mode',
@@ -73,43 +77,70 @@ define([], function () {
         this.$location.search(SEARCH.END_DELTA, deltas.end);
     };
 
+    TimeSettingsURLHandler.prototype.parseQueryParams = function () {
+        var searchParams = _.pick(this.$location.search(), _.values(SEARCH));
+        var parsedParams = {
+            clock: searchParams[SEARCH.MODE],
+            timeSystem: searchParams[SEARCH.TIME_SYSTEM]
+        };
+        if (!isNaN(parseInt(searchParams[SEARCH.START_DELTA], 0xA)) &&
+            !isNaN(parseInt(searchParams[SEARCH.END_DELTA], 0xA))) {
+            parsedParams.clockOffsets = {
+                start: -searchParams[SEARCH.START_DELTA],
+                end: +searchParams[SEARCH.END_DELTA]
+            };
+        }
+        if (!isNaN(parseInt(searchParams[SEARCH.START_BOUND], 0xA)) &&
+            !isNaN(parseInt(searchParams[SEARCH.END_BOUND], 0xA))) {
+            parsedParams.bounds = {
+                start: +searchParams[SEARCH.START_BOUND],
+                end: +searchParams[SEARCH.END_BOUND]
+            };
+        }
+        return parsedParams;
+    };
+
     TimeSettingsURLHandler.prototype.updateTime = function () {
-        var searchParams = this.$location.search();
-        var mode = searchParams[SEARCH.MODE];
-        var timeSystem = searchParams[SEARCH.TIME_SYSTEM];
-        var clockOffsets = {
-            start: -searchParams[SEARCH.START_DELTA],
-            end: +searchParams[SEARCH.END_DELTA]
-        };
-        var bounds = {
-            start: +searchParams[SEARCH.START_BOUND],
-            end: +searchParams[SEARCH.END_BOUND]
-        };
-        var fixed = (mode === 'fixed');
-        var clock = fixed ? undefined : mode;
-        var hasDeltas =
-            !isNaN(parseInt(searchParams[SEARCH.START_DELTA], 0xA)) &&
-            !isNaN(parseInt(searchParams[SEARCH.END_DELTA], 0xA));
-        var hasBounds =
-            !isNaN(parseInt(searchParams[SEARCH.START_BOUND], 0xA)) &&
-            !isNaN(parseInt(searchParams[SEARCH.END_BOUND], 0xA));
-
-        if (fixed && timeSystem && hasBounds) {
-            this.time.timeSystem(timeSystem, bounds);
-            this.time.stopClock();
+        var params = this.parseQueryParams();
+        if (_.isEqual(params, this.last)) {
+            return; // Do nothing;
         }
+        this.last = params;
 
-        if (!fixed && clock && hasDeltas) {
-            this.time.clock(clock, clockOffsets);
-            this.time.timeSystem(timeSystem);
-        }
+        if (params.bounds) {
+            if (!this.time.timeSystem() ||
+                this.time.timeSystem().key !== params.timeSystem) {
 
-        if (hasDeltas && !fixed) {
-            this.time.clockOffsets(clockOffsets);
-        }
+                this.time.timeSystem(
+                    params.timeSystem,
+                    params.bounds
+                );
+            } else if (!_.isEqual(this.time.bounds(), params.bounds)) {
+                this.time.bounds(params.bounds);
+            }
+            if (this.time.clock()) {
+                this.time.stopClock();
+            }
+        } else if (params.clockOffsets) {
+            if (params.clock === 'fixed') {
+                this.time.stopClock();
+                return;
+            }
+            if (!this.time.clock() ||
+                this.time.clock().key !== params.clock) {
 
-        if (hasBounds && fixed) {
-            this.time.bounds(bounds);
+                this.time.clock(params.clock, params.clockOffsets);
+            } else if (!_.isEqual(this.time.clockOffsets(), params.clockOffsets)) {
+                this.time.clockOffsets(params.clockOffsets);
+            }
+            if (!this.time.timeSystem() ||
+                this.time.timeSystem().key !== params.timeSystem) {
+
+                this.time.timeSystem(params.timeSystem);
+            }
+        } else {
+            // Neither found, update from timeSystem.
+            this.updateQueryParams();
         }
     };
 
