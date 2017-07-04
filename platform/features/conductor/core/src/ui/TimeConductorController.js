@@ -111,7 +111,8 @@ define(
             var options = this.optionsFromConfig(config);
             this.menu = {
                 selected: undefined,
-                options: options
+                options: options,
+                select: this.selectMenuOption
             };
 
             //Set the initial state of the UI from the conductor state
@@ -131,8 +132,6 @@ define(
             if (bounds && bounds.start !== undefined && bounds.end !== undefined) {
                 this.setViewFromBounds(bounds);
             }
-
-            this.$scope.$watch("tcController.menu.selected", this.selectMenuOption);
 
             this.conductorViewService.on('pan', this.onPan);
             this.conductorViewService.on('pan-stop', this.onPanStop);
@@ -164,26 +163,28 @@ define(
          *
          * @private
          * @param newOption
-         * @param oldOption
          */
-        TimeConductorController.prototype.selectMenuOption = function (newOption, oldOption) {
-            if (newOption !== oldOption) {
-                var config = this.getConfig(this.timeAPI.timeSystem(), newOption.clock);
-                if (!config) {
-                    // Clock does not support this timeSystem, fallback to first
-                    // option provided for clock.
-                    config = this.config.menuOptions.filter(function (menuOption) {
-                        return menuOption.clock === (newOption.clock && newOption.clock.key);
-                    })[0];
-                }
+        TimeConductorController.prototype.selectMenuOption = function (newOption) {
+            if (this.menu.selected.key === newOption.key) {
+                return;
+            }
+            this.menu.selected = newOption;
 
-                if (config.clock) {
-                    this.timeAPI.clock(config.clock, config.clockOffsets);
-                    this.timeAPI.timeSystem(config.timeSystem);
-                } else {
-                    this.timeAPI.stopClock();
-                    this.timeAPI.timeSystem(config.timeSystem, config.bounds);
-                }
+            var config = this.getConfig(this.timeAPI.timeSystem(), newOption.clock);
+            if (!config) {
+                // Clock does not support this timeSystem, fallback to first
+                // option provided for clock.
+                config = this.config.menuOptions.filter(function (menuOption) {
+                    return menuOption.clock === (newOption.clock && newOption.clock.key);
+                })[0];
+            }
+
+            if (config.clock) {
+                this.timeAPI.clock(config.clock, config.clockOffsets);
+                this.timeAPI.timeSystem(config.timeSystem);
+            } else {
+                this.timeAPI.stopClock();
+                this.timeAPI.timeSystem(config.timeSystem, config.bounds);
             }
         };
 
