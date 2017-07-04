@@ -107,7 +107,7 @@ define([
         }
         this.last = params;
 
-        if (params.bounds) {
+        if (params.clock === 'fixed' && params.bounds) {
             if (!this.time.timeSystem() ||
                 this.time.timeSystem().key !== params.timeSystem) {
 
