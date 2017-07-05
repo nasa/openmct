@@ -437,15 +437,21 @@ define(
          */
         MCTTableController.prototype.findInsertionPoint = function (searchArray, searchElement) {
             var index;
-            var textIndex;
+            var testIndex;
             var first = searchArray[0];
             var last = searchArray[searchArray.length - 1];
 
+            if (first) {
+                first = first[this.$scope.sortColumn].text;
+            }
+            if (last) {
+                last = last[this.$scope.sortColumn].text;
+            }
             // Shortcut check for append/prepend
-            if (first && this.sortComparator(first, searchElement) <= 0) {
+            if (first && this.sortComparator(first, searchElement) >= 0) {
                 index = testIndex = 0;
-            } else if (last && this.sortComparator(last, searchElement) >= 0) {
-                index = testIndex = searchArray.length - 1;
+            } else if (last && this.sortComparator(last, searchElement) <= 0) {
+                index = testIndex = searchArray.length;
             } else {
                 // use a binary search to find the correct insertion point
                 index = testIndex =  this.binarySearch(
