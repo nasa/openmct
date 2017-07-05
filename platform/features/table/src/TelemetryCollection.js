@@ -190,6 +190,7 @@ define(
         TelemetryCollection.prototype.add = function (items) {
             var added = items.filter(this.addOne);
             this.emit('added', added);
+            this.dupeCheck = true;
         };
 
         /**
