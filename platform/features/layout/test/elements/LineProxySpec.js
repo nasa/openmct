@@ -28,10 +28,10 @@ define(
             var vertical, horizontal, diagonal, reversed;
 
             beforeEach(function () {
-                vertical = { x: 1, y: 4, x2: 1, y2: 8 };
-                horizontal = { x: 3, y: 3, x2: 12, y2: 3 };
-                diagonal = { x: 3, y: 8, x2: 5, y2: 11 };
-                reversed = { x2: 3, y2: 8, x: 5, y: 11 };
+                vertical = { x: 1, y: 4, x2: 1, y2: 8};
+                horizontal = { x: 3, y: 3, x2: 12, y2: 3};
+                diagonal = { x: 3, y: 8, x2: 5, y2: 11};
+                reversed = { x2: 3, y2: 8, x: 5, y: 11};
             });
 
             it("ensures visible width for vertical lines", function () {
@@ -63,13 +63,13 @@ define(
             it("adjusts both ends when mutating x", function () {
                 var proxy = new LineProxy(diagonal);
                 proxy.x(6);
-                expect(diagonal).toEqual({ x: 6, y: 8, x2: 8, y2: 11 });
+                expect(diagonal).toEqual({ x: 6, y: 8, x2: 8, y2: 11, useGrid: true });
             });
 
             it("adjusts both ends when mutating y", function () {
                 var proxy = new LineProxy(diagonal);
                 proxy.y(6);
-                expect(diagonal).toEqual({ x: 3, y: 6, x2: 5, y2: 9 });
+                expect(diagonal).toEqual({ x: 3, y: 6, x2: 5, y2: 9, useGrid: true });
             });
 
             it("provides internal positions for SVG lines", function () {

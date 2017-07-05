@@ -37,10 +37,11 @@ define(
          * @param element the fixed position element, as stored in its
          *        configuration
          * @param index the element's index within its array
+         * @param {number[]} gridSize the current layout grid size in [x,y] from
          * @param {Array} elements the full array of elements
          */
-        function BoxProxy(element, index, elements) {
-            var proxy = new ElementProxy(element, index, elements);
+        function BoxProxy(element, index, elements, gridSize) {
+            var proxy = new ElementProxy(element, index, elements, gridSize);
 
             /**
              * Get/set this element's fill color. (Omitting the
@@ -51,6 +52,12 @@ define(
              * @memberof platform/features/layout.BoxProxy#
              */
             proxy.fill = new AccessorMutator(element, 'fill');
+
+            //Expose x,y, width and height for editing
+            proxy.editWidth = new AccessorMutator(element, 'width');
+            proxy.editHeight = new AccessorMutator(element, 'height');
+            proxy.editX = new AccessorMutator(element, 'x');
+            proxy.editY = new AccessorMutator(element, 'y');
 
             return proxy;
         }

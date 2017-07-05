@@ -35,13 +35,14 @@ define(
             beforeEach(function () {
                 mockElementHandle = jasmine.createSpyObj(
                     'elementHandle',
-                    ['x', 'y']
+                    ['x', 'y','getGridSize']
                 );
                 mockUpdate = jasmine.createSpy('update');
                 mockCommit = jasmine.createSpy('commit');
 
                 mockElementHandle.x.andReturn(6);
                 mockElementHandle.y.andReturn(8);
+                mockElementHandle.getGridSize.andReturn(TEST_GRID_SIZE);
 
                 handle = new FixedDragHandle(
                     mockElementHandle,
