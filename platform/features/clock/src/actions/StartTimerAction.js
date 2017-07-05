@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['./AbstractStartTimerAction'],
-    function (AbstractStartTimerAction) {
+    [],
+    function () {
 
         /**
          * Implements the "Start" action for timers.
@@ -30,7 +30,6 @@ define(
          * Sets the reference timestamp in a timer to the current
          * time, such that it begins counting up.
          *
-         * @extends {platform/features/clock.AbstractTimerAction}
          * @implements {Action}
          * @memberof platform/features/clock
          * @constructor
@@ -39,11 +38,9 @@ define(
          * @param {ActionContext} context the context for this action
          */
         function StartTimerAction(now, context) {
-            AbstractStartTimerAction.apply(this, [now, context]);
+            this.domainObject = context.domainObject;
+            this.now = now;
         }
-
-        StartTimerAction.prototype =
-            Object.create(AbstractStartTimerAction.prototype);
 
         StartTimerAction.appliesTo = function (context) {
             var model =
@@ -53,10 +50,28 @@ define(
             // We show this variant for timers which do not yet have
             // a target time.
             return model.type === 'timer' &&
-                    model.timestamp === undefined;
+                    model.timerState !== 'started';
+        };
+
+        StartTimerAction.prototype.perform = function () {
+            var domainObject = this.domainObject,
+                now = this.now;
+
+            function updateModel(model) {
+                //if we are resuming
+                if (model.pausedTime) {
+                    var timeShift = now() - model.pausedTime;
+                    model.timestamp = model.timestamp + timeShift;
+                } else {
+                    model.timestamp = now();
+                }
+                model.timerState = 'started';
+                model.pausedTime = undefined;
+            }
+
+            return domainObject.useCapability('mutation', updateModel);
         };
 
         return StartTimerAction;
-
     }
 );

@@ -39,6 +39,18 @@ define(
                 };
             }
 
+            function testState(type, timerState, timestamp, expected) {
+                testModel.type = type;
+                testModel.timerState = timerState;
+                testModel.timestamp = timestamp;
+
+                if (expected) {
+                    expect(RestartTimerAction.appliesTo(testContext)).toBeTruthy();
+                } else {
+                    expect(RestartTimerAction.appliesTo(testContext)).toBeFalsy();
+                }
+            }
+
             beforeEach(function () {
                 mockNow = jasmine.createSpy('now');
                 mockDomainObject = jasmine.createSpyObj(
@@ -63,23 +75,36 @@ define(
             });
 
             it("updates the model with a timestamp", function () {
+                testModel.pausedTime = 12000;
                 mockNow.andReturn(12000);
                 action.perform();
                 expect(testModel.timestamp).toEqual(12000);
             });
 
-            it("applies only to timers with a target time", function () {
-                testModel.type = 'timer';
-                testModel.timestamp = 12000;
-                expect(RestartTimerAction.appliesTo(testContext)).toBeTruthy();
+            it("updates the model with a pausedTime", function () {
+                testModel.pausedTime = 12000;
+                action.perform();
+                expect(testModel.pausedTime).toEqual(undefined);
+            });
 
-                testModel.type = 'timer';
-                testModel.timestamp = undefined;
-                expect(RestartTimerAction.appliesTo(testContext)).toBeFalsy();
+            it("updates the model with a timerState", function () {
+                testModel.timerState = 'stopped';
+                action.perform();
+                expect(testModel.timerState).toEqual('started');
+            });
 
-                testModel.type = 'clock';
-                testModel.timestamp = 12000;
-                expect(RestartTimerAction.appliesTo(testContext)).toBeFalsy();
+            it("applies only to timers in a non-stopped state", function () {
+                //in a stopped state
+                testState('timer', 'stopped', undefined, false);
+
+                //in a paused state
+                testState('timer', 'paused', 12000, true);
+
+                //in a playing state
+                testState('timer', 'started', 12000, true);
+
+                //not a timer
+                testState('clock', 'paused', 12000, false);
             });
         });
     }

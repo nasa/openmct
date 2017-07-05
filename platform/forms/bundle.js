@@ -24,14 +24,17 @@ define([
     "./src/MCTForm",
     "./src/MCTToolbar",
     "./src/MCTControl",
+    "./src/controllers/AutocompleteController",
     "./src/controllers/DateTimeController",
     "./src/controllers/CompositeController",
     "./src/controllers/ColorController",
     "./src/controllers/DialogButtonController",
+    "text!./res/templates/controls/autocomplete.html",
     "text!./res/templates/controls/checkbox.html",
     "text!./res/templates/controls/datetime.html",
     "text!./res/templates/controls/select.html",
     "text!./res/templates/controls/textfield.html",
+    "text!./res/templates/controls/numberfield.html",
     "text!./res/templates/controls/textarea.html",
     "text!./res/templates/controls/button.html",
     "text!./res/templates/controls/color.html",
@@ -44,14 +47,17 @@ define([
     MCTForm,
     MCTToolbar,
     MCTControl,
+    AutocompleteController,
     DateTimeController,
     CompositeController,
     ColorController,
     DialogButtonController,
+    autocompleteTemplate,
     checkboxTemplate,
     datetimeTemplate,
     selectTemplate,
     textfieldTemplate,
+    numberfieldTemplate,
     textareaTemplate,
     buttonTemplate,
     colorTemplate,
@@ -86,6 +92,10 @@ define([
             ],
             "controls": [
                 {
+                    "key": "autocomplete",
+                    "template": autocompleteTemplate
+                },
+                {
                     "key": "checkbox",
                     "template": checkboxTemplate
                 },
@@ -104,6 +114,10 @@ define([
                 {
                     "key": "textfield",
                     "template": textfieldTemplate
+                },
+                {
+                    "key": "numberfield",
+                    "template": numberfieldTemplate
                 },
                 {
                     "key": "textarea",
@@ -131,6 +145,14 @@ define([
                 }
             ],
             "controllers": [
+                {
+                    "key": "AutocompleteController",
+                    "implementation": AutocompleteController,
+                    "depends": [
+                        "$scope",
+                        "$element"
+                    ]
+                },
                 {
                     "key": "DateTimeController",
                     "implementation": DateTimeController,

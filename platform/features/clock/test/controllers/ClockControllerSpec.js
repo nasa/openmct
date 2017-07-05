@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2009-2016, United States Government
+ * Open MCT, Copyright (c) 2009-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -43,9 +43,9 @@ define(
                 controller = new ClockController(mockScope, mockTicker);
             });
 
-            it("watches for clock format from the domain object model", function () {
+            it("watches for model (clockFormat and timezone) from the domain object model", function () {
                 expect(mockScope.$watch).toHaveBeenCalledWith(
-                    "model.clockFormat",
+                    "model",
                     jasmine.any(Function)
                 );
             });
@@ -67,29 +67,35 @@ define(
 
             it("formats using the format string from the model", function () {
                 mockTicker.listen.mostRecentCall.args[0](TEST_TIMESTAMP);
-                mockScope.$watch.mostRecentCall.args[1]([
-                    "YYYY-DDD hh:mm:ss",
-                    "clock24"
-                ]);
+                mockScope.$watch.mostRecentCall.args[1]({
+                    "clockFormat": [
+                        "YYYY-DDD hh:mm:ss",
+                        "clock24"
+                    ],
+                    "timezone": "Canada/Eastern"
+                });
 
-                expect(controller.zone()).toEqual("UTC");
-                expect(controller.text()).toEqual("2015-154 17:56:14");
+                expect(controller.zone()).toEqual("EDT");
+                expect(controller.text()).toEqual("2015-154 13:56:14");
                 expect(controller.ampm()).toEqual("");
             });
 
             it("formats 12-hour time", function () {
                 mockTicker.listen.mostRecentCall.args[0](TEST_TIMESTAMP);
-                mockScope.$watch.mostRecentCall.args[1]([
-                    "YYYY-DDD hh:mm:ss",
-                    "clock12"
-                ]);
+                mockScope.$watch.mostRecentCall.args[1]({
+                    "clockFormat": [
+                        "YYYY-DDD hh:mm:ss",
+                        "clock12"
+                    ],
+                    "timezone": ""
+                });
 
                 expect(controller.zone()).toEqual("UTC");
                 expect(controller.text()).toEqual("2015-154 05:56:14");
                 expect(controller.ampm()).toEqual("PM");
             });
 
-            it("does not throw exceptions when clockFormat is undefined", function () {
+            it("does not throw exceptions when model is undefined", function () {
                 mockTicker.listen.mostRecentCall.args[0](TEST_TIMESTAMP);
                 expect(function () {
                     mockScope.$watch.mostRecentCall.args[1](undefined);

@@ -224,10 +224,21 @@ textarea {
 
 /******************************************************** INPUTS */
 input[type="text"],
-input[type="search"] {
+input[type="search"],
+input[type="number"] {
     @include nice-input();
+    vertical-align: baseline;
+    padding: $inputTextP;
     &.numeric {
         text-align: right;
+    }
+}
+
+.l-input-sm {
+    input[type="text"],
+    input[type="search"],
+    input[type="number"] {
+        width: 50px !important;
     }
 }
 
@@ -235,7 +246,6 @@ input[type="search"] {
 input[type="text"].lg {  width: 100% !important; }
 .l-input-med input[type="text"],
 input[type="text"].med { width: 200px !important; }
-.l-input-sm input[type="text"],
 input[type="text"].sm {  width: 50px !important; }
 .l-numeric input[type="text"],
 input[type="text"].numeric { text-align: right; }
@@ -294,6 +304,40 @@ textarea.lg { position: relative; height: 300px; }
         display: block;
         position: absolute;
         right: $interiorMargin; top: 0;
+    }
+}
+
+/******************************************************** AUTOCOMPLETE */
+.autocomplete {
+    input {
+        width: 226px;
+        padding: 5px 0px 5px 7px;
+    }
+    .icon-arrow-down {
+        position: absolute;
+        top: 8px;
+        left: 210px;
+        font-size: 10px;
+        cursor: pointer;
+    }
+    .autocompleteOptions {
+        border: 1px solid $colorFormLines;
+        border-radius: 5px;
+        width: 224px;
+        max-height: 170px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        li {
+            border: 1px solid $colorFormLines;
+            padding: 8px 0px 8px 5px;
+            .optionText {
+                cursor: pointer;
+            }
+        }
+        .optionPreSelected {
+            background-color: $colorInspectorSectionHeaderBg;
+            color: $colorInspectorSectionHeaderFg;
+        }
     }
 }
 

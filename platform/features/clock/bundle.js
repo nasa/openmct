@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 define([
+    "moment-timezone",
     "./src/indicators/ClockIndicator",
     "./src/services/TickerService",
     "./src/controllers/ClockController",
@@ -28,10 +29,13 @@ define([
     "./src/controllers/RefreshingController",
     "./src/actions/StartTimerAction",
     "./src/actions/RestartTimerAction",
+    "./src/actions/StopTimerAction",
+    "./src/actions/PauseTimerAction",
     "text!./res/templates/clock.html",
     "text!./res/templates/timer.html",
     'legacyRegistry'
 ], function (
+    MomentTimezone,
     ClockIndicator,
     TickerService,
     ClockController,
@@ -39,6 +43,8 @@ define([
     RefreshingController,
     StartTimerAction,
     RestartTimerAction,
+    StopTimerAction,
+    PauseTimerAction,
     clockTemplate,
     timerTemplate,
     legacyRegistry
@@ -140,6 +146,17 @@ define([
                     "priority": "preferred"
                 },
                 {
+                    "key": "timer.pause",
+                    "implementation": PauseTimerAction,
+                    "depends": [
+                        "now"
+                    ],
+                    "category": "contextual",
+                    "name": "Pause",
+                    "cssClass": "icon-pause",
+                    "priority": "preferred"
+                },
+                {
                     "key": "timer.restart",
                     "implementation": RestartTimerAction,
                     "depends": [
@@ -148,6 +165,17 @@ define([
                     "category": "contextual",
                     "name": "Restart at 0",
                     "cssClass": "icon-refresh",
+                    "priority": "preferred"
+                },
+                {
+                    "key": "timer.stop",
+                    "implementation": StopTimerAction,
+                    "depends": [
+                        "now"
+                    ],
+                    "category": "contextual",
+                    "name": "Stop",
+                    "cssClass": "icon-box",
                     "priority": "preferred"
                 }
             ],
@@ -200,13 +228,20 @@ define([
                                     "cssClass": "l-inline"
                                 }
                             ]
+                        },
+                        {
+                            "key": "timezone",
+                            "name": "Timezone",
+                            "control": "autocomplete",
+                            "options": MomentTimezone.tz.names()
                         }
                     ],
                     "model": {
                         "clockFormat": [
                             "YYYY/MM/DD hh:mm:ss",
                             "clock12"
-                        ]
+                        ],
+                        "timezone": "UTC"
                     }
                 },
                 {

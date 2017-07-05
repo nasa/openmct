@@ -77,11 +77,15 @@ if (process.env.NODE_ENV === 'development') {
 gulp.task('scripts', function () {
     var requirejsOptimize = require('gulp-requirejs-optimize');
     var replace = require('gulp-replace-task');
+    var header = require('gulp-header');
+    var comment = fs.readFileSync('src/about.frag');
+
     return gulp.src(paths.main)
         .pipe(sourcemaps.init())
         .pipe(requirejsOptimize(options.requirejsOptimize))
         .pipe(sourcemaps.write('.'))
         .pipe(replace(options.replace))
+        .pipe(header(comment, options.replace.variables))
         .pipe(gulp.dest(paths.dist));
 });
 
