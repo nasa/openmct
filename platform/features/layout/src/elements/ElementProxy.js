@@ -69,7 +69,7 @@ define(
              * The current grid size of the layout.
              * @memberof platform/features/layout.ElementProxy#
              */
-            this.gridSize = gridSize;
+            this.gridSize = gridSize || [1,1]; //Ensure a reasonable default
 
             this.resizeHandles = [new ResizeHandle(
                                     this.element,
@@ -182,6 +182,10 @@ define(
          */
         ElementProxy.prototype.getGridSize = function () {
             var gridSize;
+            // Default to using the grid if useGrid was not defined
+            if (typeof this.element.useGrid === 'undefined') {
+                this.element.useGrid = true;
+            }
             if (this.element.useGrid) {
                 gridSize = this.gridSize;
             } else {

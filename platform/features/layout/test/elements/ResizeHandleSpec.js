@@ -24,8 +24,8 @@ define(
     ['../../src/elements/ResizeHandle'],
     function (ResizeHandle) {
 
-        var TEST_MIN_WIDTH = 4, TEST_MIN_HEIGHT = 2,
-            GRID_SIZE = [34,81];
+        var TEST_MIN_WIDTH = 4,
+            TEST_MIN_HEIGHT = 2;
 
         describe("A fixed position drag handle", function () {
             var testElement,
@@ -44,7 +44,7 @@ define(
                     testElement,
                     TEST_MIN_WIDTH,
                     TEST_MIN_HEIGHT,
-                    GRID_SIZE
+                    [34,81]
                 );
             });
 

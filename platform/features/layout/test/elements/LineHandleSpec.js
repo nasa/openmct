@@ -24,8 +24,6 @@ define(
     ['../../src/elements/LineHandle'],
     function (LineHandle) {
 
-        var GRID_SIZE = [45,21];
-
         describe("A fixed position drag handle", function () {
             var testElement,
                 handle;
@@ -39,7 +37,7 @@ define(
                     useGrid: true
                 };
 
-                handle = new LineHandle(testElement, 'x', 'y', 'x2', 'y2', GRID_SIZE);
+                handle = new LineHandle(testElement, 'x', 'y', 'x2', 'y2', [45,21]);
             });
 
             it("provides x/y grid coordinates for its corner", function () {

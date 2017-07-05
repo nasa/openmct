@@ -24,8 +24,6 @@ define(
     ['../../src/elements/ElementProxy'],
     function (ElementProxy) {
 
-        var GRID_SIZE = [13,21];
-
         describe("A fixed position element proxy", function () {
             var testElement,
                 testElements,
@@ -45,7 +43,7 @@ define(
                     testElement,
                     testElements.indexOf(testElement),
                     testElements,
-                    GRID_SIZE
+                    [13,21]
                 );
             });
 
