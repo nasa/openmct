@@ -28,6 +28,7 @@ define([], function () {
      * @memberof module:openmct
      */
     function ViewRegistry() {
+        this._next_id = 0;
         this.providers = [];
     }
 
@@ -40,7 +41,8 @@ define([], function () {
      */
     ViewRegistry.prototype.get = function (item) {
         return this.providers.filter(function (provider) {
-            return provider.canView(item);
+            return typeof provider.canView(item) !== 'undefined' &&
+                provider.canView(item) !== false;
         });
     };
 
@@ -52,7 +54,19 @@ define([], function () {
      * @memberof module:openmct.ViewRegistry#
      */
     ViewRegistry.prototype.addProvider = function (provider) {
+        provider._vpid = this._next_id++;
         this.providers.push(provider);
+    };
+
+    /**
+     * Used internally to support seamless usage of new views with old
+     * views.
+     * @private
+     */
+    ViewRegistry.prototype._getByVPID = function (vpid) {
+        return this.providers.filter(function (p) {
+            return p._vpid === vpid;
+        })[0]
     };
 
     /**
@@ -91,6 +105,11 @@ define([], function () {
      * Exposes types of views in Open MCT.
      *
      * @interface ViewProvider
+     * @property {string} name the human-readable name of this view
+     * @property {string} [description] a longer-form description (typically
+     *           a single sentence or short paragraph) of this kind of view
+     * @property {string} [cssClass] the CSS class to apply to labels for this
+     *           view (to add icons, for instance)
      * @memberof module:openmct
      */
 
@@ -107,8 +126,11 @@ define([], function () {
      * @memberof module:openmct.ViewProvider#
      * @param {module:openmct.DomainObject} domainObject the domain object
      *        to be viewed
-     * @returns {boolean} true if this domain object can be viewed using
-     *          this provider
+     * @returns {Number|boolean} if this returns `false`, then the view does
+     *          not apply to the object.  If it returns true or any number, then
+     *          it applies to this object.  If multiple views could apply
+     *          to an object, the view that returns the lowest number will be
+     *          the default view.
      */
 
     /**
@@ -124,27 +146,6 @@ define([], function () {
      * @memberof module:openmct.ViewProvider#
      * @param {*} object the object to be viewed
      * @returns {module:openmct.View} a view of this domain object
-     */
-
-    /**
-     * Get metadata associated with this view provider. This may be used
-     * to populate the user interface with options associated with this
-     * view provider.
-     *
-     * @method metadata
-     * @memberof module:openmct.ViewProvider#
-     * @returns {module:openmct.ViewProvider~ViewMetadata} view metadata
-     */
-
-    /**
-     * @typedef ViewMetadata
-     * @memberof module:openmct.ViewProvider~
-     * @property {string} name the human-readable name of this view
-     * @property {string} key a machine-readable name for this view
-     * @property {string} [description] a longer-form description (typically
-     *           a single sentence or short paragraph) of this kind of view
-     * @property {string} cssClass the CSS class to apply to labels for this
-     *           view (to add icons, for instance)
      */
 
     return ViewRegistry;

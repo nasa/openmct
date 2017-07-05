@@ -21,18 +21,20 @@
  *****************************************************************************/
 
 define([
-    'angular',
-    './Region'
 ], function (
-    angular,
-    Region
 ) {
-    function MCTView() {
+    function MCTView(openmct) {
         return {
-            restrict: 'A',
+            restrict: 'E',
             link: function (scope, element, attrs) {
-                var region = new Region(element[0]);
-                scope.$watch(attrs.mctView, region.show.bind(region));
+                var provider = openmct.objectViews._getByVPID(Number(attrs.mctVpid));
+                var view = new provider.view(scope.domainObject.useCapability('adapter'));
+                view.show(element[0]);
+                if (view.destroy) {
+                    scope.$on('$destroy', function () {
+                        view.destroy(element[0])
+                    });
+                }
             }
         };
     }

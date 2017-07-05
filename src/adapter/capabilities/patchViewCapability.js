@@ -20,21 +20,42 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-    function AdaptedViewController($scope, openmct) {
-        function refresh(legacyObject) {
-            if (!legacyObject) {
-                $scope.view = undefined;
-                return;
-            }
+define([
+    'lodash'
+], function (
+    _
+) {
 
-            var domainObject = legacyObject.useCapability('adapter');
-            var providers = openmct.mainViews.get(domainObject);
-            $scope.view = providers[0] && providers[0].view(domainObject);
+    function patchViewCapability(viewConstructor) {
+        return function makeCapability(domainObject) {
+            var capability = viewConstructor(domainObject);
+            var oldInvoke = capability.invoke.bind(capability);
+
+            capability.invoke = function () {
+                var availableViews = oldInvoke();
+                var newDomainObject = capability
+                    .domainObject
+                    .useCapability('adapter');
+
+                return _(availableViews).map(function (v, i) {
+                    var vd = {
+                        view: v,
+                        priority: i + 100 // arbitrary to allow new views to
+                        // be defaults by returning priority less than 100.
+                    };
+                    if (v.provider) {
+                        vd.priority = v.provider.canView(newDomainObject);
+                    }
+                    return vd;
+                })
+                .sortBy('priority')
+                .map('view')
+                .value();
+            }
+            return capability;
         }
 
-        $scope.$watch('domainObject', refresh);
     }
 
-    return AdaptedViewController;
+    return patchViewCapability;
 });

@@ -24,7 +24,6 @@ define([
     'legacyRegistry',
     './actions/ActionDialogDecorator',
     './capabilities/AdapterCapability',
-    './controllers/AdaptedViewController',
     './directives/MCTView',
     './services/Instantiate',
     './services/MissingModelCompatibilityDecorator',
@@ -33,12 +32,10 @@ define([
     './policies/AdaptedViewPolicy',
     './runs/AlternateCompositionInitializer',
     './runs/TimeSettingsURLHandler',
-    'text!./templates/adapted-view-template.html'
 ], function (
     legacyRegistry,
     ActionDialogDecorator,
     AdapterCapability,
-    AdaptedViewController,
     MCTView,
     Instantiate,
     MissingModelCompatibilityDecorator,
@@ -47,30 +44,20 @@ define([
     AdaptedViewPolicy,
     AlternateCompositionInitializer,
     TimeSettingsURLHandler,
-    adaptedViewTemplate
 ) {
     legacyRegistry.register('src/adapter', {
         "extensions": {
             "directives": [
                 {
                     key: "mctView",
-                    implementation: MCTView
+                    implementation: MCTView,
+                    depends: ["openmct"]
                 }
             ],
             capabilities: [
                 {
                     key: "adapter",
                     implementation: AdapterCapability
-                }
-            ],
-            controllers: [
-                {
-                    key: "AdaptedViewController",
-                    implementation: AdaptedViewController,
-                    depends: [
-                        '$scope',
-                        'openmct'
-                    ]
                 }
             ],
             services: [
@@ -133,12 +120,6 @@ define([
                         );
                     },
                     depends: ["openmct", "$location", "$rootScope"]
-                }
-            ],
-            views: [
-                {
-                    key: "adapted-view",
-                    template: adaptedViewTemplate
                 }
             ],
             licenses: [
