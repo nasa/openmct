@@ -34,15 +34,15 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function CopyActionWizard(domainObject, parent, locationValidator, title, label) {
+        function CopyActionWizard(domainObject, parent, locationValidator) {
             this.type = domainObject.getCapability('type');
             this.model = domainObject.getModel();
             this.domainObject = domainObject;
             this.properties = this.type.getProperties();
             this.parent = parent;
             this.locationValidator = locationValidator;
-            this.title = title;
-            this.label = label;
+            this.title = "Duplicate " + this.model.name + " To a Location";
+            this.label = "Duplicate To";
         }
 
         /**

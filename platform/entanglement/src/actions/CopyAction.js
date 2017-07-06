@@ -110,8 +110,6 @@ define(
 
         CopyAction.prototype.createWizard = function () {
             var self = this,
-                title = "Duplicate " + this.object.getModel().name + " To a Location",
-                label = "Duplicate To",
                 object = this.object,
                 copyService = this.copyService,
                 policyService = this.policyService;
@@ -124,12 +122,7 @@ define(
                     policyService.allow("action", self, newContext);
             };
 
-            return new CopyActionWizard(
-                this.object,
-                undefined,
-                validateLocation,
-                title,
-                label);
+            return new CopyActionWizard(this.object, undefined, validateLocation);
         };
 
         CopyAction.prototype.performBase = function () {
