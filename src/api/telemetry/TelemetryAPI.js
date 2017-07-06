@@ -23,10 +23,12 @@
 define([
     './TelemetryMetadataManager',
     './TelemetryValueFormatter',
+    '../objects/object-utils',
     'lodash'
 ], function (
     TelemetryMetadataManager,
     TelemetryValueFormatter,
+    objectUtils,
     _
 ) {
     /**
@@ -225,7 +227,15 @@ define([
      *          telemetry data
      */
     TelemetryAPI.prototype.request = function (domainObject) {
+        if (arguments.length === 1) {
+            arguments.length = 2;
+            arguments[1] = {};
+        }
+        this.standardizeRequestOptions(arguments[1]);
         var provider = this.findRequestProvider.apply(this, arguments);
+        if (!provider) {
+            return Promise.reject('No provider found');
+        }
         return provider.request.apply(provider, arguments);
     };
 
@@ -240,14 +250,45 @@ define([
      *        which has associated telemetry
      * @param {Function} callback the callback to invoke with new data, as
      *        it becomes available
-     * @param {module:openmct.TelemetryAPI~TelemetryRequest} options
-     *        options for this request
      * @returns {Function} a function which may be called to terminate
      *          the subscription
      */
     TelemetryAPI.prototype.subscribe = function (domainObject, callback) {
-        var provider = this.findSubscriptionProvider.apply(this, arguments);
-        return provider.subscribe.apply(provider, arguments);
+        var provider = this.findSubscriptionProvider(domainObject);
+
+        if (!this.subscribeCache) {
+            this.subscribeCache = {};
+        }
+        var keyString = objectUtils.makeKeyString(domainObject.identifier);
+        var subscriber = this.subscribeCache[keyString];
+
+        if (!subscriber) {
+            subscriber = this.subscribeCache[keyString] = {
+                callbacks: [callback]
+            };
+            if (provider) {
+                subscriber.unsubscribe = provider
+                    .subscribe(domainObject, function (value) {
+                        subscriber.callbacks.forEach(function (cb) {
+                            cb(value);
+                        });
+                    });
+            } else {
+                subscriber.unsubscribe = function () {};
+            }
+        } else {
+            subscriber.callbacks.push(callback);
+        }
+
+        return function unsubscribe() {
+            subscriber.callbacks = subscriber.callbacks.filter(function (cb) {
+                return cb !== callback;
+            });
+            if (subscriber.callbacks.length === 0) {
+                subscriber.unsubscribe();
+            }
+            delete this.subscribeCache[keyString];
+        }.bind(this);
     };
 
     /**
