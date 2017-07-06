@@ -102,11 +102,16 @@ define(
                 // Broadcast a destroy event
                 mockScope.$on.mostRecentCall.args[1]();
 
+                testElement.offsetWidth = 300;
+                testElement.offsetHeight = 350;
+                mockScope.$eval.reset();
+
                 // Fire the timeout
                 mockTimeout.mostRecentCall.args[0]();
 
                 // Should NOT have scheduled another timeout
                 expect(mockTimeout.calls.length).toEqual(2);
+                expect(mockScope.$eval).not.toHaveBeenCalled();
             });
 
             it("triggers a digest cycle when size changes", function () {
