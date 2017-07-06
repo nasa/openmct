@@ -100,44 +100,49 @@ define(
             }
         };
 
-        CopyAction.prototype.performBase = function () {
-            var dialogTitle,
-                label,
-                validateLocation,
-                self = this,
+        CopyAction.prototype.cloneContext = function () {
+            var clone = {}, original = this.context;
+            Object.keys(original).forEach(function (k) {
+                clone[k] = original[k];
+            });
+            return clone;
+        };
+
+        CopyAction.prototype.createWizard = function () {
+            var self = this,
+                title = "Duplicate " + this.object.getModel().name + " To a Location",
+                label = "Duplicate To",
+                object = this.object,
                 copyService = this.copyService,
-                policyService = this.policyService,
-                dialogService = this.dialogService,
-                composeService = this.composeService,
-                currentParent = this.currentParent,
-                newParent = this.newParent,
-                context = this.context,
-                object = this.object;
-
-            if (newParent) {
-                return copyService.perform(object, newParent);
-            }
-
-            var cloneContext = function () {
-                var clone = {}, original = context;
-                Object.keys(original).forEach(function (k) {
-                    clone[k] = original[k];
-                });
-                return clone;
-            };
+                policyService = this.policyService;
 
             var validateLocation = function (newParentObj) {
-                var newContext = cloneContext();
+                var newContext = self.cloneContext();
                 newContext.selectedObject = object;
                 newContext.domainObject = newParentObj;
                 return copyService.validate(object, newParentObj) &&
                     policyService.allow("action", self, newContext);
             };
 
-            title = "Duplicate " + object.getModel().name + " To a Location";
-            label = "Duplicate To";
-            var wizard = new CopyActionWizard(object, undefined, validateLocation, title, label);
+            return new CopyActionWizard(
+                this.object,
+                undefined,
+                validateLocation,
+                title,
+                label);
+        };
 
+        CopyAction.prototype.performBase = function () {
+            var copyService = this.copyService,
+                dialogService = this.dialogService,
+                newParent = this.newParent,
+                object = this.object;
+
+            if (newParent) {
+                return copyService.perform(object, newParent);
+            }
+
+            var wizard = this.createWizard();
             return dialogService.getUserInput(
                 wizard.getFormStructure(),
                 wizard.getInitialFormValue()
