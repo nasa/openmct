@@ -66,7 +66,46 @@
             }));
             openmct.time.clock('local', {start: -THIRTY_MINUTES, end: 0});
             openmct.time.timeSystem('utc');
+
+            //TESTING GESTURE API
+            openmct.mainViews.addProvider({
+                name: 'my view',
+                canView: function (d) {
+                    return d.type === 'folder' ? 150 : false;
+                },
+                view: function (domainObject) {
+                    return {
+                        show: function (container) {
+                            container.innerHTML = '<div data-contextmenu=??? > The Object: ' + domainObject.name + '</div>' +
+                            '<div>Children of this view </div>'
+                            var composition = openmct.composition.get(domainObject);
+                            composition.on('add', function (child) {
+                                var childEl = document.createElement('div');
+                                childEl.innerHTML = child.name;
+                                childEl.setAttribute('data-context', JSON.stringify(child));
+                                childEl.setAttribute('data-id', child.identifier.key);
+                                openmct.gestures.info(childEl, child, domainObject);
+                                openmct.gestures.contextMenu(childEl, child, domainObject);
+                                container.appendChild(childEl);
+                            });
+
+                            composition.on('remove', function (identifier) {
+                                var child = container.querySelector('[data-id="'+identifier.key+'"]');
+                                container.removeChild(child);
+                            });
+
+                            composition.load();
+
+                        },
+                        destroy: function (container) {
+
+                        }
+                    }
+                }
+            });
+
             openmct.start();
+            window.openmct = openmct;
         });
     </script>
     <link rel="stylesheet" href="platform/commonUI/general/res/css/startup-base.css">
