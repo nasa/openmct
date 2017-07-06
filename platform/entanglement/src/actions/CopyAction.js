@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['./AbstractComposeAction', './CancelError'],
-    function (AbstractComposeAction, CancelError) {
+    ['./AbstractComposeAction', './CopyActionWizard', './CancelError',],
+    function (AbstractComposeAction, CopyActionWizard, CancelError) {
 
         /**
          * The CopyAction is available from context menus and allows a user to
@@ -43,22 +43,20 @@ define(
         ) {
             this.dialog = undefined;
             this.notification = undefined;
+            this.policyService = policyService;
+            this.copyService = copyService;
             this.dialogService = dialogService;
             this.notificationService = notificationService;
+            this.context = context;
             this.$log = $log;
-            //Extend the behaviour of the Abstract Compose Action
-            AbstractComposeAction.call(
-                this,
-                policyService,
-                locationService,
-                copyService,
-                context,
-                "Duplicate",
-                "To a Location"
-            );
-        }
 
-        CopyAction.prototype = Object.create(AbstractComposeAction.prototype);
+            if (context.selectedObject) {
+                this.newParent = context.domainObject;
+                this.object = context.selectedObject;
+            } else {
+                this.object = context.domainObject;
+            }
+        }
 
         /**
          * Updates user about progress of copy. Should not be invoked by
@@ -103,6 +101,54 @@ define(
             }
         };
 
+        CopyAction.prototype.performBase = function () {
+            var dialogTitle,
+                label,
+                validateLocation,
+                self = this,
+                copyService = this.copyService,
+                policyService = this.policyService,
+                dialogService = this.dialogService,
+                composeService = this.composeService,
+                currentParent = this.currentParent,
+                newParent = this.newParent,
+                context = this.context,
+                object = this.object;
+
+            if (newParent) {
+                return copyService.perform(object, newParent);
+            }
+
+            var cloneContext = function () {
+                var clone = {}, original = context;
+                Object.keys(original).forEach(function (k) {
+                    clone[k] = original[k];
+                });
+                return clone;
+            };
+
+            var validateLocation = function (newParentObj) {
+                var newContext = cloneContext();
+                newContext.selectedObject = object;
+                newContext.domainObject = newParentObj;
+                return copyService.validate(object, newParentObj) &&
+                    policyService.allow("action", self, newContext);
+            };
+
+            title = "Duplicate " + object.getModel().name + " To a Location";
+            label = "Duplicate To";
+            var wizard = new CopyActionWizard(object, undefined, validateLocation, title, label);
+
+            return dialogService.getUserInput(
+                wizard.getFormStructure(),
+                wizard.getInitialFormValue()
+            ).then(function (userInput) {
+                return copyService.perform(object, userInput.location);
+            }, function () {
+                return Promise.reject(new CancelError(CANCEL_MESSAGE));
+            }.bind(this));
+        };
+
         /**
          * Executes the CopyAction. The CopyAction uses the default behaviour of
          * the AbstractComposeAction, but extends it to support notification
@@ -124,17 +170,17 @@ define(
 
                 var errorDialog,
                     errorMessage = {
-                    title: "Error copying objects.",
-                    severity: "error",
-                    hint: errorDetails.message,
-                    minimized: true, // want the notification to be minimized initially (don't show banner)
-                    options: [{
-                        label: "OK",
-                        callback: function () {
-                            errorDialog.dismiss();
-                        }
-                    }]
-                };
+                        title: "Error copying objects.",
+                        severity: "error",
+                        hint: errorDetails.message,
+                        minimized: true, // want the notification to be minimized initially (don't show banner)
+                        options: [{
+                            label: "OK",
+                            callback: function () {
+                                errorDialog.dismiss();
+                            }
+                        }]
+                    };
 
                 self.dialog.dismiss();
                 if (self.notification) {
@@ -147,11 +193,12 @@ define(
                 errorDialog = self.dialogService.showBlockingMessage(errorMessage);
 
             }
+
             function notification(details) {
                 self.progress(details.phase, details.totalObjects, details.processed);
             }
 
-            return AbstractComposeAction.prototype.perform.call(this)
+            return self.performBase()
                 .then(success, error, notification);
         };
 
