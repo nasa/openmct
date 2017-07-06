@@ -85,7 +85,6 @@ define([
                     "depends": [
                         "$log",
                         "policyService",
-                        "locationService",
                         "copyService",
                         "dialogService",
                         "notificationService"

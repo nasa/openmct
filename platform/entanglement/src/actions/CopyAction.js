@@ -35,7 +35,6 @@ define(
         function CopyAction(
             $log,
             policyService,
-            locationService,
             copyService,
             dialogService,
             notificationService,

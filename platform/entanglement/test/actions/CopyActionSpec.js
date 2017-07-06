@@ -152,7 +152,6 @@ define(
                     copyAction = new CopyAction(
                         mockLog,
                         policyService,
-                        locationService,
                         copyService,
                         dialogService,
                         notificationService,
@@ -212,7 +211,6 @@ define(
                     copyAction = new CopyAction(
                         mockLog,
                         policyService,
-                        locationService,
                         copyService,
                         dialogService,
                         notificationService,
