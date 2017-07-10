@@ -33,10 +33,11 @@ define(
                     x: 3,
                     y: 42,
                     x2: 8,
-                    y2: 11
+                    y2: 11,
+                    useGrid: true
                 };
 
-                handle = new LineHandle(testElement, 'x', 'y', 'x2', 'y2');
+                handle = new LineHandle(testElement, 'x', 'y', 'x2', 'y2', [45,21]);
             });
 
             it("provides x/y grid coordinates for its corner", function () {
@@ -67,6 +68,9 @@ define(
                 expect(testElement.y).not.toEqual(testElement.y2);
             });
 
+            it("returns the correct grid size", function () {
+                expect(handle.getGridSize()).toEqual([45,21]);
+            });
 
         });
     }

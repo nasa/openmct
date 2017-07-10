@@ -47,9 +47,10 @@ define(
          * @memberof platform/features/layout.FixedDragHandle#
          */
         FixedDragHandle.prototype.style = function () {
+            var gridSize = this.elementHandle.getGridSize();
             // Adjust from grid to pixel coordinates
-            var x = this.elementHandle.x() * this.gridSize[0],
-                y = this.elementHandle.y() * this.gridSize[1];
+            var x = this.elementHandle.x() * gridSize[0],
+                y = this.elementHandle.y() * gridSize[1];
 
             // Convert to a CSS style centered on that point
             return {
@@ -78,13 +79,14 @@ define(
          *                   started
          */
         FixedDragHandle.prototype.continueDrag = function (delta) {
+            var gridSize = this.elementHandle.getGridSize();
             if (this.dragging) {
                 // Update x/y positions (snapping to grid)
                 this.elementHandle.x(
-                    this.dragging.x + Math.round(delta[0] / this.gridSize[0])
+                    this.dragging.x + Math.round(delta[0] / gridSize[0])
                 );
                 this.elementHandle.y(
-                    this.dragging.y + Math.round(delta[1] / this.gridSize[1])
+                    this.dragging.y + Math.round(delta[1] / gridSize[1])
                 );
                 // Invoke update callback
                 if (this.update) {
