@@ -33,18 +33,21 @@ define(
 
             var copyAction,
                 policyService,
-                locationService,
-                locationServicePromise,
+                userInputPromise,
                 copyService,
                 context,
                 selectedObject,
                 selectedObjectContextCapability,
                 currentParent,
                 newParent,
+                newParentLocation,
                 notificationService,
                 notification,
                 dialogService,
                 mockDialog,
+                mockWizard,
+                mockFormStructure = "form_structure",
+                mockFormInitialValue = "initial_form_value",
                 mockLog,
                 abstractComposePromise,
                 progress = {phase: "copying", totalObjects: 10, processed: 1};
@@ -84,16 +87,10 @@ define(
                 newParent = domainObjectFactory({
                     name: 'newParent'
                 });
+                newParentLocation = "newParentLocation";
 
-                locationService = jasmine.createSpyObj(
-                    'locationService',
-                    [
-                        'getLocationFromUser'
-                    ]
-                );
-
-                locationServicePromise = jasmine.createSpyObj(
-                    'locationServicePromise',
+                userInputPromise = jasmine.createSpyObj(
+                    'userInputPromise',
                     [
                         'then'
                     ]
@@ -111,21 +108,24 @@ define(
                     success();
                 });
 
-                locationServicePromise.then.andCallFake(function (callback) {
-                    callback(newParent);
+                userInputPromise.then.andCallFake(function (callback) {
+                    callback({ location: newParentLocation });
                     return abstractComposePromise;
                 });
 
-                locationService
-                    .getLocationFromUser
-                    .andReturn(locationServicePromise);
-
                 dialogService = jasmine.createSpyObj('dialogService',
-                    ['showBlockingMessage']
+                    ['showBlockingMessage', 'getUserInput']
                 );
+
+                dialogService.getUserInput.andReturn(userInputPromise);
 
                 mockDialog = jasmine.createSpyObj("dialog", ["dismiss"]);
                 dialogService.showBlockingMessage.andReturn(mockDialog);
+
+                mockWizard = jasmine.createSpyObj('wizard', 
+                    ['getFormStructure', 'getInitialFormValue']);
+                mockWizard.getFormStructure.andReturn(mockFormStructure);
+                mockWizard.getInitialFormValue.andReturn(mockFormInitialValue);
 
                 notification = jasmine.createSpyObj('notification',
                     ['dismiss', 'model']
@@ -157,41 +157,40 @@ define(
                         notificationService,
                         context
                     );
+                    spyOn(copyAction, "createWizard").andReturn(mockWizard);
                 });
 
                 it("initializes happily", function () {
                     expect(copyAction).toBeDefined();
                 });
 
-                describe("when performed it", function () {
+                describe("when performed", function () {
                     beforeEach(function () {
                         spyOn(copyAction, 'progress').andCallThrough();
                         copyAction.perform();
                     });
 
-                    it("prompts for location", function () {
-                        expect(locationService.getLocationFromUser)
-                            .toHaveBeenCalledWith(
-                                "Duplicate selectedObject To a Location",
-                                "Duplicate To",
-                                jasmine.any(Function),
-                                currentParent
-                            );
+                    it("prompts for user input via its wizard", function () {
+                        expect(copyAction.createWizard).toHaveBeenCalled();
+                        expect(dialogService.getUserInput).toHaveBeenCalledWith(
+                            mockFormStructure,
+                            mockFormInitialValue
+                        );
                     });
 
-                    it("waits for location and handles cancellation by user", function () {
-                        expect(locationServicePromise.then)
+                    it("waits for input and handles cancellation by user", function () {
+                        expect(userInputPromise.then)
                             .toHaveBeenCalledWith(jasmine.any(Function), jasmine.any(Function));
                     });
 
                     it("copies object to selected location", function () {
-                        locationServicePromise
+                        userInputPromise
                             .then
                             .mostRecentCall
                             .args[0](newParent);
 
                         expect(copyService.perform)
-                            .toHaveBeenCalledWith(selectedObject, newParent);
+                            .toHaveBeenCalledWith(selectedObject, newParentLocation);
                     });
 
                     it("notifies the user of progress", function () {
@@ -216,6 +215,7 @@ define(
                         notificationService,
                         context
                     );
+                    spyOn(copyAction, "createWizard").andReturn(mockWizard);
                 });
 
                 it("initializes happily", function () {
