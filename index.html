@@ -86,6 +86,7 @@
                                 childEl.setAttribute('data-id', child.identifier.key);
                                 openmct.gestures.info(childEl, child, domainObject);
                                 openmct.gestures.contextMenu(childEl, child, domainObject);
+                                openmct.gestures.selectable(childEl, child);
                                 container.appendChild(childEl);
                             });
 

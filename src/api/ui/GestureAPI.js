@@ -22,10 +22,16 @@
 
  define([
      'zepto',
-     '../../../platform/core/src/capabilities/ContextualDomainObject.js'
+     '../../../platform/core/src/capabilities/ContextualDomainObject.js',
+     '../../selection/ContextManager.js',
+     '../../selection/Selection.js',
+     '../../selection/SelectGesture.js'
  ], function (
      $,
-     ContextualDomainObject
+     ContextualDomainObject,
+     ContextManager,
+     Selection,
+     SelectGesture
  ) {
      /**
       * Allows support for common user actions to be attached to views.
@@ -51,6 +57,21 @@
       */
      GestureAPI.prototype.selectable = function (htmlElement, item) {
          // TODO: implement selectable
+        //
+         //
+        //  var instantiate = this.openmct.$injector.get('instantiate');
+        //  var childKeystring = this.objectUtils.makeKeyString(item.identifier);
+        //  var childOldformat = this.objectUtils.toOldFormat(item);
+        //  var childOldObject = instantiate(childOldformat, childKeystring);
+        //  debugger;
+         //
+         //
+        //  var selection = new Selection();
+        //  var contextManager = new ContextManager();
+        //  var selectGesture = new SelectGesture(selection, contextManager);
+        //
+        //  return selectGesture.apply(htmlElement,item);
+
      };
 
 
