@@ -222,11 +222,11 @@ define(
                     expect(copyAction).toBeDefined();
                 });
 
-
                 it("performs copy immediately", function () {
                     copyAction.perform();
                     expect(copyService.perform)
                         .toHaveBeenCalledWith(selectedObject, newParent);
+                    expect(copyAction.createWizard).not.toHaveBeenCalled();
                 });
             });
         });
