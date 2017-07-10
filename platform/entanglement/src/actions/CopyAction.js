@@ -140,7 +140,7 @@ define(
                 wizard.getFormStructure(),
                 wizard.getInitialFormValue()
             ).then(function (userInput) {
-                return copyService.perform(object, userInput.location);
+                return copyService.perform(object, userInput.location, undefined, userInput);
             }, function () {
                 return Promise.reject(new CancelError(CANCEL_MESSAGE));
             }.bind(this));

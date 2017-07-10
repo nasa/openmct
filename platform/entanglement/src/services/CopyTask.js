@@ -37,9 +37,10 @@ define(
          * @param $q Angular's $q, for promises
          * @constructor
          */
-        function CopyTask(domainObject, parent, filter, $q) {
+        function CopyTask(domainObject, parent, filter, cloneProperties, $q) {
             this.domainObject = domainObject;
             this.parent = parent;
+            this.cloneProperties = cloneProperties;
             this.firstClone = undefined;
             this.$q = $q;
             this.deferred = undefined;

@@ -48,9 +48,10 @@ define(
                 mockWizard,
                 mockFormStructure = "form_structure",
                 mockFormInitialValue = "initial_form_value",
+                mockFormUserInput,
                 mockLog,
                 abstractComposePromise,
-                progress = {phase: "copying", totalObjects: 10, processed: 1};
+                progress = { phase: "copying", totalObjects: 10, processed: 1 };
 
             beforeEach(function () {
                 policyService = jasmine.createSpyObj(
@@ -108,8 +109,12 @@ define(
                     success();
                 });
 
+                mockFormUserInput = {
+                    location: newParentLocation
+                };
+
                 userInputPromise.then.andCallFake(function (callback) {
-                    callback({ location: newParentLocation });
+                    callback(mockFormUserInput);
                     return abstractComposePromise;
                 });
 
@@ -122,7 +127,7 @@ define(
                 mockDialog = jasmine.createSpyObj("dialog", ["dismiss"]);
                 dialogService.showBlockingMessage.andReturn(mockDialog);
 
-                mockWizard = jasmine.createSpyObj('wizard', 
+                mockWizard = jasmine.createSpyObj('wizard',
                     ['getFormStructure', 'getInitialFormValue']);
                 mockWizard.getFormStructure.andReturn(mockFormStructure);
                 mockWizard.getInitialFormValue.andReturn(mockFormInitialValue);
@@ -190,7 +195,11 @@ define(
                             .args[0](newParent);
 
                         expect(copyService.perform)
-                            .toHaveBeenCalledWith(selectedObject, newParentLocation);
+                            .toHaveBeenCalledWith(
+                                selectedObject, 
+                                newParentLocation,
+                                undefined,
+                                mockFormUserInput);
                     });
 
                     it("notifies the user of progress", function () {

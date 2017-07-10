@@ -140,10 +140,7 @@ define(
                 mockDeferred.resolve.andCallFake(function (value) {
                     mockDeferred.promise = synchronousPromise(value);
                 });
-
-
             });
-
 
             describe("produces models which", function () {
                 var model;
@@ -153,6 +150,7 @@ define(
                         mockDomainObject,
                         mockParentObject,
                         mockFilter,
+                        undefined,
                         mockQ
                     );
 
@@ -214,6 +212,7 @@ define(
                         mockComposingObject,
                         mockParentObject,
                         mockFilter,
+                        undefined,
                         mockQ
                     );
 
