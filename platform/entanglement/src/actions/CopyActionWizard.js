@@ -37,7 +37,6 @@ define(
         function CopyActionWizard(domainObject, parent, locationValidator) {
             this.type = domainObject.getCapability('type');
             this.model = domainObject.getModel();
-            this.domainObject = domainObject;
             this.properties = this.type.getProperties();
             this.parent = parent;
             this.locationValidator = locationValidator;
@@ -100,8 +99,7 @@ define(
                     return property.getValue(model);
                 });
 
-            // Include the createParent
-            formValue.createParent = this.parent;
+            formValue.location = this.parent;
 
             return formValue;
         };
