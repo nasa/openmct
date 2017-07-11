@@ -140,7 +140,8 @@ define(
                 wizard.getFormStructure(),
                 wizard.getInitialFormValue()
             ).then(function (userInput) {
-                return copyService.perform(object, userInput.location, undefined, userInput);
+                var customModel = wizard.createModel(userInput);
+                return copyService.perform(object, userInput.location, undefined, customModel);
             }, function () {
                 return Promise.reject(new CancelError(CANCEL_MESSAGE));
             }.bind(this));

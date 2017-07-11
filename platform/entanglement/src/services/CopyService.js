@@ -78,7 +78,7 @@ define(
          * @returns a promise that will be completed with the clone of
          * domainObject when the duplication is successful.
          */
-        CopyService.prototype.perform = function (domainObject, parent, filter, cloneProperties) {
+        CopyService.prototype.perform = function (domainObject, parent, filter, cloneModel) {
             var policyService = this.policyService;
 
             // Combines caller-provided filter (if any) with the
@@ -96,7 +96,7 @@ define(
                     domainObject,
                     parent,
                     filterWithPolicy,
-                    cloneProperties,
+                    cloneModel,
                     this.$q
                 ).perform();
             } else {
