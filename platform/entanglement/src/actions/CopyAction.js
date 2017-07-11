@@ -21,6 +21,8 @@
  *****************************************************************************/
 
 define(
+    // AbstractComposeAction used to be extended by CopyAction.
+    // Now used only for the few common parts left.
     ['./AbstractComposeAction', './CopyActionWizard', './CancelError',],
     function (AbstractComposeAction, CopyActionWizard, CancelError) {
 
@@ -148,9 +150,9 @@ define(
         };
 
         /**
-         * Executes the CopyAction. The CopyAction uses the default behaviour of
-         * the AbstractComposeAction, but extends it to support notification
-         * updates of progress on copy.
+         * Executes the CopyAction. The actual copy logic is contained within
+         * performBase, and perform extends it with notifications on overall
+         * progress.
          */
         CopyAction.prototype.perform = function () {
             var self = this;
