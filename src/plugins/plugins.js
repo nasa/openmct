@@ -26,14 +26,16 @@ define([
     '../../example/generator/plugin',
     '../../platform/features/autoflow/plugin',
     './timeConductor/plugin',
-    '../../example/imagery/plugin'
+    '../../example/imagery/plugin',
+    './listview/plugin'
 ], function (
     _,
     UTCTimeSystem,
     GeneratorPlugin,
     AutoflowPlugin,
     TimeConductorPlugin,
-    ExampleImagery
+    ExampleImagery,
+    ListView
 ) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
@@ -53,6 +55,8 @@ define([
     });
 
     plugins.UTCTimeSystem = UTCTimeSystem;
+
+    plugins.ListView = ListView;
 
     /**
      * A tabular view showing the latest values of multiple telemetry points at
