@@ -15,10 +15,14 @@
     "d3-time-format": "^2.0.3",
     "express": "^4.13.1",
     "minimist": "^1.1.1",
-    "request": "^2.69.0"
+    "request": "^2.69.0",
+    "requirejs-babel-plugin": "^0.4.0"
   },
   "devDependencies": {
+    "babel-standalone": "^6.25.0",
     "bower": "^1.7.7",
+    "cajon": "^0.4.3",
+    "etch": "^0.12.5",
     "git-rev-sync": "^1.4.0",
     "glob": ">= 3.0.0",
     "gulp": "^3.9.0",

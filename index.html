@@ -25,7 +25,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
-    <script src="bower_components/requirejs/require.js">
+    <script src="node_modules/cajon/cajon.js">
     </script>
     <script>
         var THIRTY_MINUTES = 30 * 60 * 1000;
@@ -43,6 +43,7 @@
             openmct.install(openmct.plugins.Generator());
             openmct.install(openmct.plugins.ExampleImagery());
             openmct.install(openmct.plugins.UTCTimeSystem());
+            openmct.install(openmct.plugins.LADTable());
             openmct.install(openmct.plugins.Conductor({
                 menuOptions: [
                     {
