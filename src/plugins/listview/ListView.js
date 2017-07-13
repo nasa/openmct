@@ -20,7 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['zepto',], function ($) {
+define([
+    'zepto',
+    '../../api/objects/object-utils.js'
+], function (
+    $,
+    objectUtils
+) {
 
     /**
      * Displays folders in a list view.
@@ -29,6 +35,7 @@ define(['zepto',], function ($) {
     function ListView(openmct) {
         var createTable = function(container,domainObject) {
             var element = document.createElement('table');
+            element.classList.add('list-view');
             createTableHeader(element);
             createTableBody(element, domainObject);
 
@@ -56,24 +63,27 @@ define(['zepto',], function ($) {
             openmct.composition.get(domainObject).load().then(
                 function(compositions){
                     compositions.map(function(child){
+                        var instantiate = this.openmct.$injector.get('instantiate');
+
+                        var childKeystring = objectUtils.makeKeyString(child.identifier);
+                        var childOldformat = objectUtils.toOldFormat(child);
+                        var childOld = instantiate(childOldformat, childKeystring);
 
                         return {
-                            icon: child.getCapability('type').getCssClass(),
-                            title: child.getModel().name,
-                            type: child.getCapability('type').getName(),
+                            icon: childOld.getCapability('type').getCssClass(),
+                            title: childOld.getModel().name,
+                            type: childOld.getCapability('type').getName(),
                             persisted: new Date(
-                                child.getModel().persisted
+                                childOld.getModel().persisted
                             ).toUTCString(),
                             modified: new Date(
-                                child.getModel().modified
+                                childOld.getModel().modified
                             ).toUTCString(),
-                            asDomainObject: child,
-                            location: child.getCapability('location'),
-                            action: child.getCapability('action')
+                            asDomainObject: childOld,
+                            location: childOld.getCapability('location'),
+                            action: childOld.getCapability('action')
                         }
                     }).forEach(function (child){
-                        console.log(child);
-
                         createRow(tbodyElement, child);
                     });
                 },
@@ -91,6 +101,9 @@ define(['zepto',], function ($) {
             addType(rowElement, domainObject);
             addPersistedValue(rowElement, domainObject);
             addModifiedValue(rowElement, domainObject);
+            rowElement.addEventListener('click',function(){
+                domainObject.action.perform('navigate');
+            });
             parentElement.appendChild(rowElement);
         }
 
@@ -105,19 +118,18 @@ define(['zepto',], function ($) {
         }
 
         var createIconElement = function(parentElement, domainObject){
-            debugger;
             var wrapElement = document.createElement('span');
-            wrapElement.classList.add(['flex-elem', 't-item-icon']);
+            wrapElement.classList.add(...['flex-elem', 't-item-icon']);
             var element = document.createElement('span')
-            element.classList.add(['t-item-icon-glyph', domainObject.icon]);
+            element.classList.add(...['t-item-icon-glyph', domainObject.icon]);
             wrapElement.appendChild(element);
             parentElement.appendChild(wrapElement);
         }
 
         var createTitleElement = function(parentElement, domainObject){
             var element = document.createElement('span');
-            element.classList.add(['t-title-label', 'flex-elem', 'grows']);
-            element.appendChild(document.createTextNode(domainObject.name));
+            element.classList.add(...['t-title-label', 'flex-elem', 'grows']);
+            element.appendChild(document.createTextNode(domainObject.title));
             parentElement.appendChild(element);
         }
 
