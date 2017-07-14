@@ -21,8 +21,14 @@
  *****************************************************************************/
 
 define(
-    ["../../src/controllers/ImageryController"],
-    function (ImageryController) {
+    [
+        "zepto",
+        "../../src/controllers/ImageryController"
+    ],
+    function ($, ImageryController) {
+
+        var MOCK_ELEMENT_TEMPLATE =
+            '<div class="l-image-thumbs-wrapper"></div>';
 
         describe("The Imagery controller", function () {
             var $scope,
@@ -34,7 +40,8 @@ define(
                 prefix,
                 controller,
                 hasLoaded,
-                mockWindow;
+                mockWindow,
+                mockElement;
 
             beforeEach(function () {
                 $scope = jasmine.createSpyObj('$scope', ['$on', '$watch']);
@@ -50,6 +57,7 @@ define(
                     ]),
                     time: jasmine.createSpyObj('timeAPI', [
                         'timeSystem',
+                        'clock',
                         'on',
                         'off'
                     ]),
@@ -94,18 +102,23 @@ define(
                 });
                 metadata.value.andReturn("timestamp");
                 metadata.valuesForHints.andReturn(["value"]);
+                mockElement = $(MOCK_ELEMENT_TEMPLATE);
                 mockWindow = jasmine.createSpyObj('$window', ['requestAnimationFrame']);
                 mockWindow.requestAnimationFrame.andCallFake(function (f) {
                     return f();
                 });
 
-                controller = new ImageryController($scope, mockWindow, openmct);
+                controller = new ImageryController(
+                    $scope,
+                    mockWindow,
+                    mockElement,
+                    openmct
+                );
             });
 
             describe("when loaded", function () {
                 var callback,
                     boundsListener;
-                var mockBounds = {start: 1434600000000, end: 1434600500000};
 
                 beforeEach(function () {
                     waitsFor(function () {
@@ -198,20 +211,13 @@ define(
                 });
 
                 it("listens for bounds event and responds to tick and manual change", function () {
+                    var mockBounds = {start: 1434600000000, end: 1434600500000};
                     expect(openmct.time.on).toHaveBeenCalled();
                     openmct.telemetry.request.reset();
                     boundsListener(mockBounds, true);
                     expect(openmct.telemetry.request).not.toHaveBeenCalled();
                     boundsListener(mockBounds, false);
                     expect(openmct.telemetry.request).toHaveBeenCalledWith(newDomainObject, mockBounds);
-                });
-
-                it("recognizes duplicate bounds", function () {
-                    openmct.telemetry.request.reset();
-                    boundsListener(mockBounds, false);
-                    boundsListener(mockBounds, false);
-                    boundsListener(mockBounds, false);
-                    expect(openmct.telemetry.request.calls.length).toBe(1);
                 });
 
                 it ("doesnt append duplicate datum", function () {

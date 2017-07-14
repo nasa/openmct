@@ -79,6 +79,7 @@ define([
                     "depends": [
                         "$scope",
                         "$window",
+                        "$element",
                         "openmct"
                     ]
                 }

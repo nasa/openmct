@@ -39,7 +39,7 @@ define(
          * @memberof platform/features/imagery
          */
 
-        function ImageryController($scope, $window, openmct) {
+        function ImageryController($scope, $window, element, openmct) {
             this.$scope = $scope;
             this.$window = $window;
             this.openmct = openmct;
@@ -48,10 +48,8 @@ define(
             this.zone = "";
             this.imageUrl = "";
             this.requestCount = 0;
-            this.lastBound = undefined;
-            this.autoScroll = false;
-            this.scrollable =
-                $(document.getElementsByClassName('l-image-thumbs-wrapper')[0]);
+            this.scrollable = $(element[0]);
+            this.autoScroll = openmct.time.clock() ? true : false;
 
             this.$scope.imageHistory = [];
             this.$scope.filters = {
@@ -66,11 +64,9 @@ define(
             this.onBoundsChange = this.onBoundsChange.bind(this);
             this.onScroll = this.onScroll.bind(this);
 
-            // Subscribe to telemetry when a domain object becomes available
             this.subscribe(this.$scope.domainObject);
 
-            // Unsubscribe when the plot is destroyed
-            this.$scope.$on("$destroy", this.stopListening);
+            this.$scope.$on('$destroy', this.stopListening);
             this.openmct.time.on('bounds', this.onBoundsChange);
             this.scrollable.on('scroll', this.onScroll);
         }
@@ -109,19 +105,24 @@ define(
                 .request(this.domainObject, bounds)
                     .then(function (values) {
                         if (this.requestCount > requestId) {
-                            return Promise.reject('Stale request');
+                            return Promise.resolve('Stale request');
                         }
                         values.forEach(function (datum) {
                             this.updateHistory(datum);
-                        }.bind(this));
+                        }, this);
                         this.requestLad(true);
                     }.bind(this));
         };
 
-        // Optional addToHistory argument allows for two use cases:
-        //     updating url and timestamp only for standard imagery view,
-        //     i.e to populate the view before history is requested OR
-        //     appending to the running imagery history
+        /**
+         * Makes a request for the most recent datum in the
+         * telelmetry store. Optional addToHistory argument
+         * determines whether the requested telemetry should
+         * be added to history or only used to update the current
+         * image url and timestamp.
+         * @private
+         * @param {boolean} [addToHistory] if true, adds to history
+         */
         ImageryController.prototype.requestLad = function (addToHistory) {
             this.openmct.telemetry
                 .request(this.domainObject, {
@@ -145,16 +146,25 @@ define(
             }
         };
 
-        // Query for new historical data on manual bound change
+        /**
+         * Responds to bound change event be requesting new
+         * historical data if the bound change was manual.
+         * @private
+         * @param {object} [newBounds] new bounds object
+         * @param {boolean} [tick] true when change is automatic
+         */
         ImageryController.prototype.onBoundsChange = function (newBounds, tick) {
-            if (this.domainObject && !tick &&
-                !_.isEqual(this.lastBound, newBounds)) {
-                this.lastBound = newBounds;
+            if (this.domainObject && !tick) {
                 this.requestHistory(newBounds);
             }
         };
 
-        // Update displayable values to reflect latest image telemetry
+        /**
+         * Updates displayable values to match those of the most
+         * recently recieved datum.
+         * @param {object} [datum] the datum
+         * @private
+         */
         ImageryController.prototype.updateValues = function (datum) {
             if (this.isPaused) {
                 this.nextDatum = datum;
@@ -166,7 +176,12 @@ define(
 
         };
 
-        // Update displayable values and append datum to running history
+        /**
+         * Appends given imagery datum to running history.
+         * @private
+         * @param {object} [datum] target telemetry datum
+         * @returns {boolean} falsy when a duplicate datum is given
+         */
         ImageryController.prototype.updateHistory = function (datum) {
             if (this.$scope.imageHistory.length === 0 ||
                 !_.isEqual(this.$scope.imageHistory.slice(-1)[0], datum)) {
