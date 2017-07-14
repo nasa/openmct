@@ -115,9 +115,7 @@ define(
                     return (this.telemetryService =
                         $injector.get("telemetryService"));
                 } catch (e) {
-                    // $injector should throw if telemetryService
-                    // is unavailable or unsatisfiable.
-                    $log.warn("Telemetry service unavailable");
+                    $log.info("Telemetry service unavailable");
                     return (this.telemetryService = null);
                 }
             };
@@ -314,4 +312,3 @@ define(
         return TelemetryCapability;
     }
 );
-
