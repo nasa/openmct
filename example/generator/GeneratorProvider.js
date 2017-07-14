@@ -55,6 +55,10 @@ define([
 
         var workerRequest = {};
 
+        if (!request) {
+            request = {};
+        }
+
         props.forEach(function (prop) {
             if (domainObject.telemetry && domainObject.telemetry.hasOwnProperty(prop)) {
                 workerRequest[prop] = domainObject.telemetry[prop];

@@ -46,6 +46,7 @@
             openmct.install(openmct.plugins.AutoflowView({
                 type: "telemetry.panel"
             }));
+            openmct.install(openmct.plugins.LADTable());
             openmct.install(openmct.plugins.Conductor({
                 menuOptions: [
                     {
