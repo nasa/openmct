@@ -135,7 +135,11 @@ define([
             rowElement.addEventListener('click',function(){
 
                 var l =openmct.$injector.get('$location');
-                l.path(l.path() + '/' + domainObject.asDomainObject.getId())
+                var domainObjectId = domainObject.asDomainObject.getId();
+                //l.path(l.path() + '/' + domainObject.asDomainObject.getId())
+                var hash = window.location.hash;
+                var pathWithoutStuff = hash.split('?')[0];
+                window.location = pathWithoutStuff +'/' + domainObjectId;
                 // debugger;
                 // domainObject.action.perform('navigate');
             });
