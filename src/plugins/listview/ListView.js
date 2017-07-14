@@ -22,9 +22,11 @@
 
 define([
     'zepto',
+    '../../../../platform/core/src/capabilities/ContextualDomainObject.js',
     '../../api/objects/object-utils.js'
 ], function (
     $,
+    ContextualDomainObject,
     objectUtils
 ) {
 
@@ -38,7 +40,14 @@ define([
             element.classList.add('list-view');
             createTableHeader(element);
             createTableBody(element, domainObject);
-
+            element.addEventListener("click", function(event){
+                var tableRef = event.currentTarget;
+                var headerRef = event.target;
+                if(headerRef.tagName ==="TH"){
+                    sortTableByHeader(tableRef,headerRef);//current target is table element, target is th element
+                };
+            },false);
+            initialTableSort(element);
             container.appendChild(element);
         }
         var createTableHeader = function (parentElement) {
@@ -46,9 +55,17 @@ define([
 
             var rowElement = document.createElement('tr');
             //populate table header with column names
-            ['Name','Type','Created Date','Update Date'].forEach(function (columnName){
+            [
+                {title:'Name', order:'asc'},
+                {title:'Type', order:'asc'},
+                {title:'Created Date', order:'desc'},
+                {title:'Update Date', order:'desc'}
+            ].forEach(function (columnInfo, index){
                 var element = document.createElement('th');
-                element.appendChild(document.createTextNode(columnName));
+                element.classList.add('sortable');
+                element.setAttribute('col', index);
+                element.setAttribute('order', columnInfo.order);
+                element.appendChild(document.createTextNode(columnInfo.title));
                 rowElement.appendChild(element);
             });
 
@@ -68,6 +85,13 @@ define([
                         var childKeystring = objectUtils.makeKeyString(child.identifier);
                         var childOldformat = objectUtils.toOldFormat(child);
                         var childOld = instantiate(childOldformat, childKeystring);
+
+                        //can't access globalDomainObject TODO: figure out how to access it.
+                        // var parentKeystring = this.objectUtils.makeKeyString(globalDomainObject.identifier);
+                        // var parentOldformat = this.objectUtils.toOldFormat(globalDomainObject);
+                        // var parentOld = instantiate(parentOldformat, parentKeystring);
+                        //
+                        // var contextObject = new ContextualDomainObject(childOld, parentOld);
 
                         return {
                             icon: childOld.getCapability('type').getCssClass(),
@@ -101,8 +125,19 @@ define([
             addType(rowElement, domainObject);
             addPersistedValue(rowElement, domainObject);
             addModifiedValue(rowElement, domainObject);
+
+            //TODO: implement the navigate functionality.
+            //currently we are using $injector for angular and getting $location.
+            //this allows us to get the path within the application.
+            //this may be something along the lines of an internal view hierarchy.
+            //not view hierarchy but a hierarchy of subfolder.
+            //what belongs to what.
             rowElement.addEventListener('click',function(){
-                domainObject.action.perform('navigate');
+
+                var l =openmct.$injector.get('$location');
+                l.path(l.path() + '/' + domainObject.asDomainObject.getId())
+                // debugger;
+                // domainObject.action.perform('navigate');
             });
             parentElement.appendChild(rowElement);
         }
@@ -150,6 +185,106 @@ define([
             element.appendChild(document.createTextNode(domainObject.modified));
             parentElement.appendChild(element);
         }
+
+        // function sortTable(table, col, reverse) {
+        //     var tb = table.tBodies[0], // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+        //         tr = Array.prototype.slice.call(tb.rows, 0), // put rows into array
+        //         i;
+        //     reverse = -((+reverse) || -1);
+        //     tr = tr.sort(function (a, b) { // sort rows
+        //         return reverse // `-1 *` if want opposite order
+        //             * (a.cells[col].textContent.trim() // using `.textContent.trim()` for test
+        //                 .localeCompare(b.cells[col].textContent.trim())
+        //                );
+        //     });
+        //     for(i = 0; i < tr.length; ++i) tb.appendChild(tr[i]); // append each row in order
+        //     debugger;
+        // }
+        //
+        // function makeSortable(table) {
+        //     var th = table.tHead, i;
+        //     th && (th = th.rows[0]) && (th = th.cells);
+        //     if (th) i = th.length;
+        //     else return; // if no `<thead>` then do nothing
+        //     while (--i >= 0) (function (i) {
+        //         var dir = 1;
+        //         //backwards iteration through the rows. therefore time  are the last two
+        //         if(i==0||i==1){
+        //             th[i].addEventListener('click', function () {sortTable(table, i, -1)});
+        //         }else{
+        //             th[i].addEventListener('click', function () {sortTable(table, i, 1)});
+        //         }
+        //         //th[i].addEventListener('click', function () {sortTable(table, i, (dir = 1 - dir))});
+        //
+        //     }(i));
+        // }
+        // function makeAllSortable(parent) {
+        //     parent = parent || document.body;
+        //     var t = parent.getElementsByTagName('table'), i = t.length;
+        //     while (--i >= 0) makeSortable(t[i]);
+        // }
+
+        function sortTableByHeader(table,header){
+            // debugger;
+            var col = header.getAttribute('col');
+            var order = header.getAttribute('order');
+            if(header.classList.contains('sort')){
+                var ascLast = header.classList.contains('asc');
+                clearTableHeaders(table);
+                header.classList.add('sort');
+                if(ascLast){
+                    reverse = -1;
+                    header.classList.add('desc');
+                }else{
+                    reverse = 1;
+                    header.classList.add('asc');
+                }
+            }else{
+                clearTableHeaders(table);
+                header.classList.add('sort');
+                if (order === 'asc'){
+                    reverse = 1;
+                    header.classList.add('asc')
+                }else{
+                    reverse = -1;
+                    header.classList.add('desc')
+                }
+            }
+
+            var body = table.tBodies[0];
+            var rows = Array.prototype.slice.call(body.rows, 0);
+            rows = rows.sort(function (a, b) { // sort rows
+                return reverse // `-1 *` if want opposite order
+                    * (a.cells[col].textContent.trim() // using `.textContent.trim()` for test
+                        .localeCompare(b.cells[col].textContent.trim())
+                       );
+            });
+            for(i = 0; i < rows.length; ++i) body.appendChild(rows[i]);
+        }
+        function initialTableSort(table){
+            var col = 0;
+            var reserve = 1;
+            table.firstElementChild.firstElementChild.firstElementChild.classList.add('sort','asc');
+            var body = table.tBodies[0];
+            var rows = Array.prototype.slice.call(body.rows, 0);
+            rows = rows.sort(function (a, b) { // sort rows
+                return reverse // `-1 *` if want opposite order
+                    * (a.cells[col].textContent.trim() // using `.textContent.trim()` for test
+                        .localeCompare(b.cells[col].textContent.trim())
+                       );
+            });
+            for(i = 0; i < rows.length; ++i) body.appendChild(rows[i]);
+        }
+
+        function clearTableHeaders(table){
+            var tableHeadersHTMLCollection = table.firstElementChild.firstElementChild.children;
+            var tableHeaders = Array.prototype.slice.call(tableHeadersHTMLCollection);
+            tableHeaders.forEach(function(headerElement, index){
+                //remove sort from all
+                headerElement.classList.remove('sort','desc','asc');
+            });
+        }
+
         //Object defining the view
         return {
             name: 'listview',
