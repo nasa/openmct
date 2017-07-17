@@ -22,10 +22,10 @@
 
  define([
      'zepto',
-     '../../../platform/core/src/capabilities/ContextualDomainObject.js',
-     '../../selection/ContextManager.js',
-     '../../selection/Selection.js',
-     '../../selection/SelectGesture.js'
+     '../../../platform/core/src/capabilities/ContextualDomainObject',
+     '../../selection/ContextManager',
+     '../../selection/Selection',
+     '../../selection/SelectGesture'
  ], function (
      $,
      ContextualDomainObject,
@@ -92,18 +92,11 @@
       */
      GestureAPI.prototype.contextMenu = function (htmlElement, childObject, parentObject) {
          var gestureService = this.openmct.$injector.get('gestureService');
-         var instantiate = this.openmct.$injector.get('instantiate');
 
-         var childKeystring = this.objectUtils.makeKeyString(childObject.identifier);
-         var childOldformat = this.objectUtils.toOldFormat(childObject);
-         var childOldObject = instantiate(childOldformat, childKeystring);
+         var oldChildObject = this.convertAndInstantiate(childObject);
+         var oldParentObject = this.convertAndInstantiate(parentObject);
 
-         var parentKeystring = this.objectUtils.makeKeyString(parentObject.identifier);
-         var parentOldformat = this.objectUtils.toOldFormat(parentObject);
-         var parentOldObject = instantiate(parentOldformat, parentKeystring);
-
-         var contextObject = new ContextualDomainObject(childOldObject, parentOldObject);
-
+         var contextObject = new ContextualDomainObject(oldChildObject, oldParentObject);
 
          return gestureService.attachGestures($(htmlElement), contextObject, ['menu']);
      };
@@ -125,19 +118,23 @@
       */
      GestureAPI.prototype.info = function (htmlElement, childObject, parentObject) {
          var gestureService = this.openmct.$injector.get('gestureService');
-         var instantiate = this.openmct.$injector.get('instantiate');
 
-         var childKeystring = this.objectUtils.makeKeyString(childObject.identifier);
-         var childOldformat = this.objectUtils.toOldFormat(childObject);
-         var childOldObject = instantiate(childOldformat, childKeystring);
+         var oldChildObject = this.convertAndInstantiate(childObject);
+         var oldParentObject = this.convertAndInstantiate(parentObject);
 
-         var parentKeystring = this.objectUtils.makeKeyString(parentObject.identifier);
-         var parentOldformat = this.objectUtils.toOldFormat(parentObject);
-         var parentOldObject = instantiate(parentOldformat, parentKeystring);
-
-         var contextObject = new ContextualDomainObject(childOldObject, parentOldObject);
+         var contextObject = new ContextualDomainObject(oldChildObject, oldParentObject);
 
          return gestureService.attachGestures($(htmlElement), contextObject, ['info']);
+     }
+
+     //Converts a new domain object(nDomainObject) to an old domain object(oDomainObject) and instantiates it.
+     GestureAPI.prototype.convertAndInstantiate = function (nDomainObject) {
+         var instantiate = this.openmct.$injector.get('instantiate');
+
+         var keystring = this.objectUtils.makeKeyString(nDomainObject.identifier);
+         var oDomainObject = this.objectUtils.toOldFormat(nDomainObject);
+
+         return instantiate(oDomainObject, keystring);
      }
 
      return GestureAPI;
