@@ -3,6 +3,7 @@ define(
     function () {
         function HyperlinkController($scope) {
           this.$scope = $scope
+          console.log(this.$scope.domainObject.getModel())
         }
 
         /*Function used to return if the property openNewTab should be true and a new tab should be opened

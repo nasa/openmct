@@ -86,8 +86,6 @@ define(
                 domainObject.getCapability.andReturn(
                     mutationCapability
                 );
-
-
                 scope = jasmine.createSpyObj(
                     "$scope",
                     ["$on"]

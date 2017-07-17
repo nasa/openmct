@@ -94,7 +94,7 @@ define([
                 "cssClass": "icon-check",
                 "name": "List",
                 "templateUrl": "templates/hyperlink.html",
-                "editable": true
+                "editable": false
             }
         ],
         "controllers": [
