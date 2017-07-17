@@ -108,7 +108,7 @@ define([
                             action: childOld.getCapability('action')
                         }
                     }).forEach(function (child){
-                        createRow(tbodyElement, child);
+                        createRow(tbodyElement, child, domainObject);
                     });
                 },
                 function(err){
@@ -119,7 +119,7 @@ define([
             parentElement.appendChild(tbodyElement);
         }
 
-        var createRow = function(parentElement, domainObject){
+        var createRow = function(parentElement, domainObject, parentDomainObject){
             var rowElement = document.createElement('tr');
             addIconAndTitle(rowElement, domainObject);
             addType(rowElement, domainObject);
@@ -133,7 +133,6 @@ define([
             //not view hierarchy but a hierarchy of subfolder.
             //what belongs to what.
             rowElement.addEventListener('click',function(){
-
                 var l =openmct.$injector.get('$location');
                 var domainObjectId = domainObject.asDomainObject.getId();
                 //l.path(l.path() + '/' + domainObject.asDomainObject.getId())
@@ -143,6 +142,8 @@ define([
                 // debugger;
                 // domainObject.action.perform('navigate');
             });
+            openmct.gestures.contextMenu(rowElement, domainObject.asDomainObject, parentDomainObject);
+            openmct.gestures.info(rowElement, domainObject.asDomainObject, parentDomainObject);
             parentElement.appendChild(rowElement);
         }
 
