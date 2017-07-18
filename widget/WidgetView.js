@@ -27,7 +27,7 @@ define(
         object: undefined,
         property: undefined,
         operation: 'lessThan',
-        value: [10]
+        values: [10]
     }]
 
     // parameters
@@ -107,7 +107,16 @@ define(
               $('#' + this.dataset.ruleId + ' .title').html(this.value);
           });
 
+          // populate a select with most recent composition before it opens
           $(container).on('mousedown','select', this.populateSelect);
+
+          // update data model when a select element is modified
+          $(container).on('change','select', function () {
+              var index = $(this).prop('selectedIndex'),
+                  selectedId = $(this).prop('options')[index].value;
+
+              this.dataset.selectedId = selectedId;
+          });
     }
 
     WidgetView.prototype.destroy = function (container) {
@@ -133,7 +142,6 @@ define(
     }
 
     WidgetView.prototype.onCompositionAdd = function (newObj) {
-        debugger;
         var self = this,
             telemetryAPI = self.openmct.telemetry,
             telemetryMetadata;
@@ -149,6 +157,11 @@ define(
             self.telemetryMetadataByObject[newObj.identifier.key] = {};
             telemetryMetadata.forEach( function (metaDatum) {
                 self.telemetryMetadataByObject[newObj.identifier.key][metaDatum.key] = metaDatum;
+            });
+            telemetryAPI.request(newObj, {}).then( function (telemetry) {
+                Object.entries(telemetry[0]).forEach( function(telem) {
+                    self.telemetryMetadataByObject[newObj.identifier.key][telem[0]]['type'] = typeof telem[1];
+                });
             });
         }
     }
@@ -277,15 +290,18 @@ define(
             self = this,
             id = $(elem).prop('id'),
             ruleId = elem.dataset.ruleId,
-            selectedId;
+            selectedId,
+            selectedStr,
+            objInput = $('#object', '#'+ruleId),
+            objId = objInput.get(0).dataset.selectedId || '',
+            keyInput = $('#key', '#'+ruleId),
+            keyId = keyInput.get(0).dataset.selectedId || '';
 
         $('option', elem).each( function () {
             if ($(this).prop('selected')) {
                 selectedId = $(this).prop('value')
             }
-        })
-
-        elem.dataset.selectedId = selectedId || '';
+        });
 
         $(elem).html('');
 
@@ -293,7 +309,6 @@ define(
             '--'+ _.capitalize($(elem).prop('id')) + '--' +'</option>');
 
         if (id === 'object') {
-            debugger;
             Object.values(self.compositionObjs).forEach( function (obj) {
                 var selectedStr = (obj.identifier.key === selectedId) ? 'selected' : '';
                 $(elem).append(
@@ -302,22 +317,31 @@ define(
                 );
             });
         } else if (id === 'key') {
-            debugger;
-            var objInput = $('#object', '#'+ruleId),
-                objId = objInput.get(0).dataset.selectedId || '',
-                metaData;
+            var metaData,
+                selectedStr;
                 if (objId && objId !== '') {
                     metaData = Object.values(self.telemetryMetadataByObject[objId]);
+                    metaData.forEach( function (metaDatum) {
+                        selectedStr = (metaDatum.key === selectedId) ? 'selected' : '';
+                        $(elem).append(
+                            '<option value = ' + metaDatum.key + ' ' + selectedStr + '>'
+                            + metaDatum.name + '</option>'
+                        )
+                    });
                 }
-                console.log(metaData);
         } else if (id === 'operation') {
-            self.evaluator.getOperationKeys().forEach( function (key) {
-                var selectedStr = (key === selectedId) ? 'selected' : '';
-                $(elem).append(
-                    '<option value = ' + key + ' ' + selectedStr + '>'
-                    + self.evaluator.getOperationText(key) + '</options>'
-                );
-            });
+            if (objId && objId != '' && keyId && keyId !== '')
+                var type = self.telemetryMetadataByObject[objId][keyId]['type']
+                    operationKeys = self.evaluator.getOperationKeys().filter( function (opKey) {
+                        return (self.evaluator.operationAppliesTo(opKey, type));
+                    })
+                operationKeys.forEach( function (key) {
+                    var selectedStr = (key === selectedId) ? 'selected' : '';
+                    $(elem).append(
+                        '<option value = ' + key + ' ' + selectedStr + '>'
+                        + self.evaluator.getOperationText(key) + '</option>'
+                    );
+                });
         }
     }
 

@@ -13,32 +13,42 @@ define(
             equalTo: {
                 operation: function(input) {return input[0] === input[1]},
                 text: 'is Equal To',
-                appliesTo: ['Number', 'String', 'Boolean']
+                appliesTo: 'number'
             },
             notEqualTo: {
                 operation: function(input) {return input[0] !== input[1]},
-                text: ' is Not Equal To',
-                appliesTo: ['Number', 'String', 'Boolean']
+                text: 'is Not Equal To',
+                appliesTo: 'number'
             },
             greaterThan: {
                 operation: function (input) {return input[0] > input[1]},
-                text: ' is Greater Than',
-                appliesTo: ['Number']
+                text: 'is Greater Than',
+                appliesTo: 'number'
             },
             lessThan: {
                 operation: function(input) {return input[0] < input[1]},
-                text: ' is Less Than',
-                appliesTo: ['Number']
+                text: 'is Less Than',
+                appliesTo: 'number'
             },
             greaterThanOrEq: {
                 operation: function (input) {return input[0] >= input[1]},
                 text: 'is Greater Than or Equal To',
-                appliesTo: ['Number']
+                appliesTo: 'number'
             },
             lessThanOrEq: {
                 operation: function (input) {return input[0] >= input[1]},
                 text: 'is Less Than or Equal To',
-                appliesTo: ['Number']
+                appliesTo: 'number'
+            },
+            textContains: {
+                operation: function(input) {return input[0].includes(input[1])},
+                text: 'Text Contains',
+                appliesTo: 'string'
+            },
+            textDoesNotContain: {
+                operation: function(input) {return !input[0]},
+                text: 'Text Does Not Contain',
+                appliesTo: 'string'
             }
         }
     }
@@ -59,6 +69,10 @@ define(
 
     RuleEvaluator.prototype.getOperationText = function (key) {
         return this.operations[key].text
+    }
+
+    RuleEvaluator.prototype.operationAppliesTo = function (key, type) {
+        return (this.operations[key].appliesTo === type);
     }
 
     return RuleEvaluator;
