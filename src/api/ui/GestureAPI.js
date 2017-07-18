@@ -92,11 +92,16 @@
       */
      GestureAPI.prototype.contextMenu = function (htmlElement, childObject, parentObject) {
          var gestureService = this.openmct.$injector.get('gestureService');
+         if(childObject.identifier !== undefined){
+             childObject = this.convertAndInstantiate(childObject);
+         }
+         if(parentObject.identifier !== undefined){
+             parentObject = this.convertAndInstantiate(parentObject);
+         }
 
-         var oldChildObject = this.convertAndInstantiate(childObject);
-         var oldParentObject = this.convertAndInstantiate(parentObject);
 
-         var contextObject = new ContextualDomainObject(oldChildObject, oldParentObject);
+
+         var contextObject = new ContextualDomainObject(childObject, parentObject);
 
          return gestureService.attachGestures($(htmlElement), contextObject, ['menu']);
      };
@@ -119,10 +124,15 @@
      GestureAPI.prototype.info = function (htmlElement, childObject, parentObject) {
          var gestureService = this.openmct.$injector.get('gestureService');
 
-         var oldChildObject = this.convertAndInstantiate(childObject);
-         var oldParentObject = this.convertAndInstantiate(parentObject);
-
-         var contextObject = new ContextualDomainObject(oldChildObject, oldParentObject);
+         //Check if the objects have an identifier property
+         if(childObject.identifier !== undefined){
+             //If they don't convert them into the old object
+             childObject = this.convertAndInstantiate(childObject);
+         }
+         if(parentObject.identifier !== undefined){
+             parentObject = this.convertAndInstantiate(parentObject);
+         }
+         var contextObject = new ContextualDomainObject(childObject, parentObject);
 
          return gestureService.attachGestures($(htmlElement), contextObject, ['info']);
      }
