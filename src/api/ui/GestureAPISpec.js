@@ -1,58 +1,65 @@
 define([
     './GestureAPI',
-    '../objects/object-utils',
-],function(
+    '../objects/object-utils'
+], function (
     GestureAPI,
     objectUtils
-){
+) {
     describe('The Gesture API', function () {
         var api, openmct;
         beforeEach(function () {
-
-            // gestureService = jasmine.createSpyObj('gestureService', ['attachGestures']);
-            // gestureService.attachGestures.andReturn(jasmine.any(Function));
-            // openmct = jasmine.createSpyObj('openmct', ['$injector']);
-            // var injector = jasmine.createSpyObj('injector', ['get']);
-            // injector.get.andReturn(gestureService);
-            // openmct.$injector.andReturn(injector);
-            openmct = jasmine.createSpyObj('openmct',['$injector']);
+            openmct = jasmine.createSpyObj('openmct', ['$injector']);
             var gestureService = jasmine.createSpyObj('gestureService', ['attachGestures']);
-            var fakeDomainObject = jasmine.createSpyObj('fakeDomainObject',['idkyet']).andCallFake(function(){return "test"});
+            gestureService.attachGestures.andCallFake(function (arg1,arg2,arg3) {
+                var destroyFunction = jasmine.createSpy('destroyFunction');
+                return destroyFunction;
+            });
+            var instantiateFunction = jasmine.createSpy('instantiateFunction');
+            instantiateFunction.andCallFake(function (arg1,arg2) {
+                return arg1;
+            });
             var $injector = jasmine.createSpyObj('$injector', ['get']);
-            $injector.get.andCallFake(function (arg){
-                if(arg === "gestureService"){
+            $injector.get.andCallFake(function (arg) {
+                if (arg === "gestureService") {
                     return gestureService;
                 }
-                if(arg === "instantiate"){
-                    return fakeDomainObject;
+                if (arg === "instantiate") {
+                    return instantiateFunction;
                 }
             });
             openmct.$injector = $injector;
 
             api = new GestureAPI(openmct, objectUtils);
-            //openmct.$injector.get.andCallFake(gestureService);
         });
         it('attaches a contextmenu to an element and returns a destroy function', function () {
             var htmlElement = document.createElement('div');
             htmlElement.appendChild(document.createTextNode('test element'));
+
             var nChildDomainObject = jasmine.createSpyObj('nChildDomainObject', ['identifier']);
+            nChildDomainObject.identifier = '555S';
+
             var nParentDomainObject = jasmine.createSpyObj('nParentDomainObject', ['identifier']);
-            var destroyFunc = api.contextMenu(htmlElement,nChildDomainObject,nParentDomainObject);
-            //console.log(destroyFunc);
+            nParentDomainObject.identifier = '555P';
+
+            var destroyFunc = api.contextMenu(htmlElement, nChildDomainObject, nParentDomainObject);
             expect(destroyFunc).toBeDefined();
         });
         it('attaches a infomenu to an element and returns a destroy function', function () {
             var htmlElement = document.createElement('div');
             htmlElement.appendChild(document.createTextNode('test element'));
+
             var nChildDomainObject = jasmine.createSpyObj('nChildDomainObject', ['identifier']);
+            nChildDomainObject.identifier = '555S';
+
             var nParentDomainObject = jasmine.createSpyObj('nParentDomainObject', ['identifier']);
-            var destroyFunc = api.info(htmlElement,nChildDomainObject,nParentDomainObject);
-            //console.log(destroyFunc);
+            nParentDomainObject.identifier = '555P';
+
+            var destroyFunc = api.info(htmlElement, nChildDomainObject, nParentDomainObject);
             expect(destroyFunc).toBeDefined();
         });
         it('converts a new domain object to an old one and instantiates it', function () {
             var nDomainObject = jasmine.createSpyObj('nDomainObject', ['identifier']);
-            var oDomainObject = api.convertAndInstantiate(nDomainObject);
+            var oDomainObject = api.convertAndInstantiateDomainObject(nDomainObject);
             expect(oDomainObject).toBeDefined();
 
         });

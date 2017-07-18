@@ -56,22 +56,7 @@
       * @memberof module:openmct.GestureAPI#
       */
      GestureAPI.prototype.selectable = function (htmlElement, item) {
-         // TODO: implement selectable
-        //
-         //
-        //  var instantiate = this.openmct.$injector.get('instantiate');
-        //  var childKeystring = this.objectUtils.makeKeyString(item.identifier);
-        //  var childOldformat = this.objectUtils.toOldFormat(item);
-        //  var childOldObject = instantiate(childOldformat, childKeystring);
-        //  debugger;
-         //
-         //
-        //  var selection = new Selection();
-        //  var contextManager = new ContextManager();
-        //  var selectGesture = new SelectGesture(selection, contextManager);
-        //
-        //  return selectGesture.apply(htmlElement,item);
-
+         //TODO: implement selectable
      };
 
 
@@ -92,14 +77,12 @@
       */
      GestureAPI.prototype.contextMenu = function (htmlElement, childObject, parentObject) {
          var gestureService = this.openmct.$injector.get('gestureService');
-         if(childObject.identifier !== undefined){
-             childObject = this.convertAndInstantiate(childObject);
+         if (childObject.hasOwnProperty('identifier')) {
+             childObject = this.convertAndInstantiateDomainObject(childObject);
          }
-         if(parentObject.identifier !== undefined){
-             parentObject = this.convertAndInstantiate(parentObject);
+         if (parentObject.hasOwnProperty('identifier')) {
+             parentObject = this.convertAndInstantiateDomainObject(parentObject);
          }
-
-
 
          var contextObject = new ContextualDomainObject(childObject, parentObject);
 
@@ -125,27 +108,30 @@
          var gestureService = this.openmct.$injector.get('gestureService');
 
          //Check if the objects have an identifier property
-         if(childObject.identifier !== undefined){
+         if (childObject.hasOwnProperty('identifier')) {
              //If they don't convert them into the old object
-             childObject = this.convertAndInstantiate(childObject);
+             childObject = this.convertAndInstantiateDomainObject(childObject);
          }
-         if(parentObject.identifier !== undefined){
-             parentObject = this.convertAndInstantiate(parentObject);
+         if (parentObject.hasOwnProperty('identifier')) {
+             parentObject = this.convertAndInstantiateDomainObject(parentObject);
          }
+
          var contextObject = new ContextualDomainObject(childObject, parentObject);
 
+
          return gestureService.attachGestures($(htmlElement), contextObject, ['info']);
-     }
+     };
 
      //Converts a new domain object(nDomainObject) to an old domain object(oDomainObject) and instantiates it.
-     GestureAPI.prototype.convertAndInstantiate = function (nDomainObject) {
+     GestureAPI.prototype.convertAndInstantiateDomainObject = function (nDomainObject) {
          var instantiate = this.openmct.$injector.get('instantiate');
 
          var keystring = this.objectUtils.makeKeyString(nDomainObject.identifier);
+
          var oDomainObject = this.objectUtils.toOldFormat(nDomainObject);
 
          return instantiate(oDomainObject, keystring);
-     }
+     };
 
      return GestureAPI;
  });
