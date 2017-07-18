@@ -25,12 +25,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
-    <script src="bower_components/requirejs/require.js">
-    </script>
+    <script src="bower_components/requirejs/require.js"> </script>
     <script>
         var THIRTY_MINUTES = 30 * 60 * 1000;
 
-        require(['openmct'], function (openmct) {
+        require(['openmct','widget/widgetPlugin'], function (openmct, widgetPlugin) {
             [
                 'example/eventGenerator',
                 'example/styleguide'
@@ -64,6 +63,7 @@
                     }
                 ]
             }));
+            openmct.install((new widgetPlugin()).plugin());
             openmct.time.clock('local', {start: -THIRTY_MINUTES, end: 0});
             openmct.time.timeSystem('utc');
             openmct.start();

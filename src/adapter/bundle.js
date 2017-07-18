@@ -43,7 +43,7 @@ define([
     AdapterCompositionPolicy,
     AdaptedViewPolicy,
     AlternateCompositionInitializer,
-    TimeSettingsURLHandler,
+    TimeSettingsURLHandler
 ) {
     legacyRegistry.register('src/adapter', {
         "extensions": {
