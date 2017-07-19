@@ -36,7 +36,8 @@ define(
 
         this.widgetType = {
             name: 'Summary Widget',
-            description: 'A compact status update for collections of telemetry-producing items',
+            description: 'A compact status display for collections of telemetry-producing items',
+            cssClass: 'icon-summary-widget',
             creatable: true,
             initialize: function (domainObject) {
                 domainObject.composition = [];
