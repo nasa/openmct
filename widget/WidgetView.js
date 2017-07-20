@@ -42,7 +42,7 @@ define(
         this.domainObject.configuration = this.domainObject.configuration || {};
         this.domainObject.configuration.rulesById = this.domainObject.configuration.rulesById || {};
         this.domainObject.configuration.ruleStylesById = this.domainObject.configuration.ruleStylesById || {};
-        this.domainObject.configuration.ruleCount = this.domainObject.configuration.ruleCount || 0;
+        this.domainObject.configuration.ruleOrder = this.domainObject.configuration.ruleOrder || ['default'];
 
         var self = this;
 
@@ -99,13 +99,39 @@ define(
           })
 
           $('#addRule', container).on('click', function () {
-              self.makeRule('rule' + self.getConfigProp('ruleCount'), 'Rule', container);
+              var ruleCount = 0,
+                  ruleId,
+                  ruleOrder = self.getConfigProp('ruleOrder');
+
+              //create a unique identifier
+              while (Object.keys(self.getConfigProp('rulesById')).includes('rule' + ruleCount)) {
+                  ruleCount = ++ruleCount;
+              }
+              //add rule to config
+              ruleId = 'rule' + ruleCount;
+              ruleOrder.push(ruleId);
+              self.setConfigProp('ruleOrder', ruleOrder);
+              self.makeRule(ruleId, 'Rule', container);
           });
 
           $(container).on('input','#ruleName', function() {
-              self.setConfigProp('rulesById.'+ this.dataset.ruleId + '.name', this.value);
+              self.setConfigProp('rulesById.' + this.dataset.ruleId + '.name', this.value);
               $('#' + this.dataset.ruleId + ' .title').html(this.value);
           });
+
+          $(container).on('click','.delete', function() {
+              var elem = this,
+                  ruleId = elem.dataset.ruleId,
+                  ruleOrder = self.getConfigProp('ruleOrder')
+
+              self.removeConfigProp('rulesById.' + ruleId);
+              self.removeConfigProp('ruleStylesById.' + ruleId);
+              _.remove(ruleOrder, function (value) {
+                  return value === ruleId;
+              });
+              self.setConfigProp('ruleOrder', ruleOrder);
+              self.refreshRules(container);
+          })
 
           // populate a select with most recent composition before it opens
           $(container).on('mousedown','select', this.populateSelect);
@@ -129,16 +155,7 @@ define(
         self.makeRule('default', 'Default', container);
         self.applyStyle( $('#widget'), self.getConfigProp('ruleStylesById.default'));
         $('#widgetName').html(self.domainObject.name);
-        (Object.keys(self.getConfigProp('rulesById')) || []).forEach( function(ruleId) {
-            if (ruleId !== 'default') {
-                self.makeRule(ruleId, self.getConfigProp('rulesById.' + ruleId + '.name'), container);
-            }
-        });
-        $('select').each( function() {
-            $(this).append('<option value = "">' +
-              '--' + _.capitalize($(this).prop('id')) + '--' +'</option>');
-        });
-
+        self.refreshRules(container);
     }
 
     WidgetView.prototype.onCompositionAdd = function (newObj) {
@@ -166,16 +183,25 @@ define(
         }
     }
 
+    WidgetView.prototype.refreshRules = function (container) {
+        var self = this;
+        $('#ruleArea').html('');
+        self.getConfigProp('ruleOrder').forEach( function(ruleId) {
+            self.makeRule(ruleId, self.getConfigProp('rulesById.' + ruleId + '.name'), container);
+        })
+    }
+
     WidgetView.prototype.makeRule = function (ruleId, ruleName, container) {
         //create a DOM element from HTML template and access its components
         var newRule = $(ruleTemplate),
             thumbnail = $('.rule-header .thumbnail', newRule),
             title = $('.rule-header .title' , newRule),
             nameInput = $('#ruleName', newRule),
-            styleObj;
+            styleObj = {};
 
+        Object.assign(styleObj, DEFAULT_PROPS)
         if (!this.hasConfigProp('ruleStylesById.' + ruleId)) {
-            styleObj = this.setConfigProp('ruleStylesById.' + ruleId, DEFAULT_PROPS);
+            this.setConfigProp('ruleStylesById.' + ruleId, styleObj);
         } else {
             styleObj = this.getConfigProp('ruleStylesById.' + ruleId);
         }
@@ -190,7 +216,6 @@ define(
         newRule.prop('id', ruleId);
         title.html(ruleName);
         this.applyStyle(thumbnail, styleObj);
-        this.setConfigProp('ruleCount', this.getConfigProp('ruleCount') + 1);
 
         //configure color inputs
         this.initColorPalette( $('.t-color-palette', newRule) );
@@ -211,7 +236,18 @@ define(
         //configure select inputs
         $('select', newRule).each( function () {
             this.dataset.ruleId = ruleId;
+            $(this).append('<option value = "">' +
+              '--' + _.capitalize($(this).prop('id')) + '--' +'</option>');
         });
+
+        //configure delete
+        $('.delete', newRule).get(0).dataset.ruleId = ruleId;
+
+        //hide rule form areas that don't apply to default
+        if (ruleId === 'default') {
+            $('.delete', ruleArea).hide();
+            $('.rule-config').hide();
+        }
     }
 
     //Convert object property id to css property name
@@ -285,7 +321,6 @@ define(
     }
 
     WidgetView.prototype.populateSelect = function (elem) {
-        //this refers to DOM element being populated
         var elem = elem.toElement,
             self = this,
             id = $(elem).prop('id'),
@@ -305,20 +340,20 @@ define(
 
         $(elem).html('');
 
-        $(elem).append('<option value = "">' +
-            '--'+ _.capitalize($(elem).prop('id')) + '--' +'</option>');
+        $(elem).append('<option value = "">' +  '--'+ _.capitalize($(elem).prop('id')) + '--' +'</option>');
 
         if (id === 'object') {
+            $(elem).append('<option value = "any"' + (selectedId === 'any' ? 'selected' : '') + '> Any Telemetry Item </option>' +
+                         '<option value = "all"' + (selectedId === 'all' ? 'selected' : '') +'> All Telemetry Items </option>');
             Object.values(self.compositionObjs).forEach( function (obj) {
-                var selectedStr = (obj.identifier.key === selectedId) ? 'selected' : '';
+                selectedStr = (obj.identifier.key === selectedId) ? 'selected' : '';
                 $(elem).append(
                     '<option value = ' + obj.identifier.key + ' ' + selectedStr + '>'
                     + obj.name + '</option>'
                 );
             });
         } else if (id === 'key') {
-            var metaData,
-                selectedStr;
+            var metaData;
                 if (objId && objId !== '') {
                     metaData = Object.values(self.telemetryMetadataByObject[objId]);
                     metaData.forEach( function (metaDatum) {
@@ -358,8 +393,10 @@ define(
         return _.has(this.domainObject.configuration, path)
     }
 
-    WidgetView.prototype.loadTelemetryObjects = function () {
-
+    WidgetView.prototype.removeConfigProp = function(path) {
+        var config = this.domainObject.configuration;
+        _.set(config, path, undefined);
+        this.openmct.objects.mutate(this.domainObject, 'configuration', config)
     }
 
     return WidgetView;
