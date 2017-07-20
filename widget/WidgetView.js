@@ -85,7 +85,7 @@ define(
               var elem = this,
                   col = $(elem).css('background-color'),
                   ruleId = elem.dataset.ruleId,
-                  thumbnail = $('#' + ruleId + ' .thumbnail'),
+                  thumbnail = $('#' + ruleId + ' .t-widget-thumb'),
                   propertyKey = elem.dataset.propertyKey,
                   styleObj;
 
@@ -169,7 +169,7 @@ define(
     WidgetView.prototype.makeRule = function (ruleId, ruleName, container) {
         //create a DOM element from HTML template and access its components
         var newRule = $(ruleTemplate),
-            thumbnail = $('.rule-header .thumbnail', newRule),
+            thumbnail = $('.rule-header .t-widget-thumb', newRule),
             title = $('.rule-header .title' , newRule),
             nameInput = $('#ruleName', newRule),
             styleObj;
