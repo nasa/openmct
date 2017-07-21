@@ -70,12 +70,10 @@ define(
           self.setup(container);
 
           //register event listeners
-
-            /* TO-DO: change the next function to look for a click on .widget-rule-header .view-control
-            * Apply toggleClass('expanded') to both .view-control and .widget-rule-content elems
-            */
-          $(container).on('click', '.rule-header', function () {
-              $('.rule-content', $(this).parent()).toggle();
+          $(container).on('click', '.expand', function () {
+              $('.rule-content', $(this).parent().parent()).toggle();
+              $(this).toggleClass('icon-arrow-right');
+              $(this).toggleClass('icon-arrow-down');
           });
 
           $(container).on('click', '.t-color-palette', function () {
@@ -160,6 +158,7 @@ define(
         self.applyStyle( $('#widget'), self.getConfigProp('ruleStylesById.default'));
         $('#widgetName').html(self.domainObject.name);
         self.refreshRules(container);
+        $('.rule-content').hide()
     }
 
     WidgetView.prototype.onCompositionAdd = function (newObj) {
@@ -198,8 +197,8 @@ define(
     WidgetView.prototype.makeRule = function (ruleId, ruleName, container) {
         //create a DOM element from HTML template and access its components
         var newRule = $(ruleTemplate),
-            thumbnail = $('.widget-rule-header .t-widget-thumb', newRule),
-            title = $('.widget-rule-header .rule-title' , newRule),
+            thumbnail = $('.t-widget-thumb', newRule),
+            title = $('.rule-header .title' , newRule),
             nameInput = $('#ruleName', newRule),
             styleObj = {};
 
