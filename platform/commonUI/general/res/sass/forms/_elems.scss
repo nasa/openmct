@@ -196,15 +196,21 @@
             label,
             .control {
                 @include display(flex);
-                min-width: $minW;
+                //min-width: $minW;
             }
             label {
                 line-height: inherit;
                 padding: $interiorMarginSm 0;
                 width: $labelW;
             }
-            .control {
+            .controls {
                 @include flex-grow(1);
+                .e-control {
+                    // Individual form controls
+                    &:not(:first-child) {
+                        margin-left: $interiorMarginSm;
+                    }
+                }
             }
 
             &:not(.section-header) {
@@ -214,7 +220,7 @@
             }
 
             &.connects-to-previous {
-                padding-top: 0 !important;
+                padding-top: 0;
             }
 
             &.section-header {

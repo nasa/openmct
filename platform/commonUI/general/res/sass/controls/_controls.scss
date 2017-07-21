@@ -706,7 +706,6 @@ textarea {
     &:before {
         position: absolute;
         @include trans-prop-nice(transform, 100ms);
-        //content: $glyph-icon-arrow-right;
         @include transform-origin(center);
     }
     &.expanded:before {
@@ -714,7 +713,7 @@ textarea {
     }
 }
 
-.s-grippy {
+.grippy {
     @extend .icon-list-view; // TO-DO: add new icon and change here
 }
 

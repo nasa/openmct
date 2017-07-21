@@ -32,17 +32,19 @@
 
 .l-summary-widget {
     // Widget layout classes here
+    text-align: center;
 
 }
 
 /********************************************************** EDITING A WIDGET */
 .l-edit-widget {
+    $ruleLabelW: 40%;
+    $ruleLabelMaxW: 150px;
     // Classes for editor layout while editing a widget
     @include absPosDefault();
     @extend .l-flex-col;
 
-    .widget-holder,
-    .widget-rules {
+    > .holder {
         @extend .flex-elem;
         //@include test();
     }
@@ -57,23 +59,96 @@
         }
     }
 
-    .widget-rules {
+    .widget-rules-wrapper {
         // Wrapper area that holds n rules
-        @extend .grows;
+        box-sizing: border-box;
+        font-size: 0.8em;
         overflow-x: hidden;
         overflow-y: auto;
+        padding-right: $interiorMargin;
     }
 
     .l-widget-rule {
+        box-sizing: border-box;
+        margin-bottom: $interiorMargin;
+        padding: $interiorMarginLg;
+    }
 
+    .l-widget-thumb-wrapper,
+    .l-compact-form label {
+        @include display(flex);
+        max-width: $ruleLabelMaxW;
+        width: $ruleLabelW;
+        padding-right: $interiorMargin;
+    }
+
+    .l-widget-thumb-wrapper {
+        //@include display(flex);
+        @extend .l-flex-row;
+        @include align-items(center);
+        > span { display: block; }
+        .grippy,
+        .view-control {
+            margin-right: $interiorMargin;
+            width: 1em;
+            height: 1em;
+        }
+
+        .widget-thumb {
+            //@include test(green);
+            @include flex(1 1 auto);
+        }
+    }
+
+    .l-title-wrapper {
+        @include flex(1 1 auto);
     }
 
     .s-widget-rule {
-
+        background-color: rgba($colorBodyFg, 0.1);
+        border-radius: $basicCr;
     }
 
-    .s-widget-thumb {
+    .widget-thumb {
         @extend .s-summary-widget;
+        @extend .l-summary-widget;
         padding: $interiorMarginSm $interiorMargin;
+    }
+
+    // Hide and show elements in the rule-header on hover
+    .l-widget-rule {
+        .grippy,
+        .l-rule-action-buttons-wrapper {
+            @include trans-prop-nice($props: opacity, $dur: 500ms);
+            opacity: 0;
+        }
+        &:hover {
+            .grippy,
+            .l-rule-action-buttons-wrapper {
+                @include trans-prop-nice($props: opacity, $dur: 0);
+                opacity: 1;
+            }
+        }
+    }
+
+
+    .l-compact-form {
+        // Overrides
+        ul li {
+            padding: $interiorMargin 0;
+            &:not(.rule-header) {
+                &:not(.connects-to-previous) {
+                    border-top: 1px solid $colorFormLines;
+                }
+            }
+            &.connects-to-previous {
+                padding: $interiorMargin 0;
+            }
+        }
+
+        label {
+            display: block; // Needed to align text to right
+            text-align: right;
+        }
     }
 }
