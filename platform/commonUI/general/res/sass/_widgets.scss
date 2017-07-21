@@ -145,13 +145,15 @@
     // Hide and show elements in the rule-header on hover
     .l-widget-rule {
         .grippy,
-        .l-rule-action-buttons-wrapper {
+        .l-rule-action-buttons-wrapper,
+        .l-condition-action-buttons-wrapper {
             @include trans-prop-nice($props: opacity, $dur: 500ms);
             opacity: 0;
         }
         &:hover {
             .grippy,
-            .l-rule-action-buttons-wrapper {
+            .l-rule-action-buttons-wrapper,
+            .l-condition-action-buttons-wrapper {
                 @include trans-prop-nice($props: opacity, $dur: 0);
                 opacity: 1;
             }
