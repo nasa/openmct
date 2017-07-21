@@ -44,6 +44,7 @@ $glyph-icon-plus: '\e926';
 $glyph-icon-trash: '\e927';
 $glyph-icon-x: '\e928';
 $glyph-icon-brackets: '\e929';
+$glyph-icon-grippy: '\e931';
 $glyph-icon-arrows-out: '\e1000';
 $glyph-icon-arrows-right-left: '\e1001';
 $glyph-icon-arrows-up-down: '\e1002';
@@ -150,6 +151,7 @@ $glyph-icon-summary-widget: '\e1130';
 .icon-trash {  @include glyphBefore($glyph-icon-trash); }
 .icon-x {  @include glyphBefore($glyph-icon-x); }
 .icon-brackets {  @include glyphBefore($glyph-icon-brackets); }
+.icon-grippy {  @include glyphBefore($glyph-icon-grippy); }
 .icon-arrows-out {  @include glyphBefore($glyph-icon-arrows-out); }
 .icon-arrows-right-left {  @include glyphBefore($glyph-icon-arrows-right-left); }
 .icon-arrows-up-down {  @include glyphBefore($glyph-icon-arrows-up-down); }

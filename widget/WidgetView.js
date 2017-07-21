@@ -53,11 +53,6 @@ define(
 
         var self = this;
 
-        // Stand-in rules for testing
-        //Object.keys(this.getConfigProp('rulesById')).forEach( function (ruleKey) {
-        //    self.setConfigProp('rulesById.' + ruleKey + '.rules', TEST_RULES);
-        //});
-
         this.telemetryMetadataByObject = {};
         this.compositionObjs = {};
         this.compositionCollection = this.openmct.composition.get(this.domainObject);
@@ -117,7 +112,7 @@ define(
               self.makeRule(ruleId, 'Rule', container);
           });
 
-          $(container).on('click','.duplicate', function () {
+          $(container).on('click','.t-duplicate', function () {
               var elem = this;
               debugger;
               self.duplicateRule(elem.dataset.ruleId, container);
@@ -128,16 +123,7 @@ define(
               $('#' + this.dataset.ruleId + ' .rule-title').html(this.value);
           });
 
-          $(container).on('input','#ruleLabel', function () {
-              self.setConfigProp('rulesById.' + this.dataset.ruleId + '.label', this.value);
-              self.updateWidget();
-          });
-
-          $(container).on('input','#ruleMessage', function () {
-              self.setConfigProp('rulesById.' + this.dataset.ruleId + '.message', this.value);
-          })
-
-          $(container).on('click','.delete', function() {
+          $(container).on('click','.t-delete', function() {
               var elem = this,
                   ruleId = elem.dataset.ruleId,
                   ruleOrder = self.getConfigProp('ruleOrder')
@@ -284,15 +270,15 @@ define(
         });
 
         //configure delete
-        $('.delete', newRule).get(0).dataset.ruleId = ruleId;
+        $('.t-delete', newRule).get(0).dataset.ruleId = ruleId;
 
-        //configure duplicate
-        $('.duplicate', newRule).get(0).dataset.ruleId = ruleId;
+        $('.t-duplicate', newRule).get(0).dataset.ruleId = ruleId;
 
-        //hide rule form areas that don't apply to default
+        //hide elements that don't apply to default
         if (ruleId === 'default') {
-            $('.delete', ruleArea).hide();
-            $('.rule-config').hide();
+            $('.t-delete', ruleArea).hide();
+            $('.t-widget-rule-config').hide();
+            $('.t-grippy').hide();
         }
     }
 
@@ -316,6 +302,10 @@ define(
         var self = this;
             rules = Object.entries(self.getConfigProp('rulesById'));
             showRuleId = 'default';
+
+        rules = rules.filter( function (rule) {
+            return (self.getConfigProp('ruleOrder').includes(rule.id))
+        });
 
         rules.forEach( function (rule) {
             if(self.evaluator.execute(rule[1].conditions)) {

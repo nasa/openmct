@@ -715,7 +715,7 @@ textarea {
 }
 
 .grippy {
-    @extend .icon-list-view; // TO-DO: add new icon and change here
+    @extend .icon-grippy;
     cursor: move;
 }
 
