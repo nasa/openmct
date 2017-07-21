@@ -70,8 +70,10 @@ define(
           self.setup(container);
 
           //register event listeners
-          $(container).on('click', '.rule-header', function () {
-              $('.rule-content', $(this).parent()).toggle();
+          $(container).on('click', '.expand', function () {
+              $('.rule-content', $(this).parent().parent()).toggle();
+              $(this).toggleClass('icon-arrow-right');
+              $(this).toggleClass('icon-arrow-down');
           });
 
           $(container).on('click', '.t-color-palette', function () {
@@ -156,6 +158,7 @@ define(
         self.applyStyle( $('#widget'), self.getConfigProp('ruleStylesById.default'));
         $('#widgetName').html(self.domainObject.name);
         self.refreshRules(container);
+        $('.rule-content').hide()
     }
 
     WidgetView.prototype.onCompositionAdd = function (newObj) {
