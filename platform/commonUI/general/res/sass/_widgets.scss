@@ -55,6 +55,7 @@
     &.expanded {
         min-height: 50px;
         height: auto;
+        overflow: visible;
     }
 }
 
@@ -104,11 +105,10 @@
     }
 
     .l-widget-thumb-wrapper {
-        //@include display(flex);
         @extend .l-flex-row;
         @include align-items(center);
         > span { display: block; }
-        .grippy,
+        .grippy-holder,
         .view-control {
             margin-right: $interiorMargin;
             width: 1em;
@@ -116,7 +116,6 @@
         }
 
         .widget-thumb {
-            //@include test(green);
             @include flex(1 1 auto);
         }
     }

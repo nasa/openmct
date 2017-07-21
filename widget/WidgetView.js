@@ -123,7 +123,7 @@ define(
               $('#' + this.dataset.ruleId + ' .rule-title').html(this.value);
           });
 
-          $(container).on('click','.delete', function() {
+          $(container).on('click','.t-delete', function() {
               var elem = this,
                   ruleId = elem.dataset.ruleId,
                   ruleOrder = self.getConfigProp('ruleOrder')
@@ -245,12 +245,13 @@ define(
         });
 
         //configure delete
-        $('.delete', newRule).get(0).dataset.ruleId = ruleId;
+        $('.t-delete', newRule).get(0).dataset.ruleId = ruleId;
 
-        //hide rule form areas that don't apply to default
+        //hide elements that don't apply to default
         if (ruleId === 'default') {
-            $('.delete', ruleArea).hide();
-            $('.rule-config').hide();
+            $('.t-delete', ruleArea).hide();
+            $('.t-widget-rule-config').hide();
+            $('.t-grippy').hide();
         }
     }
 
