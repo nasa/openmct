@@ -46,7 +46,7 @@ define(
                 appliesTo: ['string']
             },
             textDoesNotContain: {
-                operation: function(input) {return !input[0].includes(input[0])},
+                operation: function(input) {return !input[0].includes(input[1])},
                 text: 'Text Does Not Contain',
                 appliesTo: ['string']
             },
@@ -73,14 +73,14 @@ define(
         }
     }
 
-    // evaluate the ruleset passed in as a parameter and return the id of the rule
-    // to be displayed in the view
+    // evaluate the ruleset passed in as a parameter return whether this rules'
+    // conditions evaluate to true
     RuleEvaluator.prototype.execute = function(ruleset) {
-        var activeId = 'default';
+        var active = false;
         (ruleset || []).forEach( function (rule) {
 
         });
-        return activeId;
+        return active;
     }
 
     RuleEvaluator.prototype.getOperationKeys = function () {

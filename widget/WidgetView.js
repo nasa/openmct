@@ -16,6 +16,13 @@ define(
         border_color: '#666666'
     }
 
+    //selects that most be populated dynamically
+    var CONDITION_CONFIG_IDS = [
+        'object',
+        'key',
+        'operation'
+    ];
+
     // example rules for the rule evalutor
     var TEST_RULES = [{
         object: undefined,
@@ -46,9 +53,10 @@ define(
 
         var self = this;
 
-        Object.keys(this.getConfigProp('rulesById')).forEach( function (ruleKey) {
-            self.setConfigProp('rulesById.' + ruleKey + '.rules', TEST_RULES);
-        });
+        // Stand-in rules for testing
+        //Object.keys(this.getConfigProp('rulesById')).forEach( function (ruleKey) {
+        //    self.setConfigProp('rulesById.' + ruleKey + '.rules', TEST_RULES);
+        //});
 
         this.telemetryMetadataByObject = {};
         this.compositionObjs = {};
@@ -68,13 +76,6 @@ define(
           var self = this;
 
           self.setup(container);
-
-          //register event listeners
-          $(container).on('click', '.expand', function () {
-              $('.rule-content', $(this).parent().parent()).toggle();
-              $(this).toggleClass('icon-arrow-right');
-              $(this).toggleClass('icon-arrow-down');
-          });
 
           $(container).on('click', '.t-color-palette', function () {
               $('.l-color-palette', container)
@@ -116,10 +117,25 @@ define(
               self.makeRule(ruleId, 'Rule', container);
           });
 
-          $(container).on('input','#ruleName', function() {
+          $(container).on('click','.duplicate', function () {
+              var elem = this;
+              debugger;
+              self.duplicateRule(elem.dataset.ruleId, container);
+          });
+
+          $(container).on('input','#ruleName', function () {
               self.setConfigProp('rulesById.' + this.dataset.ruleId + '.name', this.value);
               $('#' + this.dataset.ruleId + ' .rule-title').html(this.value);
           });
+
+          $(container).on('input','#ruleLabel', function () {
+              self.setConfigProp('rulesById.' + this.dataset.ruleId + '.label', this.value);
+              self.updateWidget();
+          });
+
+          $(container).on('input','#ruleMessage', function () {
+              self.setConfigProp('rulesById.' + this.dataset.ruleId + '.message', this.value);
+          })
 
           $(container).on('click','.delete', function() {
               var elem = this,
@@ -136,12 +152,14 @@ define(
           })
 
           // populate a select with most recent composition before it opens
-          $(container).on('mousedown','select', this.populateSelect);
+          $(container).on('mousedown', 'select', this.populateSelect);
 
           // update data model when a select element is modified
           $(container).on('change','select', function () {
-              var index = $(this).prop('selectedIndex'),
-                  selectedId = $(this).prop('options')[index].value;
+              var elem = this,
+                  index = $(elem).prop('selectedIndex'),
+                  selectedId = $(elem).prop('options')[index].value,
+                  ruleId = elem.dataset.ruleId;
 
               this.dataset.selectedId = selectedId;
           });
@@ -155,10 +173,8 @@ define(
         var self = this;
         $(container).append(widgetTemplate);
         self.makeRule('default', 'Default', container);
-        self.applyStyle( $('#widget'), self.getConfigProp('ruleStylesById.default'));
-        $('#widgetName').html(self.domainObject.name);
         self.refreshRules(container);
-        $('.rule-content').hide()
+        self.updateWidget();
     }
 
     WidgetView.prototype.onCompositionAdd = function (newObj) {
@@ -198,9 +214,13 @@ define(
         //create a DOM element from HTML template and access its components
         var newRule = $(ruleTemplate),
             thumbnail = $('.t-widget-thumb', newRule),
-            title = $('.rule-header .title' , newRule),
+            title = $('.rule-title' , newRule),
+            description = $('.rule-description', newRule),
             nameInput = $('#ruleName', newRule),
-            styleObj = {};
+            styleObj = {},
+            ruleLabel,
+            ruleDescription,
+            ruleMessage;
 
         Object.assign(styleObj, DEFAULT_PROPS)
         if (!this.hasConfigProp('ruleStylesById.' + ruleId)) {
@@ -209,15 +229,29 @@ define(
             styleObj = this.getConfigProp('ruleStylesById.' + ruleId);
         }
         if (!this.hasConfigProp('rulesById.' + ruleId)) {
-            this.setConfigProp('rulesById.' + ruleId, {id: ruleId, name: ruleName});
+            this.setConfigProp('rulesById.' + ruleId, {
+                name: ruleName,
+                label: this.domainObject.name,
+                message: '',
+                id: ruleId,
+                description: ruleId === 'default' ? 'Default appearance for the widget' : 'A new rule',
+                conditions: [],
+                trigger: ''
+              });
         }
+
+        ruleDescription = this.getConfigProp('rulesById.' + ruleId + '.description');
+        ruleLabel = this.getConfigProp('rulesById.' + ruleId + '.label');
+        ruleMessage = this.getConfigProp('rulesById.' + ruleId + '.message');
+
         //append it to the document
         $('#ruleArea', container).append(newRule);
 
         //configure new rule's default properties
-        this.setConfigProp('ruleStylesById.'+ ruleId, styleObj);
+        this.setConfigProp('ruleStylesById.' + ruleId, styleObj);
         newRule.prop('id', ruleId);
         title.html(ruleName);
+        description.html(ruleDescription);
         this.applyStyle(thumbnail, styleObj);
 
         //configure color inputs
@@ -235,16 +269,25 @@ define(
         //configure text inputs
         $(nameInput).get(0).dataset.ruleId = ruleId;
         $(nameInput).prop('value', ruleName);
+        $('#ruleLabel', newRule).get(0).dataset.ruleId = ruleId;
+        $('#ruleLabel', newRule).prop('value', ruleLabel);
+        $('#ruleMessage', newRule).get(0).dataset.ruleId = ruleId;
+        $('#ruleMessage', newRule).prop('value', ruleMessage);
 
         //configure select inputs
         $('select', newRule).each( function () {
-            this.dataset.ruleId = ruleId;
-            $(this).append('<option value = "">' +
-              '--' + _.capitalize($(this).prop('id')) + '--' +'</option>');
+            if (CONDITION_CONFIG_IDS.includes($(this).prop('id'))) {
+                this.dataset.ruleId = ruleId;
+                $(this).append('<option value = "">' +
+                  '--' + _.capitalize($(this).prop('id')) + '--' +'</option>');
+            }
         });
 
         //configure delete
         $('.delete', newRule).get(0).dataset.ruleId = ruleId;
+
+        //configure duplicate
+        $('.duplicate', newRule).get(0).dataset.ruleId = ruleId;
 
         //hide rule form areas that don't apply to default
         if (ruleId === 'default') {
@@ -270,10 +313,18 @@ define(
     }
 
     WidgetView.prototype.updateWidget = function() {
-        var rules = Object.values(this.getConfigProp('rulesById')),
-            showRuleId = this.evaluator.execute(rules);
+        var self = this;
+            rules = Object.entries(self.getConfigProp('rulesById'));
+            showRuleId = 'default';
 
-        this.applyStyle( $('#widget'), this.getConfigProp('ruleStylesById.'+showRuleId));
+        rules.forEach( function (rule) {
+            if(self.evaluator.execute(rule[1].conditions)) {
+                showRuleId = rule[0];
+            }
+        });
+
+        this.applyStyle( $('#widget'), this.getConfigProp('ruleStylesById.' + showRuleId));
+        $('#widgetName').html(this.getConfigProp('rulesById.' + showRuleId + '.label'));
     }
 
     WidgetView.prototype.subscriptionCallback = function(datum) {
@@ -283,7 +334,7 @@ define(
     WidgetView.prototype.initColorPalette = function(elem) {
         var paletteTemplate = `
             <span class="l-click-area"></span>
-            <span class="color-swatch" style="background: rgb(255, 0, 0);"></span>
+            <span class="color-swatch"></span>
             <div class="menu l-color-palette">
                 <div class="l-palette-row l-option-row">
                     <div class="l-palette-item s-palette-item"></div>
@@ -323,40 +374,72 @@ define(
         });
     }
 
+    WidgetView.prototype.duplicateRule = function (sourceRuleId, container) {
+      var self = this,
+          ruleCount = 0,
+          ruleId,
+          ruleOrder = self.getConfigProp('ruleOrder'),
+          sourceRule = {},
+          sourceStyle = {};
+
+      // copy source object configuration by value
+      Object.assign(sourceRule, self.getConfigProp('rulesById.' + sourceRuleId));
+      Object.assign(sourceStyle, self.getConfigProp('ruleStylesById.' + sourceRuleId));
+
+      //create a unique identifier
+      while (Object.keys(self.getConfigProp('rulesById')).includes('rule' + ruleCount)) {
+          ruleCount = ++ruleCount;
+      }
+
+      //add rule to config
+      ruleId = 'rule' + ruleCount;
+      sourceRule.id = ruleId;
+      sourceRule.name += ' Copy'
+      ruleOrder.splice(ruleOrder.indexOf(sourceRuleId)+1, 0, ruleId);
+      self.setConfigProp('ruleOrder', ruleOrder);
+      self.setConfigProp('rulesById.' + ruleId, sourceRule);
+      self.setConfigProp('ruleStylesById.' + ruleId, sourceStyle)
+      self.makeRule(ruleId, sourceRule.name, container);
+      self.refreshRules(container);
+    }
+
     WidgetView.prototype.populateSelect = function (elem) {
         var elem = elem.toElement,
-            self = this,
-            id = $(elem).prop('id'),
-            ruleId = elem.dataset.ruleId,
-            selectedId,
-            selectedStr,
-            objInput = $('#object', '#'+ruleId),
-            objId = objInput.get(0).dataset.selectedId || '',
-            keyInput = $('#key', '#'+ruleId),
-            keyId = keyInput.get(0).dataset.selectedId || '';
+            id = $(elem).prop('id');
 
-        $('option', elem).each( function () {
-            if ($(this).prop('selected')) {
-                selectedId = $(this).prop('value')
-            }
-        });
+        if (CONDITION_CONFIG_IDS.includes(id)) {
+                var self = this,
+                ruleId = elem.dataset.ruleId,
+                selectedId,
+                selectedStr,
+                objInput = $('#object', '#'+ruleId),
+                objId = objInput.get(0).dataset.selectedId || '',
+                keyInput = $('#key', '#'+ruleId),
+                keyId = keyInput.get(0).dataset.selectedId || '';
 
-        $(elem).html('');
-
-        $(elem).append('<option value = "">' +  '--'+ _.capitalize($(elem).prop('id')) + '--' +'</option>');
-
-        if (id === 'object') {
-            $(elem).append('<option value = "any"' + (selectedId === 'any' ? 'selected' : '') + '> Any Telemetry Item </option>' +
-                         '<option value = "all"' + (selectedId === 'all' ? 'selected' : '') +'> All Telemetry Items </option>');
-            Object.values(self.compositionObjs).forEach( function (obj) {
-                selectedStr = (obj.identifier.key === selectedId) ? 'selected' : '';
-                $(elem).append(
-                    '<option value = ' + obj.identifier.key + ' ' + selectedStr + '>'
-                    + obj.name + '</option>'
-                );
+            $('option', elem).each( function () {
+                if ($(this).prop('selected')) {
+                    selectedId = $(this).prop('value')
+                }
             });
-        } else if (id === 'key') {
-            var metaData;
+
+
+            $(elem).html('');
+            $(elem).append('<option value = "">' +  '--'+ _.capitalize($(elem).prop('id')) + '--' +'</option>');
+
+
+            if (id === 'object') {
+                $(elem).append('<option value = "any"' + (selectedId === 'any' ? 'selected' : '') + '> Any Telemetry Item </option>' +
+                             '<option value = "all"' + (selectedId === 'all' ? 'selected' : '') +'> All Telemetry Items </option>');
+                Object.values(self.compositionObjs).forEach( function (obj) {
+                    selectedStr = (obj.identifier.key === selectedId) ? 'selected' : '';
+                    $(elem).append(
+                        '<option value = ' + obj.identifier.key + ' ' + selectedStr + '>'
+                        + obj.name + '</option>'
+                    );
+                });
+            } else if (id === 'key') {
+                var metaData;
                 if (objId && objId !== '') {
                     metaData = Object.values(self.telemetryMetadataByObject[objId]);
                     metaData.forEach( function (metaDatum) {
@@ -367,19 +450,21 @@ define(
                         )
                     });
                 }
-        } else if (id === 'operation') {
-            if (objId && objId != '' && keyId && keyId !== '')
-                var type = self.telemetryMetadataByObject[objId][keyId]['type']
-                    operationKeys = self.evaluator.getOperationKeys().filter( function (opKey) {
-                        return (self.evaluator.operationAppliesTo(opKey, type));
-                    })
-                operationKeys.forEach( function (key) {
-                    var selectedStr = (key === selectedId) ? 'selected' : '';
-                    $(elem).append(
-                        '<option value = ' + key + ' ' + selectedStr + '>'
-                        + self.evaluator.getOperationText(key) + '</option>'
-                    );
-                });
+            } else if (id === 'operation') {
+                if (objId && objId != '' && keyId && keyId !== '') {
+                    var type = self.telemetryMetadataByObject[objId][keyId]['type']
+                        operationKeys = self.evaluator.getOperationKeys().filter( function (opKey) {
+                            return (self.evaluator.operationAppliesTo(opKey, type));
+                        })
+                    operationKeys.forEach( function (key) {
+                        var selectedStr = (key === selectedId) ? 'selected' : '';
+                        $(elem).append(
+                            '<option value = ' + key + ' ' + selectedStr + '>'
+                            + self.evaluator.getOperationText(key) + '</option>'
+                        );
+                    });
+                }
+            }
         }
     }
 
