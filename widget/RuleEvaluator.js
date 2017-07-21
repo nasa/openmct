@@ -13,42 +13,62 @@ define(
             equalTo: {
                 operation: function(input) {return input[0] === input[1]},
                 text: 'is Equal To',
-                appliesTo: 'number'
+                appliesTo: ['number']
             },
             notEqualTo: {
                 operation: function(input) {return input[0] !== input[1]},
                 text: 'is Not Equal To',
-                appliesTo: 'number'
+                appliesTo: ['number']
             },
             greaterThan: {
                 operation: function (input) {return input[0] > input[1]},
                 text: 'is Greater Than',
-                appliesTo: 'number'
+                appliesTo: ['number']
             },
             lessThan: {
                 operation: function(input) {return input[0] < input[1]},
                 text: 'is Less Than',
-                appliesTo: 'number'
+                appliesTo: ['number']
             },
             greaterThanOrEq: {
                 operation: function (input) {return input[0] >= input[1]},
                 text: 'is Greater Than or Equal To',
-                appliesTo: 'number'
+                appliesTo: ['number']
             },
             lessThanOrEq: {
                 operation: function (input) {return input[0] >= input[1]},
                 text: 'is Less Than or Equal To',
-                appliesTo: 'number'
+                appliesTo: ['number']
             },
             textContains: {
                 operation: function(input) {return input[0].includes(input[1])},
                 text: 'Text Contains',
-                appliesTo: 'string'
+                appliesTo: ['string']
             },
             textDoesNotContain: {
-                operation: function(input) {return !input[0]},
+                operation: function(input) {return !input[0].includes(input[0])},
                 text: 'Text Does Not Contain',
-                appliesTo: 'string'
+                appliesTo: ['string']
+            },
+            textStartsWith: {
+                operation: function(input) {return input[0].startsWith(input[1])},
+                text: 'Text Starts With',
+                appliesTo: ['string']
+            },
+            textEndsWith: {
+                operation: function(input) {return input[0].endsWith(input[1])},
+                text: 'Text Ends With',
+                appliesTo: ['string']
+            },
+            textIsExactly: {
+                operation: function(input) {return input[0] === input[1]},
+                text: 'Text is Exactly',
+                appliesTo: ['string']
+            },
+            isUndefined: {
+                operation: function(input) {return typeof input === 'undefined'},
+                text: 'is Undefined',
+                appliesTo: ['string','number']
             }
         }
     }
@@ -72,7 +92,7 @@ define(
     }
 
     RuleEvaluator.prototype.operationAppliesTo = function (key, type) {
-        return (this.operations[key].appliesTo === type);
+        return (this.operations[key].appliesTo.includes(type));
     }
 
     return RuleEvaluator;
