@@ -87,7 +87,7 @@ define(
               var elem = this,
                   col = $(elem).css('background-color'),
                   ruleId = elem.dataset.ruleId,
-                  thumbnail = $('#' + ruleId + ' .thumbnail'),
+                  thumbnail = $('#' + ruleId + ' .t-widget-thumb'),
                   propertyKey = elem.dataset.propertyKey,
                   styleObj;
 
@@ -118,7 +118,7 @@ define(
 
           $(container).on('input','#ruleName', function() {
               self.setConfigProp('rulesById.' + this.dataset.ruleId + '.name', this.value);
-              $('#' + this.dataset.ruleId + ' .title').html(this.value);
+              $('#' + this.dataset.ruleId + ' .rule-title').html(this.value);
           });
 
           $(container).on('click','.delete', function() {
@@ -197,7 +197,7 @@ define(
     WidgetView.prototype.makeRule = function (ruleId, ruleName, container) {
         //create a DOM element from HTML template and access its components
         var newRule = $(ruleTemplate),
-            thumbnail = $('.rule-header .thumbnail', newRule),
+            thumbnail = $('.t-widget-thumb', newRule),
             title = $('.rule-header .title' , newRule),
             nameInput = $('#ruleName', newRule),
             styleObj = {};

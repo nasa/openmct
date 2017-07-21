@@ -38,6 +38,7 @@ define(
             name: 'Summary Widget',
             description: 'A compact status update for collections of telemetry-producing items',
             creatable: true,
+            cssClass: 'icon-summary-widget',
             initialize: function (domainObject) {
                 domainObject.composition = [];
                 domainObject.configuration = {};

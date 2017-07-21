@@ -1,41 +1,87 @@
-<div>
-    <div class='rule-header'>
-        <a class='icon-arrow-right expand'></a>
-        <strong class='title'> Default Title </strong>
-        <span class='thumbnail'> Sample </span>
-        <a class='s-icon-button icon-trash delete'> </a>
-        <a class='s-icon-button icon-duplicate duplicate'> </a>
+<div class="l-widget-rule s-widget-rule l-compact-form">
+    <div class="widget-rule-header">
+        <span class="flex-elem l-widget-thumb-wrapper">
+            <span class="grippy"></span> <!-- TO-DO: hide this when this rule is the default -->
+            <span class="view-control expanded"></span>
+            <span class="t-widget-thumb widget-thumb">ABC</span>
+        </span>
+        <span class="flex-elem rule-title">Default Title</span>
+        <span class="flex-elem rule-description grows">Rule description goes here,lorem ipsum dolor sit amet nomummy lorem ipsum dolor sit amet nomummy </span>
+        <span class="flex-elem l-rule-action-buttons-wrapper">
+            <a class="s-icon-button icon-duplicate"></a>
+            <a class="s-icon-button icon-trash delete"></a> <!-- TO-DO: hide this when this rule is the default -->
+        </span>
     </div>
-    <div class='rule-content'>
-        <div class='rule-form-area'>
-            <span> Rule Name: </span>
-            <input id ='ruleName' type='text' class='s'></input>
-        </div>
-        <div class='rule-form-area'>
-            <span> Style: </span>
-            <div class="s-button s-menu-button menu-element t-color-palette icon-paint-bucket"
-                 id='background_color' data-property-key='background_color'>
-            </div>
-            <div class="s-button s-menu-button menu-element t-color-palette icon-line-horz"
-                 id='border_color' data-property-key='border_color'>
-            </div>
-            <div class="s-button s-menu-button menu-element t-color-palette icon-T"
-                 id='color' data-property-key='color'>
-            </div>
-        </div>
-        <div class = 'rule-form-area rule-config'>
-            <span> Rule Configuration: </span>
-            <div class='select'>
-                <select id = 'object'>
-                </select>
-             </div>
-            <div class='select'>
-                <select id = 'key'>
-                </select>
-             </div>
-            <div class='select'>
-                <select id = 'operation'>
-                </select>
-            </div>
+    <div class="widget-rule-content expanded">
+        <ul>
+            <li>
+                <label>Rule Name:</label>
+                <span class="controls">
+                    <input id ="ruleName" type="text" />
+                </span>
+            </li>
+            <li class="connects-to-previous">
+                <label>Label:</label>
+                <span class="controls">
+                    <input id ="ruleLabel" type="text" />
+                </span>
+            </li>
+            <li class="connects-to-previous">
+                <label>Message:</label>
+                <span class="controls">
+                    <input id ="ruleMessage" type="text" class="lg s" />
+                </span>
+            </li>
+            <li class="connects-to-previous">
+                <label>Style:</label>
+                <span class="controls">
+                    <a class="e-control s-button s-menu-button menu-element t-color-palette icon-paint-bucket"
+                       id="background_color" data-property-key="background_color">
+                    </a>
+                    <a class="e-control s-button s-menu-button menu-element t-color-palette icon-line-horz"
+                       id="border_color" data-property-key="border_color">
+                    </a>
+                    <a class="e-control s-button s-menu-button menu-element t-color-palette icon-T"
+                       id="color" data-property-key="color">
+                    </a>
+                </span>
+            </li>
+        </ul>
+        <ul> <!-- TO-DO: hide this when this rule is the default -->
+            <li>
+                <label>Trigger when</label>
+                <span class="controls">
+                    <div class="e-control select">
+                        <select id="trigger">
+                            <option>any condition is met</option>
+                            <option>all conditions are met</option>
+                        </select>
+                     </div>
+                </span>
+            </li>
+            <li>
+                <label>when</label>
+                <span class="controls">
+                    <div class="e-control select">
+                        <select id = "object">
+                        </select>
+                     </div>
+                    <div class="e-control select">
+                        <select id = "key">
+                        </select>
+                     </div>
+                    <div class="e-control select">
+                        <select id = "operation">
+                        </select>
+                    </div>
+                </span>
+            </li>
+            <li>
+                <label></label>
+                <span class="controls">
+                    <a class="e-control s-button labeled add-condition icon-plus">Add Condition</a>
+                </span>
+            </li>
+        </ul>
     </div>
 </div>

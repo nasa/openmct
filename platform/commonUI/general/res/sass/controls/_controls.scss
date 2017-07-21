@@ -700,6 +700,25 @@ textarea {
     @include trans-prop-nice-fade($controlFadeMs);
 }
 
+.view-control {
+    @extend .icon-arrow-right;
+    cursor: pointer;
+    font-size: 0.75em;
+    &:before {
+        position: absolute;
+        @include trans-prop-nice(transform, 100ms);
+        @include transform-origin(center);
+    }
+    &.expanded:before {
+        @include transform(rotate(90deg));
+    }
+}
+
+.grippy {
+    @extend .icon-list-view; // TO-DO: add new icon and change here
+    cursor: move;
+}
+
 /******************************************************** BROWSER ELEMENTS */
 body.desktop {
     ::-webkit-scrollbar {

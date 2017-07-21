@@ -1,0 +1,182 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+/************************************************************* WIDGET OBJECT */
+.s-summary-widget {
+    // Widget style classes here
+    border-radius: $basicCr;
+    border-style: solid;
+    border-width: 1px;
+    box-sizing: border-box;
+    padding: $interiorMarginLg $interiorMarginLg * 2;
+}
+
+.l-summary-widget {
+    // Widget layout classes here
+    text-align: center;
+
+}
+
+.widget-rule-header {
+    @extend .l-flex-row;
+    @include align-items(center);
+    margin-bottom: $interiorMargin;
+    > .flex-elem {
+        &:not(:first-child) {
+            margin-left: $interiorMargin;
+        }
+    }
+}
+
+.widget-rule-content {
+    @include trans-prop-nice($props: (height, min-height), $dur: 250ms);
+    min-height: 0;
+    height: 0;
+    overflow: hidden;
+    &.expanded {
+        min-height: 50px;
+        height: auto;
+    }
+}
+
+.l-widget-thumb-wrapper,
+.l-compact-form label {
+    $ruleLabelW: 40%;
+    $ruleLabelMaxW: 150px;
+    @include display(flex);
+    max-width: $ruleLabelMaxW;
+    width: $ruleLabelW;
+}
+
+/********************************************************** EDITING A WIDGET */
+.l-edit-widget {
+    // Classes for editor layout while editing a widget
+    @include absPosDefault();
+    @extend .l-flex-col;
+
+    > .holder {
+        @extend .flex-elem;
+        //@include test();
+    }
+
+    .widget-holder {
+        height: 100px;
+        .s-summary-widget {
+            display: inline-block;
+            position: absolute;
+            top: 50%; left: 50%;
+            @include transform(translateX(-50%) translateY(-50%));
+        }
+    }
+
+    .widget-rules-wrapper {
+        // Wrapper area that holds n rules
+        box-sizing: border-box;
+        font-size: 0.8em;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding-right: $interiorMargin;
+    }
+
+    .l-widget-rule {
+        box-sizing: border-box;
+        margin-bottom: $interiorMargin;
+        padding: $interiorMarginLg;
+    }
+
+    .l-widget-thumb-wrapper {
+        //@include display(flex);
+        @extend .l-flex-row;
+        @include align-items(center);
+        > span { display: block; }
+        .grippy,
+        .view-control {
+            margin-right: $interiorMargin;
+            width: 1em;
+            height: 1em;
+        }
+
+        .widget-thumb {
+            //@include test(green);
+            @include flex(1 1 auto);
+        }
+    }
+
+    .rule-title {
+        @include flex(0 1 auto);
+        color: pullForward($colorBodyFg, 50%);
+    }
+
+    .rule-description {
+        @include flex(1 1 auto);
+        @include ellipsize();
+        color: pushBack($colorBodyFg, 20%);
+    }
+
+    .s-widget-rule {
+        background-color: rgba($colorBodyFg, 0.1);
+        border-radius: $basicCr;
+    }
+
+    .widget-thumb {
+        @extend .s-summary-widget;
+        @extend .l-summary-widget;
+        padding: $interiorMarginSm $interiorMargin;
+    }
+
+    // Hide and show elements in the rule-header on hover
+    .l-widget-rule {
+        .grippy,
+        .l-rule-action-buttons-wrapper {
+            @include trans-prop-nice($props: opacity, $dur: 500ms);
+            opacity: 0;
+        }
+        &:hover {
+            .grippy,
+            .l-rule-action-buttons-wrapper {
+                @include trans-prop-nice($props: opacity, $dur: 0);
+                opacity: 1;
+            }
+        }
+    }
+
+
+    .l-compact-form {
+        // Overrides
+        ul li {
+            padding: $interiorMargin 0;
+            &:not(.widget-rule-header) {
+                &:not(.connects-to-previous) {
+                    border-top: 1px solid $colorFormLines;
+                }
+            }
+            &.connects-to-previous {
+                padding: $interiorMargin 0;
+            }
+        }
+
+        label {
+            display: block; // Needed to align text to right
+            text-align: right;
+        }
+    }
+}

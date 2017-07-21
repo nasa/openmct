@@ -1,65 +1,13 @@
-<style>
-    .widget-button {
-        border: 2px;
-        border-style: solid;
-        background-color: green;
-        padding: 20px;
-        padding-left: 40px;
-        padding-right: 40px;
-        text-align: center;
-    }
-    .widget-container {
-        text-align: center;
-        padding-top: 40px;
-        padding-bottom: 40px;
-    }
-    .widget-name {
-        font-size: large;
-    }
-    .rule-content {
-        border: 2px;
-        border-style: solid;
-        border-color: white;
-        margin-top: 5px;
-        padding: 10px;
-        padding-left: 15px;
-    }
-    .rule-header {
-        border: 2px;
-        border-style: solid;
-        border-color: grey;
-        margin-top: 5px;
-        padding: 10px;
-    }
-    .rule-form-area {
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-    .thumbnail {
-        border: 2px;
-        border-style: solid;
-        padding: 2px;
-        margin-left: 5px;
-    }
-    .add-rule-button {
-        margin-top: 10px;
-    }
-    .delete {
-        float: right;
-    }
-    .duplicate {
-        float: right;
-    }
-</style>
-
-<div id ="rootDiv">
-    <div class="widget-container">
-        <button id = "widget" class = "widget-button">
-            <p id = "widgetName" class="widget-name"> Name </p>
-        </button>
+<div id="rootDiv" class="l-edit-widget">
+    <div class="holder widget-holder">
+        <a id="widget" class="widget t-summary-widget l-summary-widget s-summary-widget">
+            <span id="widgetName" class="widget-name">Name</span>
+        </a>
     </div>
-    <div id = "ruleArea"> </div>
-    <div style='text-align: right; padding-right:10px'>
-        <a id='addRule' class = 's-button add-rule-button icon-plus'> Add Rule </a>
+    <div class="holder widget-rules-wrapper grows">
+        <div id="ruleArea" class="widget-rules"></div>
+        <div class="holder add-rule-button-wrapper align-right">
+            <a id="addRule" class="s-button major labeled add-rule-button icon-plus">Add Rule</a>
+        </div>
     </div>
 </div>
