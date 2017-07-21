@@ -205,6 +205,7 @@
             }
             .controls {
                 @include flex-grow(1);
+                margin-left: $interiorMargin    ;
                 .e-control {
                     // Individual form controls
                     &:not(:first-child) {

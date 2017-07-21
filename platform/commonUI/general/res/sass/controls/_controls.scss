@@ -702,6 +702,7 @@ textarea {
 
 .view-control {
     @extend .icon-arrow-right;
+    cursor: pointer;
     font-size: 0.75em;
     &:before {
         position: absolute;
@@ -715,6 +716,7 @@ textarea {
 
 .grippy {
     @extend .icon-list-view; // TO-DO: add new icon and change here
+    cursor: move;
 }
 
 /******************************************************** BROWSER ELEMENTS */

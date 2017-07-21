@@ -36,10 +36,39 @@
 
 }
 
-/********************************************************** EDITING A WIDGET */
-.l-edit-widget {
+.widget-rule-header {
+    @extend .l-flex-row;
+    @include align-items(center);
+    margin-bottom: $interiorMargin;
+    > .flex-elem {
+        &:not(:first-child) {
+            margin-left: $interiorMargin;
+        }
+    }
+}
+
+.widget-rule-content {
+    @include trans-prop-nice($props: (height, min-height), $dur: 250ms);
+    min-height: 0;
+    height: 0;
+    overflow: hidden;
+    &.expanded {
+        min-height: 50px;
+        height: auto;
+    }
+}
+
+.l-widget-thumb-wrapper,
+.l-compact-form label {
     $ruleLabelW: 40%;
     $ruleLabelMaxW: 150px;
+    @include display(flex);
+    max-width: $ruleLabelMaxW;
+    width: $ruleLabelW;
+}
+
+/********************************************************** EDITING A WIDGET */
+.l-edit-widget {
     // Classes for editor layout while editing a widget
     @include absPosDefault();
     @extend .l-flex-col;
@@ -74,14 +103,6 @@
         padding: $interiorMarginLg;
     }
 
-    .l-widget-thumb-wrapper,
-    .l-compact-form label {
-        @include display(flex);
-        max-width: $ruleLabelMaxW;
-        width: $ruleLabelW;
-        padding-right: $interiorMargin;
-    }
-
     .l-widget-thumb-wrapper {
         //@include display(flex);
         @extend .l-flex-row;
@@ -100,8 +121,15 @@
         }
     }
 
-    .l-title-wrapper {
+    .rule-title {
+        @include flex(0 1 auto);
+        color: pullForward($colorBodyFg, 50%);
+    }
+
+    .rule-description {
         @include flex(1 1 auto);
+        @include ellipsize();
+        color: pushBack($colorBodyFg, 20%);
     }
 
     .s-widget-rule {
@@ -136,7 +164,7 @@
         // Overrides
         ul li {
             padding: $interiorMargin 0;
-            &:not(.rule-header) {
+            &:not(.widget-rule-header) {
                 &:not(.connects-to-previous) {
                     border-top: 1px solid $colorFormLines;
                 }

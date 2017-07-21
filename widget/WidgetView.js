@@ -70,6 +70,10 @@ define(
           self.setup(container);
 
           //register event listeners
+
+            /* TO-DO: change the next function to look for a click on .widget-rule-header .view-control
+            * Apply toggleClass('expanded') to both .view-control and .widget-rule-content elems
+            */
           $(container).on('click', '.rule-header', function () {
               $('.rule-content', $(this).parent()).toggle();
           });
@@ -104,7 +108,7 @@ define(
 
           $(container).on('input','#ruleName', function() {
               self.setConfigProp('rulesById.'+ this.dataset.ruleId + '.name', this.value);
-              $('#' + this.dataset.ruleId + ' .title').html(this.value);
+              $('#' + this.dataset.ruleId + ' .rule-title').html(this.value);
           });
 
           // populate a select with most recent composition before it opens
@@ -169,8 +173,8 @@ define(
     WidgetView.prototype.makeRule = function (ruleId, ruleName, container) {
         //create a DOM element from HTML template and access its components
         var newRule = $(ruleTemplate),
-            thumbnail = $('.rule-header .t-widget-thumb', newRule),
-            title = $('.rule-header .title' , newRule),
+            thumbnail = $('.widget-rule-header .t-widget-thumb', newRule),
+            title = $('.widget-rule-header .rule-title' , newRule),
             nameInput = $('#ruleName', newRule),
             styleObj;
 
