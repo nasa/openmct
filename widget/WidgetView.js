@@ -72,7 +72,14 @@ define(
 
           self.setup(container);
 
-          $(container).on('click', '.t-color-palette', function () {
+        $(container).on('click', '.t-icon-palette-menu-button', function () {
+            $('.menu', container)
+                .not('#' + this.id +' .menu')
+                .hide(); //close any open palettes except this one
+            $('.menu', this).toggle(); //toggle this palette
+        });
+
+          $(container).on('click', '.t-color-palette-menu-button', function () {
               $('.l-color-palette', container)
                   .not('#' + this.id +' .l-color-palette')
                   .hide(); //close any open palettes except this one
@@ -240,12 +247,17 @@ define(
         description.html(ruleDescription);
         this.applyStyle(thumbnail, styleObj);
 
+        // configure label icon
+        this.initIconPalette( $('.t-icon-palette-menu-button', newRule) );
+        $('.menu', newRule).hide();
+        // TO-DO: ADD WIRING
+
         //configure color inputs
-        this.initColorPalette( $('.t-color-palette', newRule) );
-        $('.l-color-palette', newRule).hide();
-        $('.t-color-palette', newRule).each( function () {
+        this.initColorPalette( $('.t-color-palette-menu-button', newRule) );
+        $('.menu', newRule).hide();
+        $('.t-color-palette-menu-button', newRule).each( function () {
             var propertyKey = this.dataset.propertyKey;
-            $('.color-swatch', this).css('background-color', styleObj[propertyKey])
+            $('.color-swatch', this).css('background-color', styleObj[propertyKey]);
             $('.s-palette-item', this).each( function() {
                 this.dataset.ruleId = ruleId;
                 this.dataset.propertyKey = propertyKey;
@@ -325,7 +337,7 @@ define(
         var paletteTemplate = `
             <span class="l-click-area"></span>
             <span class="color-swatch"></span>
-            <div class="menu l-color-palette">
+            <div class="menu l-palette l-color-palette">
                 <div class="l-palette-row l-option-row">
                     <div class="l-palette-item s-palette-item"></div>
                     <span class="l-palette-item-label">None</span>
@@ -363,6 +375,61 @@ define(
             itemCount = itemCount < maxItems ? ++itemCount : 1;
         });
     }
+
+        WidgetView.prototype.initIconPalette = function(elem) {
+            var paletteTemplate = `
+            <span class="l-click-area"></span>
+            <span class="icon-swatch"></span>
+            <div class="menu l-palette l-icon-palette">
+                <div class="l-palette-row l-option-row">
+                    <div class="l-palette-item s-palette-item"></div>
+                    <span class="l-palette-item-label">None</span>
+                </div>
+            </div>
+        `,
+                icons = [
+                    'icon-alert-rect',
+                    'icon-alert-triangle',
+                    'icon-arrow-down',
+                    'icon-arrow-left',
+                    'icon-arrow-right',
+                    'icon-arrow-double-up',
+                    'icon-arrow-tall-up',
+                    'icon-arrow-tall-down',
+                    'icon-arrow-double-down',
+                    'icon-arrow-up',
+                    'icon-asterisk',
+                    'icon-bell',
+                    'icon-check',
+                    'icon-eye-open',
+                    'icon-gear',
+                    'icon-hourglass',
+                    'icon-info',
+                    'icon-link',
+                    'icon-lock',
+                    'icon-people',
+                    'icon-person',
+                    'icon-plus',
+                    'icon-trash',
+                    'icon-x'
+                ],
+                maxItems = icons.length,
+                itemCount = 1;
+
+            elem.html(paletteTemplate);
+
+            icons.forEach(function (icon) {
+                if (itemCount === 1) {
+                    $('.menu', elem).append(
+                        '<div class = "l-palette-row"> </div>'
+                    )
+                }
+                $('.l-palette-row:last-of-type', elem).append(
+                    '<div class="l-palette-item s-palette-item ' + icon + '"> </div>'
+                )
+                itemCount = itemCount < maxItems ? ++itemCount : 1;
+            });
+        }
 
     WidgetView.prototype.duplicateRule = function (sourceRuleId, container) {
       var self = this,
