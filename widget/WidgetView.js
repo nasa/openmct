@@ -80,10 +80,10 @@ define(
         });
 
           $(container).on('click', '.t-color-palette-menu-button', function () {
-              $('.l-color-palette', container)
+              $('.menu', container)
                   .not('#' + this.id +' .l-color-palette')
                   .hide(); //close any open palettes except this one
-              $('.l-color-palette', this).toggle(); //toggle this palette
+              $('.menu', this).toggle(); //toggle this palette
           });
 
           $(container).on('click', '.s-palette-item', function () {
@@ -121,13 +121,21 @@ define(
 
           $(container).on('click','.t-duplicate', function () {
               var elem = this;
-              debugger;
               self.duplicateRule(elem.dataset.ruleId, container);
           });
 
           $(container).on('input','#ruleName', function () {
               self.setConfigProp('rulesById.' + this.dataset.ruleId + '.name', this.value);
               $('#' + this.dataset.ruleId + ' .rule-title').html(this.value);
+          });
+
+          $(container).on('input', '#ruleLabel', function () {
+              self.setConfigProp('rulesById.' + this.dataset.ruleId + '.label', this.value);
+              self.updateWidget();
+          });
+
+          $(container).on('input', '#ruleMessage', function () {
+              self.setConfigProp('rulesById.' + this.dataset.ruleId + '.message', this.value);
           });
 
           $(container).on('click','.t-delete', function() {
@@ -465,7 +473,7 @@ define(
             id = $(elem).prop('id');
 
         if (CONDITION_CONFIG_IDS.includes(id)) {
-                var self = this,
+            var self = this,
                 ruleId = elem.dataset.ruleId,
                 selectedId,
                 selectedStr,
