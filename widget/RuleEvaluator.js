@@ -73,11 +73,11 @@ define(
         }
     }
 
-    // evaluate the ruleset passed in as a parameter return whether this rules'
+    // evaluate the conditions passed in as a parameter, return whether this rules'
     // conditions evaluate to true
-    RuleEvaluator.prototype.execute = function(ruleset) {
+    RuleEvaluator.prototype.execute = function(conditions) {
         var active = false;
-        (ruleset || []).forEach( function (rule) {
+        (conditions || []).forEach( function (condition) {
 
         });
         return active;

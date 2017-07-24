@@ -68,102 +68,96 @@ define(
     }
 
     WidgetView.prototype.show = function (container) {
-          var self = this;
+        var self = this;
 
-          self.setup(container);
+        self.setup(container);
 
-        $(container).on('click', '.t-icon-palette-menu-button', function () {
+        $(container).on('click', '.t-icon-palette-menu-button, .t-color-palette-menu-button', function () {
             $('.menu', container)
                 .not('#' + this.id +' .menu')
                 .hide(); //close any open palettes except this one
             $('.menu', this).toggle(); //toggle this palette
         });
 
-          $(container).on('click', '.t-color-palette-menu-button', function () {
-              $('.menu', container)
-                  .not('#' + this.id +' .l-color-palette')
-                  .hide(); //close any open palettes except this one
-              $('.menu', this).toggle(); //toggle this palette
-          });
+        $(container).on('click', '.t-color-palette-menu-button .s-palette-item', function () {
+            var elem = this,
+                col = $(elem).css('background-color'),
+                ruleId = elem.dataset.ruleId,
+                thumbnail = $('#' + ruleId + ' .t-widget-thumb'),
+                propertyKey = elem.dataset.propertyKey,
+                styleObj;
 
-          $(container).on('click', '.s-palette-item', function () {
-              var elem = this,
-                  col = $(elem).css('background-color'),
-                  ruleId = elem.dataset.ruleId,
-                  thumbnail = $('#' + ruleId + ' .t-widget-thumb'),
-                  propertyKey = elem.dataset.propertyKey,
-                  styleObj;
+            self.setConfigProp('ruleStylesById.' + ruleId + '.'+ propertyKey, col);
+            styleObj = self.getConfigProp('ruleStylesById.' + ruleId);
+            self.applyStyle(thumbnail, styleObj);
+            self.updateWidget();
+            $('.color-swatch', '#' + ruleId + ' #' + propertyKey)
+                .css('background-color', col); //update color indicator on palette
+            $('.l-color-palette', '#' + ruleId).hide(); //close palette
 
-              self.setConfigProp('ruleStylesById.' + ruleId + '.'+ propertyKey, col);
-              styleObj = self.getConfigProp('ruleStylesById.' + ruleId);
-              self.applyStyle(thumbnail, styleObj);
-              self.updateWidget();
-              $('.color-swatch', '#' + ruleId + ' #' + propertyKey)
-                  .css('background-color', col); //update color indicator on palette
-              $('.l-color-palette', '#' + ruleId).hide(); //close palette
-          })
+        });
 
-          $('#addRule', container).on('click', function () {
-              var ruleCount = 0,
-                  ruleId,
-                  ruleOrder = self.getConfigProp('ruleOrder');
+        $(container).on('click', '.t-icon-palette-menu-button .s-palette-item', function () {
+            var elem = this,
+                iconClass = elem.dataset.iconClass,
+                ruleId = elem.dataset.ruleId,
+                oldClass = self.getConfigProp('rulesById.' + ruleId + '.icon');
 
-              //create a unique identifier
-              while (Object.keys(self.getConfigProp('rulesById')).includes('rule' + ruleCount)) {
-                  ruleCount = ++ruleCount;
-              }
-              //add rule to config
-              ruleId = 'rule' + ruleCount;
-              ruleOrder.push(ruleId);
-              self.setConfigProp('ruleOrder', ruleOrder);
-              self.makeRule(ruleId, 'Rule', container);
-          });
+            self.setConfigProp('rulesById.' + ruleId + '.icon', iconClass);
+            self.updateWidget();
+            $('.icon-swatch', '#' + ruleId).removeClass(oldClass).addClass(iconClass);
+            $('.menu', '#' + ruleId).hide();
+        });
 
-          $(container).on('click','.t-duplicate', function () {
-              var elem = this;
-              self.duplicateRule(elem.dataset.ruleId, container);
-          });
+        $('#addRule', container).on('click', function () {
+            self.addRule(container);
+        });
 
-          $(container).on('input','#ruleName', function () {
-              self.setConfigProp('rulesById.' + this.dataset.ruleId + '.name', this.value);
-              $('#' + this.dataset.ruleId + ' .rule-title').html(this.value);
-          });
+        $(container).on('click','.t-duplicate', function () {
+            var elem = this;
+            self.duplicateRule(elem.dataset.ruleId, container);
+        });
 
-          $(container).on('input', '#ruleLabel', function () {
-              self.setConfigProp('rulesById.' + this.dataset.ruleId + '.label', this.value);
-              self.updateWidget();
-          });
+        $(container).on('input','#ruleName', function () {
+            self.setConfigProp('rulesById.' + this.dataset.ruleId + '.name', this.value);
+            $('#' + this.dataset.ruleId + ' .rule-title').html(this.value);
+        });
 
-          $(container).on('input', '#ruleMessage', function () {
-              self.setConfigProp('rulesById.' + this.dataset.ruleId + '.message', this.value);
-          });
+        $(container).on('input', '#ruleLabel', function () {
+            self.setConfigProp('rulesById.' + this.dataset.ruleId + '.label', this.value);
+            self.updateWidget();
+        });
 
-          $(container).on('click','.t-delete', function() {
-              var elem = this,
-                  ruleId = elem.dataset.ruleId,
-                  ruleOrder = self.getConfigProp('ruleOrder')
+        $(container).on('input', '#ruleMessage', function () {
+            self.setConfigProp('rulesById.' + this.dataset.ruleId + '.message', this.value);
+        });
 
-              self.removeConfigProp('rulesById.' + ruleId);
-              self.removeConfigProp('ruleStylesById.' + ruleId);
-              _.remove(ruleOrder, function (value) {
-                  return value === ruleId;
-              });
-              self.setConfigProp('ruleOrder', ruleOrder);
-              self.refreshRules(container);
-          })
+        $(container).on('click','.t-delete', function() {
+            var elem = this,
+                ruleId = elem.dataset.ruleId,
+                ruleOrder = self.getConfigProp('ruleOrder')
 
-          // populate a select with most recent composition before it opens
-          $(container).on('mousedown', 'select', this.populateSelect);
+            self.removeConfigProp('rulesById.' + ruleId);
+            self.removeConfigProp('ruleStylesById.' + ruleId);
+            _.remove(ruleOrder, function (value) {
+                return value === ruleId;
+            });
+            self.setConfigProp('ruleOrder', ruleOrder);
+            self.refreshRules(container);
+        })
 
-          // update data model when a select element is modified
-          $(container).on('change','select', function () {
-              var elem = this,
-                  index = $(elem).prop('selectedIndex'),
-                  selectedId = $(elem).prop('options')[index].value,
-                  ruleId = elem.dataset.ruleId;
+        // populate a select with most recent composition before it opens
+        $(container).on('mousedown', 'select', this.populateSelect);
 
-              this.dataset.selectedId = selectedId;
-          });
+        // update data model when a select element is modified
+        $(container).on('change','select', function () {
+            var elem = this,
+                index = $(elem).prop('selectedIndex'),
+                selectedId = $(elem).prop('options')[index].value,
+                ruleId = elem.dataset.ruleId;
+
+            this.dataset.selectedId = selectedId;
+        });
     }
 
     WidgetView.prototype.destroy = function (container) {
@@ -237,13 +231,15 @@ define(
                 id: ruleId,
                 description: ruleId === 'default' ? 'Default appearance for the widget' : 'A new rule',
                 conditions: [],
-                trigger: ''
+                trigger: '',
+                icon: 'icon-alert-rect'
               });
         }
 
         ruleDescription = this.getConfigProp('rulesById.' + ruleId + '.description');
         ruleLabel = this.getConfigProp('rulesById.' + ruleId + '.label');
         ruleMessage = this.getConfigProp('rulesById.' + ruleId + '.message');
+        ruleIcon = this.getConfigProp('rulesById.' + ruleId + '.icon');
 
         //append it to the document
         $('#ruleArea', container).append(newRule);
@@ -255,10 +251,13 @@ define(
         description.html(ruleDescription);
         this.applyStyle(thumbnail, styleObj);
 
-        // configure label icon
+        // configure icon inputs
         this.initIconPalette( $('.t-icon-palette-menu-button', newRule) );
         $('.menu', newRule).hide();
-        // TO-DO: ADD WIRING
+        $('.t-icon-palette-menu-button .icon-swatch', newRule).addClass(ruleIcon);
+        $('.t-icon-palette-menu-button .s-palette-item', newRule).each( function () {
+            this.dataset.ruleId = ruleId;
+        });
 
         //configure color inputs
         this.initColorPalette( $('.t-color-palette-menu-button', newRule) );
@@ -333,8 +332,10 @@ define(
             }
         });
 
+
         this.applyStyle( $('#widget'), this.getConfigProp('ruleStylesById.' + showRuleId));
         $('#widgetName').html(this.getConfigProp('rulesById.' + showRuleId + '.label'));
+        $('#widgetIcon').removeClass().addClass(this.getConfigProp('rulesById.' + showRuleId + '.icon'));
     }
 
     WidgetView.prototype.subscriptionCallback = function(datum) {
@@ -384,60 +385,78 @@ define(
         });
     }
 
-        WidgetView.prototype.initIconPalette = function(elem) {
-            var paletteTemplate = `
-            <span class="l-click-area"></span>
-            <span class="icon-swatch"></span>
-            <div class="menu l-palette l-icon-palette">
-                <div class="l-palette-row l-option-row">
-                    <div class="l-palette-item s-palette-item"></div>
-                    <span class="l-palette-item-label">None</span>
-                </div>
+    WidgetView.prototype.initIconPalette = function(elem) {
+        var paletteTemplate = `
+        <span class="l-click-area"></span>
+        <span class="icon-swatch"></span>
+        <div class="menu l-palette l-icon-palette">
+            <div class="l-palette-row l-option-row">
+                <div class="l-palette-item s-palette-item"></div>
+                <span class="l-palette-item-label">None</span>
             </div>
-        `,
-                icons = [
-                    'icon-alert-rect',
-                    'icon-alert-triangle',
-                    'icon-arrow-down',
-                    'icon-arrow-left',
-                    'icon-arrow-right',
-                    'icon-arrow-double-up',
-                    'icon-arrow-tall-up',
-                    'icon-arrow-tall-down',
-                    'icon-arrow-double-down',
-                    'icon-arrow-up',
-                    'icon-asterisk',
-                    'icon-bell',
-                    'icon-check',
-                    'icon-eye-open',
-                    'icon-gear',
-                    'icon-hourglass',
-                    'icon-info',
-                    'icon-link',
-                    'icon-lock',
-                    'icon-people',
-                    'icon-person',
-                    'icon-plus',
-                    'icon-trash',
-                    'icon-x'
-                ],
-                maxItems = icons.length,
-                itemCount = 1;
+        </div>
+    `,
+            icons = [
+                'icon-alert-rect',
+                'icon-alert-triangle',
+                'icon-arrow-down',
+                'icon-arrow-left',
+                'icon-arrow-right',
+                'icon-arrow-double-up',
+                'icon-arrow-tall-up',
+                'icon-arrow-tall-down',
+                'icon-arrow-double-down',
+                'icon-arrow-up',
+                'icon-asterisk',
+                'icon-bell',
+                'icon-check',
+                'icon-eye-open',
+                'icon-gear',
+                'icon-hourglass',
+                'icon-info',
+                'icon-link',
+                'icon-lock',
+                'icon-people',
+                'icon-person',
+                'icon-plus',
+                'icon-trash',
+                'icon-x'
+            ],
+            maxItems = icons.length,
+            itemCount = 1;
 
-            elem.html(paletteTemplate);
+        elem.html(paletteTemplate);
 
-            icons.forEach(function (icon) {
-                if (itemCount === 1) {
-                    $('.menu', elem).append(
-                        '<div class = "l-palette-row"> </div>'
-                    )
-                }
-                $('.l-palette-row:last-of-type', elem).append(
-                    '<div class="l-palette-item s-palette-item ' + icon + '"> </div>'
+        icons.forEach(function (icon) {
+            if (itemCount === 1) {
+                $('.menu', elem).append(
+                    '<div class = "l-palette-row"> </div>'
                 )
-                itemCount = itemCount < maxItems ? ++itemCount : 1;
-            });
+            }
+            $('.l-palette-row:last-of-type', elem).append(
+                '<div class="l-palette-item s-palette-item ' + icon + '"' +
+                ' data-icon-class="' + icon + '"> </div>'
+            )
+            itemCount = itemCount < maxItems ? ++itemCount : 1;
+        });
+    }
+
+    WidgetView.prototype.addRule = function (container) {
+        var self = this,
+            ruleCount = 0,
+            ruleId,
+            ruleOrder = self.getConfigProp('ruleOrder');
+
+        //create a unique identifier
+        while (Object.keys(self.getConfigProp('rulesById')).includes('rule' + ruleCount)) {
+            ruleCount = ++ruleCount;
         }
+        //add rule to config
+        ruleId = 'rule' + ruleCount;
+        ruleOrder.push(ruleId);
+        self.setConfigProp('ruleOrder', ruleOrder);
+        self.makeRule(ruleId, 'Rule', container);
+    }
 
     WidgetView.prototype.duplicateRule = function (sourceRuleId, container) {
       var self = this,
