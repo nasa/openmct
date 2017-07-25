@@ -40,7 +40,7 @@ define(
     // parameters
     // domainObject: the domain object represented by this view
     // openmct: an MCT instance
-    // evaluator: a RuleEvaluator instance for evaluating rulesets
+    // evaluator: a RuleEvaluator instance for evaluating conditions
     function WidgetView(domainObject, openmct, evaluator) {
         this.domainObject = domainObject;
         this.openmct = openmct;
@@ -51,13 +51,16 @@ define(
         this.domainObject.configuration.ruleStylesById = this.domainObject.configuration.ruleStylesById || {};
         this.domainObject.configuration.ruleOrder = this.domainObject.configuration.ruleOrder || ['default'];
 
+        this.activeId = 'default';
         var self = this;
 
         this.telemetryMetadataByObject = {};
         this.compositionObjs = {};
         this.compositionCollection = this.openmct.composition.get(this.domainObject);
         this.compositionCollection.on('add', this.onCompositionAdd, this);
-        this.compositionCollection.load();
+        this.compositionCollection.load().then( function () {
+            self.refreshRules();
+        });
 
         //ensure 'this' points to an instance of this object when its methods
         //are called from a different scope
@@ -147,18 +150,55 @@ define(
         })
 
         // populate a select with most recent composition before it opens
-        $(container).on('mousedown', 'select', this.populateSelect);
+        $(container).on('mousedown', 'select', function () {
+            self.populateSelect(this);
+        });
 
         // update data model when a select element is modified
         $(container).on('change','select', function () {
             var elem = this,
                 index = $(elem).prop('selectedIndex'),
-                selectedId = $(elem).prop('options')[index].value,
-                ruleId = elem.dataset.ruleId;
+                selectedOption = $(elem).prop('options')[index],
+                selectedId = selectedOption.value,
+                ruleId = elem.dataset.ruleId,
+                propId = $(elem).prop('id'),
+                conditions = self.getConfigProp('rulesById.' + ruleId + '.conditions'),
+                conditionLabels = self.getConfigProp('rulesById.' + ruleId + '.conditionLabels'),
+                configIndex = CONDITION_CONFIG_IDS.indexOf(propId);
 
-            this.dataset.selectedId = selectedId;
+            conditions[0][propId] = elem.value;
+            conditionLabels[0][propId] = $(selectedOption).html();
+            elem.dataset.selectedId = selectedId;
+
+            //clear cache for downstream elements
+            // CONDITION_CONFIG_IDS.forEach( function (propKey, index) {
+            //     if (index > configIndex) {
+            //         conditions[0][propKey] = '';
+            //         conditionLabels[0][propKey] = '';
+            //     }
+            // });
+
+            self.setConfigProp('rulesById.' + ruleId + '.conditions', conditions);
+            self.setConfigProp('rulesById.' + ruleId + '.conditionLabels', conditionLabels);
+
+            //refresh selects
+            $('select', '#' + ruleId).each( function (index) {
+                var element = this,
+                    propKey = $(element).prop('id');
+                self.populateSelect(this).then( function () {
+                    var optionValues = Array.from($(element).prop('options')).map( function(option) {
+                        return $(option).html();
+                    });
+                    if (!optionValues.includes(conditionLabels[0][propKey])) {
+                        conditions[0][propKey] = '';
+                        conditionLabels[0][propKey] = '';
+                    }
+                })
+
+
+            });
         });
-    }
+    };
 
     WidgetView.prototype.destroy = function (container) {
 
@@ -215,44 +255,61 @@ define(
             styleObj = {},
             ruleLabel,
             ruleDescription,
-            ruleMessage;
+            ruleMessage,
+            ruleIcon,
+            ruleConditions,
+            conditionLabels,
+            self = this;
 
         Object.assign(styleObj, DEFAULT_PROPS)
-        if (!this.hasConfigProp('ruleStylesById.' + ruleId)) {
-            this.setConfigProp('ruleStylesById.' + ruleId, styleObj);
+        if (!self.hasConfigProp('ruleStylesById.' + ruleId)) {
+            self.setConfigProp('ruleStylesById.' + ruleId, styleObj);
         } else {
-            styleObj = this.getConfigProp('ruleStylesById.' + ruleId);
+            styleObj = self.getConfigProp('ruleStylesById.' + ruleId);
         }
-        if (!this.hasConfigProp('rulesById.' + ruleId)) {
-            this.setConfigProp('rulesById.' + ruleId, {
+        if (!self.hasConfigProp('rulesById.' + ruleId)) {
+            self.setConfigProp('rulesById.' + ruleId, {
                 name: ruleName,
-                label: this.domainObject.name,
+                label: self.domainObject.name,
                 message: '',
                 id: ruleId,
                 description: ruleId === 'default' ? 'Default appearance for the widget' : 'A new rule',
-                conditions: [],
+                conditions: [{
+                    object: '',
+                    key: '',
+                    operation: '',
+                    values: []
+                }],
+                conditionLabels: [{
+                    object: '',
+                    key: '',
+                    operation: '',
+                    values: ['']
+                }],
                 trigger: '',
                 icon: 'icon-alert-rect'
-              });
+            });
         }
 
-        ruleDescription = this.getConfigProp('rulesById.' + ruleId + '.description');
-        ruleLabel = this.getConfigProp('rulesById.' + ruleId + '.label');
-        ruleMessage = this.getConfigProp('rulesById.' + ruleId + '.message');
-        ruleIcon = this.getConfigProp('rulesById.' + ruleId + '.icon');
+        ruleDescription = self.getConfigProp('rulesById.' + ruleId + '.description');
+        ruleLabel = self.getConfigProp('rulesById.' + ruleId + '.label');
+        ruleMessage = self.getConfigProp('rulesById.' + ruleId + '.message');
+        ruleIcon = self.getConfigProp('rulesById.' + ruleId + '.icon');
+        ruleConditions = self.getConfigProp('rulesById.' + ruleId + '.conditions');
+        conditionLabels = self.getConfigProp('rulesById.' + ruleId + '.conditionLabels')
 
         //append it to the document
         $('#ruleArea', container).append(newRule);
 
         //configure new rule's default properties
-        this.setConfigProp('ruleStylesById.' + ruleId, styleObj);
+        self.setConfigProp('ruleStylesById.' + ruleId, styleObj);
         newRule.prop('id', ruleId);
         title.html(ruleName);
         description.html(ruleDescription);
-        this.applyStyle(thumbnail, styleObj);
+        self.applyStyle(thumbnail, styleObj);
 
         // configure icon inputs
-        this.initIconPalette( $('.t-icon-palette-menu-button', newRule) );
+        self.initIconPalette( $('.t-icon-palette-menu-button', newRule) );
         $('.menu', newRule).hide();
         $('.t-icon-palette-menu-button .icon-swatch', newRule).addClass(ruleIcon);
         $('.t-icon-palette-menu-button .s-palette-item', newRule).each( function () {
@@ -260,7 +317,7 @@ define(
         });
 
         //configure color inputs
-        this.initColorPalette( $('.t-color-palette-menu-button', newRule) );
+        self.initColorPalette( $('.t-color-palette-menu-button', newRule) );
         $('.menu', newRule).hide();
         $('.t-color-palette-menu-button', newRule).each( function () {
             var propertyKey = this.dataset.propertyKey;
@@ -279,14 +336,33 @@ define(
         $('#ruleMessage', newRule).get(0).dataset.ruleId = ruleId;
         $('#ruleMessage', newRule).prop('value', ruleMessage);
 
-        //configure select inputs
         $('select', newRule).each( function () {
-            if (CONDITION_CONFIG_IDS.includes($(this).prop('id'))) {
-                this.dataset.ruleId = ruleId;
-                $(this).append('<option value = "">' +
-                  '--' + _.capitalize($(this).prop('id')) + '--' +'</option>');
+            var propId = $(this).prop('id'),
+                elem = this,
+                selectedId;
+            if (CONDITION_CONFIG_IDS.includes(propId)) {
+                selectedId = ruleConditions[0][propId];
+                elem.dataset.ruleId = ruleId;
+                elem.dataset.selectedId = selectedId;
+                if (conditionLabels[0][propId] != '') {
+                    $(elem).append(
+                      '<option value = ' + selectedId + ' selected>'
+                      + conditionLabels[0][propId] + '</option>'
+                    )
+                } else {
+                    $(elem).append('<option value = "" selected>' +  '--' +
+                        _.capitalize($(elem).prop('id')) + '--' +'</option>');
+                }
+                $(elem).prop('selectedIndex', 0);
             }
         });
+
+        // configure conditions
+        self.getConfigProp('rulesById.' + ruleId + '.conditions').forEach( function (condition) {
+            Object.entries(condition).forEach( function (property) {
+                var options = $('select', newRule).has('#' + property[0]);
+            })
+        })
 
         //configure delete
         $('.t-delete', newRule).get(0).dataset.ruleId = ruleId;
@@ -296,8 +372,8 @@ define(
         //hide elements that don't apply to default
         if (ruleId === 'default') {
             $('.t-delete', ruleArea).hide();
-            $('.t-widget-rule-config').hide();
-            $('.t-grippy').hide();
+            $('.t-widget-rule-config', ruleArea).hide();
+            $('.t-grippy', ruleArea).hide();
         }
     }
 
@@ -318,12 +394,19 @@ define(
     }
 
     WidgetView.prototype.updateWidget = function() {
+        this.executeRules();
+        this.applyStyle( $('#widget'), this.getConfigProp('ruleStylesById.' + this.activeId));
+        $('#widgetName').html(this.getConfigProp('rulesById.' + this.activeId + '.label'));
+        $('#widgetIcon').removeClass().addClass(this.getConfigProp('rulesById.' + this.activeId + '.icon'));
+    }
+
+    WidgetView.prototype.executeRules = function () {
         var self = this;
             rules = Object.entries(self.getConfigProp('rulesById'));
             showRuleId = 'default';
 
         rules = rules.filter( function (rule) {
-            return (self.getConfigProp('ruleOrder').includes(rule.id))
+            return (self.getConfigProp('ruleOrder').includes(rule[0]))
         });
 
         rules.forEach( function (rule) {
@@ -332,10 +415,7 @@ define(
             }
         });
 
-
-        this.applyStyle( $('#widget'), this.getConfigProp('ruleStylesById.' + showRuleId));
-        $('#widgetName').html(this.getConfigProp('rulesById.' + showRuleId + '.label'));
-        $('#widgetIcon').removeClass().addClass(this.getConfigProp('rulesById.' + showRuleId + '.icon'));
+        this.activeId = showRuleId;
     }
 
     WidgetView.prototype.subscriptionCallback = function(datum) {
@@ -459,97 +539,128 @@ define(
     }
 
     WidgetView.prototype.duplicateRule = function (sourceRuleId, container) {
-      var self = this,
-          ruleCount = 0,
-          ruleId,
-          ruleOrder = self.getConfigProp('ruleOrder'),
-          sourceRule = {},
-          sourceStyle = {};
+        var self = this,
+            ruleCount = 0,
+            ruleId,
+            ruleOrder = self.getConfigProp('ruleOrder'),
+            sourceRule = {},
+            sourceStyle = {};
 
-      // copy source object configuration by value
-      Object.assign(sourceRule, self.getConfigProp('rulesById.' + sourceRuleId));
-      Object.assign(sourceStyle, self.getConfigProp('ruleStylesById.' + sourceRuleId));
+        // copy source object configuration by value
+        Object.assign(sourceRule, self.getConfigProp('rulesById.' + sourceRuleId));
+        Object.assign(sourceStyle, self.getConfigProp('ruleStylesById.' + sourceRuleId));
 
-      //create a unique identifier
-      while (Object.keys(self.getConfigProp('rulesById')).includes('rule' + ruleCount)) {
-          ruleCount = ++ruleCount;
-      }
+        //create a unique identifier
+        while (Object.keys(self.getConfigProp('rulesById')).includes('rule' + ruleCount)) {
+            ruleCount = ++ruleCount;
+        }
 
-      //add rule to config
-      ruleId = 'rule' + ruleCount;
-      sourceRule.id = ruleId;
-      sourceRule.name += ' Copy'
-      ruleOrder.splice(ruleOrder.indexOf(sourceRuleId)+1, 0, ruleId);
-      self.setConfigProp('ruleOrder', ruleOrder);
-      self.setConfigProp('rulesById.' + ruleId, sourceRule);
-      self.setConfigProp('ruleStylesById.' + ruleId, sourceStyle)
-      self.makeRule(ruleId, sourceRule.name, container);
-      self.refreshRules(container);
+        //add rule to config
+        ruleId = 'rule' + ruleCount;
+        sourceRule.id = ruleId;
+        sourceRule.name += ' Copy';
+        ruleOrder.splice(ruleOrder.indexOf(sourceRuleId)+1, 0, ruleId);
+        self.setConfigProp('ruleOrder', ruleOrder);
+        self.setConfigProp('rulesById.' + ruleId, sourceRule);
+        self.setConfigProp('ruleStylesById.' + ruleId, sourceStyle)
+        self.makeRule(ruleId, sourceRule.name, container);
+        self.refreshRules(container);
     }
 
+    //populate a select with elements
     WidgetView.prototype.populateSelect = function (elem) {
-        var elem = elem.toElement,
-            id = $(elem).prop('id');
+        var id = $(elem).prop('id'),
+            self = this,
+            promise;
 
-        if (CONDITION_CONFIG_IDS.includes(id)) {
-            var self = this,
-                ruleId = elem.dataset.ruleId,
-                selectedId,
-                selectedStr,
-                objInput = $('#object', '#'+ruleId),
-                objId = objInput.get(0).dataset.selectedId || '',
-                keyInput = $('#key', '#'+ruleId),
-                keyId = keyInput.get(0).dataset.selectedId || '';
+        promise = new Promise( function(resolve, reject) {
+            if (CONDITION_CONFIG_IDS.includes(id)) {
+                var ruleId = elem.dataset.ruleId,
+                    selectedId,
+                    selectedStr,
+                    objInput = $('#object', '#'+ruleId),
+                    objId = objInput.get(0).dataset.selectedId || '',
+                    keyInput = $('#key', '#'+ruleId),
+                    keyId = keyInput.get(0).dataset.selectedId || '';
 
-            $('option', elem).each( function () {
-                if ($(this).prop('selected')) {
-                    selectedId = $(this).prop('value')
-                }
-            });
-
-
-            $(elem).html('');
-            $(elem).append('<option value = "">' +  '--'+ _.capitalize($(elem).prop('id')) + '--' +'</option>');
-
-
-            if (id === 'object') {
-                $(elem).append('<option value = "any"' + (selectedId === 'any' ? 'selected' : '') + '> Any Telemetry Item </option>' +
-                             '<option value = "all"' + (selectedId === 'all' ? 'selected' : '') +'> All Telemetry Items </option>');
-                Object.values(self.compositionObjs).forEach( function (obj) {
-                    selectedStr = (obj.identifier.key === selectedId) ? 'selected' : '';
-                    $(elem).append(
-                        '<option value = ' + obj.identifier.key + ' ' + selectedStr + '>'
-                        + obj.name + '</option>'
-                    );
+                $('option', elem).each( function () {
+                    if ($(this).prop('selected')) {
+                        selectedId = $(this).prop('value')
+                    }
                 });
-            } else if (id === 'key') {
-                var metaData;
-                if (objId && objId !== '') {
-                    metaData = Object.values(self.telemetryMetadataByObject[objId]);
-                    metaData.forEach( function (metaDatum) {
-                        selectedStr = (metaDatum.key === selectedId) ? 'selected' : '';
+
+
+                $(elem).html('');
+                $(elem).append('<option value = "">' +  '--'+ _.capitalize($(elem).prop('id')) + '--' +'</option>');
+
+
+                if (id === 'object') {
+                    $(elem).append('<option value = "any"' + (selectedId === 'any' ? 'selected' : '') + '> Any Telemetry Item </option>' +
+                                 '<option value = "all"' + (selectedId === 'all' ? 'selected' : '') +'> All Telemetry Items </option>');
+                    Object.values(self.compositionObjs).forEach( function (obj) {
+                        selectedStr = (obj.identifier.key === selectedId) ? 'selected' : '';
                         $(elem).append(
-                            '<option value = ' + metaDatum.key + ' ' + selectedStr + '>'
-                            + metaDatum.name + '</option>'
-                        )
-                    });
-                }
-            } else if (id === 'operation') {
-                if (objId && objId != '' && keyId && keyId !== '') {
-                    var type = self.telemetryMetadataByObject[objId][keyId]['type']
-                        operationKeys = self.evaluator.getOperationKeys().filter( function (opKey) {
-                            return (self.evaluator.operationAppliesTo(opKey, type));
-                        })
-                    operationKeys.forEach( function (key) {
-                        var selectedStr = (key === selectedId) ? 'selected' : '';
-                        $(elem).append(
-                            '<option value = ' + key + ' ' + selectedStr + '>'
-                            + self.evaluator.getOperationText(key) + '</option>'
+                            '<option value = ' + obj.identifier.key + ' ' + selectedStr + '>'
+                            + obj.name + '</option>'
                         );
                     });
+                    resolve();
+                } else if (id === 'key') {
+                    var metaData;
+                    if (objId && self.telemetryMetadataByObject[objId]) {
+                        metaData = Object.values(self.telemetryMetadataByObject[objId]);
+                        metaData.forEach( function (metaDatum) {
+                            selectedStr = (metaDatum.key === selectedId) ? 'selected' : '';
+                            $(elem).append(
+                                '<option value = ' + metaDatum.key + ' ' + selectedStr + '>'
+                                + metaDatum.name + '</option>'
+                            )
+                        });
+                    }
+                    resolve();
+                } else if (id === 'operation') {
+                    if (objId && keyId && self.telemetryMetadataByObject[objId] && self.telemetryMetadataByObject[objId][keyId]) {
+                        var type = self.telemetryMetadataByObject[objId][keyId]['type']
+                            operationKeys = self.evaluator.getOperationKeys().filter( function (opKey) {
+                                return (self.evaluator.operationAppliesTo(opKey, type));
+                            })
+                        operationKeys.forEach( function (key) {
+                            var selectedStr = (key === selectedId) ? 'selected' : '';
+                            $(elem).append(
+                                '<option value = ' + key + ' ' + selectedStr + '>'
+                                + self.evaluator.getOperationText(key) + '</option>'
+                            );
+                        });
+                    }
+                    resolve();
                 }
             }
-        }
+        });
+        return promise;
+    }
+
+    //load and parse the type of a telemetry object and cache it for future use.
+    //returns a promise resolving to the type
+    WidgetView.prototype.getPropertyType = function (domainObject, key) {
+        var self = this,
+            telemetryAPI = this.openmct.telemetry,
+            type = '',
+            objId = domainObject.identifier.key,
+            promise = new Promise(function (resolve, reject) {
+                if (self.telemetryMetadataByObject[objId][key]['type']) {
+                    resolve(self.telemetryMetadataByObject[objId][key]['type'])
+                }
+                telemetryAPI.request(domainObject, {}).then( function (telemetry) {
+                    Object.entries(telemetry[0]).forEach( function(telem) {
+                        if (telem[0] === key){
+                            type = typeof telem[1];
+                            self.telemetryMetadataByObject[objId][telem[0]]['type'] = type;
+                            resolve(type);
+                        }
+                    });
+                });
+        });
+        return promise;
     }
 
     WidgetView.prototype.getConfigProp = function (path) {
