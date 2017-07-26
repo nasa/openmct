@@ -21,8 +21,14 @@
  *****************************************************************************/
 
 define(
-    ["../../src/controllers/ImageryController"],
-    function (ImageryController) {
+    [
+        "zepto",
+        "../../src/controllers/ImageryController"
+    ],
+    function ($, ImageryController) {
+
+        var MOCK_ELEMENT_TEMPLATE =
+            '<div class="l-image-thumbs-wrapper"></div>';
 
         describe("The Imagery controller", function () {
             var $scope,
@@ -33,7 +39,9 @@ define(
                 metadata,
                 prefix,
                 controller,
-                hasLoaded;
+                hasLoaded,
+                mockWindow,
+                mockElement;
 
             beforeEach(function () {
                 $scope = jasmine.createSpyObj('$scope', ['$on', '$watch']);
@@ -42,14 +50,16 @@ define(
                     ['getId']
                 );
                 newDomainObject = { name: 'foo' };
-
                 oldDomainObject.getId.andReturn('testID');
                 openmct = {
                     objects: jasmine.createSpyObj('objectAPI', [
                         'get'
                     ]),
                     time: jasmine.createSpyObj('timeAPI', [
-                        'timeSystem'
+                        'timeSystem',
+                        'clock',
+                        'on',
+                        'off'
                     ]),
                     telemetry: jasmine.createSpyObj('telemetryAPI', [
                         'subscribe',
@@ -92,13 +102,24 @@ define(
                 });
                 metadata.value.andReturn("timestamp");
                 metadata.valuesForHints.andReturn(["value"]);
+                mockElement = $(MOCK_ELEMENT_TEMPLATE);
+                mockWindow = jasmine.createSpyObj('$window', ['requestAnimationFrame']);
+                mockWindow.requestAnimationFrame.andCallFake(function (f) {
+                    return f();
+                });
 
-                controller = new ImageryController($scope, openmct);
-
+                controller = new ImageryController(
+                    $scope,
+                    mockWindow,
+                    mockElement,
+                    openmct
+                );
             });
 
             describe("when loaded", function () {
-                var callback;
+                var callback,
+                    boundsListener;
+
                 beforeEach(function () {
                     waitsFor(function () {
                         return hasLoaded;
@@ -106,11 +127,15 @@ define(
 
 
                     runs(function () {
+                        openmct.time.on.calls.forEach(function (call) {
+                            if (call.args[0] === "bounds") {
+                                boundsListener = call.args[1];
+                            }
+                        });
                         callback =
                             openmct.telemetry.subscribe.mostRecentCall.args[1];
                     });
                 });
-
 
                 it("uses LAD telemetry", function () {
                     expect(openmct.telemetry.request).toHaveBeenCalledWith(
@@ -165,7 +190,14 @@ define(
                     );
                 });
 
-                it("unsubscribes when scope is destroyed", function () {
+                it("requests telemetry", function () {
+                    expect(openmct.telemetry.request).toHaveBeenCalledWith(
+                        newDomainObject,
+                        jasmine.any(Object)
+                    );
+                });
+
+                it("unsubscribes and unlistens when scope is destroyed", function () {
                     expect(unsubscribe).not.toHaveBeenCalled();
 
                     $scope.$on.calls.forEach(function (call) {
@@ -174,6 +206,25 @@ define(
                         }
                     });
                     expect(unsubscribe).toHaveBeenCalled();
+                    expect(openmct.time.off)
+                        .toHaveBeenCalledWith('bounds', jasmine.any(Function));
+                });
+
+                it("listens for bounds event and responds to tick and manual change", function () {
+                    var mockBounds = {start: 1434600000000, end: 1434600500000};
+                    expect(openmct.time.on).toHaveBeenCalled();
+                    openmct.telemetry.request.reset();
+                    boundsListener(mockBounds, true);
+                    expect(openmct.telemetry.request).not.toHaveBeenCalled();
+                    boundsListener(mockBounds, false);
+                    expect(openmct.telemetry.request).toHaveBeenCalledWith(newDomainObject, mockBounds);
+                });
+
+                it ("doesnt append duplicate datum", function () {
+                    var mockDatum = {url: 'image/url', utc: 1434600000000};
+                    expect(controller.updateHistory(mockDatum)).toBe(true);
+                    expect(controller.updateHistory(mockDatum)).toBe(false);
+                    expect(controller.updateHistory(mockDatum)).toBe(false);
                 });
             });
 

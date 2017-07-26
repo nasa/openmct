@@ -191,6 +191,9 @@ $colorItemTreeVCHover: pullForward($colorItemTreeVC, 20%);
 $colorItemTreeSelectedVC: $colorItemTreeVC;
 $shdwItemTreeIcon: 0.6;
 
+// Images
+$colorThumbHoverBg: $colorItemTreeHoverBg;
+
 // Scrollbar
 $scrollbarTrackSize: 10px;
 $scrollbarTrackShdw: rgba(#000, 0.7) 0 1px 5px;
