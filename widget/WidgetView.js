@@ -2,10 +2,12 @@ define(
     [
         'text!./widgetTemplate.html',
         'text!./ruleTemplate.html',
+        'text!./conditionTemplate.html',
         'lodash'
     ], function (
         widgetTemplate,
         ruleTemplate,
+        conditionTemplate,
         _
     ) {
 
@@ -149,6 +151,32 @@ define(
             self.refreshRules(container);
         })
 
+        $(container).on('click', '.add-condition', function () {
+            var elem = this,
+                ruleId = elem.dataset.ruleId,
+                conditions = self.getConfigProp('rulesById.' + ruleId + '.conditions'),
+                conditionLabels = self.getConfigProp('rulesById.' + ruleId + '.conditionLabels');
+
+            conditions.push({
+                object: '',
+                key: '',
+                operation: '',
+                values: []
+            })
+
+            conditionLabels.push({
+              object: '',
+              key: '',
+              operation: '',
+              values: []
+            })
+
+            self.setConfigProp('rulesById.' + ruleId + '.conditions', conditions);
+            self.setConfigProp('rulesById.' + ruleId + '.conditionLabels', conditionLabels);
+
+            self.refreshRules();
+        });
+
         // populate a select with most recent composition before it opens
         $(container).on('mousedown', 'select', function () {
             self.populateSelect(this);
@@ -161,42 +189,34 @@ define(
                 selectedOption = $(elem).prop('options')[index],
                 selectedId = selectedOption.value,
                 ruleId = elem.dataset.ruleId,
+                conditionIndex = elem.dataset.conditionIndex,
                 propId = $(elem).prop('id'),
                 conditions = self.getConfigProp('rulesById.' + ruleId + '.conditions'),
-                conditionLabels = self.getConfigProp('rulesById.' + ruleId + '.conditionLabels'),
-                configIndex = CONDITION_CONFIG_IDS.indexOf(propId);
+                conditionLabels = self.getConfigProp('rulesById.' + ruleId + '.conditionLabels');
 
-            conditions[0][propId] = elem.value;
-            conditionLabels[0][propId] = $(selectedOption).html();
+            conditions[conditionIndex][propId] = elem.value;
+            conditionLabels[conditionIndex][propId] = $(selectedOption).html();
             elem.dataset.selectedId = selectedId;
-
-            //clear cache for downstream elements
-            // CONDITION_CONFIG_IDS.forEach( function (propKey, index) {
-            //     if (index > configIndex) {
-            //         conditions[0][propKey] = '';
-            //         conditionLabels[0][propKey] = '';
-            //     }
-            // });
-
             self.setConfigProp('rulesById.' + ruleId + '.conditions', conditions);
             self.setConfigProp('rulesById.' + ruleId + '.conditionLabels', conditionLabels);
 
             //refresh selects
-            $('select', '#' + ruleId).each( function (index) {
+            $('select', '#' + ruleId + ' #condition' + conditionIndex).each( function (index) {
                 var element = this,
                     propKey = $(element).prop('id');
                 self.populateSelect(this).then( function () {
                     var optionValues = Array.from($(element).prop('options')).map( function(option) {
                         return $(option).html();
                     });
-                    if (!optionValues.includes(conditionLabels[0][propKey])) {
-                        conditions[0][propKey] = '';
-                        conditionLabels[0][propKey] = '';
+                    if (!optionValues.includes(conditionLabels[conditionIndex][propKey])) {
+                        conditions[conditionIndex][propKey] = '';
+                        conditionLabels[conditionIndex][propKey] = '';
                     }
+                    self.setConfigProp('rulesById.' + ruleId + '.conditions', conditions);
+                    self.setConfigProp('rulesById.' + ruleId + '.conditionLabels', conditionLabels);
                 })
-
-
             });
+
         });
     };
 
@@ -336,26 +356,7 @@ define(
         $('#ruleMessage', newRule).get(0).dataset.ruleId = ruleId;
         $('#ruleMessage', newRule).prop('value', ruleMessage);
 
-        $('select', newRule).each( function () {
-            var propId = $(this).prop('id'),
-                elem = this,
-                selectedId;
-            if (CONDITION_CONFIG_IDS.includes(propId)) {
-                selectedId = ruleConditions[0][propId];
-                elem.dataset.ruleId = ruleId;
-                elem.dataset.selectedId = selectedId;
-                if (conditionLabels[0][propId] != '') {
-                    $(elem).append(
-                      '<option value = ' + selectedId + ' selected>'
-                      + conditionLabels[0][propId] + '</option>'
-                    )
-                } else {
-                    $(elem).append('<option value = "" selected>' +  '--' +
-                        _.capitalize($(elem).prop('id')) + '--' +'</option>');
-                }
-                $(elem).prop('selectedIndex', 0);
-            }
-        });
+        self.initCondititions(newRule, ruleConditions, conditionLabels);
 
         // configure conditions
         self.getConfigProp('rulesById.' + ruleId + '.conditions').forEach( function (condition) {
@@ -369,12 +370,49 @@ define(
 
         $('.t-duplicate', newRule).get(0).dataset.ruleId = ruleId;
 
+        $('.add-condition', newRule).get(0).dataset.ruleId = ruleId;
+
         //hide elements that don't apply to default
         if (ruleId === 'default') {
             $('.t-delete', ruleArea).hide();
             $('.t-widget-rule-config', ruleArea).hide();
             $('.t-grippy', ruleArea).hide();
         }
+    }
+
+    WidgetView.prototype.initCondititions = function(rule, conditions, labels) {
+        var condition;
+        conditions.forEach( function (condition, index) {
+            condition = $(conditionTemplate);
+            $('.t-widget-rule-config li:last-of-type', rule).before(condition);
+            $(condition).prop('id', 'condition' + index);
+            $('select', condition).each(function() {
+                this.dataset.conditionIndex = index;
+            });
+        });
+
+        $('select', rule).each( function () {
+            var propId = $(this).prop('id'),
+                elem = this,
+                selectedId
+                ruleId = $(rule).prop('id');
+
+            if (CONDITION_CONFIG_IDS.includes(propId)) {
+                selectedId = conditions[elem.dataset.conditionIndex][propId];
+                elem.dataset.ruleId = ruleId;
+                elem.dataset.selectedId = selectedId;
+                if (labels[elem.dataset.conditionIndex][propId] != '') {
+                    $(elem).append(
+                      '<option value = ' + selectedId + ' selected>'
+                      + labels[elem.dataset.conditionIndex][propId] + '</option>'
+                    )
+                } else {
+                    $(elem).append('<option value = "" selected>' +  '--' +
+                        _.capitalize($(elem).prop('id')) + '--' +'</option>');
+                }
+                $(elem).prop('selectedIndex', 0);
+            }
+        });
     }
 
     //Convert object property id to css property name
@@ -576,11 +614,12 @@ define(
         promise = new Promise( function(resolve, reject) {
             if (CONDITION_CONFIG_IDS.includes(id)) {
                 var ruleId = elem.dataset.ruleId,
+                    conditionIndex = elem.dataset.conditionIndex,
                     selectedId,
                     selectedStr,
-                    objInput = $('#object', '#'+ruleId),
+                    objInput = $('#object', '#'+ruleId+' #condition'+conditionIndex),
                     objId = objInput.get(0).dataset.selectedId || '',
-                    keyInput = $('#key', '#'+ruleId),
+                    keyInput = $('#key', '#'+ruleId+' #condition'+conditionIndex),
                     keyId = keyInput.get(0).dataset.selectedId || '';
 
                 $('option', elem).each( function () {
