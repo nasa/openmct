@@ -1,0 +1,20 @@
+<div class="s-hyperlink" ng-controller="HyperlinkController as hyperlink">
+      <div ng-if="hyperlink.isButton()">
+          <div ng-if="hyperlink.openNewTab()">
+              <a class="s-button"
+              href ={{domainObject.getModel().url}} target="_blank">{{domainObject.getModel().displayText}}</a>
+          </div>
+          <div ng-if="hyperlink.openNewTab()== false">
+              <a class="s-button"
+              href ={{domainObject.getModel().url}}>{{domainObject.getModel().displayText}}</a>
+          </div>
+      </div>
+      <div ng-if="hyperlink.isButton()== false">
+          <div ng-if="hyperlink.openNewTab()">
+              <a href={{domainObject.getModel().url}} target="_blank">{{domainObject.getModel().displayText}}</a>
+          </div>
+          <div ng-if="hyperlink.openNewTab()==false">
+            <a href={{domainObject.getModel().url}}>{{domainObject.getModel().displayText}}</a>
+          </div>
+      </div>
+</div>
