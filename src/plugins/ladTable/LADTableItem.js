@@ -21,7 +21,7 @@ define([
         this.stopWatchingMutation = props
             .openmct
             .objects
-            .observe(props.domainObject, 'name', this.onNameChange.bind(this));
+            .observe(props.domainObject, '*', this.onNameChange.bind(this));
         this.unsubscribe = props
             .openmct
             .telemetry
@@ -38,8 +38,8 @@ define([
         etch.update(this);
     };
 
-    LADTableItem.prototype.onNameChange = function (name) {
-        this.props.values.name = name;
+    LADTableItem.prototype.onNameChange = function (domainObject) {
+        this.props.values.name = domainObject.name;
         etch.update(this);
     };
 
