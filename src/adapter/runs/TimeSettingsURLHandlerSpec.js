@@ -132,6 +132,20 @@ define([
             };
         });
 
+        it("initializes with missing time system", function () {
+            // This handles an odd transitory case where a url does not include
+            // a timeSystem.  It's generally only experienced by those who
+            // based their code on the tutorial before it specified a time
+            // system.
+            search['tc.mode'] = 'clockA';
+            search['tc.timeSystem'] = undefined;
+            search['tc.startDelta'] = '123';
+            search['tc.endDelta'] = '456';
+
+            // We don't specify behavior right now other than "don't break."
+            expect(initialize).not.toThrow();
+        });
+
         it("can initalize fixed mode from location", function () {
             search['tc.mode'] = 'fixed';
             search['tc.timeSystem'] = 'timeSystemA';
