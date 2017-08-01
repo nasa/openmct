@@ -94,12 +94,17 @@ define(
          * @constructor
          */
         function MCTSplitPane($parse, $log, $interval) {
+            var splitPaneNumber = 1;
             function controller($scope, $element, $attrs) {
                 var anchorKey = $attrs.anchor || DEFAULT_ANCHOR,
                     anchor,
                     activeInterval,
                     positionParsed = $parse($attrs.position),
                     position; // Start undefined, until explicitly set
+
+                // create unique alias for every instance of MCTSplitPane
+                var mctSplitPaneAlias = "mctSplitPaneAlias" + splitPaneNumber;
+                splitPaneNumber += 1;
 
                 // Get relevant size (height or width) of DOM element
                 function getSize(domElement) {
@@ -148,8 +153,10 @@ define(
 
                 // Enforce minimum/maximum positions
                 function enforceExtrema() {
+                    // Check for user preference on splitPane width
+                    var userWidthPreference = window.localStorage[mctSplitPaneAlias];
                     position = Math.max(position, 0);
-                    position = Math.min(position, getSize($element[0]));
+                    position = Math.min(position,(userWidthPreference || getSize($element[0])));
                 }
 
                 // Getter-setter for the pixel offset of the splitter,
@@ -208,7 +215,9 @@ define(
                     toggleClass: toggleClass,
                     anchor: function () {
                         return anchor;
-                    }
+                    },
+                    saveUserWidthPreference: $attrs.saveuserwidthpreference,
+                    mctSplitPaneAlias: mctSplitPaneAlias
                 };
             }
 
@@ -219,9 +228,7 @@ define(
                 controller: ['$scope', '$element', '$attrs', controller]
             };
         }
-
         return MCTSplitPane;
 
     }
 );
-

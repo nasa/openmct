@@ -56,6 +56,12 @@ define(
 
                         // Update the position of this splitter
                         mctSplitPane.position(initialPosition + pixelDelta);
+
+                        // Save user width preference to local storage if selected
+                        if (mctSplitPane.saveUserWidthPreference === 'true') {
+                            var myStorage = window.localStorage;
+                            myStorage.setItem(mctSplitPane.mctSplitPaneAlias, initialPosition + pixelDelta);
+                        }
                     },
                     // Grab the event when the user is done moving
                     // the splitter and pass it on
@@ -83,4 +89,3 @@ define(
 
     }
 );
-
