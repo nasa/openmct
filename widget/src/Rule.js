@@ -83,7 +83,7 @@ define(
             self.textInputs[inputKey].on('input', function () {
                 var elem = this;
                 self.config[inputKey] = elem.value;
-                self.updateDomainObject(inputKey, elem.value)
+                self.updateDomainObject(inputKey, elem.value);
                 if (inputKey === 'name') {
                     self.title.html(elem.value);
                 }
@@ -132,10 +132,8 @@ define(
     }
 
     Rule.prototype.onConditionChange = function (value, property, index) {
-        this.config.conditions[index][property] = value[0];
-        this.config.conditionLabels[index][property] = value[1];
+        _.set(this.config.conditions[index], property, value[0]);
         this.updateDomainObject('conditions[' + index + '].' + property, value[0]);
-        this.updateDomainObject('conditionLabels[' + index + '].'+ property, value[1]);
         this.callbacks['change'] && this.callbacks['change']();
     }
 
@@ -176,7 +174,7 @@ define(
         this.initCondition();
     }
 
-    Rule.prototype.initCondition = function (sourceConfig, sourceLabels) {
+    Rule.prototype.initCondition = function (sourceConfig) {
         var ruleConfigById = this.domainObject.configuration.ruleConfigById,
             newConfig,
             defaultConfig = {
@@ -184,18 +182,10 @@ define(
                 key: '',
                 operation: '',
                 values: []
-            },
-            defaultLabels = {
-                object: '',
-                key: '',
-                operation: '',
-                values: ['']
             }
 
         newConfig = sourceConfig || defaultConfig;
-        newLabels = sourceLabels || defaultLabels;
         ruleConfigById[this.config.id].conditions.push(newConfig);
-        ruleConfigById[this.config.id].conditionLabels.push(newLabels);
         this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById', ruleConfigById);
         this.refreshConditions();
     }
@@ -209,7 +199,7 @@ define(
         this.config.conditions.forEach( function (condition, index) {
             var newCondition = new Condition(condition, index, self.selectManager);
             newCondition.on('remove', self.removeCondition);
-            newCondition.on('duplicate', self.addCondition);
+            newCondition.on('duplicate', self.initCondition);
             newCondition.on('change', self.onConditionChange);
             self.conditions.push(newCondition);
         });

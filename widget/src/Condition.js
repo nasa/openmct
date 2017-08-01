@@ -31,10 +31,12 @@ define(
         }
 
         this.selects = {}
+        this.valueInputs = [];
 
         this.remove = this.remove.bind(this);
         this.duplicate = this.duplicate.bind(this);
         this.onSelectChange = this.onSelectChange.bind(this);
+        this.onValueInput = this.onValueInput.bind(this);
 
         this.init();
     }
@@ -46,12 +48,16 @@ define(
 
         this.selects.object = new ObjectSelect(this.config, this.conditionManager),
         this.selects.key = new KeySelect(this.config, this.selects.object, this.conditionManager),
-        this.selects.operation = new OperationSelect(this.config, this.selects.key, this.conditionManager)
+        this.selects.operation = new OperationSelect(this.config, this.selects.key, this.conditionManager, this.onSelectChange)
+
+        this.selects.object.on('change', self.onSelectChange);
+        this.selects.key.on('change', self.onSelectChange);
 
         Object.values(this.selects).forEach( function(select) {
             $('.t-configuration', self.domElement).append(select.getDOM());
-            select.on('change', self.onSelectChange);
-        })
+        });
+
+        $(this.domElement).on('input', 'input', this.onValueInput)
     }
 
     Condition.prototype.getDOM = function (container) {
@@ -80,6 +86,39 @@ define(
 
     Condition.prototype.onSelectChange = function (value, property) {
         this.callbacks['change'] && this.callbacks['change'](value, property, this.index);
+        if (property === 'operation') {
+            this.generateValueInputs(value);
+        }
+    }
+
+    Condition.prototype.onValueInput = function (event) {
+        var elem = event.target,
+            value = elem.value,
+            inputIndex = this.valueInputs.indexOf(elem);
+
+        this.callbacks['change'] && this.callbacks['change']([value,''], 'values[' + inputIndex + ']', this.index);
+    }
+
+    Condition.prototype.generateValueInputs = function(operation) {
+        var evaluator = this.conditionManager.getEvaluator(),
+            inputArea = $('.t-value-inputs', this.domElement),
+            inputCount,
+            inputType,
+            index = 0;
+
+        inputArea.html('');
+        this.valueInputs = [];
+
+        if (evaluator.getInputCount(operation[0])) {
+            inputCount = evaluator.getInputCount(operation[0]);
+            inputType = this.conditionManager.getInputType(evaluator.getOperationType(operation[0]));
+            while (index < inputCount) {
+                newInput = $('<input type = "' + inputType + '" value = "' + this.config.values[index] + '"> </input>');
+                this.valueInputs.push(newInput.get(0));
+                inputArea.append(newInput);
+                index += 1;
+            }
+        }
     }
 
     return Condition;

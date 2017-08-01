@@ -106,11 +106,23 @@ define(
     }
 
     RuleEvaluator.prototype.getOperationText = function (key) {
-        return this.operations[key].text
+        return this.operations[key].text;
     }
 
     RuleEvaluator.prototype.operationAppliesTo = function (key, type) {
         return (this.operations[key].appliesTo.includes(type));
+    }
+
+    RuleEvaluator.prototype.getInputCount = function(key) {
+        if (this.operations[key]) {
+            return this.operations[key].inputCount;
+        }
+    }
+
+    RuleEvaluator.prototype.getOperationType = function(key) {
+        if (this.operations[key]) {
+            return this.operations[key].appliesTo[0];
+        }
     }
 
     return RuleEvaluator;

@@ -2,7 +2,7 @@ define(
     ['./Select'],
     function (Select) {
 
-    function OperationSelect(conditionConfig, keySelect, selectManager) {
+    function OperationSelect(conditionConfig, keySelect, selectManager, changeCallback) {
         var self = this;
 
         this.config = conditionConfig;
@@ -15,6 +15,9 @@ define(
 
         this.select = new Select('operation')
         this.select.addOption('','--Operation--');
+        if (changeCallback) {
+            this.select.on('change', changeCallback);
+        }
 
         this.keySelect.on('change', onKeyChange);
         this.manager.on('metadata', onMetadataLoad);
@@ -65,10 +68,6 @@ define(
         self.operationKeys = operations.filter( function(operation) {
             return self.evaluator.operationAppliesTo(operation, type);
         });
-    }
-
-    OperationSelect.prototype.generateInputs = function () {
-
     }
 
     return OperationSelect;

@@ -26,6 +26,11 @@ define (
             metadata: []
         }
 
+        this.inputTypes = {
+            number: 'number',
+            string: 'text'
+        }
+
         this.composition.on('add', onCompositionAdd, this);
         this.composition.on('remove', onCompositionRemove, this);
         this.composition.on('load', onCompositionLoad, this);
@@ -152,5 +157,10 @@ define (
     ConditionManager.prototype.metadataLoadCompleted = function () {
         return this.metadataLoadComplete;
     }
+
+    ConditionManager.prototype.getInputType = function (type) {
+        return this.inputTypes[type];
+    }
+
     return ConditionManager;
 })
