@@ -88,6 +88,10 @@ $glyph-icon-brightness: '\e1039';
 $glyph-icon-contrast: '\e1040';
 $glyph-icon-expand: '\e1041';
 $glyph-icon-list-view: '\e1042';
+$glyph-icon-grid-snap-to: '\e1043';
+$glyph-icon-grid-snap-no: '\e1044';
+$glyph-icon-frame-show: '\e1045';
+$glyph-icon-frame-hide: '\e1046';
 $glyph-icon-activity: '\e1100';
 $glyph-icon-activity-mode: '\e1101';
 $glyph-icon-autoflow-tabular: '\e1102';
@@ -195,6 +199,10 @@ $glyph-icon-summary-widget: '\e1130';
 .icon-contrast {  @include glyphBefore($glyph-icon-contrast); }
 .icon-expand {  @include glyphBefore($glyph-icon-expand); }
 .icon-list-view {  @include glyphBefore($glyph-icon-list-view); }
+.icon-grid-snap-to {  @include glyphBefore($glyph-icon-grid-snap-to); }
+.icon-grid-snap-no {  @include glyphBefore($glyph-icon-grid-snap-no); }
+.icon-frame-show {  @include glyphBefore($glyph-icon-frame-show); }
+.icon-frame-hide {  @include glyphBefore($glyph-icon-frame-hide); }
 .icon-activity {  @include glyphBefore($glyph-icon-activity); }
 .icon-activity-mode {  @include glyphBefore($glyph-icon-activity-mode); }
 .icon-autoflow-tabular {  @include glyphBefore($glyph-icon-autoflow-tabular); }
