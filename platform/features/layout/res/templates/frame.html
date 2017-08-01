@@ -22,11 +22,13 @@
 <div class="frame frame-template abs">
     <div class="abs object-browse-bar l-flex-row">
         <div class="left flex-elem l-flex-row grows">
-            <mct-representation
-                key="'object-header'"
-                mct-object="domainObject"
-                class="l-flex-row flex-elem object-header grows">
-            </mct-representation>
+            <div ng-if=domainObject.getModel().showTitle>
+                <mct-representation
+                    key="'object-header'"
+                    mct-object="domainObject"
+                    class="l-flex-row flex-elem object-header grows">
+                </mct-representation>
+            </div>
         </div>
         <div class="btn-bar right l-flex-row flex-elem flex-justify-end flex-fixed">
             <mct-representation key="'switcher'"
@@ -35,9 +37,14 @@
             </mct-representation>
         </div>
     </div>
-    <div class="abs object-holder">
-        <mct-representation key="representation.selected.key"
-                            mct-object="representation.selected.key && domainObject">
-        </mct-representation>
+    <div ng-if=!domainObject.getModel().showTitle class="l-flex-row flex-elem object-header grows">
+          <mct-representation key="representation.selected.key"
+                              mct-object="representation.selected.key && domainObject">
+          </mct-representation>
+    </div>
+    <div ng-if=domainObject.getModel().showTitle class="abs object-holder">
+          <mct-representation key="representation.selected.key"
+                              mct-object="representation.selected.key && domainObject">
+          </mct-representation>
     </div>
 </div>
