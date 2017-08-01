@@ -14,10 +14,10 @@ define(
         OperationSelect
     ) {
 
-    function Condition(conditionConfig, index, selectManager) {
+    function Condition(conditionConfig, index, conditionManager) {
         this.config = conditionConfig;
         this.index = index;
-        this.selectManager = selectManager;
+        this.conditionManager = conditionManager;
 
         this.domElement = $(conditionTemplate);
 
@@ -44,9 +44,9 @@ define(
         this.deleteButton.on('click', this.remove);
         this.duplicateButton.on('click', this.duplicate);
 
-        this.selects.object = new ObjectSelect(this.config, this.selectManager),
-        this.selects.key = new KeySelect(this.config, this.selects.object, this.selectManager),
-        this.selects.operation = new OperationSelect(this.config, this.selects.key, this.selectManager)
+        this.selects.object = new ObjectSelect(this.config, this.conditionManager),
+        this.selects.key = new KeySelect(this.config, this.selects.object, this.conditionManager),
+        this.selects.operation = new OperationSelect(this.config, this.selects.key, this.conditionManager)
 
         Object.values(this.selects).forEach( function(select) {
             $('.t-configuration', self.domElement).append(select.getDOM());

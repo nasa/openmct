@@ -67,6 +67,10 @@ define(
         });
     }
 
+    OperationSelect.prototype.generateInputs = function () {
+
+    }
+
     return OperationSelect;
 
 });

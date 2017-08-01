@@ -3,14 +3,14 @@ define(
         'text!../res/widgetTemplate.html',
         './RuleEvaluator',
         './Rule',
-        './SelectManager',
+        './ConditionManager',
         'lodash'
     ],
     function (
         widgetTemplate,
         RuleEvaluator,
         Rule,
-        SelectManager,
+        ConditionManager,
         _
     ) {
 
@@ -35,7 +35,7 @@ define(
         this.activeId = 'default';
         this.rulesById = {};
         this.evaluator = new RuleEvaluator();
-        this.selectManager = new SelectManager(this.domainObject, this.openmct, this.evaluator)
+        this.conditionManager = new ConditionManager(this.domainObject, this.openmct, this.evaluator)
         this.widget = $(widgetTemplate);
         var self = this;
 
@@ -135,7 +135,7 @@ define(
         } else {
             ruleConfig = this.getConfigProp('ruleConfigById.' + ruleId);
         }
-        this.rulesById[ruleId] = new Rule(ruleConfig, this.domainObject, this.openmct, this.selectManager);
+        this.rulesById[ruleId] = new Rule(ruleConfig, this.domainObject, this.openmct, this.conditionManager);
         this.rulesById[ruleId].on('remove', this.refreshRules)
         this.rulesById[ruleId].on('duplicate', this.duplicateRule);
         this.rulesById[ruleId].on('change', this.updateWidget);

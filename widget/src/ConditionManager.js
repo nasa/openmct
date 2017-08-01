@@ -5,7 +5,7 @@ define (
     //provide a centralized content manager for conditions in the summary widget.
     //Load and cache composition and telemetry subscriptions, and handle evaluation
     //of rules
-    function SelectManager(domainObject, openmct, evaluator) {
+    function ConditionManager(domainObject, openmct, evaluator) {
         var self = this;
 
         this.domainObject = domainObject;
@@ -119,7 +119,7 @@ define (
         }
     }
 
-    SelectManager.prototype.on = function (event, callback) {
+    ConditionManager.prototype.on = function (event, callback) {
         if(this.callbacks[event]) {
             this.callbacks[event].push(callback);
         } else {
@@ -127,30 +127,30 @@ define (
         }
     }
 
-    SelectManager.prototype.getComposition = function () {
+    ConditionManager.prototype.getComposition = function () {
         return this.compositionObjs;
     }
 
-    SelectManager.prototype.getTelemetryMetadata = function (id) {
+    ConditionManager.prototype.getTelemetryMetadata = function (id) {
         return this.telemetryMetadataById[id];
     }
 
-    SelectManager.prototype.getTelemetryPropertyType = function (id, property) {
+    ConditionManager.prototype.getTelemetryPropertyType = function (id, property) {
         if (this.telemetryTypesById[id]) {
             return this.telemetryTypesById[id][property];
         }
     }
 
-    SelectManager.prototype.getEvaluator = function () {
+    ConditionManager.prototype.getEvaluator = function () {
         return this.evaluator;
     }
 
-    SelectManager.prototype.loadCompleted = function () {
+    ConditionManager.prototype.loadCompleted = function () {
         return this.loadComplete;
     }
 
-    SelectManager.prototype.metadataLoadCompleted = function () {
+    ConditionManager.prototype.metadataLoadCompleted = function () {
         return this.metadataLoadComplete;
     }
-    return SelectManager;
+    return ConditionManager;
 })
