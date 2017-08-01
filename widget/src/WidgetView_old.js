@@ -1,13 +1,21 @@
 define(
     [
-        'text!./widgetTemplate.html',
-        'text!./ruleTemplate.html',
-        'text!./conditionTemplate.html',
+        'text!../res/widgetTemplate.html',
+        'text!../res/ruleTemplate.html',
+        'text!../res/conditionTemplate.html',
+        './RuleEvaluator',
+        './input/ColorPalette',
+        './input/IconPalette',
+        './Rule',
         'lodash'
     ], function (
         widgetTemplate,
         ruleTemplate,
         conditionTemplate,
+        RuleEvaluator,
+        ColorPalette,
+        IconPalette,
+        Rule,
         _
     ) {
 
@@ -42,11 +50,9 @@ define(
     // parameters
     // domainObject: the domain object represented by this view
     // openmct: an MCT instance
-    // evaluator: a RuleEvaluator instance for evaluating conditions
-    function WidgetView(domainObject, openmct, evaluator) {
+    function WidgetView(domainObject, openmct) {
         this.domainObject = domainObject;
         this.openmct = openmct;
-        this.evaluator = evaluator;
 
         this.domainObject.configuration = this.domainObject.configuration || {};
         this.domainObject.configuration.rulesById = this.domainObject.configuration.rulesById || {};
@@ -54,6 +60,7 @@ define(
         this.domainObject.configuration.ruleOrder = this.domainObject.configuration.ruleOrder || ['default'];
 
         this.activeId = 'default';
+        this.evaluator = new RuleEvaluator();
         var self = this;
 
         this.telemetryMetadataByObject = {};
@@ -61,7 +68,7 @@ define(
         this.compositionCollection = this.openmct.composition.get(this.domainObject);
         this.compositionCollection.on('add', this.onCompositionAdd, this);
         this.compositionCollection.load().then( function () {
-            self.refreshRules();
+            //self.refreshRules();
         });
 
         //ensure 'this' points to an instance of this object when its methods
@@ -77,159 +84,165 @@ define(
 
         self.setup(container);
 
-        $(container).on('click', '.t-icon-palette-menu-button, .t-color-palette-menu-button', function () {
-            $('.menu', container)
-                .not('#' + this.id +' .menu')
-                .hide(); //close any open palettes except this one
-            $('.menu', this).toggle(); //toggle this palette
-        });
 
-        $(container).on('click', '.t-color-palette-menu-button .s-palette-item', function () {
-            var elem = this,
-                col = $(elem).css('background-color'),
-                ruleId = elem.dataset.ruleId,
-                thumbnail = $('#' + ruleId + ' .t-widget-thumb'),
-                propertyKey = elem.dataset.propertyKey,
-                styleObj;
 
-            self.setConfigProp('ruleStylesById.' + ruleId + '.'+ propertyKey, col);
-            styleObj = self.getConfigProp('ruleStylesById.' + ruleId);
-            self.applyStyle(thumbnail, styleObj);
-            self.updateWidget();
-            $('.color-swatch', '#' + ruleId + ' #' + propertyKey)
-                .css('background-color', col); //update color indicator on palette
-            $('.l-color-palette', '#' + ruleId).hide(); //close palette
+        //$(container).on('click', '.t-icon-palette-menu-button, .t-color-palette-menu-button', function () {
+        //    $('.menu', container)
+        //        .not('#' + this.id +' .menu')
+        //        .hide(); //close any open palettes except this one
+        //    $('.menu', this).toggle(); //toggle this palette
+        //});
 
-        });
+        // $(container).on('click', '.t-color-palette-menu-button .s-palette-item', function () {
+        //     var elem = this,
+        //         col = $(elem).css('background-color'),
+        //         ruleId = elem.dataset.ruleId,
+        //         thumbnail = $('#' + ruleId + ' .t-widget-thumb'),
+        //         propertyKey = elem.dataset.propertyKey,
+        //         styleObj;
+        //
+        //     self.setConfigProp('ruleStylesById.' + ruleId + '.'+ propertyKey, col);
+        //     styleObj = self.getConfigProp('ruleStylesById.' + ruleId);
+        //     self.applyStyle(thumbnail, styleObj);
+        //     self.updateWidget();
+        //     $('.color-swatch', '#' + ruleId + ' #' + propertyKey)
+        //         .css('background-color', col); //update color indicator on palette
+        //     $('.l-color-palette', '#' + ruleId).hide(); //close palette
+        //
+        // });
+        //
+        // $(container).on('click', '.t-icon-palette-menu-button .s-palette-item', function () {
+        //     var elem = this,
+        //         iconClass = elem.dataset.iconClass,
+        //         ruleId = elem.dataset.ruleId,
+        //         oldClass = self.getConfigProp('rulesById.' + ruleId + '.icon');
+        //
+        //     self.setConfigProp('rulesById.' + ruleId + '.icon', iconClass);
+        //     self.updateWidget();
+        //     $('.icon-swatch', '#' + ruleId).removeClass(oldClass).addClass(iconClass);
+        //     $('.menu', '#' + ruleId).hide();
+        // });
 
-        $(container).on('click', '.t-icon-palette-menu-button .s-palette-item', function () {
-            var elem = this,
-                iconClass = elem.dataset.iconClass,
-                ruleId = elem.dataset.ruleId,
-                oldClass = self.getConfigProp('rulesById.' + ruleId + '.icon');
-
-            self.setConfigProp('rulesById.' + ruleId + '.icon', iconClass);
-            self.updateWidget();
-            $('.icon-swatch', '#' + ruleId).removeClass(oldClass).addClass(iconClass);
-            $('.menu', '#' + ruleId).hide();
-        });
-
-        $('#addRule', container).on('click', function () {
-            self.addRule(container);
-        });
-
-        $(container).on('click','.t-duplicate', function () {
-            var elem = this;
-            self.duplicateRule(elem.dataset.ruleId, container);
-        });
-
-        $(container).on('input','#ruleName', function () {
-            self.setConfigProp('rulesById.' + this.dataset.ruleId + '.name', this.value);
-            $('#' + this.dataset.ruleId + ' .rule-title').html(this.value);
-        });
-
-        $(container).on('input', '#ruleLabel', function () {
-            self.setConfigProp('rulesById.' + this.dataset.ruleId + '.label', this.value);
-            self.updateWidget();
-        });
-
-        $(container).on('input', '#ruleMessage', function () {
-            self.setConfigProp('rulesById.' + this.dataset.ruleId + '.message', this.value);
-        });
-
-        $(container).on('click','.t-delete', function() {
-            var elem = this,
-                ruleId = elem.dataset.ruleId,
-                ruleOrder = self.getConfigProp('ruleOrder')
-
-            self.removeConfigProp('rulesById.' + ruleId);
-            self.removeConfigProp('ruleStylesById.' + ruleId);
-            _.remove(ruleOrder, function (value) {
-                return value === ruleId;
-            });
-            self.setConfigProp('ruleOrder', ruleOrder);
-            self.refreshRules(container);
-        })
-
-        $(container).on('click', '.add-condition', function () {
-            var elem = this,
-                ruleId = elem.dataset.ruleId,
-                conditions = self.getConfigProp('rulesById.' + ruleId + '.conditions'),
-                conditionLabels = self.getConfigProp('rulesById.' + ruleId + '.conditionLabels');
-
-            conditions.push({
-                object: '',
-                key: '',
-                operation: '',
-                values: []
-            })
-
-            conditionLabels.push({
-              object: '',
-              key: '',
-              operation: '',
-              values: []
-            })
-
-            self.setConfigProp('rulesById.' + ruleId + '.conditions', conditions);
-            self.setConfigProp('rulesById.' + ruleId + '.conditionLabels', conditionLabels);
-
-            self.refreshRules();
-        });
-
-        // populate a select with most recent composition before it opens
-        $(container).on('mousedown', 'select', function () {
-            self.populateSelect(this);
-        });
-
-        // update data model when a select element is modified
-        $(container).on('change','select', function () {
-            var elem = this,
-                index = $(elem).prop('selectedIndex'),
-                selectedOption = $(elem).prop('options')[index],
-                selectedId = selectedOption.value,
-                ruleId = elem.dataset.ruleId,
-                conditionIndex = elem.dataset.conditionIndex,
-                propId = $(elem).prop('id'),
-                conditions = self.getConfigProp('rulesById.' + ruleId + '.conditions'),
-                conditionLabels = self.getConfigProp('rulesById.' + ruleId + '.conditionLabels');
-
-            conditions[conditionIndex][propId] = elem.value;
-            conditionLabels[conditionIndex][propId] = $(selectedOption).html();
-            elem.dataset.selectedId = selectedId;
-            self.setConfigProp('rulesById.' + ruleId + '.conditions', conditions);
-            self.setConfigProp('rulesById.' + ruleId + '.conditionLabels', conditionLabels);
-
-            //refresh selects
-            $('select', '#' + ruleId + ' #condition' + conditionIndex).each( function (index) {
-                var element = this,
-                    propKey = $(element).prop('id');
-                self.populateSelect(this).then( function () {
-                    var optionValues = Array.from($(element).prop('options')).map( function(option) {
-                        return $(option).html();
-                    });
-                    if (!optionValues.includes(conditionLabels[conditionIndex][propKey])) {
-                        conditions[conditionIndex][propKey] = '';
-                        conditionLabels[conditionIndex][propKey] = '';
-                    }
-                    self.setConfigProp('rulesById.' + ruleId + '.conditions', conditions);
-                    self.setConfigProp('rulesById.' + ruleId + '.conditionLabels', conditionLabels);
-                })
-            });
-
-        });
-    };
+        // $('#addRule', container).on('click', function () {
+        //     self.addRule(container);
+        // });
+        //
+        // $(container).on('click','.t-duplicate', function () {
+        //     var elem = this;
+        //     self.duplicateRule(elem.dataset.ruleId, container);
+        // });
+        //
+        // $(container).on('input','#ruleName', function () {
+        //     self.setConfigProp('rulesById.' + this.dataset.ruleId + '.name', this.value);
+        //     $('#' + this.dataset.ruleId + ' .rule-title').html(this.value);
+        // });
+        //
+        // $(container).on('input', '#ruleLabel', function () {
+        //     self.setConfigProp('rulesById.' + this.dataset.ruleId + '.label', this.value);
+        //     self.updateWidget();
+        // });
+        //
+        // $(container).on('input', '#ruleMessage', function () {
+        //     self.setConfigProp('rulesById.' + this.dataset.ruleId + '.message', this.value);
+        // });
+        //
+        // $(container).on('click','.t-delete', function() {
+        //     var elem = this,
+        //         ruleId = elem.dataset.ruleId,
+        //         ruleOrder = self.getConfigProp('ruleOrder')
+        //
+        //     self.removeConfigProp('rulesById.' + ruleId);
+        //     self.removeConfigProp('ruleStylesById.' + ruleId);
+        //     self.setConfigProp('ruleOrder', ruleOrder);
+        //     self.refreshRules(container);
+        // })
+        //
+        // $(container).on('click', '.add-condition', function () {
+        //     var elem = this,
+        //         ruleId = elem.dataset.ruleId,
+        //         conditions = self.getConfigProp('rulesById.' + ruleId + '.conditions'),
+        //         conditionLabels = self.getConfigProp('rulesById.' + ruleId + '.conditionLabels');
+        //
+        //     conditions.push({
+        //         object: '',
+        //         key: '',
+        //         operation: '',
+        //         values: []
+        //     })
+        //
+        //     conditionLabels.push({
+        //       object: '',
+        //       key: '',
+        //       operation: '',
+        //       values: []
+        //     })
+        //
+        //     self.setConfigProp('rulesById.' + ruleId + '.conditions', conditions);
+        //     self.setConfigProp('rulesById.' + ruleId + '.conditionLabels', conditionLabels);
+        //
+        //     self.refreshRules();
+        // });
+        //
+        // // populate a select with most recent composition before it opens
+        // $(container).on('mousedown', 'select', function () {
+        //     self.populateSelect(this);
+        // });
+        //
+        // // update data model when a select element is modified
+        // $(container).on('change','select', function () {
+        //     var elem = this,
+        //         index = $(elem).prop('selectedIndex'),
+        //         selectedOption = $(elem).prop('options')[index],
+        //         selectedId = selectedOption.value,
+        //         ruleId = elem.dataset.ruleId,
+        //         conditionIndex = elem.dataset.conditionIndex,
+        //         propId = $(elem).prop('id'),
+        //         conditions = self.getConfigProp('rulesById.' + ruleId + '.conditions'),
+        //         conditionLabels = self.getConfigProp('rulesById.' + ruleId + '.conditionLabels');
+        //
+        //     conditions[conditionIndex][propId] = elem.value;
+        //     conditionLabels[conditionIndex][propId] = $(selectedOption).html();
+        //     elem.dataset.selectedId = selectedId;
+        //     self.setConfigProp('rulesById.' + ruleId + '.conditions', conditions);
+        //     self.setConfigProp('rulesById.' + ruleId + '.conditionLabels', conditionLabels);
+        //
+        //     //refresh selects
+        //     $('select', '#' + ruleId + ' #condition' + conditionIndex).each( function (index) {
+        //         var element = this,
+        //             propKey = $(element).prop('id');
+        //         self.populateSelect(this).then( function () {
+        //             var optionValues = Array.from($(element).prop('options')).map( function(option) {
+        //                 return $(option).html();
+        //             });
+        //             if (!optionValues.includes(conditionLabels[conditionIndex][propKey])) {
+        //                 conditions[conditionIndex][propKey] = '';
+        //                 conditionLabels[conditionIndex][propKey] = '';
+        //             }
+        //             self.setConfigProp('rulesById.' + ruleId + '.conditions', conditions);
+        //             self.setConfigProp('rulesById.' + ruleId + '.conditionLabels', conditionLabels);
+        //         })
+        //     });
+        //
+        // });
+    }
 
     WidgetView.prototype.destroy = function (container) {
 
     }
 
     WidgetView.prototype.setup = function (container) {
+        var testRule = new Rule('test', 'Test');
+        var testRule2 = new Rule('test', 'Testing 1 2 3');
+
+        var widget = $(widgetTemplate);
+
         var self = this;
-        $(container).append(widgetTemplate);
-        self.makeRule('default', 'Default', container);
-        self.refreshRules(container);
-        self.updateWidget();
+        $(container).append(widget);
+        testRule.render('#ruleArea', $(widget));
+        testRule2.render('#ruleArea', $(widget));
+        //self.makeRule('default', 'Default', container);
+        //self.refreshRules(container);
+        //self.updateWidget();
     }
 
     WidgetView.prototype.onCompositionAdd = function (newObj) {
@@ -265,120 +278,120 @@ define(
         })
     }
 
-    WidgetView.prototype.makeRule = function (ruleId, ruleName, container) {
-        //create a DOM element from HTML template and access its components
-        var newRule = $(ruleTemplate),
-            thumbnail = $('.t-widget-thumb', newRule),
-            title = $('.rule-title' , newRule),
-            description = $('.rule-description', newRule),
-            nameInput = $('#ruleName', newRule),
-            styleObj = {},
-            ruleLabel,
-            ruleDescription,
-            ruleMessage,
-            ruleIcon,
-            ruleConditions,
-            conditionLabels,
-            self = this;
-
-        Object.assign(styleObj, DEFAULT_PROPS)
-        if (!self.hasConfigProp('ruleStylesById.' + ruleId)) {
-            self.setConfigProp('ruleStylesById.' + ruleId, styleObj);
-        } else {
-            styleObj = self.getConfigProp('ruleStylesById.' + ruleId);
-        }
-        if (!self.hasConfigProp('rulesById.' + ruleId)) {
-            self.setConfigProp('rulesById.' + ruleId, {
-                name: ruleName,
-                label: self.domainObject.name,
-                message: '',
-                id: ruleId,
-                description: ruleId === 'default' ? 'Default appearance for the widget' : 'A new rule',
-                conditions: [{
-                    object: '',
-                    key: '',
-                    operation: '',
-                    values: []
-                }],
-                conditionLabels: [{
-                    object: '',
-                    key: '',
-                    operation: '',
-                    values: ['']
-                }],
-                trigger: '',
-                icon: 'icon-alert-rect'
-            });
-        }
-
-        ruleDescription = self.getConfigProp('rulesById.' + ruleId + '.description');
-        ruleLabel = self.getConfigProp('rulesById.' + ruleId + '.label');
-        ruleMessage = self.getConfigProp('rulesById.' + ruleId + '.message');
-        ruleIcon = self.getConfigProp('rulesById.' + ruleId + '.icon');
-        ruleConditions = self.getConfigProp('rulesById.' + ruleId + '.conditions');
-        conditionLabels = self.getConfigProp('rulesById.' + ruleId + '.conditionLabels')
-
-        //append it to the document
-        $('#ruleArea', container).append(newRule);
-
-        //configure new rule's default properties
-        self.setConfigProp('ruleStylesById.' + ruleId, styleObj);
-        newRule.prop('id', ruleId);
-        title.html(ruleName);
-        description.html(ruleDescription);
-        self.applyStyle(thumbnail, styleObj);
-
-        // configure icon inputs
-        self.initIconPalette( $('.t-icon-palette-menu-button', newRule) );
-        $('.menu', newRule).hide();
-        $('.t-icon-palette-menu-button .icon-swatch', newRule).addClass(ruleIcon);
-        $('.t-icon-palette-menu-button .s-palette-item', newRule).each( function () {
-            this.dataset.ruleId = ruleId;
-        });
-
-        //configure color inputs
-        self.initColorPalette( $('.t-color-palette-menu-button', newRule) );
-        $('.menu', newRule).hide();
-        $('.t-color-palette-menu-button', newRule).each( function () {
-            var propertyKey = this.dataset.propertyKey;
-            $('.color-swatch', this).css('background-color', styleObj[propertyKey]);
-            $('.s-palette-item', this).each( function() {
-                this.dataset.ruleId = ruleId;
-                this.dataset.propertyKey = propertyKey;
-            });
-        });
-
-        //configure text inputs
-        $(nameInput).get(0).dataset.ruleId = ruleId;
-        $(nameInput).prop('value', ruleName);
-        $('#ruleLabel', newRule).get(0).dataset.ruleId = ruleId;
-        $('#ruleLabel', newRule).prop('value', ruleLabel);
-        $('#ruleMessage', newRule).get(0).dataset.ruleId = ruleId;
-        $('#ruleMessage', newRule).prop('value', ruleMessage);
-
-        self.initCondititions(newRule, ruleConditions, conditionLabels);
-
-        // configure conditions
-        self.getConfigProp('rulesById.' + ruleId + '.conditions').forEach( function (condition) {
-            Object.entries(condition).forEach( function (property) {
-                var options = $('select', newRule).has('#' + property[0]);
-            })
-        })
-
-        //configure delete
-        $('.t-delete', newRule).get(0).dataset.ruleId = ruleId;
-
-        $('.t-duplicate', newRule).get(0).dataset.ruleId = ruleId;
-
-        $('.add-condition', newRule).get(0).dataset.ruleId = ruleId;
-
-        //hide elements that don't apply to default
-        if (ruleId === 'default') {
-            $('.t-delete', ruleArea).hide();
-            $('.t-widget-rule-config', ruleArea).hide();
-            $('.t-grippy', ruleArea).hide();
-        }
-    }
+    // WidgetView.prototype.makeRule = function (ruleId, ruleName, container) {
+    //     //create a DOM element from HTML template and access its components
+    //     var newRule = $(ruleTemplate),
+    //         thumbnail = $('.t-widget-thumb', newRule),
+    //         title = $('.rule-title' , newRule),
+    //         description = $('.rule-description', newRule),
+    //         nameInput = $('#ruleName', newRule),
+    //         styleObj = {},
+    //         ruleLabel,
+    //         ruleDescription,
+    //         ruleMessage,
+    //         ruleIcon,
+    //         ruleConditions,
+    //         conditionLabels,
+    //         self = this;
+    //
+    //     Object.assign(styleObj, DEFAULT_PROPS)
+    //     if (!self.hasConfigProp('ruleStylesById.' + ruleId)) {
+    //         self.setConfigProp('ruleStylesById.' + ruleId, styleObj);
+    //     } else {
+    //         styleObj = self.getConfigProp('ruleStylesById.' + ruleId);
+    //     }
+    //     if (!self.hasConfigProp('rulesById.' + ruleId)) {
+    //         self.setConfigProp('rulesById.' + ruleId, {
+    //             name: ruleName,
+    //             label: self.domainObject.name,
+    //             message: '',
+    //             id: ruleId,
+    //             description: ruleId === 'default' ? 'Default appearance for the widget' : 'A new rule',
+    //             conditions: [{
+    //                 object: '',
+    //                 key: '',
+    //                 operation: '',
+    //                 values: []
+    //             }],
+    //             conditionLabels: [{
+    //                 object: '',
+    //                 key: '',
+    //                 operation: '',
+    //                 values: ['']
+    //             }],
+    //             trigger: '',
+    //             icon: 'icon-alert-rect'
+    //         });
+    //     }
+    //
+    //     ruleDescription = self.getConfigProp('rulesById.' + ruleId + '.description');
+    //     ruleLabel = self.getConfigProp('rulesById.' + ruleId + '.label');
+    //     ruleMessage = self.getConfigProp('rulesById.' + ruleId + '.message');
+    //     ruleIcon = self.getConfigProp('rulesById.' + ruleId + '.icon');
+    //     ruleConditions = self.getConfigProp('rulesById.' + ruleId + '.conditions');
+    //     conditionLabels = self.getConfigProp('rulesById.' + ruleId + '.conditionLabels')
+    //
+    //     //append it to the document
+    //     $('#ruleArea', container).append(newRule);
+    //
+    //     //configure new rule's default properties
+    //     self.setConfigProp('ruleStylesById.' + ruleId, styleObj);
+    //     newRule.prop('id', ruleId);
+    //     title.html(ruleName);
+    //     description.html(ruleDescription);
+    //     self.applyStyle(thumbnail, styleObj);
+    //
+    //     // configure icon inputs
+    //     self.initIconPalette( $('.t-icon-palette-menu-button', newRule) );
+    //     $('.menu', newRule).hide();
+    //     $('.t-icon-palette-menu-button .icon-swatch', newRule).addClass(ruleIcon);
+    //     $('.t-icon-palette-menu-button .s-palette-item', newRule).each( function () {
+    //         this.dataset.ruleId = ruleId;
+    //     });
+    //
+    //     //configure color inputs
+    //     self.initColorPalette( $('.t-color-palette-menu-button', newRule) );
+    //     $('.menu', newRule).hide();
+    //     $('.t-color-palette-menu-button', newRule).each( function () {
+    //         var propertyKey = this.dataset.propertyKey;
+    //         $('.color-swatch', this).css('background-color', styleObj[propertyKey]);
+    //         $('.s-palette-item', this).each( function() {
+    //             this.dataset.ruleId = ruleId;
+    //             this.dataset.propertyKey = propertyKey;
+    //         });
+    //     });
+    //
+    //     //configure text inputs
+    //     $(nameInput).get(0).dataset.ruleId = ruleId;
+    //     $(nameInput).prop('value', ruleName);
+    //     $('#ruleLabel', newRule).get(0).dataset.ruleId = ruleId;
+    //     $('#ruleLabel', newRule).prop('value', ruleLabel);
+    //     $('#ruleMessage', newRule).get(0).dataset.ruleId = ruleId;
+    //     $('#ruleMessage', newRule).prop('value', ruleMessage);
+    //
+    //     self.initCondititions(newRule, ruleConditions, conditionLabels);
+    //
+    //     // configure conditions
+    //     self.getConfigProp('rulesById.' + ruleId + '.conditions').forEach( function (condition) {
+    //         Object.entries(condition).forEach( function (property) {
+    //             var options = $('select', newRule).has('#' + property[0]);
+    //         })
+    //     })
+    //
+    //     //configure delete
+    //     $('.t-delete', newRule).get(0).dataset.ruleId = ruleId;
+    //
+    //     $('.t-duplicate', newRule).get(0).dataset.ruleId = ruleId;
+    //
+    //     $('.add-condition', newRule).get(0).dataset.ruleId = ruleId;
+    //
+    //     //hide elements that don't apply to default
+    //     if (ruleId === 'default') {
+    //         $('.t-delete', ruleArea).hide();
+    //         $('.t-widget-rule-config', ruleArea).hide();
+    //         $('.t-grippy', ruleArea).hide();
+    //     }
+    // }
 
     WidgetView.prototype.initCondititions = function(rule, conditions, labels) {
         var condition;

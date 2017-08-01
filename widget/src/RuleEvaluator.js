@@ -13,67 +13,85 @@ define(
             equalTo: {
                 operation: function(input) {return input[0] === input[1]},
                 text: 'is Equal To',
-                appliesTo: ['number']
+                appliesTo: ['number'],
+                inputCount: 1
             },
             notEqualTo: {
                 operation: function(input) {return input[0] !== input[1]},
                 text: 'is Not Equal To',
-                appliesTo: ['number']
+                appliesTo: ['number'],
+                inputCount: 1
             },
             greaterThan: {
                 operation: function (input) {return input[0] > input[1]},
                 text: 'is Greater Than',
-                appliesTo: ['number']
+                appliesTo: ['number'],
+                inputCount: 1
             },
             lessThan: {
                 operation: function(input) {return input[0] < input[1]},
                 text: 'is Less Than',
-                appliesTo: ['number']
+                appliesTo: ['number'],
+                inputCount: 1
             },
             greaterThanOrEq: {
                 operation: function (input) {return input[0] >= input[1]},
                 text: 'is Greater Than or Equal To',
-                appliesTo: ['number']
+                appliesTo: ['number'],
+                inputCount: 1
             },
             lessThanOrEq: {
                 operation: function (input) {return input[0] >= input[1]},
                 text: 'is Less Than or Equal To',
-                appliesTo: ['number']
+                appliesTo: ['number'],
+                inputCount: 1
+            },
+            between: {
+                operation: function (input) {return input[0] > input[1] && input[0] < input[2]},
+                text: 'is Between',
+                appliesTo: ['number'],
+                inputCount: 2
             },
             textContains: {
                 operation: function(input) {return input[0].includes(input[1])},
                 text: 'Text Contains',
-                appliesTo: ['string']
+                appliesTo: ['string'],
+                inputCount: 1
             },
             textDoesNotContain: {
                 operation: function(input) {return !input[0].includes(input[1])},
                 text: 'Text Does Not Contain',
-                appliesTo: ['string']
+                appliesTo: ['string'],
+                inputCount: 1
             },
             textStartsWith: {
                 operation: function(input) {return input[0].startsWith(input[1])},
                 text: 'Text Starts With',
-                appliesTo: ['string']
+                appliesTo: ['string'],
+                inputCount: 1
             },
             textEndsWith: {
                 operation: function(input) {return input[0].endsWith(input[1])},
                 text: 'Text Ends With',
-                appliesTo: ['string']
+                appliesTo: ['string'],
+                inputCount: 1
             },
             textIsExactly: {
                 operation: function(input) {return input[0] === input[1]},
                 text: 'Text is Exactly',
-                appliesTo: ['string']
+                appliesTo: ['string'],
+                inputCount: 1
             },
             isUndefined: {
                 operation: function(input) {return typeof input === 'undefined'},
                 text: 'is Undefined',
-                appliesTo: ['string','number']
+                appliesTo: ['string', 'number'],
+                inputCount: 0
             }
         }
     }
 
-    // evaluate the conditions passed in as a parameter, return whether this rules'
+    // evaluate the conditions passed in as an argument return whether these
     // conditions evaluate to true
     RuleEvaluator.prototype.execute = function(conditions) {
         var active = false;

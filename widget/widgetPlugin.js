@@ -1,11 +1,9 @@
 define(
     [
-      './WidgetView',
-      './RuleEvaluator'
+      './src/WidgetView'
     ],
     function (
-      WidgetView,
-      RuleEvaluator
+      WidgetView
     ) {
 
     function widgetPlugin() {
@@ -22,8 +20,7 @@ define(
         this.viewProvider = {
             name: 'Widget View',
             view: function (domainObject) {
-                var eval = new RuleEvaluator();
-                var wv = new WidgetView(domainObject, self.openmct, eval);
+                var wv = new WidgetView(domainObject, self.openmct);
                 return {
                     show: wv.show,
                     destroy: wv.destroy
