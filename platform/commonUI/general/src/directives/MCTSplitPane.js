@@ -102,10 +102,6 @@ define(
                     positionParsed = $parse($attrs.position),
                     position; // Start undefined, until explicitly set
 
-                // create unique alias for every instance of MCTSplitPane
-                var mctSplitPaneAlias = "mctSplitPaneAlias" + splitPaneNumber;
-                splitPaneNumber += 1;
-
                 // Get relevant size (height or width) of DOM element
                 function getSize(domElement) {
                     return (anchor.orientation === 'vertical' ?
@@ -154,7 +150,7 @@ define(
                 // Enforce minimum/maximum positions
                 function enforceExtrema() {
                     // Check for user preference on splitPane width
-                    var userWidthPreference = window.localStorage[mctSplitPaneAlias];
+                    var userWidthPreference = window.localStorage[$attrs.alias];
                     position = Math.max(position, 0);
                     position = Math.min(position,(userWidthPreference || getSize($element[0])));
                 }
@@ -172,7 +168,13 @@ define(
                         if (positionParsed.assign && position !== prior) {
                             positionParsed.assign($scope, position);
                         }
+
+                        if ($attrs.alias) {
+                            var myStorage = window.localStorage;
+                            myStorage.setItem($attrs.alias, value);
+                        }
                     }
+
                     return position;
                 }
 
@@ -215,9 +217,7 @@ define(
                     toggleClass: toggleClass,
                     anchor: function () {
                         return anchor;
-                    },
-                    saveUserWidthPreference: $attrs.saveuserwidthpreference,
-                    mctSplitPaneAlias: mctSplitPaneAlias
+                    }
                 };
             }
 
