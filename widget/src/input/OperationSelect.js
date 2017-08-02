@@ -2,6 +2,7 @@ define(
     ['./Select'],
     function (Select) {
 
+    //wraps a generic Select and populates it with available operations
     function OperationSelect(conditionConfig, keySelect, selectManager, changeCallback) {
         var self = this;
 

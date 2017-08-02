@@ -31,7 +31,8 @@
             <li class="connects-to-previous">
                 <label>Message:</label>
                 <span class="controls">
-                    <input type="text" class="lg s t-rule-message-input" />
+                    <input type="text" class="lg s t-rule-message-input"
+                     placeholder="Will appear as tooltip when hovering on the widget"/>
                 </span>
             </li>
             <li class="connects-to-previous">
@@ -45,9 +46,10 @@
                 <label>Trigger when</label>
                 <span class="controls">
                     <div class="e-control select">
-                        <select id="trigger">
-                            <option>any condition is met</option>
-                            <option>all conditions are met</option>
+                        <select class="t-trigger">
+                            <option value = "any">any condition is met</option>
+                            <option value = "all">all conditions are met</option>
+                            <option value = "js">the following JavaScript evaluates to true</<option>
                         </select>
                      </div>
                 </span>

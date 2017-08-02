@@ -1,29 +1,42 @@
 define (
-    ['lodash'],
-    function (_) {
+    [
+        './RuleEvaluator',
+        'lodash'
+    ],
+    function (
+        RuleEvaluator,
+        _
+    ) {
 
-    //provide a centralized content manager for conditions in the summary widget.
-    //Load and cache composition and telemetry subscriptions, and handle evaluation
-    //of rules
-    function ConditionManager(domainObject, openmct, evaluator) {
+    // provide a centralized content manager for conditions in the summary widget.
+    // Load and cache composition and telemetry subscriptions, and handle evaluation
+    // of rules
+    // parameters:
+    // domainObject: the Summary Widget domain object represented by this view
+    // openmct: an MCT instance
+    // evaluator: a RuleEvaluator instance for evaluating conditions
+    function ConditionManager(domainObject, openmct) {
         var self = this;
 
         this.domainObject = domainObject;
         this.openmct = openmct;
-        this.evaluator = evaluator;
 
         this.composition = this.openmct.composition.get(this.domainObject);
-
         this.compositionObjs = {};
         this.telemetryMetadataById = {};
         this.telemetryTypesById = {};
+        this.subscriptions = {};
+        this.subscriptionCache = {};
         this.loadComplete = false;
+        this.metadataLoadComplete = false;
+        this.evaluator = new RuleEvaluator(this.subscriptionCache);
 
         this.callbacks = {
             add: [],
             remove: [],
             load: [],
-            metadata: []
+            metadata: [],
+            recieveTelemetry: []
         }
 
         this.inputTypes = {
@@ -44,29 +57,36 @@ define (
                 telemetryMetadata,
                 self = this;
 
-            self.compositionObjs[objId] = obj;
-            self.telemetryMetadataById[objId] = {};
-            compositionKeys = self.domainObject.composition.map( function (obj) {
-                return obj.key;
-            })
-            if (!compositionKeys.includes(obj.identifier.key)) {
-                self.domainObject.composition.push(obj.identifier);
+            if (telemetryAPI.canProvideTelemetry(obj)) {
+                self.compositionObjs[objId] = obj;
+                self.telemetryMetadataById[objId] = {};
+                compositionKeys = self.domainObject.composition.map( function (obj) {
+                    return obj.key;
+                })
+                if (!compositionKeys.includes(obj.identifier.key)) {
+                    self.domainObject.composition.push(obj.identifier);
+                }
+
+                telemetryMetadata = telemetryAPI.getMetadata(obj).values();
+                telemetryMetadata.forEach( function (metaDatum) {
+                    self.telemetryMetadataById[objId][metaDatum.key] = metaDatum;
+                });
+
+                self.subscriptionCache[objId] = {};
+                self.subscriptions[objId] = telemetryAPI.subscribe(obj, function(datum) {
+                    handleSubscriptionCallback(objId, datum);
+                }, {})
+
+                //if this is the initial load, postpose loading metadata so event handlers
+                //fire properly
+                if (self.loadComplete) {
+                    getPropertyTypes(obj)
+                }
+
+                self.callbacks.add.forEach( function (callback) {
+                    callback && callback(obj);
+                });
             }
-
-            telemetryMetadata = telemetryAPI.getMetadata(obj).values();
-            telemetryMetadata.forEach( function (metaDatum) {
-                self.telemetryMetadataById[objId][metaDatum.key] = metaDatum;
-            });
-
-            //if this is the initial load, postpose loading metadata so event handlers
-            //fire properly
-            if (self.loadComplete) {
-                getPropertyTypes(obj)
-            }
-
-            self.callbacks.add.forEach( function (callback) {
-                callback && callback(obj);
-            });
         }
 
         function onCompositionRemove(identifier) {
@@ -122,6 +142,13 @@ define (
             })
             return promise;
         }
+
+        function handleSubscriptionCallback(objId, datum) {
+            self.subscriptionCache[objId] = datum;
+            self.callbacks.recieveTelemetry.forEach( function (callback) {
+                callback && callback();
+            });
+        }
     }
 
     ConditionManager.prototype.on = function (event, callback) {
@@ -130,6 +157,21 @@ define (
         } else {
             throw new Error('Unsupported event type: ' + event);
         }
+    }
+
+    ConditionManager.prototype.executeRules = function(ruleOrder, rules){
+        var self = this,
+            activeId = ruleOrder[0],
+            rule;
+
+        ruleOrder.forEach( function (ruleId) {
+            rule = rules[ruleId]
+            if(self.evaluator.execute(rule.getProperty('conditions'), rule.getProperty('trigger'))) {
+                activeId = ruleId;
+            }
+        });
+
+        return activeId;
     }
 
     ConditionManager.prototype.getComposition = function () {

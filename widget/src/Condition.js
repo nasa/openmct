@@ -14,6 +14,13 @@ define(
         OperationSelect
     ) {
 
+    // an individual condition for a summary widget rule.
+    // parameter:
+    // conditionConfig: the configuration for this conditionConfig
+    // index: the index of this Condition object in it's parent Rule's data model,
+    //        to be injected into callbacks for removes
+    // conditionManager: a conditionManager instance for populating selects with
+    //                    configuration data
     function Condition(conditionConfig, index, conditionManager) {
         this.config = conditionConfig;
         this.index = index;
@@ -113,6 +120,7 @@ define(
             inputCount = evaluator.getInputCount(operation[0]);
             inputType = this.conditionManager.getInputType(evaluator.getOperationType(operation[0]));
             while (index < inputCount) {
+                this.config.values[index] = this.config.values[index] || '';
                 newInput = $('<input type = "' + inputType + '" value = "' + this.config.values[index] + '"> </input>');
                 this.valueInputs.push(newInput.get(0));
                 inputArea.append(newInput);

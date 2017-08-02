@@ -1,14 +1,12 @@
 define(
     [
         'text!../res/widgetTemplate.html',
-        './RuleEvaluator',
         './Rule',
         './ConditionManager',
         'lodash'
     ],
     function (
         widgetTemplate,
-        RuleEvaluator,
         Rule,
         ConditionManager,
         _
@@ -34,10 +32,8 @@ define(
 
         this.activeId = 'default';
         this.rulesById = {};
-        this.evaluator = new RuleEvaluator();
-        this.conditionManager = new ConditionManager(this.domainObject, this.openmct, this.evaluator)
+        this.conditionManager = new ConditionManager(this.domainObject, this.openmct)
         this.widget = $(widgetTemplate);
-        var self = this;
 
         this.show = this.show.bind(this);
         this.destroy = this.destroy.bind(this);
@@ -45,6 +41,7 @@ define(
         this.refreshRules = this.refreshRules.bind(this);
         this.duplicateRule = this.duplicateRule.bind(this);
         this.updateWidget = this.updateWidget.bind(this);
+        this.onRecieveTelemetry = this.onRecieveTelemetry.bind(this);
     }
 
     WidgetView.prototype.show = function (container) {
@@ -54,10 +51,16 @@ define(
         this.updateWidget();
 
         $('#addRule').on('click', this.addRule);
+        this.conditionManager.on('recieveTelemetry', this.onRecieveTelemetry);
     }
 
     WidgetView.prototype.destroy = function (container) {
 
+    }
+
+    WidgetView.prototype.onRecieveTelemetry = function () {
+        this.activeId = this.conditionManager.executeRules(this.domainObject.configuration.ruleOrder, this.rulesById);
+        this.updateWidget()
     }
 
     WidgetView.prototype.addRule = function () {
@@ -103,7 +106,6 @@ define(
         self.refreshRules();
     }
 
-
     WidgetView.prototype.initRule = function (ruleId, ruleName) {
         var ruleConfig,
             styleObj = {};
@@ -124,13 +126,7 @@ define(
                     operation: '',
                     values: []
                 }],
-                conditionLabels: [{
-                    object: '',
-                    key: '',
-                    operation: '',
-                    values: ['']
-                }],
-                trigger: ''
+                trigger: 'any'
             });
         } else {
             ruleConfig = this.getConfigProp('ruleConfigById.' + ruleId);
@@ -146,7 +142,7 @@ define(
             ruleOrder = self.getConfigProp('ruleOrder'),
             rules = self.rulesById;
 
-        $('#ruleArea' , this.widget).html('');
+        $('#ruleArea', this.widget).html('');
         Object.values(ruleOrder).forEach( function (ruleId) {
             self.initRule(ruleId);
             $('#ruleArea', self.widget).append(rules[ruleId].getDOM());
@@ -166,30 +162,9 @@ define(
 
     WidgetView.prototype.updateWidget = function() {
         var activeRule = this.rulesById[this.activeId];
-        this.executeRules();
         this.applyStyle( $('#widget'), activeRule.getProperty('style'));
         $('#widgetLabel').html(activeRule.getProperty('label'));
         $('#widgetIcon').removeClass().addClass(activeRule.getProperty('icon'));
-    }
-
-    WidgetView.prototype.executeRules = function () {
-        var self = this,
-            ruleOrder = this.getConfigProp('ruleOrder'),
-            showRuleId = 'default',
-            rule;
-
-        ruleOrder.forEach( function (ruleId) {
-            rule = self.rulesById[ruleId]
-            if(self.evaluator.execute(rule.getProperty('conditions'))) {
-                showRuleId = ruleId;
-            }
-        });
-
-        this.activeId = showRuleId;
-    }
-
-    WidgetView.prototype.subscriptionCallback = function(datum) {
-        //do some telemetry stuff
     }
 
     WidgetView.prototype.getConfigProp = function (path) {

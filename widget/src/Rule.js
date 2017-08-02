@@ -1,24 +1,32 @@
 define(
-  [
-      'text!../res/ruleTemplate.html',
-      './Condition',
-      './input/ColorPalette',
-      './input/IconPalette',
-      'lodash'
-  ],
-  function (
-      ruleTemplate,
-      Condition,
-      ColorPalette,
-      IconPalette,
-      _
-  ) {
+    [
+        'text!../res/ruleTemplate.html',
+        './Condition',
+        './input/ColorPalette',
+        './input/IconPalette',
+        'lodash'
+    ],
+    function (
+        ruleTemplate,
+        Condition,
+        ColorPalette,
+        IconPalette,
+        _
+    ) {
 
-    function Rule(ruleConfig, domainObject, openmct, selectManager) {
+    // a module representing a summary widget rule. Maintains a set of text
+    // and css properties for output, and a set of conditions for configuring
+    // when the rule will be applied to the summary widget.
+    // parameters:
+    // ruleConfig: a JavaScript representing the configuration of this ruleConfig
+    // domainObject: the Summary Widget domain object
+    // openmct: an MCT instance
+    // conditionManager: a ConditionManager instance
+    function Rule(ruleConfig, domainObject, openmct, conditionManager) {
         this.config = ruleConfig;
         this.domainObject = domainObject;
         this.openmct = openmct;
-        this.selectManager = selectManager;
+        this.conditionManager = conditionManager;
 
         this.domElement = $(ruleTemplate);
         this.conditions = [];
@@ -32,10 +40,12 @@ define(
         this.removeCondition = this.removeCondition.bind(this);
         this.refreshConditions = this.refreshConditions.bind(this);
         this.onConditionChange = this.onConditionChange.bind(this);
+        this.onTriggerInput = this.onTriggerInput.bind(this);
 
         this.thumbnail = $('.t-widget-thumb', this.domElement);
         this.title = $('.rule-title', this.domElement);
         this.description = $('.rule-description', this.domElement);
+        this.trigger = $('.t-trigger', this.domElement);
         this.conditionArea = $('.t-widget-rule-config', this.domElement);
         this.deleteButton = $('.t-delete', this.domElement);
         this.duplicateButton = $('.t-duplicate', this.domElement);
@@ -94,9 +104,11 @@ define(
         this.deleteButton.on('click', this.remove);
         this.duplicateButton.on('click', this.duplicate);
         this.addConditionButton.on('click', this.addCondition);
+        this.trigger.on('change', this.onTriggerInput);
 
         this.title.html(self.config.name);
         this.description.html(self.config.description);
+        this.trigger.prop('value', self.config.trigger);
 
         this.refreshConditions();
 
@@ -128,6 +140,13 @@ define(
         this.config.style[property] = color;
         this.updateDomainObject('style.' + property, color)
         this.thumbnail.css(property, color);
+        this.callbacks['change'] && this.callbacks['change']();
+    }
+
+    Rule.prototype.onTriggerInput = function (event) {
+        var elem = event.target;
+        _.set(this.config, 'trigger', elem.value);
+        this.updateDomainObject('trigger', elem.value);
         this.callbacks['change'] && this.callbacks['change']();
     }
 
@@ -197,7 +216,7 @@ define(
         $('.t-condition', this.domElement).remove();
 
         this.config.conditions.forEach( function (condition, index) {
-            var newCondition = new Condition(condition, index, self.selectManager);
+            var newCondition = new Condition(condition, index, self.conditionManager);
             newCondition.on('remove', self.removeCondition);
             newCondition.on('duplicate', self.initCondition);
             newCondition.on('change', self.onConditionChange);

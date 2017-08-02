@@ -29,6 +29,7 @@ define(
         'icon-x'
     ]
 
+    // a module wrapping an Open MCT icon palette
     // changeCallback: function to be called when the value of this Icon Palette
     // changes. Injected with the current value of the icon picker.
     // if constructor is invoked with Icons argument, instantiates a Icon pallete

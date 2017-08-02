@@ -2,6 +2,7 @@ define(
     ['./Select'],
     function (Select) {
 
+    // wraps a generic Select and populates it with telemetry metadata
     function KeySelect(conditionConfig, objectSelect, selectManager) {
         var self = this;
 

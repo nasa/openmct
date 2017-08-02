@@ -16,7 +16,8 @@ define(
         '#cccccc',
         '#ffffff'
     ]
-
+    
+    // A module wrapping an Open MCT color palette
     // changeCallback: function to be called when the value of this color Palette
     // changes. Injected with the current value of the color picker.
     // if constructor is invoked with colors argument, instantiates a color pallete

@@ -3,12 +3,17 @@ define(
     function (
     ) {
 
-    function RuleEvaluator() {
+    // a module responsible for maintaining the possible operations for conditions
+    // in this widget, and evaluating whether these conditions evaluate to true.
+    function RuleEvaluator(subscriptionCache) {
+
+        this.subscriptionCache = subscriptionCache;
 
         // operations supported by this rule evaluator. Each rule has a method
         // with input boolean return type to be evaluated when the operation is
         // executed, a human-readable text description to populate lists in
-        // the view, and a key for what type it applies to
+        // the view, a key for what type it applies to, and an integer number
+        // value inputs to generate
         this.operations = {
             equalTo: {
                 operation: function(input) {return input[0] === input[1]},
@@ -52,14 +57,20 @@ define(
                 appliesTo: ['number'],
                 inputCount: 2
             },
+            notBetween: {
+                operation: function(input) {return input[0] < input[1] || input[0] > input[2]},
+                text: 'is Not Between',
+                appliesTo: ['number'],
+                inputCount: 2
+            },
             textContains: {
-                operation: function(input) {return input[0].includes(input[1])},
+                operation: function(input) {return input[0] && input[1] && input[0].includes(input[1])},
                 text: 'Text Contains',
                 appliesTo: ['string'],
                 inputCount: 1
             },
             textDoesNotContain: {
-                operation: function(input) {return !input[0].includes(input[1])},
+                operation: function(input) {return input[0] && input[1] && !input[0].includes(input[1])},
                 text: 'Text Does Not Contain',
                 appliesTo: ['string'],
                 inputCount: 1
@@ -83,7 +94,7 @@ define(
                 inputCount: 1
             },
             isUndefined: {
-                operation: function(input) {return typeof input === 'undefined'},
+                operation: function(input) {return typeof input[0] === 'undefined'},
                 text: 'is Undefined',
                 appliesTo: ['string', 'number'],
                 inputCount: 0
@@ -91,12 +102,37 @@ define(
         }
     }
 
-    // evaluate the conditions passed in as an argument return whether these
+    // evaluate the conditions passed in as an argument, and return whether these
     // conditions evaluate to true
-    RuleEvaluator.prototype.execute = function(conditions) {
-        var active = false;
-        (conditions || []).forEach( function (condition) {
+    // mode: if 'any', || all conditions; if 'all', && all conditions; if 'js',
+    // evaluate the conditions as JavaScript
+    RuleEvaluator.prototype.execute = function(conditions, mode) {
+        var active = false,
+            telemetryValue,
+            operation,
+            input,
+            self = this;
 
+        debugger;
+        if (mode === 'js') {
+            //TODO: implement JavaScript conditional input
+        }
+        (conditions || []).forEach( function (condition, index) {
+            telemetryValue = self.subscriptionCache[condition.object] &&
+                             self.subscriptionCache[condition.object][condition.key] &&
+                             [self.subscriptionCache[condition.object][condition.key]];
+            operation = self.operations[condition.operation] &&
+                        self.operations[condition.operation].operation;
+            input = telemetryValue && telemetryValue.concat(condition.values);
+
+            if (operation && input) {
+                active = (mode === 'all' && index === 0 ? true : active);
+                if (mode === 'any') {
+                    active = active || operation(input);
+                } else if (mode === 'all') {
+                    active = active && operation(input);
+                }
+            }
         });
         return active;
     }

@@ -2,7 +2,7 @@ define(
     ['text!../../res/input/selectTemplate.html'],
     function (selectTemplate) {
 
-    //a wrapper module for controlling an HTML select element
+    //a wrapper module for dynamically poplulating an HTML select element
     function Select(property) {
         this.property = property
         this.domElement = $(selectTemplate);
