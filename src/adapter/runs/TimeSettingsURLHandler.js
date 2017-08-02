@@ -107,7 +107,9 @@ define([
         }
         this.last = params;
 
-        if (params.clock === 'fixed' && params.bounds) {
+        if (!params.timeSystem) {
+            this.updateQueryParams();
+        } else if (params.clock === 'fixed' && params.bounds) {
             if (!this.time.timeSystem() ||
                 this.time.timeSystem().key !== params.timeSystem) {
 
