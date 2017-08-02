@@ -38,7 +38,8 @@ define(
                 mockLog,
                 mockInterval,
                 mockParsed,
-                mctSplitPane;
+                mctSplitPane,
+                mockWindow = {};
 
             beforeEach(function () {
                 mockParse = jasmine.createSpy('$parse');
@@ -48,13 +49,23 @@ define(
                 mockInterval.cancel = jasmine.createSpy('mockCancel');
                 mockParsed = jasmine.createSpy('parsed');
                 mockParsed.assign = jasmine.createSpy('assign');
-
                 mockParse.andReturn(mockParsed);
+
+                mockWindow.localStorage =  {
+                    store: {},
+                    setItem: function (key, value) {
+                        this.store[key] = value;
+                    },
+                    getItem: function (key) {
+                        return this.store[key];
+                    }
+                };
 
                 mctSplitPane = new MCTSplitPane(
                     mockParse,
                     mockLog,
-                    mockInterval
+                    mockInterval,
+                    mockWindow
                 );
             });
 
@@ -85,7 +96,7 @@ define(
                         jasmine.createSpyObj('$scope', ['$apply', '$watch', '$on']);
                     mockElement =
                         jasmine.createSpyObj('element', JQLITE_METHODS);
-                    testAttrs = {};
+                    testAttrs = {alias: 'rightSide'};
                     mockChildren =
                         jasmine.createSpyObj('children', JQLITE_METHODS);
                     mockFirstPane =
@@ -142,10 +153,14 @@ define(
                     });
                 });
 
-                it("allows classes to be toggled on contained elements", function () {
-                    controller.toggleClass('resizing');
-                    expect(mockChildren.toggleClass)
-                        .toHaveBeenCalledWith('resizing');
+                it("applies resizing class to children when resizing", function () {
+                    controller.startResizing();
+                    expect(mockChildren.toggleClass).toHaveBeenCalledWith('resizing');
+                });
+
+                it("removes resizing class from children when resizing action ends", function () {
+                    controller.endResizing(0);
+                    expect(mockChildren.toggleClass).toHaveBeenCalledWith('resizing');
                 });
 
                 it("allows positions to be set", function () {
@@ -198,6 +213,12 @@ define(
                     fireOn('$destroy');
                     expect(mockInterval.cancel).toHaveBeenCalled();
                 });
+
+                it("saves user preference to localStorage when user is done resizing", function () {
+                    controller.endResizing(100);
+                    expect(Number(mockWindow.localStorage.getItem('mctSplitPane-rightSide'))).toEqual(100 - mockSplitter[0].offsetWidth);
+                });
+
             });
 
         });
