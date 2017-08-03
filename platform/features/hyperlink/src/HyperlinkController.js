@@ -37,7 +37,7 @@ define(
         @returns true if the hyperlink is chosen to open in a different tab, false if the same tab
         **/
         HyperlinkController.prototype.openNewTab = function () {
-            if (this.$scope.domainObject.getModel().openNewTab[0] === "thisTab") {
+            if (this.$scope.domainObject.getModel().openNewTab === "thisTab") {
                 return false;
             } else {
                 return true;
@@ -47,7 +47,7 @@ define(
         @returns true if the hyperlink is chosen to be created as a button, false if a link
         **/
         HyperlinkController.prototype.isButton = function () {
-            if (this.$scope.domainObject.getModel().displayFormat[0] === "link") {
+            if (this.$scope.domainObject.getModel().displayFormat === "link") {
                 return false;
             }
             return true;

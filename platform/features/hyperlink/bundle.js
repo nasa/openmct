@@ -56,56 +56,43 @@ define([
                       "required": true,
                       "cssClass": "l-input-lg"
                   },
-                  {
-                      "key": "showTitle",
-                      "control": "checkbox",
-                      "value": false
-                  },{
+                {
                       "key": "displayFormat",
                       "name": "Display Format",
-                      "control": "composite",
-                      "items": [
-                          {
-                              "control": "select",
-                              "options": [
-                                  {
-                                      "name": "Link",
-                                      "value": "link"
-                                  },
-                                  {
-                                      "value": "button",
-                                      "name": "Button"
-                                  }
-                              ],
-                              "cssClass": "l-inline"
-                          }
-                      ]
+                      "control": "select",
+                      "options": [
+                              {
+                                  "name": "Link",
+                                  "value": "link"
+                              },
+                              {
+                                  "value": "button",
+                                  "name": "Button"
+                              }
+                          ],
+                      "cssClass": "l-inline"
                   },
                   {
                       "key": "openNewTab",
                       "name": "Tab to Open Hyperlink",
-                      "control": "composite",
-                      "items": [
-                          {
-                              "control": "select",
-                              "options": [
-                                  {
-                                      "name": "Open in this tab",
-                                      "value": "thisTab"
-                                  },
-                                  {
-                                      "value": "newTab",
-                                      "name": "Open in a new tab"
-                                  }
-                              ],
-                              "cssClass": "l-inline"
-                          }
-                      ]
+                      "control": "select",
+                      "options": [
+                              {
+                                  "name": "Open in this tab",
+                                  "value": "thisTab"
+                              },
+                              {
+                                  "value": "newTab",
+                                  "name": "Open in a new tab"
+                              }
+                          ],
+                      "cssClass": "l-inline"
+
                   }
                 ],
                 "model": {
-                    "displayFormat": ["link"],
-                    "openNewTab": ["thisTab"],
+                    "displayFormat": "link",
+                    "openNewTab": "thisTab",
                     "showTitle": false
                 }
 
@@ -115,8 +102,7 @@ define([
             {
                 "key": "hyperlink",
                 "type": "hyperlink",
-                "cssClass": "icon-check",
-                "name": "icon",
+                "name": "Hyperlink Display",
                 "template": hyperlinkTemplate,
                 "editable": false
             }

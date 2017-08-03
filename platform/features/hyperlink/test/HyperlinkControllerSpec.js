@@ -26,34 +26,63 @@ define(
 
         describe("The controller for hyperlinks", function () {
             var domainObject,
-                model,
                 controller,
-                link = "http://nasa.gov";
+                scope;
             beforeEach(function () {
+                scope = jasmine.createSpyObj(
+                  "$scope",
+                  ["domainObject"]
+              );
                 domainObject = jasmine.createSpyObj(
-                      "domainObject",
-                      ["getModel"]
-                );
-                model = jasmine.createSpyObj(
-                    "getModel",
-                    ["link","openNewTab","displayFormat"]
-                );
-                domainObject.getModel.link = link;
-                domainObject.getModel.displayFormat = "button";
-                domainObject.getModel.openNewTab = "thisTab";
-                controller = new HyperlinkController();
-            });
-            it("opens a specific given link", function () {
-                expect(domainObject.getModel.link)
-                    .toEqual("http://nasa.gov");
+                        "domainObject",
+                        ["getModel"]
+                  );
+                scope.domainObject = domainObject;
+                controller = new HyperlinkController(scope);
             });
             it("knows when it should open a new tab", function () {
-                expect(domainObject.getModel.openNewTab)
-                    .toEqual("thisTab");
+                scope.domainObject.getModel.andReturn({
+                  "displayFormat": "link",
+                  "openNewTab": "newTab",
+                  "showTitle": false
+              }
+                );
+                controller = new HyperlinkController(scope);
+                expect(controller.openNewTab())
+                    .toBe(true);
             });
             it("knows when it is a button", function () {
-                expect(domainObject.getModel.displayFormat)
-                    .toEqual("button");
+                scope.domainObject.getModel.andReturn({
+                  "displayFormat": "button",
+                  "openNewTab": "thisTab",
+                  "showTitle": false
+              }
+                );
+                controller = new HyperlinkController(scope);
+                expect(controller.isButton())
+                    .toEqual(true);
+            });
+            it("knows when it should open in the same tab", function () {
+                scope.domainObject.getModel.andReturn({
+                  "displayFormat": "link",
+                  "openNewTab": "thisTab",
+                  "showTitle": false
+              }
+                );
+                controller = new HyperlinkController(scope);
+                expect(controller.openNewTab())
+                    .toBe(false);
+            });
+            it("knows when it is a link", function () {
+                scope.domainObject.getModel.andReturn({
+                  "displayFormat": "link",
+                  "openNewTab": "thisTab",
+                  "showTitle": false
+              }
+                );
+                controller = new HyperlinkController(scope);
+                expect(controller.openNewTab())
+                    .toBe(false);
             });
         });
     }

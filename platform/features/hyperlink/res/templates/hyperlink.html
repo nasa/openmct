@@ -20,12 +20,13 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="s-hyperlink" ng-controller="HyperlinkController as hyperlink">
-  <div>
-    <a href="{{domainObject.getModel().url}}"
-      ng-attr-target="{{hyperlink.openNewTab() ? '_blank' : undefined}}"
-      ng-class="{
-       's-button': hyperlink.isButton()}">
-    {{domainObject.getModel().displayText}}
-    </a>
-  </div>
+    <div>
+        <a href="{{domainObject.getModel().url}}"
+           ng-attr-target="{{hyperlink.openNewTab() ? '_blank' : undefined}}"
+           ng-class="{
+               's-button': hyperlink.isButton()
+           }">
+           {{domainObject.getModel().displayText}}
+        </a>
+    </div>
 </div>
