@@ -36,7 +36,7 @@ define (
             remove: [],
             load: [],
             metadata: [],
-            recieveTelemetry: []
+            receiveTelemetry: []
         }
 
         this.inputTypes = {
@@ -145,7 +145,7 @@ define (
 
         function handleSubscriptionCallback(objId, datum) {
             self.subscriptionCache[objId] = datum;
-            self.callbacks.recieveTelemetry.forEach( function (callback) {
+            self.callbacks.receiveTelemetry.forEach( function (callback) {
                 callback && callback();
             });
         }

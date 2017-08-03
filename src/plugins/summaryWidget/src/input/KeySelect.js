@@ -3,12 +3,12 @@ define(
     function (Select) {
 
     // wraps a generic Select and populates it with telemetry metadata
-    function KeySelect(conditionConfig, objectSelect, selectManager) {
+    function KeySelect(conditionConfig, objectSelect, conditionManager) {
         var self = this;
 
         this.config = conditionConfig;
         this.objectSelect = objectSelect;
-        this.manager = selectManager;
+        this.manager = conditionManager;
 
         this.objectSelect.on('change', onObjectChange);
         this.manager.on('metadata', onMetadataLoad);

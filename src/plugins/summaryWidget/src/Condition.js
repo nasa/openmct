@@ -14,6 +14,8 @@ define(
         OperationSelect
     ) {
 
+    //TODO: impelement 'any telemetry' or 'all telemetry' options
+
     // an individual condition for a summary widget rule.
     // parameter:
     // conditionConfig: the configuration for this conditionConfig
@@ -88,7 +90,7 @@ define(
 
     Condition.prototype.duplicate = function () {
         var sourceCondition = JSON.parse(JSON.stringify(this.config));
-        this.callbacks['duplicate'] && this.callbacks['duplicate'](sourceCondition);
+        this.callbacks['duplicate'] && this.callbacks['duplicate'](sourceCondition, this.index);
     }
 
     Condition.prototype.onSelectChange = function (value, property) {

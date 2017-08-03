@@ -4,7 +4,7 @@ define(
 
     //a wrapper module for dynamically poplulating an HTML select element
     function Select(property) {
-        this.property = property
+        this.property = property;
         this.domElement = $(selectTemplate);
 
         this.options = [];

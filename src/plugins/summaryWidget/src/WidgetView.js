@@ -41,7 +41,7 @@ define(
         this.refreshRules = this.refreshRules.bind(this);
         this.duplicateRule = this.duplicateRule.bind(this);
         this.updateWidget = this.updateWidget.bind(this);
-        this.onRecieveTelemetry = this.onRecieveTelemetry.bind(this);
+        this.onReceiveTelemetry = this.onReceiveTelemetry.bind(this);
     }
 
     WidgetView.prototype.show = function (container) {
@@ -51,16 +51,16 @@ define(
         this.updateWidget();
 
         $('#addRule').on('click', this.addRule);
-        this.conditionManager.on('recieveTelemetry', this.onRecieveTelemetry);
+        this.conditionManager.on('receiveTelemetry', this.onReceiveTelemetry);
     }
 
     WidgetView.prototype.destroy = function (container) {
 
     }
 
-    WidgetView.prototype.onRecieveTelemetry = function () {
+    WidgetView.prototype.onReceiveTelemetry = function () {
         this.activeId = this.conditionManager.executeRules(this.domainObject.configuration.ruleOrder, this.rulesById);
-        this.updateWidget()
+        this.updateWidget();
     }
 
     WidgetView.prototype.addRule = function () {
@@ -162,9 +162,9 @@ define(
 
     WidgetView.prototype.updateWidget = function() {
         var activeRule = this.rulesById[this.activeId];
-        this.applyStyle( $('#widget'), activeRule.getProperty('style'));
-        $('#widgetLabel').html(activeRule.getProperty('label'));
-        $('#widgetIcon').removeClass().addClass(activeRule.getProperty('icon'));
+        this.applyStyle( $('#widget', this.widget), activeRule.getProperty('style'));
+        $('#widgetLabel', this.widget).html(activeRule.getProperty('label'));
+        $('#widgetIcon', this.widget).removeClass().addClass(activeRule.getProperty('icon'));
     }
 
     WidgetView.prototype.getConfigProp = function (path) {

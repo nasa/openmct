@@ -3,12 +3,12 @@ define(
     function (Select) {
 
     //wraps a generic Select and populates it with available operations
-    function OperationSelect(conditionConfig, keySelect, selectManager, changeCallback) {
+    function OperationSelect(conditionConfig, keySelect, conditionManager, changeCallback) {
         var self = this;
 
         this.config = conditionConfig;
         this.keySelect = keySelect;
-        this.manager = selectManager;
+        this.manager = conditionManager;
 
         this.operationKeys = [];
         this.evaluator = this.manager.getEvaluator();

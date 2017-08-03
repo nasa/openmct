@@ -193,7 +193,7 @@ define(
         this.initCondition();
     }
 
-    Rule.prototype.initCondition = function (sourceConfig) {
+    Rule.prototype.initCondition = function (sourceConfig, sourceIndex) {
         var ruleConfigById = this.domainObject.configuration.ruleConfigById,
             newConfig,
             defaultConfig = {
@@ -203,8 +203,13 @@ define(
                 values: []
             }
 
+        debugger
         newConfig = sourceConfig || defaultConfig;
-        ruleConfigById[this.config.id].conditions.push(newConfig);
+        if (sourceIndex !== undefined) {
+            ruleConfigById[this.config.id].conditions.splice(sourceIndex + 1, 0, newConfig);
+        } else {
+            ruleConfigById[this.config.id].conditions.push(newConfig);
+        }
         this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById', ruleConfigById);
         this.refreshConditions();
     }

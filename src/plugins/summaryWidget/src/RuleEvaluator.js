@@ -12,7 +12,7 @@ define(
         // operations supported by this rule evaluator. Each rule has a method
         // with input boolean return type to be evaluated when the operation is
         // executed, a human-readable text description to populate lists in
-        // the view, a key for what type it applies to, and an integer number
+        // the view, a key for what type it applies to, and an integer number of
         // value inputs to generate
         this.operations = {
             equalTo: {
@@ -46,7 +46,7 @@ define(
                 inputCount: 1
             },
             lessThanOrEq: {
-                operation: function (input) {return input[0] >= input[1]},
+                operation: function (input) {return input[0] <= input[1]},
                 text: 'is Less Than or Equal To',
                 appliesTo: ['number'],
                 inputCount: 1
@@ -113,7 +113,6 @@ define(
             input,
             self = this;
 
-        debugger;
         if (mode === 'js') {
             //TODO: implement JavaScript conditional input
         }
