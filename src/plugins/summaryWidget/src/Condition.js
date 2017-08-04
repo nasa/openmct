@@ -14,8 +14,6 @@ define(
         OperationSelect
     ) {
 
-    //TODO: impelement 'any telemetry' or 'all telemetry' options
-
     // an individual condition for a summary widget rule.
     // parameter:
     // conditionConfig: the configuration for this conditionConfig
@@ -34,9 +32,9 @@ define(
         this.duplicateButton = $('.t-duplicate', this.domElement)
 
         this.callbacks = {
-            remove: $.noop,
-            duplicate: $.noop,
-            change: $.noop
+            remove: [],
+            duplicate: [],
+            change: []
         }
 
         this.selects = {}
@@ -44,30 +42,44 @@ define(
 
         this.remove = this.remove.bind(this);
         this.duplicate = this.duplicate.bind(this);
-        this.onSelectChange = this.onSelectChange.bind(this);
-        this.onValueInput = this.onValueInput.bind(this);
 
-        this.init();
-    }
-
-    Condition.prototype.init = function () {
         var self = this;
         this.deleteButton.on('click', this.remove);
         this.duplicateButton.on('click', this.duplicate);
 
         this.selects.object = new ObjectSelect(this.config, this.conditionManager),
         this.selects.key = new KeySelect(this.config, this.selects.object, this.conditionManager),
-        this.selects.operation = new OperationSelect(this.config, this.selects.key, this.conditionManager, this.onSelectChange)
+        this.selects.operation = new OperationSelect(this.config, this.selects.key, this.conditionManager, onSelectChange)
 
-        this.selects.object.on('change', self.onSelectChange);
-        this.selects.key.on('change', self.onSelectChange);
+        this.selects.object.on('change', onSelectChange);
+        this.selects.key.on('change', onSelectChange);
 
         Object.values(this.selects).forEach( function(select) {
             $('.t-configuration', self.domElement).append(select.getDOM());
         });
 
-        $(this.domElement).on('input', 'input', this.onValueInput)
+        $(this.domElement).on('input', 'input', onValueInput);
+
+        function onSelectChange(value, property) {
+            self.callbacks.change.forEach( function (callback) {
+                callback && callback(value, property, self.index);
+            });
+            if (property === 'operation') {
+                self.generateValueInputs(value);
+            }
+        }
+
+        function onValueInput(event) {
+            var elem = event.target,
+                value = elem.value,
+                inputIndex = self.valueInputs.indexOf(elem);
+
+            self.callbacks.change.forEach(function (callback) {
+                callback && callback([value, ''], 'values[' + inputIndex + ']', self.index);
+            });
+        }
     }
+
 
     Condition.prototype.getDOM = function (container) {
         return this.domElement;
@@ -75,7 +87,7 @@ define(
 
     Condition.prototype.on = function (event, callback) {
         if(this.callbacks[event]) {
-            this.callbacks[event] = callback;
+            this.callbacks[event].push(callback);
         }
     }
 
@@ -84,28 +96,19 @@ define(
     }
 
     Condition.prototype.remove = function () {
-      this.callbacks['remove'] && this.callbacks['remove'](this.index);
-      delete this;
+        var self = this;
+        this.callbacks.remove.forEach(function (callback) {
+            callback && callback(self.index);
+        });
+        delete this;
     }
 
     Condition.prototype.duplicate = function () {
-        var sourceCondition = JSON.parse(JSON.stringify(this.config));
-        this.callbacks['duplicate'] && this.callbacks['duplicate'](sourceCondition, this.index);
-    }
-
-    Condition.prototype.onSelectChange = function (value, property) {
-        this.callbacks['change'] && this.callbacks['change'](value, property, this.index);
-        if (property === 'operation') {
-            this.generateValueInputs(value);
-        }
-    }
-
-    Condition.prototype.onValueInput = function (event) {
-        var elem = event.target,
-            value = elem.value,
-            inputIndex = this.valueInputs.indexOf(elem);
-
-        this.callbacks['change'] && this.callbacks['change']([value,''], 'values[' + inputIndex + ']', this.index);
+        var sourceCondition = JSON.parse(JSON.stringify(this.config)),
+            self = this;
+        this.callbacks.duplicate.forEach(function (callback) {
+            callback && callback(sourceCondition, self.index);
+        });
     }
 
     Condition.prototype.generateValueInputs = function(operation) {

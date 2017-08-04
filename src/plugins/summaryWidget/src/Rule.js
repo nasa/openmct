@@ -18,11 +18,13 @@ define(
     // and css properties for output, and a set of conditions for configuring
     // when the rule will be applied to the summary widget.
     // parameters:
-    // ruleConfig: a JavaScript representing the configuration of this ruleConfig
+    // ruleConfig: a JavaScript representing the configuration of this rule
     // domainObject: the Summary Widget domain object
     // openmct: an MCT instance
     // conditionManager: a ConditionManager instance
     function Rule(ruleConfig, domainObject, openmct, conditionManager) {
+        var self = this;
+
         this.config = ruleConfig;
         this.domainObject = domainObject;
         this.openmct = openmct;
@@ -31,8 +33,6 @@ define(
         this.domElement = $(ruleTemplate);
         this.conditions = [];
 
-        this.onColorInput = this.onColorInput.bind(this);
-        this.onIconInput = this.onIconInput.bind(this);
         this.remove = this.remove.bind(this);
         this.duplicate = this.duplicate.bind(this);
         this.addCondition = this.addCondition.bind(this);
@@ -40,12 +40,14 @@ define(
         this.removeCondition = this.removeCondition.bind(this);
         this.refreshConditions = this.refreshConditions.bind(this);
         this.onConditionChange = this.onConditionChange.bind(this);
-        this.onTriggerInput = this.onTriggerInput.bind(this);
 
         this.thumbnail = $('.t-widget-thumb', this.domElement);
         this.title = $('.rule-title', this.domElement);
         this.description = $('.rule-description', this.domElement);
         this.trigger = $('.t-trigger', this.domElement);
+        this.toggleConfigButton = $('.view-control', this.domElement);
+        this.configArea = $('.widget-rule-content', this.domElement);
+        this.grippy = $('.t-grippy', this.domElement);
         this.conditionArea = $('.t-widget-rule-config', this.domElement);
         this.deleteButton = $('.t-delete', this.domElement);
         this.duplicateButton = $('.t-duplicate', this.domElement);
@@ -57,7 +59,7 @@ define(
             message: $('.t-rule-message-input', this.domElement)
         }
 
-        this.iconInput = new IconPalette('');
+        this.iconInput = new IconPalette('icon', '');
 
         this.colorInputs = {
             'background-color': new ColorPalette('background-color', 'icon-paint-bucket'),
@@ -66,49 +68,47 @@ define(
         }
 
         this.callbacks = {
-            remove: $.noop,
-            duplicate: $.noop,
-            change: $.noop
+            remove: [],
+            duplicate: [],
+            change: []
         }
 
-        this.init();
-    }
-
-    Rule.prototype.init = function () {
-        var self = this;
-
         $('.t-rule-label-input', this.domElement).before(this.iconInput.getDOM());
-        this.iconInput.setIcon(self.config.icon);
-        this.iconInput.on('change', this.onIconInput);
+        this.iconInput.set(self.config.icon);
+        this.iconInput.on('change', onIconInput);
 
         Object.keys(this.colorInputs).forEach( function (inputKey) {
             var input = self.colorInputs[inputKey];
-            input.on('change', self.onColorInput);
-            input.setColor(self.config.style[inputKey]);
+            input.on('change', onColorInput);
+            input.set(self.config.style[inputKey]);
             $('.t-style-input', self.domElement).append(input.getDOM());
         });
 
         Object.keys(this.textInputs).forEach( function (inputKey) {
             self.textInputs[inputKey].prop('value', self.config[inputKey]);
-            self.textInputs[inputKey].on('input', function () {
-                var elem = this;
-                self.config[inputKey] = elem.value;
-                self.updateDomainObject(inputKey, elem.value);
-                if (inputKey === 'name') {
-                    self.title.html(elem.value);
-                }
-                self.callbacks['change'] && self.callbacks['change']();
+            self.textInputs[inputKey].on('input', function (){
+                onTextInput(this, inputKey);
             });
         });
 
         this.deleteButton.on('click', this.remove);
         this.duplicateButton.on('click', this.duplicate);
         this.addConditionButton.on('click', this.addCondition);
-        this.trigger.on('change', this.onTriggerInput);
+        this.toggleConfigButton.on('click', toggleConfig)
+        this.trigger.on('change', onTriggerInput);
 
         this.title.html(self.config.name);
         this.description.html(self.config.description);
         this.trigger.prop('value', self.config.trigger);
+
+        if (!this.conditionManager.loadCompleted()) {
+            this.config.expanded = false;
+        }
+
+        if (!this.config.expanded) {
+            this.configArea.removeClass('expanded');
+            this.toggleConfigButton.removeClass('expanded');
+        }
 
         this.refreshConditions();
 
@@ -117,7 +117,50 @@ define(
             $('.t-delete', this.domElement).hide();
             $('.t-widget-rule-config', this.domElement).hide();
             $('.t-grippy', this.domElement).hide();
+        };
+
+        function onIconInput(icon) {
+            self.config.icon = icon;
+            self.updateDomainObject('icon', icon);
+            self.callbacks.change.forEach( function (callback) {
+                callback && callback();
+            });
         }
+
+        function onColorInput(color, property) {
+            self.config.style[property] = color;
+            self.updateDomainObject('style.' + property, color)
+            self.thumbnail.css(property, color);
+            self.callbacks.change.forEach( function (callback) {
+                callback && callback();
+            });
+        };
+
+        function onTriggerInput(event) {
+            var elem = event.target;
+            self.config.trigger = elem.value;
+            self.updateDomainObject('trigger', elem.value);
+            self.callbacks.change.forEach( function (callback) {
+                callback && callback();
+            });
+        };
+
+        function toggleConfig() {
+            self.configArea.toggleClass('expanded');
+            self.toggleConfigButton.toggleClass('expanded');
+            self.config.expanded = !self.config.expanded;
+        };
+
+        function onTextInput(elem, inputKey) {
+              self.config[inputKey] = elem.value;
+              self.updateDomainObject(inputKey, elem.value);
+              if (inputKey === 'name') {
+                  self.title.html(elem.value);
+              }
+              self.callbacks.change.forEach( function (callback) {
+                  callback && callback();
+              });
+        };
     }
 
     Rule.prototype.getDOM = function () {
@@ -126,34 +169,16 @@ define(
 
     Rule.prototype.on = function (event, callback) {
         if(this.callbacks[event]) {
-            this.callbacks[event] = callback;
+            this.callbacks[event].push(callback);
         }
     }
 
-    Rule.prototype.onIconInput = function (icon) {
-        this.icon = icon;
-        this.updateDomainObject('icon', icon);
-        this.callbacks['change'] && this.callbacks['change']();
-    }
-
-    Rule.prototype.onColorInput = function (color, property) {
-        this.config.style[property] = color;
-        this.updateDomainObject('style.' + property, color)
-        this.thumbnail.css(property, color);
-        this.callbacks['change'] && this.callbacks['change']();
-    }
-
-    Rule.prototype.onTriggerInput = function (event) {
-        var elem = event.target;
-        _.set(this.config, 'trigger', elem.value);
-        this.updateDomainObject('trigger', elem.value);
-        this.callbacks['change'] && this.callbacks['change']();
-    }
-
-    Rule.prototype.onConditionChange = function (value, property, index) {
+    Rule.prototype.onConditionChange = function(value, property, index) {
         _.set(this.config.conditions[index], property, value[0]);
         this.updateDomainObject('conditions[' + index + '].' + property, value[0]);
-        this.callbacks['change'] && this.callbacks['change']();
+        this.callbacks.change.forEach( function (callback) {
+            callback && callback();
+        });
     }
 
     Rule.prototype.updateDomainObject = function (property, value) {
@@ -177,7 +202,9 @@ define(
         self.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById', ruleConfigById);
         self.openmct.objects.mutate(this.domainObject, 'configuration.ruleOrder', ruleOrder);
 
-        this.callbacks['remove'] && this.callbacks['remove']();
+        self.callbacks.remove.forEach( function (callback) {
+            callback && callback();
+        });
 
         delete this;
     }
@@ -185,8 +212,12 @@ define(
     //makes a deep copy of this rule's configuration, and calls the duplicate event
     //callback with the copy as an argument if one has been registered
     Rule.prototype.duplicate = function () {
-        var sourceRule = JSON.parse(JSON.stringify(this.config));
-        this.callbacks['duplicate'] && this.callbacks['duplicate'](sourceRule);
+        var sourceRule = JSON.parse(JSON.stringify(this.config)),
+            self = this;
+        sourceRule.expanded = true;
+        self.callbacks.duplicate.forEach( function (callback) {
+            callback && callback(sourceRule);
+        });
     }
 
     Rule.prototype.addCondition = function () {
@@ -203,7 +234,6 @@ define(
                 values: []
             }
 
-        debugger
         newConfig = sourceConfig || defaultConfig;
         if (sourceIndex !== undefined) {
             ruleConfigById[this.config.id].conditions.splice(sourceIndex + 1, 0, newConfig);

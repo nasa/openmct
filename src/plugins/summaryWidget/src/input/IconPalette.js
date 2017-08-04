@@ -1,6 +1,6 @@
 define(
-    ['text!../../res/input/iconPaletteTemplate.html'],
-    function(paletteTemplate) {
+    ['./Palette'],
+    function (Palette) {
 
     var DEFAULT_ICONS = [
         'icon-alert-rect',
@@ -29,79 +29,31 @@ define(
         'icon-x'
     ]
 
-    // a module wrapping an Open MCT icon palette
-    // changeCallback: function to be called when the value of this Icon Palette
-    // changes. Injected with the current value of the icon picker.
-    // if constructor is invoked with Icons argument, instantiates a Icon pallete
-    // input with these icons. Otherwise uses a default iconset.
-    function IconPalette(cssClass, icons) {
-        this.cssClass = cssClass;
+    function IconPalette(property, cssClass, icons) {
         this.icons = icons || DEFAULT_ICONS;
-        this.currentIcon = this.icons[0];
-        this.domElement = $(paletteTemplate);
+        this.palette = new Palette(property, cssClass, this.icons);
 
-        this.handleItemClick = this.handleItemClick.bind(this);
+        var domElement = $(this.palette.getDOM()),
+            self = this;
 
-        this.init();
-    }
+        $('.s-menu-button', domElement).addClass('t-icon-palette-menu-button');
+        $('.t-swatch', domElement).addClass('icon-swatch');
+        $('.l-palette', domElement).addClass('l-icon-palette');
 
-    IconPalette.prototype.init = function () {
-        var self = this;
-        self.domElement.addClass(self.cssClass);
-        $('.l-palette-row', self.domElement).after('<div class = "l-palette-row"> </div>');
-        self.icons.forEach( function (icon) {
-            $('.l-palette-row:last-of-type', self.domElement).append(
-                '<div class = "l-palette-item s-palette-item ' + icon + '"' +
-                ' data-icon-class = ' + icon + '> </div>'
-            )
+        $('.s-palette-item', domElement).each(function () {
+            var elem = this;
+            $(elem).addClass(elem.dataset.item);
         });
 
-        $('.menu', self.domElement).hide();
+        this.palette.on('change', updateSwatch);
 
-        $('.icon-swatch', self.domElement).addClass(self.currentIcon);
-
-        $(document).on('click', function () {
-            $('.menu', self.domElement).hide();
-        });
-
-        $('.l-click-area', self.domElement).on('click', function (event) {
-            event.stopPropagation();
-            $('.menu', self.domElement).toggle();
-        });
-
-        $('.s-palette-item', self.domElement).on('click', self.handleItemClick);
-    }
-
-    // Construct DOM element representing this Icon pallete, register event handlers
-    // on it, and attach it to a container
-    IconPalette.prototype.getDOM = function() {
-        return this.domElement;
-    }
-
-    IconPalette.prototype.handleItemClick = function (event) {
-        var elem = event.currentTarget,
-            icon = elem.dataset.iconClass;
-
-        this.setIcon(icon);
-        $('.menu', this.domElement).hide();
-    }
-
-    IconPalette.prototype.on = function (event, callback) {
-        if (event === 'change') {
-            this.changeCallback = callback;
+        function updateSwatch() {
+            $('.icon-swatch', domElement).removeClass()
+                .addClass(self.palette.getCurrent())
+                .addClass('icon-swatch')
         }
-    }
 
-    IconPalette.prototype.getCurrentIcon = function () {
-        return this.currentIcon;
-    }
-
-    IconPalette.prototype.setIcon = function (icon) {
-        var oldIcon = this.currentIcon;
-
-        this.currentIcon = icon;
-        $('.icon-swatch', this.domElement).removeClass(oldIcon).addClass(icon);
-        this.changeCallback && this.changeCallback(icon);
+        return this.palette;
     }
 
     return IconPalette;

@@ -20,7 +20,7 @@ define(
     }
 
     // parameters
-    // domainObject: the domain object represented by this view
+    // domainObject: the summary widget domain object represented by this view
     // openmct: an MCT instance
     function WidgetView(domainObject, openmct) {
         this.domainObject = domainObject;
@@ -126,7 +126,8 @@ define(
                     operation: '',
                     values: []
                 }],
-                trigger: 'any'
+                trigger: 'any',
+                expanded: 'true'
             });
         } else {
             ruleConfig = this.getConfigProp('ruleConfigById.' + ruleId);

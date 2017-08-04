@@ -111,12 +111,13 @@ define(
             telemetryValue,
             operation,
             input,
-            self = this;
+            self = this,
+            firstRuleEvaluated = false;
 
         if (mode === 'js') {
             //TODO: implement JavaScript conditional input
         }
-        (conditions || []).forEach( function (condition, index) {
+        (conditions || []).forEach( function (condition) {
             telemetryValue = self.subscriptionCache[condition.object] &&
                              self.subscriptionCache[condition.object][condition.key] &&
                              [self.subscriptionCache[condition.object][condition.key]];
@@ -125,7 +126,8 @@ define(
             input = telemetryValue && telemetryValue.concat(condition.values);
 
             if (operation && input) {
-                active = (mode === 'all' && index === 0 ? true : active);
+                active = (mode === 'all' && !firstRuleEvaluated ? true : active);
+                firstRuleEvaluated = true;
                 if (mode === 'any') {
                     active = active || operation(input);
                 } else if (mode === 'all') {
