@@ -33,6 +33,9 @@ define(
             DEFAULT_GRID_SIZE = [32, 32],
             MINIMUM_FRAME_SIZE = [320, 180];
 
+        // Method names to expose from this controller
+        var HIDE = 'hideFrame', SHOW = 'showFrame';
+
         /**
          * The LayoutController is responsible for supporting the
          * Layout view. It arranges frames according to saved configuration
@@ -62,7 +65,7 @@ define(
             // Position a panel after a drop event
             function handleDrop(e, id, position) {
                 if (e.defaultPrevented) {
-                    return;
+                     return;
                 }
 
                 // Ensure that configuration field is populated
@@ -77,8 +80,10 @@ define(
                         Math.floor(position.x / self.gridSize[0]),
                         Math.floor(position.y / self.gridSize[1])
                     ],
-                    dimensions: self.defaultDimensions()
+                    dimensions: self.defaultDimensions(),
+                    hasFrame: true
                 };
+
                 // Mark change as persistable
                 if ($scope.commit) {
                     $scope.commit("Dropped a frame.");
@@ -123,13 +128,18 @@ define(
                 // saved by the EditRepresenter.
                 $scope.configuration =
                     $scope.configuration || {};
+
                 // Make sure there is a "panels" field in the
                 // view configuration.
                 $scope.configuration.panels =
                     $scope.configuration.panels || {};
-                // Store the position of this panel.
-                $scope.configuration.panels[self.activeDragId] =
-                    self.rawPositions[self.activeDragId];
+                
+                // Store the position and dimensions of this panel.
+                $scope.configuration.panels[self.activeDragId].position =
+                    self.rawPositions[self.activeDragId].position;
+                $scope.configuration.panels[self.activeDragId].dimensions =
+                    self.rawPositions[self.activeDragId].dimensions;
+
                 // Mark this object as dirty to encourage persistence
                 if ($scope.commit) {
                     $scope.commit("Moved frame.");
@@ -140,6 +150,10 @@ define(
             this.rawPositions = {};
             this.gridSize = DEFAULT_GRID_SIZE;
             this.$scope = $scope;
+
+            $scope.$watch("selection", function(selection) {
+                this.selection = selection;
+            }.bind(this));
 
             // Watch for changes to the grid size in the model
             $scope.$watch("model.layoutGrid", updateGridSize);
@@ -295,6 +309,69 @@ define(
         LayoutController.prototype.endDrag = function () {
             this.endDragInScope();
         };
+
+        /**
+         * Check if the object is currently selected, or (if no
+         * argument is supplied) get the currently selected object.
+         *
+         * @param {string} obj the object to select
+         * @returns {boolean} true if selected
+         */
+        LayoutController.prototype.selected = function (obj) { 
+            var selection = this.selection;
+            return selection && ((arguments.length > 0) ?
+                    selection.selected(obj) : selection.get());
+        };
+
+        /**
+         * Set the active user selection in this view.
+         *
+         * @param event the mouse event
+         * @param {string} obj the object to select
+         */
+        LayoutController.prototype.select = function select(event, obj) {
+            event.stopPropagation();
+
+            var self = this;
+            
+            // Toggle the visibility of the frame around the object.                   
+            function toggle() {                                
+                var id = obj.getId();
+                var configuration = self.$scope.configuration;
+                configuration.panels[id].hasFrame = 
+                    !configuration.panels[id].hasFrame;
+
+                // Change which method is exposed, to influence
+                // which button is shown in the toolbar
+                delete obj[SHOW];
+                delete obj[HIDE];
+                obj[configuration.panels[id].hasFrame ? HIDE : SHOW] = toggle;
+            }
+
+            // Expose initial toggle
+            obj[this.$scope.configuration.panels[obj.getId()].hasFrame ? HIDE : SHOW] = toggle;            
+
+            if (this.selection) {                
+                // Update selection...                
+                this.selection.select(obj);
+            }
+        };
+
+        /**
+         * Clear the current user selection.
+         */
+        LayoutController.prototype.clearSelection = function (event) {
+            if (this.selection) {
+                this.selection.deselect();            
+            }
+        };
+
+        /**
+         * Check if the object has frame.
+         */
+        LayoutController.prototype.hasFrame = function(obj) {
+            return this.$scope.configuration.panels[obj.getId()].hasFrame;
+        }
 
         return LayoutController;
     }

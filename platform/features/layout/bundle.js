@@ -62,7 +62,29 @@ define([
                     "type": "layout",
                     "template": layoutTemplate,
                     "editable": true,
-                    "uses": []
+                    "uses": [],
+                    "toolbar": {
+                        "sections": [
+                            {
+                                "items": [
+                                    {
+                                        "method": "showFrame",
+                                        "cssClass": "icon-two-parts-both",
+                                        "control": "button",
+                                        "title": "Show frame",
+                                        "description": "Show frame"
+                                    },
+                                    {
+                                        "method": "hideFrame",
+                                        "cssClass": "icon-two-parts-both",
+                                        "control": "button",
+                                        "title": "Hide frame",
+                                        "description": "Hide frame"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
                 },
                 {
                     "key": "fixed",
@@ -110,7 +132,7 @@ define([
                                 ]
                             },
                             {
-                                "items": [
+                               "items": [
                                     {
                                         "method": "order",
                                         "cssClass": "icon-layers",

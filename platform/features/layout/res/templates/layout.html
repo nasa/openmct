@@ -19,11 +19,15 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="l-layout"
-     ng-controller="LayoutController as controller">
+
+<div class="l-layout" style="position: absolute; top: 0; right:0; bottom:0; left:0;"
+     ng-controller="LayoutController as controller"
+     ng-click="controller.clearSelection($event)">
 
     <div class='frame child-frame panel abs'
+         ng-class="{'no-frame': !controller.hasFrame(childObject)}"
          ng-repeat="childObject in composition"
+         ng-click="controller.select($event, childObject)"
          ng-style="controller.getFrameStyle(childObject.getId())">
 
         <mct-representation key="'frame'"
@@ -33,6 +37,7 @@
         <!-- Drag handles -->
         <span ng-show="domainObject.hasCapability('editor')">
             <span class="edit-handle edit-move"
+                  ng-class="{'s-selectable s-selected s-moveable' : controller.selected(childObject)}"
                   mct-drag-down="controller.startDrag(childObject.getId(), [1,1], [0,0])"
                   mct-drag="controller.continueDrag(delta)"
                   mct-drag-up="controller.endDrag()">
