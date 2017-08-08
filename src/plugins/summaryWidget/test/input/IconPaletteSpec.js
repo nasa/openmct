@@ -4,7 +4,7 @@ define(['../../src/input/IconPalette'], function (IconPalette) {
 
         beforeEach(function () {
             changeCallback = jasmine.createSpy('changeCallback');
-        })
+        });
 
         it('allows defining a custom icon set', function () {
             iconPalette = new IconPalette('someProperty', 'someClass', ['icon1', 'icon2', 'icon3']);
@@ -16,8 +16,8 @@ define(['../../src/input/IconPalette'], function (IconPalette) {
         });
 
         it('loads with a default icon set if one is not provided', function () {
-            iconPalette = new IconPalette('someProperty', 'someClass')
+            iconPalette = new IconPalette('someProperty', 'someClass');
             expect(iconPalette.getCurrent()).toBeDefined();
-        })
+        });
     });
 });

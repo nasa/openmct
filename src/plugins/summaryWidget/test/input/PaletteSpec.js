@@ -12,17 +12,17 @@ define(['../../src/input/Palette'], function (Palette) {
             expect(palette.getCurrent()).toEqual('item1');
         });
 
-        it('allows setting the current item', function() {
+        it('allows setting the current item', function () {
             palette.set('item2');
             expect(palette.getCurrent()).toEqual('item2');
         });
 
         it('allows registering change callbacks, and errors when an unsupported event is registered', function () {
             expect(function () {
-                palette.on('change', callbackSpy1)
+                palette.on('change', callbackSpy1);
             }).not.toThrow();
             expect(function () {
-                palette.on('someUnsupportedEvent', callbackSpy1)
+                palette.on('someUnsupportedEvent', callbackSpy1);
             }).toThrow();
         });
 

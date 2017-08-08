@@ -1,6 +1,4 @@
-define(
-    ['./Select'],
-    function (Select) {
+define(['./Select'], function (Select) {
 
     // wraps a generic Select and populates it with telemetry metadata
     function KeySelect(conditionConfig, objectSelect, conditionManager) {
@@ -11,7 +9,7 @@ define(
         this.manager = conditionManager;
 
         this.select = new Select('key');
-        this.select.addOption('','--Key--');
+        this.select.addOption('', '--Key--');
 
         function onObjectChange(identifier) {
             var selected = self.manager.metadataLoadCompleted() ? self.select.getSelected() : self.config.key;
@@ -40,7 +38,7 @@ define(
 
     //populate this select with options based on its current composition
     KeySelect.prototype.generateOptions = function () {
-        var items = Object.entries(this.telemetryMetadata).map( function(metaDatum) {
+        var items = Object.entries(this.telemetryMetadata).map(function (metaDatum) {
             return [metaDatum[0], metaDatum[1].name];
         });
         items.splice(0, 0, ['','--Key--']);

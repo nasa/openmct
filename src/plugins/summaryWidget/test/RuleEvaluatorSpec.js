@@ -28,7 +28,7 @@ define(['../src/RuleEvaluator'], function (RuleEvaluator) {
                         type: 'Centaur'
                     }
                 }
-            }
+            };
             mockConditions = [{
                 object: 'a',
                 key: 'alpha',
@@ -39,13 +39,13 @@ define(['../src/RuleEvaluator'], function (RuleEvaluator) {
                 key: 'gamma',
                 operation: 'lessThan',
                 values: [5]
-            }]
+            }];
             mockConditionsEmpty = [{
                 object: '',
                 key: '',
                 operation: '',
                 values: []
-            }]
+            }];
             mockConditionsUndefined = [{
                 object: 'No Such Object',
                 key: '',
@@ -61,39 +61,49 @@ define(['../src/RuleEvaluator'], function (RuleEvaluator) {
                 key: 'alpha',
                 operation: 'No Such Operation',
                 values: []
-            }]
+            }];
             mockOperations = {
                 greaterThan: {
-                    operation: function (input) {return input[0] > input[1]},
+                    operation: function (input) {
+                        return input[0] > input[1];
+                    },
                     text: 'is Greater Than',
                     appliesTo: ['number'],
                     inputCount: 1
                 },
                 lessThan: {
-                    operation: function(input) {return input[0] < input[1]},
+                    operation: function (input) {
+                        return input[0] < input[1];
+                    },
                     text: 'is Less Than',
                     appliesTo: ['number'],
                     inputCount: 1
                 },
                 textContains: {
-                    operation: function(input) {return input[0] && input[1] && input[0].includes(input[1])},
+                    operation: function (input) {
+                        return input[0] && input[1] && input[0].includes(input[1]);
+                    },
                     text: 'Text Contains',
                     appliesTo: ['string'],
                     inputCount: 1
                 },
                 textIsExactly: {
-                    operation: function(input) {return input[0] === input[1]},
+                    operation: function (input) {
+                        return input[0] === input[1];
+                    },
                     text: 'Text is Exactly',
                     appliesTo: ['string'],
                     inputCount: 1
                 },
                 isHalfHorse: {
-                    operation: function(input) {return input[0].type === 'Centaur'},
+                    operation: function (input) {
+                        return input[0].type === 'Centaur';
+                    },
                     text: 'is Half Horse',
                     appliesTo: ['mythicalCreature'],
                     inputCount: 0
                 }
-            }
+            };
             evaluator = new RuleEvaluator(mockCache);
             testEvaluator = new RuleEvaluator(mockCache);
             evaluator.operations = mockOperations;
@@ -110,8 +120,10 @@ define(['../src/RuleEvaluator'], function (RuleEvaluator) {
         });
 
         it('handles malformed conditions gracefully', function () {
-            //if no conditions are fully defined, should return false
+            //if no conditions are fully defined, should return false for any mode
             expect(evaluator.execute(mockConditionsUndefined, 'any')).toEqual(false);
+            expect(evaluator.execute(mockConditionsUndefined, 'all')).toEqual(false);
+            expect(evaluator.execute(mockConditionsUndefined, 'js')).toEqual(false);
             //these conditions are true: evaluator should ignore undefined conditions,
             //and evaluate the rule as true
             mockConditionsUndefined.push({
@@ -132,14 +144,14 @@ define(['../src/RuleEvaluator'], function (RuleEvaluator) {
 
         it('gets the keys for possible operations', function () {
             expect(evaluator.getOperationKeys()).toEqual(
-              ['greaterThan', 'lessThan', 'textContains', 'textIsExactly', 'isHalfHorse'])
+              ['greaterThan', 'lessThan', 'textContains', 'textIsExactly', 'isHalfHorse']);
         });
 
         it('gets output text for a given operation', function () {
             expect(evaluator.getOperationText('isHalfHorse')).toEqual('is Half Horse');
         });
 
-        it('correctly returns whether an operation applies to a given type', function() {
+        it('correctly returns whether an operation applies to a given type', function () {
             expect(evaluator.operationAppliesTo('isHalfHorse', 'mythicalCreature')).toEqual(true);
             expect(evaluator.operationAppliesTo('isHalfHorse', 'spaceJunk')).toEqual(false);
         });
@@ -157,42 +169,42 @@ define(['../src/RuleEvaluator'], function (RuleEvaluator) {
         it('supports all required operations', function () {
             //equal to
             testOperation = testEvaluator.operations.equalTo.operation;
-            expect(testOperation([33,33])).toEqual(true);
-            expect(testOperation([55,147])).toEqual(false);
+            expect(testOperation([33, 33])).toEqual(true);
+            expect(testOperation([55, 147])).toEqual(false);
             //not equal to
             testOperation = testEvaluator.operations.notEqualTo.operation;
-            expect(testOperation([33,33])).toEqual(false);
-            expect(testOperation([55,147])).toEqual(true);
+            expect(testOperation([33, 33])).toEqual(false);
+            expect(testOperation([55, 147])).toEqual(true);
             //greater than
             testOperation = testEvaluator.operations.greaterThan.operation;
-            expect(testOperation([100,33])).toEqual(true);
-            expect(testOperation([33,33])).toEqual(false);
-            expect(testOperation([55,147])).toEqual(false);
+            expect(testOperation([100, 33])).toEqual(true);
+            expect(testOperation([33, 33])).toEqual(false);
+            expect(testOperation([55, 147])).toEqual(false);
             //less than
             testOperation = testEvaluator.operations.lessThan.operation;
-            expect(testOperation([100,33])).toEqual(false);
-            expect(testOperation([33,33])).toEqual(false);
-            expect(testOperation([55,147])).toEqual(true);
+            expect(testOperation([100, 33])).toEqual(false);
+            expect(testOperation([33, 33])).toEqual(false);
+            expect(testOperation([55, 147])).toEqual(true);
             //greater than or equal to
             testOperation = testEvaluator.operations.greaterThanOrEq.operation;
-            expect(testOperation([100,33])).toEqual(true);
-            expect(testOperation([33,33])).toEqual(true);
-            expect(testOperation([55,147])).toEqual(false);
+            expect(testOperation([100, 33])).toEqual(true);
+            expect(testOperation([33, 33])).toEqual(true);
+            expect(testOperation([55, 147])).toEqual(false);
             //less than or equal to
             testOperation = testEvaluator.operations.lessThanOrEq.operation;
-            expect(testOperation([100,33])).toEqual(false);
-            expect(testOperation([33,33])).toEqual(true);
-            expect(testOperation([55,147])).toEqual(true);
+            expect(testOperation([100, 33])).toEqual(false);
+            expect(testOperation([33, 33])).toEqual(true);
+            expect(testOperation([55, 147])).toEqual(true);
             //between
             testOperation = testEvaluator.operations.between.operation;
-            expect(testOperation([100,33,66])).toEqual(false);
-            expect(testOperation([1,33,66])).toEqual(false);
-            expect(testOperation([45,33,66])).toEqual(true);
+            expect(testOperation([100, 33, 66])).toEqual(false);
+            expect(testOperation([1, 33, 66])).toEqual(false);
+            expect(testOperation([45, 33, 66])).toEqual(true);
             //not between
             testOperation = testEvaluator.operations.notBetween.operation;
-            expect(testOperation([100,33,66])).toEqual(true);
-            expect(testOperation([1,33,66])).toEqual(true);
-            expect(testOperation([45,33,66])).toEqual(false);
+            expect(testOperation([100, 33, 66])).toEqual(true);
+            expect(testOperation([1, 33, 66])).toEqual(true);
+            expect(testOperation([45, 33, 66])).toEqual(false);
             //text contains
             testOperation = testEvaluator.operations.textContains.operation;
             expect(testOperation(['Testing', 'tin'])).toEqual(true);

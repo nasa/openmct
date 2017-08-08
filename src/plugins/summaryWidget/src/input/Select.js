@@ -1,12 +1,12 @@
 define(
-    [
-        'text!../../res/input/selectTemplate.html',
-        'zepto'
-    ],
-    function (
-        selectTemplate,
-        $
-    ) {
+  [
+    'text!../../res/input/selectTemplate.html',
+    'zepto'
+  ],
+  function (
+    selectTemplate,
+    $
+  ) {
 
     //a wrapper module for dynamically poplulating an HTML select element
     function Select(property) {
@@ -26,14 +26,14 @@ define(
             var elem = event.target,
                 value = self.options[$(elem).prop('selectedIndex')];
 
-            self.changeCallbacks.forEach( function(callback) {
+            self.changeCallbacks.forEach(function (callback) {
                 if (callback) {
                     callback(value[0], self.property);
                 }
             });
         }
 
-        $('select', this.domElement).on('change' , onChange);
+        $('select', this.domElement).on('change', onChange);
     }
 
     Select.prototype.getDOM = function () {
@@ -55,7 +55,7 @@ define(
         selectedIndex = $('select', this.domElement).prop('selectedIndex');
         $('option', this.domElement).remove();
 
-        self.options.forEach( function (option, index) {
+        self.options.forEach(function (option, index) {
             $('select', self.domElement)
                 .append('<option value = "' + option[0] + '"' + ' >' +
                         option[1] + '</option>');
@@ -90,7 +90,7 @@ define(
         $('select', this.domElement).prop('selectedIndex', selectedIndex);
 
         selectedOption = this.options[selectedIndex];
-        this.changeCallbacks.forEach( function(callback) {
+        this.changeCallbacks.forEach(function (callback) {
             if (callback) {
                 callback(selectedOption[0], self.property);
             }

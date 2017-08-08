@@ -1,12 +1,12 @@
 define (
-    [
-        './RuleEvaluator',
-        'lodash'
-    ],
-    function (
-        RuleEvaluator,
-        _
-    ) {
+  [
+    './RuleEvaluator',
+    'lodash'
+  ],
+  function (
+    RuleEvaluator,
+    _
+  ) {
 
     // provide a centralized content manager for conditions in the summary widget.
     // Load and cache composition and telemetry subscriptions, and handle evaluation
@@ -49,8 +49,8 @@ define (
 
             self.telemetryTypesById[object.identifier.key] = {};
 
-            return telemetryAPI.request(object, {}).then( function (telemetry) {
-                Object.entries(telemetry[0]).forEach( function(telem) {
+            return telemetryAPI.request(object, {}).then(function (telemetry) {
+                Object.entries(telemetry[0]).forEach(function (telem) {
                     self.telemetryTypesById[object.identifier.key][telem[0]] = typeof telem[1];
                 });
             });
@@ -63,21 +63,21 @@ define (
                     if (objs.length === 0) {
                         resolve();
                     }
-                    objs.forEach(function(obj) {
-                        getPropertyTypes(obj).then( function () {
+                    objs.forEach(function (obj) {
+                        getPropertyTypes(obj).then(function () {
                             if (index === objs.length - 1) {
                                 resolve();
                             }
                             index += 1;
                         });
                     });
-            });
+                });
             return promise;
         }
 
         function handleSubscriptionCallback(objId, datum) {
             self.subscriptionCache[objId] = datum;
-            self.callbacks.receiveTelemetry.forEach( function (callback) {
+            self.callbacks.receiveTelemetry.forEach(function (callback) {
                 if (callback) {
                     callback();
                 }
@@ -93,7 +93,7 @@ define (
             if (telemetryAPI.canProvideTelemetry(obj)) {
                 self.compositionObjs[objId] = obj;
                 self.telemetryMetadataById[objId] = {};
-                compositionKeys = self.domainObject.composition.map( function (object) {
+                compositionKeys = self.domainObject.composition.map(function (object) {
                     return object.key;
                 });
                 if (!compositionKeys.includes(obj.identifier.key)) {
@@ -101,12 +101,12 @@ define (
                 }
 
                 telemetryMetadata = telemetryAPI.getMetadata(obj).values();
-                telemetryMetadata.forEach( function (metaDatum) {
+                telemetryMetadata.forEach(function (metaDatum) {
                     self.telemetryMetadataById[objId][metaDatum.key] = metaDatum;
                 });
 
                 self.subscriptionCache[objId] = {};
-                self.subscriptions[objId] = telemetryAPI.subscribe(obj, function(datum) {
+                self.subscriptions[objId] = telemetryAPI.subscribe(obj, function (datum) {
                     handleSubscriptionCallback(objId, datum);
                 }, {});
 
@@ -116,8 +116,8 @@ define (
                     getPropertyTypes(obj);
                 }
 
-                self.callbacks.add.forEach( function (callback) {
-                    if(callback) {
+                self.callbacks.add.forEach(function (callback) {
+                    if (callback) {
                         callback(obj);
                     }
                 });
@@ -129,7 +129,7 @@ define (
                 return id.key === identifier.key;
             });
             delete self.compositionObjs[identifier.key];
-            self.callbacks.remove.forEach( function (callback) {
+            self.callbacks.remove.forEach(function (callback) {
                 if (callback) {
                     callback(identifier);
                 }
@@ -138,15 +138,15 @@ define (
 
         function onCompositionLoad() {
             self.loadComplete = true;
-            self.callbacks.load.forEach( function (callback) {
-                if(callback) {
+            self.callbacks.load.forEach(function (callback) {
+                if (callback) {
                     callback();
                 }
             });
-            loadMetadata().then( function () {
+            loadMetadata().then(function () {
                 self.metadataLoadComplete = true;
-                self.callbacks.metadata.forEach( function(callback) {
-                    if(callback) {
+                self.callbacks.metadata.forEach(function (callback) {
+                    if (callback) {
                         callback();
                     }
                 });
@@ -161,21 +161,21 @@ define (
     }
 
     ConditionManager.prototype.on = function (event, callback) {
-        if(this.callbacks[event]) {
+        if (this.callbacks[event]) {
             this.callbacks[event].push(callback);
         } else {
             throw new Error('Unsupported event type: ' + event);
         }
     };
 
-    ConditionManager.prototype.executeRules = function(ruleOrder, rules){
+    ConditionManager.prototype.executeRules = function (ruleOrder, rules) {
         var self = this,
             activeId = ruleOrder[0],
             rule;
 
-        ruleOrder.forEach( function (ruleId) {
+        ruleOrder.forEach(function (ruleId) {
             rule = rules[ruleId];
-            if(self.evaluator.execute(rule.getProperty('conditions'), rule.getProperty('trigger'))) {
+            if (self.evaluator.execute(rule.getProperty('conditions'), rule.getProperty('trigger'))) {
                 activeId = ruleId;
             }
         });

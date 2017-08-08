@@ -1,4 +1,4 @@
-define(['../src/Rule'], function(Rule) {
+define(['../src/Rule'], function (Rule) {
     describe('A Summary Widget Rule', function () {
         var mockRuleConfig,
             mockDomainObject,
@@ -9,7 +9,7 @@ define(['../src/Rule'], function(Rule) {
             duplicateSpy,
             changeSpy;
 
-        beforeEach(function() {
+        beforeEach(function () {
             mockRuleConfig = {
                 name: 'Name',
                 id: 'mockRule',
@@ -27,14 +27,14 @@ define(['../src/Rule'], function(Rule) {
                 //     operation: '',
                 //     values: []
                 // }]
-            }
+            };
             mockDomainObject = {
                 ruleConfigById: {
                     mockRule: mockRuleConfig
                 }
-            }
-            mockOpenMCT = jasmine.createSpyObj('', ['objects'])
-            mockOpenMCT.objects = jasmine.createSpyObj('', ['mutate'])
+            };
+            mockOpenMCT = jasmine.createSpyObj('', ['objects']);
+            mockOpenMCT.objects = jasmine.createSpyObj('', ['mutate']);
             mockConditionManager = jasmine.createSpyObj('', [
                 'on',
                 'getComposition',
@@ -80,6 +80,6 @@ define(['../src/Rule'], function(Rule) {
             testRule.duplicate();
             mockRuleConfig.expanded = true;
             expect(duplicateSpy).toHaveBeenCalledWith(mockRuleConfig);
-        })
+        });
     });
 });

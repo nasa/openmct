@@ -1,20 +1,20 @@
 define(
-    [
-        'text!../res/ruleTemplate.html',
-        './Condition',
-        './input/ColorPalette',
-        './input/IconPalette',
-        'lodash',
-        'zepto'
-    ],
-    function (
-        ruleTemplate,
-        Condition,
-        ColorPalette,
-        IconPalette,
-        _,
-        $
-    ) {
+  [
+    'text!../res/ruleTemplate.html',
+    './Condition',
+    './input/ColorPalette',
+    './input/IconPalette',
+    'lodash',
+    'zepto'
+  ],
+  function (
+    ruleTemplate,
+    Condition,
+    ColorPalette,
+    IconPalette,
+    _,
+    $
+  ) {
 
     // a module representing a summary widget rule. Maintains a set of text
     // and css properties for output, and a set of conditions for configuring
@@ -78,7 +78,7 @@ define(
         function onIconInput(icon) {
             self.config.icon = icon;
             self.updateDomainObject('icon', icon);
-            self.callbacks.change.forEach( function (callback) {
+            self.callbacks.change.forEach(function (callback) {
                 if (callback) {
                     callback();
                 }
@@ -89,7 +89,7 @@ define(
             self.config.style[property] = color;
             self.updateDomainObject('style.' + property, color);
             self.thumbnail.css(property, color);
-            self.callbacks.change.forEach( function (callback) {
+            self.callbacks.change.forEach(function (callback) {
                 if (callback) {
                     callback();
                 }
@@ -100,7 +100,7 @@ define(
             var elem = event.target;
             self.config.trigger = elem.value;
             self.updateDomainObject('trigger', elem.value);
-            self.callbacks.change.forEach( function (callback) {
+            self.callbacks.change.forEach(function (callback) {
                 if (callback) {
                     callback();
                 }
@@ -114,32 +114,32 @@ define(
         }
 
         function onTextInput(elem, inputKey) {
-              self.config[inputKey] = elem.value;
-              self.updateDomainObject(inputKey, elem.value);
-              if (inputKey === 'name') {
-                  self.title.html(elem.value);
-              }
-              self.callbacks.change.forEach( function (callback) {
-                  if (callback) {
-                      callback();
-                  }
-              });
+            self.config[inputKey] = elem.value;
+            self.updateDomainObject(inputKey, elem.value);
+            if (inputKey === 'name') {
+                self.title.html(elem.value);
+            }
+            self.callbacks.change.forEach(function (callback) {
+                if (callback) {
+                    callback();
+                }
+            });
         }
 
         $('.t-rule-label-input', this.domElement).before(this.iconInput.getDOM());
         this.iconInput.set(self.config.icon);
         this.iconInput.on('change', onIconInput);
 
-        Object.keys(this.colorInputs).forEach( function (inputKey) {
+        Object.keys(this.colorInputs).forEach(function (inputKey) {
             var input = self.colorInputs[inputKey];
             input.on('change', onColorInput);
             input.set(self.config.style[inputKey]);
             $('.t-style-input', self.domElement).append(input.getDOM());
         });
 
-        Object.keys(this.textInputs).forEach( function (inputKey) {
+        Object.keys(this.textInputs).forEach(function (inputKey) {
             self.textInputs[inputKey].prop('value', self.config[inputKey]);
-            self.textInputs[inputKey].on('input', function (){
+            self.textInputs[inputKey].on('input', function () {
                 onTextInput(this, inputKey);
             });
         });
@@ -178,15 +178,15 @@ define(
     };
 
     Rule.prototype.on = function (event, callback) {
-        if(this.callbacks[event]) {
+        if (this.callbacks[event]) {
             this.callbacks[event].push(callback);
         }
     };
 
-    Rule.prototype.onConditionChange = function(value, property, index) {
+    Rule.prototype.onConditionChange = function (value, property, index) {
         _.set(this.config.conditions[index], property, value);
         this.updateDomainObject('conditions[' + index + '].' + property, value);
-        this.callbacks.change.forEach( function (callback) {
+        this.callbacks.change.forEach(function (callback) {
             if (callback) {
                 callback();
             }
@@ -214,7 +214,7 @@ define(
         self.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById', ruleConfigById);
         self.openmct.objects.mutate(this.domainObject, 'configuration.ruleOrder', ruleOrder);
 
-        self.callbacks.remove.forEach( function (callback) {
+        self.callbacks.remove.forEach(function (callback) {
             if (callback) {
                 callback();
             }
@@ -227,7 +227,7 @@ define(
         var sourceRule = JSON.parse(JSON.stringify(this.config)),
             self = this;
         sourceRule.expanded = true;
-        self.callbacks.duplicate.forEach( function (callback) {
+        self.callbacks.duplicate.forEach(function (callback) {
             if (callback) {
                 callback(sourceRule);
             }
@@ -264,7 +264,7 @@ define(
         self.conditions = [];
         $('.t-condition', this.domElement).remove();
 
-        this.config.conditions.forEach( function (condition, index) {
+        this.config.conditions.forEach(function (condition, index) {
             var newCondition = new Condition(condition, index, self.conditionManager);
             newCondition.on('remove', self.removeCondition);
             newCondition.on('duplicate', self.initCondition);
@@ -272,7 +272,7 @@ define(
             self.conditions.push(newCondition);
         });
 
-        self.conditions.forEach( function (condition) {
+        self.conditions.forEach(function (condition) {
             $('li:last-of-type', self.conditionArea).before(condition.getDOM());
         });
 
@@ -282,19 +282,19 @@ define(
     };
 
     Rule.prototype.removeCondition = function (removeIndex) {
-      var ruleConfigById = this.domainObject.configuration.ruleConfigById,
-          conditions = ruleConfigById[this.config.id].conditions,
-          conditionLabels = ruleConfigById[this.config.id].conditionLabels;
+        var ruleConfigById = this.domainObject.configuration.ruleConfigById,
+            conditions = ruleConfigById[this.config.id].conditions,
+            conditionLabels = ruleConfigById[this.config.id].conditionLabels;
 
-      _.remove(conditions, function (condition, index) {
-          return index === removeIndex;
-      });
-      _.remove(conditionLabels, function (condition, index) {
-          return index === removeIndex;
-      });
+        _.remove(conditions, function (condition, index) {
+            return index === removeIndex;
+        });
+        _.remove(conditionLabels, function (condition, index) {
+            return index === removeIndex;
+        });
 
-      this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById', ruleConfigById);
-      this.refreshConditions();
+        this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById', ruleConfigById);
+        this.refreshConditions();
     };
 
     return Rule;

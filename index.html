@@ -29,7 +29,7 @@
     <script>
         var THIRTY_MINUTES = 30 * 60 * 1000;
 
-        require(['openmct','src/plugins/summaryWidget/widgetPlugin'], function (openmct, widgetPlugin) {
+        require(['openmct'], function (openmct) {
             [
                 'example/eventGenerator',
                 'example/styleguide'
@@ -63,7 +63,7 @@
                     }
                 ]
             }));
-            openmct.install((new widgetPlugin()).plugin());
+            openmct.install(openmct.plugins.SummaryWidget());
             openmct.time.clock('local', {start: -THIRTY_MINUTES, end: 0});
             openmct.time.timeSystem('utc');
             openmct.start();

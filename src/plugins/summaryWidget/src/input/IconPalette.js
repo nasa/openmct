@@ -1,12 +1,12 @@
 define(
-    [
-        './Palette',
-        'zepto'
-    ],
-    function (
-        Palette,
-        $
-    ) {
+  [
+      './Palette',
+      'zepto'
+  ],
+  function (
+    Palette,
+    $
+  ) {
 
     var DEFAULT_ICONS = [
         'icon-alert-rect',

@@ -1,18 +1,18 @@
 define(
-    [
-        'text!../res/widgetTemplate.html',
-        './Rule',
-        './ConditionManager',
-        'lodash',
-        'zepto'
-    ],
-    function (
-        widgetTemplate,
-        Rule,
-        ConditionManager,
-        _,
-        $
-    ) {
+  [
+    'text!../res/widgetTemplate.html',
+    './Rule',
+    './ConditionManager',
+    'lodash',
+    'zepto'
+  ],
+  function (
+    widgetTemplate,
+    Rule,
+    ConditionManager,
+    _,
+    $
+  ) {
 
     //default css configuration for new rules
     var DEFAULT_PROPS = {
@@ -94,7 +94,7 @@ define(
 
         //create a unique identifier
         while (ruleIds.includes('rule' + ruleCount)) {
-             ruleCount = ++ruleCount;
+            ruleCount = ++ruleCount;
         }
 
         // //add rule to config
@@ -146,7 +146,7 @@ define(
             rules = self.rulesById;
 
         $('#ruleArea', this.widget).html('');
-        Object.values(ruleOrder).forEach( function (ruleId) {
+        Object.values(ruleOrder).forEach(function (ruleId) {
             self.initRule(ruleId);
             $('#ruleArea', self.widget).append(rules[ruleId].getDOM());
         });
@@ -156,15 +156,15 @@ define(
     // Arguments:
     // elem: the DOM element to which the rules will be applied
     // style: an object representing the style
-    WidgetView.prototype.applyStyle = function(elem, style) {
-        Object.keys(style).forEach( function (propId) {
+    WidgetView.prototype.applyStyle = function (elem, style) {
+        Object.keys(style).forEach(function (propId) {
             elem.css(propId, style[propId]);
         });
     };
 
-    WidgetView.prototype.updateWidget = function() {
+    WidgetView.prototype.updateWidget = function () {
         var activeRule = this.rulesById[this.activeId];
-        this.applyStyle( $('#widget', this.widget), activeRule.getProperty('style'));
+        this.applyStyle($('#widget', this.widget), activeRule.getProperty('style'));
         $('#widgetLabel', this.widget).html(activeRule.getProperty('label'));
         $('#widgetIcon', this.widget).removeClass().addClass(activeRule.getProperty('icon'));
     };
@@ -173,7 +173,7 @@ define(
         return _.get(this.domainObject.configuration, path);
     };
 
-    WidgetView.prototype.setConfigProp = function(path, value) {
+    WidgetView.prototype.setConfigProp = function (path, value) {
         this.openmct.objects.mutate(this.domainObject, 'configuration.' + path, value);
         return this.getConfigProp(path);
     };
@@ -182,7 +182,7 @@ define(
         return _.has(this.domainObject.configuration, path);
     };
 
-    WidgetView.prototype.removeConfigProp = function(path) {
+    WidgetView.prototype.removeConfigProp = function (path) {
         var config = this.domainObject.configuration;
         _.set(config, path, undefined);
         this.openmct.objects.mutate(this.domainObject, 'configuration', config);

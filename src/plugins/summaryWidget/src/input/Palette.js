@@ -1,12 +1,12 @@
 define(
-    [
-        'text!../../res/input/paletteTemplate.html',
-        'zepto'
-    ],
-    function (
-        paletteTemplate,
-        $
-    ) {
+  [
+    'text!../../res/input/paletteTemplate.html',
+    'zepto'
+  ],
+  function (
+    paletteTemplate,
+    $
+  ) {
 
     //Generic wrapper class for OpenMCT palettes
     function Palette(property, cssClass, items) {
@@ -22,7 +22,7 @@ define(
 
         self.domElement.addClass(this.cssClass);
         $('.l-palette-row', self.domElement).after('<div class = "l-palette-row"> </div>');
-        self.items.forEach( function (item) {
+        self.items.forEach(function (item) {
             $('.l-palette-row:last-of-type', self.domElement).append(
                 '<div class = "l-palette-item s-palette-item"' +
                 ' data-item = ' + item + '> </div>'
@@ -51,7 +51,7 @@ define(
         $('.s-palette-item', self.domElement).on('click', handleItemClick);
     }
 
-    Palette.prototype.getDOM = function() {
+    Palette.prototype.getDOM = function () {
         return this.domElement;
     };
 
@@ -69,10 +69,10 @@ define(
 
     Palette.prototype.set = function (item) {
         var self = this;
-        if (this.items.includes(item)){
+        if (this.items.includes(item)) {
             this.value = item;
         }
-        this.changeCallbacks.forEach( function (callback) {
+        this.changeCallbacks.forEach(function (callback) {
             if (callback) {
                 callback(self.value, self.property);
             }

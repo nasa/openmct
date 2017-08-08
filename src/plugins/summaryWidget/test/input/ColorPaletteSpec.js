@@ -4,7 +4,7 @@ define(['../../src/input/ColorPalette'], function (ColorPalette) {
 
         beforeEach(function () {
             changeCallback = jasmine.createSpy('changeCallback');
-        })
+        });
 
         it('allows defining a custom color set', function () {
             colorPalette = new ColorPalette('someProperty', 'someClass', ['color1', 'color2', 'color3']);
@@ -16,8 +16,8 @@ define(['../../src/input/ColorPalette'], function (ColorPalette) {
         });
 
         it('loads with a default color set if one is not provided', function () {
-            colorPalette = new ColorPalette('someProperty', 'someClass')
+            colorPalette = new ColorPalette('someProperty', 'someClass');
             expect(colorPalette.getCurrent()).toBeDefined();
-        })
+        });
     });
 });

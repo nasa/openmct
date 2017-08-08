@@ -28,19 +28,19 @@ define(['../../src/input/Select'], function (Select) {
 
         it('allows registering change callbacks, and errors when an unsupported event is registered', function () {
             expect(function () {
-                select.on('change', callbackSpy1)
+                select.on('change', callbackSpy1);
             }).not.toThrow();
             expect(function () {
-                select.on('someUnsupportedEvent', callbackSpy1)
+                select.on('someUnsupportedEvent', callbackSpy1);
             }).toThrow();
         });
 
         it('injects its callbacks with its property and value on a change', function () {
-              select.on('change', callbackSpy1);
-              select.on('change', callbackSpy2);
-              select.setSelected('item2');
-              expect(callbackSpy1).toHaveBeenCalledWith('item2', 'testProperty');
-              expect(callbackSpy2).toHaveBeenCalledWith('item2', 'testProperty');
+            select.on('change', callbackSpy1);
+            select.on('change', callbackSpy2);
+            select.setSelected('item2');
+            expect(callbackSpy1).toHaveBeenCalledWith('item2', 'testProperty');
+            expect(callbackSpy2).toHaveBeenCalledWith('item2', 'testProperty');
         });
 
         it('gracefully handles being set to an item not included in its set', function () {

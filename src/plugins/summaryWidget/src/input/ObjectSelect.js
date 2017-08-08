@@ -1,10 +1,7 @@
-define(
-    ['./Select'],
-    function(Select)
-    {
+define(['./Select'], function (Select) {
 
     //wraps a generic select input and populates its input with composition objects
-    function ObjectSelect (config, manager) {
+    function ObjectSelect(config, manager) {
         var self = this;
 
         this.config = config;
@@ -43,7 +40,7 @@ define(
 
     //populate this select with options based on its current composition
     ObjectSelect.prototype.generateOptions = function () {
-        var items = Object.values(this.compositionObjs).map( function(obj) {
+        var items = Object.values(this.compositionObjs).map(function (obj) {
             return [obj.identifier.key, obj.name];
         });
         items.splice(0, 0, ['','--Object--']);

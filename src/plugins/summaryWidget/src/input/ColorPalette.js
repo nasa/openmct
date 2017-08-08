@@ -1,12 +1,11 @@
-define(
-    [
-        './Palette',
-        'zepto'
-    ],
-    function (
-        Palette,
-        $
-    ) {
+define([
+    './Palette',
+    'zepto'
+],
+function (
+    Palette,
+    $
+) {
 
     var DEFAULT_COLORS = [
           '#ff0000',
@@ -22,7 +21,6 @@ define(
           '#cccccc',
           '#ffffff'
       ];
-
 
     function ColorPalette(property, cssClass, colors) {
         this.colors = colors || DEFAULT_COLORS;

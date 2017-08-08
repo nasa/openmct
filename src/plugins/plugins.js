@@ -26,14 +26,16 @@ define([
     '../../example/generator/plugin',
     '../../platform/features/autoflow/plugin',
     './timeConductor/plugin',
-    '../../example/imagery/plugin'
+    '../../example/imagery/plugin',
+    './summaryWidget/plugin'
 ], function (
     _,
     UTCTimeSystem,
     GeneratorPlugin,
     AutoflowPlugin,
     TimeConductorPlugin,
-    ExampleImagery
+    ExampleImagery,
+    SummaryWidget
 ) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
@@ -116,6 +118,8 @@ define([
     };
 
     plugins.ExampleImagery = ExampleImagery;
+
+    plugins.SummaryWidget = SummaryWidget;
 
     return plugins;
 });

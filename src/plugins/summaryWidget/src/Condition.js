@@ -1,20 +1,18 @@
-define(
-    [
-      'text!../res/conditionTemplate.html',
-      './input/Select',
-      './input/ObjectSelect',
-      './input/KeySelect',
-      './input/OperationSelect',
-      'zepto'
-    ],
-    function (
-        conditionTemplate,
-        Select,
-        ObjectSelect,
-        KeySelect,
-        OperationSelect,
-        $
-    ) {
+define([
+    'text!../res/conditionTemplate.html',
+    './input/Select',
+    './input/ObjectSelect',
+    './input/KeySelect',
+    './input/OperationSelect',
+    'zepto'
+], function (
+    conditionTemplate,
+    Select,
+    ObjectSelect,
+    KeySelect,
+    OperationSelect,
+    $
+) {
 
     // an individual condition for a summary widget rule.
     // parameter:
@@ -48,8 +46,8 @@ define(
         var self = this;
 
         function onSelectChange(value, property) {
-            self.callbacks.change.forEach( function (callback) {
-                if(callback) {
+            self.callbacks.change.forEach(function (callback) {
+                if (callback) {
                     callback(value, property, self.index);
                 }
             });
@@ -80,7 +78,7 @@ define(
         this.selects.object.on('change', onSelectChange);
         this.selects.key.on('change', onSelectChange);
 
-        Object.values(this.selects).forEach( function(select) {
+        Object.values(this.selects).forEach(function (select) {
             $('.t-configuration', self.domElement).append(select.getDOM());
         });
 
@@ -93,12 +91,12 @@ define(
     };
 
     Condition.prototype.on = function (event, callback) {
-        if(this.callbacks[event]) {
+        if (this.callbacks[event]) {
             this.callbacks[event].push(callback);
         }
     };
 
-    Condition.prototype.hideButtons = function() {
+    Condition.prototype.hideButtons = function () {
         this.deleteButton.hide();
     };
 
@@ -115,13 +113,13 @@ define(
         var sourceCondition = JSON.parse(JSON.stringify(this.config)),
             self = this;
         this.callbacks.duplicate.forEach(function (callback) {
-            if(callback) {
+            if (callback) {
                 callback(sourceCondition, self.index);
             }
         });
     };
 
-    Condition.prototype.generateValueInputs = function(operation) {
+    Condition.prototype.generateValueInputs = function (operation) {
         var evaluator = this.conditionManager.getEvaluator(),
             inputArea = $('.t-value-inputs', this.domElement),
             inputCount,

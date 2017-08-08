@@ -1,6 +1,4 @@
-define(
-    ['./Select'],
-    function (Select) {
+define(['./Select'], function (Select) {
 
     //wraps a generic Select and populates it with available operations
     function OperationSelect(conditionConfig, keySelect, conditionManager, changeCallback) {
@@ -15,7 +13,7 @@ define(
         this.loadComplete = false;
 
         this.select = new Select('operation');
-        this.select.addOption('','--Operation--');
+        this.select.addOption('', '--Operation--');
         if (changeCallback) {
             this.select.on('change', changeCallback);
         }
@@ -49,10 +47,10 @@ define(
 
     OperationSelect.prototype.generateOptions = function () {
         var self = this,
-            items = this.operationKeys.map( function(operation) {
+            items = this.operationKeys.map(function (operation) {
                 return [operation, self.evaluator.getOperationText(operation)];
             });
-        items.splice(0, 0, ['','--Operation--']);
+        items.splice(0, 0, ['', '--Operation--']);
         this.select.setOptions(items);
     };
 
@@ -63,7 +61,7 @@ define(
 
         type = self.manager.getTelemetryPropertyType(self.config.object, key);
 
-        self.operationKeys = operations.filter( function(operation) {
+        self.operationKeys = operations.filter(function (operation) {
             return self.evaluator.operationAppliesTo(operation, type);
         });
     };
