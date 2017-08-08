@@ -29,8 +29,11 @@ define(['../src/Rule'], function (Rule) {
                 // }]
             };
             mockDomainObject = {
-                ruleConfigById: {
-                    mockRule: mockRuleConfig
+                configuration: {
+                    ruleConfigById: {
+                        mockRule: mockRuleConfig
+                    },
+                    ruleOrder: ['default', 'mockRule', 'otherRule']
                 }
             };
             mockOpenMCT = jasmine.createSpyObj('', ['objects']);

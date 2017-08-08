@@ -1,12 +1,10 @@
-define(
-  [
+define([
       './Palette',
       'zepto'
-  ],
-  function (
+], function (
     Palette,
     $
-  ) {
+) {
 
     var DEFAULT_ICONS = [
         'icon-alert-rect',
@@ -38,6 +36,8 @@ define(
     function IconPalette(property, cssClass, icons) {
         this.icons = icons || DEFAULT_ICONS;
         this.palette = new Palette(property, cssClass, this.icons);
+
+        this.palette.setNullOption(' ');
 
         var domElement = $(this.palette.getDOM()),
             self = this;

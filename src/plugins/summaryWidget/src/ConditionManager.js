@@ -1,12 +1,10 @@
-define (
-  [
+define ([
     './RuleEvaluator',
     'lodash'
-  ],
-  function (
+], function (
     RuleEvaluator,
     _
-  ) {
+) {
 
     // provide a centralized content manager for conditions in the summary widget.
     // Load and cache composition and telemetry subscriptions, and handle evaluation

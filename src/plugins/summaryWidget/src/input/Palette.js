@@ -1,14 +1,12 @@
-define(
-  [
+define([
     'text!../../res/input/paletteTemplate.html',
     'zepto'
-  ],
-  function (
+], function (
     paletteTemplate,
     $
-  ) {
+) {
 
-    //Generic wrapper class for OpenMCT palettes
+    //Generic wrapper class for Open MCT palettes
     function Palette(property, cssClass, items) {
         var self = this;
 
@@ -19,8 +17,10 @@ define(
         this.domElement = $(paletteTemplate);
         this.changeCallbacks = [];
         this.value = this.items[0];
+        this.nullOption = ' ';
 
         self.domElement.addClass(this.cssClass);
+        self.setNullOption(this.nullOption);
         $('.l-palette-row', self.domElement).after('<div class = "l-palette-row"> </div>');
         self.items.forEach(function (item) {
             $('.l-palette-row:last-of-type', self.domElement).append(
@@ -69,7 +69,7 @@ define(
 
     Palette.prototype.set = function (item) {
         var self = this;
-        if (this.items.includes(item)) {
+        if (this.items.includes(item) || item === this.nullOption) {
             this.value = item;
         }
         this.changeCallbacks.forEach(function (callback) {
@@ -77,6 +77,17 @@ define(
                 callback(self.value, self.property);
             }
         });
+    };
+
+    //set the property to be used for the 'none' item
+    Palette.prototype.setNullOption = function (item) {
+        this.nullOption = item;
+        $('.l-option-row .s-palette-item', this.domElement).data('item', item);
+    };
+
+    //allow the 'none' option to be hidden if it doesn't apply
+    Palette.prototype.toggleNullOption = function () {
+        $('.l-option-row', this.domElement).toggle();
     };
 
     return Palette;

@@ -26,6 +26,8 @@ function (
         this.colors = colors || DEFAULT_COLORS;
         this.palette = new Palette(property, cssClass, this.colors);
 
+        this.palette.setNullOption('rgba(0,0,0,0');
+
         var domElement = $(this.palette.getDOM()),
             self = this;
 
@@ -39,7 +41,8 @@ function (
         });
 
         function updateSwatch() {
-            $('.color-swatch', domElement).css('background-color', self.palette.getCurrent());
+            var color = self.palette.getCurrent();
+            $('.color-swatch', domElement).css('background-color', color);
         }
 
         this.palette.on('change', updateSwatch);

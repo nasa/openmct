@@ -1,18 +1,16 @@
-define(
-  [
+define([
     'text!../res/widgetTemplate.html',
     './Rule',
     './ConditionManager',
     'lodash',
     'zepto'
-  ],
-  function (
+], function (
     widgetTemplate,
     Rule,
     ConditionManager,
     _,
     $
-  ) {
+) {
 
     //default css configuration for new rules
     var DEFAULT_PROPS = {
@@ -165,6 +163,7 @@ define(
     WidgetView.prototype.updateWidget = function () {
         var activeRule = this.rulesById[this.activeId];
         this.applyStyle($('#widget', this.widget), activeRule.getProperty('style'));
+        $('#widget', this.widget).prop('title', activeRule.getProperty('message'));
         $('#widgetLabel', this.widget).html(activeRule.getProperty('label'));
         $('#widgetIcon', this.widget).removeClass().addClass(activeRule.getProperty('icon'));
     };

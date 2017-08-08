@@ -1,12 +1,10 @@
-define(
-  [
+define([
     'text!../../res/input/selectTemplate.html',
     'zepto'
-  ],
-  function (
+], function (
     selectTemplate,
     $
-  ) {
+) {
 
     //a wrapper module for dynamically poplulating an HTML select element
     function Select(property) {

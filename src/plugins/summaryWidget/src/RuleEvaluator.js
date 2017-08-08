@@ -1,7 +1,4 @@
-define(
-    [],
-    function (
-    ) {
+define([], function () {
 
     // a module responsible for maintaining the possible operations for conditions
     // in this widget, and evaluating whether these conditions evaluate to true.

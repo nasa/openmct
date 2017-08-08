@@ -1,12 +1,11 @@
-define(
-  [
+define([
     'text!../res/ruleTemplate.html',
     './Condition',
     './input/ColorPalette',
     './input/IconPalette',
     'lodash',
     'zepto'
-  ],
+],
   function (
     ruleTemplate,
     Condition,
@@ -14,7 +13,7 @@ define(
     IconPalette,
     _,
     $
-  ) {
+) {
 
     // a module representing a summary widget rule. Maintains a set of text
     // and css properties for output, and a set of conditions for configuring
@@ -68,6 +67,9 @@ define(
             'border-color': new ColorPalette('border-color', 'icon-line-horz'),
             'color': new ColorPalette('color', 'icon-T')
         };
+
+        //hide the 'none' option for the test color palette
+        this.colorInputs.color.toggleNullOption();
 
         this.callbacks = {
             remove: [],
@@ -161,6 +163,10 @@ define(
         if (!this.config.expanded) {
             this.configArea.removeClass('expanded');
             this.toggleConfigButton.removeClass('expanded');
+        }
+
+        if (this.domainObject.configuration.ruleOrder.length === 2) {
+            $('.t-grippy', this.domElement).hide();
         }
 
         this.refreshConditions();
