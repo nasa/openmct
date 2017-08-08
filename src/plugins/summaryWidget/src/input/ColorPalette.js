@@ -1,6 +1,12 @@
 define(
-    ['./Palette'],
-    function (Palette) {
+    [
+        './Palette',
+        'zepto'
+    ],
+    function (
+        Palette,
+        $
+    ) {
 
     var DEFAULT_COLORS = [
           '#ff0000',
@@ -15,7 +21,7 @@ define(
           '#999999',
           '#cccccc',
           '#ffffff'
-      ]
+      ];
 
 
     function ColorPalette(property, cssClass, colors) {
@@ -32,13 +38,13 @@ define(
         $('.s-palette-item', domElement).each(function () {
             var elem = this;
             $(elem).css('background-color', elem.dataset.item);
-        })
-
-        this.palette.on('change', updateSwatch);
+        });
 
         function updateSwatch() {
             $('.color-swatch', domElement).css('background-color', self.palette.getCurrent());
         }
+
+        this.palette.on('change', updateSwatch);
 
         return this.palette;
     }

@@ -3,13 +3,15 @@ define(
         'text!../res/widgetTemplate.html',
         './Rule',
         './ConditionManager',
-        'lodash'
+        'lodash',
+        'zepto'
     ],
     function (
         widgetTemplate,
         Rule,
         ConditionManager,
-        _
+        _,
+        $
     ) {
 
     //default css configuration for new rules
@@ -17,7 +19,7 @@ define(
         'color': '#000000',
         'background-color': '#00ff00',
         'border-color': '#666666'
-    }
+    };
 
     // parameters
     // domainObject: the summary widget domain object represented by this view
@@ -32,7 +34,7 @@ define(
 
         this.activeId = 'default';
         this.rulesById = {};
-        this.conditionManager = new ConditionManager(this.domainObject, this.openmct)
+        this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
         this.widget = $(widgetTemplate);
 
         this.show = this.show.bind(this);
@@ -52,16 +54,16 @@ define(
 
         $('#addRule').on('click', this.addRule);
         this.conditionManager.on('receiveTelemetry', this.onReceiveTelemetry);
-    }
+    };
 
     WidgetView.prototype.destroy = function (container) {
 
-    }
+    };
 
     WidgetView.prototype.onReceiveTelemetry = function () {
         this.activeId = this.conditionManager.executeRules(this.domainObject.configuration.ruleOrder, this.rulesById);
         this.updateWidget();
-    }
+    };
 
     WidgetView.prototype.addRule = function () {
         var self = this,
@@ -80,7 +82,7 @@ define(
         self.setConfigProp('ruleOrder', ruleOrder);
         self.initRule(ruleId, 'Rule');
         self.refreshRules();
-    }
+    };
 
     WidgetView.prototype.duplicateRule = function (sourceConfig) {
         var self = this,
@@ -104,7 +106,7 @@ define(
         self.setConfigProp('ruleConfigById.' + ruleId, sourceConfig);
         self.initRule(ruleId, sourceConfig.name);
         self.refreshRules();
-    }
+    };
 
     WidgetView.prototype.initRule = function (ruleId, ruleName) {
         var ruleConfig,
@@ -133,10 +135,10 @@ define(
             ruleConfig = this.getConfigProp('ruleConfigById.' + ruleId);
         }
         this.rulesById[ruleId] = new Rule(ruleConfig, this.domainObject, this.openmct, this.conditionManager);
-        this.rulesById[ruleId].on('remove', this.refreshRules)
+        this.rulesById[ruleId].on('remove', this.refreshRules);
         this.rulesById[ruleId].on('duplicate', this.duplicateRule);
         this.rulesById[ruleId].on('change', this.updateWidget);
-    }
+    };
 
     WidgetView.prototype.refreshRules = function () {
         var self = this,
@@ -148,44 +150,43 @@ define(
             self.initRule(ruleId);
             $('#ruleArea', self.widget).append(rules[ruleId].getDOM());
         });
-    }
+    };
 
     // Apply a list of css properties to an element
     // Arguments:
     // elem: the DOM element to which the rules will be applied
     // style: an object representing the style
     WidgetView.prototype.applyStyle = function(elem, style) {
-        var self = this;
         Object.keys(style).forEach( function (propId) {
-            elem.css(propId, style[propId])
+            elem.css(propId, style[propId]);
         });
-    }
+    };
 
     WidgetView.prototype.updateWidget = function() {
         var activeRule = this.rulesById[this.activeId];
         this.applyStyle( $('#widget', this.widget), activeRule.getProperty('style'));
         $('#widgetLabel', this.widget).html(activeRule.getProperty('label'));
         $('#widgetIcon', this.widget).removeClass().addClass(activeRule.getProperty('icon'));
-    }
+    };
 
     WidgetView.prototype.getConfigProp = function (path) {
         return _.get(this.domainObject.configuration, path);
-    }
+    };
 
     WidgetView.prototype.setConfigProp = function(path, value) {
         this.openmct.objects.mutate(this.domainObject, 'configuration.' + path, value);
         return this.getConfigProp(path);
-    }
+    };
 
     WidgetView.prototype.hasConfigProp = function (path) {
-        return _.has(this.domainObject.configuration, path)
-    }
+        return _.has(this.domainObject.configuration, path);
+    };
 
     WidgetView.prototype.removeConfigProp = function(path) {
         var config = this.domainObject.configuration;
         _.set(config, path, undefined);
-        this.openmct.objects.mutate(this.domainObject, 'configuration', config)
-    }
+        this.openmct.objects.mutate(this.domainObject, 'configuration', config);
+    };
 
     return WidgetView;
 });

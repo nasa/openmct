@@ -4,14 +4,16 @@ define(
         './Condition',
         './input/ColorPalette',
         './input/IconPalette',
-        'lodash'
+        'lodash',
+        'zepto'
     ],
     function (
         ruleTemplate,
         Condition,
         ColorPalette,
         IconPalette,
-        _
+        _,
+        $
     ) {
 
     // a module representing a summary widget rule. Maintains a set of text
@@ -57,7 +59,7 @@ define(
             name: $('.t-rule-name-input', this.domElement),
             label: $('.t-rule-label-input', this.domElement),
             message: $('.t-rule-message-input', this.domElement)
-        }
+        };
 
         this.iconInput = new IconPalette('icon', '');
 
@@ -65,12 +67,63 @@ define(
             'background-color': new ColorPalette('background-color', 'icon-paint-bucket'),
             'border-color': new ColorPalette('border-color', 'icon-line-horz'),
             'color': new ColorPalette('color', 'icon-T')
-        }
+        };
 
         this.callbacks = {
             remove: [],
             duplicate: [],
             change: []
+        };
+
+        function onIconInput(icon) {
+            self.config.icon = icon;
+            self.updateDomainObject('icon', icon);
+            self.callbacks.change.forEach( function (callback) {
+                if (callback) {
+                    callback();
+                }
+            });
+        }
+
+        function onColorInput(color, property) {
+            self.config.style[property] = color;
+            self.updateDomainObject('style.' + property, color);
+            self.thumbnail.css(property, color);
+            self.callbacks.change.forEach( function (callback) {
+                if (callback) {
+                    callback();
+                }
+            });
+        }
+
+        function onTriggerInput(event) {
+            var elem = event.target;
+            self.config.trigger = elem.value;
+            self.updateDomainObject('trigger', elem.value);
+            self.callbacks.change.forEach( function (callback) {
+                if (callback) {
+                    callback();
+                }
+            });
+        }
+
+        function toggleConfig() {
+            self.configArea.toggleClass('expanded');
+            self.toggleConfigButton.toggleClass('expanded');
+            self.config.expanded = !self.config.expanded;
+        }
+
+        function onTextInput(elem, inputKey) {
+              self.config[inputKey] = elem.value;
+              self.updateDomainObject(inputKey, elem.value);
+              if (inputKey === 'name') {
+                  self.title.html(elem.value);
+              }
+              self.callbacks.change.forEach( function (callback) {
+                  if (callback) {
+                      callback();
+                  }
+              });
         }
 
         $('.t-rule-label-input', this.domElement).before(this.iconInput.getDOM());
@@ -94,7 +147,7 @@ define(
         this.deleteButton.on('click', this.remove);
         this.duplicateButton.on('click', this.duplicate);
         this.addConditionButton.on('click', this.addCondition);
-        this.toggleConfigButton.on('click', toggleConfig)
+        this.toggleConfigButton.on('click', toggleConfig);
         this.trigger.on('change', onTriggerInput);
 
         this.title.html(self.config.name);
@@ -117,85 +170,44 @@ define(
             $('.t-delete', this.domElement).hide();
             $('.t-widget-rule-config', this.domElement).hide();
             $('.t-grippy', this.domElement).hide();
-        };
-
-        function onIconInput(icon) {
-            self.config.icon = icon;
-            self.updateDomainObject('icon', icon);
-            self.callbacks.change.forEach( function (callback) {
-                callback && callback();
-            });
         }
-
-        function onColorInput(color, property) {
-            self.config.style[property] = color;
-            self.updateDomainObject('style.' + property, color)
-            self.thumbnail.css(property, color);
-            self.callbacks.change.forEach( function (callback) {
-                callback && callback();
-            });
-        };
-
-        function onTriggerInput(event) {
-            var elem = event.target;
-            self.config.trigger = elem.value;
-            self.updateDomainObject('trigger', elem.value);
-            self.callbacks.change.forEach( function (callback) {
-                callback && callback();
-            });
-        };
-
-        function toggleConfig() {
-            self.configArea.toggleClass('expanded');
-            self.toggleConfigButton.toggleClass('expanded');
-            self.config.expanded = !self.config.expanded;
-        };
-
-        function onTextInput(elem, inputKey) {
-              self.config[inputKey] = elem.value;
-              self.updateDomainObject(inputKey, elem.value);
-              if (inputKey === 'name') {
-                  self.title.html(elem.value);
-              }
-              self.callbacks.change.forEach( function (callback) {
-                  callback && callback();
-              });
-        };
     }
 
     Rule.prototype.getDOM = function () {
         return this.domElement;
-    }
+    };
 
     Rule.prototype.on = function (event, callback) {
         if(this.callbacks[event]) {
             this.callbacks[event].push(callback);
         }
-    }
+    };
 
     Rule.prototype.onConditionChange = function(value, property, index) {
-        _.set(this.config.conditions[index], property, value[0]);
-        this.updateDomainObject('conditions[' + index + '].' + property, value[0]);
+        _.set(this.config.conditions[index], property, value);
+        this.updateDomainObject('conditions[' + index + '].' + property, value);
         this.callbacks.change.forEach( function (callback) {
-            callback && callback();
+            if (callback) {
+                callback();
+            }
         });
-    }
+    };
 
     Rule.prototype.updateDomainObject = function (property, value) {
         this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById.' +
             this.config.id + '.' + property, value);
-    }
+    };
 
     Rule.prototype.getProperty = function (prop) {
         return this.config[prop];
-    }
+    };
 
     Rule.prototype.remove = function () {
         var ruleOrder = this.domainObject.configuration.ruleOrder,
             ruleConfigById = this.domainObject.configuration.ruleConfigById,
             self = this;
 
-        delete ruleConfigById[self.config.id];
+        ruleConfigById[self.config.id] = undefined;
         _.remove(ruleOrder, function (ruleId) {
             return ruleId === self.config.id;
         });
@@ -203,11 +215,11 @@ define(
         self.openmct.objects.mutate(this.domainObject, 'configuration.ruleOrder', ruleOrder);
 
         self.callbacks.remove.forEach( function (callback) {
-            callback && callback();
+            if (callback) {
+                callback();
+            }
         });
-
-        delete this;
-    }
+    };
 
     //makes a deep copy of this rule's configuration, and calls the duplicate event
     //callback with the copy as an argument if one has been registered
@@ -216,13 +228,15 @@ define(
             self = this;
         sourceRule.expanded = true;
         self.callbacks.duplicate.forEach( function (callback) {
-            callback && callback(sourceRule);
+            if (callback) {
+                callback(sourceRule);
+            }
         });
-    }
+    };
 
     Rule.prototype.addCondition = function () {
         this.initCondition();
-    }
+    };
 
     Rule.prototype.initCondition = function (sourceConfig, sourceIndex) {
         var ruleConfigById = this.domainObject.configuration.ruleConfigById,
@@ -232,7 +246,7 @@ define(
                 key: '',
                 operation: '',
                 values: []
-            }
+            };
 
         newConfig = sourceConfig || defaultConfig;
         if (sourceIndex !== undefined) {
@@ -242,7 +256,7 @@ define(
         }
         this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById', ruleConfigById);
         this.refreshConditions();
-    }
+    };
 
     Rule.prototype.refreshConditions = function () {
         var self = this;
@@ -265,7 +279,7 @@ define(
         if (self.conditions.length === 1) {
             self.conditions[0].hideButtons();
         }
-    }
+    };
 
     Rule.prototype.removeCondition = function (removeIndex) {
       var ruleConfigById = this.domainObject.configuration.ruleConfigById,
@@ -281,7 +295,7 @@ define(
 
       this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById', ruleConfigById);
       this.refreshConditions();
-    }
+    };
 
     return Rule;
 });

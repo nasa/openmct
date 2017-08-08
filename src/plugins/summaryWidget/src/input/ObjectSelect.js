@@ -10,18 +10,11 @@ define(
         this.config = config;
         this.manager = manager;
 
-        this.manager.on('add', onCompositionAdd);
-        this.manager.on('remove', onCompositionRemove);
-        this.manager.on('load', onCompositionLoad);
-
         this.select = new Select('object');
         this.select.addOption('', '--Object--');
 
         this.compositionObjs = this.manager.getComposition();
         self.generateOptions();
-        if (this.manager.loadCompleted()) {
-            onCompositionLoad();
-        }
 
         function onCompositionAdd(obj) {
             self.select.addOption(obj.identifier.key, obj.name);
@@ -37,6 +30,14 @@ define(
             self.select.setSelected(self.config.object);
         }
 
+        this.manager.on('add', onCompositionAdd);
+        this.manager.on('remove', onCompositionRemove);
+        this.manager.on('load', onCompositionLoad);
+
+        if (this.manager.loadCompleted()) {
+            onCompositionLoad();
+        }
+
         return this.select;
     }
 
@@ -45,9 +46,9 @@ define(
         var items = Object.values(this.compositionObjs).map( function(obj) {
             return [obj.identifier.key, obj.name];
         });
-        items.splice(0, 0, ['','--Object--'])
+        items.splice(0, 0, ['','--Object--']);
         this.select.setOptions(items);
-    }
+    };
 
     return ObjectSelect;
 });

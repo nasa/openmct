@@ -1,6 +1,12 @@
 define(
-    ['./Palette'],
-    function (Palette) {
+    [
+        './Palette',
+        'zepto'
+    ],
+    function (
+        Palette,
+        $
+    ) {
 
     var DEFAULT_ICONS = [
         'icon-alert-rect',
@@ -27,7 +33,7 @@ define(
         'icon-plus',
         'icon-trash',
         'icon-x'
-    ]
+    ];
 
     function IconPalette(property, cssClass, icons) {
         this.icons = icons || DEFAULT_ICONS;
@@ -45,13 +51,13 @@ define(
             $(elem).addClass(elem.dataset.item);
         });
 
-        this.palette.on('change', updateSwatch);
-
         function updateSwatch() {
             $('.icon-swatch', domElement).removeClass()
                 .addClass(self.palette.getCurrent())
-                .addClass('icon-swatch')
+                .addClass('icon-swatch');
         }
+
+        this.palette.on('change', updateSwatch);
 
         return this.palette;
     }

@@ -10,19 +10,12 @@ define(
         this.objectSelect = objectSelect;
         this.manager = conditionManager;
 
-        this.objectSelect.on('change', onObjectChange);
-        this.manager.on('metadata', onMetadataLoad);
-
-        this.select = new Select('key')
+        this.select = new Select('key');
         this.select.addOption('','--Key--');
-
-        if (self.manager.metadataLoadCompleted()) {
-            onMetadataLoad();
-        }
 
         function onObjectChange(identifier) {
             var selected = self.manager.metadataLoadCompleted() ? self.select.getSelected() : self.config.key;
-            self.telemetryMetadata = self.manager.getTelemetryMetadata(identifier[0]) || {};
+            self.telemetryMetadata = self.manager.getTelemetryMetadata(identifier) || {};
             self.generateOptions();
             self.select.setSelected(selected);
         }
@@ -35,6 +28,13 @@ define(
             self.select.setSelected(self.config.key);
         }
 
+        if (self.manager.metadataLoadCompleted()) {
+            onMetadataLoad();
+        }
+
+        this.objectSelect.on('change', onObjectChange);
+        this.manager.on('metadata', onMetadataLoad);
+
         return this.select;
     }
 
@@ -43,9 +43,9 @@ define(
         var items = Object.entries(this.telemetryMetadata).map( function(metaDatum) {
             return [metaDatum[0], metaDatum[1].name];
         });
-        items.splice(0, 0, ['','--Key--'])
+        items.splice(0, 0, ['','--Key--']);
         this.select.setOptions(items);
-    }
+    };
 
 
     return KeySelect;

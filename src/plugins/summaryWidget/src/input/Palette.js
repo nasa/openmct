@@ -1,6 +1,12 @@
 define(
-    ['text!../../res/input/paletteTemplate.html'],
-    function (paletteTemplate) {
+    [
+        'text!../../res/input/paletteTemplate.html',
+        'zepto'
+    ],
+    function (
+        paletteTemplate,
+        $
+    ) {
 
     //Generic wrapper class for OpenMCT palettes
     function Palette(property, cssClass, items) {
@@ -20,7 +26,7 @@ define(
             $('.l-palette-row:last-of-type', self.domElement).append(
                 '<div class = "l-palette-item s-palette-item"' +
                 ' data-item = ' + item + '> </div>'
-            )
+            );
         });
 
         $('.menu', self.domElement).hide();
@@ -35,29 +41,31 @@ define(
             $('.menu', self.domElement).show();
         });
 
-        $('.s-palette-item', self.domElement).on('click', handleItemClick);
-
         function handleItemClick(event) {
             var elem = event.currentTarget,
                 item = elem.dataset.item;
             self.set(item);
             $('.menu', self.domElement).hide();
         }
+
+        $('.s-palette-item', self.domElement).on('click', handleItemClick);
     }
 
     Palette.prototype.getDOM = function() {
         return this.domElement;
-    }
+    };
 
     Palette.prototype.on = function (event, callback) {
         if (event === 'change') {
             this.changeCallbacks.push(callback);
+        } else {
+            throw new Error('Unsuppored event type: ' + event);
         }
-    }
+    };
 
     Palette.prototype.getCurrent = function () {
         return this.value;
-    }
+    };
 
     Palette.prototype.set = function (item) {
         var self = this;
@@ -65,9 +73,11 @@ define(
             this.value = item;
         }
         this.changeCallbacks.forEach( function (callback) {
-            callback && callback(self.value, self.property);
-        })
-    }
+            if (callback) {
+                callback(self.value, self.property);
+            }
+        });
+    };
 
     return Palette;
-})
+});

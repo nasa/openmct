@@ -1,33 +1,23 @@
 define(['../../src/input/ColorPalette'], function (ColorPalette) {
     describe('An Open MCT color palette', function () {
-        var colorPalette, callbackSpy1, callbackSpy2;
+        var colorPalette, changeCallback;
 
         beforeEach(function () {
-            colorPalette = new ColorPalette('someProperty', 'someClass', ['#ff0000', '#abcdef']);
-            callbackSpy1 = jasmine.createSpy('changeCallback1');
-            callbackSpy2 = jasmine.createSpy('changeCallback2');
-            colorPalette.on('change', callbackSpy1);
-            colorPalette.on('change', callbackSpy2);
-        });
-
-        it('gets the current color', function () {
-            expect(colorPalette.getCurrent()).toEqual('#ff0000');
-        });
-
-        it('allows setting the current color', function() {
-            colorPalette.set('#abcdef');
-            expect(colorPalette.getCurrent()).toEqual('#abcdef');
+            changeCallback = jasmine.createSpy('changeCallback');
         })
 
-        it('injects its callbacks with the new selected color on a color change', function () {
-            colorPalette.set('#abcdef');
-            expect(callbackSpy1).toHaveBeenCalledWith('#abcdef', 'someProperty');
-            expect(callbackSpy2).toHaveBeenCalledWith('#abcdef', 'someProperty');
+        it('allows defining a custom color set', function () {
+            colorPalette = new ColorPalette('someProperty', 'someClass', ['color1', 'color2', 'color3']);
+            expect(colorPalette.getCurrent()).toEqual('color1');
+            colorPalette.on('change', changeCallback);
+            colorPalette.set('color2');
+            expect(colorPalette.getCurrent()).toEqual('color2');
+            expect(changeCallback).toHaveBeenCalledWith('color2', 'someProperty');
         });
 
-        it('gracefully handles being set to a color not included in its set', function () {
-            colorPalette.set('#foobar');
-            expect(colorPalette.getCurrent()).not.toEqual('#foobar')
-        });
+        it('loads with a default color set if one is not provided', function () {
+            colorPalette = new ColorPalette('someProperty', 'someClass')
+            expect(colorPalette.getCurrent()).toBeDefined();
+        })
     });
 });
