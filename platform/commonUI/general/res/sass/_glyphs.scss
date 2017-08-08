@@ -156,6 +156,7 @@ $glyph-icon-summary-widget: '\e1130';
 .icon-trash {  @include glyphBefore($glyph-icon-trash); }
 .icon-x {  @include glyphBefore($glyph-icon-x); }
 .icon-brackets {  @include glyphBefore($glyph-icon-brackets); }
+.icon-crosshair {  @include glyphBefore($glyph-icon-crosshair); }
 .icon-grippy {  @include glyphBefore($glyph-icon-grippy); }
 .icon-arrows-out {  @include glyphBefore($glyph-icon-arrows-out); }
 .icon-arrows-right-left {  @include glyphBefore($glyph-icon-arrows-right-left); }
@@ -236,8 +237,5 @@ $glyph-icon-summary-widget: '\e1130';
 .icon-summary-widget {  @include glyphBefore($glyph-icon-summary-widget); }
 
 /************************** 12 PX CLASSES */
-
-.icon-eye-open-12px {  @include glyphBefore($glyph-icon-eye-open,'symbolsfont-12px'); }
-.icon-collapse-pane-left-12px {  @include glyphBefore($glyph-icon-collapse-pane-left,'symbolsfont-12px'); }
-.icon-collapse-pane-right-12px {  @include glyphBefore($glyph-icon-collapse-pane-right,'symbolsfont-12px'); }
+.icon-crosshair-12px {  @include glyphBefore($glyph-icon-crosshair,'symbolsfont-12px'); }
 .icon-folder-12px {  @include glyphBefore($glyph-icon-folder,'symbolsfont-12px'); }
