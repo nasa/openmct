@@ -8,18 +8,16 @@ function (
 ) {
 
     var DEFAULT_COLORS = [
-          '#ff0000',
-          '#00ff00',
-          '#0000ff',
-          '#ffff00',
-          '#ff00ff',
-          '#00ffff',
-          '#000000',
-          '#333333',
-          '#666666',
-          '#999999',
-          '#cccccc',
-          '#ffffff'
+        'rgb(0,0,0)',
+        'rgb(63,63,63)',
+        'rgb(127,127,127)',
+        'rgb(191,191,191)',
+        'rgb(255,255,255)',
+        'rgb(255,0,0)',
+        'rgb(255,64,0)',
+        'rgb(255,128,0)',
+        'rgb(255,192,0)',
+        'rgb(255,255,0)'
       ];
 
     function ColorPalette(property, cssClass, colors) {
