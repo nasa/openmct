@@ -180,6 +180,20 @@ a.disabled {
     @include ellipsize();
 }
 
+.no-selection {
+    // aka selection = "None". Used in palettes and their menu buttons.
+    $c: red; $s: 48%; $e: 52%;
+    @include background-image(linear-gradient(-45deg,
+        transparent $s - 5%,
+        $c $s,
+        $c $e,
+        transparent $e + 5%
+    ));
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+
 .scrolling,
 .scroll {
     overflow: auto;
