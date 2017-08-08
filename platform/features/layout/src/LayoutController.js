@@ -334,10 +334,11 @@ define(
 
             var self = this;
             
-            // Toggle the visibility of the frame around the object.                   
+            // Toggle the visibility of the object frame
             function toggle() {                                
                 var id = obj.getId();
                 var configuration = self.$scope.configuration;
+
                 configuration.panels[id].hasFrame = 
                     !configuration.panels[id].hasFrame;
 
@@ -346,8 +347,23 @@ define(
                 delete obj[SHOW];
                 delete obj[HIDE];
                 obj[configuration.panels[id].hasFrame ? HIDE : SHOW] = toggle;
-            }
 
+                var selection = self.selection;
+
+                obj.useCapability('mutation', function() {
+                    // reselect(obj);
+                    var selected = selection && selection.get();
+
+                    if (selection) {
+                        selection.deselect();
+
+                        if (selected !== undefined) {
+                            selection.select(obj);
+                        }
+                    }
+                });
+             }
+                
             // Expose initial toggle
             obj[this.$scope.configuration.panels[obj.getId()].hasFrame ? HIDE : SHOW] = toggle;            
 
@@ -356,6 +372,19 @@ define(
                 this.selection.select(obj);
             }
         };
+
+        // Helper function to reslect an object
+        function reselect(obj) {
+            var selected = this.selection && this.selection.get();
+
+            if (this.selection) {
+                this.selection.deselect();
+
+                if (selected !== undefined) {
+                    this.selection.select(obj);
+                }
+            }
+        }
 
         /**
          * Clear the current user selection.
