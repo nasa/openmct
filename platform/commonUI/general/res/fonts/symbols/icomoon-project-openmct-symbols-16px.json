@@ -765,12 +765,12 @@
           "tempChar": ""
         },
         {
-          "order": 0,
+          "order": 135,
           "id": 99,
           "name": "icon-plot-overlay",
           "prevSize": 24,
           "code": 921878,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 113,
@@ -778,7 +778,7 @@
           "name": "icon-plot-stacked",
           "prevSize": 24,
           "code": 921879,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 10,
@@ -786,7 +786,7 @@
           "name": "icon-session",
           "id": 5,
           "code": 921880,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 24,
@@ -794,7 +794,7 @@
           "name": "icon-tabular",
           "id": 19,
           "code": 921881,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 7,
@@ -802,7 +802,7 @@
           "name": "icon-tabular-lad",
           "id": 2,
           "code": 921888,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 6,
@@ -810,7 +810,7 @@
           "name": "icon-tabular-lad-set",
           "id": 1,
           "code": 921889,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 8,
@@ -818,7 +818,7 @@
           "name": "icon-tabular-realtime",
           "id": 3,
           "code": 921890,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 23,
@@ -826,7 +826,7 @@
           "name": "icon-tabular-scrolling",
           "id": 18,
           "code": 921891,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 112,
@@ -834,7 +834,7 @@
           "name": "icon-telemetry",
           "id": 86,
           "code": 921892,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 90,
@@ -842,7 +842,7 @@
           "name": "icon-telemetry-panel",
           "id": 85,
           "code": 921893,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 93,
@@ -850,7 +850,7 @@
           "name": "icon-timeline",
           "id": 88,
           "code": 921894,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 116,
@@ -858,7 +858,7 @@
           "name": "icon-timer-v1.5",
           "prevSize": 24,
           "code": 921895,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 11,
@@ -866,7 +866,7 @@
           "name": "icon-topic",
           "id": 6,
           "code": 921896,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 115,
@@ -874,7 +874,7 @@
           "name": "icon-box-with-dashed-lines",
           "id": 29,
           "code": 921897,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 126,
@@ -882,7 +882,7 @@
           "name": "icon-summary-widget",
           "prevSize": 24,
           "code": 921904,
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "metadata": {
