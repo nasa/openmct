@@ -46,14 +46,14 @@ define([
         var self = this;
 
         function onSelectChange(value, property) {
+            if (property === 'operation') {
+                self.generateValueInputs(value);
+            }
             self.callbacks.change.forEach(function (callback) {
                 if (callback) {
                     callback(value, property, self.index);
                 }
             });
-            if (property === 'operation') {
-                self.generateValueInputs(value);
-            }
         }
 
         function onValueInput(event) {
@@ -134,7 +134,9 @@ define([
             inputCount = evaluator.getInputCount(operation);
             inputType = this.conditionManager.getInputType(evaluator.getOperationType(operation));
             while (index < inputCount) {
-                this.config.values[index] = this.config.values[index] || '';
+                if (!this.config.values[index]) {
+                    this.config.values[index] = (inputType === 'number' ? 0 : '');
+                }
                 newInput = $('<input type = "' + inputType + '" value = "' + this.config.values[index] + '"> </input>');
                 this.valueInputs.push(newInput.get(0));
                 inputArea.append(newInput);

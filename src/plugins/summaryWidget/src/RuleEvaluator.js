@@ -18,7 +18,10 @@ define([], function () {
                 },
                 text: 'is Equal To',
                 appliesTo: ['number'],
-                inputCount: 1
+                inputCount: 1,
+                getDescription: function (values) {
+                    return ' == ' + values[0];
+                }
             },
             notEqualTo: {
                 operation: function (input) {
@@ -26,7 +29,10 @@ define([], function () {
                 },
                 text: 'is Not Equal To',
                 appliesTo: ['number'],
-                inputCount: 1
+                inputCount: 1,
+                getDescription: function (values) {
+                    return ' != ' + values[0];
+                }
             },
             greaterThan: {
                 operation: function (input) {
@@ -34,7 +40,10 @@ define([], function () {
                 },
                 text: 'is Greater Than',
                 appliesTo: ['number'],
-                inputCount: 1
+                inputCount: 1,
+                getDescription: function (values) {
+                    return ' > ' + values[0];
+                }
             },
             lessThan: {
                 operation: function (input) {
@@ -42,7 +51,10 @@ define([], function () {
                 },
                 text: 'is Less Than',
                 appliesTo: ['number'],
-                inputCount: 1
+                inputCount: 1,
+                getDescription: function (values) {
+                    return ' < ' + values[0];
+                }
             },
             greaterThanOrEq: {
                 operation: function (input) {
@@ -50,7 +62,10 @@ define([], function () {
                 },
                 text: 'is Greater Than or Equal To',
                 appliesTo: ['number'],
-                inputCount: 1
+                inputCount: 1,
+                getDescription: function (values) {
+                    return ' >= ' + values[0];
+                }
             },
             lessThanOrEq: {
                 operation: function (input) {
@@ -58,7 +73,10 @@ define([], function () {
                 },
                 text: 'is Less Than or Equal To',
                 appliesTo: ['number'],
-                inputCount: 1
+                inputCount: 1,
+                getDescription: function (values) {
+                    return ' <= ' + values[0];
+                }
             },
             between: {
                 operation: function (input) {
@@ -66,7 +84,10 @@ define([], function () {
                 },
                 text: 'is Between',
                 appliesTo: ['number'],
-                inputCount: 2
+                inputCount: 2,
+                getDescription: function (values) {
+                    return ' between ' + values[0] + ' and ' + values[1];
+                }
             },
             notBetween: {
                 operation: function (input) {
@@ -74,7 +95,10 @@ define([], function () {
                 },
                 text: 'is Not Between',
                 appliesTo: ['number'],
-                inputCount: 2
+                inputCount: 2,
+                getDescription: function (values) {
+                    return ' not between ' + values[0] + ' and ' + values[1];
+                }
             },
             textContains: {
                 operation: function (input) {
@@ -82,7 +106,10 @@ define([], function () {
                 },
                 text: 'Text Contains',
                 appliesTo: ['string'],
-                inputCount: 1
+                inputCount: 1,
+                getDescription: function (values) {
+                    return ' contains ' + values[0];
+                }
             },
             textDoesNotContain: {
                 operation: function (input) {
@@ -90,7 +117,10 @@ define([], function () {
                 },
                 text: 'Text Does Not Contain',
                 appliesTo: ['string'],
-                inputCount: 1
+                inputCount: 1,
+                getDescription: function (values) {
+                    return ' does not contain ' + values[0];
+                }
             },
             textStartsWith: {
                 operation: function (input) {
@@ -98,7 +128,10 @@ define([], function () {
                 },
                 text: 'Text Starts With',
                 appliesTo: ['string'],
-                inputCount: 1
+                inputCount: 1,
+                getDescription: function (values) {
+                    return ' starts with ' + values[0];
+                }
             },
             textEndsWith: {
                 operation: function (input) {
@@ -106,7 +139,10 @@ define([], function () {
                 },
                 text: 'Text Ends With',
                 appliesTo: ['string'],
-                inputCount: 1
+                inputCount: 1,
+                getDescription: function (values) {
+                    return ' ends with ' + values[0];
+                }
             },
             textIsExactly: {
                 operation: function (input) {
@@ -114,7 +150,10 @@ define([], function () {
                 },
                 text: 'Text is Exactly',
                 appliesTo: ['string'],
-                inputCount: 1
+                inputCount: 1,
+                getDescription: function (values) {
+                    return ' is exactly ' + values[0];
+                }
             },
             isUndefined: {
                 operation: function (input) {
@@ -122,7 +161,10 @@ define([], function () {
                 },
                 text: 'is Undefined',
                 appliesTo: ['string', 'number'],
-                inputCount: 0
+                inputCount: 0,
+                getDescription: function () {
+                    return 'is undefined';
+                }
             }
         };
     }
@@ -184,6 +226,12 @@ define([], function () {
     RuleEvaluator.prototype.getOperationType = function (key) {
         if (this.operations[key]) {
             return this.operations[key].appliesTo[0];
+        }
+    };
+
+    RuleEvaluator.prototype.getOperationDescription = function (key, values) {
+        if (this.operations[key]) {
+            return this.operations[key].getDescription(values);
         }
     };
 

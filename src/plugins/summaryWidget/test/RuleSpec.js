@@ -41,7 +41,9 @@ define(['../src/Rule'], function (Rule) {
             mockConditionManager = jasmine.createSpyObj('', [
                 'on',
                 'getComposition',
-                'loadCompleted'
+                'loadCompleted',
+                'getEvaluator',
+                'getTelemetryMetadata'
             ]);
             mockConditionManager.loadCompleted.andReturn(false);
             removeSpy = jasmine.createSpy('removeCallback');

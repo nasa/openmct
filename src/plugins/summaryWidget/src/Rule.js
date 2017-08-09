@@ -101,6 +101,7 @@ define([
         function onTriggerInput(event) {
             var elem = event.target;
             self.config.trigger = elem.value;
+            self.generateDescription();
             self.updateDomainObject('trigger', elem.value);
             self.callbacks.change.forEach(function (callback) {
                 if (callback) {
@@ -191,6 +192,7 @@ define([
 
     Rule.prototype.onConditionChange = function (value, property, index) {
         _.set(this.config.conditions[index], property, value);
+        this.generateDescription();
         this.updateDomainObject('conditions[' + index + '].' + property, value);
         this.callbacks.change.forEach(function (callback) {
             if (callback) {
@@ -285,6 +287,8 @@ define([
         if (self.conditions.length === 1) {
             self.conditions[0].hideButtons();
         }
+
+        self.generateDescription();
     };
 
     Rule.prototype.removeCondition = function (removeIndex) {
@@ -301,6 +305,42 @@ define([
 
         this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById', ruleConfigById);
         this.refreshConditions();
+    };
+
+    Rule.prototype.generateDescription = function () {
+        var description = '',
+            evaluator = this.conditionManager.getEvaluator(),
+            composition = this.conditionManager.getComposition(),
+            metadata,
+            name,
+            property,
+            operation,
+            self = this;
+
+        if (this.config.conditions && this.config.id !== 'default') {
+            if (self.config.trigger === 'js') {
+                description = 'when a custom JavaScript condition evaluates to true';
+            } else {
+                this.config.conditions.forEach(function (condition, index) {
+                    metadata = self.conditionManager.getTelemetryMetadata(condition.object);
+                    name = composition[condition.object] && composition[condition.object].name;
+                    property = metadata && metadata[condition.key] && metadata[condition.key].name;
+                    operation = evaluator.getOperationDescription(condition.operation, condition.values);
+                    description += 'when ' +
+                        (name ? name + ' ' : '') +
+                        (property ? property + ' ' : '') +
+                        (operation ? operation + ' ' : '');
+                    if (index < self.config.conditions.length - 1) {
+                        description += (self.config.trigger === 'any' ? ' OR ' : ' AND ');
+                    }
+                });
+            }
+        }
+
+        description = (description === '' ? this.config.description : description);
+        this.description.html(description);
+        this.config.description = description;
+        this.updateDomainObject('description', description);
     };
 
     return Rule;

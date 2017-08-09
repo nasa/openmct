@@ -59,7 +59,10 @@ define([
     };
 
     WidgetView.prototype.onReceiveTelemetry = function () {
-        this.activeId = this.conditionManager.executeRules(this.domainObject.configuration.ruleOrder, this.rulesById);
+        this.activeId = this.conditionManager.executeRules(
+            this.domainObject.configuration.ruleOrder,
+            this.rulesById
+        );
         this.updateWidget();
     };
 
