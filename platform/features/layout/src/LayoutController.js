@@ -321,10 +321,8 @@ define(
          * @param {string} obj the object to select
          * @returns {boolean} true if selected
          */
-        LayoutController.prototype.selected = function (obj) { 
-            var selection = this.selection;
-            return selection && ((arguments.length > 0) ?
-                    selection.selected(obj) : selection.get());
+        LayoutController.prototype.selected = function (obj) {
+            return this.selectedId && this.selectedId === obj.getId();
         };
 
         /**
@@ -337,28 +335,30 @@ define(
             event.stopPropagation();
 
             var self = this;
-            
-            // Toggle the visibility of the object frame
-            function toggle() {                            
-                var id = obj.getId();
-                var configuration = self.$scope.configuration;
+            var selectedObj = {};
+            var id = this.selectedId = obj.getId();
+            var configuration = this.$scope.configuration
 
-                configuration.panels[id].hasFrame = 
-                    !configuration.panels[id].hasFrame;              
-                   
+            // Toggle the visibility of the object frame
+            function toggle() {
+                // create new selection object so toolbar updates.
+                selectedObj = {};
+
+                configuration.panels[id].hasFrame =
+                    !configuration.panels[id].hasFrame;
+
                 // Change which method is exposed, to influence
                 // which button is shown in the toolbar
-                delete obj[SHOW];
-                delete obj[HIDE];
-                obj[configuration.panels[id].hasFrame ? HIDE : SHOW] = toggle;                
-             }
-                
-            // Expose initial toggle
-            obj[this.$scope.configuration.panels[obj.getId()].hasFrame ? HIDE : SHOW] = toggle;            
+                selectedObj[configuration.panels[id].hasFrame ? HIDE : SHOW] = toggle;
+                self.selection.deselect();
+                self.selection.select(selectedObj);
+            }
 
-            if (this.selection) {                
-                // Update selection...                
-                this.selection.select(obj);
+            // Expose initial toggle
+            selectedObj[configuration.panels[id].hasFrame ? HIDE : SHOW] = toggle;
+
+            if (this.selection) {
+                this.selection.select(selectedObj);
             }
         };
 
@@ -367,7 +367,8 @@ define(
          */
         LayoutController.prototype.clearSelection = function (event) {
             if (this.selection) {
-                this.selection.deselect();            
+                this.selection.deselect();
+                delete this.selectedId;
             }
         };
 
