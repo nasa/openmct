@@ -27,7 +27,7 @@
     <div class='frame child-frame panel abs'
          ng-class="{'no-frame': !controller.hasFrame(childObject)}"
          ng-repeat="childObject in composition"
-         ng-click="controller.select($event, childObject)"
+         ng-click="controller.select($event, childObject.getId())"
          ng-style="controller.getFrameStyle(childObject.getId())">
 
         <mct-representation key="'frame'"

@@ -84,9 +84,8 @@ define(
                     hasFrame: true
                 };
 
-                // TODO:
                 // Select the newly-added object
-                //self.select(null, );
+                self.select(null, id);
 
                 // Mark change as persistable
                 if ($scope.commit) {
@@ -329,15 +328,18 @@ define(
          * Set the active user selection in this view.
          *
          * @param event the mouse event
-         * @param {string} obj the object to select
+         * @param {string} id the object id
          */
-        LayoutController.prototype.select = function select(event, obj) {            
-            event.stopPropagation();
+        LayoutController.prototype.select = function select(event, id) {
+            if (event) {                
+                event.stopPropagation();
+            }    
 
             var self = this;
             var selectedObj = {};
-            var id = this.selectedId = obj.getId();
             var configuration = this.$scope.configuration
+
+            this.selectedId = id;
 
             // Toggle the visibility of the object frame
             function toggle() {
