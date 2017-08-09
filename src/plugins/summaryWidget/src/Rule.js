@@ -310,7 +310,7 @@ define([
     Rule.prototype.generateDescription = function () {
         var description = '',
             manager = this.conditionManager,
-            evaluator = this.conditionManager.getEvaluator(),
+            evaluator = manager.getEvaluator(),
             name,
             property,
             operation,
@@ -325,7 +325,7 @@ define([
                     property = manager.getTelemetryPropertyName(condition.object, condition.key);
                     operation = evaluator.getOperationDescription(condition.operation, condition.values);
                     description += 'when ' +
-                        (name ? name + ' ' : '') +
+                        (name ? name + '\'s ' : '') +
                         (property ? property + ' ' : '') +
                         (operation ? operation + ' ' : '');
                     if (index < self.config.conditions.length - 1) {

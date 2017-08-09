@@ -22,7 +22,7 @@ define([
     // parameters
     // domainObject: the summary widget domain object represented by this view
     // openmct: an MCT instance
-    function WidgetView(domainObject, openmct) {
+    function Widget(domainObject, openmct) {
         this.domainObject = domainObject;
         this.openmct = openmct;
 
@@ -44,8 +44,9 @@ define([
         this.onReceiveTelemetry = this.onReceiveTelemetry.bind(this);
     }
 
-    WidgetView.prototype.show = function (container) {
+    Widget.prototype.show = function (container) {
         $(container).append(this.domElement);
+
         this.initRule('default', 'Default');
         this.refreshRules();
         this.updateWidget();
@@ -54,11 +55,11 @@ define([
         this.conditionManager.on('receiveTelemetry', this.onReceiveTelemetry);
     };
 
-    WidgetView.prototype.destroy = function (container) {
+    Widget.prototype.destroy = function (container) {
 
     };
 
-    WidgetView.prototype.onReceiveTelemetry = function () {
+    Widget.prototype.onReceiveTelemetry = function () {
         this.activeId = this.conditionManager.executeRules(
             this.domainObject.configuration.ruleOrder,
             this.rulesById
@@ -66,7 +67,7 @@ define([
         this.updateWidget();
     };
 
-    WidgetView.prototype.addRule = function () {
+    Widget.prototype.addRule = function () {
         var self = this,
             ruleCount = 0,
             ruleId,
@@ -85,7 +86,7 @@ define([
         self.refreshRules();
     };
 
-    WidgetView.prototype.duplicateRule = function (sourceConfig) {
+    Widget.prototype.duplicateRule = function (sourceConfig) {
         var self = this,
             ruleCount = 0,
             ruleId,
@@ -109,7 +110,7 @@ define([
         self.refreshRules();
     };
 
-    WidgetView.prototype.initRule = function (ruleId, ruleName) {
+    Widget.prototype.initRule = function (ruleId, ruleName) {
         var ruleConfig,
             styleObj = {};
 
@@ -141,7 +142,7 @@ define([
         this.rulesById[ruleId].on('change', this.updateWidget);
     };
 
-    WidgetView.prototype.refreshRules = function () {
+    Widget.prototype.refreshRules = function () {
         var self = this,
             ruleOrder = self.getConfigProp('ruleOrder'),
             rules = self.rulesById;
@@ -157,13 +158,13 @@ define([
     // Arguments:
     // elem: the DOM element to which the rules will be applied
     // style: an object representing the style
-    WidgetView.prototype.applyStyle = function (elem, style) {
+    Widget.prototype.applyStyle = function (elem, style) {
         Object.keys(style).forEach(function (propId) {
             elem.css(propId, style[propId]);
         });
     };
 
-    WidgetView.prototype.updateWidget = function () {
+    Widget.prototype.updateWidget = function () {
         var activeRule = this.rulesById[this.activeId];
         this.applyStyle($('#widget', this.domElement), activeRule.getProperty('style'));
         $('#widget', this.domElement).prop('title', activeRule.getProperty('message'));
@@ -171,24 +172,24 @@ define([
         $('#widgetIcon', this.domElement).removeClass().addClass(activeRule.getProperty('icon'));
     };
 
-    WidgetView.prototype.getConfigProp = function (path) {
+    Widget.prototype.getConfigProp = function (path) {
         return _.get(this.domainObject.configuration, path);
     };
 
-    WidgetView.prototype.setConfigProp = function (path, value) {
+    Widget.prototype.setConfigProp = function (path, value) {
         this.openmct.objects.mutate(this.domainObject, 'configuration.' + path, value);
         return this.getConfigProp(path);
     };
 
-    WidgetView.prototype.hasConfigProp = function (path) {
+    Widget.prototype.hasConfigProp = function (path) {
         return _.has(this.domainObject.configuration, path);
     };
 
-    WidgetView.prototype.removeConfigProp = function (path) {
+    Widget.prototype.removeConfigProp = function (path) {
         var config = this.domainObject.configuration;
         _.set(config, path, undefined);
         this.openmct.objects.mutate(this.domainObject, 'configuration', config);
     };
 
-    return WidgetView;
+    return Widget;
 });

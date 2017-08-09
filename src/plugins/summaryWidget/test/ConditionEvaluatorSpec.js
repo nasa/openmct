@@ -4,9 +4,14 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
             testEvaluator,
             testOperation,
             mockCache,
+            mockComposition,
             mockConditions,
             mockConditionsEmpty,
             mockConditionsUndefined,
+            mockConditionsAnyTrue,
+            mockConditionsAllTrue,
+            mockConditionsAnyFalse,
+            mockConditionsAllFalse,
             mockOperations;
 
         beforeEach(function () {
@@ -28,6 +33,11 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                         type: 'Centaur'
                     }
                 }
+            };
+            mockComposition = {
+                a: {},
+                b: {},
+                c: {}
             };
             mockConditions = [{
                 object: 'a',
@@ -61,6 +71,40 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                 key: 'alpha',
                 operation: 'No Such Operation',
                 values: []
+            },{
+                object: 'all',
+                key: 'Nonexistent Field',
+                operation: 'Random Operation',
+                values: []
+            },{
+                object: 'any',
+                key: 'Nonexistent Field',
+                operation: 'Whatever Operation',
+                values: []
+            }];
+            mockConditionsAnyTrue = [{
+                object: 'any',
+                key: 'alpha',
+                operation: 'greaterThan',
+                values: [5]
+            }];
+            mockConditionsAnyFalse = [{
+                object: 'any',
+                key: 'alpha',
+                operation: 'greaterThan',
+                values: [1000]
+            }];
+            mockConditionsAllFalse = [{
+                object: 'all',
+                key: 'alpha',
+                operation: 'greaterThan',
+                values: [5]
+            }];
+            mockConditionsAllTrue = [{
+                object: 'all',
+                key: 'alpha',
+                operation: 'greaterThan',
+                values: [0]
             }];
             mockOperations = {
                 greaterThan: {
@@ -104,8 +148,8 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                     inputCount: 0
                 }
             };
-            evaluator = new ConditionEvaluator(mockCache);
-            testEvaluator = new ConditionEvaluator(mockCache);
+            evaluator = new ConditionEvaluator(mockCache, mockComposition);
+            testEvaluator = new ConditionEvaluator(mockCache, mockComposition);
             evaluator.operations = mockOperations;
         });
 
@@ -117,6 +161,16 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
         it('correctly evaluates a set of conditions', function () {
             expect(evaluator.execute(mockConditions, 'any')).toEqual(true);
             expect(evaluator.execute(mockConditions, 'all')).toEqual(false);
+        });
+
+        it('correctly evaluates conditions involving "any telemetry"', function () {
+            expect(evaluator.execute(mockConditionsAnyTrue, 'any')).toEqual(true);
+            expect(evaluator.execute(mockConditionsAnyFalse, 'any')).toEqual(false);
+        });
+
+        it('correctly evaluates conditions involving "all telemetry"', function () {
+            expect(evaluator.execute(mockConditionsAllTrue, 'any')).toEqual(true);
+            expect(evaluator.execute(mockConditionsAllFalse, 'any')).toEqual(false);
         });
 
         it('handles malformed conditions gracefully', function () {

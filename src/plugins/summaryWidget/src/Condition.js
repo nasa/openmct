@@ -1,13 +1,11 @@
 define([
     'text!../res/conditionTemplate.html',
-    './input/Select',
     './input/ObjectSelect',
     './input/KeySelect',
     './input/OperationSelect',
     'zepto'
 ], function (
     conditionTemplate,
-    Select,
     ObjectSelect,
     KeySelect,
     OperationSelect,
@@ -132,7 +130,7 @@ define([
 
         if (evaluator.getInputCount(operation)) {
             inputCount = evaluator.getInputCount(operation);
-            inputType = this.conditionManager.getInputType(evaluator.getOperationType(operation));
+            inputType = evaluator.getInputType(operation);
             while (index < inputCount) {
                 if (!this.config.values[index]) {
                     this.config.values[index] = (inputType === 'number' ? 0 : '');

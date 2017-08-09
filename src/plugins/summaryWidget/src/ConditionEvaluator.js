@@ -1,10 +1,18 @@
 define([], function () {
 
     // a module responsible for maintaining the possible operations for conditions
-    // in this widget, and evaluating whether these conditions evaluate to true.
-    function ConditionEvaluator(subscriptionCache) {
+    // in this widget, and evaluating the boolean value of the conditions
+    function ConditionEvaluator(subscriptionCache, compositionObjs) {
 
         this.subscriptionCache = subscriptionCache;
+        this.compositionObjs = compositionObjs;
+
+        //the HTML input type to generate corresponding to the input value(s) a
+        //condition expects
+        this.inputTypes = {
+            number: 'number',
+            string: 'text'
+        };
 
         // operations supported by this rule evaluator. Each rule has a method
         // with input boolean return type to be evaluated when the operation is
@@ -177,34 +185,76 @@ define([], function () {
     // evaluate the conditions as JavaScript
     ConditionEvaluator.prototype.execute = function (conditions, mode) {
         var active = false,
-            telemetryValue,
-            operation,
-            input,
+            conditionValue,
+            conditionDefined = false,
             self = this,
-            firstRuleEvaluated = false;
+            firstRuleEvaluated = false,
+            compositionObjs = this.compositionObjs;
 
         //if (mode === 'js') {
         //TODO: implement JavaScript conditional input
         //}
         (conditions || []).forEach(function (condition) {
-            telemetryValue = self.subscriptionCache[condition.object] &&
-                             self.subscriptionCache[condition.object][condition.key] &&
-                             [self.subscriptionCache[condition.object][condition.key]];
-            operation = self.operations[condition.operation] &&
-                        self.operations[condition.operation].operation;
-            input = telemetryValue && telemetryValue.concat(condition.values);
+            if (condition.object === 'any') {
+                conditionValue = false;
+                Object.keys(compositionObjs).forEach(function (objId) {
+                    try {
+                        conditionValue = conditionValue ||
+                            self.executeCondition(objId, condition.key,
+                                condition.operation, condition.values);
+                        conditionDefined = true;
+                    } catch (e) {
+                        //ignore a malformed condition
+                    }
+                });
+            } else if (condition.object === 'all') {
+                conditionValue = true;
+                Object.keys(compositionObjs).forEach(function (objId) {
+                    try {
+                        conditionValue = conditionValue &&
+                            self.executeCondition(objId, condition.key,
+                                condition.operation, condition.values);
+                        conditionDefined = true;
+                    } catch (e) {
+                        //ignore a malformed condition
+                    }
+                });
+            } else {
+                try {
+                    conditionValue = self.executeCondition(condition.object, condition.key,
+                        condition.operation, condition.values);
+                    conditionDefined = true;
+                } catch (e) {
+                    //ignore malformed condition
+                }
+            }
 
-            if (operation && input) {
+            if (conditionDefined) {
                 active = (mode === 'all' && !firstRuleEvaluated ? true : active);
                 firstRuleEvaluated = true;
                 if (mode === 'any') {
-                    active = active || operation(input);
+                    active = active || conditionValue;
                 } else if (mode === 'all') {
-                    active = active && operation(input);
+                    active = active && conditionValue;
                 }
             }
         });
         return active;
+    };
+
+    ConditionEvaluator.prototype.executeCondition = function (object, key, operation, values) {
+        var telemetryValue = this.subscriptionCache[object] &&
+                         this.subscriptionCache[object][key] &&
+                         [this.subscriptionCache[object][key]],
+        op = this.operations[operation] &&
+                    this.operations[operation].operation,
+        input = telemetryValue && telemetryValue.concat(values);
+
+        if (op && input) {
+            return op(input);
+        } else {
+            throw new Error('Malformed condition');
+        }
     };
 
     ConditionEvaluator.prototype.getOperationKeys = function () {
@@ -234,6 +284,16 @@ define([], function () {
     ConditionEvaluator.prototype.getOperationDescription = function (key, values) {
         if (this.operations[key]) {
             return this.operations[key].getDescription(values);
+        }
+    };
+
+    ConditionEvaluator.prototype.getInputType = function (key) {
+        var type;
+        if (this.operations[key]) {
+            type = this.operations[key].appliesTo[0];
+        }
+        if (this.inputTypes[type]) {
+            return this.inputTypes[type];
         }
     };
 

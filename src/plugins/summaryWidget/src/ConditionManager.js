@@ -10,7 +10,7 @@ define ([
     // Load and cache composition and telemetry subscriptions, and handle evaluation
     // of rules
     // parameters:
-    // domainObject: the Summary Widget domain object represented by this view
+    // domainObject: the Summary Widget domain object
     // openmct: an MCT instance
     // evaluator: a ConditionEvaluator instance for evaluating conditions
     function ConditionManager(domainObject, openmct) {
@@ -21,13 +21,27 @@ define ([
 
         this.composition = this.openmct.composition.get(this.domainObject);
         this.compositionObjs = {};
-        this.telemetryMetadataById = {};
-        this.telemetryTypesById = {};
+
+        this.specialNames = {
+            any: 'Any Telemetry',
+            all: 'All Telemetry'
+        };
+
+        this.telemetryMetadataById = {
+            any: {},
+            all: {}
+        };
+
+        this.telemetryTypesById = {
+            any: {},
+            all: {}
+        };
+
         this.subscriptions = {};
         this.subscriptionCache = {};
         this.loadComplete = false;
         this.metadataLoadComplete = false;
-        this.evaluator = new ConditionEvaluator(this.subscriptionCache);
+        this.evaluator = new ConditionEvaluator(this.subscriptionCache, this.compositionObjs);
 
         this.callbacks = {
             add: [],
@@ -37,19 +51,28 @@ define ([
             receiveTelemetry: []
         };
 
-        this.inputTypes = {
-            number: 'number',
-            string: 'text'
-        };
+        function addGlobalMetadata(metadatum) {
+            self.telemetryMetadataById.any[metadatum.key] = metadatum;
+            self.telemetryMetadataById.all[metadatum.key] = metadatum;
+        }
+        function addGlobalPropertyType(key, type) {
+            self.telemetryTypesById.any[key] = type;
+            self.telemetryTypesById.all[key] = type;
+        }
 
         function getPropertyTypes(object) {
-            var telemetryAPI = self.openmct.telemetry;
+            var telemetryAPI = self.openmct.telemetry,
+                key,
+                type;
 
             self.telemetryTypesById[object.identifier.key] = {};
 
             return telemetryAPI.request(object, {}).then(function (telemetry) {
                 Object.entries(telemetry[0]).forEach(function (telem) {
-                    self.telemetryTypesById[object.identifier.key][telem[0]] = typeof telem[1];
+                    key = telem[0];
+                    type = typeof telem[1];
+                    self.telemetryTypesById[object.identifier.key][key] = type;
+                    addGlobalPropertyType(key, type);
                 });
             });
         }
@@ -91,6 +114,8 @@ define ([
             if (telemetryAPI.canProvideTelemetry(obj)) {
                 self.compositionObjs[objId] = obj;
                 self.telemetryMetadataById[objId] = {};
+
+                //workaround to keep composition state current
                 compositionKeys = self.domainObject.composition.map(function (object) {
                     return object.key;
                 });
@@ -101,6 +126,7 @@ define ([
                 telemetryMetadata = telemetryAPI.getMetadata(obj).values();
                 telemetryMetadata.forEach(function (metaDatum) {
                     self.telemetryMetadataById[objId][metaDatum.key] = metaDatum;
+                    addGlobalMetadata(metaDatum);
                 });
 
                 self.subscriptionCache[objId] = {};
@@ -186,9 +212,15 @@ define ([
     };
 
     ConditionManager.prototype.getObjectName = function (id) {
-        if (this.compositionObjs[id]) {
-            return this.compositionObjs[id].name;
+        var name;
+
+        if (this.specialNames[id]) {
+            name = this.specialNames[id];
+        } else if (this.compositionObjs[id]) {
+            name = this.compositionObjs[id].name;
         }
+
+        return name;
     };
 
     ConditionManager.prototype.getTelemetryMetadata = function (id) {
@@ -217,10 +249,6 @@ define ([
 
     ConditionManager.prototype.metadataLoadCompleted = function () {
         return this.metadataLoadComplete;
-    };
-
-    ConditionManager.prototype.getInputType = function (type) {
-        return this.inputTypes[type];
     };
 
     return ConditionManager;

@@ -8,7 +8,15 @@ define(['./Select'], function (Select) {
         this.manager = manager;
 
         this.select = new Select('object');
-        this.select.addOption('', '--Object--');
+        this.baseOptions = [
+            ['', '--Object--'],
+            ['any', 'Any Telemetry'],
+            ['all', 'All Telemetry']
+        ];
+
+        this.baseOptions.forEach(function (option) {
+            self.select.addOption(option[0], option[1]);
+        });
 
         this.compositionObjs = this.manager.getComposition();
         self.generateOptions();
@@ -43,7 +51,9 @@ define(['./Select'], function (Select) {
         var items = Object.values(this.compositionObjs).map(function (obj) {
             return [obj.identifier.key, obj.name];
         });
-        items.splice(0, 0, ['','--Object--']);
+        this.baseOptions.forEach(function (option, index) {
+            items.splice(index, 0, option);
+        });
         this.select.setOptions(items);
     };
 
