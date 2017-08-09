@@ -69,14 +69,14 @@ define([
                                 "items": [
                                     {
                                         "method": "showFrame",
-                                        "cssClass": "icon-two-parts-both",
+                                        "cssClass": "icon-frame-show",
                                         "control": "button",
                                         "title": "Show frame",
                                         "description": "Show frame"
                                     },
                                     {
                                         "method": "hideFrame",
-                                        "cssClass": "icon-two-parts-both",
+                                        "cssClass": "icon-frame-hide",
                                         "control": "button",
                                         "title": "Hide frame",
                                         "description": "Hide frame"
