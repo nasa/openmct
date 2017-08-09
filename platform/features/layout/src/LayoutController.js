@@ -84,6 +84,10 @@ define(
                     hasFrame: true
                 };
 
+                // TODO:
+                // Select the newly-added object
+                //self.select(null, );
+
                 // Mark change as persistable
                 if ($scope.commit) {
                     $scope.commit("Dropped a frame.");
@@ -329,39 +333,24 @@ define(
          * @param event the mouse event
          * @param {string} obj the object to select
          */
-        LayoutController.prototype.select = function select(event, obj) {
+        LayoutController.prototype.select = function select(event, obj) {            
             event.stopPropagation();
 
             var self = this;
             
             // Toggle the visibility of the object frame
-            function toggle() {                                
+            function toggle() {                            
                 var id = obj.getId();
                 var configuration = self.$scope.configuration;
 
                 configuration.panels[id].hasFrame = 
-                    !configuration.panels[id].hasFrame;
-
+                    !configuration.panels[id].hasFrame;              
+                   
                 // Change which method is exposed, to influence
                 // which button is shown in the toolbar
                 delete obj[SHOW];
                 delete obj[HIDE];
-                obj[configuration.panels[id].hasFrame ? HIDE : SHOW] = toggle;
-
-                var selection = self.selection;
-
-                obj.useCapability('mutation', function() {
-                    // reselect(obj);
-                    var selected = selection && selection.get();
-
-                    if (selection) {
-                        selection.deselect();
-
-                        if (selected !== undefined) {
-                            selection.select(obj);
-                        }
-                    }
-                });
+                obj[configuration.panels[id].hasFrame ? HIDE : SHOW] = toggle;                
              }
                 
             // Expose initial toggle
@@ -372,19 +361,6 @@ define(
                 this.selection.select(obj);
             }
         };
-
-        // Helper function to reslect an object
-        function reselect(obj) {
-            var selected = this.selection && this.selection.get();
-
-            if (this.selection) {
-                this.selection.deselect();
-
-                if (selected !== undefined) {
-                    this.selection.select(obj);
-                }
-            }
-        }
 
         /**
          * Clear the current user selection.
