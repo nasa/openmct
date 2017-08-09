@@ -1,4 +1,4 @@
-define(['../src/RuleEvaluator'], function (RuleEvaluator) {
+define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
     describe('A Summary Widget Rule Evaluator', function () {
         var evaluator,
             testEvaluator,
@@ -104,8 +104,8 @@ define(['../src/RuleEvaluator'], function (RuleEvaluator) {
                     inputCount: 0
                 }
             };
-            evaluator = new RuleEvaluator(mockCache);
-            testEvaluator = new RuleEvaluator(mockCache);
+            evaluator = new ConditionEvaluator(mockCache);
+            testEvaluator = new ConditionEvaluator(mockCache);
             evaluator.operations = mockOperations;
         });
 

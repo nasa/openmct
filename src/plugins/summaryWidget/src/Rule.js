@@ -68,7 +68,7 @@ define([
             'color': new ColorPalette('color', 'icon-T')
         };
 
-        //hide the 'none' option for the test color palette
+        //hide the 'none' option for the text color palette
         this.colorInputs.color.toggleNullOption();
 
         this.callbacks = {
@@ -309,9 +309,8 @@ define([
 
     Rule.prototype.generateDescription = function () {
         var description = '',
+            manager = this.conditionManager,
             evaluator = this.conditionManager.getEvaluator(),
-            composition = this.conditionManager.getComposition(),
-            metadata,
             name,
             property,
             operation,
@@ -322,9 +321,8 @@ define([
                 description = 'when a custom JavaScript condition evaluates to true';
             } else {
                 this.config.conditions.forEach(function (condition, index) {
-                    metadata = self.conditionManager.getTelemetryMetadata(condition.object);
-                    name = composition[condition.object] && composition[condition.object].name;
-                    property = metadata && metadata[condition.key] && metadata[condition.key].name;
+                    name = manager.getObjectName(condition.object);
+                    property = manager.getTelemetryPropertyName(condition.object, condition.key);
                     operation = evaluator.getOperationDescription(condition.operation, condition.values);
                     description += 'when ' +
                         (name ? name + ' ' : '') +

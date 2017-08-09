@@ -1,8 +1,8 @@
 define ([
-    './RuleEvaluator',
+    './ConditionEvaluator',
     'lodash'
 ], function (
-    RuleEvaluator,
+    ConditionEvaluator,
     _
 ) {
 
@@ -12,7 +12,7 @@ define ([
     // parameters:
     // domainObject: the Summary Widget domain object represented by this view
     // openmct: an MCT instance
-    // evaluator: a RuleEvaluator instance for evaluating conditions
+    // evaluator: a ConditionEvaluator instance for evaluating conditions
     function ConditionManager(domainObject, openmct) {
         var self = this;
 
@@ -27,7 +27,7 @@ define ([
         this.subscriptionCache = {};
         this.loadComplete = false;
         this.metadataLoadComplete = false;
-        this.evaluator = new RuleEvaluator(this.subscriptionCache);
+        this.evaluator = new ConditionEvaluator(this.subscriptionCache);
 
         this.callbacks = {
             add: [],
@@ -185,6 +185,12 @@ define ([
         return this.compositionObjs;
     };
 
+    ConditionManager.prototype.getObjectName = function (id) {
+        if (this.compositionObjs[id]) {
+            return this.compositionObjs[id].name;
+        }
+    };
+
     ConditionManager.prototype.getTelemetryMetadata = function (id) {
         return this.telemetryMetadataById[id];
     };
@@ -192,6 +198,12 @@ define ([
     ConditionManager.prototype.getTelemetryPropertyType = function (id, property) {
         if (this.telemetryTypesById[id]) {
             return this.telemetryTypesById[id][property];
+        }
+    };
+
+    ConditionManager.prototype.getTelemetryPropertyName = function (id, property) {
+        if (this.telemetryMetadataById[id] && this.telemetryMetadataById[id][property]) {
+            return this.telemetryMetadataById[id][property].name;
         }
     };
 

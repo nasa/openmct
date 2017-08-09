@@ -2,15 +2,17 @@ define([], function () {
 
     // a module responsible for maintaining the possible operations for conditions
     // in this widget, and evaluating whether these conditions evaluate to true.
-    function RuleEvaluator(subscriptionCache) {
+    function ConditionEvaluator(subscriptionCache) {
 
         this.subscriptionCache = subscriptionCache;
 
         // operations supported by this rule evaluator. Each rule has a method
         // with input boolean return type to be evaluated when the operation is
         // executed, a human-readable text description to populate lists in
-        // the view, a key for what type it applies to, and an integer number of
-        // value inputs to generate
+        // the view, a key for what type it applies to, an integer number of
+        // value inputs to generate, and a getDescription function that generateOptions
+        // shorthand human-readable text for to desribe this operation in the rule
+        // header
         this.operations = {
             equalTo: {
                 operation: function (input) {
@@ -173,7 +175,7 @@ define([], function () {
     // conditions evaluate to true
     // mode: if 'any', || all conditions; if 'all', && all conditions; if 'js',
     // evaluate the conditions as JavaScript
-    RuleEvaluator.prototype.execute = function (conditions, mode) {
+    ConditionEvaluator.prototype.execute = function (conditions, mode) {
         var active = false,
             telemetryValue,
             operation,
@@ -205,35 +207,35 @@ define([], function () {
         return active;
     };
 
-    RuleEvaluator.prototype.getOperationKeys = function () {
+    ConditionEvaluator.prototype.getOperationKeys = function () {
         return Object.keys(this.operations);
     };
 
-    RuleEvaluator.prototype.getOperationText = function (key) {
+    ConditionEvaluator.prototype.getOperationText = function (key) {
         return this.operations[key].text;
     };
 
-    RuleEvaluator.prototype.operationAppliesTo = function (key, type) {
+    ConditionEvaluator.prototype.operationAppliesTo = function (key, type) {
         return (this.operations[key].appliesTo.includes(type));
     };
 
-    RuleEvaluator.prototype.getInputCount = function (key) {
+    ConditionEvaluator.prototype.getInputCount = function (key) {
         if (this.operations[key]) {
             return this.operations[key].inputCount;
         }
     };
 
-    RuleEvaluator.prototype.getOperationType = function (key) {
+    ConditionEvaluator.prototype.getOperationType = function (key) {
         if (this.operations[key]) {
             return this.operations[key].appliesTo[0];
         }
     };
 
-    RuleEvaluator.prototype.getOperationDescription = function (key, values) {
+    ConditionEvaluator.prototype.getOperationDescription = function (key, values) {
         if (this.operations[key]) {
             return this.operations[key].getDescription(values);
         }
     };
 
-    return RuleEvaluator;
+    return ConditionEvaluator;
 });

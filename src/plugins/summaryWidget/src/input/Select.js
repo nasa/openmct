@@ -59,8 +59,7 @@ define([
                         option[1] + '</option>');
         });
 
-        //$('select', this.domElement).prop('selectedIndex', selectedIndex);
-        $('select', this.domElement).prop('value', self.options[selectedIndex]);
+        $('select', this.domElement).prop('selectedIndex', selectedIndex);
     };
 
     //add a single option in the form of a [value,label] pair

@@ -33,7 +33,7 @@ define([
         this.activeId = 'default';
         this.rulesById = {};
         this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
-        this.widget = $(widgetTemplate);
+        this.domElement = $(widgetTemplate);
 
         this.show = this.show.bind(this);
         this.destroy = this.destroy.bind(this);
@@ -45,7 +45,7 @@ define([
     }
 
     WidgetView.prototype.show = function (container) {
-        $(container).append(this.widget);
+        $(container).append(this.domElement);
         this.initRule('default', 'Default');
         this.refreshRules();
         this.updateWidget();
@@ -146,10 +146,10 @@ define([
             ruleOrder = self.getConfigProp('ruleOrder'),
             rules = self.rulesById;
 
-        $('#ruleArea', this.widget).html('');
+        $('#ruleArea', this.domElement).html('');
         Object.values(ruleOrder).forEach(function (ruleId) {
             self.initRule(ruleId);
-            $('#ruleArea', self.widget).append(rules[ruleId].getDOM());
+            $('#ruleArea', self.domElement).append(rules[ruleId].getDOM());
         });
     };
 
@@ -165,10 +165,10 @@ define([
 
     WidgetView.prototype.updateWidget = function () {
         var activeRule = this.rulesById[this.activeId];
-        this.applyStyle($('#widget', this.widget), activeRule.getProperty('style'));
-        $('#widget', this.widget).prop('title', activeRule.getProperty('message'));
-        $('#widgetLabel', this.widget).html(activeRule.getProperty('label'));
-        $('#widgetIcon', this.widget).removeClass().addClass(activeRule.getProperty('icon'));
+        this.applyStyle($('#widget', this.domElement), activeRule.getProperty('style'));
+        $('#widget', this.domElement).prop('title', activeRule.getProperty('message'));
+        $('#widgetLabel', this.domElement).html(activeRule.getProperty('label'));
+        $('#widgetIcon', this.domElement).removeClass().addClass(activeRule.getProperty('icon'));
     };
 
     WidgetView.prototype.getConfigProp = function (path) {
