@@ -24,7 +24,7 @@
     <mct-include key="'topbar-browse'"></mct-include>
     <div class="abs holder holder-main browse-area s-browse-area browse-wrapper"
          ng-controller="PaneController as modelPaneTree"
-         ng-class="modelPaneTree.visible() ? 'pane-tree-showing' : 'pane-tree-hidden'">
+         ng-class="modelPaneTree.visible() ? 'pane-tree-showing' : 'pane-tree-hidden'" hide-parameter="hideTree">
         <mct-split-pane class='abs contents'
                         anchor='left'>
             <div class='split-pane-component treeview pane left'>
@@ -58,7 +58,8 @@
 
                 <div class='holder holder-object-and-inspector abs' id='content-area'
                      ng-controller="InspectorPaneController as modelPaneInspect"
-                     ng-class="modelPaneInspect.visible() ? 'pane-inspect-showing' : 'pane-inspect-hidden'">
+                     ng-class="modelPaneInspect.visible() ? 'pane-inspect-showing' : 'pane-inspect-hidden'" 
+                     hide-parameter="hideInspector">
 
                     <mct-split-pane class='l-object-and-inspector contents abs' anchor='right'>
                         <div class='split-pane-component t-object pane primary-pane left'>
@@ -87,4 +88,3 @@
     </div>
     <mct-include key="'bottombar'"></mct-include>
 </div>
-

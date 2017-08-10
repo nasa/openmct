@@ -107,7 +107,9 @@ define([
                     "depends": [
                         "$scope",
                         "agentService",
-                        "$window"
+                        "$window",
+                        "$location",
+                        "$attrs"
                     ]
                 },
                 {
@@ -134,7 +136,9 @@ define([
                         "$scope",
                         "agentService",
                         "$window",
-                        "navigationService"
+                        "navigationService",
+                        "$location",
+                        "$attrs"
                     ]
                 }
             ],
