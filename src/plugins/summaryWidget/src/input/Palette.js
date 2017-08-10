@@ -15,18 +15,22 @@ define([
         this.items = items;
 
         this.domElement = $(paletteTemplate);
+        this.itemElements = {
+            nullOption: $('.l-option-row .s-palette-item', this.domElement)
+        };
         this.changeCallbacks = [];
         this.value = this.items[0];
         this.nullOption = ' ';
 
         self.domElement.addClass(this.cssClass);
         self.setNullOption(this.nullOption);
+
         $('.l-palette-row', self.domElement).after('<div class = "l-palette-row"> </div>');
         self.items.forEach(function (item) {
-            $('.l-palette-row:last-of-type', self.domElement).append(
-                '<div class = "l-palette-item s-palette-item"' +
-                ' data-item = ' + item + '> </div>'
-            );
+            var itemElement = $('<div class = "l-palette-item s-palette-item"' +
+                                ' data-item = ' + item + '> </div>');
+            $('.l-palette-row:last-of-type', self.domElement).append(itemElement);
+            self.itemElements[item] = itemElement;
         });
 
         $('.menu', self.domElement).hide();
@@ -71,6 +75,11 @@ define([
         var self = this;
         if (this.items.includes(item) || item === this.nullOption) {
             this.value = item;
+            if (item === this.nullOption) {
+                this.updateSelected('nullOption');
+            } else {
+                this.updateSelected(item);
+            }
         }
         this.changeCallbacks.forEach(function (callback) {
             if (callback) {
@@ -79,10 +88,20 @@ define([
         });
     };
 
+    Palette.prototype.updateSelected = function (item) {
+        $('.s-palette-item', this.domElement).removeClass('selected');
+        this.itemElements[item].addClass('selected');
+        if (item === 'nullOption') {
+            $('.t-swatch', this.domElement).addClass('no-selection');
+        } else {
+            $('.t-swatch', this.domElement).removeClass('no-selection');
+        }
+    };
+
     //set the property to be used for the 'none' item
     Palette.prototype.setNullOption = function (item) {
         this.nullOption = item;
-        $('.l-option-row .s-palette-item', this.domElement).data('item', item);
+        this.itemElements.nullOption.data('item', item);
     };
 
     //allow the 'none' option to be hidden if it doesn't apply

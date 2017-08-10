@@ -38,6 +38,7 @@ define([
         this.palette = new Palette(property, cssClass, this.icons);
 
         this.palette.setNullOption(' ');
+        this.oldIcon = this.palette.current || ' ';
 
         var domElement = $(this.palette.getDOM()),
             self = this;
@@ -52,9 +53,9 @@ define([
         });
 
         function updateSwatch() {
-            $('.icon-swatch', domElement).removeClass()
-                .addClass(self.palette.getCurrent())
-                .addClass('icon-swatch');
+            $('.icon-swatch', domElement).removeClass(self.oldIcon)
+                .addClass(self.palette.getCurrent());
+            self.oldIcon = self.palette.getCurrent();
         }
 
         this.palette.on('change', updateSwatch);
