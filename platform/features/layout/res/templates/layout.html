@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 
-<div class="l-layout" style="position: absolute; top: 0; right:0; bottom:0; left:0;"
+<div class="l-layout abs"
      ng-controller="LayoutController as controller"
      ng-click="controller.clearSelection($event)">
 
@@ -32,6 +32,7 @@
 
         <mct-representation key="'frame'"
                             class="frame child-frame holder contents abs"
+                            parameters="{ hasFrame: controller.hasFrame(childObject)}"
                             mct-object="childObject">
         </mct-representation>
         <!-- Drag handles -->
