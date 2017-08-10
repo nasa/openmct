@@ -143,6 +143,17 @@
 
     // Example grid of glyphs
     .items-holder.grid {
+        table.details {
+            width: 100%;
+            td {
+                font-size: inherit;
+                &.label {
+                    color: pushBack($colorBodyFg, 10%);
+                    text-transform: uppercase;
+                    white-space: nowrap;
+                }
+            }
+        }
         .item.glyph-item,
         .item.swatch-item {
             margin-bottom: 50px;
@@ -154,15 +165,6 @@
                 font-size: 5em;
                 margin: $interiorMarginLg 0;
                 text-align: center;
-            }
-
-            table.details td {
-                font-size: inherit;
-                &.label {
-                    color: pushBack($colorBodyFg, 10%);
-                    text-transform: uppercase;
-                    white-space: nowrap;
-                }
             }
         }
 

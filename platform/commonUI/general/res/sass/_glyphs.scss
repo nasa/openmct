@@ -44,6 +44,8 @@ $glyph-icon-plus: '\e926';
 $glyph-icon-trash: '\e927';
 $glyph-icon-x: '\e928';
 $glyph-icon-brackets: '\e929';
+$glyph-icon-crosshair: '\e930';
+$glyph-icon-grippy: '\e931';
 $glyph-icon-arrows-out: '\e1000';
 $glyph-icon-arrows-right-left: '\e1001';
 $glyph-icon-arrows-up-down: '\e1002';
@@ -86,6 +88,10 @@ $glyph-icon-brightness: '\e1039';
 $glyph-icon-contrast: '\e1040';
 $glyph-icon-expand: '\e1041';
 $glyph-icon-list-view: '\e1042';
+$glyph-icon-grid-snap-to: '\e1043';
+$glyph-icon-grid-snap-no: '\e1044';
+$glyph-icon-frame-show: '\e1045';
+$glyph-icon-frame-hide: '\e1046';
 $glyph-icon-activity: '\e1100';
 $glyph-icon-activity-mode: '\e1101';
 $glyph-icon-autoflow-tabular: '\e1102';
@@ -116,6 +122,7 @@ $glyph-icon-timeline: '\e1126';
 $glyph-icon-timer: '\e1127';
 $glyph-icon-topic: '\e1128';
 $glyph-icon-box-with-dashed-lines: '\e1129';
+$glyph-icon-summary-widget: '\e1130';
 
 /************************** 16 PX CLASSES */
 
@@ -149,6 +156,8 @@ $glyph-icon-box-with-dashed-lines: '\e1129';
 .icon-trash {  @include glyphBefore($glyph-icon-trash); }
 .icon-x {  @include glyphBefore($glyph-icon-x); }
 .icon-brackets {  @include glyphBefore($glyph-icon-brackets); }
+.icon-crosshair {  @include glyphBefore($glyph-icon-crosshair); }
+.icon-grippy {  @include glyphBefore($glyph-icon-grippy); }
 .icon-arrows-out {  @include glyphBefore($glyph-icon-arrows-out); }
 .icon-arrows-right-left {  @include glyphBefore($glyph-icon-arrows-right-left); }
 .icon-arrows-up-down {  @include glyphBefore($glyph-icon-arrows-up-down); }
@@ -191,6 +200,10 @@ $glyph-icon-box-with-dashed-lines: '\e1129';
 .icon-contrast {  @include glyphBefore($glyph-icon-contrast); }
 .icon-expand {  @include glyphBefore($glyph-icon-expand); }
 .icon-list-view {  @include glyphBefore($glyph-icon-list-view); }
+.icon-grid-snap-to {  @include glyphBefore($glyph-icon-grid-snap-to); }
+.icon-grid-snap-no {  @include glyphBefore($glyph-icon-grid-snap-no); }
+.icon-frame-show {  @include glyphBefore($glyph-icon-frame-show); }
+.icon-frame-hide {  @include glyphBefore($glyph-icon-frame-hide); }
 .icon-activity {  @include glyphBefore($glyph-icon-activity); }
 .icon-activity-mode {  @include glyphBefore($glyph-icon-activity-mode); }
 .icon-autoflow-tabular {  @include glyphBefore($glyph-icon-autoflow-tabular); }
@@ -221,10 +234,8 @@ $glyph-icon-box-with-dashed-lines: '\e1129';
 .icon-timer {  @include glyphBefore($glyph-icon-timer); }
 .icon-topic {  @include glyphBefore($glyph-icon-topic); }
 .icon-box-with-dashed-lines {  @include glyphBefore($glyph-icon-box-with-dashed-lines); }
+.icon-summary-widget {  @include glyphBefore($glyph-icon-summary-widget); }
 
 /************************** 12 PX CLASSES */
-
-.icon-eye-open-12px {  @include glyphBefore($glyph-icon-eye-open,'symbolsfont-12px'); }
-.icon-collapse-pane-left-12px {  @include glyphBefore($glyph-icon-collapse-pane-left,'symbolsfont-12px'); }
-.icon-collapse-pane-right-12px {  @include glyphBefore($glyph-icon-collapse-pane-right,'symbolsfont-12px'); }
+.icon-crosshair-12px {  @include glyphBefore($glyph-icon-crosshair,'symbolsfont-12px'); }
 .icon-folder-12px {  @include glyphBefore($glyph-icon-folder,'symbolsfont-12px'); }
