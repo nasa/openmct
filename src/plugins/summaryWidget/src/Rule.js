@@ -33,6 +33,7 @@ define([
 
         this.domElement = $(ruleTemplate);
         this.conditions = [];
+        this.dragging = false;
 
         this.remove = this.remove.bind(this);
         this.duplicate = this.duplicate.bind(this);
@@ -74,7 +75,8 @@ define([
         this.callbacks = {
             remove: [],
             duplicate: [],
-            change: []
+            change: [],
+            drop: []
         };
 
         function onIconInput(icon) {
@@ -129,6 +131,20 @@ define([
             });
         }
 
+        function onDragStart(event) {
+            var header = $('.widget-rule-header', self.domElement).get(0),
+                height = $(header).height(),
+                width = $('.t-grippy', header).width();
+            event.dataTransfer.setDragImage(header, width, height / 2);
+            event.dataTransfer.setData('text/plain', self.config.id);
+            self.dragging = true;
+        }
+
+        function onDragEnd(event) {
+            $('.t-drag-indicator').hide();
+            self.dragging = false;
+        }
+
         $('.t-rule-label-input', this.domElement).before(this.iconInput.getDOM());
         this.iconInput.set(self.config.icon);
         this.iconInput.on('change', onIconInput);
@@ -156,6 +172,9 @@ define([
         this.title.html(self.config.name);
         this.description.html(self.config.description);
         this.trigger.prop('value', self.config.trigger);
+
+        this.grippy.on('dragstart', onDragStart);
+        this.grippy.on('dragend', onDragEnd);
 
         if (!this.conditionManager.loadCompleted()) {
             this.config.expanded = false;
@@ -199,6 +218,11 @@ define([
                 callback();
             }
         });
+    };
+
+    Rule.prototype.showDragIndicator = function () {
+        $('.t-drag-indicator').hide();
+        $('.t-drag-indicator', this.domElement).show();
     };
 
     Rule.prototype.updateDomainObject = function (property, value) {
@@ -324,21 +348,31 @@ define([
                     name = manager.getObjectName(condition.object);
                     property = manager.getTelemetryPropertyName(condition.object, condition.key);
                     operation = evaluator.getOperationDescription(condition.operation, condition.values);
-                    description += 'when ' +
-                        (name ? name + '\'s ' : '') +
-                        (property ? property + ' ' : '') +
-                        (operation ? operation + ' ' : '');
-                    if (index < self.config.conditions.length - 1) {
-                        description += (self.config.trigger === 'any' ? ' OR ' : ' AND ');
+                    if (name || property || operation) {
+                        description += 'when ' +
+                            (name ? name + '\'s ' : '') +
+                            (property ? property + ' ' : '') +
+                            (operation ? operation + ' ' : '') +
+                            (self.config.trigger === 'any' ? ' OR ' : ' AND ');
                     }
                 });
             }
         }
 
+        if (description.endsWith('OR ')) {
+            description = description.substring(0, description.length - 3);
+        }
+        if (description.endsWith('AND ')) {
+            description = description.substring(0, description.length - 4);
+        }
         description = (description === '' ? this.config.description : description);
         this.description.html(description);
         this.config.description = description;
         this.updateDomainObject('description', description);
+    };
+
+    Rule.prototype.isDragging = function () {
+        return this.dragging;
     };
 
     return Rule;

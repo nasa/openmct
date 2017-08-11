@@ -42,6 +42,9 @@ define([
         this.duplicateRule = this.duplicateRule.bind(this);
         this.updateWidget = this.updateWidget.bind(this);
         this.onReceiveTelemetry = this.onReceiveTelemetry.bind(this);
+        this.reorder = this.reorder.bind(this);
+        this.onDragOver = this.onDragOver.bind(this);
+        this.onDrop = this.onDrop.bind(this);
     }
 
     Widget.prototype.show = function (container) {
@@ -53,10 +56,71 @@ define([
 
         $('#addRule').on('click', this.addRule);
         this.conditionManager.on('receiveTelemetry', this.onReceiveTelemetry);
+
+        this.domElement.on('dragover', this.onDragOver);
+        this.domElement.on('drop', this.onDrop);
     };
 
     Widget.prototype.destroy = function (container) {
 
+    };
+
+    Widget.prototype.getDropLocation = function (event) {
+        var ruleOrder = this.domainObject.configuration.ruleOrder,
+            rulesById = this.rulesById,
+            offset,
+            y,
+            height,
+            dropY = event.pageY,
+            target = '';
+
+        ruleOrder.forEach(function (ruleId) {
+            offset = rulesById[ruleId].getDOM().offset();
+            y = offset.top;
+            height = offset.height;
+            if (y + height / 4 < dropY && dropY < y + 3 * height / 2) {
+                target = ruleId;
+            }
+        });
+        return target;
+    };
+
+    Widget.prototype.onDragOver = function (event) {
+        var dragTarget = this.getDropLocation(event),
+            draggingRule = this.draggingRule();
+
+        if (this.rulesById[dragTarget] && draggingRule) {
+            this.rulesById[dragTarget].showDragIndicator();
+        } else {
+            $('.t-drag-indicator').hide();
+        }
+        event.preventDefault();
+    };
+
+    Widget.prototype.onDrop = function (event) {
+        event.preventDefault();
+        var sourceId = event.dataTransfer.getData('text'),
+            dropTarget = this.getDropLocation(event),
+            draggingRule = this.draggingRule();
+
+        if (this.rulesById[dropTarget] && draggingRule) {
+            this.reorder(sourceId, dropTarget);
+        }
+
+    };
+
+    Widget.prototype.draggingRule = function () {
+        var ruleOrder = this.domainObject.configuration.ruleOrder,
+            rulesById = this.rulesById,
+            dragging;
+
+        ruleOrder.forEach(function (ruleId) {
+            if (rulesById[ruleId].isDragging()) {
+                dragging = ruleId;
+            }
+        });
+
+        return dragging;
     };
 
     Widget.prototype.onReceiveTelemetry = function () {
@@ -140,6 +204,21 @@ define([
         this.rulesById[ruleId].on('remove', this.refreshRules);
         this.rulesById[ruleId].on('duplicate', this.duplicateRule);
         this.rulesById[ruleId].on('change', this.updateWidget);
+        this.rulesById[ruleId].on('drop', this.reorder);
+    };
+
+    Widget.prototype.reorder = function (sourceId, targetId) {
+        var ruleOrder = this.domainObject.configuration.ruleOrder,
+            sourceIndex = ruleOrder.indexOf(sourceId),
+            targetIndex;
+
+        if (sourceId !== targetId) {
+            ruleOrder.splice(sourceIndex, 1);
+            targetIndex = ruleOrder.indexOf(targetId);
+            ruleOrder.splice(targetIndex + 1, 0, sourceId);
+            this.setConfigProp('ruleOrder', ruleOrder);
+            this.refreshRules();
+        }
     };
 
     Widget.prototype.refreshRules = function () {
