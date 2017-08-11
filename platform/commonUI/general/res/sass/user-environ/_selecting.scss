@@ -28,12 +28,12 @@
 
     .s-hover-border {
         &:hover {
-            border-color: rgba($colorSelectableSelectedPrimary, 0.5);
+            border-color: rgba($colorSelectableSelectedPrimary, 0.7) !important;
         }
     }
 
-    .s-selected > .t-edit-handle-holder.s-hover-border,
-    .s-selected.t-edit-handle-holder.s-hover-border {
+    .s-selected > .s-hover-border,
+    .s-selected.s-hover-border {
         // Styles for a selected object. Also used by legacy Fixed Position/Panel objects.
         border-color: $colorSelectableSelectedPrimary !important;
         @include boxShdwLarge();
@@ -48,7 +48,8 @@
         }
     }
 
-    .s-moveable {
+    .s-selected > .s-moveable,
+    .s-selected.s-moveable {
         cursor: move;
     }
 }

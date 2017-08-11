@@ -35,7 +35,7 @@
          class="l-fixed-position-item s-selectable s-moveable s-hover-border"
          ng-class="{
             's-not-selected': controller.selected() && !controller.selected(element),
-            't-edit-handle-holder s-selected': controller.selected(element)
+            's-selected': controller.selected(element)
          }"
          ng-style="element.style"
          ng-click="controller.select(element)">
@@ -47,7 +47,7 @@
 
     <!-- Selection highlight, handles -->
     <span ng-if="controller.selected()">
-        <div class="l-fixed-position-item"
+        <div class="l-fixed-position-item t-edit-handle-holder"
              mct-drag-down="controller.moveHandle().startDrag(controller.selected())"
              mct-drag="controller.moveHandle().continueDrag(delta)"
              mct-drag-up="controller.moveHandle().endDrag()"
