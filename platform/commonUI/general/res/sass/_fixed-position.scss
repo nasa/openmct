@@ -39,6 +39,7 @@
 				width: 100%;
 				pointer-events: none;
 				z-index: 0;
+                &.l-grid-y { background-position: 0 1px; }
 			}
 		}
 	}
