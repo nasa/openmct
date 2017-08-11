@@ -22,7 +22,7 @@
 
 <div class="abs l-layout"
      ng-controller="LayoutController as controller"
-     ng-click="controller.clearSelection($event)">
+     ng-click="controller.clearSelection()">
 
     <div class='abs frame child-frame panel s-selectable s-moveable'
          ng-class="{ 'no-frame': !controller.hasFrame(childObject), 's-selected':controller.selected(childObject) }"
@@ -36,7 +36,7 @@
                             mct-object="childObject">
         </mct-representation>
         <!-- Drag handles -->
-        <span class="abs t-edit-handle-holder s-hover-border" ng-show="domainObject.hasCapability('editor')">
+        <span class="abs t-edit-handle-holder s-hover-border" ng-if="controller.selected(childObject)">
             <span class="edit-handle edit-move"
                   mct-drag-down="controller.startDrag(childObject.getId(), [1,1], [0,0])"
                   mct-drag="controller.continueDrag(delta)"
