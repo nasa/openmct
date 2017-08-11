@@ -24,15 +24,14 @@
      ng-controller="LayoutController as controller"
      ng-click="controller.clearSelection($event)">
 
-    <div class='abs frame child-frame panel s-selectable s-moveable'
+    <div class='abs frame t-frame-outer child-frame panel s-selectable s-moveable'
          ng-class="{ 'no-frame': !controller.hasFrame(childObject), 's-selected':controller.selected(childObject) }"
          ng-repeat="childObject in composition"
          ng-click="controller.select($event, childObject.getId())"
          ng-style="controller.getFrameStyle(childObject.getId())">
 
         <mct-representation key="'frame'"
-                            class="frame child-frame holder contents abs"
-                            parameters="{ hasFrame: controller.hasFrame(childObject)}"
+                            class="t-rep-frame holder contents abs"
                             mct-object="childObject">
         </mct-representation>
         <!-- Drag handles -->

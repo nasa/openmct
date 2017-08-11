@@ -30,6 +30,7 @@
 		height: auto;
 
 		.l-grid-holder {
+            display: none;
 			position: relative;
 			height: 100%;
 			width: 100%;
@@ -109,6 +110,7 @@
 .s-status-editing {
     .t-fixed-position {
         .l-grid-holder {
+            display: block;
             .l-grid {
                 &.l-grid-x {
                     @include bgTicks($colorGridLines, 'x');
