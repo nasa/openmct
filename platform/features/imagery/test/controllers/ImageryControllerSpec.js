@@ -226,6 +226,28 @@ define(
                     expect(controller.updateHistory(mockDatum)).toBe(false);
                     expect(controller.updateHistory(mockDatum)).toBe(false);
                 });
+
+                describe("user clicks on imagery thumbnail", function () {
+                    var mockDatum = { utc: 1434600258123, url: 'some/url', selected: false};
+
+                    it("pauses and adds selected class to imagery thumbnail", function () {
+                        controller.setSelectedImage(mockDatum);
+                        expect(controller.paused()).toBeTruthy();
+                        expect(mockDatum.selected).toBeTruthy();
+                    });
+
+                    it("unselects previously selected image", function () {
+                        $scope.imageHistory = [{ utc: 1434600258123, url: 'some/url', selected: true}];
+                        controller.unselectAllImages();
+                        expect($scope.imageHistory[0].selected).toBeFalsy();
+                    });
+
+                    it("updates larger image url and time", function () {
+                        controller.setSelectedImage(mockDatum);
+                        expect(controller.getImageUrl()).toEqual(controller.getImageUrl(mockDatum));
+                        expect(controller.getTime()).toEqual(controller.timeFormat.format(mockDatum.utc));
+                    });
+                });
             });
 
             it("initially shows an empty string for date/time", function () {

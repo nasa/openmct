@@ -48,9 +48,8 @@ define(
             this.zone = "";
             this.imageUrl = "";
             this.requestCount = 0;
-            this.scrollable = $(element[0]);
+            this.scrollable = $(".l-image-thumbs-wrapper");
             this.autoScroll = openmct.time.clock() ? true : false;
-
             this.$scope.imageHistory = [];
             this.$scope.filters = {
                 brightness: 100,
@@ -63,6 +62,7 @@ define(
             this.updateHistory = this.updateHistory.bind(this);
             this.onBoundsChange = this.onBoundsChange.bind(this);
             this.onScroll = this.onScroll.bind(this);
+            this.setSelectedImage = this.setSelectedImage.bind(this);
 
             this.subscribe(this.$scope.domainObject);
 
@@ -80,10 +80,10 @@ define(
                     var metadata = this.openmct
                         .telemetry
                         .getMetadata(this.domainObject);
-                    var timeKey = this.openmct.time.timeSystem().key;
+                    this.timeKey = this.openmct.time.timeSystem().key;
                     this.timeFormat = this.openmct
                         .telemetry
-                        .getValueFormatter(metadata.value(timeKey));
+                        .getValueFormatter(metadata.value(this.timeKey));
                     this.imageFormat = this.openmct
                         .telemetry
                         .getValueFormatter(metadata.valuesForHints(['image'])[0]);
@@ -161,7 +161,7 @@ define(
 
         /**
          * Updates displayable values to match those of the most
-         * recently recieved datum.
+         * recently received datum.
          * @param {object} [datum] the datum
          * @private
          */
@@ -170,7 +170,6 @@ define(
                 this.nextDatum = datum;
                 return;
             }
-
             this.time = this.timeFormat.format(datum);
             this.imageUrl = this.imageFormat.format(datum);
 
@@ -185,8 +184,7 @@ define(
         ImageryController.prototype.updateHistory = function (datum) {
             if (this.$scope.imageHistory.length === 0 ||
                 !_.isEqual(this.$scope.imageHistory.slice(-1)[0], datum)) {
-
-                var index = _.sortedIndex(this.$scope.imageHistory, datum, 'utc');
+                var index = _.sortedIndex(this.$scope.imageHistory, datum, this.timeFormat.format.bind(this.timeFormat));
                 this.$scope.imageHistory.splice(index, 0, datum);
                 return true;
             }
@@ -196,8 +194,12 @@ define(
 
         ImageryController.prototype.onScroll = function (event) {
             this.$window.requestAnimationFrame(function () {
+                var thumbnailWrapperHeight = this.scrollable[0].offsetHeight;
+                var thumbnailWrapperWidth = this.scrollable[0].offsetWidth;
                 if (this.scrollable[0].scrollLeft <
-                    (this.scrollable[0].scrollWidth - this.scrollable[0].clientWidth) - 20) {
+                    (this.scrollable[0].scrollWidth - this.scrollable[0].clientWidth) - (thumbnailWrapperWidth) ||
+                    this.scrollable[0].scrollTop <
+                    (this.scrollable[0].scrollHeight - this.scrollable[0].clientHeight) - (thumbnailWrapperHeight)) {
                     this.autoScroll = false;
                 } else {
                     this.autoScroll = true;
@@ -205,11 +207,15 @@ define(
             }.bind(this));
         };
 
-        ImageryController.prototype.scrollToRight = function () {
+        /**
+         *  Force history imagery div to scroll to bottom.
+         */
+        ImageryController.prototype.scrollToBottom = function () {
             if (this.autoScroll) {
-                this.scrollable[0].scrollLeft = this.scrollable[0].scrollWidth;
+                this.scrollable[0].scrollTop = this.scrollable[0].scrollHeight;
             }
         };
+
 
         /**
          * Get the time portion (hours, minutes, seconds) of the
@@ -243,16 +249,38 @@ define(
          * @returns {boolean} the current state
          */
         ImageryController.prototype.paused = function (state) {
-                if (arguments.length > 0 && state !== this.isPaused) {
-                    this.isPaused = state;
-                    if (this.nextDatum) {
-                        this.updateValues(this.nextDatum);
-                        delete this.nextDatum;
-                    }
+            if (arguments.length > 0 && state !== this.isPaused) {
+                this.unselectAllImages();
+                this.isPaused = state;
+                if (this.nextDatum) {
+                    this.updateValues(this.nextDatum);
+                    delete this.nextDatum;
                 }
-                return this.isPaused;
-            };
+                this.autoScroll = true;
+            }
+            return this.isPaused;
+        };
 
+        /**
+         * Set the selected image on the state for the large imagery div to use.
+         * @param {object} [image] the image object to get url from.
+         */
+        ImageryController.prototype.setSelectedImage = function (image) {
+            this.imageUrl = this.getImageUrl(image);
+            this.time = this.getTime(image);
+            this.paused(true);
+            this.unselectAllImages();
+            image.selected = true;
+        };
+
+        /**
+         * Loop through the history imagery data to set all images to unselected.
+         */
+        ImageryController.prototype.unselectAllImages = function () {
+            for (var i = 0; i < this.$scope.imageHistory.length; i++) {
+                this.$scope.imageHistory[i].selected = false;
+            }
+        };
         return ImageryController;
     }
 );

@@ -9,7 +9,6 @@
 	@if $enableImageryThumbs == true {
 		bottom: $interiorMargin*2 +  $imageThumbsWrapperH;
 	}
-	min-height: 100px;
 	min-width: 150px;
 	.l-image-main {
 		background-color: $colorPlotBg;
@@ -22,7 +21,8 @@
 
 .l-image-thumbs-wrapper {
 	top: auto;
-	height: $imageThumbsWrapperH;
+	min-height: $imageThumbsWrapperH;
+	max-height: 60%;
 }
 
 .l-date,
@@ -82,9 +82,8 @@
 /*************************************** THUMBS */
 
 .l-image-thumbs-wrapper {
-	//@include test(green);
-	overflow-x: auto;
-	overflow-y: hidden;
+	overflow-x: hidden;
+	overflow-y: auto;
 	padding-bottom: $interiorMargin;
 	white-space: nowrap;
 }
@@ -92,8 +91,17 @@
 .l-image-thumb-item {
 	@include transition(background-color, 0.25s);
 	box-sizing: border-box;
+    cursor: pointer;
+    direction: ltr;
+    display: inline-block;
+    float: left;
+    font-size: 0.8em;
 	padding: 1px;
-	position: relative;
+    margin-left: $interiorMarginSm;
+    position: relative;
+    text-align: left;
+    width: $imageThumbsD + $imageThumbPad*2;
+    white-space: normal;
 	.l-thumb,
 	.l-date,
 	.l-time {
@@ -103,14 +111,7 @@
 	.l-time {
 		padding: 2px 3px;
 	}
-	cursor: pointer;
-	direction: ltr;
-	display: inline-block;
-	font-size: 0.8em;
-	margin-left: $interiorMarginSm;
-	text-align: left;
-	width: $imageThumbsD + $imageThumbPad*2;
-	white-space: normal;
+
 	&:hover {
 		background: $colorThumbHoverBg;
 		.l-date,
@@ -184,7 +185,8 @@
 /*************************************** WHEN IN FRAME */
 .frame .t-imagery {
 	.l-image-main-wrapper {
-		bottom: 0;
+		bottom: 0 !important;
+        height: 100% !important;
 		.l-image-main-controlbar {
 			font-size: 0.7em;
 		}
@@ -194,7 +196,8 @@
 			}
 		}
 	}
-	.l-image-thumbs-wrapper {
+	.l-image-thumbs-wrapper,
+    mct-splitter {
 		display: none;
 	}
 }

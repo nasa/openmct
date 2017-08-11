@@ -117,9 +117,7 @@ define(
 
                 // Apply styles to child elements
                 function updateChildren(children) {
-                    if (alias) {
-                        position = userWidthPreference || position;
-                    }
+                    position = userWidthPreference || position;
 
                     // Pick out correct elements to update, flowing from
                     // selected anchor edge.
@@ -134,6 +132,11 @@ define(
 
                     // Get actual size (to obey min-width etc.)
                     firstSize = getSize(first[0]);
+
+                    if (alias === 'mctSplitPane-imagery') {
+                        firstSize = firstSize - 5;
+                    }
+
                     first.css(anchor.dimension, firstSize + 'px');
                     splitter.css(anchor.edge, firstSize + 'px');
                     splitter.css(anchor.opposite, "auto");
@@ -182,7 +185,9 @@ define(
                 }
 
                 function setUserWidthPreference(value) {
-                    userWidthPreference = value;
+                    if (alias) {
+                        userWidthPreference = value;
+                    }
                 }
 
                 function persistToLocalStorage(value) {

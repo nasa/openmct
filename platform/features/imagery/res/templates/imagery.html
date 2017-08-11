@@ -1,5 +1,6 @@
 <div class="t-imagery" ng-controller="ImageryController as imagery">
-    <div class="l-image-main-wrapper l-flex-col"
+    <mct-split-pane class='abs' anchor="bottom" alias="imagery">
+    <div class="split-pane-component l-image-main-wrapper l-flex-col"
         ng-mouseenter="showLocalControls = true;"
         ng-mouseleave="showLocalControls = false;">
         <div class="l-local-controls s-local-controls s-wrapper-transluc l-flex-row"
@@ -55,4 +56,14 @@
             </div>
         </div>
     </div>
+    <mct-splitter></mct-splitter>
+    <div class="split-pane-component l-image-thumbs-wrapper">
+        <div class="l-image-thumb-item" ng-class="{selected: image.selected}" ng-repeat="image in imageHistory track by $index" 
+            ng-click="imagery.setSelectedImage(image)"  ng-init="imagery.scrollToBottom()">
+            <img class="l-thumb" 
+                ng-src={{imagery.getImageUrl(image)}}>
+            <div class="l-time">{{imagery.getTime(image)}}</div>
+        </div>
+    </div>
+    </mct-split-pane>
 </div>
