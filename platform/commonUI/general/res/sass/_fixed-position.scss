@@ -45,7 +45,7 @@
 
 	.l-fixed-position-item {
 		position: absolute;
-		border: 1px solid transparent;
+		//border: 1px solid transparent;
 
 		&.s-not-selected {
 			opacity: 0.8;
@@ -107,35 +107,29 @@
 	}
 
 	.l-fixed-position-item-handle {
-		$brd: 1px solid $colorKey;
-		background: rgba($colorKey, 0.5);
+		background: rgba($colorSelectableSelectedPrimary, 0.5);
 		cursor: crosshair;
-		border: $brd;
+		border: 1px solid $colorSelectableSelectedPrimary;
 		position: absolute;
 	}
 }
 
-.edit-mode .t-fixed-position {
-	&.l-fixed-position {
-		.l-grid-holder {
-			.l-grid {
-				&.l-grid-x {
-					@include bgTicks($colorGridLines, 'x');
-				}
+.s-status-editing {
+    .t-fixed-position {
+        .l-grid-holder {
+            .l-grid {
+                &.l-grid-x {
+                    @include bgTicks($colorGridLines, 'x');
+                }
 
-				&.l-grid-y {
-					@include bgTicks($colorGridLines, 'y');
-				}
-			}
-		}
-	}
-
-	.l-fixed-position-item {
-		&:not(.s-selected) {
-			border: 1px dotted rgba($colorKey, 0.75);
-			&:hover {
-				border: 1px dotted rgba($colorKey, 1.0);
-			}
-		}
-	}
+                &.l-grid-y {
+                    @include bgTicks($colorGridLines, 'y');
+                }
+            }
+        }
+    }
+    .l-fixed-position-item.s-hover-border {
+        // Show a border by default so user can see empty items
+        border-color: rgba($colorSelectableSelectedPrimary, 0.4);
+    }
 }

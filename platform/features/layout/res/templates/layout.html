@@ -20,12 +20,12 @@
  at runtime from the About dialog for additional information.
 -->
 
-<div class="l-layout abs"
+<div class="abs l-layout"
      ng-controller="LayoutController as controller"
      ng-click="controller.clearSelection($event)">
 
-    <div class='frame child-frame panel abs'
-         ng-class="{'no-frame': !controller.hasFrame(childObject)}"
+    <div class='abs frame child-frame panel s-selectable s-moveable'
+         ng-class="{ 'no-frame': !controller.hasFrame(childObject), 's-selected':controller.selected(childObject) }"
          ng-repeat="childObject in composition"
          ng-click="controller.select($event, childObject.getId())"
          ng-style="controller.getFrameStyle(childObject.getId())">
@@ -36,9 +36,8 @@
                             mct-object="childObject">
         </mct-representation>
         <!-- Drag handles -->
-        <span ng-show="domainObject.hasCapability('editor')">
+        <span class="abs t-edit-handle-holder s-hover-border" ng-show="domainObject.hasCapability('editor')">
             <span class="edit-handle edit-move"
-                  ng-class="{'s-selectable s-selected s-moveable' : controller.selected(childObject)}"
                   mct-drag-down="controller.startDrag(childObject.getId(), [1,1], [0,0])"
                   mct-drag="controller.continueDrag(delta)"
                   mct-drag-up="controller.endDrag()">
