@@ -45,8 +45,6 @@
 
 	.l-fixed-position-item {
 		position: absolute;
-		//border: 1px solid transparent;
-
 		&.s-not-selected {
 			opacity: 0.8;
 		}
@@ -105,13 +103,6 @@
 			}
 		}
 	}
-
-	.l-fixed-position-item-handle {
-		background: rgba($colorSelectableSelectedPrimary, 0.5);
-		cursor: crosshair;
-		border: 1px solid $colorSelectableSelectedPrimary;
-		position: absolute;
-	}
 }
 
 .s-status-editing {
@@ -132,4 +123,6 @@
         // Show a border by default so user can see empty items
         border-color: rgba($colorSelectableSelectedPrimary, 0.3);
     }
+
+    .l-fixed-position-item-handle.edit-corner { display: block; }
 }

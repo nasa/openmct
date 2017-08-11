@@ -25,7 +25,6 @@
 
 .s-status-editing {
     // Limit to editing mode until we have sub-object selection
-
     .s-hover-border {
         &:hover {
             border-color: rgba($colorSelectableSelectedPrimary, 0.7) !important;
@@ -39,9 +38,7 @@
         @include boxShdwLarge();
         // Show edit-corners if you got 'em
         .edit-corner {
-            background: rgba($colorSelectableSelectedPrimary, 0.5);
-            border: 1px solid $colorSelectableSelectedPrimary;
-            cursor: crosshair;
+            display: block;
             &:hover {
                 background-color: rgba($colorKey, 1);
             }

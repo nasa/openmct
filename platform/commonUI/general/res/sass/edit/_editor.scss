@@ -24,7 +24,6 @@
     // .s-status-editing .l-object-wrapper is relevant to New Edit Mode;
     // .edit-main is legacy for old edit mode.
     $handleD: 5px;
-    //$cr: 5px;
     .edit-corner,
     .edit-handle {
         position: absolute;
@@ -32,33 +31,20 @@
     }
 
     .edit-corner {
+        background: rgba($colorSelectableSelectedPrimary, 0.5);
+        cursor: crosshair;
+        display: none; // Hide by default
+        border: 1px solid $colorSelectableSelectedPrimary;
         width: $handleD;
         height: $handleD;
         $o: (-1 * $handleD) + 1px;
         &:hover {
             z-index: 11;
         }
-        &.edit-resize-nw {
-            //border-bottom-right-radius: $cr;
-            //cursor: nw-resize;
-            top: $o; left: $o;
-        }
-        &.edit-resize-ne {
-            //border-bottom-left-radius: $cr;
-            //cursor: ne-resize;
-            top: $o; right: $o;
-        }
-        &.edit-resize-se {
-            //border-top-left-radius: $cr;
-            //cursor: se-resize;
-            bottom: $o; right: $o;
-        }
-        &.edit-resize-sw {
-            //border-top-right-radius: $cr;
-            //cursor: sw-resize;
-            bottom: $o; left: $o;
-        }
-
+        &.edit-resize-nw { top: $o; left: $o; }
+        &.edit-resize-ne { top: $o; right: $o; }
+        &.edit-resize-se { bottom: $o; right: $o; }
+        &.edit-resize-sw { bottom: $o; left: $o; }
     }
 
     .edit-handle.edit-move {
@@ -73,20 +59,9 @@
 
     .frame.child-frame.panel {
         &:hover {
-            //border: 1px solid rgba($colorSelectableSelectedPrimary, 0.4);
             .view-switcher {
                 opacity: 1;
             }
         }
-/*        &.s-selected {
-            //@include boxShdwLarge();
-            .edit-corner {
-                //border: 1px solid rgba($colorKey, 0.8);
-                border: 1px solid $colorSelectableSelectedPrimary;
-                &:hover {
-                    background-color: rgba($colorKey, 1);
-                }
-            }
-        }*/
     }
 }

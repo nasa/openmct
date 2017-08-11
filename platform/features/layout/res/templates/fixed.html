@@ -46,7 +46,7 @@
     </div>
 
     <!-- Selection highlight, handles -->
-    <span ng-if="controller.selected()">
+    <span class="s-selected s-moveable" ng-if="controller.selected()">
         <div class="l-fixed-position-item t-edit-handle-holder"
              mct-drag-down="controller.moveHandle().startDrag(controller.selected())"
              mct-drag="controller.moveHandle().continueDrag(delta)"
@@ -54,7 +54,7 @@
              ng-style="controller.selected().style">
         </div>
         <div ng-repeat="handle in controller.handles()"
-             class="l-fixed-position-item-handle"
+             class="l-fixed-position-item-handle edit-corner"
              ng-style="handle.style()"
              mct-drag-down="handle.startDrag()"
              mct-drag="handle.continueDrag(delta)"
