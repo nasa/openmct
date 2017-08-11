@@ -40,11 +40,11 @@
         top: $ohH + $interiorMargin;
     }
     .contents {
-        $myM: $interiorMargin;
-        top: $myM;
-        right: $myM;
-        bottom: $myM;
-        left: $myM;
+        $m: $interiorMargin;
+        top: $m;
+        right: $m;
+        bottom: $m;
+        left: $m;
     }
     &.frame-template {
         .s-button,
@@ -71,6 +71,26 @@
         // Hide the name when the view switcher is in a frame context
         .title-label {
             display: none;
+        }
+    }
+    &.no-frame {
+        border: none !important;
+        &.t-frame-outer > .t-rep-frame {
+            &.contents {
+                $m: 2px;
+                top: $m;
+                right: $m;
+                bottom: $m;
+                left: $m;
+            }
+            > .t-frame-inner {
+                > .object-browse-bar {
+                    display: none;
+                }
+                > .object-holder.abs {
+                    top: 0 !important;
+                }
+            }
         }
     }
 }
