@@ -49,6 +49,7 @@ define([
                       "required": true,
                       "cssClass": "l-input-lg"
                   },
+
                   {
                       "key": "displayText",
                       "name": "Text to Display",
@@ -93,7 +94,7 @@ define([
                 "model": {
                     "displayFormat": "link",
                     "openNewTab": "thisTab",
-                    "showTitle": false
+                    "removeTitle": true
                 }
 
             }

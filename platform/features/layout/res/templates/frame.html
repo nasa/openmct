@@ -22,7 +22,7 @@
 <div class="frame frame-template abs">
     <div class="abs object-browse-bar l-flex-row">
         <div class="left flex-elem l-flex-row grows">
-            <div ng-if=domainObject.getModel().showTitle>
+            <div ng-if=!domainObject.getModel().removeTitle>
                 <mct-representation
                     key="'object-header'"
                     mct-object="domainObject"
@@ -37,12 +37,12 @@
             </mct-representation>
         </div>
     </div>
-    <div ng-if=!domainObject.getModel().showTitle class="l-flex-row flex-elem object-header grows">
+    <div ng-if=domainObject.getModel().removeTitle class="l-flex-row flex-elem object-header grows">
           <mct-representation key="representation.selected.key"
                               mct-object="representation.selected.key && domainObject">
           </mct-representation>
     </div>
-    <div ng-if=domainObject.getModel().showTitle class="abs object-holder">
+    <div ng-if=!domainObject.getModel().removeTitle class="abs object-holder">
           <mct-representation key="representation.selected.key"
                               mct-object="representation.selected.key && domainObject">
           </mct-representation>
