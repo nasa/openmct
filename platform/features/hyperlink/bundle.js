@@ -37,7 +37,7 @@ define([
             {
                 "key": "hyperlink",
                 "name": "Hyperlink",
-                "cssClass": "icon-page",
+                "cssClass": "icon-chain-links",
                 "description": "A hyperlink to redirect to a different link",
                 "features": ["creation"],
                 "properties": [
