@@ -308,12 +308,14 @@ define(
         /**
          * End the active drag gesture. This will update the
          * view configuration.
-         *
-         * @param resize flag indicating whether it was a resize event
-         * as opposed to move.
          */
-        LayoutController.prototype.endDrag = function (resize) {
-            this.frameResized = resize ? true : false;
+        LayoutController.prototype.endDrag = function () {
+            this.frameMoved = true;
+
+            setTimeout(function() {
+                this.frameMoved = false;
+            }.bind(this), 0);
+
             this.endDragInScope();
         };
 
@@ -372,9 +374,9 @@ define(
          * Clear the current user selection.
          */
         LayoutController.prototype.clearSelection = function (event) {
-            // Keep the selection if the frame was resized.
-            if (this.frameResized) {
-                this.frameResized = false;
+            // Keep the selection if the frame is moved.
+            if (this.frameMoved) {
+                this.frameMoved = false;
                 return;
             }
 
