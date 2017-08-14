@@ -72,6 +72,15 @@
     }
 }
 
+.s-hyperlink {
+    // Hyperlink objects
+    &:not(.s-button) {
+        color: $colorKey;
+        font-size: 0.8rem;
+        &:hover { color: $colorKeyHov; }
+    }
+}
+
 .s-icon-button {
     // Clickable icon elements that have hover
     @extend .ui-symbol;
