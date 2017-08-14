@@ -121,7 +121,7 @@ define(
                         self.layoutPanels(ids);
                     }
                 });
-            }
+            }           
 
             // End drag; we don't want to put $scope into this
             // because it triggers "cpws" (copy window or scope)
@@ -136,7 +136,7 @@ define(
                 // view configuration.
                 $scope.configuration.panels =
                     $scope.configuration.panels || {};
-                
+
                 // Store the position and dimensions of this panel.
                 $scope.configuration.panels[self.activeDragId].position =
                     self.rawPositions[self.activeDragId].position;
@@ -308,8 +308,12 @@ define(
         /**
          * End the active drag gesture. This will update the
          * view configuration.
+         *
+         * @param resize flag indicating whether it was a resize event
+         * as opposed to move.
          */
-        LayoutController.prototype.endDrag = function () {
+        LayoutController.prototype.endDrag = function (resize) {
+            this.frameResized = resize ? true : false;
             this.endDragInScope();
         };
 
@@ -368,6 +372,12 @@ define(
          * Clear the current user selection.
          */
         LayoutController.prototype.clearSelection = function (event) {
+            // Keep the selection if the frame was resized.
+            if (this.frameResized) {
+                this.frameResized = false;
+                return;
+            }
+
             if (this.selection) {
                 this.selection.deselect();
                 delete this.selectedId;
