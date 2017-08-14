@@ -19,16 +19,14 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="frame frame-template abs">
+<div class="frame frame-template t-frame-inner abs t-object-type-{{ representation.selected.key }}">
     <div class="abs object-browse-bar l-flex-row">
         <div class="left flex-elem l-flex-row grows">
-            <div ng-if=!domainObject.getModel().removeTitle>
-                <mct-representation
+            <mct-representation
                     key="'object-header'"
                     mct-object="domainObject"
                     class="l-flex-row flex-elem object-header grows">
-                </mct-representation>
-            </div>
+            </mct-representation>
         </div>
         <div class="btn-bar right l-flex-row flex-elem flex-justify-end flex-fixed">
             <mct-representation key="'switcher'"
@@ -37,14 +35,9 @@
             </mct-representation>
         </div>
     </div>
-    <div ng-if=domainObject.getModel().removeTitle class="l-flex-row flex-elem object-header grows">
-          <mct-representation key="representation.selected.key"
-                              mct-object="representation.selected.key && domainObject">
-          </mct-representation>
-    </div>
-    <div ng-if=!domainObject.getModel().removeTitle class="abs object-holder">
-          <mct-representation key="representation.selected.key"
-                              mct-object="representation.selected.key && domainObject">
-          </mct-representation>
+    <div class="abs object-holder">
+        <mct-representation key="representation.selected.key"
+                            mct-object="representation.selected.key && domainObject">
+        </mct-representation>
     </div>
 </div>
