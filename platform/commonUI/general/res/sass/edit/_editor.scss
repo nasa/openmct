@@ -21,10 +21,20 @@
  *****************************************************************************/
 .t-edit-handle-holder { display: none; }
 
-.s-status-editing .l-object-wrapper,
-.edit-main {
-    // .s-status-editing .l-object-wrapper is relevant to New Edit Mode;
-    // .edit-main is legacy for old edit mode.
+.l-grid-holder {
+    display: none;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    .l-grid {
+        @extend .abs;
+        pointer-events: none;
+        z-index: 0;
+        &.l-grid-y { background-position: 0 1px; }
+    }
+}
+
+.s-status-editing {
     $handleD: 5px;
     .t-edit-handle-holder { display: block; }
     .edit-corner,
@@ -67,4 +77,16 @@
             }
         }
     }
+
+    // Editing Grids
+    .l-grid-holder {
+        display: block;
+        .l-grid {
+            &.l-grid-x { @include bgTicks($colorGridLines, 'x'); }
+            &.l-grid-y { @include bgTicks($colorGridLines, 'y'); }
+        }
+    }
+
+    // Prevent nested frames from showing their grids
+    .t-frame-outer .l-grid-holder { display: none !important; }
 }

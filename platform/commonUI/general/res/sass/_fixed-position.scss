@@ -86,39 +86,7 @@
 	}
 }
 
-.l-grid-holder {
-    display: none;
-    position: relative;
-    height: 100%;
-    width: 100%;
-    .l-grid {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        pointer-events: none;
-        z-index: 0;
-        &.l-grid-y { background-position: 0 1px; }
-    }
-}
-
 .s-status-editing {
-    .l-grid-holder {
-        display: block;
-        .l-grid {
-            &.l-grid-x {
-                @include bgTicks($colorGridLines, 'x');
-            }
-
-            &.l-grid-y {
-                @include bgTicks($colorGridLines, 'y');
-            }
-        }
-    }
-
-    // Prevent nested frames from showing their grids
-    .t-frame-outer .l-grid-holder { display: none !important; }
-
-
     .l-fixed-position-item.s-hover-border {
         // Show a border by default so user can see empty items
         border-color: rgba($colorSelectableSelectedPrimary, 0.3);
