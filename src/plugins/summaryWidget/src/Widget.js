@@ -2,12 +2,14 @@ define([
     'text!../res/widgetTemplate.html',
     './Rule',
     './ConditionManager',
+    './WidgetDnD',
     'lodash',
     'zepto'
 ], function (
     widgetTemplate,
     Rule,
     ConditionManager,
+    WidgetDnD,
     _,
     $
 ) {
@@ -46,13 +48,11 @@ define([
         this.updateWidget = this.updateWidget.bind(this);
         this.onReceiveTelemetry = this.onReceiveTelemetry.bind(this);
         this.reorder = this.reorder.bind(this);
-        this.onDragStart = this.onDragStart.bind(this);
-        this.onDrag = this.onDrag.bind(this);
-        this.onDrop = this.onDrop.bind(this);
     }
 
     Widget.prototype.show = function (container) {
         $(container).append(this.domElement);
+        this.widgetDnD = new WidgetDnD(this.domElement, this.domainObject.configuration.ruleOrder, this.rulesById);
 
         this.initRule('default', 'Default');
         this.refreshRules();
@@ -60,89 +60,11 @@ define([
 
         $('#addRule').on('click', this.addRule);
         this.conditionManager.on('receiveTelemetry', this.onReceiveTelemetry);
-
-        this.domElement.on('mousemove', this.onDrag);
-        $(document).on('mouseup', this.onDrop);
+        this.widgetDnD.on('drop', this.reorder);
     };
 
     Widget.prototype.destroy = function (container) {
 
-    };
-
-    Widget.prototype.getDropLocation = function (event) {
-        var ruleOrder = this.domainObject.configuration.ruleOrder,
-            rulesById = this.rulesById,
-            draggingId = this.draggingId,
-            offset,
-            y,
-            height,
-            dropY = event.pageY,
-            target = '';
-
-        ruleOrder.forEach(function (ruleId, index) {
-            offset = rulesById[ruleId].getDOM().offset();
-            y = offset.top;
-            height = offset.height;
-            if (index === 0) {
-                if (dropY < y + 3 * height / 2) {
-                    target = ruleId;
-                }
-            } else if (index === ruleOrder.length - 1 && ruleId !== draggingId) {
-                if (y + height / 4 < dropY) {
-                    target = ruleId;
-                }
-            } else {
-                if (y + height / 4 < dropY && dropY < y + 3 * height / 2) {
-                    target = ruleId;
-                }
-            }
-        });
-        return target;
-    };
-
-    Widget.prototype.onDragStart = function (ruleId) {
-        var ruleOrder = this.domainObject.configuration.ruleOrder;
-        this.draggingId = ruleId;
-        this.draggingRulePrevious = ruleOrder[ruleOrder.indexOf(ruleId) - 1];
-        this.rulesById[this.draggingRulePrevious].showDragIndicator();
-        $('.t-drag-rule-image').show();
-        this.dragImage.offset({
-            top: event.pageY - this.dragImage.height() / 2,
-            left: event.pageX - $('.t-grippy', this.dragImage).width()
-        });
-    };
-
-    Widget.prototype.onDrag = function (event) {
-        var dragTarget;
-        if (this.draggingId && this.draggingId !== '') {
-            event.preventDefault();
-            dragTarget = this.getDropLocation(event);
-            this.dragImage.offset({
-                top: event.pageY - this.dragImage.height() / 2,
-                left: event.pageX - $('.t-grippy', this.dragImage).width()
-            });
-            if (this.rulesById[dragTarget]) {
-                this.rulesById[dragTarget].showDragIndicator();
-            } else {
-                $('.t-drag-indicator').hide();
-                this.rulesById[this.draggingRulePrevious].showDragIndicator();
-            }
-        }
-    };
-
-    Widget.prototype.onDrop = function (event) {
-        var dropTarget = this.getDropLocation(event);
-
-        if (this.draggingId && this.draggingId !== '') {
-            if (this.rulesById[dropTarget]) {
-                this.reorder(this.draggingId, dropTarget);
-            } else {
-                this.reorder(this.draggingId, this.draggingId);
-            }
-            this.draggingId = '';
-            this.draggingRulePrevious = '';
-            $('.t-drag-rule-image').hide();
-        }
     };
 
     Widget.prototype.onReceiveTelemetry = function () {
@@ -222,11 +144,10 @@ define([
         } else {
             ruleConfig = this.getConfigProp('ruleConfigById.' + ruleId);
         }
-        this.rulesById[ruleId] = new Rule(ruleConfig, this.domainObject, this.openmct, this.conditionManager);
+        this.rulesById[ruleId] = new Rule(ruleConfig, this.domainObject, this.openmct, this.conditionManager, this.widgetDnD);
         this.rulesById[ruleId].on('remove', this.refreshRules);
         this.rulesById[ruleId].on('duplicate', this.duplicateRule);
         this.rulesById[ruleId].on('change', this.updateWidget);
-        this.rulesById[ruleId].on('dragStart', this.onDragStart);
     };
 
     Widget.prototype.reorder = function (sourceId, targetId) {

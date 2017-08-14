@@ -23,13 +23,14 @@ define([
     // domainObject: the Summary Widget domain object
     // openmct: an MCT instance
     // conditionManager: a ConditionManager instance
-    function Rule(ruleConfig, domainObject, openmct, conditionManager) {
+    function Rule(ruleConfig, domainObject, openmct, conditionManager, widgetDnD) {
         var self = this;
 
         this.config = ruleConfig;
         this.domainObject = domainObject;
         this.openmct = openmct;
         this.conditionManager = conditionManager;
+        this.widgetDnD = widgetDnD;
 
         this.domElement = $(ruleTemplate);
         this.conditions = [];
@@ -75,9 +76,7 @@ define([
         this.callbacks = {
             remove: [],
             duplicate: [],
-            change: [],
-            dragStart: [],
-            drop: []
+            change: []
         };
 
         function onIconInput(icon) {
@@ -136,13 +135,9 @@ define([
             $('.t-drag-indicator').each(function () {
                 $(this).html($('.widget-rule-header', self.domElement).clone().get(0));
             });
-            $('.t-drag-rule-image').html($('.widget-rule-header', self.domElement).clone().get(0));
+            self.widgetDnD.setDragImage($('.widget-rule-header', self.domElement).clone().get(0));
+            self.widgetDnD.dragStart(self.config.id);
             self.domElement.hide();
-            self.callbacks.dragStart.forEach(function (callback) {
-                if (callback) {
-                    callback(self.config.id);
-                }
-            });
         }
 
         $('.t-rule-label-input', this.domElement).before(this.iconInput.getDOM());
