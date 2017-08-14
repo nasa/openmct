@@ -339,6 +339,9 @@ define(
         LayoutController.prototype.select = function select(event, id) {
             if (event) {                
                 event.stopPropagation();
+                if (this.selection) {
+                    event.preventDefault();
+                }
             }    
 
             var self = this;
