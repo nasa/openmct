@@ -137,6 +137,9 @@ define(
                 $scope.configuration.panels =
                     $scope.configuration.panels || {};
 
+                $scope.configuration.panels[self.activeDragId] =
+                    $scope.configuration.panels[self.activeDragId] || {};
+
                 // Store the position and dimensions of this panel.
                 $scope.configuration.panels[self.activeDragId].position =
                     self.rawPositions[self.activeDragId].position;
@@ -154,12 +157,12 @@ define(
             this.gridSize = DEFAULT_GRID_SIZE;
             this.$scope = $scope;
 
-            $scope.$watch("selection", function(selection) {
-                this.selection = selection;
-            }.bind(this));
-
             // Watch for changes to the grid size in the model
             $scope.$watch("model.layoutGrid", updateGridSize);
+
+            $scope.$watch("selection", function(selection) {
+                this.selection = selection;
+            }.bind(this));    
 
             // Update composed objects on screen, and position panes
             $scope.$watchCollection("model.composition", refreshComposition);
