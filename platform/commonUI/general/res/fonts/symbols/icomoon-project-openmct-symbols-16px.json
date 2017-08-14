@@ -2,7 +2,7 @@
   "metadata": {
     "name": "openmct-symbols-16px",
     "lastOpened": 0,
-    "created": 1502213984498
+    "created": 1502487054429
   },
   "iconSets": [
     {
@@ -2634,19 +2634,19 @@
         {
           "id": 110,
           "paths": [
-            "M64 128v768h896v-768h-896zM832 768h-640v-512h640v512z",
-            "M256 320h384v128h-384v-128z"
+            "M0 64v896h1024v-896h-1024zM896 832h-768v-640h768v640z",
+            "M192 256h384v128h-384v-128z"
           ],
           "attrs": [
             {},
             {}
           ],
-          "isMulticolor": false,
-          "isMulticolor2": false,
           "grid": 16,
           "tags": [
             "icon-frame-show"
           ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
           "colorPermutations": {
             "1161751207457516161751": [
               {},
@@ -2657,37 +2657,25 @@
         {
           "id": 111,
           "paths": [
-            "M66 128v128h64v-64h64v-64h-64z",
-            "M130 768h-64v128h128v-64h-64z",
-            "M66 448h64v128h-64v-128z",
-            "M898 448h64v128h-64v-128z",
-            "M898 832h-64v64h128v-128h-64z",
-            "M450 128h128v64h-128v-64z",
-            "M450 832h128v64h-128v-64z",
-            "M898 128h-64v64h64v64h64v-128z"
+            "M128 190h420l104-128h-652v802.4l128-157.4z",
+            "M896 830h-420l-104 128h652v-802.4l-128 157.4z",
+            "M832-2l-832 1024h192l832-1024z",
+            "M392 382l104-128h-304v128z"
           ],
           "attrs": [
             {},
             {},
             {},
-            {},
-            {},
-            {},
-            {},
             {}
           ],
-          "isMulticolor": false,
-          "isMulticolor2": false,
           "grid": 16,
           "tags": [
             "icon-frame-hide"
           ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
           "colorPermutations": {
             "1161751207457516161751": [
-              {},
-              {},
-              {},
-              {},
               {},
               {},
               {},
