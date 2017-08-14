@@ -399,6 +399,15 @@ define(
             return this.$scope.configuration.panels[obj.getId()].hasFrame;
         }
 
+        /**
+         * Get the size of the grid, in pixels. The returned array
+         * is in the form `[x, y]`.
+         * @returns {number[]} the grid size
+         */
+        LayoutController.prototype.getGridSize = function() {
+            return this.gridSize;
+        }
+
         return LayoutController;
     }
 );

@@ -25,8 +25,10 @@
     <!-- Background grid -->
     <div class="l-grid-holder" ng-click="controller.clearSelection()">
         <div class="l-grid l-grid-x"
+             ng-if="!controller.getGridSize()[0] < 3"
              ng-style="{ 'background-size': controller.getGridSize() [0] + 'px 100%' }"></div>
         <div class="l-grid l-grid-y"
+             ng-if="!controller.getGridSize()[1] < 3"
              ng-style="{ 'background-size': '100% ' + controller.getGridSize() [1] + 'px' }"></div>
     </div>
 
