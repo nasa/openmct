@@ -76,6 +76,7 @@ define([
             remove: [],
             duplicate: [],
             change: [],
+            dragStart: [],
             drop: []
         };
 
@@ -132,17 +133,16 @@ define([
         }
 
         function onDragStart(event) {
-            var header = $('.widget-rule-header', self.domElement).get(0),
-                height = $(header).height(),
-                width = $('.t-grippy', header).width();
-            event.dataTransfer.setDragImage(header, width, height / 2);
-            event.dataTransfer.setData('text/plain', self.config.id);
-            self.dragging = true;
-        }
-
-        function onDragEnd(event) {
-            $('.t-drag-indicator').hide();
-            self.dragging = false;
+            $('.t-drag-indicator').each(function () {
+                $(this).html($('.widget-rule-header', self.domElement).clone().get(0));
+            });
+            $('.t-drag-rule-image').html($('.widget-rule-header', self.domElement).clone().get(0));
+            self.domElement.hide();
+            self.callbacks.dragStart.forEach(function (callback) {
+                if (callback) {
+                    callback(self.config.id);
+                }
+            });
         }
 
         $('.t-rule-label-input', this.domElement).before(this.iconInput.getDOM());
@@ -173,8 +173,7 @@ define([
         this.description.html(self.config.description);
         this.trigger.prop('value', self.config.trigger);
 
-        this.grippy.on('dragstart', onDragStart);
-        this.grippy.on('dragend', onDragEnd);
+        this.grippy.on('mousedown', onDragStart);
 
         if (!this.conditionManager.loadCompleted()) {
             this.config.expanded = false;
@@ -369,10 +368,6 @@ define([
         this.description.html(description);
         this.config.description = description;
         this.updateDomainObject('description', description);
-    };
-
-    Rule.prototype.isDragging = function () {
-        return this.dragging;
     };
 
     return Rule;

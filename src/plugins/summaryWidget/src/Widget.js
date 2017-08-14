@@ -34,6 +34,9 @@ define([
         this.rulesById = {};
         this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
         this.domElement = $(widgetTemplate);
+        this.dragImage = $('.t-drag-rule-image', this.domElement);
+        this.draggingId = '';
+        this.draggingRulePrevious = '';
 
         this.show = this.show.bind(this);
         this.destroy = this.destroy.bind(this);
@@ -43,7 +46,8 @@ define([
         this.updateWidget = this.updateWidget.bind(this);
         this.onReceiveTelemetry = this.onReceiveTelemetry.bind(this);
         this.reorder = this.reorder.bind(this);
-        this.onDragOver = this.onDragOver.bind(this);
+        this.onDragStart = this.onDragStart.bind(this);
+        this.onDrag = this.onDrag.bind(this);
         this.onDrop = this.onDrop.bind(this);
     }
 
@@ -57,8 +61,8 @@ define([
         $('#addRule').on('click', this.addRule);
         this.conditionManager.on('receiveTelemetry', this.onReceiveTelemetry);
 
-        this.domElement.on('dragover', this.onDragOver);
-        this.domElement.on('drop', this.onDrop);
+        this.domElement.on('mousemove', this.onDrag);
+        $(document).on('mouseup', this.onDrop);
     };
 
     Widget.prototype.destroy = function (container) {
@@ -68,59 +72,77 @@ define([
     Widget.prototype.getDropLocation = function (event) {
         var ruleOrder = this.domainObject.configuration.ruleOrder,
             rulesById = this.rulesById,
+            draggingId = this.draggingId,
             offset,
             y,
             height,
             dropY = event.pageY,
             target = '';
 
-        ruleOrder.forEach(function (ruleId) {
+        ruleOrder.forEach(function (ruleId, index) {
             offset = rulesById[ruleId].getDOM().offset();
             y = offset.top;
             height = offset.height;
-            if (y + height / 4 < dropY && dropY < y + 3 * height / 2) {
-                target = ruleId;
+            if (index === 0) {
+                if (dropY < y + 3 * height / 2) {
+                    target = ruleId;
+                }
+            } else if (index === ruleOrder.length - 1 && ruleId !== draggingId) {
+                if (y + height / 4 < dropY) {
+                    target = ruleId;
+                }
+            } else {
+                if (y + height / 4 < dropY && dropY < y + 3 * height / 2) {
+                    target = ruleId;
+                }
             }
         });
         return target;
     };
 
-    Widget.prototype.onDragOver = function (event) {
-        var dragTarget = this.getDropLocation(event),
-            draggingRule = this.draggingRule();
+    Widget.prototype.onDragStart = function (ruleId) {
+        var ruleOrder = this.domainObject.configuration.ruleOrder;
+        this.draggingId = ruleId;
+        this.draggingRulePrevious = ruleOrder[ruleOrder.indexOf(ruleId) - 1];
+        this.rulesById[this.draggingRulePrevious].showDragIndicator();
+        $('.t-drag-rule-image').show();
+        this.dragImage.offset({
+            top: event.pageY - this.dragImage.height() / 2,
+            left: event.pageX - $('.t-grippy', this.dragImage).width()
+        });
+    };
 
-        if (this.rulesById[dragTarget] && draggingRule) {
-            this.rulesById[dragTarget].showDragIndicator();
-        } else {
-            $('.t-drag-indicator').hide();
+    Widget.prototype.onDrag = function (event) {
+        var dragTarget;
+        if (this.draggingId && this.draggingId !== '') {
+            event.preventDefault();
+            dragTarget = this.getDropLocation(event);
+            this.dragImage.offset({
+                top: event.pageY - this.dragImage.height() / 2,
+                left: event.pageX - $('.t-grippy', this.dragImage).width()
+            });
+            if (this.rulesById[dragTarget]) {
+                this.rulesById[dragTarget].showDragIndicator();
+            } else {
+                $('.t-drag-indicator').hide();
+                this.rulesById[this.draggingRulePrevious].showDragIndicator();
+            }
         }
-        event.preventDefault();
     };
 
     Widget.prototype.onDrop = function (event) {
-        event.preventDefault();
-        var sourceId = event.dataTransfer.getData('text'),
-            dropTarget = this.getDropLocation(event),
-            draggingRule = this.draggingRule();
+        var dropTarget = this.getDropLocation(event);
 
-        if (this.rulesById[dropTarget] && draggingRule) {
-            this.reorder(sourceId, dropTarget);
-        }
-
-    };
-
-    Widget.prototype.draggingRule = function () {
-        var ruleOrder = this.domainObject.configuration.ruleOrder,
-            rulesById = this.rulesById,
-            dragging;
-
-        ruleOrder.forEach(function (ruleId) {
-            if (rulesById[ruleId].isDragging()) {
-                dragging = ruleId;
+        if (this.draggingId && this.draggingId !== '') {
+            if (this.rulesById[dropTarget]) {
+                this.reorder(this.draggingId, dropTarget);
+            } else {
+                this.reorder(this.draggingId, this.draggingId);
             }
-        });
-
-        return dragging;
+            this.draggingId = '';
+            this.draggingRulePrevious = '';
+            $('.t-drag-rule-image').hide();
+        }
     };
 
     Widget.prototype.onReceiveTelemetry = function () {
@@ -204,7 +226,7 @@ define([
         this.rulesById[ruleId].on('remove', this.refreshRules);
         this.rulesById[ruleId].on('duplicate', this.duplicateRule);
         this.rulesById[ruleId].on('change', this.updateWidget);
-        this.rulesById[ruleId].on('drop', this.reorder);
+        this.rulesById[ruleId].on('dragStart', this.onDragStart);
     };
 
     Widget.prototype.reorder = function (sourceId, targetId) {
@@ -217,8 +239,8 @@ define([
             targetIndex = ruleOrder.indexOf(targetId);
             ruleOrder.splice(targetIndex + 1, 0, sourceId);
             this.setConfigProp('ruleOrder', ruleOrder);
-            this.refreshRules();
         }
+        this.refreshRules();
     };
 
     Widget.prototype.refreshRules = function () {
