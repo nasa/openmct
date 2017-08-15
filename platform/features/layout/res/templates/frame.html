@@ -29,15 +29,21 @@
             </mct-representation>
         </div>
         <div class="btn-bar right l-flex-row flex-elem flex-justify-end flex-fixed">
-            <mct-representation key="'switcher'"
-                                ng-model="representation"
-                                mct-object="domainObject">
+            <mct-representation
+                    key="'switcher'"
+                    ng-model="representation"
+                    mct-object="domainObject">
             </mct-representation>
+            <a class="s-button icon-expand t-btn-view-large"
+               title="View large"
+               mct-trigger-modal>
+            </a>
         </div>
     </div>
     <div class="abs object-holder">
-        <mct-representation key="representation.selected.key"
-                            mct-object="representation.selected.key && domainObject">
+        <mct-representation
+                key="representation.selected.key"
+                mct-object="representation.selected.key && domainObject">
         </mct-representation>
     </div>
 </div>
