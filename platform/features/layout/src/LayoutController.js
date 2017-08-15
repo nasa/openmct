@@ -323,11 +323,10 @@ define(
         };
 
         /**
-         * Check if the object is currently selected, or (if no
-         * argument is supplied) get the currently selected object.
+         * Check if the object is currently selected.
          *
-         * @param {string} obj the object to select
-         * @returns {boolean} true if selected
+         * @param {string} obj the object to check for selection
+         * @returns {boolean} true if selected, otherwise false
          */
         LayoutController.prototype.selected = function (obj) {
             return this.selectedId && this.selectedId === obj.getId();

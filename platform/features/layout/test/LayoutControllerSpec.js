@@ -53,6 +53,17 @@ define(
                 };
             }
 
+            // Utility function to find a watch for a given expression
+            function findWatch(expr) {
+                var watch;
+                mockScope.$watch.calls.forEach(function (call) {
+                    if (call.args[0] === expr) {
+                        watch = call.args[1];
+                    }
+                });
+                return watch;
+            }
+
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
@@ -60,7 +71,7 @@ define(
                 );
                 mockEvent = jasmine.createSpyObj(
                     'event',
-                    ['preventDefault']
+                    ['preventDefault', 'stopPropagation']
                 );
 
                 testModel = {};
@@ -72,7 +83,8 @@ define(
                     panels: {
                         a: {
                             position: [20, 10],
-                            dimensions: [5, 5]
+                            dimensions: [5, 5],
+                            hasFrame: true
                         }
                     }
                 };
@@ -82,10 +94,17 @@ define(
                 mockScope.domainObject = mockDomainObject("mockDomainObject");
                 mockScope.model = testModel;
                 mockScope.configuration = testConfiguration;
+                mockScope.selection = jasmine.createSpyObj(
+                    'selection',
+                    ['select', 'get', 'selected', 'deselect']
+                );
+
                 spyOn(mockScope.domainObject, "useCapability").andCallThrough();
 
                 controller = new LayoutController(mockScope);
                 spyOn(controller, "layoutPanels").andCallThrough();
+
+                findWatch("selection")(mockScope.selection);
             });
 
             // Model changes will indicate that panel positions
@@ -288,6 +307,28 @@ define(
 
                 expect(controller.getFrameStyle("b"))
                     .not.toEqual(oldStyle);
+            });
+
+            it("allows panels to be selected", function() {
+                var childObj = mockCompositionObjects[0];
+
+                controller.select(mockEvent, childObj.getId());
+
+                 // Should have stopped propagation
+                expect(mockEvent.stopPropagation).toHaveBeenCalled();
+
+                // Should have selected the object
+                expect(controller.selected(childObj)).not.toBeFalsy();
+            });
+
+            it("allows selection to be cleared", function() {
+                var childObj = mockCompositionObjects[0];
+
+                controller.select(null, childObj.getId());
+                controller.clearSelection();
+
+                // Should have deselected the object
+                expect(controller.selected(childObj)).toBeFalsy();
             });
         });
     }
