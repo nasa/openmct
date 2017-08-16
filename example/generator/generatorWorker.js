@@ -103,7 +103,7 @@
 
         var data = [];
 
-        for (; nextStep < end; nextStep += step) {
+        for (; nextStep < end && data.length < 5000; nextStep += step) {
             data.push({
                 utc: nextStep,
                 yesterday: nextStep - 60*60*24*1000,

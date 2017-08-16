@@ -374,7 +374,8 @@ define([
                     "depends": [
                         "$parse",
                         "$log",
-                        "$interval"
+                        "$interval",
+                        "$window"
                     ]
                 },
                 {

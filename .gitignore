@@ -36,3 +36,5 @@ protractor/logs
 
 # npm-debug log
 npm-debug.log
+
+package-lock.json
