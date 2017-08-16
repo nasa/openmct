@@ -80,12 +80,12 @@ define(
                         Math.floor(position.x / self.gridSize[0]),
                         Math.floor(position.y / self.gridSize[1])
                     ],
-                    dimensions: self.defaultDimensions(),
-                    hasFrame: true
+                    dimensions: self.defaultDimensions()
                 };
 
-                // Select the newly-added object
-                self.select(null, id);
+                // Store the id so that the newly-dropped object
+                // gets selected during refresh composition
+                self.droppedFrameId = id;
 
                 // Mark change as persistable
                 if ($scope.commit) {
@@ -119,6 +119,13 @@ define(
 
                         $scope.composition = composition;
                         self.layoutPanels(ids);
+                        self.setDefaultFrame();
+
+                        // If there is a newly-dropped object, select it.
+                        if (self.droppedFrameId) {
+                            self.select(null, self.droppedFrameId);
+                            delete self.droppedFrameId;
+                        }
                     }
                 });
             }           
@@ -170,6 +177,20 @@ define(
             // Position panes where they are dropped
             $scope.$on("mctDrop", handleDrop);
         }
+
+        // Set a default value for hasFrame property on a panel.
+        // A 'hyperlink' object should have no frame by default.
+        LayoutController.prototype.setDefaultFrame = function() {
+                var panels = this.$scope.configuration.panels;
+
+                this.$scope.composition.forEach(function(object) {
+                    var id = object.getId();
+
+                    if (panels[id] && panels[id].hasFrame === undefined) {
+                        panels[id].hasFrame = object.getModel().type === 'hyperlink' ? false : true;
+                    }
+                });
+        };
 
         // Convert from { positions: ..., dimensions: ... } to an
         // appropriate ng-style argument, to position frames.
