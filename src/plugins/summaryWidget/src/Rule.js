@@ -5,8 +5,7 @@ define([
     './input/IconPalette',
     'lodash',
     'zepto'
-],
-  function (
+], function (
     ruleTemplate,
     Condition,
     ColorPalette,
@@ -76,7 +75,8 @@ define([
         this.callbacks = {
             remove: [],
             duplicate: [],
-            change: []
+            change: [],
+            conditionChange: []
         };
 
         function onIconInput(icon) {
@@ -105,7 +105,7 @@ define([
             self.config.trigger = elem.value;
             self.generateDescription();
             self.updateDomainObject('trigger', elem.value);
-            self.callbacks.change.forEach(function (callback) {
+            self.callbacks.conditionChange.forEach(function (callback) {
                 if (callback) {
                     callback();
                 }
@@ -207,7 +207,7 @@ define([
         _.set(this.config.conditions[index], property, value);
         this.generateDescription();
         this.updateDomainObject('conditions[' + index + '].' + property, value);
-        this.callbacks.change.forEach(function (callback) {
+        this.callbacks.conditionChange.forEach(function (callback) {
             if (callback) {
                 callback();
             }
@@ -311,18 +311,20 @@ define([
 
     Rule.prototype.removeCondition = function (removeIndex) {
         var ruleConfigById = this.domainObject.configuration.ruleConfigById,
-            conditions = ruleConfigById[this.config.id].conditions,
-            conditionLabels = ruleConfigById[this.config.id].conditionLabels;
+            conditions = ruleConfigById[this.config.id].conditions;
 
         _.remove(conditions, function (condition, index) {
-            return index === removeIndex;
-        });
-        _.remove(conditionLabels, function (condition, index) {
             return index === removeIndex;
         });
 
         this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById', ruleConfigById);
         this.refreshConditions();
+
+        this.callbacks.conditionChange.forEach(function (callback) {
+            if (callback) {
+                callback();
+            }
+        });
     };
 
     Rule.prototype.generateDescription = function () {

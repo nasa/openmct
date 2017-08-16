@@ -6,7 +6,6 @@ define([
     $
 ) {
 
-    //takes a template to use as a drag image
     //and a drag area where the drag and drop should apply
     function WidgetDnD(container, ruleOrder, rulesById) {
         this.ruleOrder = ruleOrder;
@@ -55,15 +54,15 @@ define([
             y = offset.top;
             height = offset.height;
             if (index === 0) {
-                if (dropY < y + 3 * height / 2) {
+                if (dropY < y + 7 * height / 3) {
                     target = ruleId;
                 }
             } else if (index === ruleOrder.length - 1 && ruleId !== draggingId) {
-                if (y + height / 4 < dropY) {
+                if (y + height / 3 < dropY) {
                     target = ruleId;
                 }
             } else {
-                if (y + height / 4 < dropY && dropY < y + 3 * height / 2) {
+                if (y + height / 3 < dropY && dropY < y + 7 * height / 3) {
                     target = ruleId;
                 }
             }
@@ -95,7 +94,6 @@ define([
             if (this.rulesById[dragTarget]) {
                 this.rulesById[dragTarget].showDragIndicator();
             } else {
-                $('.t-drag-indicator').hide();
                 this.rulesById[this.draggingRulePrevious].showDragIndicator();
             }
         }

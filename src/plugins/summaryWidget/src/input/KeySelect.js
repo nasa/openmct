@@ -1,7 +1,7 @@
 define(['./Select'], function (Select) {
 
     // wraps a generic Select and populates it with telemetry metadata
-    function KeySelect(conditionConfig, objectSelect, conditionManager) {
+    function KeySelect(conditionConfig, objectSelect, conditionManager, changeCallback) {
         var self = this;
 
         this.config = conditionConfig;
@@ -10,6 +10,9 @@ define(['./Select'], function (Select) {
 
         this.select = new Select('key');
         this.select.addOption('', '--Key--');
+        if (changeCallback) {
+            this.select.on('change', changeCallback);
+        }
 
         function onObjectChange(identifier) {
             var selected = self.manager.metadataLoadCompleted() ? self.select.getSelected() : self.config.key;

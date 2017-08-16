@@ -251,5 +251,13 @@ define ([
         return this.metadataLoadComplete;
     };
 
+    ConditionManager.prototype.triggerTelemetryCallback = function () {
+        this.callbacks.receiveTelemetry.forEach(function (callback) {
+            if (callback) {
+                callback();
+            }
+        });
+    };
+
     return ConditionManager;
 });

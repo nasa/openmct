@@ -7,11 +7,20 @@ define([], function () {
         this.subscriptionCache = subscriptionCache;
         this.compositionObjs = compositionObjs;
 
+        this.testCache = {};
+        this.useTestCache = false;
+
         //the HTML input type to generate corresponding to the input value(s) a
         //condition expects
         this.inputTypes = {
             number: 'number',
             string: 'text'
+        };
+
+        //function to validate the input of a given type
+        this.inputValidators = {
+            number: this.validateNumberInput,
+            string: this.validateStringInput
         };
 
         // operations supported by this rule evaluator. Each rule has a method
@@ -173,7 +182,7 @@ define([], function () {
                 appliesTo: ['string', 'number'],
                 inputCount: 0,
                 getDescription: function () {
-                    return 'is undefined';
+                    return ' is undefined';
                 }
             }
         };
@@ -195,6 +204,7 @@ define([], function () {
         //TODO: implement JavaScript conditional input
         //}
         (conditions || []).forEach(function (condition) {
+            conditionDefined = false;
             if (condition.object === 'any') {
                 conditionValue = false;
                 Object.keys(compositionObjs).forEach(function (objId) {
@@ -243,18 +253,40 @@ define([], function () {
     };
 
     ConditionEvaluator.prototype.executeCondition = function (object, key, operation, values) {
-        var telemetryValue = this.subscriptionCache[object] &&
-                         this.subscriptionCache[object][key] &&
-                         [this.subscriptionCache[object][key]],
-        op = this.operations[operation] &&
-                    this.operations[operation].operation,
-        input = telemetryValue && telemetryValue.concat(values);
+        var cache = (this.useTestCache ? this.testCache : this.subscriptionCache),
+            telemetryValue,
+            op,
+            input,
+            validator;
 
-        if (op && input) {
-            return op(input);
+        if (cache[object] && typeof cache[object][key] !== 'undefined') {
+            telemetryValue = [cache[object][key]];
+        }
+        op = this.operations[operation] && this.operations[operation].operation;
+        input = telemetryValue && telemetryValue.concat(values);
+        validator = op && this.inputValidators[this.operations[operation].appliesTo[0]];
+
+        if (op && input && validator) {
+            return validator(input) && op(input);
         } else {
             throw new Error('Malformed condition');
         }
+    };
+
+    ConditionEvaluator.prototype.validateNumberInput = function (input) {
+        var valid = true;
+        input.forEach(function (value) {
+            valid = valid && (typeof value === 'number');
+        });
+        return valid;
+    };
+
+    ConditionEvaluator.prototype.validateStringInput = function (input) {
+        var valid = true;
+        input.forEach(function (value) {
+            valid = valid && (typeof value === 'string');
+        });
+        return valid;
     };
 
     ConditionEvaluator.prototype.getOperationKeys = function () {
@@ -275,12 +307,6 @@ define([], function () {
         }
     };
 
-    ConditionEvaluator.prototype.getOperationType = function (key) {
-        if (this.operations[key]) {
-            return this.operations[key].appliesTo[0];
-        }
-    };
-
     ConditionEvaluator.prototype.getOperationDescription = function (key, values) {
         if (this.operations[key]) {
             return this.operations[key].getDescription(values);
@@ -295,6 +321,18 @@ define([], function () {
         if (this.inputTypes[type]) {
             return this.inputTypes[type];
         }
+    };
+
+    ConditionEvaluator.prototype.getInputTypeById = function (dataType) {
+        return this.inputTypes[dataType];
+    };
+
+    ConditionEvaluator.prototype.setTestDataCache = function (testCache) {
+        this.testCache = testCache;
+    };
+
+    ConditionEvaluator.prototype.useTestData = function (useTestCache) {
+        this.useTestCache = useTestCache;
     };
 
     return ConditionEvaluator;

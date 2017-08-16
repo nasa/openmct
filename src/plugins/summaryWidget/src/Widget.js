@@ -2,6 +2,7 @@ define([
     'text!../res/widgetTemplate.html',
     './Rule',
     './ConditionManager',
+    './TestDataManager',
     './WidgetDnD',
     'lodash',
     'zepto'
@@ -9,6 +10,7 @@ define([
     widgetTemplate,
     Rule,
     ConditionManager,
+    TestDataManager,
     WidgetDnD,
     _,
     $
@@ -31,14 +33,18 @@ define([
         this.domainObject.configuration = this.domainObject.configuration || {};
         this.domainObject.configuration.ruleConfigById = this.domainObject.configuration.ruleConfigById || {};
         this.domainObject.configuration.ruleOrder = this.domainObject.configuration.ruleOrder || ['default'];
+        this.domainObject.configuration.testDataConfig = this.domainObject.configuration.testDataConfig || [{
+            object: '',
+            key: '',
+            value: ''
+        }];
 
         this.activeId = 'default';
         this.rulesById = {};
-        this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
         this.domElement = $(widgetTemplate);
-        this.dragImage = $('.t-drag-rule-image', this.domElement);
-        this.draggingId = '';
-        this.draggingRulePrevious = '';
+        this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
+        this.testDataManager = new TestDataManager(this.domainObject, this.conditionManager, this.openmct);
+        $('.widget-test-data', this.domElement).append(this.testDataManager.getDOM());
 
         this.show = this.show.bind(this);
         this.destroy = this.destroy.bind(this);
@@ -46,20 +52,19 @@ define([
         this.refreshRules = this.refreshRules.bind(this);
         this.duplicateRule = this.duplicateRule.bind(this);
         this.updateWidget = this.updateWidget.bind(this);
-        this.onReceiveTelemetry = this.onReceiveTelemetry.bind(this);
+        this.executeRules = this.executeRules.bind(this);
         this.reorder = this.reorder.bind(this);
     }
 
     Widget.prototype.show = function (container) {
         $(container).append(this.domElement);
         this.widgetDnD = new WidgetDnD(this.domElement, this.domainObject.configuration.ruleOrder, this.rulesById);
-
         this.initRule('default', 'Default');
         this.refreshRules();
         this.updateWidget();
 
         $('#addRule').on('click', this.addRule);
-        this.conditionManager.on('receiveTelemetry', this.onReceiveTelemetry);
+        this.conditionManager.on('receiveTelemetry', this.executeRules);
         this.widgetDnD.on('drop', this.reorder);
     };
 
@@ -67,7 +72,7 @@ define([
 
     };
 
-    Widget.prototype.onReceiveTelemetry = function () {
+    Widget.prototype.executeRules = function () {
         this.activeId = this.conditionManager.executeRules(
             this.domainObject.configuration.ruleOrder,
             this.rulesById
@@ -148,6 +153,7 @@ define([
         this.rulesById[ruleId].on('remove', this.refreshRules);
         this.rulesById[ruleId].on('duplicate', this.duplicateRule);
         this.rulesById[ruleId].on('change', this.updateWidget);
+        this.rulesById[ruleId].on('conditionChange', this.executeRules);
     };
 
     Widget.prototype.reorder = function (sourceId, targetId) {
@@ -174,6 +180,8 @@ define([
             self.initRule(ruleId);
             $('#ruleArea', self.domElement).append(rules[ruleId].getDOM());
         });
+
+        this.executeRules();
     };
 
     // Apply a list of css properties to an element

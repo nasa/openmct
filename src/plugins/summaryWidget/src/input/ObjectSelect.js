@@ -1,18 +1,17 @@
 define(['./Select'], function (Select) {
 
     //wraps a generic select input and populates its input with composition objects
-    function ObjectSelect(config, manager) {
+    function ObjectSelect(config, manager, baseOptions) {
         var self = this;
 
         this.config = config;
         this.manager = manager;
 
         this.select = new Select('object');
-        this.baseOptions = [
-            ['', '--Object--'],
-            ['any', 'Any Telemetry'],
-            ['all', 'All Telemetry']
-        ];
+        this.baseOptions = [['', '--Object--']];
+        if (baseOptions) {
+            this.baseOptions = this.baseOptions.concat(baseOptions);
+        }
 
         this.baseOptions.forEach(function (option) {
             self.select.addOption(option[0], option[1]);

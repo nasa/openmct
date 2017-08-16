@@ -1,30 +1,28 @@
 define([
-    'text!../res/conditionTemplate.html',
+    'text!../res/testDataItemTemplate.html',
     './input/ObjectSelect',
     './input/KeySelect',
-    './input/OperationSelect',
     'zepto'
 ], function (
-    conditionTemplate,
+    itemTemplate,
     ObjectSelect,
     KeySelect,
-    OperationSelect,
     $
 ) {
 
-    // an individual condition for a summary widget rule.
+    // an individual mock telemetry value for test data
     // parameter:
     // conditionConfig: the configuration for this conditionConfig
-    // index: the index of this Condition object in it's parent Rule's data model,
+    // index: the index of this TestDataItem object in it's parent Rule's data model,
     //        to be injected into callbacks for removes
     // conditionManager: a conditionManager instance for populating selects with
     //                    configuration data
-    function Condition(conditionConfig, index, conditionManager) {
-        this.config = conditionConfig;
+    function TestDataItem(itemConfig, index, conditionManager) {
+        this.config = itemConfig;
         this.index = index;
         this.conditionManager = conditionManager;
 
-        this.domElement = $(conditionTemplate);
+        this.domElement = $(itemTemplate);
 
         this.deleteButton = $('.t-delete', this.domElement);
         this.duplicateButton = $('.t-duplicate', this.domElement);
@@ -44,8 +42,8 @@ define([
         var self = this;
 
         function onSelectChange(value, property) {
-            if (property === 'operation') {
-                self.generateValueInputs(value);
+            if (property === 'key') {
+                self.generateValueInput(value);
             }
             self.callbacks.change.forEach(function (callback) {
                 if (callback) {
@@ -56,12 +54,11 @@ define([
 
         function onValueInput(event) {
             var elem = event.target,
-                value = (isNaN(elem.valueAsNumber) ? elem.value : elem.valueAsNumber),
-                inputIndex = self.valueInputs.indexOf(elem);
+                value = (isNaN(elem.valueAsNumber) ? elem.value : elem.valueAsNumber);
 
             self.callbacks.change.forEach(function (callback) {
                 if (callback) {
-                    callback(value, 'values[' + inputIndex + ']', self.index);
+                    callback(value, 'value', self.index);
                 }
             });
         }
@@ -69,15 +66,10 @@ define([
         this.deleteButton.on('click', this.remove);
         this.duplicateButton.on('click', this.duplicate);
 
-        this.selects.object = new ObjectSelect(this.config, this.conditionManager, [
-            ['any', 'Any Telemetry'],
-            ['all', 'All Telemetry']
-        ]);
-        this.selects.key = new KeySelect(this.config, this.selects.object, this.conditionManager);
-        this.selects.operation = new OperationSelect(this.config, this.selects.key, this.conditionManager, onSelectChange);
+        this.selects.object = new ObjectSelect(this.config, this.conditionManager);
+        this.selects.key = new KeySelect(this.config, this.selects.object, this.conditionManager, onSelectChange);
 
         this.selects.object.on('change', onSelectChange);
-        this.selects.key.on('change', onSelectChange);
 
         Object.values(this.selects).forEach(function (select) {
             $('.t-configuration', self.domElement).append(select.getDOM());
@@ -87,21 +79,21 @@ define([
     }
 
 
-    Condition.prototype.getDOM = function (container) {
+    TestDataItem.prototype.getDOM = function (container) {
         return this.domElement;
     };
 
-    Condition.prototype.on = function (event, callback) {
+    TestDataItem.prototype.on = function (event, callback) {
         if (this.callbacks[event]) {
             this.callbacks[event].push(callback);
         }
     };
 
-    Condition.prototype.hideButtons = function () {
+    TestDataItem.prototype.hideButtons = function () {
         this.deleteButton.hide();
     };
 
-    Condition.prototype.remove = function () {
+    TestDataItem.prototype.remove = function () {
         var self = this;
         this.callbacks.remove.forEach(function (callback) {
             if (callback) {
@@ -110,41 +102,31 @@ define([
         });
     };
 
-    Condition.prototype.duplicate = function () {
-        var sourceCondition = JSON.parse(JSON.stringify(this.config)),
+    TestDataItem.prototype.duplicate = function () {
+        var sourceItem = JSON.parse(JSON.stringify(this.config)),
             self = this;
         this.callbacks.duplicate.forEach(function (callback) {
             if (callback) {
-                callback(sourceCondition, self.index);
+                callback(sourceItem, self.index);
             }
         });
     };
 
-    Condition.prototype.generateValueInputs = function (operation) {
+    TestDataItem.prototype.generateValueInput = function (key) {
         var evaluator = this.conditionManager.getEvaluator(),
             inputArea = $('.t-value-inputs', this.domElement),
-            inputCount,
-            inputType,
-            newInput,
-            index = 0;
+            dataType = this.conditionManager.getTelemetryPropertyType(this.config.object, key),
+            inputType = evaluator.getInputTypeById(dataType);
 
         inputArea.html('');
-        this.valueInputs = [];
-
-        if (evaluator.getInputCount(operation)) {
-            inputCount = evaluator.getInputCount(operation);
-            inputType = evaluator.getInputType(operation);
-            while (index < inputCount) {
-                if (!this.config.values[index]) {
-                    this.config.values[index] = (inputType === 'number' ? 0 : '');
-                }
-                newInput = $('<input type = "' + inputType + '" value = "' + this.config.values[index] + '"> </input>');
-                this.valueInputs.push(newInput.get(0));
-                inputArea.append(newInput);
-                index += 1;
+        if (inputType) {
+            if (!this.config.value) {
+                this.config.value = (inputType === 'number' ? 0 : '');
             }
+            this.valueInput = $('<input type = "' + inputType + '" value = "' + this.config.value + '"> </input>').get(0);
+            inputArea.append(this.valueInput);
         }
     };
 
-    return Condition;
+    return TestDataItem;
 });

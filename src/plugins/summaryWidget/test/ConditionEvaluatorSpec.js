@@ -181,10 +181,10 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
             //these conditions are true: evaluator should ignore undefined conditions,
             //and evaluate the rule as true
             mockConditionsUndefined.push({
-                object: 'c',
-                key: 'creature',
-                operation: 'isHalfHorse',
-                values: []
+                object: 'a',
+                key: 'gamma',
+                operation: 'textContains',
+                values: ['Testing']
             });
             expect(evaluator.execute(mockConditionsUndefined, 'any')).toEqual(true);
             mockConditionsUndefined.push({
@@ -213,11 +213,6 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
         it('gets the number of inputs required for a given operation', function () {
             expect(evaluator.getInputCount('isHalfHorse')).toEqual(0);
             expect(evaluator.getInputCount('greaterThan')).toEqual(1);
-        });
-
-        it('get what type a given operation applies to', function () {
-            expect(evaluator.getOperationType('isHalfHorse')).toEqual('mythicalCreature');
-            expect(evaluator.getOperationType('greaterThan')).toEqual('number');
         });
 
         it('supports all required operations', function () {
