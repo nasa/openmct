@@ -263,6 +263,7 @@ define([
                 name: p.name,
                 cssClass: p.cssClass,
                 description: p.description,
+                editable: p.editable,
                 template: '<mct-view mct-vpid="' + p._vpid + '"/>'
             });
         }, this);
