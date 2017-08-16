@@ -79,7 +79,7 @@ define([
                 var start = options.start;
                 var end = options.end;
                 var data = [];
-                while (start < end) {
+                while (start < end && data.length < 5000) {
                     data.push(pointForTimestamp(start));
                     start += 5000;
                 }
