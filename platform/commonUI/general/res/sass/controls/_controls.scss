@@ -276,14 +276,13 @@ textarea.lg { position: relative; height: 300px; }
 .select {
     @include btnSubtle($bg: $colorSelectBg);
     @extend .icon-arrow-down; // Context arrow
-    @if $shdwBtns != none {
-        margin: 0 0 2px 0; // Needed to avoid dropshadow from being clipped by parent containers
-    }
+    //@if $shdwBtns != none { margin: 0 0 2px 0; } // Needed to avoid dropshadow from being clipped by parent containers
     display: inline-block;
     padding: 0 $interiorMargin;
     overflow: hidden;
     position: relative;
-    line-height: $formInputH;
+    height: $btnStdH;
+    line-height: $btnStdH;
     select {
         @include appearance(none);
         box-sizing: border-box;
@@ -298,12 +297,13 @@ textarea.lg { position: relative; height: 300px; }
         }
     }
     &:before {
-        //@include contextArrow();
-        pointer-events: none;
-        color: rgba($colorSelectFg, percentToDecimal($contrastInvokeMenuPercent));
+        @include transform(translateY(-50%));
+        color: rgba($colorInvokeMenu, percentToDecimal($contrastInvokeMenuPercent));
         display: block;
+        pointer-events: none;
         position: absolute;
-        right: $interiorMargin; top: 0;
+        right: $interiorMargin;
+        top: 50%;
     }
 }
 
