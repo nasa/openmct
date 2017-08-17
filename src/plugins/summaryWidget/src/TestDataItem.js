@@ -13,7 +13,7 @@ define([
     // an individual mock telemetry value for test data
     // parameter:
     // conditionConfig: the configuration for this conditionConfig
-    // index: the index of this TestDataItem object in it's parent Rule's data model,
+    // index: the index of this TestDataItem object in it's parent TestDataManagers's data model,
     //        to be injected into callbacks for removes
     // conditionManager: a conditionManager instance for populating selects with
     //                    configuration data

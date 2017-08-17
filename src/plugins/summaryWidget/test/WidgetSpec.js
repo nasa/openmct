@@ -1,4 +1,4 @@
-define(['../src/Widget'], function (WidgetView) {
+define(['../src/Widget'], function (Widget) {
     describe('The Summary Widget', function () {
         //widgetView = new WidgetView()
     });
