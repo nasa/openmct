@@ -132,7 +132,7 @@ define([
                                 ]
                             },
                             {
-                               "items": [
+                                "items": [
                                     {
                                         "method": "order",
                                         "cssClass": "icon-layers",

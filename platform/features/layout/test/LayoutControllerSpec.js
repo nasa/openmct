@@ -309,7 +309,7 @@ define(
                     .not.toEqual(oldStyle);
             });
 
-            it("allows panels to be selected", function() {
+            it("allows panels to be selected", function () {
                 var childObj = mockCompositionObjects[0];
 
                 controller.select(mockEvent, childObj.getId());
@@ -319,7 +319,7 @@ define(
                 expect(controller.selected(childObj)).toBe(true);
             });
 
-            it("allows selection to be cleared", function() {
+            it("allows selection to be cleared", function () {
                 var childObj = mockCompositionObjects[0];
 
                 controller.select(null, childObj.getId());

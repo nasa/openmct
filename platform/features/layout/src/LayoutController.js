@@ -65,7 +65,7 @@ define(
             // Position a panel after a drop event
             function handleDrop(e, id, position) {
                 if (e.defaultPrevented) {
-                     return;
+                    return;
                 }
 
                 // Ensure that configuration field is populated
@@ -128,7 +128,7 @@ define(
                         }
                     }
                 });
-            }           
+            }
 
             // End drag; we don't want to put $scope into this
             // because it triggers "cpws" (copy window or scope)
@@ -167,9 +167,9 @@ define(
             // Watch for changes to the grid size in the model
             $scope.$watch("model.layoutGrid", updateGridSize);
 
-            $scope.$watch("selection", function(selection) {
+            $scope.$watch("selection", function (selection) {
                 this.selection = selection;
-            }.bind(this));    
+            }.bind(this));
 
             // Update composed objects on screen, and position panes
             $scope.$watchCollection("model.composition", refreshComposition);
@@ -180,16 +180,16 @@ define(
 
         // Set a default value for hasFrame property on a panel.
         // A 'hyperlink' object should have no frame by default.
-        LayoutController.prototype.setDefaultFrame = function() {
-                var panels = this.$scope.configuration.panels;
+        LayoutController.prototype.setDefaultFrame = function () {
+            var panels = this.$scope.configuration.panels;
 
-                this.$scope.composition.forEach(function(object) {
-                    var id = object.getId();
+            this.$scope.composition.forEach(function (object) {
+                var id = object.getId();
 
-                    if (panels[id] && panels[id].hasFrame === undefined) {
-                        panels[id].hasFrame = object.getModel().type === 'hyperlink' ? false : true;
-                    }
-                });
+                if (panels[id] && panels[id].hasFrame === undefined) {
+                    panels[id].hasFrame = object.getModel().type === 'hyperlink' ? false : true;
+                }
+            });
         };
 
         // Convert from { positions: ..., dimensions: ... } to an
@@ -336,7 +336,7 @@ define(
         LayoutController.prototype.endDrag = function () {
             this.frameMoved = true;
 
-            setTimeout(function() {
+            setTimeout(function () {
                 this.frameMoved = false;
             }.bind(this), 0);
 
@@ -359,17 +359,17 @@ define(
          * @param event the mouse event
          * @param {string} id the object id
          */
-        LayoutController.prototype.select = function select(event, id) {
-            if (event) {                
+        LayoutController.prototype.select = function (event, id) {
+            if (event) {
                 event.stopPropagation();
                 if (this.selection) {
                     event.preventDefault();
                 }
-            }    
+            }
 
             var self = this;
             var selectedObj = {};
-            var configuration = this.$scope.configuration
+            var configuration = this.$scope.configuration;
 
             this.selectedId = id;
 
@@ -415,18 +415,18 @@ define(
         /**
          * Check if the object has frame.
          */
-        LayoutController.prototype.hasFrame = function(obj) {
+        LayoutController.prototype.hasFrame = function (obj) {
             return this.$scope.configuration.panels[obj.getId()].hasFrame;
-        }
+        };
 
         /**
          * Get the size of the grid, in pixels. The returned array
          * is in the form `[x, y]`.
          * @returns {number[]} the grid size
          */
-        LayoutController.prototype.getGridSize = function() {
+        LayoutController.prototype.getGridSize = function () {
             return this.gridSize;
-        }
+        };
 
         return LayoutController;
     }
