@@ -33,9 +33,9 @@ define([
         'icon-x'
     ];
 
-    function IconPalette(property, cssClass, icons) {
+    function IconPalette(property, cssClass, container, icons) {
         this.icons = icons || DEFAULT_ICONS;
-        this.palette = new Palette(property, cssClass, this.icons);
+        this.palette = new Palette(property, cssClass, container, this.icons);
 
         this.palette.setNullOption(' ');
         this.oldIcon = this.palette.current || ' ';

@@ -22,7 +22,7 @@ define([
     // domainObject: the Summary Widget domain object
     // openmct: an MCT instance
     // conditionManager: a ConditionManager instance
-    function Rule(ruleConfig, domainObject, openmct, conditionManager, widgetDnD) {
+    function Rule(ruleConfig, domainObject, openmct, conditionManager, widgetDnD, container) {
         var self = this;
 
         this.config = ruleConfig;
@@ -30,6 +30,7 @@ define([
         this.openmct = openmct;
         this.conditionManager = conditionManager;
         this.widgetDnD = widgetDnD;
+        this.container = container;
 
         this.domElement = $(ruleTemplate);
         this.conditions = [];
@@ -61,12 +62,12 @@ define([
             message: $('.t-rule-message-input', this.domElement)
         };
 
-        this.iconInput = new IconPalette('icon', '');
+        this.iconInput = new IconPalette('icon', '', container);
 
         this.colorInputs = {
-            'background-color': new ColorPalette('background-color', 'icon-paint-bucket'),
-            'border-color': new ColorPalette('border-color', 'icon-line-horz'),
-            'color': new ColorPalette('color', 'icon-T')
+            'background-color': new ColorPalette('background-color', 'icon-paint-bucket', container),
+            'border-color': new ColorPalette('border-color', 'icon-line-horz', container),
+            'color': new ColorPalette('color', 'icon-T', container)
         };
 
         //hide the 'none' option for the text color palette
@@ -81,7 +82,7 @@ define([
 
         function onIconInput(icon) {
             self.config.icon = icon;
-            self.updateDomainObject('icon', icon);
+            self.updateDomainObject();
             self.callbacks.change.forEach(function (callback) {
                 if (callback) {
                     callback();
@@ -91,7 +92,7 @@ define([
 
         function onColorInput(color, property) {
             self.config.style[property] = color;
-            self.updateDomainObject('style.' + property, color);
+            self.updateDomainObject();
             self.thumbnail.css(property, color);
             self.callbacks.change.forEach(function (callback) {
                 if (callback) {
@@ -104,7 +105,7 @@ define([
             var elem = event.target;
             self.config.trigger = elem.value;
             self.generateDescription();
-            self.updateDomainObject('trigger', elem.value);
+            self.updateDomainObject();
             self.callbacks.conditionChange.forEach(function (callback) {
                 if (callback) {
                     callback();
@@ -120,7 +121,7 @@ define([
 
         function onTextInput(elem, inputKey) {
             self.config[inputKey] = elem.value;
-            self.updateDomainObject(inputKey, elem.value);
+            self.updateDomainObject();
             if (inputKey === 'name') {
                 self.title.html(elem.value);
             }
@@ -206,7 +207,7 @@ define([
     Rule.prototype.onConditionChange = function (value, property, index) {
         _.set(this.config.conditions[index], property, value);
         this.generateDescription();
-        this.updateDomainObject('conditions[' + index + '].' + property, value);
+        this.updateDomainObject();
         this.callbacks.conditionChange.forEach(function (callback) {
             if (callback) {
                 callback();
@@ -219,9 +220,9 @@ define([
         $('.t-drag-indicator', this.domElement).show();
     };
 
-    Rule.prototype.updateDomainObject = function (property, value) {
+    Rule.prototype.updateDomainObject = function () {
         this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById.' +
-            this.config.id + '.' + property, value);
+            this.config.id, this.config);
     };
 
     Rule.prototype.getProperty = function (prop) {
@@ -237,8 +238,10 @@ define([
         _.remove(ruleOrder, function (ruleId) {
             return ruleId === self.config.id;
         });
-        self.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById', ruleConfigById);
-        self.openmct.objects.mutate(this.domainObject, 'configuration.ruleOrder', ruleOrder);
+
+        this.domainObject.configuration.ruleConfigById = ruleConfigById;
+        this.domainObject.configuration.ruleOrder = ruleOrder;
+        this.updateDomainObject();
 
         self.callbacks.remove.forEach(function (callback) {
             if (callback) {
@@ -280,7 +283,8 @@ define([
         } else {
             ruleConfigById[this.config.id].conditions.push(newConfig);
         }
-        this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById', ruleConfigById);
+        this.domainObject.configuration.ruleConfigById = ruleConfigById;
+        this.updateDomainObject();
         this.refreshConditions();
     };
 
@@ -317,7 +321,8 @@ define([
             return index === removeIndex;
         });
 
-        this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById', ruleConfigById);
+        this.domainObject.configuration.ruleConfigById[this.config.id] = this.config;
+        this.updateDomainObject();
         this.refreshConditions();
 
         this.callbacks.conditionChange.forEach(function (callback) {
@@ -364,7 +369,7 @@ define([
         description = (description === '' ? this.config.description : description);
         this.description.html(description);
         this.config.description = description;
-        this.updateDomainObject('description', description);
+        this.updateDomainObject();
     };
 
     return Rule;

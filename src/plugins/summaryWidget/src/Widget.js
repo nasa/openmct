@@ -42,9 +42,14 @@ define([
         this.activeId = 'default';
         this.rulesById = {};
         this.domElement = $(widgetTemplate);
+        this.editing = false;
+        this.container = '';
+        this.ruleArea = $('#ruleArea', this.domElement);
+        this.testDataArea = $('.widget-test-data', this.domElement);
+        this.addRuleButton = $('#addRule', this.domElement);
+
         this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
         this.testDataManager = new TestDataManager(this.domainObject, this.conditionManager, this.openmct);
-        $('.widget-test-data', this.domElement).append(this.testDataManager.getDOM());
 
         this.show = this.show.bind(this);
         this.destroy = this.destroy.bind(this);
@@ -54,22 +59,63 @@ define([
         this.updateWidget = this.updateWidget.bind(this);
         this.executeRules = this.executeRules.bind(this);
         this.reorder = this.reorder.bind(this);
+        this.onEdit = this.onEdit.bind(this);
+
+        var id = this.domainObject.identifier.key,
+            self = this,
+            oldDomainObject,
+            statusCapability;
+        openmct.$injector.get('objectService')
+            .getObjects([id])
+            .then(function (objs) {
+                oldDomainObject = objs[id];
+                statusCapability = oldDomainObject.getCapability('status');
+                statusCapability.listen(self.onEdit);
+                if (statusCapability.get('editing')) {
+                    self.onEdit(['editing']);
+                } else {
+                    self.onEdit([]);
+                }
+            });
     }
 
     Widget.prototype.show = function (container) {
+        this.container = container;
         $(container).append(this.domElement);
+        $('.widget-test-data', this.domElement).append(this.testDataManager.getDOM());
         this.widgetDnD = new WidgetDnD(this.domElement, this.domainObject.configuration.ruleOrder, this.rulesById);
         this.initRule('default', 'Default');
         this.refreshRules();
         this.updateWidget();
 
-        $('#addRule').on('click', this.addRule);
+        this.addRuleButton.on('click', this.addRule);
         this.conditionManager.on('receiveTelemetry', this.executeRules);
         this.widgetDnD.on('drop', this.reorder);
     };
 
     Widget.prototype.destroy = function (container) {
 
+    };
+
+    Widget.prototype.onEdit = function (status) {
+        if (status && status.includes('editing')) {
+            this.editing = true;
+        } else {
+            this.editing = false;
+        }
+        this.updateView();
+    };
+
+    Widget.prototype.updateView = function () {
+        if (this.editing) {
+            this.ruleArea.show();
+            this.testDataArea.show();
+            this.addRuleButton.show();
+        } else {
+            this.ruleArea.hide();
+            this.testDataArea.hide();
+            this.addRuleButton.hide();
+        }
     };
 
     Widget.prototype.executeRules = function () {
@@ -81,31 +127,30 @@ define([
     };
 
     Widget.prototype.addRule = function () {
-        var self = this,
-            ruleCount = 0,
+        var ruleCount = 0,
             ruleId,
-            ruleOrder = self.getConfigProp('ruleOrder');
+            ruleOrder = this.domainObject.configuration.ruleOrder;
 
         //create a unique identifier
-        while (Object.keys(self.rulesById).includes('rule' + ruleCount)) {
+        while (Object.keys(this.rulesById).includes('rule' + ruleCount)) {
             ruleCount = ++ruleCount;
         }
 
         //add rule to config
         ruleId = 'rule' + ruleCount;
         ruleOrder.push(ruleId);
-        self.setConfigProp('ruleOrder', ruleOrder);
-        self.initRule(ruleId, 'Rule');
-        self.refreshRules();
+        this.domainObject.configuration.ruleOrder = ruleOrder;
+        this.updateDomainObject();
+        this.initRule(ruleId, 'Rule');
+        this.refreshRules();
     };
 
     Widget.prototype.duplicateRule = function (sourceConfig) {
-        var self = this,
-            ruleCount = 0,
+        var ruleCount = 0,
             ruleId,
             sourceRuleId = sourceConfig.id,
-            ruleOrder = self.getConfigProp('ruleOrder'),
-            ruleIds = Object.keys(self.rulesById);
+            ruleOrder = this.domainObject.configuration.ruleOrder,
+            ruleIds = Object.keys(this.rulesById);
 
         //create a unique identifier
         while (ruleIds.includes('rule' + ruleCount)) {
@@ -117,10 +162,11 @@ define([
         sourceConfig.id = ruleId;
         sourceConfig.name += ' Copy';
         ruleOrder.splice(ruleOrder.indexOf(sourceRuleId) + 1, 0, ruleId);
-        self.setConfigProp('ruleOrder', ruleOrder);
-        self.setConfigProp('ruleConfigById.' + ruleId, sourceConfig);
-        self.initRule(ruleId, sourceConfig.name);
-        self.refreshRules();
+        this.domainObject.configuration.ruleOrder = ruleOrder;
+        this.domainObject.configuration.ruleConfigById[ruleId] = sourceConfig;
+        this.updateDomainObject();
+        this.initRule(ruleId, sourceConfig.name);
+        this.refreshRules();
     };
 
     Widget.prototype.initRule = function (ruleId, ruleName) {
@@ -128,8 +174,8 @@ define([
             styleObj = {};
 
         Object.assign(styleObj, DEFAULT_PROPS);
-        if (!this.hasConfigProp('ruleConfigById.' + ruleId)) {
-            ruleConfig = this.setConfigProp('ruleConfigById.' + ruleId, {
+        if (!this.domainObject.configuration.ruleConfigById[ruleId]) {
+            this.domainObject.configuration.ruleConfigById[ruleId] = {
                 name: ruleName || 'Rule',
                 label: this.domainObject.name,
                 message: '',
@@ -145,11 +191,12 @@ define([
                 }],
                 trigger: 'any',
                 expanded: 'true'
-            });
-        } else {
-            ruleConfig = this.getConfigProp('ruleConfigById.' + ruleId);
+            };
+
         }
-        this.rulesById[ruleId] = new Rule(ruleConfig, this.domainObject, this.openmct, this.conditionManager, this.widgetDnD);
+        ruleConfig = this.domainObject.configuration.ruleConfigById[ruleId];
+        this.rulesById[ruleId] = new Rule(ruleConfig, this.domainObject, this.openmct,
+                                          this.conditionManager, this.widgetDnD, this.container);
         this.rulesById[ruleId].on('remove', this.refreshRules);
         this.rulesById[ruleId].on('duplicate', this.duplicateRule);
         this.rulesById[ruleId].on('change', this.updateWidget);
@@ -165,17 +212,18 @@ define([
             ruleOrder.splice(sourceIndex, 1);
             targetIndex = ruleOrder.indexOf(targetId);
             ruleOrder.splice(targetIndex + 1, 0, sourceId);
-            this.setConfigProp('ruleOrder', ruleOrder);
+            this.domainObject.configuration.ruleOrder = ruleOrder;
+            this.updateDomainObject();
         }
         this.refreshRules();
     };
 
     Widget.prototype.refreshRules = function () {
         var self = this,
-            ruleOrder = self.getConfigProp('ruleOrder'),
+            ruleOrder = self.domainObject.configuration.ruleOrder,
             rules = self.rulesById;
 
-        $('#ruleArea', this.domElement).html('');
+        $('#ruleArea', self.domElement).html('');
         Object.values(ruleOrder).forEach(function (ruleId) {
             self.initRule(ruleId);
             $('#ruleArea', self.domElement).append(rules[ruleId].getDOM());
@@ -202,23 +250,8 @@ define([
         $('#widgetIcon', this.domElement).removeClass().addClass(activeRule.getProperty('icon'));
     };
 
-    Widget.prototype.getConfigProp = function (path) {
-        return _.get(this.domainObject.configuration, path);
-    };
-
-    Widget.prototype.setConfigProp = function (path, value) {
-        this.openmct.objects.mutate(this.domainObject, 'configuration.' + path, value);
-        return this.getConfigProp(path);
-    };
-
-    Widget.prototype.hasConfigProp = function (path) {
-        return _.has(this.domainObject.configuration, path);
-    };
-
-    Widget.prototype.removeConfigProp = function (path) {
-        var config = this.domainObject.configuration;
-        _.set(config, path, undefined);
-        this.openmct.objects.mutate(this.domainObject, 'configuration', config);
+    Widget.prototype.updateDomainObject = function () {
+        this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
     };
 
     return Widget;

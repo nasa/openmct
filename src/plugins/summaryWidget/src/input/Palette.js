@@ -7,12 +7,13 @@ define([
 ) {
 
     //Generic wrapper class for Open MCT palettes
-    function Palette(property, cssClass, items) {
+    function Palette(property, cssClass, container, items) {
         var self = this;
 
         this.property = property;
         this.cssClass = cssClass;
         this.items = items;
+        this.container = container;
 
         this.domElement = $(paletteTemplate);
         this.itemElements = {
@@ -41,7 +42,7 @@ define([
 
         $('.l-click-area', self.domElement).on('click', function (event) {
             event.stopPropagation();
-            $('.menu').hide();
+            $('.menu', self.container).hide();
             $('.menu', self.domElement).show();
         });
 

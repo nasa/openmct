@@ -18,9 +18,9 @@ function (
         '#5b0f00','#660000','#783f04','#7f6000','#274e13','#0c343d','#1c4587','#073763','#20124d','#4c1130'
       ];
 
-    function ColorPalette(property, cssClass, colors) {
+    function ColorPalette(property, cssClass, container, colors) {
         this.colors = colors || DEFAULT_COLORS;
-        this.palette = new Palette(property, cssClass, this.colors);
+        this.palette = new Palette(property, cssClass, container, this.colors);
 
         this.palette.setNullOption('rgba(0,0,0,0)');
 

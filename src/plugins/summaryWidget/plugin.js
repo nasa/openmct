@@ -25,7 +25,8 @@ define(['./src/Widget'], function (Widget) {
                 },
                 canView: function (domainObject) {
                     return (domainObject.type === 'widget');
-                }
+                },
+                editable: true
             };
         }
 

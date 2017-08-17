@@ -3,7 +3,7 @@ define(['../../src/input/Palette'], function (Palette) {
         var palette, callbackSpy1, callbackSpy2;
 
         beforeEach(function () {
-            palette = new Palette('someProperty', 'someClass', ['item1', 'item2', 'item3']);
+            palette = new Palette('someProperty', 'someClass', 'someContainer', ['item1', 'item2', 'item3']);
             callbackSpy1 = jasmine.createSpy('changeCallback1');
             callbackSpy2 = jasmine.createSpy('changeCallback2');
         });
