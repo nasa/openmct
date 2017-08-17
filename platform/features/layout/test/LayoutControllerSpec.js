@@ -314,11 +314,9 @@ define(
 
                 controller.select(mockEvent, childObj.getId());
 
-                 // Should have stopped propagation
                 expect(mockEvent.stopPropagation).toHaveBeenCalled();
 
-                // Should have selected the object
-                expect(controller.selected(childObj)).not.toBeFalsy();
+                expect(controller.selected(childObj)).toBe(true);
             });
 
             it("allows selection to be cleared", function() {
@@ -327,7 +325,6 @@ define(
                 controller.select(null, childObj.getId());
                 controller.clearSelection();
 
-                // Should have deselected the object
                 expect(controller.selected(childObj)).toBeFalsy();
             });
         });
