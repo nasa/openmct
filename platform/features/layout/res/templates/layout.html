@@ -34,7 +34,7 @@
              ng-style="{ 'background-size': '100% ' + controller.getGridSize() [1] + 'px' }"></div>
     </div>
 
-    <div class='abs frame t-frame-outer child-frame panel s-selectable s-moveable'
+    <div class='abs frame t-frame-outer child-frame panel s-selectable s-moveable s-hover-border'
          ng-class="{ 'no-frame': !controller.hasFrame(childObject), 's-selected':controller.selected(childObject) }"
          ng-repeat="childObject in composition"
          ng-click="controller.select($event, childObject.getId())"

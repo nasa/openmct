@@ -87,10 +87,5 @@
 }
 
 .s-status-editing {
-    .l-fixed-position-item.s-hover-border {
-        // Show a border by default so user can see empty items
-        border-color: rgba($colorSelectableSelectedPrimary, 0.3);
-    }
-
     .l-fixed-position-item-handle.edit-corner { display: block; }
 }

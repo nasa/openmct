@@ -26,6 +26,8 @@
 .s-status-editing {
     // Limit to editing mode until we have sub-object selection
     .s-hover-border {
+        // Show a border by default so user can see object bounds and empty objects
+        border: 1px dotted rgba($colorSelectableSelectedPrimary, 0.3) !important;
         &:hover {
             border-color: rgba($colorSelectableSelectedPrimary, 0.7) !important;
         }
