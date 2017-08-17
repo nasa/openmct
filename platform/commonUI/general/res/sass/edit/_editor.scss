@@ -89,4 +89,9 @@
 
     // Prevent nested frames from showing their grids
     .t-frame-outer .l-grid-holder { display: none !important; }
+
+    // Prevent nested frames from being selectable until we have proper sub-object editing
+    .t-frame-outer .t-frame-outer {
+        pointer-events: none;
+    }
 }
