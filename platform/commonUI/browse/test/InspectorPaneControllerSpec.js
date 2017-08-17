@@ -33,7 +33,9 @@ define(
                 mockNavigationService,
                 mockNavigationUnlistener,
                 mockStatusUnlistener,
-                controller;
+                controller,
+                mockLocation,
+                mockAttrs;
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj("$scope", ["$on"]);
@@ -71,7 +73,12 @@ define(
                 mockDomainObject.hasCapability.andReturn(true);
                 mockDomainObject.getCapability.andReturn(mockStatusCapability);
 
-                controller = new InspectorPaneController(mockScope, mockAgentService, mockWindow, mockNavigationService);
+                mockLocation = jasmine.createSpyObj('location', ['search']);
+                mockLocation.search.andReturn({});
+
+                mockAttrs = {};
+
+                controller = new InspectorPaneController(mockScope, mockAgentService, mockWindow, mockNavigationService, mockLocation, mockAttrs);
             });
 
             it("listens for changes to navigation and attaches a status" +

@@ -31,12 +31,17 @@ define(
          * @constructor
          * @memberof platform/commonUI/browse
          */
-        function PaneController($scope, agentService, $window) {
+        function PaneController($scope, agentService, $window, $location, $attrs) {
             var self = this;
             this.agentService = agentService;
+            var hideParameterPresent = $location.search().hasOwnProperty($attrs.hideParameter);
 
-            // Fast and cheap: if this has been opened in a new window, hide panes by default
-            this.state = !$window.opener;
+            if ($attrs.hideParameter && hideParameterPresent) {
+                this.state = false;
+                $location.search($attrs.hideParameter, undefined);
+            } else {
+                this.state = true;
+            }
 
             /**
              * Callback to invoke when any selection occurs in the tree.
@@ -70,7 +75,7 @@ define(
          * @returns {boolean} true when visible
          */
         PaneController.prototype.visible = function () {
-            return this.state;
+            return !!this.state;
         };
 
         return PaneController;

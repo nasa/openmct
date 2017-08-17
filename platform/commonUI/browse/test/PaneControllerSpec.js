@@ -29,7 +29,9 @@ define(
                 mockAgentService,
                 mockDomainObjects,
                 mockWindow,
-                controller;
+                controller,
+                mockLocation,
+                mockAttrs;
 
             // We want to reinstantiate for each test case
             // because device state can influence constructor-time behavior
@@ -37,7 +39,9 @@ define(
                 return new PaneController(
                     mockScope,
                     mockAgentService,
-                    mockWindow
+                    mockWindow,
+                    mockLocation,
+                    mockAttrs
                 );
             }
 
@@ -59,6 +63,11 @@ define(
                     ["isMobile", "isPhone", "isTablet", "isPortrait", "isLandscape"]
                 );
                 mockWindow = jasmine.createSpyObj("$window", ["open"]);
+
+                mockLocation = jasmine.createSpyObj('location', ['search']);
+                mockLocation.search.andReturn({});
+
+                mockAttrs = {};
             });
 
             it("is initially visible", function () {
@@ -85,6 +94,24 @@ define(
 
                 // Tree should have collapsed
                 expect(controller.visible()).toBeFalsy();
+            });
+
+            describe("specifying hideParameter", function () {
+                beforeEach(function () {
+                    mockAttrs = {hideParameter: 'hideTree'};
+                });
+
+                it("sets pane state to false when in location.search", function () {
+                    mockLocation.search.andReturn({'hideTree': true});
+                    expect(instantiateController().visible()).toBe(false);
+                    expect(mockLocation.search).toHaveBeenCalledWith('hideTree', undefined);
+                });
+
+                it("sets state to true when not found in location.search", function () {
+                    mockLocation.search.andReturn({});
+                    expect(instantiateController().visible()).toBe(true);
+                    expect(mockLocation.search).not.toHaveBeenCalledWith('hideTree', undefined);
+                });
             });
         });
     }
