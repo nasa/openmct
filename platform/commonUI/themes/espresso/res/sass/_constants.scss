@@ -53,9 +53,15 @@ $timeControllerToiLineColor: #00c2ff;
 $timeControllerToiLineColorHov: #fff;
 $colorTransLucBg: #666; // Used as a visual blocking element over variable backgrounds, like imagery
 
-// General Colors
+// Foundation Colors
 $colorAlt1: #ffc700;
 $colorAlert: #ff3c00;
+$colorWarningHi: #cc0000;
+$colorWarningLo: #ff9900;
+$colorDiagnostic: #a4b442;
+$colorCommand: #3693bd;
+$colorInfo: #2294a2;
+$colorOk: #33cc33;
 $colorIconLink: #49dedb;
 $colorPausedBg: #c56f01;
 $colorPausedFg: #fff;
@@ -84,8 +90,8 @@ $colorCreateMenuText: $colorMenuFg;
 // Form colors
 $colorCheck: $colorKey;
 $colorFormRequired: $colorAlt1;
-$colorFormValid: #33cc33;
-$colorFormError: #990000;
+$colorFormValid: $colorOk;
+$colorFormError: $colorWarningHi;
 $colorFormInvalid: #ff3300;
 $colorFormFieldErrorBg: $colorFormError;
 $colorFormFieldErrorFg: rgba(#fff, 0.6);
@@ -109,8 +115,8 @@ $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #ccc;
 $colorStatusDefault: #ccc;
-$colorStatusInfo: #62ba72;
-$colorStatusAlert: #ffa66d;
+$colorStatusInfo: $colorInfo;
+$colorStatusAlert: $colorAlert;
 $colorStatusError: #d4585c;
 $colorStatusAvailable: $colorKey;
 $colorStatusBtnBg: $colorBtnBg;
@@ -125,14 +131,14 @@ $animPausedPulseDur: 500ms;
 $colorSelectBg: $colorBtnBg;
 $colorSelectFg: $colorBtnFg;
 
-// Limits and staleness colors
+// Limits, status and staleness colors
 $colorTelemFresh: pullForward($colorBodyFg, 20%);
 $colorTelemStale: pushBack($colorBodyFg, 20%);
 $styleTelemStale: italic;
-$colorLimitYellowBg: rgba(#ffaa00, 0.3);
-$colorLimitYellowIc: #ffaa00;
-$colorLimitRedBg: rgba(red, 0.3);
-$colorLimitRedIc: red;
+$colorLimitYellowBg: rgba($colorWarningLo, 0.3);
+$colorLimitYellowIc: $colorWarningLo;
+$colorLimitRedBg: rgba($colorWarningHi, 0.3);
+$colorLimitRedIc: $colorWarningHi;
 
 // Bubble colors
 $colorInfoBubbleBg: #ddd;

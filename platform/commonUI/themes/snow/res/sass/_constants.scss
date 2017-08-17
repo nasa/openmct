@@ -53,9 +53,15 @@ $timeControllerToiLineColor: $colorBodyFg;
 $timeControllerToiLineColorHov: #0052b5;
 $colorTransLucBg: #666; // Used as a visual blocking element over variable backgrounds, like imagery
 
-// General Colors
+// Foundation Colors
 $colorAlt1: #776ba2;
 $colorAlert: #ff3c00;
+$colorWarningHi: #990000;
+$colorWarningLo: #ff9900;
+$colorDiagnostic: #a4b442;
+$colorCommand: #3693bd;
+$colorInfo: #2294a2;
+$colorOk: #33cc33;
 $colorIconLink: #49dedb;
 $colorPausedBg: #ff9900;
 $colorPausedFg: #fff;
@@ -84,8 +90,8 @@ $colorCreateMenuText: $colorBodyFg;
 // Form colors
 $colorCheck: $colorKey;
 $colorFormRequired: $colorKey;
-$colorFormValid: #33cc33;
-$colorFormError: #990000;
+$colorFormValid: $colorOk;
+$colorFormError: $colorWarningHi;
 $colorFormInvalid: #ff2200;
 $colorFormFieldErrorBg: $colorFormError;
 $colorFormFieldErrorFg: rgba(#fff, 0.6);
@@ -107,7 +113,7 @@ $colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
 // Status colors, mainly used for messaging and item ancillary symbols
-$colorStatusFg: #fff;
+$colorStatusFg: #999;
 $colorStatusDefault: #ccc;
 $colorStatusInfo: #60ba7b;
 $colorStatusAlert: #ffb66c;

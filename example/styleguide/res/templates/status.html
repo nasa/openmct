@@ -21,6 +21,7 @@
 -->
 <style>
     .w-mct-example div[class*="s-limit"],
+    .w-mct-example div[class*="s-status"],
     .w-mct-example div[class*="s-unsynced"],
     .w-mct-example span[class*="s-limit"] {
         border-radius: 4px;
@@ -69,6 +70,28 @@
     <tr><td>ENG_PWR 4992</td><td>49.784</td><td class="s-limit-red s-limit-lwr">-121.22</td></tr>
     <tr><td>ENG_PWR 4993</td><td class="s-limit-yellow icon-bell">0.451</td><td>1.007</td></tr>
 </table>
+</mct-example>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Status</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Classes here can be applied to elements as needed.</p>
+                <ul>
+                    <li><code>s-status-warning-hi</code>: Nuke the entire site from orbit - it's the only way to be sure.</li>
+                    <li><code>s-status-warning-lo</code>: Pay attention to this.</li>
+                    <li><code>s-status-diagnostic</code>: Something in the code wants to talk to you.</li>
+                    <li><code>s-status-info</code>: What?! What?! Oh, ok.</li>
+                    <li><code>s-status-ok</code>: Whew! Hand me a beer would'ya?</li>
+                </ul>
+            </div>
+<mct-example><div class="s-status-warning-hi-icon">WARNING HI</div>
+<div class="s-status-warning-lo-icon">WARNING LOW</div>
+<div class="s-status-diagnostic-icon">DIAGNOSTIC</div>
+<div class="s-status-info-icon">INFO</div>
+<div class="s-status-ok-icon">OK</div>
 </mct-example>
         </div>
     </div>
