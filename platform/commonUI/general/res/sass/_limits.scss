@@ -22,7 +22,13 @@
 .s-limit-yellow,
 .s-limit-red,
 .s-limit-yellow-icon,
-.s-limit-red-icon {
+.s-limit-red-icon,
+.s-status-warning-lo,
+.s-status-warning-hi,
+.s-status-diagnostic,
+.s-status-command,
+.s-status-info,
+.s-status-ok {
     &:before {
         content:'';
         font-family: symbolsfont;
@@ -44,8 +50,8 @@
     &:before { color: $colorLimitRedIc !important; }
 }
 
-
 .s-limit-upr:before { content: $glyph-icon-arrow-double-up; }
 .s-limit-lwr:before { content: $glyph-icon-arrow-double-down; }
 .s-limit-yellow-icon:before,
 .s-limit-red-icon:before { content: $glyph-icon-alert-triangle; }
+
