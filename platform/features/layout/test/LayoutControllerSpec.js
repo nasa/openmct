@@ -327,6 +327,24 @@ define(
 
                 expect(controller.selected(childObj)).toBeFalsy();
             });
+
+            it("does not clear selection when moving/resizing", function () {
+                mockScope.$watchCollection.mostRecentCall.args[1]();
+
+                var childObj = mockCompositionObjects[0];
+                var id = childObj.getId();
+
+                controller.select(mockEvent, id);
+
+                // Do a drag
+                controller.startDrag(id, [1, 1], [0, 0]);
+                controller.continueDrag([100, 100]);
+                controller.endDrag();
+
+                controller.clearSelection();
+
+                expect(controller.selected(childObj)).toBe(true);
+            });
         });
     }
 );
