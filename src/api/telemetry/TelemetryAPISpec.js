@@ -82,18 +82,15 @@ define([
                 expect(telemetryProvider.subscribe)
                     .toHaveBeenCalledWith(domainObject, jasmine.any(Function));
 
-                // can notify values
                 var notify = telemetryProvider.subscribe.mostRecentCall.args[1];
                 notify('someValue');
                 expect(callback).toHaveBeenCalledWith('someValue');
 
-                // unsubscribes
                 expect(unsubscribe).toEqual(jasmine.any(Function));
                 expect(unsubFunc).not.toHaveBeenCalled();
                 unsubscribe();
                 expect(unsubFunc).toHaveBeenCalled();
 
-                // doesn't notify after unsubscribe
                 notify('otherValue');
                 expect(callback).not.toHaveBeenCalledWith('otherValue');
             });
