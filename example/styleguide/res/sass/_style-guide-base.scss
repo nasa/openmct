@@ -54,6 +54,12 @@
         position: relative;
     }
 
+    .w-mct-example {
+        div {
+            margin-bottom: $interiorMarginLg;
+        }
+    }
+
     code,
     pre {
         font-size: 0.8rem;
