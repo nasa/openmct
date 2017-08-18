@@ -704,11 +704,6 @@ textarea {
     }
 }
 
-.view-switcher,
-.t-btn-view-large {
-    @include trans-prop-nice-fade($controlFadeMs);
-}
-
 /******************************************************** BROWSER ELEMENTS */
 body.desktop {
     ::-webkit-scrollbar {

@@ -19,12 +19,24 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.s-status-editing .l-object-wrapper,
-.edit-main {
-    // .s-status-editing .l-object-wrapper is relevant to New Edit Mode;
-    // .edit-main is legacy for old edit mode.
-    $handleD: 15px;
-    $cr: 5px;
+.t-edit-handle-holder { display: none; }
+
+.l-grid-holder {
+    display: none;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    .l-grid {
+        @extend .abs;
+        pointer-events: none;
+        z-index: 0;
+        &.l-grid-y { background-position: 0 1px; }
+    }
+}
+
+.s-status-editing {
+    $handleD: 5px;
+    .t-edit-handle-holder { display: block; }
     .edit-corner,
     .edit-handle {
         position: absolute;
@@ -32,81 +44,59 @@
     }
 
     .edit-corner {
+        background: rgba($colorSelectableSelectedPrimary, 0.5);
+        cursor: crosshair;
+        display: none; // Hide by default
+        border: 1px solid $colorSelectableSelectedPrimary;
         width: $handleD;
         height: $handleD;
+        $o: (-1 * $handleD) + 1px;
         &:hover {
             z-index: 11;
         }
-        &.edit-resize-nw {
-            border-bottom-right-radius: $cr;
-            cursor: nw-resize;
-            top: 0; left: 0;
-        }
-        &.edit-resize-ne {
-            border-bottom-left-radius: $cr;
-            cursor: ne-resize;
-            top: 0; right: 0;
-        }
-        &.edit-resize-se {
-            border-top-left-radius: $cr;
-            cursor: se-resize;
-            bottom: 0; right: 0;
-        }
-        &.edit-resize-sw {
-            border-top-right-radius: $cr;
-            cursor: sw-resize;
-            bottom: 0; left: 0;
-        }
-
+        &.edit-resize-nw { top: $o; left: $o; }
+        &.edit-resize-ne { top: $o; right: $o; }
+        &.edit-resize-se { bottom: $o; right: $o; }
+        &.edit-resize-sw { bottom: $o; left: $o; }
     }
 
-    .edit-handle {
-        top: $handleD; right: $handleD; bottom: $handleD; left: $handleD;
-        &.edit-move {
-            $m: 0; //$handleD;
-            cursor: move;
-            left: $m;
-            right: $m;
-            top: $m;
-            bottom: $m;
-            z-index: 1;
-
-        }
-        &.edit-resize-n {
-            top: 0px; bottom: auto;
-            height: $handleD;
-            cursor: n-resize;
-        }
-        &.edit-resize-e {
-            right: 0px; left: auto;
-            width: $handleD;
-            cursor: e-resize;
-        }
-        &.edit-resize-s {
-            bottom: 0px; top: auto;
-            height: $handleD;
-            cursor: s-resize;
-        }
-        &.edit-resize-w {
-            left: 0px; right: auto;
-            width: $handleD;
-            cursor: w-resize;
-        }
+    .edit-handle.edit-move {
+        // main move box for the whole frame element
+        $m: 0;
+        left: $m;
+        right: $m;
+        top: $m;
+        bottom: $m;
+        z-index: 1;
     }
 
     .frame.child-frame.panel {
         &:hover {
-            @include boxShdwLarge();
-            border-color: $colorSelectableSelectedPrimary;
             .view-switcher {
                 opacity: 1;
             }
-            .edit-corner {
-                background-color: rgba($colorKey, 0.8);
-                &:hover {
-                    background-color: rgba($colorKey, 1);
-                }
-            }
         }
+    }
+
+    // Editing Grids
+    .l-grid-holder {
+        display: block;
+        .l-grid {
+            &.l-grid-x { @include bgTicks($colorGridLines, 'x'); }
+            &.l-grid-y { @include bgTicks($colorGridLines, 'y'); }
+        }
+    }
+
+    // Prevent nested frames from showing their grids
+    .t-frame-outer .l-grid-holder { display: none !important; }
+
+    // Prevent nested elements from showing s-hover-border
+    .t-frame-outer .s-hover-border {
+        border: none !important;
+    }
+
+    // Prevent nested frames from being selectable until we have proper sub-object editing
+    .t-frame-outer .t-frame-outer {
+        pointer-events: none;
     }
 }
