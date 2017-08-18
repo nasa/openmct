@@ -14,14 +14,18 @@ define([
     $
 ) {
 
-    // a module representing a summary widget rule. Maintains a set of text
-    // and css properties for output, and a set of conditions for configuring
-    // when the rule will be applied to the summary widget.
-    // parameters:
-    // ruleConfig: a JavaScript representing the configuration of this rule
-    // domainObject: the Summary Widget domain object
-    // openmct: an MCT instance
-    // conditionManager: a ConditionManager instance
+    /**
+     * An object representing a summary widget rule. Maintains a set of text
+     * and css properties for output, and a set of conditions for configuring
+     * when the rule will be applied to the summary widget.
+     * @constructor
+     * @param {Object} ruleConfig A JavaScript object representing the configuration of this rule
+     * @param {Object} domainObject The Summary Widget domain object which contains this rule
+     * @param {MCT} openmct An MCT instance
+     * @param {ConditionManager} conditionManager A ConditionManager instance
+     * @param {WidgetDnD} widgetDnD A WidgetDnD instance to handle dragging and dropping rules
+     * @param {element} container The DOM element which cotains this summary widget
+     */
     function Rule(ruleConfig, domainObject, openmct, conditionManager, widgetDnD, container) {
         var self = this;
 
@@ -57,6 +61,9 @@ define([
         this.duplicateButton = $('.t-duplicate', this.domElement);
         this.addConditionButton = $('.add-condition', this.domElement);
 
+        //The text inputs for this rule: any input included in this object will
+        //have the appropriate event handlers registered to it, and it's corresponding
+        //field in the domain object will be updated with its value
         this.textInputs = {
             name: $('.t-rule-name-input', this.domElement),
             label: $('.t-rule-label-input', this.domElement),
@@ -64,8 +71,8 @@ define([
             jsCondition: $('.t-rule-js-condition-input', this.domElement)
         };
 
+        //palette inputs for widget output style
         this.iconInput = new IconPalette('icon', '', container);
-
         this.colorInputs = {
             'background-color': new ColorPalette('background-color', 'icon-paint-bucket', container),
             'border-color': new ColorPalette('border-color', 'icon-line-horz', container),
@@ -75,6 +82,7 @@ define([
         //hide the 'none' option for the text color palette
         this.colorInputs.color.toggleNullOption();
 
+        //event handler callback functions which this rule supports
         this.callbacks = {
             remove: [],
             duplicate: [],
@@ -82,6 +90,11 @@ define([
             conditionChange: []
         };
 
+        /**
+         * An onchange event handler method for this rule's icon palettes
+         * @param {string} icon The css class name corresponding to this icon
+         * @private
+         */
         function onIconInput(icon) {
             self.config.icon = icon;
             self.updateDomainObject();
@@ -92,6 +105,12 @@ define([
             });
         }
 
+        /**
+         * An onchange event handler method for this rule's color palettes palettes
+         * @param {string} color The color selected in the palette
+         * @param {string} property The css property which this color corresponds to
+         * @private
+         */
         function onColorInput(color, property) {
             self.config.style[property] = color;
             self.updateDomainObject();
@@ -103,6 +122,11 @@ define([
             });
         }
 
+        /**
+         * An onchange event handler method for this rule's trigger key
+         * @param {event} event The change event from this rule's select element
+         * @private
+         */
         function onTriggerInput(event) {
             var elem = event.target;
             self.config.trigger = elem.value;
@@ -116,6 +140,12 @@ define([
             });
         }
 
+        /**
+         * An onchange event handler method for this rule's text inputs
+         * @param {element} elem The input element that generated the event
+         * @param {string} inputKey The field of this rule's configuration to update
+         * @private
+         */
         function onTextInput(elem, inputKey) {
             self.config[inputKey] = elem.value;
             self.updateDomainObject();
@@ -129,6 +159,11 @@ define([
             });
         }
 
+        /**
+         * An onchange event handler for a mousedown event that initiates a drag gesture
+         * @param {event} event A mouseup event that was registered on this rule's grippy
+         * @private
+         */
         function onDragStart(event) {
             $('.t-drag-indicator').each(function () {
                 $(this).html($('.widget-rule-header', self.domElement).clone().get(0));
@@ -137,7 +172,10 @@ define([
             self.widgetDnD.dragStart(self.config.id);
             self.domElement.hide();
         }
-
+        /**
+         * Show or hide this rule's configuration properties
+         * @private
+         */
         function toggleConfig() {
             self.configArea.toggleClass('expanded');
             self.toggleConfigButton.toggleClass('expanded');
@@ -197,16 +235,31 @@ define([
         }
     }
 
+    /**
+     * Return the DOM element representing this rule
+     */
     Rule.prototype.getDOM = function () {
         return this.domElement;
     };
 
+    /**
+     * Register a callback with this rule: supported callbacks are remove, change,
+     * conditionChange, and duplicate
+     * @param {string} event The key for the event to listen to
+     * @param {function} callback The function that this rule will envoke on this event
+     */
     Rule.prototype.on = function (event, callback) {
         if (this.callbacks[event]) {
             this.callbacks[event].push(callback);
         }
     };
 
+    /**
+     * An event handler for when a condition's configuration is modified
+     * @param {} value
+     * @param {string} property The path in the configuration to updateDomainObject
+     * @param {number} index The index of the condition that initiated this change
+     */
     Rule.prototype.onConditionChange = function (value, property, index) {
         _.set(this.config.conditions[index], property, value);
         this.generateDescription();

@@ -23,9 +23,15 @@ define([
         'border-color': '#666666'
     };
 
-    // parameters
-    // domainObject: the summary widget domain object represented by this view
-    // openmct: an MCT instance
+    /**
+     * A Summary Widget object, which allows a user to configure rules based
+     * on telemetry producing domain objects, and update a compact display
+     * accordingly.
+     *
+     * @constructor
+     * @param {Object} domainObject The domain Object represented by this Widget
+     * @param {MCT} openmct An MCT instance
+     */
     function Widget(domainObject, openmct) {
         this.domainObject = domainObject;
         this.openmct = openmct;
@@ -65,6 +71,7 @@ define([
             self = this,
             oldDomainObject,
             statusCapability;
+
         openmct.$injector.get('objectService')
             .getObjects([id])
             .then(function (objs) {
@@ -79,6 +86,13 @@ define([
             });
     }
 
+    /**
+     * Builds the Summary Widget's DOM, performs other necessary setup, and attaches
+     * this Summary Widget's view to the supplied container.
+     *
+     * @param {element} container The DOM element that will contain this Summary
+     *                            Widget's view.
+     */
     Widget.prototype.show = function (container) {
         this.container = container;
         $(container).append(this.domElement);
@@ -97,6 +111,13 @@ define([
 
     };
 
+    /**
+     * A callback function for the Open MCT status capability listener. If the
+     * view representing the domain object is in edit mode, update the internal
+     * state and widget view accordingly.
+     *
+     * @param {string[]} status an array containing the domain object's current status
+     */
     Widget.prototype.onEdit = function (status) {
         if (status && status.includes('editing')) {
             this.editing = true;
@@ -106,6 +127,10 @@ define([
         this.updateView();
     };
 
+    /**
+     * If this view is currently in edit mode, show all rule configuration modules.
+     * Otherwise, hide them.
+     */
     Widget.prototype.updateView = function () {
         if (this.editing) {
             this.ruleArea.show();
@@ -118,6 +143,37 @@ define([
         }
     };
 
+    /**
+     * Update the view from the current rule configuration and order
+     */
+    Widget.prototype.refreshRules = function () {
+        var self = this,
+            ruleOrder = self.domainObject.configuration.ruleOrder,
+            rules = self.rulesById;
+
+        $('#ruleArea', self.domElement).html('');
+        Object.values(ruleOrder).forEach(function (ruleId) {
+            self.initRule(ruleId);
+            $('#ruleArea', self.domElement).append(rules[ruleId].getDOM());
+        });
+
+        this.executeRules();
+    };
+
+    /**
+     * Update the widget's appearance from the configuration of the active rule
+     */
+    Widget.prototype.updateWidget = function () {
+        var activeRule = this.rulesById[this.activeId];
+        this.applyStyle($('#widget', this.domElement), activeRule.getProperty('style'));
+        $('#widget', this.domElement).prop('title', activeRule.getProperty('message'));
+        $('#widgetLabel', this.domElement).html(activeRule.getProperty('label'));
+        $('#widgetIcon', this.domElement).removeClass().addClass(activeRule.getProperty('icon'));
+    };
+
+    /**
+     * Get the active rule and update the Widget's appearance.
+     */
     Widget.prototype.executeRules = function () {
         this.activeId = this.conditionManager.executeRules(
             this.domainObject.configuration.ruleOrder,
@@ -126,17 +182,18 @@ define([
         this.updateWidget();
     };
 
+    /**
+     * Add a new rule to this widget
+     */
     Widget.prototype.addRule = function () {
         var ruleCount = 0,
             ruleId,
             ruleOrder = this.domainObject.configuration.ruleOrder;
 
-        //create a unique identifier
         while (Object.keys(this.rulesById).includes('rule' + ruleCount)) {
             ruleCount = ++ruleCount;
         }
 
-        //add rule to config
         ruleId = 'rule' + ruleCount;
         ruleOrder.push(ruleId);
         this.domainObject.configuration.ruleOrder = ruleOrder;
@@ -145,6 +202,14 @@ define([
         this.refreshRules();
     };
 
+
+    /**
+     * Duplicate an existing widget rule from its configuration and splice it in
+     * after the rule it duplicates
+     *
+     * @param {Object} sourceConfig The configuration properties of the rule to be
+     *                              instantiated
+     */
     Widget.prototype.duplicateRule = function (sourceConfig) {
         var ruleCount = 0,
             ruleId,
@@ -152,12 +217,10 @@ define([
             ruleOrder = this.domainObject.configuration.ruleOrder,
             ruleIds = Object.keys(this.rulesById);
 
-        //create a unique identifier
         while (ruleIds.includes('rule' + ruleCount)) {
             ruleCount = ++ruleCount;
         }
 
-        // //add rule to config
         ruleId = 'rule' + ruleCount;
         sourceConfig.id = ruleId;
         sourceConfig.name += ' Copy';
@@ -169,6 +232,14 @@ define([
         this.refreshRules();
     };
 
+    /**
+     * Initialze a new rule from a default configuration, or build a {Rule} objects
+     * from it if already exists
+     *
+     * @param {string} ruleId An key to be used to identify this ruleId, or the key
+                              of the rule to be instantiated
+     * @param {string} ruleName The initial human-readable name of this rule
+     */
     Widget.prototype.initRule = function (ruleId, ruleName) {
         var ruleConfig,
             styleObj = {};
@@ -204,6 +275,13 @@ define([
         this.rulesById[ruleId].on('conditionChange', this.executeRules);
     };
 
+    /**
+     * Given two ruleIds, move the source rule after the target rule and updateWidget
+     * the view.
+     * @param {string} sourceId The key of the source rule to be moved
+     * @param {string} targetId The key of the target rule that the source will
+     *                          be moved after.
+     */
     Widget.prototype.reorder = function (sourceId, targetId) {
         var ruleOrder = this.domainObject.configuration.ruleOrder,
             sourceIndex = ruleOrder.indexOf(sourceId),
@@ -219,38 +297,21 @@ define([
         this.refreshRules();
     };
 
-    Widget.prototype.refreshRules = function () {
-        var self = this,
-            ruleOrder = self.domainObject.configuration.ruleOrder,
-            rules = self.rulesById;
-
-        $('#ruleArea', self.domElement).html('');
-        Object.values(ruleOrder).forEach(function (ruleId) {
-            self.initRule(ruleId);
-            $('#ruleArea', self.domElement).append(rules[ruleId].getDOM());
-        });
-
-        this.executeRules();
-    };
-
-    // Apply a list of css properties to an element
-    // Arguments:
-    // elem: the DOM element to which the rules will be applied
-    // style: an object representing the style
+    /**
+     * Apply a list of css properties to an element
+     *
+     * @param {element} elem The DOM element to which the rules will be applied
+     * @param {object} style an object representing the style
+     */
     Widget.prototype.applyStyle = function (elem, style) {
         Object.keys(style).forEach(function (propId) {
             elem.css(propId, style[propId]);
         });
     };
 
-    Widget.prototype.updateWidget = function () {
-        var activeRule = this.rulesById[this.activeId];
-        this.applyStyle($('#widget', this.domElement), activeRule.getProperty('style'));
-        $('#widget', this.domElement).prop('title', activeRule.getProperty('message'));
-        $('#widgetLabel', this.domElement).html(activeRule.getProperty('label'));
-        $('#widgetIcon', this.domElement).removeClass().addClass(activeRule.getProperty('icon'));
-    };
-
+    /**
+     * Mutate this domain object's configuration with the current local configuration
+     */
     Widget.prototype.updateDomainObject = function () {
         this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
     };

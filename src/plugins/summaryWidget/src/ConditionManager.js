@@ -115,7 +115,6 @@ define ([
                 self.compositionObjs[objId] = obj;
                 self.telemetryMetadataById[objId] = {};
 
-                //workaround to keep composition state current
                 compositionKeys = self.domainObject.composition.map(function (object) {
                     return object.key;
                 });
