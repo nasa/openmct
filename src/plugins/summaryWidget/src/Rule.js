@@ -52,6 +52,7 @@ define([
         this.configArea = $('.widget-rule-content', this.domElement);
         this.grippy = $('.t-grippy', this.domElement);
         this.conditionArea = $('.t-widget-rule-config', this.domElement);
+        this.jsConditionArea = $('.t-rule-js-condition-input-holder', this.domElement);
         this.deleteButton = $('.t-delete', this.domElement);
         this.duplicateButton = $('.t-duplicate', this.domElement);
         this.addConditionButton = $('.add-condition', this.domElement);
@@ -59,7 +60,8 @@ define([
         this.textInputs = {
             name: $('.t-rule-name-input', this.domElement),
             label: $('.t-rule-label-input', this.domElement),
-            message: $('.t-rule-message-input', this.domElement)
+            message: $('.t-rule-message-input', this.domElement),
+            jsCondition: $('.t-rule-js-condition-input', this.domElement)
         };
 
         this.iconInput = new IconPalette('icon', '', container);
@@ -106,17 +108,12 @@ define([
             self.config.trigger = elem.value;
             self.generateDescription();
             self.updateDomainObject();
+            self.refreshConditions();
             self.callbacks.conditionChange.forEach(function (callback) {
                 if (callback) {
                     callback();
                 }
             });
-        }
-
-        function toggleConfig() {
-            self.configArea.toggleClass('expanded');
-            self.toggleConfigButton.toggleClass('expanded');
-            self.config.expanded = !self.config.expanded;
         }
 
         function onTextInput(elem, inputKey) {
@@ -141,6 +138,12 @@ define([
             self.domElement.hide();
         }
 
+        function toggleConfig() {
+            self.configArea.toggleClass('expanded');
+            self.toggleConfigButton.toggleClass('expanded');
+            self.config.expanded = !self.config.expanded;
+        }
+
         $('.t-rule-label-input', this.domElement).before(this.iconInput.getDOM());
         this.iconInput.set(self.config.icon);
         this.iconInput.on('change', onIconInput);
@@ -153,7 +156,7 @@ define([
         });
 
         Object.keys(this.textInputs).forEach(function (inputKey) {
-            self.textInputs[inputKey].prop('value', self.config[inputKey]);
+            self.textInputs[inputKey].prop('value', self.config[inputKey] || '');
             self.textInputs[inputKey].on('input', function () {
                 onTextInput(this, inputKey);
             });
@@ -302,9 +305,16 @@ define([
             self.conditions.push(newCondition);
         });
 
-        self.conditions.forEach(function (condition) {
-            $('li:last-of-type', self.conditionArea).before(condition.getDOM());
-        });
+        if (this.config.trigger === 'js') {
+            this.jsConditionArea.show();
+            this.addConditionButton.hide();
+        } else {
+            this.jsConditionArea.hide();
+            this.addConditionButton.show();
+            self.conditions.forEach(function (condition) {
+                $('li:last-of-type', self.conditionArea).before(condition.getDOM());
+            });
+        }
 
         if (self.conditions.length === 1) {
             self.conditions[0].hideButtons();

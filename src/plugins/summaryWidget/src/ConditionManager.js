@@ -195,11 +195,14 @@ define ([
     ConditionManager.prototype.executeRules = function (ruleOrder, rules) {
         var self = this,
             activeId = ruleOrder[0],
-            rule;
+            rule,
+            conditions;
 
         ruleOrder.forEach(function (ruleId) {
             rule = rules[ruleId];
-            if (self.evaluator.execute(rule.getProperty('conditions'), rule.getProperty('trigger'))) {
+            conditions = rule.getProperty('trigger') === 'js' ?
+                rule.getProperty('jsCondition') : rule.getProperty('conditions');
+            if (self.evaluator.execute(conditions, rule.getProperty('trigger'))) {
                 activeId = ruleId;
             }
         });

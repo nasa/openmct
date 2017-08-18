@@ -200,55 +200,56 @@ define([], function () {
             firstRuleEvaluated = false,
             compositionObjs = this.compositionObjs;
 
-        //if (mode === 'js') {
-        //TODO: implement JavaScript conditional input
-        //}
-        (conditions || []).forEach(function (condition) {
-            conditionDefined = false;
-            if (condition.object === 'any') {
-                conditionValue = false;
-                Object.keys(compositionObjs).forEach(function (objId) {
+        if (mode === 'js') {
+            active = this.executeJavaScriptCondition(conditions);
+        } else {
+            (conditions || []).forEach(function (condition) {
+                conditionDefined = false;
+                if (condition.object === 'any') {
+                    conditionValue = false;
+                    Object.keys(compositionObjs).forEach(function (objId) {
+                        try {
+                            conditionValue = conditionValue ||
+                                self.executeCondition(objId, condition.key,
+                                    condition.operation, condition.values);
+                            conditionDefined = true;
+                        } catch (e) {
+                            //ignore a malformed condition
+                        }
+                    });
+                } else if (condition.object === 'all') {
+                    conditionValue = true;
+                    Object.keys(compositionObjs).forEach(function (objId) {
+                        try {
+                            conditionValue = conditionValue &&
+                                self.executeCondition(objId, condition.key,
+                                    condition.operation, condition.values);
+                            conditionDefined = true;
+                        } catch (e) {
+                            //ignore a malformed condition
+                        }
+                    });
+                } else {
                     try {
-                        conditionValue = conditionValue ||
-                            self.executeCondition(objId, condition.key,
-                                condition.operation, condition.values);
+                        conditionValue = self.executeCondition(condition.object, condition.key,
+                            condition.operation, condition.values);
                         conditionDefined = true;
                     } catch (e) {
-                        //ignore a malformed condition
+                        //ignore malformed condition
                     }
-                });
-            } else if (condition.object === 'all') {
-                conditionValue = true;
-                Object.keys(compositionObjs).forEach(function (objId) {
-                    try {
-                        conditionValue = conditionValue &&
-                            self.executeCondition(objId, condition.key,
-                                condition.operation, condition.values);
-                        conditionDefined = true;
-                    } catch (e) {
-                        //ignore a malformed condition
-                    }
-                });
-            } else {
-                try {
-                    conditionValue = self.executeCondition(condition.object, condition.key,
-                        condition.operation, condition.values);
-                    conditionDefined = true;
-                } catch (e) {
-                    //ignore malformed condition
                 }
-            }
 
-            if (conditionDefined) {
-                active = (mode === 'all' && !firstRuleEvaluated ? true : active);
-                firstRuleEvaluated = true;
-                if (mode === 'any') {
-                    active = active || conditionValue;
-                } else if (mode === 'all') {
-                    active = active && conditionValue;
+                if (conditionDefined) {
+                    active = (mode === 'all' && !firstRuleEvaluated ? true : active);
+                    firstRuleEvaluated = true;
+                    if (mode === 'any') {
+                        active = active || conditionValue;
+                    } else if (mode === 'all') {
+                        active = active && conditionValue;
+                    }
                 }
-            }
-        });
+            });
+        }
         return active;
     };
 
@@ -271,6 +272,13 @@ define([], function () {
         } else {
             throw new Error('Malformed condition');
         }
+    };
+
+    ConditionEvaluator.prototype.executeJavaScriptCondition = function (condition) {
+        var conditionValue = false;
+        //conditionValue = eval(condition);
+        //TODO: implement JavaScript execution
+        return conditionValue;
     };
 
     ConditionEvaluator.prototype.validateNumberInput = function (input) {

@@ -189,6 +189,7 @@ define([
                     operation: '',
                     values: []
                 }],
+                jsCondition: '',
                 trigger: 'any',
                 expanded: 'true'
             };
