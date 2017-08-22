@@ -22,16 +22,14 @@ function (
     /**
      * Instantiates a new Open MCT Color Palette input
      * @constructor
-     * @param {string} property The property that this color palette modifies,
-     *                          to be used in callbacks
      * @param {string} cssClass The class name of the icon which should be applied
      *                          to this palette
      * @param {Element} container The view that contains this palette
      * @param {string[]} colors (optional) A list of colors that should be used to instantiate this palette
      */
-    function ColorPalette(property, cssClass, container, colors) {
+    function ColorPalette(cssClass, container, colors) {
         this.colors = colors || DEFAULT_COLORS;
-        this.palette = new Palette(property, cssClass, container, this.colors);
+        this.palette = new Palette(cssClass, container, this.colors);
 
         this.palette.setNullOption('rgba(0,0,0,0)');
 

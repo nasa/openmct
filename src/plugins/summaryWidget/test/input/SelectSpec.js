@@ -2,7 +2,7 @@ define(['../../src/input/Select'], function (Select) {
     describe('A select wrapper', function () {
         var select, testOptions, callbackSpy1, callbackSpy2;
         beforeEach(function () {
-            select = new Select('testProperty');
+            select = new Select();
             testOptions = [['item1', 'Item 1'], ['item2', 'Item 2'], ['item3', 'Item 3']];
             select.setOptions(testOptions);
             callbackSpy1 = jasmine.createSpy('callbackSpy1');
@@ -39,8 +39,8 @@ define(['../../src/input/Select'], function (Select) {
             select.on('change', callbackSpy1);
             select.on('change', callbackSpy2);
             select.setSelected('item2');
-            expect(callbackSpy1).toHaveBeenCalledWith('item2', 'testProperty');
-            expect(callbackSpy2).toHaveBeenCalledWith('item2', 'testProperty');
+            expect(callbackSpy1).toHaveBeenCalledWith('item2');
+            expect(callbackSpy2).toHaveBeenCalledWith('item2');
         });
 
         it('gracefully handles being set to an item not included in its set', function () {

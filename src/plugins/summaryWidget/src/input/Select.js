@@ -6,13 +6,15 @@ define([
     $
 ) {
 
-    //a wrapper module for dynamically poplulating an HTML select element
-    function Select(property) {
+    /**
+     * Wraps an HTML select element, and provides methods for dynamically altering
+     * its composition from the data model
+     * @constructor
+     */
+    function Select() {
         var self = this;
 
-        this.property = property;
         this.domElement = $(selectTemplate);
-
         this.options = [];
         this.changeCallbacks = [];
 
@@ -20,13 +22,19 @@ define([
 
         this.populate();
 
+        /**
+         * Event handler for the wrapped select element. Also invokes any change
+         * callbacks registered with this select with the new value
+         * @param {Event} event The change event that triggered this callback
+         * @private
+         */
         function onChange(event) {
             var elem = event.target,
                 value = self.options[$(elem).prop('selectedIndex')];
 
             self.changeCallbacks.forEach(function (callback) {
                 if (callback) {
-                    callback(value[0], self.property);
+                    callback(value[0]);
                 }
             });
         }
@@ -34,10 +42,20 @@ define([
         $('select', this.domElement).on('change', onChange);
     }
 
+    /**
+     * Get the DOM element representing this Select in the view
+     * @return {Element}
+     */
     Select.prototype.getDOM = function () {
         return this.domElement;
     };
 
+    /**
+     * Register an event callback with this select supported callbacks are remove, change,
+     * and duplicate
+     * @param {string} event The key for the event to listen to
+     * @param {function} callback The function that this rule will envoke on this event
+     */
     Select.prototype.on = function (event, callback) {
         if (event === 'change') {
             this.changeCallbacks.push(callback);
@@ -46,6 +64,10 @@ define([
         }
     };
 
+    /**
+     * Update the select element in the view from the current state of the data
+     * model
+     */
     Select.prototype.populate = function () {
         var self = this,
             selectedIndex = 0;
@@ -62,22 +84,34 @@ define([
         $('select', this.domElement).prop('selectedIndex', selectedIndex);
     };
 
-    //add a single option in the form of a [value,label] pair
+    /**
+     * Add a single option to this select
+     * @param {string} value The value for the new option
+     * @param {string} label The human-readable text for the new option
+     */
     Select.prototype.addOption = function (value, label) {
         this.options.push([value, label]);
         this.populate();
     };
 
-    //add a set of options in the form of [value,label] pairs
+    /**
+     * Set the available options for this select. Replaces any existing options
+     * @param {string[][]} options An array of [value, label] pairs to display
+     */
     Select.prototype.setOptions = function (options) {
         this.options = options;
         this.populate();
     };
 
+    /**
+     * Sets the currently selected element an invokes any registered change
+     * callbacks with the new value. If the value doesn't exist in this select's
+     * model, its state will not change.
+     * @param {string} value The value to set as the selected option
+     */
     Select.prototype.setSelected = function (value) {
         var selectedIndex = 0,
-            selectedOption,
-            self = this;
+            selectedOption;
 
         this.options.forEach (function (option, index) {
             if (option[0] === value) {
@@ -89,11 +123,15 @@ define([
         selectedOption = this.options[selectedIndex];
         this.changeCallbacks.forEach(function (callback) {
             if (callback) {
-                callback(selectedOption[0], self.property);
+                callback(selectedOption[0]);
             }
         });
     };
 
+    /**
+     * Get the value of the currently selected item
+     * @return {string}
+     */
     Select.prototype.getSelected = function () {
         return $('select', this.domElement).prop('value');
     };

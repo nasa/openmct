@@ -88,10 +88,20 @@ define([
             ['all', 'All Telemetry']
         ]);
         this.selects.key = new KeySelect(this.config, this.selects.object, this.conditionManager);
-        this.selects.operation = new OperationSelect(this.config, this.selects.key, this.conditionManager, onSelectChange);
+        this.selects.operation = new OperationSelect(
+            this.config,
+            this.selects.key,
+            this.conditionManager,
+            function (value) {
+                onSelectChange(value, 'operation');
+            });
 
-        this.selects.object.on('change', onSelectChange);
-        this.selects.key.on('change', onSelectChange);
+        this.selects.object.on('change', function (value) {
+            onSelectChange(value, 'object');
+        });
+        this.selects.key.on('change', function (value) {
+            onSelectChange(value, 'key');
+        });
 
         Object.values(this.selects).forEach(function (select) {
             $('.t-configuration', self.domElement).append(select.getDOM());
@@ -101,14 +111,15 @@ define([
     }
 
     /**
-     * Get the DOM element representing this condition
+     * Get the DOM element representing this condition in the view
+     * @return {Element}
      */
     Condition.prototype.getDOM = function (container) {
         return this.domElement;
     };
 
     /**
-     * Register a callback with this conditition: supported callbacks are remove, change,
+     * Register an event callback with this conditition: supported callbacks are remove, change,
      * and duplicate
      * @param {string} event The key for the event to listen to
      * @param {function} callback The function that this rule will envoke on this event

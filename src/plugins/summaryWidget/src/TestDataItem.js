@@ -14,10 +14,10 @@ define([
      * An object representing a single mock telemetry value
      * @param {object} itemConfig the configuration for this item, consisting of
      *                            object, key, and value fields
-     * @param {number} index: the index of this TestDataItem object in the data
+     * @param {number} index the index of this TestDataItem object in the data
      *                 model of its parent {TestDataManager} o be injected into callbacks
      *                 for removes
-     * @param {ConditionManager} conditionManager: a conditionManager instance
+     * @param {ConditionManager} conditionManager a conditionManager instance
      *                           for populating selects with configuration data
      * @constructor
      */
@@ -84,9 +84,17 @@ define([
         this.duplicateButton.on('click', this.duplicate);
 
         this.selects.object = new ObjectSelect(this.config, this.conditionManager);
-        this.selects.key = new KeySelect(this.config, this.selects.object, this.conditionManager, onSelectChange);
+        this.selects.key = new KeySelect(
+            this.config,
+            this.selects.object,
+            this.conditionManager,
+            function (value) {
+                onSelectChange(value, 'key');
+            });
 
-        this.selects.object.on('change', onSelectChange);
+        this.selects.object.on('change', function (value) {
+            onSelectChange(value, 'object');
+        });
 
         Object.values(this.selects).forEach(function (select) {
             $('.t-configuration', self.domElement).append(select.getDOM());

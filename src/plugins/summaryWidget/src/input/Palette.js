@@ -9,19 +9,16 @@ define([
     /**
      * Instantiates a new Open MCT Color Palette input
      * @constructor
-     * @param {string} property The property that this palette modifies,
-     *                          to be used in callbacks
      * @param {string} cssClass The class name of the icon which should be applied
      *                          to this palette
      * @param {Element} container The view that contains this palette
      * @param {string[]} items A list of data items that will be associated with each
-     *                         palette item in the view; how this data is reprented is
+     *                         palette item in the view; how this data is represented is
      *                         up to the descendent class
      */
-    function Palette(property, cssClass, container, items) {
+    function Palette(cssClass, container, items) {
         var self = this;
 
-        this.property = property;
         this.cssClass = cssClass;
         this.items = items;
         this.container = container;
@@ -81,9 +78,9 @@ define([
     };
 
     /**
-     * Register a callback with this conditition: supported callback is change
+     * Register a callback with this conditition: supported event is change
      * @param {string} event The key for the event to listen to
-     * @param {function} callback The function that this rule will envoke on this event
+     * @param {function} callback The function that this rule will invoke on this event
      */
     Palette.prototype.on = function (event, callback) {
         if (event === 'change') {
@@ -119,7 +116,7 @@ define([
         }
         this.changeCallbacks.forEach(function (callback) {
             if (callback) {
-                callback(self.value, self.property);
+                callback(self.value);
             }
         });
     };

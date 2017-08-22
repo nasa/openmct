@@ -236,7 +236,7 @@ define ([
     }
 
     /**
-     * Register a callback with this ConditionManager: supported callbacks are add, remove,
+     * Register an event callback with this ConditionManager: supported events are add, remove,
      * load, metadata, and receiveTelemetry.
      * @param {string} event The key for the event to listen to
      * @param {function} callback The function that this rule will envoke on this event
@@ -301,7 +301,7 @@ define ([
     };
 
     /**
-     * Returns the property metadata associated with a given telemetry sourceCondition
+     * Returns the property metadata associated with a given telemetry source
      * @param {string} id The key assoicated with the domain object
      * @return {Object} Returns an object with fields representing each telemetry field
      */

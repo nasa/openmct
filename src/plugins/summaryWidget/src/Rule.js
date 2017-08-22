@@ -73,16 +73,16 @@ define([
         };
 
         //palette inputs for widget output style
-        this.iconInput = new IconPalette('icon', '', container);
+        this.iconInput = new IconPalette('', container);
         this.colorInputs = {
-            'background-color': new ColorPalette('background-color', 'icon-paint-bucket', container),
-            'border-color': new ColorPalette('border-color', 'icon-line-horz', container),
-            'color': new ColorPalette('color', 'icon-T', container)
+            'background-color': new ColorPalette('icon-paint-bucket', container),
+            'border-color': new ColorPalette('icon-line-horz', container),
+            'color': new ColorPalette('icon-T', container)
         };
 
         this.colorInputs.color.toggleNullOption();
 
-        //event handler callback functions which this rule supports
+        //event callback functions supported by this rule
         this.callbacks = {
             remove: [],
             duplicate: [],
@@ -184,11 +184,15 @@ define([
 
         $('.t-rule-label-input', this.domElement).before(this.iconInput.getDOM());
         this.iconInput.set(self.config.icon);
-        this.iconInput.on('change', onIconInput);
+        this.iconInput.on('change', function (value) {
+            onIconInput(value);
+        });
 
         Object.keys(this.colorInputs).forEach(function (inputKey) {
             var input = self.colorInputs[inputKey];
-            input.on('change', onColorInput);
+            input.on('change', function (value) {
+                onColorInput(value, inputKey);
+            });
             input.set(self.config.style[inputKey]);
             $('.t-style-input', self.domElement).append(input.getDOM());
         });
@@ -315,7 +319,6 @@ define([
 
         this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById', ruleConfigById);
         this.openmct.objects.mutate(this.domainObject, 'configuration.ruleOrder', ruleOrder);
-        this.updateDomainObject();
 
         self.callbacks.remove.forEach(function (callback) {
             if (callback) {

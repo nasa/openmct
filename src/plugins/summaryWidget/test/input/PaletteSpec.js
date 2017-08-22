@@ -3,7 +3,7 @@ define(['../../src/input/Palette'], function (Palette) {
         var palette, callbackSpy1, callbackSpy2;
 
         beforeEach(function () {
-            palette = new Palette('someProperty', 'someClass', 'someContainer', ['item1', 'item2', 'item3']);
+            palette = new Palette('someClass', 'someContainer', ['item1', 'item2', 'item3']);
             callbackSpy1 = jasmine.createSpy('changeCallback1');
             callbackSpy2 = jasmine.createSpy('changeCallback2');
         });
@@ -30,8 +30,8 @@ define(['../../src/input/Palette'], function (Palette) {
             palette.on('change', callbackSpy1);
             palette.on('change', callbackSpy2);
             palette.set('item2');
-            expect(callbackSpy1).toHaveBeenCalledWith('item2', 'someProperty');
-            expect(callbackSpy2).toHaveBeenCalledWith('item2', 'someProperty');
+            expect(callbackSpy1).toHaveBeenCalledWith('item2');
+            expect(callbackSpy2).toHaveBeenCalledWith('item2');
         });
 
         it('gracefully handles being set to an item not included in its set', function () {

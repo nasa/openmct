@@ -36,16 +36,14 @@ define([
     /**
      * Instantiates a new Open MCT Icon Palette input
      * @constructor
-     * @param {string} property The property that this icon palette modifies,
-     *                          to be used in callbacks
      * @param {string} cssClass The class name of the icon which should be applied
      *                          to this palette
      * @param {Element} container The view that contains this palette
      * @param {string[]} icons (optional) A list of icons that should be used to instantiate this palette
      */
-    function IconPalette(property, cssClass, container, icons) {
+    function IconPalette(cssClass, container, icons) {
         this.icons = icons || DEFAULT_ICONS;
-        this.palette = new Palette(property, cssClass, container, this.icons);
+        this.palette = new Palette(cssClass, container, this.icons);
 
         this.palette.setNullOption(' ');
         this.oldIcon = this.palette.current || ' ';

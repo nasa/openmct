@@ -1,26 +1,52 @@
 define(['./Select'], function (Select) {
 
-    // wraps a generic Select and populates it with telemetry metadata
-    function KeySelect(conditionConfig, objectSelect, conditionManager, changeCallback) {
+    /**
+     * Create a {Select} element whose composition is dynamically updated with
+     * the telemetry fields of a particular domain object
+     * @constructor
+     * @param {Object} config The current state of this select. Must have object
+     *                        and key fields
+     * @param {ObjectSelect} objectSelect The linked ObjectSelect instance to which
+     *                                    this KeySelect should listen to for change
+     *                                    events
+     * @param {ConditionManager} manager A ConditionManager instance from which
+     *                                   to receive telemetry metadata
+     * @param {function} changeCallback A change event callback to register with this
+     *                                  select on initialization
+     */
+    function KeySelect(config, objectSelect, manager, changeCallback) {
         var self = this;
 
-        this.config = conditionConfig;
+        this.config = config;
         this.objectSelect = objectSelect;
-        this.manager = conditionManager;
+        this.manager = manager;
 
-        this.select = new Select('key');
+        this.select = new Select();
         this.select.addOption('', '--Key--');
         if (changeCallback) {
             this.select.on('change', changeCallback);
         }
 
-        function onObjectChange(identifier) {
+        /**
+         * Change event handler for the {ObjectSelect} to which this KeySelect instance
+         * is linked. Loads the new object's metadata and updates its select element's
+         * composition.
+         * @param {Object} key The key identifying the newly selected domain object
+         * @private
+         */
+        function onObjectChange(key) {
             var selected = self.manager.metadataLoadCompleted() ? self.select.getSelected() : self.config.key;
-            self.telemetryMetadata = self.manager.getTelemetryMetadata(identifier) || {};
+            self.telemetryMetadata = self.manager.getTelemetryMetadata(key) || {};
             self.generateOptions();
             self.select.setSelected(selected);
         }
 
+        /**
+         * Event handler for the intial metadata load event from the associated
+         * ConditionManager. Retreives metadata from the manager and populates
+         * the select element.
+         * @private
+         */
         function onMetadataLoad() {
             if (self.manager.getTelemetryMetadata(self.config.object)) {
                 self.telemetryMetadata = self.manager.getTelemetryMetadata(self.config.object);
@@ -39,7 +65,9 @@ define(['./Select'], function (Select) {
         return this.select;
     }
 
-    //populate this select with options based on its current composition
+    /**
+     * Populate this select with options based on its current composition
+     */
     KeySelect.prototype.generateOptions = function () {
         var items = Object.entries(this.telemetryMetadata).map(function (metaDatum) {
             return [metaDatum[0], metaDatum[1].name];
@@ -47,7 +75,6 @@ define(['./Select'], function (Select) {
         items.splice(0, 0, ['','--Key--']);
         this.select.setOptions(items);
     };
-
 
     return KeySelect;
 
