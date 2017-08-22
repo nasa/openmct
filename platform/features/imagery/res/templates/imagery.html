@@ -55,7 +55,7 @@
             </div>
         </div>
     </div>
-    <div class="l-image-thumbs-wrapper {{imagery.showHistoryView()}}">
+    <div class="l-image-thumbs-wrapper" ng-class="imagery.showHistoryView()">
         <div class="l-image-thumb-item" ng-repeat="image in imageHistory track by $index">
             <img class="l-thumb" ng-init="imagery.scrollToRight()"
                 ng-src={{imagery.getImageUrl(image)}} ng-click="imagery.setSelectedImage(image)">

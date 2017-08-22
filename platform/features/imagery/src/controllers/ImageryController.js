@@ -163,7 +163,7 @@ define(
 
         /**
          * Updates displayable values to match those of the most
-         * recently recieved datum.
+         * recently received datum.
          * @param {object} [datum] the datum
          * @private
          */
@@ -172,7 +172,7 @@ define(
                 this.nextDatum = datum;
                 return;
             }
-
+            
             this.time = this.timeFormat.format(datum);
             this.imageUrl = this.imageFormat.format(datum);
 
