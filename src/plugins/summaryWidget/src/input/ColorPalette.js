@@ -7,6 +7,7 @@ function (
     $
 ) {
 
+    //The colors that will be used to instantiate this palette if none are provided
     var DEFAULT_COLORS = [
         '#000000','#434343','#666666','#999999','#b7b7b7','#cccccc','#d9d9d9','#efefef','#f3f3f3','#ffffff',
         '#980000','#ff0000','#ff9900','#ffff00','#00ff00','#00ffff','#4a86e8','#0000ff','#9900ff','#ff00ff',
@@ -18,6 +19,16 @@ function (
         '#5b0f00','#660000','#783f04','#7f6000','#274e13','#0c343d','#1c4587','#073763','#20124d','#4c1130'
       ];
 
+    /**
+     * Instantiates a new Open MCT Color Palette input
+     * @constructor
+     * @param {string} property The property that this color palette modifies,
+     *                          to be used in callbacks
+     * @param {string} cssClass The class name of the icon which should be applied
+     *                          to this palette
+     * @param {Element} container The view that contains this palette
+     * @param {string[]} colors (optional) A list of colors that should be used to instantiate this palette
+     */
     function ColorPalette(property, cssClass, container, colors) {
         this.colors = colors || DEFAULT_COLORS;
         this.palette = new Palette(property, cssClass, container, this.colors);
@@ -36,6 +47,11 @@ function (
             $(elem).css('background-color', elem.dataset.item);
         });
 
+        /**
+         * Update this palette's current selection indicator with the style
+         * of the currently selected item
+         * @private
+         */
         function updateSwatch() {
             var color = self.palette.getCurrent();
             $('.color-swatch', domElement).css('background-color', color);

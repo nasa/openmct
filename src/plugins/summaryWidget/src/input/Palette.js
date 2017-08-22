@@ -6,7 +6,18 @@ define([
     $
 ) {
 
-    //Generic wrapper class for Open MCT palettes
+    /**
+     * Instantiates a new Open MCT Color Palette input
+     * @constructor
+     * @param {string} property The property that this palette modifies,
+     *                          to be used in callbacks
+     * @param {string} cssClass The class name of the icon which should be applied
+     *                          to this palette
+     * @param {Element} container The view that contains this palette
+     * @param {string[]} items A list of data items that will be associated with each
+     *                         palette item in the view; how this data is reprented is
+     *                         up to the descendent class
+     */
     function Palette(property, cssClass, container, items) {
         var self = this;
 
@@ -46,6 +57,12 @@ define([
             $('.menu', self.domElement).show();
         });
 
+        /**
+         * Event handler for selection of an individual palette item. Sets the
+         * currently selected element to be the one associated with that item's data
+         * @param {Event} event the click event that initiated this callback
+         * @private
+         */
         function handleItemClick(event) {
             var elem = event.currentTarget,
                 item = elem.dataset.item;
@@ -56,10 +73,18 @@ define([
         $('.s-palette-item', self.domElement).on('click', handleItemClick);
     }
 
+    /**
+     * Get the DOM element representing this palette in the view
+     */
     Palette.prototype.getDOM = function () {
         return this.domElement;
     };
 
+    /**
+     * Register a callback with this conditition: supported callback is change
+     * @param {string} event The key for the event to listen to
+     * @param {function} callback The function that this rule will envoke on this event
+     */
     Palette.prototype.on = function (event, callback) {
         if (event === 'change') {
             this.changeCallbacks.push(callback);
@@ -68,10 +93,20 @@ define([
         }
     };
 
+    /**
+     * Get the currently selected value of this palette
+     * @return {string} The selected value
+     */
     Palette.prototype.getCurrent = function () {
         return this.value;
     };
 
+    /**
+     * Set the selected value of this palette; if the item doesn't exist in the
+     * palette's data model, the selected value will not change. Invokes any
+     * change callbacks associated with this palette.
+     * @param {string} item The key of the item to set as selected
+     */
     Palette.prototype.set = function (item) {
         var self = this;
         if (this.items.includes(item) || item === this.nullOption) {
@@ -89,6 +124,9 @@ define([
         });
     };
 
+    /**
+     * Update the view assoicated with the currently selected item
+     */
     Palette.prototype.updateSelected = function (item) {
         $('.s-palette-item', this.domElement).removeClass('selected');
         this.itemElements[item].addClass('selected');
@@ -99,13 +137,19 @@ define([
         }
     };
 
-    //set the property to be used for the 'none' item
+    /**
+     * set the property to be used for the 'no selection' item. If not set, this
+     * defaults to a single space
+     * @param {string} item The key to use as the 'no selection' item
+     */
     Palette.prototype.setNullOption = function (item) {
         this.nullOption = item;
         this.itemElements.nullOption.data('item', item);
     };
 
-    //allow the 'none' option to be hidden if it doesn't apply
+    /**
+     * Hides the 'no selection' option to be hidden in the view if it doesn't apply
+     */
     Palette.prototype.toggleNullOption = function () {
         $('.l-option-row', this.domElement).toggle();
     };

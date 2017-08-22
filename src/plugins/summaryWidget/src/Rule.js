@@ -42,7 +42,6 @@ define([
 
         this.remove = this.remove.bind(this);
         this.duplicate = this.duplicate.bind(this);
-        this.addCondition = this.addCondition.bind(this);
         this.initCondition = this.initCondition.bind(this);
         this.removeCondition = this.removeCondition.bind(this);
         this.refreshConditions = this.refreshConditions.bind(this);
@@ -61,9 +60,11 @@ define([
         this.duplicateButton = $('.t-duplicate', this.domElement);
         this.addConditionButton = $('.add-condition', this.domElement);
 
-        //The text inputs for this rule: any input included in this object will
-        //have the appropriate event handlers registered to it, and it's corresponding
-        //field in the domain object will be updated with its value
+        /**
+         * The text inputs for this rule: any input included in this object will
+         * have the appropriate event handlers registered to it, and it's corresponding
+         *field in the domain object will be updated with its value
+        */
         this.textInputs = {
             name: $('.t-rule-name-input', this.domElement),
             label: $('.t-rule-label-input', this.domElement),
@@ -79,7 +80,6 @@ define([
             'color': new ColorPalette('color', 'icon-T', container)
         };
 
-        //hide the 'none' option for the text color palette
         this.colorInputs.color.toggleNullOption();
 
         //event handler callback functions which this rule supports
@@ -202,7 +202,9 @@ define([
 
         this.deleteButton.on('click', this.remove);
         this.duplicateButton.on('click', this.duplicate);
-        this.addConditionButton.on('click', this.addCondition);
+        this.addConditionButton.on('click', function () {
+            self.initCondition();
+        });
         this.toggleConfigButton.on('click', toggleConfig);
         this.trigger.on('change', onTriggerInput);
 
@@ -237,6 +239,7 @@ define([
 
     /**
      * Return the DOM element representing this rule
+     * @return {Element} A DOM element
      */
     Rule.prototype.getDOM = function () {
         return this.domElement;
@@ -271,20 +274,35 @@ define([
         });
     };
 
+    /**
+     * During a rule drag event, show the placeholder element after this rule
+     */
     Rule.prototype.showDragIndicator = function () {
         $('.t-drag-indicator').hide();
         $('.t-drag-indicator', this.domElement).show();
     };
 
+    /**
+     * Mutate thet domain object with this rule's local configuration
+     */
     Rule.prototype.updateDomainObject = function () {
         this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById.' +
             this.config.id, this.config);
     };
 
+    /**
+     * Get a property of this rule by key
+     * @param {string} prop They property key of this rule to get
+     * @return {} The queried property
+     */
     Rule.prototype.getProperty = function (prop) {
         return this.config[prop];
     };
 
+    /**
+     * Remove this rule from the domain object's configuration and invoke any
+     * registered remove callbacks
+     */
     Rule.prototype.remove = function () {
         var ruleOrder = this.domainObject.configuration.ruleOrder,
             ruleConfigById = this.domainObject.configuration.ruleConfigById,
@@ -295,8 +313,8 @@ define([
             return ruleId === self.config.id;
         });
 
-        this.domainObject.configuration.ruleConfigById = ruleConfigById;
-        this.domainObject.configuration.ruleOrder = ruleOrder;
+        this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById', ruleConfigById);
+        this.openmct.objects.mutate(this.domainObject, 'configuration.ruleOrder', ruleOrder);
         this.updateDomainObject();
 
         self.callbacks.remove.forEach(function (callback) {
@@ -306,8 +324,10 @@ define([
         });
     };
 
-    //makes a deep copy of this rule's configuration, and calls the duplicate event
-    //callback with the copy as an argument if one has been registered
+    /**
+     * Makes a deep clone of this rule's configuration, and calls the duplicate event
+     * callback with the cloned configuration as an argument if one has been registered
+     */
     Rule.prototype.duplicate = function () {
         var sourceRule = JSON.parse(JSON.stringify(this.config)),
             self = this;
@@ -319,10 +339,16 @@ define([
         });
     };
 
-    Rule.prototype.addCondition = function () {
-        this.initCondition();
-    };
-
+    /**
+     * Initialze a new condition. If called with the sourceConfig and sourceIndex arguments,
+     * will insert a new condition with the provided configuration after the sourceIndex
+     * index. Otherwise, initializes a new blank rule and inserts it at the end
+     * of the list.
+     * @param {Object} sourceConfig (optional) The configuration to use to instantiate
+     *                              a new condition. Must have object, key,
+     * @param {number} sourceIndex (optional) The location at which to insert the new
+     *                             condition
+     */
     Rule.prototype.initCondition = function (sourceConfig, sourceIndex) {
         var ruleConfigById = this.domainObject.configuration.ruleConfigById,
             newConfig,
@@ -344,6 +370,9 @@ define([
         this.refreshConditions();
     };
 
+    /**
+     * Build {Condition} objects from configuration and rebuild associated view
+     */
     Rule.prototype.refreshConditions = function () {
         var self = this;
 
@@ -376,6 +405,10 @@ define([
         self.generateDescription();
     };
 
+    /**
+     * Remove a condition from this rule's configuration at the given index
+     * @param {number} removeIndex The index of the condition to remove
+     */
     Rule.prototype.removeCondition = function (removeIndex) {
         var ruleConfigById = this.domainObject.configuration.ruleConfigById,
             conditions = ruleConfigById[this.config.id].conditions;
@@ -395,6 +428,9 @@ define([
         });
     };
 
+    /**
+     * Build a human-readable description from this rule's conditions
+     */
     Rule.prototype.generateDescription = function () {
         var description = '',
             manager = this.conditionManager,

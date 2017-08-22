@@ -5,7 +5,7 @@ define([
     Palette,
     $
 ) {
-
+    //The icons that will be used to instantiate this palette if none are provided
     var DEFAULT_ICONS = [
         'icon-alert-rect',
         'icon-alert-triangle',
@@ -33,6 +33,16 @@ define([
         'icon-x'
     ];
 
+    /**
+     * Instantiates a new Open MCT Icon Palette input
+     * @constructor
+     * @param {string} property The property that this icon palette modifies,
+     *                          to be used in callbacks
+     * @param {string} cssClass The class name of the icon which should be applied
+     *                          to this palette
+     * @param {Element} container The view that contains this palette
+     * @param {string[]} icons (optional) A list of icons that should be used to instantiate this palette
+     */
     function IconPalette(property, cssClass, container, icons) {
         this.icons = icons || DEFAULT_ICONS;
         this.palette = new Palette(property, cssClass, container, this.icons);
@@ -52,6 +62,11 @@ define([
             $(elem).addClass(elem.dataset.item);
         });
 
+        /**
+         * Update this palette's current selection indicator with the style
+         * of the currently selected item
+         * @private
+         */
         function updateSwatch() {
             $('.icon-swatch', domElement).removeClass(self.oldIcon)
                 .addClass(self.palette.getCurrent());

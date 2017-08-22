@@ -32,11 +32,21 @@ define([
         this.initItem = this.initItem.bind(this);
         this.removeItem = this.removeItem.bind(this);
 
+        /**
+         * Toggles the configuration area for test data in the view
+         * @private
+         */
         function toggleConfig() {
             self.configArea.toggleClass('expanded');
             self.toggleConfigButton.toggleClass('expanded');
         }
 
+        /**
+         * Toggles whether the associated {ConditionEvaluator} uses the actual
+         * subscription cache or the test data cache
+         * @param {Event} event The change event that triggered this callback
+         * @private
+         */
         function toggleTestData(event) {
             var elem = event.target;
             self.evaluator.useTestData(elem.checked);
@@ -55,10 +65,22 @@ define([
         this.refreshItems();
     }
 
+    /**
+     * Get the DOM element representing this test data manager in the view
+     */
     TestDataManager.prototype.getDOM = function () {
         return this.domElement;
     };
 
+    /**
+     * Initialze a new test data item, either from a source configuration, or with
+     * the default empty configuration
+     * @param {Object} sourceItem (optional) The source configuration to use when
+     *                            instantiating this item. Must have object, key and
+     *                            value fields.
+     * @param {number} sourceIndex (optional) The index at which to insert the
+     *                             new item
+     */
     TestDataManager.prototype.initItem = function (sourceItem, sourceIndex) {
         var defaultItem = {
             object: '',
@@ -77,6 +99,10 @@ define([
         this.refreshItems();
     };
 
+    /**
+     * Remove an item from this TestDataManager at the given index
+     * @param {number} removeIndex The index of the item to remove
+     */
     TestDataManager.prototype.removeItem = function (removeIndex) {
         _.remove(this.config, function (item, index) {
             return index === removeIndex;
@@ -85,18 +111,33 @@ define([
         this.refreshItems();
     };
 
+    /**
+     * Change event handler for the test data items which compose this
+     * test data generateor
+     * @param {string} value The new value from the test data items
+     * @param {string} property The property of the test data item to modify
+     * @param {number} index The index of the item which initiated the change event
+     */
     TestDataManager.prototype.onItemChange = function (value, property, index) {
         this.config[index][property] = value;
         this.updateDomainObject();
         this.updateTestCache();
     };
 
+    /**
+     * Builds the test cache from the current item configuration, and passes
+     * the new test cache to the associated {ConditionEvaluator} instance
+     */
     TestDataManager.prototype.updateTestCache = function () {
         this.generateTestCache();
         this.evaluator.setTestDataCache(this.testCache);
         this.manager.triggerTelemetryCallback();
     };
 
+    /**
+     * Intantiate {TestDataItem} objects from the current configuration, and
+     * update the view accordingly
+     */
     TestDataManager.prototype.refreshItems = function () {
         var self = this;
 
@@ -122,6 +163,10 @@ define([
         this.updateTestCache();
     };
 
+    /**
+     * Builds a test data cache in the format of a telemetry subscription cache
+     * as expected by a {ConditionEvaluator}
+     */
     TestDataManager.prototype.generateTestCache = function () {
         var testCache = this.testCache,
             manager = this.manager,
@@ -145,6 +190,9 @@ define([
         this.testCache = testCache;
     };
 
+    /**
+     * Update the domain object configuration associated with this test data manager
+     */
     TestDataManager.prototype.updateDomainObject = function () {
         this.openmct.objects.mutate(this.domainObject, 'configuration.testDataConfig', this.config);
     };

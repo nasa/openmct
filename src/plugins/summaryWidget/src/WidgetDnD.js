@@ -6,7 +6,12 @@ define([
     $
 ) {
 
-    //and a drag area where the drag and drop should apply
+    /**
+     * Manages the Sortable List interface for reordering rules by drag and drop
+     * @param {Element} container The DOM element that contains this Summary Widget's view
+     * @param {string[]} ruleOrder An array of rule IDs representing the current rule order
+     * @param {Object} rulesById An object mapping rule IDs to rule configurations
+     */
     function WidgetDnD(container, ruleOrder, rulesById) {
         this.ruleOrder = ruleOrder;
         this.rulesById = rulesById;
@@ -29,16 +34,31 @@ define([
         $(this.imageContainer).hide();
     }
 
+    /**
+     * Register an event callback with this WidgetDnD instance: supported callback is drop
+     * @param {string} event The key for the event to listen to
+     * @param {function} callback The function that this rule will envoke on this event
+     */
     WidgetDnD.prototype.on = function (event, callback) {
         if (this.callbacks[event]) {
             this.callbacks[event].push(callback);
         }
     };
 
+    /**
+     * Sets the image for the dragged element to the given DOM element
+     * @param {Element} image The HTML element to set as the drap image
+     */
     WidgetDnD.prototype.setDragImage = function (image) {
         this.image.html(image);
     };
 
+    /**
+     * Calculate where this rule has been dragged relative to the other rules
+     * @param {Event} event The mousemove or mouseup event that triggered this
+                            event handler
+     * @return {string} The ID of the rule whose drag indicator should be displayed
+     */
     WidgetDnD.prototype.getDropLocation = function (event) {
         var ruleOrder = this.ruleOrder,
             rulesById = this.rulesById,
@@ -70,6 +90,10 @@ define([
         return target;
     };
 
+    /**
+     * Called by a {Rule} instance that initiates a drag gesture
+     * @param {string} ruleId The identifier of the rule which is being dragged
+     */
     WidgetDnD.prototype.dragStart = function (ruleId) {
         var ruleOrder = this.ruleOrder;
         this.draggingId = ruleId;
@@ -82,6 +106,10 @@ define([
         });
     };
 
+    /**
+     * An event handler for a mousemove event, once a rule has begun a drag gesture
+     * @param {Event} event The mousemove event that triggered this callback
+     */
     WidgetDnD.prototype.drag = function (event) {
         var dragTarget;
         if (this.draggingId && this.draggingId !== '') {
@@ -99,6 +127,13 @@ define([
         }
     };
 
+    /**
+     * Handles the mouseup event that corresponds to the user dropping the rule
+     * in its final location. Invokes any registered drop callbacks with the dragged
+     * rule's ID and the ID of the target rule that the dragged rule should be
+     * inserted after
+     * @param {Event} event The mouseup event that triggered this callback
+     */
     WidgetDnD.prototype.drop = function (event) {
         var dropTarget = this.getDropLocation(event),
             draggingId = this.draggingId;

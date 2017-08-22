@@ -10,13 +10,17 @@ define([
     $
 ) {
 
-    // an individual mock telemetry value for test data
-    // parameter:
-    // conditionConfig: the configuration for this conditionConfig
-    // index: the index of this TestDataItem object in it's parent TestDataManagers's data model,
-    //        to be injected into callbacks for removes
-    // conditionManager: a conditionManager instance for populating selects with
-    //                    configuration data
+    /**
+     * An object representing a single mock telemetry value
+     * @param {object} itemConfig the configuration for this item, consisting of
+     *                            object, key, and value fields
+     * @param {number} index: the index of this TestDataItem object in the data
+     *                 model of its parent {TestDataManager} o be injected into callbacks
+     *                 for removes
+     * @param {ConditionManager} conditionManager: a conditionManager instance
+     *                           for populating selects with configuration data
+     * @constructor
+     */
     function TestDataItem(itemConfig, index, conditionManager) {
         this.config = itemConfig;
         this.index = index;
@@ -41,6 +45,13 @@ define([
 
         var self = this;
 
+        /**
+         * A change event handler for this item's select inputs, which also invokes
+         * change callbacks registered with this item
+         * @param {string} value The new value of this select item
+         * @param {string} property The property of this item to modify
+         * @private
+         */
         function onSelectChange(value, property) {
             if (property === 'key') {
                 self.generateValueInput(value);
@@ -52,6 +63,12 @@ define([
             });
         }
 
+        /**
+         * An input event handler for this item's value field. Invokes any change
+         * callbacks associated with this item
+         * @param {Event} event The input event that initiated this callback
+         * @private
+         */
         function onValueInput(event) {
             var elem = event.target,
                 value = (isNaN(elem.valueAsNumber) ? elem.value : elem.valueAsNumber);
@@ -78,21 +95,38 @@ define([
         $(this.domElement).on('input', 'input', onValueInput);
     }
 
-
+    /**
+     * Gets the DOM associated with this element's view
+     * @return {Element}
+     */
     TestDataItem.prototype.getDOM = function (container) {
         return this.domElement;
     };
 
+    /**
+     * Register a callback with this item: supported callbacks are remove, change,
+     * and duplicate
+     * @param {string} event The key for the event to listen to
+     * @param {function} callback The function that this rule will envoke on this event
+     * @private
+     */
     TestDataItem.prototype.on = function (event, callback) {
         if (this.callbacks[event]) {
             this.callbacks[event].push(callback);
         }
     };
 
+    /**
+     * Hide the appropriate inputs when this is the only item
+     */
     TestDataItem.prototype.hideButtons = function () {
         this.deleteButton.hide();
     };
 
+    /**
+     * Remove this item from the configuration. Invokes any registered
+     * remove callbacks
+     */
     TestDataItem.prototype.remove = function () {
         var self = this;
         this.callbacks.remove.forEach(function (callback) {
@@ -102,6 +136,10 @@ define([
         });
     };
 
+    /**
+     * Makes a deep clone of this item's configuration, and invokes any registered
+     * duplicate callbacks with the cloned configuration as an argument
+     */
     TestDataItem.prototype.duplicate = function () {
         var sourceItem = JSON.parse(JSON.stringify(this.config)),
             self = this;
@@ -112,6 +150,11 @@ define([
         });
     };
 
+    /**
+     * When a telemetry property key is selected, create the appropriate value input
+     * and add it to the view
+     * @param {string} key The key of currently selected telemetry property
+     */
     TestDataItem.prototype.generateValueInput = function (key) {
         var evaluator = this.conditionManager.getEvaluator(),
             inputArea = $('.t-value-inputs', this.domElement),

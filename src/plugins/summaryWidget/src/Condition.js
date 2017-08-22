@@ -12,13 +12,16 @@ define([
     $
 ) {
 
-    // an individual condition for a summary widget rule.
-    // parameter:
-    // conditionConfig: the configuration for this conditionConfig
-    // index: the index of this Condition object in it's parent Rule's data model,
-    //        to be injected into callbacks for removes
-    // conditionManager: a conditionManager instance for populating selects with
-    //                    configuration data
+    /**
+     * Represents an individual condition for a summary widget rule. Manages the
+     * associated inputs and view.
+     * @param {Object} conditionConfig The configurration for this condition, consisting
+     *                                of object, key, operation, and values fields
+     * @param {number} index the index of this Condition object in it's parent Rule's data model,
+     *                        to be injected into callbacks for removes
+     * @param {ConditionManager} conditionManager A ConditionManager instance for populating
+     *                                            selects with configuration data
+     */
     function Condition(conditionConfig, index, conditionManager) {
         this.config = conditionConfig;
         this.index = index;
@@ -43,6 +46,12 @@ define([
 
         var self = this;
 
+        /**
+         * Event handler for a change in one of this conditions' custom selects
+         * @param {string} value The new value of this selects
+         * @param {string} property The property of this condition to modify
+         * @private
+         */
         function onSelectChange(value, property) {
             if (property === 'operation') {
                 self.generateValueInputs(value);
@@ -54,6 +63,11 @@ define([
             });
         }
 
+        /**
+         * Event handler for this conditions value inputs
+         * @param {Event} event The oninput event that triggered this callback
+         * @private
+         */
         function onValueInput(event) {
             var elem = event.target,
                 value = (isNaN(elem.valueAsNumber) ? elem.value : elem.valueAsNumber),
@@ -86,21 +100,36 @@ define([
         $(this.domElement).on('input', 'input', onValueInput);
     }
 
-
+    /**
+     * Get the DOM element representing this condition
+     */
     Condition.prototype.getDOM = function (container) {
         return this.domElement;
     };
 
+    /**
+     * Register a callback with this conditition: supported callbacks are remove, change,
+     * and duplicate
+     * @param {string} event The key for the event to listen to
+     * @param {function} callback The function that this rule will envoke on this event
+     */
     Condition.prototype.on = function (event, callback) {
         if (this.callbacks[event]) {
             this.callbacks[event].push(callback);
         }
     };
 
+    /**
+     * Hide the appropriate inputs when this is the only condition
+     */
     Condition.prototype.hideButtons = function () {
         this.deleteButton.hide();
     };
 
+    /**
+     * Remove this condition from the configuration. Invokes any registered
+     * remove callbacks
+     */
     Condition.prototype.remove = function () {
         var self = this;
         this.callbacks.remove.forEach(function (callback) {
@@ -110,6 +139,10 @@ define([
         });
     };
 
+    /**
+     * Make a deep clone of this condition's configuration and invoke any duplicate
+     * callbacks with the cloned configuration and this rule's index
+     */
     Condition.prototype.duplicate = function () {
         var sourceCondition = JSON.parse(JSON.stringify(this.config)),
             self = this;
@@ -120,6 +153,11 @@ define([
         });
     };
 
+    /**
+     * When an operation is selected, create the appropriate value inputs
+     * and add them to the view
+     * @param {string} operation The key of currently selected operation
+     */
     Condition.prototype.generateValueInputs = function (operation) {
         var evaluator = this.conditionManager.getEvaluator(),
             inputArea = $('.t-value-inputs', this.domElement),
