@@ -50,6 +50,7 @@ define(
             this.requestCount = 0;
             this.scrollable = $(".l-image-thumbs-wrapper");
             this.autoScroll = openmct.time.clock() ? true : false;
+            this.historyView = true;
 
             this.$scope.imageHistory = [];
             this.$scope.filters = {
@@ -260,6 +261,10 @@ define(
             this.autoScroll = false;
             this.paused(true);
         };
+
+        ImageryController.prototype.showHistoryView = function () {
+            return this.historyView === true ? "" : "hidden";
+        }
 
         return ImageryController;
     }
