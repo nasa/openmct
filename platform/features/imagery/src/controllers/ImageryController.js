@@ -48,7 +48,7 @@ define(
             this.zone = "";
             this.imageUrl = "";
             this.requestCount = 0;
-            this.scrollable = $(element[0]);
+            this.scrollable = $(".l-image-thumbs-wrapper");
             this.autoScroll = openmct.time.clock() ? true : false;
 
             this.$scope.imageHistory = [];
@@ -63,6 +63,7 @@ define(
             this.updateHistory = this.updateHistory.bind(this);
             this.onBoundsChange = this.onBoundsChange.bind(this);
             this.onScroll = this.onScroll.bind(this);
+            this.setSelectedImage = this.setSelectedImage.bind(this);
 
             this.subscribe(this.$scope.domainObject);
 
@@ -251,7 +252,14 @@ define(
                     }
                 }
                 return this.isPaused;
-            };
+        };
+
+        ImageryController.prototype.setSelectedImage = function (image) {
+            this.imageUrl = image.url;
+            this.time = this.getTime(image.utc);
+            this.autoScroll = false;
+            this.paused(true);
+        };
 
         return ImageryController;
     }
