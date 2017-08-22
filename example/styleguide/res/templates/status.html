@@ -37,7 +37,12 @@
 
     <div class="l-section">
         <h2>Overview</h2>
-        <p>Many elements in Open MCT need to articulate a dynamic status. </p>
+        <p>Many elements in Open MCT need to articulate a dynamic status; Open MCT provides the following styles and conventions to handle this:</p>
+        <ul>
+            <li><strong>Limits</strong>: when telemetry values exceed minimum or maximum values, they can be violating limits. Limit styles include both color and iconography; color is used to indicate severity while icons are used to indicate direction, upper or lower.</li>
+            <li><strong>Status</strong>: Open MCT also provides a number or built-in Status styles allowing telemetry or other displayed information to be visually classified.</li>
+            <li><strong>Synchronization</strong>: When the system is displaying real-time data, it is very important that displays clearly indicate when they are not doing so. Open MCT provides a style for this.</li>
+        </ul>
     </div>
 
     <div class="l-section">
@@ -46,12 +51,23 @@
             <div class="col">
                 <p>Limit CSS classes can be applied to any block or inline element. Open MCT limit classes set color and optionally an icon, but don't effect other properties. Yellow and red limit classes can be used as is, or allow the application of any custom icon available in Open MCT's glyphs library. &quot;Level&quot; limit classes - upper and lower - always use an icon in addition to a color; Open MCT doesn't support level limits without color.</p>
                 <ul>
-                    <li><code>s-limit-yellow</code>: A yellow limit.</li>
-                    <li><code>s-limit-red</code>: A red limit.</li>
-                    <li><code>s-limit-yellow-icon</code>: A yellow limit with icon.</li>
-                    <li><code>s-limit-red-icon</code>: A red limit with icon.</li>
-                    <li><code>s-limit-upr</code>: Upper limit. Use this class in concert with a yellow or red limit class.</li>
-                    <li><code>s-limit-lwr</code>: Lower limit. Use this class in concert with a yellow or red limit class.</li>
+                    <li>Color only</li>
+                    <ul>
+                        <li><code>s-limit-yellow</code>: A yellow limit.</li>
+                        <li><code>s-limit-red</code>: A red limit.</li>
+                    </ul>
+                    <li>Color and icon</li>
+                    <ul>
+                        <li><code>s-limit-yellow-icon</code>: A yellow limit with icon.</li>
+                        <li><code>s-limit-red-icon</code>: A red limit with icon.</li>
+                    </ul>
+                    <li>Upper and lower limit indicators. Must be used with a color limit class to be visible.</li>
+                    <ul>
+                        <li><code>s-limit-upr</code>: Upper limit.
+                        </li>
+                        <li><code>s-limit-lwr</code>: Lower limit.
+                        </li>
+                    </ul>
                 </ul>
             </div>
 <mct-example><div class="s-limit-yellow">Yellow limit</div>
@@ -80,16 +96,22 @@
             <div class="col">
                 <p>Classes here can be applied to elements as needed.</p>
                 <ul>
-                    <li><code>s-status-warning-hi</code></li>
-                    <li><code>s-status-warning-lo</code></li>
-                    <li><code>s-status-diagnostic</code></li>
-                    <li><code>s-status-info</code></li>
-                    <li><code>s-status-ok</code></li>
-                    <li><code>s-status-warning-hi-icon</code></li>
-                    <li><code>s-status-warning-lo-icon</code></li>
-                    <li><code>s-status-diagnostic-icon</code></li>
-                    <li><code>s-status-info-icon</code></li>
-                    <li><code>s-status-ok-icon</code></li>
+                    <li>Color only</li>
+                    <ul>
+                        <li><code>s-status-warning-hi</code></li>
+                        <li><code>s-status-warning-lo</code></li>
+                        <li><code>s-status-diagnostic</code></li>
+                        <li><code>s-status-info</code></li>
+                        <li><code>s-status-ok</code></li>
+                    </ul>
+                    <li>Color and icon</li>
+                    <ul>
+                        <li><code>s-status-warning-hi-icon</code></li>
+                        <li><code>s-status-warning-lo-icon</code></li>
+                        <li><code>s-status-diagnostic-icon</code></li>
+                        <li><code>s-status-info-icon</code></li>
+                        <li><code>s-status-ok-icon</code></li>
+                    </ul>
                 </ul>
             </div>
 <mct-example><div class="s-status-warning-hi">WARNING HI</div>
