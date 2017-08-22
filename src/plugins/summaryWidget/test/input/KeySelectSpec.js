@@ -40,7 +40,7 @@ define(['../../src/input/KeySelect'], function (KeySelect) {
                 'on',
                 'metadataLoadCompleted',
                 'triggerCallback',
-                'getComposition'
+                'getTelemetryMetadata'
             ]);
 
             mockObjectSelect = jasmine.createSpyObj('mockObjectSelect', [
@@ -48,27 +48,27 @@ define(['../../src/input/KeySelect'], function (KeySelect) {
                 'triggerCallback'
             ]);
 
-            mockObjectSelect.on = function (event, callback) {
+            mockObjectSelect.on.andCallFake(function (event, callback) {
                 this.callbacks = this.callbacks || {};
                 this.callbacks[event] = callback;
-            };
+            });
 
-            mockObjectSelect.triggerCallback = function (event, key) {
+            mockObjectSelect.triggerCallback.andCallFake(function (event, key) {
                 this.callbacks[event](key);
-            };
+            });
 
-            mockManager.on = function (event, callback) {
+            mockManager.on.andCallFake(function (event, callback) {
                 this.callbacks = this.callbacks || {};
                 this.callbacks[event] = callback;
-            };
+            });
 
-            mockManager.triggerCallback = function (event) {
+            mockManager.triggerCallback.andCallFake(function (event) {
                 this.callbacks[event]();
-            };
+            });
 
-            mockManager.getTelemetryMetadata = function (key) {
+            mockManager.getTelemetryMetadata.andCallFake(function (key) {
                 return mockMetadata[key];
-            };
+            });
 
         });
 

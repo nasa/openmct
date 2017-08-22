@@ -55,44 +55,39 @@ define(['../../src/input/OperationSelect'], function (OperationSelect) {
                 'getOperationText'
             ]);
 
-            mockEvaluator.getOperationKeys = function () {
-                return Object.keys(mockOperations);
-            };
+            mockEvaluator.getOperationKeys.andReturn(Object.keys(mockOperations));
 
-            mockEvaluator.getOperationText = function (key) {
+            mockEvaluator.getOperationText.andCallFake(function (key) {
                 return mockOperations[key].text;
-            };
+            });
 
-            mockEvaluator.operationAppliesTo = function (operation, type) {
+            mockEvaluator.operationAppliesTo.andCallFake(function (operation, type) {
                 return (mockOperations[operation].appliesTo.includes(type));
-            };
+            });
 
-            mockKeySelect.on = function (event, callback) {
+            mockKeySelect.on.andCallFake(function (event, callback) {
                 this.callbacks = this.callbacks || {};
                 this.callbacks[event] = callback;
-            };
+            });
 
-            mockKeySelect.triggerCallback = function (event, key) {
+            mockKeySelect.triggerCallback.andCallFake(function (event, key) {
                 this.callbacks[event](key);
-            };
+            });
 
-            mockManager.on = function (event, callback) {
+            mockManager.on.andCallFake(function (event, callback) {
                 this.callbacks = this.callbacks || {};
                 this.callbacks[event] = callback;
-            };
+            });
 
-            mockManager.triggerCallback = function (event) {
+            mockManager.triggerCallback.andCallFake(function (event) {
                 this.callbacks[event]();
-            };
+            });
 
-            mockManager.getTelemetryPropertyType = function (object, key) {
+            mockManager.getTelemetryPropertyType.andCallFake(function (object, key) {
                 return mockPropertyTypes[object][key];
-            };
+            });
 
-            mockManager.getEvaluator = function () {
-                return mockEvaluator;
-            };
-
+            mockManager.getEvaluator.andReturn(mockEvaluator);
         });
 
         it('waits until the metadata fully loads to populate itself', function () {

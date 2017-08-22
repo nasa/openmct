@@ -27,7 +27,6 @@ define([
      * A Summary Widget object, which allows a user to configure rules based
      * on telemetry producing domain objects, and update a compact display
      * accordingly.
-     *
      * @constructor
      * @param {Object} domainObject The domain Object represented by this Widget
      * @param {MCT} openmct An MCT instance
@@ -50,6 +49,7 @@ define([
         this.domElement = $(widgetTemplate);
         this.editing = false;
         this.container = '';
+
         this.ruleArea = $('#ruleArea', this.domElement);
         this.testDataArea = $('.widget-test-data', this.domElement);
         this.addRuleButton = $('#addRule', this.domElement);
@@ -89,7 +89,6 @@ define([
     /**
      * Builds the Summary Widget's DOM, performs other necessary setup, and attaches
      * this Summary Widget's view to the supplied container.
-     *
      * @param {element} container The DOM element that will contain this Summary
      *                            Widget's view.
      */
@@ -108,14 +107,13 @@ define([
     };
 
     Widget.prototype.destroy = function (container) {
-
+        this.conditionManager.destroy();
     };
 
     /**
      * A callback function for the Open MCT status capability listener. If the
      * view representing the domain object is in edit mode, update the internal
      * state and widget view accordingly.
-     *
      * @param {string[]} status an array containing the domain object's current status
      */
     Widget.prototype.onEdit = function (status) {
@@ -128,7 +126,7 @@ define([
     };
 
     /**
-     * If this view is currently in edit mode, show all rule configuration modules.
+     * If this view is currently in edit mode, show all rule configuration interfaces.
      * Otherwise, hide them.
      */
     Widget.prototype.updateView = function () {
@@ -151,10 +149,10 @@ define([
             ruleOrder = self.domainObject.configuration.ruleOrder,
             rules = self.rulesById;
 
-        $('#ruleArea', self.domElement).html('');
+        self.ruleArea.html('');
         Object.values(ruleOrder).forEach(function (ruleId) {
             self.initRule(ruleId);
-            $('#ruleArea', self.domElement).append(rules[ruleId].getDOM());
+            self.ruleArea.append(rules[ruleId].getDOM());
         });
 
         this.executeRules();
@@ -206,7 +204,6 @@ define([
     /**
      * Duplicate an existing widget rule from its configuration and splice it in
      * after the rule it duplicates
-     *
      * @param {Object} sourceConfig The configuration properties of the rule to be
      *                              instantiated
      */
@@ -233,9 +230,8 @@ define([
     };
 
     /**
-     * Initialze a new rule from a default configuration, or build a {Rule} objects
+     * Initialze a new rule from a default configuration, or build a {Rule} object
      * from it if already exists
-     *
      * @param {string} ruleId An key to be used to identify this ruleId, or the key
                               of the rule to be instantiated
      * @param {string} ruleName The initial human-readable name of this rule
@@ -276,7 +272,7 @@ define([
     };
 
     /**
-     * Given two ruleIds, move the source rule after the target rule and updateWidget
+     * Given two ruleIds, move the source rule after the target rule and update
      * the view.
      * @param {string} sourceId The key of the source rule to be moved
      * @param {string} targetId The key of the target rule that the source will
@@ -299,7 +295,6 @@ define([
 
     /**
      * Apply a list of css properties to an element
-     *
      * @param {element} elem The DOM element to which the rules will be applied
      * @param {object} style an object representing the style
      */

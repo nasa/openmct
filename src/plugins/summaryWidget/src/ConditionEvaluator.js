@@ -41,9 +41,9 @@ define([], function () {
          * A library of operations supported by this rule evaluator. Each operation
          * consists of the following fields:
          * operation: a function with boolean return type to be invoked when this
-                      operation is used. Will be called with an array of inputs
-                      where input [0] is the telemetry value and input [1..n] are
-                      any comparison values
+         *            operation is used. Will be called with an array of inputs
+         *            where input [0] is the telemetry value and input [1..n] are
+         *            any comparison values
          * text: a human-readable description of this operation to populate selects
          * appliesTo: an array of identifiers for types that operation may be used on
          * inputCount: the number of inputs to generate to get any necessary comparison
@@ -313,7 +313,7 @@ define([], function () {
     };
 
     /**
-     * Interpret a string as a JavaScript conditional, and return its boolean valueInputs
+     * Interpret a string as a JavaScript conditional, and return its boolean value
      * @param {string} condition The string to interpret as JavaScript
      * @return {boolean} The value of the conditions
      */

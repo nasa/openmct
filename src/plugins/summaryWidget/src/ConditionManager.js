@@ -23,7 +23,7 @@ define ([
         this.composition = this.openmct.composition.get(this.domainObject);
         this.compositionObjs = {};
 
-        this.specialNames = {
+        this.keywordLabels = {
             any: 'Any Telemetry',
             all: 'All Telemetry'
         };
@@ -78,7 +78,7 @@ define ([
          * fields with a type, parsing from historical data.
          * @param {Object} object a domain object that can produce telemetry
          * @return {Promise} A promise that resolves when a telemetry request
-         *                   has completed and types have been parse
+         *                   has completed and types have been parsed
          * @private
          */
         function getPropertyTypes(object) {
@@ -100,7 +100,7 @@ define ([
 
         /**
          * Once the intial composition load has completed, parse all telemetry fields
-         * from given composition objects
+         * from all composition objects
          * @return {Promise} A promise that resolves when all metadata has been loaded
          *                   and property types parsed
          * @private
@@ -198,6 +198,7 @@ define ([
                 return id.key === identifier.key;
             });
             delete self.compositionObjs[identifier.key];
+            self.subscriptions[identifier.key](); //unsubscribe from telemetry source
             self.callbacks.remove.forEach(function (callback) {
                 if (callback) {
                     callback(identifier);
@@ -291,8 +292,8 @@ define ([
     ConditionManager.prototype.getObjectName = function (id) {
         var name;
 
-        if (this.specialNames[id]) {
-            name = this.specialNames[id];
+        if (this.keywordLabels[id]) {
+            name = this.keywordLabels[id];
         } else if (this.compositionObjs[id]) {
             name = this.compositionObjs[id].name;
         }
@@ -362,13 +363,23 @@ define ([
     /**
      * Triggers the telemetryRecieve callbacks registered to this ConditionManager,
      * used by the {TestDataManager} to force a rule evaluation when test data is
-     * enable
+     * enabled
      */
     ConditionManager.prototype.triggerTelemetryCallback = function () {
         this.callbacks.receiveTelemetry.forEach(function (callback) {
             if (callback) {
                 callback();
             }
+        });
+    };
+
+
+    /**
+     * Unsubscribe from all registered telemetry sources
+     */
+    ConditionManager.prototype.destroy = function () {
+        Object.values(this.subscriptions).forEach(function (unsubscribeFunction) {
+            unsubscribeFunction();
         });
     };
 

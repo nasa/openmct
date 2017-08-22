@@ -1,4 +1,4 @@
-define(['./src/Widget'], function (Widget) {
+define(['./src/SummaryWidget'], function (SummaryWidget) {
 
     function plugin() {
 
@@ -17,10 +17,10 @@ define(['./src/Widget'], function (Widget) {
             return {
                 name: 'Widget View',
                 view: function (domainObject) {
-                    var widget = new Widget(domainObject, openmct);
+                    var summaryWidget = new SummaryWidget(domainObject, openmct);
                     return {
-                        show: widget.show,
-                        destroy: widget.destroy
+                        show: summaryWidget.show,
+                        destroy: summaryWidget.destroy
                     };
                 },
                 canView: function (domainObject) {

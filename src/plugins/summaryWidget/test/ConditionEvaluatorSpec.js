@@ -4,6 +4,7 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
             testEvaluator,
             testOperation,
             mockCache,
+            mockTestCache,
             mockComposition,
             mockConditions,
             mockConditionsEmpty,
@@ -32,6 +33,18 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                     creature: {
                         type: 'Centaur'
                     }
+                }
+            };
+            mockTestCache = {
+                a: {
+                    alpha: 1,
+                    beta: 1,
+                    gamma: 'Testing 4 5 6'
+                },
+                b: {
+                    alpha: 2,
+                    beta: 2,
+                    gamma: 'Goodbye world'
                 }
             };
             mockComposition = {
@@ -113,7 +126,10 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                     },
                     text: 'is Greater Than',
                     appliesTo: ['number'],
-                    inputCount: 1
+                    inputCount: 1,
+                    getDescription: function (values) {
+                        return ' > ' + values [0];
+                    }
                 },
                 lessThan: {
                     operation: function (input) {
@@ -145,7 +161,10 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                     },
                     text: 'is Half Horse',
                     appliesTo: ['mythicalCreature'],
-                    inputCount: 0
+                    inputCount: 0,
+                    getDescription: function () {
+                        return 'is half horse';
+                    }
                 }
             };
             evaluator = new ConditionEvaluator(mockCache, mockComposition);
@@ -153,7 +172,7 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
             evaluator.operations = mockOperations;
         });
 
-        it('evaluates to false when a condition has no configuration', function () {
+        it('evaluates a condition when it has no configuration', function () {
             expect(evaluator.execute(mockConditionsEmpty, 'any')).toEqual(false);
             expect(evaluator.execute(mockConditionsEmpty, 'all')).toEqual(false);
         });
@@ -210,9 +229,37 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
             expect(evaluator.operationAppliesTo('isHalfHorse', 'spaceJunk')).toEqual(false);
         });
 
+        it('returns the HTML input type associated with a given data type', function () {
+            expect(evaluator.getInputTypeById('string')).toEqual('text');
+        });
+
         it('gets the number of inputs required for a given operation', function () {
             expect(evaluator.getInputCount('isHalfHorse')).toEqual(0);
             expect(evaluator.getInputCount('greaterThan')).toEqual(1);
+        });
+
+        it('gets a human-readable description of a condition', function () {
+            expect(evaluator.getOperationDescription('isHalfHorse')).toEqual('is half horse');
+            expect(evaluator.getOperationDescription('greaterThan', [1])).toEqual(' > 1');
+        });
+
+        it('allows setting a substitute cache for testing purposes, and toggling its use', function () {
+            evaluator.setTestDataCache(mockTestCache);
+            evaluator.useTestData(true);
+            expect(evaluator.execute(mockConditions, 'any')).toEqual(false);
+            expect(evaluator.execute(mockConditions, 'all')).toEqual(false);
+            mockConditions.push({
+                object: 'a',
+                key: 'gamma',
+                operation: 'textContains',
+                values: ['4 5 6']
+            });
+            expect(evaluator.execute(mockConditions, 'any')).toEqual(true);
+            expect(evaluator.execute(mockConditions, 'all')).toEqual(false);
+            mockConditions.pop();
+            evaluator.useTestData(false);
+            expect(evaluator.execute(mockConditions, 'any')).toEqual(true);
+            expect(evaluator.execute(mockConditions, 'all')).toEqual(false);
         });
 
         it('supports all required operations', function () {

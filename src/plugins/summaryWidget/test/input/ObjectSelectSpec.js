@@ -31,22 +31,22 @@ define(['../../src/input/ObjectSelect'], function (ObjectSelect) {
                 'getComposition'
             ]);
 
-            mockManager.on = function (event, callback) {
+            mockManager.on.andCallFake(function (event, callback) {
                 this.callbacks = this.callbacks || {};
                 this.callbacks[event] = callback;
-            };
+            });
 
-            mockManager.triggerCallback = function (event, newObj) {
+            mockManager.triggerCallback.andCallFake(function (event, newObj) {
                 if (event === 'add') {
                     this.callbacks.add(newObj);
                 } else {
                     this.callbacks[event]();
                 }
-            };
+            });
 
-            mockManager.getComposition = function () {
+            mockManager.getComposition.andCallFake(function () {
                 return mockComposition;
-            };
+            });
 
         });
 
