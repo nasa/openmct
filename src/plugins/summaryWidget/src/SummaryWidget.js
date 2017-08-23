@@ -72,7 +72,7 @@ define([
             .then(function (objs) {
                 oldDomainObject = objs[id];
                 statusCapability = oldDomainObject.getCapability('status');
-                statusCapability.listen(self.onEdit);
+                self.editListenerUnsubscribe = statusCapability.listen(self.onEdit);
                 if (statusCapability.get('editing')) {
                     self.onEdit(['editing']);
                 } else {
@@ -101,8 +101,17 @@ define([
         this.widgetDnD.on('drop', this.reorder, this);
     };
 
+    /**
+     * Unregister event listeners with the Open MCT APIS, unsubscribe from telemetry,
+     * and clean up event handlers
+     */
     Widget.prototype.destroy = function (container) {
+        this.editListenerUnsubscribe();
         this.conditionManager.destroy();
+        this.widgetDnD.destroy();
+        Object.values(this.rulesById).forEach(function (rule) {
+            rule.destroy();
+        });
     };
 
     /**

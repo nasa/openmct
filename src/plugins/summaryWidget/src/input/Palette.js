@@ -34,6 +34,8 @@ define([
         this.value = this.items[0];
         this.nullOption = ' ';
 
+        this.hideMenu = this.hideMenu.bind(this);
+
         self.domElement.addClass(this.cssClass);
         self.setNullOption(this.nullOption);
 
@@ -47,10 +49,7 @@ define([
 
         $('.menu', self.domElement).hide();
 
-        $(document).on('click', function () {
-            $('.menu', self.domElement).hide();
-        });
-
+        $(document).on('click', this.hideMenu);
         $('.l-click-area', self.domElement).on('click', function (event) {
             event.stopPropagation();
             $('.menu', self.container).hide();
@@ -78,6 +77,17 @@ define([
      */
     Palette.prototype.getDOM = function () {
         return this.domElement;
+    };
+
+    /**
+     * Clean up any event listeners registered to DOM elements external to the widget
+     */
+    Palette.prototype.destroy = function () {
+        $(document).off('click', this.hideMenu);
+    };
+
+    Palette.prototype.hideMenu = function () {
+        $('.menu', this.domElement).hide();
     };
 
     /**

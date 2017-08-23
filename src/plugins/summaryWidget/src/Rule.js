@@ -225,6 +225,13 @@ define([
         return this.domElement;
     };
 
+    Rule.prototype.destroy = function () {
+        Object.values(this.colorInputs).forEach(function (palette) {
+            palette.destroy();
+        });
+        this.iconInput.destroy();
+    };
+
     /**
      * Register a callback with this rule: supported callbacks are remove, change,
      * conditionChange, and duplicate
@@ -293,6 +300,7 @@ define([
 
         this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById', ruleConfigById);
         this.openmct.objects.mutate(this.domainObject, 'configuration.ruleOrder', ruleOrder);
+        this.destroy();
         this.eventEmitter.emit('remove');
     };
 

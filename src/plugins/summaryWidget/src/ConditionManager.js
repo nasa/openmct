@@ -17,8 +17,6 @@ define ([
      * @param {MCT} openmct an MCT instance
      */
     function ConditionManager(domainObject, openmct) {
-        var self = this;
-
         this.domainObject = domainObject;
         this.openmct = openmct;
 
@@ -48,166 +46,9 @@ define ([
         this.metadataLoadComplete = false;
         this.evaluator = new ConditionEvaluator(this.subscriptionCache, this.compositionObjs);
 
-        /**
-         * Adds a field to the list of all available metadata fields in the widget
-         * @param {Object} metadatum An object representing a set of telemetry metadata
-         * @private
-         */
-        function addGlobalMetadata(metadatum) {
-            self.telemetryMetadataById.any[metadatum.key] = metadatum;
-            self.telemetryMetadataById.all[metadatum.key] = metadatum;
-        }
-
-        /**
-         * Adds a field to the list of properties for globally available metadata
-         * @param {string} key The key for the property this type applies to
-         * @param {string} type The type that should be associated with this property
-         * @private
-         */
-        function addGlobalPropertyType(key, type) {
-            self.telemetryTypesById.any[key] = type;
-            self.telemetryTypesById.all[key] = type;
-        }
-
-        /**
-         * Given a telemetry-producing domain object, associate each of it's telemetry
-         * fields with a type, parsing from historical data.
-         * @param {Object} object a domain object that can produce telemetry
-         * @return {Promise} A promise that resolves when a telemetry request
-         *                   has completed and types have been parsed
-         * @private
-         */
-        function getPropertyTypes(object) {
-            var telemetryAPI = self.openmct.telemetry,
-                key,
-                type;
-
-            self.telemetryTypesById[object.identifier.key] = {};
-
-            return telemetryAPI.request(object, {}).then(function (telemetry) {
-                Object.entries(telemetry[0]).forEach(function (telem) {
-                    key = telem[0];
-                    type = typeof telem[1];
-                    self.telemetryTypesById[object.identifier.key][key] = type;
-                    addGlobalPropertyType(key, type);
-                });
-            });
-        }
-
-        /**
-         * Once the intial composition load has completed, parse all telemetry fields
-         * from all composition objects
-         * @return {Promise} A promise that resolves when all metadata has been loaded
-         *                   and property types parsed
-         * @private
-         */
-        function loadMetadata() {
-            var index = 0,
-                objs = Object.values(self.compositionObjs),
-                promise = new Promise(function (resolve, reject) {
-                    if (objs.length === 0) {
-                        resolve();
-                    }
-                    objs.forEach(function (obj) {
-                        getPropertyTypes(obj).then(function () {
-                            if (index === objs.length - 1) {
-                                resolve();
-                            }
-                            index += 1;
-                        });
-                    });
-                });
-            return promise;
-        }
-
-        /**
-         * Invoked when a telemtry subscription yields new data. Updates the LAD
-         * cache and invokes any registered receiveTelemetry callbacks
-         * @param {string} objId The key associated with the telemetry source
-         * @param {datum} datum The new data from the telemetry source
-         * @private
-         */
-        function handleSubscriptionCallback(objId, datum) {
-            self.subscriptionCache[objId] = datum;
-            self.eventEmitter.emit('receiveTelemetry');
-        }
-
-        /**
-         * Event handler for an add event in this Summary Widget's composition.
-         * Sets up subscription handlers and parses its property types.
-         * @private
-         */
-        function onCompositionAdd(obj) {
-            var compositionKeys,
-                telemetryAPI = self.openmct.telemetry,
-                objId = obj.identifier.key,
-                telemetryMetadata;
-
-            if (telemetryAPI.canProvideTelemetry(obj)) {
-                self.compositionObjs[objId] = obj;
-                self.telemetryMetadataById[objId] = {};
-
-                compositionKeys = self.domainObject.composition.map(function (object) {
-                    return object.key;
-                });
-                if (!compositionKeys.includes(obj.identifier.key)) {
-                    self.domainObject.composition.push(obj.identifier);
-                }
-
-                telemetryMetadata = telemetryAPI.getMetadata(obj).values();
-                telemetryMetadata.forEach(function (metaDatum) {
-                    self.telemetryMetadataById[objId][metaDatum.key] = metaDatum;
-                    addGlobalMetadata(metaDatum);
-                });
-
-                self.subscriptionCache[objId] = {};
-                self.subscriptions[objId] = telemetryAPI.subscribe(obj, function (datum) {
-                    handleSubscriptionCallback(objId, datum);
-                }, {});
-
-                //if this is the initial load, postpose loading metadata so event handlers
-                //fire properly
-                if (self.loadComplete) {
-                    getPropertyTypes(obj);
-                }
-
-                self.eventEmitter.emit('add', obj);
-            }
-        }
-
-        /**
-         * Invoked in a remove event in this Summary Widget's compostion. Removes
-         * the object from the local composition, and untracks it
-         * @param {object} identifier The identifier of the object to be removed
-         * @private
-         */
-        function onCompositionRemove(identifier) {
-            _.remove(self.domainObject.composition, function (id) {
-                return id.key === identifier.key;
-            });
-            delete self.compositionObjs[identifier.key];
-            self.subscriptions[identifier.key](); //unsubscribe from telemetry source
-            self.eventEmitter.emit('remove', identifier);
-        }
-
-        /**
-         * Invoked when the Summary Widget's composition finishes its initial load.
-         * Invokes any registered load callbacks, does a block load of all metadata,
-         * and then invokes any registered metadata load callbacks.
-         * @private
-         */
-        function onCompositionLoad() {
-            self.loadComplete = true;
-            self.eventEmitter.emit('load');
-            loadMetadata().then(function () {
-                self.metadataLoadComplete = true;
-                self.eventEmitter.emit('metadata');
-            });
-        }
-
-        this.composition.on('add', onCompositionAdd, this);
-        this.composition.on('remove', onCompositionRemove, this);
-        this.composition.on('load', onCompositionLoad, this);
+        this.composition.on('add', this.onCompositionAdd, this);
+        this.composition.on('remove', this.onCompositionRemove, this);
+        this.composition.on('load', this.onCompositionLoad, this);
 
         this.composition.load();
     }
@@ -250,6 +91,161 @@ define ([
         });
 
         return activeId;
+    };
+
+    /**
+     * Adds a field to the list of all available metadata fields in the widget
+     * @param {Object} metadatum An object representing a set of telemetry metadata
+     */
+    ConditionManager.prototype.addGlobalMetadata = function (metadatum) {
+        this.telemetryMetadataById.any[metadatum.key] = metadatum;
+        this.telemetryMetadataById.all[metadatum.key] = metadatum;
+    };
+
+    /**
+     * Adds a field to the list of properties for globally available metadata
+     * @param {string} key The key for the property this type applies to
+     * @param {string} type The type that should be associated with this property
+     */
+    ConditionManager.prototype.addGlobalPropertyType = function (key, type) {
+        this.telemetryTypesById.any[key] = type;
+        this.telemetryTypesById.all[key] = type;
+    };
+
+    /**
+     * Given a telemetry-producing domain object, associate each of it's telemetry
+     * fields with a type, parsing from historical data.
+     * @param {Object} object a domain object that can produce telemetry
+     * @return {Promise} A promise that resolves when a telemetry request
+     *                   has completed and types have been parsed
+     */
+    ConditionManager.prototype.getPropertyTypes = function (object) {
+        var telemetryAPI = this.openmct.telemetry,
+            key,
+            type,
+            self = this;
+
+        self.telemetryTypesById[object.identifier.key] = {};
+
+        return telemetryAPI.request(object, {}).then(function (telemetry) {
+            Object.entries(telemetry[0]).forEach(function (telem) {
+                key = telem[0];
+                type = typeof telem[1];
+                self.telemetryTypesById[object.identifier.key][key] = type;
+                self.addGlobalPropertyType(key, type);
+            });
+        });
+    };
+
+    /**
+     * Once the intial composition load has completed, parse all telemetry fields
+     * from all composition objects
+     * @return {Promise} A promise that resolves when all metadata has been loaded
+     *                   and property types parsed
+     */
+    ConditionManager.prototype.loadMetadata = function () {
+        var self = this,
+            index = 0,
+            objs = Object.values(self.compositionObjs),
+            promise = new Promise(function (resolve, reject) {
+                if (objs.length === 0) {
+                    resolve();
+                }
+                objs.forEach(function (obj) {
+                    self.getPropertyTypes(obj).then(function () {
+                        if (index === objs.length - 1) {
+                            resolve();
+                        }
+                        index += 1;
+                    });
+                });
+            });
+        return promise;
+    };
+
+    /**
+     * Invoked when a telemtry subscription yields new data. Updates the LAD
+     * cache and invokes any registered receiveTelemetry callbacks
+     * @param {string} objId The key associated with the telemetry source
+     * @param {datum} datum The new data from the telemetry source
+     * @private
+     */
+    ConditionManager.prototype.handleSubscriptionCallback = function (objId, datum) {
+        this.subscriptionCache[objId] = datum;
+        this.eventEmitter.emit('receiveTelemetry');
+    };
+
+    /**
+     * Event handler for an add event in this Summary Widget's composition.
+     * Sets up subscription handlers and parses its property types.
+     * @param {Object} obj The newly added domain object
+     */
+    ConditionManager.prototype.onCompositionAdd = function (obj) {
+        var compositionKeys,
+            telemetryAPI = this.openmct.telemetry,
+            objId = obj.identifier.key,
+            telemetryMetadata,
+            self = this;
+
+        if (telemetryAPI.canProvideTelemetry(obj)) {
+            self.compositionObjs[objId] = obj;
+            self.telemetryMetadataById[objId] = {};
+
+            compositionKeys = self.domainObject.composition.map(function (object) {
+                return object.key;
+            });
+            if (!compositionKeys.includes(obj.identifier.key)) {
+                self.domainObject.composition.push(obj.identifier);
+            }
+
+            telemetryMetadata = telemetryAPI.getMetadata(obj).values();
+            telemetryMetadata.forEach(function (metaDatum) {
+                self.telemetryMetadataById[objId][metaDatum.key] = metaDatum;
+                self.addGlobalMetadata(metaDatum);
+            });
+
+            self.subscriptionCache[objId] = {};
+            self.subscriptions[objId] = telemetryAPI.subscribe(obj, function (datum) {
+                self.handleSubscriptionCallback(objId, datum);
+            }, {});
+
+            //if this is the initial load, postpose loading metadata so event handlers
+            //fire properly
+            if (self.loadComplete) {
+                self.getPropertyTypes(obj);
+            }
+
+            self.eventEmitter.emit('add', obj);
+        }
+    };
+
+    /**
+     * Invoked in a remove event in this Summary Widget's compostion. Removes
+     * the object from the local composition, and untracks it
+     * @param {object} identifier The identifier of the object to be removed
+     */
+    ConditionManager.prototype.onCompositionRemove = function (identifier) {
+        _.remove(this.domainObject.composition, function (id) {
+            return id.key === identifier.key;
+        });
+        delete this.compositionObjs[identifier.key];
+        this.subscriptions[identifier.key](); //unsubscribe from telemetry source
+        this.eventEmitter.emit('remove', identifier);
+    };
+
+    /**
+     * Invoked when the Summary Widget's composition finishes its initial load.
+     * Invokes any registered load callbacks, does a block load of all metadata,
+     * and then invokes any registered metadata load callbacks.
+     */
+    ConditionManager.prototype.onCompositionLoad = function () {
+        var self = this;
+        self.loadComplete = true;
+        self.eventEmitter.emit('load');
+        self.loadMetadata().then(function () {
+            self.metadataLoadComplete = true;
+            self.eventEmitter.emit('metadata');
+        });
     };
 
     /**
@@ -347,12 +343,16 @@ define ([
 
 
     /**
-     * Unsubscribe from all registered telemetry sources
+     * Unsubscribe from all registered telemetry sources and unregister all event
+     * listeners registered with the Open MCT APIs
      */
     ConditionManager.prototype.destroy = function () {
         Object.values(this.subscriptions).forEach(function (unsubscribeFunction) {
             unsubscribeFunction();
         });
+        this.composition.off('add', this.onCompositionAdd, this);
+        this.composition.off('remove', this.onCompositionRemove, this);
+        this.composition.off('load', this.onCompositionLoad, this);
     };
 
     return ConditionManager;

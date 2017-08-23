@@ -15,6 +15,7 @@ define([
      * @param {Object} rulesById An object mapping rule IDs to rule configurations
      */
     function WidgetDnD(container, ruleOrder, rulesById) {
+        this.container = container;
         this.ruleOrder = ruleOrder;
         this.rulesById = rulesById;
 
@@ -28,11 +29,19 @@ define([
         this.drag = this.drag.bind(this);
         this.drop = this.drop.bind(this);
 
-        $(container).on('mousemove', this.drag);
+        $(this.container).on('mousemove', this.drag);
         $(document).on('mouseup', this.drop);
-        $(container).before(this.imageContainer);
+        $(this.container).before(this.imageContainer);
         $(this.imageContainer).hide();
     }
+
+    /**
+     * Remove event listeners registered to elements external to the widget
+     */
+    WidgetDnD.prototype.destroy = function () {
+        $(this.container).off('mousemove', this.drag);
+        $(document).off('mouseup', this.drop);
+    };
 
     /**
      * Register a callback with this WidgetDnD: supported callback is drop
