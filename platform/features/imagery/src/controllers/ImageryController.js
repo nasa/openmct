@@ -245,6 +245,7 @@ define(
          */
         ImageryController.prototype.paused = function (state) {
                 if (arguments.length > 0 && state !== this.isPaused) {
+                    this.unselectAllImages(this.$scope);
                     this.isPaused = state;
                     if (this.nextDatum) {
                         this.updateValues(this.nextDatum);
@@ -259,7 +260,15 @@ define(
             this.time = this.timeFormat.format(image.utc);
             this.autoScroll = false;
             this.paused(true);
+            this.unselectAllImages(this.$scope);
+            image.selected = true;
         };
+
+        ImageryController.prototype.unselectAllImages = function ($scope) {
+            for(var i = 0; i < $scope.imageHistory.length; i++){
+                this.$scope.imageHistory[i].selected = false;
+            }
+        }
 
         return ImageryController;
     }

@@ -58,10 +58,11 @@
     </div>
     <mct-splitter class="mobile-hide"></mct-splitter>
     <div class="l-image-thumbs-wrapper">
-        <div class="l-image-thumb-item" ng-repeat="image in imageHistory track by $index">
+        <div class="l-image-thumb-item" ng-class="{selected: image.selected}" ng-repeat="image in imageHistory track by $index" 
+            ng-click="imagery.setSelectedImage(image)">
             <img class="l-thumb" ng-init="imagery.scrollToRight()"
-                ng-src={{imagery.getImageUrl(image)}} ng-click="imagery.setSelectedImage(image)">
-                <div class="l-time">{{imagery.getTime(image)}}</div>
+                ng-src={{imagery.getImageUrl(image)}}>
+            <div class="l-time">{{imagery.getTime(image)}}</div>
         </div>
     </div>
     </mct-split-pane>
