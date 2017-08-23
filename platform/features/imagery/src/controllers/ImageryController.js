@@ -197,7 +197,6 @@ define(
 
         ImageryController.prototype.onScroll = function (event) {
             this.$window.requestAnimationFrame(function () {
-                console.log("sT: " + this.scrollable[0].scrollTop + "; h:" + ((this.scrollable[0].scrollHeight - this.scrollable[0].clientHeight) - 20));
                 if (this.scrollable[0].scrollLeft <
                     (this.scrollable[0].scrollWidth - this.scrollable[0].clientWidth) - 20 ||
                     this.scrollable[0].scrollTop <
