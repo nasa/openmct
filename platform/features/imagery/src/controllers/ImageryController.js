@@ -251,6 +251,8 @@ define(
                         this.updateValues(this.nextDatum);
                         delete this.nextDatum;
                     }
+                    this.autoScroll = true;
+                    this.scrollToRight();
                 }
                 return this.isPaused;
         };
