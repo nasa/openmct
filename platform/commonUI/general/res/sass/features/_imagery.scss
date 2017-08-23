@@ -22,8 +22,7 @@
 
 .l-image-thumbs-wrapper {
 	top: auto;
-	//height: $imageThumbsWrapperH;
-    min-height: $imageThumbsWrapperH;
+    min-height: $imageThumbsWrapperH !important;
 }
 
 .l-date,
@@ -86,15 +85,23 @@
 	overflow-x: hidden;
 	overflow-y: auto;
 	padding-bottom: $interiorMargin;
-	//white-space: nowrap;
+	white-space: nowrap;
 }
 
 .l-image-thumb-item {
 	@include transition(background-color, 0.25s);
 	box-sizing: border-box;
+    cursor: pointer;
+    direction: ltr;
+    display: inline-block;
     float: left;
+    font-size: 0.8em;
 	padding: 1px;
-	position: relative;
+    margin-left: $interiorMarginSm;
+    position: relative;
+    text-align: left;
+    width: $imageThumbsD + $imageThumbPad*2;
+    white-space: normal;
 	.l-thumb,
 	.l-date,
 	.l-time {
@@ -104,14 +111,7 @@
 	.l-time {
 		padding: 2px 3px;
 	}
-	cursor: pointer;
-	direction: ltr;
-	display: inline-block;
-	font-size: 0.8em;
-	margin-left: $interiorMarginSm;
-	text-align: left;
-	width: $imageThumbsD + $imageThumbPad*2;
-	white-space: normal;
+
 	&:hover {
 		background: $colorThumbHoverBg;
 		.l-date,
