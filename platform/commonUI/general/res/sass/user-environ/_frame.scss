@@ -23,28 +23,43 @@
     $ohH: $btnFrameH;
     $bc: $colorInteriorBorder;
     &.child-frame.panel {
-        background: $colorBodyBg;
-        border: 1px solid $bc;
         z-index: 0; // Needed to prevent child-frame controls from showing through when another child-frame is above
-        &:hover {
-            border-color: lighten($bc, 10%);
+        &:not(.no-frame) {
+            background: $colorBodyBg;
+            border: 1px solid $bc;
+            &:hover {
+                border-color: lighten($bc, 10%);
+            }
         }
     }
     .object-browse-bar {
         font-size: 0.75em;
         height: $ohH;
         line-height: $ohH;
+        .right {
+            @include trans-prop-nice-fade($controlFadeMs);
+            padding-left: $interiorMargin;
+        }
+    }
+
+    &.t-object-type-timer,
+    &.t-object-type-clock,
+    &.t-object-type-hyperlink {
+        // Hide the right side buttons for objects where they don't make sense
+        // Note that this will hide the view Switcher button if applied
+        // to an object that it.
+        .object-browse-bar .right { display: none; }
     }
 
     > .object-holder.abs {
         top: $ohH + $interiorMargin;
     }
     .contents {
-        $myM: $interiorMargin;
-        top: $myM;
-        right: $myM;
-        bottom: $myM;
-        left: $myM;
+        $m: $interiorMargin;
+        top: $m;
+        right: $m;
+        bottom: $m;
+        left: $m;
     }
     &.frame-template {
         .s-button,
@@ -67,15 +82,25 @@
         }
     }
     .view-switcher {
-        margin-left: $interiorMargin; // Kick other top bar elements away when I'm present.
+        margin-right: $interiorMargin; // Kick other top bar elements away when I'm present.
         // Hide the name when the view switcher is in a frame context
         .title-label {
             display: none;
         }
     }
+
     &.no-frame {
         background: transparent !important;
         border: none !important;
+        .object-browse-bar .right {
+            $m: 0; // $interiorMarginSm;
+            background: rgba(black, 0.3);
+            border-radius: $basicCr;
+            padding: $interiorMarginSm;
+            position: absolute;
+            top: $m; right: $m;
+            z-index: 2;
+        }
         &.t-frame-outer > .t-rep-frame {
             &.contents {
                 $m: 2px;
@@ -85,7 +110,7 @@
                 left: $m;
             }
             > .t-frame-inner {
-                > .object-browse-bar {
+                > .object-browse-bar .left {
                     display: none;
                 }
                 > .object-holder.abs {
@@ -117,8 +142,7 @@
 body.desktop .frame {
     // Hide local controls initially and show it them on hover when they're in an element that's in a frame context
     // Frame template is used because we need to target the lowest nested frame
-    .view-switcher,
-    .t-btn-view-large {
+    .right {
         opacity: 0;
         pointer-events: none;
     }
@@ -126,8 +150,7 @@ body.desktop .frame {
     // Target the first descendant so that we only show the elements in the outermost container.
     // Handles the case where we have layouts in layouts.
     &:hover > .object-browse-bar {
-        .view-switcher,
-        .t-btn-view-large {
+        .right {
             opacity: 1;
             pointer-events: inherit;
         }

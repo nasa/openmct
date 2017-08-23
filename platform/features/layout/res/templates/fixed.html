@@ -25,15 +25,20 @@
     <!-- Background grid -->
     <div class="l-grid-holder" ng-click="controller.clearSelection()">
         <div class="l-grid l-grid-x"
+             ng-if="!controller.getGridSize()[0] < 3"
              ng-style="{ 'background-size': controller.getGridSize() [0] + 'px 100%' }"></div>
         <div class="l-grid l-grid-y"
+             ng-if="!controller.getGridSize()[1] < 3"
              ng-style="{ 'background-size': '100% ' + controller.getGridSize() [1] + 'px' }"></div>
     </div>
 
     <!-- Fixed position elements -->
     <div ng-repeat="element in controller.getElements()"
-         class="l-fixed-position-item"
-         ng-class="{ 's-not-selected': controller.selected() && !controller.selected(element) }"
+         class="l-fixed-position-item s-selectable s-moveable s-hover-border"
+         ng-class="{
+            's-not-selected': controller.selected() && !controller.selected(element),
+            's-selected': controller.selected(element)
+         }"
          ng-style="element.style"
          ng-click="controller.select(element)">
         <mct-include key="element.template"
@@ -43,15 +48,15 @@
     </div>
 
     <!-- Selection highlight, handles -->
-    <span ng-if="controller.selected()">
-        <div class="l-fixed-position-item s-selectable s-selected s-moveable"
+    <span class="s-selected s-moveable" ng-if="controller.selected()">
+        <div class="l-fixed-position-item t-edit-handle-holder"
              mct-drag-down="controller.moveHandle().startDrag(controller.selected())"
              mct-drag="controller.moveHandle().continueDrag(delta)"
              mct-drag-up="controller.moveHandle().endDrag()"
              ng-style="controller.selected().style">
         </div>
         <div ng-repeat="handle in controller.handles()"
-             class="l-fixed-position-item-handle"
+             class="l-fixed-position-item-handle edit-corner"
              ng-style="handle.style()"
              mct-drag-down="handle.startDrag()"
              mct-drag="handle.continueDrag(delta)"
