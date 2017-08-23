@@ -252,7 +252,6 @@ define(
                         delete this.nextDatum;
                     }
                     this.autoScroll = true;
-                    this.scrollToRight();
                 }
                 return this.isPaused;
         };
@@ -260,7 +259,6 @@ define(
         ImageryController.prototype.setSelectedImage = function (image) {
             this.imageUrl = image.url;
             this.time = this.timeFormat.format(image.utc);
-            this.autoScroll = false;
             this.paused(true);
             this.unselectAllImages(this.$scope);
             image.selected = true;
