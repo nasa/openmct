@@ -1,8 +1,10 @@
 define([
     'text!../../res/input/paletteTemplate.html',
+    'EventEmitter',
     'zepto'
 ], function (
     paletteTemplate,
+    EventEmitter,
     $
 ) {
 
@@ -27,7 +29,8 @@ define([
         this.itemElements = {
             nullOption: $('.l-option-row .s-palette-item', this.domElement)
         };
-        this.changeCallbacks = [];
+        this.eventEmitter = new EventEmitter();
+        this.supportedCallbacks = ['change'];
         this.value = this.items[0];
         this.nullOption = ' ';
 
@@ -78,15 +81,17 @@ define([
     };
 
     /**
-     * Register a callback with this conditition: supported event is change
+     * Register a callback with this palette: supported callback is change
      * @param {string} event The key for the event to listen to
-     * @param {function} callback The function that this rule will invoke on this event
+     * @param {function} callback The function that this rule will envoke on this event
+     * @param {Object} context A reference to a scope to use as the context for
+     *                         context for the callback function
      */
-    Palette.prototype.on = function (event, callback) {
-        if (event === 'change') {
-            this.changeCallbacks.push(callback);
+    Palette.prototype.on = function (event, callback, context) {
+        if (this.supportedCallbacks.includes(event)) {
+            this.eventEmitter.on(event, callback, context || this);
         } else {
-            throw new Error('Unsuppored event type: ' + event);
+            throw new Error('Unsupported event type: ' + event);
         }
     };
 
@@ -114,11 +119,7 @@ define([
                 this.updateSelected(item);
             }
         }
-        this.changeCallbacks.forEach(function (callback) {
-            if (callback) {
-                callback(self.value);
-            }
-        });
+        this.eventEmitter.emit('change', self.value);
     };
 
     /**

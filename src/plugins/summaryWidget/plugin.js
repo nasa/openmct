@@ -24,14 +24,14 @@ define(['./src/SummaryWidget'], function (SummaryWidget) {
                     };
                 },
                 canView: function (domainObject) {
-                    return (domainObject.type === 'widget');
+                    return (domainObject.type === 'summary-widget');
                 },
                 editable: true
             };
         }
 
         return function install(openmct) {
-            openmct.types.addType('widget', widgetType);
+            openmct.types.addType('summary-widget', widgetType);
             openmct.objectViews.addProvider(initViewProvider(openmct));
         };
     }

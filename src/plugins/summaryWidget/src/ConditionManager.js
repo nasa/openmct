@@ -1,8 +1,10 @@
 define ([
     './ConditionEvaluator',
+    'EventEmitter',
     'lodash'
 ], function (
     ConditionEvaluator,
+    EventEmitter,
     _
 ) {
 
@@ -22,6 +24,8 @@ define ([
 
         this.composition = this.openmct.composition.get(this.domainObject);
         this.compositionObjs = {};
+        this.eventEmitter = new EventEmitter();
+        this.supportedCallbacks = ['add', 'remove', 'load', 'metadata', 'receiveTelemetry'];
 
         this.keywordLabels = {
             any: 'Any Telemetry',
@@ -43,14 +47,6 @@ define ([
         this.loadComplete = false;
         this.metadataLoadComplete = false;
         this.evaluator = new ConditionEvaluator(this.subscriptionCache, this.compositionObjs);
-
-        this.callbacks = {
-            add: [],
-            remove: [],
-            load: [],
-            metadata: [],
-            receiveTelemetry: []
-        };
 
         /**
          * Adds a field to the list of all available metadata fields in the widget
@@ -133,11 +129,7 @@ define ([
          */
         function handleSubscriptionCallback(objId, datum) {
             self.subscriptionCache[objId] = datum;
-            self.callbacks.receiveTelemetry.forEach(function (callback) {
-                if (callback) {
-                    callback();
-                }
-            });
+            self.eventEmitter.emit('receiveTelemetry');
         }
 
         /**
@@ -179,11 +171,7 @@ define ([
                     getPropertyTypes(obj);
                 }
 
-                self.callbacks.add.forEach(function (callback) {
-                    if (callback) {
-                        callback(obj);
-                    }
-                });
+                self.eventEmitter.emit('add', obj);
             }
         }
 
@@ -199,11 +187,7 @@ define ([
             });
             delete self.compositionObjs[identifier.key];
             self.subscriptions[identifier.key](); //unsubscribe from telemetry source
-            self.callbacks.remove.forEach(function (callback) {
-                if (callback) {
-                    callback(identifier);
-                }
-            });
+            self.eventEmitter.emit('remove', identifier);
         }
 
         /**
@@ -214,18 +198,10 @@ define ([
          */
         function onCompositionLoad() {
             self.loadComplete = true;
-            self.callbacks.load.forEach(function (callback) {
-                if (callback) {
-                    callback();
-                }
-            });
+            self.eventEmitter.emit('load');
             loadMetadata().then(function () {
                 self.metadataLoadComplete = true;
-                self.callbacks.metadata.forEach(function (callback) {
-                    if (callback) {
-                        callback();
-                    }
-                });
+                self.eventEmitter.emit('metadata');
             });
         }
 
@@ -237,16 +213,16 @@ define ([
     }
 
     /**
-     * Register an event callback with this ConditionManager: supported events are add, remove,
-     * load, metadata, and receiveTelemetry.
+     * Register a callback with this ConditionManager: supported callbacks are add
+     * remove, load, metadata, and receiveTelemetry
      * @param {string} event The key for the event to listen to
      * @param {function} callback The function that this rule will envoke on this event
+     * @param {Object} context A reference to a scope to use as the context for
+     *                         context for the callback function
      */
-    ConditionManager.prototype.on = function (event, callback) {
-        if (this.callbacks[event]) {
-            this.callbacks[event].push(callback);
-        } else {
-            throw new Error('Unsupported event type: ' + event);
+    ConditionManager.prototype.on = function (event, callback, context) {
+        if (this.supportedCallbacks.includes(event)) {
+            this.eventEmitter.on(event, callback, context || this);
         }
     };
 
@@ -366,11 +342,7 @@ define ([
      * enabled
      */
     ConditionManager.prototype.triggerTelemetryCallback = function () {
-        this.callbacks.receiveTelemetry.forEach(function (callback) {
-            if (callback) {
-                callback();
-            }
-        });
+        this.eventEmitter.emit('receiveTelemetry');
     };
 
 

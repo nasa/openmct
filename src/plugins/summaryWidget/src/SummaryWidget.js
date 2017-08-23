@@ -60,11 +60,6 @@ define([
         this.show = this.show.bind(this);
         this.destroy = this.destroy.bind(this);
         this.addRule = this.addRule.bind(this);
-        this.refreshRules = this.refreshRules.bind(this);
-        this.duplicateRule = this.duplicateRule.bind(this);
-        this.updateWidget = this.updateWidget.bind(this);
-        this.executeRules = this.executeRules.bind(this);
-        this.reorder = this.reorder.bind(this);
         this.onEdit = this.onEdit.bind(this);
 
         var id = this.domainObject.identifier.key,
@@ -102,8 +97,8 @@ define([
         this.updateWidget();
 
         this.addRuleButton.on('click', this.addRule);
-        this.conditionManager.on('receiveTelemetry', this.executeRules);
-        this.widgetDnD.on('drop', this.reorder);
+        this.conditionManager.on('receiveTelemetry', this.executeRules, this);
+        this.widgetDnD.on('drop', this.reorder, this);
     };
 
     Widget.prototype.destroy = function (container) {
@@ -265,28 +260,27 @@ define([
         ruleConfig = this.domainObject.configuration.ruleConfigById[ruleId];
         this.rulesById[ruleId] = new Rule(ruleConfig, this.domainObject, this.openmct,
                                           this.conditionManager, this.widgetDnD, this.container);
-        this.rulesById[ruleId].on('remove', this.refreshRules);
-        this.rulesById[ruleId].on('duplicate', this.duplicateRule);
-        this.rulesById[ruleId].on('change', this.updateWidget);
-        this.rulesById[ruleId].on('conditionChange', this.executeRules);
+        this.rulesById[ruleId].on('remove', this.refreshRules, this);
+        this.rulesById[ruleId].on('duplicate', this.duplicateRule, this);
+        this.rulesById[ruleId].on('change', this.updateWidget, this);
+        this.rulesById[ruleId].on('conditionChange', this.executeRules, this);
     };
 
     /**
      * Given two ruleIds, move the source rule after the target rule and update
      * the view.
-     * @param {string} sourceId The key of the source rule to be moved
-     * @param {string} targetId The key of the target rule that the source will
-     *                          be moved after.
+     * @param {Object} event An event object representing this drop with draggingId
+     *                       and dropTarget fields
      */
-    Widget.prototype.reorder = function (sourceId, targetId) {
+    Widget.prototype.reorder = function (event) {
         var ruleOrder = this.domainObject.configuration.ruleOrder,
-            sourceIndex = ruleOrder.indexOf(sourceId),
+            sourceIndex = ruleOrder.indexOf(event.draggingId),
             targetIndex;
 
-        if (sourceId !== targetId) {
+        if (event.draggingId !== event.dropTarget) {
             ruleOrder.splice(sourceIndex, 1);
-            targetIndex = ruleOrder.indexOf(targetId);
-            ruleOrder.splice(targetIndex + 1, 0, sourceId);
+            targetIndex = ruleOrder.indexOf(event.dropTarget);
+            ruleOrder.splice(targetIndex + 1, 0, event.draggingId);
             this.domainObject.configuration.ruleOrder = ruleOrder;
             this.updateDomainObject();
         }

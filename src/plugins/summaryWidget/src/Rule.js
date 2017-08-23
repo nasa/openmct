@@ -3,6 +3,7 @@ define([
     './Condition',
     './input/ColorPalette',
     './input/IconPalette',
+    'EventEmitter',
     'lodash',
     'zepto'
 ], function (
@@ -10,6 +11,7 @@ define([
     Condition,
     ColorPalette,
     IconPalette,
+    EventEmitter,
     _,
     $
 ) {
@@ -37,15 +39,13 @@ define([
         this.container = container;
 
         this.domElement = $(ruleTemplate);
+        this.eventEmitter = new EventEmitter();
+        this.supportedCallbacks = ['remove', 'duplicate', 'change', 'conditionChange'];
         this.conditions = [];
         this.dragging = false;
 
         this.remove = this.remove.bind(this);
         this.duplicate = this.duplicate.bind(this);
-        this.initCondition = this.initCondition.bind(this);
-        this.removeCondition = this.removeCondition.bind(this);
-        this.refreshConditions = this.refreshConditions.bind(this);
-        this.onConditionChange = this.onConditionChange.bind(this);
 
         this.thumbnail = $('.t-widget-thumb', this.domElement);
         this.title = $('.rule-title', this.domElement);
@@ -63,8 +63,8 @@ define([
         /**
          * The text inputs for this rule: any input included in this object will
          * have the appropriate event handlers registered to it, and it's corresponding
-         *field in the domain object will be updated with its value
-        */
+         * field in the domain object will be updated with its value
+         */
         this.textInputs = {
             name: $('.t-rule-name-input', this.domElement),
             label: $('.t-rule-label-input', this.domElement),
@@ -82,14 +82,6 @@ define([
 
         this.colorInputs.color.toggleNullOption();
 
-        //event callback functions supported by this rule
-        this.callbacks = {
-            remove: [],
-            duplicate: [],
-            change: [],
-            conditionChange: []
-        };
-
         /**
          * An onchange event handler method for this rule's icon palettes
          * @param {string} icon The css class name corresponding to this icon
@@ -98,11 +90,7 @@ define([
         function onIconInput(icon) {
             self.config.icon = icon;
             self.updateDomainObject();
-            self.callbacks.change.forEach(function (callback) {
-                if (callback) {
-                    callback();
-                }
-            });
+            self.eventEmitter.emit('change');
         }
 
         /**
@@ -115,11 +103,7 @@ define([
             self.config.style[property] = color;
             self.updateDomainObject();
             self.thumbnail.css(property, color);
-            self.callbacks.change.forEach(function (callback) {
-                if (callback) {
-                    callback();
-                }
-            });
+            self.eventEmitter.emit('change');
         }
 
         /**
@@ -133,11 +117,7 @@ define([
             self.generateDescription();
             self.updateDomainObject();
             self.refreshConditions();
-            self.callbacks.conditionChange.forEach(function (callback) {
-                if (callback) {
-                    callback();
-                }
-            });
+            self.eventEmitter.emit('conditionChange');
         }
 
         /**
@@ -152,11 +132,7 @@ define([
             if (inputKey === 'name') {
                 self.title.html(elem.value);
             }
-            self.callbacks.change.forEach(function (callback) {
-                if (callback) {
-                    callback();
-                }
-            });
+            self.eventEmitter.emit('change');
         }
 
         /**
@@ -254,10 +230,12 @@ define([
      * conditionChange, and duplicate
      * @param {string} event The key for the event to listen to
      * @param {function} callback The function that this rule will envoke on this event
+     * @param {Object} context A reference to a scope to use as the context for
+     *                         context for the callback function
      */
-    Rule.prototype.on = function (event, callback) {
-        if (this.callbacks[event]) {
-            this.callbacks[event].push(callback);
+    Rule.prototype.on = function (event, callback, context) {
+        if (this.supportedCallbacks.includes(event)) {
+            this.eventEmitter.on(event, callback, context || this);
         }
     };
 
@@ -267,15 +245,11 @@ define([
      * @param {string} property The path in the configuration to updateDomainObject
      * @param {number} index The index of the condition that initiated this change
      */
-    Rule.prototype.onConditionChange = function (value, property, index) {
-        _.set(this.config.conditions[index], property, value);
+    Rule.prototype.onConditionChange = function (event) {
+        _.set(this.config.conditions[event.index], event.property, event.value);
         this.generateDescription();
         this.updateDomainObject();
-        this.callbacks.conditionChange.forEach(function (callback) {
-            if (callback) {
-                callback();
-            }
-        });
+        this.eventEmitter.emit('conditionChange');
     };
 
     /**
@@ -319,12 +293,7 @@ define([
 
         this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById', ruleConfigById);
         this.openmct.objects.mutate(this.domainObject, 'configuration.ruleOrder', ruleOrder);
-
-        self.callbacks.remove.forEach(function (callback) {
-            if (callback) {
-                callback();
-            }
-        });
+        this.eventEmitter.emit('remove');
     };
 
     /**
@@ -332,14 +301,9 @@ define([
      * callback with the cloned configuration as an argument if one has been registered
      */
     Rule.prototype.duplicate = function () {
-        var sourceRule = JSON.parse(JSON.stringify(this.config)),
-            self = this;
+        var sourceRule = JSON.parse(JSON.stringify(this.config));
         sourceRule.expanded = true;
-        self.callbacks.duplicate.forEach(function (callback) {
-            if (callback) {
-                callback(sourceRule);
-            }
-        });
+        this.eventEmitter.emit('duplicate', sourceRule);
     };
 
     /**
@@ -352,9 +316,10 @@ define([
      * @param {number} sourceIndex (optional) The location at which to insert the new
      *                             condition
      */
-    Rule.prototype.initCondition = function (sourceConfig, sourceIndex) {
+    Rule.prototype.initCondition = function (config) {
         var ruleConfigById = this.domainObject.configuration.ruleConfigById,
             newConfig,
+            sourceIndex = config && config.index,
             defaultConfig = {
                 object: '',
                 key: '',
@@ -362,7 +327,7 @@ define([
                 values: []
             };
 
-        newConfig = sourceConfig || defaultConfig;
+        newConfig = (config !== undefined ? config.sourceCondition : defaultConfig);
         if (sourceIndex !== undefined) {
             ruleConfigById[this.config.id].conditions.splice(sourceIndex + 1, 0, newConfig);
         } else {
@@ -384,9 +349,9 @@ define([
 
         this.config.conditions.forEach(function (condition, index) {
             var newCondition = new Condition(condition, index, self.conditionManager);
-            newCondition.on('remove', self.removeCondition);
-            newCondition.on('duplicate', self.initCondition);
-            newCondition.on('change', self.onConditionChange);
+            newCondition.on('remove', self.removeCondition, self);
+            newCondition.on('duplicate', self.initCondition, self);
+            newCondition.on('change', self.onConditionChange, self);
             self.conditions.push(newCondition);
         });
 
@@ -423,12 +388,7 @@ define([
         this.domainObject.configuration.ruleConfigById[this.config.id] = this.config;
         this.updateDomainObject();
         this.refreshConditions();
-
-        this.callbacks.conditionChange.forEach(function (callback) {
-            if (callback) {
-                callback();
-            }
-        });
+        this.eventEmitter.emit('conditionChange');
     };
 
     /**

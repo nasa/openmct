@@ -3,12 +3,14 @@ define([
     './input/ObjectSelect',
     './input/KeySelect',
     './input/OperationSelect',
+    'EventEmitter',
     'zepto'
 ], function (
     conditionTemplate,
     ObjectSelect,
     KeySelect,
     OperationSelect,
+    EventEmitter,
     $
 ) {
 
@@ -28,15 +30,11 @@ define([
         this.conditionManager = conditionManager;
 
         this.domElement = $(conditionTemplate);
+        this.eventEmitter = new EventEmitter();
+        this.supportedCallbacks = ['remove', 'duplicate', 'change'];
 
         this.deleteButton = $('.t-delete', this.domElement);
         this.duplicateButton = $('.t-duplicate', this.domElement);
-
-        this.callbacks = {
-            remove: [],
-            duplicate: [],
-            change: []
-        };
 
         this.selects = {};
         this.valueInputs = [];
@@ -56,10 +54,10 @@ define([
             if (property === 'operation') {
                 self.generateValueInputs(value);
             }
-            self.callbacks.change.forEach(function (callback) {
-                if (callback) {
-                    callback(value, property, self.index);
-                }
+            self.eventEmitter.emit('change', {
+                value: value,
+                property: property,
+                index: self.index
             });
         }
 
@@ -73,10 +71,10 @@ define([
                 value = (isNaN(elem.valueAsNumber) ? elem.value : elem.valueAsNumber),
                 inputIndex = self.valueInputs.indexOf(elem);
 
-            self.callbacks.change.forEach(function (callback) {
-                if (callback) {
-                    callback(value, 'values[' + inputIndex + ']', self.index);
-                }
+            self.eventEmitter.emit('change', {
+                value: value,
+                property: 'values[' + inputIndex + ']',
+                index: self.index
             });
         }
 
@@ -119,14 +117,16 @@ define([
     };
 
     /**
-     * Register an event callback with this conditition: supported callbacks are remove, change,
-     * and duplicate
+     * Register a callback with this condition: supported callbacks are remove, change,
+     * duplicate
      * @param {string} event The key for the event to listen to
      * @param {function} callback The function that this rule will envoke on this event
+     * @param {Object} context A reference to a scope to use as the context for
+     *                         context for the callback function
      */
-    Condition.prototype.on = function (event, callback) {
-        if (this.callbacks[event]) {
-            this.callbacks[event].push(callback);
+    Condition.prototype.on = function (event, callback, context) {
+        if (this.supportedCallbacks.includes(event)) {
+            this.eventEmitter.on(event, callback, context || this);
         }
     };
 
@@ -142,12 +142,7 @@ define([
      * remove callbacks
      */
     Condition.prototype.remove = function () {
-        var self = this;
-        this.callbacks.remove.forEach(function (callback) {
-            if (callback) {
-                callback(self.index);
-            }
-        });
+        this.eventEmitter.emit('remove', this.index);
     };
 
     /**
@@ -155,12 +150,10 @@ define([
      * callbacks with the cloned configuration and this rule's index
      */
     Condition.prototype.duplicate = function () {
-        var sourceCondition = JSON.parse(JSON.stringify(this.config)),
-            self = this;
-        this.callbacks.duplicate.forEach(function (callback) {
-            if (callback) {
-                callback(sourceCondition, self.index);
-            }
+        var sourceCondition = JSON.parse(JSON.stringify(this.config));
+        this.eventEmitter.emit('duplicate', {
+            sourceCondition: sourceCondition,
+            index: this.index
         });
     };
 

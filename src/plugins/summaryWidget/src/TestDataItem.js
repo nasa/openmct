@@ -2,11 +2,13 @@ define([
     'text!../res/testDataItemTemplate.html',
     './input/ObjectSelect',
     './input/KeySelect',
+    'EventEmitter',
     'zepto'
 ], function (
     itemTemplate,
     ObjectSelect,
     KeySelect,
+    EventEmitter,
     $
 ) {
 
@@ -27,15 +29,11 @@ define([
         this.conditionManager = conditionManager;
 
         this.domElement = $(itemTemplate);
+        this.eventEmitter = new EventEmitter();
+        this.supportedCallbacks = ['remove', 'duplicate', 'change'];
 
         this.deleteButton = $('.t-delete', this.domElement);
         this.duplicateButton = $('.t-duplicate', this.domElement);
-
-        this.callbacks = {
-            remove: [],
-            duplicate: [],
-            change: []
-        };
 
         this.selects = {};
         this.valueInputs = [];
@@ -56,10 +54,10 @@ define([
             if (property === 'key') {
                 self.generateValueInput(value);
             }
-            self.callbacks.change.forEach(function (callback) {
-                if (callback) {
-                    callback(value, property, self.index);
-                }
+            self.eventEmitter.emit('change', {
+                value: value,
+                property: property,
+                index: self.index
             });
         }
 
@@ -73,10 +71,10 @@ define([
             var elem = event.target,
                 value = (isNaN(elem.valueAsNumber) ? elem.value : elem.valueAsNumber);
 
-            self.callbacks.change.forEach(function (callback) {
-                if (callback) {
-                    callback(value, 'value', self.index);
-                }
+            self.eventEmitter.emit('change', {
+                value: value,
+                property: 'value',
+                index: self.index
             });
         }
 
@@ -116,11 +114,12 @@ define([
      * and duplicate
      * @param {string} event The key for the event to listen to
      * @param {function} callback The function that this rule will envoke on this event
-     * @private
+     * @param {Object} context A reference to a scope to use as the context for
+     *                         context for the callback function
      */
-    TestDataItem.prototype.on = function (event, callback) {
-        if (this.callbacks[event]) {
-            this.callbacks[event].push(callback);
+    TestDataItem.prototype.on = function (event, callback, context) {
+        if (this.supportedCallbacks.includes(event)) {
+            this.eventEmitter.on(event, callback, context || this);
         }
     };
 
@@ -137,11 +136,7 @@ define([
      */
     TestDataItem.prototype.remove = function () {
         var self = this;
-        this.callbacks.remove.forEach(function (callback) {
-            if (callback) {
-                callback(self.index);
-            }
-        });
+        this.eventEmitter.emit('remove', self.index);
     };
 
     /**
@@ -151,10 +146,9 @@ define([
     TestDataItem.prototype.duplicate = function () {
         var sourceItem = JSON.parse(JSON.stringify(this.config)),
             self = this;
-        this.callbacks.duplicate.forEach(function (callback) {
-            if (callback) {
-                callback(sourceItem, self.index);
-            }
+        this.eventEmitter.emit('duplicate', {
+            sourceItem: sourceItem,
+            index: self.index
         });
     };
 

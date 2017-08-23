@@ -1,8 +1,10 @@
 define([
     'text!../res/ruleImageTemplate.html',
+    'EventEmitter',
     'zepto'
 ], function (
     ruleImageTemplate,
+    EventEmitter,
     $
 ) {
 
@@ -20,10 +22,8 @@ define([
         this.image = $('.t-drag-rule-image', this.imageContainer);
         this.draggingId = '';
         this.draggingRulePrevious = '';
-
-        this.callbacks = {
-            drop: []
-        };
+        this.eventEmitter = new EventEmitter();
+        this.supportedCallbacks = ['drop'];
 
         this.drag = this.drag.bind(this);
         this.drop = this.drop.bind(this);
@@ -35,13 +35,15 @@ define([
     }
 
     /**
-     * Register an event callback with this WidgetDnD instance: supported callback is drop
+     * Register a callback with this WidgetDnD: supported callback is drop
      * @param {string} event The key for the event to listen to
      * @param {function} callback The function that this rule will envoke on this event
+     * @param {Object} context A reference to a scope to use as the context for
+     *                         context for the callback function
      */
-    WidgetDnD.prototype.on = function (event, callback) {
-        if (this.callbacks[event]) {
-            this.callbacks[event].push(callback);
+    WidgetDnD.prototype.on = function (event, callback, context) {
+        if (this.supportedCallbacks.includes(event)) {
+            this.eventEmitter.on(event, callback, context || this);
         }
     };
 
@@ -142,10 +144,9 @@ define([
             if (!this.rulesById[dropTarget]) {
                 dropTarget = this.draggingId;
             }
-            this.callbacks.drop.forEach(function (callback) {
-                if (callback) {
-                    callback(draggingId, dropTarget);
-                }
+            this.eventEmitter.emit('drop', {
+                draggingId: draggingId,
+                dropTarget: dropTarget
             });
             this.draggingId = '';
             this.draggingRulePrevious = '';

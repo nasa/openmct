@@ -10,6 +10,13 @@ define([
     _
 ) {
 
+    /**
+     * Controls the input and usage of test data in the summary widget.
+     * @constructor
+     * @param {Object} domainObject The summary widget domain object
+     * @param {ConditionManager} conditionManager A conditionManager instance
+     * @param {MCT} openmct and MCT instance
+     */
     function TestDataManager(domainObject, conditionManager, openmct) {
         var self = this;
 
@@ -27,10 +34,6 @@ define([
         this.toggleConfigButton = $('.view-control', this.domElement);
         this.addItemButton = $('.add-item', this.domElement);
         this.testDataInput = $('.t-test-data-checkbox', this.domElement);
-
-        this.onItemChange = this.onItemChange.bind(this);
-        this.initItem = this.initItem.bind(this);
-        this.removeItem = this.removeItem.bind(this);
 
         /**
          * Toggles the configuration area for test data in the view
@@ -75,21 +78,19 @@ define([
     /**
      * Initialze a new test data item, either from a source configuration, or with
      * the default empty configuration
-     * @param {Object} sourceItem (optional) The source configuration to use when
-     *                            instantiating this item. Must have object, key and
-     *                            value fields.
-     * @param {number} sourceIndex (optional) The index at which to insert the
-     *                             new item
+     * @param {Object} [config] An object with sourceItem and index fields to instantiate
+     *                          this rule from, optional
      */
-    TestDataManager.prototype.initItem = function (sourceItem, sourceIndex) {
-        var defaultItem = {
+    TestDataManager.prototype.initItem = function (config) {
+        var sourceIndex = config && config.index,
+        defaultItem = {
             object: '',
             key: '',
             value: ''
         },
         newItem;
 
-        newItem = sourceItem || defaultItem;
+        newItem = (config !== undefined ? config.sourceItem : defaultItem);
         if (sourceIndex !== undefined) {
             this.config.splice(sourceIndex + 1, 0, newItem);
         } else {
@@ -114,12 +115,11 @@ define([
     /**
      * Change event handler for the test data items which compose this
      * test data generateor
-     * @param {string} value The new value from the test data items
-     * @param {string} property The property of the test data item to modify
-     * @param {number} index The index of the item which initiated the change event
+     * @param {Object} event An object representing this event, with value, property,
+     *                       and index fields
      */
-    TestDataManager.prototype.onItemChange = function (value, property, index) {
-        this.config[index][property] = value;
+    TestDataManager.prototype.onItemChange = function (event) {
+        this.config[event.index][event.property] = event.value;
         this.updateDomainObject();
         this.updateTestCache();
     };
@@ -146,9 +146,9 @@ define([
 
         this.config.forEach(function (item, index) {
             var newItem = new TestDataItem(item, index, self.manager);
-            newItem.on('remove', self.removeItem);
-            newItem.on('duplicate', self.initItem);
-            newItem.on('change', self.onItemChange);
+            newItem.on('remove', self.removeItem, self);
+            newItem.on('duplicate', self.initItem, self);
+            newItem.on('change', self.onItemChange, self);
             self.items.push(newItem);
         });
 

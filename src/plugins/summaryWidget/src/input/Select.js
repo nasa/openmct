@@ -1,8 +1,10 @@
 define([
     'text!../../res/input/selectTemplate.html',
+    'EventEmitter',
     'zepto'
 ], function (
     selectTemplate,
+    EventEmitter,
     $
 ) {
 
@@ -16,9 +18,8 @@ define([
 
         this.domElement = $(selectTemplate);
         this.options = [];
-        this.changeCallbacks = [];
-
-        this.on = this.on.bind(this);
+        this.eventEmitter = new EventEmitter();
+        this.supportedCallbacks = ['change'];
 
         this.populate();
 
@@ -32,11 +33,7 @@ define([
             var elem = event.target,
                 value = self.options[$(elem).prop('selectedIndex')];
 
-            self.changeCallbacks.forEach(function (callback) {
-                if (callback) {
-                    callback(value[0]);
-                }
-            });
+            self.eventEmitter.emit('change', value[0]);
         }
 
         $('select', this.domElement).on('change', onChange);
@@ -51,14 +48,15 @@ define([
     };
 
     /**
-     * Register an event callback with this select supported callbacks are remove, change,
-     * and duplicate
+     * Register a callback with this select: supported callback is change
      * @param {string} event The key for the event to listen to
      * @param {function} callback The function that this rule will envoke on this event
+     * @param {Object} context A reference to a scope to use as the context for
+     *                         context for the callback function
      */
-    Select.prototype.on = function (event, callback) {
-        if (event === 'change') {
-            this.changeCallbacks.push(callback);
+    Select.prototype.on = function (event, callback, context) {
+        if (this.supportedCallbacks.includes(event)) {
+            this.eventEmitter.on(event, callback, context || this);
         } else {
             throw new Error('Unsupported event type' + event);
         }
@@ -121,11 +119,7 @@ define([
         $('select', this.domElement).prop('selectedIndex', selectedIndex);
 
         selectedOption = this.options[selectedIndex];
-        this.changeCallbacks.forEach(function (callback) {
-            if (callback) {
-                callback(selectedOption[0]);
-            }
-        });
+        this.eventEmitter.emit('change', selectedOption[0]);
     };
 
     /**
