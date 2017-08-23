@@ -259,6 +259,12 @@ define(
             this.time = this.timeFormat.format(image.utc);
             this.autoScroll = false;
             this.paused(true);
+            
+            for(var i = 0; i < this.$scope.imageHistory.length; i++){
+                this.$scope.imageHistory[i].selected = false;
+            }
+
+            image.selected = true;
         };
 
         return ImageryController;
