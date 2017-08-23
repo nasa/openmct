@@ -197,8 +197,11 @@ define(
 
         ImageryController.prototype.onScroll = function (event) {
             this.$window.requestAnimationFrame(function () {
+                console.log("sT: " + this.scrollable[0].scrollTop + "; h:" + ((this.scrollable[0].scrollHeight - this.scrollable[0].clientHeight) - 20));
                 if (this.scrollable[0].scrollLeft <
-                    (this.scrollable[0].scrollWidth - this.scrollable[0].clientWidth) - 20) {
+                    (this.scrollable[0].scrollWidth - this.scrollable[0].clientWidth) - 20 ||
+                    this.scrollable[0].scrollTop <
+                    (this.scrollable[0].scrollHeight - this.scrollable[0].clientHeight) - 20) {
                     this.autoScroll = false;
                 } else {
                     this.autoScroll = true;
@@ -211,6 +214,13 @@ define(
                 this.scrollable[0].scrollLeft = this.scrollable[0].scrollWidth;
             }
         };
+
+        ImageryController.prototype.scrollToBottom = function () {
+            if (this.autoScroll) {
+                this.scrollable[0].scrollTop = this.scrollable[0].scrollHeight;
+            }
+        };
+
 
         /**
          * Get the time portion (hours, minutes, seconds) of the
