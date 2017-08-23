@@ -22,7 +22,8 @@
 
 .l-image-thumbs-wrapper {
 	top: auto;
-	height: $imageThumbsWrapperH;
+	//height: $imageThumbsWrapperH;
+    min-height: $imageThumbsWrapperH;
 }
 
 .l-date,
@@ -82,15 +83,16 @@
 /*************************************** THUMBS */
 
 .l-image-thumbs-wrapper {
-	overflow-x: auto;
-	overflow-y: hidden;
+	overflow-x: hidden;
+	overflow-y: auto;
 	padding-bottom: $interiorMargin;
-	white-space: nowrap;
+	//white-space: nowrap;
 }
 
 .l-image-thumb-item {
 	@include transition(background-color, 0.25s);
 	box-sizing: border-box;
+    float: left;
 	padding: 1px;
 	position: relative;
 	.l-thumb,
@@ -183,7 +185,8 @@
 /*************************************** WHEN IN FRAME */
 .frame .t-imagery {
 	.l-image-main-wrapper {
-		bottom: 0;
+		bottom: 0 !important;
+        height: 100% !important;
 		.l-image-main-controlbar {
 			font-size: 0.7em;
 		}
@@ -193,7 +196,8 @@
 			}
 		}
 	}
-	.l-image-thumbs-wrapper {
+	.l-image-thumbs-wrapper,
+    mct-splitter {
 		display: none;
 	}
 }
