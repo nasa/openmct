@@ -1,4 +1,5 @@
 <div class="t-imagery" ng-controller="ImageryController as imagery">
+    <mct-split-pane anchor="top" alias="imagery">
     <div class="l-image-main-wrapper l-flex-col"
         ng-mouseenter="showLocalControls = true;"
         ng-mouseleave="showLocalControls = false;">
@@ -55,6 +56,7 @@
             </div>
         </div>
     </div>
+    <mct-splitter class="mobile-hide"></mct-splitter>
     <div class="l-image-thumbs-wrapper">
         <div class="l-image-thumb-item" ng-repeat="image in imageHistory track by $index">
             <img class="l-thumb" ng-init="imagery.scrollToRight()"
@@ -62,4 +64,5 @@
                 <div class="l-time">{{imagery.getTime(image)}}</div>
         </div>
     </div>
+    </mct-split-pane>
 </div>
