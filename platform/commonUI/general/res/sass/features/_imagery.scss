@@ -11,6 +11,7 @@
 	}
 	min-height: 100px;
 	min-width: 150px;
+	max-height: 80%;
 	.l-image-main {
 		background-color: $colorPlotBg;
         margin-bottom: $interiorMargin;
@@ -22,7 +23,7 @@
 
 .l-image-thumbs-wrapper {
 	top: auto;
-    min-height: $imageThumbsWrapperH !important;
+	// min-height: $imageThumbsWrapperH !important;
 }
 
 .l-date,
