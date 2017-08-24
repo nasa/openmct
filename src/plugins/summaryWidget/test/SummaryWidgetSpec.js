@@ -1,4 +1,4 @@
-define(['../src/SummaryWidget'], function (SummaryWidget) {
+define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
     describe('The Summary Widget', function () {
         var summaryWidget,
             mockDomainObject,
@@ -30,6 +30,7 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
                 'listen',
                 'triggerCallback'
             ]);
+
             listenCallbackSpy = jasmine.createSpy('listenCallbackSpy', function () {});
             mockStatusCapability.get.andReturn([]);
             mockStatusCapability.listen.andCallFake(function (callback) {
@@ -39,9 +40,11 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
             mockStatusCapability.triggerCallback.andCallFake(function () {
                 listenCallback(['editing']);
             });
+
             mockOldDomainObject = {};
             mockOldDomainObject.getCapability = jasmine.createSpy('capability');
             mockOldDomainObject.getCapability.andReturn(mockStatusCapability);
+
             mockObjectService = {};
             mockObjectService.getObjects = jasmine.createSpy('objectService');
             mockObjectService.getObjects.andReturn(new Promise(function (resolve, reject) {
@@ -62,6 +65,7 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
             ]);
             mockOpenMCT.composition.get.andReturn(mockComposition);
             mockOpenMCT.objects.mutate = jasmine.createSpy('mutate');
+
             summaryWidget = new SummaryWidget(mockDomainObject, mockOpenMCT);
             mockContainer = document.createElement('div');
             summaryWidget.show(mockContainer);
@@ -76,12 +80,16 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
             expect(mockDomainObject.configuration.ruleOrder).toEqual(['default']);
         });
 
+        it('builds rules and rule placeholders in view from configuration', function () {
+            expect($('.l-widget-rule', summaryWidget.ruleArea).get().length).toEqual(2);
+        });
+
         it('allows initializing a new rule with a particular identifier', function () {
             summaryWidget.initRule('rule0', 'Rule');
             expect(mockDomainObject.configuration.ruleConfigById.rule0).toBeDefined();
         });
 
-        it('allows adding a new rule with a unique identifier to the configuration', function () {
+        it('allows adding a new rule with a unique identifier to the configuration and view', function () {
             summaryWidget.addRule();
             expect(mockDomainObject.configuration.ruleOrder.length).toEqual(2);
             mockDomainObject.configuration.ruleOrder.forEach(function (ruleId) {
@@ -92,6 +100,7 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
             mockDomainObject.configuration.ruleOrder.forEach(function (ruleId) {
                 expect(mockDomainObject.configuration.ruleConfigById[ruleId]).toBeDefined();
             });
+            expect($('.l-widget-rule', summaryWidget.ruleArea).get().length).toEqual(6);
         });
 
         it('allows duplicating a rule from source configuration', function () {
@@ -111,7 +120,18 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
         });
 
         it('shows configuration interfaces when in edit mode, and hides them otherwise', function () {
-            mockStatusCapability.triggerCallback();
+            setTimeout(function () {
+                summaryWidget.onEdit([]);
+                expect(summaryWidget.editing).toEqual(false);
+                expect(summaryWidget.ruleArea.css('display')).toEqual('none');
+                expect(summaryWidget.testDataArea.css('display')).toEqual('none');
+                expect(summaryWidget.addRuleButton.css('display')).toEqual('none');
+                summaryWidget.onEdit(['editing']);
+                expect(summaryWidget.editing).toEqual(true);
+                expect(summaryWidget.ruleArea.css('display')).not.toEqual('none');
+                expect(summaryWidget.testDataArea.css('display')).not.toEqual('none');
+                expect(summaryWidget.addRuleButton.css('display')).not.toEqual('none');
+            }, 100);
         });
 
         it('unregisters any registered listeners on a destroy', function () {
@@ -119,6 +139,17 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
                 summaryWidget.destroy();
                 expect(listenCallbackSpy).toHaveBeenCalled();
             }, 100);
+        });
+
+        it('allows reorders of rules', function () {
+            summaryWidget.initRule('rule0');
+            summaryWidget.initRule('rule1');
+            summaryWidget.domainObject.configuration.ruleOrder = ['default', 'rule0', 'rule1'];
+            summaryWidget.reorder({
+                draggingId: 'rule1',
+                dropTarget: 'default'
+            });
+            expect(summaryWidget.domainObject.configuration.ruleOrder).toEqual(['default', 'rule1', 'rule0']);
         });
     });
 });

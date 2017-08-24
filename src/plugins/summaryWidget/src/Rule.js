@@ -72,7 +72,6 @@ define([
             jsCondition: $('.t-rule-js-condition-input', this.domElement)
         };
 
-        //palette inputs for widget output style
         this.iconInput = new IconPalette('', container);
         this.colorInputs = {
             'background-color': new ColorPalette('icon-paint-bucket', container),
@@ -229,6 +228,9 @@ define([
         return this.domElement;
     };
 
+    /**
+     * Unregister any event handlers registered with external sources
+     */
     Rule.prototype.destroy = function () {
         Object.values(this.colorInputs).forEach(function (palette) {
             palette.destroy();
@@ -323,10 +325,8 @@ define([
      * will insert a new condition with the provided configuration after the sourceIndex
      * index. Otherwise, initializes a new blank rule and inserts it at the end
      * of the list.
-     * @param {Object} sourceConfig (optional) The configuration to use to instantiate
-     *                              a new condition. Must have object, key,
-     * @param {number} sourceIndex (optional) The location at which to insert the new
-     *                             condition
+     * @param {Object} [config] The configuration to initialize this rule from,
+     *                          consisting of sourceCondition and index fields
      */
     Rule.prototype.initCondition = function (config) {
         var ruleConfigById = this.domainObject.configuration.ruleConfigById,

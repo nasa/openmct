@@ -100,6 +100,7 @@ define([
         });
         this.refreshRules();
         this.updateWidget();
+        this.updateView();
 
         this.addRuleButton.on('click', this.addRule);
         this.conditionManager.on('receiveTelemetry', this.executeRules, this);
