@@ -17,17 +17,18 @@ define(['../src/ConditionManager'], function (ConditionManager) {
             addCallbackSpy,
             loadCallbackSpy,
             removeCallbackSpy,
+            telemetryCallbackSpy,
             metadataCallbackSpy,
             mockTelemetryValues,
-            mockTelemetryValues2;
+            mockTelemetryValues2,
+            mockConditionEvaluator;
 
         beforeEach(function () {
             mockDomainObject = {
                 identifier: {
-                    key: 'testKey',
-                    name: "Test Object"
+                    key: 'testKey'
                 },
-                name: 'testName',
+                name: 'Test Object',
                 composition: [{
                     mockCompObject1: {
                         key: 'mockCompObject1'
@@ -41,41 +42,50 @@ define(['../src/ConditionManager'], function (ConditionManager) {
             mockCompObject1 = {
                 identifier: {
                     key: 'mockCompObject1'
-                }
+                },
+                name: 'Object 1'
             };
             mockCompObject2 = {
                 identifier: {
                     key: 'mockCompObject2'
-                }
+                },
+                name: 'Object 2'
             };
             mockCompObject3 = {
                 identifier: {
                     key: 'mockCompObject3'
-                }
+                },
+                name: 'Object 3'
             };
             mockMetadata = {
                 mockCompObject1: {
                     property1: {
-                        key: 'property1'
+                        key: 'property1',
+                        name: 'Property 1'
                     },
                     property2: {
-                        key: 'property2'
+                        key: 'property2',
+                        name: 'Property 2'
                     }
                 },
                 mockCompObject2: {
                     property3: {
-                        key: 'property3'
+                        key: 'property3',
+                        name: 'Property 3'
                     },
                     property4: {
-                        key: 'property4'
+                        key: 'property4',
+                        name: 'Property 4'
                     }
                 },
                 mockCompObject3: {
                     property1: {
-                        key: 'property1'
+                        key: 'property1',
+                        name: 'Property 1'
                     },
                     property2: {
-                        key: 'property2'
+                        key: 'property2',
+                        name: 'Property 2'
                     }
                 }
             };
@@ -111,8 +121,8 @@ define(['../src/ConditionManager'], function (ConditionManager) {
                     property2: 44
                 },
                 mockCompObject2: {
-                    property3: 'Execute:',
-                    property4: 85
+                    property3: 'Execute catch:',
+                    property4: 22
                 },
                 mockCompObject3: {
                     property1: 'Walrus',
@@ -200,12 +210,18 @@ define(['../src/ConditionManager'], function (ConditionManager) {
             addCallbackSpy = jasmine.createSpy('addCallbackSpy');
             removeCallbackSpy = jasmine.createSpy('removeCallbackSpy');
             metadataCallbackSpy = jasmine.createSpy('metadataCallbackSpy');
+            telemetryCallbackSpy = jasmine.createSpy('telemetryCallbackSpy');
 
             conditionManager = new ConditionManager(mockDomainObject, mockOpenMCT);
             conditionManager.on('load', loadCallbackSpy);
             conditionManager.on('add', addCallbackSpy);
             conditionManager.on('remove', removeCallbackSpy);
             conditionManager.on('metadata', metadataCallbackSpy);
+            conditionManager.on('receiveTelemetry', telemetryCallbackSpy);
+
+            mockConditionEvaluator = jasmine.createSpy('mockConditionEvaluator');
+            mockConditionEvaluator.execute = jasmine.createSpy('execute');
+            conditionManager.evaluator = mockConditionEvaluator;
         });
 
         it('loads the initial composition and invokes the appropriate handlers', function () {
@@ -228,16 +244,20 @@ define(['../src/ConditionManager'], function (ConditionManager) {
         it('maintains lists of global metadata, and does not duplicate repeated fields', function () {
             var allKeys = {
                 property1: {
-                    key: 'property1'
+                    key: 'property1',
+                    name: 'Property 1'
                 },
                 property2: {
-                    key: 'property2'
+                    key: 'property2',
+                    name: 'Property 2'
                 },
                 property3: {
-                    key: 'property3'
+                    key: 'property3',
+                    name: 'Property 3'
                 },
                 property4: {
-                    key: 'property4'
+                    key: 'property4',
+                    name: 'Property 4'
                 }
             };
             expect(conditionManager.getTelemetryMetadata('all')).toEqual(allKeys);
@@ -248,7 +268,7 @@ define(['../src/ConditionManager'], function (ConditionManager) {
         });
 
         it('loads and gets telemetry property types', function () {
-            conditionManager.loadMetadata().then(function () {
+            conditionManager.parseAllPropertyTypes().then(function () {
                 expect(conditionManager.getTelemetryPropertyType('mockCompObject1', 'property1'))
                     .toEqual('string');
                 expect(conditionManager.getTelemetryPropertyType('mockCompObject2', 'property4'))
@@ -288,6 +308,65 @@ define(['../src/ConditionManager'], function (ConditionManager) {
             Object.values(unregisterSpies).forEach(function (spy) {
                 expect(spy).toHaveBeenCalled();
             });
+        });
+
+        it('populates its LAD cache with historial data on load, if available', function () {
+            conditionManager.parseAllPropertyTypes().then(function () {
+                expect(conditionManager.subscriptionCache.mockCompObject1.property1).toEqual('Its a string');
+                expect(conditionManager.subscriptionCache.mockCompObject2.property4).toEqual(66);
+            });
+        });
+
+        it('updates its LAD cache upon recieving telemetry and invokes the appropriate handlers', function () {
+            mockTelemetryAPI.triggerTelemetryCallback('mockCompObject1');
+            expect(conditionManager.subscriptionCache.mockCompObject1.property1).toEqual('Its a different string');
+            mockTelemetryAPI.triggerTelemetryCallback('mockCompObject2');
+            expect(conditionManager.subscriptionCache.mockCompObject2.property4).toEqual(22);
+            expect(telemetryCallbackSpy).toHaveBeenCalled();
+        });
+
+        it('evalutes a set of rules and returns the id of the' +
+           'last active rule, or the first if no rules are active', function () {
+            var mockRuleOrder = ['default', 'rule0', 'rule1'],
+                mockRules = {
+                    default: {
+                        getProperty: function () {}
+                    },
+                    rule0: {
+                        getProperty: function () {}
+                    },
+                    rule1: {
+                        getProperty: function () {}
+                    }
+                };
+
+            mockConditionEvaluator.execute.andReturn(false);
+            expect(conditionManager.executeRules(mockRuleOrder, mockRules)).toEqual('default');
+            mockConditionEvaluator.execute.andReturn(true);
+            expect(conditionManager.executeRules(mockRuleOrder, mockRules)).toEqual('rule1');
+        });
+
+        it('gets the human-readable name of a composition object', function () {
+            expect(conditionManager.getObjectName('mockCompObject1')).toEqual('Object 1');
+            expect(conditionManager.getObjectName('all')).toEqual('All Telemetry');
+        });
+
+        it('gets the human-readable name of a telemetry field', function () {
+            conditionManager.parseAllPropertyTypes().then(function () {
+                expect(conditionManager.getTelemetryPropertyName('mockCompObject1', 'property1'))
+                    .toEqual('Property 1');
+                expect(conditionManager.getTelemetryPropertyName('mockCompObject2', 'property4'))
+                    .toEqual('Property 4');
+            });
+        });
+
+        it('gets its associated ConditionEvaluator', function () {
+            expect(conditionManager.getEvaluator()).toEqual(mockConditionEvaluator);
+        });
+
+        it('allows forcing a receive telemetry event', function () {
+            conditionManager.triggerTelemetryCallback();
+            expect(telemetryCallbackSpy).toHaveBeenCalled();
         });
     });
 });

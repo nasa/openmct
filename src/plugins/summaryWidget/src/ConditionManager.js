@@ -119,7 +119,7 @@ define ([
      * @return {Promise} A promise that resolves when a telemetry request
      *                   has completed and types have been parsed
      */
-    ConditionManager.prototype.getPropertyTypes = function (object) {
+    ConditionManager.prototype.parsePropertyTypes = function (object) {
         var telemetryAPI = this.openmct.telemetry,
             key,
             type,
@@ -127,22 +127,23 @@ define ([
 
         self.telemetryTypesById[object.identifier.key] = {};
         return telemetryAPI.request(object, {}).then(function (telemetry) {
-            Object.entries(telemetry[0]).forEach(function (telem) {
+            Object.entries(telemetry[telemetry.length - 1]).forEach(function (telem) {
                 key = telem[0];
                 type = typeof telem[1];
                 self.telemetryTypesById[object.identifier.key][key] = type;
+                self.subscriptionCache[object.identifier.key][key] = telem[1];
                 self.addGlobalPropertyType(key, type);
             });
         });
     };
 
     /**
-     * Once the intial composition load has completed, parse all telemetry fields
-     * from all composition objects
+     * Parse types of telemetry fields from all composition objects; used internally
+     * to perform a block types load once initial composition load has completed
      * @return {Promise} A promise that resolves when all metadata has been loaded
      *                   and property types parsed
      */
-    ConditionManager.prototype.loadMetadata = function () {
+    ConditionManager.prototype.parseAllPropertyTypes = function () {
         var self = this,
             index = 0,
             objs = Object.values(self.compositionObjs),
@@ -151,7 +152,7 @@ define ([
                     resolve();
                 }
                 objs.forEach(function (obj) {
-                    self.getPropertyTypes(obj).then(function () {
+                    self.parsePropertyTypes(obj).then(function () {
                         if (index === objs.length - 1) {
                             resolve();
                         }
@@ -178,6 +179,7 @@ define ([
      * Event handler for an add event in this Summary Widget's composition.
      * Sets up subscription handlers and parses its property types.
      * @param {Object} obj The newly added domain object
+     * @private
      */
     ConditionManager.prototype.onCompositionAdd = function (obj) {
         var compositionKeys,
@@ -208,10 +210,12 @@ define ([
                 self.handleSubscriptionCallback(objId, datum);
             }, {});
 
-            //if this is the initial load, postpose loading metadata so event handlers
-            //fire properly
+            /**
+             * if this is the initial load, parsing property types will be postponed
+             * until all composition objects have been loaded
+             */
             if (self.loadComplete) {
-                self.getPropertyTypes(obj);
+                self.parsePropertyTypes(obj);
             }
 
             self.eventEmitter.emit('add', obj);
@@ -219,9 +223,10 @@ define ([
     };
 
     /**
-     * Invoked in a remove event in this Summary Widget's compostion. Removes
+     * Invoked on a remove event in this Summary Widget's compostion. Removes
      * the object from the local composition, and untracks it
      * @param {object} identifier The identifier of the object to be removed
+     * @private
      */
     ConditionManager.prototype.onCompositionRemove = function (identifier) {
         _.remove(this.domainObject.composition, function (id) {
@@ -236,12 +241,13 @@ define ([
      * Invoked when the Summary Widget's composition finishes its initial load.
      * Invokes any registered load callbacks, does a block load of all metadata,
      * and then invokes any registered metadata load callbacks.
+     * @private
      */
     ConditionManager.prototype.onCompositionLoad = function () {
         var self = this;
         self.loadComplete = true;
         self.eventEmitter.emit('load');
-        self.loadMetadata().then(function () {
+        self.parseAllPropertyTypes().then(function () {
             self.metadataLoadComplete = true;
             self.eventEmitter.emit('metadata');
         });
@@ -308,7 +314,7 @@ define ([
     };
 
     /**
-     * Returns the {ConditionEvaluator} instanace assoicated with this condition
+     * Returns the {ConditionEvaluator} instance associated with this condition
      * manager
      * @return {ConditionEvaluator}
      */

@@ -31,7 +31,7 @@ define([
      * @param {Object} domainObject The domain Object represented by this Widget
      * @param {MCT} openmct An MCT instance
      */
-    function Widget(domainObject, openmct) {
+    function SummaryWidget(domainObject, openmct) {
         this.domainObject = domainObject;
         this.openmct = openmct;
 
@@ -88,7 +88,7 @@ define([
      * @param {element} container The DOM element that will contain this Summary
      *                            Widget's view.
      */
-    Widget.prototype.show = function (container) {
+    SummaryWidget.prototype.show = function (container) {
         var self = this;
         this.container = container;
         $(container).append(this.domElement);
@@ -110,7 +110,7 @@ define([
      * Unregister event listeners with the Open MCT APIs, unsubscribe from telemetry,
      * and clean up event handlers
      */
-    Widget.prototype.destroy = function (container) {
+    SummaryWidget.prototype.destroy = function (container) {
         this.editListenerUnsubscribe();
         this.conditionManager.destroy();
         this.widgetDnD.destroy();
@@ -125,7 +125,7 @@ define([
      * state and widget view accordingly.
      * @param {string[]} status an array containing the domain object's current status
      */
-    Widget.prototype.onEdit = function (status) {
+    SummaryWidget.prototype.onEdit = function (status) {
         if (status && status.includes('editing')) {
             this.editing = true;
         } else {
@@ -138,7 +138,7 @@ define([
      * If this view is currently in edit mode, show all rule configuration interfaces.
      * Otherwise, hide them.
      */
-    Widget.prototype.updateView = function () {
+    SummaryWidget.prototype.updateView = function () {
         if (this.editing) {
             this.ruleArea.show();
             this.testDataArea.show();
@@ -153,7 +153,7 @@ define([
     /**
      * Update the view from the current rule configuration and order
      */
-    Widget.prototype.refreshRules = function () {
+    SummaryWidget.prototype.refreshRules = function () {
         var self = this,
             ruleOrder = self.domainObject.configuration.ruleOrder,
             rules = self.rulesById;
@@ -169,7 +169,7 @@ define([
     /**
      * Update the widget's appearance from the configuration of the active rule
      */
-    Widget.prototype.updateWidget = function () {
+    SummaryWidget.prototype.updateWidget = function () {
         var activeRule = this.rulesById[this.activeId];
         this.applyStyle($('#widget', this.domElement), activeRule.getProperty('style'));
         $('#widget', this.domElement).prop('title', activeRule.getProperty('message'));
@@ -180,7 +180,7 @@ define([
     /**
      * Get the active rule and update the Widget's appearance.
      */
-    Widget.prototype.executeRules = function () {
+    SummaryWidget.prototype.executeRules = function () {
         this.activeId = this.conditionManager.executeRules(
             this.domainObject.configuration.ruleOrder,
             this.rulesById
@@ -191,7 +191,7 @@ define([
     /**
      * Add a new rule to this widget
      */
-    Widget.prototype.addRule = function () {
+    SummaryWidget.prototype.addRule = function () {
         var ruleCount = 0,
             ruleId,
             ruleOrder = this.domainObject.configuration.ruleOrder;
@@ -215,7 +215,7 @@ define([
      * @param {Object} sourceConfig The configuration properties of the rule to be
      *                              instantiated
      */
-    Widget.prototype.duplicateRule = function (sourceConfig) {
+    SummaryWidget.prototype.duplicateRule = function (sourceConfig) {
         var ruleCount = 0,
             ruleId,
             sourceRuleId = sourceConfig.id,
@@ -244,7 +244,7 @@ define([
                               of the rule to be instantiated
      * @param {string} ruleName The initial human-readable name of this rule
      */
-    Widget.prototype.initRule = function (ruleId, ruleName) {
+    SummaryWidget.prototype.initRule = function (ruleId, ruleName) {
         var ruleConfig,
             styleObj = {};
 
@@ -285,7 +285,7 @@ define([
      * @param {Object} event An event object representing this drop with draggingId
      *                       and dropTarget fields
      */
-    Widget.prototype.reorder = function (event) {
+    SummaryWidget.prototype.reorder = function (event) {
         var ruleOrder = this.domainObject.configuration.ruleOrder,
             sourceIndex = ruleOrder.indexOf(event.draggingId),
             targetIndex;
@@ -305,7 +305,7 @@ define([
      * @param {element} elem The DOM element to which the rules will be applied
      * @param {object} style an object representing the style
      */
-    Widget.prototype.applyStyle = function (elem, style) {
+    SummaryWidget.prototype.applyStyle = function (elem, style) {
         Object.keys(style).forEach(function (propId) {
             elem.css(propId, style[propId]);
         });
@@ -314,9 +314,9 @@ define([
     /**
      * Mutate this domain object's configuration with the current local configuration
      */
-    Widget.prototype.updateDomainObject = function () {
+    SummaryWidget.prototype.updateDomainObject = function () {
         this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
     };
 
-    return Widget;
+    return SummaryWidget;
 });
