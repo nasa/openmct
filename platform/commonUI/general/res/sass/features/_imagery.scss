@@ -9,7 +9,7 @@
 	@if $enableImageryThumbs == true {
 		bottom: $interiorMargin*2 +  $imageThumbsWrapperH;
 	}
-	min-height: 100px;
+	min-height: 150px;
 	min-width: 150px;
 	.l-image-main {
 		background-color: $colorPlotBg;
@@ -22,8 +22,8 @@
 
 .l-image-thumbs-wrapper {
 	top: auto;
-	min-height: $imageThumbsWrapperH !important;
-	max-height: 80%;
+	min-height: $imageThumbsWrapperH;
+	max-height: 60%;
 }
 
 .l-date,
