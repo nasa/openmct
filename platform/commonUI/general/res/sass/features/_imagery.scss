@@ -9,7 +9,6 @@
 	@if $enableImageryThumbs == true {
 		bottom: $interiorMargin*2 +  $imageThumbsWrapperH;
 	}
-	min-height: 150px;
 	min-width: 150px;
 	.l-image-main {
 		background-color: $colorPlotBg;
