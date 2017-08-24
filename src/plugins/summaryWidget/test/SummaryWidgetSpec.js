@@ -8,7 +8,8 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
             mockStatusCapability,
             mockComposition,
             mockContainer,
-            listenCallback;
+            listenCallback,
+            listenCallbackSpy;
 
         beforeEach(function () {
             mockDomainObject = {
@@ -21,6 +22,7 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
             };
             mockComposition = jasmine.createSpyObj('composition', [
                 'on',
+                'off',
                 'load'
             ]);
             mockStatusCapability = jasmine.createSpyObj('statusCapability', [
@@ -28,9 +30,11 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
                 'listen',
                 'triggerCallback'
             ]);
+            listenCallbackSpy = jasmine.createSpy('listenCallbackSpy', function () {});
             mockStatusCapability.get.andReturn([]);
             mockStatusCapability.listen.andCallFake(function (callback) {
                 listenCallback = callback;
+                return listenCallbackSpy;
             });
             mockStatusCapability.triggerCallback.andCallFake(function () {
                 listenCallback(['editing']);
@@ -108,6 +112,13 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
 
         it('shows configuration interfaces when in edit mode, and hides them otherwise', function () {
             mockStatusCapability.triggerCallback();
+        });
+
+        it('unregisters any registered listeners on a destroy', function () {
+            setTimeout(function () {
+                summaryWidget.destroy();
+                expect(listenCallbackSpy).toHaveBeenCalled();
+            }, 100);
         });
     });
 });

@@ -126,7 +126,6 @@ define ([
             self = this;
 
         self.telemetryTypesById[object.identifier.key] = {};
-
         return telemetryAPI.request(object, {}).then(function (telemetry) {
             Object.entries(telemetry[0]).forEach(function (telem) {
                 key = telem[0];
@@ -275,7 +274,7 @@ define ([
 
     /**
      * Returns the property metadata associated with a given telemetry source
-     * @param {string} id The key assoicated with the domain object
+     * @param {string} id The key associated with the domain object
      * @return {Object} Returns an object with fields representing each telemetry field
      */
     ConditionManager.prototype.getTelemetryMetadata = function (id) {

@@ -49,6 +49,7 @@ define([
         this.domElement = $(widgetTemplate);
         this.editing = false;
         this.container = '';
+        this.editListenerUnsubscribe = $.noop;
 
         this.ruleArea = $('#ruleArea', this.domElement);
         this.testDataArea = $('.widget-test-data', this.domElement);
@@ -102,7 +103,7 @@ define([
     };
 
     /**
-     * Unregister event listeners with the Open MCT APIS, unsubscribe from telemetry,
+     * Unregister event listeners with the Open MCT APIs, unsubscribe from telemetry,
      * and clean up event handlers
      */
     Widget.prototype.destroy = function (container) {
