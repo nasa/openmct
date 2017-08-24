@@ -218,7 +218,7 @@ define(
                 $scope.$on('$destroy', function () {
                     $interval.cancel(activeInterval);
                 });
-
+                
 
                 // Interface exposed by controller, for mct-splitter to user
                 return {
