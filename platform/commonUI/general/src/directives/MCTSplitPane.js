@@ -126,7 +126,7 @@ define(
 
                     splitterSize = getSize(splitter[0]);
                     first.css(anchor.edge, "0px");
-                    first.css(anchor.dimension, (userWidthPreference || position) + 'px');
+                    first.css(anchor.dimension, (userWidthPreference|| position) + 'px');
 
                     // Get actual size (to obey min-width etc.)
                     firstSize = getSize(first[0]);
@@ -136,7 +136,7 @@ define(
 
                     last.css(anchor.edge, firstSize + splitterSize + 'px');
                     last.css(anchor.opposite, "0px");
-                    position = firstSize + splitterSize;
+                    position = anchor.edge === 'bottom' ? firstSize + (0.75 * splitterSize) : firstSize + splitterSize;
                 }
 
                 // Update positioning of contained elements
@@ -162,17 +162,17 @@ define(
                 // Getter-setter for the pixel offset of the splitter,
                 // relative to the current edge.
                 function getSetPosition(value) {
-                    var prior = position;
                     if (typeof value === 'number') {
                         position = value;
                         enforceExtrema();
                         updateElementPositions();
 
                         // Pass change up so this state can be shared
-                        if (positionParsed.assign && position !== prior) {
+                        if (positionParsed.assign) {
                             positionParsed.assign($scope, position);
                         }
-                    }
+                    } 
+
                     return position;
                 }
 
