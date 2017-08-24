@@ -193,6 +193,10 @@ define([
         this.trigger.prop('value', self.config.trigger);
 
         this.grippy.on('mousedown', onDragStart);
+        this.widgetDnD.on('drop', function () {
+            this.domElement.show();
+            $('.t-drag-indicator').hide();
+        }, this);
 
         if (!this.conditionManager.loadCompleted()) {
             this.config.expanded = false;

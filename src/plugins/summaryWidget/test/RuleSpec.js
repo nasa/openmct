@@ -4,6 +4,7 @@ define(['../src/Rule'], function (Rule) {
             mockDomainObject,
             mockOpenMCT,
             mockConditionManager,
+            mockWidgetDnD,
             testRule,
             removeSpy,
             duplicateSpy,
@@ -36,8 +37,11 @@ define(['../src/Rule'], function (Rule) {
                     ruleOrder: ['default', 'mockRule', 'otherRule']
                 }
             };
-            mockOpenMCT = jasmine.createSpyObj('', ['objects']);
-            mockOpenMCT.objects = jasmine.createSpyObj('', ['mutate']);
+
+            mockOpenMCT = {};
+            mockOpenMCT.objects = {};
+            mockOpenMCT.objects.mutate = jasmine.createSpy('mutate');
+
             mockConditionManager = jasmine.createSpyObj('', [
                 'on',
                 'getComposition',
@@ -46,10 +50,15 @@ define(['../src/Rule'], function (Rule) {
                 'getTelemetryMetadata'
             ]);
             mockConditionManager.loadCompleted.andReturn(false);
+
+            mockWidgetDnD = {};
+            mockWidgetDnD.on = jasmine.createSpy('');
+
             removeSpy = jasmine.createSpy('removeCallback');
             duplicateSpy = jasmine.createSpy('duplicateCallback');
             changeSpy = jasmine.createSpy('changeCallback');
-            testRule = new Rule(mockRuleConfig, mockDomainObject, mockOpenMCT, mockConditionManager);
+            testRule = new Rule(mockRuleConfig, mockDomainObject, mockOpenMCT, mockConditionManager,
+                                mockWidgetDnD);
             testRule.on('remove', removeSpy);
             testRule.on('duplicate', duplicateSpy);
             testRule.on('change', changeSpy);

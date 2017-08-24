@@ -100,7 +100,7 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
             expect(Object.keys(mockDomainObject.configuration.ruleConfigById).length).toEqual(2);
         });
 
-        it('does not duplicate an existing rule', function () {
+        it('does not duplicate an existing rule in the configuration', function () {
             summaryWidget.initRule('default', 'Default');
             expect(Object.keys(mockDomainObject.configuration.ruleConfigById).length).toEqual(1);
         });

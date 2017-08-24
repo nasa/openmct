@@ -89,11 +89,15 @@ define([
      *                            Widget's view.
      */
     Widget.prototype.show = function (container) {
+        var self = this;
         this.container = container;
         $(container).append(this.domElement);
         $('.widget-test-data', this.domElement).append(this.testDataManager.getDOM());
         this.widgetDnD = new WidgetDnD(this.domElement, this.domainObject.configuration.ruleOrder, this.rulesById);
         this.initRule('default', 'Default');
+        this.domainObject.configuration.ruleOrder.forEach(function (ruleId) {
+            self.initRule(ruleId);
+        });
         this.refreshRules();
         this.updateWidget();
 
@@ -156,7 +160,6 @@ define([
 
         self.ruleArea.html('');
         Object.values(ruleOrder).forEach(function (ruleId) {
-            self.initRule(ruleId);
             self.ruleArea.append(rules[ruleId].getDOM());
         });
 
