@@ -21,32 +21,11 @@
 *****************************************************************************/
 .t-fixed-position {
 	&.l-fixed-position {
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		width: auto;
-		height: auto;
-
-		.l-grid-holder {
-			position: relative;
-			height: 100%;
-			width: 100%;
-			.l-grid {
-				position: absolute;
-				height: 100%;
-				width: 100%;
-				pointer-events: none;
-				z-index: 0;
-			}
-		}
+		@extend .abs;
 	}
 
 	.l-fixed-position-item {
 		position: absolute;
-		border: 1px solid transparent;
-
 		&.s-not-selected {
 			opacity: 0.8;
 		}
@@ -105,37 +84,8 @@
 			}
 		}
 	}
-
-	.l-fixed-position-item-handle {
-		$brd: 1px solid $colorKey;
-		background: rgba($colorKey, 0.5);
-		cursor: crosshair;
-		border: $brd;
-		position: absolute;
-	}
 }
 
-.edit-mode .t-fixed-position {
-	&.l-fixed-position {
-		.l-grid-holder {
-			.l-grid {
-				&.l-grid-x {
-					@include bgTicks($colorGridLines, 'x');
-				}
-
-				&.l-grid-y {
-					@include bgTicks($colorGridLines, 'y');
-				}
-			}
-		}
-	}
-
-	.l-fixed-position-item {
-		&:not(.s-selected) {
-			border: 1px dotted rgba($colorKey, 0.75);
-			&:hover {
-				border: 1px dotted rgba($colorKey, 1.0);
-			}
-		}
-	}
+.s-status-editing {
+    .l-fixed-position-item-handle.edit-corner { display: block; }
 }

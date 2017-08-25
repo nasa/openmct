@@ -19,21 +19,36 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.s-selectable {
-    border: 1px solid transparent;
+.s-hover-border {
+    border: 1px dotted transparent;
+}
 
-    &.s-hover {
-        // Styles when hovering over a selectable object
-        border-color: $colorSelectableHov !important;
+.s-status-editing {
+    // Limit to editing mode until we have sub-object selection
+    .s-hover-border {
+        // Show a border by default so user can see object bounds and empty objects
+        border: 1px dotted rgba($colorSelectableSelectedPrimary, 0.3) !important;
+        &:hover {
+            border-color: rgba($colorSelectableSelectedPrimary, 0.7) !important;
+        }
     }
 
-    &.s-selected {
+    .s-selected > .s-hover-border,
+    .s-selected.s-hover-border {
         // Styles for a selected object. Also used by legacy Fixed Position/Panel objects.
         border-color: $colorSelectableSelectedPrimary !important;
+        @include boxShdwLarge();
+        // Show edit-corners if you got 'em
+        .edit-corner {
+            display: block;
+            &:hover {
+                background-color: rgba($colorKey, 1);
+            }
+        }
     }
 
-    &.s-moveable {
-        @include boxShdwLarge();
+    .s-selected > .s-moveable,
+    .s-selected.s-moveable {
         cursor: move;
     }
 }

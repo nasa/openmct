@@ -75,6 +75,21 @@ define(
                 ].join(""));
             }
 
+            //Log an info: defaults to "no service provide by"
+            function info(extension, category, message) {
+                var msg = message || "No service provided by";
+                $log.info([
+                    msg,
+                    " ",
+                    category,
+                    " ",
+                    extension.key,
+                    " from bundle ",
+                    (extension.bundle || { path: "unknown bundle" }).path,
+                    "; skipping."
+                ].join(""));
+            }
+
             // Echo arguments; used to represent groups of non-built-in
             // extensions as a single dependency.
             function echoMany() {
@@ -161,13 +176,13 @@ define(
                     name = makeName("aggregator", service, index);
 
                 if (!service) {
-                    return warn(aggregator, "aggregator");
+                    return info(aggregator, "aggregator");
                 }
 
                 // Aggregators need other services to aggregate, otherwise they
                 // do nothing.
                 if (!latest[service]) {
-                    return warn(
+                    return info(
                         aggregator,
                         "aggregator",
                         "No services to aggregate for"

@@ -47,7 +47,7 @@ define([
     };
 
     ImageryViewPolicy.prototype.allow = function (view, domainObject) {
-        if (view.key === 'imagery') {
+        if (view.key === 'imagery' || view.key === 'historical-imagery') {
             return this.hasImageTelemetry(domainObject);
         }
 

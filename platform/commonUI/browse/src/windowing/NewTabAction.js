@@ -38,6 +38,7 @@ define(
 
             this.urlService = urlService;
             this.open = function () {
+                arguments[0] += "&hideTree=true&hideInspector=true";
                 $window.open.apply($window, arguments);
             };
 

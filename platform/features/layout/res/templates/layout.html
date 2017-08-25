@@ -19,19 +19,33 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="l-layout"
-     ng-controller="LayoutController as controller">
 
-    <div class='frame child-frame panel abs'
+<div class="abs l-layout"
+     ng-controller="LayoutController as controller"
+     ng-click="controller.clearSelection()">
+
+    <!-- Background grid -->
+    <div class="l-grid-holder" ng-click="controller.clearSelection()">
+        <div class="l-grid l-grid-x"
+             ng-if="!controller.getGridSize()[0] < 3"
+             ng-style="{ 'background-size': controller.getGridSize() [0] + 'px 100%' }"></div>
+        <div class="l-grid l-grid-y"
+             ng-if="!controller.getGridSize()[1] < 3"
+             ng-style="{ 'background-size': '100% ' + controller.getGridSize() [1] + 'px' }"></div>
+    </div>
+
+    <div class='abs frame t-frame-outer child-frame panel s-selectable s-moveable s-hover-border'
+         ng-class="{ 'no-frame': !controller.hasFrame(childObject), 's-selected':controller.selected(childObject) }"
          ng-repeat="childObject in composition"
+         ng-click="controller.select($event, childObject.getId())"
          ng-style="controller.getFrameStyle(childObject.getId())">
 
         <mct-representation key="'frame'"
-                            class="frame child-frame holder contents abs"
+                            class="t-rep-frame holder contents abs"
                             mct-object="childObject">
         </mct-representation>
         <!-- Drag handles -->
-        <span ng-show="domainObject.hasCapability('editor')">
+        <span class="abs t-edit-handle-holder s-hover-border" ng-if="controller.selected(childObject)">
             <span class="edit-handle edit-move"
                   mct-drag-down="controller.startDrag(childObject.getId(), [1,1], [0,0])"
                   mct-drag="controller.continueDrag(delta)"

@@ -193,6 +193,7 @@
 
             @include animToParams(overlayIn, $dur: $durLargeViewExpand, $delay: 0);
             background: $colorBodyBg;
+            z-index: 101;
 
             .abs.inner-holder {
                 opacity: 0;
@@ -203,10 +204,19 @@
                 @include animToParams(contentsIn, $dur: 50ms, $delay: $durLargeViewExpand * 1.25);
             }
 
+            // Hide View Large button
             .t-btn-view-large {
                 display: none;
             }
-            z-index: 101;
+
+            // But show View Large button when it's nested inside a Layout
+            .t-frame-inner .t-frame-inner .t-btn-view-large { display: block; }
+        }
+    }
+    // When multiple Large Views are visible, hide the blocker for all but the first
+    & + .l-large-view {
+        .blocker {
+            display: none;
         }
     }
 }

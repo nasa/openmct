@@ -115,9 +115,7 @@ define(
                     return (this.telemetryService =
                         $injector.get("telemetryService"));
                 } catch (e) {
-                    // $injector should throw if telemetryService
-                    // is unavailable or unsatisfiable.
-                    $log.warn("Telemetry service unavailable");
+                    $log.info("Telemetry service unavailable");
                     return (this.telemetryService = null);
                 }
             };
@@ -213,7 +211,8 @@ define(
 
             var metadata = telemetryAPI.getMetadata(domainObject);
             var defaultDomain = metadata.valuesForHints(['domain'])[0].source;
-            var defaultRange = metadata.valuesForHints(['range'])[0].source;
+            var defaultRange = metadata.valuesForHints(['range'])[0];
+            defaultRange = defaultRange ? defaultRange.source : undefined;
 
             var isLegacyProvider = telemetryAPI.findRequestProvider(domainObject) ===
                 telemetryAPI.legacyProvider;
@@ -275,7 +274,8 @@ define(
 
             var metadata = telemetryAPI.getMetadata(domainObject);
             var defaultDomain = metadata.valuesForHints(['domain'])[0].source;
-            var defaultRange = metadata.valuesForHints(['range'])[0].source;
+            var defaultRange = metadata.valuesForHints(['range'])[0];
+            defaultRange = defaultRange ? defaultRange.source : undefined;
 
             var isLegacyProvider = telemetryAPI.findSubscriptionProvider(domainObject) ===
                 telemetryAPI.legacyProvider;
@@ -314,4 +314,3 @@ define(
         return TelemetryCapability;
     }
 );
-

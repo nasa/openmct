@@ -27,7 +27,6 @@ define([
 ) {
 
     var OVERLAY_TEMPLATE = '' +
-'<div class="abs overlay l-large-view">' +
 '    <div class="abs blocker"></div>' +
 '    <div class="abs outer-holder">' +
 '       <a class="close icon-x-in-circle"></a>' +
@@ -37,8 +36,7 @@ define([
 '               <a class="t-done s-button major">Done</a>' +
 '           </div>' +
 '       </div>' +
-'    </div>' +
-'</div>';
+'    </div>';
 
     /**
      * MCT Trigger Modal is intended for use in only one location: inside the
@@ -81,7 +79,8 @@ define([
             function openOverlay() {
                 // Remove frame classes from being applied in a non-frame context
                 $(frame).removeClass('frame frame-template');
-                overlay = document.createElement('span');
+                overlay = document.createElement('div');
+                $(overlay).addClass('abs overlay l-large-view');
                 overlay.innerHTML = OVERLAY_TEMPLATE;
                 overlayContainer = overlay.querySelector('.t-contents');
                 closeButton = overlay.querySelector('a.close');

@@ -36,10 +36,11 @@ define(
          *        configuration
          * @param index the element's index within its array
          * @param {Array} elements the full array of elements
+         * @param {number[]} gridSize the current layout grid size in [x,y] from
          * @augments {platform/features/layout.ElementProxy}
          */
-        function ImageProxy(element, index, elements) {
-            var proxy = new ElementProxy(element, index, elements);
+        function ImageProxy(element, index, elements, gridSize) {
+            var proxy = new ElementProxy(element, index, elements, gridSize);
 
             /**
              * Get and/or set the displayed text of this element.
@@ -48,6 +49,12 @@ define(
              * @memberof platform/features/layout.ImageProxy#
              */
             proxy.url = new AccessorMutator(element, 'url');
+
+            //Expose x,y, width and height properties for editing
+            proxy.editWidth = new AccessorMutator(element, 'width');
+            proxy.editHeight = new AccessorMutator(element, 'height');
+            proxy.editX = new AccessorMutator(element, 'x');
+            proxy.editY = new AccessorMutator(element, 'y');
 
             return proxy;
         }

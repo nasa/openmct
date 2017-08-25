@@ -36,10 +36,11 @@ define(
          *        configuration
          * @param index the element's index within its array
          * @param {Array} elements the full array of elements
+         * @param {number[]} gridSize the current layout grid size in [x,y] from
          * @augments {platform/features/layout.ElementProxy}
          */
-        function TextProxy(element, index, elements) {
-            var proxy = new BoxProxy(element, index, elements);
+        function TextProxy(element, index, elements, gridSize) {
+            var proxy = new BoxProxy(element, index, elements, gridSize);
 
             /**
              * Get and/or set the text color of this element.
