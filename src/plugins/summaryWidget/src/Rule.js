@@ -48,6 +48,8 @@ define([
         this.duplicate = this.duplicate.bind(this);
 
         this.thumbnail = $('.t-widget-thumb', this.domElement);
+        this.thumbnailIcon = $('.widget-icon', this.domElement);
+        this.thumbnailLabel = $('.widget-label', this.domElement);
         this.title = $('.rule-title', this.domElement);
         this.description = $('.rule-description', this.domElement);
         this.trigger = $('.t-trigger', this.domElement);
@@ -88,7 +90,8 @@ define([
          */
         function onIconInput(icon) {
             self.config.icon = icon;
-            self.updateDomainObject();
+            self.updateDomainObject('icon', icon);
+            self.thumbnailIcon.removeClass().addClass('widget-icon ' + icon);
             self.eventEmitter.emit('change');
         }
 
@@ -130,6 +133,8 @@ define([
             self.updateDomainObject();
             if (inputKey === 'name') {
                 self.title.html(elem.value);
+            } else if (inputKey === 'label') {
+                self.thumbnailLabel.html(elem.value);
             }
             self.eventEmitter.emit('change');
         }
@@ -162,6 +167,10 @@ define([
         this.iconInput.on('change', function (value) {
             onIconInput(value);
         });
+
+        // Initialize thumbs when first loading
+        this.thumbnailIcon.removeClass().addClass('widget-icon ' + self.config.icon);
+        this.thumbnailLabel.html(self.config.label);
 
         Object.keys(this.colorInputs).forEach(function (inputKey) {
             var input = self.colorInputs[inputKey];

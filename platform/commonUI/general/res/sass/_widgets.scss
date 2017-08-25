@@ -137,9 +137,13 @@
     }
 
     .widget-thumb {
+        @include ellipsize();
         @extend .s-summary-widget;
         @extend .l-summary-widget;
         padding: $interiorMarginSm $interiorMargin;
+        .widget-icon {
+            font-size: 0.8em;
+        }
     }
 
     // Hide and show elements in the rule-header on hover
