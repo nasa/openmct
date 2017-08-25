@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['./AccessorMutator', './ResizeHandle'],
-    function (AccessorMutator, ResizeHandle) {
+    ['./AccessorMutator', './ResizeHandle', './UnitAccessorMutator'],
+    function (AccessorMutator, ResizeHandle, UnitAccessorMutator) {
 
         // Index deltas for changes in order
         var ORDERS = {
@@ -31,6 +31,10 @@ define(
             down: -1,
             bottom: Number.NEGATIVE_INFINITY
         };
+
+        // Mininmum pixel height and width for objects
+        var MIN_WIDTH = 10;
+        var MIN_HEIGHT = 10;
 
         // Ensure a value is non-negative (for x/y setters)
         function clamp(value) {
@@ -51,16 +55,28 @@ define(
          * @param element the fixed position element, as stored in its
          *        configuration
          * @param index the element's index within its array
+         * @param {number[]} gridSize the current layout grid size in [x,y] from
          * @param {Array} elements the full array of elements
          */
-        function ElementProxy(element, index, elements) {
-            this.resizeHandles = [new ResizeHandle(element, 1, 1)];
-
+        function ElementProxy(element, index, elements, gridSize) {
             /**
              * The element as stored in the view configuration.
              * @memberof platform/features/layout.ElementProxy#
              */
             this.element = element;
+
+            /**
+             * The current grid size of the layout.
+             * @memberof platform/features/layout.ElementProxy#
+             */
+            this.gridSize = gridSize || [1,1]; //Ensure a reasonable default
+
+            this.resizeHandles = [new ResizeHandle(
+                                    this.element,
+                                    this.getMinWidth(),
+                                    this.getMinHeight(),
+                                    this.getGridSize()
+                                  )];
 
             /**
              * Get and/or set the x position of this element.
@@ -105,6 +121,8 @@ define(
              * @memberof platform/features/layout.ElementProxy#
              */
             this.height = new AccessorMutator(element, 'height');
+
+            this.useGrid = new UnitAccessorMutator(this);
 
             this.index = index;
             this.elements = elements;
@@ -154,6 +172,51 @@ define(
          */
         ElementProxy.prototype.handles = function () {
             return this.resizeHandles;
+        };
+
+        /**
+         * Returns which grid size the element is currently using.
+         * @return {number[]} The current grid size in [x,y] form if the element
+         *                    is currently using the grid, [1,1] if it is using
+         *                    pixels.
+         */
+        ElementProxy.prototype.getGridSize = function () {
+            var gridSize;
+            // Default to using the grid if useGrid was not defined
+            if (typeof this.element.useGrid === 'undefined') {
+                this.element.useGrid = true;
+            }
+            if (this.element.useGrid) {
+                gridSize = this.gridSize;
+            } else {
+                gridSize = [1,1];
+            }
+            return gridSize;
+        };
+
+        /**
+         * Set the current grid size stored by this element proxy
+         * @param {number[]} gridSize The current layout grid size in [x,y] form
+         */
+        ElementProxy.prototype.setGridSize = function (gridSize) {
+            this.gridSize = gridSize;
+        };
+
+        /**
+         * Get the current minimum element width in grid units
+         * @return {number} The current minimum element width
+         */
+        ElementProxy.prototype.getMinWidth = function () {
+            return Math.ceil(MIN_WIDTH / this.getGridSize()[0]);
+
+        };
+
+        /**
+         * Get the current minimum element height in grid units
+         * @return {number} The current minimum element height
+         */
+        ElementProxy.prototype.getMinHeight = function () {
+            return Math.ceil(MIN_HEIGHT / this.getGridSize()[1]);
         };
 
         return ElementProxy;

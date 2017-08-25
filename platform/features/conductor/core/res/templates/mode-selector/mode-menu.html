@@ -23,7 +23,7 @@
     <div class="pane left menu-items">
         <ul>
             <li ng-repeat="metadata in ngModel.options"
-                ng-click="ngModel.selected = metadata">
+                ng-click="ngModel.select(metadata)">
                 <a ng-mouseover="ngModel.activeMetadata = metadata"
                    ng-mouseleave="ngModel.activeMetadata = undefined"
                    class="menu-item-a {{metadata.cssClass}}">

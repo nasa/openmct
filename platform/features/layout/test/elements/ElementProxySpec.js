@@ -35,13 +35,15 @@ define(
                     y: 2,
                     stroke: '#717171',
                     width: 42,
-                    height: 24
+                    height: 24,
+                    useGrid: true
                 };
                 testElements = [{}, {}, testElement, {}];
                 proxy = new ElementProxy(
                     testElement,
                     testElements.indexOf(testElement),
-                    testElements
+                    testElements,
+                    [13,21]
                 );
             });
 
@@ -72,6 +74,29 @@ define(
                 proxy.y(-400);
                 expect(proxy.x()).toEqual(0);
                 expect(proxy.y()).toEqual(0);
+            });
+
+            it("allows modifying the current grid size", function () {
+                proxy.setGridSize([112,420]);
+                expect(proxy.gridSize).toEqual([112,420]);
+            });
+
+            it("returns the current grid size only if the element snaps to grid", function () {
+                expect(proxy.getGridSize()).toEqual([13,21]);
+                proxy.useGrid(false);
+                expect(proxy.getGridSize()).toEqual([1,1]);
+            });
+
+            it("returns the mininum height and width of an element currently used units", function () {
+                // Assumes mininum height and width are 10, in pixels
+                expect(proxy.getMinWidth()).toEqual(1);
+                expect(proxy.getMinHeight()).toEqual(1);
+                proxy.setGridSize([7,4]);
+                expect(proxy.getMinWidth()).toEqual(2);
+                expect(proxy.getMinHeight()).toEqual(3);
+                proxy.useGrid(false);
+                expect(proxy.getMinWidth()).toEqual(10);
+                expect(proxy.getMinHeight()).toEqual(10);
             });
         });
     }

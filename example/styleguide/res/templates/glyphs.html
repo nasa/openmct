@@ -48,7 +48,9 @@
 { 'meaning': 'General usage plus symbol; used in timer object', 'cssClass': 'icon-plus', 'cssContent': 'e926', 'htmlEntity': '&amp;#xe926' },
 { 'meaning': 'Delete', 'cssClass': 'icon-trash', 'cssContent': 'e927', 'htmlEntity': '&amp;#xe927' },
 { 'meaning': 'Close, remove', 'cssClass': 'icon-x', 'cssContent': 'e928', 'htmlEntity': '&amp;#xe928' },
-{ 'meaning': 'Enclosing, inclusive; used in Time Conductor', 'cssClass': 'icon-brackets', 'cssContent': 'e929', 'htmlEntity': '&amp;#xe929' }
+{ 'meaning': 'Enclosing, inclusive; used in Time Conductor', 'cssClass': 'icon-brackets', 'cssContent': 'e929', 'htmlEntity': '&amp;#xe929' },
+{ 'meaning': 'Something is targeted', 'cssClass': 'icon-crosshair', 'cssContent': 'e930', 'htmlEntity': '&amp;#xe930' },
+{ 'meaning': 'Draggable', 'cssClass': 'icon-grippy', 'cssContent': 'e931', 'htmlEntity': '&amp;#xe931' }
 ]; controls= [{ 'meaning': 'Reset zoom/pam', 'cssClass': 'icon-arrows-out', 'cssContent': 'e1000', 'htmlEntity': '&amp;#xe1000' },
 { 'meaning': 'Expand vertically', 'cssClass': 'icon-arrows-right-left', 'cssContent': 'e1001', 'htmlEntity': '&amp;#xe1001' },
 { 'meaning': 'View scrolling', 'cssClass': 'icon-arrows-up-down', 'cssContent': 'e1002', 'htmlEntity': '&amp;#xe1002' },
@@ -84,10 +86,17 @@
 { 'meaning': 'Image thumbs strip; view items grid', 'cssClass': 'icon-thumbs-strip', 'cssContent': 'e1033', 'htmlEntity': '&amp;#xe1033' },
 { 'meaning': 'Two part item, both parts', 'cssClass': 'icon-two-parts-both', 'cssContent': 'e1034', 'htmlEntity': '&amp;#xe1034' },
 { 'meaning': 'Two part item, one only', 'cssClass': 'icon-two-parts-one-only', 'cssContent': 'e1035', 'htmlEntity': '&amp;#xe1035' },
+{ 'meaning': 'Resync', 'cssClass': 'icon-resync', 'cssContent': 'e1036', 'htmlEntity': '&amp;#xe1036' },
+{ 'meaning': 'Reset', 'cssClass': 'icon-reset', 'cssContent': 'e1037', 'htmlEntity': '&amp;#xe1037' },
 { 'meaning': 'Clear', 'cssClass': 'icon-x-in-circle', 'cssContent': 'e1038', 'htmlEntity': '&amp;#xe1038' },
 { 'meaning': 'Brightness', 'cssClass': 'icon-brightness', 'cssContent': 'e1039', 'htmlEntity': '&amp;#xe1039' },
 { 'meaning': 'Contrast', 'cssClass': 'icon-contrast', 'cssContent': 'e1040', 'htmlEntity': '&amp;#xe1040' },
-{ 'meaning': 'Expand', 'cssClass': 'icon-expand', 'cssContent': 'e1041', 'htmlEntity': '&amp;#xe1041' }
+{ 'meaning': 'Expand', 'cssClass': 'icon-expand', 'cssContent': 'e1041', 'htmlEntity': '&amp;#xe1041' },
+{ 'meaning': 'View items in a tabular list', 'cssClass': 'icon-list-view', 'cssContent': 'e1042', 'htmlEntity': '&amp;#xe1042' },
+{ 'meaning': 'Snap an object corner to a grid', 'cssClass': 'icon-grid-snap-to', 'cssContent': 'e1043', 'htmlEntity': '&amp;#xe1043' },
+{ 'meaning': 'Do not snap an object corner to a grid', 'cssClass': 'icon-grid-snap-no', 'cssContent': 'e1044', 'htmlEntity': '&amp;#xe1044' },
+{ 'meaning': 'Show an object frame in a Display Layout', 'cssClass': 'icon-frame-show', 'cssContent': 'e1045', 'htmlEntity': '&amp;#xe1045' },
+{ 'meaning': 'Do not show an object frame in a Display Layout', 'cssClass': 'icon-frame-hide', 'cssContent': 'e1046', 'htmlEntity': '&amp;#xe1046' }
 ]; objects= [{ 'meaning': 'Activity', 'cssClass': 'icon-activity', 'cssContent': 'e1100', 'htmlEntity': '&amp;#xe1100' },
 { 'meaning': 'Activity Mode', 'cssClass': 'icon-activity-mode', 'cssContent': 'e1101', 'htmlEntity': '&amp;#xe1101' },
 { 'meaning': 'Auto-flow Tabular view', 'cssClass': 'icon-autoflow-tabular', 'cssContent': 'e1102', 'htmlEntity': '&amp;#xe1102' },
@@ -117,7 +126,8 @@
 { 'meaning': 'Timeline object', 'cssClass': 'icon-timeline', 'cssContent': 'e1126', 'htmlEntity': '&amp;#xe1126' },
 { 'meaning': 'Timer object', 'cssClass': 'icon-timer', 'cssContent': 'e1127', 'htmlEntity': '&amp;#xe1127' },
 { 'meaning': 'Data Topic', 'cssClass': 'icon-topic', 'cssContent': 'e1128', 'htmlEntity': '&amp;#xe1128' },
-{ 'meaning': 'Fixed Position object', 'cssClass': 'icon-box-with-dashed-lines', 'cssContent': 'e1129', 'htmlEntity': '&amp;#xe1129' }
+{ 'meaning': 'Fixed Position object', 'cssClass': 'icon-box-with-dashed-lines', 'cssContent': 'e1129', 'htmlEntity': '&amp;#xe1129' },
+{ 'meaning': 'Summary Widget', 'cssClass': 'icon-summary-widget', 'cssContent': 'e1130', 'htmlEntity': '&amp;#xe1130' }
 ];
 "></div>
 
@@ -141,8 +151,8 @@
         <h2>How to Use Glyphs</h2>
         <div class="cols cols1-1">
             <div class="col">
-                <p>The easiest way to use a glyph is to include its CSS class in element. The CSS adds a psuedo <code>:before</code> HTML element to whatever element it's attached to that makes proper use of the symbols font.</p>
-                <p>Alternately, you can use the <code>.ui-symbol</code> class in an object that contains encoded HTML entities. This method is only recommended if you cannot use the aforementioned CSS class approach for some reason.</p>
+                <p>The easiest way to use a glyph is to include its CSS class in an element. The CSS adds a psuedo <code>:before</code> HTML element to whatever element it's attached to that makes proper use of the symbols font.</p>
+                <p>Alternately, you can use the <code>.ui-symbol</code> class in an object that contains encoded HTML entities. This method is only recommended if you cannot use the aforementioned CSS class approach.</p>
             </div>
             <mct-example><a class="s-button icon-gear" title="Settings"></a>
 <br /><br />
@@ -160,8 +170,8 @@
             <div class="item glyph-item" ng-repeat="glyph in general">
                 <div class="glyph" ng-class="glyph.cssClass"></div>
                 <table class="details">
-                    <tr><td class="label">Meaning</td><td class="value">{{glyph.meaning}}</td></tr>
                     <tr><td class="label">Class</td><td class="value">.{{glyph.cssClass}}</td></tr>
+                    <tr><td class="label">Meaning</td><td class="value">{{glyph.meaning}}</td></tr>
                     <tr><td class="label">CSS Content</td><td class="value">\{{glyph.cssContent}}</td></tr>
                     <tr><td class="label">HTML Entity</td><td class="value">{{glyph.htmlEntity}}</td></tr>
                 </table>
@@ -176,8 +186,8 @@
             <div class="item glyph-item" ng-repeat="glyph in controls">
                 <div class="glyph" ng-class="glyph.cssClass"></div>
                 <table class="details">
-                    <tr><td class="label">Meaning</td><td class="value">{{glyph.meaning}}</td></tr>
                     <tr><td class="label">Class</td><td class="value">.{{glyph.cssClass}}</td></tr>
+                    <tr><td class="label">Meaning</td><td class="value">{{glyph.meaning}}</td></tr>
                     <tr><td class="label">CSS Content</td><td class="value">\{{glyph.cssContent}}</td></tr>
                     <tr><td class="label">HTML Entity</td><td class="value">{{glyph.htmlEntity}}</td></tr>
                 </table>
@@ -192,8 +202,8 @@
             <div class="item glyph-item" ng-repeat="glyph in objects">
                 <div class="glyph" ng-class="glyph.cssClass"></div>
                 <table class="details">
-                    <tr><td class="label">Meaning</td><td class="value">{{glyph.meaning}}</td></tr>
                     <tr><td class="label">Class</td><td class="value">.{{glyph.cssClass}}</td></tr>
+                    <tr><td class="label">Meaning</td><td class="value">{{glyph.meaning}}</td></tr>
                     <tr><td class="label">CSS Content</td><td class="value">\{{glyph.cssContent}}</td></tr>
                     <tr><td class="label">HTML Entity</td><td class="value">{{glyph.htmlEntity}}</td></tr>
                 </table>

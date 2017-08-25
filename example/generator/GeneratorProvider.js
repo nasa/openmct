@@ -59,7 +59,7 @@ define([
             if (domainObject.telemetry && domainObject.telemetry.hasOwnProperty(prop)) {
                 workerRequest[prop] = domainObject.telemetry[prop];
             }
-            if (request.hasOwnProperty(prop)) {
+            if (request && request.hasOwnProperty(prop)) {
                 workerRequest[prop] = request[prop];
             }
             if (!workerRequest[prop]) {

@@ -83,13 +83,14 @@ define(
                 // Callback to fire after each timeout;
                 // update bounds and schedule another timeout
                 function onInterval() {
+                    if (!active) {
+                        return;
+                    }
                     fireEval({
                         width: element[0].offsetWidth,
                         height: element[0].offsetHeight
                     });
-                    if (active) {
-                        $timeout(onInterval, currentInterval(), false);
-                    }
+                    $timeout(onInterval, currentInterval(), false);
                 }
 
                 // Stop running in the background

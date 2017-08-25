@@ -72,6 +72,15 @@
     }
 }
 
+.s-hyperlink {
+    // Hyperlink objects
+    &:not(.s-button) {
+        color: $colorKey;
+        font-size: 0.8rem;
+        &:hover { color: $colorKeyHov; }
+    }
+}
+
 .s-icon-button {
     // Clickable icon elements that have hover
     @extend .ui-symbol;
@@ -276,13 +285,14 @@ textarea.lg { position: relative; height: 300px; }
 .select {
     @include btnSubtle($bg: $colorSelectBg);
     @extend .icon-arrow-down; // Context arrow
-    //@if $shdwBtns != none { margin: 0 0 2px 0; } // Needed to avoid dropshadow from being clipped by parent containers
+    @if $shdwBtns != none {
+        margin: 0 0 2px 0; // Needed to avoid dropshadow from being clipped by parent containers
+    }
     display: inline-block;
     padding: 0 $interiorMargin;
     overflow: hidden;
     position: relative;
-    height: $btnStdH;
-    line-height: $btnStdH;
+    line-height: $formInputH;
     select {
         @include appearance(none);
         box-sizing: border-box;
@@ -297,13 +307,12 @@ textarea.lg { position: relative; height: 300px; }
         }
     }
     &:before {
-        @include transform(translateY(-50%));
-        color: rgba($colorInvokeMenu, percentToDecimal($contrastInvokeMenuPercent));
-        display: block;
+        //@include contextArrow();
         pointer-events: none;
+        color: rgba($colorSelectFg, percentToDecimal($contrastInvokeMenuPercent));
+        display: block;
         position: absolute;
-        right: $interiorMargin;
-        top: 50%;
+        right: $interiorMargin; top: 0;
     }
 }
 
@@ -693,30 +702,6 @@ textarea {
     &:hover {
         color: $colorKeyHov;
     }
-}
-
-.view-switcher,
-.t-btn-view-large {
-    @include trans-prop-nice-fade($controlFadeMs);
-}
-
-.view-control {
-    @extend .icon-arrow-right;
-    cursor: pointer;
-    font-size: 0.75em;
-    &:before {
-        position: absolute;
-        @include trans-prop-nice(transform, 100ms);
-        @include transform-origin(center);
-    }
-    &.expanded:before {
-        @include transform(rotate(90deg));
-    }
-}
-
-.grippy {
-    @extend .icon-grippy;
-    cursor: move;
 }
 
 /******************************************************** BROWSER ELEMENTS */

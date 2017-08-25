@@ -199,7 +199,7 @@ define(
 
                 telemetry.requestData();
 
-                expect(mockLog.warn).toHaveBeenCalled();
+                expect(mockLog.info).toHaveBeenCalled();
             });
 
             it("if a new style telemetry source is available, use it", function () {

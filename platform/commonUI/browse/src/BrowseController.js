@@ -25,8 +25,8 @@
  * @namespace platform/commonUI/browse
  */
 define(
-    [],
-    function () {
+    ['lodash'],
+    function (_) {
 
         /**
          * The BrowseController is used to populate the initial scope in Browse
@@ -157,12 +157,28 @@ define(
             // (e.g. bookmarks to pages in OpenMCT) and prevent them.  Instead,
             // navigate to the path ourselves, which results in it being
             // properly set.
-            $scope.$on('$routeChangeStart', function (event, route) {
+            $scope.$on('$routeChangeStart', function (event, route, oldRoute) {
                 if (route.$$route === $route.current.$$route) {
                     if (route.pathParams.ids &&
                         route.pathParams.ids !== $route.current.pathParams.ids) {
+
+                        var otherParams = _.omit(route.params, 'ids');
+                        var oldOtherParams = _.omit(oldRoute.params, 'ids');
+                        var deletedParams = _.omit(oldOtherParams, _.keys(otherParams));
+
                         event.preventDefault();
-                        navigateToPath(route.pathParams.ids.split('/'));
+
+                        navigateToPath(route.pathParams.ids.split('/'))
+                            .then(function () {
+                                if (!_.isEqual(otherParams, oldOtherParams)) {
+                                    _.forEach(otherParams, function (v, k) {
+                                        $location.search(k, v);
+                                    });
+                                    _.forEach(deletedParams, function (k) {
+                                        $location.search(k, null);
+                                    });
+                                }
+                            });
                     } else {
                         navigateToPath([]);
                     }

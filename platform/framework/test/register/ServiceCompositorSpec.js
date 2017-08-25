@@ -195,7 +195,8 @@ define(
                 expect(mockApp.service).not.toHaveBeenCalled();
 
                 // Should have gotten one warning for each skipped component
-                expect(mockLog.warn.calls.length).toEqual(3);
+                expect(mockLog.warn.calls.length).toEqual(2);
+                expect(mockLog.info.calls.length).toEqual(1);
             });
 
             it("warns about and skips aggregators with zero providers", function () {
@@ -217,7 +218,7 @@ define(
                 expect(mockApp.service).not.toHaveBeenCalled();
 
                 // Should have gotten a warning
-                expect(mockLog.warn).toHaveBeenCalled();
+                expect(mockLog.info).toHaveBeenCalled();
             });
 
             it("warns about and skips decorators with nothing to decorate", function () {
