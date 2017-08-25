@@ -32,6 +32,7 @@
 
 .l-summary-widget {
     // Widget layout classes here
+    @include ellipsize();
     text-align: center;
 
 }
