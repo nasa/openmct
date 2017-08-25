@@ -217,7 +217,8 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
 
         it('gets the keys for possible operations', function () {
             expect(evaluator.getOperationKeys()).toEqual(
-              ['greaterThan', 'lessThan', 'textContains', 'textIsExactly', 'isHalfHorse']);
+              ['greaterThan', 'lessThan', 'textContains', 'textIsExactly', 'isHalfHorse']
+            );
         });
 
         it('gets output text for a given operation', function () {
@@ -325,6 +326,12 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
             testOperation = testEvaluator.operations.isUndefined.operation;
             expect(testOperation([1])).toEqual(false);
             expect(testOperation([])).toEqual(true);
+        });
+
+        it('can produce a description for all supported operations', function () {
+            testEvaluator.getOperationKeys().forEach(function (key) {
+                expect(testEvaluator.getOperationDescription(key, [])).toBeDefined();
+            });
         });
     });
 });
