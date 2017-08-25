@@ -129,7 +129,7 @@ define([
                 label: this.domainObject.name,
                 message: '',
                 id: ruleId,
-                icon: 'icon-alert-rect',
+                icon: ' ',
                 style: styleObj,
                 description: ruleId === 'default' ? 'Default appearance for the widget' : 'A new rule',
                 conditions: [{

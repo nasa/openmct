@@ -45,6 +45,8 @@ define([
         this.onConditionChange = this.onConditionChange.bind(this);
 
         this.thumbnail = $('.t-widget-thumb', this.domElement);
+        this.thumbnailIcon = $('.widget-icon', this.domElement);
+        this.thumbnailLabel = $('.widget-label', this.domElement);
         this.title = $('.rule-title', this.domElement);
         this.description = $('.rule-description', this.domElement);
         this.trigger = $('.t-trigger', this.domElement);
@@ -82,6 +84,7 @@ define([
         function onIconInput(icon) {
             self.config.icon = icon;
             self.updateDomainObject('icon', icon);
+            self.thumbnailIcon.removeClass().addClass('widget-icon ' + icon);
             self.callbacks.change.forEach(function (callback) {
                 if (callback) {
                     callback();
@@ -121,6 +124,7 @@ define([
         function onTextInput(elem, inputKey) {
             self.config[inputKey] = elem.value;
             self.updateDomainObject(inputKey, elem.value);
+            self.thumbnailLabel.html(elem.value);
             if (inputKey === 'name') {
                 self.title.html(elem.value);
             }
@@ -143,6 +147,10 @@ define([
         $('.t-rule-label-input', this.domElement).before(this.iconInput.getDOM());
         this.iconInput.set(self.config.icon);
         this.iconInput.on('change', onIconInput);
+
+        // Initialize thumbs when first loading
+        this.thumbnailIcon.removeClass().addClass('widget-icon ' + self.config.icon);
+        this.thumbnailLabel.html(self.config.label);
 
         Object.keys(this.colorInputs).forEach(function (inputKey) {
             var input = self.colorInputs[inputKey];
