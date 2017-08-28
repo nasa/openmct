@@ -39,7 +39,7 @@
 // Status coloring
 .ok, .info {
     .status-indicator {
-        color: $colorStatusInfo;
+        color: $colorInfo;
     }
 }
 
@@ -224,15 +224,15 @@
 	}
 	&.ok,
     &.info {
-		@include statusBannerColors($colorStatusInfo);
+		@include statusBannerColors($colorInfo);
 	}
 	&.caution,
     &.warning,
     &.alert {
-		@include statusBannerColors($colorStatusAlert);
+		@include statusBannerColors($colorWarningLo);
 	}
     &.error {
-        @include statusBannerColors($colorStatusError);
+        @include statusBannerColors($colorWarningHi);
     }
 }
 
@@ -248,15 +248,15 @@
 
     .message-severity-info .type-icon.message-type {
         @extend .icon-info;
-        color: $colorStatusInfo;
+        color: $colorInfo;
     }
     .message-severity-alert .type-icon.message-type {
         @extend .icon-bell;
-        color: $colorStatusAlert;
+        color: $colorWarningLo;
     }
     .message-severity-error .type-icon.message-type {
         @extend .icon-alert-rect;
-        color: $colorStatusError;
+        color: $colorWarningHi;
     }
 }
 /* Paths:

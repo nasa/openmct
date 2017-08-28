@@ -12,3 +12,11 @@
     // For dark interfaces, darker things move back - opposite for light interfaces
     @return lighten($c, $p);
 }
+
+@function bgFg($c) {
+    // Given a single color, return valid background and foreground versions of that color
+    $bg: darken($c, 20%);
+    $fg: lighten($c, 20%);
+    @return $bg, $fg;
+}
+

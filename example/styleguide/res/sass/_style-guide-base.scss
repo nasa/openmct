@@ -28,8 +28,8 @@
         color: $colorKey;
     }
 
-    h1, h2 {
-        color: pullForward($colorBodyFg, 20%);
+    h1, h2, strong, b {
+        color: pullForward($colorBodyFg, 50%);
     }
 
     h2 {
@@ -45,6 +45,10 @@
         text-transform: uppercase;
     }
 
+    strong, b {
+        font-weight: normal;
+    }
+
     .w-markup {
         //Wrap markup example "pre" element
         background-color: $colorCode;
@@ -52,6 +56,12 @@
         display: block;
         padding: $interiorMarginLg $interiorMarginLg;
         position: relative;
+    }
+
+    .w-mct-example {
+        div {
+            margin-bottom: $interiorMarginLg;
+        }
     }
 
     code,
