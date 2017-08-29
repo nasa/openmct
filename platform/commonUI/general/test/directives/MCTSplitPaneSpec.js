@@ -164,9 +164,8 @@ define(
                 });
 
                 it("allows positions to be set", function () {
-                    var intitialValue = mockChildren[0].offsetWidth;
                     var testValue = mockChildren[0].offsetWidth + 50;
-                    controller.position(intitialValue, testValue);
+                    controller.position(testValue);
                     expect(mockFirstPane.css).toHaveBeenCalledWith(
                         'width',
                         (testValue) + 'px'

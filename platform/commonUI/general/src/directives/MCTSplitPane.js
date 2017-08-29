@@ -229,14 +229,13 @@ define(
                     anchor: function () {
                         return anchor;
                     },
-                    position: function (initialValue, newValue) {
+                    position: function (newPosition) {
                         if (arguments.length === 0) {
                             return getSetPosition();
                         }
-                        if (initialValue !== newValue) {
-                            setUserWidthPreference(newValue);
-                            getSetPosition(newValue);
-                        }
+
+                        setUserWidthPreference(newPosition);
+                        return getSetPosition(newPosition);
                     },
                     startResizing: function () {
                         toggleClass('resizing');

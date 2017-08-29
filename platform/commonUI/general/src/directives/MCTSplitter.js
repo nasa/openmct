@@ -57,7 +57,10 @@ define(
 
                         // Update the position of this splitter
                         newPosition =  initialPosition + pixelDelta;
-                        mctSplitPane.position(initialPosition, newPosition);
+
+                        if (initialPosition !== newPosition) {
+                            mctSplitPane.position(newPosition);
+                        }
                     },
                     // Grab the event when the user is done moving
                     // the splitter and pass it on
