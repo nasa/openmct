@@ -26,6 +26,7 @@ define([
     "./src/InspectorPaneController",
     "./src/BrowseObjectController",
     "./src/MenuArrowController",
+    "./src/ObjectHeaderController",
     "./src/navigation/NavigationService",
     "./src/navigation/NavigateAction",
     "./src/navigation/OrphanNavigationHandler",
@@ -48,6 +49,7 @@ define([
     InspectorPaneController,
     BrowseObjectController,
     MenuArrowController,
+    ObjectHeaderController,
     NavigationService,
     NavigateAction,
     OrphanNavigationHandler,
@@ -139,6 +141,13 @@ define([
                         "navigationService",
                         "$location",
                         "$attrs"
+                    ]
+                },
+                {
+                    "key": "ObjectHeaderController",
+                    "implementation": ObjectHeaderController,
+                    "depends": [
+                        "$scope"
                     ]
                 }
             ],
