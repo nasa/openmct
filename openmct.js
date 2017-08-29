@@ -48,7 +48,20 @@ requirejs.config({
         "d3-format": "node_modules/d3-format/build/d3-format.min",
         "d3-interpolate": "node_modules/d3-interpolate/build/d3-interpolate.min",
         "d3-time": "node_modules/d3-time/build/d3-time.min",
-        "d3-time-format": "node_modules/d3-time-format/build/d3-time-format.min"
+        "d3-time-format": "node_modules/d3-time-format/build/d3-time-format.min",
+        "es6": "node_modules/requirejs-babel-plugin/es6",
+        "babel": "node_modules/babel-standalone/babel"
+    },
+    map: {
+        "*": {
+            etch: "es6!node_modules/etch/dist/index"
+        }
+    },
+    babel: {
+        presets: ['es2015'],
+        plugins: [
+            'transform-es2015-modules-amd'
+        ]
     },
     "shim": {
         "angular": {
@@ -71,19 +84,6 @@ requirejs.config({
         },
         "zepto": {
             "exports": "Zepto"
-        },
-        "lodash": {
-            "exports": "lodash"
-        },
-        "d3-selection": {
-            "exports": "d3-selection"
-        },
-        "d3-scale": {
-            "deps": ["d3-array", "d3-collection", "d3-color", "d3-format", "d3-interpolate", "d3-time", "d3-time-format"],
-            "exports": "d3-scale"
-        },
-        "d3-axis": {
-            "exports": "d3-axis"
         }
     }
 });
