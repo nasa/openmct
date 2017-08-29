@@ -117,6 +117,10 @@ define(
 
                 // Apply styles to child elements
                 function updateChildren(children) {
+                    if (alias) {
+                        position = userWidthPreference || position;
+                    }
+
                     // Pick out correct elements to update, flowing from
                     // selected anchor edge.
                     var first = children.eq(anchor.reversed ? 2 : 0),
@@ -126,7 +130,7 @@ define(
 
                     splitterSize = getSize(splitter[0]);
                     first.css(anchor.edge, "0px");
-                    first.css(anchor.dimension, (userWidthPreference || position) + 'px');
+                    first.css(anchor.dimension, position + 'px');
 
                     // Get actual size (to obey min-width etc.)
                     firstSize = getSize(first[0]);
@@ -135,8 +139,8 @@ define(
                     splitter.css(anchor.opposite, "auto");
 
                     last.css(anchor.edge, firstSize + splitterSize + 'px');
-                    last.css(anchor.opposite, "0px");
-                    position = firstSize + splitterSize;
+                    last.css(anchor.opposite, '0px');
+                    position = firstSize;
                 }
 
                 // Update positioning of contained elements
@@ -173,17 +177,17 @@ define(
                             positionParsed.assign($scope, position);
                         }
                     }
+
                     return position;
                 }
 
                 function setUserWidthPreference(value) {
-                    userWidthPreference = value - splitterSize;
+                    userWidthPreference = value;
                 }
 
                 function persistToLocalStorage(value) {
                     if (alias) {
-                        userWidthPreference = value - splitterSize;
-                        $window.localStorage.setItem(alias, userWidthPreference);
+                        $window.localStorage.setItem(alias, value);
                     }
                 }
 
@@ -225,13 +229,13 @@ define(
                     anchor: function () {
                         return anchor;
                     },
-                    position: function (value) {
-                        if (arguments.length > 0) {
-                            setUserWidthPreference(value);
-                            return getSetPosition(value);
-                        } else {
+                    position: function (newPosition) {
+                        if (arguments.length === 0) {
                             return getSetPosition();
                         }
+
+                        setUserWidthPreference(newPosition);
+                        return getSetPosition(newPosition);
                     },
                     startResizing: function () {
                         toggleClass('resizing');
