@@ -505,7 +505,7 @@ MCT, it will be pre-configured to use the UTC time system, which is installed an
 
 The time bounds of an Open MCT application are defined as numbers, and a Time 
 System gives meaning and context to these numbers so that they can be correctly 
-interpreted. Time Systems are javscript objects that provide some information 
+interpreted. Time Systems are JavaScript objects that provide some information 
 about the current time reference frame. An example of defining and registering 
 a new time system is given below:
 
