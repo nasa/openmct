@@ -140,7 +140,7 @@ define(
 
                 it("exposes its splitter's initial position", function () {
                     expect(controller.position()).toEqual(
-                        mockFirstPane[0].offsetWidth + mockSplitter[0].offsetWidth
+                        mockFirstPane[0].offsetWidth
                     );
                 });
 
@@ -164,11 +164,12 @@ define(
                 });
 
                 it("allows positions to be set", function () {
+                    var intitialValue = mockChildren[0].offsetWidth;
                     var testValue = mockChildren[0].offsetWidth + 50;
-                    controller.position(testValue);
+                    controller.position(intitialValue, testValue);
                     expect(mockFirstPane.css).toHaveBeenCalledWith(
                         'width',
-                        (testValue - mockSplitter[0].offsetWidth) + 'px'
+                        (testValue) + 'px'
                     );
                 });
 
@@ -200,11 +201,11 @@ define(
                     mockFirstPane[0].offsetWidth += 100;
                     // Should not reflect the change yet
                     expect(controller.position()).not.toEqual(
-                        mockFirstPane[0].offsetWidth + mockSplitter[0].offsetWidth
+                        mockFirstPane[0].offsetWidth
                     );
                     mockInterval.mostRecentCall.args[0]();
                     expect(controller.position()).toEqual(
-                        mockFirstPane[0].offsetWidth + mockSplitter[0].offsetWidth
+                        mockFirstPane[0].offsetWidth
                     );
                 });
 
@@ -216,7 +217,7 @@ define(
 
                 it("saves user preference to localStorage when user is done resizing", function () {
                     controller.endResizing(100);
-                    expect(Number(mockWindow.localStorage.getItem('mctSplitPane-rightSide'))).toEqual(100 - mockSplitter[0].offsetWidth);
+                    expect(Number(mockWindow.localStorage.getItem('mctSplitPane-rightSide'))).toEqual(100);
                 });
 
             });
