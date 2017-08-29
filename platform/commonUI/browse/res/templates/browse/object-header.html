@@ -20,9 +20,15 @@
  at runtime from the About dialog for additional information.
 -->
 <span class='type-icon flex-elem {{type.getCssClass()}}'></span>
-<span class="l-elem-wrapper l-flex-row flex-elem grows">
+<span class="l-elem-wrapper l-flex-row flex-elem grows" ng-controller="ObjectHeaderController as controller">
     <span ng-if="parameters.mode" class='action flex-elem'>{{parameters.mode}}</span>
-    <span class='title-label flex-elem holder flex-can-shrink'>{{model.name}}</span>
+    <input type="text"
+		class='title-label flex-elem holder flex-can-shrink'
+		ng-class="{ error: !valid, 'inline-edit': inlineEdit }"
+		ng-model="name"
+		ng-click="controller.edit()"
+		ng-blur="controller.updateName()"
+		ng-keypress="controller.updateName($event)"></input>
     <span class='t-object-alert t-alert-unsynced flex-elem holder' title='This object is not currently displaying real-time data'></span>
     <mct-representation
         key="'menu-arrow'"
