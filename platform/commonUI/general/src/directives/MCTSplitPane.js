@@ -100,7 +100,7 @@ define(
                     anchor,
                     activeInterval,
                     position,
-                    splitterSize,
+                    splitterSize, 
 
                     alias = $attrs.alias !== undefined ?
                       "mctSplitPane-" + $attrs.alias : undefined,
@@ -108,7 +108,7 @@ define(
                     //convert string to number from localStorage
                     userWidthPreference = $window.localStorage.getItem(alias) === null ?
                       undefined : Number($window.localStorage.getItem(alias));
-
+              
                 // Get relevant size (height or width) of DOM element
                 function getSize(domElement) {
                     return (anchor.orientation === 'vertical' ?
@@ -117,6 +117,10 @@ define(
 
                 // Apply styles to child elements
                 function updateChildren(children) {
+                    if (alias) {
+                        position = userWidthPreference || position;
+                    }                  
+                    
                     // Pick out correct elements to update, flowing from
                     // selected anchor edge.
                     var first = children.eq(anchor.reversed ? 2 : 0),
@@ -126,7 +130,7 @@ define(
 
                     splitterSize = getSize(splitter[0]);
                     first.css(anchor.edge, "0px");
-                    first.css(anchor.dimension, (userWidthPreference || position) + 'px');
+                    first.css(anchor.dimension, position + 'px');
 
                     // Get actual size (to obey min-width etc.)
                     firstSize = getSize(first[0]);
@@ -135,8 +139,8 @@ define(
                     splitter.css(anchor.opposite, "auto");
 
                     last.css(anchor.edge, firstSize + splitterSize + 'px');
-                    last.css(anchor.opposite, "0px");
-                    position = firstSize + splitterSize;
+                    last.css(anchor.opposite, '0px');
+                    position = firstSize;
                 }
 
                 // Update positioning of contained elements
@@ -162,28 +166,27 @@ define(
                 // Getter-setter for the pixel offset of the splitter,
                 // relative to the current edge.
                 function getSetPosition(value) {
-                    var prior = position;
                     if (typeof value === 'number') {
                         position = value;
                         enforceExtrema();
                         updateElementPositions();
 
                         // Pass change up so this state can be shared
-                        if (positionParsed.assign && position !== prior) {
+                        if (positionParsed.assign) {
                             positionParsed.assign($scope, position);
                         }
-                    }
+                    } 
+
                     return position;
                 }
 
                 function setUserWidthPreference(value) {
-                    userWidthPreference = value - splitterSize;
+                    userWidthPreference = value;
                 }
 
                 function persistToLocalStorage(value) {
                     if (alias) {
-                        userWidthPreference = value - splitterSize;
-                        $window.localStorage.setItem(alias, userWidthPreference);
+                        $window.localStorage.setItem(alias, value);
                     }
                 }
 
@@ -218,19 +221,20 @@ define(
                 $scope.$on('$destroy', function () {
                     $interval.cancel(activeInterval);
                 });
-
+                
 
                 // Interface exposed by controller, for mct-splitter to user
                 return {
                     anchor: function () {
                         return anchor;
                     },
-                    position: function (value) {
-                        if (arguments.length > 0) {
-                            setUserWidthPreference(value);
-                            return getSetPosition(value);
-                        } else {
+                    position: function (initialValue, newValue) {
+                        if(arguments.length === 0){
                             return getSetPosition();
+                        }
+                        if (initialValue !== newValue) {
+                            setUserWidthPreference(newValue);
+                            getSetPosition(newValue);
                         }
                     },
                     startResizing: function () {
