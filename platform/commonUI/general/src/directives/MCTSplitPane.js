@@ -166,13 +166,14 @@ define(
                 // Getter-setter for the pixel offset of the splitter,
                 // relative to the current edge.
                 function getSetPosition(value) {
+                    var prior = position;
                     if (typeof value === 'number') {
                         position = value;
                         enforceExtrema();
                         updateElementPositions();
 
                         // Pass change up so this state can be shared
-                        if (positionParsed.assign) {
+                        if (positionParsed.assign && position !== prior) {
                             positionParsed.assign($scope, position);
                         }
                     }

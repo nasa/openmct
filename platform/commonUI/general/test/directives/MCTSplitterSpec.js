@@ -94,7 +94,7 @@ define(
                     it("repositions during drag", function () {
                         mockScope.splitter.move([10, 0]);
                         expect(mockSplitPane.position)
-                            .toHaveBeenCalledWith(testPosition + 10);
+                            .toHaveBeenCalledWith(testPosition, testPosition + 10);
                     });
 
                     it("tell's the splitter when it is done resizing", function () {
