@@ -100,7 +100,7 @@ define(
                     anchor,
                     activeInterval,
                     position,
-                    splitterSize, 
+                    splitterSize,
 
                     alias = $attrs.alias !== undefined ?
                       "mctSplitPane-" + $attrs.alias : undefined,
@@ -108,7 +108,7 @@ define(
                     //convert string to number from localStorage
                     userWidthPreference = $window.localStorage.getItem(alias) === null ?
                       undefined : Number($window.localStorage.getItem(alias));
-              
+
                 // Get relevant size (height or width) of DOM element
                 function getSize(domElement) {
                     return (anchor.orientation === 'vertical' ?
@@ -119,8 +119,8 @@ define(
                 function updateChildren(children) {
                     if (alias) {
                         position = userWidthPreference || position;
-                    }                  
-                    
+                    }
+
                     // Pick out correct elements to update, flowing from
                     // selected anchor edge.
                     var first = children.eq(anchor.reversed ? 2 : 0),
@@ -175,7 +175,7 @@ define(
                         if (positionParsed.assign) {
                             positionParsed.assign($scope, position);
                         }
-                    } 
+                    }
 
                     return position;
                 }
@@ -221,7 +221,7 @@ define(
                 $scope.$on('$destroy', function () {
                     $interval.cancel(activeInterval);
                 });
-                
+
 
                 // Interface exposed by controller, for mct-splitter to user
                 return {
@@ -229,7 +229,7 @@ define(
                         return anchor;
                     },
                     position: function (initialValue, newValue) {
-                        if(arguments.length === 0){
+                        if (arguments.length === 0) {
                             return getSetPosition();
                         }
                         if (initialValue !== newValue) {
