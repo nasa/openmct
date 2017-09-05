@@ -51,7 +51,7 @@ define(
 
 				var name = this.$scope.name;
 
-				if (name.length == 0) {
+				if (name.length === 0) {
 					this.$scope.valid = false;
 					return;
 				}
