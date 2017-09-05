@@ -57,9 +57,11 @@
 		 			return;
 		 		}
 
-		 		this.$scope.domainObject.getCapability('mutation').mutate(function (model) {
-		 			model.name = name;
-		 		});
+		 		if (name !== this.$scope.domainObject.model.name) {
+		 			this.$scope.domainObject.getCapability('mutation').mutate(function (model) {
+		 				model.name = name;
+		 			});
+		 		}
 				
 		 		this.$scope.inlineEdit = false;
 
