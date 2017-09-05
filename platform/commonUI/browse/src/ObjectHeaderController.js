@@ -20,64 +20,63 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
- define(
- 	[],
- 	function() {
+define(
+	[],
+	function () {
 
- 		/**
- 		 * Controller to provide the ability to inline edit an object name.
- 		 *
- 		 * @constructor
-         * @memberof platform/commonUI/browse
- 		 */
-	 	function ObjectHeaderController($scope) {
-	 		this.$scope = $scope;	 		
-	 		this.$scope.name = $scope.domainObject.model.name;
-	 		this.$scope.valid = true;
-	 		this.$scope.inlineEdit = false;
+		/**
+		 * Controller to provide the ability to inline edit an object name.
+		 *
+		 * @constructor
+		 * @memberof platform/commonUI/browse
+		 */
+		function ObjectHeaderController($scope) {
+			this.$scope = $scope;
+			this.$scope.name = $scope.domainObject.model.name;
+			this.$scope.valid = true;
+			this.$scope.inlineEdit = false;
 		}
 
+		/**
+		 * Handler for the blur and enter/return key press events
+		 * to update the object name.
+		 *
+		 * @param event the mouse event
+		 */
+		ObjectHeaderController.prototype.updateName = function (event) {
+			var enterKeyPressed = event && event.which === 13;
 
-	 	/**
-	 	 * Handler for the blur and enter/return key press events
-	 	 * to update the object name.
-	 	 *
-	 	 * @param event the mouse event
-	 	 */	 	
-	 	ObjectHeaderController.prototype.updateName = function (event) {
-	 		var enterKeyPressed = event && event.which === 13;
+			if (event === undefined || enterKeyPressed) {
+				this.$scope.valid = true;
 
-	 		if (event === undefined || enterKeyPressed) {
-	 			this.$scope.valid = true;
-	 			
-		 		var name = this.$scope.name;
+				var name = this.$scope.name;
 
-		 		if (name.length == 0) {
-		 			this.$scope.valid = false;
-		 			return;
-		 		}
+				if (name.length == 0) {
+					this.$scope.valid = false;
+					return;
+				}
 
-		 		if (name !== this.$scope.domainObject.model.name) {
-		 			this.$scope.domainObject.getCapability('mutation').mutate(function (model) {
-		 				model.name = name;
-		 			});
-		 		}
-				
-		 		this.$scope.inlineEdit = false;
+				if (name !== this.$scope.domainObject.model.name) {
+					this.$scope.domainObject.getCapability('mutation').mutate(function (model) {
+						model.name = name;
+					});
+				}
 
-		 		if (enterKeyPressed) {
-		 		 	event.currentTarget.blur();
-		 		}
-		 	}	
-	 	};
+				this.$scope.inlineEdit = false;
 
-	 	/**
-	 	 * Handler for the click event to mark the filed as inline edit.
-	 	 */
-	 	ObjectHeaderController.prototype.edit = function () {
-	 		this.$scope.inlineEdit = true;
-	 	};
+				if (enterKeyPressed) {
+					event.currentTarget.blur();
+				}
+			}
+		};
 
-	 	return ObjectHeaderController;
+		/**
+		 * Handler for the click event to mark the filed as inline edit.
+		 */
+		ObjectHeaderController.prototype.edit = function () {
+			this.$scope.inlineEdit = true;
+		};
+
+		return ObjectHeaderController;
 	}
 );
