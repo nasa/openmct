@@ -138,6 +138,11 @@ define(
                 typeRequest = (type && type.getDefinition().telemetry) || {},
                 modelTelemetry = domainObject.getModel().telemetry,
                 fullRequest = Object.create(typeRequest),
+                newObject = objectUtils.toNewFormat(
+                    domainObject.getModel(),
+                    domainObject.getId()
+                ),
+                metadata = this.openmct.telemetry.getMetadata(newObject),
                 bounds,
                 timeSystem;
 
@@ -171,6 +176,14 @@ define(
                 if (timeSystem !== undefined) {
                     fullRequest.domain = timeSystem.key;
                 }
+            }
+
+            if (!fullRequest.ranges) {
+                fullRequest.ranges = metadata.valuesForHints(['range']);
+            }
+
+            if (!fullRequest.domains) {
+                fullRequest.domains = metadata.valuesForHints(['domain']);
             }
 
             return fullRequest;
