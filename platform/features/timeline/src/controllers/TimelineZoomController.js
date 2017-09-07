@@ -60,14 +60,21 @@ define(
                 });
             }
 
-            function initializeZoomFromTimespan(timespan) {
-                var timelineDuration = timespan.getDuration();
+            function initializeZoomFromStartEnd(start, end) {
+                var duration = end - start;
                 zoomIndex = 0;
-                while (toMillis($scope.scroll.width) < timelineDuration &&
+                while (toMillis($scope.scroll.width) < duration &&
                         zoomIndex < zoomLevels.length - 1) {
                     zoomIndex += 1;
                 }
-                setScroll(toPixels(timespan.getStart()));
+                setScroll(toPixels(start));
+            }
+
+            function initializeZoomFromTimespan(timespan) {
+                return initializeZoomFromStartEnd(
+                    timespan.getStart(),
+                    timespan.getEnd()
+                );
             }
 
             function initializeZoom() {
@@ -101,6 +108,13 @@ define(
                     }
                     return zoomLevels[zoomIndex];
                 },
+                /**
+                 * Adjust the current zoom bounds to fit both the
+                 * start and the end time provided.
+                 * @param {number} start the starting timestamp
+                 * @param {number} end the ending timestamp
+                 */
+                bounds: initializeZoomFromStartEnd,
                 /**
                  * Set the zoom level to fit the bounds of the timeline
                  * being viewed.

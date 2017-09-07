@@ -101,22 +101,29 @@
                     class="abs split-pane-component l-timeline-pane l-pane-r t-pane-v">
 
         <!-- TOP PANE GANTT BARS -->
-        <div class="split-pane-component l-timeline-pane t-pane-h l-pane-top t-timeline-gantt l-timeline-gantt s-timeline-gantt">
+        <div class="split-pane-component l-timeline-pane t-pane-h l-pane-top t-timeline-gantt l-timeline-gantt s-timeline-gantt"
+             ng-controller="TimelineTOIController as toiController">
             <div class="l-hover-btns-holder s-hover-btns-holder">
+                <a class="s-button icon-clock"
+                   ng-click="scroll.follow = true"
+                   ng-show="!toiController.isFollowing() && toiController.isActive()"
+                   title="Follow time bounds">
+                </a>
+
                 <a class="s-button icon-arrows-out"
-                   ng-click="zoomController.fit()"
+                   ng-click="scroll.follow = false; zoomController.fit()"
                    ng-show="true"
                    title="Zoom to fit">
                 </a>
 
                 <a class="s-button icon-magnify-in"
-                   ng-click="zoomController.zoom(-1)"
+                   ng-click="scroll.follow = false; zoomController.zoom(-1)"
                    ng-show="true"
                    title="Zoom in">
                 </a>
 
                 <a class="s-button icon-magnify-out"
-                   ng-click="zoomController.zoom(1)"
+                   ng-click="scroll.follow = false; zoomController.zoom(1)"
                    ng-show="true"
                    title="Zoom out">
                 </a>
@@ -132,6 +139,10 @@
                                          toMillis: zoomController.toMillis
                                          }">
                 </mct-include>
+                <div ng-if="toiController.isActive()"
+                     ng-style="{ left: toiController.x() + 'px', width: '4px', top: '0px', height: '30px', background: 'blue', position: 'absolute' }">
+            </div>
+
             </div>
 
             <div class="t-swimlanes-holder l-swimlanes-holder"
