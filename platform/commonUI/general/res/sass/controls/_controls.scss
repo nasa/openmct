@@ -247,6 +247,7 @@ span[contenteditable].s-inline-edit {
     @include trans-prop-nice((padding), 250ms);
     @include input-base();
     border: 1px solid transparent;
+    min-width: 20px;
     &:hover {
         border-color: rgba($colorBodyFg, 0.2);
         padding-left: $inputTextPLeftRight;
