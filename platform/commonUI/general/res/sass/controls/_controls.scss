@@ -234,13 +234,19 @@ textarea {
 /******************************************************** INPUTS */
 input[type="text"],
 input[type="search"],
-input[type="number"] {
+input[type="number"],
+span[contenteditable].s-status-editing {
     @include nice-input();
     vertical-align: baseline;
     padding: $inputTextP;
     &.numeric {
         text-align: right;
     }
+}
+
+span[contenteditable].s-status-editing {
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 .l-input-sm {
