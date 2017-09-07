@@ -29,6 +29,7 @@ define([
     "./src/controllers/TimelineTickController",
     "./src/controllers/TimelineTableController",
     "./src/controllers/TimelineGanttController",
+    "./src/controllers/TimelineTOIController",
     "./src/controllers/ActivityModeValuesController",
     "./src/capabilities/ActivityTimespanCapability",
     "./src/capabilities/TimelineTimespanCapability",
@@ -59,6 +60,7 @@ define([
     TimelineTickController,
     TimelineTableController,
     TimelineGanttController,
+    TimelineTOIController,
     ActivityModeValuesController,
     ActivityTimespanCapability,
     TimelineTimespanCapability,
@@ -500,6 +502,15 @@ define([
                     "implementation": TimelineGanttController,
                     "depends": [
                         "TIMELINE_MAXIMUM_OFFSCREEN"
+                    ]
+                },
+                {
+                    "key": "TimelineTOIController",
+                    "implementation": TimelineTOIController,
+                    "depends": [
+                        "openmct",
+                        "timerService",
+                        "$scope"
                     ]
                 },
                 {
