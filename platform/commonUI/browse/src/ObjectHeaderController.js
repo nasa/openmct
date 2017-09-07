@@ -32,8 +32,6 @@ define(
 		 */
 		function ObjectHeaderController($scope) {
 			this.$scope = $scope;
-			this.$scope.name = $scope.domainObject.model.name;
-			this.$scope.valid = true;
 			this.$scope.inlineEdit = false;
 		}
 
@@ -44,16 +42,12 @@ define(
 		 * @param event the mouse event
 		 */
 		ObjectHeaderController.prototype.updateName = function (event) {
-			var enterKeyPressed = event && event.which === 13;
-
-			if (event === undefined || enterKeyPressed) {
-				this.$scope.valid = true;
-
-				var name = this.$scope.name;
+			if (event && (event.type === 'blur' || event.which === 13)) {
+				var name = event.currentTarget.innerHTML;
 
 				if (name.length === 0) {
-					this.$scope.valid = false;
-					return;
+					name = "Unnamed " + this.$scope.domainObject.getCapability("type").typeDef.name;
+					event.currentTarget.innerHTML = name;
 				}
 
 				if (name !== this.$scope.domainObject.model.name) {
@@ -64,7 +58,7 @@ define(
 
 				this.$scope.inlineEdit = false;
 
-				if (enterKeyPressed) {
+				if (event.which === 13) {
 					event.currentTarget.blur();
 				}
 			}
