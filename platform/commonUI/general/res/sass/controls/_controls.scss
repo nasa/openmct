@@ -234,8 +234,7 @@ textarea {
 /******************************************************** INPUTS */
 input[type="text"],
 input[type="search"],
-input[type="number"],
-span[contenteditable].s-status-editing {
+input[type="number"] {
     @include nice-input();
     vertical-align: baseline;
     padding: $inputTextP;
@@ -244,9 +243,21 @@ span[contenteditable].s-status-editing {
     }
 }
 
-span[contenteditable].s-status-editing {
-    padding-top: 0;
-    padding-bottom: 0;
+span[contenteditable].s-inline-edit {
+    @include trans-prop-nice((padding), 250ms);
+    @include input-base();
+    border: 1px solid transparent;
+    &:hover {
+        border-color: rgba($colorBodyFg, 0.2);
+        padding-left: $inputTextPLeftRight;
+        padding-right: $inputTextPLeftRight;
+    }
+}
+
+span[contenteditable].s-inline-edit.s-status-editing {
+    @include nice-input();
+    vertical-align: baseline;
+    padding: 0 $inputTextPLeftRight;
 }
 
 .l-input-sm {
