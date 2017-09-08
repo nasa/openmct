@@ -23,8 +23,7 @@
 <span class="l-elem-wrapper l-flex-row flex-elem grows" ng-controller="ObjectHeaderController as controller">
     <span ng-if="parameters.mode" class='action flex-elem'>{{parameters.mode}}</span>
     <span contenteditable="true" 
-		class='title-label flex-elem holder flex-can-shrink s-inline-edit'
-		ng-class="{'s-status-editing': editing}"
+		class='title-label flex-elem holder flex-can-shrink s-input-inline'
 		ng-click="controller.edit()"
 		ng-blur="controller.updateName($event)"
 		ng-keypress="controller.updateName($event)">{{model.name}}</span>

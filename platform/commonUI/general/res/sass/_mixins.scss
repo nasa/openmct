@@ -327,14 +327,17 @@
 	}
 }
 
-@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.6) 0 1px 3px) {
-	@include input-base();
+@mixin s-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.6) 0 1px 3px) {
+    @include input-base();
     background: $bg;
     box-shadow: inset $shdw;
-    border: none;
     color: $fg;
+}
+
+@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.6) 0 1px 3px) {
+    @include s-input($bg, $fg, $shdw);
+    border: none;
     outline: none;
-    padding: $inputTextPTopBtm $inputTextPLeftRight;
 }
 
 @mixin contextArrow() {
