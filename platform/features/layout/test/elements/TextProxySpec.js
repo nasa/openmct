@@ -35,7 +35,8 @@ define(
                     y: 2,
                     width: 42,
                     height: 24,
-                    fill: "transparent"
+                    fill: "transparent",
+                    size: "20px"
                 };
                 testElements = [{}, {}, testElement, {}];
                 proxy = new TextProxy(
@@ -49,6 +50,12 @@ define(
                 expect(proxy.fill()).toEqual('transparent');
                 expect(proxy.fill('#FFF')).toEqual('#FFF');
                 expect(proxy.fill()).toEqual('#FFF');
+            });
+
+            it("provides getter/setter for text size", function () {
+                expect(proxy.size()).toEqual('20px');
+                expect(proxy.size('12px')).toEqual('12px');
+                expect(proxy.size()).toEqual('12px');
             });
         });
     }

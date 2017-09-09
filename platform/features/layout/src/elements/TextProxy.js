@@ -58,6 +58,15 @@ define(
              */
             proxy.text = new AccessorMutator(element, 'text');
 
+            /**
+             * Get and/or set the text size of this element.
+             *
+             * @param {string} [size] the new text size (if setting)
+             * @returns {string} the text size
+             * @memberof platform/features/layout.TextProxy#
+             */
+            proxy.size = new AccessorMutator(element, 'size');
+
             return proxy;
         }
 

@@ -256,7 +256,8 @@ define(
                     titled: true,
                     width: DEFAULT_DIMENSIONS[0],
                     height: DEFAULT_DIMENSIONS[1],
-                    useGrid: true
+                    useGrid: true,
+                    size: "14px"
                 });
 
                 //Re-initialize objects, and subscribe to new object

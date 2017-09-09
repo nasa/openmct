@@ -123,14 +123,6 @@ define([
                                         "control": "color"
                                     },
                                     {
-                                        "property": "color",
-                                        "cssClass": "icon-T",
-                                        "title": "Text color",
-                                        "description": "Set text color",
-                                        "mandatory": true,
-                                        "control": "color"
-                                    },
-                                    {
                                         "property": "url",
                                         "cssClass": "icon-image",
                                         "control": "dialog-button",
@@ -142,6 +134,82 @@ define([
                                             "cssClass": "l-input-lg",
                                             "required": true
                                         }
+                                    }
+                                ]
+                            },
+                            {
+                                "items": [
+                                    {
+                                        "property": "color",
+                                        "cssClass": "icon-T",
+                                        "title": "Text color",
+                                        "description": "Set text color",
+                                        "mandatory": true,
+                                        "control": "color"
+                                    },
+                                    {
+                                        "property": "size",
+                                        "title": "Text size",
+                                        "description": "Set text size",
+                                        "control": "select",
+                                        "options": [
+                                            {
+                                                "value": "8px",
+                                                "name": "8 px"
+                                            },
+                                            {
+                                                "value": "9px",
+                                                "name": "9 px"
+                                            },
+                                            {
+                                                "value": "10px",
+                                                "name": "10 px"
+                                            },
+                                            {
+                                                "value": "11px",
+                                                "name": "11 px"
+                                            },
+                                            {
+                                                "value": "12px",
+                                                "name": "12 px"
+                                            },
+                                            {
+                                                "value": "14px",
+                                                "name": "14 px"
+                                            },
+                                            {
+                                                "value": "16px",
+                                                "name": "16 px"
+                                            },
+                                            {
+                                                "value": "20px",
+                                                "name": "20 px"
+                                            },
+                                            {
+                                                "value": "24px",
+                                                "name": "24 px"
+                                            },
+                                            {
+                                                "value": "30px",
+                                                "name": "30 px"
+                                            },
+                                            {
+                                                "value": "36px",
+                                                "name": "36 px"
+                                            },
+                                            {
+                                                "value": "48px",
+                                                "name": "48 px"
+                                            },
+                                            {
+                                                "value": "72px",
+                                                "name": "72 px"
+                                            },
+                                            {
+                                                "value": "96px",
+                                                "name": "96 px"
+                                            }
+                                        ]
                                     }
                                 ]
                             },
