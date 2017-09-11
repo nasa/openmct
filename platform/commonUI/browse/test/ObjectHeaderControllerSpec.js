@@ -27,33 +27,43 @@ define(
         describe("The object header controller", function () {
             var mockScope,
                 mockDomainObject,
-                mockCapability,
+                mockCapabilities,
+                mockMutationCapability,
+                mockTypeCapability,
                 mockEvent,
                 mockCurrentTarget,
                 controller;
 
-            function getModel() {
-                return {
-                    name: "Test name"
-                };
-            }
-
             beforeEach(function () {
-                mockCapability = jasmine.createSpyObj("capability", ["mutate", "typeDef"]);
-                mockCapability.typeDef.name = "";
+                mockMutationCapability = jasmine.createSpyObj("mutation", ["mutate"]);
+                mockTypeCapability = {
+                    typeDef: {
+                        name: ""
+                    }
+                };
+                mockCapabilities = {
+                    mutation: mockMutationCapability,
+                    type: mockTypeCapability
+                };
 
                 mockDomainObject = jasmine.createSpyObj("domainObject", ["getCapability", "model"]);
-                mockDomainObject.model = getModel();
-                mockDomainObject.getCapability.andReturn(mockCapability);
+                mockDomainObject.model = {name: "Test name"};
+                mockDomainObject.getCapability.andCallFake(function (key) {
+                    return mockCapabilities[key];
+                });
 
-                mockScope = jasmine.createSpyObj("$scope", [""]);
-                mockScope.domainObject = mockDomainObject;
+                mockScope = {
+                    domainObject: mockDomainObject
+                };
 
                 mockCurrentTarget = jasmine.createSpyObj("currentTarget", ["blur", "innerHTML"]);
-                mockCurrentTarget.blur.andReturn({ blur: function () {} });
+                mockCurrentTarget.blur.andReturn(mockCurrentTarget);
 
-                mockEvent = jasmine.createSpyObj('event', ["which", "type"]);
-                mockEvent.currentTarget = mockCurrentTarget;
+                mockEvent = {
+                    which: {},
+                    type: {},
+                    currentTarget: mockCurrentTarget
+                };
 
                 controller = new ObjectHeaderController(mockScope);
             });
@@ -63,7 +73,7 @@ define(
                 mockCurrentTarget.innerHTML = "New name";
                 controller.updateName(mockEvent);
 
-                expect(mockCapability.mutate).toHaveBeenCalled();
+                expect(mockMutationCapability.mutate).toHaveBeenCalled();
             });
 
             it("updates the model with a default for blank names", function () {
@@ -72,27 +82,31 @@ define(
                 controller.updateName(mockEvent);
 
                 expect(mockCurrentTarget.innerHTML.length).not.toEqual(0);
-                expect(mockCapability.mutate).toHaveBeenCalled();
+                expect(mockMutationCapability.mutate).toHaveBeenCalled();
             });
 
             it("does not update the model if the same name", function () {
                 mockEvent.type = "blur";
-                mockCurrentTarget.innerHTML = getModel().name;
+                mockCurrentTarget.innerHTML = mockDomainObject.model.name;
                 controller.updateName(mockEvent);
 
-                expect(mockCapability.mutate).not.toHaveBeenCalled();
+                expect(mockMutationCapability.mutate).not.toHaveBeenCalled();
             });
 
             it("updates the model on enter keypress event only", function () {
                 mockCurrentTarget.innerHTML = "New name";
                 controller.updateName(mockEvent);
 
-                expect(mockCapability.mutate).not.toHaveBeenCalled();
+                expect(mockMutationCapability.mutate).not.toHaveBeenCalled();
 
                 mockEvent.which = 13;
                 controller.updateName(mockEvent);
 
-                expect(mockCapability.mutate).toHaveBeenCalled();
+                expect(mockMutationCapability.mutate).toHaveBeenCalledWith(jasmine.any(Function));
+
+                mockMutationCapability.mutate.mostRecentCall.args[0](mockDomainObject.model);
+
+                expect(mockDomainObject.model.name).toBe("New name");
             });
 
             it("blurs the field on enter key press", function () {

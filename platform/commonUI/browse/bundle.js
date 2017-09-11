@@ -37,6 +37,7 @@ define([
     "text!./res/templates/browse-object.html",
     "text!./res/templates/items/grid-item.html",
     "text!./res/templates/browse/object-header.html",
+    "text!./res/templates/browse/object-header-frame.html",
     "text!./res/templates/menu-arrow.html",
     "text!./res/templates/back-arrow.html",
     "text!./res/templates/items/items.html",
@@ -60,6 +61,7 @@ define([
     browseObjectTemplate,
     gridItemTemplate,
     objectHeaderTemplate,
+    objectHeaderFrameTemplate,
     menuArrowTemplate,
     backArrowTemplate,
     itemsTemplate,
@@ -178,6 +180,13 @@ define([
                 {
                     "key": "object-header",
                     "template": objectHeaderTemplate,
+                    "uses": [
+                        "type"
+                    ]
+                },
+                {
+                    "key": "object-header-frame",
+                    "template": objectHeaderFrameTemplate,
                     "uses": [
                         "type"
                     ]
