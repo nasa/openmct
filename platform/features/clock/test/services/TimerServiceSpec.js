@@ -25,7 +25,6 @@ define([
 ], function (TimerService) {
     describe("TimerService", function () {
         var callback;
-        var mockClock;
         var mockmct;
         var timerService;
 
