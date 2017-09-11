@@ -132,11 +132,6 @@ define(
 
                     // Get actual size (to obey min-width etc.)
                     firstSize = getSize(first[0]);
-
-                    if (alias === 'mctSplitPane-imagery') {
-                        firstSize = firstSize - 5;
-                    }
-
                     first.css(anchor.dimension, firstSize + 'px');
                     splitter.css(anchor.edge, firstSize + 'px');
                     splitter.css(anchor.opposite, "auto");
