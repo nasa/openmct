@@ -117,9 +117,7 @@ define(
 
                 // Apply styles to child elements
                 function updateChildren(children) {
-                    if (alias) {
-                        position = userWidthPreference || position;
-                    }
+                    position = userWidthPreference || position;
 
                     // Pick out correct elements to update, flowing from
                     // selected anchor edge.
@@ -182,7 +180,9 @@ define(
                 }
 
                 function setUserWidthPreference(value) {
-                    userWidthPreference = value;
+                    if (alias) {
+                        userWidthPreference = value;
+                    }
                 }
 
                 function persistToLocalStorage(value) {
