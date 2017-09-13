@@ -152,68 +152,9 @@ define([
                                         "title": "Text size",
                                         "description": "Set text size",
                                         "control": "select",
-                                        "options": [
-                                            {
-                                                "value": "9px",
-                                                "name": "9 px"
-                                            },
-                                            {
-                                                "value": "10px",
-                                                "name": "10 px"
-                                            },
-                                            {
-                                                "value": "11px",
-                                                "name": "11 px"
-                                            },
-                                            {
-                                                "value": "12px",
-                                                "name": "12 px"
-                                            },
-                                            {
-                                                "value": "13px",
-                                                "name": "13 px"
-                                            },
-                                            {
-                                                "value": "14px",
-                                                "name": "14 px"
-                                            },
-                                            {
-                                                "value": "15px",
-                                                "name": "15 px"
-                                            },
-                                            {
-                                                "value": "16px",
-                                                "name": "16 px"
-                                            },
-                                            {
-                                                "value": "20px",
-                                                "name": "20 px"
-                                            },
-                                            {
-                                                "value": "24px",
-                                                "name": "24 px"
-                                            },
-                                            {
-                                                "value": "30px",
-                                                "name": "30 px"
-                                            },
-                                            {
-                                                "value": "36px",
-                                                "name": "36 px"
-                                            },
-                                            {
-                                                "value": "48px",
-                                                "name": "48 px"
-                                            },
-                                            {
-                                                "value": "72px",
-                                                "name": "72 px"
-                                            },
-                                            {
-                                                "value": "96px",
-                                                "name": "96 px"
-                                            }
-                                        ]
+                                        "options": [9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96].map(function (size) {
+                                            return { "name": size + " px", "value": size + "px" };
+                                        })
                                     }
                                 ]
                             },
