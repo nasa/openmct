@@ -43,7 +43,7 @@ define(
                 "fixed.text": {
                     fill: "transparent",
                     stroke: "transparent",
-                    size: "14px"
+                    size: "13px"
                 }
             },
             DIALOGS = {

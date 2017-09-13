@@ -52,6 +52,7 @@
 			font-size: 0.8rem;
 			$p: 1px;
 			line-height: 100%;
+            overflow: hidden;
 			&.l-static-text {
 				padding: $p;
 			}

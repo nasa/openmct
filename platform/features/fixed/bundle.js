@@ -154,10 +154,6 @@ define([
                                         "control": "select",
                                         "options": [
                                             {
-                                                "value": "8px",
-                                                "name": "8 px"
-                                            },
-                                            {
                                                 "value": "9px",
                                                 "name": "9 px"
                                             },
@@ -174,8 +170,16 @@ define([
                                                 "name": "12 px"
                                             },
                                             {
+                                                "value": "13px",
+                                                "name": "13 px"
+                                            },
+                                            {
                                                 "value": "14px",
                                                 "name": "14 px"
+                                            },
+                                            {
+                                                "value": "15px",
+                                                "name": "15 px"
                                             },
                                             {
                                                 "value": "16px",
@@ -280,11 +284,7 @@ define([
                                         "control": "numberfield",
                                         "description": "Resize object width",
                                         "min": "1"
-                                    }
-                                ]
-                            },
-                            {
-                                "items": [
+                                    },
                                     {
                                         "property": "useGrid",
                                         "name": "Snap to Grid",
