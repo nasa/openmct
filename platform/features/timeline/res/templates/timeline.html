@@ -129,7 +129,7 @@
                 </a>
             </div>
 
-            <div style="overflow: hidden; position: absolute; left: 0; top: 0; right: 0; height: 30px;" mct-scroll-x="scroll.x">
+            <div class="abs l-timeline-gantt-header-w" mct-scroll-x="scroll.x">
                 <mct-include key="'timeline-ticks'"
                              parameters="{
                                          fullWidth: zoomController.width(timelineController.end()),
@@ -139,10 +139,9 @@
                                          toMillis: zoomController.toMillis
                                          }">
                 </mct-include>
-                <div ng-if="toiController.isActive()"
-                     ng-style="{ left: toiController.x() + 'px', width: '4px', top: '0px', height: '30px', background: 'blue', position: 'absolute' }">
-            </div>
-
+                <div class="t-follow-line l-follow-line s-follow-line" ng-if="toiController.isActive()"
+                     ng-style="{ left: toiController.x() + 'px' }">
+                </div>
             </div>
 
             <div class="t-swimlanes-holder l-swimlanes-holder"

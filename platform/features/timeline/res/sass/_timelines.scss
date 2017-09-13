@@ -75,6 +75,10 @@
                 }
             }
             &.l-timeline-gantt {
+                .abs.l-timeline-gantt-header-w {
+                    overflow: hidden;
+                    height: $timelineTopPaneHeaderH;
+                }
                 .l-swimlanes-holder {
                     @include scrollV(scroll);
                     bottom: $scrollbarTrackSize;
@@ -322,6 +326,18 @@
 	.l-subticks {
 		height: 5px
 	}
+
+    // Follow Line
+    .l-follow-line {
+        position: absolute;
+        top: 0; bottom: 0;
+        width: 1px;
+        z-index: 100;
+    }
+
+    .s-follow-line {
+        background: rgba(red, 0.5);
+    }
 }
 
 .s-status-editing .l-title .rep-object-label[draggable="true"] {
