@@ -94,31 +94,6 @@ define([
             }
         },
         "extensions": {
-            "versions": [
-                {
-                    "name": "Version",
-                    "value": "@@version",
-                    "priority": 999
-                },
-                {
-                    "name": "Built",
-                    "value": "@@timestamp",
-                    "description": "The date on which this version of the client was built.",
-                    "priority": 990
-                },
-                {
-                    "name": "Revision",
-                    "value": "@@revision",
-                    "description": "A unique revision identifier for the client sources.",
-                    "priority": 995
-                },
-                {
-                    "name": "Branch",
-                    "value": "@@branch",
-                    "description": "The name of the branch that was used during the build.",
-                    "priority": 994
-                }
-            ],
             "components": [
                 {
                     "provides": "objectService",

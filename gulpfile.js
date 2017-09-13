@@ -46,9 +46,22 @@ var gulp = require('gulp'),
             name: 'bower_components/almond/almond.js',
             include: paths.main.replace('.js', ''),
             wrap: {
-                startFile: "src/start.frag",
+                start: (function () {
+                    var buildVariables = {
+                        version: project.version,
+                        timestamp: moment.utc(Date.now()).format(),
+                        revision: fs.existsSync('.git') ? git.long() : 'Unknown',
+                        branch: fs.existsSync('.git') ? git.branch() : 'Unknown'
+                    };
+                    return fs.readFileSync("src/start.frag", 'utf-8')
+                        .replace(/@@(\w+)/g, function (match, key) {
+                            return buildVariables[key];
+                        });;
+                }()),
                 endFile: "src/end.frag"
             },
+            optimize: 'uglify2',
+            uglify2: { output: { comments: /@preserve/ } },
             mainConfigFile: paths.main,
             wrapShim: true
         },
@@ -58,14 +71,6 @@ var gulp = require('gulp'),
         },
         sass: {
             sourceComments: true
-        },
-        replace: {
-            variables: {
-                version: project.version,
-                timestamp: moment.utc(Date.now()).format(),
-                revision: fs.existsSync('.git') ? git.long() : 'Unknown',
-                branch: fs.existsSync('.git') ? git.branch() : 'Unknown'
-            }
         }
     };
 
@@ -76,16 +81,11 @@ if (process.env.NODE_ENV === 'development') {
 
 gulp.task('scripts', function () {
     var requirejsOptimize = require('gulp-requirejs-optimize');
-    var replace = require('gulp-replace-task');
-    var header = require('gulp-header');
-    var comment = fs.readFileSync('src/about.frag');
 
     return gulp.src(paths.main)
         .pipe(sourcemaps.init())
         .pipe(requirejsOptimize(options.requirejsOptimize))
         .pipe(sourcemaps.write('.'))
-        .pipe(replace(options.replace))
-        .pipe(header(comment, options.replace.variables))
         .pipe(gulp.dest(paths.dist));
 });
 

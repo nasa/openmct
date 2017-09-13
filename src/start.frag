@@ -18,6 +18,14 @@
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
+ *
+ * Open MCT https://nasa.github.io/openmct/
+ * Version: @@version
+ * Built: @@timestamp
+ * Revision: @@revision
+ * Branch: @@branch
+ *
+ * @preserve
  *****************************************************************************/
 
 (function (root, factory) {
@@ -29,3 +37,9 @@
         root.openmct = factory();
     }
 }(this, function() {
+    var BUILD_CONSTANTS = {
+        version: "@@version",
+        timestamp: "@@timestamp",
+        revision: "@@revision",
+        branch: "@@branch"
+    };
