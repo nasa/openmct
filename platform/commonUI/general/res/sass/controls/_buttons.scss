@@ -33,7 +33,6 @@ $pad: $interiorMargin * $baseRatio;
     height: $btnStdH;
     line-height: $btnStdH;
     padding: 0 $pad;
-    vertical-align: top;
 
     &.labeled:before {
         // Icon when it's included

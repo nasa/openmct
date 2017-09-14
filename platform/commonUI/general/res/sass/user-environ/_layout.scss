@@ -240,7 +240,9 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
 .top-bar .buttons-main .s-button,
 .top-bar .s-menu-button,
 .tool-bar .s-button,
-.tool-bar .s-menu-button {
+.tool-bar .s-menu-button,
+.tool-bar .select,
+.tool-bar .input-labeled {
     $h: $btnToolbarH;
     height: $h;
     line-height: $h;

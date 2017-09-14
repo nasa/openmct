@@ -309,9 +309,8 @@ textarea.lg { position: relative; height: 300px; }
         }
     }
     &:before {
-        //@include contextArrow();
         pointer-events: none;
-        color: rgba($colorSelectFg, percentToDecimal($contrastInvokeMenuPercent));
+        color: rgba($colorInvokeMenu, percentToDecimal($contrastInvokeMenuPercent));
         display: block;
         position: absolute;
         right: $interiorMargin; top: 0;
