@@ -31,7 +31,7 @@ define([
     './policies/AdapterCompositionPolicy',
     './policies/AdaptedViewPolicy',
     './runs/AlternateCompositionInitializer',
-    './runs/TimeSettingsURLHandler',
+    './runs/TimeSettingsURLHandler'
 ], function (
     legacyRegistry,
     ActionDialogDecorator,

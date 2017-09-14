@@ -257,14 +257,14 @@ define([
 
         this.objectViews.providers.forEach(function (p) {
             this.legacyExtension('views', {
-                key: '_vpid' + p._vpid,
-                vpid: p._vpid,
+                key: 'vpid' + p.vpid,
+                vpid: p.vpid,
                 provider: p,
                 name: p.name,
                 cssClass: p.cssClass,
                 description: p.description,
                 editable: p.editable,
-                template: '<mct-view mct-vpid="' + p._vpid + '"/>'
+                template: '<mct-view mct-vpid="' + p.vpid + '"/>'
             });
         }, this);
 

@@ -28,7 +28,7 @@ define([], function () {
      * @memberof module:openmct
      */
     function ViewRegistry() {
-        this._next_id = 0;
+        this.next_id = 0;
         this.providers = [];
     }
 
@@ -54,7 +54,7 @@ define([], function () {
      * @memberof module:openmct.ViewRegistry#
      */
     ViewRegistry.prototype.addProvider = function (provider) {
-        provider._vpid = this._next_id++;
+        provider.vpid = this.next_id++;
         this.providers.push(provider);
     };
 
@@ -63,10 +63,10 @@ define([], function () {
      * views.
      * @private
      */
-    ViewRegistry.prototype._getByVPID = function (vpid) {
+    ViewRegistry.prototype.getByVPID = function (vpid) {
         return this.providers.filter(function (p) {
-            return p._vpid === vpid;
-        })[0]
+            return p.vpid === vpid;
+        })[0];
     };
 
     /**

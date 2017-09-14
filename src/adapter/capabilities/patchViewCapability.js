@@ -51,9 +51,9 @@ define([
                 .sortBy('priority')
                 .map('view')
                 .value();
-            }
+            };
             return capability;
-        }
+        };
 
     }
 
