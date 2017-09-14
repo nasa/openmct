@@ -20,6 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .section-header {
+    border-radius: $basicCr;
+    background: $colorFormSectionHeader;
+    color: lighten($colorBodyFg, 20%);
+    font-size: 0.8em;
+    margin: $interiorMargin 0;
+    padding: $formTBPad $formLRPad;
     text-transform: uppercase;
 }
 
@@ -39,15 +45,6 @@
                 }
             }
         }
-    }
-
-    .section-header {
-        border-radius: $basicCr;
-        background: $colorFormSectionHeader;
-        $c: lighten($colorBodyFg, 20%);
-        color: $c;
-        font-size: 0.8em;
-        padding: $formTBPad $formLRPad;
     }
 
 	.form-row {
