@@ -51,7 +51,7 @@ define([
         this.container = '';
         this.editListenerUnsubscribe = $.noop;
 
-        this.ruleArea = $('#ruleArea', this.domElement);
+        this.ruleArea = $('.t-widget-rules', this.domElement);
         this.testDataArea = $('.widget-test-data', this.domElement);
         this.addRuleButton = $('#addRule', this.domElement);
 
@@ -133,22 +133,6 @@ define([
             this.editing = false;
         }
         this.updateView();
-    };
-
-    /**
-     * If this view is currently in edit mode, show all rule configuration interfaces.
-     * Otherwise, hide them.
-     */
-    SummaryWidget.prototype.updateView = function () {
-        if (this.editing) {
-            this.ruleArea.show();
-            this.testDataArea.show();
-            this.addRuleButton.show();
-        } else {
-            this.ruleArea.hide();
-            this.testDataArea.hide();
-            this.addRuleButton.hide();
-        }
     };
 
     /**

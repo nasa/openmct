@@ -21,6 +21,13 @@
  *****************************************************************************/
 
 /************************************************************* WIDGET OBJECT */
+.l-summary-widget {
+    // Widget layout classes here
+    @include ellipsize();
+    display: inline-block;
+    text-align: center;
+}
+
 .s-summary-widget {
     // Widget style classes here
     border-radius: $basicCr;
@@ -30,11 +37,16 @@
     padding: $interiorMarginLg $interiorMarginLg * 2;
 }
 
-.l-summary-widget {
-    // Widget layout classes here
-    @include ellipsize();
-    text-align: center;
+.l-widget-outer-w,
+.widget-holder,
+.widget-edit-holder {
+    // In browse mode, all these things should be at .abs default
+    @extend .abs;
+}
 
+.widget-edit-holder {
+    // Hide edit area when in browse mode
+    display: none;
 }
 
 .widget-rule-header {
@@ -60,7 +72,7 @@
     }
 }
 
-.l-widget-thumb-wrapper,
+.l-widget-thumb-w,
 .l-compact-form label {
     $ruleLabelW: 40%;
     $ruleLabelMaxW: 150px;
@@ -70,19 +82,15 @@
 }
 
 /********************************************************** EDITING A WIDGET */
-.l-edit-widget {
-    // Classes for editor layout while editing a widget
-    @include absPosDefault();
-    @extend .l-flex-col;
-
-    > .holder {
-        @extend .flex-elem;
-        //@include test();
-    }
+.s-status-editing .l-widget-outer-w {
+    $widgetHolderH: 100px;
+    @extend .abs;
+    //overflow: hidden; // Overflow scroll is handled by internal elements
 
     .widget-holder {
-        height: 100px;
-        .s-summary-widget {
+        bottom: auto;
+        height: $widgetHolderH;
+        .l-summary-widget {
             display: inline-block;
             position: absolute;
             top: 50%; left: 50%;
@@ -90,13 +98,30 @@
         }
     }
 
-    .widget-rules-wrapper {
+    .widget-edit-holder {
+        @extend .l-flex-col;
+        display: block; // Needed to counteract display: none while browsing
+        overflow-y: scroll;
+        padding-right: $interiorMargin;
+        top: $widgetHolderH + $interiorMargin;
+    }
+
+
+    
+    .widget-test-data,
+    .widget-rules-w {
+        @include test(blue, 0.1);
+    }
+    
+    .widget-test-data {
+
+    }
+
+    .widget-rules-w {
         // Wrapper area that holds n rules
+        @extend .flex-elem;
         box-sizing: border-box;
         font-size: 0.8em;
-        overflow-x: hidden;
-        overflow-y: auto;
-        padding-right: $interiorMargin;
     }
 
     .l-widget-rule {
@@ -105,7 +130,7 @@
         padding: $interiorMarginLg;
     }
 
-    .l-widget-thumb-wrapper {
+    .l-widget-thumb-w {
         @extend .l-flex-row;
         @include align-items(center);
         > span { display: block; }
@@ -144,21 +169,21 @@
         padding: $interiorMarginSm $interiorMargin;
         .widget-icon {
             font-size: 0.8em;
-        }
+            }
     }
 
     // Hide and show elements in the rule-header on hover
     .l-widget-rule {
         .grippy,
-        .l-rule-action-buttons-wrapper,
-        .l-condition-action-buttons-wrapper {
+        .l-rule-action-buttons-w,
+        .l-condition-action-buttons-w {
             @include trans-prop-nice($props: opacity, $dur: 500ms);
             opacity: 0;
         }
         &:hover {
             .grippy,
-            .l-rule-action-buttons-wrapper,
-            .l-condition-action-buttons-wrapper {
+            .l-rule-action-buttons-w,
+            .l-condition-action-buttons-w {
                 @include trans-prop-nice($props: opacity, $dur: 0);
                 opacity: 1;
             }
