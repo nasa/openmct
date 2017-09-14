@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-@mixin absPosDefault($offset: 0px, $overflowHidden: hidden) {
-    overflow: $overflowHidden;
+@mixin absPosDefault($offset: 0px, $overflow: hidden) {
+    overflow: $overflow;
     position: absolute;
     top: $offset;
     right: $offset;
