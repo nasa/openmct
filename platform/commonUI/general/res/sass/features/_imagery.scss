@@ -44,14 +44,16 @@
 .l-image-main-controlbar {
 	font-size: 0.8em;
 	line-height: inherit;
-	.left, .right {
+	.l-datetime-w, .l-controls-w {
 		direction: rtl;
 		overflow: hidden;
 	}
-	.left {
+	.l-datetime-w {
+        @include ellipsize();
+        margin-right: $interiorMarginSm;
 		text-align: left;
 	}
-	.right {
+	.l-controls-w {
 		z-index: 2;
 	}
 	.l-date,
@@ -138,6 +140,7 @@
 /*************************************** LOCAL CONTROLS */
 .l-local-controls {
     max-width: 200px;
+    min-width: 100px;
     width: 35%;
     input[type="range"] {
         display: block;
