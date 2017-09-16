@@ -118,7 +118,10 @@ define([
             "policies": [
                 {
                     "category": "view",
-                    "implementation": PlotViewPolicy
+                    "implementation": PlotViewPolicy,
+                    "depends": [
+                        "openmct"
+                    ]
                 }
             ],
             "representations": [
