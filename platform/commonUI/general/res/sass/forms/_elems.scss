@@ -208,6 +208,9 @@
                     &:not(:first-child) {
                         margin-left: $interiorMarginSm;
                     }
+                    &.select {
+                        vertical-align: top;
+                    }
                 }
             }
 
