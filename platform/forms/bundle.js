@@ -24,6 +24,8 @@ define([
     "./src/MCTForm",
     "./src/MCTToolbar",
     "./src/MCTControl",
+    "./src/MCTFileInput",
+    "./src/FileInputService",
     "./src/controllers/AutocompleteController",
     "./src/controllers/DateTimeController",
     "./src/controllers/CompositeController",
@@ -42,11 +44,14 @@ define([
     "text!./res/templates/controls/menu-button.html",
     "text!./res/templates/controls/dialog.html",
     "text!./res/templates/controls/radio.html",
+    "text!./res/templates/controls/file-input.html",
     'legacyRegistry'
 ], function (
     MCTForm,
     MCTToolbar,
     MCTControl,
+    MCTFileInput,
+    FileInputService,
     AutocompleteController,
     DateTimeController,
     CompositeController,
@@ -65,6 +70,7 @@ define([
     menuButtonTemplate,
     dialogTemplate,
     radioTemplate,
+    fileInputTemplate,
     legacyRegistry
 ) {
 
@@ -87,6 +93,13 @@ define([
                     "depends": [
                         "templateLinker",
                         "controls[]"
+                    ]
+                },
+                {
+                    "key": "mctFileInput",
+                    "implementation": MCTFileInput,
+                    "depends": [
+                        "fileInputService"
                     ]
                 }
             ],
@@ -142,6 +155,10 @@ define([
                 {
                     "key": "dialog-button",
                     "template": dialogTemplate
+                },
+                {
+                    "key": "file-input",
+                    "template": fileInputTemplate
                 }
             ],
             "controllers": [
@@ -176,6 +193,14 @@ define([
                         "dialogService"
                     ]
                 }
+            ],
+            "components": [
+                {
+                    "provides": "fileInputService",
+                    "type": "provider",
+                    "implementation": FileInputService
+                }
+
             ]
         }
     });

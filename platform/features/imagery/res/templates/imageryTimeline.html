@@ -1,8 +1,0 @@
-
-<div class="l-image-thumbs-wrapper" ng-controller="ImageryController as imagery">
-	<div class="l-image-thumb-item" ng-repeat="image in imageHistory track by $index">
-		<img class="l-thumb" ng-init="imagery.scrollToRight()"
-			ng-src={{imagery.getImageUrl(image)}} >
-			<div class="l-time">{{imagery.getTime(image)}}</div>
-	</div>
-</div>

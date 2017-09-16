@@ -27,6 +27,7 @@ define([
     '../../platform/features/autoflow/plugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
+    '../../platform/import-export/bundle',
     './summaryWidget/plugin'
 ], function (
     _,
@@ -35,7 +36,8 @@ define([
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
-    SummaryWidget
+    SummaryWidget,
+    ImportExport
 ) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
@@ -55,6 +57,8 @@ define([
     });
 
     plugins.UTCTimeSystem = UTCTimeSystem;
+
+    plugins.ImportExport = ImportExport;
 
     /**
      * A tabular view showing the latest values of multiple telemetry points at

@@ -91,8 +91,10 @@ define(
                     "findSubscriptionProvider"
                 ]);
                 mockTelemetryAPI.getMetadata.andReturn({
-                    valuesForHints: function () {
-                        return [{}];
+                    valuesForHints: function (hint) {
+                        var metadatum = {};
+                        metadatum[hint] = "foo";
+                        return [metadatum];
                     }
                 });
 
@@ -147,7 +149,9 @@ define(
                         source: "testSource", // from model
                         key: "testKey", // from model
                         start: 42, // from argument
-                        domain: 'mockTimeSystem'
+                        domain: 'mockTimeSystem',
+                        domains: [{ domain: "foo" }],
+                        ranges: [{ range: "foo" }]
                     }]);
             });
 
@@ -167,7 +171,9 @@ define(
                     key: "testKey",
                     start: 0,
                     end: 1,
-                    domain: 'mockTimeSystem'
+                    domain: 'mockTimeSystem',
+                    domains: [{ domain: "foo" }],
+                    ranges: [{ range: "foo" }]
                 });
             });
 
@@ -184,7 +190,9 @@ define(
                     key: "testId", // from domain object
                     start: 0,
                     end: 1,
-                    domain: 'mockTimeSystem'
+                    domain: 'mockTimeSystem',
+                    domains: [{ domain: "foo" }],
+                    ranges: [{ range: "foo" }]
                 });
             });
 
@@ -266,7 +274,9 @@ define(
                         key: "testKey",
                         start: 0,
                         end: 1,
-                        domain: 'mockTimeSystem'
+                        domain: 'mockTimeSystem',
+                        domains: [{ domain: "foo" }],
+                        ranges: [{ range: "foo" }]
                     }]
                 );
 
