@@ -85,11 +85,7 @@
 .s-status-editing .l-widget-main {
     // Classes for editor layout while editing a widget
     @include absPosDefault();
-
-    > .holder {
-        @extend .flex-elem;
-        //@include test();
-    }
+    @extend .l-flex-col;
 
     .widget-holder {
         height: 100px;
@@ -103,7 +99,7 @@
     }
 
     .widget-edit-holder {
-        display: block;
+        display: flex; // Overrides display: none during Browse mode
     }
 
     .l-compact-form {
