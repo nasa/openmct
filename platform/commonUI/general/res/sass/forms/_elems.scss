@@ -23,10 +23,16 @@
     border-radius: $basicCr;
     background: $colorFormSectionHeader;
     color: lighten($colorBodyFg, 20%);
-    font-size: 0.8em;
+    font-size: inherit;
     margin: $interiorMargin 0;
     padding: $formTBPad $formLRPad;
     text-transform: uppercase;
+    .view-control {
+        display: inline-block;
+        margin-right: $interiorMargin;
+        width: 1em;
+        height: 1em;
+    }
 }
 
 .form {

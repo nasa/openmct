@@ -60,7 +60,8 @@
     }
 }
 
-.widget-rule-content {
+.widget-rule-content,
+.w-widget-test-data-content {
     @include trans-prop-nice($props: (height, min-height), $dur: 250ms);
     min-height: 0;
     height: 0;
@@ -114,20 +115,23 @@
             &.connects-to-previous {
                 padding: $interiorMargin 0;
             }
-        }
 
-        label {
-            display: block; // Needed to align text to right
-            text-align: right;
+            > label {
+                display: block; // Needed to align text to right
+                text-align: right;
+            }
         }
     }
+}
+
+.widget-edit-holder {
+    font-size: 0.8rem;
 }
 
 .widget-rules-wrapper {
     // Wrapper area that holds n rules
     box-sizing: border-box;
-    font-size: 0.8em;
-    overflow-x: hidden;
+    //overflow-x: hidden;
     overflow-y: auto;
     padding-right: $interiorMargin;
 }
