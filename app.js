@@ -10,7 +10,7 @@
 (function () {
     "use strict";
 
-    var BUNDLE_FILE = 'bundles.json',
+    const BUNDLE_FILE = 'bundles.json',
         options = require('minimist')(process.argv.slice(2)),
         express = require('express'),
         app = express(),
@@ -45,8 +45,8 @@
     app.disable('x-powered-by');
 
     // Override bundles.json for HTTP requests
-    app.use('/' + BUNDLE_FILE, function (req, res) {
-        var bundles;
+    app.use('/' + BUNDLE_FILE, (req, res) => {
+        let bundles;
 
         try {
             bundles = JSON.parse(fs.readFileSync(BUNDLE_FILE, 'utf8'));
@@ -66,8 +66,8 @@
         res.send(JSON.stringify(bundles));
     });
 
-    app.use('/proxyUrl', function proxyRequest(req, res, next) {
-        console.log('Proxying request to: ', req.query.url);
+    app.use('/proxyUrl', (req, res, next) => {
+        console.log(`Proxying request to: ${req.query.url}`);
         req.pipe(request({
             url: req.query.url,
             strictSSL: false
@@ -78,7 +78,7 @@
     app.use(express['static'](options.directory));
 
     // Finally, open the HTTP server and log the instance to the console
-    app.listen(options.port, function() {
-        console.log('Open MCT application running at localhost:' + options.port)
+    app.listen(options.port, () => {
+        console.log(`Open MCT application running at localhost: ${options.port}`);
     });
 }());
