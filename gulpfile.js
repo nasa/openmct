@@ -22,7 +22,7 @@
 
 /*global require,__dirname*/
 
-var gulp = require('gulp'),
+const gulp = require('gulp'),
     sourcemaps = require('gulp-sourcemaps'),
     path = require('path'),
     fs = require('fs'),
@@ -75,10 +75,10 @@ if (process.env.NODE_ENV === 'development') {
 
 
 gulp.task('scripts', function () {
-    var requirejsOptimize = require('gulp-requirejs-optimize');
-    var replace = require('gulp-replace-task');
-    var header = require('gulp-header');
-    var comment = fs.readFileSync('src/about.frag');
+    const requirejsOptimize = require('gulp-requirejs-optimize');
+    const replace = require('gulp-replace-task');
+    const header = require('gulp-header');
+    const comment = fs.readFileSync('src/about.frag');
 
     return gulp.src(paths.main)
         .pipe(sourcemaps.init())
@@ -90,14 +90,14 @@ gulp.task('scripts', function () {
 });
 
 gulp.task('test', function (done) {
-    var karma = require('karma');
+    const karma = require('karma');
     new karma.Server(options.karma, done).start();
 });
 
 gulp.task('stylesheets', function () {
-    var sass = require('gulp-sass');
-    var rename = require('gulp-rename');
-    var bourbon = require('node-bourbon');
+    const sass = require('gulp-sass');
+    const rename = require('gulp-rename');
+    const bourbon = require('node-bourbon');
     options.sass.includePaths = bourbon.includePaths;
 
     return gulp.src(paths.scss, {base: '.'})
@@ -113,10 +113,10 @@ gulp.task('stylesheets', function () {
 });
 
 gulp.task('lint', function () {
-    var jshint = require('gulp-jshint');
-    var merge = require('merge-stream');
+    const jshint = require('gulp-jshint');
+    const merge = require('merge-stream');
 
-    var nonspecs = paths.specs.map(function (glob) {
+    const nonspecs = paths.specs.map(function (glob) {
             return "!" + glob;
         }),
         scriptLint = gulp.src(paths.scripts.concat(nonspecs))
@@ -134,11 +134,11 @@ gulp.task('lint', function () {
 });
 
 gulp.task('checkstyle', function () {
-    var jscs = require('gulp-jscs');
-    var mkdirp = require('mkdirp');
-    var reportName = 'jscs-html-report.html';
-    var reportPath = path.resolve(paths.reports, 'checkstyle', reportName);
-    var moveReport = fs.rename.bind(fs, reportName, reportPath, _.noop);
+    const jscs = require('gulp-jscs');
+    const mkdirp = require('mkdirp');
+    const reportName = 'jscs-html-report.html';
+    const reportPath = path.resolve(paths.reports, 'checkstyle', reportName);
+    const moveReport = fs.rename.bind(fs, reportName, reportPath, _.noop);
 
     mkdirp.sync(path.resolve(paths.reports, 'checkstyle'));
 
@@ -150,7 +150,7 @@ gulp.task('checkstyle', function () {
 });
 
 gulp.task('fixstyle', function () {
-    var jscs = require('gulp-jscs');
+    const jscs = require('gulp-jscs');
 
     return gulp.src(paths.scripts, { base: '.' })
         .pipe(jscs({ fix: true }))
@@ -168,7 +168,7 @@ gulp.task('watch', function () {
 
 gulp.task('serve', function () {
     console.log('Running development server with all defaults');
-    var app = require('./app.js');
+    const app = require('./app.js');
 });
 
 gulp.task('develop', ['serve', 'stylesheets', 'watch']);
