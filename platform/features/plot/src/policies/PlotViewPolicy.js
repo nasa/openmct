@@ -30,30 +30,25 @@ define(
          * @constructor
          * @memberof platform/features/plot
          */
-        function PlotViewPolicy() {
+        function PlotViewPolicy(openmct) {
+            this.openmct = openmct;
         }
 
-        function hasNumericTelemetry(domainObject) {
-            var telemetry = domainObject &&
-                    domainObject.getCapability('telemetry'),
-                metadata = telemetry ? telemetry.getMetadata() : {},
-                ranges = metadata.ranges || [];
-
-            // Generally, we want to allow Plot for telemetry-providing
-            // objects (most telemetry is plottable.) We only want to
-            // suppress this for telemetry which only has explicitly
-            // non-numeric values.
-            return ranges.length === 0 || ranges.some(function (range) {
-                    // Assume format is numeric if it is undefined
-                    // (numeric telemetry is the common case)
-                    return range.format === undefined ||
-                        range.format === 'number';
-                });
-        }
+        PlotViewPolicy.prototype.hasNumericTelemetry = function (domainObject) {
+            var adaptedObject = domainObject.useCapability('adapter');
+            var metadata = this.openmct.telemetry.getMetadata(adaptedObject);
+            var rangeValues = metadata.valuesForHints(['range']);
+            if (rangeValues.length === 0) {
+                return false;
+            }
+            return !rangeValues.every(function (value) {
+                return value.format === 'string';
+            });
+        };
 
         PlotViewPolicy.prototype.allow = function (view, domainObject) {
             if (view.key === 'plot') {
-                return hasNumericTelemetry(domainObject);
+                return this.hasNumericTelemetry(domainObject);
             }
 
             return true;

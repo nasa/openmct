@@ -78,8 +78,8 @@ define([
         return this.workerInterface.request(workerRequest);
     };
 
-    GeneratorProvider.prototype.subscribe = function (domainObject, callback, request) {
-        var workerRequest = this.makeWorkerRequest(domainObject, request);
+    GeneratorProvider.prototype.subscribe = function (domainObject, callback) {
+        var workerRequest = this.makeWorkerRequest(domainObject, {});
         return this.workerInterface.subscribe(workerRequest, callback);
     };
 
