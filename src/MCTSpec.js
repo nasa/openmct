@@ -62,31 +62,6 @@ define([
             expect(mockListener).not.toHaveBeenCalled();
         });
 
-        describe("specifyBuildInfo", function () {
-            var testInfo;
-
-            beforeEach(function () {
-                testInfo = { foo: 123, bar: "baz" };
-                openmct.legacyExtension = jasmine.createSpy('legacyExtension');
-                openmct.specifyBuildInfo(testInfo);
-            });
-
-            it("registers versions extensions", function () {
-                Object.keys(testInfo).forEach(function (key) {
-                    expect(openmct.legacyExtension).toHaveBeenCalledWith(
-                        "versions",
-                        {
-                            key: key,
-                            name: jasmine.any(String),
-                            value: testInfo[key],
-                            description: undefined,
-                            priority: undefined
-                        }
-                    );
-                });
-            });
-        });
-
         describe("start", function () {
             beforeEach(function () {
                 openmct.start();

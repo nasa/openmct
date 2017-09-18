@@ -210,31 +210,6 @@ define([
     };
 
     /**
-     * Inject build information for the About dialog et al.
-     * @private
-     */
-    MCT.prototype.specifyBuildInfo = function (buildInfo) {
-        var aliases = { timestamp: "Built" };
-        var descriptions = {
-            timestamp: "The date on which this version of Open MCT was built.",
-            revision: "A unique revision identifier for the client sources.",
-            branch: "The name of the branch that was used during the build."
-        };
-        var priorities =
-            { version: 999, timestamp: 990, revision: 995, branch: 994 };
-
-        Object.keys(buildInfo).forEach(function (key) {
-            this.legacyExtension("versions", {
-                key: key,
-                name: aliases[key] || (key.charAt(0).toUpperCase() + key.substring(1)),
-                value: buildInfo[key],
-                description: descriptions[key],
-                priority: priorities[key]
-            });
-        }.bind(this));
-    };
-
-    /**
      * Set path to where assets are hosted.  This should be the path to main.js.
      * @memberof module:openmct.MCT#
      * @method setAssetPath

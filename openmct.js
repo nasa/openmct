@@ -91,14 +91,15 @@ requirejs.config({
 define([
     './platform/framework/src/Main',
     './src/defaultRegistry',
-    './src/MCT'
-], function (Main, defaultRegistry, MCT) {
+    './src/MCT',
+    './src/plugins/buildInfo/plugin'
+], function (Main, defaultRegistry, MCT, buildInfo) {
     var openmct = new MCT();
 
     openmct.legacyRegistry = defaultRegistry;
 
     if (typeof BUILD_CONSTANTS !== 'undefined') {
-        openmct.specifyBuildInfo(BUILD_CONSTANTS);
+        openmct.install(buildInfo(BUILD_CONSTANTS));
     }
 
     openmct.on('start', function () {
