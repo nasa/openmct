@@ -129,4 +129,10 @@
             color: $timelineResourceGraphFg;
         }
     }
+
+    .s-follow-line {
+        &:before {
+            background: $timelineHeaderColorBg;
+        }
+    }
 }

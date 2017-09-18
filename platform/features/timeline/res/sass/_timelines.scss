@@ -83,6 +83,9 @@
                     @include scrollV(scroll);
                     bottom: $scrollbarTrackSize;
                 }
+                .l-follow-line {
+
+                }
             }
 	        &.l-timeline-resource-legend {
 		        box-sizing: border-box;
@@ -329,15 +332,45 @@
 
     // Follow Line
     .l-follow-line {
+        // TODO: move before and after into l-timeline-gantt so those only render in that pane
+        $d: 0.8rem;
+        $t: $interiorMargin;
         pointer-events: none;
         position: absolute;
         top: 0; bottom: 0;
         width: 1px;
-        z-index: 100;
+        z-index: 9; // Just below .l-hover-btns-holder
+        &:before,
+        &:after {
+            display: block;
+            height: $d;
+            width: $d;
+            position: absolute;
+            top: $t;
+            @include transform(translateX(-50%));
+        }
+        &:before {
+            // Icon blocker
+            content: '';
+            width: 1.25 * $d;
+        }
+        &:after {
+            // Icon
+            font-size: $d;
+            line-height: $d;
+            text-align: center;
+        }
     }
 
     .s-follow-line {
         background: rgba($timeControllerToiLineColor, 0.5);
+        &:after {
+            // Icon
+            color: $timeControllerToiLineColor;
+            content: $glyph-icon-timer;
+            font-family: symbolsfont;
+            text-shadow: $shdwItemText;
+        }
     }
 }
 
