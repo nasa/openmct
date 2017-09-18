@@ -72,11 +72,13 @@
     }
 }
 
+// Hyperlink objects
 .s-hyperlink {
-    // Hyperlink objects
+    .label {
+        font-size: 0.8rem !important;
+    }
     &:not(.s-button) {
         color: $colorKey;
-        font-size: 0.8rem;
         &:hover { color: $colorKeyHov; }
     }
 }

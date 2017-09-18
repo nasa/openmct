@@ -123,14 +123,6 @@ define([
                                         "control": "color"
                                     },
                                     {
-                                        "property": "color",
-                                        "cssClass": "icon-T",
-                                        "title": "Text color",
-                                        "description": "Set text color",
-                                        "mandatory": true,
-                                        "control": "color"
-                                    },
-                                    {
                                         "property": "url",
                                         "cssClass": "icon-image",
                                         "control": "dialog-button",
@@ -142,6 +134,27 @@ define([
                                             "cssClass": "l-input-lg",
                                             "required": true
                                         }
+                                    }
+                                ]
+                            },
+                            {
+                                "items": [
+                                    {
+                                        "property": "color",
+                                        "cssClass": "icon-T",
+                                        "title": "Text color",
+                                        "description": "Set text color",
+                                        "mandatory": true,
+                                        "control": "color"
+                                    },
+                                    {
+                                        "property": "size",
+                                        "title": "Text size",
+                                        "description": "Set text size",
+                                        "control": "select",
+                                        "options": [9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96].map(function (size) {
+                                            return { "name": size + " px", "value": size + "px" };
+                                        })
                                     }
                                 ]
                             },
@@ -212,11 +225,7 @@ define([
                                         "control": "numberfield",
                                         "description": "Resize object width",
                                         "min": "1"
-                                    }
-                                ]
-                            },
-                            {
-                                "items": [
+                                    },
                                     {
                                         "property": "useGrid",
                                         "name": "Snap to Grid",

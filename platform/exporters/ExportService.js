@@ -66,6 +66,20 @@ define(['csv'], function (CSV) {
     };
 
     /**
+     * Export an object as a JSON file. Triggers a download using the function
+     * provided when the ExportService was instantiated.
+     *
+     * @param {Object} obj an object to be exported as JSON
+     * @param {ExportOptions} [options] additional parameters for the file
+     *        export
+     */
+    ExportService.prototype.exportJSON = function (obj, options) {
+        var filename = (options && options.filename) || "test-export.json";
+        var jsonText = JSON.stringify(obj);
+        var blob = new Blob([jsonText], {type: "application/json"});
+        this.saveAs(blob, filename);
+    };
+    /**
      * Additional parameters for file export.
      * @typedef ExportOptions
      * @property {string} filename the name of the file to write

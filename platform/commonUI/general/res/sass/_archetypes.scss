@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 /********************************************* COLUMN LAYOUTS STYLES */
-/*@mixin cols($totalCols, $span) {
+@mixin cols($totalCols, $span) {
     $cw: 100% / $totalCols;
     min-width: (500px / $totalCols) * $span;
     @if ($totalCols != $span) {
@@ -89,7 +89,7 @@
         @include clearfix;
         padding: $interiorMargin 0;
     }
-}*/
+}
 
 /********************************************* FLEX STYLES */
 .l-flex-row,

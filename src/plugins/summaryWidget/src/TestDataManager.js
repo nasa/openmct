@@ -29,7 +29,7 @@ define([
         this.config = this.domainObject.configuration.testDataConfig;
         this.testCache = {};
 
-        this.configArea = $('.widget-test-data-content', this.domElement);
+        this.configArea = $('.t-widget-test-data-content', this.domElement);
         this.itemArea = $('.t-test-data-config', this.domElement);
         this.toggleConfigButton = $('.view-control', this.domElement);
         this.addItemButton = $('.add-item', this.domElement);

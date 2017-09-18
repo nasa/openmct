@@ -19,21 +19,12 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div
-    class="l-fixed-position-text l-telemetry"
-    ng-style="{ background: ngModel.fill(), 'border-color': ngModel.stroke(), color: ngModel.color(), 'font-size': ngModel.size() }"
-    >
-    <span
-        class="l-elem l-value l-obj-val-format"
-        data-value="{{ngModel.value}}"
-        ng-class="ngModel.cssClass"
-        >
-        {{ngModel.value}}
+
+<a class="s-button {{structure.cssClass}}"
+   ng-model="ngModel[field]"
+   ng-class="{ labeled: structure.text }"
+   mct-file-input>
+    <span class="title-label" ng-if="structure.text">
+        {{structure.text}}
     </span>
-    <span
-        class="l-elem l-title"
-        ng-show="ngModel.element.titled"
-        >
-        {{ngModel.name}}
-    </span>
-</div>
+</a>

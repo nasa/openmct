@@ -20,7 +20,19 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .section-header {
+    border-radius: $basicCr;
+    background: $colorFormSectionHeader;
+    color: lighten($colorBodyFg, 20%);
+    font-size: inherit;
+    margin: $interiorMargin 0;
+    padding: $formTBPad $formLRPad;
     text-transform: uppercase;
+    .view-control {
+        display: inline-block;
+        margin-right: $interiorMargin;
+        width: 1em;
+        height: 1em;
+    }
 }
 
 .form {
@@ -39,15 +51,6 @@
                 }
             }
         }
-    }
-
-    .section-header {
-        border-radius: $basicCr;
-        background: $colorFormSectionHeader;
-        $c: lighten($colorBodyFg, 20%);
-        color: $c;
-        font-size: 0.8em;
-        padding: $formTBPad $formLRPad;
     }
 
 	.form-row {
@@ -210,6 +213,9 @@
                     // Individual form controls
                     &:not(:first-child) {
                         margin-left: $interiorMarginSm;
+                    }
+                    &.select {
+                        vertical-align: top;
                     }
                 }
             }

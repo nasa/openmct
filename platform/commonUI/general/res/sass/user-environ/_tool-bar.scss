@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .tool-bar {
+    font-size: 0.7rem;
     &.btn-bar {
         white-space: nowrap;
     }
@@ -30,9 +31,7 @@
     input[type="search"],
     input[type="number"] {
 		box-sizing: border-box;
-		font-size: .8em;
 		height: $btnToolbarH;
-		margin-bottom: 1px;
 		position: relative;
 		&.sm {
 			width: $btnToolbarH;

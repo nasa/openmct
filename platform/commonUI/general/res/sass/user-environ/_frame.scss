@@ -122,7 +122,10 @@
 
     /********************************************************** OBJECT TYPES */
     .t-object-type-hyperlink {
-        .s-hyperlink.s-button {
+        .object-holder {
+            overflow: hidden;
+        }
+        .l-hyperlink.s-button {
             // When a hyperlink is a button in a frame, make it expand to fill out to the object-holder
             @extend .abs;
             .label {
@@ -142,7 +145,7 @@
 body.desktop .frame {
     // Hide local controls initially and show it them on hover when they're in an element that's in a frame context
     // Frame template is used because we need to target the lowest nested frame
-    .right {
+    .object-browse-bar .btn-bar {
         opacity: 0;
         pointer-events: none;
     }
@@ -150,7 +153,7 @@ body.desktop .frame {
     // Target the first descendant so that we only show the elements in the outermost container.
     // Handles the case where we have layouts in layouts.
     &:hover > .object-browse-bar {
-        .right {
+        .btn-bar {
             opacity: 1;
             pointer-events: inherit;
         }

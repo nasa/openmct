@@ -1,0 +1,142 @@
+<!--
+ Open MCT, Copyright (c) 2014-2016, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<style>
+    .w-mct-example div[class*="s-limit"],
+    .w-mct-example div[class*="s-status"],
+    .w-mct-example div[class*="s-unsynced"],
+    .w-mct-example span[class*="s-limit"] {
+        border-radius: 4px;
+        padding: 3px 7px;
+    }
+    .w-mct-example table {
+        width: 100%;
+    }
+</style>
+<div class="l-style-guide s-text">
+    <p class="doc-title">Open MCT Style Guide</p>
+    <h1>Status Indication</h1>
+
+    <div class="l-section">
+        <h2>Overview</h2>
+        <p>Many elements in Open MCT need to articulate a dynamic status; Open MCT provides the following styles and conventions to handle this:</p>
+        <ul>
+            <li><strong>Limits</strong>: when telemetry values exceed minimum or maximum values, they can be violating limits. Limit styles include both color and iconography; color is used to indicate severity while icons are used to indicate direction, upper or lower.</li>
+            <li><strong>Status</strong>: Open MCT also provides a number or built-in Status styles allowing telemetry or other displayed information to be visually classified by type. Common uses for these classes are to visually denote event records.</li>
+            <li><strong>Synchronization</strong>: When the system is displaying real-time data, it is very important that displays clearly indicate when they are not doing so, such as when a plot if frozen while panning or zooming. Open MCT provides a style for this.</li>
+        </ul>
+    </div>
+
+    <div class="l-section">
+        <h2>Limits</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Limit CSS classes can be applied to any block or inline element. Open MCT limit classes set color and optionally an icon, but don't effect other properties. Yellow and red limit classes can be used as is, or allow the application of any custom icon available in Open MCT's glyphs library. &quot;Level&quot; limit classes - upper and lower - always use an icon in addition to a color; Open MCT doesn't support level limits without color.</p>
+                <ul>
+                    <li>Color only</li>
+                    <ul>
+                        <li><code>s-limit-yellow</code>: A yellow limit.</li>
+                        <li><code>s-limit-red</code>: A red limit.</li>
+                    </ul>
+                    <li>Color and icon</li>
+                    <ul>
+                        <li><code>s-limit-yellow-icon</code>: A yellow limit with icon.</li>
+                        <li><code>s-limit-red-icon</code>: A red limit with icon.</li>
+                    </ul>
+                    <li>Upper and lower limit indicators. Must be used with a color limit class to be visible.</li>
+                    <ul>
+                        <li><code>s-limit-upr</code>: Upper limit.
+                        </li>
+                        <li><code>s-limit-lwr</code>: Lower limit.
+                        </li>
+                    </ul>
+                </ul>
+            </div>
+<mct-example><div class="s-limit-yellow">Yellow limit</div>
+<div class="s-limit-red">Red limit</div>
+<div class="s-limit-yellow-icon">Yellow limit with icon</div>
+<div class="s-limit-red-icon">Red limit with icon</div>
+<div class="s-limit-yellow s-limit-lwr">Lower yellow limit</div>
+<div class="s-limit-red s-limit-upr">Upper red limit</div>
+<div class="s-limit-red icon-bell">Red Limit with a custom icon</div>
+<div>Some text with an <span class="s-limit-yellow-icon">inline element</span> showing a yellow limit.</div>
+
+<!-- Limits applied in a table -->
+<table>
+    <tr class='header'><td>Name</td><td>Value 1</td><td>Value 2</td></tr>
+    <tr><td>ENG_PWR 4991</td><td>7.023</td><td class="s-limit-yellow s-limit-upr">70.23</td></tr>
+    <tr><td>ENG_PWR 4992</td><td>49.784</td><td class="s-limit-red s-limit-lwr">-121.22</td></tr>
+    <tr><td>ENG_PWR 4993</td><td class="s-limit-yellow icon-bell">0.451</td><td>1.007</td></tr>
+</table>
+</mct-example>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Status</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Classes here can be applied to elements as needed.</p>
+                <ul>
+                    <li>Color only</li>
+                    <ul>
+                        <li><code>s-status-warning-hi</code></li>
+                        <li><code>s-status-warning-lo</code></li>
+                        <li><code>s-status-diagnostic</code></li>
+                        <li><code>s-status-info</code></li>
+                        <li><code>s-status-ok</code></li>
+                    </ul>
+                    <li>Color and icon</li>
+                    <ul>
+                        <li><code>s-status-warning-hi-icon</code></li>
+                        <li><code>s-status-warning-lo-icon</code></li>
+                        <li><code>s-status-diagnostic-icon</code></li>
+                        <li><code>s-status-info-icon</code></li>
+                        <li><code>s-status-ok-icon</code></li>
+                    </ul>
+                </ul>
+            </div>
+<mct-example><div class="s-status-warning-hi">WARNING HI</div>
+<div class="s-status-warning-lo">WARNING LOW</div>
+<div class="s-status-diagnostic">DIAGNOSTIC</div>
+<div class="s-status-info">INFO</div>
+<div class="s-status-ok">OK</div>
+<div class="s-status-warning-hi-icon">WARNING HI with icon</div>
+<div class="s-status-warning-lo-icon">WARNING LOW with icon</div>
+<div class="s-status-diagnostic-icon">DIAGNOSTIC with icon</div>
+<div class="s-status-info-icon">INFO with icon</div>
+<div class="s-status-ok-icon">OK with icon</div>
+<div class="s-status-warning-hi icon-gear">WARNING HI with custom icon</div>
+</mct-example>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Synchronization</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>When the system is operating in real-time streaming mode, it is important for views that display real-time data to clearly articulate when they are not, such as when a user zooms or pans a plot view, freezing that view. In that case, the CSS class <code>s-unsynced</code> should be applied to that view.</p>
+            </div>
+<mct-example><div class="s-unsynced">This element is unsynced</div>
+</mct-example>
+        </div>
+    </div>
+</div>

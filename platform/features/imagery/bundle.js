@@ -25,14 +25,12 @@ define([
     "./src/controllers/ImageryController",
     "./src/directives/MCTBackgroundImage",
     "text!./res/templates/imagery.html",
-    "text!./res/templates/imageryTimeline.html",
     'legacyRegistry'
 ], function (
     ImageryViewPolicy,
     ImageryController,
     MCTBackgroundImage,
     imageryTemplate,
-    imageryTimelineTemplate,
     legacyRegistry
 ) {
 
@@ -45,17 +43,6 @@ define([
                     "key": "imagery",
                     "cssClass": "icon-image",
                     "template": imageryTemplate,
-                    "priority": "preferred",
-                    "needs": [
-                        "telemetry"
-                    ],
-                    "editable": false
-                },
-                {
-                    "name": "Historical Imagery",
-                    "key": "historical-imagery",
-                    "cssClass": "icon-image",
-                    "template": imageryTimelineTemplate,
                     "priority": "preferred",
                     "needs": [
                         "telemetry"
