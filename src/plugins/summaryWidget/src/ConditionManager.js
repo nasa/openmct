@@ -1,10 +1,12 @@
 define ([
     './ConditionEvaluator',
     'EventEmitter',
+    'zepto',
     'lodash'
 ], function (
     ConditionEvaluator,
     EventEmitter,
+    $,
     _
 ) {
 
@@ -219,6 +221,8 @@ define ([
             }
 
             self.eventEmitter.emit('add', obj);
+
+            $('.l-widget-main').removeClass('s-status-no-data');
         }
     };
 
@@ -235,6 +239,10 @@ define ([
         delete this.compositionObjs[identifier.key];
         this.subscriptions[identifier.key](); //unsubscribe from telemetry source
         this.eventEmitter.emit('remove', identifier);
+
+        if (_.isEmpty(this.compositionObjs)) {
+            $('.l-widget-main').addClass('s-status-no-data');
+        }
     };
 
     /**
