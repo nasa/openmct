@@ -56,7 +56,7 @@ define(['../src/TestDataItem', 'zepto'], function (TestDataItem, $) {
 
         it('exposes a DOM element to represent itself in the view', function () {
             mockContainer.append(testDataItem.getDOM());
-            expect($('.t-condition', mockContainer).get().length).toEqual(1);
+            expect($('.t-test-data-item', mockContainer).get().length).toEqual(1);
         });
 
         it('responds to a change in its object select', function () {

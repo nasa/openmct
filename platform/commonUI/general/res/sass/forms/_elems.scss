@@ -203,12 +203,18 @@
             }
             label {
                 line-height: inherit;
-                padding: $interiorMarginSm 0;
                 width: $labelW;
             }
             .controls {
                 @include flex-grow(1);
-                margin-left: $interiorMargin    ;
+                margin-left: $interiorMargin;
+                input[type="text"],
+                input[type="search"],
+                input[type="number"],
+                .select {
+                    height: $btnStdH;
+                }
+
                 .e-control {
                     // Individual form controls
                     &:not(:first-child) {

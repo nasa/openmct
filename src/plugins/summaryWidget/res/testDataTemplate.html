@@ -1,18 +1,16 @@
 <div>
-    <!-- For some goddamn reason this doesn't work unless its in a div. TODO: figure this out! -->
-    <div class="section-header"><span class="view-control"></span>Test Data</div>
-    <div class="t-widget-test-data-content w-widget-test-data-content l-compact-form">
-        <label class="checkbox custom">Enable
-            <input type="checkbox" class="t-test-data-checkbox">
-            <em></em>
-        </label>
-        <ul class="t-test-data-config">
-            <li>
-                <label></label>
-                <span class="controls">
-                    <a class="e-control s-button labeled add-item icon-plus">Add Test Condition</a>
-                </span>
-            </li>
-        </ul>
+    <div class="section-header"><span class="view-control expanded"></span>Test Data Values</div>
+    <div class="t-widget-test-data-content w-widget-test-data-content expanded">
+        <div class="l-enable">
+            <label class="checkbox custom">Apply Test Values
+                <input type="checkbox" class="t-test-data-checkbox">
+                <em></em>
+            </label>
+        </div>
+        <div class="t-test-data-config w-widget-test-data-items">
+            <div class="holder add-rule-button-wrapper align-right">
+                <a id="addRule" class="e-control s-button major labeled add-test-condition icon-plus">Add Test Value</a>
+            </div>
+        </div>
     </div>
 </div>

@@ -180,7 +180,7 @@ define([
                 if (!this.config.values[index]) {
                     this.config.values[index] = (inputType === 'number' ? 0 : '');
                 }
-                newInput = $('<input type = "' + inputType + '" value = "' + this.config.values[index] + '"> </input>');
+                newInput = $('<input class="sm" type = "' + inputType + '" value = "' + this.config.values[index] + '"> </input>');
                 this.valueInputs.push(newInput.get(0));
                 inputArea.append(newInput);
                 index += 1;
