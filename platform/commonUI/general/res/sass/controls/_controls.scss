@@ -257,7 +257,7 @@ input[type="number"] {
 input[type="text"].lg {  width: 100% !important; }
 .l-input-med input[type="text"],
 input[type="text"].med { width: 200px !important; }
-input[type="text"].sm {  width: 50px !important; }
+input[type="text"].sm, input[type="number"].sm {  width: 50px !important; }
 .l-numeric input[type="text"],
 input[type="text"].numeric { text-align: right; }
 
@@ -292,8 +292,8 @@ textarea.lg { position: relative; height: 300px; }
     padding: 0 $interiorMargin;
     overflow: hidden;
     position: relative;
-    height: $btnStdH;
-    line-height: $btnStdH;
+    //height: $btnStdH;
+    //line-height: $btnStdH;
     select {
         @include appearance(none);
         box-sizing: border-box;
