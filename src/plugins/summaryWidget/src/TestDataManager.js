@@ -32,7 +32,7 @@ define([
         this.configArea = $('.t-widget-test-data-content', this.domElement);
         this.itemArea = $('.t-test-data-config', this.domElement);
         this.toggleConfigButton = $('.view-control', this.domElement);
-        this.addItemButton = $('.add-item', this.domElement);
+        this.addItemButton = $('.add-test-condition', this.domElement);
         this.testDataInput = $('.t-test-data-checkbox', this.domElement);
 
         /**
@@ -153,7 +153,8 @@ define([
         });
 
         self.items.forEach(function (item) {
-            $('li:last-of-type', self.itemArea).before(item.getDOM());
+            // $('li:last-of-type', self.itemArea).before(item.getDOM());
+            self.itemArea.prepend(item.getDOM());
         });
 
         if (self.items.length === 1) {

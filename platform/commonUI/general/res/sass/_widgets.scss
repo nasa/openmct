@@ -62,14 +62,34 @@
 
 .widget-rule-content,
 .w-widget-test-data-content {
-    @include trans-prop-nice($props: (height, min-height), $dur: 250ms);
+    @include trans-prop-nice($props: (height, min-height, opacity), $dur: 250ms);
     min-height: 0;
     height: 0;
+    opacity: 0;
     overflow: hidden;
+    pointer-events: none;
     &.expanded {
         min-height: 50px;
         height: auto;
-        overflow: visible;
+        opacity: 1;
+        pointer-events: inherit;
+    }
+}
+
+.widget-rule-content.expanded {
+    overflow-y: visible;
+}
+
+.w-widget-test-data-content {
+    .l-enable {
+        padding: $interiorMargin 0;
+    }
+
+    .w-widget-test-data-items {
+        max-height: 20vh;
+        overflow-y: scroll !important;
+        padding-right: $interiorMargin;
+        //@include test();
     }
 }
 
@@ -105,20 +125,44 @@
 
     .l-compact-form {
         // Overrides
-        ul li {
-            padding: $interiorMargin 0;
-            &:not(.widget-rule-header) {
-                &:not(.connects-to-previous) {
-                    border-top: 1px solid $colorFormLines;
+        ul {
+            &:last-child { margin: 0; }
+            li {
+                line-height: 200%;
+                padding: $interiorMarginSm 0;
+                &:not(.widget-rule-header) {
+                    &:not(.connects-to-previous) {
+                        border-top: 1px solid $colorFormLines;
+                    }
+                }
+                &.connects-to-previous {
+                    padding: $interiorMargin 0;
+                }
+
+                > label {
+                    display: block; // Needed to align text to right
+                    text-align: right;
+                }
+
+                > .controls > span {
+                    //display: inline-block;
                 }
             }
-            &.connects-to-previous {
-                padding: $interiorMargin 0;
-            }
+        }
 
-            > label {
-                display: block; // Needed to align text to right
-                text-align: right;
+        &.s-widget-test-data-item {
+            // Single line of ul li label span, etc.
+            ul {
+                //margin: 0;
+                li {
+                    //padding: 0;
+                    border: none !important;
+                    > label {
+                        display: inline-block;
+                        width: auto;
+                        text-align: left;
+                    }
+                }
             }
         }
     }
@@ -131,15 +175,15 @@
 .widget-rules-wrapper {
     // Wrapper area that holds n rules
     box-sizing: border-box;
-    //overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: scroll;
     padding-right: $interiorMargin;
 }
 
-.l-widget-rule {
+.l-widget-rule,
+.l-widget-test-data-item {
     box-sizing: border-box;
-    margin-bottom: $interiorMargin;
-    padding: $interiorMarginLg;
+    margin-bottom: $interiorMarginSm;
+    padding: $interiorMargin $interiorMarginLg;
 }
 
 .l-widget-thumb-wrapper {
@@ -155,6 +199,7 @@
 
     .widget-thumb {
         @include flex(1 1 auto);
+        width: 100%;
     }
 }
 
@@ -169,7 +214,8 @@
     color: pushBack($colorBodyFg, 20%);
 }
 
-.s-widget-rule {
+.s-widget-rule,
+.s-widget-test-data-item {
     background-color: rgba($colorBodyFg, 0.1);
     border-radius: $basicCr;
 }
