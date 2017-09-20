@@ -206,8 +206,10 @@ define([
         if (!options.hasOwnProperty('end')) {
             options.end = this.MCT.time.bounds().end;
         }
-        if (!options.hasOwnProperty('domain')) {
-            options.domain = this.MCT.time.timeSystem().key;
+        if (!options.hasOwnProperty('domain'))  {
+            if (this.MCT.time.timeSystem()) {
+                options.domain = this.MCT.time.timeSystem().key;
+            }
         }
     };
 
