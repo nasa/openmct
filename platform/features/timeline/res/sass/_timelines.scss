@@ -75,6 +75,10 @@
                 }
             }
             &.l-timeline-gantt {
+                .abs.l-timeline-gantt-header-w {
+                    overflow: hidden;
+                    height: $timelineTopPaneHeaderH;
+                }
                 .l-swimlanes-holder {
                     @include scrollV(scroll);
                     bottom: $scrollbarTrackSize;

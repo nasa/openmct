@@ -29,6 +29,44 @@
             }
         }
     }
+
+    // Follow Line
+    .l-follow-line {
+        // TODO: move before and after into l-timeline-gantt so those only render in that pane
+        pointer-events: none;
+        position: absolute;
+        top: 0; bottom: 0;
+        width: 1px;
+        z-index: 9; // Just below .l-hover-btns-holder
+    }
+}
+
+.l-timeline-gantt {
+    .l-follow-line {
+        $d: 0.8rem;
+        top: $interiorMargin;
+        &:before,
+        &:after {
+            content: '';
+            display: block;
+            height: $d;
+            width: $d;
+            position: absolute;
+            top: 0;
+            @include transform(translateX(-50%));
+        }
+        &:before {
+            // Icon blocker
+            width: 2 * $d;
+        }
+        &:after {
+            // Icon
+            font-size: $d;
+            line-height: $d;
+            text-align: center;
+        }
+    }
+
 }
 
 .s-timeline-gantt {
@@ -108,10 +146,9 @@
     }
     .s-hover-btns-holder {
         $bg: $timelineHeaderColorBg;
-        $bga: 1;
         $l: 5%;
         @include user-select(none);
-        @include background-image(linear-gradient(-90deg, rgba($bg, $bga), rgba($bg, $bga) 70%, rgba($bg, 0) 100%));
+        @include background-image(linear-gradient(-90deg, rgba($bg, 1), rgba($bg, 1) 70%, rgba($bg, 0) 100%));
         .s-button {
             height: 16px;
             line-height: 16px;
@@ -127,6 +164,29 @@
         }
         .l-title {
             color: $timelineResourceGraphFg;
+        }
+    }
+
+    .s-follow-line {
+        background: rgba($timeControllerToiLineColor, 0.5);
+    }
+
+    .s-timeline-gantt {
+        .s-follow-line {
+            &:after {
+                // Icon
+                color: $timeControllerToiLineColor;
+                content: $glyph-icon-timer;
+                font-family: symbolsfont;
+                text-shadow: $shdwItemText;
+            }
+            &:before {
+                // Blocker
+                $bg: $timelineHeaderColorBg;
+                $l: 30%;
+                @include background-image(linear-gradient(90deg, rgba($bg, 0), rgba($bg, 1) $l, rgba($bg, 1) 100% - $l, rgba($bg, 0)));
+
+            }
         }
     }
 }
