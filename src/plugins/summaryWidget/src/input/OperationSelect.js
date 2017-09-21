@@ -14,6 +14,8 @@ define(['./Select'], function (Select) {
      * @param {function} changeCallback A change event callback to register with this
      *                                  select on initialization
      */
+    var NULLVALUE = '- Select Comparison -';
+
     function OperationSelect(config, keySelect, manager, changeCallback) {
         var self = this;
 
@@ -26,7 +28,7 @@ define(['./Select'], function (Select) {
         this.loadComplete = false;
 
         this.select = new Select();
-        this.select.addOption('', '--Operation--');
+        this.select.addOption('', NULLVALUE);
         if (changeCallback) {
             this.select.on('change', changeCallback);
         }
@@ -79,7 +81,7 @@ define(['./Select'], function (Select) {
             items = this.operationKeys.map(function (operation) {
                 return [operation, self.evaluator.getOperationText(operation)];
             });
-        items.splice(0, 0, ['', '--Operation--']);
+        items.splice(0, 0, ['', NULLVALUE]);
         this.select.setOptions(items);
     };
 

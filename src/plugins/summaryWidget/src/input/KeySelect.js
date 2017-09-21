@@ -14,6 +14,8 @@ define(['./Select'], function (Select) {
      * @param {function} changeCallback A change event callback to register with this
      *                                  select on initialization
      */
+    var NULLVALUE = '- Select Field -';
+
     function KeySelect(config, objectSelect, manager, changeCallback) {
         var self = this;
 
@@ -22,7 +24,7 @@ define(['./Select'], function (Select) {
         this.manager = manager;
 
         this.select = new Select();
-        this.select.addOption('', '--Key--');
+        this.select.addOption('', NULLVALUE);
         if (changeCallback) {
             this.select.on('change', changeCallback);
         }
@@ -72,7 +74,7 @@ define(['./Select'], function (Select) {
         var items = Object.entries(this.telemetryMetadata).map(function (metaDatum) {
             return [metaDatum[0], metaDatum[1].name];
         });
-        items.splice(0, 0, ['','--Key--']);
+        items.splice(0, 0, ['',NULLVALUE]);
         this.select.setOptions(items);
     };
 
