@@ -101,6 +101,10 @@
     width: $ruleLabelW;
 }
 
+.t-message-widget-no-data {
+    display: none;
+}
+
 /********************************************************** EDITING A WIDGET */
 .s-status-editing .l-widget-main {
     // Classes for editor layout while editing a widget
@@ -126,6 +130,9 @@
         .widget-edit-holder {
             opacity: 0.3;
             pointer-events: none;
+        }
+        .t-message-widget-no-data {
+            display: flex;
         }
     }
 
