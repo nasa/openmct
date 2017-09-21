@@ -26,6 +26,11 @@
     @include ellipsize();
     display: inline-block;
     text-align: center;
+    .widget-label:before {
+        // Widget icon
+        font-size: 0.9em;
+        margin-right: $interiorMarginSm;
+    }
 }
 
 .s-summary-widget {
@@ -70,7 +75,7 @@
 }
 
 .widget-rule-content.expanded {
-    overflow-y: visible;
+    overflow: visible !important;
 }
 
 .w-widget-test-data-content {
@@ -228,9 +233,6 @@
     @extend .s-summary-widget;
     @extend .l-summary-widget;
     padding: $interiorMarginSm $interiorMargin;
-    .widget-icon {
-        font-size: 0.8em;
-    }
 }
 
 // Hide and show elements in the rule-header on hover
