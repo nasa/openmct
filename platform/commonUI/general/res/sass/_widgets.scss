@@ -44,7 +44,6 @@
     pointer-events: none;
     &[href] {
         @include boxShdw($shdwBtns);
-        font-style: italic;
         pointer-events: inherit;
     }
 }
