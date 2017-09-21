@@ -44,10 +44,11 @@
 
     &.t-object-type-timer,
     &.t-object-type-clock,
-    &.t-object-type-hyperlink {
+    &.t-object-type-hyperlink,
+    &.t-object-type-summary-widget {
         // Hide the right side buttons for objects where they don't make sense
         // Note that this will hide the view Switcher button if applied
-        // to an object that it.
+        // to an object that has it.
         .object-browse-bar .right { display: none; }
     }
 
@@ -128,7 +129,7 @@
         }
         .w-summary-widget,
         .l-summary-widget,
-        .l-hyperline.s-button {
+        .l-hyperlink.s-button {
             @extend .abs;
         }
 
