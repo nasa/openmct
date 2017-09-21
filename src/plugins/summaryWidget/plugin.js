@@ -33,7 +33,8 @@ define(['./src/SummaryWidget', './SummaryWidgetsCompositionPolicy'], function (S
         return function install(openmct) {
             openmct.types.addType('summary-widget', widgetType);
             openmct.objectViews.addProvider(initViewProvider(openmct));
-            openmct.legacyExtension('policies', {category: 'composition', implementation: SummaryWidgetsCompositionPolicy});
+            openmct.legacyExtension('policies', {category: 'composition',
+                implementation: SummaryWidgetsCompositionPolicy, depends: ['openmct']});
         };
     }
 
