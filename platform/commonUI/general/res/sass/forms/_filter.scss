@@ -129,9 +129,6 @@
 }
 
 .s-filter {
-    input[type="search"] {
-        @include input-base();
-    }
     .clear-icon,
     .menu-icon,
     &:before {

@@ -234,12 +234,16 @@ textarea {
 }
 
 /******************************************************** INPUTS */
+%input-base {
+    @include input-base();
+}
+
 input[type="text"],
 input[type="search"],
 input[type="number"] {
     @include nice-input();
     vertical-align: baseline;
-    padding: $inputTextP;
+    padding: $inputTextPTopBtm $inputTextPLeftRight;
     &.numeric {
         text-align: right;
     }
@@ -283,6 +287,32 @@ textarea.lg { position: relative; height: 300px; }
     }
 }
 
+*[contenteditable].s-input-inline,
+input[type="text"].s-input-inline,
+.s-input-inline input[type="text"] {
+    // A text input or contenteditable element that indicates edit affordance on hover and looks like an input on focus
+    @extend %input-base;
+    @include trans-prop-nice((padding, box-shadow), 250ms);
+    background: none;
+    box-shadow: none;
+    border: 1px solid transparent;
+    min-width: 20px;
+    padding-left: 0;
+    padding-right: 0;
+    &:hover,
+    &:focus {
+        padding-left: $inputTextPLeftRight;
+        padding-right: $inputTextPLeftRight;
+    }
+    &:hover {
+        border-color: rgba($colorBodyFg, 0.2);
+    }
+    &:focus {
+        @include s-input();
+        border-color: transparent;
+    }
+}
+
 /******************************************************** SELECTS */
 .select {
     @include btnSubtle($bg: $colorSelectBg);
@@ -298,6 +328,7 @@ textarea.lg { position: relative; height: 300px; }
     select {
         @include appearance(none);
         box-sizing: border-box;
+        &:focus { outline: 0; }
         background: none;
         color: $colorSelectFg;
         cursor: pointer;

@@ -111,7 +111,9 @@ $bubbleMaxW: 300px;
 $reqSymbolW: 15px;
 $reqSymbolM: $interiorMargin * 2;
 $reqSymbolFontSize: 0.75em;
-$inputTextP: 3px 5px;
+$inputTextPTopBtm: 3px;
+$inputTextPLeftRight: 5px;
+$inputTextP: $inputTextPTopBtm $inputTextPLeftRight;
 /*************** Wait Spinner Defaults */
 $waitSpinnerD: 32px;
 $waitSpinnerTreeD: 20px;

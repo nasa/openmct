@@ -47,7 +47,7 @@
     &.t-object-type-hyperlink {
         // Hide the right side buttons for objects where they don't make sense
         // Note that this will hide the view Switcher button if applied
-        // to an object that it.
+        // to an object that has it.
         .object-browse-bar .right { display: none; }
     }
 
@@ -120,7 +120,12 @@
         }
     }
 
-    /********************************************************** OBJECT TYPES */
+    &.t-frame-outer .s-input-inline {
+        // Prevent inline inputs from being edited when nested in a Layout
+        pointer-events: none !important;
+    }
+
+        /********************************************************** OBJECT TYPES */
     .t-object-type-hyperlink {
         .object-holder {
             overflow: hidden;
