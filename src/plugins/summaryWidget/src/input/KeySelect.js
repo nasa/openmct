@@ -74,6 +74,12 @@ define(['./Select'], function (Select) {
         });
         items.splice(0, 0, ['','--Key--']);
         this.select.setOptions(items);
+
+        if(this.select.options.length < 2){
+            this.select.hide();
+        } else {
+            this.select.show();
+        }
     };
 
     return KeySelect;
