@@ -32,7 +32,8 @@ define(
             // Prefer to start with the middle index
             var zoomLevels = ZOOM_CONFIGURATION.levels || [1000],
                 zoomIndex = Math.floor(zoomLevels.length / 2),
-                tickWidth = ZOOM_CONFIGURATION.width || 200;
+                tickWidth = ZOOM_CONFIGURATION.width || 200,
+                lastWidth = Number.MAX_VALUE; // Don't constrain prematurely
 
             function toMillis(pixels) {
                 return (pixels / tickWidth) * zoomLevels[zoomIndex];
@@ -55,7 +56,10 @@ define(
 
             function setScroll(x) {
                 $window.requestAnimationFrame(function () {
-                    $scope.scroll.x = x;
+                    $scope.scroll.x = Math.min(
+                        Math.max(x, 0),
+                        lastWidth - $scope.scroll.width
+                    );
                     $scope.$apply();
                 });
             }
@@ -133,14 +137,14 @@ define(
                  */
                 toMillis: toMillis,
                 /**
-                 * Get the pixel width necessary to fit the specified
-                 * timestamp, expressed as an offset in milliseconds from
-                 * the start of the timeline.
+                 * Set the maximum timestamp value to be displayed, and get
+                 * the pixel width necessary to display this value.
                  * @param {number} timestamp the time to display
                  */
                 width: function (timestamp) {
                     var pixels = Math.ceil(toPixels(timestamp * (1 + PADDING)));
-                    return Math.max($scope.scroll.width, pixels);
+                    lastWidth = Math.max($scope.scroll.width, pixels);
+                    return lastWidth;
                 }
             };
         }

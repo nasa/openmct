@@ -52,8 +52,9 @@ define(["../../src/indicators/FollowIndicator"], function (FollowIndicator) {
                 mockTimerService.getTimer.andReturn(mockDomainObject);
             });
 
-            it("display's the timer's name", function () {
-                expect(indicator.getText()).toEqual(testModel.name);
+            it("displays the timer's name", function () {
+                expect(indicator.getText().indexOf(testModel.name))
+                    .not.toEqual(-1);
             });
         });
     });
