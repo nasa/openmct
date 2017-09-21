@@ -31,26 +31,20 @@ define(
          * @memberof platform/features/layout
          * @implements {Policy.<View, DomainObject>}
          */
-        function SummaryWidgetsCompositionPolicy() {
-        }
-
-        var incompatibleObjectTypes = ['folder', 'layout', 'fixed-position-display', 'timeline',
-            'activity', 'activity-mode', 'clock', 'timer', 'webpage', 'hyperlink'];
-
-        function isTypeCompatible(childType) {
-            return !incompatibleObjectTypes.some(function (type) {
-                return childType.instanceOf(type);
-            });
+        function SummaryWidgetsCompositionPolicy(openmct) {
+            this.openmct = openmct;
         }
 
         SummaryWidgetsCompositionPolicy.prototype.allow = function (parent, child) {
+
             var parentType = parent.getCapability('type');
-            var childType = child.getCapability('type');
-            if (parentType.instanceOf('summary-widget') && isTypeCompatible(childType)) {
-                return true;
+            var newStyleChild = child.useCapability('adapter');
+
+            if (parentType.instanceOf('summary-widget') && !this.openmct.telemetry.canProvideTelemetry(newStyleChild)) {
+                return false;
             }
 
-            return false;
+            return true;
         };
 
         return SummaryWidgetsCompositionPolicy;
