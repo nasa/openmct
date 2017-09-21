@@ -1,11 +1,19 @@
-<div class="l-widget-main">
+<div class="l-widget-main s-status-no-data">
     <div class="holder widget-holder flex-elem">
-        <a id="widget" class="widget t-summary-widget l-summary-widget s-summary-widget labeled">
+        <a id="widget" class="t-summary-widget l-summary-widget s-summary-widget labeled">
             <span id="widgetIcon" class="widget-icon"></span>
-            <span id="widgetLabel" class="widget-label">Default Name</span>
+            <span id="widgetLabel" class="widget-label">Default Static Name</span>
         </a>
     </div>
-    <div class="holder widget-edit-holder l-flex-col flex-elem grows">
+    <div class="holder flex-elem w-widget-no-data t-message-inline l-message message-severity-info">
+        <div class="w-message-contents l-message-body-only">
+            <div class="message-body">
+                To configure this widget, it must include at least one telemetry element - add a telemetry element to
+                continue editing.
+            </div>
+        </div>
+    </div>
+    <div class="holder l-flex-col flex-elem grows widget-edit-holder">
         <div class="widget-test-data"></div>
         <div class="section-header">Rules</div>
         <div class="holder widget-rules-wrapper flex-elem grows">

@@ -89,7 +89,6 @@
         max-height: 20vh;
         overflow-y: scroll !important;
         padding-right: $interiorMargin;
-        //@include test();
     }
 }
 
@@ -123,8 +122,16 @@
         display: flex; // Overrides display: none during Browse mode
     }
 
+    &.s-status-no-data {
+        .widget-edit-holder {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+    }
+
+
     .l-compact-form {
-        // Overrides
+        // Overrides on .l-compact-form
         ul {
             &:last-child { margin: 0; }
             li {
