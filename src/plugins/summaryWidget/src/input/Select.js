@@ -130,5 +130,15 @@ define([
         return $('select', this.domElement).prop('value');
     };
 
+    Select.prototype.hide = function () {
+        $(this.domElement).addClass('hidden');
+        $('.equal-to').addClass('hidden');
+    };
+
+    Select.prototype.show = function () {
+        $(this.domElement).removeClass('hidden');
+        $('.equal-to').removeClass('hidden');
+    };
+
     return Select;
 });
