@@ -40,6 +40,13 @@
     border-width: 1px;
     box-sizing: border-box;
     padding: $interiorMarginLg $interiorMarginLg * 2;
+    cursor: pointer;
+    pointer-events: none;
+    &[href] {
+        @include boxShdw($shdwBtns);
+        font-style: italic;
+        pointer-events: inherit;
+    }
 }
 
 .widget-edit-holder {
