@@ -24,6 +24,7 @@ define(['./Select'], function (Select) {
         this.manager = manager;
 
         this.select = new Select();
+        this.select.hide();
         this.select.addOption('', NULLVALUE);
         if (changeCallback) {
             this.select.on('change', changeCallback);
@@ -79,7 +80,7 @@ define(['./Select'], function (Select) {
 
         if(this.select.options.length < 2){
             this.select.hide();
-        } else {
+        } else if (this.select.options.length > 1) {
             this.select.show();
         }
     };

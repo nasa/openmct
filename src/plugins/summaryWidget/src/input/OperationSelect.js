@@ -28,6 +28,7 @@ define(['./Select'], function (Select) {
         this.loadComplete = false;
 
         this.select = new Select();
+        this.select.hide();
         this.select.addOption('', NULLVALUE);
         if (changeCallback) {
             this.select.on('change', changeCallback);
@@ -83,6 +84,12 @@ define(['./Select'], function (Select) {
             });
         items.splice(0, 0, ['', NULLVALUE]);
         this.select.setOptions(items);
+
+        if(this.select.options.length < 2){
+            this.select.hide();
+        } else {
+            this.select.show();
+        }
     };
 
     /**
