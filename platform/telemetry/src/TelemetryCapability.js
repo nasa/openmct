@@ -25,10 +25,12 @@
  */
 define(
     [
-        '../../../src/api/objects/object-utils'
+        '../../../src/api/objects/object-utils',
+        'lodash'
     ],
     function (
-        objectUtils
+        objectUtils,
+        _
     ) {
 
         var ZERO = function () {
@@ -189,14 +191,17 @@ define(
             return fullRequest;
         };
 
+        function asSeries(telemetry, defaultDomain, defaultRange, sourceMap) {
+            function getValue(index, key) {
+                return telemetry[index][sourceMap[key].source];
+            }
 
-        function asSeries(telemetry, defaultDomain, defaultRange) {
             return {
                 getRangeValue: function (index, range) {
-                    return telemetry[index][range || defaultRange];
+                    return getValue(index, range || defaultRange);
                 },
                 getDomainValue: function (index, domain) {
-                    return telemetry[index][domain || defaultDomain];
+                    return getValue(index, domain || defaultDomain);
                 },
                 getPointCount: function () {
                     return telemetry.length;
@@ -223,9 +228,11 @@ define(
             var telemetryAPI = this.openmct.telemetry;
 
             var metadata = telemetryAPI.getMetadata(domainObject);
-            var defaultDomain = metadata.valuesForHints(['domain'])[0].source;
+            var defaultDomain = metadata.valuesForHints(['domain'])[0].key;
             var defaultRange = metadata.valuesForHints(['range'])[0];
-            defaultRange = defaultRange ? defaultRange.source : undefined;
+            defaultRange = defaultRange ? defaultRange.key : undefined;
+
+            var sourceMap = _.indexBy(metadata.values(), 'key');
 
             var isLegacyProvider = telemetryAPI.findRequestProvider(domainObject) ===
                 telemetryAPI.legacyProvider;
@@ -250,7 +257,7 @@ define(
                     requestTelemetryFromService().then(getRelevantResponse);
             } else {
                 return telemetryAPI.request(domainObject, fullRequest).then(function (telemetry) {
-                    return asSeries(telemetry, defaultDomain, defaultRange);
+                    return asSeries(telemetry, defaultDomain, defaultRange, sourceMap);
                 });
             }
         };
@@ -286,15 +293,17 @@ define(
             var telemetryAPI = this.openmct.telemetry;
 
             var metadata = telemetryAPI.getMetadata(domainObject);
-            var defaultDomain = metadata.valuesForHints(['domain'])[0].source;
+            var defaultDomain = metadata.valuesForHints(['domain'])[0].key;
             var defaultRange = metadata.valuesForHints(['range'])[0];
-            defaultRange = defaultRange ? defaultRange.source : undefined;
+            defaultRange = defaultRange ? defaultRange.key : undefined;
+
+            var sourceMap = _.indexBy(metadata.values(), 'key');
 
             var isLegacyProvider = telemetryAPI.findSubscriptionProvider(domainObject) ===
                 telemetryAPI.legacyProvider;
 
             function update(telemetry) {
-                callback(asSeries([telemetry], defaultDomain, defaultRange));
+                callback(asSeries([telemetry], defaultDomain, defaultRange, sourceMap));
             }
 
             // Unpack the relevant telemetry series
