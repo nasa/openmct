@@ -106,8 +106,10 @@
 }
 
 /********************************************************** EDITING A WIDGET */
-.s-status-editing .l-widget-main {
+.s-status-editing > mct-view > .l-widget-main {
     // Classes for editor layout while editing a widget
+    // This selector is ugly and brittle, but needed to prevent interface from showing when widget is in a layout
+    // being edited.
     @include absPosDefault();
     @extend .l-flex-col;
 
