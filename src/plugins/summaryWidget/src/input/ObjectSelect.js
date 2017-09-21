@@ -18,7 +18,7 @@ define(['./Select'], function (Select) {
         this.manager = manager;
 
         this.select = new Select();
-        this.baseOptions = [['', '--Object--']];
+        this.baseOptions = [['', '- Select Telemetry -']];
         if (baseOptions) {
             this.baseOptions = this.baseOptions.concat(baseOptions);
         }

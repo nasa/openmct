@@ -79,6 +79,7 @@
 
     // Dialog boxes, size constrained and centered in desktop/tablet
     &.l-dialog {
+        font-size: 0.8rem;
         .s-button {
             &:not(.major) {
                 @include btnSubtle($bg: $colorOvrBtnBg, $bgHov: pullForward($colorOvrBtnBg, 10%), $fg: $colorOvrBtnFg, $fgHov: $colorOvrBtnFg, $ic: $colorOvrBtnFg, $icHov: $colorOvrBtnFg);
@@ -125,9 +126,9 @@
             @include containerSubtle($colorOvrBg, $colorOvrFg);
         }
 
-        .title {
+        .dialog-title {
             @include ellipsize();
-            font-size: 1.2em;
+            font-size: 1.5em;
             line-height: 120%;
             margin-bottom: $interiorMargin;
         }

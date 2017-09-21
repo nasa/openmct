@@ -222,7 +222,7 @@ define ([
 
             self.eventEmitter.emit('add', obj);
 
-            $('.l-widget-main').removeClass('s-status-no-data');
+            $('.w-summary-widget').removeClass('s-status-no-data');
         }
     };
 
@@ -241,7 +241,7 @@ define ([
         this.eventEmitter.emit('remove', identifier);
 
         if (_.isEmpty(this.compositionObjs)) {
-            $('.l-widget-main').addClass('s-status-no-data');
+            $('.w-summary-widget').addClass('s-status-no-data');
         }
     };
 

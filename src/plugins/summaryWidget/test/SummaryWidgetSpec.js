@@ -72,7 +72,7 @@ define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
         });
 
         it('adds its DOM element to the view', function () {
-            expect(mockContainer.getElementsByClassName('l-widget-main').length).toBeGreaterThan(0);
+            expect(mockContainer.getElementsByClassName('w-summary-widget').length).toBeGreaterThan(0);
         });
 
         it('initialzes a default rule', function () {

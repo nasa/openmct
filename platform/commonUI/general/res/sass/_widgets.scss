@@ -37,13 +37,6 @@
     padding: $interiorMarginLg $interiorMarginLg * 2;
 }
 
-.l-edit-widget,
-.widget-holder,
-.widget-edit-holder {
-    // In browse mode, all these things should be at .abs default
-    //@extend .abs;
-}
-
 .widget-edit-holder {
     // Hide edit area when in browse mode
     display: none;
@@ -89,7 +82,6 @@
         max-height: 20vh;
         overflow-y: scroll !important;
         padding-right: $interiorMargin;
-        //@include test();
     }
 }
 
@@ -102,29 +94,40 @@
     width: $ruleLabelW;
 }
 
+.t-message-widget-no-data {
+    display: none;
+}
+
 /********************************************************** EDITING A WIDGET */
-.s-status-editing .l-widget-main {
+.s-status-editing > mct-view > .w-summary-widget {
     // Classes for editor layout while editing a widget
+    // This selector is ugly and brittle, but needed to prevent interface from showing when widget is in a layout
+    // being edited.
     @include absPosDefault();
     @extend .l-flex-col;
 
-    .widget-holder {
-        height: 100px;
-        .s-summary-widget {
-            display: inline-block;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            @include transform(translateX(-50%) translateY(-50%));
-        }
+    > .l-summary-widget {
+        // Main view of the summary widget
+        margin: 30px auto;
     }
 
     .widget-edit-holder {
         display: flex; // Overrides display: none during Browse mode
     }
 
+    &.s-status-no-data {
+        .widget-edit-holder {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        .t-message-widget-no-data {
+            display: flex;
+        }
+    }
+
+
     .l-compact-form {
-        // Overrides
+        // Overrides on .l-compact-form
         ul {
             &:last-child { margin: 0; }
             li {
