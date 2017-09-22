@@ -35,6 +35,7 @@
 
 .s-summary-widget {
     // Widget style classes here
+    @include boxShdw($shdwBtns);
     border-radius: $basicCr;
     border-style: solid;
     border-width: 1px;
@@ -43,7 +44,6 @@
     cursor: pointer;
     pointer-events: none;
     &[href] {
-        @include boxShdw($shdwBtns);
         pointer-events: inherit;
     }
 }
@@ -142,8 +142,10 @@
         ul {
             &:last-child { margin: 0; }
             li {
-                line-height: 200%;
-                padding: $interiorMarginSm 0;
+                @include align-items(flex-start);
+                @include flex-wrap(nowrap);
+                line-height: 230%; // Provide enough space when controls wrap
+                padding: 2px 0;
                 &:not(.widget-rule-header) {
                     &:not(.connects-to-previous) {
                         border-top: 1px solid $colorFormLines;
@@ -157,19 +159,13 @@
                     display: block; // Needed to align text to right
                     text-align: right;
                 }
-
-                > .controls > span {
-                    //display: inline-block;
-                }
             }
         }
 
         &.s-widget-test-data-item {
             // Single line of ul li label span, etc.
             ul {
-                //margin: 0;
                 li {
-                    //padding: 0;
                     border: none !important;
                     > label {
                         display: inline-block;
