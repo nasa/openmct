@@ -60,9 +60,6 @@
         margin-bottom: $interiorMarginLg * 2;
 		padding: $formTBPad 0;
 		position: relative;
-        //&ng-form {
-        //    display: block;
-        //}
 
 		&.first {
 			border-top: none;
@@ -199,7 +196,6 @@
             label,
             .control {
                 @include display(flex);
-                //min-width: $minW;
             }
             label {
                 line-height: inherit;
@@ -213,6 +209,8 @@
                 input[type="number"],
                 .select {
                     height: $btnStdH;
+                    line-height: $btnStdH;
+                    vertical-align: middle;
                 }
 
                 .e-control {
@@ -220,15 +218,6 @@
                     &:not(:first-child) {
                         margin-left: $interiorMarginSm;
                     }
-                    &.select {
-                        vertical-align: top;
-                    }
-                }
-            }
-
-            &:not(.section-header) {
-                &:not(.connects-to-previous) {
-                    //border-top: 1px solid $colorFormLines;
                 }
             }
 
