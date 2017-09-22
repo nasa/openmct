@@ -238,19 +238,29 @@
 }
 
 // Hide and show elements in the rule-header on hover
-.l-widget-rule {
+.l-widget-rule,
+.l-widget-test-data-item {
     .grippy,
     .l-rule-action-buttons-wrapper,
-    .l-condition-action-buttons-wrapper {
+    .l-condition-action-buttons-wrapper,
+    .l-widget-test-data-item-action-buttons-wrapper {
         @include trans-prop-nice($props: opacity, $dur: 500ms);
         opacity: 0;
     }
     &:hover {
         .grippy,
         .l-rule-action-buttons-wrapper,
-        .l-condition-action-buttons-wrapper {
+        .l-widget-test-data-item-action-buttons-wrapper {
             @include trans-prop-nice($props: opacity, $dur: 0);
             opacity: 1;
+        }
+    }
+    .t-condition {
+        &:hover {
+            .l-condition-action-buttons-wrapper {
+                @include trans-prop-nice($props: opacity, $dur: 0);
+                opacity: 1;
+            }
         }
     }
 }
