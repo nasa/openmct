@@ -18,9 +18,9 @@ define([
 
     //default css configuration for new rules
     var DEFAULT_PROPS = {
-        'color': '#000000',
-        'background-color': '#00ff00',
-        'border-color': '#666666'
+        'color': '#ffffff',
+        'background-color': '#38761d',
+        'border-color': 'rgba(0,0,0,0)'
     };
 
     /**
@@ -256,7 +256,7 @@ define([
                 label: this.domainObject.name,
                 message: '',
                 id: ruleId,
-                icon: 'icon-alert-rect',
+                icon: ' ',
                 style: styleObj,
                 description: ruleId === 'default' ? 'Default appearance for the widget' : 'A new rule',
                 conditions: [{
