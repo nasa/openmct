@@ -76,7 +76,8 @@ requirejs.config({
         "d3-time": "node_modules/d3-time/build/d3-time.min",
         "d3-time-format": "node_modules/d3-time-format/build/d3-time-format.min",
         "html2canvas": "node_modules/html2canvas/dist/html2canvas.min",
-        "painterro": "node_modules/painterro/build/painterro.min"
+        "painterro": "node_modules/painterro/build/painterro.min",
+        "printj": "node_modules/printj/dist/printj.min"
     },
 
     "shim": {
