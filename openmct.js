@@ -49,7 +49,8 @@ requirejs.config({
         "d3-format": "node_modules/d3-format/build/d3-format.min",
         "d3-interpolate": "node_modules/d3-interpolate/build/d3-interpolate.min",
         "d3-time": "node_modules/d3-time/build/d3-time.min",
-        "d3-time-format": "node_modules/d3-time-format/build/d3-time-format.min"
+        "d3-time-format": "node_modules/d3-time-format/build/d3-time-format.min",
+        "printj": "node_modules/printj/dist/printj.min"
     },
     "shim": {
         "angular": {

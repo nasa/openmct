@@ -21,9 +21,11 @@
  *****************************************************************************/
 
 define([
-    'lodash'
+    'lodash',
+    'printj'
 ], function (
-    _
+    _,
+    printj
 ) {
 
     // TODO: needs reference to formatService;
@@ -70,6 +72,12 @@ define([
                 }
                 return Number(string);
             }.bind(this);
+        }
+        if (valueMetadata.sprintf) {
+            this.formatter = numberFormatter;
+            this.formatter.format = function (value) {
+                return printj.sprintf(valueMetadata.sprintf, value);
+            }
         }
     }
 
