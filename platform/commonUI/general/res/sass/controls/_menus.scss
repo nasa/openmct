@@ -21,92 +21,87 @@
  *****************************************************************************/
 /******************************************************** MENU BUTTONS */
 .s-menu-button {
-	// Formerly .btn-menu
-	@extend .s-button;
-	span.l-click-area {
-		// In markup, this element should not enclose anything.
-		@extend .abs;
-	}
+    // Formerly .btn-menu
+    @extend .s-button;
+    span.l-click-area {
+        // In markup, this element should not enclose anything.
+        @extend .abs;
+    }
 
-	.icon {
-		font-size: 16px; //120%;
-	}
+    .icon {
+        font-size: 16px; //120%;
+    }
 
-	.title-label {
-		margin-left: $interiorMarginSm;
-	}
+    .title-label {
+        margin-left: $interiorMarginSm;
+    }
 
     .color-swatch {
         // Used in color menu buttons in toolbar
         $d: 10px;
         display: inline-block;
         border: 1px solid rgba($colorBtnFg, 0.2);
-        height: $d; width: $d;
+        height: $d;
+        width: $d;
         vertical-align: middle;
         margin-left: $interiorMarginSm;
         margin-top: -2px;
     }
 
-	&:after {
-		// Adds the downward facing 'context available / invoke menu' arrow element
-		@include contextArrow();
-		color: rgba($colorInvokeMenu, percentToDecimal($contrastInvokeMenuPercent));
-	}
+    &:after {
+        // Adds the downward facing 'context available / invoke menu' arrow element
+        @include contextArrow();
+        color: rgba($colorInvokeMenu, percentToDecimal($contrastInvokeMenuPercent));
+    }
 
-	&.create-button {
+    &.create-button {
         @extend .icon-plus;
-		.title-label {
-			font-size: 1rem;
-		}
-	}
+        .title-label {
+            font-size: 1rem;
+        }
+    }
 
-	.menu {
-		left: 0;
-		text-align: left;
-	}
+    .menu {
+        left: 0;
+        text-align: left;
+    }
 }
 
 /******************************************************** MENUS THEMSELVES */
 .menu-element {
-	cursor: pointer;
-	position: relative;
-}
-
-.s-menu {
-	border-radius: $basicCr;
-	@include containerSubtle($colorMenuBg, $colorMenuFg);
-	@include boxShdw($shdwMenu);
-	@include txtShdw($shdwMenuText);
-	padding: $interiorMarginSm 0;
+    cursor: pointer;
+    position: relative;
 }
 
 .menu {
-    // TODO: reduce size of icons
-	@extend .s-menu;
-	display: block;
-	position: absolute;
-	z-index: 10;
-	ul {
-		@include menuUlReset();
-		li {
-			box-sizing: border-box;
-			border-top: 1px solid pullForward($colorMenuBg, 10%);
+    border-radius: $basicCr;
+    @include containerSubtle($colorMenuBg, $colorMenuFg);
+    @include boxShdw($shdwMenu);
+    @include txtShdw($shdwMenuText);
+    padding: $interiorMarginSm 0;
+    display: block;
+    position: absolute;
+    z-index: 10;
+    ul {
+        @include menuUlReset();
+        li {
+            box-sizing: border-box;
+            border-top: 1px solid pullForward($colorMenuBg, 10%);
             color: $colorMenuFg;
-			//color: pullForward($colorMenuBg, 60%);
-			line-height: $menuLineH;
-			padding: $interiorMarginSm $interiorMargin * 2 $interiorMarginSm ($interiorMargin * 2) + $treeTypeIconW;
-			position: relative;
-			white-space: nowrap;
-			&:first-child {
-				border: none;
-			}
-			&:hover {
-				background: $colorMenuHovBg;
-				color: $colorMenuHovFg;
+            line-height: $menuLineH;
+            padding: $interiorMarginSm $interiorMargin * 2 $interiorMarginSm ($interiorMargin * 2) + $treeTypeIconW;
+            position: relative;
+            white-space: nowrap;
+            &:first-child {
+                border: none;
+            }
+            &:hover {
+                background: $colorMenuHovBg;
+                color: $colorMenuHovFg;
                 &:before {
                     color: $colorMenuHovIc;
                 }
-			}
+            }
             &:before {
                 @extend .ui-symbol;
                 @extend .type-icon;
@@ -114,8 +109,8 @@
                 display: inline-block;
                 left: $interiorMargin * 2;
             }
-		}
-	}
+        }
+    }
 }
 
 .menu,
@@ -123,94 +118,97 @@
 .context-menu,
 .super-menu,
 .s-menu-button .menu {
-	pointer-events: auto;
-	ul li {
-		a.menu-item-a {
+    pointer-events: auto;
+    ul li {
+        a.menu-item-a {
             color: $colorMenuFg;
             display: block;
-		}
+        }
         &:before,
         a.menu-item-a:before {
             color: $colorMenuIc;
             left: $interiorMargin;
         }
-	}
+    }
 }
 
 .checkbox-menu {
-	// Used in search dropdown in tree
-	@extend .context-menu;
-	ul li {
-		padding-left: 50px;
-		.checkbox {
-			$d: 0.7rem;
-			position: absolute;
-			left: $interiorMargin;
-			top: ($menuLineH - $d) / 1.5;
-			em {
-				height: $d;
-				width: $d;
-				&:before {
-					font-size: 7px !important;
-					height: $d;
-					width: $d;
-					line-height: $d;
-				}
-			}
-		}
-		&:before {
+    // Used in search dropdown in tree
+    @extend .context-menu;
+    ul li {
+        padding-left: 50px;
+        .checkbox {
+            $d: 0.7rem;
+            position: absolute;
+            left: $interiorMargin;
+            top: ($menuLineH - $d) / 1.5;
+            em {
+                height: $d;
+                width: $d;
+                &:before {
+                    font-size: 7px !important;
+                    height: $d;
+                    width: $d;
+                    line-height: $d;
+                }
+            }
+        }
+        &:before {
             // Type icon
-			left: 25px;
-		}
-	}
+            left: 25px;
+        }
+    }
+}
+
+.super-menu,
+.super-menu > mct-representation,
+.super-menu > .contents {
+    box-sizing: border-box;
+    display: block;
+    position: relative;
 }
 
 .super-menu {
-	$w: 500px;
-	$h: $w - 20;
-	$plw: 50%;
-	$prw: 50%;
-	display: block;
-	width: $w;
-	height: $h;
-	.contents {
-		@include absPosDefault($interiorMargin);
-	}
-	.pane {
-		box-sizing: border-box;
-		&.menu-items {
-			border-right: 1px solid pullForward($colorMenuBg, 10%);
-			left: 0;
-			padding-right: $interiorMargin;
-			right: auto;
-			width: $plw;
-			overflow-x: hidden;
-			overflow-y: auto;
-			ul {
-				li {
-					border-radius: $controlCr;
-					padding-left: 30px;
-					border-top: none;
-				}
-			}
-		}
-		&.menu-item-description {
-			left: auto;
-			right: 0;
-			padding: $interiorMargin * 5;
-			width: $prw;
+    $plw: 50%;
+    $prw: 100% - $plw;
+    position: absolute;
+    .w-menu {
+        align-items: stretch;
+        display: flex;
+        flex-direction: row;
+        margin: $interiorMarginLg;
+    }
+    .col {
+        box-sizing: border-box;
+        flex: 1 1 auto;
+        overflow-x: hidden;
+        &.menu-items {
+            border-right: 1px solid pullForward($colorMenuBg, 10%);
+            overflow-y: auto;
+            padding-right: $interiorMargin;
+            width: $plw;
+            ul {
+                li {
+                    border-radius: $controlCr;
+                    padding-left: 30px;
+                    border-top: none;
+                }
+            }
+        }
+        &.menu-item-description {
+            $p: $interiorMargin * 3;
+            overflow-y: hidden;
+            padding: $p $p 0 $p;
+            width: $prw;
+
             .desc-area {
                 &.icon {
                     color: $colorCreateMenuLgIcon;
-                    font-size: 8em;
-                    margin-bottom: $interiorMargin * 3;
                     position: relative;
                     text-align: center;
                 }
                 &.title {
                     color: $colorCreateMenuText;
-                    font-size: 1.2em;
-                    margin-bottom: $interiorMargin * 2;
                 }
                 &.description {
                     color: pushBack($colorCreateMenuText, 20%);
@@ -218,67 +216,104 @@
                     line-height: 1.5em;
                 }
             }
-		}
-	}
+        }
+    }
+
+    .w-title-desc {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; // Height set in specific menu instances
+    }
+
+    // Specific menu instances
+    &.l-create-menu {
+        width: 500px;
+        .col {
+            max-height: 70vh;
+        }
+        .w-title-desc {
+            height: 190px;
+        }
+        .desc-area {
+            &.icon {
+                font-size: 8em;
+                height: 135px;
+                margin-bottom: $interiorMargin * 3;
+            }
+            &.title {
+                font-size: 1.2em;
+                margin-bottom: $interiorMargin * 2;
+            }
+        }
+    }
 
     &.mini {
         width: 400px;
-        height: 300px;
-        .pane {
+        .col {
+            max-height: 50vh;
             &.menu-items {
                 font-size: 0.8em;
             }
             &.menu-item-description {
-                padding: $interiorMargin * 3;
-                .desc-area {
-                    &.icon {
-                        font-size: 4em;
-                    }
-                    &.title {
-                        font-size: 1em;
-                    }
-                }
+                $p: $interiorMargin * 2;
+                padding: $p $p 0 $p;
+            }
+        }
+        .w-title-desc {
+            height: 180px;
+        }
+        .desc-area {
+            &.icon {
+                font-size: 4em;
+                height: 70px;
+                margin-bottom: $interiorMargin * 3;
+            }
+            &.title {
+                font-size: 1em;
+                margin-bottom: $interiorMargin * 2;
             }
         }
     }
 }
+
 .context-menu {
-	font-size: 0.80rem;
+    font-size: 0.80rem;
 }
 
 .context-menu-holder,
 .menu-holder {
-	position: absolute;
-	z-index: 120;
-	.context-menu-wrapper {
-		position: absolute;
-		height: 100%;
-		width: 100%;
-	}
-	&.go-left .context-menu,
-	&.go-left .menu {
-		right: 0;
-	}
-	&.go-up .context-menu,
-	&.go-up .menu {
-		bottom: 0;
-	}
+    position: absolute;
+    z-index: 120;
+    .context-menu-wrapper {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+    }
+    &.go-left .context-menu,
+    &.go-left .menu {
+        right: 0;
+    }
+    &.go-up .context-menu,
+    &.go-up .menu {
+        bottom: 0;
+    }
 }
 
 .context-menu-holder {
-	pointer-events: none;
-	height: 200px;
-	width: 170px;
+    pointer-events: none;
+    height: 200px;
+    width: 170px;
 }
 
 .btn-bar.right .menu,
 .menus-to-left .menu {
     z-index: 79;
-	left: auto;
-	right: 0;
-	width: auto;
+    left: auto;
+    right: 0;
+    width: auto;
 }
 
 .menus-up .menu {
-    bottom: $btnStdH; top: auto;
+    bottom: $btnStdH;
+    top: auto;
 }

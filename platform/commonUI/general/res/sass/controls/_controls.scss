@@ -753,9 +753,13 @@ body.desktop {
     }
 
     .overlay ::-webkit-scrollbar-thumb {
-        $lr: 15%;
         background: $scrollbarThumbColorOverlay;
         &:hover { background: $scrollbarThumbColorOverlayHov; }
+    }
+
+    .menu ::-webkit-scrollbar-thumb {
+        background: $scrollbarThumbColorMenu;
+        &:hover { background: $scrollbarThumbColorMenuHov; }
     }
 
     ::-webkit-scrollbar-corner {

@@ -156,6 +156,8 @@
             left: 0;
             right: 0;
             overflow: auto;
+            padding-right: $interiorMargin;
+            padding-bottom: $interiorMargin;
             .field.l-input-med {
                 input[type='text'] {
                     width: 100%;
