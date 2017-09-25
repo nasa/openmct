@@ -10,6 +10,7 @@ define(['./src/SummaryWidget', './SummaryWidgetsCompositionPolicy'], function (S
             initialize: function (domainObject) {
                 domainObject.composition = [];
                 domainObject.configuration = {};
+                domainObject.openNewTab = 'thisTab';
             },
             form: [
                 {
