@@ -26,15 +26,26 @@
     @include ellipsize();
     display: inline-block;
     text-align: center;
+    .widget-label:before {
+        // Widget icon
+        font-size: 0.9em;
+        margin-right: $interiorMarginSm;
+    }
 }
 
 .s-summary-widget {
     // Widget style classes here
+    @include boxShdw($shdwBtns);
     border-radius: $basicCr;
     border-style: solid;
     border-width: 1px;
     box-sizing: border-box;
     padding: $interiorMarginLg $interiorMarginLg * 2;
+    cursor: pointer;
+    pointer-events: none;
+    &[href] {
+        pointer-events: inherit;
+    }
 }
 
 .widget-edit-holder {
@@ -70,7 +81,7 @@
 }
 
 .widget-rule-content.expanded {
-    overflow-y: visible;
+    overflow: visible !important;
 }
 
 .w-widget-test-data-content {
@@ -131,8 +142,10 @@
         ul {
             &:last-child { margin: 0; }
             li {
-                line-height: 200%;
-                padding: $interiorMarginSm 0;
+                @include align-items(flex-start);
+                @include flex-wrap(nowrap);
+                line-height: 230%; // Provide enough space when controls wrap
+                padding: 2px 0;
                 &:not(.widget-rule-header) {
                     &:not(.connects-to-previous) {
                         border-top: 1px solid $colorFormLines;
@@ -146,19 +159,13 @@
                     display: block; // Needed to align text to right
                     text-align: right;
                 }
-
-                > .controls > span {
-                    //display: inline-block;
-                }
             }
         }
 
         &.s-widget-test-data-item {
             // Single line of ul li label span, etc.
             ul {
-                //margin: 0;
                 li {
-                    //padding: 0;
                     border: none !important;
                     > label {
                         display: inline-block;
@@ -228,25 +235,32 @@
     @extend .s-summary-widget;
     @extend .l-summary-widget;
     padding: $interiorMarginSm $interiorMargin;
-    .widget-icon {
-        font-size: 0.8em;
-    }
 }
 
 // Hide and show elements in the rule-header on hover
-.l-widget-rule {
+.l-widget-rule,
+.l-widget-test-data-item {
     .grippy,
     .l-rule-action-buttons-wrapper,
-    .l-condition-action-buttons-wrapper {
+    .l-condition-action-buttons-wrapper,
+    .l-widget-test-data-item-action-buttons-wrapper {
         @include trans-prop-nice($props: opacity, $dur: 500ms);
         opacity: 0;
     }
     &:hover {
         .grippy,
         .l-rule-action-buttons-wrapper,
-        .l-condition-action-buttons-wrapper {
+        .l-widget-test-data-item-action-buttons-wrapper {
             @include trans-prop-nice($props: opacity, $dur: 0);
             opacity: 1;
+        }
+    }
+    .t-condition {
+        &:hover {
+            .l-condition-action-buttons-wrapper {
+                @include trans-prop-nice($props: opacity, $dur: 0);
+                opacity: 1;
+            }
         }
     }
 }

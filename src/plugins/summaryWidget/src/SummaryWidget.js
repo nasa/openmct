@@ -18,9 +18,9 @@ define([
 
     //default css configuration for new rules
     var DEFAULT_PROPS = {
-        'color': '#000000',
-        'background-color': '#00ff00',
-        'border-color': '#666666'
+        'color': '#ffffff',
+        'background-color': '#38761d',
+        'border-color': 'rgba(0,0,0,0)'
     };
 
     /**
@@ -175,7 +175,7 @@ define([
         this.applyStyle($('#widget', this.domElement), activeRule.getProperty('style'));
         $('#widget', this.domElement).prop('title', activeRule.getProperty('message'));
         $('#widgetLabel', this.domElement).html(activeRule.getProperty('label'));
-        $('#widgetIcon', this.domElement).removeClass().addClass(activeRule.getProperty('icon'));
+        $('#widgetLabel', this.domElement).removeClass().addClass('label widget-label ' + activeRule.getProperty('icon'));
     };
 
     /**
@@ -256,7 +256,7 @@ define([
                 label: this.domainObject.name,
                 message: '',
                 id: ruleId,
-                icon: 'icon-alert-rect',
+                icon: ' ',
                 style: styleObj,
                 description: ruleId === 'default' ? 'Default appearance for the widget' : 'A new rule',
                 conditions: [{

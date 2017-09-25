@@ -48,7 +48,6 @@ define([
         this.duplicate = this.duplicate.bind(this);
 
         this.thumbnail = $('.t-widget-thumb', this.domElement);
-        this.thumbnailIcon = $('.widget-icon', this.domElement);
         this.thumbnailLabel = $('.widget-label', this.domElement);
         this.title = $('.rule-title', this.domElement);
         this.description = $('.rule-description', this.domElement);
@@ -91,7 +90,7 @@ define([
         function onIconInput(icon) {
             self.config.icon = icon;
             self.updateDomainObject('icon', icon);
-            self.thumbnailIcon.removeClass().addClass('widget-icon ' + icon);
+            self.thumbnailLabel.removeClass().addClass('label widget-label ' + icon);
             self.eventEmitter.emit('change');
         }
 
@@ -169,7 +168,7 @@ define([
         });
 
         // Initialize thumbs when first loading
-        this.thumbnailIcon.removeClass().addClass('widget-icon ' + self.config.icon);
+        this.thumbnailLabel.removeClass().addClass('label widget-label ' + self.config.icon);
         this.thumbnailLabel.html(self.config.label);
 
         Object.keys(this.colorInputs).forEach(function (inputKey) {
