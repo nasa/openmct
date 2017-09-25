@@ -18,28 +18,33 @@
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
- *
- * Open MCT https://nasa.github.io/openmct/
- * Version: @@version
- * Built: @@timestamp
- * Revision: @@revision
- * Branch: @@branch
- *
- * @preserve
  *****************************************************************************/
 
-(function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define([], factory);
-    } else if (typeof exports === 'object') {
-        module.exports = factory();
-    } else {
-        root.openmct = factory();
-    }
-}(this, function() {
-    var BUILD_CONSTANTS = {
-        version: "@@version",
-        timestamp: "@@timestamp",
-        revision: "@@revision",
-        branch: "@@branch"
-    };
+define([
+    './plugin'
+], function (plugin) {
+    describe("The buildInfo plugin", function () {
+        var mockmct;
+        var testInfo;
+
+        beforeEach(function () {
+            mockmct = jasmine.createSpyObj('openmct', ['legacyExtension']);
+            testInfo = { foo: 123, bar: "baz" };
+            plugin(testInfo)(mockmct);
+        });
+
+        it("registers versions extensions", function () {
+            Object.keys(testInfo).forEach(function (key) {
+                expect(mockmct.legacyExtension).toHaveBeenCalledWith(
+                    "versions",
+                    {
+                        key: key,
+                        name: jasmine.any(String),
+                        value: testInfo[key],
+                        description: undefined
+                    }
+                );
+            });
+        });
+    });
+});

@@ -27,51 +27,71 @@ define(
         describe("Plot view policy", function () {
             var testView,
                 mockDomainObject,
-                mockTelemetry,
-                testMetadata,
+                openmct,
+                telemetryMetadata,
                 policy;
 
             beforeEach(function () {
                 testView = { key: "plot" };
-                testMetadata = {};
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    ['getId', 'getModel', 'getCapability']
+                    ['useCapability']
                 );
-                mockTelemetry = jasmine.createSpyObj(
-                    'telemetry',
-                    ['getMetadata']
-                );
-                mockDomainObject.getCapability.andCallFake(function (c) {
-                    return c === 'telemetry' ? mockTelemetry : undefined;
-                });
-                mockTelemetry.getMetadata.andReturn(testMetadata);
-
-                policy = new PlotViewPolicy();
+                mockDomainObject.useCapability.andReturn('adaptedObject');
+                openmct = {
+                    telemetry: jasmine.createSpyObj('telemetryAPI', [
+                        'getMetadata'
+                    ])
+                };
+                telemetryMetadata = jasmine.createSpyObj('telemetryMetadata', [
+                    'valuesForHints'
+                ]);
+                telemetryMetadata.valuesForHints.andReturn([]);
+                openmct.telemetry.getMetadata.andReturn(telemetryMetadata);
+                policy = new PlotViewPolicy(openmct);
             });
 
-            it("allows the imagery view for domain objects with numeric telemetry", function () {
-                testMetadata.ranges = [{ key: "foo", format: "number" }];
-                expect(policy.allow(testView, mockDomainObject)).toBeTruthy();
+            it('fetches metadata from telem api', function () {
+                policy.allow(testView, mockDomainObject);
+                expect(mockDomainObject.useCapability)
+                    .toHaveBeenCalledWith('adapter');
+                expect(openmct.telemetry.getMetadata)
+                    .toHaveBeenCalledWith('adaptedObject');
+                expect(telemetryMetadata.valuesForHints)
+                    .toHaveBeenCalledWith(['range']);
             });
 
-            it("allows the imagery view for domain objects with unspecified telemetry", function () {
-                testMetadata.ranges = [{ key: "foo"  }];
-                expect(policy.allow(testView, mockDomainObject)).toBeTruthy();
+            it('returns false if no ranges exist', function () {
+                telemetryMetadata.valuesForHints.andReturn([]);
+                expect(policy.allow(testView, mockDomainObject)).toBe(false);
             });
 
-            it("disallows the imagery view for domain objects without image telemetry", function () {
-                testMetadata.ranges = [{ key: "foo", format: "somethingElse" }];
-                expect(policy.allow(testView, mockDomainObject)).toBeFalsy();
+            it('returns true if any ranges exist', function () {
+                telemetryMetadata.valuesForHints.andReturn([{}]);
+                expect(policy.allow(testView, mockDomainObject)).toBe(true);
+            });
+
+            it('returns false if all ranges are strings', function () {
+                telemetryMetadata.valuesForHints.andReturn([{
+                    format: 'string'
+                }, {
+                    format: 'string'
+                }]);
+                expect(policy.allow(testView, mockDomainObject)).toBe(false);
+            });
+
+            it('returns true if only some ranges are strings', function () {
+                telemetryMetadata.valuesForHints.andReturn([{
+                    format: 'string'
+                }, {}]);
+                expect(policy.allow(testView, mockDomainObject)).toBe(true);
             });
 
             it("allows other views", function () {
                 testView.key = "somethingElse";
-                testMetadata.ranges = [{ key: "foo", format: "somethingElse" }];
-                expect(policy.allow(testView, mockDomainObject)).toBeTruthy();
+                expect(policy.allow(testView, mockDomainObject)).toBe(true);
             });
 
         });
     }
 );
-

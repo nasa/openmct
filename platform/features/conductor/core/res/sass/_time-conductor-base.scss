@@ -162,9 +162,6 @@
             .l-time-conductor-inputs {
                 pointer-events: auto;
             }
-            input[type="text"] {
-                @include trans-prop-nice(padding, 250ms);
-            }
             .time-range-input input[type="text"] {
                 width: $timeCondInputTimeSysDefW;
             }
@@ -290,18 +287,6 @@
 
         .l-time-conductor-inputs-holder {
             .l-time-range-input-w {
-                input[type="text"]:not(.error) {
-                    background: transparent;
-                    box-shadow: none;
-                    border-radius: 0;
-                    padding-left: 0;
-                    padding-right: 0;
-                    &:hover,
-                    &:focus {
-                        @include nice-input();
-                        padding: $inputTextP;
-                    }
-                }
                 .icon-calendar {
                     display: none;
                 }
@@ -309,8 +294,11 @@
                     display: none;
                 }
                 &.end-date {
+                    // Displays the current time
                     pointer-events: none;
                     input[type="text"] {
+                        background: none;
+                        box-shadow: none;
                         color: pullForward($colorTimeCondKeyBg, 5%);
                         margin-right: $interiorMargin;
                         tab-index: -1;

@@ -316,23 +316,28 @@
     text-shadow: $shdwItemText;
 }
 
-@mixin input-base($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.6) 0 1px 3px) {
+@mixin input-base() {
 	@include appearance(none);
 	border-radius: $controlCr;
 	box-sizing: border-box;
-	box-shadow: inset $shdw;
-	background: $bg;
-	border: none;
-	color: $fg;
-	outline: none;
+    &:focus { outline: 0; }
 	&.error {
 		background-color: $colorFormFieldErrorBg;
         color: $colorFormFieldErrorFg;
 	}
 }
 
-@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg) {
-	@include input-base($bg, $fg);
+@mixin s-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.6) 0 1px 3px) {
+    @include input-base();
+    background: $bg;
+    box-shadow: inset $shdw;
+    color: $fg;
+}
+
+@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.6) 0 1px 3px) {
+    @include s-input($bg, $fg, $shdw);
+    border: none;
+    outline: none;
 }
 
 @mixin contextArrow() {
@@ -344,7 +349,7 @@
 }
 
 @mixin nice-textarea($bg: $colorBodyBg, $fg: $colorBodyFg) {
-    @include input-base($bg, $fg);
+    @include nice-input($bg, $fg);
     padding: $interiorMargin;
 }
 
