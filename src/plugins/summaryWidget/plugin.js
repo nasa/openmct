@@ -10,7 +10,33 @@ define(['./src/SummaryWidget', './SummaryWidgetsCompositionPolicy'], function (S
             initialize: function (domainObject) {
                 domainObject.composition = [];
                 domainObject.configuration = {};
-            }
+            },
+            form: [
+                {
+                    "key": "url",
+                    "name": "URL",
+                    "control": "textfield",
+                    "pattern": "^(ftp|https?)\\:\\/\\/",
+                    "required": false,
+                    "cssClass": "l-input-lg"
+                },
+                {
+                    "key": "openNewTab",
+                    "name": "Tab to Open Hyperlink",
+                    "control": "select",
+                    "options": [
+                            {
+                                "value": "thisTab",
+                                "name": "Open in this tab"
+                            },
+                            {
+                                "value": "newTab",
+                                "name": "Open in a new tab"
+                            }
+                        ],
+                    "cssClass": "l-inline"
+                }
+            ]
         };
 
         function initViewProvider(openmct) {

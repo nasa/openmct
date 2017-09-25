@@ -47,6 +47,7 @@ define([
         this.activeId = 'default';
         this.rulesById = {};
         this.domElement = $(widgetTemplate);
+        this.widgetButton = this.domElement.children('#widget');
         this.editing = false;
         this.container = '';
         this.editListenerUnsubscribe = $.noop;
@@ -80,7 +81,19 @@ define([
                     self.onEdit([]);
                 }
             });
+
+        if (this.domainObject.url) {
+            this.addHyperlink(this.domainObject.url, this.domainObject.openNewTab);
+        }
     }
+
+    SummaryWidget.prototype.addHyperlink = function (url, openNewTab) {
+        this.widgetButton.attr('href', url);
+
+        if (openNewTab === 'newTab') {
+            this.widgetButton.attr('target', '_blank');
+        }
+    };
 
     /**
      * Builds the Summary Widget's DOM, performs other necessary setup, and attaches
