@@ -27,17 +27,19 @@ define(
         describe("Plot view policy", function () {
             var testView,
                 mockDomainObject,
+                testAdaptedObject,
                 openmct,
                 telemetryMetadata,
                 policy;
 
             beforeEach(function () {
                 testView = { key: "plot" };
+                testAdaptedObject = { telemetry: {} };
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    ['useCapability']
+                    ['useCapability', 'hasCapability', 'getCapability']
                 );
-                mockDomainObject.useCapability.andReturn('adaptedObject');
+                mockDomainObject.useCapability.andReturn(testAdaptedObject);
                 openmct = {
                     telemetry: jasmine.createSpyObj('telemetryAPI', [
                         'getMetadata'
@@ -56,7 +58,7 @@ define(
                 expect(mockDomainObject.useCapability)
                     .toHaveBeenCalledWith('adapter');
                 expect(openmct.telemetry.getMetadata)
-                    .toHaveBeenCalledWith('adaptedObject');
+                    .toHaveBeenCalledWith(testAdaptedObject);
                 expect(telemetryMetadata.valuesForHints)
                     .toHaveBeenCalledWith(['range']);
             });
