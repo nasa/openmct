@@ -78,7 +78,7 @@ define(['./Select'], function (Select) {
         items.splice(0, 0, ['',NULLVALUE]);
         this.select.setOptions(items);
 
-        if(this.select.options.length < 2){
+        if (this.select.options.length < 2) {
             this.select.hide();
         } else if (this.select.options.length > 1) {
             this.select.show();
