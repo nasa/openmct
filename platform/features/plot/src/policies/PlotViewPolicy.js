@@ -36,6 +36,13 @@ define(
 
         PlotViewPolicy.prototype.hasNumericTelemetry = function (domainObject) {
             var adaptedObject = domainObject.useCapability('adapter');
+
+            if (!adaptedObject.telemetry) {
+                return domainObject.hasCapability('delegation') &&
+                    domainObject.getCapability('delegation')
+                            .doesDelegateCapability('telemetry');
+            }
+
             var metadata = this.openmct.telemetry.getMetadata(adaptedObject);
             var rangeValues = metadata.valuesForHints(['range']);
             if (rangeValues.length === 0) {
