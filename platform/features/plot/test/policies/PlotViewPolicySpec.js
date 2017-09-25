@@ -89,6 +89,30 @@ define(
                 expect(policy.allow(testView, mockDomainObject)).toBe(true);
             });
 
+            it('returns true for telemetry delegators', function () {
+                delete testAdaptedObject.telemetry;
+                mockDomainObject.hasCapability.andCallFake(function (c) {
+                    return c === 'delegation';
+                });
+                mockDomainObject.getCapability.andReturn(
+                    jasmine.createSpyObj('delegation', [
+                        'doesDelegateCapability'
+                    ])
+                );
+                mockDomainObject.getCapability('delegation')
+                    .doesDelegateCapability.andCallFake(function (c) {
+                        return c === 'telemetry';
+                    });
+                expect(policy.allow(testView, mockDomainObject)).toBe(true);
+                expect(openmct.telemetry.getMetadata).not.toHaveBeenCalled();
+            });
+
+            it('returns true for non-telemetry non-delegators', function () {
+                delete testAdaptedObject.telemetry;
+                mockDomainObject.hasCapability.andReturn(false);
+                expect(policy.allow(testView, mockDomainObject)).toBe(false);
+            });
+
             it("allows other views", function () {
                 testView.key = "somethingElse";
                 expect(policy.allow(testView, mockDomainObject)).toBe(true);
