@@ -165,27 +165,35 @@
 	}
 }
 
+.super-menu,
+.super-menu > mct-representation,
+.super-menu > .contents {
+    box-sizing: border-box;
+    display: block;
+    position: relative;
+}
+
 .super-menu {
-	$w: 500px;
-	$h: $w - 20;
 	$plw: 50%;
-	$prw: 50%;
-	display: block;
-	width: $w;
-	height: $h;
-	.contents {
-		@include absPosDefault($interiorMargin);
+	$prw: 100% - $plw;
+    position: absolute;
+    width: 500px;
+	.w-menu {
+        align-items: stretch;
+        display: flex;
+        flex-direction: row;
+        margin: $interiorMarginLg;
 	}
-	.pane {
-		box-sizing: border-box;
+	.col {
+        box-sizing: border-box;
+        flex: 1 1 auto;
+        max-height: 70vh;
+        overflow-x: hidden;
 		&.menu-items {
 			border-right: 1px solid pullForward($colorMenuBg, 10%);
-			left: 0;
+            overflow-y: auto;
 			padding-right: $interiorMargin;
-			right: auto;
 			width: $plw;
-			overflow-x: hidden;
-			overflow-y: auto;
 			ul {
 				li {
 					border-radius: $controlCr;
@@ -195,8 +203,8 @@
 			}
 		}
 		&.menu-item-description {
-			left: auto;
-			right: 0;
+            @include test(blue);
+            overflow-y: hidden;
 			padding: $interiorMargin * 5;
 			width: $prw;
             .desc-area {
@@ -223,8 +231,9 @@
 
     &.mini {
         width: 400px;
-        height: 300px;
-        .pane {
+        .col {
+            height: 350px;
+            max-height: 50vh;
             &.menu-items {
                 font-size: 0.8em;
             }
