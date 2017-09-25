@@ -27,17 +27,19 @@ define(
         describe("Plot view policy", function () {
             var testView,
                 mockDomainObject,
+                testAdaptedObject,
                 openmct,
                 telemetryMetadata,
                 policy;
 
             beforeEach(function () {
                 testView = { key: "plot" };
+                testAdaptedObject = { telemetry: {} };
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    ['useCapability']
+                    ['useCapability', 'hasCapability', 'getCapability']
                 );
-                mockDomainObject.useCapability.andReturn('adaptedObject');
+                mockDomainObject.useCapability.andReturn(testAdaptedObject);
                 openmct = {
                     telemetry: jasmine.createSpyObj('telemetryAPI', [
                         'getMetadata'
@@ -56,7 +58,7 @@ define(
                 expect(mockDomainObject.useCapability)
                     .toHaveBeenCalledWith('adapter');
                 expect(openmct.telemetry.getMetadata)
-                    .toHaveBeenCalledWith('adaptedObject');
+                    .toHaveBeenCalledWith(testAdaptedObject);
                 expect(telemetryMetadata.valuesForHints)
                     .toHaveBeenCalledWith(['range']);
             });
@@ -85,6 +87,30 @@ define(
                     format: 'string'
                 }, {}]);
                 expect(policy.allow(testView, mockDomainObject)).toBe(true);
+            });
+
+            it('returns true for telemetry delegators', function () {
+                delete testAdaptedObject.telemetry;
+                mockDomainObject.hasCapability.andCallFake(function (c) {
+                    return c === 'delegation';
+                });
+                mockDomainObject.getCapability.andReturn(
+                    jasmine.createSpyObj('delegation', [
+                        'doesDelegateCapability'
+                    ])
+                );
+                mockDomainObject.getCapability('delegation')
+                    .doesDelegateCapability.andCallFake(function (c) {
+                        return c === 'telemetry';
+                    });
+                expect(policy.allow(testView, mockDomainObject)).toBe(true);
+                expect(openmct.telemetry.getMetadata).not.toHaveBeenCalled();
+            });
+
+            it('returns true for non-telemetry non-delegators', function () {
+                delete testAdaptedObject.telemetry;
+                mockDomainObject.hasCapability.andReturn(false);
+                expect(policy.allow(testView, mockDomainObject)).toBe(false);
             });
 
             it("allows other views", function () {
