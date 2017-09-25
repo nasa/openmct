@@ -37,8 +37,7 @@ define(['EventEmitter'], function (EventEmitter) {
         this.key = 'local';
         this.cssClass = 'icon-clock';
         this.name = 'Local Clock';
-        this.description = "Updates every second, providing UTC timestamps from " +
-            "user's local computer.";
+        this.description = "Provides UTC timestamps every second from the local system clock.";
 
         this.period = period;
         this.timeoutHandle = undefined;

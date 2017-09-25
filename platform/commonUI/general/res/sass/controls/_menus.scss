@@ -72,17 +72,12 @@
 	position: relative;
 }
 
-.s-menu {
-	border-radius: $basicCr;
-	@include containerSubtle($colorMenuBg, $colorMenuFg);
-	@include boxShdw($shdwMenu);
-	@include txtShdw($shdwMenuText);
-	padding: $interiorMarginSm 0;
-}
-
 .menu {
-    // TODO: reduce size of icons
-	@extend .s-menu;
+    border-radius: $basicCr;
+    @include containerSubtle($colorMenuBg, $colorMenuFg);
+    @include boxShdw($shdwMenu);
+    @include txtShdw($shdwMenuText);
+    padding: $interiorMarginSm 0;
 	display: block;
 	position: absolute;
 	z-index: 10;
@@ -92,7 +87,6 @@
 			box-sizing: border-box;
 			border-top: 1px solid pullForward($colorMenuBg, 10%);
             color: $colorMenuFg;
-			//color: pullForward($colorMenuBg, 60%);
 			line-height: $menuLineH;
 			padding: $interiorMarginSm $interiorMargin * 2 $interiorMarginSm ($interiorMargin * 2) + $treeTypeIconW;
 			position: relative;
@@ -203,7 +197,6 @@
 			}
 		}
 		&.menu-item-description {
-            @include test(blue);
             overflow-y: hidden;
 			padding: $interiorMargin * 5;
 			width: $prw;
@@ -232,7 +225,7 @@
     &.mini {
         width: 400px;
         .col {
-            height: 350px;
+            height: 320px;
             max-height: 50vh;
             &.menu-items {
                 font-size: 0.8em;
