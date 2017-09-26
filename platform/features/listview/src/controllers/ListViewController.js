@@ -52,10 +52,10 @@ define(function () {
                 type: child.getCapability('type').getName(),
                 persisted: new Date(
                     child.getModel().persisted
-                ).toUTCString(),
+                ),
                 modified: new Date(
                     child.getModel().modified
-                ).toUTCString(),
+                ),
                 asDomainObject: child,
                 location: child.getCapability('location'),
                 action: child.getCapability('action')
