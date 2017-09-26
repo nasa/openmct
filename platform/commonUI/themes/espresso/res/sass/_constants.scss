@@ -201,13 +201,15 @@ $shdwItemTreeIcon: 0.6;
 $colorThumbHoverBg: $colorItemTreeHoverBg;
 
 // Scrollbar
-$scrollbarTrackSize: 10px;
-$scrollbarTrackShdw: rgba(#000, 0.7) 0 1px 5px;
-$scrollbarTrackColorBg: rgba(#000, 0.4);
+$scrollbarTrackSize: 7px;
+$scrollbarTrackShdw: rgba(#000, 0.5) 0 1px 5px;
+$scrollbarTrackColorBg: transparent; //rgba(#000, 0.4);
 $scrollbarThumbColor: pullForward($colorBodyBg, 10%);
 $scrollbarThumbColorHov: pullForward($scrollbarThumbColor, 2%);
 $scrollbarThumbColorOverlay: pullForward($colorOvrBg, 10%);
 $scrollbarThumbColorOverlayHov: pullForward($scrollbarThumbColorOverlay, 2%);
+$scrollbarThumbColorMenu: pullForward($colorMenuBg, 20%);
+$scrollbarThumbColorMenuHov: pullForward($scrollbarThumbColorMenu, 2%);
 
 // Splitter
 // All splitterD* values MUST both be either odd or even numbers

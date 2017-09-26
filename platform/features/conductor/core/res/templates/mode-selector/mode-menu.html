@@ -19,8 +19,8 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="contents">
-    <div class="pane left menu-items">
+<div class="w-menu">
+    <div class="col menu-items">
         <ul>
             <li ng-repeat="metadata in ngModel.options"
                 ng-click="ngModel.select(metadata)">
@@ -32,13 +32,15 @@
             </li>
         </ul>
     </div>
-    <div class="pane right menu-item-description">
+    <div class="col menu-item-description">
         <div class="desc-area ui-symbol icon type-icon {{ngModel.activeMetadata.cssClass}}"></div>
-        <div class="desc-area title">
-            {{ngModel.activeMetadata.name}}
-        </div>
-        <div class="desc-area description">
-            {{ngModel.activeMetadata.description}}
+        <div class="w-title-desc">
+            <div class="desc-area title">
+                {{ngModel.activeMetadata.name}}
+            </div>
+            <div class="desc-area description">
+                {{ngModel.activeMetadata.description}}
+            </div>
         </div>
     </div>
 </div>
