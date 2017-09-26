@@ -65,6 +65,7 @@ define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
             ]);
             mockOpenMCT.composition.get.andReturn(mockComposition);
             mockOpenMCT.objects.mutate = jasmine.createSpy('mutate');
+            mockOpenMCT.objects.observe = function(){};
 
             summaryWidget = new SummaryWidget(mockDomainObject, mockOpenMCT);
             mockContainer = document.createElement('div');

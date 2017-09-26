@@ -59,10 +59,14 @@ define([
         this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
         this.testDataManager = new TestDataManager(this.domainObject, this.conditionManager, this.openmct);
 
+        this.watchForChanges = this.watchForChanges.bind(this);
         this.show = this.show.bind(this);
         this.destroy = this.destroy.bind(this);
         this.addRule = this.addRule.bind(this);
         this.onEdit = this.onEdit.bind(this);
+
+        this.addHyperlink(domainObject.url, domainObject.openNewTab);
+        this.watchForChanges(openmct, domainObject);
 
         var id = this.domainObject.identifier.key,
             self = this,
@@ -81,18 +85,40 @@ define([
                     self.onEdit([]);
                 }
             });
-
-        if (this.domainObject.url) {
-            this.addHyperlink(this.domainObject.url, this.domainObject.openNewTab);
-        }
     }
 
+    /**
+     * adds or removes href to widget button and adds or removes openInNewTab
+     * @param {string} url String that denotes the url to be opened
+     * @param {string} openNewTab String that denotes wether to open link in new tab or not
+     */
     SummaryWidget.prototype.addHyperlink = function (url, openNewTab) {
-        this.widgetButton.attr('href', url);
+        if (url) {
+            this.widgetButton.attr('href', url);
+        } else {
+            this.widgetButton.removeAttr('href');
+        }
 
         if (openNewTab === 'newTab') {
             this.widgetButton.attr('target', '_blank');
+        } else {
+            this.widgetButton.removeAttr('target');
         }
+    };
+
+    /**
+     * adds a listener to the object to watch for any changes made by user
+     * only executes if changes are observed
+     * @param {openmct} Object Instance of OpenMCT
+     * @param {domainObject} Object instance of this object
+     */
+    SummaryWidget.prototype.watchForChanges = function (openmct, domainObject) {
+        openmct.objects.observe(domainObject, '*', function (newDomainObject) {
+            if (newDomainObject.url !== this.domainObject.url ||
+                    newDomainObject.openNewTab !== this.domainObject.openNewTab) {
+                this.addHyperlink(newDomainObject.url, newDomainObject.openNewTab);
+            }
+        }.bind(this));
     };
 
     /**
