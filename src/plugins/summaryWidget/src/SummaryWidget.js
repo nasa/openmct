@@ -47,12 +47,17 @@ define([
         this.activeId = 'default';
         this.rulesById = {};
         this.domElement = $(widgetTemplate);
+        this.toggleRulesControl = $('.t-view-control-rules', this.domElement);
+        this.toggleTestDataControl = $('.t-view-control-test-data', this.domElement);
         this.widgetButton = this.domElement.children('#widget');
         this.editing = false;
         this.container = '';
         this.editListenerUnsubscribe = $.noop;
 
+        this.outerWrapper = $('.widget-edit-holder', this.domElement);
         this.ruleArea = $('#ruleArea', this.domElement);
+        this.configAreaRules = $('.widget-rules-wrapper', this.domElement);
+
         this.testDataArea = $('.widget-test-data', this.domElement);
         this.addRuleButton = $('#addRule', this.domElement);
 
@@ -72,6 +77,26 @@ define([
             self = this,
             oldDomainObject,
             statusCapability;
+
+        /**
+         * Toggles the configuration area for test data in the view
+         * @private
+         */
+        function toggleTestData() {
+            self.outerWrapper.toggleClass('expanded-widget-test-data');
+            self.toggleTestDataControl.toggleClass('expanded');
+        }
+        this.toggleTestDataControl.on('click', toggleTestData);
+
+        /**
+         * Toggles the configuration area for rules in the view
+         * @private
+         */
+        function toggleRules() {
+            self.outerWrapper.toggleClass('expanded-widget-rules');
+            self.toggleRulesControl.toggleClass('expanded');
+        }
+        this.toggleRulesControl.on('click', toggleRules);
 
         openmct.$injector.get('objectService')
             .getObjects([id])

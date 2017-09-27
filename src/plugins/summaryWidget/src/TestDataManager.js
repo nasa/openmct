@@ -29,20 +29,9 @@ define([
         this.config = this.domainObject.configuration.testDataConfig;
         this.testCache = {};
 
-        this.configArea = $('.t-widget-test-data-content', this.domElement);
         this.itemArea = $('.t-test-data-config', this.domElement);
-        this.toggleConfigButton = $('.view-control', this.domElement);
         this.addItemButton = $('.add-test-condition', this.domElement);
         this.testDataInput = $('.t-test-data-checkbox', this.domElement);
-
-        /**
-         * Toggles the configuration area for test data in the view
-         * @private
-         */
-        function toggleConfig() {
-            self.configArea.toggleClass('expanded');
-            self.toggleConfigButton.toggleClass('expanded');
-        }
 
         /**
          * Toggles whether the associated {ConditionEvaluator} uses the actual
@@ -56,7 +45,6 @@ define([
             self.updateTestCache();
         }
 
-        this.toggleConfigButton.on('click', toggleConfig);
         this.addItemButton.on('click', function () {
             self.initItem();
         });
