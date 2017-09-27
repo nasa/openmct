@@ -362,7 +362,10 @@ define([
      * Build {Condition} objects from configuration and rebuild associated view
      */
     Rule.prototype.refreshConditions = function () {
-        var self = this;
+        var self = this,
+            $condition = null,
+            loopCnt = 0,
+            triggerContextStr = self.config.trigger === 'any' ? ' or ' : ' and ';
 
         self.conditions = [];
         $('.t-condition', this.domElement).remove();
@@ -382,11 +385,17 @@ define([
             this.jsConditionArea.hide();
             this.addConditionButton.show();
             self.conditions.forEach(function (condition) {
-                $('li:last-of-type', self.conditionArea).before(condition.getDOM());
+                $condition = condition.getDOM();
+                $('li:last-of-type', self.conditionArea).before($condition);
+                if (loopCnt > 0) {
+                    $('.t-condition-context', $condition).html(triggerContextStr + ' when');
+                }
+                loopCnt++;
             });
         }
 
         if (self.conditions.length === 1) {
+            // Only one condition
             self.conditions[0].hideButtons();
         }
 
