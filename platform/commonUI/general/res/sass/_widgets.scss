@@ -64,6 +64,7 @@
     }
 }
 
+.widget-rules-wrapper,
 .widget-rule-content,
 .w-widget-test-data-content {
     @include trans-prop-nice($props: (height, min-height, opacity), $dur: 250ms);
@@ -72,16 +73,18 @@
     opacity: 0;
     overflow: hidden;
     pointer-events: none;
-    &.expanded {
-        min-height: 50px;
-        height: auto;
-        opacity: 1;
-        pointer-events: inherit;
-    }
+}
+
+.widget-rules-wrapper {
+    flex: 1 1 auto !important;
 }
 
 .widget-rule-content.expanded {
     overflow: visible !important;
+    min-height: 50px;
+    height: auto;
+    opacity: 1;
+    pointer-events: inherit;
 }
 
 .w-widget-test-data-content {
@@ -119,11 +122,43 @@
 
     > .l-summary-widget {
         // Main view of the summary widget
+        // Give some airspace and center the widget in the area
         margin: 30px auto;
     }
 
     .widget-edit-holder {
-        display: flex; // Overrides display: none during Browse mode
+        display: flex; // Overrides `display: none` during Browse mode
+        .flex-accordion-holder {
+            // Needed because otherwise accordion elements "creep" when contents expand and contract
+            display: block !important;
+        }
+        &.expanded-widget-test-data {
+            .w-widget-test-data-content {
+                min-height: 50px;
+                height: auto;
+                opacity: 1;
+                pointer-events: inherit;
+            }
+            &:not(.expanded-widget-rules) {
+                // Test data is expanded and rules are collapsed
+                // Make text data take up all the vertical space
+                .flex-accordion-holder { display: flex; }
+                .widget-test-data {
+                    flex-grow: 999999;
+                }
+                .w-widget-test-data-items {
+                    max-height: inherit;
+                }
+            }
+        }
+        &.expanded-widget-rules {
+            .widget-rules-wrapper {
+                min-height: 50px;
+                height: auto;
+                opacity: 1;
+                pointer-events: inherit;
+            }
+        }
     }
 
     &.s-status-no-data {
