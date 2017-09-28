@@ -41,10 +41,9 @@
     border-width: 1px;
     box-sizing: border-box;
     padding: $interiorMarginLg $interiorMarginLg * 2;
-    cursor: pointer;
-    pointer-events: none;
+    cursor: default;
     &[href] {
-        pointer-events: inherit;
+        cursor: pointer;
     }
 }
 
