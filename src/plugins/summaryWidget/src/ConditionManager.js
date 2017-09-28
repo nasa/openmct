@@ -28,8 +28,8 @@ define ([
         this.supportedCallbacks = ['add', 'remove', 'load', 'metadata', 'receiveTelemetry'];
 
         this.keywordLabels = {
-            any: 'Any Telemetry',
-            all: 'All Telemetry'
+            any: 'any Telemetry',
+            all: 'all Telemetry'
         };
 
         this.telemetryMetadataById = {

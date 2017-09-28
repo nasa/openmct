@@ -82,8 +82,8 @@ define([
         this.duplicateButton.on('click', this.duplicate);
 
         this.selects.object = new ObjectSelect(this.config, this.conditionManager, [
-            ['any', 'Any telemetry'],
-            ['all', 'All telemetry']
+            ['any', 'any telemetry'],
+            ['all', 'all telemetry']
         ]);
         this.selects.key = new KeySelect(this.config, this.selects.object, this.conditionManager);
         this.selects.operation = new OperationSelect(

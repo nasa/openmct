@@ -124,7 +124,7 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                     operation: function (input) {
                         return input[0] > input[1];
                     },
-                    text: 'is Greater Than',
+                    text: 'is greater than',
                     appliesTo: ['number'],
                     inputCount: 1,
                     getDescription: function (values) {
@@ -135,7 +135,7 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                     operation: function (input) {
                         return input[0] < input[1];
                     },
-                    text: 'is Less Than',
+                    text: 'is less than',
                     appliesTo: ['number'],
                     inputCount: 1
                 },
@@ -143,7 +143,7 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                     operation: function (input) {
                         return input[0] && input[1] && input[0].includes(input[1]);
                     },
-                    text: 'Text Contains',
+                    text: 'text contains',
                     appliesTo: ['string'],
                     inputCount: 1
                 },
@@ -151,7 +151,7 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                     operation: function (input) {
                         return input[0] === input[1];
                     },
-                    text: 'Text is Exactly',
+                    text: 'text is exactly',
                     appliesTo: ['string'],
                     inputCount: 1
                 },

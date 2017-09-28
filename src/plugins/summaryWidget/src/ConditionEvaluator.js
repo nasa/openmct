@@ -57,7 +57,7 @@ define([], function () {
                 operation: function (input) {
                     return input[0] === input[1];
                 },
-                text: 'is Equal To',
+                text: 'is equal to',
                 appliesTo: ['number'],
                 inputCount: 1,
                 getDescription: function (values) {
@@ -68,7 +68,7 @@ define([], function () {
                 operation: function (input) {
                     return input[0] !== input[1];
                 },
-                text: 'is Not Equal To',
+                text: 'is not equal to',
                 appliesTo: ['number'],
                 inputCount: 1,
                 getDescription: function (values) {
@@ -79,7 +79,7 @@ define([], function () {
                 operation: function (input) {
                     return input[0] > input[1];
                 },
-                text: 'is Greater Than',
+                text: 'is greater than',
                 appliesTo: ['number'],
                 inputCount: 1,
                 getDescription: function (values) {
@@ -90,7 +90,7 @@ define([], function () {
                 operation: function (input) {
                     return input[0] < input[1];
                 },
-                text: 'is Less Than',
+                text: 'is less than',
                 appliesTo: ['number'],
                 inputCount: 1,
                 getDescription: function (values) {
@@ -101,7 +101,7 @@ define([], function () {
                 operation: function (input) {
                     return input[0] >= input[1];
                 },
-                text: 'is Greater Than or Equal To',
+                text: 'is greater than or equal to',
                 appliesTo: ['number'],
                 inputCount: 1,
                 getDescription: function (values) {
@@ -112,7 +112,7 @@ define([], function () {
                 operation: function (input) {
                     return input[0] <= input[1];
                 },
-                text: 'is Less Than or Equal To',
+                text: 'is less than or equal to',
                 appliesTo: ['number'],
                 inputCount: 1,
                 getDescription: function (values) {
@@ -123,7 +123,7 @@ define([], function () {
                 operation: function (input) {
                     return input[0] > input[1] && input[0] < input[2];
                 },
-                text: 'is Between',
+                text: 'is between',
                 appliesTo: ['number'],
                 inputCount: 2,
                 getDescription: function (values) {
@@ -134,7 +134,7 @@ define([], function () {
                 operation: function (input) {
                     return input[0] < input[1] || input[0] > input[2];
                 },
-                text: 'is Not Between',
+                text: 'is not between',
                 appliesTo: ['number'],
                 inputCount: 2,
                 getDescription: function (values) {
@@ -145,7 +145,7 @@ define([], function () {
                 operation: function (input) {
                     return input[0] && input[1] && input[0].includes(input[1]);
                 },
-                text: 'Text Contains',
+                text: 'text contains',
                 appliesTo: ['string'],
                 inputCount: 1,
                 getDescription: function (values) {
@@ -156,7 +156,7 @@ define([], function () {
                 operation: function (input) {
                     return input[0] && input[1] && !input[0].includes(input[1]);
                 },
-                text: 'Text Does Not Contain',
+                text: 'text does not contain',
                 appliesTo: ['string'],
                 inputCount: 1,
                 getDescription: function (values) {
@@ -167,7 +167,7 @@ define([], function () {
                 operation: function (input) {
                     return input[0].startsWith(input[1]);
                 },
-                text: 'Text Starts With',
+                text: 'text starts with',
                 appliesTo: ['string'],
                 inputCount: 1,
                 getDescription: function (values) {
@@ -178,7 +178,7 @@ define([], function () {
                 operation: function (input) {
                     return input[0].endsWith(input[1]);
                 },
-                text: 'Text Ends With',
+                text: 'text ends with',
                 appliesTo: ['string'],
                 inputCount: 1,
                 getDescription: function (values) {
@@ -189,7 +189,7 @@ define([], function () {
                 operation: function (input) {
                     return input[0] === input[1];
                 },
-                text: 'Text is Exactly',
+                text: 'text is exactly',
                 appliesTo: ['string'],
                 inputCount: 1,
                 getDescription: function (values) {
@@ -200,7 +200,7 @@ define([], function () {
                 operation: function (input) {
                     return typeof input[0] === 'undefined';
                 },
-                text: 'is Undefined',
+                text: 'is undefined',
                 appliesTo: ['string', 'number'],
                 inputCount: 0,
                 getDescription: function () {
