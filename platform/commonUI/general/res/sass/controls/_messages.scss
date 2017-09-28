@@ -192,7 +192,6 @@
 		padding: 0 $interiorMargin;
 	}
     .close {
-		//@include test(red, 0.7);
 		cursor: pointer;
         font-size: 7px;
 		width: 8px;
@@ -247,7 +246,6 @@
 // Archetypal message
 .l-message {
     $iconW: 32px;
-    //@include test();
     @include display(flex);
     @include flex-direction(row);
     @include align-items(stretch);
@@ -292,7 +290,6 @@
     }
 
     .message-body {
-        //@include test(blue);
         @include flex(1 1 100%);
     }
 }
@@ -335,7 +332,6 @@
 
     > div,
     > span {
-        //@include test(red);
         margin-bottom: $interiorMargin;
     }
 
