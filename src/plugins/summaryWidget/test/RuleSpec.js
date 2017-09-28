@@ -209,19 +209,23 @@ define(['../src/Rule', 'zepto'], function (Rule, $) {
             expect(changeSpy).toHaveBeenCalled();
         });
 
-        it('responds to input of text properties', function () {
-            var testInputs = ['name', 'label', 'message', 'jsCondition'],
-                input;
+        /*
+        test for js condition commented out for v1
+        */
 
-            testInputs.forEach(function (key) {
-                input = testRule.textInputs[key];
-                input.prop('value', 'A new ' + key);
-                input.trigger('input');
-                expect(mockRuleConfig[key]).toEqual('A new ' + key);
-            });
+        // it('responds to input of text properties', function () {
+        //     var testInputs = ['name', 'label', 'message', 'jsCondition'],
+        //         input;
 
-            expect(changeSpy).toHaveBeenCalled();
-        });
+        //     testInputs.forEach(function (key) {
+        //         input = testRule.textInputs[key];
+        //         input.prop('value', 'A new ' + key);
+        //         input.trigger('input');
+        //         expect(mockRuleConfig[key]).toEqual('A new ' + key);
+        //     });
+
+        //     expect(changeSpy).toHaveBeenCalled();
+        // });
 
         it('allows input for when the rule triggers', function () {
             testRule.trigger.prop('value', 'all');
@@ -248,14 +252,9 @@ define(['../src/Rule', 'zepto'], function (Rule, $) {
             expect(mockWidgetDnD.dragStart).toHaveBeenCalledWith('mockRule');
         });
 
-        it('shows the JavaScript conditional area when js mode is active', function () {
-            testRule.trigger.prop('value', 'any');
-            testRule.trigger.trigger('change');
-            expect(testRule.jsConditionArea.css('display')).toEqual('none');
-            testRule.trigger.prop('value', 'js');
-            testRule.trigger.trigger('change');
-            expect(testRule.jsConditionArea.css('display')).not.toEqual('none');
-        });
+        /*
+        test for js condition commented out for v1
+        */
 
         it('can remove a condition from its configuration', function () {
             testRule.removeCondition(0);

@@ -152,5 +152,14 @@ define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
             });
             expect(summaryWidget.domainObject.configuration.ruleOrder).toEqual(['default', 'rule1', 'rule0']);
         });
+
+        it('adds hyperlink to the widget button and sets newTab preference', function () {
+            summaryWidget.addHyperlink('https://www.nasa.gov', 'newTab');
+
+            var widgetButton = $('#widget', mockContainer);
+
+            expect(widgetButton.attr('href')).toEqual('https://www.nasa.gov');
+            expect(widgetButton.attr('target')).toEqual('_blank');
+        });
     });
 });
