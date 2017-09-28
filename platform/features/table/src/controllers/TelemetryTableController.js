@@ -170,6 +170,9 @@ define(
          * @param rows
          */
         TelemetryTableController.prototype.addRowsToTable = function (rows) {
+            rows.forEach(function (row) {
+                this.$scope.rows.push(row);
+            }, this);
             this.$scope.$broadcast('add:rows', rows);
         };
 
