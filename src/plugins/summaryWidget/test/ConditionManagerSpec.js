@@ -348,7 +348,7 @@ define(['../src/ConditionManager'], function (ConditionManager) {
 
         it('gets the human-readable name of a composition object', function () {
             expect(conditionManager.getObjectName('mockCompObject1')).toEqual('Object 1');
-            expect(conditionManager.getObjectName('all')).toEqual('All Telemetry');
+            expect(conditionManager.getObjectName('all')).toEqual('all Telemetry');
         });
 
         it('gets the human-readable name of a telemetry field', function () {
