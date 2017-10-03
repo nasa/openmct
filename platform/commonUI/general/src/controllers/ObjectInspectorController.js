@@ -111,8 +111,10 @@ define(
                 getMetadata();
             });
 
-            this.InspectorMutation.listen(function(){
-                getMetadata();
+            this.InspectorMutation.listen(function () {
+                if(!angular.equals($scope.metadata, $scope.ngModel.selectedObject.useCapability('metadata'))){
+                    getMetadata();
+                }
             });
         }
         return ObjectInspectorController;
