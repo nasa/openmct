@@ -38,6 +38,8 @@ define(
             $scope.contextutalParents = [];
             //$scope.isLink = false;
 
+            this.InspectorMutation = $scope.ngModel.selectedObject.getCapability('mutation');
+
             // Gets an array of the contextual parents/ancestors of the selected object
             function getContextualPath() {
                 var currentObj = $scope.ngModel.selectedObject,
@@ -108,8 +110,11 @@ define(
 
                 getMetadata();
             });
-        }
 
+            this.InspectorMutation.listen(function(){
+                getMetadata();
+            });
+        }
         return ObjectInspectorController;
     }
 );
