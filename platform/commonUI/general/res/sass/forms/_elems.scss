@@ -20,7 +20,19 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .section-header {
+    border-radius: $basicCr;
+    background: $colorFormSectionHeader;
+    color: lighten($colorBodyFg, 20%);
+    font-size: inherit;
+    margin: $interiorMargin 0;
+    padding: $formTBPad $formLRPad;
     text-transform: uppercase;
+    .view-control {
+        display: inline-block;
+        margin-right: $interiorMargin;
+        width: 1em;
+        height: 1em;
+    }
 }
 
 .form {
@@ -41,15 +53,6 @@
         }
     }
 
-    .section-header {
-        border-radius: $basicCr;
-        background: $colorFormSectionHeader;
-        $c: lighten($colorBodyFg, 20%);
-        color: $c;
-        font-size: 0.8em;
-        padding: $formTBPad $formLRPad;
-    }
-
 	.form-row {
 		$m: $interiorMargin;
 		box-sizing: border-box;
@@ -57,9 +60,6 @@
         margin-bottom: $interiorMarginLg * 2;
 		padding: $formTBPad 0;
 		position: relative;
-        //&ng-form {
-        //    display: block;
-        //}
 
 		&.first {
 			border-top: none;
@@ -170,4 +170,107 @@
 		color: lighten($colorFormInvalid, 30%);
 		padding: $interiorMargin;
 	}
+}
+
+/**************************************************************************** COMPACT FORM */
+// ul > li > label, control
+// Make a new UL for each form section
+// Allow control-first, controls-below
+// TO-DO: migrate work in branch ch-plot-styling that users .inspector-config to use classes below instead
+
+.l-compact-form .tree ul li,
+.l-compact-form ul li {
+    padding: 2px 0;
+}
+
+
+.l-compact-form {
+    $labelW: 40%;
+    $minW: $labelW;
+    ul {
+        margin-bottom: $interiorMarginLg;
+        li {
+            @include display(flex);
+            @include flex-wrap(wrap);
+            @include align-items(center);
+            label,
+            .control {
+                @include display(flex);
+            }
+            label {
+                line-height: inherit;
+                width: $labelW;
+            }
+            .controls {
+                @include flex-grow(1);
+                margin-left: $interiorMargin;
+                input[type="text"],
+                input[type="search"],
+                input[type="number"],
+                .select {
+                    height: $btnStdH;
+                    line-height: $btnStdH;
+                    vertical-align: middle;
+                }
+
+                .e-control {
+                    // Individual form controls
+                    &:not(:first-child) {
+                        margin-left: $interiorMarginSm;
+                    }
+                }
+            }
+
+            &.connects-to-previous {
+                padding-top: 0;
+            }
+
+            &.section-header {
+                margin-top: $interiorMarginLg;
+                border-top: 1px solid $colorFormLines;
+            }
+
+            &.controls-first {
+                .control {
+                    @include flex-grow(0);
+                    margin-right: $interiorMargin;
+                    min-width: 0;
+                    order: 1;
+                    width: auto;
+                }
+                label {
+                    @include flex-grow(1);
+                    order: 2;
+                    width: auto;
+                }
+            }
+            &.controls-under {
+                display: block;
+                .control, label {
+                    display: block;
+                    width: auto;
+                }
+
+                ul li {
+                    border-top: none !important;
+                    padding: 0;
+                }
+            }
+        }
+    }
+
+    .form-error {
+        // Block element that visually flags an error and contains a message
+        background-color: $colorFormFieldErrorBg;
+        color: $colorFormFieldErrorFg;
+        border-radius: $basicCr;
+        display: block;
+        padding: 1px 6px;
+        &:before {
+            content: $glyph-icon-alert-triangle;
+            display: inline;
+            font-family: symbolsfont;
+            margin-right: $interiorMarginSm;
+        }
+    }
 }

@@ -20,26 +20,33 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-    function Region(element) {
-        this.activeView = undefined;
-        this.element = element;
+define(
+    [],
+    function () {
+
+        /**
+         * Defines composition policy for Display Layout objects.
+         * They cannot contain folders.
+         * @constructor
+         * @memberof platform/features/layout
+         * @implements {Policy.<View, DomainObject>}
+         */
+        function SummaryWidgetsCompositionPolicy(openmct) {
+            this.openmct = openmct;
+        }
+
+        SummaryWidgetsCompositionPolicy.prototype.allow = function (parent, child) {
+
+            var parentType = parent.getCapability('type');
+            var newStyleChild = child.useCapability('adapter');
+
+            if (parentType.instanceOf('summary-widget') && !this.openmct.telemetry.canProvideTelemetry(newStyleChild)) {
+                return false;
+            }
+
+            return true;
+        };
+
+        return SummaryWidgetsCompositionPolicy;
     }
-
-    Region.prototype.clear = function () {
-        if (this.activeView) {
-            this.activeView.destroy();
-            this.activeView = undefined;
-        }
-    };
-
-    Region.prototype.show = function (view) {
-        this.clear();
-        this.activeView = view;
-        if (this.activeView) {
-            this.activeView.show(this.element);
-        }
-    };
-
-    return Region;
-});
+);

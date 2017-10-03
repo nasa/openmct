@@ -24,21 +24,22 @@
 
     <span class="l-click-area" ng-click="toggle.toggle()"></span>
     <span class="color-swatch"
+          ng-class="{'no-selection':ngModel[field] === 'transparent'}"
           ng-style="{
-             background: ngModel[field]
+             'background-color': ngModel[field]
          }">
     </span>
     <span class="title-label" ng-if="structure.text">
         {{structure.text}}
     </span>
 
-    <div class="menu l-color-palette"
+    <div class="menu l-palette l-color-palette"
         ng-controller="ColorController as colors"
         ng-show="toggle.isActive()">
         <div
             class="l-palette-row l-option-row"
             ng-if="!structure.mandatory">
-            <div class="l-palette-item s-palette-item {{ngModel[field] === 'transparent' ? 'icon-check' : '' }}"
+            <div class="l-palette-item s-palette-item no-selection {{ngModel[field] === 'transparent' ? 'selected' : '' }}"
                 ng-click="ngModel[field] = 'transparent'">
             </div>
             <span class="l-palette-item-label">None</span>
@@ -46,7 +47,7 @@
         <div
             class="l-palette-row"
             ng-repeat="group in colors.groups()">
-            <div class="l-palette-item s-palette-item {{ngModel[field] === color ? 'icon-check' : '' }}"
+            <div class="l-palette-item s-palette-item {{ngModel[field] === color ? 'selected' : '' }}"
                 ng-repeat="color in group"
                 ng-style="{ background: color }"
                 ng-click="ngModel[field] = color">
