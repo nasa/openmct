@@ -29,7 +29,9 @@ define([
         props.openmct
             .telemetry
             .request(props.domainObject, {strategy: 'latest'})
-            .then((values) => values.forEach(this.onDatum, this))
+            .then(function (values) {
+                values.forEach(this.onDatum, this)
+            }.bind(this));
     }
 
     LADTableItem.prototype.updateTimeSystem = function (timeSystem) {
@@ -62,9 +64,9 @@ define([
 
     LADTableItem.prototype.render = function () {
         return etch.dom('tr', null,
-            etch.dom('td', null, `${this.props.values.name}`),
-            etch.dom('td', null, `${this.props.values.timestamp}`),
-            etch.dom('td', {className: this.props.values.valueClass}, `${this.props.values.value}`)
+            etch.dom('td', null, "" + this.props.values.name),
+            etch.dom('td', null, "" + this.props.values.timestamp),
+            etch.dom('td', {className: this.props.values.valueClass}, "" + this.props.values.value)
         );
     };
 
