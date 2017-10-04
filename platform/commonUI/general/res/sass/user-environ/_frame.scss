@@ -44,7 +44,9 @@
 
     &.t-object-type-timer,
     &.t-object-type-clock,
-    &.t-object-type-hyperlink {
+    &.t-object-type-hyperlink,
+    &.no-frame .t-object-type-fixed-display,
+    &.no-frame .t-object-type-layout {
         // Hide the right side buttons for objects where they don't make sense
         // Note that this will hide the view Switcher button if applied
         // to an object that has it.
