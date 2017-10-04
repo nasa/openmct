@@ -40,8 +40,9 @@
     border-style: solid;
     border-width: 1px;
     box-sizing: border-box;
-    padding: $interiorMarginLg $interiorMarginLg * 2;
     cursor: default;
+    font-size: 0.8rem;
+    padding: $interiorMarginLg $interiorMarginLg * 2;
     &[href] {
         cursor: pointer;
     }
