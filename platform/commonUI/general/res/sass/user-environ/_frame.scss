@@ -45,7 +45,9 @@
     &.t-object-type-timer,
     &.t-object-type-clock,
     &.t-object-type-hyperlink,
-    &.t-object-type-summary-widget {
+    &.t-object-type-summary-widget,
+    &.no-frame .t-object-type-fixed-display,
+    &.no-frame .t-object-type-layout {
         // Hide the right side buttons for objects where they don't make sense
         // Note that this will hide the view Switcher button if applied
         // to an object that has it.
@@ -104,7 +106,7 @@
         }
         &.t-frame-outer > .t-rep-frame {
             &.contents {
-                $m: 2px;
+                $m: 0px;
                 top: $m;
                 right: $m;
                 bottom: $m;
