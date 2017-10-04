@@ -27,8 +27,8 @@ define([
     '../../platform/features/autoflow/plugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
-    '../../platform/import-export/bundle',
-    './summaryWidget/plugin'
+    './summaryWidget/plugin',
+    '../../platform/import-export/bundle'
 ], function (
     _,
     UTCTimeSystem,
