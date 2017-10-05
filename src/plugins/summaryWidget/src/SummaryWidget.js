@@ -222,11 +222,23 @@ define([
         var self = this,
             ruleOrder = self.domainObject.configuration.ruleOrder,
             rules = self.rulesById;
-
         self.ruleArea.html('');
         Object.values(ruleOrder).forEach(function (ruleId) {
             self.ruleArea.append(rules[ruleId].getDOM());
         });
+
+        var ruleKeys = Object.keys(self.rulesById);
+        if(ruleKeys.length > 2){
+            ruleKeys.forEach(function (ruleKey) {
+                if(rules[ruleKey].config.id !== 'default'){
+                    $('.t-grippy', rules[ruleKey].domElement).show();
+                }
+            });
+        } else if (ruleKeys.length <= 2) {
+            ruleKeys.forEach( function (ruleKey) {
+                $('.t-grippy', rules[ruleKey].domElement).hide();
+            });
+        }
 
         this.executeRules();
     };
