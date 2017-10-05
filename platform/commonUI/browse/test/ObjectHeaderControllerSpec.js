@@ -36,11 +36,12 @@ define(
 
             beforeEach(function () {
                 mockMutationCapability = jasmine.createSpyObj("mutation", ["mutate"]);
-                mockTypeCapability = {
-                    typeDef: {
-                        name: ""
-                    }
-                };
+                mockTypeCapability = jasmine.createSpyObj("type", ["typeDef", "hasFeature"]);
+                mockTypeCapability.typeDef = { name: ""};
+                mockTypeCapability.hasFeature.andCallFake(function (feature) {
+                    return feature === 'creation';
+                });
+
                 mockCapabilities = {
                     mutation: mockMutationCapability,
                     type: mockTypeCapability
@@ -114,6 +115,17 @@ define(
                 controller.updateName(mockEvent);
 
                 expect(mockEvent.currentTarget.blur).toHaveBeenCalled();
+            });
+
+            it("allows editting name when object is creatable", function () {
+                expect(controller.allowEdit()).toBe(true);
+            });
+
+            it("disallows editting name when object is non-creatable", function () {
+                mockTypeCapability.hasFeature.andReturn(false);
+
+                expect(controller.allowEdit()).toBe(false);
+
             });
         });
     }
