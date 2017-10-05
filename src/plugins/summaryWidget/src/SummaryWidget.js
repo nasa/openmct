@@ -228,14 +228,14 @@ define([
         });
 
         var ruleKeys = Object.keys(self.rulesById);
-        if(ruleKeys.length > 2){
+        if (ruleKeys.length > 2) {
             ruleKeys.forEach(function (ruleKey) {
-                if(rules[ruleKey].config.id !== 'default'){
+                if (rules[ruleKey].config.id !== 'default') {
                     $('.t-grippy', rules[ruleKey].domElement).show();
                 }
             });
         } else if (ruleKeys.length <= 2) {
-            ruleKeys.forEach( function (ruleKey) {
+            ruleKeys.forEach(function (ruleKey) {
                 $('.t-grippy', rules[ruleKey].domElement).hide();
             });
         }
