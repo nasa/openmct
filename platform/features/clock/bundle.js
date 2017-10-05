@@ -23,10 +23,13 @@
 define([
     "moment-timezone",
     "./src/indicators/ClockIndicator",
+    "./src/indicators/FollowIndicator",
     "./src/services/TickerService",
+    "./src/services/TimerService",
     "./src/controllers/ClockController",
     "./src/controllers/TimerController",
     "./src/controllers/RefreshingController",
+    "./src/actions/FollowTimerAction",
     "./src/actions/StartTimerAction",
     "./src/actions/RestartTimerAction",
     "./src/actions/StopTimerAction",
@@ -37,10 +40,13 @@ define([
 ], function (
     MomentTimezone,
     ClockIndicator,
+    FollowIndicator,
     TickerService,
+    TimerService,
     ClockController,
     TimerController,
     RefreshingController,
+    FollowTimerAction,
     StartTimerAction,
     RestartTimerAction,
     StopTimerAction,
@@ -80,6 +86,11 @@ define([
                         "CLOCK_INDICATOR_FORMAT"
                     ],
                     "priority": "preferred"
+                },
+                {
+                    "implementation": FollowIndicator,
+                    "depends": ["timerService"],
+                    "priority": "fallback"
                 }
             ],
             "services": [
@@ -90,6 +101,11 @@ define([
                         "$timeout",
                         "now"
                     ]
+                },
+                {
+                    "key": "timerService",
+                    "implementation": TimerService,
+                    "depends": ["openmct"]
                 }
             ],
             "controllers": [
@@ -134,6 +150,15 @@ define([
                 }
             ],
             "actions": [
+                {
+                    "key": "timer.follow",
+                    "implementation": FollowTimerAction,
+                    "depends": ["timerService"],
+                    "category": "contextual",
+                    "name": "Follow Timer",
+                    "cssClass": "icon-clock",
+                    "priority": "optional"
+                },
                 {
                     "key": "timer.start",
                     "implementation": StartTimerAction,

@@ -96,109 +96,124 @@
 
     <!-- RIGHT PANE: GANTT AND RESOURCE PLOTS -->
     <span ng-controller="TimelineZoomController as zoomController" class="abs">
-    <mct-split-pane anchor="bottom"
+
+        <span class="toi-control-holder temp" ng-controller="TimelineTOIController as toiController">
+            <mct-split-pane anchor="bottom"
                     position="pane.y"
                     class="abs split-pane-component l-timeline-pane l-pane-r t-pane-v">
 
-        <!-- TOP PANE GANTT BARS -->
-        <div class="split-pane-component l-timeline-pane t-pane-h l-pane-top t-timeline-gantt l-timeline-gantt s-timeline-gantt">
-            <div class="l-hover-btns-holder s-hover-btns-holder">
-                <a class="s-button icon-arrows-out"
-                   ng-click="zoomController.fit()"
-                   ng-show="true"
-                   title="Zoom to fit">
-                </a>
+                <!-- TOP PANE GANTT BARS -->
+                <div class="split-pane-component l-timeline-pane t-pane-h l-pane-top t-timeline-gantt l-timeline-gantt s-timeline-gantt">
+                    <div class="l-hover-btns-holder s-hover-btns-holder">
+                        <a class="s-button icon-timer"
+                           ng-click="scroll.follow = true"
+                           ng-show="!toiController.isFollowing() && toiController.isActive()"
+                           title="Follow time bounds">
+                        </a>
 
-                <a class="s-button icon-magnify-in"
-                   ng-click="zoomController.zoom(-1)"
-                   ng-show="true"
-                   title="Zoom in">
-                </a>
+                        <a class="s-button icon-arrows-out"
+                           ng-click="scroll.follow = false; zoomController.fit()"
+                           ng-show="true"
+                           title="Zoom to fit">
+                        </a>
 
-                <a class="s-button icon-magnify-out"
-                   ng-click="zoomController.zoom(1)"
-                   ng-show="true"
-                   title="Zoom out">
-                </a>
-            </div>
+                        <a class="s-button icon-magnify-in"
+                           ng-click="scroll.follow = false; zoomController.zoom(-1)"
+                           ng-show="true"
+                           title="Zoom in">
+                        </a>
 
-            <div style="overflow: hidden; position: absolute; left: 0; top: 0; right: 0; height: 30px;" mct-scroll-x="scroll.x">
-                <mct-include key="'timeline-ticks'"
-                             parameters="{
-                                         fullWidth: zoomController.width(timelineController.end()),
-                                         start: scroll.x,
-                                         width: scroll.width,
-                                         step: zoomController.toPixels(zoomController.zoom()),
-                                         toMillis: zoomController.toMillis
-                                         }">
-                </mct-include>
-            </div>
+                        <a class="s-button icon-magnify-out"
+                           ng-click="scroll.follow = false; zoomController.zoom(1)"
+                           ng-show="true"
+                           title="Zoom out">
+                        </a>
+                    </div>
 
-            <div class="t-swimlanes-holder l-swimlanes-holder"
-                 mct-scroll-x="scroll.x"
-                 mct-scroll-y="scroll.y">
-                <div class="l-width-control"
-                     ng-style="{ width: zoomController.width(timelineController.end()) + 'px' }">
-                    <div class="t-swimlane s-swimlane l-swimlane"
-                         ng-repeat="swimlane in timelineController.swimlanes()"
-                         ng-class="{
-                                   exceeded: swimlane.exceeded(),
-                                   selected: selection.selected(swimlane),
-                                   'drop-into': swimlane.highlight(),
-                                   'drop-after': swimlane.highlightBottom()
-                                   }"
-                         ng-click="selection.select(swimlane)"
-                         mct-swimlane-drop="swimlane">
+                    <div style="overflow: hidden; position: absolute; left: 0; top: 0; right: 0; height: 30px;" mct-scroll-x="scroll.x">
+                        <mct-include key="'timeline-ticks'"
+                                     parameters="{
+                                                 fullWidth: zoomController.width(timelineController.end()),
+                                                 start: scroll.x,
+                                                 width: scroll.width,
+                                                 step: zoomController.toPixels(zoomController.zoom()),
+                                                 toMillis: zoomController.toMillis
+                                                 }">
+                        </mct-include>
+                    </div>
+                    <div ng-if="toiController.isActive()" class="l-follow-line s-follow-line"
+                         ng-style="{ left: toiController.x() - scroll.x + 'px' }"></div>
 
-                        <mct-representation key="'gantt'"
-                                            mct-object="swimlane.domainObject"
-                                            parameters="{
-                                                        scroll: scroll,
-                                                        toPixels: zoomController.toPixels
-                                                        }">
-                        </mct-representation>
+                    <div class="t-swimlanes-holder l-swimlanes-holder"
+                         mct-scroll-x="scroll.x"
+                         mct-scroll-y="scroll.y">
+                        <div class="l-width-control"
+                             ng-style="{ width: zoomController.width(timelineController.end()) + 'px' }">
+                            <div class="t-swimlane s-swimlane l-swimlane"
+                                 ng-repeat="swimlane in timelineController.swimlanes()"
+                                 ng-class="{
+                                           exceeded: swimlane.exceeded(),
+                                           selected: selection.selected(swimlane),
+                                           'drop-into': swimlane.highlight(),
+                                           'drop-after': swimlane.highlightBottom()
+                                           }"
+                                 ng-click="selection.select(swimlane)"
+                                 mct-swimlane-drop="swimlane">
 
-                        <span ng-if="selection.selected(swimlane)">
-                            <span ng-repeat="handle in timelineController.handles()"
-                                  ng-style="handle.style(zoomController)"
-                                  style="position: absolute; top: 0px; bottom: 0px;"
-                                  class="handle"
-                                  ng-class="{ start: $index === 0, mid: $index === 1, end: $index > 1 }"
-                                  mct-drag-down="handle.begin()"
-                                  mct-drag="handle.drag(delta[0], zoomController); timelineController.refresh()"
-                                  mct-drag-up="handle.finish()">
-                            </span>
-                        </span>
+                                <mct-representation key="'gantt'"
+                                                    mct-object="swimlane.domainObject"
+                                                    parameters="{
+                                                                scroll: scroll,
+                                                                toPixels: zoomController.toPixels
+                                                                }">
+                                </mct-representation>
+
+                                <span ng-if="selection.selected(swimlane)">
+                                    <span ng-repeat="handle in timelineController.handles()"
+                                          ng-style="handle.style(zoomController)"
+                                          style="position: absolute; top: 0px; bottom: 0px;"
+                                          class="handle"
+                                          ng-class="{ start: $index === 0, mid: $index === 1, end: $index > 1 }"
+                                          mct-drag-down="handle.begin()"
+                                          mct-drag="handle.drag(delta[0], zoomController); timelineController.refresh()"
+                                          mct-drag-up="handle.finish()">
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- HORZ SPLITTER -->
-        <mct-splitter></mct-splitter>
+                <!-- HORZ SPLITTER -->
+                <mct-splitter></mct-splitter>
 
-        <!-- BOTTOM PANE RESOURCE GRAPHS AND RIGHT PANE HORIZONTAL SCROLL CONTROL -->
-        <div class="split-pane-component l-timeline-resource-graph l-timeline-pane t-pane-h l-pane-btm">
-            <div class="l-graphs-holder"
-                 mct-resize="scroll.width = bounds.width">
-                <div class="t-graphs l-graphs">
-                    <mct-include key="'timeline-resource-graphs'"
-                                 parameters="{
-                                             origin: zoomController.toMillis(scroll.x),
-                                             duration: zoomController.toMillis(scroll.width),
-                                             graphs: timelineController.graphs()
-                                             }">
-                    </mct-include>
+                <!-- BOTTOM PANE RESOURCE GRAPHS AND RIGHT PANE HORIZONTAL SCROLL CONTROL -->
+                <div class="split-pane-component l-timeline-resource-graph l-timeline-pane t-pane-h l-pane-btm">
+                    <div class="l-graphs-holder"
+                         mct-resize="scroll.width = bounds.width">
+                        <div class="t-graphs l-graphs">
+                            <mct-include key="'timeline-resource-graphs'"
+                                         parameters="{
+                                                     origin: zoomController.toMillis(scroll.x),
+                                                     duration: zoomController.toMillis(scroll.width),
+                                                     graphs: timelineController.graphs()
+                                                     }">
+                            </mct-include>
+                        </div>
+                        <div ng-if="toiController.isActive()" class="l-follow-line s-follow-line"
+                             ng-style="{ left: toiController.x() - scroll.x + 'px' }"></div>
+                    </div>
+                    <div mct-scroll-x="scroll.x"
+                         class="t-pane-r-scroll-h-control l-scroll-control s-scroll-control">
+                        <div class="l-width-control"
+                             ng-style="{ width: zoomController.width(timelineController.end()) + 'px' }">
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div mct-scroll-x="scroll.x"
-                 class="t-pane-r-scroll-h-control l-scroll-control s-scroll-control">
-                <div class="l-width-control"
-                     ng-style="{ width: zoomController.width(timelineController.end()) + 'px' }">
-                </div>
-            </div>
-        </div>
-    </mct-split-pane>
+            </mct-split-pane>
+        </span>
+
+
     </span>
 </mct-split-pane>
 </div>
