@@ -32,6 +32,7 @@ define(['EventEmitter'], function (EventEmitter) {
     function TimerService(openmct) {
         EventEmitter.apply(this);
         this.time = openmct.time;
+        this.objects = openmct.objects;
     }
 
     TimerService.prototype = Object.create(EventEmitter.prototype);
@@ -44,6 +45,16 @@ define(['EventEmitter'], function (EventEmitter) {
     TimerService.prototype.setTimer = function (timer) {
         this.timer = timer;
         this.emit('change');
+
+        if (this.stopObserving) {
+            this.stopObserving();
+            delete this.stopObserving;
+        }
+
+        if (timer) {
+            this.stopObserving =
+                this.objects.observe(timer, '*', this.setTimer.bind(this));
+        }
     };
 
     /**
@@ -73,16 +84,16 @@ define(['EventEmitter'], function (EventEmitter) {
         var clock = this.time.clock();
         var canConvert = this.hasTimer() &&
             !!clock &&
-            this.timer.getModel().timerState !== 'stopped';
+            this.timer.timerState !== 'stopped';
 
         if (!canConvert) {
             return undefined;
         }
 
         var now = clock.currentValue();
-        var model = this.timer.getModel();
-        var delta = model.timerState === 'paused' ? now - model.pausedTime : 0;
-        var epoch = model.timestamp;
+        var delta = this.timer.timerState === 'paused' ?
+            now - this.timer.pausedTime : 0;
+        var epoch = this.timer.timestamp;
 
         return timestamp - epoch - delta;
     };

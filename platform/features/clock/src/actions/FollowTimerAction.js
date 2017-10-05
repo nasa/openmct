@@ -36,7 +36,9 @@ define(
          * @param {ActionContext} context the context for this action
          */
         function FollowTimerAction(timerService, context) {
-            var domainObject = context.domainObject;
+            var domainObject =
+                context.domainObject &&
+                context.domainObject.useCapability('adapter');
             this.perform =
                 timerService.setTimer.bind(timerService, domainObject);
         }
