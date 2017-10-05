@@ -30,7 +30,10 @@ define([
 
         beforeEach(function () {
             callback = jasmine.createSpy('callback');
-            mockmct = { time: { clock: jasmine.createSpy('clock') } };
+            mockmct = {
+                time: { clock: jasmine.createSpy('clock') },
+                objects: { observe: jasmine.createSpy('observe') }
+            };
             timerService = new TimerService(mockmct);
             timerService.on('change', callback);
         });
