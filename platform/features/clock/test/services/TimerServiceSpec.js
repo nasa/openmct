@@ -61,6 +61,17 @@ define([
             it("reports the current timer", function () {
                 expect(timerService.getTimer()).toBe(testTimer);
             });
+
+            it("observes changes to an object", function () {
+                var newTimer = { name: "I am another timer." };
+                expect(mockmct.objects.observe).toHaveBeenCalledWith(
+                    testTimer,
+                    '*',
+                    jasmine.any(Function)
+                );
+                mockmct.objects.observe.mostRecentCall.args[2](newTimer);
+                expect(timerService.getTimer()).toBe(newTimer);
+            });
         });
     });
 });
