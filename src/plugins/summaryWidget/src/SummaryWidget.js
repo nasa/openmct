@@ -222,13 +222,26 @@ define([
         var self = this,
             ruleOrder = self.domainObject.configuration.ruleOrder,
             rules = self.rulesById;
-
         self.ruleArea.html('');
         Object.values(ruleOrder).forEach(function (ruleId) {
             self.ruleArea.append(rules[ruleId].getDOM());
         });
 
         this.executeRules();
+        this.addOrRemoveDragIndicator();
+    };
+
+    SummaryWidget.prototype.addOrRemoveDragIndicator = function () {
+        var rules = this.domainObject.configuration.ruleOrder;
+        var rulesById = this.rulesById;
+
+        rules.forEach(function (ruleKey, index, array) {
+            if (array.length > 2 && index > 0) {
+                $('.t-grippy', rulesById[ruleKey].domElement).show();
+            } else {
+                $('.t-grippy', rulesById[ruleKey].domElement).hide();
+            }
+        });
     };
 
     /**
@@ -317,7 +330,7 @@ define([
         if (!this.domainObject.configuration.ruleConfigById[ruleId]) {
             this.domainObject.configuration.ruleConfigById[ruleId] = {
                 name: ruleName || 'Rule',
-                label: this.domainObject.name,
+                label: 'Unnamed Rule',
                 message: '',
                 id: ruleId,
                 icon: ' ',
