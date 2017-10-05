@@ -108,13 +108,22 @@ define([
         }
 
         /**
+         * Parse input text from textbox to prevent HTML Injection
+         * @param {string} msg The text to be Parsed
+         * @private
+         */
+        function encodeMsg(msg) {
+            return $('<div />').text(msg).html();
+        }
+
+        /**
          * An onchange event handler method for this rule's trigger key
          * @param {event} event The change event from this rule's select element
          * @private
          */
         function onTriggerInput(event) {
             var elem = event.target;
-            self.config.trigger = elem.value;
+            self.config.trigger = encodeMsg(elem.value);
             self.generateDescription();
             self.updateDomainObject();
             self.refreshConditions();
@@ -128,12 +137,13 @@ define([
          * @private
          */
         function onTextInput(elem, inputKey) {
-            self.config[inputKey] = elem.value;
+            var text = encodeMsg(elem.value);
+            self.config[inputKey] = text;
             self.updateDomainObject();
             if (inputKey === 'name') {
-                self.title.html(elem.value);
+                self.title.html(text);
             } else if (inputKey === 'label') {
-                self.thumbnailLabel.html(elem.value);
+                self.thumbnailLabel.html(text);
             }
             self.eventEmitter.emit('change');
         }
