@@ -1,0 +1,13 @@
+{
+    "identifier": {
+        "namespace": "deep.space.network",
+        "key": "dsn"
+    },
+    "name": "Deep Space Network",
+    "type": "folder",
+    "location": "ROOT",
+    "measurements": [
+        {
+        }
+    ]
+}
