@@ -49,7 +49,10 @@ define(
          * @return {Promise} a promise which will be
          *         fulfilled when the action has completed.
          */
+
+         
         RemoveAction.prototype.perform = function () {
+
             var navigationService = this.navigationService,
                 domainObject = this.domainObject;
             /*
@@ -100,8 +103,37 @@ define(
              * capability. Based on object's location and selected object's location
              * user may be navigated to existing parent object
              */
+
+        
+
+
+
+
             function removeFromContext(object) {
-                var contextCapability = object.getCapability('context'),
+
+       
+
+                function Confirm( ) { /*change*/
+                var $content =  "<div class='dialog-ovelay' style='position: absolute;top: 0;left: 0;right: 0;bottom: 0;background-color: rgba(0, 0, 0, 0.50);z-index: 999999'>" +
+                                "<div class='dialog' style='width: 400px;margin: 100px auto 0;background-color: #fff;box-shadow: 0 0 20px rgba(0,0,0,.2);border-radius: 3px;overflow: hidden'><header style='padding: 10px 8px;background-color: #f6f7f9;border-bottom: 1px solid #e5e5e5'>" +
+                                 " <h3 style=' font-size: 14px;margin: 0;color: #555;display: inline-block'> " + "Remove" + " </h3> " +
+                                 "<i class='fa fa-close' style='float: right;color: #c4c5c7;cursor: pointer;transition: all .5s ease;padding: 0 2px;border-radius: 1px '></i>" +
+                             "</header>" +
+                             "<div class='dialog-msg' style='padding: 12px 10px'>" +
+                                 " <p style=' margin: 0;font-size: 15px;color: #333'> " + "Are you sure you want to remove ?"  + " </p> " +
+                             "</div>" +
+                             "<footer style='border-top: 1px solid #e5e5e5;padding: 8px 10px'>" +
+                                 "<div class='controls' style='direction: rtl'>" +
+                                     " <button class='button button-danger doAction' style=' padding: 5px 15px;border-radius: 3px;background-color: #f44336;border: 1px solid #d32f2f;color: #f5f5f5'>" + "Yes" + "</button> " +
+                                     " <button class='button button-default cancelAction' style=' padding: 5px 15px;border-radius: 3px;background-color: rgb(248, 248, 248);border: 1px solid rgba(204, 204, 204, 0.5);color: #5D5D5D;'>" + "Cancel" + "</button> " +
+                                 "</div>" +
+                             "</footer>" +
+                          "</div>" +
+                        "</div>";
+                 $('body').prepend($content);
+              $('.doAction').click(function () {
+                $(".dialog-ovelay").remove();
+                 var contextCapability = object.getCapability('context'),
                     parent = contextCapability.getParent();
 
                 // If currently within path of removed object(s),
@@ -109,6 +141,18 @@ define(
                 checkObjectNavigation(object, parent);
 
                 return parent.useCapability('mutation', doMutate);
+                 
+              });
+                $('.cancelAction, .fa-close').click(function () {
+                        
+                          $(".dialog-ovelay").remove();
+                        
+                      });
+                      
+                   }
+
+                    Confirm();
+               
             }
 
             return removeFromContext(domainObject);
