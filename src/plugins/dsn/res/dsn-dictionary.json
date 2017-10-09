@@ -4,10 +4,1188 @@
         "key": "dsn"
     },
     "name": "Deep Space Network",
-    "type": "folder",
+    "type": "dsn.collection",
     "location": "ROOT",
-    "measurements": [
+    "domainObjects": [
         {
+            "identifier": {
+                "namespace": "canberra.root",
+                "key": "canberra"
+            },
+            "name": "Canberra",
+            "type": "dsn.collection",
+            "composition": [
+                {
+                    "namespace": "canberra",
+                    "key": "cdscc"
+                }
+            ]
+        },
+        {
+            "identifier": {
+                "namespace": "canberra",
+                "key": "cdscc"
+            },
+            "name": "Canberra",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Friendly Name",
+                        "key": "friendly.name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "UTC Time",
+                        "key": "utc.time",
+                        "format": "utc",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Time Zone Offset",
+                        "key": "time.zone.offset",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": {
+                "namespace": "canberra",
+                "key": "dss34"
+            },
+            "name": "DSS 34",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Azimuth",
+                        "key": "azimuth.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Elevation",
+                        "key": "elevation.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Wind Speed",
+                        "key": "wind.speed",
+                        "units": "km/hr",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "MSPA",
+                        "key": "mspa",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Array",
+                        "key": "array",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "DDOR",
+                        "key": "ddor",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Created",
+                        "key": "created",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Updated",
+                        "key": "updated",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": {
+                "namespace": "canberra",
+                "key": "dss35"
+            },
+            "name": "DSS 35",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Azimuth",
+                        "key": "azimuth.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Elevation",
+                        "key": "elevation.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Wind Speed",
+                        "key": "wind.speed",
+                        "units": "km/hr",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "MSPA",
+                        "key": "mspa",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Array",
+                        "key": "array",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "DDOR",
+                        "key": "ddor",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Created",
+                        "key": "created",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Updated",
+                        "key": "updated",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": {
+                "namespace": "canberra",
+                "key": "dss36"
+            },
+            "name": "DSS 36",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Azimuth",
+                        "key": "azimuth.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Elevation",
+                        "key": "elevation.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Wind Speed",
+                        "key": "wind.speed",
+                        "units": "km/hr",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "MSPA",
+                        "key": "mspa",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Array",
+                        "key": "array",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "DDOR",
+                        "key": "ddor",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Created",
+                        "key": "created",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Updated",
+                        "key": "updated",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": {
+                "namespace": "canberra",
+                "key": "dss43"
+            },
+            "name": "DSS 43",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Azimuth",
+                        "key": "azimuth.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Elevation",
+                        "key": "elevation.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Wind Speed",
+                        "key": "wind.speed",
+                        "units": "km/hr",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "MSPA",
+                        "key": "mspa",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Array",
+                        "key": "array",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "DDOR",
+                        "key": "ddor",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Created",
+                        "key": "created",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Updated",
+                        "key": "updated",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": {
+                "namespace": "goldstone.root",
+                "key": "goldstone"
+            },
+            "name": "Goldstone",
+            "type": "dsn.collection",
+            "composition": [
+                {
+                    "namespace": "goldstone",
+                    "key": "gdscc"
+                }
+            ]
+        },
+        {
+            "identifier": {
+                "namespace": "goldstone",
+                "key": "gdscc"
+            },
+            "name": "Goldstone",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Friendly Name",
+                        "key": "friendly.name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "UTC Time",
+                        "key": "utc.time",
+                        "format": "utc",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Time Zone Offset",
+                        "key": "time.zone.offset",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": {
+                "namespace": "goldstone",
+                "key": "dss14"
+            },
+            "name": "DSS 14",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Azimuth",
+                        "key": "azimuth.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Elevation",
+                        "key": "elevation.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Wind Speed",
+                        "key": "wind.speed",
+                        "units": "km/hr",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "MSPA",
+                        "key": "mspa",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Array",
+                        "key": "array",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "DDOR",
+                        "key": "ddor",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Created",
+                        "key": "created",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Updated",
+                        "key": "updated",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": {
+                "namespace": "goldstone",
+                "key": "dss15"
+            },
+            "name": "DSS 15",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Azimuth",
+                        "key": "azimuth.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Elevation",
+                        "key": "elevation.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Wind Speed",
+                        "key": "wind.speed",
+                        "units": "km/hr",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "MSPA",
+                        "key": "mspa",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Array",
+                        "key": "array",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "DDOR",
+                        "key": "ddor",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Created",
+                        "key": "created",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Updated",
+                        "key": "updated",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": {
+                "namespace": "goldstone",
+                "key": "dss24"
+            },
+            "name": "DSS 24",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Azimuth",
+                        "key": "azimuth.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Elevation",
+                        "key": "elevation.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Wind Speed",
+                        "key": "wind.speed",
+                        "units": "km/hr",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "MSPA",
+                        "key": "mspa",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Array",
+                        "key": "array",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "DDOR",
+                        "key": "ddor",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Created",
+                        "key": "created",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Updated",
+                        "key": "updated",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": {
+                "namespace": "goldstone",
+                "key": "dss25"
+            },
+            "name": "DSS 25",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Azimuth",
+                        "key": "azimuth.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Elevation",
+                        "key": "elevation.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Wind Speed",
+                        "key": "wind.speed",
+                        "units": "km/hr",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "MSPA",
+                        "key": "mspa",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Array",
+                        "key": "array",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "DDOR",
+                        "key": "ddor",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Created",
+                        "key": "created",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Updated",
+                        "key": "updated",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": {
+                "namespace": "goldstone",
+                "key": "dss26"
+            },
+            "name": "DSS 26",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Azimuth",
+                        "key": "azimuth.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Elevation",
+                        "key": "elevation.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Wind Speed",
+                        "key": "wind.speed",
+                        "units": "km/hr",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "MSPA",
+                        "key": "mspa",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Array",
+                        "key": "array",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "DDOR",
+                        "key": "ddor",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Created",
+                        "key": "created",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Updated",
+                        "key": "updated",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": {
+                "namespace": "madrid.root",
+                "key": "madrid"
+            },
+            "name": "Madrid",
+            "type": "dsn.collection",
+            "composition": [
+                {
+                    "namespace": "madrid",
+                    "key": "mdscc"
+                }
+            ]
+        },
+        {
+            "identifier": {
+                "namespace": "madrid",
+                "key": "mdscc"
+            },
+            "name": "Madrid",
+            "type": "dsn.telemetry",
+            "key": "mdscc",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Friendly Name",
+                        "key": "friendly.name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "UTC Time",
+                        "key": "utc.time",
+                        "format": "utc",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Time Zone Offset",
+                        "key": "time.zone.offset",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": {
+                "namespace": "madrid",
+                "key": "dss54"
+            },
+            "name": "DSS 54",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Azimuth",
+                        "key": "azimuth.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Elevation",
+                        "key": "elevation.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Wind Speed",
+                        "key": "wind.speed",
+                        "units": "km/hr",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "MSPA",
+                        "key": "mspa",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Array",
+                        "key": "array",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "DDOR",
+                        "key": "ddor",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Created",
+                        "key": "created",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Updated",
+                        "key": "updated",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": {
+                "namespace": "madrid",
+                "key": "dss55"
+            },
+            "name": "DSS 55",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Azimuth",
+                        "key": "azimuth.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Elevation",
+                        "key": "elevation.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Wind Speed",
+                        "key": "wind.speed",
+                        "units": "km/hr",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "MSPA",
+                        "key": "mspa",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Array",
+                        "key": "array",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "DDOR",
+                        "key": "ddor",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Created",
+                        "key": "created",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Updated",
+                        "key": "updated",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": {
+                "namespace": "madrid",
+                "key": "dss63"
+            },
+            "name": "DSS 63",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Azimuth",
+                        "key": "azimuth.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Elevation",
+                        "key": "elevation.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Wind Speed",
+                        "key": "wind.speed",
+                        "units": "km/hr",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "MSPA",
+                        "key": "mspa",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Array",
+                        "key": "array",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "DDOR",
+                        "key": "ddor",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Created",
+                        "key": "created",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Updated",
+                        "key": "updated",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": {
+                "namespace": "madrid",
+                "key": "dss65"
+            },
+            "name": "DSS 65",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Azimuth",
+                        "key": "azimuth.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Elevation",
+                        "key": "elevation.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Wind Speed",
+                        "key": "wind.speed",
+                        "units": "km/hr",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "MSPA",
+                        "key": "mspa",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Array",
+                        "key": "array",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "DDOR",
+                        "key": "ddor",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Created",
+                        "key": "created",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Updated",
+                        "key": "updated",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
         }
     ]
 }
