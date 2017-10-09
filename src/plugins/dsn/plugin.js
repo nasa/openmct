@@ -2,9 +2,11 @@
 'use strict';
 
 define([
-
+    'request-promise',
+    'xml2js'
 ], function (
-
+    rp,
+    xml2js
 ) {
     var canberraObjects,
         dictionary,
@@ -17,6 +19,7 @@ define([
         DSN_KEY = 'dsn',
         DSN_NAMESPACE = 'deep.space.network',
         DSN_COLLECTION_TYPE = 'dsn.collection',
+        DSN_TELEMETRY_SOURCE = 'https://eyes.nasa.gov/dsn/data/dsn.xml',
         DSN_TELEMETRY_TYPE = 'dsn.telemetry',
         GOLDSTONE_NAMESPACE = 'goldstone',
         MADRID_NAMESPACE = 'madrid',
@@ -27,6 +30,21 @@ define([
         return http.get(DSN_DICTIONARY_URI)
             .then(function (result) {
                 return result.data;
+            });
+    }
+
+    function parseDsnData(xml) {
+        xml2js.parseString(xml, function (error, result) {
+            console.log(result);
+        });
+    }
+
+    function getDsnData() {
+        var url = '/proxyUrl?url=' + encodeURIComponent(DSN_TELEMETRY_SOURCE);
+
+        return http.get(url)
+            .then(function (resp) {
+                parseDsnData(resp.data);
             });
     }
 
@@ -129,6 +147,22 @@ define([
         }
     };
 
+    var realTimeProvider = {
+        supportsSubscribe: function (domainObject) {
+            return domainObject.type === DSN_TELEMETRY_TYPE;
+        },
+        subscribe: function (domainObject, callback, options) {
+            // DSN data is updated every 5 seconds
+            var interval = setInterval(function () {
+                callback(getDsnData());
+            }, 5000);
+
+            return function (interval) {
+                clearInterval(interval);
+            };
+        }
+    };
+
     function DsnPlugin() {
         return function install(openmct) {
             openmct.objects.addRoot({
@@ -164,6 +198,7 @@ define([
                 openmct.objects.addProvider(GOLDSTONE_NAMESPACE, goldstoneObjectProvider);
                 openmct.objects.addProvider(MADRID_NAMESPACE, madridObjectProvider);
                 openmct.composition.addProvider(compositionProvider);
+                openmct.telemetry.addProvider(realTimeProvider);
             });
 
             // This type represents DSN domain objects that contain other DSN objects
