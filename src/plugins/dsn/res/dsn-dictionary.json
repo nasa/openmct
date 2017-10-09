@@ -13,13 +13,7 @@
                 "key": "canberra"
             },
             "name": "Canberra",
-            "type": "dsn.collection",
-            "composition": [
-                {
-                    "namespace": "canberra",
-                    "key": "cdscc"
-                }
-            ]
+            "type": "dsn.collection"
         },
         {
             "identifier": {
@@ -380,13 +374,7 @@
                 "key": "goldstone"
             },
             "name": "Goldstone",
-            "type": "dsn.collection",
-            "composition": [
-                {
-                    "namespace": "goldstone",
-                    "key": "gdscc"
-                }
-            ]
+            "type": "dsn.collection"
         },
         {
             "identifier": {
@@ -825,13 +813,7 @@
                 "key": "madrid"
             },
             "name": "Madrid",
-            "type": "dsn.collection",
-            "composition": [
-                {
-                    "namespace": "madrid",
-                    "key": "mdscc"
-                }
-            ]
+            "type": "dsn.collection"
         },
         {
             "identifier": {
