@@ -290,6 +290,11 @@
             opacity: 1;
         }
     }
+    .l-rule-action-buttons-wrapper {
+          .t-delete {
+            margin-left: 10px;
+          }
+    }
     .t-condition {
         &:hover {
             .l-condition-action-buttons-wrapper {
