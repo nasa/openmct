@@ -227,20 +227,21 @@ define([
             self.ruleArea.append(rules[ruleId].getDOM());
         });
 
-        var ruleKeys = Object.keys(self.rulesById);
-        if (ruleKeys.length > 2) {
-            ruleKeys.forEach(function (ruleKey) {
-                if (rules[ruleKey].config.id !== 'default') {
-                    $('.t-grippy', rules[ruleKey].domElement).show();
-                }
-            });
-        } else if (ruleKeys.length <= 2) {
-            ruleKeys.forEach(function (ruleKey) {
-                $('.t-grippy', rules[ruleKey].domElement).hide();
-            });
-        }
-
         this.executeRules();
+        this.addOrRemoveDragIndicator();
+    };
+
+    SummaryWidget.prototype.addOrRemoveDragIndicator = function () {
+        var rules = this.domainObject.configuration.ruleOrder;
+        var rulesById = this.rulesById;
+
+        rules.forEach(function (ruleKey, index, array) {
+            if (array.length > 2 && index > 0) {
+                $('.t-grippy', rulesById[ruleKey].domElement).show();
+            } else {
+                $('.t-grippy', rulesById[ruleKey].domElement).hide();
+            }
+        });
     };
 
     /**
