@@ -39,7 +39,7 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    ["$watch"]
+                    ["$watch", "$on"]
                 );
                 mockScope.ngModel = {};
                 mockScope.ngModel.selectedObject = {

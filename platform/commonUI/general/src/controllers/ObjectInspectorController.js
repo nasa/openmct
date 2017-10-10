@@ -24,8 +24,8 @@
  * Module defining ObjectInspectorController. Created by shale on 08/21/2015.
  */
 define(
-    ['angular'],
-    function (angular) {
+    [],
+    function () {
 
         /**
          * The ObjectInspectorController gets and formats the data for
@@ -37,8 +37,6 @@ define(
             $scope.primaryParents = [];
             $scope.contextutalParents = [];
             //$scope.isLink = false;
-
-            this.InspectorMutation = $scope.ngModel.selectedObject.getCapability('mutation');
 
             // Gets an array of the contextual parents/ancestors of the selected object
             function getContextualPath() {
@@ -111,11 +109,9 @@ define(
                 getMetadata();
             });
 
-            this.InspectorMutation.listen(function () {
-                if (!angular.equals($scope.metadata, $scope.ngModel.selectedObject.useCapability('metadata'))) {
-                    getMetadata();
-                }
-            });
+            var mutation = $scope.ngModel.selectedObject.getCapability('mutation');
+            var unlisten = mutation.listen(getMetadata);
+            $scope.$on('$destroy', unlisten);
         }
         return ObjectInspectorController;
     }
