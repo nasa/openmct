@@ -29,12 +29,19 @@ define([
     describe("The Follow Timer action", function () {
         var testContext;
         var testModel;
+        var testAdaptedObject;
 
         beforeEach(function () {
             testModel = {};
-            testContext = { domainObject: { getModel: function () {
-                return testModel;
-            } } };
+            testContext = { domainObject: jasmine.createSpyObj('domainObject', [
+                'getModel',
+                'useCapability'
+            ]) };
+            testAdaptedObject = { foo: 'bar' };
+            testContext.domainObject.getModel.andReturn(testModel);
+            testContext.domainObject.useCapability.andCallFake(function (c) {
+                return c === 'adapter' && testAdaptedObject;
+            });
         });
 
         it("is applicable to timers", function () {
@@ -72,7 +79,7 @@ define([
 
                 it("sets the active timer", function () {
                     expect(mockTimerService.setTimer)
-                        .toHaveBeenCalledWith(testContext.domainObject);
+                        .toHaveBeenCalledWith(testAdaptedObject);
                 });
             });
         });

@@ -30,7 +30,10 @@ define([
 
         beforeEach(function () {
             callback = jasmine.createSpy('callback');
-            mockmct = { time: { clock: jasmine.createSpy('clock') } };
+            mockmct = {
+                time: { clock: jasmine.createSpy('clock') },
+                objects: { observe: jasmine.createSpy('observe') }
+            };
             timerService = new TimerService(mockmct);
             timerService.on('change', callback);
         });
@@ -57,6 +60,17 @@ define([
 
             it("reports the current timer", function () {
                 expect(timerService.getTimer()).toBe(testTimer);
+            });
+
+            it("observes changes to an object", function () {
+                var newTimer = { name: "I am another timer." };
+                expect(mockmct.objects.observe).toHaveBeenCalledWith(
+                    testTimer,
+                    '*',
+                    jasmine.any(Function)
+                );
+                mockmct.objects.observe.mostRecentCall.args[2](newTimer);
+                expect(timerService.getTimer()).toBe(newTimer);
             });
         });
     });
