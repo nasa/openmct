@@ -24,8 +24,8 @@
  * Module defining ObjectInspectorController. Created by shale on 08/21/2015.
  */
 define(
-    [],
-    function () {
+    ['angular'],
+    function (angular) {
 
         /**
          * The ObjectInspectorController gets and formats the data for
@@ -112,7 +112,7 @@ define(
             });
 
             this.InspectorMutation.listen(function () {
-                if(!angular.equals($scope.metadata, $scope.ngModel.selectedObject.useCapability('metadata'))){
+                if (!angular.equals($scope.metadata, $scope.ngModel.selectedObject.useCapability('metadata'))) {
                     getMetadata();
                 }
             });
