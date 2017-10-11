@@ -330,7 +330,7 @@ define([
         if (!this.domainObject.configuration.ruleConfigById[ruleId]) {
             this.domainObject.configuration.ruleConfigById[ruleId] = {
                 name: ruleName || 'Rule',
-                label: this.domainObject.name,
+                label: 'Unnamed Rule',
                 message: '',
                 id: ruleId,
                 icon: ' ',
