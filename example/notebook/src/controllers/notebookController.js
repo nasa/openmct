@@ -1,0 +1,279 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+ /*-- main controller file, here is the core functionality of the notebook plugin --*/
+
+define(
+    [],
+    function () {
+
+        
+    function notebookController(
+        $scope,
+        dialogService,
+        popupService,
+        agentService,
+        now,
+        actionService,
+        $timeout,
+        ) {
+        var showAll = true,
+            showCompleted;
+
+        var self = this;
+
+        $scope.time = now();
+
+        $scope.AS = actionService;
+
+        $scope.sortEntries = '-createdOn';
+        $scope.showTime = "0";
+        $scope.editEntry = false;
+
+        /*--seconds in an hour--*/
+
+        $scope.hourSecs = 60 * 60 * 1000;
+
+        this.scope = $scope;
+
+
+        // Persist changes made to a domain object's model
+        function persist() {
+            var persistence = $scope.domainObject.getCapability('persistence');
+            return persistence && persistence.persist();
+        };
+
+        /*--*/
+
+        $scope.hoursFilter = function(hours,entryTime){
+            if(+hours){
+                return entryTime > (now() - $scope.hourSecs*(+hours));
+            }else{
+                return true;
+            }            
+        };
+
+        /*--create a new entry--*/
+        $scope.newEntry = function(){
+             $scope.domainObject.useCapability('mutation', function(model) {
+               var entries = model.entries;
+               var lastEntry= entries[entries.length-1];
+               if(lastEntry==undefined || lastEntry.text || lastEntry.embeds){
+                    model.entries.push({'createdOn':now()});
+                }else{
+                    model.entries[entries.length-1].createdOn = now();
+                }                  
+            });
+        };
+
+        /*--delete an entry--*/
+        $scope.deleteEntry = function($event){
+            var delId = $event.currentTarget.parentElement.parentElement.id; 
+            var errorDialog = dialogService.showBlockingMessage({
+                severity: "error",
+                title: "This action will permanently delete this notebook. Do you want to continue?",
+                minimized: true, // want the notification to be minimized initially (don't show banner)
+                options: [{
+                    label: "OK",
+                    callback: function () {
+                        errorDialog.dismiss();
+                         $scope.domainObject.useCapability('mutation', function(model) {
+                            var elementPos = model.entries.map(function(x) {return x.createdOn; }).indexOf(+delId);
+                            if(elementPos != -1){
+                                model.entries.splice(elementPos,1);  
+                            }else{
+                                alert('delete error');
+                            }
+                                     
+                        });
+                    }
+                },{
+                    label: "Cancel",
+                    callback: function () {
+                        errorDialog.dismiss();
+                    }
+                }]
+            }); 
+        };
+
+        $scope.textBlur = function($event,entryId){
+            if($event.target && $event.target.value !== ""){
+                $scope.domainObject.useCapability('mutation', function(model) {
+                    var elementPos = model.entries.map(function(x) {return x.createdOn}).indexOf(+(entryId));
+                    model.entries[elementPos].text = $event.target.value;
+                });
+            }
+        }
+
+        $scope.parseText = function(text){
+            if(text){
+                return text.split(/\r\n|\r|\n/gi);
+            }
+        };
+
+        $scope.renderImage = function(img){
+            return URL.createObjectURL(img);
+        };
+
+
+        /*-----*/
+        function refreshComp(change) {  
+            //Keep a track of how many composition callbacks have been made            
+             if(change){
+                 $scope.domainObject.useCapability('composition').then(function (composition) {
+                     var compObj = {};
+                     composition.map(function(comp){
+                        var id = comp.getId();                            
+                        compObj[id] = comp;
+                     });
+
+                     $scope.entries = compObj;
+
+                  });
+             }
+        };
+
+        
+
+        function actionToMenuOption(action) {
+            return {
+                key: action,
+                name: action.getMetadata().name,
+                cssClass: action.getMetadata().cssClass
+            };
+        };
+
+            // Maintain all "conclude-editing" and "save" actions in the
+            // present context.
+        function updateActions() {
+            $scope.menuEmbed = $scope.action ?
+                    $scope.action.getActions({category: 'embed'}) :
+                    [];
+
+            $scope.menuEmbedNoSnap = $scope.action ?
+                    $scope.action.getActions({category: 'embed-no-snap'}) :
+                    [];
+
+            $scope.menuActions = $scope.action ?
+                    $scope.action.getActions({key: 'window'}) :
+                    [];
+
+            if($scope.action){
+                 $scope.menuActions.push(actionToMenuOption($scope.action.getActions({key: 'navigate'})[0]));
+            }
+        };
+
+        // Update set of actions whenever the action capability
+        // changes or becomes available.
+        $scope.$watch("action", updateActions);
+
+
+        $scope.setObj = function(embed){            
+           if($scope.entries && $scope.entries[embed]){
+                return $scope.entries[embed];
+            }            
+        };
+
+        $scope.saveSnap = function(url,embedPos,entryPos){   
+            var snapshot = false;
+            if(url){
+                var reader = new window.FileReader();
+                 reader.readAsDataURL(url); 
+                 reader.onloadend = function() {
+                    snapshot = reader.result; 
+                    $scope.domainObject.useCapability('mutation', function(model) {
+                         model.entries[entryPos].embeds[embedPos]['snapshot'] = snapshot;
+                    });
+                 };
+            }else{
+                $scope.domainObject.useCapability('mutation', function(model) {
+                     model.entries[entryPos].embeds[embedPos]['snapshot'] = snapshot;
+                });
+            }            
+        };
+
+        /*---popups menu embeds----*/ 
+      
+        $scope.openMenu = function($event){
+            $event.preventDefault();
+
+            var body = $(document).find('body'),
+                initiatingEvent = agentService.isMobile() ?
+                        'touchstart' : 'mousedown',
+                dismissExistingMenu,
+                menu,
+                popup;
+
+            var container = $($event.currentTarget).parent().parent();
+
+            menu = container.find('.menu-element');
+
+            // Remove the context menu
+            function dismiss() {
+                container.find('.hide-menu').append(menu);
+                body.off("mousedown", dismiss);
+                dismissExistingMenu = undefined;
+            }
+
+            // Dismiss any menu which was already showing
+            if (dismissExistingMenu) {
+                dismissExistingMenu();
+            }
+
+            // ...and record the presence of this menu.
+            dismissExistingMenu = dismiss;
+
+            popup = popupService.display(menu, [$event.pageX,$event.pageY], {
+                marginX: 0,
+                marginY: -50
+            }); 
+
+            // Stop propagation so that clicks or touches on the menu do not close the menu
+            menu.on(initiatingEvent, function (event) {
+                event.stopPropagation();
+                $timeout(dismiss, 300);
+            });
+
+            // Dismiss the menu when body is clicked/touched elsewhere
+            // ('mousedown' because 'click' breaks left-click context menus)
+            // ('touchstart' because 'touch' breaks context menus up)
+            body.on(initiatingEvent, dismiss);
+
+        };
+
+
+        $scope.$watchCollection("model.entries", refreshComp);
+
+
+        $scope.$on('$destroy', function () {});
+
+
+        $scope.selectEntry = function(){
+            if (!$scope.selection) {
+               $scope.domainObject.getCapability('action').getActions({key:'edit'})[0].perform()
+            }
+            return true;
+        };
+    }
+
+    return notebookController;
+});

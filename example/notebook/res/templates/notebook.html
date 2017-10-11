@@ -1,0 +1,133 @@
+<div ng-controller="notebookController as controller" class="mct-notebook">
+
+     <!-- Reuse of native styles the more as I can -->
+  <div class="notebook-head l-flex-row flex-elem grows">
+    <div class="l-flex-row holder holder-search">
+
+     <div class="search-bar flex-elem l-flex-row"
+           ng-class="{ holder: !(entrySearch === '' || entrySearch === undefined) }">
+          <div class="holder flex-elem grows">
+              <input class="search-input"
+                     type="text" tabindex="10000"
+                     ng-model="entrySearch"
+                     ng-keyup="controller.search()"/>
+              <a class="clear-icon clear-input icon-x-in-circle"
+                 ng-class="{show: !(entrySearch === '' || entrySearch === undefined)}"
+                 ng-click="entrySearch = ''; controller.search()"></a>
+          </div>
+
+          <a class="holder s-button flex-elem btn-cancel"
+             ng-show="!(entrySearch === '' || entrySearch === undefined)"
+             ng-click="entrySearch = ''; ngModel.checkAll = true; menuController.checkAll(); controller.search()">
+              Cancel</a>
+      </div>
+    </div>
+
+    <div class="notebook-filters right l-flex-row flex-elem grows flex-justify-end">
+      <div class="select">
+          <select ng-model="showTime">
+              <option value="0" selected="selected">Show all</option>
+              <option value="1">Last Hour</option>
+              <option value="8">Last 8 Hours</option>
+              <option value="24">Last 24 Hours</option>
+          </select>
+      </div>
+      <div class="select">
+          <select ng-model="sortEntries">
+              <option value="-createdOn" selected="selected">Newest first</option>
+              <option value="createdOn">Oldest first</option>
+          </select>
+      </div>
+    </div>
+  </div>
+
+
+ <!--  drag area -->
+
+ <div class="drag-area l-flex-row" ng-click="newEntry()" id="newEntry" mct-entry-dnd>
+    <div class="glyph icon-plus" title="new"></div>
+    <p>To start a new entry, click here or drag and drop any object</p>
+  </div>
+
+  <!-- entries -->
+
+  <div class="entries-wrapper">
+    <ul class="entries-list">
+      <li class="entry l-flex-row" id="{{entry.createdOn}}" ng-if="hoursFilter(showTime,entry.createdOn)" ng-repeat="entry in model.entries | filter:entrySearch | orderBy: sortEntries track by $index" mct-entry-dnd>
+        <span class="entry-time">{{entry.createdOn | date:'yy-dd-MM hh:mm:ss'}}</span>
+        <span class="entry-info">
+          <span class="entry-text" ng-mouseenter="editEntry=true"  ng-mouseleave="editEntry=false">
+            <span class="unedited-text">
+              <p ng-hide="editEntry" ng-repeat="line in parseText(entry.text) track by $index">        {{line}}
+              </p>
+            </span>             
+            <textarea ng-show="editEntry" ng-blur="textBlur($event,entry.createdOn)" ng-model="entry.text" placeholder="Enter text here" class="sm" rows="{{parseText(entry.text).length}}" ng-click="selectEntry()">{{entry.text}}</textarea>
+          </span>
+           <!-- embeds -->
+          <span class="embeds l-flex-row">
+            <span class="entry-embedded" ng-repeat="embed in entry.embeds" id="{{embed.id}}">
+                 <span  ng-if="embed.snapshot === false">
+                    <mct-representation key="'draggedEntry'"                                
+                                parameters="{entry:entry.createdOn,embed:embed.id}"
+                                class="t-rep-frame holder"
+                                mct-object="setObj(embed.type)">
+                    </mct-representation> 
+                 </span>                
+                 <span class="l-flex-row embed">  
+                    <span class="snap-thumb" ng-if="embed.snapshot">
+                      <span ng-class="embed.cssClass" class="abs embed-icon"></span>
+                      <img ng-src="{{embed.snapshot}}" src="" alt="{{embed.id}}" >
+                    </span>      
+                    <span class="embed-info l-flex-col">
+                      <span class="embed-title">{{embed.name}}
+                        <a href="" class='context-available' ng-click='openMenu($event)'></a>
+                      </span>
+                      
+                      <span class="hide-menu" ng-show="false">
+                        <span class="menu-element context-menu-wrapper mobile-disable-select">
+                            <span class="menu context-menu">
+                                <ul>
+                                    <li ng-repeat="menu in menuEmbed"
+                                        ng-click="menu.perform($event,embed.snapshot,embed.id,entry.createdOn,this,setObj(embed.type))"
+                                        title="{{menu.getMetadata().description}}"
+                                        class="{{menu.getMetadata().cssClass}}"
+                                        ng-if="embed.snapshot">
+                                        {{menu.getMetadata().name}}
+                                    </li>
+                                    <li ng-repeat="menu in menuEmbedNoSnap"
+                                        ng-click="menu.perform($event,embed.snapshot,embed.id,entry.createdOn,this)"
+                                        title="{{menu.getMetadata().description}}"
+                                        class="{{menu.getMetadata().cssClass}}"
+                                        ng-if="!embed.snapshot">
+                                        {{menu.getMetadata().name}}
+                                    </li>
+                                    <li ng-repeat="menu in menuActions"
+                                        ng-click="menu.perform()"
+                                        title="{{menu.getMetadata().description}}"
+                                        class="{{menu.getMetadata().cssClass}}">
+                                        {{menu.getMetadata().name}}
+                                    </li>
+                                </ul>
+                            </span>
+                        </span>
+                      </span>                      
+                      <span class="embed-date">{{embed.id| date:'yy-dd-MM hh:mm:ss'}}</span>
+                    </span>              
+                 </span>                
+            </span> 
+          </span>                  
+        </span>
+        <!-- delete entry -->
+        <span class="entry-delete">
+          <a class="s-icon-button icon-trash" title="Delete Entry" ng-click="deleteEntry($event)"></a>
+        </span>
+      </li>
+    </ul>
+  </div>
+    
+ 
+
+  <div ng-if="model.entries.length < 1" class="example-message">
+         There are no entries to show.
+  </div>
+</div>
