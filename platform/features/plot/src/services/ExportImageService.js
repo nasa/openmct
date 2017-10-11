@@ -149,6 +149,10 @@ define(
             });
         };
 
+        ExportImageService.prototype.exportPNGtoSRC = function (element) {
+            return renderElement(element, "png");
+        };
+
         polyfillToBlob();
 
         return ExportImageService;
