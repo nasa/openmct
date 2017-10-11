@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <span ng-controller="DateTimeFieldController">
-    <input type="text"
+    <input type="text" autocorrect="off" spellcheck="false"
            ng-model="textValue"
            ng-blur="restoreTextValue(); ngBlur()"
            ng-mouseup="ngMouseup()"
