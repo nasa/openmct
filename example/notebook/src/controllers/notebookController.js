@@ -35,11 +35,13 @@ define(
         now,
         actionService,
         $timeout,
+        $element,
         ) {
         var showAll = true,
             showCompleted;
 
         var self = this;
+        $scope.entriesEl = $(document.body).find('.entries-list');
 
         $scope.time = now();
 
@@ -48,6 +50,7 @@ define(
         $scope.sortEntries = '-createdOn';
         $scope.showTime = "0";
         $scope.editEntry = false;
+        $scope.entrySearch = '';
 
         /*--seconds in an hour--*/
 
@@ -72,17 +75,23 @@ define(
             }            
         };
 
+        $scope.scrollToTop = function(){
+            var entriesContainer = $scope.entriesEl.parent();
+            entriesContainer[0].scrollTop = 0;   
+        }
+
         /*--create a new entry--*/
-        $scope.newEntry = function(){
-             $scope.domainObject.useCapability('mutation', function(model) {
-               var entries = model.entries;
+        $scope.newEntry = function($event){   
+               $scope.scrollToTop();
+               var entries = $scope.domainObject.model.entries;
                var lastEntry= entries[entries.length-1];
                if(lastEntry==undefined || lastEntry.text || lastEntry.embeds){
-                    model.entries.push({'createdOn':now()});
+                    $scope.domainObject.model.entries.push({'createdOn':now()});                    
                 }else{
-                    model.entries[entries.length-1].createdOn = now();
-                }                  
-            });
+                    $scope.domainObject.model.entries[entries.length-1].createdOn = now();
+                }   
+            $scope.domainObject.useCapability('mutation', function(model) {});
+            $scope.entrySearch = '';
         };
 
         /*--delete an entry--*/
@@ -96,15 +105,13 @@ define(
                     label: "OK",
                     callback: function () {
                         errorDialog.dismiss();
-                         $scope.domainObject.useCapability('mutation', function(model) {
-                            var elementPos = model.entries.map(function(x) {return x.createdOn; }).indexOf(+delId);
-                            if(elementPos != -1){
-                                model.entries.splice(elementPos,1);  
-                            }else{
-                                alert('delete error');
-                            }
-                                     
-                        });
+                        var elementPos = $scope.domainObject.model.entries.map(function(x) {return x.createdOn; }).indexOf(+delId.replace('entry_',''));
+                        if(elementPos != -1){
+                            $scope.domainObject.model.entries.splice(elementPos,1);  
+                        }else{
+                            console.log('delete error');
+                        }
+                        $scope.domainObject.useCapability('mutation', function(model) {});  
                     }
                 },{
                     label: "Cancel",
@@ -117,12 +124,29 @@ define(
 
         $scope.textBlur = function($event,entryId){
             if($event.target && $event.target.value !== ""){
-                $scope.domainObject.useCapability('mutation', function(model) {
-                    var elementPos = model.entries.map(function(x) {return x.createdOn}).indexOf(+(entryId));
-                    model.entries[elementPos].text = $event.target.value;
-                });
+                var elementPos = $scope.domainObject.model.entries.map(function(x) {return x.createdOn}).indexOf(+(entryId));
+                $scope.domainObject.model.entries[elementPos].text = $event.target.value;
+                $scope.domainObject.useCapability('mutation', function(model) {});
             }
         }
+
+        $scope.finished = function(model){
+            var lastEntry = model[model.length-1];
+            if(!lastEntry.text && !lastEntry.embeds){
+                var newEntry = $scope.entriesEl.find('#entry_'+lastEntry.createdOn).addClass('active');
+                newEntry.find('textarea').focus();
+            }
+        }
+
+        $scope.clearSearch = function(){
+            $scope.entrySearch = '';
+        }
+
+         $scope.viewSnapshot = function($event,snapshot,embedId,entryId,$scope,domainObject){
+            var viewAction = $scope.action.getActions({category: 'embed'})[0];
+            viewAction.perform($event,snapshot,embedId,entryId,$scope,domainObject);
+        }
+
 
         $scope.parseText = function(text){
             if(text){
@@ -196,14 +220,23 @@ define(
         $scope.saveSnap = function(url,embedPos,entryPos){   
             var snapshot = false;
             if(url){
-                var reader = new window.FileReader();
-                 reader.readAsDataURL(url); 
-                 reader.onloadend = function() {
-                    snapshot = reader.result; 
-                    $scope.domainObject.useCapability('mutation', function(model) {
-                         model.entries[entryPos].embeds[embedPos]['snapshot'] = snapshot;
-                    });
-                 };
+                if(embedPos !== -1 && entryPos !== -1 ){
+                    var reader = new window.FileReader();
+                     reader.readAsDataURL(url); 
+                     reader.onloadend = function() {
+                        snapshot = reader.result; 
+                        $scope.domainObject.useCapability('mutation', function(model) {
+                            if(model.entries[entryPos]){
+                                model.entries[entryPos].embeds[embedPos]['snapshot'] = {'src':snapshot,
+                                                                                 'type':url.type,
+                                                                                 'size':url.size,
+                                                                                 'modified':Date.now()
+                                                                             };
+                              model.entries[entryPos].embeds[embedPos].id = Date.now();
+                           }
+                        });
+                     };
+                }                
             }else{
                 $scope.domainObject.useCapability('mutation', function(model) {
                      model.entries[entryPos].embeds[embedPos]['snapshot'] = snapshot;

@@ -19,20 +19,12 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="frame snap-frame frame-template t-frame-inner abs t-object-type-{{ representation.selected.key }}">
-    <div class="abs object-browse-bar l-flex-row">
-        <div class="btn-bar right l-flex-row flex-elem flex-justify-end flex-fixed">
-            <mct-representation
-                    key="'switcher'"
-                    ng-model="representation"
-                    mct-object="domainObject">
-            </mct-representation>
-        </div>
-    </div>
-    <div class="abs object-holder" data-entry = "{{parameters.entry}}" data-embed = "{{parameters.embed}}" mct-snapshot>
-        <mct-representation
-                key="representation.selected.key"
-                mct-object="representation.selected.key && domainObject">
-        </mct-representation>
-    </div>
+<div class='form-control select' ng-controller="selectSnapshotController">
+    <select
+            ng-model="selectModel"
+            ng-options="opt.value as opt.name for opt in options"
+            ng-required="ngRequired"
+            name="mctControl">
+        <!-- <option value="" ng-show="!ngModel[field]">- Select One -</option> -->
+    </select>
 </div>

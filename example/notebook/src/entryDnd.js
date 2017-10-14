@@ -22,11 +22,15 @@
 
 define([
 ], function (
-    $
 ) {
 
-    function entryDnd($document,dndService,typeService) {
-        var document = $document[0];
+    var SNAPSHOT_TEMPLATE = '<mct-representation key="\'draggedEntry\'"'+
+                                    'parameters="{entry:entryId,embed:embedId}"'+
+                                    'class="t-rep-frame holder"'+
+                                    'mct-object="selObj">'+
+                                '</mct-representation>';
+
+    function entryDnd($rootScope,$compile,dndService,typeService) {
 
         function link($scope, $element) {
             var frame = $element.parent();
@@ -39,58 +43,84 @@ define([
 
                 var selectedModel = selectedObject.getModel();
                 var cssClass= selectedObject.getCapability('type').typeDef.cssClass;
-
+                var entryId = -1;
+                var embedId = -1;
+               
+                $scope.clearSearch();
                 if($element[0].id == 'newEntry'){
-                    
-                    var lastEntry= domainObj.model.entries[domainObj.model.entries.length-1];
+                    entryId = domainObj.model.entries.length;
+                    embedId = 0;
+                    var lastEntry= domainObj.model.entries[entryId-1];
                     if(lastEntry==undefined || lastEntry.text || lastEntry.embeds){
                         domainObj.model.entries.push({'createdOn':+Date.now(),
                                             'embeds':[{'type':selectedObject.getId(),
                                                        'id':''+Date.now(),
                                                        'cssClass':cssClass,
                                                        'name':selectedModel.name,
-                                                       'snapshot':false
+                                                       'snapshot':''
                                                      }]
                                             });
                     }else{
-                        domainObj.model.entries[domainObj.model.entries.length-1] = 
+                        domainObj.model.entries[entryId-1] = 
                                                     {'createdOn':+Date.now(),
                                                      'embeds':[{'type':selectedObject.getId(),
                                                                 'id':''+Date.now(),
                                                                 'cssClass':cssClass,
                                                                 'name':selectedModel.name,
-                                                                'snapshot':false
+                                                                'snapshot':''
                                                                }]
                                                     };
                     } 
 
+                    $scope.scrollToTop();
+
                 }else{  
                     
-                    var elementPos = domainObj.model.entries.map(function(x) {
+                    entryId = domainObj.model.entries.map(function(x) {
                         return x.createdOn;
-                    }).indexOf(+($element[0].id));
-                    if(!domainObj.model.entries[elementPos].embeds){
-                        domainObj.model.entries[elementPos].embeds = [];
+                    }).indexOf(+($element[0].id.replace('entry_','')));
+                    if(!domainObj.model.entries[entryId].embeds){
+                        domainObj.model.entries[entryId].embeds = [];
                     }
                     
 
-                    domainObj.model.entries[elementPos].embeds.push({'type':selectedObject.getId(),
+                    domainObj.model.entries[entryId].embeds.push({'type':selectedObject.getId(),
                                                                       'id':''+Date.now(),
                                                                       'cssClass':cssClass,
                                                                       'name':selectedModel.name,
-                                                                      'snapshot':false
+                                                                      'snapshot':''
                                                                     });
+
+                    embedId = domainObj.model.entries[entryId].embeds.length-1;
                   
                     if (selectedObject) {
                         e.preventDefault();
 
                     }
                 }
+
+                if(entryId >= 0 && embedId >= 0){
+                    $scope.selObj = selectedObject;
+                    $scope.entryId = entryId;
+                    $scope.embedId = embedId;
+                    var element = $compile(SNAPSHOT_TEMPLATE)($scope);
+                }
+
+                if($(e.currentTarget).hasClass('drag-active')){
+                    $(e.currentTarget).removeClass('drag-active');
+                } 
             }
 
-          
+            function dragover(e) {
+                if(!$(e.currentTarget).hasClass('drag-active')){
+                    $(e.currentTarget).addClass('drag-active');
+                }              
+            }
+            
             // Listen for the drop itself
+            $element.on('dragover', dragover);
             $element.on('drop', drop);
+            
 
             $scope.$on('$destroy', function () {
                 
