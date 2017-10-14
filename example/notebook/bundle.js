@@ -1,8 +1,10 @@
 define([
-    'openmct',
-    './src/controllers/notebookController', 
-    './src/MCTSnapshot',
-    './src/entryDnd',
+    "openmct",
+    "./src/controllers/notebookController", 
+    "./src/controllers/newEntryController",
+    "./src/controllers/selectSnapshotController",
+    "./src/MCTSnapshot",
+    "./src/entryDnd",
     "./src/actions/viewSnapshot",
     "./src/actions/annotateSnapshot",
     "./src/actions/removeEmbed",
@@ -10,14 +12,12 @@ define([
     "./src/actions/removeSnapshot",
     "./src/actions/newEntryContextual",
     "./src/capabilities/notebookCapability",
-    "./src/indicators/notificationIndicator",
-    "text!./res/templates/controls/embedControl.html",
-    "text!./res/templates/entry.html",
-    "text!./res/templates/annotation.html",
-    "text!./res/templates/notifications.html"
+    "./src/indicators/notificationIndicator"
 ], function (
     openmct,
-    notebookController,        
+    notebookController,  
+    newEntryController, 
+    selectSnapshotController,     
     MCTSnapshot,
     MCTEntryDnd,
     viewSnapshotAction,
@@ -28,10 +28,7 @@ define([
     newEntryAction,
     NotebookCapability,
     NotificationLaunchIndicator,
-    embedControlTemplate,
-    frameTemplate,
-    annotateSnapshot,
-    notificationTemplate
+    legacyRegistry
 ) {
     openmct.legacyRegistry.register("example/notebook", {
         "name": "Notebook Plugin",
@@ -69,7 +66,7 @@ define([
                 "cssClass": "icon-notebook",
                 "name": "notebook",
                 "templateUrl": "templates/notebook.html",
-                "editable": true,
+                "editable": false,
                 "uses": [
                       "composition",
                       "action"
@@ -89,24 +86,39 @@ define([
                              "agentService",
                              "now",
                              "actionService",
-                             "$timeout"
+                             "$timeout",
+                             "$element"
+                             ]
+             },
+             {
+                 "key": "newEntryController",
+                 "implementation": newEntryController,                 
+                 "depends": [ "$scope", 
+                              "$rootScope"
+                             ]
+             },
+             {
+                 "key": "selectSnapshotController",
+                 "implementation": selectSnapshotController,                 
+                 "depends": [ "$scope", 
+                              "$rootScope"
                              ]
              }
        	   ],
            "representations": [
                 {
                     "key": "draggedEntry",
-                    "template": frameTemplate
+                    "templateUrl": "templates/entry.html"
                 }
             ],
             "templates": [
                 {
                     "key": "annotate-snapshot",
-                    "template": annotateSnapshot
+                    "templateUrl": "templates/annotation.html"
                 },
                 {
                     "key": "notificationTemplate",
-                    "template": notificationTemplate
+                    "templateUrl": "templates/notifications.html"
                 }
             ],
             "directives": [
@@ -114,6 +126,7 @@ define([
                     "key": "mctSnapshot",
                     "implementation": MCTSnapshot,
                     "depends": [
+                        "$rootScope",
                         "$document",
                         "exportImageService",
                         "dialogService",
@@ -124,7 +137,7 @@ define([
                     "key": "mctEntryDnd",
                     "implementation": MCTEntryDnd,
                     "depends": [
-                        "$document","dndService","typeService"
+                        "$rootScope","$compile","dndService","typeService"
                     ]
                 }
             ],
@@ -168,7 +181,10 @@ define([
                     "name": "Create Snapshot",
                     "description": "Create a snapshot for the embed",
                     "category": "embed-no-snap",
-                    "priority": "preferred"
+                    "priority": "preferred",
+                    "depends":[
+                      "$compile"
+                    ]
                 },
                 {
                     "key": "remove-embed",
@@ -185,19 +201,23 @@ define([
                     ]
                 },
                 {
-                    "key": "new-entry-contextual",
+                    "key": "notebook-new-entry",
                     "implementation": newEntryAction,
                     "name": "New Notebook Entry",
                     "cssClass": "icon-notebook labeled",
                     "description": "Add a new entry",
                     "category": [
-                        "contextual"
+                        "contextual",
+                         "view-control"
                     ],
                     "depends":[
+                      "$compile",
+                      "$rootScope",
                       "dialogService",
                       "notificationService",
                       "linkService"
-                    ]
+                    ],
+                    "priority": "preferred"
                 }
             ],
             "indicators": [
@@ -220,8 +240,12 @@ define([
             "controls": [
               {
                   "key": "embed-control",
-                  "template": embedControlTemplate
+                  "templateUrl": "templates/controls/embedControl.html"
               },
+               {
+                  "key": "snapshot-select",
+                  "templateUrl":  "templates/controls/snapSelect.html"
+              }
             ],
      	     "stylesheets": [
               {

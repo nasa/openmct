@@ -24,11 +24,17 @@ define(
     [],
     function () {
 
+        var SNAPSHOT_TEMPLATE = '<mct-representation key="\'draggedEntry\'"'+
+                                    'parameters="{entry:entryId,embed:embedId}"'+
+                                    'class="t-rep-frame holder"'+
+                                    'mct-object="selObj">'+
+                                '</mct-representation>'; 
 
-        function createSnapshot(context) {
+        function createSnapshot($compile,context) {
             context = context || {};
             this.domainObject = context.selectedObject || context.domainObject;
             this.context = context;
+            this.$compile = $compile;
         }
 
 
@@ -38,8 +44,14 @@ define(
             var elementPos = model.entries.map(function(x) {return x.createdOn; }).indexOf(entryId)
             var entryEmbeds = model.entries[elementPos].embeds;
             var embedPos = entryEmbeds.map(function(x) {return x.id; }).indexOf(embedId);
+            var embedType = entryEmbeds[embedPos].type;
 
-            $scope.saveSnap(false,embedPos,elementPos);
+            if(entryId >= 0 && embedId >= 0){
+                $scope.selObj = $scope.entries[embedType];
+                $scope.entryId = elementPos;
+                $scope.embedId = embedPos;
+                var element = this.$compile(SNAPSHOT_TEMPLATE)($scope);
+            }
 
         };
 

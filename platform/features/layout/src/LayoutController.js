@@ -50,6 +50,10 @@ define(
             var self = this,
                 callbackCount = 0;
 
+            $scope.hasNotebookAction = undefined;
+
+            $scope.newNotebook = undefined;
+
             // Update grid size when it changed
             function updateGridSize(layoutGrid) {
                 var oldSize = self.gridSize;
@@ -168,6 +172,17 @@ define(
 
             // Update composed objects on screen, and position panes
             $scope.$watchCollection("model.composition", refreshComposition);
+
+            var actions = $scope.domainObject.getCapability('action');
+            var notebookAction = actions.getActions({'key':'notebook-new-entry'});
+            if(notebookAction.length > 0){
+                $scope.hasNotebookAction = true;
+                 $scope.newNotebook = function(){
+                    notebookAction[0].perform();
+                }
+            }
+
+            
 
             // Position panes where they are dropped
             $scope.$on("mctDrop", handleDrop);

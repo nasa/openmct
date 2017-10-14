@@ -23,6 +23,11 @@ define(
     [],
     function () {
 
+        var SNAPSHOT_TEMPLATE = '<mct-representation key="\'draggedEntry\'"'+
+                                    'class="t-rep-frame holder"'+
+                                    'mct-object="selObj">'+
+                                '</mct-representation>';
+
         var NEW_TASK_FORM = {
             name: "Create a Notebook Entry",
             hint: "Please select one Notebook",
@@ -36,8 +41,9 @@ define(
                 {
                     name: 'Embed Type',
                     key: 'withSnapshot',
-                    control: 'select',
-                    "options": [{
+                    control: 'snapshot-select',
+                    "options": [
+                        {
                             "name": "Link and Snapshot", 
                             "value": true
                         },
@@ -45,29 +51,30 @@ define(
                             "name": "Link only", 
                             "value": false
                         }                        
-                    ],
-                    required:true
+                    ]
+                },
+                {
+                    name: 'Embed',
+                    key: 'embedObject',
+                    control: 'embed-control'
                 },
                 {
                     name: 'Save in Notebook',
                     key: 'saveNotebook',
                     control: 'locator',
                     validate: validateLocation
-                },
-                {
-                    name: 'Embed',
-                    key: 'embedSnapshot',
-                    control: 'embed-control'
                 }]
             }]
         };
 
-        function newEntryContextual(dialogService,notificationService,linkService,context) {
+        function newEntryContextual($compile,$rootScope,dialogService,notificationService,linkService,context) {
             context = context || {};
             this.domainObject = context.selectedObject || context.domainObject;
             this.dialogService = dialogService;
             this.notificationService = notificationService;
             this.linkService = linkService;
+            this.$rootScope = $rootScope;
+            this.$compile = $compile;
         }      
 
         function validateLocation(newParentObj) {
@@ -76,38 +83,75 @@ define(
 
 
         newEntryContextual.prototype.perform = function () {
-            this.dialogService.getUserInput(NEW_TASK_FORM, {}).then(addNewEntry);
+
+            var self = this;
             var domainObj = this.domainObject;  
             var notification = this.notificationService; 
-            var linkService = this.linkService;            
+            var linkService = this.linkService; 
+            var dialogService = this.dialogService;
+
+             // Create the overlay element and add it to the document's body
+            this.$rootScope.selObj = domainObj;
+            this.$rootScope.selValue = "";
+            var element = this.$compile(SNAPSHOT_TEMPLATE)(this.$rootScope);
+
+            this.$rootScope.$watch("snapshot", setSnapshot);
+
+            function setSnapshot(value){
+                if(value){
+                    dialogService.getUserInput(NEW_TASK_FORM,{}).then(addNewEntry);
+                }                
+            }
 
             function addNewEntry(options){
-                   options.selectedModel = domainObj.getModel();
-                   options.cssClass= domainObj.getCapability('type').typeDef.cssClass;
-                   options.snapshot= false;
-                   if(!options.withSnapshot){
-                     options.snapshot = '';
-                   } 
+               options.selectedModel = options.embedObject.getModel();
+               options.cssClass= options.embedObject.getCapability('type').typeDef.cssClass;
+               if(self.$rootScope.snapshot){
+                    options.snapshot= self.$rootScope.snapshot;
+                    self.$rootScope.snapshot = undefined;
+               }else{
+                    options.snapshot = undefined;
+               }
+               
+               if(!options.withSnapshot){
+                 options.snapshot = '';
+               } 
 
-                   if (options.saveNotebook.getModel().composition.indexOf(domainObj.getId()) !== -1) {
-                        createSnap(options)
-                   }else{
-                        linkService.perform(domainObj, options.saveNotebook).then(createSnap(options));
-                   } 
+               if (options.saveNotebook.getModel().composition.indexOf(options.embedObject.getId()) !== -1) {
+                    createSnap(options)
+               }else{
+                    linkService.perform(options.embedObject, options.saveNotebook).then(createSnap(options));
+               } 
             }
 
             function createSnap(options){
                 options.saveNotebook.useCapability('mutation', function(model) {
-                    model.entries.push({'createdOn':Date.now(),
-                        'text': options.entry,
-                        'embeds':[{'type':domainObj.getId(),
-                                   'id':''+Date.now(),
-                                   'cssClass':options.cssClass,
-                                   'name':options.selectedModel.name,
-                                   'snapshot':options.snapshot
-                                 }]   
-                    }); 
-                });
+                    var entries = model.entries;
+                    var lastEntry= entries[entries.length-1];
+                    if(lastEntry==undefined || lastEntry.text || lastEntry.embeds){
+                        model.entries.push({
+                            'createdOn':Date.now(),
+                            'text': options.entry,
+                            'embeds':[{'type':options.embedObject.getId(),
+                                       'id':''+Date.now(),
+                                       'cssClass':options.cssClass,
+                                       'name':options.selectedModel.name,
+                                       'snapshot':options.snapshot
+                                     }]   
+                        }); 
+                    }else{
+                        model.entries[entries.length-1] = {
+                            'createdOn':Date.now(),
+                            'text': options.entry,
+                            'embeds':[{'type':options.embedObject.getId(),
+                                       'id':''+Date.now(),
+                                       'cssClass':options.cssClass,
+                                       'name':options.selectedModel.name,
+                                       'snapshot':options.snapshot
+                                     }]   
+                        };
+                    }                                 
+            });
 
                 notification.info({
                     title: "Notebook Entry created"

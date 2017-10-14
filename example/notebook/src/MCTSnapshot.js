@@ -27,41 +27,39 @@ define([
     /**
 
      */
-    function MCTSnapshot($document,exportImageService,dialogService,notificationService) {
+    function MCTSnapshot($rootScope,$document,exportImageService,dialogService,notificationService) {
         var document = $document[0];
 
         function link($scope, $element) {
 
             var element = $element[0];
             var layoutContainer = element.parentElement,
-                isOpen = false,
                 toggleOverlay,
                 snapshot = document.createElement('div');
 
             function openOverlay() {
-                // Remove frame classes from being applied in a non-frame context
-               
+                // Remove frame classes from being applied in a non-frame context               
                 $(snapshot).addClass('abs overlay l-large-view snapshot');
                 snapshot.appendChild(element);
                 document.body.appendChild(snapshot);             
             }
 
-            function closeOverlay() {
-                if(snapshot){
-                    snapshot.removeChild(element);
-                    document.body.removeChild(snapshot);                 
-
-                    layoutContainer.remove();           
-                    snapshot = undefined; 
-                }
-                   
+            function closeOverlay(newForm) {
+                if(!newForm){
+                    if(snapshot){
+                        snapshot.removeChild(element);
+                        layoutContainer.remove(); 
+                    }   
+                }else{
+                    layoutContainer.appendChild(element);
+                }    
+                document.body.removeChild(snapshot); 
+                snapshot = undefined;                             
             }
 
             toggleOverlay = function () {
-                    openOverlay();
-                    isOpen = true;
-                    
-                    makeImg(element);
+                openOverlay();
+                makeImg(element);
             };
 
             makeImg =function(element){
@@ -80,32 +78,43 @@ define([
                                 if(img){
                                     if(dialog){
                                         dialog.dismiss();
-                                        notificationService.info({
-                                            title: "Snapshot created"
-                                        });    
-                                    }                                                                    
-                                    saveImg(img);
-                                    closeOverlay();
+                                    } 
+                                    if($element[0].dataset.entry && $element[0].dataset.embed){
+                                        saveImg(img,+$element[0].dataset.entry,+$element[0].dataset.embed);
+                                        closeOverlay(false);
+                                    }else{
+                                        var reader = new window.FileReader();
+                                        reader.readAsDataURL(img); 
+                                        reader.onloadend = function() {
+                                            //closeOverlay(true);
+                                            $($element[0]).attr("data-snapshot",reader.result);
+                                            $rootScope.snapshot = {'src':reader.result,
+                                                                     'type':img.type,
+                                                                     'size':img.size,
+                                                                     'modified':Date.now()
+                                                                  };
+                                        };
+                                        
+                                    } 
+                                    
                                 }else{
                                     console.log('no url');
+                                    dialog.dismiss();
                                 }
                                
                         },function(error){
-                            console.log('error');
-                            console.log(error);
-                             closeOverlay();
+                            console.log('error',error);
+                            if(dialog){
+                                dialog.dismiss();
+                            }
+                            closeOverlay();
                         });
                     }, 500);
                    window.EXPORT_IMAGE_TIMEOUT = 500;
             }
 
-            saveImg = function(url){
-                
-                var entryId = +($element[0].dataset.entry);
-                var elementPos = $scope.$parent.$parent.model.entries.map(function(x) {return x.createdOn; }).indexOf(entryId)
-                var entryEmbeds = $scope.$parent.$parent.model.entries[elementPos].embeds;
-                var embedPos = entryEmbeds.map(function(x) {return x.id; }).indexOf($element[0].dataset.embed);
-                $scope.$parent.$parent.saveSnap(url,embedPos,elementPos);                
+            saveImg = function(url,entryId,embedId){         
+                $scope.$parent.$parent.saveSnap(url,embedId,entryId);                
             }
 
             toggleOverlay();

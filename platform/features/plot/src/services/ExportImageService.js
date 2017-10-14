@@ -149,6 +149,13 @@ define(
             });
         };
 
+        /**
+         * Takes a screenshot of a DOM node in PNG format.
+         * @param {node} element to be exported
+         * @param {string} filename the exported image
+         * @returns {promise}
+         */
+
         ExportImageService.prototype.exportPNGtoSRC = function (element) {
             return renderElement(element, "png");
         };

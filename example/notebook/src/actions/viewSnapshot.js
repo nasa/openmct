@@ -52,8 +52,7 @@ define(
                 blocker,
                 overlayContainer,
                 img,
-                annotateButton;
-            
+                annotateButton;            
         }
 
         function openOverlay(url,header) {
@@ -92,16 +91,19 @@ define(
 
         function headerTemplate(){
             var template = '<div class="view-header">'+
-                            '<mct-representation '+
-                                'key="\'object-header-frame\'" '+
-                                'mct-object="selObj" '+
-                                'class="l-flex-row flex-elem object-header grows view-snap-info">'+
-                            '</mct-representation> '+
-                            '<div class="view-date">'+
-                            'SNAPSHOT {{snapDate | date:\'yy-dd-MM hh:mm:ss\'}}</div>'+
-                            '<a class="s-button icon-pencil" title="Annotate">'+
-                                '<span class="title-label">Annotate</span>'+
-                            '</a>'+
+                                '<mct-representation '+
+                                    'key="\'object-header-frame\'" '+
+                                    'mct-object="selObj" '+
+                                    'class="l-flex-row flex-elem object-header grows view-snap-info">'+
+                                '</mct-representation> '+
+                                '<div class="view-date">'+
+                                    '<span class="icon-alert-rect" title="Snapshot">'+
+                                    '</span>  '+
+                                    'SNAPSHOT {{snapDate | date:\'yyyy-MM-dd hh:mm:ss\'}}'+
+                                '</div>'+
+                                '<a class="s-button icon-pencil" title="Annotate">'+
+                                    '<span class="title-label">Annotate</span>'+
+                                '</a>'+
                             '</div>';
             return template;
         }
@@ -113,7 +115,7 @@ define(
              // Create the overlay element and add it to the document's body
             $scope.selObj = domainObject;
             $scope.snapDate = +embedId;
-            element = this.$compile(headerTemplate())($scope);
+            var element = this.$compile(headerTemplate())($scope);
 
             var annotateAction = $scope.action.getActions({category: 'embed'})[1];
 

@@ -19,25 +19,34 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class='form-control complex datetime'>
-
+<div class='form-control'>
      <ng-form name="mctControl">
-        <div class='fields' ng-controller="TimelineDateTimeController">
-            <span class="l-flex-row embed">  
-              <span class="snap-thumb" ng-if="embed.snapshot">
-                <span ng-class="embed.cssClass" class="abs"></span>
-                <img ng-src="{{embed.snapshot}}" alt="{{embed.id}}" >
-              </span>      
-              <span class="embed-info l-flex-col">
-                <span ng-class="embed-title">{{embed.name}}</span>
-                <a href="" class='context-available' ng-click='openMenu($event)'></a>
-                
-                
-                <span ng-class="embed-title">{{embed.id| date:'yy-MM-dd hh:mm:ss'}}</span>
-              </span>              
-           </span> 
+        <div class='fields' ng-controller="newEntryController">
+          <div class="l-flex-row new-display-embed">
+             <div class="l-flex-row embed">  
+                <div ng-if="snapToggle" class="l-flex-row">
+                  <div class="snap-thumb l-flex-row">
+                    <div ng-class="cssClass" class="abs embed-icon"></div>
+                    <img ng-src="{{snapshot.src}}" alt="{{snapshot.modified}}" >
+                  </div>      
+                  <div class="embed-info l-flex-col">
+                    <div class="embed-title">{{objectName}}</div>  
+                    <div class="embed-date">{{snapshot.modified| date:'yyyy-MM-dd hh:mm:ss'}}</div>
+                  </div>    
+                </div>
+                <div ng-if="!snapToggle" class="l-flex-row nosnapshot">
+                    <div class="l-flex-row">
+                       <span ng-class="cssClass" class="abs embed-icon"></span>
+                       <div class="embed-info">
+                         <span class="embed-title">{{objectName}}</span>  
+                         <span class="embed-date">{{snapshot.modified| date:'yyyy-MM-dd hh:mm:ss'}}
+                         </span>
+                        </div> 
+                    </div> 
+                </div>
+                          
+             </div>
+           </div>            
         </div>
     </ng-form>
-
-
 </div>
