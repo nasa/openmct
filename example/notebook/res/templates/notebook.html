@@ -51,9 +51,9 @@
 
   <!-- entries -->
 
-  <div class="entries-wrapper">
+  <div class="entries-wrapper" ng-mouseover="handleActive()">
     <ul class="entries-list">
-      <li class="entry l-flex-row" id="{{'entry_'+entry.createdOn}}" ng-if="hoursFilter(showTime,entry.createdOn)" ng-repeat="entry in model.entries | filter:entrySearch | orderBy: sortEntries track by $index" ng-class="{active : (!entry.embeds.length && !entry.text) }" ng-init="$last && finished(model.entries)" mct-entry-dnd>
+      <li class="entry l-flex-row" id="{{'entry_'+entry.createdOn}}" ng-if="hoursFilter(showTime,entry.createdOn)" ng-repeat="entry in model.entries | filter:entrySearch | orderBy: sortEntries track by $index" ng-init="$last && finished(model.entries)" mct-entry-dnd>
         <div class="entry-time">{{entry.createdOn | date:'yyyy-MM-dd hh:mm:ss'}}</div>
         <div class="entry-info">
           <div class="entry-text">
