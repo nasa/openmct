@@ -138,6 +138,14 @@ define(
             }
         }
 
+        $scope.handleActive = function(){
+            var newEntry = $scope.entriesEl.find('.active');
+            if(newEntry){
+                newEntry.removeClass('active');
+            }
+        }
+
+
         $scope.clearSearch = function(){
             $scope.entrySearch = '';
         }

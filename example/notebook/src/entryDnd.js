@@ -33,8 +33,6 @@ define([
     function entryDnd($rootScope,$compile,dndService,typeService) {
 
         function link($scope, $element) {
-            var frame = $element.parent();
-            var actionCapability = $scope.domainObject.getCapability('action');
             var domainObj = $scope.domainObject;
 
             function drop(e) {
