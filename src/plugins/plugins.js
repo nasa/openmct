@@ -31,7 +31,8 @@ define([
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
     './telemetryMean/plugin',
-    './orbital/plugin'
+    './orbital/plugin',
+    './trajectory/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -43,7 +44,8 @@ define([
     SummaryWidget,
     URLIndicatorPlugin,
     TelemetryMean,
-    OrbitalPlugin
+    OrbitalPlugin,
+    TrajectoryPlugin
 ) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
@@ -129,6 +131,10 @@ define([
 
     plugins.Orbital = function() {
         return OrbitalPlugin;
+    }
+
+    plugins.Trajectory = function() {
+        return TrajectoryPlugin;
     }
 
     plugins.ExampleImagery = ExampleImagery;
