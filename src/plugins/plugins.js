@@ -134,7 +134,7 @@ define([
     }
 
     plugins.Trajectory = function() {
-        return TrajectoryPlugin;
+        return TrajectoryPlugin();
     }
 
     plugins.ExampleImagery = ExampleImagery;

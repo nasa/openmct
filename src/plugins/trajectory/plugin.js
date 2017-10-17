@@ -23,6 +23,15 @@
 define(['Cesium'], function () {
     return function () {
         return function (openmct) {
+            openmct.types.addType('trajectory.map', {
+                key: 'trajectory.map',
+                name: 'Trajectory Map',
+                cssClass: 'icon-image',
+                description: 'Creates a trajectory map ' +
+                    'that recieves telemetry data.',
+                creatable: true,
+            });
+            /*
             var viewer = new Cesium.Viewer('cesiumContainer');
             
             var wyoming = viewer.entities.add({
@@ -49,6 +58,7 @@ define(['Cesium'], function () {
             });
             
             viewer.zoomTo(wyoming);
+            */
         };
     };
 });
