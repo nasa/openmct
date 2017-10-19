@@ -33,6 +33,7 @@ define([
             link: function (scope, element, attrs) {
                 var region = new Region(element[0]);
                 scope.$watch(attrs.mctView, region.show.bind(region));
+                scope.$on("$destroy", region.clear.bind(region));
             }
         };
     }
