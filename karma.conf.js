@@ -45,6 +45,7 @@ module.exports = function(config) {
             {pattern: 'warp/**/*.js', included: false},
             {pattern: 'platform/**/*.html', included: false},
             {pattern: 'src/**/*.html', included: false},
+            {pattern: 'src/**/*.json', included: false},
             'test-main.js'
         ],
 
