@@ -22,7 +22,7 @@
 <span class='type-icon flex-elem {{type.getCssClass()}}'></span>
 <span class="l-elem-wrapper l-flex-row flex-elem grows" ng-controller="ObjectHeaderController as controller">
     <span ng-if="parameters.mode" class='action flex-elem'>{{parameters.mode}}</span>
-    <span contenteditable="true" 
+    <span ng-attr-contenteditable="{{ controller.editable ? true : undefined }}"
 		class='title-label flex-elem holder flex-can-shrink s-input-inline'
 		ng-click="controller.edit()"
 		ng-blur="controller.updateName($event)"

@@ -108,8 +108,11 @@ define(
 
                 getMetadata();
             });
-        }
 
+            var mutation = $scope.ngModel.selectedObject.getCapability('mutation');
+            var unlisten = mutation.listen(getMetadata);
+            $scope.$on('$destroy', unlisten);
+        }
         return ObjectInspectorController;
     }
 );
