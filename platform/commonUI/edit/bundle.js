@@ -121,7 +121,8 @@ define([
                     "key": "ElementsController",
                     "implementation": ElementsController,
                     "depends": [
-                        "$scope"
+                        "$scope",
+                        "openmct"
                     ]
                 },
                 {
@@ -299,9 +300,6 @@ define([
                 {
                     "key": "edit-elements",
                     "template": elementsTemplate,
-                    "uses": [
-                        "composition"
-                    ],
                     "gestures": [
                         "drop"
                     ]

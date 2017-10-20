@@ -38,10 +38,18 @@ define(
          * @memberof platform/commonUI/edit
          * @constructor
          */
-        function EditToolbarSelection() {
+        function EditToolbarSelection(openmct) {
             this.selection = [{}];
             this.selecting = false;
             this.selectedObj = undefined;
+
+            openmct.selection.on('change', function (selection) {
+                if (selection[0] && selection[0].toolbar) {
+                    this.select(selection[0].toolbar);
+                } else {
+                    this.deselect();
+                }
+            }.bind(this));
         }
 
         /**

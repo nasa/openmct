@@ -50,9 +50,11 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function LayoutController($scope) {
+        function LayoutController($scope, openmct) {
             var self = this,
                 callbackCount = 0;
+
+            this.openmct = openmct;
 
             // Update grid size when it changed
             function updateGridSize(layoutGrid) {
@@ -111,11 +113,15 @@ define(
 
                 $scope.domainObject.useCapability('composition').then(function (composition) {
                     var ids;
+                    var domainObject;
 
                     //Is this callback for the most recent composition
                     // request? If not, discard it. Prevents race condition
                     if (thisCount === callbackCount) {
                         ids = composition.map(function (object) {
+                                if (self.droppedIdToSelectAfterRefresh && self.droppedIdToSelectAfterRefresh === object.getId()) {
+                                    domainObject = object;
+                                }
                                 return object.getId();
                             }) || [];
 
@@ -125,9 +131,9 @@ define(
 
                         // If there is a newly-dropped object, select it.
                         if (self.droppedIdToSelectAfterRefresh) {
-                            self.select(null, self.droppedIdToSelectAfterRefresh);
+                            self.select(null, self.droppedIdToSelectAfterRefresh, domainObject);
                             delete self.droppedIdToSelectAfterRefresh;
-                        } else if (composition.indexOf(self.selectedId) === -1) {
+                        } else if (self.selectedId && composition.indexOf(self.selectedId) === -1) {
                             self.clearSelection();
                         }
                     }
@@ -167,10 +173,6 @@ define(
 
             // Watch for changes to the grid size in the model
             $scope.$watch("model.layoutGrid", updateGridSize);
-
-            $scope.$watch("selection", function (selection) {
-                this.selection = selection;
-            }.bind(this));
 
             // Update composed objects on screen, and position panes
             $scope.$watchCollection("model.composition", refreshComposition);
@@ -363,7 +365,9 @@ define(
          * @returns {boolean} true if selected, otherwise false
          */
         LayoutController.prototype.selected = function (obj) {
-            return !!this.selectedId && this.selectedId === obj.getId();
+            var selection = this.openmct.selection.get();
+            var sobj = selection[0];
+            return (sobj && sobj.oldItem.getId() === obj.getId()) ? true : false;
         };
 
         /**
@@ -372,22 +376,21 @@ define(
          * @param event the mouse event
          * @param {string} id the object id
          */
-        LayoutController.prototype.select = function (event, id) {
+        LayoutController.prototype.select = function (event, id, domainObject) {
             if (event) {
                 event.stopPropagation();
-                if (this.selection) {
-                    event.preventDefault();
-                }
             }
 
             this.selectedId = id;
-
             var selectedObj = {};
-            selectedObj[this.frames[id] ? 'hideFrame' : 'showFrame'] = this.toggleFrame.bind(this, id);
+            selectedObj[this.frames[id] ? 'hideFrame' : 'showFrame'] =
+                this.toggleFrame.bind(this, id, domainObject);
 
-            if (this.selection) {
-                this.selection.select(selectedObj);
-            }
+            this.openmct.selection.select({
+                item: domainObject.useCapability('adapter'),
+                oldItem: domainObject,
+                toolbar: selectedObj
+            });
         };
 
         /**
@@ -396,7 +399,7 @@ define(
          * @param {string} id the object id
          * @private
          */
-        LayoutController.prototype.toggleFrame = function (id) {
+        LayoutController.prototype.toggleFrame = function (id, domainObject) {
             var configuration = this.$scope.configuration;
 
             if (!configuration.panels[id]) {
@@ -404,21 +407,27 @@ define(
             }
 
             this.frames[id] = configuration.panels[id].hasFrame = !this.frames[id];
-            this.select(undefined, id); // reselect so toolbar updates
+            this.select(undefined, id, domainObject); // reselect so toolbar updates
         };
 
         /**
          * Clear the current user selection.
          */
-        LayoutController.prototype.clearSelection = function () {
+        LayoutController.prototype.clearSelection = function (event) {
+            if (event) {
+                event.stopPropagation();
+            }
+
             if (this.dragInProgress) {
                 return;
             }
 
-            if (this.selection) {
-                this.selection.deselect();
-                delete this.selectedId;
-            }
+            delete this.selectedId;
+
+            this.openmct.selection.select({
+                item: this.$scope.domainObject.useCapability('adapter'),
+                oldItem: this.$scope.domainObject
+            });
         };
 
         /**

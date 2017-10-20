@@ -29,7 +29,11 @@ define(
          *
          * @constructor
          */
-        function ElementsController($scope) {
+        function ElementsController($scope, openmct) {
+            this.scope = $scope;
+            this.scope.composition = [];
+            var self = this;
+
             function filterBy(text) {
                 if (typeof text === 'undefined') {
                     return $scope.searchText;
@@ -47,9 +51,37 @@ define(
                 }
             }
 
+            function setSelection(selection) {
+                self.scope.selection = selection;
+                self.refreshComposition();
+            }
+
             $scope.filterBy = filterBy;
             $scope.searchElements = searchElements;
+
+            openmct.selection.on('change', setSelection);
+            setSelection(openmct.selection.get());
+
+            $scope.$on("$destroy", function () {
+                openmct.selection.off("change", setSelection);
+            });
         }
+
+        ElementsController.prototype.refreshComposition = function () {
+            var selection = this.scope.selection[0];
+            if (!selection) {
+                return;
+            }
+
+            var comp = selection.oldItem.useCapability('composition');
+            if (comp) {
+                comp.then(function (composition) {
+                    this.scope.composition = composition;                    
+                }.bind(this));    
+            } else {
+                this.scope.composition = [];
+            }
+        };
 
         return ElementsController;
     }

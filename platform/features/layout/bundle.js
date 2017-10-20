@@ -260,7 +260,8 @@ define([
                     "key": "LayoutController",
                     "implementation": LayoutController,
                     "depends": [
-                        "$scope"
+                        "$scope",
+                        "openmct"
                     ]
                 },
                 {

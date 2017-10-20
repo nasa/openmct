@@ -30,33 +30,30 @@ define(
          *
          * @constructor
          */
-        function InspectorController($scope, policyService) {
-            var domainObject = $scope.domainObject,
-                typeCapability = domainObject.getCapability('type'),
-                statusListener;
+        function InspectorController($scope, policyService, openmct, $document) {
+            window.inspectorScope = $scope;
 
-            /**
-             * Filters region parts to only those allowed by region policies
-             * @param regions
-             * @returns {{}}
-             */
-            function filterRegions(inspector) {
-                //Dupe so we're not modifying the type definition.
-                return inspector.regions && inspector.regions.filter(function (region) {
-                    return policyService.allow('region', region, domainObject);
-                });
+            function setSelection(selection) {
+
+                if (selection[0]) {
+                    var view = openmct.inspectorViews.get(selection);
+                    if (view) {
+                        var container = $document[0].querySelectorAll('.custom-view')[0];
+                        view.show(container);
+                    } else {
+                        $scope.inspectorKey = selection[0].oldItem.getCapability("type").typeDef.inspector;    
+                    }
+                }
+
+                $scope.selection = selection;
             }
 
-            function setRegions() {
-                $scope.regions = filterRegions(typeCapability.getDefinition().inspector || new InspectorRegion());
-            }
+            openmct.selection.on("change", setSelection);
+            setSelection(openmct.selection.get());
 
-            statusListener = domainObject.getCapability("status").listen(setRegions);
             $scope.$on("$destroy", function () {
-                statusListener();
+                openmct.selection.off("change", setSelection);
             });
-
-            setRegions();
         }
 
         return InspectorController;
