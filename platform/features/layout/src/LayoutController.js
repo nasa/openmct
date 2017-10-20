@@ -50,9 +50,11 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function LayoutController($scope) {
+        function LayoutController($scope, openmct) {
             var self = this,
                 callbackCount = 0;
+
+            this.openmct = openmct;
 
             // Update grid size when it changed
             function updateGridSize(layoutGrid) {
@@ -111,11 +113,15 @@ define(
 
                 $scope.domainObject.useCapability('composition').then(function (composition) {
                     var ids;
+                    var domainObject;
 
                     //Is this callback for the most recent composition
                     // request? If not, discard it. Prevents race condition
                     if (thisCount === callbackCount) {
                         ids = composition.map(function (object) {
+                                if (self.droppedIdToSelectAfterRefresh && self.droppedIdToSelectAfterRefresh === object.getId()) {
+                                    domainObject = object;
+                                }
                                 return object.getId();
                             }) || [];
 
@@ -125,7 +131,7 @@ define(
 
                         // If there is a newly-dropped object, select it.
                         if (self.droppedIdToSelectAfterRefresh) {
-                            self.select(null, self.droppedIdToSelectAfterRefresh);
+                            self.select(null, self.droppedIdToSelectAfterRefresh, domainObject);
                             delete self.droppedIdToSelectAfterRefresh;
                         } else if (composition.indexOf(self.selectedId) === -1) {
                             self.clearSelection();
@@ -372,13 +378,15 @@ define(
          * @param event the mouse event
          * @param {string} id the object id
          */
-        LayoutController.prototype.select = function (event, id) {
+        LayoutController.prototype.select = function (event, id, domainObject) {
             if (event) {
                 event.stopPropagation();
                 if (this.selection) {
                     event.preventDefault();
                 }
             }
+
+            this.openmct.selection.select({item: domainObject.useCapability('adapter'), oldItem: domainObject});
 
             this.selectedId = id;
 
@@ -414,6 +422,8 @@ define(
             if (this.dragInProgress) {
                 return;
             }
+
+            this.openmct.selection.select({item: this.$scope.domainObject.useCapability('adapter'), oldItem: this.$scope.domainObject});
 
             if (this.selection) {
                 this.selection.deselect();

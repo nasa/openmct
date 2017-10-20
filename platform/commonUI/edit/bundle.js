@@ -300,7 +300,7 @@ define([
                     "key": "edit-elements",
                     "template": elementsTemplate,
                     "uses": [
-                        "composition"
+                        
                     ],
                     "gestures": [
                         "drop"

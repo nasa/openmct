@@ -19,12 +19,19 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div ng-controller="InspectorController">
-    <div ng-repeat="region in regions">
+<div ng-controller="InspectorController">   
+        <!--{{selection[0].oldItem}}-->
         <mct-representation
-                key="region.content.key"
-                mct-object="domainObject"
+                key="'object-properties'"
+                mct-object="selection[0].oldItem"
                 ng-model="ngModel">
         </mct-representation>
-    </div>
+
+        <div class='custom-view'>
+             <mct-representation
+                    key="inspectorKey"
+                    mct-object="selection[0].oldItem"
+                    ng-model="ngModel">
+            </mct-representation>
+        </div>
 </div>

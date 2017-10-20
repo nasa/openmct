@@ -40,7 +40,7 @@ define(
 
             // Gets an array of the contextual parents/ancestors of the selected object
             function getContextualPath() {
-                var currentObj = $scope.ngModel.selectedObject,
+                var currentObj = $scope.domainObject,
                     currentParent,
                     parents = [];
 
@@ -68,7 +68,7 @@ define(
 
                 // If this the the initial call of this recursive function
                 if (!current) {
-                    current = $scope.ngModel.selectedObject;
+                    current = $scope.domainObject;
                     $scope.primaryParents = [];
                 }
 
@@ -87,16 +87,16 @@ define(
 
             // Gets the metadata for the selected object
             function getMetadata() {
-                $scope.metadata = $scope.ngModel.selectedObject &&
-                    $scope.ngModel.selectedObject.hasCapability('metadata') &&
-                    $scope.ngModel.selectedObject.useCapability('metadata');
+                $scope.metadata = $scope.domainObject &&
+                    $scope.domainObject.hasCapability('metadata') &&
+                    $scope.domainObject.useCapability('metadata');
             }
 
             // Set scope variables when the selected object changes
-            $scope.$watch('ngModel.selectedObject', function () {
-                $scope.isLink = $scope.ngModel.selectedObject &&
-                    $scope.ngModel.selectedObject.hasCapability('location') &&
-                    $scope.ngModel.selectedObject.getCapability('location').isLink();
+            $scope.$watch('domainObject', function () {
+                $scope.isLink = $scope.domainObject &&
+                    $scope.domainObject.hasCapability('location') &&
+                    $scope.domainObject.getCapability('location').isLink();
 
                 if ($scope.isLink) {
                     getPrimaryPath();
@@ -109,7 +109,7 @@ define(
                 getMetadata();
             });
 
-            var mutation = $scope.ngModel.selectedObject.getCapability('mutation');
+            var mutation = $scope.domainObject.getCapability('mutation');
             var unlisten = mutation.listen(getMetadata);
             $scope.$on('$destroy', unlisten);
         }

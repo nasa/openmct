@@ -54,15 +54,20 @@ define(['EventEmitter'], function (EventEmitter) {
 
     Selection.prototype.clear = function () {
         this.selected = [];
-        this.emit('change');
+        this.emit('change', this.selected);
     };
 
     Selection.prototype.primary = function () {
         return this.selected[this.selected.length - 1];
     };
 
-    Selection.prototype.all = function () {
+    Selection.prototype.get = function () {
         return this.selected;
+    };
+
+    Selection.prototype.select = function (context) {
+        this.selected = [context];
+        this.emit('change', this.selected);
     };
 
     return Selection;
