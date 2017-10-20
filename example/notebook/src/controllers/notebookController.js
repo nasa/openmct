@@ -99,7 +99,7 @@ define(
             var delId = $event.currentTarget.parentElement.parentElement.id; 
             var errorDialog = dialogService.showBlockingMessage({
                 severity: "error",
-                title: "This action will permanently delete this notebook. Do you want to continue?",
+                title: "This action will permanently delete this Notebook entry. Do you want to continue?",
                 minimized: true, // want the notification to be minimized initially (don't show banner)
                 options: [{
                     label: "OK",
@@ -132,7 +132,7 @@ define(
 
         $scope.finished = function(model){
             var lastEntry = model[model.length-1];
-            if(!lastEntry.text && !lastEntry.embeds){
+            if(!lastEntry.text){
                 var newEntry = $scope.entriesEl.find('#entry_'+lastEntry.createdOn).addClass('active');
                 newEntry.find('textarea').focus();
             }
@@ -306,14 +306,6 @@ define(
 
 
         $scope.$on('$destroy', function () {});
-
-
-        $scope.selectEntry = function(){
-            if (!$scope.selection) {
-               $scope.domainObject.getCapability('action').getActions({key:'edit'})[0].perform()
-            }
-            return true;
-        };
     }
 
     return notebookController;

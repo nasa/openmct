@@ -3,8 +3,8 @@ define([
     "./src/controllers/notebookController", 
     "./src/controllers/newEntryController",
     "./src/controllers/selectSnapshotController",
-    "./src/MCTSnapshot",
-    "./src/entryDnd",
+    "./src/directives/MCTSnapshot",
+    "./src/directives/entryDnd",
     "./src/actions/viewSnapshot",
     "./src/actions/annotateSnapshot",
     "./src/actions/removeEmbed",
@@ -27,8 +27,7 @@ define([
     removeSnapshotAction,
     newEntryAction,
     NotebookCapability,
-    NotificationLaunchIndicator,
-    legacyRegistry
+    NotificationLaunchIndicator
 ) {
     openmct.legacyRegistry.register("example/notebook", {
         "name": "Notebook Plugin",
@@ -249,11 +248,11 @@ define([
             ],
      	     "stylesheets": [
               {
-                  "stylesheetUrl": "css/style-guide-espresso.css",
+                  "stylesheetUrl": "css/notebook-espresso.css",
                   "theme": "espresso"
               },
               {
-                  "stylesheetUrl": "css/style-guide-snow.css",
+                  "stylesheetUrl": "css/notebook-snow.css",
                   "theme": "snow"
               }
           ]
