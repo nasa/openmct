@@ -30,6 +30,7 @@ define(
 
             $scope.snapshot = undefined;
             $scope.snapToggle = true;
+            $scope.entryText = '';
             var annotateAction = $rootScope.selObj.getCapability('action').getActions(
                                                                             {category: 'embed'})[1];
 
@@ -37,16 +38,25 @@ define(
             $scope.objectName = $rootScope.selObj.getModel().name;
             $scope.cssClass= $rootScope.selObj.getCapability('type').typeDef.cssClass;
 
+            $scope.annotateSnapshot = function($event){
+                if($rootScope.currentDialog.value){
+                    $rootScope.newEntryText = $scope.$parent.$parent.ngModel['entry'];
+                    $rootScope.currentDialog.cancel();
+                    annotateAction.perform($event,$rootScope.snapshot.src);
+                    $rootScope.currentDialog = undefined;
+                }                
+            };
+
             function updateSnapshot(img){
                 $scope.snapshot = img;
-            }
+            };
             // Update set of actions whenever the action capability
             // changes or becomes available.
             $rootScope.$watch("snapshot", updateSnapshot);
 
-            $rootScope.$watch("selValue", selValueFn);
+            $rootScope.$watch("selValue", toggleEmbed);
 
-            function selValueFn(value){
+            function toggleEmbed(value){
                 $scope.snapToggle =value;
             }
         }

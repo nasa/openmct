@@ -338,7 +338,24 @@
     padding-right: 0;
 }
 
-@media only screen and (max-device-width: 1024px){
+.overlay.l-dialog .outer-holder.annotation-dialog{
+    width: 90%;
+    height: 90%;
+}
+
+.snap-annotation-wrapper{
+    padding-top: 40px;
+}
+
+.annotate-new{
+    .s-button{
+        margin-left: 25px;
+        margin-top: 10px;
+        z-index: 9;
+    }
+}
+
+@media screen and (max-width: 1024px){
     .entries-wrapper{
         font-size: 14px;
     }
@@ -354,6 +371,17 @@
             text-align: center;
             white-space: normal;
         }
+    }
+
+    .ptro-color-main{
+        height: 80px;
+        .tool-controls,>div>span:not(.ptro-info){
+            float: left;
+        }
+    }
+
+    .ptro-wrapper{
+        top: 80px;
     }
 }
 

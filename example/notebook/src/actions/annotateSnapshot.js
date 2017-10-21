@@ -42,13 +42,14 @@ define(
             }]            
         };
 
-        function annotateSnapshot(dialogService,dndService,context) {
+        function annotateSnapshot(dialogService,dndService,$rootScope,context) {
             context = context || {};
 
             // Choose the object to be opened into a new tab
             this.domainObject = context.selectedObject || context.domainObject;
             this.dialogService = dialogService;
             this.dndService = dndService;
+            this.$rootScope = $rootScope;
         }
 
         
@@ -61,25 +62,36 @@ define(
             this.dialogService.getUserChoice(ANNOTATION_STRUCT)
                         .then(saveNotes);
 
+            var rootscope = this.$rootScope;
+
             var painterro;
 
             var tracker = function(){
+                $(document.body).find('.l-dialog .outer-holder').addClass('annotation-dialog');
                 painterro = Painterro({
                 id: 'snap-annotation',
                 backgroundFillColor: '#eee',
                 hiddenTools:['save', 'open', 'close','eraser'],
                 saveHandler: function (image, done) {
-                        var elementPos = domainObject.model.entries.map(function(x) {return x.createdOn; }).indexOf(entryId)
-                        var entryEmbeds = domainObject.model.entries[elementPos].embeds;
-                        var embedPos = entryEmbeds.map(function(x) {return x.id; }).indexOf(embedId);
-                        $scope.saveSnap(image.asBlob(),embedPos,elementPos);
+                        if(entryId && embedId){
+                            var elementPos = domainObject.model.entries.map(function(x) {return x.createdOn; }).indexOf(entryId)
+                            var entryEmbeds = domainObject.model.entries[elementPos].embeds;
+                            var embedPos = entryEmbeds.map(function(x) {return x.id; }).indexOf(embedId);
+                            $scope.saveSnap(image.asBlob(),embedPos,elementPos);
+                        }else{  
+                            rootscope.snapshot = {'src':image.asDataURL('image/png'),
+                                                  'modified':Date.now()};                             
+                        }
+                        
                    done(true); 
-
                }
                 }).show(snapshot);
+
             }
 
             ANNOTATION_STRUCT.model = {'tracker':tracker};
+
+
 
             function saveNotes(param){
                 if(param=='ok'){
