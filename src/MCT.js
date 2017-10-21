@@ -106,9 +106,9 @@ define([
          *
          * @type {module:openmct.ViewRegistry}
          * @memberof module:openmct.MCT#
-         * @name mainViews
+         * @name objectViews
          */
-        this.mainViews = new ViewRegistry();
+        this.objectViews = new ViewRegistry();
 
         /**
          * Registry for views which should appear in the Inspector area.
@@ -254,6 +254,18 @@ define([
             legacyDefinition.key = typeKey;
             this.legacyExtension('types', legacyDefinition);
         }.bind(this));
+
+        this.objectViews.getAllProviders().forEach(function (p) {
+            this.legacyExtension('views', {
+                key: p.key,
+                provider: p,
+                name: p.name,
+                cssClass: p.cssClass,
+                description: p.description,
+                editable: p.editable,
+                template: '<mct-view mct-provider-key="' + p.key + '"/>'
+            });
+        }, this);
 
         legacyRegistry.register('adapter', this.legacyBundle);
         legacyRegistry.enable('adapter');

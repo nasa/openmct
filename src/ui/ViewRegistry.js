@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global console */
 
 define([], function () {
     /**
@@ -28,7 +29,7 @@ define([], function () {
      * @memberof module:openmct
      */
     function ViewRegistry() {
-        this.providers = [];
+        this.providers = {};
     }
 
 
@@ -39,9 +40,17 @@ define([], function () {
      *          which can provide views of this object
      */
     ViewRegistry.prototype.get = function (item) {
-        return this.providers.filter(function (provider) {
-            return provider.canView(item);
-        });
+        return this.getAllProviders()
+            .filter(function (provider) {
+                return provider.canView(item);
+            });
+    };
+
+    /**
+     * @private
+     */
+    ViewRegistry.prototype.getAllProviders = function () {
+        return Object.values(this.providers);
     };
 
     /**
@@ -52,7 +61,22 @@ define([], function () {
      * @memberof module:openmct.ViewRegistry#
      */
     ViewRegistry.prototype.addProvider = function (provider) {
-        this.providers.push(provider);
+        var key = provider.key;
+        if (key === undefined) {
+            throw "View providers must have a unique 'key' property defined";
+        }
+        if (this.providers[key] !== undefined) {
+            console.warn("Provider already defined for key '%s'. Provider keys must be unique.", key);
+        }
+
+        this.providers[key] = provider;
+    };
+
+    /**
+     * @private
+     */
+    ViewRegistry.prototype.getByProviderKey = function (key) {
+        return this.providers[key];
     };
 
     /**
@@ -91,6 +115,12 @@ define([], function () {
      * Exposes types of views in Open MCT.
      *
      * @interface ViewProvider
+     * @property {string} key a unique identifier for this view
+     * @property {string} name the human-readable name of this view
+     * @property {string} [description] a longer-form description (typically
+     *           a single sentence or short paragraph) of this kind of view
+     * @property {string} [cssClass] the CSS class to apply to labels for this
+     *           view (to add icons, for instance)
      * @memberof module:openmct
      */
 
@@ -100,15 +130,28 @@ define([], function () {
      * When called by Open MCT, this may include additional arguments
      * which are on the path to the object to be viewed; for instance,
      * when viewing "A Folder" within "My Items", this method will be
-     * invoked with "A Folder" (as a domain object) as the first argument,
-     * and "My Items" as the second argument.
+     * invoked with "A Folder" (as a domain object) as the first argument
      *
      * @method canView
      * @memberof module:openmct.ViewProvider#
      * @param {module:openmct.DomainObject} domainObject the domain object
      *        to be viewed
-     * @returns {boolean} true if this domain object can be viewed using
-     *          this provider
+     * @returns {boolean} 'true' if the view applies to the provided object,
+     *          otherwise 'false'.
+     */
+
+    /**
+     * Optional method determining the priority of a given view. If this
+     * function is not defined on a view provider, then a default priority
+     * of 100 will be applicable for all objects supported by this view.
+     *
+     * @method priority
+     * @memberof module:openmct.ViewProvider#
+     * @param {module:openmct.DomainObject} domainObject the domain object
+     *        to be viewed
+     * @returns {number} The priority of the view. If multiple views could apply
+     *          to an object, the view that returns the lowest number will be
+     *          the default view.
      */
 
     /**
@@ -124,27 +167,6 @@ define([], function () {
      * @memberof module:openmct.ViewProvider#
      * @param {*} object the object to be viewed
      * @returns {module:openmct.View} a view of this domain object
-     */
-
-    /**
-     * Get metadata associated with this view provider. This may be used
-     * to populate the user interface with options associated with this
-     * view provider.
-     *
-     * @method metadata
-     * @memberof module:openmct.ViewProvider#
-     * @returns {module:openmct.ViewProvider~ViewMetadata} view metadata
-     */
-
-    /**
-     * @typedef ViewMetadata
-     * @memberof module:openmct.ViewProvider~
-     * @property {string} name the human-readable name of this view
-     * @property {string} key a machine-readable name for this view
-     * @property {string} [description] a longer-form description (typically
-     *           a single sentence or short paragraph) of this kind of view
-     * @property {string} cssClass the CSS class to apply to labels for this
-     *           view (to add icons, for instance)
      */
 
     return ViewRegistry;

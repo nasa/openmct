@@ -29,9 +29,9 @@ define([], function () {
         view,
         legacyObject
     ) {
-        if (view.key === 'adapted-view') {
+        if (view.hasOwnProperty('provider')) {
             var domainObject = legacyObject.useCapability('adapter');
-            return this.openmct.mainViews.get(domainObject).length > 0;
+            return view.provider.canView(domainObject);
         }
         return true;
     };
