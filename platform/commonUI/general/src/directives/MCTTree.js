@@ -25,6 +25,27 @@ define([
     '../ui/TreeView'
 ], function (angular, TreeView) {
     function MCTTree(gestureService) {
+        function isScrolledIntoView(elem, scrollableParent) {
+            var docViewTop = $(scrollableParent).scrollTop();
+            var docViewBottom = docViewTop + $(scrollableParent).height();
+
+            var elemTop = $(elem).offset().top;
+            var elemBottom = elemTop + $(elem).height();
+
+            return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+        }
+
+        function scrollToSelectedNodeIfNotInView(scrollableParent, selectedNodeView) {
+            if (scrollableParent !== null &&
+                !isScrolledIntoView(selectedNodeView.elements()[0], scrollableParent)) {
+                $(scrollableParent).scrollTop(selectedNodeView.elements().offset().top);
+            }
+        }
+
+        function findSelectedNodeView(rootView) {
+
+        }
+
         function link(scope, element) {
             if (!scope.allowSelection) {
                 scope.allowSelection = function () {
@@ -51,6 +72,10 @@ define([
                 if (event && event instanceof MouseEvent) {
                     scope.$apply();
                 }
+
+                var selectedNode = findSelectedNodeView(treeView);
+                var scrollableParent = treeView.elements()[0];
+                scrollToSelectedNodeIfNotInView(selectedNode, scrollableParent);
             }
 
             var unobserve = treeView.observe(setSelection);
