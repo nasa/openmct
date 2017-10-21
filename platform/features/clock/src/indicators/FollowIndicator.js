@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2009-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,15 +19,39 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-$output-bourbon-deprecation-warnings: false;
-@import "bourbon";
 
-@import "../../../../commonUI/general/res/sass/constants";
-@import "../../../../commonUI/general/res/sass/mixins";
-@import "../../../../commonUI/general/res/sass/glyphs";
-@import "../../../../commonUI/themes/espresso/res/sass/constants";
-@import "../../../../commonUI/themes/espresso/res/sass/mixins";
-@import "constants";
-@import "constants-espresso";
-@import "timeline-thematic";
+define(
+    ['moment'],
+    function (moment) {
+        var NO_TIMER = "No timer being followed";
 
+        /**
+         * Indicator that displays the active timer, as well as its
+         * current state.
+         * @implements {Indicator}
+         * @memberof platform/features/clock
+         */
+        function FollowIndicator(timerService) {
+            this.timerService = timerService;
+        }
+
+        FollowIndicator.prototype.getGlyphClass = function () {
+            return "";
+        };
+
+        FollowIndicator.prototype.getCssClass = function () {
+            return (this.timerService.getTimer()) ? "icon-timer s-status-ok" : "icon-timer";
+        };
+
+        FollowIndicator.prototype.getText = function () {
+            var timer = this.timerService.getTimer();
+            return (timer) ? 'Following timer ' + timer.getModel().name : NO_TIMER;
+        };
+
+        FollowIndicator.prototype.getDescription = function () {
+            return "";
+        };
+
+        return FollowIndicator;
+    }
+);

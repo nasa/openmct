@@ -120,7 +120,11 @@
 	}
 
 	.status-indicator {
+        background: none !important;
 		margin-right: $interiorMarginSm;
+        &[class*='s-status']:before {
+            font-size: 1em;
+        }
 	}
 
 	.count {
