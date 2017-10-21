@@ -89,7 +89,7 @@ define(
             var notification = this.notificationService; 
             var linkService = this.linkService; 
             var dialogService = this.dialogService;
-
+            var rootScope = this.$rootScope;
              // Create the overlay element and add it to the document's body
             this.$rootScope.selObj = domainObj;
             this.$rootScope.selValue = "";
@@ -99,7 +99,30 @@ define(
 
             function setSnapshot(value){
                 if(value){
-                    dialogService.getUserInput(NEW_TASK_FORM,{}).then(addNewEntry);
+                    var overlayModel = {
+                        title: NEW_TASK_FORM.name,
+                        message: NEW_TASK_FORM.message,
+                        structure: NEW_TASK_FORM,
+                        value: {'entry': rootScope.newEntryText || ""}
+                    };
+
+                    // Provide result from the model
+                    function resultGetter() {
+                        return overlayModel.value;
+                    }
+
+                    if(value !== rootScope.lastValue){
+                         rootScope.currentDialog = overlayModel;
+
+                        dialogService.getDialogResponse(
+                            "overlay-dialog",
+                            overlayModel,
+                            resultGetter
+                        ).then(addNewEntry);
+                    }
+                   
+
+                    rootScope.lastValue = value;
                 }                
             }
 
@@ -151,11 +174,13 @@ define(
                                      }]   
                         };
                     }                                 
-            });
+                });
 
                 notification.info({
                     title: "Notebook Entry created"
                 }); 
+
+                self.$rootScope.newEntryText = '';
             }
         };
 

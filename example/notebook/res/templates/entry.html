@@ -29,7 +29,7 @@
             </mct-representation>
         </div>
     </div>
-    <div class="abs object-holder" data-entry = "{{parameters.entry}}" data-embed = "{{parameters.embed}}" mct-snapshot>
+    <div class="abs object-holder" data-entry = "{{parameters.entry}}" data-embed = "{{parameters.embed}}" mct-snapshot ng-if="representation.selected.key">
         <mct-representation
                 key="representation.selected.key"
                 mct-object="representation.selected.key && domainObject">

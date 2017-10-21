@@ -44,15 +44,11 @@ define([
                 document.body.appendChild(snapshot);             
             }
 
-            function closeOverlay(newForm) {
-                if(!newForm){
-                    if(snapshot){
-                        snapshot.removeChild(element);
-                        layoutContainer.remove(); 
-                    }   
-                }else{
-                    layoutContainer.appendChild(element);
-                }    
+            function closeOverlay() {
+                if(snapshot){
+                    snapshot.removeChild(element);
+                    layoutContainer.remove(); 
+                }   
                 document.body.removeChild(snapshot); 
                 snapshot = undefined;                             
             }
@@ -93,6 +89,7 @@ define([
                                                                      'size':img.size,
                                                                      'modified':Date.now()
                                                                   };
+                                            closeOverlay(false);
                                         };
                                         
                                     } 
@@ -114,10 +111,12 @@ define([
             }
 
             saveImg = function(url,entryId,embedId){         
-                $scope.$parent.$parent.saveSnap(url,embedId,entryId);                
+                $scope.$parent.$parent.$parent.saveSnap(url,embedId,entryId);                
+            }
+            if($(document.body).find('.overlay.snapshot').length == 0){
+                toggleOverlay();
             }
 
-            toggleOverlay();
             $scope.$on('$destroy', function () {
                 $element.off('click', toggleOverlay);
             });

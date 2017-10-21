@@ -160,7 +160,8 @@ define([
                     "category": "embed",
                     "depends":[
                       "dialogService",
-                      "dndService"
+                      "dndService",
+                      "$rootScope",
                     ]
                 },                
                 {
