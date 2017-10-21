@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['moment'], function (moment) {
+define(function () {
     function ListViewController($scope, formatService) {
         this.$scope = $scope;
         $scope.orderByField = 'title';
