@@ -1,16 +1,15 @@
 
-'use strict';
-
 define([
-    'request-promise',
-    'xml2js'
+    './DsnParser'
 ], function (
-    rp,
-    xml2js
+    DsnParser
 ) {
+    'use strict';
+
     var canberraObjects,
         dictionary,
         goldstoneObjects,
+        listeners = {},
         madridObjects,
         rootObjects;
 
@@ -33,18 +32,17 @@ define([
             });
     }
 
-    function parseDsnData(xml) {
-        xml2js.parseString(xml, function (error, result) {
-            console.log(result);
-        });
-    }
-
-    function getDsnData() {
-        var url = '/proxyUrl?url=' + encodeURIComponent(DSN_TELEMETRY_SOURCE);
+    function getDsnData(domainObject) {
+        // Add the same query string parameter the DSN site sends with each request
+        var url = '/proxyUrl?url=' + encodeURIComponent(DSN_TELEMETRY_SOURCE + '?r=' + Math.floor(new Date().getTime() / 5000));
 
         return http.get(url)
             .then(function (resp) {
-                parseDsnData(resp.data);
+                var dsn,
+                    parser = new DsnParser();
+
+                dsn = parser.parseXml(resp.request.responseXML);
+                return dsn[domainObject.identifier.key];
             });
     }
 
@@ -152,13 +150,30 @@ define([
             return domainObject.type === DSN_TELEMETRY_TYPE;
         },
         subscribe: function (domainObject, callback, options) {
+            // Keep track of the domain objects subscribed
+            if (!listeners[domainObject.identifier.key]) {
+                listeners[domainObject.identifier.key] = [];
+            }
+
+            listeners[domainObject.identifier.key].push(callback);
+
             // DSN data is updated every 5 seconds
             var interval = setInterval(function () {
-                callback(getDsnData());
+                getDsnData(domainObject).then(function (datum) {
+                    // Invoke the callback with the updated datum
+                    callback(datum);
+                });
             }, 5000);
 
-            return function (interval) {
+            return function () {
+                // Stop polling the DSN site
                 clearInterval(interval);
+
+                // Unsubscribe domain object
+                listeners[domainObject.identifier.key] =
+                        listeners[domainObject.identifier.key].filter(function (c) {
+                    return c !== callback;
+                });
             };
         }
     };

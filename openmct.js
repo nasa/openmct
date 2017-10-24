@@ -49,9 +49,7 @@ requirejs.config({
         "d3-format": "node_modules/d3-format/build/d3-format.min",
         "d3-interpolate": "node_modules/d3-interpolate/build/d3-interpolate.min",
         "d3-time": "node_modules/d3-time/build/d3-time.min",
-        "d3-time-format": "node_modules/d3-time-format/build/d3-time-format.min",
-        "request-promise": "node_modules/request-promise/lib/rp",
-        "xml2js": "node_modules/xml2js/lib/xml2js"
+        "d3-time-format": "node_modules/d3-time-format/build/d3-time-format.min"
     },
     "shim": {
         "angular": {
@@ -90,12 +88,6 @@ requirejs.config({
         },
         "d3-axis": {
             "exports": "d3-axis"
-        },
-        "request-promise": {
-            "exports": "rp"
-        },
-        "xml2js": {
-            "exports": "xml2js"
         }
     }
 });
