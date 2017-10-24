@@ -22,6 +22,21 @@
 
 /*global module,process*/
 module.exports = function(config) {
+
+    var preprocessorsConfig = ['coverage'];
+    var browsersConfig = ['Chrome'];
+    var singleRunConfig = true;
+    
+    function isDebug(argument) {
+        return argument === '--debug';
+    }
+
+    if (process.argv.some(isDebug)) {
+        preprocessorsConfig = [];
+        browsersConfig = ['chrome-debug'];
+        singleRunConfig = false;
+    }
+
     config.set({
 
         // Base path that will be used to resolve all file patterns.
@@ -55,8 +70,8 @@ module.exports = function(config) {
         // Preprocess matching files before serving them to the browser.
         // https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'src/**/!(*Spec).js': [ 'coverage' ],
-            'platform/**/src/**/!(*Spec).js': [ 'coverage' ]
+            'src/**/!(*Spec).js': preprocessorsConfig,
+            'platform/**/src/**/!(*Spec).js': preprocessorsConfig
         },
 
         // Test results reporter to use
@@ -77,9 +92,14 @@ module.exports = function(config) {
 
         // Specify browsers to run tests in.
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: [
-            'Chrome'
-        ],
+        browsers: browsersConfig,
+
+        customLaunchers: {
+            "chrome-debug": {
+                base: 'Chrome',
+                flags: [ '--remote-debugging-port=9333' ]
+            }
+        },
 
         // Code coverage reporting.
         coverageReporter: {
@@ -106,6 +126,6 @@ module.exports = function(config) {
 
         // Continuous Integration mode.
         // If true, Karma captures browsers, runs the tests and exits.
-        singleRun: true
+        singleRun: singleRunConfig
     });
 };
