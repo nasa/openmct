@@ -27,7 +27,8 @@ define([
     '../../platform/features/autoflow/plugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
-    '../../platform/import-export/bundle'
+    '../../platform/import-export/bundle',
+    './roverView/plugin.js'
 ], function (
     _,
     UTCTimeSystem,
@@ -35,7 +36,8 @@ define([
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
-    ImportExport
+    ImportExport,
+    RoverView
 ) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
@@ -120,6 +122,8 @@ define([
     };
 
     plugins.ExampleImagery = ExampleImagery;
+
+    plugins.RoverView = RoverView;
 
     return plugins;
 });
