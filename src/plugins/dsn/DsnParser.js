@@ -13,43 +13,43 @@ define([], function () {
     }
 
     function parseStationTag(stationElement) {
-        var station;
+        var key = stationElement.getAttribute('name'),
+            station = {};
 
-        station = {
-            'name':             stationElement.getAttribute('name'),
-            'friendly.name':    stationElement.getAttribute('friendlyName'),
-            'utc.time':         parseInt(stationElement.getAttribute('timeUTC'), 10),
-            'time.zone.offset': parseInt(stationElement.getAttribute('timeZoneOffset'), 10)
-        };
+        station[key + '.name'] = stationElement.getAttribute('name');
+        station[key + '.friendly.name'] = stationElement.getAttribute('friendlyName');
+        station[key + '.utc.time'] = parseInt(stationElement.getAttribute('timeUTC'), 10);
+        station[key + '.time.zone.offset'] = parseInt(stationElement.getAttribute('timeZoneOffset'), 10);
 
         return station;
     }
 
     function parseDishTag(dishElement) {
         var children = dishElement.children,
-            dish;
+            key,
+            dish = {};
 
-        dish = {
-            'name':            dishElement.getAttribute('name'),
-            'azimuth.angle':   dishElement.getAttribute('azimuthAngle'),
-            'elevation.angle': dishElement.getAttribute('elevationAngle'),
-            'wind.speed':      dishElement.getAttribute('windSpeed'),
-            'mspa':            dishElement.getAttribute('isMSPA'),
-            'array':           dishElement.getAttribute('isArray'),
-            'ddor':            dishElement.getAttribute('isDDOR'),
-            'created':         dishElement.getAttribute('created'),
-            'updated':         dishElement.getAttribute('updated'),
-            'downSignals':     [],
-            'upSignals':       [],
-            'targets':         []
-        };
+        key = dishElement.getAttribute('name').toLowerCase();
+
+        dish[key + '.name'] = dishElement.getAttribute('name');
+        dish[key + '.azimuth.angle'] = dishElement.getAttribute('azimuthAngle');
+        dish[key + '.elevation.angle'] = dishElement.getAttribute('elevationAngle');
+        dish[key + '.wind.speed'] = dishElement.getAttribute('windSpeed');
+        dish[key + '.mspa'] = dishElement.getAttribute('isMSPA');
+        dish[key + '.array'] = dishElement.getAttribute('isArray');
+        dish[key + '.ddor'] = dishElement.getAttribute('isDDOR');
+        dish[key + '.created'] = dishElement.getAttribute('created');
+        dish[key + '.updated'] = dishElement.getAttribute('updated');
+        dish[key + '.downSignals'] = [];
+        dish[key + '.upSignals'] = [];
+        dish[key + '.targets'] = [];
 
         for (var i = 0; i < children.length; i++) {
             var child = children[i];
 
             switch (child.tagName) {
                 case 'downSignal':
-                    dish.downSignals.push({
+                    dish[key + '.downSignals'].push({
                         'signal.type':       child.getAttribute('signalType'),
                         'signal.type.debug': child.getAttribute('signalTypeDebug'),
                         'data.rate':         child.getAttribute('dataRate'),
@@ -60,7 +60,7 @@ define([], function () {
                     });
                     break;
                 case 'upSignal':
-                    dish.upSignals.push({
+                    dish[key + '.upSignals'].push({
                         'signal.type':       child.getAttribute('signalType'),
                         'signal.type.debug': child.getAttribute('signalTypeDebug'),
                         'data.rate':         child.getAttribute('dataRate'),
@@ -71,7 +71,7 @@ define([], function () {
                     });
                     break;
                 case 'target':
-                    dish.targets.push({
+                    dish[key + '.targets'].push({
                         'name':          child.getAttribute('name'),
                         'id':            child.getAttribute('id'),
                         'upleg.range':   child.getAttribute('uplegRange'),
@@ -106,12 +106,10 @@ define([], function () {
 
             switch (element.tagName) {
                 case 'station':
-                    dsn[element.getAttribute('name').toLowerCase()] =
-                        parseStationTag(element);
+                    Object.assign(dsn, parseStationTag(element));
                     break;
                 case 'dish':
-                    dsn[element.getAttribute('name').toLowerCase()] =
-                        parseDishTag(element);
+                    Object.assign(dsn, parseDishTag(element));
                     break;
                 case 'timestamp':
                     dsn.timestamp = parseTimestampTag(element);

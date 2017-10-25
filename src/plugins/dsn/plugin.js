@@ -6,23 +6,18 @@ define([
 ) {
     'use strict';
 
-    var canberraObjects,
+    var compositionProvider,
         dictionary,
-        goldstoneObjects,
         listeners = {},
-        madridObjects,
-        rootObjects;
+        objectProvider,
+        realTimeProvider;
 
-    var CANBERRA_NAMESPACE = 'canberra',
+    var DSN_COLLECTION_TYPE = 'dsn.collection',
         DSN_DICTIONARY_URI = 'src/plugins/dsn/res/dsn-dictionary.json',
         DSN_KEY = 'dsn',
         DSN_NAMESPACE = 'deep.space.network',
-        DSN_COLLECTION_TYPE = 'dsn.collection',
         DSN_TELEMETRY_SOURCE = 'https://eyes.nasa.gov/dsn/data/dsn.xml',
-        DSN_TELEMETRY_TYPE = 'dsn.telemetry',
-        GOLDSTONE_NAMESPACE = 'goldstone',
-        MADRID_NAMESPACE = 'madrid',
-        ROOT_NAMESPACE = 'root';
+        DSN_TELEMETRY_TYPE = 'dsn.telemetry';
 
     function getDsnDictionary() {
         // TODO: Replace http with library from npm
@@ -46,106 +41,68 @@ define([
             });
     }
 
-    var rootObjectProvider = {
+    function serializeIdentifier(identifier) {
+        return identifier.namespace + ':' + identifier.key;
+    }
+
+    function deserializeIdentifier(identifier) {
+        var tokens = identifier.split(':');
+        return {
+            namespace: tokens[0],
+            key: tokens[1]
+        };
+    }
+
+    objectProvider = {
         get: function (identifier) {
-            if (identifier.key === DSN_KEY) {
-                // Return the root "Deep Space Network" object
+            if (identifier.key === 'dsn') {
                 return Promise.resolve({
-                    identifier: dictionary.identifier,
-                    name: dictionary.name,
-                    type: dictionary.type,
-                    location: dictionary.location
+                    identifier: {
+                        namespace: 'deep.space.network',
+                        key: 'dsn'
+                    },
+                    type: 'dsn.collection',
+                    location: 'ROOT',
+                    name: 'Deep Space Network',
+                    composition: []
                 });
             } else {
-                // Return the root objects for Canberra, Goldstone and Madrid
-                var domainObject = rootObjects.filter(function (domainObj) {
-                    return domainObj.identifier.key === identifier.key;
-                }).shift();
-
-                return Promise.resolve(domainObject);
+                return Promise.resolve(dictionary.domainObjects[serializeIdentifier(identifier)]);
             }
         }
     };
 
-    var canberraObjectProvider = {
-        get: function (identifier) {
-            // Return the Canberra telemetry objects
-            var domainObject = canberraObjects.filter(function (domainObj) {
-                return domainObj.identifier.key === identifier.key;
-            }).shift();
-
-            return Promise.resolve(domainObject);
-        }
-    };
-
-    var goldstoneObjectProvider = {
-        get: function (identifier) {
-            // Return the Goldstone telemetry objects
-            var domainObject = goldstoneObjects.filter(function (domainObj) {
-                return domainObj.identifier.key === identifier.key;
-            }).shift();
-
-            return Promise.resolve(domainObject);
-        }
-    };
-
-    var madridObjectProvider = {
-        get: function (identifier) {
-            // Return the Madrid telemetry objects
-            var domainObject = madridObjects.filter(function (domainObj) {
-                return domainObj.identifier.key === identifier.key;
-            }).shift();
-
-            return Promise.resolve(domainObject);
-        }
-    };
-
-    var compositionProvider = {
+    compositionProvider = {
         appliesTo: function (domainObject) {
-            return domainObject.type === DSN_COLLECTION_TYPE;
+            return domainObject.identifier.namespace === DSN_NAMESPACE
+                    && domainObject.composition !== undefined;
         },
         load: function (domainObject) {
-            var domainObjects;
-
-            switch (domainObject.identifier.key) {
-            case CANBERRA_NAMESPACE:
-                domainObjects = canberraObjects.map(function (domainObj) {
+            if (domainObject.identifier.key === DSN_KEY) {
+                return Promise.resolve(Object.keys(dictionary.domainObjects).filter(function (key) {
+                    return dictionary.domainObjects[key].location === DSN_NAMESPACE + ':' + DSN_KEY;
+                }).map(function (key) {
+                    var childId = deserializeIdentifier(key);
                     return {
-                        namespace: domainObj.identifier.namespace,
-                        key: domainObj.identifier.key
+                        namespace: childId.namespace,
+                        key: childId.key
                     };
-                });
-                break;
-            case GOLDSTONE_NAMESPACE:
-                domainObjects = goldstoneObjects.map(function (domainObj) {
-                    return {
-                        namespace: domainObj.identifier.namespace,
-                        key: domainObj.identifier.key
-                    };
-                });
-                break;
-            case MADRID_NAMESPACE:
-                domainObjects = madridObjects.map(function (domainObj) {
-                    return {
-                        namespace: domainObj.identifier.namespace,
-                        key: domainObj.identifier.key
-                    };
-                });
-                break;
-            default:
-                domainObjects = rootObjects.map(function (domainObj) {
-                    return {
-                        namespace: DSN_NAMESPACE,
-                        key: domainObj.identifier.key
-                    };
-                });
+                }));
+            } else {
+                return Promise.resolve(
+                    dictionary.domainObjects[serializeIdentifier(domainObject.identifier)].composition.map(function (key) {
+                        var childId = deserializeIdentifier(key);
+                        return {
+                            namespace: childId.namespace,
+                            key: childId.key
+                        };
+                    })
+                );
             }
-
-            return Promise.resolve(domainObjects);
         }
     };
 
-    var realTimeProvider = {
+    realTimeProvider = {
         supportsSubscribe: function (domainObject) {
             return domainObject.type === DSN_TELEMETRY_TYPE;
         },
@@ -189,29 +146,7 @@ define([
             getDsnDictionary().then(function (dsnDictionary) {
                 dictionary = dsnDictionary;
 
-                // Split domain objects for use in object and composition providers
-                canberraObjects = dictionary.domainObjects.filter(function (domainObj) {
-                    return domainObj.identifier.namespace === CANBERRA_NAMESPACE;
-                });
-
-                goldstoneObjects = dictionary.domainObjects.filter(function (domainObj) {
-                    return domainObj.identifier.namespace === GOLDSTONE_NAMESPACE;
-                });
-
-                madridObjects = dictionary.domainObjects.filter(function (domainObj) {
-                    return domainObj.identifier.namespace === MADRID_NAMESPACE;
-                });
-
-                rootObjects = dictionary.domainObjects.filter(function (domainObj) {
-                    return domainObj.identifier.namespace === CANBERRA_NAMESPACE + '.' + ROOT_NAMESPACE ||
-                            domainObj.identifier.namespace === GOLDSTONE_NAMESPACE + '.' + ROOT_NAMESPACE ||
-                            domainObj.identifier.namespace === MADRID_NAMESPACE + '.' + ROOT_NAMESPACE;
-                });
-
-                openmct.objects.addProvider(DSN_NAMESPACE, rootObjectProvider);
-                openmct.objects.addProvider(CANBERRA_NAMESPACE, canberraObjectProvider);
-                openmct.objects.addProvider(GOLDSTONE_NAMESPACE, goldstoneObjectProvider);
-                openmct.objects.addProvider(MADRID_NAMESPACE, madridObjectProvider);
+                openmct.objects.addProvider(DSN_NAMESPACE, objectProvider);
                 openmct.composition.addProvider(compositionProvider);
                 openmct.telemetry.addProvider(realTimeProvider);
             });
