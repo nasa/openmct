@@ -44,7 +44,8 @@
 
     &.t-object-type-timer,
     &.t-object-type-clock,
-    &.t-object-type-hyperlink {
+    &.t-object-type-hyperlink,
+    &.t-object-type-summary-widget {
         // Hide the right side buttons for objects where they don't make sense
         // Note that this will hide the view Switcher button if applied
         // to an object that has it.
@@ -125,14 +126,21 @@
         pointer-events: none !important;
     }
 
-        /********************************************************** OBJECT TYPES */
-    .t-object-type-hyperlink {
+    /********************************************************** OBJECT TYPES */
+    .t-object-type-hyperlink,
+    .t-object-type-summary-widget {
         .object-holder {
             overflow: hidden;
         }
+        .w-summary-widget,
+        .l-summary-widget,
         .l-hyperlink.s-button {
-            // When a hyperlink is a button in a frame, make it expand to fill out to the object-holder
+            // Some object types expand to the full size of the object-holder.
             @extend .abs;
+        }
+
+        .l-summary-widget,
+        .l-hyperlink.s-button {
             .label {
                 @include ellipsize();
                 @include transform(translateY(-50%));

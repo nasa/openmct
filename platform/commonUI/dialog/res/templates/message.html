@@ -1,11 +1,10 @@
 <div class="l-message"
      ng-class="'message-severity-' + ngModel.severity">
-    <div class="ui-symbol type-icon message-type"></div>
-    <div class="message-contents">
+    <div class="w-message-contents">
         <div class="top-bar">
             <div class="title">{{ngModel.title}}</div>
-            <div class="hint" ng-hide="ngModel.hint === undefined">{{ngModel.hint}}</div>
         </div>
+        <div class="hint" ng-hide="ngModel.hint === undefined">{{ngModel.hint}}</div>
         <div class="message-body">
             <div class="message-action">
                 {{ngModel.actionText}}
@@ -25,8 +24,6 @@
                ng-click="ngModel.primaryOption.callback()">
                 {{ngModel.primaryOption.label}}
             </a>
-
         </div>
-
     </div>
 </div>

@@ -52,21 +52,13 @@ ul.tree {
 
     .view-control {
         color: $colorItemTreeVC;
-        font-size: 0.75em;
         margin-right: $interiorMargin;
         height: 100%;
         line-height: inherit;
         width: $treeVCW;
+        &:before { display: none; }
         &.has-children {
-            &:before {
-                position: absolute;
-                @include trans-prop-nice(transform, 100ms);
-                content: "\e904";
-                @include transform-origin(center);
-            }
-            &.expanded:before {
-                @include transform(rotate(90deg));
-            }
+            &:before { display: block; }
         }
     }
 

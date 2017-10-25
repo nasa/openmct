@@ -29,23 +29,27 @@
     }
 
     .icon {
-        font-size: 16px; //120%;
+        font-size: 16px;
     }
 
     .title-label {
         margin-left: $interiorMarginSm;
     }
 
+    .icon-swatch,
     .color-swatch {
         // Used in color menu buttons in toolbar
         $d: 10px;
         display: inline-block;
         border: 1px solid rgba($colorBtnFg, 0.2);
-        height: $d;
-        width: $d;
+        height: $d; width: $d;
+        line-height: $d;
         vertical-align: middle;
         margin-left: $interiorMarginSm;
         margin-top: -2px;
+        &:not(.no-selection) {
+            border-color: transparent;
+        }
     }
 
     &:after {

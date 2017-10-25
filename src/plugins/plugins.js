@@ -27,7 +27,8 @@ define([
     '../../platform/features/autoflow/plugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
-    '../../platform/import-export/bundle'
+    '../../platform/import-export/bundle',
+    './summaryWidget/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -35,6 +36,7 @@ define([
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
+    SummaryWidget,
     ImportExport
 ) {
     var bundleMap = {
@@ -120,6 +122,8 @@ define([
     };
 
     plugins.ExampleImagery = ExampleImagery;
+
+    plugins.SummaryWidget = SummaryWidget;
 
     return plugins;
 });

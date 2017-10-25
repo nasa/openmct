@@ -80,6 +80,17 @@ define([], function () {
     };
 
     /**
+     * Used internally to support seamless usage of new views with old
+     * views.
+     * @private
+     */
+    ViewRegistry.prototype.getByVPID = function (vpid) {
+        return this.providers.filter(function (p) {
+            return p.vpid === vpid;
+        })[0];
+    };
+
+    /**
      * A View is used to provide displayable content, and to react to
      * associated life cycle events.
      *

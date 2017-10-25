@@ -19,60 +19,34 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.l-color-palette {
-	$d: 16px;
-	$colorsPerRow: 10;
-	$m: 1;
-	$colorSelectedColor: #fff;
 
-	box-sizing: border-box;
-	padding: $interiorMargin !important;
+define(
+    [],
+    function () {
 
-	.l-palette-row {
-		@include clearfix;
-		line-height: $d;
-		width: ($d * $colorsPerRow) + ($m * $colorsPerRow);
+        /**
+         * Defines composition policy for Display Layout objects.
+         * They cannot contain folders.
+         * @constructor
+         * @memberof platform/features/layout
+         * @implements {Policy.<View, DomainObject>}
+         */
+        function SummaryWidgetsCompositionPolicy(openmct) {
+            this.openmct = openmct;
+        }
 
-		.l-palette-item {
-			box-sizing: border-box;
-			@include txtShdwSubtle(0.8);
-			@include trans-prop-nice-fade(0.25s);
-			border: 1px solid transparent;
-			color: $colorSelectedColor;
-			display: block;
-			float: left;
-			height: $d; width: $d;
-			line-height: $d * 0.9;
-			margin: 0 ($m * 1px) ($m * 1px) 0;
-			text-align: center;
-            &:before {
-                // Check mark for selected items
-                font-size: 0.8em;
+        SummaryWidgetsCompositionPolicy.prototype.allow = function (parent, child) {
+
+            var parentType = parent.getCapability('type');
+            var newStyleChild = child.useCapability('adapter');
+
+            if (parentType.instanceOf('summary-widget') && !this.openmct.telemetry.canProvideTelemetry(newStyleChild)) {
+                return false;
             }
-		}
 
-		.s-palette-item {
-			&:hover {
-				@include trans-prop-nice-fade(0);
-				border-color: $colorSelectedColor !important;
-			}
-		}
+            return true;
+        };
 
-		.l-palette-item-label {
-			margin-left: $interiorMargin;
-		}
-
-		&.l-option-row {
-			margin-bottom: $interiorMargin;
-			.s-palette-item {
-				border-color: $colorBodyFg;
-			}
-		}
-	}
-
-
-
-
-
-
-}
+        return SummaryWidgetsCompositionPolicy;
+    }
+);
