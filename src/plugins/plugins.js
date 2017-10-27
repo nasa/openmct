@@ -28,7 +28,8 @@ define([
     './timeConductor/plugin',
     '../../example/imagery/plugin',
     './summaryWidget/plugin',
-    '../../platform/import-export/bundle'
+    '../../platform/import-export/bundle',
+    './telemetryMean/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -37,7 +38,8 @@ define([
     TimeConductorPlugin,
     ExampleImagery,
     SummaryWidget,
-    ImportExport
+    ImportExport,
+    TelemetryMean
 ) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
@@ -122,8 +124,8 @@ define([
     };
 
     plugins.ExampleImagery = ExampleImagery;
-
     plugins.SummaryWidget = SummaryWidget;
+    plugins.TelemetryMean = TelemetryMean;
 
     return plugins;
 });
