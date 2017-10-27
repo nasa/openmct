@@ -25,7 +25,7 @@ define([
 ], function (
     _
 ) {
-
+    
     // TODO: needs reference to formatService;
     function TelemetryValueFormatter(valueMetadata, formatService) {
         var numberFormatter = {
@@ -33,7 +33,12 @@ define([
                 return Number(x);
             },
             format: function (x) {
-                return x;
+                var number = parseFloat(x);
+                if (isNaN(number)){
+                    return x;
+                } else {
+                    return number.toFixed(2);
+                }
             },
             validate: function (x) {
                 return true;

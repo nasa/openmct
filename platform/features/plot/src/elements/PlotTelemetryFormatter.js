@@ -24,7 +24,7 @@ define(
     [],
     function () {
 
-        var DIGITS = 3;
+        var DIGITS = 2;
 
         /**
          * Wraps a `TelemetryFormatter` to provide formats for domain and
