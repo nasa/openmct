@@ -121,6 +121,9 @@ define([
     };
 
     UTCTimeFormat.prototype.parse = function (text) {
+        if (typeof text === 'number') {
+            return text;
+        }
         return moment.utc(text, DATE_FORMATS).valueOf();
     };
 
