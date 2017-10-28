@@ -127,9 +127,7 @@ define(
                         if (self.droppedIdToSelectAfterRefresh) {
                             self.select(null, self.droppedIdToSelectAfterRefresh);
                             delete self.droppedIdToSelectAfterRefresh;
-                        }
-
-                        if (composition.indexOf(self.selectedId) === -1) {
+                        } else if (composition.indexOf(self.selectedId) === -1) {
                             self.clearSelection();
                         }
                     }
