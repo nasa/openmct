@@ -51,15 +51,15 @@ define([
 ) {
 
     legacyRegistry.register("platform/features/trajectory", {
-        "name": "Trajectory component",
+        "name": "Trajectory components.",
         "description": "Plugin adding Trajectory capabilities.",
         "extensions": {
             "views": [
                 {
                     "key": "trajectory",
-                    "name": "Trajectory Map",
+                    "name": "Display Trajectory",
                     "cssClass": "icon-image",
-                    "type": "layout",
+                    "type": "trajectory",
                     "template": layoutTemplate,
                     "editable": true,
                     "uses": [],
@@ -80,6 +80,159 @@ define([
                                         "control": "button",
                                         "title": "Hide frame",
                                         "description": "Hide frame"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "key": "fixed",
+                    "name": "Fixed Position",
+                    "cssClass": "icon-box-with-dashed-lines",
+                    "type": "telemetry.panel",
+                    "template": fixedTemplate,
+                    "uses": [
+                        "composition"
+                    ],
+                    "toolbar": {
+                        "sections": [
+                            {
+                                "items": [
+                                    {
+                                        "method": "add",
+                                        "cssClass": "icon-plus",
+                                        "control": "menu-button",
+                                        "text": "Add",
+                                        "title": "Add",
+                                        "description": "Add new items",
+                                        "options": [
+                                            {
+                                                "name": "Box",
+                                                "cssClass": "icon-box",
+                                                "key": "fixed.box"
+                                            },
+                                            {
+                                                "name": "Line",
+                                                "cssClass": "icon-line-horz",
+                                                "key": "fixed.line"
+                                            },
+                                            {
+                                                "name": "Text",
+                                                "cssClass": "icon-T",
+                                                "key": "fixed.text"
+                                            },
+                                            {
+                                                "name": "Image",
+                                                "cssClass": "icon-image",
+                                                "key": "fixed.image"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "items": [
+                                    {
+                                        "method": "order",
+                                        "cssClass": "icon-layers",
+                                        "control": "menu-button",
+                                        "title": "Layering",
+                                        "description": "Move the selected object above or below other objects",
+                                        "options": [
+                                            {
+                                                "name": "Move to Top",
+                                                "cssClass": "icon-arrow-double-up",
+                                                "key": "top"
+                                            },
+                                            {
+                                                "name": "Move Up",
+                                                "cssClass": "icon-arrow-up",
+                                                "key": "up"
+                                            },
+                                            {
+                                                "name": "Move Down",
+                                                "cssClass": "icon-arrow-down",
+                                                "key": "down"
+                                            },
+                                            {
+                                                "name": "Move to Bottom",
+                                                "cssClass": "icon-arrow-double-down",
+                                                "key": "bottom"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "property": "fill",
+                                        "cssClass": "icon-paint-bucket",
+                                        "title": "Fill color",
+                                        "description": "Set fill color",
+                                        "control": "color"
+                                    },
+                                    {
+                                        "property": "stroke",
+                                        "cssClass": "icon-line-horz",
+                                        "title": "Border color",
+                                        "description": "Set border color",
+                                        "control": "color"
+                                    },
+                                    {
+                                        "property": "color",
+                                        "cssClass": "icon-T",
+                                        "title": "Text color",
+                                        "description": "Set text color",
+                                        "mandatory": true,
+                                        "control": "color"
+                                    },
+                                    {
+                                        "property": "url",
+                                        "cssClass": "icon-image",
+                                        "control": "dialog-button",
+                                        "title": "Image Properties",
+                                        "description": "Edit image properties",
+                                        "dialog": {
+                                            "control": "textfield",
+                                            "name": "Image URL",
+                                            "cssClass": "l-input-lg",
+                                            "required": true
+                                        }
+                                    },
+                                    {
+                                        "property": "text",
+                                        "cssClass": "icon-gear",
+                                        "control": "dialog-button",
+                                        "title": "Text Properties",
+                                        "description": "Edit text properties",
+                                        "dialog": {
+                                            "control": "textfield",
+                                            "name": "Text",
+                                            "required": true
+                                        }
+                                    },
+                                    {
+                                        "method": "showTitle",
+                                        "cssClass": "icon-two-parts-both",
+                                        "control": "button",
+                                        "title": "Show title",
+                                        "description": "Show telemetry element title"
+                                    },
+                                    {
+                                        "method": "hideTitle",
+                                        "cssClass": "icon-two-parts-one-only",
+                                        "control": "button",
+                                        "title": "Hide title",
+                                        "description": "Hide telemetry element title"
+                                    }
+                                ]
+                            },
+                            {
+                                "items": [
+                                    {
+                                        "method": "remove",
+                                        "control": "button",
+                                        "cssClass": "icon-trash",
+                                        "title": "Delete",
+                                        "description": "Delete the selected item"
                                     }
                                 ]
                             }
@@ -152,9 +305,9 @@ define([
             "types": [
                 {
                     "key": "trajectory",
-                    "name": "Trajectory Map",
+                    "name": "Display Trajectory",
                     "cssClass": "icon-image",
-                    "description": "Assemble a 2D or 3D view of a trajectory",
+                    "description": "Assemble other objects and components together into a reusable screen layout. Working in a simple canvas workspace, simply drag in the objects you want, position and size them. Save your design and view or edit it at any time.",
                     "priority": 900,
                     "features": "creation",
                     "model": {
@@ -181,7 +334,8 @@ define([
                             "conversion": "number[]"
                         }
                     ]
-                }
+                },
+                
             ]
         }
     });

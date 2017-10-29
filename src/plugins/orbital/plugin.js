@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['Cesium'], function () {
+define([], function () {
     return function () {
         return function (openmct) {
          /* TODO */
