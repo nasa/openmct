@@ -51,14 +51,14 @@ define([
 ) {
 
     legacyRegistry.register("platform/features/trajectory", {
-        "name": "Layout components.",
-        "description": "Plug in adding Layout capabilities.",
+        "name": "Trajectory component",
+        "description": "Plugin adding Trajectory capabilities.",
         "extensions": {
             "views": [
                 {
                     "key": "trajectory",
-                    "name": "Display YW",
-                    "cssClass": "icon-layout",
+                    "name": "Trajectory Map",
+                    "cssClass": "icon-image",
                     "type": "layout",
                     "template": layoutTemplate,
                     "editable": true,
@@ -152,9 +152,9 @@ define([
             "types": [
                 {
                     "key": "trajectory",
-                    "name": "Display yo",
-                    "cssClass": "icon-layout",
-                    "description": "Assemble other objects and components together into a reusable screen layout. Working in a simple canvas workspace, simply drag in the objects you want, position and size them. Save your design and view or edit it at any time.",
+                    "name": "Trajectory Map",
+                    "cssClass": "icon-image",
+                    "description": "Assemble a 2D or 3D view of a trajectory",
                     "priority": 900,
                     "features": "creation",
                     "model": {
