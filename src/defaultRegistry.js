@@ -77,6 +77,7 @@ define([
     '../platform/features/static-markup/bundle',
     '../platform/features/table/bundle',
     '../platform/features/timeline/bundle',
+    '../platform/features/trajectory/bundle',
     '../platform/forms/bundle',
     '../platform/framework/bundle',
     '../platform/framework/src/load/Bundle',
@@ -90,7 +91,6 @@ define([
     '../platform/representation/bundle',
     '../platform/search/bundle',
     '../platform/status/bundle',
-    '../platform/telemetry/bundle'
 ], function (legacyRegistry) {
 
     var DEFAULTS = [
@@ -112,7 +112,6 @@ define([
         'platform/containment',
         'platform/execution',
         'platform/exporters',
-        'platform/telemetry',
         'platform/features/clock',
         'platform/features/fixed',
         'platform/features/imagery',
@@ -131,7 +130,8 @@ define([
         'platform/entanglement',
         'platform/search',
         'platform/status',
-        'platform/commonUI/regions'
+        'platform/commonUI/regions',
+        'platform/features/trajectory',
     ];
 
     DEFAULTS.forEach(function (bundlePath) {
