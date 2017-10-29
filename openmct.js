@@ -89,7 +89,7 @@ requirejs.config({
         },
         "d3-axis": {
             "exports": "d3-axis"
-        }
+        },
     }
 });
 

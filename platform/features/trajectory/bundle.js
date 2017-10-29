@@ -21,35 +21,14 @@
  *****************************************************************************/
 
 define([
-    "./src/LayoutController",
-    "./src/FixedController",
-    "./src/LayoutCompositionPolicy",
-    './src/MCTTriggerModal',
+    "./src/TrajectoryController",
     "text!./res/templates/layout.html",
-    "text!./res/templates/fixed.html",
-    "text!./res/templates/frame.html",
-    "text!./res/templates/elements/telemetry.html",
-    "text!./res/templates/elements/box.html",
-    "text!./res/templates/elements/line.html",
-    "text!./res/templates/elements/text.html",
-    "text!./res/templates/elements/image.html",
-    'legacyRegistry'
+    'legacyRegistry',
 ], function (
-    LayoutController,
-    FixedController,
-    LayoutCompositionPolicy,
-    MCTTriggerModal,
+    TrajectoryController,
     layoutTemplate,
-    fixedTemplate,
-    frameTemplate,
-    telemetryTemplate,
-    boxTemplate,
-    lineTemplate,
-    textTemplate,
-    imageTemplate,
     legacyRegistry
 ) {
-
     legacyRegistry.register("platform/features/trajectory", {
         "name": "Trajectory components.",
         "description": "Plugin adding Trajectory capabilities.",
@@ -63,244 +42,18 @@ define([
                     "template": layoutTemplate,
                     "editable": true,
                     "uses": [],
-                    "toolbar": {
-                        "sections": [
-                            {
-                                "items": [
-                                    {
-                                        "method": "showFrame",
-                                        "cssClass": "icon-frame-show",
-                                        "control": "button",
-                                        "title": "Show frame",
-                                        "description": "Show frame"
-                                    },
-                                    {
-                                        "method": "hideFrame",
-                                        "cssClass": "icon-frame-hide",
-                                        "control": "button",
-                                        "title": "Hide frame",
-                                        "description": "Hide frame"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
                 },
-                {
-                    "key": "fixed",
-                    "name": "Fixed Position",
-                    "cssClass": "icon-box-with-dashed-lines",
-                    "type": "telemetry.panel",
-                    "template": fixedTemplate,
-                    "uses": [
-                        "composition"
-                    ],
-                    "toolbar": {
-                        "sections": [
-                            {
-                                "items": [
-                                    {
-                                        "method": "add",
-                                        "cssClass": "icon-plus",
-                                        "control": "menu-button",
-                                        "text": "Add",
-                                        "title": "Add",
-                                        "description": "Add new items",
-                                        "options": [
-                                            {
-                                                "name": "Box",
-                                                "cssClass": "icon-box",
-                                                "key": "fixed.box"
-                                            },
-                                            {
-                                                "name": "Line",
-                                                "cssClass": "icon-line-horz",
-                                                "key": "fixed.line"
-                                            },
-                                            {
-                                                "name": "Text",
-                                                "cssClass": "icon-T",
-                                                "key": "fixed.text"
-                                            },
-                                            {
-                                                "name": "Image",
-                                                "cssClass": "icon-image",
-                                                "key": "fixed.image"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "items": [
-                                    {
-                                        "method": "order",
-                                        "cssClass": "icon-layers",
-                                        "control": "menu-button",
-                                        "title": "Layering",
-                                        "description": "Move the selected object above or below other objects",
-                                        "options": [
-                                            {
-                                                "name": "Move to Top",
-                                                "cssClass": "icon-arrow-double-up",
-                                                "key": "top"
-                                            },
-                                            {
-                                                "name": "Move Up",
-                                                "cssClass": "icon-arrow-up",
-                                                "key": "up"
-                                            },
-                                            {
-                                                "name": "Move Down",
-                                                "cssClass": "icon-arrow-down",
-                                                "key": "down"
-                                            },
-                                            {
-                                                "name": "Move to Bottom",
-                                                "cssClass": "icon-arrow-double-down",
-                                                "key": "bottom"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "property": "fill",
-                                        "cssClass": "icon-paint-bucket",
-                                        "title": "Fill color",
-                                        "description": "Set fill color",
-                                        "control": "color"
-                                    },
-                                    {
-                                        "property": "stroke",
-                                        "cssClass": "icon-line-horz",
-                                        "title": "Border color",
-                                        "description": "Set border color",
-                                        "control": "color"
-                                    },
-                                    {
-                                        "property": "color",
-                                        "cssClass": "icon-T",
-                                        "title": "Text color",
-                                        "description": "Set text color",
-                                        "mandatory": true,
-                                        "control": "color"
-                                    },
-                                    {
-                                        "property": "url",
-                                        "cssClass": "icon-image",
-                                        "control": "dialog-button",
-                                        "title": "Image Properties",
-                                        "description": "Edit image properties",
-                                        "dialog": {
-                                            "control": "textfield",
-                                            "name": "Image URL",
-                                            "cssClass": "l-input-lg",
-                                            "required": true
-                                        }
-                                    },
-                                    {
-                                        "property": "text",
-                                        "cssClass": "icon-gear",
-                                        "control": "dialog-button",
-                                        "title": "Text Properties",
-                                        "description": "Edit text properties",
-                                        "dialog": {
-                                            "control": "textfield",
-                                            "name": "Text",
-                                            "required": true
-                                        }
-                                    },
-                                    {
-                                        "method": "showTitle",
-                                        "cssClass": "icon-two-parts-both",
-                                        "control": "button",
-                                        "title": "Show title",
-                                        "description": "Show telemetry element title"
-                                    },
-                                    {
-                                        "method": "hideTitle",
-                                        "cssClass": "icon-two-parts-one-only",
-                                        "control": "button",
-                                        "title": "Hide title",
-                                        "description": "Hide telemetry element title"
-                                    }
-                                ]
-                            },
-                            {
-                                "items": [
-                                    {
-                                        "method": "remove",
-                                        "control": "button",
-                                        "cssClass": "icon-trash",
-                                        "title": "Delete",
-                                        "description": "Delete the selected item"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ],
-            "representations": [
-                {
-                    "key": "frame",
-                    "template": frameTemplate
-                }
-            ],
-            "directives": [
-                {
-                    "key": "mctTriggerModal",
-                    "implementation": MCTTriggerModal,
-                    "depends": [
-                        "$document"
-                    ]
-                }
+
             ],
             "controllers": [
                 {
-                    "key": "LayoutController",
-                    "implementation": LayoutController,
-                    "depends": [
-                        "$scope"
-                    ]
-                },
-                {
-                    "key": "FixedController",
-                    "implementation": FixedController,
+                    "key": "TrajectoryController",
+                    "implementation": TrajectoryController,
                     "depends": [
                         "$scope",
-                        "$q",
-                        "dialogService",
-                        "openmct"
-                    ]
-                }
-            ],
-            "templates": [
-                {
-                    "key": "fixed.telemetry",
-                    "template": telemetryTemplate
+                    ],
                 },
-                {
-                    "key": "fixed.box",
-                    "template": boxTemplate
-                },
-                {
-                    "key": "fixed.line",
-                    "template": lineTemplate
-                },
-                {
-                    "key": "fixed.text",
-                    "template": textTemplate
-                },
-                {
-                    "key": "fixed.image",
-                    "template": imageTemplate
-                }
-            ],
-            "policies": [
-                {
-                    "category": "composition",
-                    "implementation": LayoutCompositionPolicy
-                }
+                
             ],
             "types": [
                 {
@@ -313,27 +66,6 @@ define([
                     "model": {
                         "composition": []
                     },
-                    "properties": [
-                        {
-                            "name": "Layout Grid",
-                            "control": "composite",
-                            "pattern": "^(\\d*[1-9]\\d*)?$",
-                            "items": [
-                                {
-                                    "name": "Horizontal grid (px)",
-                                    "control": "textfield",
-                                    "cssClass": "l-input-sm l-numeric"
-                                },
-                                {
-                                    "name": "Vertical grid (px)",
-                                    "control": "textfield",
-                                    "cssClass": "l-input-sm l-numeric"
-                                }
-                            ],
-                            "key": "layoutGrid",
-                            "conversion": "number[]"
-                        }
-                    ]
                 },
                 
             ]
