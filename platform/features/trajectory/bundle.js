@@ -21,29 +21,166 @@
  *****************************************************************************/
 
 define([
+    "./src/LayoutController",
+    "./src/FixedController",
+    "./src/LayoutCompositionPolicy",
+    './src/MCTTriggerModal',
+    "text!./res/templates/layout.html",
+    "text!./res/templates/fixed.html",
+    "text!./res/templates/frame.html",
+    "text!./res/templates/elements/telemetry.html",
+    "text!./res/templates/elements/box.html",
+    "text!./res/templates/elements/line.html",
+    "text!./res/templates/elements/text.html",
+    "text!./res/templates/elements/image.html",
     'legacyRegistry'
 ], function (
+    LayoutController,
+    FixedController,
+    LayoutCompositionPolicy,
+    MCTTriggerModal,
+    layoutTemplate,
+    fixedTemplate,
+    frameTemplate,
+    telemetryTemplate,
+    boxTemplate,
+    lineTemplate,
+    textTemplate,
+    imageTemplate,
     legacyRegistry
 ) {
 
     legacyRegistry.register("platform/features/trajectory", {
-        "name": "My",
-        "description": "Defines a root named My Items",
+        "name": "Layout components.",
+        "description": "Plug in adding Layout capabilities.",
         "extensions": {
-            "roots": [
+            "views": [
                 {
-                    "id": "yooo"
+                    "key": "trajectory",
+                    "name": "Display YW",
+                    "cssClass": "icon-layout",
+                    "type": "layout",
+                    "template": layoutTemplate,
+                    "editable": true,
+                    "uses": [],
+                    "toolbar": {
+                        "sections": [
+                            {
+                                "items": [
+                                    {
+                                        "method": "showFrame",
+                                        "cssClass": "icon-frame-show",
+                                        "control": "button",
+                                        "title": "Show frame",
+                                        "description": "Show frame"
+                                    },
+                                    {
+                                        "method": "hideFrame",
+                                        "cssClass": "icon-frame-hide",
+                                        "control": "button",
+                                        "title": "Hide frame",
+                                        "description": "Hide frame"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
                 }
             ],
-            "models": [
+            "representations": [
                 {
-                    "id": "yooo",
+                    "key": "frame",
+                    "template": frameTemplate
+                }
+            ],
+            "directives": [
+                {
+                    "key": "mctTriggerModal",
+                    "implementation": MCTTriggerModal,
+                    "depends": [
+                        "$document"
+                    ]
+                }
+            ],
+            "controllers": [
+                {
+                    "key": "LayoutController",
+                    "implementation": LayoutController,
+                    "depends": [
+                        "$scope"
+                    ]
+                },
+                {
+                    "key": "FixedController",
+                    "implementation": FixedController,
+                    "depends": [
+                        "$scope",
+                        "$q",
+                        "dialogService",
+                        "openmct"
+                    ]
+                }
+            ],
+            "templates": [
+                {
+                    "key": "fixed.telemetry",
+                    "template": telemetryTemplate
+                },
+                {
+                    "key": "fixed.box",
+                    "template": boxTemplate
+                },
+                {
+                    "key": "fixed.line",
+                    "template": lineTemplate
+                },
+                {
+                    "key": "fixed.text",
+                    "template": textTemplate
+                },
+                {
+                    "key": "fixed.image",
+                    "template": imageTemplate
+                }
+            ],
+            "policies": [
+                {
+                    "category": "composition",
+                    "implementation": LayoutCompositionPolicy
+                }
+            ],
+            "types": [
+                {
+                    "key": "trajectory",
+                    "name": "Display yo",
+                    "cssClass": "icon-layout",
+                    "description": "Assemble other objects and components together into a reusable screen layout. Working in a simple canvas workspace, simply drag in the objects you want, position and size them. Save your design and view or edit it at any time.",
+                    "priority": 900,
+                    "features": "creation",
                     "model": {
-                        "name": "My",
-                        "type": "folder",
-                        "composition": [],
-                        "location": "ROOT"
-                    }
+                        "composition": []
+                    },
+                    "properties": [
+                        {
+                            "name": "Layout Grid",
+                            "control": "composite",
+                            "pattern": "^(\\d*[1-9]\\d*)?$",
+                            "items": [
+                                {
+                                    "name": "Horizontal grid (px)",
+                                    "control": "textfield",
+                                    "cssClass": "l-input-sm l-numeric"
+                                },
+                                {
+                                    "name": "Vertical grid (px)",
+                                    "control": "textfield",
+                                    "cssClass": "l-input-sm l-numeric"
+                                }
+                            ],
+                            "key": "layoutGrid",
+                            "conversion": "number[]"
+                        }
+                    ]
                 }
             ]
         }
