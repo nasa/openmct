@@ -42,11 +42,11 @@ define(
                     ['setData', 'getData', 'removeData']
                 );
                 mockScope = jasmine.createSpyObj('$scope', ['$eval', '$apply']);
-                mockElement = jasmine.createSpyObj('element', ['on']);
+                mockElement = jasmine.createSpyObj('element', ['on', 'addClass', 'removeClass']);
                 testAttrs = { mctSwimlaneDrop: "mockSwimlane" };
                 mockSwimlane = jasmine.createSpyObj(
                     "swimlane",
-                    ["allowDropIn", "allowDropAfter", "drop", "highlight", "highlightBottom"]
+                    ['graph', 'toggleGraph']
                 );
 
                 testEvent = {
@@ -61,6 +61,8 @@ define(
                         mockSwimlane : undefined;
                 });
 
+                mockSwimlane.graph.andReturn(false);
+
                 directive = new MCTResourceGraphDrop(mockDndService);
                 directive.link(mockScope, mockElement, testAttrs);
 
@@ -72,6 +74,42 @@ define(
             it("is available as an attribute", function () {
                 expect(directive.restrict).toEqual("A");
             });
+
+            [false, true].forEach(function (graphing) {
+                describe("when swimlane graph is " + (graphing ? "" : "not ") + "enabled", function () {
+                    beforeEach(function () {
+                        mockSwimlane.graph.andReturn(graphing);
+                    });
+
+
+                    describe("on dragover", function () {
+                        var prefix = !graphing ? "does" : "does not";
+
+                        beforeEach(function ()  {
+                            handlers.dragover(testEvent);
+                        });
+
+                        it(prefix + " add a drop-over class", function () {
+                            var expectAddClass = expect(mockElement.addClass);
+                            (!graphing ? expectAddClass : expectAddClass.not)
+                                .toHaveBeenCalledWith('drop-over');
+                        });
+
+                        it(prefix + " call $apply on scope", function () {
+                            var expectApply = expect(mockScope.$apply);
+                            (!graphing ? expectApply : expectApply.not)
+                                .toHaveBeenCalled();
+                        });
+
+                        it(prefix + " prevent default", function () {
+                            var expectPreventDefault = expect(testEvent.preventDefault);
+                            (!graphing ? expectPreventDefault : expectPreventDefault.not)
+                                .toHaveBeenCalled();
+                        });
+                    });
+                });
+            });
+
         });
     }
 );
