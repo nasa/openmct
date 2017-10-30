@@ -107,6 +107,31 @@ define(
                                 .toHaveBeenCalled();
                         });
                     });
+
+                    describe("on drop", function () {
+                        var prefix = !graphing ? "does" : "does not";
+
+                        beforeEach(function ()  {
+                            handlers.drop(testEvent);
+                        });
+
+                        it("removes any drop-over class", function () {
+                            expect(mockElement.removeClass)
+                                .toHaveBeenCalledWith('drop-over');
+                        });
+
+                        it(prefix + " toggle the swimlane's resource graph", function () {
+                            var expectToggle = expect(mockSwimlane.toggleGraph);
+                            (!graphing ? expectToggle : expectToggle.not)
+                                .toHaveBeenCalled();
+                        });
+
+                        it(prefix + " prevent default", function () {
+                            var expectPreventDefault = expect(testEvent.preventDefault);
+                            (!graphing ? expectPreventDefault : expectPreventDefault.not)
+                                .toHaveBeenCalled();
+                        });
+                    });
                 });
             });
 
