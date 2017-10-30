@@ -32,16 +32,25 @@ define([], function () {
 
     TelemetryMeanActionDecorator.prototype.updateTelemetryMetadata = function (model) {
         var telemetryPoint = model.telemetryPoint;
+        var telemetryApi = this.openmct.telemetry;
+
         if (telemetryPoint) {
             return this.openmct.objects.get({ key: telemetryPoint}).then(function (referencedObject) {
                 if (referencedObject.type !== 'unknown') {
+                    var keysForRanges = telemetryApi.getMetadata(referencedObject).valuesForHints(['range'])
+                        .map(function (metadatum) {
+                            return metadatum.source;
+                        });
+
                     model.telemetry.values = referencedObject.telemetry.values.map(function (value) {
-                        value.name = value.name + " (Mean)";
+                        if (keysForRanges.indexOf(value.source) !== -1) {
+                            value.name = value.name + " (Mean)";
+                        }
                         return value;
                     });
                 }
                 return model;
-            });
+            }.bind(this));
         }
     }
 

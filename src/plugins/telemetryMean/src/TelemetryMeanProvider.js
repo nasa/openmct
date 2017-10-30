@@ -68,7 +68,6 @@ define([], function () {
 
     TelemetryMeanProvider.prototype.subscribeToMeanValues = function (object, callback) {
         var telemetryApi = this.openmct.telemetry;
-        var valueToMean = this.chooseValueToMean(object);
         var lastNData = [];
         var keysForRanges = telemetryApi.getMetadata(object).valuesForHints(['range'])
             .map(function (metadatum) {
@@ -106,10 +105,6 @@ define([], function () {
             return sum + datum[valueToMean];
         }, 0) / lastNData.length;
     };
-
-    TelemetryMeanProvider.prototype.chooseValueToMean = function (object) {
-        return 'sin';
-    }
 
     TelemetryMeanProvider.prototype.request = function (domainObject, request) {
         throw "Historical requests not supported for Telemetry Averager";
