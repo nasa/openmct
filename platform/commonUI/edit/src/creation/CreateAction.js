@@ -98,8 +98,7 @@ define(
             } else if (editorCapability) {
                 //otherwise, use the save as action
                 editorCapability.edit();
-                //return newObject.getCapability("action").perform("save-as").then(onSave, onCancel);
-                return newObject.getCapability("action").perform("save-as").then(resolveWith(newObject), resolveWith(newObject));
+                return newObject.getCapability("action").perform("save-as").then(onSave, onCancel);
             }
         };
 
