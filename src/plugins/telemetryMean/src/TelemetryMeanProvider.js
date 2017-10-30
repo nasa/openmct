@@ -69,11 +69,11 @@ define([], function () {
     TelemetryMeanProvider.prototype.subscribeToMeanValues = function (object, callback) {
         var telemetryApi = this.openmct.telemetry;
         var lastNData = [];
-        var keysForRanges = telemetryApi.getMetadata(object).valuesForHints(['range'])
+        var rangeKey = telemetryApi.getMetadata(object).valuesForHints(['range'])
             .map(function (metadatum) {
                 return metadatum.source;
             }
-        );;
+        )[0];
 
         return telemetryApi.subscribe(object, function (telemetryDatum) {
 
@@ -82,21 +82,17 @@ define([], function () {
                 lastNData.shift();
             }
 
-            var meanDatum = this.calculateMeansForDatum(telemetryDatum, keysForRanges, lastNData);
+            var meanDatum = this.calculateMeansForDatum(telemetryDatum, rangeKey, lastNData);
             callback(meanDatum);
 
         }.bind(this));
     }
 
-    TelemetryMeanProvider.prototype.calculateMeansForDatum = function (telemetryDatum, keysToMean, lastNData) {
-        var meanDatum = JSON.parse(JSON.stringify(telemetryDatum));
-        
-        Object.keys(meanDatum).filter(function (key) {
-            return keysToMean.indexOf(key) !== -1;
-        }).forEach(function (key) {
-            meanDatum[key] = this.calculateMean(lastNData, key);
-        }.bind(this));
-
+    TelemetryMeanProvider.prototype.calculateMeansForDatum = function (telemetryDatum, keyToMean, lastNData) {
+        var meanDatum = {
+            'utc': telemetryDatum['utc'],
+            'value': this.calculateMean(lastNData, keyToMean)
+        }
         return meanDatum;
     }
 

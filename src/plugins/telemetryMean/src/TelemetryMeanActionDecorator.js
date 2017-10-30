@@ -47,7 +47,7 @@ define([], function () {
         var telemetryApi = this.openmct.telemetry;
 
         if (telemetryPoint) {
-            return this.openmct.objects.get({ key: telemetryPoint}).then(function (referencedObject) {
+            return this.openmct.objects.get(telemetryPoint).then(function (referencedObject) {
                 if (referencedObject.type !== 'unknown') {
                     var keysForRanges = telemetryApi.getMetadata(referencedObject).valuesForHints(['range'])
                         .map(function (metadatum) {
