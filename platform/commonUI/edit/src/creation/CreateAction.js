@@ -80,6 +80,12 @@ define(
                 return closeEditor();
             }
 
+            function resolveWith (object) {
+                return function () {
+                    return object;
+                }
+            }
+
             newModel.type = this.type.getKey();
             newModel.location = this.parent.getId();
             newObject = this.parent.useCapability('instantiation', newModel);
@@ -92,7 +98,8 @@ define(
             } else if (editorCapability) {
                 //otherwise, use the save as action
                 editorCapability.edit();
-                return newObject.getCapability("action").perform("save-as").then(onSave, onCancel);
+                //return newObject.getCapability("action").perform("save-as").then(onSave, onCancel);
+                return newObject.getCapability("action").perform("save-as").then(resolveWith(newObject), resolveWith(newObject));
             }
         };
 

@@ -6,22 +6,33 @@ define([], function () {
         [
             'decorateAction',
             'getActions',
-            'updateTelemetryMetadata'
+            'updateTelemetryFromLinkedObject'
         ].forEach(function (name) {
             this[name] = this[name].bind(this);
         }.bind(this))
     }
 
     TelemetryMeanActionDecorator.prototype.decorateAction = function (action) {
-        if (action.getMetadata && action.getMetadata().key === 'properties'){
+        function update(object) {
+            var domainObject = object || action.domainObject;
+            return this.updateTelemetryFromLinkedObject(object)
+            .then(function (modelWithTelemetry) {
+                return this.mutate(domainObject, modelWithTelemetry);
+            }.bind(this));
+        }
+
+        if (action.getMetadata && action.getMetadata().key === 'properties' || action.getMetadata().key === 'create'){
             var oldPerform = action.perform.bind(action);
             action.perform = function () {
-                oldPerform().then(function () {
-                    var model = action.domainObject.getModel();
-                    return this.updateTelemetryMetadata(model);
-                }.bind(this));
+                return oldPerform().then(update.bind(this), update.bind(this));
             }.bind(this);
         }
+    }
+
+    TelemetryMeanActionDecorator.prototype.mutate = function (domainObject, model) {
+        return domainObject.useCapability('mutation', function () {
+            return model
+        });
     }
 
     TelemetryMeanActionDecorator.prototype.getActions = function () {
@@ -30,7 +41,8 @@ define([], function () {
         return actions;      
     };
 
-    TelemetryMeanActionDecorator.prototype.updateTelemetryMetadata = function (model) {
+    TelemetryMeanActionDecorator.prototype.updateTelemetryFromLinkedObject = function (domainObject) {
+        var model = domainObject.getModel();
         var telemetryPoint = model.telemetryPoint;
         var telemetryApi = this.openmct.telemetry;
 
