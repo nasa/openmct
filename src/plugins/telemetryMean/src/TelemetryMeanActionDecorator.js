@@ -1,7 +1,7 @@
 define([], function () {
-    function TelemetryMeanActionDecorator (actionService, $q) {
+    function TelemetryMeanActionDecorator (openmct, actionService) {
+        this.openmct = openmct;
         this.actionService = actionService;
-        this.$q = $q;
 
         [
             'decorateAction',
@@ -16,9 +16,13 @@ define([], function () {
         if (action.getMetadata && action.getMetadata().key === 'properties'){
             var oldPerform = action.perform.bind(action);
             action.perform = function () {
-                oldPerform().then(function () {
+                oldPerform().then(function (result) {
                     var model = action.domainObject.getModel();
-                    return this.updateTelemetryMetadata(model);
+                    if (model.type === 'telemetry-mean') {
+                        return this.updateTelemetryMetadata(model);
+                    } else {
+                        return result;
+                    }
                 }.bind(this));
             }.bind(this);
         }
@@ -33,18 +37,13 @@ define([], function () {
     TelemetryMeanActionDecorator.prototype.updateTelemetryMetadata = function (model) {
         var telemetryPoint = model.telemetryPoint;
         if (telemetryPoint) {
-            return openmct.objects.get({ key: telemetryPoint}).then(function (referencedObject) {
+            return this.openmct.objects.get({ key: telemetryPoint}).then(function (referencedObject) {
                 model.telemetry.values = referencedObject.telemetry.values.map(function (value) {
                     value.name = value.name + " (Mean)";
                     return value;
                 });
                 return model;
             });
-        } else {
-            model.telemetry = {
-                values: []
-            };
-            return $q.when(model);
         }
     }
 

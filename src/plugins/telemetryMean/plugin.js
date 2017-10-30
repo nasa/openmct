@@ -41,7 +41,7 @@ define([
             openmct.legacyExtension('components', {
                 type: 'decorator',
                 provides: 'actionService',
-                depends: ['$q'],
+                depends: ['openmct'],
                 implementation: TelemetryMeanActionDecorator
             })
         };
