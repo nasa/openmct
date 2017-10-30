@@ -269,6 +269,7 @@ define([
 
         legacyRegistry.register('adapter', this.legacyBundle);
         legacyRegistry.enable('adapter');
+        this.install(this.plugins.Plot());
         /**
          * Fired by [MCT]{@link module:openmct.MCT} when the application
          * is started.

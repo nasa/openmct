@@ -53,6 +53,8 @@ define([
             'dataRateInHz'
         ];
 
+        request = request || {};
+
         var workerRequest = {};
 
         props.forEach(function (prop) {

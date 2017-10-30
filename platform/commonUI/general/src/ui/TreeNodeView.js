@@ -83,9 +83,9 @@ define([
         this.activeObject = domainObject;
 
         if (domainObject && domainObject.hasCapability('composition')) {
-            $(this.toggleView.elements()).addClass('has-children');
+            $(this.toggleView.elements()).removeClass('no-children');
         } else {
-            $(this.toggleView.elements()).removeClass('has-children');
+            $(this.toggleView.elements()).addClass('no-children');
         }
 
         if (domainObject && domainObject.hasCapability('status')) {
