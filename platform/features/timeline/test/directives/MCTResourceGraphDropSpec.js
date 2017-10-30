@@ -132,6 +132,25 @@ define(
                                 .toHaveBeenCalled();
                         });
                     });
+
+                    describe("on dragleave", function () {
+                        beforeEach(function ()  {
+                            handlers.dragleave(testEvent);
+                        });
+
+                        it("removes any drop-over class", function () {
+                            expect(mockElement.removeClass)
+                                .toHaveBeenCalledWith('drop-over');
+                        });
+
+                        it("calls $apply on scope", function () {
+                            expect(mockScope.$apply).toHaveBeenCalled();
+                        });
+
+                        it("calls preventDefault on events", function () {
+                            expect(testEvent.preventDefault).toHaveBeenCalled();
+                        });
+                    });
                 });
             });
 
