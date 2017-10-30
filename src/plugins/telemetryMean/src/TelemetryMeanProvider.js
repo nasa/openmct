@@ -67,30 +67,43 @@ define([], function () {
     }
 
     TelemetryMeanProvider.prototype.subscribeToMeanValues = function (object, callback) {
-        var telemetryAPI = this.openmct.telemetry;
+        var telemetryApi = this.openmct.telemetry;
         var valueToMean = this.chooseValueToMean(object);
         var lastNData = [];
+        var keysForRanges = telemetryApi.getMetadata(object).valuesForHints(['range'])
+            .map(function (metadatum) {
+                return metadatum.source;
+            }
+        );;
 
-        return telemetryAPI.subscribe(object, function (telemetryDatum) {
-            var meanDatum = {};
+        return telemetryApi.subscribe(object, function (telemetryDatum) {
 
             lastNData.push(telemetryDatum);
             if (lastNData.length > object.samples) {
                 lastNData.shift();
             }
 
-            meanDatum = {
-                sin: this.calculateMean(lastNData, valueToMean),
-                utc: telemetryDatum.utc
-            }
-
+            var meanDatum = this.calculateMeansForDatum(telemetryDatum, keysForRanges, lastNData);
             callback(meanDatum);
+
         }.bind(this));
     }
 
-    TelemetryMeanProvider.prototype.calculateMean = function (lastNData, valueToAverage) {
+    TelemetryMeanProvider.prototype.calculateMeansForDatum = function (telemetryDatum, keysToMean, lastNData) {
+        var meanDatum = JSON.parse(JSON.stringify(telemetryDatum));
+        
+        Object.keys(meanDatum).filter(function (key) {
+            return keysToMean.indexOf(key) !== -1;
+        }).forEach(function (key) {
+            meanDatum[key] = this.calculateMean(lastNData, key);
+        }.bind(this));
+
+        return meanDatum;
+    }
+
+    TelemetryMeanProvider.prototype.calculateMean = function (lastNData, valueToMean) {
         return lastNData.reduce(function (sum, datum){
-            return sum + datum[valueToAverage];
+            return sum + datum[valueToMean];
         }, 0) / lastNData.length;
     };
 
