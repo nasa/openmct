@@ -56,9 +56,9 @@ ul.tree {
         height: 100%;
         line-height: inherit;
         width: $treeVCW;
-        &:before { display: none; }
-        &.has-children {
-            &:before { display: block; }
+        &:before { display: block; }
+        &.no-children {
+            &:before { display: none; }
         }
     }
 
