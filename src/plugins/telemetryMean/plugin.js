@@ -1,6 +1,5 @@
 define([
-    './src/TelemetryMeanProvider',
-    './src/TelemetryMeanActionDecorator'
+    './src/TelemetryMeanProvider'
 ], 
     function (
         TelemetryMeanProvider, TelemetryMeanActionDecorator) {
