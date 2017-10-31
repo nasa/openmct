@@ -54,7 +54,7 @@ define(
         };
 
         PlotViewPolicy.prototype.allow = function (view, domainObject) {
-            if (view.key === 'plot') {
+            if (view.key === 'plot-single') {
                 return this.hasNumericTelemetry(domainObject);
             }
 
