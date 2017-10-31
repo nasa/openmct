@@ -1,6 +1,5 @@
 define([
-    './src/TelemetryMeanProvider',
-    './src/TelemetryMeanActionDecorator'
+    './src/TelemetryMeanProvider'
 ], 
     function (
         TelemetryMeanProvider, TelemetryMeanActionDecorator) {
@@ -9,14 +8,30 @@ define([
     function plugin() {
         return function install(openmct) {
             openmct.types.addType('telemetry-mean', {
-                name: 'Telemetry Mean',
+                name: 'Telemetry Filter',
                 description: 'Provides telemetry values that represent the mean of the last N values of a telemetry stream',
                 creatable: true,
                 cssClass: 'icon-telemetry',
                 initialize: function (domainObject) {
                     domainObject.samples = DEFAULT_SAMPLES;
                     domainObject.telemetry = {
-                        values: []
+                        values: [
+                            {
+                                key: "utc",
+                                name: "Time",
+                                format: "utc",
+                                hints: {
+                                    domain: 1
+                                }
+                            },
+                            {
+                                key: "value",
+                                name: "Value",
+                                hints: {
+                                    range: 1
+                                }
+                            }
+                        ]
                     }
                 },
                 form: [
@@ -37,13 +52,6 @@ define([
                 ]    
             });
             openmct.telemetry.addProvider(new TelemetryMeanProvider(openmct));
-
-            openmct.legacyExtension('components', {
-                type: 'decorator',
-                provides: 'actionService',
-                depends: ['openmct'],
-                implementation: TelemetryMeanActionDecorator
-            })
         };
     }
 
