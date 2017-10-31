@@ -32,6 +32,7 @@ define([
     "./src/inspector/PlotOptionsController",
     "./src/inspector/HideElementPoolDirective",
     "./src/services/ExportImageService",
+    './src/PlotViewPolicy',
     "text!./res/templates/plot-options-browse.html",
     "text!./res/templates/plot-options-edit.html",
     "text!./res/templates/stacked-plot.html",
@@ -47,6 +48,7 @@ define([
     PlotOptionsController,
     HideElementPool,
     ExportImageService,
+    PlotViewPolicy,
     plotOptionsBrowseTemplate,
     plotOptionsEditTemplate,
     StackedPlotTemplate,
@@ -65,6 +67,15 @@ define([
             openmct.legacyRegistry.register("openmct/plot", {
                 "name": "Plot view for telemetry, reborn",
                 "extensions": {
+                    "policies": [
+                        {
+                            "category": "view",
+                            "implementation": PlotViewPolicy,
+                            "depends": [
+                                "openmct"
+                            ]
+                        }
+                    ],
                     "views": [
                         {
                             "name": "Plot",
