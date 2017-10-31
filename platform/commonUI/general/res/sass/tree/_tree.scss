@@ -55,10 +55,9 @@ ul.tree {
         font-size: 0.75em;
         margin-right: $interiorMargin;
         width: $treeVCW;
+        &:before { display: block; }
         &.no-children {
-            &:before {
-                content:"";
-            }
+            &:before { display: none; }
         }
     }
 
