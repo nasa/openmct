@@ -89,10 +89,12 @@ define([
         function populateFormatters(linkedObject) {
             var linkedObjectMetadata = this.telemetryApi.getMetadata(linkedObject);
             var rangeMetadata = linkedObjectMetadata.value(this.keyForRange);
-            var rangeMetadata = linkedObjectMetadata.value(this.keyForDomain);
+            var domainMetadata = linkedObjectMetadata.value(this.keyForDomain);
 
             this.rangeFormatter = this.telemetryApi.getValueFormatter(rangeMetadata);
-            this.domainFormatter = this.telemetryApi.getValueFormatter(domainMetadata);;
+            this.domainFormatter = this.telemetryApi.getValueFormatter(domainMetadata);
+            
+            return linkedObject;
         };
 
         return this.objectApi.get(objectId).then(populateFormatters.bind(this));
@@ -189,7 +191,7 @@ define([
         var rangeValue = this.calculateMean();
 
         var meanDatum = {
-            'utc': domainValue,
+            'timestamp': domainValue,
             'value': rangeValue
         }
         return meanDatum;
@@ -201,7 +203,7 @@ define([
     PerObjectTelemetryProvider.prototype.calculateMean = function () {
         return this.mostRecentData.reduce(function (sum, datum){
             var valueToAdd = this.rangeFormatter.parse(datum);
-            return sum + datum[valueToMean];
+            return sum + valueToAdd;
         }.bind(this), 0) / this.mostRecentData.length;
     };
 
