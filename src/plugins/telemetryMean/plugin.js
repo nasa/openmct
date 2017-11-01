@@ -1,8 +1,8 @@
 define([
-    './src/TelemetryMeanProvider'
+    './src/MeanTelemetryProvider'
 ], 
     function (
-        TelemetryMeanProvider, TelemetryMeanActionDecorator) {
+        MeanTelemetryProvider, TelemetryMeanActionDecorator) {
     var DEFAULT_SAMPLES = 10;
 
     function plugin() {
@@ -51,7 +51,7 @@ define([
                     }
                 ]    
             });
-            openmct.telemetry.addProvider(new TelemetryMeanProvider(openmct));
+            openmct.telemetry.addProvider(new MeanTelemetryProvider(openmct));
         };
     }
 
