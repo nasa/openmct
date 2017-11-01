@@ -56,6 +56,7 @@ define([
 
     // Retrieve the provider for a given key.
     ObjectAPI.prototype.getProvider = function (identifier) {
+        identifier = utils.parseKeyString(identifier);
         if (identifier.key === 'ROOT') {
             return this.rootProvider;
         }
