@@ -50,7 +50,10 @@ define([
             return this.publicAPI
                 .telemetry
                 .request(this.get('domainObject'), options)
-                .then(this.addPoints.bind(this));
+                .then(function (points) {
+                    this.reset();
+                    this.addPoints(points);
+                }.bind(this));
         },
         /**
          *
