@@ -67,16 +67,22 @@ define([
 
     PerObjectTelemetryProvider.prototype.request = function (request) {
         this.requestOutstanding = true;
+        this.mostRecentData = [];
 
         return this.getLinkedObject(this.domainObject).then(function (linkedObject) {
             return this.requestTelemetryForLinkedObject(linkedObject, request);
         }.bind(this));
     }
 
+    /**
+     * @private
+     */
     PerObjectTelemetryProvider.prototype.requestTelemetryForLinkedObject = function (linkedObject, request) {
         return this.telemetryApi.request(linkedObject, request).then(function (data) {
             this.requestOutstanding = false;
-            return this.calculateAveragesForData(data);
+            var averageData = this.calculateAveragesForData(data);
+            this.mostRecentData = [];
+            return averageData;
         }.bind(this));
     };
 
@@ -132,7 +138,14 @@ define([
      * @private
      */
     PerObjectTelemetryProvider.prototype.calculateAveragesForData = function (data) {
-        return data.map(this.processTelemetryDatum);
+        var averageData = [];
+        data.forEach(function (datum) {
+            var averageDatum = this.processTelemetryDatum(datum);
+            if (this.mostRecentData.length === this.sampleSize) {
+                averageData.push(averageDatum);
+            }
+        }.bind(this));
+        return averageData;
     }
 
     /**
@@ -144,11 +157,19 @@ define([
         } else {
             if (telemetryBuffer.length > 0) {
                 telemetryBuffer.forEach(function (bufferedDatum){
-                    callback(this.processTelemetryDatum(telemetryDatum));
+                    var avgBufferedDatum = this.processTelemetryDatum(bufferedDatum)
+                    if (this.mostRecentData.length === this.sampleSize) {
+                        callback(avgBufferedDatum);
+                    }
                 }.bind(this));
+                telemetryBuffer.splice(0, telemetryBuffer.length);
             }
             var avgData = this.processTelemetryDatum(telemetryDatum);
-            callback(avgData);
+            if (this.mostRecentData.length === this.sampleSize) {
+                callback(avgData);
+            } else {
+                console.log(this.mostRecentData.length);
+            }
         }
     };
 
@@ -168,7 +189,7 @@ define([
      */
     PerObjectTelemetryProvider.prototype.isMostRecentData = function (datum) {
         var datumTimestamp = this.domainFormatter.parse(datum);
-        var latestTimestamp = this.domainFormatter.parse(this.mostRecentData[this.mostRecentData.length]);
+        var latestTimestamp = this.domainFormatter.parse(this.mostRecentData[this.mostRecentData.length - 1]);
 
         return isNaN(latestTimestamp) || datumTimestamp > latestTimestamp;
     }
