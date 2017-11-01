@@ -20,6 +20,7 @@ define([
                                 key: "utc",
                                 name: "Time",
                                 format: "utc",
+                                source: "timestamp",
                                 hints: {
                                     domain: 1
                                 }

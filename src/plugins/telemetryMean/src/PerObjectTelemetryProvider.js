@@ -20,7 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([
+    '../../../api/objects/object-utils'
+], function (objectUtils) {
 
     /**
      * Tracks subscriptions and requests for a particular object.
@@ -37,15 +39,17 @@ define([], function () {
      * @param {*} openmct 
      */
     function PerObjectTelemetryProvider(domainObject, openmct) {
+        this.keyForDomain = 'utc';
+        this.keyForRange = 'value';
+
         this.domainObject = domainObject;
         this.telemetryApi = openmct.telemetry;
         this.objectApi = openmct.objects;
         this.subscribers = 0;
         this.requestOutstanding = false;
-        this.keyForTimestamp = 'utc';
         this.mostRecentData = [];
         this.sampleSize = domainObject.samples;
-        this.rangeKey = this.getRangeKey();
+
 
         [
             'processTelemetryDatum',
@@ -80,22 +84,18 @@ define([], function () {
      * @private
      */
     PerObjectTelemetryProvider.prototype.getLinkedObject = function (domainObject) {
-        function createIdentifier(idString) {
-            var tokens = idString.split(':');
-            if (tokens.length === 1) {
-                return {
-                    key: tokens[0]
-                }
-            } else {
-                return {
-                    namespace: tokens[0],
-                    key: tokens[1]
-                }
-            }
-        }
+        var objectId = objectUtils.parseKeyString(domainObject.telemetryPoint);
 
-        var objectId = createIdentifier(domainObject.telemetryPoint);
-        return this.objectApi.get(objectId);
+        function populateFormatters(linkedObject) {
+            var linkedObjectMetadata = this.telemetryApi.getMetadata(linkedObject);
+            var rangeMetadata = linkedObjectMetadata.value(this.keyForRange);
+            var rangeMetadata = linkedObjectMetadata.value(this.keyForDomain);
+
+            this.rangeFormatter = this.telemetryApi.getValueFormatter(rangeMetadata);
+            this.domainFormatter = this.telemetryApi.getValueFormatter(domainMetadata);;
+        };
+
+        return this.objectApi.get(objectId).then(populateFormatters.bind(this));
     };
 
     /**
@@ -158,15 +158,15 @@ define([], function () {
             this.updateMostRecentData(telemetryDatum);
         }
 
-        return this.calculateMeansForDatum(telemetryDatum, this.rangeKey);
+        return this.createMeanDatum(telemetryDatum, this.rangeKey);
     }
 
     /**
      * @private
      */
     PerObjectTelemetryProvider.prototype.isMostRecentData = function (datum) {
-        var datumTimestamp = parseInt(datum[this.keyForTimestamp]);
-        var latestTimestamp = parseInt(this.mostRecentData[this.mostRecentData.length]);
+        var datumTimestamp = this.domainFormatter.parse(datum);
+        var latestTimestamp = this.domainFormatter.parse(this.mostRecentData[this.mostRecentData.length]);
 
         return isNaN(latestTimestamp) || datumTimestamp > latestTimestamp;
     }
@@ -184,10 +184,13 @@ define([], function () {
     /**
      * @private
      */
-    PerObjectTelemetryProvider.prototype.calculateMeansForDatum = function (telemetryDatum, keyToMean) {
+    PerObjectTelemetryProvider.prototype.createMeanDatum = function (telemetryDatum) {
+        var domainValue = this.domainFormatter.parse(telemetryDatum);
+        var rangeValue = this.calculateMean();
+
         var meanDatum = {
-            'utc': telemetryDatum['utc'],
-            'value': this.calculateMean(keyToMean)
+            'utc': domainValue,
+            'value': rangeValue
         }
         return meanDatum;
     }
@@ -195,19 +198,12 @@ define([], function () {
     /**
      * @private
      */
-    PerObjectTelemetryProvider.prototype.calculateMean = function (valueToMean) {
+    PerObjectTelemetryProvider.prototype.calculateMean = function () {
         return this.mostRecentData.reduce(function (sum, datum){
+            var valueToAdd = this.rangeFormatter.parse(datum);
             return sum + datum[valueToMean];
-        }, 0) / this.mostRecentData.length;
+        }.bind(this), 0) / this.mostRecentData.length;
     };
-
-    PerObjectTelemetryProvider.prototype.getRangeKey = function () {
-        return this.telemetryApi.getMetadata(this.domainObject)
-            .valuesForHints(['range'])
-            .map(function (metadatum) {
-                return metadatum.source;
-            })[0];
-    }
 
     return PerObjectTelemetryProvider;
 });
