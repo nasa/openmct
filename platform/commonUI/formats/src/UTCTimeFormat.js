@@ -120,9 +120,16 @@ define([
         }
     };
 
+    // If dates come in this format, parse them with built in parser to avoid
+    // 30x longer parsing costs via momentjs.
+    var iso9601format = /^\d{4}-\d{2}-\d{2}[T\ ]\d{2}:\d{2}:\d{2}.\d{3}Z?/;
+
     UTCTimeFormat.prototype.parse = function (text) {
         if (typeof text === 'number') {
             return text;
+        }
+        if (iso9601format.test(text)) {
+            return moment.utc(new Date(text)).valueOf();
         }
         return moment.utc(text, DATE_FORMATS).valueOf();
     };
