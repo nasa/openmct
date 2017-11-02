@@ -96,7 +96,7 @@
     }
 
     // Prevent nested frames from being selectable until we have proper sub-object editing
-    .t-frame-outer .t-frame-outer {
-        pointer-events: none;
-    }
+    //.t-frame-outer .t-frame-outer {
+    //    pointer-events: none;
+    //}
 }

@@ -299,9 +299,6 @@ define([
                 {
                     "key": "edit-elements",
                     "template": elementsTemplate,
-                    "uses": [
-                        
-                    ],
                     "gestures": [
                         "drop"
                     ]

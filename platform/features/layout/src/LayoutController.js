@@ -133,7 +133,7 @@ define(
                         if (self.droppedIdToSelectAfterRefresh) {
                             self.select(null, self.droppedIdToSelectAfterRefresh, domainObject);
                             delete self.droppedIdToSelectAfterRefresh;
-                        } else if (composition.indexOf(self.selectedId) === -1) {
+                        } else if (self.selectedId && composition.indexOf(self.selectedId) === -1) {
                             self.clearSelection();
                         }
                     }
@@ -173,10 +173,6 @@ define(
 
             // Watch for changes to the grid size in the model
             $scope.$watch("model.layoutGrid", updateGridSize);
-
-            $scope.$watch("selection", function (selection) {
-                this.selection = selection;
-            }.bind(this));
 
             // Update composed objects on screen, and position panes
             $scope.$watchCollection("model.composition", refreshComposition);
@@ -369,7 +365,9 @@ define(
          * @returns {boolean} true if selected, otherwise false
          */
         LayoutController.prototype.selected = function (obj) {
-            return !!this.selectedId && this.selectedId === obj.getId();
+            var selection = this.openmct.selection.get();
+            var sobj = selection[0];
+            return (sobj && sobj.oldItem.getId() === obj.getId()) ? true : false;
         };
 
         /**
@@ -381,21 +379,18 @@ define(
         LayoutController.prototype.select = function (event, id, domainObject) {
             if (event) {
                 event.stopPropagation();
-                if (this.selection) {
-                    event.preventDefault();
-                }
             }
-
-            this.openmct.selection.select({item: domainObject.useCapability('adapter'), oldItem: domainObject});
 
             this.selectedId = id;
-
             var selectedObj = {};
-            selectedObj[this.frames[id] ? 'hideFrame' : 'showFrame'] = this.toggleFrame.bind(this, id);
+            selectedObj[this.frames[id] ? 'hideFrame' : 'showFrame'] =
+                this.toggleFrame.bind(this, id, domainObject);
 
-            if (this.selection) {
-                this.selection.select(selectedObj);
-            }
+            this.openmct.selection.select({
+                item: domainObject.useCapability('adapter'),
+                oldItem: domainObject,
+                toolbar: selectedObj
+            });
         };
 
         /**
@@ -404,7 +399,7 @@ define(
          * @param {string} id the object id
          * @private
          */
-        LayoutController.prototype.toggleFrame = function (id) {
+        LayoutController.prototype.toggleFrame = function (id, domainObject) {
             var configuration = this.$scope.configuration;
 
             if (!configuration.panels[id]) {
@@ -412,7 +407,7 @@ define(
             }
 
             this.frames[id] = configuration.panels[id].hasFrame = !this.frames[id];
-            this.select(undefined, id); // reselect so toolbar updates
+            this.select(undefined, id, domainObject); // reselect so toolbar updates
         };
 
         /**
@@ -423,12 +418,12 @@ define(
                 return;
             }
 
-            this.openmct.selection.select({item: this.$scope.domainObject.useCapability('adapter'), oldItem: this.$scope.domainObject});
+            delete this.selectedId;
 
-            if (this.selection) {
-                this.selection.deselect();
-                delete this.selectedId;
-            }
+            this.openmct.selection.select({
+                item: this.$scope.domainObject.useCapability('adapter'),
+                oldItem: this.$scope.domainObject
+            });
         };
 
         /**
