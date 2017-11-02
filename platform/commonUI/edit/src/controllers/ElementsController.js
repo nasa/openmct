@@ -29,7 +29,7 @@ define(
          *
          * @constructor
          */
-        function ElementsController($scope) {
+        function ElementsController($scope, openmct) {
             this.scope = $scope;
             this.scope.composition = [];
             var self = this;
@@ -67,20 +67,15 @@ define(
             });
         }
 
-        // ElementsController.prototype.setSelection = function (selection) {
-        //     this.scope.selection = selection;
-        //     this.refreshComposition();
-        // };
-
         ElementsController.prototype.refreshComposition = function () {
             var selection = this.scope.selection[0];
             if (!selection) {
                 return;
             }
 
-            var composition = selection.oldItem.useCapability('composition');
-            if (composition) {
-                composition.then(function (composition) {
+            var comp = selection.oldItem.useCapability('composition');
+            if (comp) {
+                comp.then(function (composition) {
                     this.scope.composition = composition;                    
                 }.bind(this));    
             } else {

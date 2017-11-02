@@ -49,7 +49,7 @@ define(
                 } else {
                     this.deselect();
                 }
-            }.bind(this))
+            }.bind(this));
         }
 
         /**

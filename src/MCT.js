@@ -209,9 +209,7 @@ define([
         this.Dialog = api.Dialog;
 
         this.on('navigation', function(domainObject) {
-            console.log("nav start", domainObject);            
             this.selection.select({item: domainObject.useCapability('adapter'), oldItem: domainObject});
-            console.log("nav stop");
         }.bind(this));
     }
 

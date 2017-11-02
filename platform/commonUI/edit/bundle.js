@@ -121,7 +121,8 @@ define([
                     "key": "ElementsController",
                     "implementation": ElementsController,
                     "depends": [
-                        "$scope"
+                        "$scope",
+                        "openmct"
                     ]
                 },
                 {
