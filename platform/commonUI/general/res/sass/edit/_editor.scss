@@ -88,11 +88,11 @@
     }
 
     // Prevent nested frames from showing their grids
-    .t-frame-outer .l-grid-holder { display: none !important; }
+    //.t-frame-outer .l-grid-holder { display: none !important; }
 
     // Prevent nested elements from showing s-hover-border
     .t-frame-outer .s-hover-border {
-        border: none !important;
+        //border: none !important;
     }
 
     // Prevent nested frames from being selectable until we have proper sub-object editing

@@ -45,7 +45,7 @@
                             mct-object="childObject">
         </mct-representation>
         <!-- Drag handles -->
-        <span class="abs t-edit-handle-holder s-hover-border" ng-if="controller.selected(childObject)">
+        <span class="abs t-edit-handle-holder" ng-if="controller.selected(childObject)">
             <span class="edit-handle edit-move"
                   mct-drag-down="controller.startDrag(childObject.getId(), [1,1], [0,0])"
                   mct-drag="controller.continueDrag(delta)"
