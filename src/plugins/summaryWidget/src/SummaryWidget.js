@@ -138,7 +138,7 @@ define([
      * @param {domainObject} Object instance of this object
      */
     SummaryWidget.prototype.watchForChanges = function (openmct, domainObject) {
-        openmct.objects.observe(domainObject, '*', function (newDomainObject) {
+        this.watchForChangesUnsubscribe = openmct.objects.observe(domainObject, '*', function (newDomainObject) {
             if (newDomainObject.url !== this.domainObject.url ||
                     newDomainObject.openNewTab !== this.domainObject.openNewTab) {
                 this.addHyperlink(newDomainObject.url, newDomainObject.openNewTab);
@@ -179,6 +179,7 @@ define([
         this.editListenerUnsubscribe();
         this.conditionManager.destroy();
         this.widgetDnD.destroy();
+        this.watchForChangesUnsubscribe();
         Object.values(this.rulesById).forEach(function (rule) {
             rule.destroy();
         });
@@ -281,7 +282,11 @@ define([
         ruleId = 'rule' + ruleCount;
         ruleOrder.push(ruleId);
         this.domainObject.configuration.ruleOrder = ruleOrder;
-        this.updateDomainObject();
+
+        if(this.editing){
+            this.updateDomainObject();
+        }
+        
         this.initRule(ruleId, 'Rule');
         this.refreshRules();
     };
@@ -393,6 +398,7 @@ define([
      * Mutate this domain object's configuration with the current local configuration
      */
     SummaryWidget.prototype.updateDomainObject = function () {
+        console.log('persisting');
         this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
     };
 
