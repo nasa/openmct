@@ -32,22 +32,27 @@ define(
                 mockTypeCapability,
                 mockEvent,
                 mockCurrentTarget,
+                model,
                 controller;
 
             beforeEach(function () {
                 mockMutationCapability = jasmine.createSpyObj("mutation", ["mutate"]);
-                mockTypeCapability = {
-                    typeDef: {
-                        name: ""
-                    }
-                };
+                mockTypeCapability = jasmine.createSpyObj("type", ["typeDef", "hasFeature"]);
+                mockTypeCapability.typeDef = { name: ""};
+                mockTypeCapability.hasFeature.andCallFake(function (feature) {
+                    return feature === 'creation';
+                });
+
                 mockCapabilities = {
                     mutation: mockMutationCapability,
                     type: mockTypeCapability
                 };
 
-                mockDomainObject = jasmine.createSpyObj("domainObject", ["getCapability", "model"]);
-                mockDomainObject.model = {name: "Test name"};
+                model = {
+                    name: "Test name"
+                };
+                mockDomainObject = jasmine.createSpyObj("domainObject", ["getCapability", "getModel"]);
+                mockDomainObject.getModel.andReturn(model);
                 mockDomainObject.getCapability.andCallFake(function (key) {
                     return mockCapabilities[key];
                 });
@@ -56,7 +61,7 @@ define(
                     domainObject: mockDomainObject
                 };
 
-                mockCurrentTarget = jasmine.createSpyObj("currentTarget", ["blur", "innerHTML"]);
+                mockCurrentTarget = jasmine.createSpyObj("currentTarget", ["blur", "textContent"]);
                 mockCurrentTarget.blur.andReturn(mockCurrentTarget);
 
                 mockEvent = {
@@ -70,7 +75,7 @@ define(
 
             it("updates the model with new name on blur", function () {
                 mockEvent.type = "blur";
-                mockCurrentTarget.innerHTML = "New name";
+                mockCurrentTarget.textContent = "New name";
                 controller.updateName(mockEvent);
 
                 expect(mockMutationCapability.mutate).toHaveBeenCalled();
@@ -78,23 +83,23 @@ define(
 
             it("updates the model with a default for blank names", function () {
                 mockEvent.type = "blur";
-                mockCurrentTarget.innerHTML = "";
+                mockCurrentTarget.textContent = "";
                 controller.updateName(mockEvent);
 
-                expect(mockCurrentTarget.innerHTML.length).not.toEqual(0);
+                expect(mockCurrentTarget.textContent.length).not.toEqual(0);
                 expect(mockMutationCapability.mutate).toHaveBeenCalled();
             });
 
             it("does not update the model if the same name", function () {
                 mockEvent.type = "blur";
-                mockCurrentTarget.innerHTML = mockDomainObject.model.name;
+                mockCurrentTarget.textContent = mockDomainObject.getModel().name;
                 controller.updateName(mockEvent);
 
                 expect(mockMutationCapability.mutate).not.toHaveBeenCalled();
             });
 
             it("updates the model on enter keypress event only", function () {
-                mockCurrentTarget.innerHTML = "New name";
+                mockCurrentTarget.textContent = "New name";
                 controller.updateName(mockEvent);
 
                 expect(mockMutationCapability.mutate).not.toHaveBeenCalled();
@@ -104,16 +109,28 @@ define(
 
                 expect(mockMutationCapability.mutate).toHaveBeenCalledWith(jasmine.any(Function));
 
-                mockMutationCapability.mutate.mostRecentCall.args[0](mockDomainObject.model);
+                mockMutationCapability.mutate.mostRecentCall.args[0](model);
 
-                expect(mockDomainObject.model.name).toBe("New name");
+                expect(mockDomainObject.getModel().name).toBe("New name");
             });
 
             it("blurs the field on enter key press", function () {
+                mockCurrentTarget.textContent = "New name";
                 mockEvent.which = 13;
                 controller.updateName(mockEvent);
 
                 expect(mockEvent.currentTarget.blur).toHaveBeenCalled();
+            });
+
+            it("allows editting name when object is creatable", function () {
+                expect(controller.allowEdit()).toBe(true);
+            });
+
+            it("disallows editting name when object is non-creatable", function () {
+                mockTypeCapability.hasFeature.andReturn(false);
+
+                expect(controller.allowEdit()).toBe(false);
+
             });
         });
     }

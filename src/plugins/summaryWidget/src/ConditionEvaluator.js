@@ -313,17 +313,6 @@ define([], function () {
     };
 
     /**
-     * Interpret a string as a JavaScript conditional, and return its boolean value
-     * @param {string} condition The string to interpreted as JavaScript
-     * @return {boolean} The value of the conditions
-     */
-    ConditionEvaluator.prototype.executeJavaScriptCondition = function (condition) {
-        var conditionValue = false;
-        //TODO: implement JavaScript execution
-        return conditionValue;
-    };
-
-    /**
      * A function that returns true only if each value in its input argument is
      * of a numerical type
      * @param {[]} input An array of values

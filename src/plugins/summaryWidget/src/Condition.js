@@ -108,10 +108,6 @@ define([
         $(this.domElement).on('input', 'input', onValueInput);
     }
 
-    /**
-     * Get the DOM element representing this condition in the view
-     * @return {Element}
-     */
     Condition.prototype.getDOM = function (container) {
         return this.domElement;
     };

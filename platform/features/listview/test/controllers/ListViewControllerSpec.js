@@ -31,7 +31,9 @@ define(
                 controller,
                 childModel,
                 typeCapability,
-                mutationCapability;
+                mutationCapability,
+                formatService;
+
             beforeEach(function () {
                 unlistenFunc = jasmine.createSpy("unlisten");
 
@@ -40,6 +42,18 @@ define(
                     ["listen"]
                 );
                 mutationCapability.listen.andReturn(unlistenFunc);
+
+                formatService = jasmine.createSpyObj(
+                    "formatService",
+                    ["getFormat"]
+                );
+                formatService.getFormat.andReturn(jasmine.createSpyObj(
+                    'utc',
+                    ["format"]
+                ));
+                formatService.getFormat().format.andCallFake(function (v) {
+                    return "formatted " + v;
+                });
 
                 typeCapability = jasmine.createSpyObj(
                     "typeCapability",
@@ -94,20 +108,27 @@ define(
                 );
                 scope.domainObject = domainObject;
 
-                controller  = new ListViewController(scope);
+                controller  = new ListViewController(scope, formatService);
 
                 waitsFor(function () {
                     return scope.children;
                 });
             });
+
+            it("uses the UTC time format", function () {
+                expect(formatService.getFormat).toHaveBeenCalledWith('utc');
+            });
+
             it("updates the view", function () {
                 expect(scope.children[0]).toEqual(
                     {
                         icon: "icon-folder",
                         title: "Battery Charge Status",
                         type: "Folder",
-                        persisted: "Wed, 07 Jun 2017 20:34:57 GMT",
-                        modified: "Wed, 07 Jun 2017 20:34:57 GMT",
+                        persisted: formatService.getFormat('utc')
+                            .format(childModel.persisted),
+                        modified: formatService.getFormat('utc')
+                            .format(childModel.modified),
                         asDomainObject: childObject,
                         location: ''
                     }

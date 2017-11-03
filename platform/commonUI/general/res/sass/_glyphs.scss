@@ -146,6 +146,7 @@ $glyph-icon-timer: '\e1127';
 $glyph-icon-topic: '\e1128';
 $glyph-icon-box-with-dashed-lines: '\e1129';
 $glyph-icon-summary-widget: '\e1130';
+$glyph-icon-notebook: '\e1131';
 
 /************************** 16 PX CLASSES */
 
@@ -260,6 +261,7 @@ $glyph-icon-summary-widget: '\e1130';
 .icon-topic {  @include glyphBefore($glyph-icon-topic); }
 .icon-box-with-dashed-lines {  @include glyphBefore($glyph-icon-box-with-dashed-lines); }
 .icon-summary-widget {  @include glyphBefore($glyph-icon-summary-widget); }
+.icon-notebook {  @include glyphBefore($glyph-icon-notebook); }
 
 /************************** 12 PX CLASSES */
 .icon-crosshair-12px {  @include glyphBefore($glyph-icon-crosshair,'symbolsfont-12px'); }

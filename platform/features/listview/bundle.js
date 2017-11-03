@@ -49,7 +49,7 @@
                 {
                     "key": "ListViewController",
                     "implementation": ListViewController,
-                    "depends": ["$scope"]
+                    "depends": ["$scope", "formatService"]
                 }
             ],
             "directives": [

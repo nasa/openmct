@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define(function () {
-    function ListViewController($scope) {
+    function ListViewController($scope, formatService) {
         this.$scope = $scope;
         $scope.orderByField = 'title';
         $scope.reverseSort = false;
@@ -29,6 +29,8 @@ define(function () {
         this.updateView();
         var unlisten = $scope.domainObject.getCapability('mutation')
             .listen(this.updateView.bind(this));
+
+        this.utc = formatService.getFormat('utc');
 
         $scope.$on('$destroy', function () {
             unlisten();
@@ -50,17 +52,13 @@ define(function () {
                 icon: child.getCapability('type').getCssClass(),
                 title: child.getModel().name,
                 type: child.getCapability('type').getName(),
-                persisted: new Date(
-                    child.getModel().persisted
-                ).toUTCString(),
-                modified: new Date(
-                    child.getModel().modified
-                ).toUTCString(),
+                persisted: this.utc.format(child.getModel().persisted),
+                modified: this.utc.format(child.getModel().modified),
                 asDomainObject: child,
                 location: child.getCapability('location'),
                 action: child.getCapability('action')
             };
-        });
+        }, this);
     };
 
     return ListViewController;

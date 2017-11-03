@@ -65,7 +65,8 @@ define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
             ]);
             mockOpenMCT.composition.get.andReturn(mockComposition);
             mockOpenMCT.objects.mutate = jasmine.createSpy('mutate');
-            mockOpenMCT.objects.observe = function () {};
+            mockOpenMCT.objects.observe = jasmine.createSpy('observe');
+            mockOpenMCT.objects.observe.andReturn(function () {});
 
             summaryWidget = new SummaryWidget(mockDomainObject, mockOpenMCT);
             mockContainer = document.createElement('div');
@@ -115,7 +116,8 @@ define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
             expect(Object.keys(mockDomainObject.configuration.ruleConfigById).length).toEqual(1);
         });
 
-        it('uses mutate when updating the domain object', function () {
+        it('uses mutate when updating the domain object only when in edit mode', function () {
+            summaryWidget.editing = true;
             summaryWidget.updateDomainObject();
             expect(mockOpenMCT.objects.mutate).toHaveBeenCalled();
         });

@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global console */
 
 define([], function () {
     /**
@@ -119,8 +120,7 @@ define([], function () {
      * When called by Open MCT, this may include additional arguments
      * which are on the path to the object to be viewed; for instance,
      * when viewing "A Folder" within "My Items", this method will be
-     * invoked with "A Folder" (as a domain object) as the first argument,
-     * and "My Items" as the second argument.
+     * invoked with "A Folder" (as a domain object) as the first argument
      *
      * @method canView
      * @memberof module:openmct.ViewProvider#

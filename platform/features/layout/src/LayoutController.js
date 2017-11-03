@@ -26,8 +26,12 @@
  * @namespace platform/features/layout
  */
 define(
-    ['./LayoutDrag'],
-    function (LayoutDrag) {
+    [
+        './LayoutDrag'
+    ],
+    function (
+        LayoutDrag
+    ) {
 
         var DEFAULT_DIMENSIONS = [12, 8],
             DEFAULT_GRID_SIZE = [32, 32],
@@ -123,6 +127,8 @@ define(
                         if (self.droppedIdToSelectAfterRefresh) {
                             self.select(null, self.droppedIdToSelectAfterRefresh);
                             delete self.droppedIdToSelectAfterRefresh;
+                        } else if (composition.indexOf(self.selectedId) === -1) {
+                            self.clearSelection();
                         }
                     }
                 });

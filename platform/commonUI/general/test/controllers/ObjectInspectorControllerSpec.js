@@ -39,10 +39,18 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    ["$watch"]
+                    ["$watch", "$on"]
                 );
                 mockScope.ngModel = {};
-                mockScope.ngModel.selectedObject = 'mock selected object';
+                mockScope.ngModel.selectedObject = {
+                    getCapability: function () {
+                        return {
+                            listen: function () {
+                                return true;
+                            }
+                        };
+                    }
+                };
 
                 mockObjectService = jasmine.createSpyObj(
                     "objectService",

@@ -196,7 +196,6 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
             //if no conditions are fully defined, should return false for any mode
             expect(evaluator.execute(mockConditionsUndefined, 'any')).toEqual(false);
             expect(evaluator.execute(mockConditionsUndefined, 'all')).toEqual(false);
-            expect(evaluator.execute(mockConditionsUndefined, 'js')).toEqual(false);
             //these conditions are true: evaluator should ignore undefined conditions,
             //and evaluate the rule as true
             mockConditionsUndefined.push({
