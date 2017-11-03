@@ -109,7 +109,7 @@ define(
             this.updateSelection = updateSelection;
             this.toolbar = undefined;
             this.toolbarObject = {};
-            this.openmct = openmct;
+            // this.openmct = openmct;
 
             // If this representation exposes a toolbar, set up watches
             // to synchronize with it.
@@ -147,7 +147,7 @@ define(
             // Expose the toolbar object to the parent scope
             initialize(definition);
             // Create a selection scope
-            this.setSelection(new EditToolbarSelection(this.openmct));
+            this.setSelection(new EditToolbarSelection(openmct));
             // Initialize toolbar to an empty selection
             this.updateSelection([]);
         };
