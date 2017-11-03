@@ -44,8 +44,8 @@ define(
             this.selectedObj = undefined;
 
             openmct.selection.on('change', function (selection) {
-                if (selection[0] && selection[0].toolbar) {
-                    this.select(selection[0].toolbar);
+                if (selection[0] && selection[0].context.toolbar) {
+                    this.select(selection[0].context.toolbar);
                 } else {
                     this.deselect();
                 }

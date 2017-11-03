@@ -19,18 +19,17 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div ng-controller="InspectorController">   
-        <!--{{selection[0].oldItem}}-->
+<div ng-controller="InspectorController">
         <mct-representation
                 key="'object-properties'"
-                mct-object="selection[0].oldItem"
+                mct-object="selection[0].context.oldItem"
                 ng-model="ngModel">
         </mct-representation>
 
-        <div class='custom-view'>
+        <div class='inspector-view'>
              <mct-representation
                     key="inspectorKey"
-                    mct-object="selection[0].oldItem"
+                    mct-object="selection[0].context.oldItem"
                     ng-model="ngModel">
             </mct-representation>
         </div>

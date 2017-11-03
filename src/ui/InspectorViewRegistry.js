@@ -22,10 +22,24 @@
 
  define([], function () {
 
+     /**
+     * A InspectorViewRegistry maintains the definitions for views
+     * that may occur in the inspector.
+     *
+     * @interface InspectorViewRegistry
+     * @memberof module:openmct
+     */
     function InspectorViewRegistry() {
         this.providers = {};
     }
 
+    /**
+     *  
+     * @param {object} selection the object to be viewed
+     * @returns {module:openmct.InspectorViewRegistry[]} any providers
+     *          which can provide views of this object
+     * @private for platform-internal use
+     */
     InspectorViewRegistry.prototype.get = function (selection) {
         var providers = this.getAllProviders().filter(function (provider) {            
             return provider.canView(selection);
@@ -36,6 +50,20 @@
         }
     };
 
+     /**
+     * @private
+     */
+    InspectorViewRegistry.prototype.getAllProviders = function () {
+        return Object.values(this.providers);
+    };
+
+     /**
+     * Registers a new type of view.
+     *
+     * @param {module:openmct.InspectorViewRegistry} provider the provider for this view
+     * @method addProvider
+     * @memberof module:openmct.InspectorViewRegistry#
+     */
     InspectorViewRegistry.prototype.addProvider = function (provider) {
         var key = provider.key;
         
@@ -53,16 +81,11 @@
     /**
      * @private
      */
-    InspectorViewRegistry.prototype.getProviderByKey = function (key) {
+    InspectorViewRegistry.prototype.getByProviderKey = function (key) {
         return this.providers[key];
     };
 
-    /**
-     * @private
-     */
-    InspectorViewRegistry.prototype.getAllProviders = function () {
-        return Object.values(this.providers);
-    };
+   
 
     /**
      * A View is used to provide displayable content, and to react to
@@ -100,7 +123,7 @@
      * Exposes types of views in inspector.
      *
      * @interface InspectorViewProvider
-      * @property {string} key a unique identifier for this view
+     * @property {string} key a unique identifier for this view
      * @property {string} name the human-readable name of this view
      * @property {string} [description] a longer-form description (typically
      *           a single sentence or short paragraph) of this kind of view
@@ -115,17 +138,17 @@
      * @method canView
      * @memberof module:openmct.InspectorViewProvider#
      * @param {module:openmct.selection} selection
-     * @returns {boolean} true if the selected item can be viewed using
-     *          this provider
+     * @returns {boolean} 'true' if the view applies to the provided selection,
+     *          otherwise 'false'.
      */
 
     /**
-     * Provide an inspector view of this selection object.
+     * Provides a view of the selection object in the inspector.
      *
      * @method view
      * @memberof module:openmct.InspectorViewProvider#
      * @param {module:openmct.selection} selection the selection object
-     * @returns {module:openmct.View} a view for this selection 
+     * @returns {module:openmct.View} a view of this selection 
      */
 
     return InspectorViewRegistry;

@@ -38,7 +38,7 @@ define(
          * @constructor
          * @implements {Representer}
          */
-        function EditToolbarRepresenter(scope, element, attrs, openmct) {
+        function EditToolbarRepresenter(openmct, scope, element, attrs) {
             var self = this;
 
             // Mark changes as ready to persist

@@ -383,7 +383,10 @@ define([
                     ]
                 },
                 {
-                    "implementation": EditToolbarRepresenter
+                    "implementation": EditToolbarRepresenter,
+                    "depends": [
+                        "openmct"
+                    ]
                 }
             ],
             "constants": [

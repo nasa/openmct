@@ -27,9 +27,11 @@
  */
 define(
     [
+        'zepto',
         './LayoutDrag'
     ],
     function (
+        $,
         LayoutDrag
     ) {
 
@@ -53,8 +55,12 @@ define(
         function LayoutController($scope, openmct) {
             var self = this,
                 callbackCount = 0;
-
-            this.openmct = openmct;
+            
+            if ($scope.domainObject.getCapability('editor').isEditContextRoot()) {
+                openmct.selection.select({
+                    context: self.getContext($scope.domainObject)
+                });
+            }
 
             // Update grid size when it changed
             function updateGridSize(layoutGrid) {
@@ -113,15 +119,11 @@ define(
 
                 $scope.domainObject.useCapability('composition').then(function (composition) {
                     var ids;
-                    var domainObject;
 
                     //Is this callback for the most recent composition
                     // request? If not, discard it. Prevents race condition
                     if (thisCount === callbackCount) {
                         ids = composition.map(function (object) {
-                                if (self.droppedIdToSelectAfterRefresh && self.droppedIdToSelectAfterRefresh === object.getId()) {
-                                    domainObject = object;
-                                }
                                 return object.getId();
                             }) || [];
 
@@ -129,12 +131,8 @@ define(
                         self.layoutPanels(ids);
                         self.setFrames(ids);
 
-                        // If there is a newly-dropped object, select it.
-                        if (self.droppedIdToSelectAfterRefresh) {
-                            self.select(null, self.droppedIdToSelectAfterRefresh, domainObject);
-                            delete self.droppedIdToSelectAfterRefresh;
-                        } else if (self.selectedId && composition.indexOf(self.selectedId) === -1) {
-                            self.clearSelection();
+                       if (self.selectedId && composition.indexOf(self.selectedId) === -1) {
+                            openmct.selection.clear();
                         }
                     }
                 });
@@ -166,10 +164,31 @@ define(
                 }
             };
 
+            // Sets the selectable object in response to the selection change event.
+            function setSelection(selectable) {
+                var selection = selectable[0];
+
+                if (!selection) {
+                    delete self.selectedId;
+                    return;
+                }
+
+                if (self.selectedId && self.drilledIn[self.selectedId]) {
+                    self.selectable[0].element.classList.remove('s-drilled-in');
+                }
+
+                var id = selection.context.oldItem.getId();
+                self.selectedId = id;
+                self.drilledIn[id] = false;
+                self.selectable = selectable;
+            }
+
             this.positions = {};
             this.rawPositions = {};
             this.gridSize = DEFAULT_GRID_SIZE;
             this.$scope = $scope;
+            this.drilledIn = {};
+            this.openmct = openmct;
 
             // Watch for changes to the grid size in the model
             $scope.$watch("model.layoutGrid", updateGridSize);
@@ -179,6 +198,12 @@ define(
 
             // Position panes where they are dropped
             $scope.$on("mctDrop", handleDrop);
+
+            openmct.selection.on('change', setSelection);
+
+            $scope.$on("$destroy", function () {
+                openmct.selection.off("change", setSelection);
+            });
         }
 
         // Utility function to copy raw positions from configuration,
@@ -359,38 +384,14 @@ define(
         };
 
         /**
-         * Check if the object is currently selected.
+         * Checks if the object is currently selected.
          *
          * @param {string} obj the object to check for selection
          * @returns {boolean} true if selected, otherwise false
          */
         LayoutController.prototype.selected = function (obj) {
-            var selection = this.openmct.selection.get();
-            var sobj = selection[0];
-            return (sobj && sobj.oldItem.getId() === obj.getId()) ? true : false;
-        };
-
-        /**
-         * Set the active user selection in this view.
-         *
-         * @param event the mouse event
-         * @param {string} id the object id
-         */
-        LayoutController.prototype.select = function (event, id, domainObject) {
-            if (event) {
-                event.stopPropagation();
-            }
-
-            this.selectedId = id;
-            var selectedObj = {};
-            selectedObj[this.frames[id] ? 'hideFrame' : 'showFrame'] =
-                this.toggleFrame.bind(this, id, domainObject);
-
-            this.openmct.selection.select({
-                item: domainObject.useCapability('adapter'),
-                oldItem: domainObject,
-                toolbar: selectedObj
-            });
+            var sobj = this.openmct.selection.get()[0];
+            return (sobj && sobj.context.oldItem.getId() === obj.getId()) ? true : false;
         };
 
         /**
@@ -407,27 +408,76 @@ define(
             }
 
             this.frames[id] = configuration.panels[id].hasFrame = !this.frames[id];
-            this.select(undefined, id, domainObject); // reselect so toolbar updates
+
+            var selection = this.openmct.selection.get();
+            selection[0].context.toolbar = this.getToolbar(id, domainObject);
+            this.openmct.selection.select(selection);  // reselect so toolbar updates
         };
 
         /**
-         * Clear the current user selection.
+         * Gets the toolbar object for the given domain object.
+         *
+         * @param id the domain object id
+         * @param domainObject the domain object
+         * @returns {object}
+         * @private
          */
-        LayoutController.prototype.clearSelection = function (event) {
+        LayoutController.prototype.getToolbar = function (id, domainObject) {
+            var toolbarObj = {};
+            toolbarObj[this.frames[id] ? 'hideFrame' : 'showFrame'] = this.toggleFrame.bind(this, id, domainObject);
+            return toolbarObj;
+        };
+
+        /**
+         * Bypasses selection if drag is in progress.
+         *
+         * @param event the angular event object
+         */
+        LayoutController.prototype.bypassSelection = function (event) {
+            if (this.dragInProgress) {
+                if (event) {
+                    event.stopPropagation();
+                }
+                return;
+            }
+        };
+
+        /**
+         * Checks if the domain object is drilled in.
+         *
+         * @param domainObject the domain object
+         * @return true if the object is drilled in, false otherwise
+         */
+        LayoutController.prototype.isDrilledIn = function (domainObject) {
+            return this.drilledIn[domainObject.getId()];
+        };
+
+        /**
+         * Puts the given object in the drilled-in mode.
+         * 
+         * @param event the angular event object
+         * @param domainObject the domain object
+         */
+        LayoutController.prototype.drill = function (event, domainObject) {
             if (event) {
                 event.stopPropagation();
             }
 
-            if (this.dragInProgress) {
+            if (!domainObject.getCapability('editor').inEditContext()) {
                 return;
             }
 
-            delete this.selectedId;
+            if (!domainObject.hasCapability('composition')) {
+                return;
+            }
 
-            this.openmct.selection.select({
-                item: this.$scope.domainObject.useCapability('adapter'),
-                oldItem: this.$scope.domainObject
-            });
+            // Disable since fixed position doesn't use the selection API yet
+            if (domainObject.getModel().type === 'telemetry.fixed') {
+                return;
+            }
+
+            event.currentTarget.classList.add('s-drilled-in');
+            this.drilledIn[domainObject.getId()] = true;
         };
 
         /**
@@ -447,6 +497,37 @@ define(
          */
         LayoutController.prototype.getGridSize = function () {
             return this.gridSize;
+        };
+
+        /**
+         * Gets the selection context.
+         *
+         * @param domainObject the domain object
+         * @returns {object} the context object which includes
+         *                  item, oldItem and toolbar
+         */
+        LayoutController.prototype.getContext = function (domainObject, toolbar) {
+            return {
+                item: domainObject.useCapability('adapter'),
+                oldItem: domainObject,
+                toolbar: (toolbar) ? this.getToolbar(domainObject.getId(), domainObject) : undefined
+            }
+        };
+
+        /**
+         * Selects a newly-dropped object.
+         *
+         * @param classSelector the css class selector
+         * @param domainObject the domain object
+         */
+        LayoutController.prototype.selectIfNew = function (classSelector, domainObject) {
+            if (domainObject.getId() === this.droppedIdToSelectAfterRefresh) {
+                var selector = $(classSelector).selector;
+                setTimeout(function () {
+                    $('.' + selector)[0].click();
+                    delete this.droppedIdToSelectAfterRefresh;
+                }.bind(this), 0);
+            }
         };
 
         return LayoutController;

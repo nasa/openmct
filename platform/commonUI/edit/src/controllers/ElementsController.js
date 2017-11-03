@@ -53,7 +53,7 @@ define(
 
             function setSelection(selection) {
                 self.scope.selection = selection;
-                self.refreshComposition();
+                self.refreshComposition(selection);
             }
 
             $scope.filterBy = filterBy;
@@ -67,15 +67,21 @@ define(
             });
         }
 
-        ElementsController.prototype.refreshComposition = function () {
-            var selection = this.scope.selection[0];
-            if (!selection) {
+        /**
+         * Gets the composition for the selected object and populates the scope with it.
+         *
+         * @param selection the selection object
+         * @private
+         */
+        ElementsController.prototype.refreshComposition = function (selection) {
+            if (!selection[0]) {
                 return;
             }
 
-            var comp = selection.oldItem.useCapability('composition');
-            if (comp) {
-                comp.then(function (composition) {
+            var selectedObjectComposition = selection[0].context.oldItem.useCapability('composition');
+
+            if (selectedObjectComposition) {
+                selectedObjectComposition.then(function (composition) {
                     this.scope.composition = composition;                    
                 }.bind(this));    
             } else {

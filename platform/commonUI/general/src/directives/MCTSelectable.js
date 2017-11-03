@@ -21,41 +21,36 @@
  *****************************************************************************/
 
 define(
-    ['../../browse/src/InspectorRegion'],
-    function (InspectorRegion) {
+    [],
+    function () {
 
         /**
-         * The InspectorController adds region data for a domain object's type
-         * to the scope.
+         * The mct-selectable directive allows selection functionality
+         * (click) to be attached to specific elements.
          *
+         * @memberof platform/commonUI/general
          * @constructor
          */
-        function InspectorController($scope, policyService, openmct, $document) {
-            window.inspectorScope = $scope;
+        function MCTSelectable(openmct) {
 
-            function setSelection(selection) {
+            // Link; install event handlers.
+            function link(scope, element, attrs) {
+                openmct.selection.selectable(element[0], scope.$eval(attrs.mctSelectable));
 
-                if (selection[0]) {
-                    var view = openmct.inspectorViews.get(selection);
-                    if (view) {
-                        var container = $document[0].querySelectorAll('.inspector-view')[0];
-                        view.show(container);
-                    } else {
-                        $scope.inspectorKey = selection[0].context.oldItem.getCapability("type").typeDef.inspector;   
-                    }
-                }
-
-                $scope.selection = selection;
+                scope.$on("$destroy", function () {
+                    openmct.selection.removeSelectable(element[0]);
+                });
             }
 
-            openmct.selection.on("change", setSelection);
-            setSelection(openmct.selection.get());
+            return {
+                // mct-selectable only makes sense as an attribute
+                restrict: "A",
+                // Link function, to install event handlers
+                link: link
+            };
 
-            $scope.$on("$destroy", function () {
-                openmct.selection.off("change", setSelection);
-            });
         }
 
-        return InspectorController;
+        return MCTSelectable;
     }
 );
