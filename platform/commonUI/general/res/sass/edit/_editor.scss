@@ -26,11 +26,44 @@
     position: relative;
     height: 100%;
     width: 100%;
+    min-height: 2160px;
+    min-width: 3840px;
+    pointer-events: none;
     .l-grid {
         @extend .abs;
-        pointer-events: none;
         z-index: 0;
         &.l-grid-y { background-position: 0 1px; }
+    }
+    .l-sizing-guide {
+        $c: rgba(#fff, 0.3);
+        $b: 1px solid $c;
+        $d: 50px;
+        $offsetL: ($ueCollapsedPaneEdgeM * 2) + $interiorMarginSm * 2;
+        $offsetT: 165px;
+        border-right: $b;
+        border-bottom: $b;
+        font-size: 0.7rem;
+        height: $d; width: $d;
+        overflow: visible;
+        position: absolute;
+        &:after {
+            color: $c;
+            display: inline-block;
+            position: absolute;
+            right: $interiorMargin;
+            bottom: $interiorMargin;
+            white-space: nowrap;
+        }
+        &.t-size-720p {
+            left: 1280px - $d - $offsetL;
+            top: 720px - $d - $offsetT;
+            &:after { content: '720P [1280 x 720]'; }
+        }
+        &.t-size-1080p {
+            left: 1920px - $d - $offsetL;
+            top: 1080px - $d - $offsetT;
+            &:after { content: '1080P [1920 x 1080]'; }
+        }
     }
 }
 
