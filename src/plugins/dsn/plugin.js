@@ -12,8 +12,7 @@ define([
         objectProvider,
         realTimeProvider;
 
-    var DSN_COLLECTION_TYPE = 'dsn.collection',
-        DSN_DICTIONARY_URI = 'src/plugins/dsn/res/dsn-dictionary.json',
+    var DSN_DICTIONARY_URI = 'src/plugins/dsn/res/dsn-dictionary.json',
         DSN_KEY = 'dsn',
         DSN_NAMESPACE = 'deep.space.network',
         DSN_TELEMETRY_SOURCE = 'https://eyes.nasa.gov/dsn/data/dsn.xml',
@@ -61,7 +60,7 @@ define([
                         namespace: 'deep.space.network',
                         key: 'dsn'
                     },
-                    type: 'dsn.collection',
+                    type: 'folder',
                     location: 'ROOT',
                     name: 'Deep Space Network',
                     composition: []
@@ -149,13 +148,6 @@ define([
                 openmct.objects.addProvider(DSN_NAMESPACE, objectProvider);
                 openmct.composition.addProvider(compositionProvider);
                 openmct.telemetry.addProvider(realTimeProvider);
-            });
-
-            // This type represents DSN domain objects that contain other DSN objects
-            openmct.types.addType(DSN_COLLECTION_TYPE, {
-                name: 'DSNCollection',
-                description: 'A DSN domain object that contains DSN objects with telemetry.',
-                cssClass: 'icon-folder'
             });
 
             // This type represents DSN domain objects with telemetry

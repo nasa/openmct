@@ -4,7 +4,7 @@
         "key": "dsn"
     },
     "name": "Deep Space Network",
-    "type": "dsn.collection",
+    "type": "folder",
     "location": "ROOT",
     "domainObjects": {
         "deep.space.network:canberra" : {
@@ -13,7 +13,7 @@
                 "key": "canberra"
             },
             "name": "Canberra",
-            "type": "dsn.collection",
+            "type": "folder",
             "location": "deep.space.network:dsn",
             "composition":[
                 "deep.space.network:canberra.station",
@@ -120,7 +120,7 @@
                 "key": "canberra.dss34"
             },
             "name": "DSS 34",
-            "type": "dsn.collection",
+            "type": "folder",
             "composition": [
                 "deep.space.network:dss34.antenna"
             ]
@@ -324,7 +324,7 @@
                 "key": "canberra.dss35"
             },
             "name": "DSS 35",
-            "type": "dsn.collection",
+            "type": "folder",
             "composition": [
                 "deep.space.network:dss35.antenna"
             ]
@@ -528,7 +528,7 @@
                 "key": "canberra.dss36"
             },
             "name": "DSS 36",
-            "type": "dsn.collection",
+            "type": "folder",
             "composition": [
                 "deep.space.network:dss36.antenna"
             ]
@@ -732,7 +732,7 @@
                 "key": "canberra.dss43"
             },
             "name": "DSS 43",
-            "type": "dsn.collection",
+            "type": "folder",
             "composition": [
                 "deep.space.network:dss43.antenna"
             ]
