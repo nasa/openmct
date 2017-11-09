@@ -68,13 +68,14 @@
           <div class="embeds l-flex-row">
             <div class="entry-embedded" ng-repeat="embed in entry.embeds track by $index" id="{{embed.id}}">        
                  <div class="l-flex-row embed" ng-class="{ 'nosnapshot' : !embed.snapshot}">
-                    <div ng-class="embed.cssClass" class="embed-icon" ng-click="viewSnapshot($event,embed.snapshot.src,embed.id,entry.createdOn,this,setObj(embed.type))"></div>
-                    <div class="snap-thumb" ng-if="embed.snapshot" ng-click="viewSnapshot($event,embed.snapshot.src,embed.id,entry.createdOn,this,setObj(embed.type))">
+                    <div ng-class="embed.cssClass" class="embed-icon" ng-click="viewSnapshot($event,embed.snapshot.src,embed.id,entry.createdOn,this,embed)"></div>
+                    <div class="snap-thumb" ng-if="embed.snapshot" ng-click="viewSnapshot($event,embed.snapshot.src,embed.id,entry.createdOn,this,embed)">
                       <img ng-src="{{embed.snapshot.src}}" src="//:0" alt="{{embed.id}}" >
                     </div>      
                     <div class="embed-info l-flex-col">
-                      <div class="embed-title">{{embed.name}}
-                          <a href="" class='context-available' ng-click='openMenu($event)'></a>
+                      <div class="embed-title object-header">
+                          <a href="#" ng-click='navigate($event,embed.type)'>{{embed.name}}</a>
+                          <a href="#" class='context-available' ng-click='openMenu($event,embed.type)'></a>
                       </div>
                       
                       <div class="hide-menu" ng-show="false">
@@ -82,7 +83,7 @@
                             <div class="menu context-menu">
                                 <ul>
                                     <li ng-repeat="menu in menuEmbed"
-                                        ng-click="menu.perform($event,embed.snapshot.src,embed.id,entry.createdOn,this,setObj(embed.type))"
+                                        ng-click="menu.perform($event,embed.snapshot.src,embed.id,entry.createdOn,this,embed)"
                                         title="{{menu.getMetadata().description}}"
                                         class="{{menu.getMetadata().cssClass}}"
                                         ng-if="embed.snapshot">
@@ -95,7 +96,7 @@
                                         ng-if="!embed.snapshot">
                                         {{menu.getMetadata().name}}
                                     </li>
-                                    <li ng-repeat="menu in menuActions"
+                                    <li ng-repeat="menu in embedActions"
                                         ng-click="menu.perform()"
                                         title="{{menu.getMetadata().description}}"
                                         class="{{menu.getMetadata().cssClass}}">

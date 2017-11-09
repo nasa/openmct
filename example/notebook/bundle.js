@@ -54,7 +54,8 @@ define([
                         "text": "Rehek rerspis nis dem re verae remporrunti sintis vendi comnimi ntiusapic teceseque."
                       }
                     ],
-                    "composition":[]              
+                    "composition":[],
+                    "entryTypes":[]             
                 }
            }
            ],
@@ -83,6 +84,8 @@ define([
                              "dialogService",
                              "popupService",
                              "agentService",
+                             "objectService",
+                             "navigationService",
                              "now",
                              "actionService",
                              "$timeout",
@@ -249,12 +252,8 @@ define([
             ],
      	     "stylesheets": [
               {
-                  "stylesheetUrl": "css/notebook-espresso.css",
+                  "stylesheetUrl": "css/notebook.css",
                   "theme": "espresso"
-              },
-              {
-                  "stylesheetUrl": "css/notebook-snow.css",
-                  "theme": "snow"
               }
           ]
         }

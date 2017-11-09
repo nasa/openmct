@@ -39,20 +39,21 @@ define(
 
 
         createSnapshot.prototype.perform = function ($event,snapshot,embedId,entryId,$scope) {
-           
+            var compile = this.$compile;
             var model = this.domainObject.model;
             var elementPos = model.entries.map(function(x) {return x.createdOn; }).indexOf(entryId)
             var entryEmbeds = model.entries[elementPos].embeds;
             var embedPos = entryEmbeds.map(function(x) {return x.id; }).indexOf(embedId);
             var embedType = entryEmbeds[embedPos].type;
 
-            if(entryId >= 0 && embedId >= 0){
-                $scope.selObj = $scope.entries[embedType];
-                $scope.entryId = elementPos;
-                $scope.embedId = embedPos;
-                var element = this.$compile(SNAPSHOT_TEMPLATE)($scope);
-            }
-
+            $scope.getDomainObj(embedType).then(function(resp){
+                if(entryId >= 0 && embedId >= 0){
+                    $scope.selObj = resp[embedType];
+                    $scope.entryId = elementPos;
+                    $scope.embedId = embedPos;
+                    var element = compile(SNAPSHOT_TEMPLATE)($scope);
+                }
+            });
         };
 
         return createSnapshot;
