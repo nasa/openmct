@@ -91,11 +91,27 @@ define(
 
         function headerTemplate(){
             var template = '<div class="view-header">'+
-                                '<mct-representation '+
-                                    'key="\'object-header-frame\'" '+
-                                    'mct-object="selObj" '+
-                                    'class="l-flex-row flex-elem object-header grows view-snap-info">'+
-                                '</mct-representation> '+
+                                '<div class="view-info">'+
+                                    '<div ng-class="cssClass" class="embed-icon"></div>'+
+                                    '<div class="embed-title">{{entryName}}</div>'+
+                                    '<div class="object-header">'+
+                                        '<a href="" class="context-available" ng-click="openMenu($event,embedType)""></a>'+
+                                    '</div>'+
+                                    '<div class="hide-menu" ng-show="false">'+
+                                        '<div class="menu-element menu-view context-menu-wrapper mobile-disable-select">'+
+                                            '<div class="menu context-menu">'+
+                                                '<ul>'+
+                                                    '<li ng-repeat="menu in embedActions"'+
+                                                        'ng-click="menu.perform()"'+
+                                                        'title="{{menu.getMetadata().description}}"'+
+                                                        'class="{{menu.getMetadata().cssClass}}">'+
+                                                        '{{menu.getMetadata().name}}'+
+                                                    '</li>'+
+                                                '</ul>'+
+                                            '</div>'+
+                                        '</div>'+
+                                      '</div>'+        
+                                '</div>'+
                                 '<div class="view-date">'+
                                     '<span class="icon-alert-rect" title="Snapshot">'+
                                     '</span>  '+
@@ -109,11 +125,13 @@ define(
         }
 
 
-        viewSnapshot.prototype.perform = function($event,snapshot,embedId,entryId,$scope,domainObject) {
+        viewSnapshot.prototype.perform = function($event,snapshot,embedId,entryId,$scope,embed) {
             var isOpen = false;
 
              // Create the overlay element and add it to the document's body
-            $scope.selObj = domainObject;
+            $scope.cssClass = embed.cssClass;
+            $scope.embedType = embed.type;
+            $scope.entryName = embed.name;
             $scope.snapDate = +embedId;
             var element = this.$compile(headerTemplate())($scope);
 
@@ -133,9 +151,6 @@ define(
                 closeOverlay();
                 annotateAction.perform($event,snapshot,embedId,entryId,$scope);
             };
-
-
-
             
             toggleOverlay();
         };

@@ -32,6 +32,8 @@ define(
         dialogService,
         popupService,
         agentService,
+        objectService,
+        navigationService,
         now,
         actionService,
         $timeout,
@@ -51,6 +53,8 @@ define(
         $scope.showTime = "0";
         $scope.editEntry = false;
         $scope.entrySearch = '';
+        $scope.entryTypes = [];
+        $scope.embedActions = [];
 
         /*--seconds in an hour--*/
 
@@ -166,21 +170,13 @@ define(
             return URL.createObjectURL(img);
         };
 
-
+        $scope.getDomainObj = function(id){
+            return objectService.getObjects([id]);
+        };
         /*-----*/
-        function refreshComp(change) {  
-            //Keep a track of how many composition callbacks have been made            
-             if(change){
-                 $scope.domainObject.useCapability('composition').then(function (composition) {
-                     var compObj = {};
-                     composition.map(function(comp){
-                        var id = comp.getId();                            
-                        compObj[id] = comp;
-                     });
-
-                     $scope.entries = compObj;
-
-                  });
+        function refreshComp(change) {               
+             if(change && change.length){
+                change[0].getCapability('action').getActions({key:'remove'})[0].perform();
              }
         };
 
@@ -207,7 +203,7 @@ define(
 
             $scope.menuActions = $scope.action ?
                     $scope.action.getActions({key: 'window'}) :
-                    [];
+                    []; 
 
             if($scope.action){
                  $scope.menuActions.push(actionToMenuOption($scope.action.getActions({key: 'navigate'})[0]));
@@ -218,11 +214,11 @@ define(
         // changes or becomes available.
         $scope.$watch("action", updateActions);
 
-
-        $scope.setObj = function(embed){            
-           if($scope.entries && $scope.entries[embed]){
-                return $scope.entries[embed];
-            }            
+        $scope.navigate = function($event,embedType){
+            $event.preventDefault();
+            $scope.getDomainObj(embedType).then(function(resp){
+                navigationService.setNavigation(resp[embedType]);
+            });
         };
 
         $scope.saveSnap = function(url,embedPos,entryPos){   
@@ -253,9 +249,19 @@ define(
         };
 
         /*---popups menu embeds----*/ 
+
+        function getEmbedActions(embedType){   
+            if(!$scope.embedActions.length){
+                 $scope.getDomainObj(embedType).then(function(resp){
+                    $scope.embedActions = $scope.action.getActions({key: 'window',selectedObject:resp[embedType]});
+                }); 
+            }
+        };
       
-        $scope.openMenu = function($event){
+        $scope.openMenu = function($event,embedType){
             $event.preventDefault();
+
+            getEmbedActions(embedType);
 
             var body = $(document).find('body'),
                 initiatingEvent = agentService.isMobile() ?
@@ -273,6 +279,7 @@ define(
                 container.find('.hide-menu').append(menu);
                 body.off("mousedown", dismiss);
                 dismissExistingMenu = undefined;
+                $scope.embedActions = [];
             }
 
             // Dismiss any menu which was already showing
@@ -302,7 +309,7 @@ define(
         };
 
 
-        $scope.$watchCollection("model.entries", refreshComp);
+        $scope.$watchCollection("composition", refreshComp);
 
 
         $scope.$on('$destroy', function () {});

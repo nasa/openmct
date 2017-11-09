@@ -301,7 +301,28 @@
         margin-top: 10px;
         font-size: 14px;
     }
+    .view-info{
+        float: left;
+        .embed-icon{
+            display: inline-block;
+        }
+        .embed-title{
+            display: inline-block;
+            margin: 0 5px 0 10px;
+        }
+        .object-header{
+            display: inline-block;
+        }
+    }
 
+}
+
+.context-available{
+    outline: none;
+}
+
+.menu-element.menu-view{
+    z-index: 999;
 }
 
 .new-notebook-entry{
