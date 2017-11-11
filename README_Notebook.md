@@ -63,12 +63,12 @@ You have to create a database for the app and then create an user or API Key to 
 
 ![cors2](https://user-images.githubusercontent.com/18453600/32687060-96725142-c681-11e7-96fe-b9d298ad294c.png)
 
-if you have the LocalStorage plugin enabled you have to remove its call from index.html and replace it for the CouchDB plugin.
+If you have the LocalStorage plugin enabled remove its call from index.html and replace it for the CouchDB plugin.
 
-After that you have to copy the url of your DB and paste it as an argument of the CouchDB plugin call:
+After that copy the url of your DB and paste it as an argument of the CouchDB plugin call:
 ```javascript
 openmct.install(openmct.plugins.CouchDB('CouchDB-host/database-name'))
 ```
 
-Any config issue you can refer to CouchDB http://docs.couchdb.org/en/2.1.1/.
+Any config issue you can refer to CouchDB docs http://docs.couchdb.org/en/2.1.1/.
 
