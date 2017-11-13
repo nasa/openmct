@@ -35,9 +35,40 @@ The notebook should work as a standalone plugin, you just need to put the folder
 
 The Old API was used due to the documentation was more thorought.
 
-#How to use it:
+## How to use it:
 Click on the create menu button at the left top corner of the creen and create a notebook object.
 After you saved it you can start to create new entries, either clicking inside of the drag area or dragging an especific object to a new entry or an entry already created.
 
 Once you have created the snapshot of the object, you can make annotations over it. Also you can create whichever snapshots per entry as you consider,
+
+## CouchDB Persistence storage
+
+Open MCT is packaged along with a few general-purpose plugins among them the CouchDB plugin:
+
+* `openmct.plugins.CouchDB` is an adapter for using CouchDB for persistence
+  of user-created objects. This is a constructor that takes the URL for the
+  CouchDB database as a parameter, e.g.
+```javascript
+openmct.install(openmct.plugins.CouchDB('url-to-your-CouchDB-database'))
+```
+You can install and host your DB or use services like cloudant https://www.ibm.com/cloud/cloudant.com
+
+To manage the DB you can use tools like Fauxton: http://couchdb.apache.org/fauxton-visual-guide/, it commonly comes bundled with CouchDB installation.
+
+To avoid Cross-Origin Resource Sharing (CORS) on remote servers connections please config your CORS settings and add your domain. For instance on Cloudant:
+
+![cors1](https://user-images.githubusercontent.com/18453600/32687056-667b3fc6-c681-11e7-8cd5-39e000dd816c.png)
+
+You have to create a database for the app and then create an user or API Key to grant database permissions for writing/reading it.
+
+![cors2](https://user-images.githubusercontent.com/18453600/32687060-96725142-c681-11e7-96fe-b9d298ad294c.png)
+
+If you have the LocalStorage plugin enabled remove its call from index.html and replace it for the CouchDB plugin.
+
+After that copy the url of your DB and paste it as an argument of the CouchDB plugin call:
+```javascript
+openmct.install(openmct.plugins.CouchDB('CouchDB-host/database-name'))
+```
+
+Any config issue you can refer to CouchDB docs http://docs.couchdb.org/en/2.1.1/.
 
