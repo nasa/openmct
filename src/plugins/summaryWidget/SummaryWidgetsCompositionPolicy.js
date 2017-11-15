@@ -24,19 +24,11 @@ define(
     [],
     function () {
 
-        /**
-         * Defines composition policy for Display Layout objects.
-         * They cannot contain folders.
-         * @constructor
-         * @memberof platform/features/layout
-         * @implements {Policy.<View, DomainObject>}
-         */
         function SummaryWidgetsCompositionPolicy(openmct) {
             this.openmct = openmct;
         }
 
         SummaryWidgetsCompositionPolicy.prototype.allow = function (parent, child) {
-
             var parentType = parent.getCapability('type');
             var newStyleChild = child.useCapability('adapter');
 

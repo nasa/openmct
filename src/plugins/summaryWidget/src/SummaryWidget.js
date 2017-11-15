@@ -283,10 +283,10 @@ define([
         ruleOrder.push(ruleId);
         this.domainObject.configuration.ruleOrder = ruleOrder;
 
-        if(this.editing){
+        if (this.editing) {
             this.updateDomainObject();
         }
-        
+
         this.initRule(ruleId, 'Rule');
         this.refreshRules();
     };
@@ -398,7 +398,6 @@ define([
      * Mutate this domain object's configuration with the current local configuration
      */
     SummaryWidget.prototype.updateDomainObject = function () {
-        console.log('persisting');
         this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
     };
 

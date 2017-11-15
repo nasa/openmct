@@ -102,7 +102,6 @@ define([
          */
         function onColorInput(color, property) {
             self.config.style[property] = color;
-            self.updateDomainObject();
             self.thumbnail.css(property, color);
             self.eventEmitter.emit('change');
         }
@@ -183,10 +182,15 @@ define([
 
         Object.keys(this.colorInputs).forEach(function (inputKey) {
             var input = self.colorInputs[inputKey];
+
+            input.set(self.config.style[inputKey]);
+            onColorInput(self.config.style[inputKey], inputKey);
+
             input.on('change', function (value) {
                 onColorInput(value, inputKey);
+                self.updateDomainObject();
             });
-            input.set(self.config.style[inputKey]);
+
             $('.t-style-input', self.domElement).append(input.getDOM());
         });
 
@@ -470,7 +474,6 @@ define([
         description = (description === '' ? this.config.description : description);
         this.description.html(description);
         this.config.description = description;
-        this.updateDomainObject();
     };
 
     return Rule;

@@ -37,7 +37,7 @@
                 openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
             );
             openmct.install(openmct.plugins.MyItems());
-            // openmct.install(openmct.plugins.LocalStorage();
+            openmct.install(openmct.plugins.LocalStorage());
             openmct.install(openmct.plugins.Espresso());
             openmct.install(openmct.plugins.Generator());
             openmct.install(openmct.plugins.ExampleImagery());
@@ -64,7 +64,6 @@
                     }
                 ]
             }));
-            openmct.install(openmct.plugins.CouchDB('http://127.0.0.1:5984/openmct'));
             openmct.install(openmct.plugins.SummaryWidget());
             openmct.time.clock('local', {start: -THIRTY_MINUTES, end: 0});
             openmct.time.timeSystem('utc');

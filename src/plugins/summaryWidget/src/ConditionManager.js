@@ -85,8 +85,7 @@ define ([
 
         ruleOrder.forEach(function (ruleId) {
             rule = rules[ruleId];
-            conditions = rule.getProperty('trigger') === 'js' ?
-                rule.getProperty('jsCondition') : rule.getProperty('conditions');
+            conditions = rule.getProperty('conditions');
             if (self.evaluator.execute(conditions, rule.getProperty('trigger'))) {
                 activeId = ruleId;
             }
