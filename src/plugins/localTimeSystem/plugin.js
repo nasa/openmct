@@ -35,6 +35,10 @@ define([
                 key: 'local-format',
                 implementation: LocalTimeFormat
             });
+
+            var indicator = openmct.indicators.create();
+            indicator.cssClass('something');
+            indicator.show(function showIndicator(element) {});
         };
     };
 });
