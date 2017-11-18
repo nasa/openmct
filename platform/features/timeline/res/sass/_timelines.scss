@@ -38,6 +38,10 @@
     .l-timeline-pane {
         @include absPosDefault();
 
+		&.drop-over {
+			background-color: lighten($colorEditAreaBg, 5%);
+		}
+
 	    .l-width-control {
 		    position: relative;
 	    }

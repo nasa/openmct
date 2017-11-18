@@ -77,7 +77,8 @@
         <mct-splitter></mct-splitter>
 
         <!-- BOTTOM PANE RESOURCE LEGEND -->
-        <div class="split-pane-component abs l-timeline-pane t-pane-h l-pane-btm s-timeline-resource-legend l-timeline-resource-legend">
+        <div mct-resource-graph-drop
+             class="split-pane-component abs l-timeline-pane t-pane-h l-pane-btm s-timeline-resource-legend l-timeline-resource-legend">
             <div class="l-title s-title">{{ngModel.title}}Resource Graph Legend</div>
             <div class="l-legend-items legend">
                 <mct-include key="'timeline-legend-item'"
