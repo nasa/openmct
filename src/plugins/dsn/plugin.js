@@ -1,8 +1,10 @@
 
 define([
+    'text!./res/dsn-dictionary.json',
     './DsnUtils',
     './DsnParser'
 ], function (
+    baseDictionary,
     DsnUtils,
     DsnParser
 ) {
@@ -14,19 +16,10 @@ define([
         objectProvider,
         realTimeProvider;
 
-    var DSN_DICTIONARY_URI = 'src/plugins/dsn/res/dsn-dictionary.json',
-        DSN_KEY = 'dsn',
+    var DSN_KEY = 'dsn',
         DSN_NAMESPACE = 'deep.space.network',
         DSN_TELEMETRY_SOURCE = 'https://eyes.nasa.gov/dsn/data/dsn.xml',
         DSN_TELEMETRY_TYPE = 'dsn.telemetry';
-
-    function getDsnDictionary() {
-        // TODO: Replace http with library from npm
-        return http.get(DSN_DICTIONARY_URI)
-            .then(function (result) {
-                return result.data;
-            });
-    }
 
     function getDsnData(domainObject) {
         // Add the same query string parameter the DSN site sends with each request
@@ -133,14 +126,11 @@ define([
                 key: DSN_KEY
             });
 
-            // Add providers after the dictionary has been fetched
-            getDsnDictionary().then(function (dsnDictionary) {
-                dictionary = dsnDictionary;
+            dictionary = JSON.parse(baseDictionary);
 
-                openmct.objects.addProvider(DSN_NAMESPACE, objectProvider);
-                openmct.composition.addProvider(compositionProvider);
-                openmct.telemetry.addProvider(realTimeProvider);
-            });
+            openmct.objects.addProvider(DSN_NAMESPACE, objectProvider);
+            openmct.composition.addProvider(compositionProvider);
+            openmct.telemetry.addProvider(realTimeProvider);
 
             // This type represents DSN domain objects with telemetry
             openmct.types.addType(DSN_TELEMETRY_TYPE, {
