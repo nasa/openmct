@@ -55,6 +55,9 @@ define([
                             INITIAL_COLUMN_WIDTH : data.width;
                 }
             },
+            watch: {
+                filter: controller.update.bind(controller)
+            },
             template: autoflowTemplate,
             destroyed: function () {
                 controller.destroy();
