@@ -27,6 +27,7 @@ define([], function () {
         this.openmct = openmct;
 
         this.rows = 1;
+        this.unlistens = [];
         this.active = false;
     }
 
@@ -102,8 +103,11 @@ define([], function () {
     };
 
     AutoflowTabularController.prototype.destroy = function () {
+        this.unlistens.forEach(function (unlisten) {
+            unlisten();
+        });
 
-
+        this.unlistens = [];
         this.active = false;
     };
 
