@@ -99,6 +99,18 @@ define([
                         "dataRateInHz"
                     ],
                     pattern: "^\\d*(\\.\\d*)?$"
+                },
+                {
+                    name: "Phase (radians)",
+                    control: "textfield",
+                    cssClass: "l-input-sm l-numeric",
+                    key: "phase",
+                    required: true,
+                    property: [
+                        "telemetry",
+                        "phase"
+                    ],
+                    pattern: "^\\d*(\\.\\d*)?$"
                 }
             ],
             initialize: function (object) {
@@ -107,6 +119,7 @@ define([
                     amplitude: 1,
                     offset: 0,
                     dataRateInHz: 1,
+                    phase: 0,
                     values: [
                         {
                             key: "utc",
