@@ -42,7 +42,11 @@ define([], function () {
     };
 
     AutoflowTabularController.prototype.makeRow = function (childObject) {
-        var row = {};
+        var row = {
+            classes: "",
+            name: childObject.name,
+            value: undefined
+        };
         var metadata = this.openmct.telemetry.getMetadata(childObject);
         var values = metadata.valuesForHints(['range']);
         var valueMetadata = values[0];
@@ -86,8 +90,11 @@ define([], function () {
     };
 
     AutoflowTabularController.prototype.setRows = function (rows) {
+        var changed = this.rows !== rows;
         this.rows = rows;
-        this.update();
+        if (changed) {
+            this.update();
+        }
     };
 
     AutoflowTabularController.prototype.activate = function () {

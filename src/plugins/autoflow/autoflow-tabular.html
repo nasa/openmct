@@ -34,8 +34,8 @@
     <div class="abs t-autoflow-items l-autoflow-items" ref="autoflowItems">
         <ul v-for="column in columns" class="l-autoflow-col" :style="{ width: width }">
             <li v-for="row in column" class="l-autoflow-row" >
-                <span :title="row.name" class="l-autoflow-item l">{{row.name}}</span>
                 <span :title="row.value" :class="'l-autoflow-item r l-obj-val-format ' + row.classes">{{row.value}}</span>
+                <span :title="row.name" class="l-autoflow-item l">{{row.name}}</span>
             </li>
         </ul>
     </div>
