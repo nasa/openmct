@@ -22,7 +22,7 @@
 <div class="items-holder abs contents autoflow obj-value-format">
     <div class="abs l-flex-row holder t-autoflow-header l-autoflow-header">
         <span class="t-filter l-filter">
-            <input type="search" class="t-filter-input"/>
+            <input type="search" class="t-filter-input" v-model="filter"/>
             <a class="clear-icon icon-x-in-circle"></a>
         </span>
 
@@ -31,5 +31,11 @@
             class="s-button flex-elem icon-arrows-right-left change-column-width"></a>
     </div>
     <div class="abs t-autoflow-items l-autoflow-items" ref="autoflowItems">
+        <ul v-for="column in columns" class="l-autoflow-col" :style="{ width: width }">
+            <li v-for="row in column" class="l-autoflow-row" >
+                <span class="l-autoflow-item l">{{row.name}}</span>
+                <span :title="row.value" :class="'l-autoflow-item r l-obj-val-format ' + row.classes">{{row.value}}</span>
+            </li>
+        </ul>
     </div>
 </div>
