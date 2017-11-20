@@ -26,7 +26,7 @@ define([], function () {
         this.data = data;
         this.openmct = openmct;
 
-        this.rows = 1;
+        this.rowCount = 1;
         this.unlistens = [];
         this.active = false;
     }
@@ -86,7 +86,7 @@ define([], function () {
         this.data.columns = [];
 
         while (index < filteredObjects.length) {
-            if (column.length >= this.rows) {
+            if (column.length >= this.rowCount) {
                 this.data.columns.push(column);
                 column = [];
             }
@@ -106,8 +106,8 @@ define([], function () {
     };
 
     AutoflowTabularController.prototype.setRows = function (rows) {
-        var changed = this.rows !== rows;
-        this.rows = rows;
+        var changed = this.rowCount !== rows;
+        this.rowCount = rows;
         if (changed) {
             this.update();
         }
