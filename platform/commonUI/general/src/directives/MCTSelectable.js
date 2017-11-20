@@ -35,7 +35,11 @@ define(
 
             // Link; install event handlers.
             function link(scope, element, attrs) {
-                openmct.selection.selectable(element[0], scope.$eval(attrs.mctSelectable));
+                openmct.selection.selectable(
+                    element[0],
+                    scope.$eval(attrs.mctSelectable),
+                    attrs.hasOwnProperty('mctInitSelect') && scope.$eval(attrs.mctInitSelect) !== false
+                );
 
                 scope.$on("$destroy", function () {
                     openmct.selection.removeSelectable(element[0]);

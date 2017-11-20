@@ -62,7 +62,11 @@
                                 mct-object="representation.selected.key && domainObject"
                                 class="abs flex-elem grows object-holder-main scroll"
                                 toolbar="toolbar"
-                                mct-selectable="{item: domainObject.useCapability('adapter'), oldItem: domainObject}">
+                                mct-selectable="{
+                                    item: domainObject.useCapability('adapter'),
+                                    oldItem: domainObject
+                                }"
+                                mct-init-select>
             </mct-representation>
         </div><!--/ l-object-wrapper-inner -->
     </div>

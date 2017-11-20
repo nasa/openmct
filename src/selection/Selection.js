@@ -80,7 +80,7 @@ define(['EventEmitter'], function (EventEmitter) {
 
         if (this.selected[0] && this.selected[0].element) {
             this.selected[0].element.classList.remove('s-selected');
-        } 
+        }
 
         if (this.selected[1]) {
            this.selected[1].element.classList.remove('s-selected-parent');
@@ -97,7 +97,7 @@ define(['EventEmitter'], function (EventEmitter) {
         this.selected = selectable;
         this.emit('change', this.selected);
     };
-    
+
     Selection.prototype.capture = function (selectable) {
         if (!this.capturing) {
             this.capturing = [];
@@ -121,14 +121,19 @@ define(['EventEmitter'], function (EventEmitter) {
      *
      * @param element an html element
      * @param context object with oldItem, item and toolbar properties
+     * @param Boolean [select] if true, select this object after making it
+     *        selectable.
      */
-    Selection.prototype.selectable = function (element, context) {
+    Selection.prototype.selectable = function (element, context, select) {
         var selectable = {
             context: context,
             element: element
         };
         element.addEventListener('click', this.capture.bind(this, selectable), true);
         element.addEventListener('click', this.selectCapture.bind(this, selectable));
+        if (select) {
+            this.select(selectable);
+        }
     };
 
     /**

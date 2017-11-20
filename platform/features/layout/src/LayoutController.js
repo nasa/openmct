@@ -52,15 +52,11 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function LayoutController($scope, openmct) {
+        function LayoutController($scope, $element, openmct) {
             var self = this,
                 callbackCount = 0;
-            
-            if ($scope.domainObject.getCapability('editor').isEditContextRoot()) {
-                openmct.selection.select({
-                    context: self.getContext($scope.domainObject)
-                });
-            }
+
+            this.$element = $element;
 
             // Update grid size when it changed
             function updateGridSize(layoutGrid) {
@@ -131,8 +127,11 @@ define(
                         self.layoutPanels(ids);
                         self.setFrames(ids);
 
-                       if (self.selectedId && composition.indexOf(self.selectedId) === -1) {
-                            openmct.selection.clear();
+                        if (self.selectedId &&
+                            self.selectedId !== $scope.domainObject.getId() &&
+                            composition.indexOf(self.selectedId) === -1) {
+                            // Click triggers selection of layout parent.
+                            self.$element[0].click();
                         }
                     }
                 });
@@ -173,13 +172,13 @@ define(
                     return;
                 }
 
-                if (self.selectedId && self.drilledIn[self.selectedId]) {
+                if (self.selectedId && self.drilledIn === self.selectedId) {
                     self.selectable[0].element.classList.remove('s-drilled-in');
                 }
 
                 var id = selection.context.oldItem.getId();
                 self.selectedId = id;
-                self.drilledIn[id] = false;
+                self.drilledIn = undefined;
                 self.selectable = selectable;
             }
 
@@ -187,7 +186,7 @@ define(
             this.rawPositions = {};
             this.gridSize = DEFAULT_GRID_SIZE;
             this.$scope = $scope;
-            this.drilledIn = {};
+            this.drilledIn = undefined;
             this.openmct = openmct;
 
             // Watch for changes to the grid size in the model
@@ -449,12 +448,12 @@ define(
          * @return true if the object is drilled in, false otherwise
          */
         LayoutController.prototype.isDrilledIn = function (domainObject) {
-            return this.drilledIn[domainObject.getId()];
+            return this.drilledIn === domainObject.getId();
         };
 
         /**
          * Puts the given object in the drilled-in mode.
-         * 
+         *
          * @param event the angular event object
          * @param domainObject the domain object
          */
@@ -477,7 +476,7 @@ define(
             }
 
             event.currentTarget.classList.add('s-drilled-in');
-            this.drilledIn[domainObject.getId()] = true;
+            this.drilledIn = domainObject.getId();
         };
 
         /**

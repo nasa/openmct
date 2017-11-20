@@ -80,15 +80,34 @@
 
     // Editing Grids
     .l-grid-holder {
-        display: block;
         .l-grid {
             &.l-grid-x { @include bgTicks($colorGridLines, 'x'); }
             &.l-grid-y { @include bgTicks($colorGridLines, 'y'); }
         }
     }
 
-    // Prevent nested frames from showing their grids
-    //.t-frame-outer .l-grid-holder { display: none !important; }
+    // Display grid when selected or selection parent.
+    .s-selected .l-grid-holder,
+    .s-selected-parent .l-grid-holder {
+        display: block;
+    }
+
+    // Display in nested frames...
+    .t-frame-outer {
+        // ...when drilled in or selection parent...
+        &.s-drilled-in, &.s-selected-parent {
+            .l-grid-holder {
+                display: block;
+            }
+            .t-frame-outer:not(.s-drilled-in) .l-grid-holder {
+                display: none;
+            }
+        }
+        // ...but hide otherwise.
+        .l-grid-holder {
+            display: none;
+        }
+    }
 
     // Prevent nested elements from showing s-hover-border
     .t-frame-outer .s-hover-border {
