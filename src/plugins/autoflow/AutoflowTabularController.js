@@ -30,6 +30,12 @@ define([], function () {
         this.active = false;
     }
 
+    AutoflowTabularController.prototype.matchesFilter = function (domainObject) {
+        var filter = this.data.filter;
+        var name = domainObject.name;
+        return name.toLowerCase().indexOf(filter.toLowerCase()) !== -1;
+    };
+
     AutoflowTabularController.prototype.updateRow = function (row, format, datum) {
         row.value = format(datum);
     };
@@ -53,15 +59,19 @@ define([], function () {
     AutoflowTabularController.prototype.update = function () {
         var column = [];
         var index = 0;
+        var filteredObjects =
+            this.childObjects.filter(this.matchesFilter.bind(this));
 
         this.data.columns = [];
 
-        while (index < this.childObjects.length) {
+        while (index < filteredObjects.length) {
             if (column.length >= rows) {
                 this.data.columns.push(column);
                 column = [];
             }
-            column.push(makeRow(this.childObjects[index]));
+
+            if (this.m)
+            column.push(makeRow(filteredObjects[index]));
             index += 1;
         }
 
