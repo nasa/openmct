@@ -71,8 +71,7 @@ define([], function () {
                 column = [];
             }
 
-            if (this.m)
-            column.push(makeRow(filteredObjects[index]));
+            column.push(this.makeRow(filteredObjects[index]));
             index += 1;
         }
 
