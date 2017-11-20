@@ -38,7 +38,7 @@ define([
     function AutoflowTabularView(domainObject, openmct) {
         var data = {
             columns: [],
-            width: 10,
+            width: INITIAL_COLUMN_WIDTH,
             filter: ""
         };
         var controller =
@@ -47,6 +47,13 @@ define([
 
         VueView.call(this, {
             data: data,
+            methods: {
+                increaseColumnWidth: function () {
+                    data.width += COLUMN_WIDTH_STEP;
+                    data.width = data.width > MAX_COLUMN_WIDTH ?
+                            INITIAL_COLUMN_WIDTH : data.width;
+                }
+            },
             template: autoflowTemplate,
             destroyed: function () {
                 controller.destroy();

@@ -28,7 +28,8 @@
 
         <div class="flex-elem grows t-last-update" title="Last Update">{{updated}}</div>
         <a title="Change column width"
-            class="s-button flex-elem icon-arrows-right-left change-column-width"></a>
+           v-on:click="increaseColumnWidth()"
+           class="s-button flex-elem icon-arrows-right-left change-column-width"></a>
     </div>
     <div class="abs t-autoflow-items l-autoflow-items" ref="autoflowItems">
         <ul v-for="column in columns" class="l-autoflow-col" :style="{ width: width }">
