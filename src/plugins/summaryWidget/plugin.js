@@ -54,7 +54,7 @@ define(['./src/SummaryWidget', './SummaryWidgetsCompositionPolicy'], function (S
                     return (domainObject.type === 'summary-widget');
                 },
                 editable: true,
-                id: 'summaryWidgets'
+                key: 'summaryWidgets'
             };
         }
 
