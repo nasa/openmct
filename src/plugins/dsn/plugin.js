@@ -1,7 +1,9 @@
 
 define([
+    './DsnUtils',
     './DsnParser'
 ], function (
+    DsnUtils,
     DsnParser
 ) {
     'use strict';
@@ -40,18 +42,6 @@ define([
             });
     }
 
-    function serializeIdentifier(identifier) {
-        return identifier.namespace + ':' + identifier.key;
-    }
-
-    function deserializeIdentifier(identifier) {
-        var tokens = identifier.split(':');
-        return {
-            namespace: tokens[0],
-            key: tokens[1]
-        };
-    }
-
     objectProvider = {
         get: function (identifier) {
             if (identifier.key === 'dsn') {
@@ -66,7 +56,9 @@ define([
                     composition: []
                 });
             } else {
-                return Promise.resolve(dictionary.domainObjects[serializeIdentifier(identifier)]);
+                return Promise.resolve(
+                    dictionary.domainObjects[DsnUtils.serializeIdentifier(identifier)]
+                );
             }
         }
     };
@@ -81,7 +73,7 @@ define([
                 return Promise.resolve(Object.keys(dictionary.domainObjects).filter(function (key) {
                     return dictionary.domainObjects[key].location === DSN_NAMESPACE + ':' + DSN_KEY;
                 }).map(function (key) {
-                    var childId = deserializeIdentifier(key);
+                    var childId = DsnUtils.deserializeIdentifier(key);
                     return {
                         namespace: childId.namespace,
                         key: childId.key
@@ -89,8 +81,8 @@ define([
                 }));
             } else {
                 return Promise.resolve(
-                    dictionary.domainObjects[serializeIdentifier(domainObject.identifier)].composition.map(function (key) {
-                        var childId = deserializeIdentifier(key);
+                    dictionary.domainObjects[DsnUtils.serializeIdentifier(domainObject.identifier)].composition.map(function (key) {
+                        var childId = DsnUtils.deserializeIdentifier(key);
                         return {
                             namespace: childId.namespace,
                             key: childId.key
