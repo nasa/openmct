@@ -66,7 +66,7 @@ define([], function () {
         this.data.columns = [];
 
         while (index < filteredObjects.length) {
-            if (column.length >= rows) {
+            if (column.length >= this.rows) {
                 this.data.columns.push(column);
                 column = [];
             }

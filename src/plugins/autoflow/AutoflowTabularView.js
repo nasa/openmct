@@ -22,7 +22,7 @@
 
 define([
     './AutoflowTabularController',
-    '../ui/VueView',
+    '../../ui/VueView',
     'text!./autoflow-tabular.html'
 ], function (
     AutoflowTabularController,
@@ -39,7 +39,8 @@ define([
         var data = {
             columns: [],
             width: INITIAL_COLUMN_WIDTH,
-            filter: ""
+            filter: "",
+            updated: ""
         };
         var controller =
             new AutoflowTabularController(domainObject, data, openmct);
