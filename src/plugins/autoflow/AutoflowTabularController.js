@@ -25,14 +25,76 @@ define([], function () {
         this.domainObject = domainObject;
         this.data = data;
         this.openmct = openmct;
+
+        this.rows = 1;
+        this.active = false;
     }
 
-    AutoflowTabularController.prototype.activate = function () {
+    AutoflowTabularController.prototype.updateRow = function (row, format, datum) {
+        row.value = format(datum);
+    };
 
+    AutoflowTabularController.prototype.makeRow = function (childObject) {
+        var row = {};
+        var metadata = this.openmct.telemetry.getMetadata(childObject);
+        var values = metadata.valuesForHints(['range']);
+        var valueMetadata = values[0];
+        var formatter =
+            this.openmct.telemetry.getValueFormatter(valueMetadata);
+
+        this.unlistens.push(this.openmct.telemetry.subscribe(
+            childObject,
+            this.updateRow.bind(this, row, formatter.format.bind(formatter))
+        ));
+
+        return row;
+    };
+
+    AutoflowTabularController.prototype.update = function () {
+        var column = [];
+        var index = 0;
+
+        this.data.columns = [];
+
+        while (index < this.childObjects.length) {
+            if (column.length >= rows) {
+                this.data.columns.push(column);
+                column = [];
+            }
+            column.push(makeRow(this.childObjects[index]));
+            index += 1;
+        }
+
+        if (column.length > 0) {
+            this.data.columns.push(column);
+        }
+    };
+
+    AutoflowTabularController.prototype.setObjects = function (domainObjects) {
+        this.childObjects = domainObjects;
+        this.update();
+    };
+
+    AutoflowTabularController.prototype.setRows = function (rows) {
+        this.rows = rows;
+        this.update();
+    };
+
+    AutoflowTabularController.prototype.activate = function () {
+        if (this.active) {
+            this.destroy();
+        }
+        this.active = true;
+
+        this.openmct.composition.get(this.domainObject)
+            .load()
+            .then(this.setObjects.bind(this));
     };
 
     AutoflowTabularController.prototype.destroy = function () {
 
+
+        this.active = false;
     };
 
     return AutoflowTabularController;
