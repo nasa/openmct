@@ -20,34 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './AutoflowTabularController',
-    '../ui/VueView',
-    'text!./autoflow-tabular.html'
-], function (
-    AutoflowTabularController,
-    VueView,
-    autoflowTemplate
-) {
-    function AutoflowTabularView(domainObject, openmct) {
-        var data = {
-            columns: [],
-            width: 10,
-            filter: ""
-        };
-        var controller =
-            new AutoflowTabularController(domainObject, data, openmct);
-
-        VueView.call(this, {
-            data: data,
-            template: autoflowTemplate,
-            destroyed: controller.destroy.bind(controller),
-            mounted: controller.activate.bind(controller)
-        });
+define([], function () {
+    function AutoflowTabularController(domainObject, data, openmct) {
+        this.domainObject = domainObject;
+        this.data = data;
+        this.openmct = openmct;
     }
 
-    AutoflowTabularView.prototype = Object.create(VueView.prototype);
+    AutoflowTabularController.prototype.activate = function () {
 
-    return AutoflowTabularView;
+    };
+
+    AutoflowTabularController.prototype.destroy = function () {
+
+    };
+
+    return AutoflowTabularController;
 });
-
