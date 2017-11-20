@@ -27,12 +27,15 @@ define([
         return {
             restrict: 'E',
             link: function (scope, element, attrs) {
-                var provider = openmct.objectViews.getByVPID(Number(attrs.mctVpid));
+                var provider = openmct.objectViews.getByProviderKey(attrs.mctProviderKey);
                 var view = new provider.view(scope.domainObject.useCapability('adapter'));
-                view.show(element[0]);
+                var domElement = element[0];
+
+                view.show(domElement);
+
                 if (view.destroy) {
                     scope.$on('$destroy', function () {
-                        view.destroy(element[0]);
+                        view.destroy(domElement);
                     });
                 }
             }

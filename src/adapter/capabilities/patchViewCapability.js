@@ -43,8 +43,8 @@ define([
                         priority: i + 100 // arbitrary to allow new views to
                         // be defaults by returning priority less than 100.
                     };
-                    if (v.provider) {
-                        vd.priority = v.provider.canView(newDomainObject);
+                    if (v.provider && v.provider.priority) {
+                        vd.priority = v.provider.priority(newDomainObject);
                     }
                     return vd;
                 })
@@ -54,7 +54,6 @@ define([
             };
             return capability;
         };
-
     }
 
     return patchViewCapability;

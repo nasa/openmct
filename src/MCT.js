@@ -255,16 +255,15 @@ define([
             this.legacyExtension('types', legacyDefinition);
         }.bind(this));
 
-        this.objectViews.providers.forEach(function (p) {
+        this.objectViews.getAllProviders().forEach(function (p) {
             this.legacyExtension('views', {
-                key: 'vpid' + p.vpid,
-                vpid: p.vpid,
+                key: p.key,
                 provider: p,
                 name: p.name,
                 cssClass: p.cssClass,
                 description: p.description,
                 editable: p.editable,
-                template: '<mct-view mct-vpid="' + p.vpid + '"/>'
+                template: '<mct-view mct-provider-key="' + p.key + '"/>'
             });
         }, this);
 

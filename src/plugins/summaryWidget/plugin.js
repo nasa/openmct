@@ -53,7 +53,8 @@ define(['./src/SummaryWidget', './SummaryWidgetsCompositionPolicy'], function (S
                 canView: function (domainObject) {
                     return (domainObject.type === 'summary-widget');
                 },
-                editable: true
+                editable: true,
+                id: 'summaryWidgets'
             };
         }
 
