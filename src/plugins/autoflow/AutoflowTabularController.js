@@ -37,8 +37,11 @@ define([], function () {
         return name.toLowerCase().indexOf(filter.toLowerCase()) !== -1;
     };
 
-    AutoflowTabularController.prototype.updateRow = function (row, format, datum) {
+    AutoflowTabularController.prototype.updateRow = function (row, format, evaluate, datum) {
         row.value = format(datum);
+        row.classes = evaluate(datum).map(function (violation) {
+            return violation.cssClass;
+        }).join(" ");
     };
 
     AutoflowTabularController.prototype.makeRow = function (childObject) {
@@ -52,10 +55,23 @@ define([], function () {
         var valueMetadata = values[0];
         var formatter =
             this.openmct.telemetry.getValueFormatter(valueMetadata);
+        var evaluator =
+            this.openmct.telemetry.limitEvaluator(childObject);
 
         this.unlistens.push(this.openmct.telemetry.subscribe(
             childObject,
-            this.updateRow.bind(this, row, formatter.format.bind(formatter))
+            this.updateRow.bind(
+                this,
+                row,
+                formatter.format.bind(formatter),
+                function (datum) {
+                    var violations = evaluator.evaluate(datum, valueMetadata);
+                    if (!violations) {
+                        return [];
+                    }
+                    return Array.isArray(violations) ? violations : [violations];
+                }
+            )
         ));
 
         return row;
