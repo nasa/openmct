@@ -26,6 +26,7 @@ define([], function () {
         this.data = data;
         this.openmct = openmct;
 
+        this.rows = {};
         this.rowCount = 1;
         this.unlistens = [];
         this.active = false;
@@ -45,6 +46,15 @@ define([], function () {
     };
 
     AutoflowTabularController.prototype.makeRow = function (childObject) {
+        var id = [
+            childObject.identifier.namespace,
+            childObject.identifier.key
+        ].join(":");
+
+        if (this.rows[id]) {
+            return this.rows[id];
+        }
+
         var row = {
             classes: "",
             name: childObject.name,
@@ -74,6 +84,8 @@ define([], function () {
             )
         ));
 
+        this.rows[id] = row;
+
         return row;
     };
 
@@ -101,6 +113,8 @@ define([], function () {
     };
 
     AutoflowTabularController.prototype.setObjects = function (domainObjects) {
+        this.releaseSubscriptions();
+        this.rows = {};
         this.childObjects = domainObjects;
         this.update();
     };
@@ -125,12 +139,16 @@ define([], function () {
     };
 
     AutoflowTabularController.prototype.destroy = function () {
+        this.releaseSubscriptions();
+        this.active = false;
+    };
+
+    AutoflowTabularController.prototype.releaseSubscriptions = function () {
         this.unlistens.forEach(function (unlisten) {
             unlisten();
         });
 
         this.unlistens = [];
-        this.active = false;
     };
 
     return AutoflowTabularController;
