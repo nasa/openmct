@@ -29,6 +29,12 @@ define([
     VueView,
     autoflowTemplate
 ) {
+    var ROW_HEIGHT = 16,
+        SLIDER_HEIGHT = 10,
+        INITIAL_COLUMN_WIDTH = 225,
+        MAX_COLUMN_WIDTH = 525,
+        COLUMN_WIDTH_STEP = 25;
+
     function AutoflowTabularView(domainObject, openmct) {
         var data = {
             columns: [],
@@ -37,12 +43,30 @@ define([
         };
         var controller =
             new AutoflowTabularController(domainObject, data, openmct);
+        var interval;
 
         VueView.call(this, {
             data: data,
             template: autoflowTemplate,
-            destroyed: controller.destroy.bind(controller),
-            mounted: controller.activate.bind(controller)
+            destroyed: function () {
+                controller.destroy();
+
+                if (interval) {
+                    clearInterval(interval);
+                    interval = undefined;
+                }
+            },
+            mounted: function () {
+                controller.activate();
+
+                interval = setInterval(function () {
+                    var tabularArea = this.$refs.autoflowItems;
+                    var height = tabularArea.clientHeight;
+                    var available = height - SLIDER_HEIGHT;
+                    var rows = Math.max(1, Math.floor(available / ROW_HEIGHT));
+                    controller.setRows(rows);
+                }.bind(this), 50);
+            }
         });
     }
 
