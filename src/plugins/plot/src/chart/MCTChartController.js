@@ -66,7 +66,6 @@ function (
     MCTChartController.$inject = ['$scope'];
 
     MCTChartController.prototype.onSeriesAdd = function (series) {
-        this.listenTo(series, 'reset', this.onSeriesReset, this);
         this.listenTo(series, 'change:interpolate', this.changeInterpolate, this);
         this.listenTo(series, 'change:markers', this.changeMarkers, this);
         this.listenTo(series, 'change:alarmMarkers', this.changeAlarmMarkers, this);
@@ -130,10 +129,6 @@ function (
         this.stopListening(series);
         this.removeChartElement(series);
         this.scheduleDraw();
-    };
-
-    MCTChartController.prototype.onSeriesReset = function (series) {
-        this.clearOffset();
     };
 
     MCTChartController.prototype.onDestroy = function () {
