@@ -29,11 +29,7 @@ define([], function () {
         view,
         legacyObject
     ) {
-<<<<<<< HEAD
         if (view.hasOwnProperty('vpid')) {
-=======
-        if (view.hasOwnProperty('provider')) {
->>>>>>> d7b44f8... Initial functional view API implementation. See #1642
             var domainObject = legacyObject.useCapability('adapter');
             return view.provider.canView(domainObject);
         }
