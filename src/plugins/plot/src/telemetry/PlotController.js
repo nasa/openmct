@@ -275,7 +275,7 @@ define([
         }
         this.config.xAxis.unset('range');
         this.config.series.forEach(function (series) {
-            series.set('sortKey', newKey);
+            series.set('xKey', newKey);
             series.reset();
         });
     };
@@ -332,7 +332,7 @@ define([
 
         var seriesModel = {
             domainObject: domainObject,
-            sortKey: this.config.xAxis.get('key'),
+            xKey: this.config.xAxis.get('key'),
             yKey: this.config.yAxis.get('key'),
             metadata: metadata,
             formats: this.openmct.telemetry.getFormatMap(metadata),

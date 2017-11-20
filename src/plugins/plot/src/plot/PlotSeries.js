@@ -45,13 +45,13 @@ define([
             this.stats = new Model();
             this.updateStat = this.updateStat.bind(this);
             this.updateStats = this.updateStats.bind(this);
-            this.onSortKeyChange = this.onSortKeyChange.bind(this);
+            this.onXKeyChange = this.onXKeyChange.bind(this);
             this.onYKeyChange = this.onYKeyChange.bind(this);
-            this.on('change:sortKey', this.onSortKeyChange);
+            this.on('change:xKey', this.onXKeyChange);
             this.on('change:yKey', this.onYKeyChange);
 
             Model.apply(this, arguments);
-            this.onSortKeyChange(this.get('sortKey'));
+            this.onXKeyChange(this.get('xKey'));
             this.onYKeyChange(this.get('yKey'));
         },
         /**
@@ -75,9 +75,9 @@ define([
             return Promise.resolve([]);
         },
 
-        onSortKeyChange: function (sortKey) {
-            var format = this.get('formats')[sortKey];
-            this.getSortVal = format.parse.bind(format);
+        onXKeyChange: function (xKey) {
+            var format = this.get('formats')[xKey];
+            this.getXVal = format.parse.bind(format);
         },
         onYKeyChange: function (newKey, oldKey) {
             if (newKey === oldKey) {
@@ -128,12 +128,12 @@ define([
             var insertIndex = this.sortedIndex(point),
                 lowPoint = this.data[insertIndex - 1],
                 highPoint = this.data[insertIndex],
-                indexVal = this.getSortVal(point),
+                indexVal = this.getXVal(point),
                 lowDistance = lowPoint ?
-                    indexVal - this.getSortVal(lowPoint) :
+                    indexVal - this.getXVal(lowPoint) :
                     Number.POSITIVE_INFINITY,
                 highDistance = highPoint ?
-                    this.getSortVal(highPoint) - indexVal :
+                    this.getXVal(highPoint) - indexVal :
                     Number.POSITIVE_INFINITY,
                 nearestPoint = highDistance < lowDistance ? highPoint : lowPoint;
 
@@ -184,7 +184,7 @@ define([
          * @private
          */
         sortedIndex: function (point) {
-            return _.sortedIndex(this.data, point, this.getSortVal);
+            return _.sortedIndex(this.data, point, this.getXVal);
         },
         /**
          * Update min/max stats for a key to include a given value.
@@ -270,12 +270,12 @@ define([
             this.emit('remove', point, index, this);
         },
         purgeRecordsOutsideRange: function (range) {
-            var sortKey = this.get('sortKey');
-            var format = this.get('formats')[sortKey];
+            var xKey = this.get('xKey');
+            var format = this.get('formats')[xKey];
             var startPoint = {};
             var endPoint = {};
-            startPoint[sortKey] = format.format(range.min);
-            endPoint[sortKey] = format.format(range.max);
+            startPoint[xKey] = format.format(range.min);
+            endPoint[xKey] = format.format(range.max);
 
             var startIndex = this.sortedIndex(startPoint);
             var endIndex = this.sortedIndex(endPoint) + 1;
