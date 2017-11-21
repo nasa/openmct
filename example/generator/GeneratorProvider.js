@@ -71,7 +71,7 @@ define([
             }
             workerRequest[prop] = Number(workerRequest[prop]);
         });
-
+        workerRequest.name = domainObject.name;
         return workerRequest;
     };
 

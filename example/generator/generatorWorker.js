@@ -62,6 +62,7 @@
                 self.postMessage({
                     id: message.id,
                     data: {
+                        name: data.name,
                         utc: nextStep,
                         yesterday: nextStep - 60*60*24*1000,
                         sin: sin(nextStep, data.period, data.amplitude, data.offset, data.phase),
@@ -82,22 +83,22 @@
     }
 
     function onRequest(message) {
-        var data = message.data;
-        if (data.end == undefined) {
-            data.end = Date.now();
+        var request = message.data;
+        if (request.end == undefined) {
+            request.end = Date.now();
         }
-        if (data.start == undefined){
-            data.start = data.end - FIFTEEN_MINUTES;
+        if (request.start == undefined){
+            request.start = request.end - FIFTEEN_MINUTES;
         }
 
         var now = Date.now();
-        var start = data.start;
-        var end = data.end > now ? now : data.end;
-        var amplitude = data.amplitude;
-        var period = data.period;
-        var offset = data.offset;
-        var dataRateInHz = data.dataRateInHz;
-        var phase = data.phase;
+        var start = request.start;
+        var end = request.end > now ? now : request.end;
+        var amplitude = request.amplitude;
+        var period = request.period;
+        var offset = request.offset;
+        var dataRateInHz = request.dataRateInHz;
+        var phase = request.phase;
 
         var step = 1000 / dataRateInHz;
         var nextStep = start - (start % step) + step;
@@ -106,6 +107,7 @@
 
         for (; nextStep < end && data.length < 5000; nextStep += step) {
             data.push({
+                name: request.name,
                 utc: nextStep,
                 yesterday: nextStep - 60*60*24*1000,
                 sin: sin(nextStep, period, amplitude, offset, phase),
