@@ -25,22 +25,30 @@ define(
     function (InspectorRegion) {
 
         /**
-         * The InspectorController adds region data for a domain object's type
-         * to the scope.
+         * The InspectorController listens for the selection changes and adds the selection
+         * object to the scope.
          *
          * @constructor
          */
         function InspectorController($scope, policyService, openmct, $document) {
-            window.inspectorScope = $scope;
+            var self = this;
 
+            /**
+             * Callback handler for the selection change event.
+             * Adds the selection object to the scope. If the selected item has an inspector view,
+             * it puts the key in the scope. If provider view exists, it shows the view.
+             */
             function setSelection(selection) {
-
                 if (selection[0]) {
                     var view = openmct.inspectorViews.get(selection);
+                    var container = $document[0].querySelectorAll('.inspector-provider-view')[0];
+                    container.innerHTML = "";
+
                     if (view) {
-                        var container = $document[0].querySelectorAll('.inspector-view')[0];
+                        self.providerView = true;
                         view.show(container);
                     } else {
+                        self.providerView = false;
                         $scope.inspectorKey = selection[0].context.oldItem.getCapability("type").typeDef.inspector;
                     }
                 }
@@ -49,12 +57,22 @@ define(
             }
 
             openmct.selection.on("change", setSelection);
+
             setSelection(openmct.selection.get());
 
             $scope.$on("$destroy", function () {
                 openmct.selection.off("change", setSelection);
             });
         }
+
+        /**
+         * Checks if a provider view exists.
+         *
+         * @returns 'true' if provider view exists, 'false' otherwise
+         */
+        InspectorController.prototype.hasProviderView = function () {
+            return this.providerView;
+        };
 
         return InspectorController;
     }
