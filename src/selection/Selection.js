@@ -121,13 +121,16 @@ define(['EventEmitter'], function (EventEmitter) {
      * @param element an html element
      * @param context object with oldItem, item and toolbar properties
      */
-    Selection.prototype.selectable = function (element, context) {
+    Selection.prototype.selectable = function (element, context, select) {
         var selectable = {
             context: context,
             element: element
         };
         element.addEventListener('click', this.capture.bind(this, selectable), true);
         element.addEventListener('click', this.selectCapture.bind(this, selectable));
+        if (select) {
+            this.select(selectable);
+        }
     };
 
     /**
