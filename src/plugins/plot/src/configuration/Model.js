@@ -13,15 +13,18 @@ define([
 ) {
     'use strict';
 
-    function Model(model) {
-        var args = Array.prototype.slice.call(arguments, 1);
-        if (!model) {
-            model = {};
+    function Model(options) {
+        if (!options) {
+            options = {};
         }
-        args.unshift(model);
-        this.model = model;
-        _.defaultsDeep(model, this.defaults.apply(this, args));
-        this.initialize.apply(this, args);
+        this.model = options.model;
+        var defaults = this.defaults(options);
+        if (!this.model) {
+            this.model = defaults
+        } else {
+            _.defaultsDeep(this.model, defaults);
+        }
+        this.initialize(options);
     }
 
     _.extend(Model.prototype, EventEmitter.prototype);
@@ -31,7 +34,7 @@ define([
 
     Model.prototype.idAttr = 'id';
 
-    Model.prototype.defaults = function () {
+    Model.prototype.defaults = function (options) {
         return {};
     };
 
@@ -40,7 +43,7 @@ define([
     };
 
     /**
-     * Destroy the series, removing all listeners and subscriptions.
+     * Destroy the model, removing all listeners and subscriptions.
      */
     Model.prototype.destroy = function () {
         this.emit('destroy');

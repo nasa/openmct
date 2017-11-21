@@ -13,12 +13,11 @@ define([
 
     var PlotConfigurationModel = Model.extend({
 
-        initialize: function (model) {
-            model = model || {};
-            this.series = new Collection(model.series);
-            this.xAxis = new Model(model.xAxis);
-            this.yAxis = new Model(model.yAxis);
-            this.legend = new Model(model.legend);
+        initialize: function (options) {
+            this.series = new Collection({models: options.model.series});
+            this.xAxis = new Model({model: options.model.xAxis});
+            this.yAxis = new Model({model: options.model.yAxis});
+            this.legend = new Model({model: options.model.legend});
 
             this.palette = new color.ColorPalette();
 
@@ -64,10 +63,13 @@ define([
             if (this.yAxis.get('range')) {
                 this.yAxis.set('range', this.yAxis.get('range'));
             }
-            this.listenTo(this, 'destroy', this.onDestroy, this);
+
             this.legend.set('expanded', this.legend.get('expandByDefault'));
             this.listenTo(this.legend, 'change:expanded', this.setLegendHeight, this);
             this.setLegendHeight();
+
+            this.listenTo(this, 'destroy', this.onDestroy, this);
+
         },
         setLegendHeight: function () {
             var expanded = this.legend.get('expanded');
@@ -81,6 +83,7 @@ define([
             this.xAxis.destroy();
             this.yAxis.destroy();
             this.series.destroy();
+            this.legend.destroy();
         },
         defaults: function () {
             return {

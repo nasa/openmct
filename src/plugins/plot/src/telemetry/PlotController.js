@@ -141,7 +141,7 @@ define([
             var format = this.formatService.getFormat(timeSystem.timeFormat);
             var model = domainObject.getModel();
 
-            this.config = new PlotConfigurationModel({
+            this.config = new PlotConfigurationModel({model: {
                 xAxis: {
                     key: timeSystem.key,
                     range: {
@@ -154,7 +154,7 @@ define([
                 yAxis: _.get(model, 'configuration.yAxis', {}),
                 domainObject: model,
                 legend: _.get(model, 'configuration.legend')
-            });
+            }});
             configStore.add(this.configId, this.config);
         }
 
@@ -343,7 +343,10 @@ define([
 
         _.extend(seriesModel, seriesConfig);
 
-        var series = new PlotSeries(seriesModel, this.openmct);
+        var series = new PlotSeries({
+            model: seriesModel,
+            openmct: this.openmct
+        });
 
         this.config.series.add(series);
     };

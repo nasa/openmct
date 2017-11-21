@@ -10,16 +10,16 @@ define([
     'use strict';
 
     var TelemetryPlotSeries = PlotSeries.extend({
-        initialize: function (model, publicAPI) {
-            this.publicAPI = publicAPI;
-            this.limitEvaluator = publicAPI.telemetry.limitEvaluator(model.domainObject);
+        initialize: function (options) {
+            this.openmct = options.openmct;
+            this.limitEvaluator = openmct.telemetry.limitEvaluator(this.model.domainObject);
             this.on('destroy', this.onDestroy, this);
         },
 
-        defaults: function (model) {
+        defaults: function (options) {
             return {
                 markers: true,
-                name: model.domainObject.name,
+                name: options.model.domainObject.name,
             }
         },
 
@@ -39,7 +39,7 @@ define([
         fetch: function (options) {
             options = _.extend({}, {size: 1000, strategy: 'minmax'}, options || {});
             if (!this.unsubscribe) {
-                this.unsubscribe = this.publicAPI
+                this.unsubscribe = this.openmct
                     .telemetry
                     .subscribe(
                         this.get('domainObject'),
@@ -47,7 +47,7 @@ define([
                     );
             }
 
-            return this.publicAPI
+            return this.openmct
                 .telemetry
                 .request(this.get('domainObject'), options)
                 .then(function (points) {

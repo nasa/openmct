@@ -13,17 +13,22 @@ define([
 ) {
     'use strict';
 
-    function Collection(models) {
-        if (models) {
-            this.models = models.map(this.modelFn, this);
+    function Collection(options) {
+        if (options.models) {
+            this.models = options.models.map(this.modelFn, this);
         } else {
             this.models = [];
         }
+        this.initialize(options);
     }
 
     _.extend(Collection.prototype, EventEmitter.prototype);
 
     Collection.extend = extend;
+
+    Collection.prototype.initialize = function (options) {
+
+    };
 
     Collection.prototype.modelClass = Model;
 
@@ -31,7 +36,7 @@ define([
         if (model instanceof this.modelClass) {
             return model;
         }
-        return new this.modelClass(model);
+        return new this.modelClass({model: model});
     };
 
     Collection.prototype.first = function () {
