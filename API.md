@@ -882,13 +882,13 @@ openmct.install(openmct.plugins.CouchDB('http://localhost:9200'))
 * `openmct.plugins.URLIndicatorPlugin` adds an indicator which shows the
 availability of a URL with the following options: 
   - `url` : URL to indicate the status of
-  - `icon`: Icon to show in the status bar, defaults to `database`
+  - `cssClass`: Icon to show in the status bar, defaults to `icon-database`, [list of all icons](https://nasa.github.io/openmct/style-guide/#/browse/styleguide:home?view=items)
   - `interval`: Interval between checking the connection, defaults to `10000`
   - `label` Name showing up as text in the status bar, defaults to url
 ```javascript
 openmct.install(openmct.plugins.URLIndicatorPlugin({
   url: 'http://google.com',
-  icon: 'check',
+  cssClass: 'check',
   interval: 10000,
   label: 'Google'
  })

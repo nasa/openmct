@@ -57,7 +57,7 @@ define(
                 );
             });
 
-            it("has a database icon as default", function () {
+            it("has a database cssClass as default", function () {
                 expect(indicatorWrapper.getCssClass()).toEqual("icon-database");
             });
 
@@ -102,14 +102,14 @@ define(
                 // Do check for specific class
                 expect(indicatorWrapper.getGlyphClass()).toEqual("err");
             });
-            it("has a customized icon if supplied in initialization", function () {
+            it("has a customized cssClass if supplied in initialization", function () {
                 opts = {
                     url: "http://localhost:8080",
-                    icon: "checked",
+                    cssClass: "cssClass-checked",
                     interval: 10000
                 };
                 indicatorWrapper = new Indicator();
-                expect(indicatorWrapper.getCssClass()).toEqual("icon-checked");
+                expect(indicatorWrapper.getCssClass()).toEqual("cssClass-checked");
             });
             it("has a customized interval if supplied in initialization", function () {
                 opts = {

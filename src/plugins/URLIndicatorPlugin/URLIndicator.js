@@ -40,7 +40,7 @@ define(
             };
         function URLIndicator($http, $interval) {
             var self = this;
-            this.icon = "icon-" + (this.options.icon ? this.options.icon : "database");
+            this.cssClass = this.options.cssClass ? this.options.cssClass : "icon-database";
             this.URLpath = this.options.url;
             this.label = this.options.label ? this.options.label : this.options.url;
             this.interval = this.options.interval || 10000;
@@ -60,7 +60,7 @@ define(
         }
 
         URLIndicator.prototype.getCssClass = function () {
-            return this.icon;
+            return this.cssClass;
         };
         URLIndicator.prototype.getGlyphClass = function () {
             return this.state.glyphClass;
