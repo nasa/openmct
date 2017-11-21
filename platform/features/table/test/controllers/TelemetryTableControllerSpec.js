@@ -441,8 +441,8 @@ define(
                 var expectedRows;
 
                 beforeEach(function () {
-                    testRows = [ { a: 0 }, { a: 1 }, { a: 2 } ];
-                    mockScope.rows = [ { a: -1 }];
+                    testRows = [{ a: 0 }, { a: 1 }, { a: 2 }];
+                    mockScope.rows = [{ a: -1 }];
                     expectedRows = mockScope.rows.concat(testRows);
 
                     spyOn(controller.telemetry, "on").andCallThrough();
