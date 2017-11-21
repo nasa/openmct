@@ -124,7 +124,7 @@ define([
          */
         this.inspectors = new ViewRegistry();
 
-         /**
+        /**
          * Registry for views which should appear in the Inspector area.
          * These views will be chosen based on the selection state.
          *

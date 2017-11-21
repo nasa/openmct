@@ -41,7 +41,7 @@ define(
                         var container = $document[0].querySelectorAll('.inspector-view')[0];
                         view.show(container);
                     } else {
-                        $scope.inspectorKey = selection[0].context.oldItem.getCapability("type").typeDef.inspector;   
+                        $scope.inspectorKey = selection[0].context.oldItem.getCapability("type").typeDef.inspector;
                     }
                 }
 

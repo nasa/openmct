@@ -509,8 +509,8 @@ define(
             return {
                 item: domainObject.useCapability('adapter'),
                 oldItem: domainObject,
-                toolbar: (toolbar) ? this.getToolbar(domainObject.getId(), domainObject) : undefined
-            }
+                toolbar: toolbar ? this.getToolbar(domainObject.getId(), domainObject) : undefined
+            };
         };
 
         /**

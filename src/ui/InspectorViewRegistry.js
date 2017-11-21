@@ -19,10 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global console */
 
- define([], function () {
+define([], function () {
 
-     /**
+    /**
      * A InspectorViewRegistry maintains the definitions for views
      * that may occur in the inspector.
      *
@@ -34,30 +35,30 @@
     }
 
     /**
-     *  
+     *
      * @param {object} selection the object to be viewed
      * @returns {module:openmct.InspectorViewRegistry[]} any providers
      *          which can provide views of this object
      * @private for platform-internal use
      */
     InspectorViewRegistry.prototype.get = function (selection) {
-        var providers = this.getAllProviders().filter(function (provider) {            
+        var providers = this.getAllProviders().filter(function (provider) {
             return provider.canView(selection);
         });
-    
+
         if (providers && providers.length > 0) {
             return providers[0].view(selection);
         }
     };
 
-     /**
+    /**
      * @private
      */
     InspectorViewRegistry.prototype.getAllProviders = function () {
         return Object.values(this.providers);
     };
 
-     /**
+    /**
      * Registers a new type of view.
      *
      * @param {module:openmct.InspectorViewRegistry} provider the provider for this view
@@ -66,7 +67,7 @@
      */
     InspectorViewRegistry.prototype.addProvider = function (provider) {
         var key = provider.key;
-        
+
         if (key === undefined) {
             throw "View providers must have a unique 'key' property defined";
         }
@@ -84,8 +85,6 @@
     InspectorViewRegistry.prototype.getByProviderKey = function (key) {
         return this.providers[key];
     };
-
-   
 
     /**
      * A View is used to provide displayable content, and to react to
@@ -119,7 +118,7 @@
      * @memberof module:openmct.View#
      */
 
-     /**
+    /**
      * Exposes types of views in inspector.
      *
      * @interface InspectorViewProvider
@@ -132,7 +131,7 @@
      * @memberof module:openmct
      */
 
-     /**
+    /**
      * Checks if this provider can supply views for a selection.
      *
      * @method canView
@@ -148,8 +147,8 @@
      * @method view
      * @memberof module:openmct.InspectorViewProvider#
      * @param {module:openmct.selection} selection the selection object
-     * @returns {module:openmct.View} a view of this selection 
+     * @returns {module:openmct.View} a view of this selection
      */
 
     return InspectorViewRegistry;
- });
+});

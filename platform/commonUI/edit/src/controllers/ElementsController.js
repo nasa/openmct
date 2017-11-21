@@ -82,8 +82,8 @@ define(
 
             if (selectedObjectComposition) {
                 selectedObjectComposition.then(function (composition) {
-                    this.scope.composition = composition;                    
-                }.bind(this));    
+                    this.scope.composition = composition;
+                }.bind(this));
             } else {
                 this.scope.composition = [];
             }
