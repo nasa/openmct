@@ -23,7 +23,7 @@
     <div class="abs l-flex-row holder t-autoflow-header l-autoflow-header">
         <span class="t-filter l-filter">
             <input type="search" class="t-filter-input" v-model="filter"/>
-            <a class="clear-icon icon-x-in-circle"></a>
+            <a v-if="filter !== ''" v-on:click="filter = ''" class="clear-icon icon-x-in-circle"></a>
         </span>
 
         <div class="flex-elem grows t-last-update" title="Last Update">{{updated}}</div>
