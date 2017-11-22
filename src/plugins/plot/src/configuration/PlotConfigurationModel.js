@@ -6,6 +6,7 @@ define([
     './SeriesCollection',
     './XAxisModel',
     './YAxisModel',
+    './LegendModel',
     '../lib/color'
 ], function (
     Collection,
@@ -13,6 +14,7 @@ define([
     SeriesCollection,
     XAxisModel,
     YAxisModel,
+    LegendModel,
     color
 ) {
     'use strict';
@@ -32,7 +34,7 @@ define([
                 plot: this,
                 openmct: options.openmct
             });
-            this.legend = new Model({
+            this.legend = new LegendModel({
                 model: options.model.legend,
                 plot: this,
                 openmct: options.openmct
@@ -52,9 +54,8 @@ define([
             this.listenTo(this.series, 'add', this.setLegendHeight, this);
             this.listenTo(this.series, 'remove', this.setLegendHeight, this);
 
-            this.legend.set('expanded', this.legend.get('expandByDefault'));
             this.listenTo(this.legend, 'change:expanded', this.setLegendHeight, this);
-            this.setLegendHeight();
+            this.legend.set('expanded', this.legend.get('expandByDefault'));
 
             this.listenTo(this, 'destroy', this.onDestroy, this);
 
@@ -75,23 +76,13 @@ define([
             this.removeMutationListener();
         },
         defaults: function (options) {
-
-
             return {
                 series: [],
                 xAxis: {
-
                 },
                 yAxis: {
                 },
                 legend: {
-                    position: 'top',
-                    expandByDefault: false,
-                    valueToShowWhenCollapsed: 'nearestValue',
-                    showTimestampWhenExpanded: true,
-                    showValueWhenExpanded: true,
-                    showMaximumWhenExpanded: true,
-                    showMinimumWhenExpanded: true
                 }
             };
         }

@@ -21,7 +21,7 @@
                      ng-class="{ 'cursor-hover': (legend.get('valueToShowWhenCollapsed').indexOf('nearest') != -1) }"
                      ng-show="!!highlights.length && legend.get('valueToShowWhenCollapsed') !== 'none'">
                     {{ legend.get('valueToShowWhenCollapsed') === 'nearestValue' ?
-                        series.formatY(series.closest, series.get('yKey')) :
+                        series.format(series.closest, series.get('yKey')) :
                         legend.get('valueToShowWhenCollapsed') === 'nearestTimestamp' ?
                              series.closest && series.format(series.closest, series.get('xKey')) :
                              series.format(series.stats.get(series.get('yKey'))[legend.get('valueToShowWhenCollapsed')], series.get('yKey'));
