@@ -54,28 +54,6 @@ define([
 
     eventHelpers.extend(PlotOptionsController.prototype);
 
-    PlotOptionsController.prototype.updateYOptions = function () {
-        if (!this.config.series.size()) {
-            this.$scope.yAxisOptions = [];
-        } else {
-            var metadatas = this.config.series.map(function (s) {
-                return s.get('metadata');
-            });
-
-            var options = this.openmct.telemetry
-                .commonValuesForHints(metadatas, ['range']);
-            this.$scope.yAxisOptions = options.map(function (o) {
-                return {
-                    name: o.key,
-                    value: o.key
-                };
-            });
-        }
-        setTimeout(function () {
-            this.$scope.$digest();
-        }.bind(this));
-    };
-
     PlotOptionsController.prototype.setColor = function (series, color) {
         var seriesWithColor = this.config.series.filter(function (s) {
             return s.get('color') === color;
@@ -107,7 +85,7 @@ define([
 
     PlotOptionsController.prototype.setUpScope = function () {
         var config = configStore.get(this.configId);
-        if (!config || config.get('state') !== 'loaded') {
+        if (!config) {
             this.$timeout(this.setUpScope.bind(this));
             return;
         }
@@ -125,7 +103,6 @@ define([
         this.listenTo(config.series, 'remove', this.removeSeries, this);
         config.series.forEach(this.addSeries, this);
 
-        this.linkFields(config.yAxis, 'key', 'form.yAxis.key', undefined, undefined, 'configuration.yAxis.key');
         this.linkFields(config.yAxis, 'label', 'form.yAxis.label', undefined, undefined, 'configuration.yAxis.label');
         this.linkFields(config.yAxis, 'autoscale', 'form.yAxis.autoscale', Boolean, undefined, 'configuration.yAxis.autoscale');
         this.linkFields(config.yAxis, 'autoscalePadding', 'form.yAxis.autoscalePadding', Number, undefined, 'configuration.yAxis.autoscalePadding');
@@ -179,7 +156,6 @@ define([
     };
 
     PlotOptionsController.prototype.addSeries = function (series, index) {
-        this.updateYOptions();
         if (this.$scope.form.series[index]) {
             // the way listeners work, this will blow up.  At this point, it
             // can't technically occur, but if we added some sort of reordering
@@ -187,7 +163,16 @@ define([
             // So here's to hoping this helps debugging.
             throw new Error('Plot options does not support insert at index.');
         }
-        var seriesObject = series.get('domainObject');
+        var metadata = series.get('metadata');
+        this.$scope.form.series[index] = {
+            yAxisOptions: metadata.valuesForHints(['range']).map(function (o) {
+                return {
+                    name: o.key,
+                    value: o.key
+                };
+            })
+        }
+        var seriesObject = series.domainObject;
         var seriesId = objectUtils.makeKeyString(seriesObject.identifier);
         var configPath = 'configuration.series[' + index + '].';
         var path = 'form.series[' + index + '].';
@@ -200,6 +185,7 @@ define([
                 });
             }.bind(this));
 
+        this.linkFields(series, 'yKey', path + 'yKey', undefined, undefined, configPath + 'yKey');
         this.linkFields(series, 'interpolate', path + 'interpolate', undefined, undefined, configPath + 'interpolate');
         this.linkFields(series, 'markers', path + 'markers', undefined, undefined, configPath + 'markers');
         this.linkFields(series, 'markerSize', path + 'markerSize', Number, undefined, configPath + 'markerSize');
@@ -207,15 +193,9 @@ define([
     };
 
     PlotOptionsController.prototype.removeSeries = function (series, index) {
-        this.updateYOptions();
         this.stopListening(series);
         series.stopListening(this.$scope);
         this.$scope.form.series.splice(index, 1);
-        var configSeries = this.domainObject.configuration.series.slice();
-        configSeries.splice(index, 1);
-        setTimeout(function () {
-            this.openmct.objects.mutate(this.domainObject, 'configuration.series', configSeries);
-        }.bind(this));
     };
 
     PlotOptionsController.prototype.linkFields = function (

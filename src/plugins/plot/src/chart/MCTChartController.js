@@ -166,10 +166,8 @@ function (
         }
 
         var offsets = {
-            x: series.value(point, xKey),
-            y: series.value(point, yKey),
-            xKey: xKey,
-            yKey: yKey
+            x: series.getXVal(point),
+            y: series.getYVal(point)
         };
 
         this.offset.x = function (x) {
@@ -179,10 +177,10 @@ function (
             return y - offsets.y;
         }.bind(this);
         this.offset.xVal = function (point, pSeries) {
-            return this.offset.x(pSeries.value(point, xKey));
+            return this.offset.x(pSeries.getXVal(point));
         }.bind(this);
         this.offset.yVal = function (point, pSeries) {
-            return this.offset.y(pSeries.value(point, yKey));
+            return this.offset.y(pSeries.getYVal(point));
         }.bind(this);
     };
 

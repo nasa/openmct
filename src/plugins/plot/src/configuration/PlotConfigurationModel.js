@@ -3,10 +3,16 @@
 define([
     './Collection',
     './Model',
+    './SeriesCollection',
+    './XAxisModel',
+    './YAxisModel',
     '../lib/color'
 ], function (
     Collection,
     Model,
+    SeriesCollection,
+    XAxisModel,
+    YAxisModel,
     color
 ) {
     'use strict';
@@ -14,55 +20,37 @@ define([
     var PlotConfigurationModel = Model.extend({
 
         initialize: function (options) {
-            this.series = new Collection({models: options.model.series});
-            this.xAxis = new Model({model: options.model.xAxis});
-            this.yAxis = new Model({model: options.model.yAxis});
-            this.legend = new Model({model: options.model.legend});
+            this.openmct = options.openmct;
+
+            this.xAxis = new XAxisModel({
+                model: options.model.xAxis,
+                plot: this,
+                openmct: options.openmct
+            });
+            this.yAxis = new YAxisModel({
+                model: options.model.yAxis,
+                plot: this,
+                openmct: options.openmct
+            });
+            this.legend = new Model({
+                model: options.model.legend,
+                plot: this,
+                openmct: options.openmct
+            });
+            this.series = new SeriesCollection({
+                models: options.model.series,
+                plot: this,
+                openmct: options.openmct
+            });
+
+            this.removeMutationListener = this.openmct.objects.observe(this.get('domainObject'), '*', function (domainObject) {
+                this.set('domainObject', domainObject);
+            }.bind(this));
 
             this.palette = new color.ColorPalette();
 
-            this.xAxis.on('change:range', function (newValue, oldValue, model) {
-                model.set('displayRange', newValue);
-            });
-            this.yAxis.on('change:range', function (newValue, oldValue, model) {
-                if (!newValue) {
-                    this.unset('displayRange');
-                    return
-                }
-                if (model.get('autoscale')) {
-                    var padding = Math.abs(newValue.max - newValue.min) * model.get('autoscalePadding');
-                    if (padding === 0) {
-                        padding = 1;
-                    }
-                    model.set('displayRange', {
-                        min: newValue.min - padding,
-                        max: newValue.max + padding,
-                    });
-                } else {
-                    model.set('displayRange', newValue);
-                }
-            });
-
-            this.listenTo(this.series, 'add', this.onSeriesAdd, this);
             this.listenTo(this.series, 'add', this.setLegendHeight, this);
-            this.listenTo(this.series, 'remove', this.onSeriesRemove, this);
             this.listenTo(this.series, 'remove', this.setLegendHeight, this);
-
-            this.yAxis.on('change:autoscale', function (autoscale, oldValue, model) {
-                model.set('range', model.get('range')); // trigger autoscale
-            });
-            this.yAxis.on('change:autoscalePadding', function (padding, old, model) {
-                if (model.get('autoscale')) {
-                    model.set('range', model.get('range'));
-                }
-            });
-
-            if (this.xAxis.get('range')) {
-                this.xAxis.set('range', this.xAxis.get('range'));
-            }
-            if (this.yAxis.get('range')) {
-                this.yAxis.set('range', this.yAxis.get('range'));
-            }
 
             this.legend.set('expanded', this.legend.get('expandByDefault'));
             this.listenTo(this.legend, 'change:expanded', this.setLegendHeight, this);
@@ -84,15 +72,17 @@ define([
             this.yAxis.destroy();
             this.series.destroy();
             this.legend.destroy();
+            this.removeMutationListener();
         },
-        defaults: function () {
+        defaults: function (options) {
+
+
             return {
-                state: 'unloaded',
                 series: [],
                 xAxis: {
+
                 },
                 yAxis: {
-                    autoscalePadding: 0.1
                 },
                 legend: {
                     position: 'top',
@@ -104,32 +94,6 @@ define([
                     showMinimumWhenExpanded: true
                 }
             };
-        },
-        onSeriesAdd: function (series) {
-            var seriesColor = series.get('color');
-            if (seriesColor) {
-                if (!(seriesColor instanceof color.Color)) {
-                    seriesColor = color.Color.fromHexString(seriesColor);
-                    series.set('color', seriesColor);
-                }
-                this.palette.remove(seriesColor);
-            } else {
-                series.set('color', this.palette.getNextColor());
-            }
-            this.listenTo(series, 'change:color', this.updateColorPalette, this);
-        },
-        onSeriesRemove: function (series) {
-            this.palette.return(series.get('color'));
-            this.stopListening(series);
-        },
-        updateColorPalette: function (newColor, oldColor) {
-            this.palette.remove(newColor);
-            var seriesWithColor = this.series.filter(function (series) {
-                return series.get('color') === newColor;
-            })[0];
-            if (!seriesWithColor) {
-                this.palette.return(oldColor);
-            }
         }
     });
 

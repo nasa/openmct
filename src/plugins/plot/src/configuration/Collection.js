@@ -4,12 +4,14 @@ define([
     'lodash',
     'EventEmitter',
     './Model',
-    '../lib/extend'
+    '../lib/extend',
+    '../lib/eventHelpers'
 ], function (
     _,
     EventEmitter,
     Model,
-    extend
+    extend,
+    eventHelpers
 ) {
     'use strict';
 
@@ -23,6 +25,7 @@ define([
     }
 
     _.extend(Collection.prototype, EventEmitter.prototype);
+    eventHelpers.extend(Collection.prototype);
 
     Collection.extend = extend;
 
@@ -34,9 +37,14 @@ define([
 
     Collection.prototype.modelFn = function (model) {
         if (model instanceof this.modelClass) {
+            model.collection = this;
             return model;
+
         }
-        return new this.modelClass({model: model});
+        return new this.modelClass({
+            collection: this,
+            model: model
+        });
     };
 
     Collection.prototype.first = function () {

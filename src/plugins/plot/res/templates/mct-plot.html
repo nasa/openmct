@@ -21,10 +21,10 @@
                      ng-class="{ 'cursor-hover': (legend.get('valueToShowWhenCollapsed').indexOf('nearest') != -1) }"
                      ng-show="!!highlights.length && legend.get('valueToShowWhenCollapsed') !== 'none'">
                     {{ legend.get('valueToShowWhenCollapsed') === 'nearestValue' ?
-                        series.format(series.closest, yAxis.get('key')) :
+                        series.formatY(series.closest, series.get('yKey')) :
                         legend.get('valueToShowWhenCollapsed') === 'nearestTimestamp' ?
-                             series.closest && series.format(series.closest, xAxis.get('key')) :
-                             series.format(series.stats.get(yAxis.get('key'))[legend.get('valueToShowWhenCollapsed')], yAxis.get('key'));
+                             series.closest && series.format(series.closest, series.get('xKey')) :
+                             series.format(series.stats.get(series.get('yKey'))[legend.get('valueToShowWhenCollapsed')], series.get('yKey'));
                     }}
                 </div>
             </div>
@@ -62,25 +62,25 @@
 
                     <td ng-if="legend.get('showTimestampWhenExpanded')">
                         <span class="plot-series-value cursor-hover hover-value-enabled">
-                            {{ series.closest && series.format(series.closest, xAxis.get('key')) }}
+                            {{ series.closest && series.format(series.closest, series.get('xKey')) }}
                         </span>
                     </td>
                     <td ng-if="legend.get('showValueWhenExpanded')">
                         <span class="plot-series-value cursor-hover hover-value-enabled"
                               ng-class="series.closest._limit.cssClass">
-                            {{ series.format(series.closest, yAxis.get('key')) }}
+                            {{ series.format(series.closest, series.get('yKey')) }}
                         </span>
                     </td>
                     <td ng-if="legend.get('showMinimumWhenExpanded')"
                         class="mobile-hide">
                         <span class="plot-series-value">
-                            {{ series.format(series.stats.get(yAxis.get('key')).min, yAxis.get('key')) }}
+                            {{ series.format(series.stats.get(series.get('yKey')).min, series.get('yKey')) }}
                         </span>
                     </td>
                     <td ng-if="legend.get('showMaximumWhenExpanded')"
                         class="mobile-hide">
                         <span class="plot-series-value">
-                            {{ series.format(series.stats.get(yAxis.get('key')).max, yAxis.get('key')) }}
+                            {{ series.format(series.stats.get(series.get('yKey')).max, series.get('yKey')) }}
                         </span>
                     </td>
                 </tr>

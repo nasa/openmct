@@ -43,6 +43,20 @@
                 <div class="inspector-config" ng-show="series.expanded">
                     <ul>
                         <li>
+                            <label>Value:</label>
+                            <span class="control">
+                                <div class="select">
+                                    <select ng-model="form.series[$index].yKey">
+                                        <option ng-repeat="option in form.series[$index].yAxisOptions"
+                                                value="{{option.value}}"
+                                                ng-selected="option.value == form.series[$index].yKey">
+                                            {{option.name}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </span>
+                        </li>
+                        <li>
                             <label>Line Style:</label>
                             <span class="control">
                                 <div class="select">
@@ -100,20 +114,6 @@
             Y Axis
         </em>
         <ul>
-            <li>
-                <label>Value:</label>
-                <span class="control">
-                    <div class="select">
-                        <select ng-model="form.yAxis.key">
-                            <option ng-repeat="option in yAxisOptions"
-                                    value="{{option.value}}"
-                                    ng-selected="option.value == form.yAxis.key">
-                                {{option.name}}
-                            </option>
-                        </select>
-                    </div>
-                </span>
-            </li>
             <li>
                 <label>Label:</label>
                 <input class="control" type="text" ng-model="form.yAxis.label"/>

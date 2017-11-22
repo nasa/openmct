@@ -43,12 +43,8 @@ define([
             this.data = [];
             this.tracking = {};
             this.stats = new Model();
-            this.updateStat = this.updateStat.bind(this);
-            this.updateStats = this.updateStats.bind(this);
-            this.onXKeyChange = this.onXKeyChange.bind(this);
-            this.onYKeyChange = this.onYKeyChange.bind(this);
-            this.on('change:xKey', this.onXKeyChange);
-            this.on('change:yKey', this.onYKeyChange);
+            this.listenTo(this, 'change:xKey', this.onXKeyChange, this);
+            this.listenTo(this, 'change:yKey', this.onYKeyChange, this);
 
             Model.apply(this, arguments);
             this.onXKeyChange(this.get('xKey'));
@@ -94,6 +90,8 @@ define([
             this.evaluate = function (datum) {
                 return this.limitEvaluator.evaluate(datum, valueMetadata);
             }.bind(this);
+            var format = this.get('formats')[newKey];
+            this.getYVal = format.parse.bind(format);
         },
 
         /**

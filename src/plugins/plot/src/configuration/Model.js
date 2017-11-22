@@ -18,6 +18,7 @@ define([
             options = {};
         }
         this.model = options.model;
+        this.collection = options.collection;
         var defaults = this.defaults(options);
         if (!this.model) {
             this.model = defaults

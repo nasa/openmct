@@ -12,14 +12,24 @@ define([
     var TelemetryPlotSeries = PlotSeries.extend({
         initialize: function (options) {
             this.openmct = options.openmct;
-            this.limitEvaluator = openmct.telemetry.limitEvaluator(this.model.domainObject);
+            this.domainObject = options.domainObject;
+            this.limitEvaluator = this.openmct.telemetry.limitEvaluator(options.domainObject);
             this.on('destroy', this.onDestroy, this);
         },
 
         defaults: function (options) {
+            var metadata = options.openmct.telemetry.getMetadata(options.domainObject);
+            var range = metadata.valuesForHints(['range'])[0];
             return {
                 markers: true,
-                name: options.model.domainObject.name,
+                name: options.domainObject.name,
+                xKey: options.collection.plot.xAxis.get('key'),
+                yKey: range.key,
+                metadata: metadata,
+                formats: options.openmct.telemetry.getFormatMap(metadata),
+                markers: true,
+                markerSize: 2.0,
+                alarmMarkers: true
             }
         },
 
@@ -42,14 +52,14 @@ define([
                 this.unsubscribe = this.openmct
                     .telemetry
                     .subscribe(
-                        this.get('domainObject'),
+                        this.domainObject,
                         this.add.bind(this)
                     );
             }
 
             return this.openmct
                 .telemetry
-                .request(this.get('domainObject'), options)
+                .request(this.domainObject, options)
                 .then(function (points) {
                     this.reset();
                     this.addPoints(points);
