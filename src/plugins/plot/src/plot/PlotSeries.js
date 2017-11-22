@@ -41,8 +41,6 @@ define([
     var PlotSeries = Model.extend({
         constructor: function (model) {
             this.data = [];
-            this.tracking = {};
-            this.stats = new Model();
             this.listenTo(this, 'change:xKey', this.onXKeyChange, this);
             this.listenTo(this, 'change:yKey', this.onYKeyChange, this);
 
@@ -79,8 +77,6 @@ define([
             if (newKey === oldKey) {
                 return;
             }
-            this.trackStats(newKey);
-            this.untrackStats(oldKey);
             var valueMetadata = this.get('metadata').value(newKey);
             if (valueMetadata.format === 'enum') {
                 this.set('interpolate', 'stepAfter');
@@ -116,7 +112,8 @@ define([
             this.emit('reset');
         },
         resetStats: function () {
-            Object.keys(this.stats.model).forEach(this.stats.unset, this.stats);
+            this.unset('stats');
+            this.data.forEach(this.updateStats, this);
         },
         /**
          * Return the point closest to a given point, based on the sort
@@ -136,29 +133,6 @@ define([
                 nearestPoint = highDistance < lowDistance ? highPoint : lowPoint;
 
             return nearestPoint;
-        },
-        /**
-         * Track stats (min max, etc) for a given key.
-         *
-         */
-        trackStats: function (key) {
-            if (this.tracking[key]) {
-                return;
-            }
-
-            this.tracking[key] = function (point) {
-                this.updateStat(key, point);
-            }.bind(this);
-
-            this.data.forEach(this.tracking[key]);
-        },
-        /**
-         * Untrack stats for a given key.
-         *
-         */
-        untrackStats: function (key) {
-            delete this.tracking[key];
-            this.stats.unset(key);
         },
         /**
          * Override this to implement plot series loading functionality.  Must return
@@ -185,51 +159,40 @@ define([
             return _.sortedIndex(this.data, point, this.getXVal);
         },
         /**
-         * Update min/max stats for a key to include a given value.
-         * @private
-         */
-        updateStat: function (key, point) {
-            var value = this.value(point, key);
-            var stat = this.stats.get(key),
-                changed = false;
-            if (!stat) {
-                stat = {
-                    max: value,
-                    min: value
-                };
-                changed = true;
-
-            } else {
-                if (stat.max < value) {
-                    stat.max = value;
-                    changed = true;
-                }
-                if (stat.min > value) {
-                    stat.min = value;
-                    changed = true;
-                }
-            }
-
-            if (changed) {
-                this.stats.set(key, {
-                    min: stat.min,
-                    max: stat.max
-                });
-            }
-        },
-        /**
-         *
-         */
-        /**
-         * Update min/max stats for a given point.
+         * Update min/max stats for the series.
          * @private
          */
         updateStats: function (point) {
-            // TODO: make this faster.
-            for (var trackKey in this.tracking) {
-                if (this.tracking.hasOwnProperty(trackKey)) {
-                    this.tracking[trackKey](point);
+            var value = this.getYVal(point);
+            var stats = this.get('stats');
+            var changed = false;
+            if (!stats) {
+                stats = {
+                    minValue: value,
+                    minPoint: point,
+                    maxValue: value,
+                    maxPoint: point
+                };
+                changed = true;
+            } else {
+                if (stats.maxValue < value) {
+                    stats.maxValue = value;
+                    stats.maxPoint = point;
+                    changed = true;
                 }
+                if (stats.minValue > value) {
+                    stats.minValue = value;
+                    stats.minPoint = point;
+                    changed = true;
+                }
+            }
+            if (changed) {
+                this.set('stats', {
+                    minValue: stats.minValue,
+                    minPoint: stats.minPoint,
+                    maxValue: stats.maxValue,
+                    maxPoint: stats.maxPoint
+                });
             }
         },
         /**
@@ -260,7 +223,7 @@ define([
             this.emit('add', point, insertIndex, this);
         },
         /**
-         * Remove a point from the data array and remove listeners.
+         * Remove a point from the data array.
          */
         remove: function (point) {
             var index = this.data.indexOf(point);
@@ -280,7 +243,6 @@ define([
             this.data.slice(0, startIndex).forEach(this.remove, this);
             this.data.slice(endIndex, this.data.length).forEach(this.remove, this);
             this.resetStats();
-            this.data.forEach(this.updateStats, this);
         }
     });
 

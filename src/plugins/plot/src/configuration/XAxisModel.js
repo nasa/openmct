@@ -7,7 +7,15 @@ define([
     var XAxisModel = Model.extend({
         initialize: function (options) {
             this.on('change:range', function (newValue, oldValue, model) {
-                model.set('displayRange', newValue);
+                if (!model.get('frozen')) {
+                    model.set('displayRange', newValue);
+                }
+            });
+
+            this.on('change:frozen', function (frozen, oldValue, model) {
+                if (!frozen) {
+                    model.set('range', this.get('range'));
+                }
             });
 
             if (this.get('range')) {
@@ -27,7 +35,8 @@ define([
                 range: {
                     min: bounds.start,
                     max: bounds.end
-                }
+                },
+                frozen: false
             };
         }
     });

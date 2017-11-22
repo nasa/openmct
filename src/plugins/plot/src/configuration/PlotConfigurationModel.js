@@ -6,16 +6,14 @@ define([
     './SeriesCollection',
     './XAxisModel',
     './YAxisModel',
-    './LegendModel',
-    '../lib/color'
+    './LegendModel'
 ], function (
     Collection,
     Model,
     SeriesCollection,
     XAxisModel,
     YAxisModel,
-    LegendModel,
-    color
+    LegendModel
 ) {
     'use strict';
 
@@ -49,24 +47,11 @@ define([
                 this.set('domainObject', domainObject);
             }.bind(this));
 
-            this.palette = new color.ColorPalette();
-
-            this.listenTo(this.series, 'add', this.setLegendHeight, this);
-            this.listenTo(this.series, 'remove', this.setLegendHeight, this);
-
-            this.listenTo(this.legend, 'change:expanded', this.setLegendHeight, this);
-            this.legend.set('expanded', this.legend.get('expandByDefault'));
+            this.yAxis.listenToSeriesCollection(this.series);
+            this.legend.listenToSeriesCollection(this.series);
 
             this.listenTo(this, 'destroy', this.onDestroy, this);
 
-        },
-        setLegendHeight: function () {
-            var expanded = this.legend.get('expanded');
-            if (this.legend.get('position') !== 'top') {
-                this.legend.set('height', '0px');
-            } else {
-                this.legend.set('height', expanded ? (20 * (this.series.size() + 1) + 40) + 'px' : '21px');
-            }
         },
         onDestroy: function () {
             this.xAxis.destroy();

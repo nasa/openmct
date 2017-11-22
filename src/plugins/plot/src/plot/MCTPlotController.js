@@ -7,6 +7,11 @@ define([
 ) {
     'use strict';
 
+    /**
+     * MCTPlotController handles user interactions with the plot canvas.
+     * It supports pan and zoom, implements zoom history, and supports locating
+     * values near the cursor.
+     */
     function MCTPlotController($scope, $element, $window) {
         this.$scope = $scope;
         this.$scope.config = this.config;
@@ -24,6 +29,7 @@ define([
         this.tickUpdate = false;
 
         this.$scope.plotHistory = this.plotHistory = [];
+        this.$scope.$on('plot:clearHistory', this.clear.bind(this));
 
         // Bind handlers so they are properly removed.
         [
@@ -74,8 +80,6 @@ define([
 
         this.config.xAxis.on('change:displayRange', this.onXAxisChange);
         this.config.yAxis.on('change:displayRange', this.onYAxisChange);
-
-        // TODO: something needs to give me a viewport.
     };
 
     MCTPlotController.prototype.onXAxisChange = function (displayBounds) {
@@ -201,7 +205,7 @@ define([
     MCTPlotController.prototype.startMarquee = function ($event) {
         this.trackMousePosition($event);
         if (this.positionOverPlot) {
-            this.$scope.$emit('user:viewport:change:start');
+            this.freeze();
             this.marquee = {
                 start: this.positionOverPlot,
                 end: this.positionOverPlot,
@@ -231,7 +235,7 @@ define([
 
     MCTPlotController.prototype.startPan = function ($event) {
         this.trackMousePosition($event);
-        this.$scope.$emit('user:viewport:change:start');
+        this.freeze();
         this.pan = {
             start: this.positionOverPlot
         };
@@ -261,8 +265,7 @@ define([
     MCTPlotController.prototype.trackHistory = function () {
         this.plotHistory.push({
             x: this.config.xAxis.get('displayRange'),
-            y: this.config.yAxis.get('displayRange'),
-            autoscale: this.config.yAxis.get('autoscale')
+            y: this.config.yAxis.get('displayRange')
         });
     };
 
@@ -297,18 +300,26 @@ define([
         }
     };
 
+    MCTPlotController.prototype.freeze = function () {
+        this.config.yAxis.set('frozen', true);
+        this.config.xAxis.set('frozen', true);
+    };
+
     MCTPlotController.prototype.clear = function () {
-        this.$scope.plotHistory = this.plotHistory = this.plotHistory.slice(0, 1);
-        this.back();
+        this.config.yAxis.set('frozen', false);
+        this.config.xAxis.set('frozen', false);
+        this.$scope.plotHistory = this.plotHistory = [];
         this.$scope.$emit('user:viewport:change:end');
     };
 
     MCTPlotController.prototype.back = function () {
         var previousAxisRanges = this.plotHistory.pop();
-
+        if (this.plotHistory.length === 0) {
+            this.clear();
+            return;
+        }
         this.config.xAxis.set('displayRange', previousAxisRanges.x);
         this.config.yAxis.set('displayRange', previousAxisRanges.y);
-        this.config.yAxis.set('autoscale', previousAxisRanges.autoscale);
         this.$scope.$emit('user:viewport:change:end');
     };
 

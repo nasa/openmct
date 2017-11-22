@@ -24,7 +24,7 @@
                         series.format(series.closest, series.get('yKey')) :
                         legend.get('valueToShowWhenCollapsed') === 'nearestTimestamp' ?
                              series.closest && series.format(series.closest, series.get('xKey')) :
-                             series.format(series.stats.get(series.get('yKey'))[legend.get('valueToShowWhenCollapsed')], series.get('yKey'));
+                             series.format(series.get('stats')[legend.get('valueToShowWhenCollapsed') + 'Point'], series.get('yKey'));
                     }}
                 </div>
             </div>
@@ -74,13 +74,13 @@
                     <td ng-if="legend.get('showMinimumWhenExpanded')"
                         class="mobile-hide">
                         <span class="plot-series-value">
-                            {{ series.format(series.stats.get(series.get('yKey')).min, series.get('yKey')) }}
+                            {{ series.format(series.get('stats').minPoint, series.get('yKey')) }}
                         </span>
                     </td>
                     <td ng-if="legend.get('showMaximumWhenExpanded')"
                         class="mobile-hide">
                         <span class="plot-series-value">
-                            {{ series.format(series.stats.get(series.get('yKey')).max, series.get('yKey')) }}
+                            {{ series.format(series.get('stats').maxPoint, series.get('yKey')) }}
                         </span>
                     </td>
                 </tr>

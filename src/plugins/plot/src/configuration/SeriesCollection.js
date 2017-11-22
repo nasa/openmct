@@ -48,6 +48,7 @@ define([
                     );
                 }
                 seriesConfig = this.plot.get('domainObject').configuration.series[index];
+                seriesConfig = JSON.parse(JSON.stringify(seriesConfig));
             }
 
             this.add(new TelemetryPlotSeries({

@@ -5,13 +5,19 @@ define([
 ) {
 
     var LegendModel = Model.extend({
-        initialize: function (options) {
-            this.on('change:range', function (newValue, oldValue, model) {
-                model.set('displayRange', newValue);
-            });
-
-            if (this.get('range')) {
-                this.set('range', this.get('range'));
+        listenToSeriesCollection: function (seriesCollection) {
+            this.seriesCollection = seriesCollection;
+            this.listenTo(this.seriesCollection, 'add', this.setHeight, this);
+            this.listenTo(this.seriesCollection, 'remove', this.setHeight, this);
+            this.listenTo(this, 'change:expanded', this.setHeight, this);
+            this.set('expanded', this.get('expandByDefault'));
+        },
+        setHeight: function () {
+            var expanded = this.get('expanded');
+            if (this.get('position') !== 'top') {
+                this.set('height', '0px');
+            } else {
+                this.set('height', expanded ? (20 * (this.seriesCollection.size() + 1) + 40) + 'px' : '21px');
             }
         },
         defaults: function (options) {

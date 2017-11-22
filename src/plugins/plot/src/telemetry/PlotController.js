@@ -44,7 +44,6 @@ define([
         $scope.pending = 0;
 
         this.listenTo($scope, 'user:viewport:change:end', this.onUserViewportChangeEnd, this);
-        this.listenTo($scope, 'user:viewport:change:start', this.onUserViewportChangeStart, this);
         this.listenTo($scope, '$destroy', this.destroy, this);
         this.listenTo(this.openmct.time, 'bounds', this.updateDisplayBounds, this);
         this.listenTo(this.openmct.time, 'timeSystem', this.onTimeSystemChange, this);
@@ -70,7 +69,6 @@ define([
     };
 
     PlotController.prototype.addSeries = function (series) {
-        this.listenTo(series.stats, 'change', this.onSeriesStatChange, this);
         this.listenTo(series, 'change:yKey', function () {
             this.loadSeriesData(series);
         }, this)
@@ -87,41 +85,6 @@ define([
         plotSeries.destroy();
     };
 
-    PlotController.prototype.onSeriesStatChange = function (key, stats) {
-        if (!this.config.yAxis.get('autoscale')) {
-            return;
-        }
-        if (this.config.yAxis.get('key') !== key) {
-            return;
-        }
-        if (this.config.yAxis.get('values')) {
-            return;
-        }
-        if (!this.config.yAxis.get('range')) {
-            return;
-        }
-        if (!stats) {
-            // TODO: likely a removal or full requery, need to set
-            return;
-        }
-        var range = this.config.yAxis.get('range');
-        var changed = false;
-        if (!range.min || stats.min < range.min) {
-            range.min = stats.min;
-            changed = true;
-        }
-        if (!range.max || stats.max > range.max) {
-            range.max = stats.max;
-            changed = true;
-        }
-        if (changed) {
-            this.config.yAxis.set('range', {
-                min: range.min,
-                max: range.max
-            });
-        }
-    };
-
     PlotController.prototype.getConfig = function (domainObject) {
         this.configId = domainObject.getId();
         this.config = configStore.get(this.configId);
@@ -132,9 +95,9 @@ define([
                 model: {
                     id: this.configId,
                     xAxis: {},
-                    yAxis: _.get(newDomainObject, 'configuration.yAxis', {}),
+                    yAxis: JSON.parse(JSON.stringify(_.get(newDomainObject, 'configuration.yAxis', {}))),
                     domainObject: newDomainObject,
-                    legend: _.get(newDomainObject, 'configuration.legend')
+                    legend: JSON.parse(JSON.stringify(_.get(newDomainObject, 'configuration.legend', {})))
                 },
                 openmct: this.openmct
             });
@@ -142,76 +105,6 @@ define([
         }
 
         return this.config;
-    };
-
-    PlotController.prototype.changeYAxis = function (newKey, oldKey) {
-        if (newKey === oldKey) {
-            return;
-        }
-        if (!this.config.series.size()) {
-            [
-                'format',
-                'values',
-                'range',
-                'autoscale',
-                'label',
-                'key'
-            ].forEach(function (k) {
-                if (this.config.yAxis.has(k)) {
-                    this.config.yAxis.unset(k);
-                }
-            }, this);
-            return;
-        }
-        var yKey = this.config.yAxis.get('key');
-        var sampleSeries = this.config.series.first();
-        var yMetadata = sampleSeries.get('metadata').value(yKey);
-        var yFormat = sampleSeries.get('formats')[yKey];
-        var range = this.config.yAxis.get('range');
-        if (_.isUndefined(range) ||
-            _.isUndefined(range.min) ||
-            _.isUndefined(range.max)) {
-
-            range = {
-                min: yMetadata.min,
-                max: yMetadata.max
-            };
-        }
-
-        var autoscale = this.config.yAxis.get('autoscale');
-        if (_.isUndefined(autoscale)) {
-            autoscale = !range.min && !range.max;
-        }
-
-        if (autoscale && this.config.series.size()) {
-            var newScale = this.config.series.map(function (series) {
-                return series.stats.get(this.config.yAxis.get('key'));
-            }, this).reduce(function (a, b) {
-                if (!b) {
-                    return a;
-                }
-                return {
-                    min: a.min < b.min ? a.min : b.min,
-                    max: a.max > b.max ? a.max : b.max
-                };
-            });
-            this.config.yAxis.set('range', newScale);
-        }
-
-        var label = this.config.yAxis.get('label');
-        if (_.isUndefined(label)) {
-            if (this.config.series.size() > 1) {
-                label = yKey;
-            } else {
-                label = yMetadata.units;
-            }
-        }
-
-        this.config.yAxis.set('format', yFormat.format.bind(yFormat));
-        this.config.yAxis.set('values', yMetadata.values);
-        this.config.yAxis.set('range', range);
-        this.config.yAxis.set('autoscale', autoscale);
-        this.config.yAxis.set('label', label);
     };
 
     PlotController.prototype.changeXAxis = function (newKey, oldKey) {
@@ -240,7 +133,6 @@ define([
         this.getConfig(this.$scope.domainObject);
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
-        this.listenTo(this.config.yAxis, 'change:key', this.changeYAxis, this);
         this.listenTo(this.config.xAxis, 'change:key', this.changeXAxis, this);
 
         this.config.series.forEach(this.addSeries, this);
@@ -290,11 +182,9 @@ define([
         if (_.isEqual(newRange, oldRange)) {
             return;
         }
-        if (isTick && !this.synchronized()) {
-            return;
-        }
         this.config.xAxis.set('range', newRange);
         if (!isTick) {
+            this.$scope.$broadcast('plot:clearHistory');
             this.loadMoreData(newRange, true);
         } else {
             // TODO: drop any data that is more than 2x (max-min) before min.
@@ -321,14 +211,6 @@ define([
         return this._synchronized;
     };
 
-    PlotController.prototype.onUserViewportChangeStart = function () {
-        this.yAutoscale = this.config.yAxis.get('autoscale');
-        var displayRange = this.config.yAxis.get('displayRange');
-        this.config.yAxis.set('autoscale', false);
-        this.config.yAxis.set('displayRange', displayRange);
-        this.synchronized(false);
-    };
-
     PlotController.prototype.onUserViewportChangeEnd = function () {
         var xDisplayRange = this.config.xAxis.get('displayRange');
         var xRange = this.config.xAxis.get('range');
@@ -337,10 +219,6 @@ define([
 
         this.synchronized(xRange.min === xDisplayRange.min &&
                           xRange.max === xDisplayRange.max);
-
-        if (this.synchronized()) {
-            this.config.yAxis.set('autoscale', this.yAutoscale);
-        }
     };
 
     PlotController.prototype.exportJPG = function () {

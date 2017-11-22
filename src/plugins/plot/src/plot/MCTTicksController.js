@@ -104,9 +104,8 @@ define([
         this.tickUpdate = false;
         this.updateTicks = this.updateTicks.bind(this);
         this.axis.on('change:displayRange', this.updateTicks);
-        if (this.axis.get('key')) {
-            this.updateTicks(this.axis.get('displayRange'));
-        }
+        this.axis.on('change:format', this.updateTicks);
+        this.updateTicks();
         this.$scope.$on('$destroy', function () {
             this.axis.off('change:displayRange', this.updateTicks);
         }.bind(this));
@@ -149,7 +148,8 @@ define([
         return ticks(range.min, range.max, number);
     };
 
-    MCTTicksController.prototype.updateTicks = function (range) {
+    MCTTicksController.prototype.updateTicks = function () {
+        var range = this.axis.get('displayRange')
         if (!range) {
             delete this.$scope.min;
             delete this.$scope.max;
