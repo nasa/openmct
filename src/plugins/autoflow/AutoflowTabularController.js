@@ -38,11 +38,13 @@ define([], function () {
         return name.toLowerCase().indexOf(filter.toLowerCase()) !== -1;
     };
 
-    AutoflowTabularController.prototype.updateRow = function (row, format, evaluate, datum) {
-        row.value = format(datum);
+    AutoflowTabularController.prototype.updateRow = function (row, formatRange, formatDomain, evaluate, datum) {
+        row.value = formatRange(datum);
         row.classes = evaluate(datum).map(function (violation) {
             return violation.cssClass;
         }).join(" ");
+
+        this.data.updated = formatDomain(datum);
     };
 
     AutoflowTabularController.prototype.makeRow = function (childObject) {
@@ -61,10 +63,12 @@ define([], function () {
             value: undefined
         };
         var metadata = this.openmct.telemetry.getMetadata(childObject);
-        var values = metadata.valuesForHints(['range']);
-        var valueMetadata = values[0];
-        var formatter =
-            this.openmct.telemetry.getValueFormatter(valueMetadata);
+        var ranges = metadata.valuesForHints(['range']);
+        var domains = metadata.valuesForHints(['domain']);
+        var rangeFormatter =
+            this.openmct.telemetry.getValueFormatter(ranges[0]);
+        var domainFormatter =
+            this.openmct.telemetry.getValueFormatter(domains[0]);
         var evaluator =
             this.openmct.telemetry.limitEvaluator(childObject);
 
@@ -73,9 +77,10 @@ define([], function () {
             this.updateRow.bind(
                 this,
                 row,
-                formatter.format.bind(formatter),
+                rangeFormatter.format.bind(rangeFormatter),
+                domainFormatter.format.bind(domainFormatter),
                 function (datum) {
-                    var violations = evaluator.evaluate(datum, valueMetadata);
+                    var violations = evaluator.evaluate(datum, ranges[0]);
                     if (!violations) {
                         return [];
                     }

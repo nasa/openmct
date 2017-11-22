@@ -40,7 +40,7 @@ define([
             columns: [],
             width: INITIAL_COLUMN_WIDTH,
             filter: "",
-            updated: ""
+            updated: "No updates"
         };
         var controller =
             new AutoflowTabularController(domainObject, data, openmct);
