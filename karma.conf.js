@@ -36,6 +36,7 @@ module.exports = function(config) {
         files: [
             {pattern: 'bower_components/**/*.js', included: false},
             {pattern: 'node_modules/d3-*/**/*.js', included: false},
+            {pattern: 'node_modules/vue/**/*.js', included: false},
             {pattern: 'src/**/*.js', included: false},
             {pattern: 'example/**/*.html', included: false},
             {pattern: 'example/**/*.js', included: false},
