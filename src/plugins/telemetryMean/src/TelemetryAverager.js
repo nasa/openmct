@@ -30,10 +30,10 @@ define([], function () {
         this.samples = samples;
         this.averagingWindow = [];
 
-        this.rangeKey = undefined
+        this.rangeKey = undefined;
         this.rangeFormatter = undefined;
         this.setRangeKeyAndFormatter();
-        
+
         // Defined dynamically based on current time system
         this.domainKey = undefined;
         this.domainFormatter = undefined;
@@ -44,16 +44,16 @@ define([], function () {
 
         var timeValue = this.domainFormatter.parse(telemetryDatum);
         var rangeValue = this.rangeFormatter.parse(telemetryDatum);
-        
+
         this.averagingWindow.push(rangeValue);
         if (this.averagingWindow.length > this.samples) {
             this.averagingWindow.shift();
         }
         var averageValue = this.calculateMean();
-        
+
         var meanDatum = {};
         meanDatum[this.domainKey] = timeValue;
-        meanDatum['value'] = averageValue
+        meanDatum.value = averageValue;
 
         return meanDatum;
     };
@@ -92,7 +92,7 @@ define([], function () {
 
         this.rangeKey = rangeValues[0].key;
         this.rangeFormatter = this.getFormatter(this.rangeKey);
-    }
+    };
 
     /**
      * @private
