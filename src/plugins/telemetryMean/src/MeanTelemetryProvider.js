@@ -19,7 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/*jshint latedef: nofunc */
+/*global console */
 define([
     '../../../api/objects/object-utils',
     './TelemetryAverager'
@@ -47,18 +48,20 @@ define([
         var objectId = objectUtils.parseKeyString(domainObject.telemetryPoint);
         var samples = domainObject.samples;
 
-        this.objectAPI.get(objectId).then(function (linkedDomainObject) {
-            if (!unsubscribeCalled) {
-                wrappedUnsubscribe = this.subscribeToAverage(linkedDomainObject, samples, callback);
-            }
-        }.bind(this));
+        this.objectAPI.get(objectId)
+            .then(function (linkedDomainObject) {
+                if (!unsubscribeCalled) {
+                    wrappedUnsubscribe = this.subscribeToAverage(linkedDomainObject, samples, callback);
+                }
+            }.bind(this))
+            .catch(logError);
 
-        return function unsubscribe(){
+        return function unsubscribe() {
             unsubscribeCalled = true;
             if (wrappedUnsubscribe !== undefined) {
                 wrappedUnsubscribe();
             }
-        }
+        };
     };
 
     MeanTelemetryProvider.prototype.subscribeToAverage = function (domainObject, samples, callback) {
@@ -67,11 +70,11 @@ define([
         return this.telemetryAPI.subscribe(domainObject, function (telemetryDatum) {
             var avgData = telemetryAverager.createAverageDatum(telemetryDatum);
 
-            if (telemetryAverager.sampleCount() === samples){
+            if (telemetryAverager.sampleCount() === samples) {
                 callback(avgData);
             }
         }.bind(this));
-    }
+    };
 
     MeanTelemetryProvider.prototype.request = function (domainObject, request) {
         var objectId = objectUtils.parseKeyString(domainObject.telemetryPoint);
@@ -89,18 +92,18 @@ define([
         var averageData = [];
         var telemetryAverager = new TelemetryAverager(this.telemetryAPI, this.timeAPI, domainObject, samples);
 
-        return this.telemetryAPI.request(domainObject, request).then(function (telemetryData){            
-            telemetryData.forEach(function (datum){
-                var avgData = telemetryAverager.createAverageDatum(datum);
+        return this.telemetryAPI.request(domainObject, request).then(function (telemetryData) {
+            telemetryData.forEach(function (datum) {
+                var avgDatum = telemetryAverager.createAverageDatum(datum);
 
-                if (telemetryAverager.sampleCount() === samples){
-                    averageData.push(avgData);
+                if (telemetryAverager.sampleCount() === samples) {
+                    averageData.push(avgDatum);
                 }
             }.bind(this));
 
             return averageData;
         }.bind(this));
-    }
+    };
 
     /**
      * @private
@@ -109,6 +112,14 @@ define([
         var objectId = objectUtils.parseKeyString(domainObject.telemetryPoint);
         return this.objectAPI.get(objectId);
     };
+
+    function logError(error) {
+        if (error.stack) {
+            console.error(error.stack);
+        } else {
+            console.error(error);
+        }
+    }
 
     return MeanTelemetryProvider;
 });
