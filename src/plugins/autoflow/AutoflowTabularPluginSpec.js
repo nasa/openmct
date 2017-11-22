@@ -20,13 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./AutoflowTabularPlugin'], function (AutoflowTabularPlugin) {
+define([
+    './AutoflowTabularPlugin',
+    './AutoflowTabularView'
+], function (AutoflowTabularPlugin, AutoflowTabularView) {
     describe("AutoflowTabularPlugin", function () {
         var testType;
+        var testObject;
         var mockmct;
 
         beforeEach(function () {
             testType = "some-type";
+            testObject = { type: testType };
             mockmct = {
                 objectViews: jasmine.createSpyObj('views', ['addProvider'])
             };
@@ -35,9 +40,30 @@ define(['./AutoflowTabularPlugin'], function (AutoflowTabularPlugin) {
             plugin(mockmct);
         });
 
-        it("installs a view", function () {
+        it("installs a view provider", function () {
             expect(mockmct.objectViews.addProvider).toHaveBeenCalled();
         });
 
+        describe("installs a view provider which", function () {
+            var provider;
+
+            beforeEach(function () {
+                provider =
+                    mockmct.objectViews.addProvider.mostRecentCall.args[0];
+            });
+
+            it("applies its view to the type from options", function () {
+                expect(provider.canView(testObject)).toBe(true);
+            });
+
+            it("does not apply to other types", function () {
+                expect(provider.canView({ type: 'foo' })).toBe(false);
+            });
+
+            it("provides an AutoflowTabularView", function () {
+                expect(provider.view(testObject) instanceof AutoflowTabularView)
+                    .toBe(true);
+            });
+        });
     });
 });
