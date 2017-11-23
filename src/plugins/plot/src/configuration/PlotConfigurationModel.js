@@ -6,14 +6,16 @@ define([
     './SeriesCollection',
     './XAxisModel',
     './YAxisModel',
-    './LegendModel'
+    './LegendModel',
+    'lodash'
 ], function (
     Collection,
     Model,
     SeriesCollection,
     XAxisModel,
     YAxisModel,
-    LegendModel
+    LegendModel,
+    _
 ) {
     'use strict';
 
@@ -63,12 +65,11 @@ define([
         defaults: function (options) {
             return {
                 series: [],
+                domainObject: options.domainObject,
                 xAxis: {
                 },
-                yAxis: {
-                },
-                legend: {
-                }
+                yAxis: _.cloneDeep(_.get(options.domainObject, 'configuration.yAxis', {})),
+                legend: _.cloneDeep(_.get(options.domainObject, 'configuration.legend', {}))
             };
         }
     });

@@ -26,7 +26,7 @@ define([
                 this.untrackSeries(series);
                 this.updateFromSeries(this.seriesCollection);
             }, this);
-            this.seriesCollection.forEach(this.trackSeries, this.yAxis);
+            this.seriesCollection.forEach(this.trackSeries, this);
             this.updateFromSeries(this.seriesCollection);
         },
         updateDisplayRange: function (range) {

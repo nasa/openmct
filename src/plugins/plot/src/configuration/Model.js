@@ -21,7 +21,7 @@ define([
         this.collection = options.collection;
         var defaults = this.defaults(options);
         if (!this.model) {
-            this.model = defaults
+            this.model = options.model = defaults;
         } else {
             _.defaultsDeep(this.model, defaults);
         }

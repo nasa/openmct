@@ -158,13 +158,6 @@ function (
             return;
         }
 
-        var xKey = this.config.xAxis.get('key');
-        var yKey = this.config.yAxis.get('key');
-
-        if (!xKey || !yKey) {
-            return;
-        }
-
         var offsets = {
             x: series.getXVal(point),
             y: series.getYVal(point)

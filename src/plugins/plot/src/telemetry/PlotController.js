@@ -45,8 +45,6 @@ define([
 
         this.listenTo($scope, 'user:viewport:change:end', this.onUserViewportChangeEnd, this);
         this.listenTo($scope, '$destroy', this.destroy, this);
-        this.listenTo(this.openmct.time, 'bounds', this.updateDisplayBounds, this);
-        this.listenTo(this.openmct.time, 'timeSystem', this.onTimeSystemChange, this);
 
         this.initialize($scope.domainObject);
         this.followTimeConductor();
@@ -54,6 +52,20 @@ define([
     }
 
     eventHelpers.extend(PlotController.prototype);
+
+    PlotController.prototype.initialize = function () {
+        this.getConfig(this.$scope.domainObject);
+        this.listenTo(this.config.series, 'add', this.addSeries, this);
+        this.listenTo(this.config.series, 'remove', this.removeSeries, this);
+
+        this.config.series.forEach(this.addSeries, this);
+    };
+
+    PlotController.prototype.followTimeConductor = function () {
+        this.listenTo(this.openmct.time, 'bounds', this.updateDisplayBounds, this);
+        this.listenTo(this.openmct.time, 'timeSystem', this.onTimeSystemChange, this);
+        this.synchronized(true);
+    };
 
     PlotController.prototype.loadSeriesData = function (series) {
         this.startLoading();
@@ -72,17 +84,11 @@ define([
         this.listenTo(series, 'change:yKey', function () {
             this.loadSeriesData(series);
         }, this)
-        var yKey = this.config.yAxis.get('key');
-        if (!yKey) {
-            this.config.yAxis.set('key', series.get('yKey'));
-        }
         this.loadSeriesData(series);
     };
 
     PlotController.prototype.removeSeries = function (plotSeries) {
         this.stopListening(plotSeries);
-        this.stopListening(plotSeries.stats);
-        plotSeries.destroy();
     };
 
     PlotController.prototype.getConfig = function (domainObject) {
@@ -90,15 +96,8 @@ define([
         this.config = configStore.get(this.configId);
         if (!this.config) {
             var newDomainObject = domainObject.useCapability('adapter');
-
             this.config = new PlotConfigurationModel({
-                model: {
-                    id: this.configId,
-                    xAxis: {},
-                    yAxis: JSON.parse(JSON.stringify(_.get(newDomainObject, 'configuration.yAxis', {}))),
-                    domainObject: newDomainObject,
-                    legend: JSON.parse(JSON.stringify(_.get(newDomainObject, 'configuration.legend', {})))
-                },
+                domainObject: newDomainObject,
                 openmct: this.openmct
             });
             configStore.add(this.configId, this.config);
@@ -107,45 +106,7 @@ define([
         return this.config;
     };
 
-    PlotController.prototype.changeXAxis = function (newKey, oldKey) {
-        if (newKey === oldKey) {
-            return;
-        }
-        if (this.config.series.models.length) {
-            var xMetadata = this.config.series.first()
-                .get('metadata')
-                .value(newKey);
-            var xFormat = this.openmct.telemetry.getValueFormatter(xMetadata);
-            this.config.xAxis.set('label', xMetadata.name);
-            this.config.xAxis.set('format', xFormat.format.bind(xFormat));
-        } else {
-            this.config.xAxis.set('format', function (x) { return x;});
-            this.config.xAxis.set('label', newKey);
-        }
-        this.config.xAxis.unset('range');
-        this.config.series.forEach(function (series) {
-            series.set('xKey', newKey);
-            series.reset();
-        });
-    };
-
-    PlotController.prototype.initialize = function () {
-        this.getConfig(this.$scope.domainObject);
-        this.listenTo(this.config.series, 'add', this.addSeries, this);
-        this.listenTo(this.config.series, 'remove', this.removeSeries, this);
-        this.listenTo(this.config.xAxis, 'change:key', this.changeXAxis, this);
-
-        this.config.series.forEach(this.addSeries, this);
-    };
-
-    PlotController.prototype.followTimeConductor = function () {
-        this.listenTo(this.openmct.time, 'bounds', this.updateDisplayBounds, this);
-        this.listenTo(this.openmct.time, 'timeSystem', this.onTimeSystemChange, this);
-        this.synchronized(true);
-    };
-
     PlotController.prototype.onTimeSystemChange = function (timeSystem) {
-        var format = this.formatService.getFormat(timeSystem.timeFormat);
         this.config.xAxis.set('key', timeSystem.key);
     };
 
@@ -178,10 +139,6 @@ define([
             min: bounds.start,
             max: bounds.end
         };
-        var oldRange = this.config.xAxis.get('range');
-        if (_.isEqual(newRange, oldRange)) {
-            return;
-        }
         this.config.xAxis.set('range', newRange);
         if (!isTick) {
             this.$scope.$broadcast('plot:clearHistory');

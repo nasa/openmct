@@ -95,6 +95,7 @@ define([
         onSeriesRemove: function (series) {
             this.palette.return(series.get('color'));
             this.stopListening(series);
+            series.destroy();
         },
         updateColorPalette: function (newColor, oldColor) {
             this.palette.remove(newColor);
