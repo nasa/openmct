@@ -26,29 +26,60 @@ define([
 ], function (AutoflowTabularView, $) {
     describe("AutoflowTabularView", function () {
         var testObject;
+        var testChildren;
         var testContainer;
         var mockmct;
         var mockComposition;
+        var mockMetadata;
+        var mockFormatter;
+        var mockEvaluator;
         var view;
 
         beforeEach(function () {
+            var loaded = false;
+
             testType = "some-type";
             testObject = { type: testType };
+            testChildren = ['abc', 'xyz'].map(function (key) {
+                return {
+                    identifier: { namespace: "test", key: key },
+                    name: "Object " + key
+                };
+            });
             testContainer = $('<div>')[0];
 
             mockmct = {
-                composition: jasmine.createSpyObj("composition", ['get'])
+                composition: jasmine.createSpyObj("composition", ['get']),
+                telemetry: jasmine.createSpyObj("telemetry", [
+                    'getMetadata',
+                    'getValueFormatter',
+                    'limitEvaluator',
+                    'subscribe'
+                ])
             };
             mockComposition = jasmine.createSpyObj('composition', ['load']);
+            mockMetadata = jasmine.createSpyObj('metadata', ['valuesForHints']);
+            mockFormatter = jasmine.createSpyObj('formatter', ['format']);
+            mockEvaluator = jasmine.createSpyObj('evaluator', ['evaluate']);
 
             mockmct.composition.get.andReturn(mockComposition);
-            mockComposition.load.andReturn(Promise.resolve([]));
+            mockComposition.load.andReturn(Promise.resolve(testChildren));
+
+            mockmct.telemetry.getMetadata.andReturn(mockMetadata);
+            mockmct.telemetry.getValueFormatter.andReturn(mockFormatter);
+            mockmct.telemetry.limitEvaluator.andReturn(mockEvaluator);
+            mockmct.telemetry.subscribe.andReturn(jasmine.createSpy("unsubscribe"));
+            mockMetadata.valuesForHints.andReturn([]);
 
             view = new AutoflowTabularView(testObject, mockmct);
             view.show(testContainer);
 
+            mockComposition.load().then(function () {
+                loaded = true;
+            });
+
             waitsFor(function () {
-                return testContainer.children.length > 0;
+                return loaded;
             });
         });
 
@@ -56,5 +87,15 @@ define([
             expect(testContainer.children.length > 0).toBe(true);
         });
 
+        it("creates one row per child object", function () {
+            var children;
+            waitsFor(function () {
+                children = $(testContainer).find(".l-autoflow-row");
+                return children.length > 0;
+            });
+            runs(function () {
+                expect(children.length).toEqual(testChildren.length);
+            });
+        });
     });
 });
