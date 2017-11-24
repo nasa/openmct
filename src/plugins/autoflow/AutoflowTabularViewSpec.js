@@ -159,7 +159,6 @@ define([
                 callbacks[datum.key](datum);
             });
 
-
             waitsFor(function () {
                 return $(testContainer).find(".l-autoflow-item").filter(".r").text() !== "";
             });
@@ -168,6 +167,25 @@ define([
                 testData.forEach(function (datum, index) {
                     var $cell = $(testContainer).find(".l-autoflow-row").eq(index).find(".r");
                     expect($cell.text()).toEqual(String(datum.range));
+                });
+            });
+        });
+
+        it("updates classes for limit violations", function () {
+            var testClass = "some-limit-violation";
+            mockEvaluator.evaluate.andReturn({ cssClass: testClass });
+            testKeys.forEach(function (key) {
+                callbacks[key]({ range: 'foo', domain: 'bar' })
+            });
+
+            waitsFor(function () {
+                return $(testContainer).find(".l-autoflow-item").filter(".r").text() !== "";
+            });
+
+            runs(function () {
+                testKeys.forEach(function (datum, index) {
+                    var $cell = $(testContainer).find(".l-autoflow-row").eq(index).find(".r");
+                    expect($cell.hasClass(testClass)).toBe(true);
                 });
             });
         });
