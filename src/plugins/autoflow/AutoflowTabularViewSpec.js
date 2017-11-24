@@ -120,5 +120,21 @@ define([
                 expect(mockUnsubscribes[key]).toHaveBeenCalled();
             });
         });
+
+        it("provides a button to change column width", function () {
+            expect($(testContainer).find('.l-autoflow-col').css('width'))
+                .toEqual('225px');
+
+            $(testContainer).find('.change-column-width').click();
+
+            waitsFor(function () {
+                return $(testContainer).find('.l-autoflow-col').css('width') !== '225px';
+            });
+
+            runs(function () {
+                expect($(testContainer).find('.l-autoflow-col').css('width'))
+                    .toEqual('250px');
+            });
+        });
     });
 });
