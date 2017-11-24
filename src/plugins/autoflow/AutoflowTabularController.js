@@ -29,6 +29,7 @@ define([], function () {
         this.rows = {};
         this.rowCount = 1;
         this.unlistens = [];
+        this.childObjects = [];
     }
 
     AutoflowTabularController.prototype.matchesFilter = function (domainObject) {
