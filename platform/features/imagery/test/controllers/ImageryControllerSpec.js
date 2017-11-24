@@ -183,6 +183,17 @@ define(
                     expect(controller.getImageUrl()).toEqual(newUrl);
                 });
 
+                it("forwards large image view to latest image in history on un-pause", function () {
+                    $scope.imageHistory = [
+                        { utc: 1434600258122, url: 'some/url1', selected: false},
+                        { utc: 1434600258123, url: 'some/url2', selected: false}
+                    ];
+                    controller.paused(true);
+                    controller.paused(false);
+
+                    expect(controller.getImageUrl()).toEqual(controller.getImageUrl($scope.imageHistory[1]));
+                });
+
                 it("subscribes to telemetry", function () {
                     expect(openmct.telemetry.subscribe).toHaveBeenCalledWith(
                         newDomainObject,
@@ -227,7 +238,7 @@ define(
                     expect(controller.updateHistory(mockDatum)).toBe(false);
                 });
 
-                describe("user clicks on imagery thumbnail", function () {
+                describe("when user clicks on imagery thumbnail", function () {
                     var mockDatum = { utc: 1434600258123, url: 'some/url', selected: false};
 
                     it("pauses and adds selected class to imagery thumbnail", function () {
@@ -248,6 +259,7 @@ define(
                         expect(controller.getTime()).toEqual(controller.timeFormat.format(mockDatum.utc));
                     });
                 });
+
             });
 
             it("initially shows an empty string for date/time", function () {

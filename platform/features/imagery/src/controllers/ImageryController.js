@@ -255,6 +255,8 @@ define(
                 if (this.nextDatum) {
                     this.updateValues(this.nextDatum);
                     delete this.nextDatum;
+                } else {
+                    this.updateValues(this.$scope.imageHistory[this.$scope.imageHistory.length - 1]);
                 }
                 this.autoScroll = true;
             }
