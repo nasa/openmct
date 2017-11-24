@@ -70,13 +70,16 @@ define([
             mounted: function () {
                 controller.activate();
 
-                interval = setInterval(function () {
+                var updateRowHeight = function () {
                     var tabularArea = this.$refs.autoflowItems;
                     var height = tabularArea.clientHeight;
                     var available = height - SLIDER_HEIGHT;
                     var rows = Math.max(1, Math.floor(available / ROW_HEIGHT));
                     controller.setRows(rows);
-                }.bind(this), 50);
+                }.bind(this);
+
+                interval = setInterval(updateRowHeight, 50);
+                this.$nextTick(updateRowHeight);
             }
         });
     }
