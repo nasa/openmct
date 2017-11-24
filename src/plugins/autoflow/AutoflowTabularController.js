@@ -29,7 +29,6 @@ define([], function () {
         this.rows = {};
         this.rowCount = 1;
         this.unlistens = [];
-        this.active = false;
     }
 
     AutoflowTabularController.prototype.matchesFilter = function (domainObject) {
@@ -118,7 +117,6 @@ define([], function () {
     };
 
     AutoflowTabularController.prototype.setObjects = function (domainObjects) {
-        this.releaseSubscriptions();
         this.rows = {};
         this.childObjects = domainObjects;
         this.update();
@@ -133,9 +131,7 @@ define([], function () {
     };
 
     AutoflowTabularController.prototype.activate = function () {
-        if (this.active) {
-            this.destroy();
-        }
+        this.destroy();
         this.active = true;
 
         this.openmct.composition.get(this.domainObject)
@@ -144,11 +140,6 @@ define([], function () {
     };
 
     AutoflowTabularController.prototype.destroy = function () {
-        this.releaseSubscriptions();
-        this.active = false;
-    };
-
-    AutoflowTabularController.prototype.releaseSubscriptions = function () {
         this.unlistens.forEach(function (unlisten) {
             unlisten();
         });
