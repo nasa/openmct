@@ -32,7 +32,6 @@ define([
         var mockmct;
         var mockComposition;
         var mockMetadata;
-        var mockFormatter;
         var mockEvaluator;
         var mockUnsubscribes;
         var callbacks;
@@ -64,7 +63,7 @@ define([
             };
             mockComposition = jasmine.createSpyObj('composition', ['load']);
             mockMetadata = jasmine.createSpyObj('metadata', ['valuesForHints']);
-            mockFormatter = jasmine.createSpyObj('formatter', ['format']);
+
             mockEvaluator = jasmine.createSpyObj('evaluator', ['evaluate']);
             mockUnsubscribes = testKeys.reduce(function (map, key) {
                 map[key] = jasmine.createSpy('unsubscribe-' + key);
@@ -75,14 +74,22 @@ define([
             mockComposition.load.andReturn(Promise.resolve(testChildren));
 
             mockmct.telemetry.getMetadata.andReturn(mockMetadata);
-            mockmct.telemetry.getValueFormatter.andReturn(mockFormatter);
+            mockmct.telemetry.getValueFormatter.andCallFake(function (metadatum) {
+                var mockFormatter = jasmine.createSpyObj('formatter', ['format']);
+                mockFormatter.format.andCallFake(function (datum) {
+                    return datum[metadatum.hint];
+                });
+                return mockFormatter;
+            });
             mockmct.telemetry.limitEvaluator.andReturn(mockEvaluator);
             mockmct.telemetry.subscribe.andCallFake(function (obj, callback) {
                 var key = obj.identifier.key;
-                callbacks[key] = callbacks;
+                callbacks[key] = callback;
                 return mockUnsubscribes[key];
             });
-            mockMetadata.valuesForHints.andReturn([]);
+            mockMetadata.valuesForHints.andCallFake(function (hints) {
+                return [{ hint: hints[0] }];
+            });
 
             view = new AutoflowTabularView(testObject, mockmct);
             view.show(testContainer);
@@ -134,6 +141,34 @@ define([
             runs(function () {
                 expect($(testContainer).find('.l-autoflow-col').css('width'))
                     .toEqual('250px');
+            });
+        });
+
+        it("subscribes to all child objects", function () {
+            testKeys.forEach(function (key) {
+                expect(callbacks[key]).toEqual(jasmine.any(Function));
+            });
+        });
+
+        it("displays incoming telemetry", function () {
+            var testData = testKeys.map(function (key, index) {
+                return { key: key, range: index * 100, domain: key + index };
+            });
+
+            testData.forEach(function (datum) {
+                callbacks[datum.key](datum);
+            });
+
+
+            waitsFor(function () {
+                return $(testContainer).find(".l-autoflow-item").filter(".r").text() !== "";
+            });
+
+            runs(function () {
+                testData.forEach(function (datum, index) {
+                    var $cell = $(testContainer).find(".l-autoflow-row").eq(index).find(".r");
+                    expect($cell.text()).toEqual(String(datum.range));
+                });
             });
         });
     });
