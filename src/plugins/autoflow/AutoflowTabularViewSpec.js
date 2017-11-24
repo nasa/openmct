@@ -175,7 +175,7 @@ define([
             var testClass = "some-limit-violation";
             mockEvaluator.evaluate.andReturn({ cssClass: testClass });
             testKeys.forEach(function (key) {
-                callbacks[key]({ range: 'foo', domain: 'bar' })
+                callbacks[key]({ range: 'foo', domain: 'bar' });
             });
 
             waitsFor(function () {
