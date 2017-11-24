@@ -37,8 +37,8 @@ define([
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
-    SummaryWidget,
     ImportExport,
+    SummaryWidget,
     URLIndicatorPlugin
 ) {
     var bundleMap = {
