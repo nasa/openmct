@@ -26,6 +26,7 @@ define([
 ], function (AutoflowTabularView, $) {
     describe("AutoflowTabularView", function () {
         var testObject;
+        var testKeys;
         var testChildren;
         var testContainer;
         var mockmct;
@@ -33,14 +34,18 @@ define([
         var mockMetadata;
         var mockFormatter;
         var mockEvaluator;
+        var mockUnsubscribes;
+        var callbacks;
         var view;
 
         beforeEach(function () {
             var loaded = false;
 
-            testType = "some-type";
-            testObject = { type: testType };
-            testChildren = ['abc', 'xyz'].map(function (key) {
+            callbacks = {};
+
+            testObject = { type: 'some-type' };
+            testKeys = ['abc', 'def', 'xyz'];
+            testChildren = testKeys.map(function (key) {
                 return {
                     identifier: { namespace: "test", key: key },
                     name: "Object " + key
@@ -61,6 +66,10 @@ define([
             mockMetadata = jasmine.createSpyObj('metadata', ['valuesForHints']);
             mockFormatter = jasmine.createSpyObj('formatter', ['format']);
             mockEvaluator = jasmine.createSpyObj('evaluator', ['evaluate']);
+            mockUnsubscribes = testKeys.reduce(function (map, key) {
+                map[key] = jasmine.createSpy('unsubscribe-' + key);
+                return map;
+            }, {});
 
             mockmct.composition.get.andReturn(mockComposition);
             mockComposition.load.andReturn(Promise.resolve(testChildren));
@@ -68,7 +77,11 @@ define([
             mockmct.telemetry.getMetadata.andReturn(mockMetadata);
             mockmct.telemetry.getValueFormatter.andReturn(mockFormatter);
             mockmct.telemetry.limitEvaluator.andReturn(mockEvaluator);
-            mockmct.telemetry.subscribe.andReturn(jasmine.createSpy("unsubscribe"));
+            mockmct.telemetry.subscribe.andCallFake(function (obj, callback) {
+                var key = obj.identifier.key;
+                callbacks[key] = callbacks;
+                return mockUnsubscribes[key];
+            });
             mockMetadata.valuesForHints.andReturn([]);
 
             view = new AutoflowTabularView(testObject, mockmct);
@@ -95,6 +108,16 @@ define([
             });
             runs(function () {
                 expect(children.length).toEqual(testChildren.length);
+            });
+        });
+
+        it("removes subscriptions when destroyed", function () {
+            testKeys.forEach(function (key) {
+                expect(mockUnsubscribes[key]).not.toHaveBeenCalled();
+            });
+            view.destroy();
+            testKeys.forEach(function (key) {
+                expect(mockUnsubscribes[key]).toHaveBeenCalled();
             });
         });
     });
