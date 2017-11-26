@@ -276,17 +276,14 @@ define([
             ruleOrder = this.domainObject.configuration.ruleOrder;
 
         while (Object.keys(this.rulesById).includes('rule' + ruleCount)) {
-            ruleCount = ++ruleCount;
+            ruleCount++;
         }
 
         ruleId = 'rule' + ruleCount;
         ruleOrder.push(ruleId);
         this.domainObject.configuration.ruleOrder = ruleOrder;
 
-        if (this.editing) {
-            this.updateDomainObject();
-        }
-
+        this.updateDomainObject();
         this.initRule(ruleId, 'Rule');
         this.refreshRules();
     };
@@ -398,7 +395,9 @@ define([
      * Mutate this domain object's configuration with the current local configuration
      */
     SummaryWidget.prototype.updateDomainObject = function () {
-        this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
+        if (this.editing) {
+            this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
+        }
     };
 
     return SummaryWidget;

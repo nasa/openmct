@@ -436,5 +436,28 @@ define(
                 expect(mockScope.$broadcast).toHaveBeenCalledWith("remove:rows", discardedRows);
             });
 
+            describe('when telemetry is added', function () {
+                var testRows;
+                var expectedRows;
+
+                beforeEach(function () {
+                    testRows = [{ a: 0 }, { a: 1 }, { a: 2 }];
+                    mockScope.rows = [{ a: -1 }];
+                    expectedRows = mockScope.rows.concat(testRows);
+
+                    spyOn(controller.telemetry, "on").andCallThrough();
+                    controller.registerChangeListeners();
+
+                    controller.telemetry.on.calls.forEach(function (call) {
+                        if (call.args[0] === 'added') {
+                            call.args[1](testRows);
+                        }
+                    });
+                });
+
+                it("adds it to rows in scope", function () {
+                    expect(mockScope.rows).toEqual(expectedRows);
+                });
+            });
         });
     });

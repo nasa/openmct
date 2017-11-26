@@ -424,6 +424,17 @@ define(
                 expect(selectedObj.showFrame).toEqual(jasmine.any(Function));
             });
 
+            it("deselects the object that is no longer in the composition", function () {
+                mockScope.$watchCollection.mostRecentCall.args[1]();
+                var childObj = mockCompositionObjects[0];
+                controller.select(mockEvent, childObj.getId());
+
+                var composition = ["b", "c"];
+                mockScope.$watchCollection.mostRecentCall.args[1](composition);
+
+                expect(controller.selected(childObj)).toBe(false);
+            });
+
         });
     }
 );

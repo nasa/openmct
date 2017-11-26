@@ -360,20 +360,45 @@ define(
          */
         FixedController.prototype.updateView = function (telemetryObject, datum) {
             var metadata = this.openmct.telemetry.getMetadata(telemetryObject);
-            var rangeMetadata = metadata.valuesForHints(['range'])[0];
-            var rangeKey = rangeMetadata.source || rangeMetadata.key;
-            var valueMetadata = metadata.value(rangeKey);
+            var telemetryKeyToDisplay = this.chooseTelemetryKeyToDisplay(metadata);
+            var formattedTelemetryValue = this.getFormattedTelemetryValueForKey(telemetryKeyToDisplay, datum, metadata);
             var limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
-            var formatter = this.openmct.telemetry.getValueFormatter(valueMetadata);
-            var value = datum[valueMetadata.key];
-            var alarm = limitEvaluator && limitEvaluator.evaluate(datum, rangeKey);
+            var alarm = limitEvaluator && limitEvaluator.evaluate(datum, telemetryKeyToDisplay);
 
             this.setDisplayedValue(
                 telemetryObject,
-                formatter.format(value),
+                formattedTelemetryValue,
                 alarm && alarm.cssClass
             );
             this.digest();
+        };
+
+        /**
+         * @private
+         */
+        FixedController.prototype.getFormattedTelemetryValueForKey = function (telemetryKeyToDisplay, datum, metadata) {
+            var valueMetadata = metadata.value(telemetryKeyToDisplay);
+            var formatter = this.openmct.telemetry.getValueFormatter(valueMetadata);
+
+            return formatter.format(datum[valueMetadata.key]);
+        };
+
+        /**
+         * @private
+         */
+        FixedController.prototype.chooseTelemetryKeyToDisplay = function (metadata) {
+            // If there is a range value, show that preferentially
+            var telemetryKeyToDisplay = metadata.valuesForHints(['range'])[0];
+
+            // If no range is defined, default to the highest priority non time-domain data.
+            if (telemetryKeyToDisplay === undefined) {
+                var valuesOrderedByPriority = metadata.values();
+                telemetryKeyToDisplay = valuesOrderedByPriority.filter(function (valueMetadata) {
+                    return !(valueMetadata.hints.domain);
+                })[0];
+            }
+
+            return telemetryKeyToDisplay.source;
         };
 
         /**
@@ -388,7 +413,9 @@ define(
             objects.forEach(function (object) {
                 self.openmct.telemetry.request(object, {start: bounds.start, end: bounds.end, size: 1})
                     .then(function (data) {
-                        self.updateView(object, data[data.length - 1]);
+                        if (data.length > 0) {
+                            self.updateView(object, data[data.length - 1]);
+                        }
                     });
             });
             return objects;

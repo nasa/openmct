@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global console */
 
 define([], function () {
     /**
@@ -28,8 +29,7 @@ define([], function () {
      * @memberof module:openmct
      */
     function ViewRegistry() {
-        this.next_id = 0;
-        this.providers = [];
+        this.providers = {};
     }
 
 
@@ -40,10 +40,17 @@ define([], function () {
      *          which can provide views of this object
      */
     ViewRegistry.prototype.get = function (item) {
-        return this.providers.filter(function (provider) {
-            return typeof provider.canView(item) !== 'undefined' &&
-                provider.canView(item) !== false;
-        });
+        return this.getAllProviders()
+            .filter(function (provider) {
+                return provider.canView(item);
+            });
+    };
+
+    /**
+     * @private
+     */
+    ViewRegistry.prototype.getAllProviders = function () {
+        return Object.values(this.providers);
     };
 
     /**
@@ -54,8 +61,22 @@ define([], function () {
      * @memberof module:openmct.ViewRegistry#
      */
     ViewRegistry.prototype.addProvider = function (provider) {
-        provider.vpid = this.next_id++;
-        this.providers.push(provider);
+        var key = provider.key;
+        if (key === undefined) {
+            throw "View providers must have a unique 'key' property defined";
+        }
+        if (this.providers[key] !== undefined) {
+            console.warn("Provider already defined for key '%s'. Provider keys must be unique.", key);
+        }
+
+        this.providers[key] = provider;
+    };
+
+    /**
+     * @private
+     */
+    ViewRegistry.prototype.getByProviderKey = function (key) {
+        return this.providers[key];
     };
 
     /**
@@ -105,6 +126,7 @@ define([], function () {
      * Exposes types of views in Open MCT.
      *
      * @interface ViewProvider
+     * @property {string} key a unique identifier for this view
      * @property {string} name the human-readable name of this view
      * @property {string} [description] a longer-form description (typically
      *           a single sentence or short paragraph) of this kind of view
@@ -119,16 +141,26 @@ define([], function () {
      * When called by Open MCT, this may include additional arguments
      * which are on the path to the object to be viewed; for instance,
      * when viewing "A Folder" within "My Items", this method will be
-     * invoked with "A Folder" (as a domain object) as the first argument,
-     * and "My Items" as the second argument.
+     * invoked with "A Folder" (as a domain object) as the first argument
      *
      * @method canView
      * @memberof module:openmct.ViewProvider#
      * @param {module:openmct.DomainObject} domainObject the domain object
      *        to be viewed
-     * @returns {Number|boolean} if this returns `false`, then the view does
-     *          not apply to the object.  If it returns true or any number, then
-     *          it applies to this object.  If multiple views could apply
+     * @returns {boolean} 'true' if the view applies to the provided object,
+     *          otherwise 'false'.
+     */
+
+    /**
+     * Optional method determining the priority of a given view. If this
+     * function is not defined on a view provider, then a default priority
+     * of 100 will be applicable for all objects supported by this view.
+     *
+     * @method priority
+     * @memberof module:openmct.ViewProvider#
+     * @param {module:openmct.DomainObject} domainObject the domain object
+     *        to be viewed
+     * @returns {number} The priority of the view. If multiple views could apply
      *          to an object, the view that returns the lowest number will be
      *          the default view.
      */

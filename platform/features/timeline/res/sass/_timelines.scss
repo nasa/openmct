@@ -38,6 +38,10 @@
     .l-timeline-pane {
         @include absPosDefault();
 
+		&.drop-over {
+			background-color: lighten($colorEditAreaBg, 5%);
+		}
+
 	    .l-width-control {
 		    position: relative;
 	    }
@@ -75,6 +79,10 @@
                 }
             }
             &.l-timeline-gantt {
+                .abs.l-timeline-gantt-header-w {
+                    overflow: hidden;
+                    height: $timelineTopPaneHeaderH;
+                }
                 .l-swimlanes-holder {
                     @include scrollV(scroll);
                     bottom: $scrollbarTrackSize;

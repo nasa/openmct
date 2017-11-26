@@ -178,7 +178,6 @@ define(
                     Promise.resolve(mockChildren)
                 );
 
-
                 mockScope.model = testModel;
                 mockScope.configuration = testConfiguration;
                 mockScope.selection = jasmine.createSpyObj(
@@ -194,7 +193,8 @@ define(
 
                 mockMetadata = jasmine.createSpyObj('mockMetadata', [
                     'valuesForHints',
-                    'value'
+                    'value',
+                    'values'
                 ]);
                 mockMetadata.value.andReturn({
                     key: 'value'
@@ -651,6 +651,39 @@ define(
                         expect(controller.getElements()[0].value)
                             .toEqual("Formatted " + testValue);
                     });
+                });
+
+                it("selects an range value to display, if available", function () {
+                    mockMetadata.valuesForHints.andReturn([
+                        {
+                            key: 'range',
+                            source: 'range'
+                        }
+                    ]);
+                    var key = controller.chooseTelemetryKeyToDisplay(mockMetadata);
+                    expect(key).toEqual('range');
+                });
+
+                it("selects the first non-domain value to display, if no range available", function () {
+                    mockMetadata.valuesForHints.andReturn([]);
+                    mockMetadata.values.andReturn([
+                        {
+                            key: 'domain',
+                            source: 'domain',
+                            hints: {
+                                domain: 1
+                            }
+                        },
+                        {
+                            key: 'image',
+                            source: 'image',
+                            hints: {
+                                image: 1
+                            }
+                        }
+                    ]);
+                    var key = controller.chooseTelemetryKeyToDisplay(mockMetadata);
+                    expect(key).toEqual('image');
                 });
 
                 it("reflects limit status", function () {

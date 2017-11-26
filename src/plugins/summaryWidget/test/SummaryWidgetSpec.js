@@ -116,7 +116,8 @@ define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
             expect(Object.keys(mockDomainObject.configuration.ruleConfigById).length).toEqual(1);
         });
 
-        it('uses mutate when updating the domain object', function () {
+        it('uses mutate when updating the domain object only when in edit mode', function () {
+            summaryWidget.editing = true;
             summaryWidget.updateDomainObject();
             expect(mockOpenMCT.objects.mutate).toHaveBeenCalled();
         });

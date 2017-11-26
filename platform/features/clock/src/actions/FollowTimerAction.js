@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2009-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,27 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-], function (
-) {
-    function MCTView(openmct) {
-        return {
-            restrict: 'E',
-            link: function (scope, element, attrs) {
-                var provider = openmct.objectViews.getByProviderKey(attrs.mctProviderKey);
-                var view = new provider.view(scope.domainObject.useCapability('adapter'));
-                var domElement = element[0];
+define(
+    [],
+    function () {
 
-                view.show(domElement);
+        /**
+         * Designates a specific timer for following. Timelines, for example,
+         * use the actively followed timer to display a time-of-interest line
+         * and interpret time conductor bounds in the Timeline's relative
+         * time frame.
+         *
+         * @implements {Action}
+         * @memberof platform/features/clock
+         * @constructor
+         * @param {ActionContext} context the context for this action
+         */
+        function FollowTimerAction(timerService, context) {
+            var domainObject =
+                context.domainObject &&
+                context.domainObject.useCapability('adapter');
+            this.perform =
+                timerService.setTimer.bind(timerService, domainObject);
+        }
 
-                if (view.destroy) {
-                    scope.$on('$destroy', function () {
-                        view.destroy(domElement);
-                    });
-                }
-            }
+        FollowTimerAction.appliesTo = function (context) {
+            var model =
+                (context.domainObject && context.domainObject.getModel()) ||
+                {};
+
+            return model.type === 'timer';
         };
-    }
 
-    return MCTView;
-});
+        return FollowTimerAction;
+    }
+);

@@ -409,7 +409,6 @@ define([
         }
 
         if (self.conditions.length === 1) {
-            // Only one condition
             self.conditions[0].hideButtons();
         }
 

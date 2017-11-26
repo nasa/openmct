@@ -28,7 +28,8 @@ define([
     './timeConductor/plugin',
     '../../example/imagery/plugin',
     '../../platform/import-export/bundle',
-    './summaryWidget/plugin'
+    './summaryWidget/plugin',
+    './URLIndicatorPlugin/URLIndicatorPlugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -36,8 +37,9 @@ define([
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
+    ImportExport,
     SummaryWidget,
-    ImportExport
+    URLIndicatorPlugin
 ) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
@@ -124,6 +126,7 @@ define([
     plugins.ExampleImagery = ExampleImagery;
 
     plugins.SummaryWidget = SummaryWidget;
+    plugins.URLIndicatorPlugin = URLIndicatorPlugin;
 
     return plugins;
 });
