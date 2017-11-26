@@ -370,6 +370,7 @@ define([
         this.domainObject.configuration.ruleConfigById = ruleConfigById;
         this.updateDomainObject();
         this.refreshConditions();
+        this.generateDescription();
     };
 
     /**
@@ -412,7 +413,6 @@ define([
             self.conditions[0].hideButtons();
         }
 
-        self.generateDescription();
     };
 
     /**
@@ -430,6 +430,7 @@ define([
         this.domainObject.configuration.ruleConfigById[this.config.id] = this.config;
         this.updateDomainObject();
         this.refreshConditions();
+        this.generateDescription();
         this.eventEmitter.emit('conditionChange');
     };
 
