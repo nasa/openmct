@@ -22,32 +22,38 @@
 
 define([], function () {
 
-    function TelemetryAverager(telemetryAPI, domainObject, samples) {
+    function TelemetryAverager(telemetryAPI, timeAPI, domainObject, samples) {
         this.telemetryAPI = telemetryAPI;
-        this.keyForDomain = 'utc';
-        this.keyForRange = 'value';
+        this.timeAPI = timeAPI;
 
         this.domainObject = domainObject;
         this.samples = samples;
         this.averagingWindow = [];
-        this.domainFormatter = this.getFormatter(this.keyForDomain);
-        this.rangeFormatter = this.getFormatter(this.keyForRange);
+
+        this.rangeKey = undefined;
+        this.rangeFormatter = undefined;
+        this.setRangeKeyAndFormatter();
+
+        // Defined dynamically based on current time system
+        this.domainKey = undefined;
+        this.domainFormatter = undefined;
     }
 
     TelemetryAverager.prototype.createAverageDatum = function (telemetryDatum) {
+        this.setDomainKeyAndFormatter();
+
         var timeValue = this.domainFormatter.parse(telemetryDatum);
         var rangeValue = this.rangeFormatter.parse(telemetryDatum);
-        
+
         this.averagingWindow.push(rangeValue);
         if (this.averagingWindow.length > this.samples) {
             this.averagingWindow.shift();
         }
-
         var averageValue = this.calculateMean();
-        var meanDatum = {
-            'timestamp': timeValue,
-            'value': averageValue
-        };
+
+        var meanDatum = {};
+        meanDatum[this.domainKey] = timeValue;
+        meanDatum.value = averageValue;
 
         return meanDatum;
     };
@@ -69,20 +75,38 @@ define([], function () {
     /**
      * @private
      */
+    TelemetryAverager.prototype.setDomainKeyAndFormatter = function () {
+        var domainKey = this.timeAPI.timeSystem().key;
+        if (domainKey !== this.domainKey) {
+            this.domainKey = domainKey;
+            this.domainFormatter = this.getFormatter(domainKey);
+        }
+    };
+
+    /**
+     * @private
+     */
+    TelemetryAverager.prototype.setRangeKeyAndFormatter = function () {
+        var metadatas = this.telemetryAPI.getMetadata(this.domainObject);
+        var rangeValues = metadatas.valuesForHints(['range']);
+
+        this.rangeKey = rangeValues[0].key;
+        this.rangeFormatter = this.getFormatter(this.rangeKey);
+    };
+
+    /**
+     * @private
+     */
     TelemetryAverager.prototype.getFormatter = function (key) {
         var objectMetadata = this.telemetryAPI.getMetadata(this.domainObject);
         var valueMetadata = objectMetadata.value(key);
 
-        if (valueMetadata === undefined) {
-            throw "Unsupported Telemetry object. Telemetry object has no metadata for attribute " + key + ".";
-        }
-
         return this.telemetryAPI.getValueFormatter(valueMetadata);
-    }
+    };
 
     TelemetryAverager.prototype.sampleCount = function () {
         return this.averagingWindow.length;
-    }
+    };
 
     return TelemetryAverager;
 });
