@@ -22,18 +22,20 @@
 
 define([
     './AutoflowTabularController',
+    './AutoflowTabularConstants',
     '../../ui/VueView',
     'text!./autoflow-tabular.html'
 ], function (
     AutoflowTabularController,
+    AutoflowTabularConstants,
     VueView,
     autoflowTemplate
 ) {
-    var ROW_HEIGHT = 16,
-        SLIDER_HEIGHT = 10,
-        INITIAL_COLUMN_WIDTH = 225,
-        MAX_COLUMN_WIDTH = 525,
-        COLUMN_WIDTH_STEP = 25;
+    var ROW_HEIGHT = AutoflowTabularConstants.ROW_HEIGHT;
+    var SLIDER_HEIGHT = AutoflowTabularConstants.SLIDER_HEIGHT;
+    var INITIAL_COLUMN_WIDTH = AutoflowTabularConstants.INITIAL_COLUMN_WIDTH;
+    var MAX_COLUMN_WIDTH = AutoflowTabularConstants.MAX_COLUMN_WIDTH;
+    var COLUMN_WIDTH_STEP = AutoflowTabularConstants.COLUMN_WIDTH_STEP;
 
     function AutoflowTabularView(domainObject, openmct) {
         var data = {
