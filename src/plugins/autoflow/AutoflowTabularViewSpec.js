@@ -62,8 +62,10 @@ define([
                     'subscribe'
                 ])
             };
-            mockComposition = jasmine.createSpyObj('composition', ['load']);
-            mockMetadata = jasmine.createSpyObj('metadata', ['valuesForHints']);
+            mockComposition =
+                jasmine.createSpyObj('composition', ['load', 'on', 'off']);
+            mockMetadata =
+                jasmine.createSpyObj('metadata', ['valuesForHints']);
 
             mockEvaluator = jasmine.createSpyObj('evaluator', ['evaluate']);
             mockUnsubscribes = testKeys.reduce(function (map, key) {
@@ -109,6 +111,11 @@ define([
         });
 
         describe("when rows have been populated", function () {
+            function rowsMatch() {
+                var rows = $(testContainer).find(".l-autoflow-row").length;
+                return rows === testChildren.length;
+            }
+
             beforeEach(function () {
                 waitsFor(function () {
                     return $(testContainer).find(".l-autoflow-row").length > 0;
@@ -116,8 +123,32 @@ define([
             });
 
             it("shows one row per child object", function () {
-                expect($(testContainer).find(".l-autoflow-row").length)
-                    .toEqual(testChildren.length);
+                expect(rowsMatch()).toBe(true);
+            });
+
+            it("adds rows on composition change", function () {
+                var child = {
+                    identifier: { namespace: "test", key: "123" },
+                    name: "Object 123"
+                };
+                testChildren.push(child);
+                mockComposition.on.calls.forEach(function (call) {
+                    if (call.args[0] === 'add') {
+                        call.args[1](child);
+                    }
+                });
+                waitsFor(rowsMatch);
+            });
+
+            it("removes rows on composition change", function () {
+                var child = testChildren.pop();
+                testChildren.push(child);
+                mockComposition.on.calls.forEach(function (call) {
+                    if (call.args[0] === 'remove') {
+                        call.args[1](child);
+                    }
+                });
+                waitsFor(rowsMatch);
             });
         });
 
