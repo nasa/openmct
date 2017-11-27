@@ -20,7 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([
+    './AutoflowTabularRowController'
+], function (AutoflowTabularRowController) {
     function AutoflowTabularController(domainObject, data, openmct) {
         this.domainObject = domainObject;
         this.data = data;
@@ -38,13 +40,8 @@ define([], function () {
         return name.toLowerCase().indexOf(filter.toLowerCase()) !== -1;
     };
 
-    AutoflowTabularController.prototype.updateRow = function (row, formatRange, formatDomain, evaluate, datum) {
-        row.value = formatRange(datum);
-        row.classes = evaluate(datum).map(function (violation) {
-            return violation.cssClass;
-        }).join(" ");
-
-        this.data.updated = formatDomain(datum);
+    AutoflowTabularController.prototype.trackLastUpdated = function (value) {
+        this.data.updated = value;
     };
 
     AutoflowTabularController.prototype.makeRow = function (childObject) {
@@ -62,32 +59,15 @@ define([], function () {
             name: childObject.name,
             value: undefined
         };
-        var metadata = this.openmct.telemetry.getMetadata(childObject);
-        var ranges = metadata.valuesForHints(['range']);
-        var domains = metadata.valuesForHints(['domain']);
-        var rangeFormatter =
-            this.openmct.telemetry.getValueFormatter(ranges[0]);
-        var domainFormatter =
-            this.openmct.telemetry.getValueFormatter(domains[0]);
-        var evaluator =
-            this.openmct.telemetry.limitEvaluator(childObject);
 
-        this.unlistens.push(this.openmct.telemetry.subscribe(
+        var controller = new AutoflowTabularRowController(
             childObject,
-            this.updateRow.bind(
-                this,
-                row,
-                rangeFormatter.format.bind(rangeFormatter),
-                domainFormatter.format.bind(domainFormatter),
-                function (datum) {
-                    var violations = evaluator.evaluate(datum, ranges[0]);
-                    if (!violations) {
-                        return [];
-                    }
-                    return Array.isArray(violations) ? violations : [violations];
-                }
-            )
-        ));
+            row,
+            this.openmct,
+            this.trackLastUpdated.bind(this)
+        );
+        controller.activate();
+        this.unlistens.push(controller.destroy.bind(controller));
 
         this.rows[id] = row;
 

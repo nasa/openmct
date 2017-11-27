@@ -25,10 +25,11 @@ define([], function () {
         this.domainObject = domainObject;
         this.data = data;
         this.openmct = openmct;
+        this.callback = callback;
 
-        this.metadata = this.openmct.telemetry.getMetadata(childObject);
-        this.ranges = metadata.valuesForHints(['range']);
-        this.domains = metadata.valuesForHints(['domain']);
+        this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
+        this.ranges = this.metadata.valuesForHints(['range']);
+        this.domains = this.metadata.valuesForHints(['domain']);
         this.rangeFormatter =
             this.openmct.telemetry.getValueFormatter(this.ranges[0]);
         this.domainFormatter =
@@ -38,7 +39,7 @@ define([], function () {
     }
 
     AutoflowTabularRowController.prototype.updateRowData = function (datum) {
-        var violations = evaluator.evaluate(datum, ranges[0]);
+        var violations = this.evaluator.evaluate(datum, this.ranges[0]);
 
         this.data.classes = violations ? violations.cssClass : "";
         this.data.value = this.rangeFormatter.format(datum);
@@ -53,7 +54,6 @@ define([], function () {
     };
 
     AutoflowTabularRowController.prototype.destroy = function () {
-        throw new Error("Not activated");
     };
 
     return AutoflowTabularRowController;
