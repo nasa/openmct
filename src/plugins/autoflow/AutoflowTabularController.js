@@ -132,12 +132,18 @@ define([], function () {
     };
 
     AutoflowTabularController.prototype.activate = function () {
+        var composition = this.openmct.composition.get(this.domainObject);
+        var reactivate = this.activate.bind(this);
+
         this.destroy();
         this.active = true;
 
-        this.openmct.composition.get(this.domainObject)
-            .load()
-            .then(this.setObjects.bind(this));
+        composition.on('remove', reactivate);
+        composition.on('add', reactivate);
+        this.unlistens.push(composition.off.bind(composition, 'remove', reactivate));
+        this.unlistens.push(composition.off.bind(composition, 'add', reactivate));
+
+        return composition.load().then(this.setObjects.bind(this));
     };
 
     AutoflowTabularController.prototype.destroy = function () {
