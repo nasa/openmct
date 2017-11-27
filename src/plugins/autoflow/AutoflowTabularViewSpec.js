@@ -195,5 +195,37 @@ define([
                 });
             });
         });
+
+        it("automatically flows to new columns", function () {
+            var rowHeight = AutoflowTabularConstants.ROW_HEIGHT;
+            var sliderHeight = AutoflowTabularConstants.SLIDER_HEIGHT;
+            var count = testKeys.length;
+            var $container = $(testContainer);
+            var lastColumns = $container.find('.l-autoflow-col').length;
+
+            function columnsHaveAutoflowed() {
+                var itemsHeight = $container.find('.l-autoflow-items').height();
+                var availableHeight = itemsHeight - sliderHeight;
+                var availableRows = Math.max(Math.floor(availableHeight / rowHeight), 1);
+                var columns = Math.ceil(count / availableRows);
+                return $container.find('.l-autoflow-col').length === columns;
+            }
+
+            $container.find('.abs').css({
+                position: 'absolute',
+                left: '0px',
+                right: '0px',
+                top: '0px',
+                bottom: '0px'
+            });
+            $container.css({ position: 'absolute' });
+
+            runs($container.appendTo.bind($container, document.body));
+            for (var height = 0; height < rowHeight * count * 2; height += rowHeight / 2) {
+                runs($container.css.bind($container, 'height', height + 'px'));
+                waitsFor(columnsHaveAutoflowed)
+            }
+            runs($container.remove.bind($container));
+        });
     });
 });
