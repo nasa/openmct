@@ -27,11 +27,23 @@ define(
 
         describe("The Elements Pane controller", function () {
             var mockScope,
+                mockOpenMCT,
+                mockSelection,
                 controller;
 
             beforeEach(function () {
-                mockScope = jasmine.createSpy("$scope");
-                controller = new ElementsController(mockScope);
+                mockScope = jasmine.createSpyObj("$scope", ['$on']);
+                mockSelection = jasmine.createSpyObj("selection", [
+                    'on',
+                    'off',
+                    'get'
+                ]);
+                mockSelection.get.andReturn([]);
+                mockOpenMCT = {
+                    selection: mockSelection
+                };
+
+                controller = new ElementsController(mockScope, mockOpenMCT);
             });
 
             function getModel(model) {
