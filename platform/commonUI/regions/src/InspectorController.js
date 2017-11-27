@@ -32,6 +32,7 @@ define(
          */
         function InspectorController($scope, policyService, openmct, $document) {
             var self = this;
+            self.$scope = $scope;
 
             /**
              * Callback handler for the selection change event.
@@ -53,7 +54,7 @@ define(
                     }
                 }
 
-                $scope.selection = selection;
+                self.$scope.selection = selection;
             }
 
             openmct.selection.on("change", setSelection);
@@ -64,6 +65,15 @@ define(
                 openmct.selection.off("change", setSelection);
             });
         }
+
+        /**
+         * Gets the selected item.
+         *
+         * @returns a domain object
+         */
+        InspectorController.prototype.selectedItem = function () {
+            return this.$scope.selection[0].context.oldItem;
+        };
 
         /**
          * Checks if a provider view exists.

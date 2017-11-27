@@ -172,12 +172,7 @@ define(
                     return;
                 }
 
-                if (self.selectedId && self.drilledIn === self.selectedId) {
-                    self.selectable[0].element.classList.remove('s-drilled-in');
-                }
-
-                var id = selection.context.oldItem.getId();
-                self.selectedId = id;
+                self.selectedId = selection.context.oldItem.getId();
                 self.drilledIn = undefined;
                 self.selectable = selectable;
             }
@@ -475,7 +470,6 @@ define(
                 return;
             }
 
-            event.currentTarget.classList.add('s-drilled-in');
             this.drilledIn = domainObject.getId();
         };
 

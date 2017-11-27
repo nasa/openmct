@@ -33,37 +33,10 @@ define(['EventEmitter'], function (EventEmitter) {
 
     Selection.prototype = Object.create(EventEmitter.prototype);
 
-    Selection.prototype.add = function (context) {
-        this.clear(); // Only allow single select as initial simplification
-        this.selected.push(context);
-        this.emit('change', this.selected);
-    };
-
-    Selection.prototype.remove = function (path) {
-        this.selected = this.selected.filter(function (otherPath) {
-            return !path.matches(otherPath);
-        });
-        this.emit('change', this.selected);
-    };
-
-    Selection.prototype.contains = function (path) {
-        return this.selected.some(function (otherPath) {
-            return path.matches(otherPath);
-        });
-    };
-
     /**
-     * Clears the selection.
+     * Gets the selected object.
+     * @public
      */
-    Selection.prototype.clear = function () {
-        this.selected = [];
-        this.emit('change', this.selected);
-    };
-
-    Selection.prototype.primary = function () {
-        return this.selected[this.selected.length - 1];
-    };
-
     Selection.prototype.get = function () {
         return this.selected;
     };
@@ -72,6 +45,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * Selects the selectable object and emits the 'change' event.
      *
      * @param {object} selectable an object with element and context properties
+     * @private
      */
     Selection.prototype.select = function (selectable) {
         if (!Array.isArray(selectable)) {
@@ -98,6 +72,9 @@ define(['EventEmitter'], function (EventEmitter) {
         this.emit('change', this.selected);
     };
 
+    /**
+     * @private
+     */
     Selection.prototype.capture = function (selectable) {
         if (!this.capturing) {
             this.capturing = [];
@@ -106,6 +83,9 @@ define(['EventEmitter'], function (EventEmitter) {
         this.capturing.push(selectable);
     };
 
+    /**
+     * @private
+     */
     Selection.prototype.selectCapture = function (selectable) {
         if (!this.capturing) {
             return;
@@ -120,27 +100,28 @@ define(['EventEmitter'], function (EventEmitter) {
      *
      * @param element an html element
      * @param context object with oldItem, item and toolbar properties
+     * @param select a flag to select the element if true
+     * @returns a function that removes the click handlers from the element
+     * @public
      */
     Selection.prototype.selectable = function (element, context, select) {
         var selectable = {
             context: context,
             element: element
         };
-        element.addEventListener('click', this.capture.bind(this, selectable), true);
-        element.addEventListener('click', this.selectCapture.bind(this, selectable));
+        var capture = this.capture.bind(this, selectable);
+        var selectCapture = this.selectCapture.bind(this, selectable);
+        element.addEventListener('click', capture, true);
+        element.addEventListener('click', selectCapture);
+
         if (select) {
             this.select(selectable);
         }
-    };
 
-    /**
-     * Removes the click handlers from the element.
-     *
-     * @param element an html element
-     */
-    Selection.prototype.removeSelectable = function (element) {
-        element.removeEventListener('click', this.capture);
-        element.removeEventListener('click', this.selectCapture);
+        return function () {
+            element.removeEventListener('click', capture);
+            element.removeEventListener('click', selectCapture);
+        };
     };
 
     return Selection;

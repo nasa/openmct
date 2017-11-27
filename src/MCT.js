@@ -114,18 +114,6 @@ define([
 
         /**
          * Registry for views which should appear in the Inspector area.
-         * These views will be chosen based on selection state, so
-         * providers should be prepared to test arbitrary objects for
-         * viewability.
-         *
-         * @type {module:openmct.ViewRegistry}
-         * @memberof module:openmct.MCT#
-         * @name inspectors
-         */
-        this.inspectors = new ViewRegistry();
-
-        /**
-         * Registry for views which should appear in the Inspector area.
          * These views will be chosen based on the selection state.
          *
          * @type {module:openmct.InspectorViewRegistry}

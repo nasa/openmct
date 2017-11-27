@@ -22,14 +22,14 @@
 <div ng-controller="InspectorController as controller">
         <mct-representation
                 key="'object-properties'"
-                mct-object="selection[0].context.oldItem"
+                mct-object="controller.selectedItem()"
                 ng-model="ngModel">
         </mct-representation>
 
         <div ng-if="!controller.hasProviderView()">
             <mct-representation
                     key="inspectorKey"
-                    mct-object="selection[0].context.oldItem"
+                    mct-object="controller.selectedItem()"
                     ng-model="ngModel">
             </mct-representation>
         </div>
