@@ -22,8 +22,9 @@
 
 define([
     './AutoflowTabularView',
+    './AutoflowTabularConstants',
     'zepto'
-], function (AutoflowTabularView, $) {
+], function (AutoflowTabularView, AutoflowTabularConstants, $) {
     describe("AutoflowTabularView", function () {
         var testObject;
         var testKeys;
@@ -129,18 +130,23 @@ define([
         });
 
         it("provides a button to change column width", function () {
+            var initialWidth = AutoflowTabularConstants.INITIAL_COLUMN_WIDTH;
+            var nextWidth =
+                initialWidth + AutoflowTabularConstants.COLUMN_WIDTH_STEP;
+
             expect($(testContainer).find('.l-autoflow-col').css('width'))
-                .toEqual('225px');
+                .toEqual(initialWidth + 'px');
 
             $(testContainer).find('.change-column-width').click();
 
             waitsFor(function () {
-                return $(testContainer).find('.l-autoflow-col').css('width') !== '225px';
+                var width = $(testContainer).find('.l-autoflow-col').css('width');
+                return width !== initialWidth + 'px';
             });
 
             runs(function () {
                 expect($(testContainer).find('.l-autoflow-col').css('width'))
-                    .toEqual('250px');
+                    .toEqual(nextWidth + 'px');
             });
         });
 
