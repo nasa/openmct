@@ -30,6 +30,7 @@ define([
         var testKeys;
         var testChildren;
         var testContainer;
+        var testHistories;
         var mockmct;
         var mockComposition;
         var mockMetadata;
@@ -52,6 +53,10 @@ define([
                 };
             });
             testContainer = $('<div>')[0];
+            testHistories = testKeys.reduce(function (histories, key, index) {
+                histories[key] = { key: key, range: index + 10, domain: key + index };
+                return histories;
+            }, {});
 
             mockmct = {
                 composition: jasmine.createSpyObj("composition", ['get']),
@@ -59,6 +64,7 @@ define([
                     'getMetadata',
                     'getValueFormatter',
                     'limitEvaluator',
+                    'request',
                     'subscribe'
                 ])
             };
@@ -89,6 +95,12 @@ define([
                 var key = obj.identifier.key;
                 callbacks[key] = callback;
                 return mockUnsubscribes[key];
+            });
+            mockmct.telemetry.request.andCallFake(function (obj, request) {
+                var key = obj.identifier.key;
+                return Promise.resolve([
+                    { key: key, range: index * 100, domain: key + index }
+                ]);
             });
             mockMetadata.valuesForHints.andCallFake(function (hints) {
                 return [{ hint: hints[0] }];
@@ -189,6 +201,20 @@ define([
             });
         });
 
+        it("displays historical telemetry", function () {
+            waitsFor(function () {
+                return $(testContainer).find(".l-autoflow-item").filter(".r").text() !== "";
+            });
+
+            runs(function () {
+                testKeys.forEach(function (key, index) {
+                    var datum = testHistories[key];
+                    var $cell = $(testContainer).find(".l-autoflow-row").eq(index).find(".r");
+                    expect($cell.text()).toEqual(String(datum.range));
+                });
+            });
+        });
+
         it("displays incoming telemetry", function () {
             var testData = testKeys.map(function (key, index) {
                 return { key: key, range: index * 100, domain: key + index };
@@ -199,7 +225,10 @@ define([
             });
 
             waitsFor(function () {
-                return $(testContainer).find(".l-autoflow-item").filter(".r").text() !== "";
+                return testKeys.every(function (key, index) {
+                    var value = $(testContainer).find(".l-autoflow-row").eq(index).find(".r").text();
+                    return value !== "" && value !== testHistories[key].range;
+                });
             });
 
             runs(function () {
