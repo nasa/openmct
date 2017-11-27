@@ -108,14 +108,16 @@ define([
             expect(testContainer.children.length > 0).toBe(true);
         });
 
-        it("creates one row per child object", function () {
-            var children;
-            waitsFor(function () {
-                children = $(testContainer).find(".l-autoflow-row");
-                return children.length > 0;
+        describe("when rows have been populated", function () {
+            beforeEach(function () {
+                waitsFor(function () {
+                    return $(testContainer).find(".l-autoflow-row").length > 0;
+                });
             });
-            runs(function () {
-                expect(children.length).toEqual(testChildren.length);
+
+            it("shows one row per child object", function () {
+                expect($(testContainer).find(".l-autoflow-row").length)
+                    .toEqual(testChildren.length);
             });
         });
 
