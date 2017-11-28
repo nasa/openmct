@@ -116,7 +116,6 @@ define([
         var reactivate = this.activate.bind(this);
 
         this.destroy();
-        this.active = true;
 
         composition.on('remove', reactivate);
         composition.on('add', reactivate);
