@@ -39,10 +39,12 @@ define([
 
     function AutoflowTabularView(domainObject, openmct) {
         var data = {
+            items: [],
             columns: [],
             width: INITIAL_COLUMN_WIDTH,
             filter: "",
-            updated: "No updates"
+            updated: "No updates",
+            rowCount: 1
         };
         var controller =
             new AutoflowTabularController(domainObject, data, openmct);
@@ -55,10 +57,37 @@ define([
                     data.width += COLUMN_WIDTH_STEP;
                     data.width = data.width > MAX_COLUMN_WIDTH ?
                             INITIAL_COLUMN_WIDTH : data.width;
+                },
+                reflow: function () {
+                    var column = [];
+                    var index = 0;
+                    var filteredItems =
+                        data.items.filter(function (item) {
+                            return item.name.toLowerCase()
+                                .indexOf(data.filter.toLowerCase()) !== -1;
+                        });
+
+                    data.columns = [];
+
+                    while (index < filteredItems.length) {
+                        if (column.length >= data.rowCount) {
+                            data.columns.push(column);
+                            column = [];
+                        }
+
+                        column.push(filteredItems[index]);
+                        index += 1;
+                    }
+
+                    if (column.length > 0) {
+                        data.columns.push(column);
+                    }
                 }
             },
             watch: {
-                filter: controller.update.bind(controller)
+                filter: controller.update.bind(controller),
+                items: 'reflow',
+                rowCount: 'reflow'
             },
             template: autoflowTemplate,
             destroyed: function () {
@@ -77,7 +106,7 @@ define([
                     var height = tabularArea.clientHeight;
                     var available = height - SLIDER_HEIGHT;
                     var rows = Math.max(1, Math.floor(available / ROW_HEIGHT));
-                    controller.setRows(rows);
+                    data.rowCount = rows;
                 }.bind(this);
 
                 interval = setInterval(updateRowHeight, 50);

@@ -34,12 +34,6 @@ define([
         this.childObjects = [];
     }
 
-    AutoflowTabularController.prototype.matchesFilter = function (domainObject) {
-        var filter = this.data.filter;
-        var name = domainObject.name;
-        return name.toLowerCase().indexOf(filter.toLowerCase()) !== -1;
-    };
-
     AutoflowTabularController.prototype.trackLastUpdated = function (value) {
         this.data.updated = value;
     };
@@ -75,26 +69,7 @@ define([
     };
 
     AutoflowTabularController.prototype.update = function () {
-        var column = [];
-        var index = 0;
-        var filteredObjects =
-            this.childObjects.filter(this.matchesFilter.bind(this));
-
-        this.data.columns = [];
-
-        while (index < filteredObjects.length) {
-            if (column.length >= this.rowCount) {
-                this.data.columns.push(column);
-                column = [];
-            }
-
-            column.push(this.makeRow(filteredObjects[index]));
-            index += 1;
-        }
-
-        if (column.length > 0) {
-            this.data.columns.push(column);
-        }
+        this.data.items = this.childObjects.map(this.makeRow.bind(this));
     };
 
     AutoflowTabularController.prototype.setObjects = function (domainObjects) {
