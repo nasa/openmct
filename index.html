@@ -25,8 +25,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
-    <script src="bower_components/requirejs/require.js">
-    </script>
+    <script src="bower_components/requirejs/require.js"> </script>
     <script>
         var THIRTY_MINUTES = 30 * 60 * 1000;
 
@@ -50,7 +49,7 @@
                         name: "Fixed",
                         timeSystem: 'utc',
                         bounds: {
-                            start: Date.now() - 30 * 60 * 1000,
+                            start: Date.now() - THIRTY_MINUTES,
                             end: Date.now()
                         }
                     },
@@ -65,6 +64,7 @@
                     }
                 ]
             }));
+            openmct.install(openmct.plugins.SummaryWidget());
             openmct.time.clock('local', {start: -THIRTY_MINUTES, end: 0});
             openmct.time.timeSystem('utc');
             openmct.start();

@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/******************************************************************* STATUS BLOCK ELEMS */
 @mixin statusBannerColors($bg, $fg: $colorStatusFg) {
 	$bgPb: 30%;
 	$bgPbD: 10%;
@@ -140,7 +140,7 @@
     }
 }
 
-/* Styles for messages and message banners */
+/******************************************************************* MESSAGE BANNERS */
 .message {
 	&.block {
 		border-radius: $basicCr;
@@ -196,7 +196,6 @@
 		padding: 0 $interiorMargin;
 	}
     .close {
-		//@include test(red, 0.7);
 		cursor: pointer;
         font-size: 7px;
 		width: 8px;
@@ -240,132 +239,147 @@
     }
 }
 
-@mixin messageBlock($iconW: 32px) {
-    .type-icon.message-type {
+/******************************************************************* MESSAGES */
+
+/* Contexts:
+    In .t-message-list
+    In .overlay as a singleton
+    Inline in the view area
+ */
+
+// Archetypal message
+.l-message {
+    $iconW: 32px;
+    @include display(flex);
+    @include flex-direction(row);
+    @include align-items(stretch);
+    padding: $interiorMarginLg;
+
+    &:before {
+        // Icon
+        @include flex(0 1 auto);
         @include txtShdw($shdwStatusIc);
         @extend .icon-bell;
         color: $colorStatusDefault;
         font-size: $iconW;
-        padding: 1px;
         width: $iconW + 2;
+        margin-right: $interiorMarginLg;
     }
 
-    .message-severity-info .type-icon.message-type {
+    &.message-severity-info:before {
         @extend .icon-info;
         color: $colorInfo;
     }
-    .message-severity-alert .type-icon.message-type {
-        @extend .icon-bell;
+
+    &.message-severity-alert:before {
         color: $colorWarningLo;
     }
-    .message-severity-error .type-icon.message-type {
+
+    &.message-severity-error:before {
         @extend .icon-alert-rect;
         color: $colorWarningHi;
     }
 }
-/* Paths:
-    t-dialog | t-dialog-sm > t-message-single | t-message-list > overlay > holder > contents > l-message >
-        message-type > (icon)
-        message-contents >
-        top-bar >
-            title
-            hint
-        editor >
-            (if displaying list of messages)
-            ul > li > l-message >
-                ... same as above
-        bottom-bar
-*/
 
-.l-message {
+
+.w-message-contents {
+    @include flex(1 1 auto);
     @include display(flex);
-    @include flex-direction(row);
-    @include align-items(stretch);
-    .type-icon.message-type {
-        @include flex(0 1 auto);
-        position: relative;
-    }
-    .message-contents {
-        @include flex(1 1 auto);
-        margin-left: $overlayMargin;
-        position: relative;
+    @include flex-direction(column);
 
-        .top-bar,
+    > div,
+    > span {
+        //@include test(red);
+        margin-bottom: $interiorMargin;
+    }
+
+    .message-body {
+        @include flex(1 1 100%);
+    }
+}
+
+// Singleton in an overlay dialog
+.t-message-single .l-message,
+.t-message-single.l-message {
+        $iconW: 80px;
+        @include absPosDefault();
+        padding: 0;
+        &:before {
+            font-size: $iconW;
+            width: $iconW + 2;
+        }
+        .title {
+            font-size: 1.2em;
+        }
+}
+
+// Singleton inline in a view
+.t-message-inline .l-message,
+.t-message-inline.l-message {
+    border-radius: $controlCr;
+    &.message-severity-info { background-color: rgba($colorInfo, 0.3); }
+    &.message-severity-alert { background-color: rgba($colorWarningLo, 0.3); }
+    &.message-severity-error { background-color: rgba($colorWarningHi, 0.3); }
+
+    .w-message-contents.l-message-body-only {
         .message-body {
-            margin-bottom: $interiorMarginLg * 2;
+            margin-top: $interiorMargin;
         }
     }
 }
 
+// In a list
+.t-message-list {
+    @include absPosDefault();
+    @include display(flex);
+    @include flex-direction(column);
 
-// Message as singleton
-.t-message-single {
-    @include messageBlock(80px);
-}
-
-body.desktop .t-message-single {
-    .l-message,
-    .bottom-bar {
-        @include absPosDefault();
+    > div,
+    > span {
+        margin-bottom: $interiorMargin;
     }
 
-    .bottom-bar {
-        top: auto;
-        height: $ovrFooterH;
+    .w-messages {
+        @include flex(1 1 100%);
+        overflow-y: auto;
+        padding-right: $interiorMargin;
     }
+    // Each message
+    .l-message {
+        border-radius: $controlCr;
+        background: rgba($colorOvrFg, 0.1);
+        margin-bottom: $interiorMargin;
+        .hint,
+        .bottom-bar {
+            text-align: left;
+        }
+    }
+
 }
 
 @include phonePortrait {
-    .t-message-single {
-        .l-message {
-            @include flex-direction(column);
-            .message-contents { margin-left: 0; }
-        }
-        .type-icon.message-type {
+    .t-message-single .l-message,
+    .t-message-single.l-message {
+        @include flex-direction(column);
+        &:before {
+            margin-right: 0;
             margin-bottom: $interiorMarginLg;
-            width: 100%;
             text-align: center;
+            width: 100%;
         }
 
         .bottom-bar {
-            text-align: center !important;
-        }
-    }
-}
-
-// Messages in list
-.t-message-list {
-    @include messageBlock(32px);
-
-    .message-contents {
-        .l-message {
-            border-radius: $controlCr;
-            background: rgba($colorOvrFg, 0.1);
-            margin-bottom: $interiorMargin;
-            padding: $interiorMarginLg;
-
-            .message-contents,
-            .bottom-bar {
-                position: relative;
-            }
-
-            .message-contents {
-                font-size: 0.9em;
-                margin-left: $interiorMarginLg;
-                .message-action { color: pushBack($colorOvrFg, 20%); }
-                .bottom-bar { text-align: left; }
-            }
-
-            .top-bar,
-            .message-body {
-                margin-bottom: $interiorMarginLg;
+            text-align: center;
+            .s-button {
+                display: block;
+                width: 100%;
             }
         }
     }
 }
 
 body.desktop .t-message-list {
-    .message-contents .l-message { margin-right: $interiorMarginLg; }
+    .w-message-contents { padding-right: $interiorMargin; }
 }
 
 // Alert elements in views

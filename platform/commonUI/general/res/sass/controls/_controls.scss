@@ -261,7 +261,7 @@ input[type="number"] {
 input[type="text"].lg {  width: 100% !important; }
 .l-input-med input[type="text"],
 input[type="text"].med { width: 200px !important; }
-input[type="text"].sm {  width: 50px !important; }
+input[type="text"].sm, input[type="number"].sm {  width: 50px !important; }
 .l-numeric input[type="text"],
 input[type="text"].numeric { text-align: right; }
 
@@ -317,14 +317,10 @@ input[type="text"].s-input-inline,
 .select {
     @include btnSubtle($bg: $colorSelectBg);
     @extend .icon-arrow-down; // Context arrow
-    @if $shdwBtns != none {
-        margin: 0 0 2px 0; // Needed to avoid dropshadow from being clipped by parent containers
-    }
     display: inline-block;
     padding: 0 $interiorMargin;
     overflow: hidden;
     position: relative;
-    line-height: $formInputH;
     select {
         @include appearance(none);
         box-sizing: border-box;
@@ -340,11 +336,13 @@ input[type="text"].s-input-inline,
         }
     }
     &:before {
-        pointer-events: none;
+        @include transform(translateY(-50%));
         color: rgba($colorInvokeMenu, percentToDecimal($contrastInvokeMenuPercent));
         display: block;
+        pointer-events: none;
         position: absolute;
-        right: $interiorMargin; top: 0;
+        right: $interiorMargin;
+        top: 50%;
     }
 }
 
@@ -396,8 +394,7 @@ input[type="text"].s-input-inline,
     .l-elem-wrapper {
         mct-representation {
             // Holds the context-available item
-            // Must have min-width to make flex work properly
-            // in Safari
+            // Must have min-width to make flex work properly in Safari
             min-width: 0.7em;
         }
     }
@@ -563,7 +560,6 @@ input[type="text"].s-input-inline,
     height: $h;
     margin-top: 1 + floor($h/2) * -1;
     @include btnSubtle(pullForward($colorBtnBg, 10%));
-    //border-radius: 50% !important;
 }
 
 @mixin sliderKnobRound() {
@@ -578,7 +574,6 @@ input[type="text"].s-input-inline,
 
 input[type="range"] {
     // HTML5 range inputs
-
     -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
     background: transparent; /* Otherwise white in Chrome */
     &:focus {
@@ -734,6 +729,30 @@ textarea {
     &:hover {
         color: $colorKeyHov;
     }
+}
+
+.view-switcher,
+.t-btn-view-large {
+    @include trans-prop-nice-fade($controlFadeMs);
+}
+
+.view-control {
+    @extend .icon-arrow-right;
+    cursor: pointer;
+    font-size: 0.75em;
+    &:before {
+        position: absolute;
+        @include trans-prop-nice(transform, 100ms);
+        @include transform-origin(center);
+    }
+    &.expanded:before {
+        @include transform(rotate(90deg));
+    }
+}
+
+.grippy {
+    @extend .icon-grippy;
+    cursor: move;
 }
 
 /******************************************************** BROWSER ELEMENTS */

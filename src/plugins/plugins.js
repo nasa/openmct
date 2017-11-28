@@ -28,6 +28,7 @@ define([
     './timeConductor/plugin',
     '../../example/imagery/plugin',
     '../../platform/import-export/bundle',
+    './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin'
 ], function (
     _,
@@ -37,6 +38,7 @@ define([
     TimeConductorPlugin,
     ExampleImagery,
     ImportExport,
+    SummaryWidget,
     URLIndicatorPlugin
 ) {
     var bundleMap = {
@@ -123,6 +125,7 @@ define([
 
     plugins.ExampleImagery = ExampleImagery;
 
+    plugins.SummaryWidget = SummaryWidget;
     plugins.URLIndicatorPlugin = URLIndicatorPlugin;
 
     return plugins;
