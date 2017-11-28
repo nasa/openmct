@@ -28,10 +28,8 @@ define([
         this.data = data;
         this.openmct = openmct;
 
-        this.rows = {};
         this.rowCount = 1;
         this.unlistens = [];
-        this.childObjects = [];
     }
 
     AutoflowTabularController.prototype.trackLastUpdated = function (value) {
@@ -43,11 +41,6 @@ define([
             childObject.identifier.namespace,
             childObject.identifier.key
         ].join(":");
-
-        if (this.rows[id]) {
-            return this.rows[id];
-        }
-
         var row = {
             classes: "",
             name: childObject.name,
@@ -63,27 +56,11 @@ define([
         controller.activate();
         this.unlistens.push(controller.destroy.bind(controller));
 
-        this.rows[id] = row;
-
         return row;
     };
 
-    AutoflowTabularController.prototype.update = function () {
-        this.data.items = this.childObjects.map(this.makeRow.bind(this));
-    };
-
     AutoflowTabularController.prototype.setObjects = function (domainObjects) {
-        this.rows = {};
-        this.childObjects = domainObjects;
-        this.update();
-    };
-
-    AutoflowTabularController.prototype.setRows = function (rows) {
-        var changed = this.rowCount !== rows;
-        this.rowCount = rows;
-        if (changed) {
-            this.update();
-        }
+        this.data.items = domainObjects.map(this.makeRow.bind(this));
     };
 
     AutoflowTabularController.prototype.activate = function () {
