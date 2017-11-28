@@ -37,22 +37,18 @@ define([
     };
 
     AutoflowTabularController.prototype.makeRow = function (childObject) {
-        var id = [
-            childObject.identifier.namespace,
-            childObject.identifier.key
-        ].join(":");
         var row = {
             classes: "",
             name: childObject.name,
             value: undefined
         };
-
         var controller = new AutoflowTabularRowController(
             childObject,
             row,
             this.openmct,
             this.trackLastUpdated.bind(this)
         );
+
         controller.activate();
         this.unlistens.push(controller.destroy.bind(controller));
 

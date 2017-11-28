@@ -265,7 +265,6 @@ define([
             var sliderHeight = AutoflowTabularConstants.SLIDER_HEIGHT;
             var count = testKeys.length;
             var $container = $(testContainer);
-            var lastColumns = $container.find('.l-autoflow-col').length;
 
             function columnsHaveAutoflowed() {
                 var itemsHeight = $container.find('.l-autoflow-items').height();
@@ -287,7 +286,7 @@ define([
             runs($container.appendTo.bind($container, document.body));
             for (var height = 0; height < rowHeight * count * 2; height += rowHeight / 2) {
                 runs($container.css.bind($container, 'height', height + 'px'));
-                waitsFor(columnsHaveAutoflowed)
+                waitsFor(columnsHaveAutoflowed);
             }
             runs($container.remove.bind($container));
         });
