@@ -20,24 +20,35 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./Indicator', './LegacyIndicatorDisplay'], function (Indicator, LegacyIndicatorDisplay) {
+define([
+    './Indicator',
+    './LegacyIndicator'
+], function (
+    Indicator,
+    LegacyIndicator
+) {
 
     function IndicatorAPI(openmct) {
         this.openmct = openmct;
         this.indicators = [];
 
-        openmct.on('start', onStart.bind(this))
+        onStartWrapLegacyIndicators.call(this);
     }
 
     IndicatorAPI.prototype.create = function () {
         var indicator = new Indicator();
         this.indicators.push(indicator);
+
         return indicator;
     }
 
-    function onStart() {
-        this.openmct.legacyExtension('starts', {
-            depends: 'indicators',
+    IndicatorAPI.prototype.getAll = function () {
+        return this.indicators;
+    }
+
+    function onStartWrapLegacyIndicators() {
+        this.openmct.legacyExtension('runs', {
+            depends: ['indicators[]'],
             implementation: wrapLegacyIndicators.bind(this)
         });
     }
@@ -48,15 +59,11 @@ define(['./Indicator', './LegacyIndicatorDisplay'], function (Indicator, LegacyI
                 var legacyIndicator;
                 if (typeof legacyIndicatorDef === 'function') {
                     legacyIndicator = new legacyIndicatorDef();
+                } else {
+                    legacyIndicator = legacyIndicatorDef;
                 }
                 
-                var newStyleIndicator = new Indicator();
-                newStyleIndicator.text(legacyIndicator.getText && legacyIndicator.getText());
-                newStyleIndicator.description(legacyIndicator.getDescription && legacyIndicator.getDescription());
-                newStyleIndicator.glyphClass(legacyIndicator.getGlyphClass && legacyIndicator.getGlyphClass());
-                newStyleIndicator.cssClass(legacyIndicator.getCssClass && legacyIndicator.getCssClass());
-                newStyleIndicator.display(LegacyIndicatorDisplay);
-
+                var newStyleIndicator = new LegacyIndicator(legacyIndicator);
                 return newStyleIndicator;
             }));
     }
