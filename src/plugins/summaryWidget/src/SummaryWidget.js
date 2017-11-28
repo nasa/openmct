@@ -395,9 +395,7 @@ define([
      * Mutate this domain object's configuration with the current local configuration
      */
     SummaryWidget.prototype.updateDomainObject = function () {
-        if (this.editing) {
-            this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
-        }
+        this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
     };
 
     return SummaryWidget;
