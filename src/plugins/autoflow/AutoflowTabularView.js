@@ -85,7 +85,7 @@ define([
                 }
             },
             watch: {
-                filter: controller.update.bind(controller),
+                filter: 'reflow',
                 items: 'reflow',
                 rowCount: 'reflow'
             },
