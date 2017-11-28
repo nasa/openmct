@@ -44,11 +44,7 @@ define(['./src/SummaryWidget', './SummaryWidgetsCompositionPolicy'], function (S
             return {
                 name: 'Widget View',
                 view: function (domainObject) {
-                    var summaryWidget = new SummaryWidget(domainObject, openmct);
-                    return {
-                        show: summaryWidget.show,
-                        destroy: summaryWidget.destroy
-                    };
+                    return new SummaryWidget(domainObject, openmct);
                 },
                 canView: function (domainObject) {
                     return (domainObject.type === 'summary-widget');

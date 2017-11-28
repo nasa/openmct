@@ -66,6 +66,8 @@ define ([
     ConditionManager.prototype.on = function (event, callback, context) {
         if (this.supportedCallbacks.includes(event)) {
             this.eventEmitter.on(event, callback, context || this);
+        } else {
+            throw event + " is not a supported callback. Supported callbacks are " + this.supportedCallbacks;
         }
     };
 
