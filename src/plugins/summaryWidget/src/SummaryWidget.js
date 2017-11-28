@@ -35,43 +35,15 @@ define([
         this.domainObject = domainObject;
         this.openmct = openmct;
 
-        this.domainObject.configuration = this.domainObject.configuration || {};
-        this.domainObject.configuration.ruleConfigById = this.domainObject.configuration.ruleConfigById || {};
-        this.domainObject.configuration.ruleOrder = this.domainObject.configuration.ruleOrder || ['default'];
-        this.domainObject.configuration.testDataConfig = this.domainObject.configuration.testDataConfig || [{
-            object: '',
-            key: '',
-            value: ''
-        }];
-
-        this.activeId = 'default';
-        this.rulesById = {};
-        this.domElement = $(widgetTemplate);
-        this.toggleRulesControl = $('.t-view-control-rules', this.domElement);
-        this.toggleTestDataControl = $('.t-view-control-test-data', this.domElement);
-        this.widgetButton = this.domElement.children('#widget');
-        this.editing = false;
-        this.container = '';
-        this.editListenerUnsubscribe = $.noop;
-
-        this.outerWrapper = $('.widget-edit-holder', this.domElement);
-        this.ruleArea = $('#ruleArea', this.domElement);
-        this.configAreaRules = $('.widget-rules-wrapper', this.domElement);
-
-        this.testDataArea = $('.widget-test-data', this.domElement);
-        this.addRuleButton = $('#addRule', this.domElement);
-
-        this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
-        this.testDataManager = new TestDataManager(this.domainObject, this.conditionManager, this.openmct);
+        this.initializeLocalVariables();
+        this.addHyperlink(domainObject.url, domainObject.openNewTab);
+        this.watchForChanges(openmct, domainObject);
 
         this.watchForChanges = this.watchForChanges.bind(this);
         this.show = this.show.bind(this);
         this.destroy = this.destroy.bind(this);
         this.addRule = this.addRule.bind(this);
         this.onEdit = this.onEdit.bind(this);
-
-        this.addHyperlink(domainObject.url, domainObject.openNewTab);
-        this.watchForChanges(openmct, domainObject);
 
         var id = this.domainObject.identifier.key,
             self = this,
@@ -111,6 +83,38 @@ define([
                 }
             });
     }
+
+    SummaryWidget.prototype.initializeLocalVariables = function () {
+        this.domainObject.configuration = this.domainObject.configuration || {};
+        this.domainObject.configuration.ruleConfigById = this.domainObject.configuration.ruleConfigById || {};
+        this.domainObject.configuration.ruleOrder = this.domainObject.configuration.ruleOrder || ['default'];
+        
+        this.domainObject.configuration.testDataConfig = this.domainObject.configuration.testDataConfig || [{
+            object: '',
+            key: '',
+            value: ''
+        }];
+
+        this.activeId = 'default';
+        this.rulesById = {};
+        this.domElement = $(widgetTemplate);
+        this.toggleRulesControl = $('.t-view-control-rules', this.domElement);
+        this.toggleTestDataControl = $('.t-view-control-test-data', this.domElement);
+        this.widgetButton = this.domElement.children('#widget');
+        this.editing = false;
+        this.container = '';
+        this.editListenerUnsubscribe = $.noop;
+
+        this.outerWrapper = $('.widget-edit-holder', this.domElement);
+        this.ruleArea = $('#ruleArea', this.domElement);
+        this.configAreaRules = $('.widget-rules-wrapper', this.domElement);
+
+        this.testDataArea = $('.widget-test-data', this.domElement);
+        this.addRuleButton = $('#addRule', this.domElement);
+
+        this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
+        this.testDataManager = new TestDataManager(this.domainObject, this.conditionManager, this.openmct);
+    };
 
     /**
      * adds or removes href to widget button and adds or removes openInNewTab
