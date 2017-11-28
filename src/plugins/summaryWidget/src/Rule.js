@@ -204,7 +204,7 @@ define([
         this.deleteButton.on('click', this.remove);
         this.duplicateButton.on('click', this.duplicate);
         this.addConditionButton.on('click', function () {
-            self.initCondition();
+            self.addCondition();
         });
         this.toggleConfigButton.on('click', toggleConfig);
         this.trigger.on('change', onTriggerInput);
@@ -350,7 +350,7 @@ define([
      * @param {Object} [config] The configuration to initialize this rule from,
      *                          consisting of sourceCondition and index fields
      */
-    Rule.prototype.initCondition = function (config) {
+    Rule.prototype.addCondition = function (config) {
         var ruleConfigById = this.domainObject.configuration.ruleConfigById,
             newConfig,
             sourceIndex = config && config.index,
@@ -388,7 +388,7 @@ define([
         this.config.conditions.forEach(function (condition, index) {
             var newCondition = new Condition(condition, index, self.conditionManager);
             newCondition.on('remove', self.removeCondition, self);
-            newCondition.on('duplicate', self.initCondition, self);
+            newCondition.on('duplicate', self.addCondition, self);
             newCondition.on('change', self.onConditionChange, self);
             self.conditions.push(newCondition);
         });

@@ -131,7 +131,7 @@ define(['../src/Rule', 'zepto'], function (Rule, $) {
         });
 
         it('allows initializing a new condition with a default configuration', function () {
-            testRule.initCondition();
+            testRule.addCondition();
             expect(mockRuleConfig.conditions).toEqual([{
                 object: '',
                 key: '',
@@ -151,7 +151,7 @@ define(['../src/Rule', 'zepto'], function (Rule, $) {
         });
 
         it('allows initializing a new condition from a given configuration', function () {
-            testRule.initCondition({
+            testRule.addCondition({
                 sourceCondition: {
                     object: 'object1',
                     key: 'key1',
