@@ -39,6 +39,18 @@ define([
         var callbacks;
         var view;
 
+        function waitsForChange() {
+            var oldHtml;
+
+            runs(function () {
+                oldHtml = testContainer.innerHTML;
+            });
+
+            waitsFor(function () {
+                return oldHtml !== testContainer.innerHTML;
+            });
+        }
+
         beforeEach(function () {
             var loaded = false;
 
@@ -221,12 +233,7 @@ define([
                 callbacks[datum.key](datum);
             });
 
-            waitsFor(function () {
-                return testKeys.every(function (key, index) {
-                    var value = $(testContainer).find(".l-autoflow-row").eq(index).find(".r").text();
-                    return value !== "" && value !== testHistories[key].range;
-                });
-            });
+            waitsForChange();
 
             runs(function () {
                 testData.forEach(function (datum, index) {
@@ -243,9 +250,7 @@ define([
                 callbacks[key]({ range: 'foo', domain: 'bar' });
             });
 
-            waitsFor(function () {
-                return $(testContainer).find(".l-autoflow-item").filter(".r").text() !== "";
-            });
+            waitsForChange();
 
             runs(function () {
                 testKeys.forEach(function (datum, index) {
