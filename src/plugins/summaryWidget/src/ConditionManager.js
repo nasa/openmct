@@ -129,7 +129,7 @@ define ([
             self = this;
 
         self.telemetryTypesById[object.identifier.key] = {};
-        return telemetryAPI.request(object, {}).then(function (telemetry) {
+        return telemetryAPI.request(object, {size: 1, strategy: 'latest'}).then(function (telemetry) {
             Object.entries(telemetry[telemetry.length - 1]).forEach(function (telem) {
                 key = telem[0];
                 type = typeof telem[1];
