@@ -36,11 +36,14 @@ define([], function () {
             this.openmct.telemetry.getValueFormatter(this.domains[0]);
         this.evaluator =
             this.openmct.telemetry.limitEvaluator(this.domainObject);
+
+        this.initialized = false;
     }
 
     AutoflowTabularRowController.prototype.updateRowData = function (datum) {
         var violations = this.evaluator.evaluate(datum, this.ranges[0]);
 
+        this.initialized = true;
         this.data.classes = violations ? violations.cssClass : "";
         this.data.value = this.rangeFormatter.format(datum);
         this.callback(this.domainFormatter.format(datum));
@@ -51,6 +54,15 @@ define([], function () {
             this.domainObject,
             this.updateRowData.bind(this)
         );
+
+        this.openmct.telemetry.request(
+            this.domainObject,
+            { size: 1 }
+        ).then(function (history) {
+            if (!this.initialized && history.length > 0) {
+                this.updateRowData(history[history.length - 1]);
+            }
+        }.bind(this));
     };
 
     AutoflowTabularRowController.prototype.destroy = function () {

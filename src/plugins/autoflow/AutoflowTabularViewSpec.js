@@ -98,9 +98,7 @@ define([
             });
             mockmct.telemetry.request.andCallFake(function (obj, request) {
                 var key = obj.identifier.key;
-                return Promise.resolve([
-                    { key: key, range: index * 100, domain: key + index }
-                ]);
+                return Promise.resolve([testHistories[key]]);
             });
             mockMetadata.valuesForHints.andCallFake(function (hints) {
                 return [{ hint: hints[0] }];
