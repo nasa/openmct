@@ -152,7 +152,6 @@ define([
 
             it("removes rows on composition change", function () {
                 var child = testChildren.pop();
-                testChildren.push(child);
                 mockComposition.on.calls.forEach(function (call) {
                     if (call.args[0] === 'remove') {
                         call.args[1](child);
