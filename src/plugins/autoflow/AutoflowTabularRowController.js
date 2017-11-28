@@ -50,7 +50,9 @@ define([], function () {
     };
 
     AutoflowTabularRowController.prototype.activate = function () {
-        this.destroy = this.openmct.telemetry.subscribe(
+        this.destroy();
+
+        this.unsubscribe = this.openmct.telemetry.subscribe(
             this.domainObject,
             this.updateRowData.bind(this)
         );
@@ -66,6 +68,9 @@ define([], function () {
     };
 
     AutoflowTabularRowController.prototype.destroy = function () {
+        if (this.unsubscribe) {
+            this.unsubscribe();
+        }
     };
 
     return AutoflowTabularRowController;
