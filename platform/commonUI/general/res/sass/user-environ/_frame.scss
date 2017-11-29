@@ -102,7 +102,7 @@
         }
         &.t-frame-outer > .t-rep-frame {
             &.contents {
-                $m: 2px;
+                $m: 0px;
                 top: $m;
                 right: $m;
                 bottom: $m;
@@ -113,6 +113,7 @@
                     display: none;
                 }
                 > .object-holder.abs {
+                    overflow: hidden;
                     top: 0 !important;
                 }
             }
