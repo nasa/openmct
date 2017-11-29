@@ -38,6 +38,8 @@ define([
         this.initializeLocalVariables();
         this.addHyperlink(domainObject.url, domainObject.openNewTab);
         this.watchForChanges(openmct, domainObject);
+        this.addToggleSectionCallbacks();
+        this.addEditListener();
 
         this.watchForChanges = this.watchForChanges.bind(this);
         this.show = this.show.bind(this);
@@ -45,43 +47,6 @@ define([
         this.addRule = this.addRule.bind(this);
         this.onEdit = this.onEdit.bind(this);
 
-        var id = this.domainObject.identifier.key,
-            self = this,
-            oldDomainObject,
-            statusCapability;
-
-        /**
-         * Toggles the configuration area for test data in the view
-         * @private
-         */
-        function toggleTestData() {
-            self.outerWrapper.toggleClass('expanded-widget-test-data');
-            self.toggleTestDataControl.toggleClass('expanded');
-        }
-        this.toggleTestDataControl.on('click', toggleTestData);
-
-        /**
-         * Toggles the configuration area for rules in the view
-         * @private
-         */
-        function toggleRules() {
-            self.outerWrapper.toggleClass('expanded-widget-rules');
-            self.toggleRulesControl.toggleClass('expanded');
-        }
-        this.toggleRulesControl.on('click', toggleRules);
-
-        openmct.$injector.get('objectService')
-            .getObjects([id])
-            .then(function (objs) {
-                oldDomainObject = objs[id];
-                statusCapability = oldDomainObject.getCapability('status');
-                self.editListenerUnsubscribe = statusCapability.listen(self.onEdit);
-                if (statusCapability.get('editing')) {
-                    self.onEdit(['editing']);
-                } else {
-                    self.onEdit([]);
-                }
-            });
     }
 
     SummaryWidget.prototype.initializeLocalVariables = function () {
@@ -114,6 +79,51 @@ define([
 
         this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
         this.testDataManager = new TestDataManager(this.domainObject, this.conditionManager, this.openmct);
+    };
+
+    SummaryWidget.prototype.addToggleSectionCallbacks = function () {
+
+        var self = this;
+
+        /**
+         * Toggles the configuration area for test data in the view
+         * @private
+         */
+        function toggleTestData() {
+            self.outerWrapper.toggleClass('expanded-widget-test-data');
+            self.toggleTestDataControl.toggleClass('expanded');
+        }
+        this.toggleTestDataControl.on('click', toggleTestData);
+
+        /**
+         * Toggles the configuration area for rules in the view
+         * @private
+         */
+        function toggleRules() {
+            self.outerWrapper.toggleClass('expanded-widget-rules');
+            self.toggleRulesControl.toggleClass('expanded');
+        }
+        this.toggleRulesControl.on('click', toggleRules);
+    };
+
+    SummaryWidget.prototype.addEditListener = function () {
+        var oldDomainObject, 
+            statusCapability,
+            self = this,
+            id = this.domainObject.identifier.key;
+
+        this.openmct.$injector.get('objectService')
+            .getObjects([id])
+            .then(function (objs) {
+                oldDomainObject = objs[id];
+                statusCapability = oldDomainObject.getCapability('status');
+                self.editListenerUnsubscribe = statusCapability.listen(self.onEdit);
+                if (statusCapability.get('editing')) {
+                    self.onEdit(['editing']);
+                } else {
+                    self.onEdit([]);
+                }
+            });
     };
 
     /**
