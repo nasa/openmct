@@ -163,7 +163,7 @@ define([
 
             it("removes rows on composition change", function () {
                 var child = testChildren.pop();
-                emitEvent(mockComposition, 'remove', child);
+                emitEvent(mockComposition, 'remove', child.identifier);
                 waitsFor(rowsMatch);
             });
         });
@@ -288,7 +288,7 @@ define([
 
         it("loads composition exactly once", function () {
             var testObj = testChildren.pop();
-            emitEvent(mockComposition, 'remove', testObj);
+            emitEvent(mockComposition, 'remove', testObj.identifier);
             testChildren.push(testObj);
             emitEvent(mockComposition, 'add', testObj);
             expect(mockComposition.load.calls.length).toEqual(1);

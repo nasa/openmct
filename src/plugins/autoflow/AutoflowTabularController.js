@@ -60,8 +60,7 @@ define([
         }
     };
 
-    AutoflowTabularController.prototype.removeRow = function (childObject) {
-        var identifier = childObject.identifier;
+    AutoflowTabularController.prototype.removeRow = function (identifier) {
         var id = [identifier.namespace, identifier.key].join(":");
 
         if (this.rows[id]) {
