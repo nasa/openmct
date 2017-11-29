@@ -33,6 +33,7 @@ define([
             testType = "some-type";
             testObject = { type: testType };
             mockmct = {
+                composition: jasmine.createSpyObj('composition', ['get']),
                 objectViews: jasmine.createSpyObj('views', ['addProvider'])
             };
 
