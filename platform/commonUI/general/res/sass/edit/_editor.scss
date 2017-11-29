@@ -108,14 +108,4 @@
             display: none;
         }
     }
-
-    // Prevent nested elements from showing s-hover-border
-    .t-frame-outer .s-hover-border {
-        //border: none !important;
-    }
-
-    // Prevent nested frames from being selectable until we have proper sub-object editing
-    //.t-frame-outer .t-frame-outer {
-    //    pointer-events: none;
-    //}
 }
