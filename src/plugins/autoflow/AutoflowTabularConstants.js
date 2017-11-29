@@ -21,6 +21,9 @@
  *****************************************************************************/
 
 define([], function () {
+    /**
+     * Constant values used by the Autoflow Tabular View.
+     */
     return {
         ROW_HEIGHT: 16,
         SLIDER_HEIGHT: 10,

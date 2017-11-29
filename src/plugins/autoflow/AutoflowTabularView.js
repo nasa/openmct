@@ -37,6 +37,9 @@ define([
     var MAX_COLUMN_WIDTH = AutoflowTabularConstants.MAX_COLUMN_WIDTH;
     var COLUMN_WIDTH_STEP = AutoflowTabularConstants.COLUMN_WIDTH_STEP;
 
+    /**
+     * Implements the Autoflow Tabular view of a domain object.
+     */
     function AutoflowTabularView(domainObject, openmct) {
         var data = {
             items: [],

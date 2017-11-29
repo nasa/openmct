@@ -21,6 +21,15 @@
  *****************************************************************************/
 
 define([], function () {
+    /**
+     * Controller for individual rows of an Autoflow Tabular View.
+     * Subscribes to telemetry and updates row data.
+     *
+     * @param {DomainObject} domainObject the object being viewed
+     * @param {*} data the view data
+     * @param openmct a reference to the openmct application
+     * @param {Function} callback a callback to invoke with "last updated" timestamps
+     */
     function AutoflowTabularRowController(domainObject, data, openmct, callback) {
         this.domainObject = domainObject;
         this.data = data;
@@ -40,6 +49,10 @@ define([], function () {
         this.initialized = false;
     }
 
+    /**
+     * Update row to reflect incoming telemetry data.
+     * @private
+     */
     AutoflowTabularRowController.prototype.updateRowData = function (datum) {
         var violations = this.evaluator.evaluate(datum, this.ranges[0]);
 
@@ -49,6 +62,9 @@ define([], function () {
         this.callback(this.domainFormatter.format(datum));
     };
 
+    /**
+     * Activate this controller; begin listening for changes.
+     */
     AutoflowTabularRowController.prototype.activate = function () {
         this.destroy();
 
@@ -67,6 +83,9 @@ define([], function () {
         }.bind(this));
     };
 
+    /**
+     * Destroy this controller; detach any associated resources.
+     */
     AutoflowTabularRowController.prototype.destroy = function () {
         if (this.unsubscribe) {
             this.unsubscribe();

@@ -23,6 +23,15 @@
 define([
     './AutoflowTabularRowController'
 ], function (AutoflowTabularRowController) {
+    /**
+     * Controller for an Autoflow Tabular View. Subscribes to telemetry
+     * associated with children of the domain object and passes that
+     * information on to the view.
+     *
+     * @param {DomainObject} domainObject the object being viewed
+     * @param {*} data the view data
+     * @param openmct a reference to the openmct application
+     */
     function AutoflowTabularController(domainObject, data, openmct) {
         this.composition = openmct.composition.get(domainObject);
         this.data = data;
@@ -35,10 +44,19 @@ define([
         this.removeRow = this.removeRow.bind(this);
     }
 
+    /**
+     * Set the "Last Updated" value to be displayed.
+     * @param {String} value the value to display
+     * @private
+     */
     AutoflowTabularController.prototype.trackLastUpdated = function (value) {
         this.data.updated = value;
     };
 
+    /**
+     * Respond to an `add` event from composition by adding a new row.
+     * @private
+     */
     AutoflowTabularController.prototype.addRow = function (childObject) {
         var identifier = childObject.identifier;
         var id = [identifier.namespace, identifier.key].join(":");
@@ -60,6 +78,11 @@ define([
         }
     };
 
+    /**
+     * Respond to an `remove` event from composition by removing any
+     * related row.
+     * @private
+     */
     AutoflowTabularController.prototype.removeRow = function (identifier) {
         var id = [identifier.namespace, identifier.key].join(":");
 
@@ -73,12 +96,18 @@ define([
         }
     };
 
+    /**
+     * Activate this controller; begin listening for changes.
+     */
     AutoflowTabularController.prototype.activate = function () {
         this.composition.on('add', this.addRow);
         this.composition.on('remove', this.removeRow);
         this.composition.load();
     };
 
+    /**
+     * Destroy this controller; detach any associated resources.
+     */
     AutoflowTabularController.prototype.destroy = function () {
         Object.keys(this.controllers).forEach(function (id) {
             this.controllers[id].destroy();
