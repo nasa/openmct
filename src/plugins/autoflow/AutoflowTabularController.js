@@ -24,61 +24,69 @@ define([
     './AutoflowTabularRowController'
 ], function (AutoflowTabularRowController) {
     function AutoflowTabularController(domainObject, data, openmct) {
-        this.domainObject = domainObject;
+        this.composition = openmct.composition.get(domainObject);
         this.data = data;
         this.openmct = openmct;
 
-        this.rowCount = 1;
-        this.unlistens = [];
+        this.rows = {};
+        this.controllers = {};
+
+        this.addRow = this.addRow.bind(this);
+        this.removeRow = this.removeRow.bind(this);
     }
 
     AutoflowTabularController.prototype.trackLastUpdated = function (value) {
         this.data.updated = value;
     };
 
-    AutoflowTabularController.prototype.makeRow = function (childObject) {
-        var row = {
-            classes: "",
-            name: childObject.name,
-            value: undefined
-        };
-        var controller = new AutoflowTabularRowController(
-            childObject,
-            row,
-            this.openmct,
-            this.trackLastUpdated.bind(this)
-        );
+    AutoflowTabularController.prototype.addRow = function (childObject) {
+        var identifier = childObject.identifier;
+        var id = [identifier.namespace, identifier.key].join(":");
 
-        controller.activate();
-        this.unlistens.push(controller.destroy.bind(controller));
-
-        return row;
+        if (!this.rows[id]) {
+            this.rows[id] = {
+                classes: "",
+                name: childObject.name,
+                value: undefined
+            };
+            this.controllers[id] = new AutoflowTabularRowController(
+                childObject,
+                this.rows[id],
+                this.openmct,
+                this.trackLastUpdated.bind(this)
+            );
+            this.controllers[id].activate();
+            this.data.items.push(this.rows[id]);
+        }
     };
 
-    AutoflowTabularController.prototype.setObjects = function (domainObjects) {
-        this.data.items = domainObjects.map(this.makeRow.bind(this));
+    AutoflowTabularController.prototype.removeRow = function (childObject) {
+        var identifier = childObject.identifier;
+        var id = [identifier.namespace, identifier.key].join(":");
+
+        if (this.rows[id]) {
+            this.data.items = this.data.items.filter(function (item) {
+                return item !== this.rows[id];
+            }.bind(this));
+            this.controllers[id].destroy();
+            delete this.controllers[id];
+            delete this.rows[id];
+        }
     };
 
     AutoflowTabularController.prototype.activate = function () {
-        var composition = this.openmct.composition.get(this.domainObject);
-        var reactivate = this.activate.bind(this);
-
-        this.destroy();
-
-        composition.on('remove', reactivate);
-        composition.on('add', reactivate);
-        this.unlistens.push(composition.off.bind(composition, 'remove', reactivate));
-        this.unlistens.push(composition.off.bind(composition, 'add', reactivate));
-
-        return composition.load().then(this.setObjects.bind(this));
+        this.composition.on('add', this.addRow);
+        this.composition.on('remove', this.removeRow);
+        this.composition.load();
     };
 
     AutoflowTabularController.prototype.destroy = function () {
-        this.unlistens.forEach(function (unlisten) {
-            unlisten();
-        });
-
-        this.unlistens = [];
+        Object.keys(this.controllers).forEach(function (id) {
+            this.controllers[id].destroy();
+        }.bind(this));
+        this.controllers = {};
+        this.composition.off('add', this.addRow);
+        this.composition.off('remove', this.removeRow);
     };
 
     return AutoflowTabularController;
