@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['../../browse/src/InspectorRegion'],
-    function (InspectorRegion) {
+    [],
+    function () {
 
         /**
          * The InspectorController listens for the selection changes and adds the selection
@@ -30,7 +30,7 @@ define(
          *
          * @constructor
          */
-        function InspectorController($scope, policyService, openmct, $document) {
+        function InspectorController($scope, openmct, $document) {
             var self = this;
             self.$scope = $scope;
 

@@ -190,14 +190,13 @@ define(
             // Update composed objects on screen, and position panes
             $scope.$watchCollection("model.composition", refreshComposition);
 
-            // Position panes where they are dropped
-            $scope.$on("mctDrop", handleDrop);
-
             openmct.selection.on('change', setSelection);
 
             $scope.$on("$destroy", function () {
                 openmct.selection.off("change", setSelection);
             });
+
+            $scope.$on("mctDrop", handleDrop);
         }
 
         // Utility function to copy raw positions from configuration,
