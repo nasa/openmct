@@ -51,6 +51,14 @@ define([
             });
         }
 
+        function emitEvent(mockEmitter, type, event) {
+            mockEmitter.on.calls.forEach(function (call) {
+                if (call.args[0] === type) {
+                    call.args[1](event);
+                }
+            });
+        }
+
         beforeEach(function () {
             var loaded = false;
 
@@ -154,21 +162,13 @@ define([
                     name: "Object 123"
                 };
                 testChildren.push(child);
-                mockComposition.on.calls.forEach(function (call) {
-                    if (call.args[0] === 'add') {
-                        call.args[1](child);
-                    }
-                });
+                emitEvent(mockComposition, 'add', child);
                 waitsFor(rowsMatch);
             });
 
             it("removes rows on composition change", function () {
                 var child = testChildren.pop();
-                mockComposition.on.calls.forEach(function (call) {
-                    if (call.args[0] === 'remove') {
-                        call.args[1](child);
-                    }
-                });
+                emitEvent(mockComposition, 'remove', child);
                 waitsFor(rowsMatch);
             });
         });
