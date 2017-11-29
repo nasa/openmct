@@ -103,7 +103,7 @@ define([
 
                 var updateRowHeight = function () {
                     var tabularArea = this.$refs.autoflowItems;
-                    var height = tabularArea.clientHeight;
+                    var height = tabularArea ? tabularArea.clientHeight : 0;
                     var available = height - SLIDER_HEIGHT;
                     var rows = Math.max(1, Math.floor(available / ROW_HEIGHT));
                     data.rowCount = rows;
