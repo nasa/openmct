@@ -88,12 +88,7 @@ define([
                 var view;
 
                 function waitsForChange() {
-                    var oldHtml;
-
-                    runs(function () {
-                        oldHtml = testContainer.innerHTML;
-                    });
-
+                    var oldHtml = testContainer.innerHTML;
                     waitsFor(function () {
                         return oldHtml !== testContainer.innerHTML;
                     });
