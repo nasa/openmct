@@ -100,7 +100,10 @@ define([
             }, {});
 
             mockmct.composition.get.andReturn(mockComposition);
-            mockComposition.load.andReturn(Promise.resolve(testChildren));
+            mockComposition.load.andCallFake(function () {
+                testChildren.forEach(emitEvent.bind(null, mockComposition, 'add'));
+                return Promise.resolve(testChildren);
+            });
 
             mockmct.telemetry.getMetadata.andReturn(mockMetadata);
             mockmct.telemetry.getValueFormatter.andCallFake(function (metadatum) {
