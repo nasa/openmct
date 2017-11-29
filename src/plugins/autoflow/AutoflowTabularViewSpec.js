@@ -141,14 +141,8 @@ define([
                 return rows === testChildren.length;
             }
 
-            beforeEach(function () {
-                waitsFor(function () {
-                    return $(testContainer).find(".l-autoflow-row").length > 0;
-                });
-            });
-
             it("shows one row per child object", function () {
-                expect(rowsMatch()).toBe(true);
+                waitsFor(rowsMatch);
             });
 
             it("adds rows on composition change", function () {
