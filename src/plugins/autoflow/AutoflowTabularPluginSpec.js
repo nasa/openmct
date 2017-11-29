@@ -22,10 +22,9 @@
 
 define([
     './AutoflowTabularPlugin',
-    './AutoflowTabularView',
     './AutoflowTabularConstants',
     'zepto'
-], function (AutoflowTabularPlugin, AutoflowTabularView, AutoflowTabularConstants, $) {
+], function (AutoflowTabularPlugin, AutoflowTabularConstants, $) {
     describe("AutoflowTabularPlugin", function () {
         var testType;
         var testObject;
@@ -68,11 +67,6 @@ define([
 
             it("does not apply to other types", function () {
                 expect(provider.canView({ type: 'foo' })).toBe(false);
-            });
-
-            it("provides an AutoflowTabularView", function () {
-                expect(provider.view(testObject) instanceof AutoflowTabularView)
-                    .toBe(true);
             });
 
             describe("provides a view which", function () {
