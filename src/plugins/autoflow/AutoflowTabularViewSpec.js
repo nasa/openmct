@@ -60,8 +60,6 @@ define([
         }
 
         beforeEach(function () {
-            var loaded = false;
-
             callbacks = {};
 
             testObject = { type: 'some-type' };
@@ -130,13 +128,7 @@ define([
             view = new AutoflowTabularView(testObject, mockmct);
             view.show(testContainer);
 
-            mockComposition.load().then(function () {
-                loaded = true;
-            });
-
-            waitsFor(function () {
-                return loaded;
-            });
+            waitsForChange();
         });
 
         it("populates its container", function () {
@@ -292,6 +284,14 @@ define([
                 waitsFor(columnsHaveAutoflowed);
             }
             runs($container.remove.bind($container));
+        });
+
+        it("loads composition exactly once", function () {
+            var testObj = testChildren.pop();
+            emitEvent(mockComposition, 'remove', testObj);
+            testChildren.push(testObj);
+            emitEvent(mockComposition, 'add', testObj);
+            expect(mockComposition.load.calls.length).toEqual(1);
         });
     });
 });
