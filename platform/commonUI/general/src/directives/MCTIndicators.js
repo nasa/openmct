@@ -24,22 +24,20 @@ define(
     [],
     function () {
         function MCTIndicators(openmct) {
-            function link(scope, element, attrs) {
-                openmct.indicators.getAll().forEach(function (indicator){
-                    var displayFunction = indicator.display();
-                    element.append(displayFunction());
-                });
-            }
-
             return {
-                // Restrict to attributes
                 restrict: "E",
-                // Use this link function
-                link: link
+                link: function link(scope, element, attrs) {
+                    openmct.indicators.getAll().forEach(function (indicator){
+                        var displayFunction = indicator.display();
+                        var displayElement = displayFunction();
+                        
+                        element.append(displayElement);
+                    });
+                }
             };
         }
 
-        return MCTScroll;
+        return MCTIndicators;
 
     }
 );
