@@ -22,7 +22,7 @@
 
 define([], function () {
 
-    function TelemetryAverager(telemetryAPI, timeAPI, domainObject, samples) {
+    function TelemetryAverager(telemetryAPI, timeAPI, domainObject, samples, averageDatumCallback) {
         this.telemetryAPI = telemetryAPI;
         this.timeAPI = timeAPI;
 
@@ -37,6 +37,8 @@ define([], function () {
         // Defined dynamically based on current time system
         this.domainKey = undefined;
         this.domainFormatter = undefined;
+
+        this.averageDatumCallback = averageDatumCallback;
     }
 
     TelemetryAverager.prototype.createAverageDatum = function (telemetryDatum) {
@@ -46,16 +48,22 @@ define([], function () {
         var rangeValue = this.rangeFormatter.parse(telemetryDatum);
 
         this.averagingWindow.push(rangeValue);
-        if (this.averagingWindow.length > this.samples) {
+
+        if (this.averagingWindow.length < this.samples) {
+            // We do not have enough data to produce an average
+            return;
+        } else if (this.averagingWindow.length > this.samples) {
+            //Do not let averaging window grow beyond defined sample size
             this.averagingWindow.shift();
         }
+
         var averageValue = this.calculateMean();
 
         var meanDatum = {};
         meanDatum[this.domainKey] = timeValue;
         meanDatum.value = averageValue;
 
-        return meanDatum;
+        this.averageDatumCallback(meanDatum);
     };
 
     /**
@@ -73,6 +81,10 @@ define([], function () {
     };
 
     /**
+     * The mean telemetry filter produces domain values in whatever time
+     * system is currently selected from the conductor. Because this can
+     * change dynamically, the averager needs to be updated regularly with
+     * the current domain.
      * @private
      */
     TelemetryAverager.prototype.setDomainKeyAndFormatter = function () {
@@ -102,10 +114,6 @@ define([], function () {
         var valueMetadata = objectMetadata.value(key);
 
         return this.telemetryAPI.getValueFormatter(valueMetadata);
-    };
-
-    TelemetryAverager.prototype.sampleCount = function () {
-        return this.averagingWindow.length;
     };
 
     return TelemetryAverager;

@@ -65,15 +65,10 @@ define([
     };
 
     MeanTelemetryProvider.prototype.subscribeToAverage = function (domainObject, samples, callback) {
-        var telemetryAverager = new TelemetryAverager(this.telemetryAPI, this.timeAPI, domainObject, samples);
+        var telemetryAverager = new TelemetryAverager(this.telemetryAPI, this.timeAPI, domainObject, samples, callback);
+        var createAverageDatum = telemetryAverager.createAverageDatum.bind(telemetryAverager);
 
-        return this.telemetryAPI.subscribe(domainObject, function (telemetryDatum) {
-            var avgData = telemetryAverager.createAverageDatum(telemetryDatum);
-
-            if (telemetryAverager.sampleCount() === samples) {
-                callback(avgData);
-            }
-        }.bind(this));
+        return this.telemetryAPI.subscribe(domainObject, createAverageDatum);
     };
 
     MeanTelemetryProvider.prototype.request = function (domainObject, request) {
@@ -90,19 +85,15 @@ define([
      */
     MeanTelemetryProvider.prototype.requestAverageTelemetry = function (domainObject, request, samples) {
         var averageData = [];
-        var telemetryAverager = new TelemetryAverager(this.telemetryAPI, this.timeAPI, domainObject, samples);
+        var addToAverageData = averageData.push.bind(averageData);
+        var telemetryAverager = new TelemetryAverager(this.telemetryAPI, this.timeAPI, domainObject, samples, addToAverageData);
+        var createAverageDatum = telemetryAverager.createAverageDatum.bind(telemetryAverager);
 
         return this.telemetryAPI.request(domainObject, request).then(function (telemetryData) {
-            telemetryData.forEach(function (datum) {
-                var avgDatum = telemetryAverager.createAverageDatum(datum);
-
-                if (telemetryAverager.sampleCount() === samples) {
-                    averageData.push(avgDatum);
-                }
-            }.bind(this));
+            telemetryData.forEach(createAverageDatum);
 
             return averageData;
-        }.bind(this));
+        });
     };
 
     /**
