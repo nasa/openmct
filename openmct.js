@@ -66,6 +66,9 @@ requirejs.config({
         "moment-duration-format": {
             "deps": ["moment"]
         },
+        "saveAs": {
+            "exports": "saveAs"
+        },
         "screenfull": {
             "exports": "screenfull"
         },
