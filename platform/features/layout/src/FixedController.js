@@ -506,7 +506,11 @@ define(
          * Set the active user selection in this view.
          * @param element the element to select
          */
-        FixedController.prototype.select = function select(element) {
+        FixedController.prototype.select = function select(element, event) {
+            if (event) {
+                event.stopPropagation();
+            }
+
             if (this.selection) {
                 // Update selection...
                 this.selection.select(element);
