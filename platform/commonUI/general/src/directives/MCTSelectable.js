@@ -20,35 +20,41 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './src/InspectorController',
-    './src/EditableRegionPolicy',
-    'legacyRegistry'
-], function (
-    InspectorController,
-    EditableRegionPolicy,
-    legacyRegistry
-) {
+define(
+    [],
+    function () {
 
-    legacyRegistry.register("platform/commonUI/regions", {
-        "extensions": {
-            "controllers": [
-                {
-                    "key": "InspectorController",
-                    "implementation": InspectorController,
-                    "depends": [
-                        "$scope",
-                        "openmct",
-                        "$document"
-                    ]
-                }
-            ],
-            "policies": [
-                {
-                    "category": "region",
-                    "implementation": EditableRegionPolicy
-                }
-            ]
+        /**
+         * The mct-selectable directive allows selection functionality
+         * (click) to be attached to specific elements.
+         *
+         * @memberof platform/commonUI/general
+         * @constructor
+         */
+        function MCTSelectable(openmct) {
+
+            // Link; install event handlers.
+            function link(scope, element, attrs) {
+                var removeSelectable = openmct.selection.selectable(
+                    element[0],
+                    scope.$eval(attrs.mctSelectable),
+                    attrs.hasOwnProperty('mctInitSelect') && scope.$eval(attrs.mctInitSelect) !== false
+                );
+
+                scope.$on("$destroy", function () {
+                    removeSelectable();
+                });
+            }
+
+            return {
+                // mct-selectable only makes sense as an attribute
+                restrict: "A",
+                // Link function, to install event handlers
+                link: link
+            };
+
         }
-    });
-});
+
+        return MCTSelectable;
+    }
+);

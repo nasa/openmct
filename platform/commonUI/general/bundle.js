@@ -41,6 +41,7 @@ define([
     "./src/controllers/BannerController",
     "./src/directives/MCTContainer",
     "./src/directives/MCTDrag",
+    "./src/directives/MCTSelectable",
     "./src/directives/MCTClickElsewhere",
     "./src/directives/MCTResize",
     "./src/directives/MCTPopup",
@@ -90,6 +91,7 @@ define([
     BannerController,
     MCTContainer,
     MCTDrag,
+    MCTSelectable,
     MCTClickElsewhere,
     MCTResize,
     MCTPopup,
@@ -326,6 +328,13 @@ define([
                     "implementation": MCTDrag,
                     "depends": [
                         "$document"
+                    ]
+                },
+                {
+                    "key": "mctSelectable",
+                    "implementation": MCTSelectable,
+                    "depends": [
+                        "openmct"
                     ]
                 },
                 {

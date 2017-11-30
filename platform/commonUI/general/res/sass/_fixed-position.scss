@@ -25,6 +25,7 @@
 	}
 
 	.l-fixed-position-item {
+        border-width: 1px;
 		position: absolute;
 		&.s-not-selected {
 			opacity: 0.8;

@@ -28,13 +28,25 @@ define(
             var testProxy,
                 testElement,
                 otherElement,
-                selection;
+                selection,
+                mockSelection,
+                mockOpenMCT;
 
             beforeEach(function () {
                 testProxy = { someKey: "some value" };
                 testElement = { someOtherKey: "some other value" };
                 otherElement = { yetAnotherKey: 42 };
-                selection = new EditToolbarSelection();
+                mockSelection = jasmine.createSpyObj("selection", [
+                    // 'select',
+                    'on',
+                    'off',
+                    'get'
+                ]);
+                mockSelection.get.andReturn([]);
+                mockOpenMCT = {
+                    selection: mockSelection
+                };
+                selection = new EditToolbarSelection(mockOpenMCT);
                 selection.proxy(testProxy);
             });
 

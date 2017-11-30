@@ -57,7 +57,12 @@
             </div>
             <mct-representation key="representation.selected.key"
                                 mct-object="representation.selected.key && domainObject"
-                                class="abs flex-elem grows object-holder-main scroll">
+                                class="abs flex-elem grows object-holder-main scroll"
+                                mct-selectable="{
+                                    item: domainObject.useCapability('adapter'),
+                                    oldItem: domainObject
+                                }"
+                                mct-init-select>
             </mct-representation>
         </div>
     </div>
