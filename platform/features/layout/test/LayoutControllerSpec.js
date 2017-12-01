@@ -35,6 +35,7 @@ define(
                 mockCompositionObjects,
                 mockOpenMCT,
                 mockSelection,
+                mockDomainObjectCapability,
                 $element = [],
                 selectable = [];
 
@@ -61,6 +62,14 @@ define(
                             };
                         } else {
                             return {};
+                        }
+                    },
+                    getCapability: function () {
+                        return mockDomainObjectCapability;
+                    },
+                    hasCapability: function (param) {
+                        if (param === 'composition') {
+                            return id !== 'b';
                         }
                     }
                 };
@@ -89,7 +98,9 @@ define(
                         }
                     }
                 };
-
+                mockDomainObjectCapability = jasmine.createSpyObj('capability',
+                    ['inEditContext']
+                );
                 mockCompositionCapability = mockPromise(mockCompositionObjects);
 
                 mockScope.domainObject = mockDomainObject("mockDomainObject");
@@ -98,7 +109,7 @@ define(
 
                 selectable[0] = {
                     context: {
-                        oldItem: mockDomainObject
+                        oldItem: mockScope.domainObject
                     }
                 };
 
@@ -427,6 +438,23 @@ define(
                 expect($element[0].click).toHaveBeenCalled();
             });
 
+            it("allows objects to be drilled-in only when editing", function () {
+                mockScope.$watchCollection.mostRecentCall.args[1]();
+                var childObj = mockCompositionObjects[0];
+                childObj.getCapability().inEditContext.andReturn(false);
+                controller.drill(mockEvent, childObj);
+
+                expect(controller.isDrilledIn(childObj)).toBe(false);
+            });
+
+            it("allows objects to be drilled-in only if it has sub objects", function () {
+                mockScope.$watchCollection.mostRecentCall.args[1]();
+                var childObj = mockCompositionObjects[1];
+                childObj.getCapability().inEditContext.andReturn(true);
+                controller.drill(mockEvent, childObj);
+
+                expect(controller.isDrilledIn(childObj)).toBe(false);
+            });
         });
     }
 );
