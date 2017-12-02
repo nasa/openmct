@@ -21,8 +21,14 @@
  *****************************************************************************/
 
 define(
-    ["../src/LayoutController"],
-    function (LayoutController) {
+    [
+        "../src/LayoutController",
+        "zepto"
+    ],
+    function (
+        LayoutController,
+        $
+    ) {
 
         describe("The Layout controller", function () {
             var mockScope,
@@ -123,10 +129,10 @@ define(
                 mockOpenMCT = {
                     selection: mockSelection
                 };
-                $element[0] = jasmine.createSpyObj(
-                    "$element",
-                    ['click']
-                );
+
+                $element = $('<div></div>');
+                $(document).find('body').append($element);
+                spyOn($element[0], 'click');
 
                 spyOn(mockScope.domainObject, "useCapability").andCallThrough();
 
@@ -454,6 +460,24 @@ define(
                 controller.drill(mockEvent, childObj);
 
                 expect(controller.isDrilledIn(childObj)).toBe(false);
+            });
+
+            it("selects a newly-dropped object", function () {
+                mockScope.$on.mostRecentCall.args[1](
+                    mockEvent,
+                    'd',
+                    { x: 300, y: 100 }
+                );
+
+                var childObj = mockDomainObject("d");
+                var testElement = $("<div class='some-class'></div>");
+                $element.append(testElement);
+                spyOn(testElement[0], 'click');
+
+                controller.selectIfNew('some-class', childObj);
+                jasmine.Clock.tick(0);
+
+                expect(testElement[0].click).toHaveBeenCalled();
             });
         });
     }

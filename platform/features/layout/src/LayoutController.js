@@ -512,9 +512,8 @@ define(
          * @param classSelector the css class selector
          * @param domainObject the domain object
          */
-        LayoutController.prototype.selectIfNew = function (classSelector, domainObject) {
+        LayoutController.prototype.selectIfNew = function (selector, domainObject) {
             if (domainObject.getId() === this.droppedIdToSelectAfterRefresh) {
-                var selector = $(classSelector).selector;
                 setTimeout(function () {
                     $('.' + selector)[0].click();
                     delete this.droppedIdToSelectAfterRefresh;
