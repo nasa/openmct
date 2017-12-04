@@ -66,8 +66,6 @@ define([], function () {
      * Activate this controller; begin listening for changes.
      */
     AutoflowTabularRowController.prototype.activate = function () {
-        this.destroy();
-
         this.unsubscribe = this.openmct.telemetry.subscribe(
             this.domainObject,
             this.updateRowData.bind(this)
