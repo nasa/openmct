@@ -64,7 +64,7 @@ define(
             var defer = self.$q.defer(),
                 validTypes = ["png", "jpg", "jpeg"],
                 renderTimeout,
-                currentColour;
+                currentColor;
 
             if (validTypes.indexOf(type) === -1) {
                 self.$log.error("Invalid type requested. Try: (" + validTypes.join(",") + ")");
@@ -72,7 +72,7 @@ define(
             }
 
             // Save color to be restored later
-            currentColour = element.style.backgroundColor || '';
+            currentColor = element.style.backgroundColor || '';
 
             // Defaulting to white so we can see the chart when printed
             element.style.backgroundColor = 'white';
@@ -101,7 +101,7 @@ define(
                 self.$log.warn("html2canvas failed with error: " + e);
             }
 
-            element.style.backgroundColor = currentColour;
+            element.style.backgroundColor = currentColor;
 
             defer.promise.finally(renderTimeout.cancel);
 
