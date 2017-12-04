@@ -23,8 +23,9 @@
 define([
     './AutoflowTabularPlugin',
     './AutoflowTabularConstants',
+    '../../MCT',
     'zepto'
-], function (AutoflowTabularPlugin, AutoflowTabularConstants, $) {
+], function (AutoflowTabularPlugin, AutoflowTabularConstants, MCT, $) {
     describe("AutoflowTabularPlugin", function () {
         var testType;
         var testObject;
@@ -33,17 +34,14 @@ define([
         beforeEach(function () {
             testType = "some-type";
             testObject = { type: testType };
-            mockmct = {
-                composition: jasmine.createSpyObj('composition', ['get']),
-                objectViews: jasmine.createSpyObj('views', ['addProvider']),
-                telemetry: jasmine.createSpyObj("telemetry", [
-                    'getMetadata',
-                    'getValueFormatter',
-                    'limitEvaluator',
-                    'request',
-                    'subscribe'
-                ])
-            };
+            mockmct = new MCT();
+            spyOn(mockmct.composition, 'get');
+            spyOn(mockmct.objectViews, 'addProvider');
+            spyOn(mockmct.telemetry, 'getMetadata');
+            spyOn(mockmct.telemetry, 'getValueFormatter');
+            spyOn(mockmct.telemetry, 'limitEvaluator');
+            spyOn(mockmct.telemetry, 'request');
+            spyOn(mockmct.telemetry, 'subscribe');
 
             var plugin = new AutoflowTabularPlugin({ type: testType });
             plugin(mockmct);
