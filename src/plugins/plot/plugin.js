@@ -33,6 +33,7 @@ define([
     "./src/inspector/HideElementPoolDirective",
     "./src/services/ExportImageService",
     './src/PlotViewPolicy',
+    "text!./res/templates/plot-options.html",
     "text!./res/templates/plot-options-browse.html",
     "text!./res/templates/plot-options-edit.html",
     "text!./res/templates/stacked-plot.html",
@@ -49,6 +50,7 @@ define([
     HideElementPool,
     ExportImageService,
     PlotViewPolicy,
+    plotOptionsTemplate,
     plotOptionsBrowseTemplate,
     plotOptionsEditTemplate,
     StackedPlotTemplate,
@@ -202,7 +204,7 @@ define([
                                 }
                             },
                             "properties": [],
-                            "inspector": PlotInspector,
+                            "inspector": "plot-options",
                             "priority": 891
                         },
                         {
@@ -223,6 +225,10 @@ define([
                         }
                     ],
                     "representations": [
+                        {
+                            "key": "plot-options",
+                            "template": plotOptionsTemplate
+                        },
                         {
                             "key": "plot-options-browse",
                             "template": plotOptionsBrowseTemplate
