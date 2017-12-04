@@ -82,9 +82,10 @@ define([
                 var view;
 
                 function waitsForChange() {
-                    var oldHtml = testContainer.innerHTML;
+                    var callback = jasmine.createSpy('callback');
+                    window.requestAnimationFrame(callback);
                     waitsFor(function () {
-                        return oldHtml !== testContainer.innerHTML;
+                        return callback.calls.length > 0;
                     });
                 }
 
