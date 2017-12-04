@@ -83,7 +83,7 @@ define(
                     ["readAsDataURL", "onloadend"]
                 );
                 mockExportTimeoutConstant = 0;
-                testElement = {};
+                testElement = {style: {backgroundColor: 'black'}};
 
                 exportImageService = new ExportImageService(
                     mockQ,

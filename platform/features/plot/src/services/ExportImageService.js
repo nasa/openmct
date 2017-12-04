@@ -71,31 +71,27 @@ define(
                 return;
             }
 
+            // Save color to be restored later
+            currentColour = element.style.backgroundColor || '';
+
+            // Defaulting to white so we can see the chart when printed
+            element.style.backgroundColor = 'white';
+
             renderTimeout = self.$timeout(function () {
                 defer.reject("html2canvas timed out");
                 self.$log.warn("html2canvas timed out");
             }, self.EXPORT_IMAGE_TIMEOUT);
 
             try {
-                // Save color to be restored later
-                currentColour = element.style.backgroundColor || '';
-                
-                // Defaulting to white so we can see the chart when printed
-                element.style.backgroundColor = 'white';
-                
                 self.html2canvas(element, {
                     onrendered: function (canvas) {
                         switch (type.toLowerCase()) {
                             case "png":
                                 canvas.toBlob(defer.resolve, "image/png");
-                                element.style.backgroundColor = currentColour;
                                 break;
 
-                            default:
-                            case "jpg":
                             case "jpeg":
                                 canvas.toBlob(defer.resolve, "image/jpeg");
-                                element.style.backgroundColor = currentColour;                                
                                 break;
                         }
                     }
@@ -104,6 +100,8 @@ define(
                 defer.reject(e);
                 self.$log.warn("html2canvas failed with error: " + e);
             }
+
+            element.style.backgroundColor = currentColour;
 
             defer.promise.finally(renderTimeout.cancel);
 
