@@ -51,7 +51,7 @@ define([
             this.formatter = numberFormatter;
         }
 
-        if (valueMetadata.type === 'enum') {
+        if (valueMetadata.format === 'enum') {
             this.formatter = {};
             this.enumerations = valueMetadata.enumerations.reduce(function (vm, e) {
                 vm.byValue[e.value] = e.string;
@@ -59,11 +59,16 @@ define([
                 return vm;
             }, {byValue: {}, byString: {}});
             this.formatter.format = function (value) {
-                return this.enumerations.byValue[value];
+                if (typeof value === "number") {
+                    return this.enumerations.byValue[value] || value;
+                }
+                return value;
             }.bind(this);
             this.formatter.parse = function (string) {
-                if (typeof string === "string" && this.enumerations.hasOwnProperty(string)) {
-                    return this.enumerations.byString[string];
+                if (typeof string === "string") {
+                    if (this.enumerations.byString.hasOwnProperty(string)) {
+                        return this.enumerations.byString[string]
+                    }
                 }
                 return Number(string);
             }.bind(this);
