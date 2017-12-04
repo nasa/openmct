@@ -44,9 +44,7 @@ define([
         message = message.data;
         var callback = this.callbacks[message.id];
         if (callback) {
-            if (callback(message)) {
-                delete this.callbacks[message.id];
-            }
+            callback(message);
         }
     };
 
@@ -72,6 +70,7 @@ define([
             deferred.resolve = resolve;
             deferred.reject = reject;
         });
+        var messageId;
 
         function callback(message) {
             if (message.error) {
@@ -79,33 +78,27 @@ define([
             } else {
                 deferred.resolve(message.data);
             }
-            return true;
+            delete this.callbacks[messageId];
         }
 
-        this.dispatch('request', request, callback);
+        messageId = this.dispatch('request', request, callback.bind(this));
 
         return promise;
     };
 
     WorkerInterface.prototype.subscribe = function (request, cb) {
-        var isCancelled = false;
-
-        var callback = function (message) {
-            if (isCancelled) {
-                return true;
-            }
+        function callback(message) {
             cb(message.data);
         };
 
-        var messageId = this.dispatch('subscribe', request, callback)
+        var messageId = this.dispatch('subscribe', request, callback);
 
         return function () {
-            isCancelled = true;
             this.dispatch('unsubscribe', {
                 id: messageId
             });
+            delete this.callbacks[messageId];
         }.bind(this);
-
     };
 
 
