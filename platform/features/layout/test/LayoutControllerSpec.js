@@ -142,6 +142,11 @@ define(
                 jasmine.Clock.useMock();
             });
 
+            afterEach(function () {
+                $element.remove();
+            });
+
+
             it("listens for selection change events", function () {
                 expect(mockOpenMCT.selection.on).toHaveBeenCalledWith(
                     'change',
