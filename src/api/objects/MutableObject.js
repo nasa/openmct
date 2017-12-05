@@ -48,6 +48,7 @@ define([
         this.unlisteners.forEach(function (unlisten) {
             unlisten();
         });
+        this.unlisteners = [];
     };
 
     /**
