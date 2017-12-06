@@ -43,7 +43,7 @@ define(
          * @param {constant} EXPORT_IMAGE_TIMEOUT time in milliseconds before a timeout error is returned
          * @constructor
          */
-        function ExportImageService($q, $timeout, $log, EXPORT_IMAGE_TIMEOUT, injHtml2Canvas, injSaveAs, injFileReader) {
+        function ExportImageService($q, $timeout, $log, EXPORT_IMAGE_TIMEOUT, injHtml2Canvas, injSaveAs, injFileReader, injChangeBackgroundColor) {
             self.$q = $q;
             self.$timeout = $timeout;
             self.$log = $log;
@@ -51,6 +51,7 @@ define(
             self.html2canvas = injHtml2Canvas || html2canvas;
             self.saveAs = injSaveAs || saveAs;
             self.reader = injFileReader || new FileReader();
+            self.changeBackgroundColor = injChangeBackgroundColor || self.changeBackgroundColor;
         }
 
         /**
@@ -64,7 +65,7 @@ define(
             var defer = self.$q.defer(),
                 validTypes = ["png", "jpg", "jpeg"],
                 renderTimeout,
-                currentColor;
+                originalColor;
 
             if (validTypes.indexOf(type) === -1) {
                 self.$log.error("Invalid type requested. Try: (" + validTypes.join(",") + ")");
@@ -72,10 +73,10 @@ define(
             }
 
             // Save color to be restored later
-            currentColor = element.style.backgroundColor || '';
+            originalColor = element.style.backgroundColor || '';
 
             // Defaulting to white so we can see the chart when printed
-            element.style.backgroundColor = 'white';
+            self.changeBackgroundColor(element, 'white');
 
             renderTimeout = self.$timeout(function () {
                 defer.reject("html2canvas timed out");
@@ -85,6 +86,8 @@ define(
             try {
                 self.html2canvas(element, {
                     onrendered: function (canvas) {
+                        self.changeBackgroundColor(element, originalColor);
+
                         switch (type.toLowerCase()) {
                             case "png":
                                 canvas.toBlob(defer.resolve, "image/png");
@@ -100,8 +103,6 @@ define(
                 defer.reject(e);
                 self.$log.warn("html2canvas failed with error: " + e);
             }
-
-            element.style.backgroundColor = currentColor;
 
             defer.promise.finally(renderTimeout.cancel);
 
@@ -131,6 +132,13 @@ define(
                 });
             }
         }
+
+        /**
+         * @private
+         */
+        self.changeBackgroundColor = function (element, color) {
+            element.style.backgroundColor = color;
+        };
 
         /**
          * Takes a screenshot of a DOM node and exports to JPG.
