@@ -50,7 +50,11 @@ define(
                         view.show(container);
                     } else {
                         self.providerView = false;
-                        $scope.inspectorKey = selection[0].context.oldItem.getCapability("type").typeDef.inspector;
+                        var selectedItem = selection[0].context.oldItem;
+
+                        if (selectedItem) {
+                            $scope.inspectorKey = selectedItem.getCapability("type").typeDef.inspector;
+                        }
                     }
                 }
 

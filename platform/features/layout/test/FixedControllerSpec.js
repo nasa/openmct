@@ -21,8 +21,14 @@
  *****************************************************************************/
 
 define(
-    ["../src/FixedController"],
-    function (FixedController) {
+    [
+        "../src/FixedController",
+        "zepto"
+    ],
+    function (
+        FixedController,
+        $
+    ) {
 
         describe("The Fixed Position controller", function () {
             var mockScope,
@@ -46,6 +52,9 @@ define(
                 mockMetadata,
                 mockTimeSystem,
                 mockLimitEvaluator,
+                mockSelection,
+                $element = [],
+                selectable = [],
                 controller;
 
             // Utility function; find a watch for a given expression
@@ -180,16 +189,29 @@ define(
 
                 mockScope.model = testModel;
                 mockScope.configuration = testConfiguration;
-                mockScope.selection = jasmine.createSpyObj(
-                    'selection',
-                    ['select', 'get', 'selected', 'deselect', 'proxy']
-                );
+
+                selectable[0] = {
+                    context: {
+                        oldItem: mockDomainObject
+                    }
+                };
+                mockSelection = jasmine.createSpyObj("selection", [
+                    'select',
+                    'on',
+                    'off',
+                    'get'
+                ]);
+                mockSelection.get.andCallThrough();
 
                 mockOpenMCT = {
                     time: mockConductor,
                     telemetry: mockTelemetryAPI,
-                    composition: mockCompositionAPI
+                    composition: mockCompositionAPI,
+                    selection: mockSelection
                 };
+
+                $element = $('<div></div>');
+                spyOn($element[0], 'click');
 
                 mockMetadata = jasmine.createSpyObj('mockMetadata', [
                     'valuesForHints',
@@ -226,11 +248,11 @@ define(
                     mockScope,
                     mockQ,
                     mockDialogService,
-                    mockOpenMCT
+                    mockOpenMCT,
+                    $element
                 );
 
                 findWatch("model.layoutGrid")(testModel.layoutGrid);
-                findWatch("selection")(mockScope.selection);
             });
 
             it("subscribes when a domain object is available", function () {
@@ -306,41 +328,41 @@ define(
             });
 
             it("allows elements to be selected", function () {
-                var elements;
-
                 testModel.modified = 1;
                 findWatch("model.modified")(testModel.modified);
 
-                elements = controller.getElements();
-                controller.select(elements[1]);
-                expect(mockScope.selection.select)
-                    .toHaveBeenCalledWith(elements[1]);
+                selectable[0].context.elementProxy = controller.getElements()[1];
+                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+
+                expect(controller.isElementSelected()).toBe(true);
             });
 
             it("allows selection retrieval", function () {
-                // selected with no arguments should give the current
-                // selection
                 var elements;
 
                 testModel.modified = 1;
                 findWatch("model.modified")(testModel.modified);
 
                 elements = controller.getElements();
-                controller.select(elements[1]);
-                mockScope.selection.get.andReturn(elements[1]);
-                expect(controller.selected()).toEqual(elements[1]);
+                selectable[0].context.elementProxy = elements[1];
+                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+
+                expect(controller.getSelectedElement()).toEqual(elements[1]);
             });
 
-            it("allows selections to be cleared", function () {
-                var elements;
-
+             it("selects the parent view when selected element is removed", function () {
                 testModel.modified = 1;
                 findWatch("model.modified")(testModel.modified);
 
-                elements = controller.getElements();
-                controller.select(elements[1]);
-                controller.clearSelection();
-                expect(controller.selected(elements[1])).toBeFalsy();
+                var elements = controller.getElements();
+                selectable[0].context.elementProxy = elements[1];
+                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+
+                elements[1].remove();
+                testModel.modified = 2;
+                findWatch("model.modified")(testModel.modified);
+
+                expect($element[0].click).toHaveBeenCalled();
             });
 
             it("retains selections during refresh", function () {
@@ -352,23 +374,21 @@ define(
                 findWatch("model.modified")(testModel.modified);
 
                 elements = controller.getElements();
-                controller.select(elements[1]);
+                selectable[0].context.elementProxy = elements[1];
+                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
 
-                // Verify precondition
-                expect(mockScope.selection.select.calls.length).toEqual(1);
-
-                // Mimic selection behavior
-                mockScope.selection.get.andReturn(elements[1]);
+                expect(controller.getSelectedElement()).toEqual(elements[1]);
 
                 elements[2].remove();
                 testModel.modified = 2;
                 findWatch("model.modified")(testModel.modified);
 
                 elements = controller.getElements();
+
                 // Verify removal, as test assumes this
                 expect(elements.length).toEqual(2);
 
-                expect(mockScope.selection.select.calls.length).toEqual(2);
+                expect(controller.shouldSelect(elements[1])).toBe(true);
             });
 
             it("Displays received values for telemetry elements", function () {
@@ -505,21 +525,25 @@ define(
             });
 
             it("exposes a view-level selection proxy", function () {
-                expect(mockScope.selection.proxy).toHaveBeenCalledWith(
-                    jasmine.any(Object)
-                );
+                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+                var selection = mockOpenMCT.selection.select.mostRecentCall.args[0];
+
+                expect(mockOpenMCT.selection.select).toHaveBeenCalled();
+                expect(selection.context.viewProxy).toBeDefined();
             });
 
             it("exposes drag handles", function () {
                 var handles;
 
-                // Select something so that drag handles are expected
                 testModel.modified = 1;
                 findWatch("model.modified")(testModel.modified);
-                controller.select(controller.getElements()[1]);
+
+                selectable[0].context.elementProxy = controller.getElements()[1];
+                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
 
                 // Should have a non-empty array of handles
                 handles = controller.handles();
+
                 expect(handles).toEqual(jasmine.any(Array));
                 expect(handles.length).not.toEqual(0);
 
@@ -532,15 +556,14 @@ define(
             });
 
             it("exposes a move handle", function () {
-                var handle;
-
-                // Select something so that drag handles are expected
                 testModel.modified = 1;
                 findWatch("model.modified")(testModel.modified);
-                controller.select(controller.getElements()[1]);
+
+                selectable[0].context.elementProxy = controller.getElements()[1];
+                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
 
                 // Should have a move handle
-                handle = controller.moveHandle();
+                var handle = controller.moveHandle();
 
                 // And it should have start/continue/end drag methods
                 expect(handle.startDrag).toEqual(jasmine.any(Function));
@@ -551,26 +574,40 @@ define(
             it("updates selection style during drag", function () {
                 var oldStyle;
 
-                // Select something so that drag handles are expected
                 testModel.modified = 1;
                 findWatch("model.modified")(testModel.modified);
-                controller.select(controller.getElements()[1]);
-                mockScope.selection.get.andReturn(controller.getElements()[1]);
+
+                selectable[0].context.elementProxy = controller.getElements()[1];
+                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
 
                 // Get style
-                oldStyle = controller.selected().style;
+                oldStyle = controller.getSelectedElementStyle();
 
                 // Start a drag gesture
                 controller.moveHandle().startDrag();
 
                 // Haven't moved yet; style shouldn't have updated yet
-                expect(controller.selected().style).toEqual(oldStyle);
+                expect(controller.getSelectedElementStyle()).toEqual(oldStyle);
 
                 // Drag a little
                 controller.moveHandle().continueDrag([1000, 100]);
 
                 // Style should have been updated
-                expect(controller.selected().style).not.toEqual(oldStyle);
+                expect(controller.getSelectedElementStyle()).not.toEqual(oldStyle);
+            });
+
+            it("cleans up slection on scope destroy", function () {
+                expect(mockScope.$on).toHaveBeenCalledWith(
+                    '$destroy',
+                    jasmine.any(Function)
+                );
+
+                mockScope.$on.mostRecentCall.args[1]();
+
+                expect(mockOpenMCT.selection.off).toHaveBeenCalledWith(
+                    'change',
+                    jasmine.any(Function)
+                );
             });
 
             describe("on display bounds changes", function () {
@@ -702,6 +739,14 @@ define(
                         expect(controller.getElements()[0].cssClass).toEqual("alarm-a");
                     });
                 });
+
+                it("listens for selection change events", function () {
+                    expect(mockOpenMCT.selection.on).toHaveBeenCalledWith(
+                        'change',
+                        jasmine.any(Function)
+                    );
+                });
+
             });
         });
     }
