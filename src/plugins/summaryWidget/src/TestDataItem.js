@@ -2,12 +2,14 @@ define([
     'text!../res/testDataItemTemplate.html',
     './input/ObjectSelect',
     './input/KeySelect',
+    './eventHelpers',
     'EventEmitter',
     'zepto'
 ], function (
     itemTemplate,
     ObjectSelect,
     KeySelect,
+    eventHelpers,
     EventEmitter,
     $
 ) {
@@ -24,6 +26,7 @@ define([
      * @constructor
      */
     function TestDataItem(itemConfig, index, conditionManager) {
+        eventHelpers.extend(this);
         this.config = itemConfig;
         this.index = index;
         this.conditionManager = conditionManager;
@@ -70,16 +73,17 @@ define([
         function onValueInput(event) {
             var elem = event.target,
                 value = (isNaN(elem.valueAsNumber) ? elem.value : elem.valueAsNumber);
-
-            self.eventEmitter.emit('change', {
-                value: value,
-                property: 'value',
-                index: self.index
-            });
+            if (elem.tagName.toUpperCase() === 'INPUT') {
+                self.eventEmitter.emit('change', {
+                    value: value,
+                    property: 'value',
+                    index: self.index
+                });
+            }
         }
 
-        this.deleteButton.on('click', this.remove);
-        this.duplicateButton.on('click', this.duplicate);
+        this.listenTo(this.deleteButton, 'click', this.remove);
+        this.listenTo(this.duplicateButton, 'click', this.duplicate);
 
         this.selects.object = new ObjectSelect(this.config, this.conditionManager);
         this.selects.key = new KeySelect(
@@ -97,8 +101,7 @@ define([
         Object.values(this.selects).forEach(function (select) {
             $('.t-configuration', self.domElement).append(select.getDOM());
         });
-
-        $(this.domElement).on('input', 'input', onValueInput);
+        this.listenTo(this.domElement, 'input', onValueInput);
     }
 
     /**
@@ -137,6 +140,11 @@ define([
     TestDataItem.prototype.remove = function () {
         var self = this;
         this.eventEmitter.emit('remove', self.index);
+        this.stopListening();
+
+        Object.values(this.selects).forEach(function (select) {
+            select.destroy();
+        });
     };
 
     /**

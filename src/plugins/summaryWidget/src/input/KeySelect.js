@@ -1,4 +1,8 @@
-define(['./Select'], function (Select) {
+define([
+    './Select'
+], function (
+    Select
+) {
 
     /**
      * Create a {Select} element whose composition is dynamically updated with
@@ -62,7 +66,7 @@ define(['./Select'], function (Select) {
             onMetadataLoad();
         }
 
-        this.objectSelect.on('change', onObjectChange);
+        this.objectSelect.on('change', onObjectChange, this);
         this.manager.on('metadata', onMetadataLoad);
 
         return this.select;
@@ -83,6 +87,10 @@ define(['./Select'], function (Select) {
         } else if (this.select.options.length > 1) {
             this.select.show();
         }
+    };
+
+    KeySelect.prototype.destroy = function () {
+        this.objectSelect.destroy();
     };
 
     return KeySelect;

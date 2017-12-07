@@ -1,8 +1,10 @@
 define([
+    '../eventHelpers',
     'text!../../res/input/selectTemplate.html',
     'EventEmitter',
     'zepto'
 ], function (
+    eventHelpers,
     selectTemplate,
     EventEmitter,
     $
@@ -14,6 +16,8 @@ define([
      * @constructor
      */
     function Select() {
+        eventHelpers.extend(this);
+
         var self = this;
 
         this.domElement = $(selectTemplate);
@@ -36,7 +40,7 @@ define([
             self.eventEmitter.emit('change', value[0]);
         }
 
-        $('select', this.domElement).on('change', onChange);
+        this.listenTo($('select', this.domElement), 'change', onChange, this);
     }
 
     /**
@@ -138,6 +142,10 @@ define([
     Select.prototype.show = function () {
         $(this.domElement).removeClass('hidden');
         $('.equal-to').removeClass('hidden');
+    };
+
+    Select.prototype.destroy = function () {
+        this.stopListening();
     };
 
     return Select;

@@ -1,13 +1,14 @@
 define([
+    '../eventHelpers',
     'text!../../res/input/paletteTemplate.html',
     'EventEmitter',
     'zepto'
 ], function (
+    eventHelpers,
     paletteTemplate,
     EventEmitter,
     $
 ) {
-
     /**
      * Instantiates a new Open MCT Color Palette input
      * @constructor
@@ -19,6 +20,8 @@ define([
      *                         up to the descendent class
      */
     function Palette(cssClass, container, items) {
+        eventHelpers.extend(this);
+
         var self = this;
 
         this.cssClass = cssClass;
@@ -49,8 +52,8 @@ define([
 
         $('.menu', self.domElement).hide();
 
-        $(document).on('click', this.hideMenu);
-        $('.l-click-area', self.domElement).on('click', function (event) {
+        this.listenTo($(document), 'click', this.hideMenu);
+        this.listenTo($('.l-click-area', self.domElement), 'click', function (event) {
             event.stopPropagation();
             $('.menu', self.container).hide();
             $('.menu', self.domElement).show();
@@ -69,7 +72,7 @@ define([
             $('.menu', self.domElement).hide();
         }
 
-        $('.s-palette-item', self.domElement).on('click', handleItemClick);
+        this.listenTo($('.s-palette-item', self.domElement), 'click', handleItemClick);
     }
 
     /**
@@ -83,7 +86,7 @@ define([
      * Clean up any event listeners registered to DOM elements external to the widget
      */
     Palette.prototype.destroy = function () {
-        $(document).off('click', this.hideMenu);
+        this.stopListening();
     };
 
     Palette.prototype.hideMenu = function () {

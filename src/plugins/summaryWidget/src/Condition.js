@@ -3,6 +3,7 @@ define([
     './input/ObjectSelect',
     './input/KeySelect',
     './input/OperationSelect',
+    './eventHelpers',
     'EventEmitter',
     'zepto'
 ], function (
@@ -10,10 +11,10 @@ define([
     ObjectSelect,
     KeySelect,
     OperationSelect,
+    eventHelpers,
     EventEmitter,
     $
 ) {
-
     /**
      * Represents an individual condition for a summary widget rule. Manages the
      * associated inputs and view.
@@ -25,6 +26,7 @@ define([
      *                                            selects with configuration data
      */
     function Condition(conditionConfig, index, conditionManager) {
+        eventHelpers.extend(this);
         this.config = conditionConfig;
         this.index = index;
         this.conditionManager = conditionManager;
@@ -71,15 +73,17 @@ define([
                 value = (isNaN(elem.valueAsNumber) ? elem.value : elem.valueAsNumber),
                 inputIndex = self.valueInputs.indexOf(elem);
 
-            self.eventEmitter.emit('change', {
-                value: value,
-                property: 'values[' + inputIndex + ']',
-                index: self.index
-            });
+            if (elem.tagName.toUpperCase() === 'INPUT') {
+                self.eventEmitter.emit('change', {
+                    value: value,
+                    property: 'values[' + inputIndex + ']',
+                    index: self.index
+                });
+            }
         }
 
-        this.deleteButton.on('click', this.remove);
-        this.duplicateButton.on('click', this.duplicate);
+        this.listenTo(this.deleteButton, 'click', this.remove, this);
+        this.listenTo(this.duplicateButton, 'click', this.duplicate, this);
 
         this.selects.object = new ObjectSelect(this.config, this.conditionManager, [
             ['any', 'any telemetry'],
@@ -105,7 +109,7 @@ define([
             $('.t-configuration', self.domElement).append(select.getDOM());
         });
 
-        $(this.domElement).on('input', 'input', onValueInput);
+        this.listenTo($(this.domElement), 'input', onValueInput);
     }
 
     Condition.prototype.getDOM = function (container) {
@@ -139,6 +143,14 @@ define([
      */
     Condition.prototype.remove = function () {
         this.eventEmitter.emit('remove', this.index);
+        this.destroy();
+    };
+
+    Condition.prototype.destroy = function () {
+        this.stopListening();
+        Object.values(this.selects).forEach(function (select) {
+            select.destroy();
+        });
     };
 
     /**
