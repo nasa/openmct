@@ -43,6 +43,9 @@
             openmct.install(openmct.plugins.ExampleImagery());
             openmct.install(openmct.plugins.UTCTimeSystem());
             openmct.install(openmct.plugins.ImportExport());
+            openmct.install(openmct.plugins.AutoflowView({
+                type: "telemetry.panel"
+            }));
             openmct.install(openmct.plugins.Conductor({
                 menuOptions: [
                     {

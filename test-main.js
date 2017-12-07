@@ -63,6 +63,7 @@ requirejs.config({
         "screenfull": "bower_components/screenfull/dist/screenfull.min",
         "text": "bower_components/text/text",
         "uuid": "bower_components/node-uuid/uuid",
+        "vue": "node_modules/vue/dist/vue.min",
         "zepto": "bower_components/zepto/zepto.min",
         "lodash": "bower_components/lodash/lodash",
         "d3-selection": "node_modules/d3-selection/build/d3-selection.min",

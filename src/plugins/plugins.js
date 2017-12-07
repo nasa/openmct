@@ -24,7 +24,7 @@ define([
     'lodash',
     './utcTimeSystem/plugin',
     '../../example/generator/plugin',
-    '../../platform/features/autoflow/plugin',
+    './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
     '../../platform/import-export/bundle',
