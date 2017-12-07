@@ -1,9 +1,11 @@
 define([
+    './eventHelpers',
     'text!../res/testDataTemplate.html',
     './TestDataItem',
     'zepto',
     'lodash'
 ], function (
+    eventHelpers,
     testDataTemplate,
     TestDataItem,
     $,
@@ -18,6 +20,7 @@ define([
      * @param {MCT} openmct and MCT instance
      */
     function TestDataManager(domainObject, conditionManager, openmct) {
+        eventHelpers.extend(this);
         var self = this;
 
         this.domainObject = domainObject;
@@ -45,10 +48,10 @@ define([
             self.updateTestCache();
         }
 
-        this.addItemButton.on('click', function () {
+        this.listenTo(this.addItemButton, 'click', function () {
             self.initItem();
         });
-        this.testDataInput.on('change', toggleTestData);
+        this.listenTo(this.testDataInput, 'change', toggleTestData);
 
         this.evaluator.setTestDataCache(this.testCache);
         this.evaluator.useTestData(false);
@@ -184,6 +187,13 @@ define([
      */
     TestDataManager.prototype.updateDomainObject = function () {
         this.openmct.objects.mutate(this.domainObject, 'configuration.testDataConfig', this.config);
+    };
+
+    TestDataManager.prototype.destroy = function () {
+        this.items.forEach(function (item) {
+            item.remove();
+        });
+        this.stopListening();
     };
 
     return TestDataManager;

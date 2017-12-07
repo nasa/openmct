@@ -4,6 +4,7 @@ define([
     './ConditionManager',
     './TestDataManager',
     './WidgetDnD',
+    './eventHelpers',
     'lodash',
     'zepto'
 ], function (
@@ -12,6 +13,7 @@ define([
     ConditionManager,
     TestDataManager,
     WidgetDnD,
+    eventHelpers,
     _,
     $
 ) {
@@ -32,6 +34,8 @@ define([
      * @param {MCT} openmct An MCT instance
      */
     function SummaryWidget(domainObject, openmct) {
+        eventHelpers.extend(this);
+
         this.domainObject = domainObject;
         this.openmct = openmct;
 
@@ -86,7 +90,7 @@ define([
             self.outerWrapper.toggleClass('expanded-widget-test-data');
             self.toggleTestDataControl.toggleClass('expanded');
         }
-        this.toggleTestDataControl.on('click', toggleTestData);
+        this.listenTo(this.toggleTestDataControl, 'click', toggleTestData);
 
         /**
          * Toggles the configuration area for rules in the view
@@ -96,7 +100,7 @@ define([
             self.outerWrapper.toggleClass('expanded-widget-rules');
             self.toggleRulesControl.toggleClass('expanded');
         }
-        this.toggleRulesControl.on('click', toggleRules);
+        this.listenTo(this.toggleRulesControl, 'click', toggleRules);
 
         openmct.$injector.get('objectService')
             .getObjects([id])
@@ -160,13 +164,15 @@ define([
         this.widgetDnD = new WidgetDnD(this.domElement, this.domainObject.configuration.ruleOrder, this.rulesById);
         this.initRule('default', 'Default');
         this.domainObject.configuration.ruleOrder.forEach(function (ruleId) {
-            self.initRule(ruleId);
+            if (ruleId !== 'default') {
+                self.initRule(ruleId);
+            }
         });
         this.refreshRules();
         this.updateWidget();
         this.updateView();
 
-        this.addRuleButton.on('click', this.addRule);
+        this.listenTo(this.addRuleButton, 'click', this.addRule);
         this.conditionManager.on('receiveTelemetry', this.executeRules, this);
         this.widgetDnD.on('drop', this.reorder, this);
     };
@@ -178,11 +184,14 @@ define([
     SummaryWidget.prototype.destroy = function (container) {
         this.editListenerUnsubscribe();
         this.conditionManager.destroy();
+        this.testDataManager.destroy();
         this.widgetDnD.destroy();
         this.watchForChangesUnsubscribe();
         Object.values(this.rulesById).forEach(function (rule) {
             rule.destroy();
         });
+
+        this.stopListening();
     };
 
     /**

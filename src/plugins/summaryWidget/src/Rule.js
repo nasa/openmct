@@ -3,6 +3,7 @@ define([
     './Condition',
     './input/ColorPalette',
     './input/IconPalette',
+    './eventHelpers',
     'EventEmitter',
     'lodash',
     'zepto'
@@ -11,11 +12,11 @@ define([
     Condition,
     ColorPalette,
     IconPalette,
+    eventHelpers,
     EventEmitter,
     _,
     $
 ) {
-
     /**
      * An object representing a summary widget rule. Maintains a set of text
      * and css properties for output, and a set of conditions for configuring
@@ -29,6 +30,7 @@ define([
      * @param {element} container The DOM element which cotains this summary widget
      */
     function Rule(ruleConfig, domainObject, openmct, conditionManager, widgetDnD, container) {
+        eventHelpers.extend(this);
         var self = this;
 
         this.config = ruleConfig;
@@ -196,24 +198,24 @@ define([
 
         Object.keys(this.textInputs).forEach(function (inputKey) {
             self.textInputs[inputKey].prop('value', self.config[inputKey] || '');
-            self.textInputs[inputKey].on('input', function () {
+            self.listenTo(self.textInputs[inputKey], 'input', function () {
                 onTextInput(this, inputKey);
             });
         });
 
-        this.deleteButton.on('click', this.remove);
-        this.duplicateButton.on('click', this.duplicate);
-        this.addConditionButton.on('click', function () {
+        this.listenTo(this.deleteButton, 'click', this.remove);
+        this.listenTo(this.duplicateButton, 'click', this.duplicate);
+        this.listenTo(this.addConditionButton, 'click', function () {
             self.initCondition();
         });
-        this.toggleConfigButton.on('click', toggleConfig);
-        this.trigger.on('change', onTriggerInput);
+        this.listenTo(this.toggleConfigButton, 'click', toggleConfig);
+        this.listenTo(this.trigger, 'change', onTriggerInput);
 
         this.title.html(self.config.name);
         this.description.html(self.config.description);
         this.trigger.prop('value', self.config.trigger);
 
-        this.grippy.on('mousedown', onDragStart);
+        this.listenTo(this.grippy, 'mousedown', onDragStart);
         this.widgetDnD.on('drop', function () {
             this.domElement.show();
             $('.t-drag-indicator').hide();
@@ -258,6 +260,10 @@ define([
             palette.destroy();
         });
         this.iconInput.destroy();
+        this.stopListening();
+        this.conditions.forEach(function (condition) {
+            condition.destroy();
+        });
     };
 
     /**

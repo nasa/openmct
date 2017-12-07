@@ -1,4 +1,10 @@
-define(['./Select'], function (Select) {
+define([
+    './Select',
+    '../eventHelpers'
+], function (
+    Select,
+    eventHelpers
+) {
 
     /**
      * Create a {Select} element whose composition is dynamically updated with
@@ -17,6 +23,7 @@ define(['./Select'], function (Select) {
     var NULLVALUE = '- Select Comparison -';
 
     function OperationSelect(config, keySelect, manager, changeCallback) {
+        eventHelpers.extend(this);
         var self = this;
 
         this.config = config;
@@ -31,7 +38,7 @@ define(['./Select'], function (Select) {
         this.select.hide();
         this.select.addOption('', NULLVALUE);
         if (changeCallback) {
-            this.select.on('change', changeCallback);
+            this.listenTo(this.select, 'change', changeCallback);
         }
 
         /**
@@ -63,7 +70,6 @@ define(['./Select'], function (Select) {
             }
             self.select.setSelected(self.config.operation);
         }
-
         this.keySelect.on('change', onKeyChange);
         this.manager.on('metadata', onMetadataLoad);
 
@@ -107,6 +113,10 @@ define(['./Select'], function (Select) {
         self.operationKeys = operations.filter(function (operation) {
             return self.evaluator.operationAppliesTo(operation, type);
         });
+    };
+
+    OperationSelect.prototype.destroy = function () {
+        this.stopListening();
     };
 
     return OperationSelect;
