@@ -23,15 +23,14 @@
     $ohH: $btnFrameH;
     $bc: $colorInteriorBorder;
     &.child-frame.panel {
+        border: 1px solid transparent;
         z-index: 0; // Needed to prevent child-frame controls from showing through when another child-frame is above
         &:not(.no-frame) {
             background: $colorBodyBg;
-            border: 1px solid $bc;
-            &:hover {
-                border-color: lighten($bc, 10%);
-            }
+            border-color: $bc;
         }
     }
+
     .object-browse-bar {
         font-size: 0.75em;
         height: $ohH;
@@ -92,9 +91,9 @@
 
     &.no-frame {
         background: transparent !important;
-        border: none !important;
+        border: none;
         .object-browse-bar .right {
-            $m: 0; // $interiorMarginSm;
+            $m: 0;
             background: rgba(black, 0.3);
             border-radius: $basicCr;
             padding: $interiorMarginSm;
@@ -104,7 +103,7 @@
         }
         &.t-frame-outer > .t-rep-frame {
             &.contents {
-                $m: 2px;
+                $m: 0px;
                 top: $m;
                 right: $m;
                 bottom: $m;
@@ -115,6 +114,7 @@
                     display: none;
                 }
                 > .object-holder.abs {
+                    overflow: hidden;
                     top: 0 !important;
                 }
             }

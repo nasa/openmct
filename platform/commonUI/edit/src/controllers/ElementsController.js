@@ -29,7 +29,11 @@ define(
          *
          * @constructor
          */
-        function ElementsController($scope) {
+        function ElementsController($scope, openmct) {
+            this.scope = $scope;
+            this.scope.composition = [];
+            var self = this;
+
             function filterBy(text) {
                 if (typeof text === 'undefined') {
                     return $scope.searchText;
@@ -47,9 +51,43 @@ define(
                 }
             }
 
+            function setSelection(selection) {
+                self.scope.selection = selection;
+                self.refreshComposition(selection);
+            }
+
             $scope.filterBy = filterBy;
             $scope.searchElements = searchElements;
+
+            openmct.selection.on('change', setSelection);
+            setSelection(openmct.selection.get());
+
+            $scope.$on("$destroy", function () {
+                openmct.selection.off("change", setSelection);
+            });
         }
+
+        /**
+         * Gets the composition for the selected object and populates the scope with it.
+         *
+         * @param selection the selection object
+         * @private
+         */
+        ElementsController.prototype.refreshComposition = function (selection) {
+            if (!selection[0]) {
+                return;
+            }
+
+            var selectedObjectComposition = selection[0].context.oldItem.useCapability('composition');
+
+            if (selectedObjectComposition) {
+                selectedObjectComposition.then(function (composition) {
+                    this.scope.composition = composition;
+                }.bind(this));
+            } else {
+                this.scope.composition = [];
+            }
+        };
 
         return ElementsController;
     }

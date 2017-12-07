@@ -69,7 +69,7 @@ define([
                     "delegates": [
                         "telemetry"
                     ],
-                    "inspector": tableInspector,
+                    "inspector": "table-options-edit",
                     "contains": [
                         {
                             "has": "telemetry"

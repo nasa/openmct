@@ -28,7 +28,8 @@ define([
     './selection/Selection',
     './api/objects/object-utils',
     './plugins/plugins',
-    './ui/ViewRegistry'
+    './ui/ViewRegistry',
+    './ui/InspectorViewRegistry'
 ], function (
     EventEmitter,
     legacyRegistry,
@@ -37,7 +38,8 @@ define([
     Selection,
     objectUtils,
     plugins,
-    ViewRegistry
+    ViewRegistry,
+    InspectorViewRegistry
 ) {
     /**
      * Open MCT is an extensible web application for building mission
@@ -112,15 +114,13 @@ define([
 
         /**
          * Registry for views which should appear in the Inspector area.
-         * These views will be chosen based on selection state, so
-         * providers should be prepared to test arbitrary objects for
-         * viewability.
+         * These views will be chosen based on the selection state.
          *
-         * @type {module:openmct.ViewRegistry}
+         * @type {module:openmct.InspectorViewRegistry}
          * @memberof module:openmct.MCT#
-         * @name inspectors
+         * @name inspectorViews
          */
-        this.inspectors = new ViewRegistry();
+        this.inspectorViews = new InspectorViewRegistry();
 
         /**
          * Registry for views which should appear in Edit Properties
@@ -196,7 +196,6 @@ define([
 
         this.Dialog = api.Dialog;
 
-        this.on('navigation', this.selection.clear.bind(this.selection));
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);

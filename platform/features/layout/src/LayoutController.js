@@ -27,9 +27,11 @@
  */
 define(
     [
+        'zepto',
         './LayoutDrag'
     ],
     function (
+        $,
         LayoutDrag
     ) {
 
@@ -50,9 +52,11 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function LayoutController($scope) {
+        function LayoutController($scope, $element, openmct) {
             var self = this,
                 callbackCount = 0;
+
+            this.$element = $element;
 
             // Update grid size when it changed
             function updateGridSize(layoutGrid) {
@@ -123,12 +127,11 @@ define(
                         self.layoutPanels(ids);
                         self.setFrames(ids);
 
-                        // If there is a newly-dropped object, select it.
-                        if (self.droppedIdToSelectAfterRefresh) {
-                            self.select(null, self.droppedIdToSelectAfterRefresh);
-                            delete self.droppedIdToSelectAfterRefresh;
-                        } else if (composition.indexOf(self.selectedId) === -1) {
-                            self.clearSelection();
+                        if (self.selectedId &&
+                            self.selectedId !== $scope.domainObject.getId() &&
+                            composition.indexOf(self.selectedId) === -1) {
+                            // Click triggers selection of layout parent.
+                            self.$element[0].click();
                         }
                     }
                 });
@@ -160,22 +163,39 @@ define(
                 }
             };
 
+            // Sets the selectable object in response to the selection change event.
+            function setSelection(selectable) {
+                var selection = selectable[0];
+
+                if (!selection) {
+                    delete self.selectedId;
+                    return;
+                }
+
+                self.selectedId = selection.context.oldItem.getId();
+                self.drilledIn = undefined;
+                self.selectable = selectable;
+            }
+
             this.positions = {};
             this.rawPositions = {};
             this.gridSize = DEFAULT_GRID_SIZE;
             this.$scope = $scope;
+            this.drilledIn = undefined;
+            this.openmct = openmct;
 
             // Watch for changes to the grid size in the model
             $scope.$watch("model.layoutGrid", updateGridSize);
 
-            $scope.$watch("selection", function (selection) {
-                this.selection = selection;
-            }.bind(this));
-
             // Update composed objects on screen, and position panes
             $scope.$watchCollection("model.composition", refreshComposition);
 
-            // Position panes where they are dropped
+            openmct.selection.on('change', setSelection);
+
+            $scope.$on("$destroy", function () {
+                openmct.selection.off("change", setSelection);
+            });
+
             $scope.$on("mctDrop", handleDrop);
         }
 
@@ -357,37 +377,14 @@ define(
         };
 
         /**
-         * Check if the object is currently selected.
+         * Checks if the object is currently selected.
          *
          * @param {string} obj the object to check for selection
          * @returns {boolean} true if selected, otherwise false
          */
         LayoutController.prototype.selected = function (obj) {
-            return !!this.selectedId && this.selectedId === obj.getId();
-        };
-
-        /**
-         * Set the active user selection in this view.
-         *
-         * @param event the mouse event
-         * @param {string} id the object id
-         */
-        LayoutController.prototype.select = function (event, id) {
-            if (event) {
-                event.stopPropagation();
-                if (this.selection) {
-                    event.preventDefault();
-                }
-            }
-
-            this.selectedId = id;
-
-            var selectedObj = {};
-            selectedObj[this.frames[id] ? 'hideFrame' : 'showFrame'] = this.toggleFrame.bind(this, id);
-
-            if (this.selection) {
-                this.selection.select(selectedObj);
-            }
+            var sobj = this.openmct.selection.get()[0];
+            return (sobj && sobj.context.oldItem.getId() === obj.getId()) ? true : false;
         };
 
         /**
@@ -396,7 +393,7 @@ define(
          * @param {string} id the object id
          * @private
          */
-        LayoutController.prototype.toggleFrame = function (id) {
+        LayoutController.prototype.toggleFrame = function (id, domainObject) {
             var configuration = this.$scope.configuration;
 
             if (!configuration.panels[id]) {
@@ -404,21 +401,75 @@ define(
             }
 
             this.frames[id] = configuration.panels[id].hasFrame = !this.frames[id];
-            this.select(undefined, id); // reselect so toolbar updates
+
+            var selection = this.openmct.selection.get();
+            selection[0].context.toolbar = this.getToolbar(id, domainObject);
+            this.openmct.selection.select(selection);  // reselect so toolbar updates
         };
 
         /**
-         * Clear the current user selection.
+         * Gets the toolbar object for the given domain object.
+         *
+         * @param id the domain object id
+         * @param domainObject the domain object
+         * @returns {object}
+         * @private
          */
-        LayoutController.prototype.clearSelection = function () {
+        LayoutController.prototype.getToolbar = function (id, domainObject) {
+            var toolbarObj = {};
+            toolbarObj[this.frames[id] ? 'hideFrame' : 'showFrame'] = this.toggleFrame.bind(this, id, domainObject);
+            return toolbarObj;
+        };
+
+        /**
+         * Bypasses selection if drag is in progress.
+         *
+         * @param event the angular event object
+         */
+        LayoutController.prototype.bypassSelection = function (event) {
             if (this.dragInProgress) {
+                if (event) {
+                    event.stopPropagation();
+                }
+                return;
+            }
+        };
+
+        /**
+         * Checks if the domain object is drilled in.
+         *
+         * @param domainObject the domain object
+         * @return true if the object is drilled in, false otherwise
+         */
+        LayoutController.prototype.isDrilledIn = function (domainObject) {
+            return this.drilledIn === domainObject.getId();
+        };
+
+        /**
+         * Puts the given object in the drilled-in mode.
+         *
+         * @param event the angular event object
+         * @param domainObject the domain object
+         */
+        LayoutController.prototype.drill = function (event, domainObject) {
+            if (event) {
+                event.stopPropagation();
+            }
+
+            if (!domainObject.getCapability('editor').inEditContext()) {
                 return;
             }
 
-            if (this.selection) {
-                this.selection.deselect();
-                delete this.selectedId;
+            if (!domainObject.hasCapability('composition')) {
+                return;
             }
+
+            // Disable since fixed position doesn't use the selection API yet
+            if (domainObject.getModel().type === 'telemetry.fixed') {
+                return;
+            }
+
+            this.drilledIn = domainObject.getId();
         };
 
         /**
@@ -438,6 +489,36 @@ define(
          */
         LayoutController.prototype.getGridSize = function () {
             return this.gridSize;
+        };
+
+        /**
+         * Gets the selection context.
+         *
+         * @param domainObject the domain object
+         * @returns {object} the context object which includes
+         *                  item, oldItem and toolbar
+         */
+        LayoutController.prototype.getContext = function (domainObject, toolbar) {
+            return {
+                item: domainObject.useCapability('adapter'),
+                oldItem: domainObject,
+                toolbar: toolbar ? this.getToolbar(domainObject.getId(), domainObject) : undefined
+            };
+        };
+
+        /**
+         * Selects a newly-dropped object.
+         *
+         * @param classSelector the css class selector
+         * @param domainObject the domain object
+         */
+        LayoutController.prototype.selectIfNew = function (selector, domainObject) {
+            if (domainObject.getId() === this.droppedIdToSelectAfterRefresh) {
+                setTimeout(function () {
+                    $('.' + selector)[0].click();
+                    delete this.droppedIdToSelectAfterRefresh;
+                }.bind(this), 0);
+            }
         };
 
         return LayoutController;

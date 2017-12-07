@@ -22,10 +22,12 @@
 
 <div class="abs l-layout"
      ng-controller="LayoutController as controller"
-     ng-click="controller.clearSelection()">
+     ng-click="controller.bypassSelection($event)">
 
     <!-- Background grid -->
-    <div class="l-grid-holder" ng-click="controller.clearSelection()">
+    <div class="l-grid-holder"
+         ng-show="!controller.drilledIn"
+         ng-click="controller.bypassSelection($event)">
         <div class="l-grid l-grid-x"
              ng-if="!controller.getGridSize()[0] < 3"
              ng-style="{ 'background-size': controller.getGridSize() [0] + 'px 100%' }"></div>
@@ -34,10 +36,12 @@
              ng-style="{ 'background-size': '100% ' + controller.getGridSize() [1] + 'px' }"></div>
     </div>
 
-    <div class='abs frame t-frame-outer child-frame panel s-selectable s-moveable s-hover-border'
-         ng-class="{ 'no-frame': !controller.hasFrame(childObject), 's-selected':controller.selected(childObject) }"
+    <div class="abs frame t-frame-outer child-frame panel s-selectable s-moveable s-hover-border {{childObject.getId() + '-' + $id}} t-object-type-{{ childObject.getModel().type }}"
+         ng-class="{ 'no-frame': !controller.hasFrame(childObject), 's-drilled-in': controller.isDrilledIn(childObject) }"
          ng-repeat="childObject in composition"
-         ng-click="controller.select($event, childObject.getId())"
+         ng-init="controller.selectIfNew(childObject.getId() + '-' + $id, childObject)"
+         mct-selectable="controller.getContext(childObject, true)"
+         ng-dblclick="controller.drill($event, childObject)"
          ng-style="controller.getFrameStyle(childObject.getId())">
 
         <mct-representation key="'frame'"
@@ -45,7 +49,7 @@
                             mct-object="childObject">
         </mct-representation>
         <!-- Drag handles -->
-        <span class="abs t-edit-handle-holder s-hover-border" ng-if="controller.selected(childObject)">
+        <span class="abs t-edit-handle-holder" ng-if="controller.selected(childObject) && !controller.isDrilledIn(childObject)">
             <span class="edit-handle edit-move"
                   mct-drag-down="controller.startDrag(childObject.getId(), [1,1], [0,0])"
                   mct-drag="controller.continueDrag(delta)"
@@ -73,7 +77,6 @@
                   mct-drag-up="controller.endDrag()">
             </span>
         </span>
-
     </div>
 
 </div>

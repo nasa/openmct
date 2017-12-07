@@ -38,7 +38,7 @@ define(
          * @constructor
          * @implements {Representer}
          */
-        function EditToolbarRepresenter(scope, element, attrs) {
+        function EditToolbarRepresenter(openmct, scope, element, attrs) {
             var self = this;
 
             // Mark changes as ready to persist
@@ -109,6 +109,7 @@ define(
             this.updateSelection = updateSelection;
             this.toolbar = undefined;
             this.toolbarObject = {};
+            this.openmct = openmct;
 
             // If this representation exposes a toolbar, set up watches
             // to synchronize with it.
@@ -146,7 +147,7 @@ define(
             // Expose the toolbar object to the parent scope
             initialize(definition);
             // Create a selection scope
-            this.setSelection(new EditToolbarSelection());
+            this.setSelection(new EditToolbarSelection(this.openmct));
             // Initialize toolbar to an empty selection
             this.updateSelection([]);
         };

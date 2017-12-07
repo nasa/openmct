@@ -25,7 +25,7 @@
                  ng-model="filterBy">
     </mct-include>
     <div class="flex-elem grows vscroll">
-        <ul class="tree">
+        <ul class="tree" ng-if="composition.length > 0">
             <li ng-repeat="containedObject in composition | filter:searchElements">
                 <span class="tree-item">
                     <mct-representation
@@ -36,5 +36,6 @@
                 </span>
             </li>
         </ul>
+        <div ng-if="composition.length === 0">No contained elements</div>    
     </div>
 </div>

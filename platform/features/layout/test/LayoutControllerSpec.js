@@ -21,8 +21,14 @@
  *****************************************************************************/
 
 define(
-    ["../src/LayoutController"],
-    function (LayoutController) {
+    [
+        "../src/LayoutController",
+        "zepto"
+    ],
+    function (
+        LayoutController,
+        $
+    ) {
 
         describe("The Layout controller", function () {
             var mockScope,
@@ -32,7 +38,12 @@ define(
                 controller,
                 mockCompositionCapability,
                 mockComposition,
-                mockCompositionObjects;
+                mockCompositionObjects,
+                mockOpenMCT,
+                mockSelection,
+                mockDomainObjectCapability,
+                $element = [],
+                selectable = [];
 
             function mockPromise(value) {
                 return {
@@ -58,19 +69,16 @@ define(
                         } else {
                             return {};
                         }
+                    },
+                    getCapability: function () {
+                        return mockDomainObjectCapability;
+                    },
+                    hasCapability: function (param) {
+                        if (param === 'composition') {
+                            return id !== 'b';
+                        }
                     }
                 };
-            }
-
-            // Utility function to find a watch for a given expression
-            function findWatch(expr) {
-                var watch;
-                mockScope.$watch.calls.forEach(function (call) {
-                    if (call.args[0] === expr) {
-                        watch = call.args[1];
-                    }
-                });
-                return watch;
             }
 
             beforeEach(function () {
@@ -88,7 +96,6 @@ define(
                 mockComposition = ["a", "b", "c"];
                 mockCompositionObjects = mockComposition.map(mockDomainObject);
 
-
                 testConfiguration = {
                     panels: {
                         a: {
@@ -97,25 +104,68 @@ define(
                         }
                     }
                 };
-
+                mockDomainObjectCapability = jasmine.createSpyObj('capability',
+                    ['inEditContext']
+                );
                 mockCompositionCapability = mockPromise(mockCompositionObjects);
 
                 mockScope.domainObject = mockDomainObject("mockDomainObject");
                 mockScope.model = testModel;
                 mockScope.configuration = testConfiguration;
-                mockScope.selection = jasmine.createSpyObj(
-                    'selection',
-                    ['select', 'get', 'selected', 'deselect']
-                );
+
+                selectable[0] = {
+                    context: {
+                        oldItem: mockScope.domainObject
+                    }
+                };
+
+                mockSelection = jasmine.createSpyObj("selection", [
+                    'select',
+                    'on',
+                    'off',
+                    'get'
+                ]);
+                mockSelection.get.andReturn(selectable);
+                mockOpenMCT = {
+                    selection: mockSelection
+                };
+
+                $element = $('<div></div>');
+                $(document).find('body').append($element);
+                spyOn($element[0], 'click');
 
                 spyOn(mockScope.domainObject, "useCapability").andCallThrough();
 
-                controller = new LayoutController(mockScope);
+                controller = new LayoutController(mockScope, $element, mockOpenMCT);
                 spyOn(controller, "layoutPanels").andCallThrough();
 
-                findWatch("selection")(mockScope.selection);
-
                 jasmine.Clock.useMock();
+            });
+
+            afterEach(function () {
+                $element.remove();
+            });
+
+
+            it("listens for selection change events", function () {
+                expect(mockOpenMCT.selection.on).toHaveBeenCalledWith(
+                    'change',
+                    jasmine.any(Function)
+                );
+            });
+
+            it("cleans up on scope destroy", function () {
+                expect(mockScope.$on).toHaveBeenCalledWith(
+                    '$destroy',
+                    jasmine.any(Function)
+                );
+
+                mockScope.$on.calls[0].args[1]();
+
+                expect(mockOpenMCT.selection.off).toHaveBeenCalledWith(
+                    'change',
+                    jasmine.any(Function)
+                );
             });
 
             // Model changes will indicate that panel positions
@@ -320,67 +370,35 @@ define(
                     .not.toEqual(oldStyle);
             });
 
-            it("allows panels to be selected", function () {
+            it("allows objects to be selected", function () {
+                mockScope.$watchCollection.mostRecentCall.args[1]();
+                var childObj = mockCompositionObjects[0];
+                selectable[0].context.oldItem = childObj;
+                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+
+                expect(controller.selected(childObj)).toBe(true);
+            });
+
+            it("prevents event bubbling while drag is in progress", function () {
                 mockScope.$watchCollection.mostRecentCall.args[1]();
                 var childObj = mockCompositionObjects[0];
 
-                controller.select(mockEvent, childObj.getId());
+                // Do a drag
+                controller.startDrag(childObj.getId(), [1, 1], [0, 0]);
+                controller.continueDrag([100, 100]);
+                controller.endDrag();
+
+                // Because mouse position could cause the parent object to be selected, this should be ignored.
+                controller.bypassSelection(mockEvent);
 
                 expect(mockEvent.stopPropagation).toHaveBeenCalled();
 
-                expect(controller.selected(childObj)).toBe(true);
-            });
-
-            it("allows selection to be cleared", function () {
-                mockScope.$watchCollection.mostRecentCall.args[1]();
-                var childObj = mockCompositionObjects[0];
-
-                controller.select(null, childObj.getId());
-                controller.clearSelection();
-
-                expect(controller.selected(childObj)).toBeFalsy();
-            });
-
-            it("prevents clearing selection while drag is in progress", function () {
-                mockScope.$watchCollection.mostRecentCall.args[1]();
-                var childObj = mockCompositionObjects[0];
-                var id = childObj.getId();
-
-                controller.select(mockEvent, id);
-
-                // Do a drag
-                controller.startDrag(id, [1, 1], [0, 0]);
-                controller.continueDrag([100, 100]);
-                controller.endDrag();
-
-                // Because mouse position could cause clearSelection to be called, this should be ignored.
-                controller.clearSelection();
-
-                expect(controller.selected(childObj)).toBe(true);
-
-                // Shoud be able to clear the selection after dragging is done.
+                // Shoud be able to select another object when dragging is done.
                 jasmine.Clock.tick(0);
-                controller.clearSelection();
+                mockEvent.stopPropagation.reset();
+                controller.bypassSelection(mockEvent);
 
-                expect(controller.selected(childObj)).toBe(false);
-            });
-
-            it("clears selection after moving/resizing", function () {
-                mockScope.$watchCollection.mostRecentCall.args[1]();
-                var childObj = mockCompositionObjects[0];
-                var id = childObj.getId();
-
-                controller.select(mockEvent, id);
-
-                // Do a drag
-                controller.startDrag(id, [1, 1], [0, 0]);
-                controller.continueDrag([100, 100]);
-                controller.endDrag();
-
-                jasmine.Clock.tick(0);
-                controller.clearSelection();
-
-                expect(controller.selected(childObj)).toBe(false);
+                expect(mockEvent.stopPropagation).not.toHaveBeenCalled();
             });
 
             it("shows frames by default", function () {
@@ -398,43 +416,74 @@ define(
             it("hides frame when selected object has frame ", function () {
                 mockScope.$watchCollection.mostRecentCall.args[1]();
                 var childObj = mockCompositionObjects[0];
-                controller.select(mockEvent, childObj.getId());
-
-                expect(mockScope.selection.select).toHaveBeenCalled();
-
-                var selectedObj = mockScope.selection.select.mostRecentCall.args[0];
+                selectable[0].context.oldItem = childObj;
+                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+                var toolbarObj = controller.getToolbar(childObj.getId(), childObj);
 
                 expect(controller.hasFrame(childObj)).toBe(true);
-                expect(selectedObj.hideFrame).toBeDefined();
-                expect(selectedObj.hideFrame).toEqual(jasmine.any(Function));
+                expect(toolbarObj.hideFrame).toBeDefined();
+                expect(toolbarObj.hideFrame).toEqual(jasmine.any(Function));
             });
 
             it("shows frame when selected object has no frame", function () {
                 mockScope.$watchCollection.mostRecentCall.args[1]();
-
                 var childObj = mockCompositionObjects[1];
-                controller.select(mockEvent, childObj.getId());
-
-                expect(mockScope.selection.select).toHaveBeenCalled();
-
-                var selectedObj = mockScope.selection.select.mostRecentCall.args[0];
+                selectable[0].context.oldItem = childObj;
+                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+                var toolbarObj = controller.getToolbar(childObj.getId(), childObj);
 
                 expect(controller.hasFrame(childObj)).toBe(false);
-                expect(selectedObj.showFrame).toBeDefined();
-                expect(selectedObj.showFrame).toEqual(jasmine.any(Function));
+                expect(toolbarObj.showFrame).toBeDefined();
+                expect(toolbarObj.showFrame).toEqual(jasmine.any(Function));
             });
 
-            it("deselects the object that is no longer in the composition", function () {
+            it("selects the parent object when selected object is removed", function () {
                 mockScope.$watchCollection.mostRecentCall.args[1]();
                 var childObj = mockCompositionObjects[0];
-                controller.select(mockEvent, childObj.getId());
+                selectable[0].context.oldItem = childObj;
+                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
 
                 var composition = ["b", "c"];
                 mockScope.$watchCollection.mostRecentCall.args[1](composition);
 
-                expect(controller.selected(childObj)).toBe(false);
+                expect($element[0].click).toHaveBeenCalled();
             });
 
+            it("allows objects to be drilled-in only when editing", function () {
+                mockScope.$watchCollection.mostRecentCall.args[1]();
+                var childObj = mockCompositionObjects[0];
+                childObj.getCapability().inEditContext.andReturn(false);
+                controller.drill(mockEvent, childObj);
+
+                expect(controller.isDrilledIn(childObj)).toBe(false);
+            });
+
+            it("allows objects to be drilled-in only if it has sub objects", function () {
+                mockScope.$watchCollection.mostRecentCall.args[1]();
+                var childObj = mockCompositionObjects[1];
+                childObj.getCapability().inEditContext.andReturn(true);
+                controller.drill(mockEvent, childObj);
+
+                expect(controller.isDrilledIn(childObj)).toBe(false);
+            });
+
+            it("selects a newly-dropped object", function () {
+                mockScope.$on.mostRecentCall.args[1](
+                    mockEvent,
+                    'd',
+                    { x: 300, y: 100 }
+                );
+
+                var childObj = mockDomainObject("d");
+                var testElement = $("<div class='some-class'></div>");
+                $element.append(testElement);
+                spyOn(testElement[0], 'click');
+
+                controller.selectIfNew('some-class', childObj);
+                jasmine.Clock.tick(0);
+
+                expect(testElement[0].click).toHaveBeenCalled();
+            });
         });
     }
 );

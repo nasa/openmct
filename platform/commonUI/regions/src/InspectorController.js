@@ -21,43 +21,68 @@
  *****************************************************************************/
 
 define(
-    ['../../browse/src/InspectorRegion'],
-    function (InspectorRegion) {
+    [],
+    function () {
 
         /**
-         * The InspectorController adds region data for a domain object's type
-         * to the scope.
+         * The InspectorController listens for the selection changes and adds the selection
+         * object to the scope.
          *
          * @constructor
          */
-        function InspectorController($scope, policyService) {
-            var domainObject = $scope.domainObject,
-                typeCapability = domainObject.getCapability('type'),
-                statusListener;
+        function InspectorController($scope, openmct, $document) {
+            var self = this;
+            self.$scope = $scope;
 
             /**
-             * Filters region parts to only those allowed by region policies
-             * @param regions
-             * @returns {{}}
+             * Callback handler for the selection change event.
+             * Adds the selection object to the scope. If the selected item has an inspector view,
+             * it puts the key in the scope. If provider view exists, it shows the view.
              */
-            function filterRegions(inspector) {
-                //Dupe so we're not modifying the type definition.
-                return inspector.regions && inspector.regions.filter(function (region) {
-                    return policyService.allow('region', region, domainObject);
-                });
+            function setSelection(selection) {
+                if (selection[0]) {
+                    var view = openmct.inspectorViews.get(selection);
+                    var container = $document[0].querySelectorAll('.inspector-provider-view')[0];
+                    container.innerHTML = "";
+
+                    if (view) {
+                        self.providerView = true;
+                        view.show(container);
+                    } else {
+                        self.providerView = false;
+                        $scope.inspectorKey = selection[0].context.oldItem.getCapability("type").typeDef.inspector;
+                    }
+                }
+
+                self.$scope.selection = selection;
             }
 
-            function setRegions() {
-                $scope.regions = filterRegions(typeCapability.getDefinition().inspector || new InspectorRegion());
-            }
+            openmct.selection.on("change", setSelection);
 
-            statusListener = domainObject.getCapability("status").listen(setRegions);
+            setSelection(openmct.selection.get());
+
             $scope.$on("$destroy", function () {
-                statusListener();
+                openmct.selection.off("change", setSelection);
             });
-
-            setRegions();
         }
+
+        /**
+         * Gets the selected item.
+         *
+         * @returns a domain object
+         */
+        InspectorController.prototype.selectedItem = function () {
+            return this.$scope.selection[0].context.oldItem;
+        };
+
+        /**
+         * Checks if a provider view exists.
+         *
+         * @returns 'true' if provider view exists, 'false' otherwise
+         */
+        InspectorController.prototype.hasProviderView = function () {
+            return this.providerView;
+        };
 
         return InspectorController;
     }

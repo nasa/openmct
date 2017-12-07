@@ -29,7 +29,9 @@ define(
                 mockElement,
                 testAttrs,
                 mockUnwatch,
-                representer;
+                representer,
+                mockOpenMCT,
+                mockSelection;
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
@@ -46,7 +48,18 @@ define(
 
                 mockScope.$parent.$watchCollection.andReturn(mockUnwatch);
 
+                mockSelection = jasmine.createSpyObj("selection", [
+                    'on',
+                    'off',
+                    'get'
+                ]);
+                mockSelection.get.andReturn([]);
+                mockOpenMCT = {
+                    selection: mockSelection
+                };
+
                 representer = new EditToolbarRepresenter(
+                    mockOpenMCT,
                     mockScope,
                     mockElement,
                     testAttrs
