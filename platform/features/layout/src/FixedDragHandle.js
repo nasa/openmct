@@ -65,7 +65,7 @@ define(
          * Start a drag gesture. This should be called when a drag
          * begins to track initial state.
          */
-        FixedDragHandle.prototype.startDrag = function startDrag() {
+        FixedDragHandle.prototype.startDrag = function () {
             // Cache initial x/y positions
             this.dragging = {
                 x: this.elementHandle.x(),

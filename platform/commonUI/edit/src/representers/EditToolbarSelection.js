@@ -44,10 +44,16 @@ define(
             this.selectedObj = undefined;
 
             openmct.selection.on('change', function (selection) {
-                if (selection[0] && selection[0].context.toolbar) {
-                    this.select(selection[0].context.toolbar);
+                var selected = selection[0];
+
+                if (selected && selected.context.toolbar) {
+                    this.select(selected.context.toolbar);
                 } else {
                     this.deselect();
+                }
+
+                if (selected && selected.context.viewProxy) {
+                    this.proxy(selected.context.viewProxy);
                 }
             }.bind(this));
         }
