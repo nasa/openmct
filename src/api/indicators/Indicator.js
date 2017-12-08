@@ -1,104 +1,103 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 define([
-        'zepto',
-        'EventEmitter',
-        './Indicator',
         'text!./res/indicator-template.html'
-    ], function ($, eventemitter, Indicator, indicatorTemplate) {
+    ], function (indicatorTemplate) {
 
         function Indicator(openmct) {
-            EventEmitter.call(this);
-
             this.openmct = openmct;
             this.textValue = '';
             this.descriptionValue = '';
             this.cssClassValue = '';
             this.iconClassValue = '';
             this.textClassValue = '';
-
-            this.displayFunction = defaultDisplayFunction;
-        }
-
-        Indicator.prototype = Object.create(EventEmitter.prototype);
-
-        Indicator.prototype.display = function (displayFunction) {
-            if (displayFunction !== undefined){
-                this.displayFunction = displayFunction;
-            }
-
-            return this.displayFunction;
         }
 
         Indicator.prototype.text = function (text) {
-            if (text !== undefined) {
+            if (text !== undefined && text !== this.textValue) {
                 this.textValue = text;
-                this.emit('text', text);
+                if (this.renderView) {
+                    render.call(this);
+                }
             }
 
             return this.textValue;
         }
 
         Indicator.prototype.description = function (description) {
-            if (description !== undefined) {
+            if (description !== undefined && description !== this.descriptionValue) {
                 this.descriptionValue = description;
-                this.emit('text', description);
+                renderIndicator.call(this);
             }
 
             return this.descriptionValue;
         }
 
         Indicator.prototype.iconClass = function (iconClass) {
-            if (iconClass !== undefined) {
+            if (iconClass !== undefined && iconClass !== this.iconClass) {
                 this.iconClassValue = iconClass;
-                this.emit('iconClass', iconClass);
+                renderIndicator.call(this);
             }
 
             return this.iconClassValue;
         }
 
         Indicator.prototype.cssClass = function (cssClass) {
-            if (cssClass !== undefined) {
+            if (cssClass !== undefined && cssClass !== this.cssClass) {
                 this.cssClassValue = cssClass;
-                this.emit('cssClass', cssClass);
+                renderIndicator.call(this);
             }
 
             return this.cssClassValue;
         }
 
         Indicator.prototype.textClass = function (textClass) {
-            if (textClass !== undefined) {
+            if (textClass !== undefined && textClass !== this.textClass) {
                 this.textClassValue = textClass;
-                this.emit('textClass', textClass);
+                renderIndicator.call(this);
             }
 
             return this.textClassValue;
         }
 
-        function defaultDisplayFunction(indicator) {
-            var element = $(indicatorTemplate);
+        function renderIndicator() {
+            this.element.innerHTML = 
+            indicatorTemplate.replace('{{indicator.text}}', indicator.text())
+                .replace('{{indicator.textClass}}', indicator.textClass())
+                .replace('{{indicator.cssClass}}', indicator.cssClass())
+                .replace('{{indicator.description}}', indicator.description());
+        }
 
-            indicator.on('text', function updateText(newText){
-                $('indicator-text', element).text(newText);
-            });
+        Indicator.defaultDisplayFunction = function () {
+            this.usingDefaultDisplay = true;
 
-            indicator.on('textClass', function updateText(textClass){
-                $('indicator-text', element)
-                    .removeClass()
-                    .addClass(textClass);
-            });
+            if (!this.element) {
+                this.element = document.createElement('div');
+            }
 
-            indicator.on('cssClass', function updateCssClass(cssClass){
-                $('indicator-holder', element)
-                    .removeClass()
-                    .addClass(cssClass);
-            });
+            renderIndicator.call(this);
 
-            indicator.on('iconClass', function updateIconClass(iconClass){
-                $('indicator-icon', element)
-                    .removeClass()
-                    .addClass(iconClass);
-            });
-
-            return element[0];
+            return this.element;
         }
 
         return Indicator;

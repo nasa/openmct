@@ -35,37 +35,42 @@ define([
         onStartWrapLegacyIndicators.call(this);
     }
 
-    IndicatorAPI.prototype.create = function () {
-        var indicator = new Indicator();
-        this.indicators.push(indicator);
-
-        return indicator;
+    IndicatorAPI.prototype.create = function (displayFunction) {
+        if (displayFunction !== undefined) {
+            this.indicators.push(displayFunction);
+        } else {
+            var indicator = new Indicator(this.openmct);
+            this.indicators.push(Indicator.defaultDisplayFunction.bind(indicator));
+            return indicator;
+        }
     }
 
-    IndicatorAPI.prototype.getAll = function () {
+    IndicatorAPI.prototype.displayFunctions = function () {
         return this.indicators;
     }
 
     function onStartWrapLegacyIndicators() {
         this.openmct.legacyExtension('runs', {
             depends: ['indicators[]'],
-            implementation: wrapLegacyIndicators.bind(this)
+            implementation: wrapAllLegacyIndicators.bind(this)
         });
     }
 
-    function wrapLegacyIndicators(legacyIndicators) {
-        this.indicators = 
-            this.indicators.concat(legacyIndicators.map(function (legacyIndicatorDef) {
-                var legacyIndicator;
-                if (typeof legacyIndicatorDef === 'function') {
-                    legacyIndicator = new legacyIndicatorDef();
-                } else {
-                    legacyIndicator = legacyIndicatorDef;
-                }
-                
-                var newStyleIndicator = new LegacyIndicator(this.openmct, legacyIndicator);
-                return newStyleIndicator;
-            }.bind(this)));
+    function wrapAllLegacyIndicators(legacyIndicators) {
+        var wrappedLegacyIndicators = legacyIndicators.map(convertToNewIndicator.bind(this));
+        this.indicators = this.indicators.concat(wrappedLegacyIndicators);
+    }
+
+    function convertToNewIndicator(legacyIndicatorDef) {
+        var legacyIndicator;
+        if (typeof legacyIndicatorDef === 'function') {
+            legacyIndicator = new legacyIndicatorDef();
+        } else {
+            legacyIndicator = legacyIndicatorDef;
+        }
+        
+        var newStyleIndicator = new LegacyIndicator(this.openmct, legacyIndicator);
+        return LegacyIndicator.displayFunction.bind(newStyleIndicator);
     }
 
     return IndicatorAPI;
