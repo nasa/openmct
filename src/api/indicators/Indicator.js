@@ -22,7 +22,9 @@
 
 define([
         'text!./res/indicator-template.html'
-    ], function (indicatorTemplate) {
+    ], function (
+        indicatorTemplate
+    ) {
 
         function Indicator(openmct) {
             this.openmct = openmct;
@@ -31,14 +33,14 @@ define([
             this.cssClassValue = '';
             this.iconClassValue = '';
             this.textClassValue = '';
+            this.glyphClassValue = '';
+            this.node = undefined;
         }
 
         Indicator.prototype.text = function (text) {
             if (text !== undefined && text !== this.textValue) {
                 this.textValue = text;
-                if (this.renderView) {
-                    render.call(this);
-                }
+                Indicator.defaultDisplayFunction.call(this);
             }
 
             return this.textValue;
@@ -47,57 +49,62 @@ define([
         Indicator.prototype.description = function (description) {
             if (description !== undefined && description !== this.descriptionValue) {
                 this.descriptionValue = description;
-                renderIndicator.call(this);
+                Indicator.defaultDisplayFunction.call(this);
             }
 
             return this.descriptionValue;
         }
 
         Indicator.prototype.iconClass = function (iconClass) {
-            if (iconClass !== undefined && iconClass !== this.iconClass) {
+            if (iconClass !== undefined && iconClass !== this.iconClassValue) {
                 this.iconClassValue = iconClass;
-                renderIndicator.call(this);
+                Indicator.defaultDisplayFunction.call(this);
             }
 
             return this.iconClassValue;
         }
 
         Indicator.prototype.cssClass = function (cssClass) {
-            if (cssClass !== undefined && cssClass !== this.cssClass) {
+            if (cssClass !== undefined && cssClass !== this.cssClassValue) {
                 this.cssClassValue = cssClass;
-                renderIndicator.call(this);
+                Indicator.defaultDisplayFunction.call(this);
             }
 
             return this.cssClassValue;
         }
 
+        Indicator.prototype.glyphClass = function (glyphClass) {
+            if (glyphClass !== undefined && glyphClass !== this.glyphClassValue) {
+                this.glyphClassValue = glyphClass;
+                Indicator.defaultDisplayFunction.call(this);
+            }
+
+            return this.glyphClassValue;
+        }
+
         Indicator.prototype.textClass = function (textClass) {
-            if (textClass !== undefined && textClass !== this.textClass) {
+            if (textClass !== undefined && textClass !== this.textClassValue) {
                 this.textClassValue = textClass;
-                renderIndicator.call(this);
+                Indicator.defaultDisplayFunction.call(this);
             }
 
             return this.textClassValue;
         }
 
-        function renderIndicator() {
-            this.element.innerHTML = 
-            indicatorTemplate.replace('{{indicator.text}}', indicator.text())
-                .replace('{{indicator.textClass}}', indicator.textClass())
-                .replace('{{indicator.cssClass}}', indicator.cssClass())
-                .replace('{{indicator.description}}', indicator.description());
-        }
-
         Indicator.defaultDisplayFunction = function () {
-            this.usingDefaultDisplay = true;
+            var html = indicatorTemplate.replace('{{indicator.text}}', this.text())
+                .replace('{{indicator.textClass}}', this.textClass())
+                .replace('{{indicator.cssClass}}', this.cssClass())
+                .replace('{{indicator.glyphClass}}', this.glyphClass())
+                .replace('{{indicator.description}}', this.description());
 
-            if (!this.element) {
-                this.element = document.createElement('div');
+            if (!this.node){
+                this.node = document.createElement('div');
+                this.node.className = 'status-block-holder';
             }
-
-            renderIndicator.call(this);
-
-            return this.element;
+            this.node.innerHTML = html;
+            
+            return this.node;
         }
 
         return Indicator;

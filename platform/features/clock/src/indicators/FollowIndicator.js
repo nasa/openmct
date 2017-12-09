@@ -20,38 +20,30 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    ['moment'],
-    function (moment) {
-        var NO_TIMER = "No timer being followed";
-
-        /**
-         * Indicator that displays the active timer, as well as its
-         * current state.
-         * @implements {Indicator}
-         * @memberof platform/features/clock
-         */
-        function FollowIndicator(timerService) {
-            this.timerService = timerService;
+define([],function () {
+    function setIndicatorStatusFromTimer (indicator, timer) {
+        if (timer !== undefined) {
+            indicator.cssClass('icon-timer s-status-ok');
+            indicator.text('Following timer ' + timer.name);
+        } else {
+            indicator.cssClass('icon-timer');
+            indicator.text('No timer being followed.');
         }
+    }
 
-        FollowIndicator.prototype.getGlyphClass = function () {
-            return "";
-        };
+    /**
+     * Indicator that displays the active timer, as well as its
+     * current state.
+     * @memberof platform/features/clock
+     */
+    return function installFollowIndicator(openmct, timerService) {
+        var indicator = openmct.indicators.create();
+        var timer = timerService.getTimer();
+        setIndicatorStatusFromTimer(indicator, timer);
 
-        FollowIndicator.prototype.getCssClass = function () {
-            return (this.timerService.getTimer()) ? "icon-timer s-status-ok" : "icon-timer";
-        };
-
-        FollowIndicator.prototype.getText = function () {
-            var timer = this.timerService.getTimer();
-            return (timer) ? 'Following timer ' + timer.getModel().name : NO_TIMER;
-        };
-
-        FollowIndicator.prototype.getDescription = function () {
-            return "";
-        };
-
-        return FollowIndicator;
-    } 
-);
+        timerService.on('change', function () {
+            timer = timerService.getTimer();
+            setIndicatorStatusFromTimer(indicator, timer);
+        });
+    };
+});

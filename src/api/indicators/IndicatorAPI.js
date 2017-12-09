@@ -69,7 +69,7 @@ define([
             legacyIndicator = legacyIndicatorDef;
         }
         
-        var newStyleIndicator = new LegacyIndicator(this.openmct, legacyIndicator);
+        var newStyleIndicator = new LegacyIndicator(this.openmct, legacyIndicator, legacyIndicatorDef.template);
         return LegacyIndicator.displayFunction.bind(newStyleIndicator);
     }
 

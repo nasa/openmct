@@ -1,9 +1,7 @@
-<div class='status block'
-    title="{{indicator.description}}"
-ng-show="ngModel.text().length > 0">
-<span class="status-indicator {{indicator.cssClass}}"></span><span class="label"
-     class='{{indicator.textClass}}'>
-   {{indicator.text}}
-</span><span class="count">
-</span>
+<div class="{{indicator.glyphClass}}">
+    <div class="status block" title="{{indicator.description}}" ng-show="ngModel.text().length > 0">
+        <span class="status-indicator {{indicator.cssClass}}"></span><span class="label" class='{{indicator.textClass}}'>
+        {{indicator.text}}
+        </span><span class="count"></span>
+    </div>
 </div>

@@ -33,9 +33,10 @@ define([
             '   ng-class="indicator.glyphClass()"> ' +
             ' </mct-include>';
 
-        function LegacyIndicator(openmct, legacyIndicator) {   
+        function LegacyIndicator(openmct, legacyIndicator, template) {   
             this.openmct = openmct;
             this.legacyIndicator = legacyIndicator;
+            this.template = template;
         }
 
         LegacyIndicator.prototype.display = function () {
@@ -72,7 +73,7 @@ define([
             var $rootScope = this.openmct.$injector.get('$rootScope');
             var scope = $rootScope.$new(true);
             scope.indicator = this;
-            scope.template = this.legacyIndicator.template || 'indicator';
+            scope.template = this.template || 'indicator';
 
             return $compile(TEMPLATE)(scope);
         }
