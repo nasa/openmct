@@ -54,7 +54,7 @@ define(
                     return "icon-object-unknown";
                 },
                 getText: function () {
-                    return latest;
+                    return "" + latest;
                 },
                 getDescription: function () {
                     return "";
