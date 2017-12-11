@@ -21,7 +21,8 @@
  *****************************************************************************/
 
 define([],function () {
-    function setIndicatorStatusFromTimer (indicator, timer) {
+
+    function setIndicatorStatus(indicator, timer) {
         if (timer !== undefined) {
             indicator.cssClass('icon-timer s-status-ok');
             indicator.text('Following timer ' + timer.name);
@@ -39,11 +40,9 @@ define([],function () {
     return function installFollowIndicator(openmct, timerService) {
         var indicator = openmct.indicators.create();
         var timer = timerService.getTimer();
-        setIndicatorStatusFromTimer(indicator, timer);
-
-        timerService.on('change', function () {
-            timer = timerService.getTimer();
-            setIndicatorStatusFromTimer(indicator, timer);
-        });
+        var setIndicatorStatusFromTimer = setIndicatorStatus.bind(this, indicator);
+        
+        setIndicatorStatusFromTimer(timer);
+        timerService.on('change', setIndicatorStatusFromTimer);
     };
 });

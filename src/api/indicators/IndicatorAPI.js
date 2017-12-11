@@ -31,8 +31,10 @@ define([
     function IndicatorAPI(openmct) {
         this.openmct = openmct;
         this.indicators = [];
-
-        onStartWrapLegacyIndicators.call(this);
+        this.legacyIndicatorsPromise = new Promise(function (resolve) {
+            this.resolveWithIndicators = resolve;
+            onStartWrapLegacyIndicators.call(this);
+        }.bind(this));
     }
 
     IndicatorAPI.prototype.create = function (displayFunction) {
@@ -45,20 +47,25 @@ define([
         }
     }
 
+    /**
+     * @private
+     */
     IndicatorAPI.prototype.displayFunctions = function () {
-        return this.indicators;
+        return this.legacyIndicatorsPromise.then(function (legacyIndicators) {
+            var wrappedLegacyIndicators = wrapAllLegacyIndicators.call(this, legacyIndicators);
+            return this.indicators.concat(wrappedLegacyIndicators);
+        }.bind(this));
     }
 
     function onStartWrapLegacyIndicators() {
         this.openmct.legacyExtension('runs', {
             depends: ['indicators[]'],
-            implementation: wrapAllLegacyIndicators.bind(this)
+            implementation: this.resolveWithIndicators
         });
     }
 
     function wrapAllLegacyIndicators(legacyIndicators) {
-        var wrappedLegacyIndicators = legacyIndicators.map(convertToNewIndicator.bind(this));
-        this.indicators = this.indicators.concat(wrappedLegacyIndicators);
+        return legacyIndicators.map(convertToNewIndicator.bind(this));
     }
 
     function convertToNewIndicator(legacyIndicatorDef) {

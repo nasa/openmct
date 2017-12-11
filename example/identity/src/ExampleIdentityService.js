@@ -55,7 +55,7 @@ define(
          * @implements {IdentityService}
          * @memberof platform/identity
          */
-        function ExampleIdentityProvider(dialogService, $rootScope, $q) {
+        function ExampleIdentityProvider(dialogService, $q) {
             this.dialogService = dialogService;
             this.$q = $q;
 
@@ -72,10 +72,16 @@ define(
             }
         };
 
+        /**
+         * @private
+         */
         ExampleIdentityProvider.prototype.returnUser = function (user) {
-            return user;
+            return this.user = user;
         }
 
+        /**
+         * @private
+         */
         ExampleIdentityProvider.prototype.returnUndefined = function () {
             return undefined;
         }

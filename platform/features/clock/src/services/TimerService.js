@@ -44,7 +44,7 @@ define(['EventEmitter'], function (EventEmitter) {
      */
     TimerService.prototype.setTimer = function (timer) {
         this.timer = timer;
-        this.emit('change');
+        this.emit('change', timer);
 
         if (this.stopObserving) {
             this.stopObserving();

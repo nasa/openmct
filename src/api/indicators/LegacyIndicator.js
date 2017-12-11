@@ -74,8 +74,7 @@ define([
             var scope = $rootScope.$new(true);
             scope.indicator = this;
             scope.template = this.template || 'indicator';
-
-            return $compile(TEMPLATE)(scope);
+            return $compile(TEMPLATE)(scope)[0];
         }
 
         return LegacyIndicator;
