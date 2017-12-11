@@ -29,7 +29,8 @@ define([
     '../../example/imagery/plugin',
     '../../platform/import-export/bundle',
     './summaryWidget/plugin',
-    './URLIndicatorPlugin/URLIndicatorPlugin'
+    './URLIndicatorPlugin/URLIndicatorPlugin',
+    './activityModes/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -39,7 +40,8 @@ define([
     ExampleImagery,
     ImportExport,
     SummaryWidget,
-    URLIndicatorPlugin
+    URLIndicatorPlugin,
+    ActivityModes
 ) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
@@ -127,6 +129,7 @@ define([
 
     plugins.SummaryWidget = SummaryWidget;
     plugins.URLIndicatorPlugin = URLIndicatorPlugin;
+    plugins.ActivityModes = ActivityModes;
 
     return plugins;
 });
