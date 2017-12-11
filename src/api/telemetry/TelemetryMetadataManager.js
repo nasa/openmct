@@ -35,7 +35,7 @@ define([
             name: 'Name'
         });
 
-        metadata.domains.forEach(function (domain, index) {
+        (metadata.domains || []).forEach(function (domain, index) {
             var valueMetadata = _.clone(domain);
             valueMetadata.hints = {
                 domain: index + 1
@@ -43,11 +43,11 @@ define([
             valueMetadatas.push(valueMetadata);
         });
 
-        metadata.ranges.forEach(function (range, index) {
+        (metadata.ranges || []).forEach(function (range, index) {
             var valueMetadata = _.clone(range);
             valueMetadata.hints = {
                 range: index,
-                priority: index + metadata.domains.length + 1
+                priority: index + (metadata.domains || []).length + 1
             };
 
             if (valueMetadata.type === 'enum') {
