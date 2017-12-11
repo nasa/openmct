@@ -43,6 +43,7 @@ var gulp = require('gulp'),
     },
     options = {
         babel: {
+            plugins: ["transform-es2015-modules-amd"],
             presets: ['es2015']
         },
         requirejsOptimize: {
