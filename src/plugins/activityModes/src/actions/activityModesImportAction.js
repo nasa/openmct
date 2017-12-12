@@ -1,14 +1,16 @@
 define(['d3-dsv'], function (d3Dsv) {
 
-    function ActivityModesImportAction(dialogService, openmct) {
+    function ActivityModesImportAction(dialogService, openmct, context) {
         this.dialogService = dialogService;
+        this.context = context;
     }
 
     ActivityModesImportAction.prototype.perform = function () {
         this.dialogService.getUserInput(this.getFormModel(), function () {})
         .then(function (form) {
-            var csvObjects = d3Dsv.csvParse(form.selectFile.body);
-        });
+            window.localStorage.setItem('csvObjects',
+            JSON.stringify(d3Dsv.csvParse(form.selectFile.body)));
+        }.bind(this));
     };
 
     ActivityModesImportAction.prototype.getFormModel = function () {

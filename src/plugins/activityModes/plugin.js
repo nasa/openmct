@@ -7,7 +7,7 @@ define(['./src/actions/activityModesImportAction'], function(ActivityModes) {
                         if (identifier.key === 'activity-modes') {
                             return {
                                 identifier: identifier,
-                                name: 'Activity-Modes',
+                                name: 'Activity Modes',
                                 type: 'folder',
                                 location: 'ROOT'
                             };
@@ -16,13 +16,23 @@ define(['./src/actions/activityModesImportAction'], function(ActivityModes) {
                 } 
             };
         }
-        
+
         return function install(openmct) {
             openmct.objects.addRoot({
                 namespace: 'Activity Modes',
-                key: 'activity-modes'
+                key: 'activity-modes',
+                type: 'activity'
             });
+
+            openmct.types.addType('activity', {
+                initialize: function (domainObject) {
+                    domainObject.csvObjects = window.localStorage.getItem('csvObjects') || [];
+                    console.log(domainObject.csvObjects);
+                }
+            });
+
             openmct.objects.addProvider('Activity Modes', initProvider());
+
             openmct.legacyExtension('actions', {
                 key: "import-csv",
                 category: ["contextual"],
