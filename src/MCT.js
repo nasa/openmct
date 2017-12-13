@@ -193,6 +193,15 @@ define([
          * @name telemetry
          */
         this.telemetry = new api.TelemetryAPI(this);
+        
+        /**
+         * An interface for creating new indicators and changing them dynamically.
+         * 
+         * @type {module:openmct.IndicatorAPI}
+         * @memberof module:openmct.MCT#
+         * @name indicators
+         */
+        this.indicators = new api.IndicatorAPI(this);
 
         this.Dialog = api.Dialog;
 

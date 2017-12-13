@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,32 +21,29 @@
  *****************************************************************************/
 
 define([
-    './time/TimeAPI',
-    './objects/ObjectAPI',
-    './composition/CompositionAPI',
-    './types/TypeRegistry',
-    './ui/Dialog',
-    './ui/GestureAPI',
-    './telemetry/TelemetryAPI',
-    './indicators/IndicatorAPI'
-], function (
-    TimeAPI,
-    ObjectAPI,
-    CompositionAPI,
-    TypeRegistry,
-    Dialog,
-    GestureAPI,
-    TelemetryAPI,
-    IndicatorAPI
-) {
-    return {
-        TimeAPI: TimeAPI,
-        ObjectAPI: ObjectAPI,
-        CompositionAPI: CompositionAPI,
-        Dialog: Dialog,
-        TypeRegistry: TypeRegistry,
-        GestureAPI: GestureAPI,
-        TelemetryAPI: TelemetryAPI,
-        IndicatorAPI: IndicatorAPI
-    };
+        'zepto',
+        './Indicator'
+    ], function ($, Indicator) {
+
+        var TEMPLATE = 
+            '<mct-include ' +
+            '   ng-model="indicator" ' +
+            '   key="template" ' +
+            '   class="status-block-holder" ' +
+            '   ng-class="indicator.getGlyphClass()"> ' +
+            ' </mct-include>';
+
+        function displayLegacyIndicator(openmct, legacyIndicator, template) {
+            return function () {
+                var $compile = openmct.$injector.get('$compile');
+                var $rootScope = openmct.$injector.get('$rootScope');
+                var scope = $rootScope.$new(true);
+                scope.indicator = legacyIndicator;
+                scope.template = template || 'indicator';
+                
+                return $compile(TEMPLATE)(scope)[0];
+            }
+        }
+
+        return displayLegacyIndicator;
 });

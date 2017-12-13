@@ -19,14 +19,9 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class='abs bottom-bar ue-bottom-bar mobile-disable-select' ng-controller="BottomBarController as bar">
+<div class='abs bottom-bar ue-bottom-bar mobile-disable-select'>
     <div id='status' class='status-holder'>
-        <mct-include ng-repeat="indicator in bar.getIndicators()"
-                     ng-model="indicator.ngModel"
-                     key="indicator.template"
-                     class="status-block-holder"
-                     ng-class='indicator.ngModel.getGlyphClass()'>
-        </mct-include>
+        <mct-indicators></mct-indicators>
     </div>
     <mct-include key="'message-banner'"></mct-include>
     <mct-include key="'about-logo'"></mct-include>
