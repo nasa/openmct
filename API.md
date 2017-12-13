@@ -963,18 +963,18 @@ openmct.install(openmct.plugins.CouchDB('http://localhost:9200'))
 * `openmct.plugins.Espresso` and `openmct.plugins.Snow` are two different
   themes (dark and light) available for Open MCT. Note that at least one
   of these themes must be installed for Open MCT to appear correctly.
-* `openmct.plugins.URLIndicatorPlugin` adds an indicator which shows the
+* `openmct.plugins.URLIndicator` adds an indicator which shows the
 availability of a URL with the following options: 
   - `url` : URL to indicate the status of
-  - `cssClass`: Icon to show in the status bar, defaults to `icon-database`, [list of all icons](https://nasa.github.io/openmct/style-guide/#/browse/styleguide:home?view=items)
+  - `iconClass`: Icon to show in the status bar, defaults to `icon-database`, [list of all icons](https://nasa.github.io/openmct/style-guide/#/browse/styleguide:home?view=items)
   - `interval`: Interval between checking the connection, defaults to `10000`
   - `label` Name showing up as text in the status bar, defaults to url
 ```javascript
-openmct.install(openmct.plugins.URLIndicatorPlugin({
-  url: 'http://google.com',
-  cssClass: 'check',
-  interval: 10000,
-  label: 'Google'
+openmct.install(openmct.plugins.URLIndicator({
+  url: 'http://localhost:8080',
+    iconClass: 'check',
+    interval: 10000,
+    label: 'Localhost'
  })
 );
 ```
