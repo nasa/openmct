@@ -38,7 +38,8 @@ define([
                     "provides": "identityService",
                     "type": "provider",
                     "depends": [
-                        "dialogService"
+                        "dialogService",
+                        "$q"
                     ]
                 }
             ]

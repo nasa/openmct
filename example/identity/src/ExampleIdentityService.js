@@ -55,20 +55,36 @@ define(
          * @implements {IdentityService}
          * @memberof platform/identity
          */
-        function ExampleIdentityProvider(dialogService) {
-            // Handle rejected dialog messages by treating the
-            // current user as undefined.
-            function echo(v) { return v; }
-            function giveUndefined() { return undefined; }
+        function ExampleIdentityProvider(dialogService, $q) {
+            this.dialogService = dialogService;
+            this.$q = $q;
 
-            this.userPromise =
-                dialogService.getUserInput(DIALOG_STRUCTURE, DEFAULT_IDENTITY)
-                    .then(echo, giveUndefined);
+            this.returnUser = this.returnUser.bind(this);
+            this.returnUndefined = this.returnUndefined.bind(this);
         }
 
         ExampleIdentityProvider.prototype.getUser = function () {
-            return this.userPromise;
+            if (this.user) {
+                return this.$q.when(this.user);
+            } else {
+                return this.dialogService.getUserInput(DIALOG_STRUCTURE, DEFAULT_IDENTITY)
+                    .then(this.returnUser, this.returnUndefined);
+            }
         };
+
+        /**
+         * @private
+         */
+        ExampleIdentityProvider.prototype.returnUser = function (user) {
+            return this.user = user;
+        }
+
+        /**
+         * @private
+         */
+        ExampleIdentityProvider.prototype.returnUndefined = function () {
+            return undefined;
+        }
 
         return ExampleIdentityProvider;
     }
