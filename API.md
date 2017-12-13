@@ -567,7 +567,7 @@ openmct.time.timeSystem(utcTimeSystem, bounds);
 Setting the active time system will trigger a [`'timeSystem'`](#time-events) 
 event.  If you supplied bounds, a [`'bounds'`](#time-events) event will be triggered afterwards with your newly supplied bounds.
 
-### Time Bounds
+#### Time Bounds
 
 The TimeAPI provides a getter/setter for querying and setting time bounds. Time 
 bounds are simply an object with a `start` and an end `end` attribute.
@@ -591,7 +591,7 @@ openmct.time.bounds({start: now - ONE_HOUR, now);
 To respond to bounds change events, listen for the [`'bounds'`](#time-events)
 event.
 
-## Clocks
+### Clocks
 
 The Time API can be set to follow a clock source which will cause the bounds
 to be updated automatically whenever the clock source "ticks". A clock is simply
@@ -610,7 +610,7 @@ be defined to tick on some remote timing source.
 The values provided by clocks are simple `number`s, which are interpreted in the
 context of the active [Time System](#defining-and-registering-time-systems).
 
-### Defining and registering clocks
+#### Defining and registering clocks
 
 A clock is an object that defines certain required metadata and functions:
 
@@ -724,7 +724,7 @@ __Note:__ Setting the clock offsets will trigger an immediate bounds change, as
 new bounds will be calculated based on the `currentValue()` of the active clock. 
 Clock offsets are only relevant when a clock source is active.
 
-## Time Events
+### Time Events
 
 The Time API is a standard event emitter; you can register callbacks for events using the `on` method and remove callbacks for events with the `off` method.
 
@@ -766,7 +766,7 @@ The events emitted by the Time API are:
   * `clockOffsets`: The new [clock offsets](#clock-offsets).
 
 
-## The Time Conductor
+### The Time Conductor
 
 The Time Conductor provides a user interface for managing time bounds in Open 
 MCT. It allows a user to select from configured time systems and clocks, and to set bounds and clock offsets.
@@ -854,6 +854,90 @@ openmct.install(openmct.plugins.Conductor({
         }
     ]
 }));
+```
+
+## Indicators
+
+Indicators are small widgets that reside at the bottom of the screen and are visible from 
+every screen in Open MCT. They can be used to convey system state using an icon and text.
+Indicators tend to be collapsed to an icon by default (though this behavior can be customized 
+by defining a [custom indicator](#custom-indicators)), and hovering over them will reveal 
+text providing more information.
+
+### The URL Status Indicator
+
+A common use case for indicators is to convey the state of some external system such as a 
+persistence backend or HTTP server. So long as this system is accessible via http request, 
+Open MCT provides a general purpose indicator to show whether the server is available and 
+returing a 2xx status code. The URL Status Indicator is made available as a default plugin. See
+[Included Plugins](#included-plugins) below for details on how to install and configure the 
+URL Status Indicator.
+
+### Creating a New Indicator
+
+A new indicator can be created with a simple API call, eg.
+
+``` javascript
+var myIndicator = openmct.indicators.create();
+myIndicator.text("Hello World!");
+```
+
+This will create a new indicator and add it to the bottom of the screen in Open MCT.
+By default, the indicator will appear as an information icon. Hovering over the icon will
+reveal the text set via the call to `.text()`. The Indicator object returned by the API 
+call exposes a number of functions for customizing the content and appearance of the indicator:
+
+* `.text([text])`: Gets or sets the text shown when the user hovers over the indicator.
+Accepts an __optional__ `string` argument that, if provided, will be used to set the text. 
+Hovering over the indicator will expand it to its full size, revealing this text alongside 
+the icon. Returns the currently set text as a `string`.
+* `.description([description])`: Gets or sets the indicator's description. Accepts an 
+__optional__ `string` argument that, if provided, will be used to set the text. The description 
+allows for more detail to be provided in a tooltip when the user hovers over the indicator. 
+Returns the currently set text as a `string`.
+* `.iconClass([className])`: Gets or sets the CSS class used to define the icon. Accepts an __optional__ 
+`string` parameter to be used to set the class applied to the indicator. Any of 
+[the built-in glyphs](https://nasa.github.io/openmct/style-guide/#/browse/styleguide:home/glyphs?view=styleguide.glyphs) 
+may be used here, or a custom CSS class can be provided. Returns the currently defined CSS 
+class as a `string`.
+* `.statusClass([className])`: Gets or sets the CSS class used to determine status. Accepts an __optional __
+`string` parameter to be used to set a status class applied to the indicator. May be used to apply 
+different colors to indicate status.
+
+### Custom Indicators
+
+A completely custom indicator can be added by registering a factory function that produces 
+a DOM element for your custom indicator. eg.
+
+``` javascript
+openmct.indicators.create(function () {
+    var domNode = document.createElement('div');
+    domNode.innerText = new Date().toString();
+    setInterval(function () {
+        domNode.innerText = new Date().toString();
+    }, 1000);
+    return domNode;
+});
+```
+
+### Priority
+
+When creating a new indicator or defining a custom indicator, a `number` can optionally be 
+provided that will determine the order that the indicator appears on the screen. An indicator 
+with a higher `priority` number will be shown to the left of indicators with lower 
+priority numbers. The lowest possible `priority` (and the default value if no `priority` is specified) 
+is `Number.NEGATIVE_INFINTY`, and the highest possible priority is `Number.POSITIVE_INFINITY`.
+
+eg.
+``` javascript
+var myIndicator = openmct.indicators.create(1);
+myIndicator.text("I'm on the left!");
+
+openmct.indicators.create(0, function () {
+    var domNode = document.createElement('div');
+    domNode.innerText = "I'm on the right!";
+    return domNode;
+});
 ```
 
 ## Included Plugins
