@@ -1,37 +1,32 @@
 define(['./src/actions/activityModesImportAction'], function(ActivityModes) {
     function plugin() {
-        function initProvider(openmct) {
-            return {
-                get: function (identifier) {
-                    return Promise.resolve().then(function () {
-                        if (identifier.key === 'activity-modes') {
-                            return {
-                                identifier: identifier,
-                                name: 'Activity Modes',
-                                type: 'folder',
-                                location: 'ROOT'
-                            };
-                        }
-                    });
-                } 
-            };
-        }
 
         return function install(openmct) {
-            openmct.objects.addRoot({
-                namespace: 'Activity Modes',
-                key: 'activity-modes',
-                type: 'activity'
-            });
 
-            openmct.types.addType('activity', {
-                initialize: function (domainObject) {
-                    domainObject.csvObjects = window.localStorage.getItem('csvObjects') || [];
-                    console.log(domainObject.csvObjects);
+            openmct.legacyRegistry.register("src/plugins/activityModes", {
+                "name": "Activity Modes",
+                "description": "Defines a root named My Items",
+                "extensions": {
+                    "roots": [
+                        {
+                            "id": "activity-modes"
+                        }
+                    ],
+                    "models": [
+                        {
+                            "id": "activity-modes",
+                            "model": {
+                                "name": "Activity Modes",
+                                "type": "folder",
+                                "composition": [],
+                                "location": "ROOT"
+                            }
+                        }
+                    ]
                 }
             });
 
-            openmct.objects.addProvider('Activity Modes', initProvider());
+            openmct.legacyRegistry.enable("src/plugins/activityModes");
 
             openmct.legacyExtension('actions', {
                 key: "import-csv",
@@ -47,5 +42,6 @@ define(['./src/actions/activityModesImportAction'], function(ActivityModes) {
             });
         };
     }
+    
     return plugin;
 });
