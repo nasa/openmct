@@ -128,7 +128,9 @@ define(
         };
 
         $scope.textFocus = function($event){
-            $scope.currentEntryValue = $event.currentTarget.value;
+            if($event.currentTarget && $event.currentTarget.value){
+                $scope.currentEntryValue = $event.currentTarget.value;
+            }
         }
 
         $scope.textBlur = function($event,entryId){
