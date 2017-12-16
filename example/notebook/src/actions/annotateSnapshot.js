@@ -96,6 +96,8 @@ define(
             function saveNotes(param){
                 if(param=='ok'){
                     painterro.save();
+                }else{
+                    rootscope.snapshot = "annotationCancelled";
                 }
             }
 

@@ -36,6 +36,7 @@ define(
                     name: 'Entry',
                     key: 'entry',
                     control: 'textarea',
+                    required: true,
                     "cssClass": "l-textarea-sm"
                 },
                 {
@@ -90,15 +91,23 @@ define(
             var linkService = this.linkService; 
             var dialogService = this.dialogService;
             var rootScope = this.$rootScope;
+            rootScope.newEntryText = '';
              // Create the overlay element and add it to the document's body
             this.$rootScope.selObj = domainObj;
             this.$rootScope.selValue = "";
-            var element = this.$compile(SNAPSHOT_TEMPLATE)(this.$rootScope);
+            var newScope = rootScope.$new();
+            newScope.selObj = domainObj;
+            newScope.selValue = "";
+            var element = this.$compile(SNAPSHOT_TEMPLATE)(newScope);
+            //newScope.$destroy();
 
             this.$rootScope.$watch("snapshot", setSnapshot);
 
             function setSnapshot(value){
-                if(value){
+                if(value === "annotationCancelled"){
+                    rootScope.snapshot = rootScope.lastValue;  
+                    rootScope.lastValue = '';  
+                }else if(value && value !== rootScope.lastValue){
                     var overlayModel = {
                         title: NEW_TASK_FORM.name,
                         message: NEW_TASK_FORM.message,
@@ -111,19 +120,16 @@ define(
                         return overlayModel.value;
                     }
 
-                    if(value !== rootScope.lastValue){
-                         rootScope.currentDialog = overlayModel;
+                    rootScope.currentDialog = overlayModel;
 
-                        dialogService.getDialogResponse(
-                            "overlay-dialog",
-                            overlayModel,
-                            resultGetter
-                        ).then(addNewEntry);
-                    }
-                   
+                    dialogService.getDialogResponse(
+                        "overlay-dialog",
+                        overlayModel,
+                        resultGetter
+                    ).then(addNewEntry);
 
                     rootScope.lastValue = value;
-                }                
+                }           
             }
 
             function addNewEntry(options){
@@ -139,12 +145,8 @@ define(
                if(!options.withSnapshot){
                  options.snapshot = '';
                } 
-
-               if (options.saveNotebook.getModel().composition.indexOf(options.embedObject.getId()) !== -1) {
-                    createSnap(options)
-               }else{
-                    linkService.perform(options.embedObject, options.saveNotebook).then(createSnap(options));
-               } 
+               
+               createSnap(options);
             }
 
             function createSnap(options){
@@ -179,8 +181,6 @@ define(
                 notification.info({
                     title: "Notebook Entry created"
                 }); 
-
-                self.$rootScope.newEntryText = '';
             }
         };
 

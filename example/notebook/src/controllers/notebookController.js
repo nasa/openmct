@@ -55,6 +55,7 @@ define(
         $scope.entrySearch = '';
         $scope.entryTypes = [];
         $scope.embedActions = [];
+        $scope.currentEntryValue = '';
 
         /*--seconds in an hour--*/
 
@@ -126,12 +127,19 @@ define(
             }); 
         };
 
+        $scope.textFocus = function($event){
+            $scope.currentEntryValue = $event.currentTarget.value;
+        }
+
         $scope.textBlur = function($event,entryId){
             if($event.target && $event.target.value !== ""){
                 var elementPos = $scope.domainObject.model.entries.map(function(x) {return x.createdOn}).indexOf(+(entryId));
-                $scope.domainObject.model.entries[elementPos].text = $event.target.value;
+                $scope.domainObject.model.entries[elementPos].text = $event.target.value;                
+                if($scope.currentEntryValue !== $event.target.value){
+                    $scope.domainObject.model.entries[elementPos].createdOn = now();    
+                }
                 $scope.domainObject.useCapability('mutation', function(model) {});
-            }
+            }            
         }
 
         $scope.finished = function(model){
@@ -182,11 +190,12 @@ define(
 
         
 
-        function actionToMenuOption(action) {
+        $scope.actionToMenuOption = function(action) {
             return {
-                key: action,
+                key: action.getMetadata().key,
                 name: action.getMetadata().name,
-                cssClass: action.getMetadata().cssClass
+                cssClass: action.getMetadata().cssClass,
+                perform: action.perform
             };
         };
 
@@ -204,10 +213,6 @@ define(
             $scope.menuActions = $scope.action ?
                     $scope.action.getActions({key: 'window'}) :
                     []; 
-
-            if($scope.action){
-                 $scope.menuActions.push(actionToMenuOption($scope.action.getActions({key: 'navigate'})[0]));
-            }
         };
 
         // Update set of actions whenever the action capability
@@ -215,7 +220,9 @@ define(
         $scope.$watch("action", updateActions);
 
         $scope.navigate = function($event,embedType){
-            $event.preventDefault();
+            if($event){
+                $event.preventDefault();
+            }
             $scope.getDomainObj(embedType).then(function(resp){
                 navigationService.setNavigation(resp[embedType]);
             });
@@ -250,10 +257,20 @@ define(
 
         /*---popups menu embeds----*/ 
 
-        function getEmbedActions(embedType){   
+        function getEmbedActions(embedType){  
+            var self = this; 
             if(!$scope.embedActions.length){
                  $scope.getDomainObj(embedType).then(function(resp){
-                    $scope.embedActions = $scope.action.getActions({key: 'window',selectedObject:resp[embedType]});
+                    $scope.embedActions = [];
+                    $scope.embedActions.push($scope.actionToMenuOption(
+                                                $scope.action.getActions({key: 'window',selectedObject:resp[embedType]})[0]
+                                          ));
+                    $scope.embedActions.push({
+                                            key:'navigate',
+                                            name: 'Go to Original',
+                                            cssClass: '',
+                                            perform: function(){$scope.navigate('',embedType)}
+                                        });
                 }); 
             }
         };
