@@ -17,7 +17,6 @@ define(['d3-dsv'], function (d3Dsv) {
     ActivityModesImportAction.prototype.instantiateActivities = function () {
         var instantiate = this.openmct.$injector.get("instantiate");
         var parent = this.context.domainObject;
-        var test = {"start":{"timestamp":0,"epoch":"SET"},"duration":{"timestamp":0,"epoch":"SET"},"name":"Deep's Activity","type":"activity"};
         var parentComposition = parent.getCapability("composition");
 
         this.csvObjects.map(function (activity) {
@@ -26,11 +25,10 @@ define(['d3-dsv'], function (d3Dsv) {
             activity.type = "activity";
         });
 
-        this.csvObjects.forEach(function (activity) {
-            var newActivityObject = instantiate(activity);
+        this.csvObjects.forEach(function (activity, index) {
+            var newActivityObject = instantiate(activity, 'activity-'+index);
             newActivityObject.getCapability('location').setPrimaryLocation(parent.getId());
             parentComposition.add(newActivityObject);
-            console.log(activity);
         });
     };
 
