@@ -30,7 +30,7 @@ define([
                                     'mct-object="selObj">'+
                                 '</mct-representation>';
 
-    function entryDnd($rootScope,$compile,dndService,typeService) {
+    function entryDnd($rootScope,$compile,dndService,typeService,notificationService) {
 
         function link($scope, $element) {
             var domainObj = $scope.domainObject;
@@ -71,6 +71,9 @@ define([
                     } 
 
                     $scope.scrollToTop();
+                    notificationService.info({
+                        title: "Notebook Entry created"
+                    }); 
 
                 }else{  
                     
@@ -107,6 +110,7 @@ define([
                 if($(e.currentTarget).hasClass('drag-active')){
                     $(e.currentTarget).removeClass('drag-active');
                 } 
+
             }
 
             function dragover(e) {

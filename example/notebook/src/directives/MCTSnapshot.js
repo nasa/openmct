@@ -30,8 +30,7 @@ define([
     function MCTSnapshot($rootScope,$document,exportImageService,dialogService,notificationService) {
         var document = $document[0];
 
-        function link($scope, $element) {
-
+        function link($scope, $element,$attrs) {
             var element = $element[0];
             var layoutContainer = element.parentElement,
                 toggleOverlay,
@@ -50,7 +49,8 @@ define([
                     layoutContainer.remove(); 
                 }   
                 document.body.removeChild(snapshot); 
-                snapshot = undefined;                             
+                snapshot = undefined;   
+                $element.remove();                          
             }
 
             toggleOverlay = function () {
@@ -90,6 +90,7 @@ define([
                                                                      'modified':Date.now()
                                                                   };
                                             closeOverlay(false);
+                                            scope.$destroy();
                                         };
                                         
                                     } 
@@ -119,6 +120,7 @@ define([
 
             $scope.$on('$destroy', function () {
                 $element.off('click', toggleOverlay);
+                $element.remove();
             });
         }
 

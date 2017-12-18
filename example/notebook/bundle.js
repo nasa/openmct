@@ -139,7 +139,11 @@ define([
                     "key": "mctEntryDnd",
                     "implementation": MCTEntryDnd,
                     "depends": [
-                        "$rootScope","$compile","dndService","typeService"
+                        "$rootScope",
+                        "$compile",
+                        "dndService",
+                        "typeService",
+                        "notificationService"
                     ]
                 }
             ],
@@ -166,7 +170,22 @@ define([
                       "dndService",
                       "$rootScope",
                     ]
-                },                
+                },    
+
+                {
+                    "key": "remove-embed",
+                    "implementation": removeEmbedAction,
+                    "name": "Remove...",
+                    "cssClass": "icon-trash labeled",
+                    "description": "Remove this embed",
+                    "category": [
+                        "embed",
+                        "embed-no-snap"
+                    ],
+                    "depends":[
+                      "dialogService"
+                    ]
+                },            
                 {
                     "key": "remove-snapshot",
                     "implementation": removeSnapshotAction,
@@ -187,20 +206,6 @@ define([
                     "priority": "preferred",
                     "depends":[
                       "$compile"
-                    ]
-                },
-                {
-                    "key": "remove-embed",
-                    "implementation": removeEmbedAction,
-                    "name": "Remove...",
-                    "cssClass": "icon-trash labeled",
-                    "description": "Remove this embed",
-                    "category": [
-                        "embed",
-                        "embed-no-snap"
-                    ],
-                    "depends":[
-                      "dialogService"
                     ]
                 },
                 {

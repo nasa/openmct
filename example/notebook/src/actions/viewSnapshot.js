@@ -103,9 +103,9 @@ define(
                                                 '<ul>'+
                                                     '<li ng-repeat="menu in embedActions"'+
                                                         'ng-click="menu.perform()"'+
-                                                        'title="{{menu.getMetadata().description}}"'+
-                                                        'class="{{menu.getMetadata().cssClass}}">'+
-                                                        '{{menu.getMetadata().name}}'+
+                                                        'title="{{menu.name}}"'+
+                                                        'class="{{menu.cssClass}}">'+
+                                                        '{{menu.name}}'+
                                                     '</li>'+
                                                 '</ul>'+
                                             '</div>'+
@@ -115,7 +115,7 @@ define(
                                 '<div class="view-date">'+
                                     '<span class="icon-alert-rect" title="Snapshot">'+
                                     '</span>  '+
-                                    'SNAPSHOT {{snapDate | date:\'yyyy-MM-dd hh:mm:ss\'}}'+
+                                    'SNAPSHOT {{snapDate | date:\'yyyy-MM-dd HH:mm:ss\'}}'+
                                 '</div>'+
                                 '<a class="s-button icon-pencil" title="Annotate">'+
                                     '<span class="title-label">Annotate</span>'+

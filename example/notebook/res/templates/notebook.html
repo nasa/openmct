@@ -54,7 +54,7 @@
   <div class="entries-wrapper" ng-mouseover="handleActive()">
     <ul class="entries-list">
       <li class="entry l-flex-row" id="{{'entry_'+entry.createdOn}}" ng-if="hoursFilter(showTime,entry.createdOn)" ng-repeat="entry in model.entries | filter:entrySearch | orderBy: sortEntries track by $index" ng-init="$last && finished(model.entries)" mct-entry-dnd>
-        <div class="entry-time">{{entry.createdOn | date:'yyyy-MM-dd hh:mm:ss'}}</div>
+        <div class="entry-time">{{entry.createdOn | date:'yyyy-MM-dd HH:mm:ss'}}</div>
         <div class="entry-info">
           <div class="entry-text">
             <div class="unedited-text">
@@ -62,7 +62,7 @@
                       {{line}}
               </p>
             </div>             
-            <textarea ng-blur="textBlur($event,entry.createdOn)" ng-model="entry.text" placeholder="Enter text here" class="sm" rows="{{parseText(entry.text).length}}">{{entry.text}}</textarea>
+            <textarea ng-blur="textBlur($event,entry.createdOn)" ng-focus="textFocus($event)" ng-model="entry.text" placeholder="Enter text here" class="sm" rows="{{parseText(entry.text).length}}">{{entry.text}}</textarea>
           </div>
            <!-- embeds -->
           <div class="embeds l-flex-row">
@@ -98,15 +98,15 @@
                                     </li>
                                     <li ng-repeat="menu in embedActions"
                                         ng-click="menu.perform()"
-                                        title="{{menu.getMetadata().description}}"
-                                        class="{{menu.getMetadata().cssClass}}">
-                                        {{menu.getMetadata().name}}
+                                        title="{{menu.name}}"
+                                        class="{{menu.cssClass}}">
+                                        {{menu.name}}
                                     </li>
                                 </ul>
                             </div>
                         </div>
                       </div>                      
-                      <div class="embed-date">{{embed.id| date:'yyyy-MM-dd hh:mm:ss'}}</div>
+                      <div class="embed-date">{{embed.id| date:'yyyy-MM-dd HH:mm:ss'}}</div>
                     </div>              
                  </div>                
             </div> 
