@@ -29,6 +29,7 @@ define(['d3-dsv'], function (d3Dsv) {
             newActivity.start = {timestamp:0, epoch:"SET"};
             newActivity.duration = {timestamp:Number(activity.duration), epoch: "SET"};
             newActivity.type = "activity";
+            newActivity.relationships = {modes:[]};
 
             activitiesObjects.push(newActivity);
 
@@ -38,16 +39,17 @@ define(['d3-dsv'], function (d3Dsv) {
             activityModesObjects.push(newActivityMode);
         });
 
-        activitiesObjects.forEach(function (activity, index) {
-            var newActivityInstance = instantiate(activity, 'activity-'+index);
-            newActivityInstance.getCapability('location').setPrimaryLocation(parent.getId());
-            parentComposition.add(newActivityInstance);
-        });
-
         activityModesObjects.forEach(function (activityMode, index) {
             var newActivityModeInstance = instantiate(activityMode, 'activity-mode-' + index);
             newActivityModeInstance.getCapability('location').setPrimaryLocation(parent.getId());
             parentComposition.add(newActivityModeInstance);
+        });
+
+        activitiesObjects.forEach(function (activity, index) {
+            activity.relationships.modes.push({id: 'activity-modes-' + index});
+            var newActivityInstance = instantiate(activity, 'activity-'+index);
+            newActivityInstance.getCapability('location').setPrimaryLocation(parent.getId());
+            parentComposition.add(newActivityInstance);
         });
     };
 
