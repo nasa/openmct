@@ -42,18 +42,15 @@ define(["../../src/indicators/FollowIndicator"], function (FollowIndicator) {
         });
 
         describe("when a timer is set", function () {
-            var testModel;
-            var mockDomainObject;
+            var testObject;
 
             beforeEach(function () {
-                testModel = { name: "some timer!" };
-                mockDomainObject = jasmine.createSpyObj('timer', ['getModel']);
-                mockDomainObject.getModel.andReturn(testModel);
-                mockTimerService.getTimer.andReturn(mockDomainObject);
+                testObject = { name: "some timer!" };
+                mockTimerService.getTimer.andReturn(testObject);
             });
 
             it("displays the timer's name", function () {
-                expect(indicator.getText().indexOf(testModel.name))
+                expect(indicator.getText().indexOf(testObject.name))
                     .not.toEqual(-1);
             });
         });
