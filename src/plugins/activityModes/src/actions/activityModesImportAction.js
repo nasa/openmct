@@ -4,24 +4,34 @@ define(['d3-dsv'], function (d3Dsv) {
         this.dialogService = dialogService;
         this.openmct = openmct;
         this.context = context;
+
+        this.instantiateActivities = this.instantiateActivities.bind(this);
     }
 
     ActivityModesImportAction.prototype.perform = function () {
         this.dialogService.getUserInput(this.getFormModel(), function () {})
         .then(function (form) {
-            this.csvObjects = d3Dsv.csvParse(form.selectFile.body);
-            this.instantiateActivities();
+            this.csvParse(form.selectFile.body).then(this.instantiateActivities);
         }.bind(this));
     };
 
-    ActivityModesImportAction.prototype.instantiateActivities = function () {
-        var instantiate = this.openmct.$injector.get("instantiate");
-        var parent = this.context.domainObject;
-        var parentComposition = parent.getCapability("composition");
-        var activitiesObjects = [];
-        var activityModesObjects = [];
+    ActivityModesImportAction.prototype.csvParse = function (csvString) {
+        return new Promise(function (resolve, reject) {
+            var parsedObject = d3Dsv.csvParse(csvString);
 
-        this.csvObjects.forEach(function (activity) {
+            return parsedObject ? resolve(parsedObject) : reject('Could not parse provided file');
+        });
+    };
+
+    ActivityModesImportAction.prototype.instantiateActivities = function (csvObjects) {
+        var instantiate = this.openmct.$injector.get("instantiate"),
+            parent = this.context.domainObject,
+            parentId = parent.getId(),
+            parentComposition = parent.getCapability("composition"),
+            activitiesObjects = [],
+            activityModesObjects = [];
+
+        csvObjects.forEach(function (activity) {
             var newActivity = {},
                 newActivityMode = {};
 
@@ -36,19 +46,23 @@ define(['d3-dsv'], function (d3Dsv) {
             newActivityMode.name = activity.name + ' Resources';
             newActivityMode.resources = {comms: Number(activity.comms), power:Number(activity.power)};
             newActivityMode.type = 'mode';
+
             activityModesObjects.push(newActivityMode);
         });
 
         activityModesObjects.forEach(function (activityMode, index) {
             var newActivityModeInstance = instantiate(activityMode, 'activity-mode-' + index);
-            newActivityModeInstance.getCapability('location').setPrimaryLocation(parent.getId());
+
+            newActivityModeInstance.getCapability('location').setPrimaryLocation(parentId);
             parentComposition.add(newActivityModeInstance);
         });
 
         activitiesObjects.forEach(function (activity, index) {
             activity.relationships.modes.push('activity-mode-' + index);
+
             var newActivityInstance = instantiate(activity, 'activity-'+index);
-            newActivityInstance.getCapability('location').setPrimaryLocation(parent.getId());
+
+            newActivityInstance.getCapability('location').setPrimaryLocation(parentId);
             parentComposition.add(newActivityInstance);
         });
     };
