@@ -18,17 +18,36 @@ define(['d3-dsv'], function (d3Dsv) {
         var instantiate = this.openmct.$injector.get("instantiate");
         var parent = this.context.domainObject;
         var parentComposition = parent.getCapability("composition");
+        var activitiesObjects = [];
+        var activityModesObjects = [];
 
-        this.csvObjects.map(function (activity) {
-            activity.start = {timestamp:0, epoch:"SET"};
-            activity.duration = {timestamp:Number(activity.duration), epoch: "SET"};
-            activity.type = "activity";
+        this.csvObjects.forEach(function (activity) {
+            var newActivity = {},
+                newActivityMode = {};
+
+            newActivity.name = activity.name;
+            newActivity.start = {timestamp:0, epoch:"SET"};
+            newActivity.duration = {timestamp:Number(activity.duration), epoch: "SET"};
+            newActivity.type = "activity";
+
+            activitiesObjects.push(newActivity);
+
+            newActivityMode.name = activity.name + ' Resources';
+            newActivityMode.resources = {comms: Number(activity.comms), power:Number(activity.power)};
+            newActivityMode.type = 'mode';
+            activityModesObjects.push(newActivityMode);
         });
 
-        this.csvObjects.forEach(function (activity, index) {
-            var newActivityObject = instantiate(activity, 'activity-'+index);
-            newActivityObject.getCapability('location').setPrimaryLocation(parent.getId());
-            parentComposition.add(newActivityObject);
+        activitiesObjects.forEach(function (activity, index) {
+            var newActivityInstance = instantiate(activity, 'activity-'+index);
+            newActivityInstance.getCapability('location').setPrimaryLocation(parent.getId());
+            parentComposition.add(newActivityInstance);
+        });
+
+        activityModesObjects.forEach(function (activityMode, index) {
+            var newActivityModeInstance = instantiate(activityMode, 'activity-mode-' + index);
+            newActivityModeInstance.getCapability('location').setPrimaryLocation(parent.getId());
+            parentComposition.add(newActivityModeInstance);
         });
     };
 
