@@ -45,7 +45,7 @@ define(
 
         FollowIndicator.prototype.getText = function () {
             var timer = this.timerService.getTimer();
-            return (timer) ? 'Following timer ' + timer.getModel().name : NO_TIMER;
+            return timer ? ('Following timer ' + timer.name) : NO_TIMER;
         };
 
         FollowIndicator.prototype.getDescription = function () {
