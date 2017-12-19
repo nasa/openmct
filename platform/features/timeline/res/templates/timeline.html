@@ -20,6 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="s-timeline l-timeline-holder split-layout vertical splitter-sm"
+     ng-click="$event.stopPropagation()"
      ng-controller="TimelineController as timelineController">
 
 <mct-split-pane anchor="left" class="abs" position="pane.x">
