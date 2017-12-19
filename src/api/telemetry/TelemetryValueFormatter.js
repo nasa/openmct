@@ -41,8 +41,6 @@ define([
         };
 
         this.valueMetadata = valueMetadata;
-        this.parseCache = new WeakMap();
-        this.formatCache = new WeakMap();
         try {
             this.formatter = formatService
                 .getFormat(valueMetadata.format, valueMetadata);
@@ -72,26 +70,14 @@ define([
 
     TelemetryValueFormatter.prototype.parse = function (datum) {
         if (_.isObject(datum)) {
-            if (!this.parseCache.has(datum)) {
-                this.parseCache.set(
-                    datum,
-                    this.formatter.parse(datum[this.valueMetadata.source])
-                );
-            }
-            return this.parseCache.get(datum);
+            return this.formatter.parse(datum[this.valueMetadata.source]);
         }
         return this.formatter.parse(datum);
     };
 
     TelemetryValueFormatter.prototype.format = function (datum) {
         if (_.isObject(datum)) {
-            if (!this.formatCache.has(datum)) {
-                this.formatCache.set(
-                    datum,
-                    this.formatter.format(datum[this.valueMetadata.source])
-                );
-            }
-            return this.formatCache.get(datum);
+            return this.formatter.format(datum[this.valueMetadata.source]);
         }
         return this.formatter.format(datum);
     };

@@ -30,7 +30,8 @@ define([
     '../../platform/import-export/bundle',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
-    './activityModes/plugin'
+    './activityModes/plugin',
+    './telemetryMean/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -41,7 +42,8 @@ define([
     ImportExport,
     SummaryWidget,
     URLIndicatorPlugin,
-    ActivityModes
+    ActivityModes,
+    TelemetryMean
 ) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
@@ -126,8 +128,8 @@ define([
     };
 
     plugins.ExampleImagery = ExampleImagery;
-
     plugins.SummaryWidget = SummaryWidget;
+    plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicatorPlugin = URLIndicatorPlugin;
     plugins.ActivityModes = ActivityModes;
 
