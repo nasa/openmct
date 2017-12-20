@@ -475,11 +475,11 @@ define(
                 );
 
                 var childObj = mockDomainObject("d");
-                var testElement = $("<div class='some-class'></div>");
+                var testElement = $("<div data-layout-id='some-id'></div>");
                 $element.append(testElement);
                 spyOn(testElement[0], 'click');
 
-                controller.selectIfNew('some-class', childObj);
+                controller.selectIfNew('some-id', childObj);
                 jasmine.Clock.tick(0);
 
                 expect(testElement[0].click).toHaveBeenCalled();
