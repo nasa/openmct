@@ -50,7 +50,8 @@
     "moment": "^2.11.1",
     "node-bourbon": "^4.2.3",
     "requirejs": "2.1.x",
-    "split": "^1.0.0"
+    "split": "^1.0.0",
+    "v8-compile-cache": "^1.1.0"
   },
   "scripts": {
     "start": "node app.js",
