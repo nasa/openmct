@@ -23,7 +23,12 @@
 define([], function () {
     return function () {
         return function (openmct) {
-            /* todo */
+            openmct.types.addType('my-type', {
+                name: "Orbital Map",
+                description: "Map that keeps track of trajectory or moving objects",
+                creatable: true,
+                cssClass: 'icon-image'
+            });
         };
     };
 });

@@ -106,7 +106,7 @@ define([
     if (typeof BUILD_CONSTANTS !== 'undefined') {
         openmct.install(buildInfo(BUILD_CONSTANTS));
     }
-    openmct.install(openmct.plugins.TrajectoryPlugin());
+    openmct.install(openmct.plugins.OrbitalPlugin());
     openmct.on('start', function () {
         return new Main().run(defaultRegistry);
     });
