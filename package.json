@@ -3,7 +3,7 @@
   "version": "0.12.1-SNAPSHOT",
   "description": "The Open MCT core platform",
   "dependencies": {
-    "cesium": "^1.38.0",
+    "cesium": "^1.40.0",
     "d3-array": "^1.0.2",
     "d3-axis": "^1.0.4",
     "d3-collection": "^1.0.2",

@@ -31,7 +31,8 @@ define([
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
     './telemetryMean/plugin',
-    './orbitalPlugin/orbitalPlugin'
+    './orbitalPlugin/orbitalPlugin',
+    'Cesium'
 ], function (
     _,
     UTCTimeSystem,

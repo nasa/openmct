@@ -50,7 +50,6 @@ requirejs.config({
         "d3-interpolate": "node_modules/d3-interpolate/build/d3-interpolate.min",
         "d3-time": "node_modules/d3-time/build/d3-time.min",
         "d3-time-format": "node_modules/d3-time-format/build/d3-time-format.min",
-        "Cesium":  "node_modules/cesium/Build/Cesium/Cesium"
     },
     "shim": {
         "angular": {
@@ -90,7 +89,14 @@ requirejs.config({
         "d3-axis": {
             "exports": "d3-axis"
         },
-    }
+    },
+    packages: [
+        {
+            name: 'Cesium',
+            location: 'Cesium/Source',
+            main: 'Cesium'
+        }
+    ]
 });
 
 define([

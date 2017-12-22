@@ -20,15 +20,62 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define(['Cesium'], function (Cesium) {
     return function () {
         return function (openmct) {
-            openmct.types.addType('my-type', {
+
+            openmct.objects.addRoot({
+                namespace: 'trajectory.namespace',
+                key: 'spacecraft'
+            });
+
+            openmct.types.addType('orbitalType', {
                 name: "Orbital Map",
                 description: "Map that keeps track of trajectory or moving objects",
                 creatable: true,
                 cssClass: 'icon-image'
             });
+            var i = 0;
+            openmct.objectViews.addProvider({
+                key: 'spacecraft',
+                name: 'My View',
+                canView: function (domainObject) {
+                    //Return true if the view supports this domain object, or domain object type, otherwise false.
+                    return true;
+                },
+                priority: function (domainObject) {
+                   //If multiple views support a given domain object, return the priority of this view.
+                    return 1000;
+                },
+                view: function (domainObject) {
+                    return {
+                        show: function (container) {
+                            
+                            container.innerHTML = `<style>
+                                
+                            
+                            canvas {
+                            
+                                height: 100vh;
+                                width: 100%;
+                                margin: 0;
+                                overflow: hidden;
+                                padding: 0;
+                                font-family: sans-serif;
+                            }
+                        </style><div
+                         id="cesiumContainer" class="fullSize"></div>`;
+                      
+                            var viewer = new Cesium.CesiumWidget('cesiumContainer');
+    
+                        },
+                        destroy: function (container) {
+                        }
+                    }
+                }
+            });
+            
+      
         };
     };
 });
