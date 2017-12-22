@@ -49,7 +49,7 @@ requirejs.config({
         "d3-format": "node_modules/d3-format/build/d3-format.min",
         "d3-interpolate": "node_modules/d3-interpolate/build/d3-interpolate.min",
         "d3-time": "node_modules/d3-time/build/d3-time.min",
-        "d3-time-format": "node_modules/d3-time-format/build/d3-time-format.min"
+        "d3-time-format": "node_modules/d3-time-format/build/d3-time-format.min",
     },
     "shim": {
         "angular": {
@@ -88,8 +88,15 @@ requirejs.config({
         },
         "d3-axis": {
             "exports": "d3-axis"
+        },
+    },
+    packages: [
+        {
+            name: 'Cesium',
+            location: 'Cesium/Source',
+            main: 'Cesium'
         }
-    }
+    ]
 });
 
 define([
@@ -105,7 +112,7 @@ define([
     if (typeof BUILD_CONSTANTS !== 'undefined') {
         openmct.install(buildInfo(BUILD_CONSTANTS));
     }
-
+    openmct.install(openmct.plugins.OrbitalPlugin());
     openmct.on('start', function () {
         return new Main().run(defaultRegistry);
     });

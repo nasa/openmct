@@ -90,7 +90,6 @@ define([
     '../platform/representation/bundle',
     '../platform/search/bundle',
     '../platform/status/bundle',
-    '../platform/telemetry/bundle'
 ], function (legacyRegistry) {
 
     var DEFAULTS = [
@@ -112,7 +111,6 @@ define([
         'platform/containment',
         'platform/execution',
         'platform/exporters',
-        'platform/telemetry',
         'platform/features/clock',
         'platform/features/fixed',
         'platform/features/imagery',
@@ -131,7 +129,7 @@ define([
         'platform/entanglement',
         'platform/search',
         'platform/status',
-        'platform/commonUI/regions'
+        'platform/commonUI/regions',
     ];
 
     DEFAULTS.forEach(function (bundlePath) {

@@ -30,7 +30,9 @@ define([
     '../../platform/import-export/bundle',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
-    './telemetryMean/plugin'
+    './telemetryMean/plugin',
+    './orbitalPlugin/orbitalPlugin',
+    'Cesium'
 ], function (
     _,
     UTCTimeSystem,
@@ -41,7 +43,8 @@ define([
     ImportExport,
     SummaryWidget,
     URLIndicatorPlugin,
-    TelemetryMean
+    TelemetryMean,
+    OrbitalPlugin
 ) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
@@ -49,7 +52,8 @@ define([
         Espresso: 'platform/commonUI/themes/espresso',
         LocalStorage: 'platform/persistence/local',
         MyItems: 'platform/features/my-items',
-        Snow: 'platform/commonUI/themes/snow'
+        Telemetry: 'platform/telemetry',
+        Snow: 'platform/commonUI/themes/snow',
     };
 
     var plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
@@ -61,7 +65,6 @@ define([
     });
 
     plugins.UTCTimeSystem = UTCTimeSystem;
-
     plugins.ImportExport = ImportExport;
 
     /**
@@ -129,6 +132,7 @@ define([
     plugins.SummaryWidget = SummaryWidget;
     plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicatorPlugin = URLIndicatorPlugin;
+    plugins.OrbitalPlugin = OrbitalPlugin;
 
     return plugins;
 });
