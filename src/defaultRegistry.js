@@ -77,7 +77,6 @@ define([
     '../platform/features/static-markup/bundle',
     '../platform/features/table/bundle',
     '../platform/features/timeline/bundle',
-    '../platform/features/trajectory/bundle',
     '../platform/forms/bundle',
     '../platform/framework/bundle',
     '../platform/framework/src/load/Bundle',
@@ -131,7 +130,6 @@ define([
         'platform/search',
         'platform/status',
         'platform/commonUI/regions',
-        'platform/features/trajectory',
     ];
 
     DEFAULTS.forEach(function (bundlePath) {
