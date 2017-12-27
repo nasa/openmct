@@ -1,65 +1,72 @@
 define([
     "openmct",
-    "./src/controllers/notebookController", 
-    "./src/controllers/newEntryController",
-    "./src/controllers/selectSnapshotController",
+    "./src/controllers/NotebookController", 
+    "./src/controllers/NewEntryController",
+    "./src/controllers/SelectSnapshotController",
+    "./src/controllers/LayoutNotebookController",
     "./src/directives/MCTSnapshot",
-    "./src/directives/entryDnd",
-    "./src/actions/viewSnapshot",
-    "./src/actions/annotateSnapshot",
-    "./src/actions/removeEmbed",
-    "./src/actions/createSnapshot",
-    "./src/actions/removeSnapshot",
-    "./src/actions/newEntryContextual",
-    "./src/capabilities/notebookCapability",
-    "./src/indicators/notificationIndicator"
+    "./src/directives/MCTModalNotebook",
+    "./src/directives/EntryDnd",
+    "./src/actions/ViewSnapshot",
+    "./src/actions/AnnotateSnapshot",
+    "./src/actions/RemoveEmbed",
+    "./src/actions/CreateSnapshot",
+    "./src/actions/RemoveSnapshot",
+    "./src/actions/NewEntryContextual",
+    "./src/capabilities/NotebookCapability",
+    "./src/policies/CompositionPolicy",
+    "./src/policies/ViewPolicy",
+
 ], function (
     openmct,
-    notebookController,  
-    newEntryController, 
-    selectSnapshotController,     
+    NotebookController,  
+    NewEntryController, 
+    SelectSnapshotController,    
+    LayoutNotebookController, 
     MCTSnapshot,
+    MCTModalNotebook,
     MCTEntryDnd,
-    viewSnapshotAction,
+    ViewSnapshotAction,
     AnnotateSnapshotAction,
-    removeEmbedAction,
-    createSnapshotAction,
-    removeSnapshotAction,
+    RemoveEmbedAction,
+    CreateSnapshotAction,
+    RemoveSnapshotAction,
     newEntryAction,
     NotebookCapability,
-    NotificationLaunchIndicator
+    CompositionPolicy,
+    ViewPolicy    
 ) {
     openmct.legacyRegistry.register("example/notebook", {
         "name": "Notebook Plugin",
         "description": "Create and save timestamped notes with embedded object snapshots.",
         "extensions":
         {
-        	"types":[
-        	{
-               "key": "notebook",
-               "name": "Notebook",
-               "cssClass": "icon-notebook",
-               "description": "Create and save timestamped notes with embedded object snapshots.",
-               "features": ["creation"],
-               "model": {
-                    "entries":[
-                      { "createdOn": 1507512539258, 
-                        "text": "Quis qui dolupti atempe non preicias qui dolorro",
-                        "embeds":[]
-                      },
-                      { "createdOn": 1507570153599, 
-                        "text": "Rehek rerspis nis dem re verae remporrunti sintis vendi comnimi ntiusapic teceseque."
-                      },
-                      { "createdOn": 1507595098278, 
-                        "text": "Rehek rerspis nis dem re verae remporrunti sintis vendi comnimi ntiusapic teceseque."
-                      }
-                    ],
-                    "composition":[],
-                    "entryTypes":[]             
-                }
-           }
-           ],
-           "views": [
+          "types":[
+            {
+                 "key": "notebook",
+                 "name": "Notebook",
+                 "cssClass": "icon-notebook",
+                 "description": "Create and save timestamped notes with embedded object snapshots.",
+                 "features": ["creation"],
+                 "model": {
+                      "entries":[
+                        { "createdOn": 1507512539258, 
+                          "text": "Quis qui dolupti atempe non preicias qui dolorro",
+                          "embeds":[]
+                        },
+                        { "createdOn": 1507570153599, 
+                          "text": "Rehek rerspis nis dem re verae remporrunti sintis vendi comnimi ntiusapic teceseque."
+                        },
+                        { "createdOn": 1507595098278, 
+                          "text": "Rehek rerspis nis dem re verae remporrunti sintis vendi comnimi ntiusapic teceseque."
+                        }
+                      ],
+                      "composition":[],
+                      "entryTypes":[]             
+                  }
+            }
+          ],
+          "views": [
             {
                 "key": "notebook.view",
                 "type": "notebook",
@@ -75,11 +82,42 @@ define([
                       "drop"
                   ]
             },
-        	],
-        	"controllers": [
+            {
+                "key": "layoutNotebook",
+                "name": "Display Layout",
+                "cssClass": "icon-layout",
+                "type": "layout",
+                "templateUrl": "templates/layoutNotebook.html",
+                "editable": true,
+                "uses": [],
+                "toolbar": {
+                    "sections": [
+                        {
+                            "items": [
+                                {
+                                    "method": "showFrame",
+                                    "cssClass": "icon-frame-show",
+                                    "control": "button",
+                                    "title": "Show frame",
+                                    "description": "Show frame"
+                                },
+                                {
+                                    "method": "hideFrame",
+                                    "cssClass": "icon-frame-hide",
+                                    "control": "button",
+                                    "title": "Hide frame",
+                                    "description": "Hide frame"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+          ],
+          "controllers": [
              {
-                 "key": "notebookController",
-                 "implementation": notebookController,                 
+                 "key": "NotebookController",
+                 "implementation": NotebookController,                 
                  "depends": [ "$scope", 
                              "dialogService",
                              "popupService",
@@ -93,24 +131,33 @@ define([
                              ]
              },
              {
-                 "key": "newEntryController",
-                 "implementation": newEntryController,                 
+                 "key": "NewEntryController",
+                 "implementation": NewEntryController,                 
                  "depends": [ "$scope", 
                               "$rootScope"
                              ]
              },
              {
                  "key": "selectSnapshotController",
-                 "implementation": selectSnapshotController,                 
+                 "implementation": SelectSnapshotController,                 
                  "depends": [ "$scope", 
                               "$rootScope"
                              ]
+             },
+             {
+                 "key": "LayoutNotebookController",
+                 "implementation": LayoutNotebookController,                 
+                 "depends": [ "$scope"]
              }
-       	   ],
+           ],
            "representations": [
                 {
                     "key": "draggedEntry",
                     "templateUrl": "templates/entry.html"
+                },
+                {
+                    "key": "frameLayoutNotebook",
+                    "templateUrl": "templates/frameLayoutNotebook.html"
                 }
             ],
             "templates": [
@@ -145,12 +192,19 @@ define([
                         "typeService",
                         "notificationService"
                     ]
+                },
+                 {
+                    "key": "mctModalNotebook",
+                    "implementation": MCTModalNotebook,
+                    "depends": [
+                        "$document"
+                    ]
                 }
             ],
              "actions": [
                 {
                     "key": "view-snapshot",
-                    "implementation": viewSnapshotAction,
+                    "implementation": ViewSnapshotAction,
                     "name": "View Snapshot",
                     "description": "View the large image in a modal",
                     "category": "embed",
@@ -174,7 +228,7 @@ define([
 
                 {
                     "key": "remove-embed",
-                    "implementation": removeEmbedAction,
+                    "implementation": RemoveEmbedAction,
                     "name": "Remove...",
                     "cssClass": "icon-trash labeled",
                     "description": "Remove this embed",
@@ -188,7 +242,7 @@ define([
                 },            
                 {
                     "key": "remove-snapshot",
-                    "implementation": removeSnapshotAction,
+                    "implementation": RemoveSnapshotAction,
                     "name": "Remove Snapshot",
                     "cssClass": "icon-trash labeled",
                     "description": "Remove Snapshot of the embed",
@@ -199,7 +253,7 @@ define([
                 },
                 {
                     "key": "create-snapshot",
-                    "implementation": createSnapshotAction,
+                    "implementation": CreateSnapshotAction,
                     "name": "Create Snapshot",
                     "description": "Create a snapshot for the embed",
                     "category": "embed-no-snap",
@@ -228,10 +282,16 @@ define([
                     "priority": "preferred"
                 }
             ],
-            "indicators": [
+            "licenses": [
                 {
-                    "implementation": NotificationLaunchIndicator,
-                    "priority": "fallback"
+                    "name": "painterro",
+                    "version": "4.1.0",
+                    "author": "Mike Bostock",
+                    "description": "D3 (or D3.js) is a JavaScript library for visualizing data using web standards. D3 helps you bring data to life using SVG, Canvas and HTML. D3 combines powerful visualization and interaction techniques with a data-driven approach to DOM manipulation, giving you the full capabilities of modern browsers and the freedom to design the right visual interface for your data.",
+                    "website": "https://d3js.org/",
+                    "copyright": "Copyright 2010-2016 Mike Bostock",
+                    "license": "BSD-3-Clause",
+                    "link": "https://github.com/d3/d3/blob/master/LICENSE"
                 }
             ],
             "capabilities": [
@@ -245,6 +305,17 @@ define([
                     ]
                 }
             ],
+            "policies": [
+                {
+                    "category": "composition",
+                    "implementation": CompositionPolicy,
+                    "message": "Objects of this type cannot contain objects of that type."
+                },
+                {
+                    "category": "view",
+                    "implementation": ViewPolicy
+                }
+            ],
             "controls": [
               {
                   "key": "embed-control",
@@ -255,7 +326,7 @@ define([
                   "templateUrl":  "templates/controls/snapSelect.html"
               }
             ],
-     	     "stylesheets": [
+           "stylesheets": [
               {
                   "stylesheetUrl": "css/notebook.css",
                   "theme": "espresso"

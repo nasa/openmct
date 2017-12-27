@@ -19,36 +19,22 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,window*/
 
 define(
-    [],
     function () {
-        "use strict";
-
-        /**
-         * A tool for manually invoking notifications. When included this
-         * indicator will allow for notifications of different types to be
-         * launched for demonstration and testing purposes.
-         * @constructor
-         */
-
-        function NotificationIndicator() {
-
+        
+        function ViewPolicy() {
         }
 
-        NotificationIndicator.template = 'notificationTemplate';
+        ViewPolicy.prototype.allow = function (view, domainObject) {
+            if(view.key === 'layout'){
+                return false;
+            }
 
-        NotificationIndicator.prototype.getGlyphClass = function () {
-            return 'ok';
-        };
-        NotificationIndicator.prototype.getText = function () {
-            return "Launch notification";
-        };
-        NotificationIndicator.prototype.getDescription = function () {
-            return "Launch notification";
+            return true;
         };
 
-        return NotificationIndicator;
+        return ViewPolicy;
     }
 );
+

@@ -30,7 +30,7 @@ define(
          *
          * @constructor
          */
-        function noteBookCapability(typeService, domainObject) {
+        function NotebookCapability(typeService, domainObject) {
             this.domainObject = domainObject;
             this.typeService = typeService;
             return this;
@@ -41,10 +41,10 @@ define(
          *
          * @returns {Boolean}
          */
-        noteBookCapability.prototype.isNotebook = function () {
-            return this.typeService.getType('notebook');;
+        NotebookCapability.prototype.isNotebook = function () {
+            return this.typeService.getType('notebook');
         };
 
-        return noteBookCapability;
+        return NotebookCapability;
     }
 );

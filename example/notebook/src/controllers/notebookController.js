@@ -27,7 +27,7 @@ define(
     function () {
 
         
-    function notebookController(
+    function NotebookController(
         $scope,
         dialogService,
         popupService,
@@ -42,13 +42,7 @@ define(
         var showAll = true,
             showCompleted;
 
-        var self = this;
         $scope.entriesEl = $(document.body).find('.entries-list');
-
-        $scope.time = now();
-
-        $scope.AS = actionService;
-
         $scope.sortEntries = '-createdOn';
         $scope.showTime = "0";
         $scope.editEntry = false;
@@ -59,7 +53,7 @@ define(
 
         /*--seconds in an hour--*/
 
-        $scope.hourSecs = 60 * 60 * 1000;
+        SECONDS_IN_AN_HOUR  = 60 * 60 * 1000;
 
         this.scope = $scope;
 
@@ -74,7 +68,7 @@ define(
 
         $scope.hoursFilter = function(hours,entryTime){
             if(+hours){
-                return entryTime > (now() - $scope.hourSecs*(+hours));
+                return entryTime > (now() - SECONDS_IN_AN_HOUR *(+hours));
             }else{
                 return true;
             }            
@@ -91,11 +85,15 @@ define(
                var entries = $scope.domainObject.model.entries;
                var lastEntry= entries[entries.length-1];
                if(lastEntry==undefined || lastEntry.text || lastEntry.embeds){
-                    $scope.domainObject.model.entries.push({'createdOn':now()});                    
+                $scope.domainObject.useCapability('mutation', function(model) {
+                    model.entries.push({'createdOn':now()});
+                });
+                                        
                 }else{
-                    $scope.domainObject.model.entries[entries.length-1].createdOn = now();
-                }   
-            $scope.domainObject.useCapability('mutation', function(model) {});
+                    $scope.domainObject.useCapability('mutation', function(model) {
+                        model.entries[entries.length-1].createdOn = now();
+                    });
+                }               
             $scope.entrySearch = '';
         };
 
@@ -112,11 +110,13 @@ define(
                         errorDialog.dismiss();
                         var elementPos = $scope.domainObject.model.entries.map(function(x) {return x.createdOn; }).indexOf(+delId.replace('entry_',''));
                         if(elementPos != -1){
-                            $scope.domainObject.model.entries.splice(elementPos,1);  
+                            $scope.domainObject.useCapability('mutation', function(model) {
+                                model.entries.splice(elementPos,1);  
+                            });
                         }else{
                             console.log('delete error');
                         }
-                        $scope.domainObject.useCapability('mutation', function(model) {});  
+                          
                     }
                 },{
                     label: "Cancel",
@@ -136,11 +136,12 @@ define(
         $scope.textBlur = function($event,entryId){
             if($event.target && $event.target.value !== ""){
                 var elementPos = $scope.domainObject.model.entries.map(function(x) {return x.createdOn}).indexOf(+(entryId));
-                $scope.domainObject.model.entries[elementPos].text = $event.target.value;                
-                if($scope.currentEntryValue !== $event.target.value){
-                    $scope.domainObject.model.entries[elementPos].createdOn = now();    
-                }
-                $scope.domainObject.useCapability('mutation', function(model) {});
+                $scope.domainObject.useCapability('mutation', function(model) {
+                    model.entries[elementPos].text = $event.target.value;                
+                    if($scope.currentEntryValue !== $event.target.value){
+                       model.entries[elementPos].createdOn = now();    
+                    }
+                });
             }            
         }
 
@@ -334,5 +335,5 @@ define(
         $scope.$on('$destroy', function () {});
     }
 
-    return notebookController;
+    return NotebookController;
 });

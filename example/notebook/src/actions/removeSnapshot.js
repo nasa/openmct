@@ -24,7 +24,7 @@ define(
     [],
     function () {
 
-        function removeSnapshot(dialogService,context) {
+        function RemoveSnapshot(dialogService,context) {
             context = context || {};
 
             this.domainObject = context.selectedObject || context.domainObject;
@@ -33,9 +33,9 @@ define(
 
 
 
-        removeSnapshot.prototype.perform = function ($event,snapshot,embedId,entryId) {
+        RemoveSnapshot.prototype.perform = function ($event,snapshot,embedId,entryId) {
            
-            var domainObj = this.domainObject;
+            var DOMAIN_OBJ = this.domainObject;
             errorDialog = this.dialogService.showBlockingMessage({
                 severity: "error",
                 title: "This action will permanently delete this Snapshot. Do you want to continue?",
@@ -55,7 +55,7 @@ define(
             }); 
 
             function remove(){
-                domainObj.useCapability('mutation', function(model) {
+                DOMAIN_OBJ.useCapability('mutation', function(model) {
                     var elementPos = model.entries.map(function(x) {return x.createdOn; }).indexOf(entryId)
                     var entryEmbeds = model.entries[elementPos].embeds;
                     var embedPos = entryEmbeds.map(function(x) {return x.id; }).indexOf(embedId);
@@ -65,6 +65,6 @@ define(
 
         };
 
-        return removeSnapshot;
+        return RemoveSnapshot;
     }
 );

@@ -24,7 +24,7 @@ define(
     [],
     function () {
 
-        function removeEmbed(dialogService,context) {
+        function RemoveEmbed(dialogService,context) {
             context = context || {};
 
             this.domainObject = context.selectedObject || context.domainObject;
@@ -32,8 +32,8 @@ define(
         }
 
 
-        removeEmbed.prototype.perform = function ($event,snapshot,embedId,entryId) {
-            var domainObj = this.domainObject;
+        RemoveEmbed.prototype.perform = function ($event,snapshot,embedId,entryId) {
+            var DOMAIN_OBJ = this.domainObject;
             errorDialog = this.dialogService.showBlockingMessage({
                 severity: "error",
                 title: "This action will permanently delete this Embed. Do you want to continue?",
@@ -53,17 +53,16 @@ define(
             }); 
 
             function remove(){
-                domainObj.useCapability('mutation', function(model) {
+                DOMAIN_OBJ.useCapability('mutation', function(model) {
                     var elementPos = model.entries.map(function(x) {return x.createdOn; }).indexOf(entryId)
                     var entryEmbeds = model.entries[elementPos].embeds;
                     var embedPos = entryEmbeds.map(function(x) {return x.id; }).indexOf(embedId);
                     model.entries[elementPos].embeds.splice(embedPos,1);
                 });
-
             }
            
         };
 
-        return removeEmbed;
+        return RemoveEmbed;
     }
 );

@@ -40,10 +40,15 @@
          ng-click="controller.select($event, childObject.getId())"
          ng-style="controller.getFrameStyle(childObject.getId())">
 
-        <mct-representation key="'frame'"
+         <div ng-controller="LayoutNotebookController as controller">
+            <mct-representation key="'frameLayoutNotebook'"
                             class="t-rep-frame holder contents abs"
+                            parameters = "hasNotebookAction"
+                            ng-model="newNotebook"
                             mct-object="childObject">
-        </mct-representation>
+            </mct-representation>
+         </div>
+        
         <!-- Drag handles -->
         <span class="abs t-edit-handle-holder s-hover-border" ng-if="controller.selected(childObject)">
             <span class="edit-handle edit-move"

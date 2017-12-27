@@ -24,7 +24,7 @@
  * Module defining viewSnapshot (Originally NewWindowAction). Created by vwoeltje on 11/18/14.
  */
 define(
-    ['../../lib/painterro'],
+    ["painterro"],
     function () {
 
         var ANNOTATION_STRUCT = {
@@ -42,7 +42,7 @@ define(
             }]            
         };
 
-        function annotateSnapshot(dialogService,dndService,$rootScope,context) {
+        function AnnotateSnapshot(dialogService,dndService,$rootScope,context) {
             context = context || {};
 
             // Choose the object to be opened into a new tab
@@ -55,14 +55,13 @@ define(
         
 
 
-        annotateSnapshot.prototype.perform = function ($event,snapshot,embedId,entryId,$scope) {
+        AnnotateSnapshot.prototype.perform = function ($event,snapshot,embedId,entryId,$scope) {
             
-            var domainObject = this.domainObject;
+            var DOMAIN_OBJECT = this.domainObject;
+            var ROOTSCOPE = this.$rootScope;
            
             this.dialogService.getUserChoice(ANNOTATION_STRUCT)
                         .then(saveNotes);
-
-            var rootscope = this.$rootScope;
 
             var painterro;
 
@@ -74,12 +73,12 @@ define(
                 hiddenTools:['save', 'open', 'close','eraser'],
                 saveHandler: function (image, done) {
                         if(entryId && embedId){
-                            var elementPos = domainObject.model.entries.map(function(x) {return x.createdOn; }).indexOf(entryId)
-                            var entryEmbeds = domainObject.model.entries[elementPos].embeds;
+                            var elementPos = DOMAIN_OBJECT.model.entries.map(function(x) {return x.createdOn; }).indexOf(entryId)
+                            var entryEmbeds = DOMAIN_OBJECT.model.entries[elementPos].embeds;
                             var embedPos = entryEmbeds.map(function(x) {return x.id; }).indexOf(embedId);
                             $scope.saveSnap(image.asBlob(),embedPos,elementPos);
                         }else{  
-                            rootscope.snapshot = {'src':image.asDataURL('image/png'),
+                            ROOTSCOPE.snapshot = {'src':image.asDataURL('image/png'),
                                                   'modified':Date.now()};                             
                         }
                         
@@ -97,12 +96,12 @@ define(
                 if(param=='ok'){
                     painterro.save();
                 }else{
-                    rootscope.snapshot = "annotationCancelled";
+                    ROOTSCOPE.snapshot = "annotationCancelled";
                 }
             }
 
         };
 
-        return annotateSnapshot;
+        return AnnotateSnapshot;
     }
 );

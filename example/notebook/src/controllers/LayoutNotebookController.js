@@ -21,24 +21,34 @@
  *****************************************************************************/
 
 /**
- * Module defining SelectSnapshotController. */
+ * This bundle implements object types and associated views for
+ * display-building.
+ */
 define(
     [],
     function () {
-        
-        function SelectSnapshotController($scope,$rootScope) {
 
-            $scope.selectModel = true;
+        /**
+         * The LayoutNotebookController is responsible for supporting the
+         * notebook feature creation on theLayout view. 
+         **/
 
-            function selectprint(value){
-                $rootScope.selValue = value;
-                $scope.$parent.$parent.ngModel[$scope.$parent.$parent.field] = value;
+        function LayoutNotebookController($scope) {
+            $scope.hasNotebookAction = undefined;
+
+            $scope.newNotebook = undefined;
+
+            var actions = $scope.domainObject.getCapability('action');
+            var notebookAction = actions.getActions({'key': 'notebook-new-entry'});
+            if (notebookAction.length > 0) {
+                $scope.hasNotebookAction = true;
+                $scope.newNotebook = function () {
+                    notebookAction[0].perform();
+                };
             }
-
-            $scope.$watch("selectModel",selectprint);
-            
         }
 
-        return SelectSnapshotController;
+        return LayoutNotebookController;
     }
 );
+

@@ -30,10 +30,9 @@ define([
                                     'mct-object="selObj">'+
                                 '</mct-representation>';
 
-    function entryDnd($rootScope,$compile,dndService,typeService,notificationService) {
+    function EntryDnd($rootScope,$compile,dndService,typeService,notificationService) {
 
         function link($scope, $element) {
-            var domainObj = $scope.domainObject;
 
             function drop(e) {
                 var event = (e || {}).originalEvent || e,
@@ -46,20 +45,23 @@ define([
                
                 $scope.clearSearch();
                 if($element[0].id == 'newEntry'){
-                    entryId = domainObj.model.entries.length;
+                    entryId = $scope.domainObject.model.entries.length;
                     embedId = 0;
-                    var lastEntry= domainObj.model.entries[entryId-1];
+                    var lastEntry= $scope.domainObject.model.entries[entryId-1];
                     if(lastEntry==undefined || lastEntry.text || lastEntry.embeds){
-                        domainObj.model.entries.push({'createdOn':+Date.now(),
-                                            'embeds':[{'type':selectedObject.getId(),
+                        $scope.domainObject.useCapability('mutation', function(model) {
+                            model.entries.push({'createdOn':+Date.now(),
+                                                'embeds':[{'type':selectedObject.getId(),
                                                        'id':''+Date.now(),
                                                        'cssClass':cssClass,
                                                        'name':selectedModel.name,
                                                        'snapshot':''
                                                      }]
                                             });
+                        });
                     }else{
-                        domainObj.model.entries[entryId-1] = 
+                        $scope.domainObject.useCapability('mutation', function(model) {
+                            model.entries[entryId-1] = 
                                                     {'createdOn':+Date.now(),
                                                      'embeds':[{'type':selectedObject.getId(),
                                                                 'id':''+Date.now(),
@@ -68,6 +70,7 @@ define([
                                                                 'snapshot':''
                                                                }]
                                                     };
+                        });
                     } 
 
                     $scope.scrollToTop();
@@ -77,22 +80,23 @@ define([
 
                 }else{  
                     
-                    entryId = domainObj.model.entries.map(function(x) {
+                    entryId = $scope.domainObject.model.entries.map(function(x) {
                         return x.createdOn;
                     }).indexOf(+($element[0].id.replace('entry_','')));
-                    if(!domainObj.model.entries[entryId].embeds){
-                        domainObj.model.entries[entryId].embeds = [];
+                    if(!$scope.domainObject.model.entries[entryId].embeds){
+                        $scope.domainObject.model.entries[entryId].embeds = [];
                     }
                     
+                    $scope.domainObject.useCapability('mutation', function(model) {
+                        model.entries[entryId].embeds.push({'type':selectedObject.getId(),
+                                                                          'id':''+Date.now(),
+                                                                          'cssClass':cssClass,
+                                                                          'name':selectedModel.name,
+                                                                          'snapshot':''
+                                                                        });
+                    });
 
-                    domainObj.model.entries[entryId].embeds.push({'type':selectedObject.getId(),
-                                                                      'id':''+Date.now(),
-                                                                      'cssClass':cssClass,
-                                                                      'name':selectedModel.name,
-                                                                      'snapshot':''
-                                                                    });
-
-                    embedId = domainObj.model.entries[entryId].embeds.length-1;
+                    embedId = $scope.domainObject.model.entries[entryId].embeds.length-1;
                   
                     if (selectedObject) {
                         e.preventDefault();
@@ -125,7 +129,8 @@ define([
             
 
             $scope.$on('$destroy', function () {
-                
+                $element.off('dragover', dragover);
+                $element.off('drop', drop);
             });
         }
 
@@ -135,6 +140,6 @@ define([
         };
     }
 
-    return entryDnd;
+    return EntryDnd;
 
 });
