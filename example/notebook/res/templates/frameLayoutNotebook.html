@@ -34,9 +34,14 @@
                     ng-model="representation"
                     mct-object="domainObject">
             </mct-representation>
+            <a class="s-button icon-notebook t-btn-view-large"
+               title="New Notebook Entry"
+               ng-if="parameters"
+               ng-click="ngModel()">
+            </a>
             <a class="s-button icon-expand t-btn-view-large"
                title="View large"
-               mct-trigger-modal>
+               mct-modal-notebook>
             </a>
         </div>
     </div>

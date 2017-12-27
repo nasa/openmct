@@ -68,7 +68,7 @@ define(
             }]
         };
 
-        function newEntryContextual($compile,$rootScope,dialogService,notificationService,linkService,context) {
+        function NewEntryContextual($compile,$rootScope,dialogService,notificationService,linkService,context) {
             context = context || {};
             this.domainObject = context.selectedObject || context.domainObject;
             this.dialogService = dialogService;
@@ -83,7 +83,7 @@ define(
         }
 
 
-        newEntryContextual.prototype.perform = function () {
+        NewEntryContextual.prototype.perform = function () {
 
             var self = this;
             var domainObj = this.domainObject;  
@@ -184,12 +184,12 @@ define(
             }
         };
 
-        newEntryContextual.appliesTo = function (context) {
+        NewEntryContextual.appliesTo = function (context) {
             var domainObject = context.domainObject;
             return domainObject && domainObject.hasCapability("notebook") &&
                 domainObject.getCapability("notebook").isNotebook();
         };
 
-        return newEntryContextual;
+        return NewEntryContextual;
     }
 );

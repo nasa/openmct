@@ -64,7 +64,7 @@ define(
                     "composition",
                     parent,
                     domainObject
-                ) && parent.model.type !== 'notebook';
+                );
             }
 
             sections.push({

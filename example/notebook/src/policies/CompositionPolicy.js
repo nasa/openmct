@@ -1,4 +1,4 @@
-/*****************************************************************************
+/******************************************************************************
  * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
@@ -21,24 +21,24 @@
  *****************************************************************************/
 
 /**
- * Module defining SelectSnapshotController. */
+ * This bundle implements "containment" rules, which determine which objects
+ * can be contained within a notebook.
+ */
 define(
     [],
     function () {
-        
-        function SelectSnapshotController($scope,$rootScope) {
-
-            $scope.selectModel = true;
-
-            function selectprint(value){
-                $rootScope.selValue = value;
-                $scope.$parent.$parent.ngModel[$scope.$parent.$parent.field] = value;
-            }
-
-            $scope.$watch("selectModel",selectprint);
-            
+        function CompositionPolicy() {
         }
 
-        return SelectSnapshotController;
+        CompositionPolicy.prototype.allow = function (parent, child) {
+            var parentDef = parent.getCapability('type').getName();
+
+            if(parentDef === 'Notebook' && child.getCapability('status').list().length){
+                return false;
+            }
+            return true;
+        };
+
+        return CompositionPolicy;
     }
 );

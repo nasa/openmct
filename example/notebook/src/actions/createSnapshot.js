@@ -30,7 +30,7 @@ define(
                                     'mct-object="selObj">'+
                                 '</mct-representation>'; 
 
-        function createSnapshot($compile,context) {
+        function CreateSnapshot($compile,context) {
             context = context || {};
             this.domainObject = context.selectedObject || context.domainObject;
             this.context = context;
@@ -38,7 +38,7 @@ define(
         }
 
 
-        createSnapshot.prototype.perform = function ($event,snapshot,embedId,entryId,$scope) {
+        CreateSnapshot.prototype.perform = function ($event,snapshot,embedId,entryId,$scope) {
             var compile = this.$compile;
             var model = this.domainObject.model;
             var elementPos = model.entries.map(function(x) {return x.createdOn; }).indexOf(entryId)
@@ -56,6 +56,6 @@ define(
             });
         };
 
-        return createSnapshot;
+        return CreateSnapshot;
     }
 );

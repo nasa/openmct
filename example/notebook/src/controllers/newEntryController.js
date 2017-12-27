@@ -21,12 +21,12 @@
  *****************************************************************************/
 
 /**
- * Module defining newEntryController. */
+ * Module defining NewEntryController. */
 define(
     [],
     function () {
         
-        function newEntryController($scope,$rootScope) {
+        function NewEntryController($scope,$rootScope) {
 
             $scope.snapshot = undefined;
             $scope.snapToggle = true;
@@ -61,6 +61,6 @@ define(
             }
         }
 
-        return newEntryController;
+        return NewEntryController;
     }
 );

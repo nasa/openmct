@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 /**
- * Module defining viewSnapshot (Originally NewWindowAction). Created by vwoeltje on 11/18/14.
+ * Module defining ViewSnapshot
  */
 define(
     [],
@@ -40,7 +40,7 @@ define(
         '    </div>';
 
 
-        function viewSnapshot($compile,context) {
+        function ViewSnapshot($compile,context) {
             context = context || {};
 
             this.$compile = $compile;
@@ -125,7 +125,7 @@ define(
         }
 
 
-        viewSnapshot.prototype.perform = function($event,snapshot,embedId,entryId,$scope,embed) {
+        ViewSnapshot.prototype.perform = function($event,snapshot,embedId,entryId,$scope,embed) {
             var isOpen = false;
 
              // Create the overlay element and add it to the document's body
@@ -155,6 +155,6 @@ define(
             toggleOverlay();
         };
 
-        return viewSnapshot;
+        return ViewSnapshot;
     }
 );
