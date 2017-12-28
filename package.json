@@ -1,7 +1,7 @@
 {
   "name": "openmct",
   "version": "0.12.1-SNAPSHOT",
-  "description": "The Open MCT core platform -- notebook",
+  "description": "The Open MCT core platform",
   "dependencies": {
     "@cristian77/painterro": "^0.2.48",
     "d3-array": "^1.0.2",
@@ -15,7 +15,6 @@
     "d3-time": "^1.0.4",
     "d3-time-format": "^2.0.3",
     "express": "^4.13.1",
-    "jasmine-core": "^2.5.2",
     "minimist": "^1.1.1",
     "request": "^2.69.0"
   },
