@@ -23,9 +23,7 @@
 /**
  * Module defining RemoveAction. Created by vwoeltje on 11/17/14.
  */
-define(
-    [],
-    function () {
+define(['./RemoveDialog'], function (RemoveDialog) {
 
         /**
          * Construct an action which will remove the provided object manifestation.
@@ -33,25 +31,27 @@ define(
          * is looked up via the "context" capability (so this will be the
          * immediate ancestor by which this specific object was reached.)
          *
-         * @param {DomainObject} object the object to be removed
+         * @param {DialogService} dialogService a service which will show the dialog
+         * @param {NavigationService} navigationService a service that maintains the current navigation state
          * @param {ActionContext} context the context in which this action is performed
          * @memberof platform/commonUI/edit
          * @constructor
          * @implements {Action}
          */
-        function RemoveAction(navigationService, context) {
+        function RemoveAction(dialogService, navigationService, context) {
             this.domainObject = (context || {}).domainObject;
+            this.dialogService = dialogService;
             this.navigationService = navigationService;
         }
 
         /**
          * Perform this action.
-         * @return {Promise} a promise which will be
-         *         fulfilled when the action has completed.
          */
         RemoveAction.prototype.perform = function () {
-            var navigationService = this.navigationService,
-                domainObject = this.domainObject;
+            var dialog,
+                dialogService = this.dialogService,
+                domainObject = this.domainObject,
+                navigationService = this.navigationService;
             /*
              * Check whether an object ID matches the ID of the object being
              * removed (used to filter a parent's composition to handle the
@@ -111,7 +111,12 @@ define(
                 return parent.useCapability('mutation', doMutate);
             }
 
-            return removeFromContext(domainObject);
+            /*
+             * Pass in the function to remove the domain object so it can be
+             * associated with an 'OK' button press
+             */
+            dialog = new RemoveDialog(dialogService, domainObject, removeFromContext);
+            dialog.show();
         };
 
         // Object needs to have a parent for Remove to be applicable
