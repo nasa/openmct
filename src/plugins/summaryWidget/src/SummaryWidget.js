@@ -5,6 +5,7 @@ define([
     './TestDataManager',
     './WidgetDnD',
     './eventHelpers',
+    '../../../api/objects/object-utils',
     'lodash',
     'zepto'
 ], function (
@@ -14,6 +15,7 @@ define([
     TestDataManager,
     WidgetDnD,
     eventHelpers,
+    objectUtils,
     _,
     $
 ) {
@@ -77,7 +79,7 @@ define([
         this.addHyperlink(domainObject.url, domainObject.openNewTab);
         this.watchForChanges(openmct, domainObject);
 
-        var id = this.domainObject.identifier.key,
+        var id = objectUtils.makeKeyString(this.domainObject.identifier),
             self = this,
             oldDomainObject,
             statusCapability;
