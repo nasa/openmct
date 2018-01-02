@@ -14,7 +14,8 @@ define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
         beforeEach(function () {
             mockDomainObject = {
                 identifier: {
-                    key: 'testKey'
+                    key: 'testKey',
+                    namespace: 'testNamespace'
                 },
                 name: 'testName',
                 composition: [],
@@ -49,7 +50,7 @@ define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
             mockObjectService.getObjects = jasmine.createSpy('objectService');
             mockObjectService.getObjects.andReturn(new Promise(function (resolve, reject) {
                 resolve({
-                    testKey: mockOldDomainObject
+                    'testNamespace:testKey': mockOldDomainObject
                 });
             }));
             mockOpenMCT = jasmine.createSpyObj('openmct', [
@@ -71,6 +72,10 @@ define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
             summaryWidget = new SummaryWidget(mockDomainObject, mockOpenMCT);
             mockContainer = document.createElement('div');
             summaryWidget.show(mockContainer);
+        });
+
+        it('queries with legacyId', function () {
+            expect(mockObjectService.getObjects).toHaveBeenCalledWith(['testNamespace:testKey']);
         });
 
         it('adds its DOM element to the view', function () {
