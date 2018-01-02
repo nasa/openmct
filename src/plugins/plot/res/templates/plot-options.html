@@ -1,0 +1,10 @@
+<div ng-if="domainObject.getCapability('editor').inEditContext()">
+    <mct-representation key="'plot-options-edit'"
+        mct-object="domainObject">
+    </mct-representation>
+</div>
+<div ng-if="!domainObject.getCapability('editor').inEditContext()">
+    <mct-representation key="'plot-options-browse'"
+        mct-object="domainObject">
+    </mct-representation>
+</div>
