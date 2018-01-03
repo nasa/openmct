@@ -20,11 +20,15 @@ define([
                 }
             });
 
-            openmct.mainViews.addProvider({
+            openmct.objectViews.addProvider({
                 name: 'Latest Value Table',
+                key:'latest-value-table',
                 cssClass: 'icon-tabular-lad',
                 canView: function (d) {
-                    return d.type === 'view.latest-value-table' && 150;
+                    return d.type === 'view.latest-value-table';
+                },
+                priority: function () {
+                    return 150;
                 },
                 view: function (domainObject) {
 
