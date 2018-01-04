@@ -325,6 +325,10 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
             testOperation = testEvaluator.operations.isUndefined.operation;
             expect(testOperation([1])).toEqual(false);
             expect(testOperation([])).toEqual(true);
+            //isDefined
+            testOperation = testEvaluator.operations.isDefined.operation;
+            expect(testOperation([1])).toEqual(true);
+            expect(testOperation([])).toEqual(false);
         });
 
         it('can produce a description for all supported operations', function () {
