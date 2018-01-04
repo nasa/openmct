@@ -28,15 +28,15 @@ define(
     [],
     function () {
 
-        function isDirty(domainObject) {
-            var navigatedObject = domainObject,
-                editorCapability = navigatedObject &&
-                    navigatedObject.getCapability("editor");
+        // function isDirty(domainObject) {
+        //     var navigatedObject = domainObject,
+        //         editorCapability = navigatedObject &&
+        //             navigatedObject.getCapability("editor");
 
-            return editorCapability &&
-                editorCapability.isEditContextRoot() &&
-                editorCapability.dirty();
-        }
+        //     return editorCapability &&
+        //         editorCapability.isEditContextRoot() &&
+        //         editorCapability.dirty();
+        // }
 
         function cancelEditing(domainObject) {
             var navigatedObject = domainObject,
