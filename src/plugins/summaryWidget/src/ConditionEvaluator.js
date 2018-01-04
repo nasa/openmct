@@ -206,6 +206,17 @@ define([], function () {
                 getDescription: function () {
                     return ' is undefined';
                 }
+            },
+            isDefined: {
+                operation: function (input) {
+                    return typeof input[0] !== 'undefined';
+                },
+                text: 'is defined',
+                appliesTo: ['string', 'number'],
+                inputCount: 0,
+                getDescription: function () {
+                    return ' is defined';
+                }
             }
         };
     }
@@ -304,9 +315,12 @@ define([], function () {
         op = this.operations[operation] && this.operations[operation].operation;
         input = telemetryValue && telemetryValue.concat(values);
         validator = op && this.inputValidators[this.operations[operation].appliesTo[0]];
-
         if (op && input && validator) {
-            return validator(input) && op(input);
+            if (this.operations[operation].appliesTo.length === 2) {
+                return (this.validateNumberInput(input) || this.validateStringInput(input)) && op(input);
+            } else {
+                return validator(input) && op(input);
+            }
         } else {
             throw new Error('Malformed condition');
         }
