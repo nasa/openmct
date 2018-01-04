@@ -59,10 +59,7 @@ define(
 
             var removeCheck = navigationService
                 .checkBeforeNavigation(function () {
-                    if (isDirty(domainObject)) {
-                        return "Continuing will cause the loss of any unsaved changes.";
-                    }
-                    return false;
+                    return "Continuing will cause the loss of any unsaved changes.";
                 });
 
             $scope.$on('$destroy', function () {
