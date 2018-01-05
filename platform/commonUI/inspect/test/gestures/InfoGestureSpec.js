@@ -101,7 +101,7 @@ define(
                     jasmine.any(String),
                     "Test Object",
                     testMetadata,
-                    [1977, 42]
+                    [1982, 47]
                 );
             });
 
@@ -130,7 +130,7 @@ define(
                     jasmine.any(String),
                     "Test Object",
                     testMetadata,
-                    [1984, 11]
+                    [1989, 16]
                 );
             });
 
