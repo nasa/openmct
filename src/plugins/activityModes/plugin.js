@@ -1,4 +1,4 @@
-define(['./src/actions/activityModesImportAction'], function(ActivityModes) {
+define(['./src/actions/activityModesImportAction'], function (ActivityModes) {
     function plugin() {
 
         return function install(openmct) {
@@ -42,6 +42,6 @@ define(['./src/actions/activityModesImportAction'], function(ActivityModes) {
             });
         };
     }
-    
+
     return plugin;
 });

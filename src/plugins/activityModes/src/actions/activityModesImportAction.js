@@ -37,15 +37,15 @@ define(['d3-dsv'], function (d3Dsv) {
                 newActivityMode = {};
 
             newActivity.name = activity.name;
-            newActivity.start = {timestamp:0, epoch:"SET"};
-            newActivity.duration = {timestamp:Number(activity.duration), epoch: "SET"};
+            newActivity.start = {timestamp: 0, epoch: "SET"};
+            newActivity.duration = {timestamp: Number(activity.duration), epoch: "SET"};
             newActivity.type = "activity";
-            newActivity.relationships = {modes:[]};
+            newActivity.relationships = {modes: []};
 
             activitiesObjects.push(newActivity);
 
             newActivityMode.name = activity.name + ' Resources';
-            newActivityMode.resources = {comms: Number(activity.comms), power:Number(activity.power)};
+            newActivityMode.resources = {comms: Number(activity.comms), power: Number(activity.power)};
             newActivityMode.type = 'mode';
 
             activityModesObjects.push(newActivityMode);
@@ -63,7 +63,7 @@ define(['d3-dsv'], function (d3Dsv) {
         activitiesObjects.forEach(function (activity, index) {
             activity.relationships.modes.push('activity-mode-' + index);
 
-            var newActivityInstance = this.instantiate(activity, 'activity-'+index);
+            var newActivityInstance = this.instantiate(activity, 'activity-' + index);
 
             newActivityInstance.getCapability('location').setPrimaryLocation(parentId);
             parentComposition.add(newActivityInstance);
@@ -71,7 +71,7 @@ define(['d3-dsv'], function (d3Dsv) {
     };
 
     ActivityModesImportAction.prototype.createActivityModesFolder = function () {
-        var folderInstance = this.instantiate({name:'Activity-Modes', type:'folder', composition:[]}, 'activity-modes-folder');
+        var folderInstance = this.instantiate({name: 'Activity-Modes', type: 'folder', composition: []}, 'activity-modes-folder');
         folderInstance.getCapability('location').setPrimaryLocation(this.parent.getId());
         this.parent.getCapability('composition').add(folderInstance);
 
@@ -93,7 +93,6 @@ define(['d3-dsv'], function (d3Dsv) {
                             text: 'Select File'
                         }
                     ]
-                    
                 }
             ]
         };
