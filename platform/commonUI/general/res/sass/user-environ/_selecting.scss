@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .s-hover-border {
+    border: 1px solid transparent;
     &:hover {
         border-color: rgba($colorSelectableSelectedPrimary, 0.5) !important;
     }
