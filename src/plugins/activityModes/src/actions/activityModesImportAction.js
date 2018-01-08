@@ -13,6 +13,10 @@ define(['d3-dsv'], function (d3Dsv) {
     ActivityModesImportAction.prototype.perform = function () {
         this.dialogService.getUserInput(this.getFormModel(), function () {})
         .then(function (form) {
+            if(form.selectFile.name.slice(-3) !== 'csv'){
+                this.displayError();
+            }
+
             this.csvParse(form.selectFile.body).then(this.instantiateActivities);
         }.bind(this));
     };
@@ -76,6 +80,26 @@ define(['d3-dsv'], function (d3Dsv) {
         this.parent.getCapability('composition').add(folderInstance);
 
         return folderInstance;
+    };
+
+    ActivityModesImportAction.prototype.displayError = function () {
+        var dialog,
+        perform = this.perform.bind(this),
+        model = {
+            title: "Invalid File",
+            actionText:  "The selected file was not a valid CSV file",
+            severity: "error",
+            options: [
+                {
+                    label: "Ok",
+                    callback: function () {
+                        dialog.dismiss();
+                        perform();
+                    }
+                }
+            ]
+        };
+        dialog = this.dialogService.showBlockingMessage(model);
     };
 
     ActivityModesImportAction.prototype.getFormModel = function () {
