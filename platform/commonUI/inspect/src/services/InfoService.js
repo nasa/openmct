@@ -65,6 +65,10 @@ define(
             options = Object.create(OPTIONS);
             options.marginX = -bubbleSpaceLR;
 
+            // prevent bubble from appearing right under pointer,
+            // which causes hover callback to be called multiple times
+            options.offsetX = 1;
+
             // On a phone, bubble takes up more screen real estate,
             // so position it differently (toward the bottom)
             if (this.agentService.isPhone()) {
