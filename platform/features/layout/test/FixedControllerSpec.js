@@ -350,7 +350,7 @@ define(
                 expect(controller.getSelectedElement()).toEqual(elements[1]);
             });
 
-             it("selects the parent view when selected element is removed", function () {
+            it("selects the parent view when selected element is removed", function () {
                 testModel.modified = 1;
                 findWatch("model.modified")(testModel.modified);
 
