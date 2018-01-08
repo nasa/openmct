@@ -4,6 +4,8 @@ define(['d3-dsv'], function (d3Dsv) {
         this.dialogService = dialogService;
         this.openmct = openmct;
         this.context = context;
+        this.parent = this.context.domainObject;
+        this.instantiate = this.openmct.$injector.get("instantiate");
 
         this.instantiateActivities = this.instantiateActivities.bind(this);
     }
@@ -24,8 +26,7 @@ define(['d3-dsv'], function (d3Dsv) {
     };
 
     ActivityModesImportAction.prototype.instantiateActivities = function (csvObjects) {
-        var instantiate = this.openmct.$injector.get("instantiate"),
-            parent = this.context.domainObject,
+        var parent = this.context.domainObject,
             parentId = parent.getId(),
             parentComposition = parent.getCapability("composition"),
             activitiesObjects = [],
@@ -50,21 +51,31 @@ define(['d3-dsv'], function (d3Dsv) {
             activityModesObjects.push(newActivityMode);
         });
 
-        activityModesObjects.forEach(function (activityMode, index) {
-            var newActivityModeInstance = instantiate(activityMode, 'activity-mode-' + index);
+        var folderComposition = this.createActivityModesFolder().getCapability('composition');
 
-            newActivityModeInstance.getCapability('location').setPrimaryLocation(parentId);
-            parentComposition.add(newActivityModeInstance);
-        });
+        activityModesObjects.forEach(function (activityMode, index) {
+            var newActivityModeInstance = this.instantiate(activityMode, 'activity-mode-' + index);
+
+            newActivityModeInstance.getCapability('location').setPrimaryLocation('activity-modes-folder');
+            folderComposition.add(newActivityModeInstance);
+        }.bind(this));
 
         activitiesObjects.forEach(function (activity, index) {
             activity.relationships.modes.push('activity-mode-' + index);
 
-            var newActivityInstance = instantiate(activity, 'activity-'+index);
+            var newActivityInstance = this.instantiate(activity, 'activity-'+index);
 
             newActivityInstance.getCapability('location').setPrimaryLocation(parentId);
             parentComposition.add(newActivityInstance);
-        });
+        }.bind(this));
+    };
+
+    ActivityModesImportAction.prototype.createActivityModesFolder = function () {
+        var folderInstance = this.instantiate({name:'Activity-Modes', type:'folder', composition:[]}, 'activity-modes-folder');
+        folderInstance.getCapability('location').setPrimaryLocation(this.parent.getId());
+        this.parent.getCapability('composition').add(folderInstance);
+
+        return folderInstance;
     };
 
     ActivityModesImportAction.prototype.getFormModel = function () {

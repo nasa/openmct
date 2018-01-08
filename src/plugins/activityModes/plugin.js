@@ -4,19 +4,19 @@ define(['./src/actions/activityModesImportAction'], function(ActivityModes) {
         return function install(openmct) {
 
             openmct.legacyRegistry.register("src/plugins/activityModes", {
-                "name": "Activity Modes",
+                "name": "Activity Import",
                 "description": "Defines a root named My Items",
                 "extensions": {
                     "roots": [
                         {
-                            "id": "activity-modes"
+                            "id": "activity-import"
                         }
                     ],
                     "models": [
                         {
-                            "id": "activity-modes",
+                            "id": "activity-import",
                             "model": {
-                                "name": "Activity Modes",
+                                "name": "Activity Import",
                                 "type": "folder",
                                 "composition": [],
                                 "location": "ROOT"
@@ -33,7 +33,7 @@ define(['./src/actions/activityModesImportAction'], function(ActivityModes) {
                 category: ["contextual"],
                 implementation: ActivityModes,
                 cssClass: "major icon-import",
-                name: "Import from CSV",
+                name: "Import Activity Definitions from CSV",
                 description: "Import activities from a CSV file",
                 depends: [
                     "dialogService",
