@@ -58,28 +58,28 @@ define([
             domainObject = this.domainObject,
             navigationService = this.navigationService;
         /*
-            * Check whether an object ID matches the ID of the object being
-            * removed (used to filter a parent's composition to handle the
-            * removal.)
-            */
+         * Check whether an object ID matches the ID of the object being
+         * removed (used to filter a parent's composition to handle the
+         * removal.)
+         */
         function isNotObject(otherObjectId) {
             return otherObjectId !== domainObject.getId();
         }
 
         /*
-            * Mutate a parent object such that it no longer contains the object
-            * which is being removed.
-            */
+         * Mutate a parent object such that it no longer contains the object
+         * which is being removed.
+         */
         function doMutate(model) {
             model.composition = model.composition.filter(isNotObject);
         }
 
         /*
-            * Checks current object and ascendants of current
-            * object with object being removed, if the current
-            * object or any in the current object's path is being removed,
-            * navigate back to parent of removed object.
-            */
+         * Checks current object and ascendants of current
+         * object with object being removed, if the current
+         * object or any in the current object's path is being removed,
+         * navigate back to parent of removed object.
+         */
         function checkObjectNavigation(object, parentObject) {
             // Traverse object starts at current location
             var traverseObject = (navigationService).getNavigation(),
@@ -101,10 +101,10 @@ define([
         }
 
         /*
-            * Remove the object from its parent, as identified by its context
-            * capability. Based on object's location and selected object's location
-            * user may be navigated to existing parent object
-            */
+         * Remove the object from its parent, as identified by its context
+         * capability. Based on object's location and selected object's location
+         * user may be navigated to existing parent object
+         */
         function removeFromContext(object) {
             var contextCapability = object.getCapability('context'),
                 parent = contextCapability.getParent();
@@ -117,9 +117,9 @@ define([
         }
 
         /*
-            * Pass in the function to remove the domain object so it can be
-            * associated with an 'OK' button press
-            */
+         * Pass in the function to remove the domain object so it can be
+         * associated with an 'OK' button press
+         */
         dialog = new RemoveDialog(dialogService, domainObject, removeFromContext);
         dialog.show();
     };
