@@ -26,6 +26,8 @@ define(
 
         describe("The Remove action", function () {
             var mockQ,
+                mockDialogHandle,
+                mockDialogService,
                 mockNavigationService,
                 mockDomainObject,
                 mockParent,
@@ -54,7 +56,7 @@ define(
             beforeEach(function () {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    ["getId", "getCapability"]
+                    ["getId", "getCapability", "getModel"]
                 );
                 mockChildObject = jasmine.createSpyObj(
                     "domainObject",
@@ -86,6 +88,13 @@ define(
                 mockRootContext = jasmine.createSpyObj("context", ["getParent"]);
                 mockMutation = jasmine.createSpyObj("mutation", ["invoke"]);
                 mockType = jasmine.createSpyObj("type", ["hasFeature"]);
+
+                mockDialogHandle = jasmine.createSpyObj("dialogHandle", ["dismiss"]);
+                mockDialogService = jasmine.createSpyObj(
+                    "dialogService",
+                    ["showBlockingMessage"]
+                );
+
                 mockNavigationService = jasmine.createSpyObj(
                     "navigationService",
                     [
@@ -97,9 +106,9 @@ define(
                 );
                 mockNavigationService.getNavigation.andReturn(mockDomainObject);
 
-
                 mockDomainObject.getId.andReturn("test");
                 mockDomainObject.getCapability.andReturn(mockContext);
+                mockDomainObject.getModel.andReturn({name: 'test object'});
                 mockContext.getParent.andReturn(mockParent);
                 mockType.hasFeature.andReturn(true);
 
@@ -113,7 +122,7 @@ define(
 
                 actionContext = { domainObject: mockDomainObject };
 
-                action = new RemoveAction(mockNavigationService, actionContext);
+                action = new RemoveAction(mockDialogService, mockNavigationService, actionContext);
             });
 
             it("only applies to objects with parents", function () {
@@ -125,6 +134,12 @@ define(
 
                 // Also verify that creatability was checked
                 expect(mockType.hasFeature).toHaveBeenCalledWith('creation');
+            });
+
+            it("shows a blocking message dialog", function () {
+                action.perform();
+                expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
+                expect(mockDialogHandle.dismiss).not.toHaveBeenCalled();
             });
 
             it("mutates the parent when performed", function () {
