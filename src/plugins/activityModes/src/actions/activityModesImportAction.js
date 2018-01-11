@@ -66,7 +66,8 @@ define(['d3-dsv'], function (d3Dsv) {
 
         activitiesObjects.forEach(function (activity, index) {
             activity.relationships.modes.push('activity-mode-' + index);
-
+            activity.id = 'activity-' + index;
+            
             var newActivityInstance = this.instantiate(activity, 'activity-' + index);
 
             newActivityInstance.getCapability('location').setPrimaryLocation(parentId);

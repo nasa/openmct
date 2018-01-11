@@ -32,11 +32,26 @@ define(
          * @param {DomainObject} domainObject the Activity
          */
         function ActivityTimespanCapability($q, domainObject) {
+
+            function findTimeline (object) {
+                var parent = domainObject.getCapability('context').parentObject;
+
+                while (parent.getModel().type !== 'timeline') {
+                    parent = parent.getCapability('context').parentObject;
+                    findTimeline(parent);
+                }
+
+                return parent;
+            }
+
+            var parent = findTimeline(domainObject);
+
             // Promise time span
             function promiseTimeSpan() {
                 return $q.when(new ActivityTimespan(
                     domainObject.getModel(),
-                    domainObject.getCapability('mutation')
+                    domainObject.getCapability('mutation'),
+                    parent
                 ));
             }
 

@@ -21,22 +21,34 @@
  *****************************************************************************/
 
 define(
-    [],
-    function () {
-
+    ['EventEmitter'],
+    function (EventEmitter) {
         /**
          * Describes the time span of an activity object.
          * @param model the activity's object model
          */
-        function ActivityTimespan(model, mutation) {
+        function ActivityTimespan(model, mutation, parentTimeline) {
+            var parentTimelineModel = parentTimeline.getModel();
+
+            function getTimelineActivityStart(domainObjectModel) {
+                if (domainObjectModel && domainObjectModel.activities[model.id]) {
+                    return domainObjectModel.activities[model.id];
+                } else {
+                    return model.start.timestamp;
+                }
+            }
+
             // Get the start time for this timeline
             function getStart() {
-                return model.start.timestamp;
+                // console.log(domainObjectModel.activities[model.id]);
+                return getTimelineActivityStart(parentTimelineModel);
             }
 
             // Get the end time for this timeline
             function getEnd() {
-                return model.start.timestamp + model.duration.timestamp;
+                var start = getTimelineActivityStart(parentTimelineModel);
+
+                return start + model.duration.timestamp;
             }
 
             // Get the duration of this timeline
@@ -52,8 +64,10 @@ define(
             // Set the start time associated with this object
             function setStart(value) {
                 var end = getEnd();
+                parentTimelineModel.activities[model.id] = Math.max(value, 0);
+
                 mutation.mutate(function (m) {
-                    m.start.timestamp = Math.max(value, 0);
+                    // m.start.timestamp = Math.max(value, 0);
                     // Update duration to keep end time
                     m.duration.timestamp = Math.max(end - value, 0);
                 }, model.modified);

@@ -204,7 +204,8 @@ define([
                         "composition": [],
                         "start": {
                             "timestamp": 0
-                        }
+                        },
+                        "activities": {}
                     }
                 },
                 {
