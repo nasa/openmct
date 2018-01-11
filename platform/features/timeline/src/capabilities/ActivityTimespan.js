@@ -28,32 +28,41 @@ define(
          * @param model the activity's object model
          */
         function ActivityTimespan(model, mutation, parentTimeline) {
-            var parentTimelineModel = parentTimeline.getModel();
+            var parentTimelineModel = parentTimeline.getModel(),
+                parentMutation = parentTimeline.getCapability('mutation');
 
-            function getTimelineActivityStart(domainObjectModel) {
-                if (domainObjectModel && domainObjectModel.activities[model.id]) {
-                    return domainObjectModel.activities[model.id];
+            function getTimelineActivityStart (domainObjectModel) {
+                if (domainObjectModel.activityStart && domainObjectModel.activityStart[model.id]) {
+                    return domainObjectModel.activityStart[model.id];
                 } else {
                     return model.start.timestamp;
                 }
             }
 
+            function getTimelineActivityDuration (domainObjectModel) {
+                if (domainObjectModel.activityDuration && domainObjectModel.activityDuration[model.id]) {
+                    return domainObjectModel.activityDuration[model.id];
+                } else {
+                    return model.duration.timestamp;
+                }
+            }
+
             // Get the start time for this timeline
             function getStart() {
-                // console.log(domainObjectModel.activities[model.id]);
                 return getTimelineActivityStart(parentTimelineModel);
             }
 
             // Get the end time for this timeline
             function getEnd() {
-                var start = getTimelineActivityStart(parentTimelineModel);
+                var start = getTimelineActivityStart(parentTimelineModel),
+                    duration = getTimelineActivityDuration(parentTimelineModel);
 
-                return start + model.duration.timestamp;
+                return start + duration;
             }
 
             // Get the duration of this timeline
             function getDuration() {
-                return model.duration.timestamp;
+                return getTimelineActivityDuration(parentTimelineModel);
             }
 
             // Get the epoch used by this timeline
@@ -64,28 +73,41 @@ define(
             // Set the start time associated with this object
             function setStart(value) {
                 var end = getEnd();
-                parentTimelineModel.activities[model.id] = Math.max(value, 0);
 
-                mutation.mutate(function (m) {
-                    // m.start.timestamp = Math.max(value, 0);
-                    // Update duration to keep end time
-                    m.duration.timestamp = Math.max(end - value, 0);
-                }, model.modified);
+                parentMutation.mutate(function (m) {
+                    m.activityStart[model.id] = Math.max(value,0);
+                    m.activityDuration[model.id] = Math.max(end - value, 0);
+                });
+
+                // mutation.mutate(function (m) {
+                //     m.start.timestamp = Math.max(value, 0);
+                //     // Update duration to keep end time
+                //     m.duration.timestamp = Math.max(end - value, 0);
+                // }, model.modified);
             }
 
             // Set the duration associated with this object
             function setDuration(value) {
-                mutation.mutate(function (m) {
-                    m.duration.timestamp = Math.max(value, 0);
-                }, model.modified);
+                parentMutation.mutate(function (m) {
+                    m.activityDuration[model.id] = Math.max(value, 0);
+                });
+
+                // mutation.mutate(function (m) {
+                //     m.duration.timestamp = Math.max(value, 0);
+                // }, model.modified);
             }
 
             // Set the end time associated with this object
             function setEnd(value) {
                 var start = getStart();
-                mutation.mutate(function (m) {
-                    m.duration.timestamp = Math.max(value - start, 0);
-                }, model.modified);
+
+                parentMutation.mutate(function (m) {
+                    m.activityDuration[model.id] = Math.max(value - start, 0);
+                });
+
+                // mutation.mutate(function (m) {
+                //     m.duration.timestamp = Math.max(value - start, 0);
+                // }, model.modified);
             }
 
             return {
