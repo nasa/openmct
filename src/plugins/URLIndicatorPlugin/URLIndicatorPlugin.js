@@ -6,7 +6,10 @@ define(
 
     return function (opts) {
         return function install(openmct) {
-            return new URLIndicator(opts, openmct);
+            var simpleIndicator = openmct.indicators.simpleIndicator();
+            openmct.indicators.add(simpleIndicator);
+
+            return new URLIndicator(opts, openmct, simpleIndicator);
         };
     };
 });

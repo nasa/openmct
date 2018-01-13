@@ -21,82 +21,69 @@
  *****************************************************************************/
 
 define([
-    './Indicator',
-    './displayLegacyIndicator',
+    './SimpleIndicator',
     '../../../platform/framework/src/Constants',
     'lodash'
 ], function (
-    Indicator,
-    displayLegacyIndicator,
+    SimpleIndicator,
     Constants,
     _
 ) {
 
-    var DEFAULT_PRIORITY = Number.NEGATIVE_INFINITY;
+    var LEGACY_INDICATOR_TEMPLATE = 
+        '<mct-include ' +
+        '   ng-model="indicator" ' +
+        '   key="template" ' +
+        '   class="status-block-holder" ' +
+        '   ng-class="indicator.getGlyphClass()"> ' +
+        ' </mct-include>';
 
     function IndicatorAPI(openmct) {
         this.openmct = openmct;
-        this.displayFunctions = [];
-        this.promiseForAllDisplayFunctions = 
+        this.indicatorElements = [];
+        this.promiseForAllElements = 
             fetchLegacyIndicators.call(this)
             .then(addLegacyIndicators.bind(this))
-            .then(resolveWithAllDisplayFunctions.bind(this));
+            .then(resolveWithAllIndicatorElements.bind(this));
     }
 
-    IndicatorAPI.prototype.create = function (priority, displayFunction) {
-        priority = getOrDefaultPriority(arguments);
-        displayFunction = getDisplayFunctionFromArgs(arguments);
-
-        if (displayFunction === undefined) {
-            var indicator = new Indicator(this.openmct);
-            displayFunction = Indicator.defaultDisplayFunction.bind(indicator);
-            addDisplayFunctionWithPriority.call(this, displayFunction, priority);
-            return indicator;
-        } else {
-            var wrappedDisplayFunction = wrapCustomDisplayFunction.call(this, displayFunction);
-            addDisplayFunctionWithPriority.call(this, wrappedDisplayFunction, priority);
-        }
-    }
-
-    function getOrDefaultPriority(args) {
-        if (typeof args[0] === 'number') {
-            return args[0];
-        } else {
-            return DEFAULT_PRIORITY;
-        }
-    }
-
-    function getDisplayFunctionFromArgs(args) {
-        if (typeof args[0] === 'function'){
-            // No priority specified, display function is first argument
-            return args[0];
-        } else if (typeof args[1] === 'function') {
-            // Priority is specified, so display function is second argument
-            return args[1];
-        } else {
-            return undefined;
-        }
+    IndicatorAPI.prototype.simpleIndicator = function () {
+        return new SimpleIndicator(this.openmct);
     }
 
     /**
-     * Wraps custom display functions in a DOM node with appropriate CSS rules. This allows
-     * us to have some control over how custom indicators appear alongside non-custom indicators
+     * Accepts an indicator object, which is a simple object 
+     * with a single attribute, 'element' which has an HTMLElement
+     * as its value.
+     * 
+     * We provide .simpleIndicator() as a convenience function
+     * which will create a default Open MCT indicator that can 
+     * be passed to .add(indicator). This indicator also exposes 
+     * functions for changing its appearance to support customization 
+     * and dynamic behavior.
+     * 
+     * Eg.
+     * var myIndicator = openmct.indicators.simpleIndicator();
+     * openmct.indicators.add(myIndicator);
+     * 
+     * myIndicator.text("Hello World!");
+     * myIndicator.iconClass("icon-info");
+     * 
      */
-    function wrapCustomDisplayFunction(customDisplayFunction) {
-        return function wrappedCustomDisplayFunction () {
-            var providedNode = customDisplayFunction();
-            var wrapperNode = document.createElement('div');
-            wrapperNode.className = 'status-block-holder';
-            wrapperNode.appendChild(providedNode);
-            return wrapperNode;
-        }
+    IndicatorAPI.prototype.add = function (indicator) {
+        // So that we can consistently position indicator elements, 
+        // guarantee that they are wrapped in an element we control
+        var wrapperNode = document.createElement('div');
+        wrapperNode.className = 'status-block-holder';
+        wrapperNode.appendChild(indicator.element);
+        this.indicatorElements.push(wrapperNode);
     }
 
     /**
      * @private
      */
-    IndicatorAPI.prototype.allDisplayFunctions = function () {
-        return this.promiseForAllDisplayFunctions;
+    IndicatorAPI.prototype.allIndicatorElements = function () {
+        return this.promiseForAllElements;
     }
 
     function fetchLegacyIndicators() {
@@ -111,23 +98,9 @@ define([
     function addLegacyIndicators(legacyIndicators) {
         legacyIndicators.forEach(function (legacyIndicatorDef){
             var legacyIndicator = initializeIfNeeded(legacyIndicatorDef);
-            var indicatorDisplayFunction = displayLegacyIndicator(this.openmct, legacyIndicator, legacyIndicatorDef.template);
-            var priority = parseLegacyPriority(legacyIndicatorDef.priority);
-
-            addDisplayFunctionWithPriority.call(this, indicatorDisplayFunction, priority);    
+            var legacyIndicatorElement = buildLegacyIndicator(this.openmct, legacyIndicator, legacyIndicatorDef.template);
+            this.indicatorElements.push(legacyIndicatorElement);
         }.bind(this));
-    }
-
-    function addDisplayFunctionWithPriority(displayFunction, priority) {
-        displayFunction._priority = priority;
-
-        var insertionPoint = _.sortedIndex(this.displayFunctions, displayFunction, priorityDescending);
-        this.displayFunctions.splice(insertionPoint, 0, displayFunction);
-    }
-
-    function priorityDescending (displayFunction) {
-        // Sort in reverse order (so higher priority display functions at the front of the array)
-        return -displayFunction._priority;
     }
 
     function initializeIfNeeded(legacyIndicatorDef) {
@@ -139,17 +112,18 @@ define([
         return legacyIndicator;
     }
 
-    function parseLegacyPriority(priority) {
-        if (typeof(priority) === 'string') {
-            priority = Constants.PRIORITY_LEVELS[priority];
-        } else if (priority === undefined) {
-            priority = DEFAULT_PRIORITY;
-        }
-        return priority;
+    function buildLegacyIndicator(openmct, legacyIndicator, template) {
+        var $compile = openmct.$injector.get('$compile');
+        var $rootScope = openmct.$injector.get('$rootScope');
+        var scope = $rootScope.$new(true);
+        scope.indicator = legacyIndicator;
+        scope.template = template || 'indicator';
+        
+        return $compile(LEGACY_INDICATOR_TEMPLATE)(scope)[0];
     }
 
-    function resolveWithAllDisplayFunctions() {
-        return this.displayFunctions;
+    function resolveWithAllIndicatorElements() {
+        return this.indicatorElements;
     }
 
     return IndicatorAPI;
