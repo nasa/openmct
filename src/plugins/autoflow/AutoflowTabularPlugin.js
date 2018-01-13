@@ -21,9 +21,11 @@
  *****************************************************************************/
 
 define([
-    './AutoflowTabularView'
+    './AutoflowTabularView',
+    'uuid'
 ], function (
-    AutoflowTabularView
+    AutoflowTabularView,
+    uuid
 ) {
     /**
      * This plugin provides an Autoflow Tabular View for domain objects
@@ -40,7 +42,7 @@ define([
 
             views.addProvider({
                 name: "Autoflow Tabular",
-                key: "autoflow",
+                key: "autoflow-" + uuid(),
                 cssClass: "icon-packet",
                 description: "A tabular view of packet contents.",
                 canView: function (d) {
