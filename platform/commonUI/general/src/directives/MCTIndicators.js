@@ -27,10 +27,9 @@ define(
             return {
                 restrict: "E",
                 link: function link(scope, element, attrs) {
-                    openmct.indicators.allDisplayFunctions().then(function (displayFunctions){
-                        displayFunctions.forEach(function (displayFunction){
-                            var displayElement = displayFunction();
-                            element.append(displayElement);
+                    openmct.indicators.allIndicatorElements().then(function (elements){
+                        elements.forEach(function (indicatorElement){
+                            element.append(indicatorElement);
                         });
                     })
                 }

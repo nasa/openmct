@@ -38,10 +38,10 @@ define(
             DISCONNECTED = {
                 statusClass: "err"
             };
-        function URLIndicator(options, openmct) {
+        function URLIndicator(options, openmct, simpleIndicator) {
             this.bindMethods();
 
-            this.indicator = openmct.indicators.create();
+            this.indicator = simpleIndicator;
             this.setDefaultsFromOptions(options);
             this.setIndicatorToState(PENDING);
 

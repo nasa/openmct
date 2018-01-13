@@ -28,46 +28,50 @@ define([
 
         var DEFAULT_ICON_CLASS = 'icon-info';
 
-        function Indicator(openmct) {
+        function SimpleIndicator(openmct) {
             this.openmct = openmct;
             this.textValue = '';
             this.descriptionValue = '';
             this.iconClassValue = DEFAULT_ICON_CLASS;
             this.statusClassValue = '';
-            this.node = undefined;
+
+            this.element = document.createElement('div');
+            this.element.className = 'status-block-holder';
+
+            defaultDisplayFunction.call(this);
         }
 
-        Indicator.prototype.text = function (text) {
+        SimpleIndicator.prototype.text = function (text) {
             if (text !== undefined && text !== this.textValue) {
                 this.textValue = text;
-                Indicator.defaultDisplayFunction.call(this);
+                defaultDisplayFunction.call(this);
             }
 
             return this.textValue;
         }
 
-        Indicator.prototype.description = function (description) {
+        SimpleIndicator.prototype.description = function (description) {
             if (description !== undefined && description !== this.descriptionValue) {
                 this.descriptionValue = description;
-                Indicator.defaultDisplayFunction.call(this);
+                defaultDisplayFunction.call(this);
             }
 
             return this.descriptionValue;
         }
 
-        Indicator.prototype.iconClass = function (iconClass) {
+        SimpleIndicator.prototype.iconClass = function (iconClass) {
             if (iconClass !== undefined && iconClass !== this.iconClassValue) {
                 this.iconClassValue = iconClass;
-                Indicator.defaultDisplayFunction.call(this);
+                defaultDisplayFunction.call(this);
             }
 
             return this.iconClassValue;
         }
 
-        Indicator.prototype.statusClass = function (statusClass) {
+        SimpleIndicator.prototype.statusClass = function (statusClass) {
             if (statusClass !== undefined && statusClass !== this.statusClassValue) {
                 this.statusClassValue = statusClass;
-                Indicator.defaultDisplayFunction.call(this);
+                defaultDisplayFunction.call(this);
             }
 
             return this.statusClassValue;
@@ -81,7 +85,7 @@ define([
             }
         }
 
-        Indicator.defaultDisplayFunction = function () {
+        function defaultDisplayFunction() {
             var html = indicatorTemplate
                 .replace('{{indicator.text}}', this.text())
                 .replace('{{indicator.iconClass}}', this.iconClass())
@@ -89,14 +93,10 @@ define([
                 .replace('{{indicator.description}}', this.description())
                 .replace('{{hideOrShowText}}', hideOrShowText(this.text()));
 
-            if (!this.node){
-                this.node = document.createElement('div');
-                this.node.className = 'status-block-holder';
-            }
-            this.node.innerHTML = html;
+            this.element.innerHTML = html;
             
-            return this.node;
+            return this.element;
         }
 
-        return Indicator;
+        return SimpleIndicator;
 });

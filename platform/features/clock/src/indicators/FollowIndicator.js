@@ -22,29 +22,30 @@
 
 define([],function () {
 
-    function setIndicatorStatus(indicator, timer) {
-        if (timer !== undefined) {
-            indicator.iconClass('icon-timer');
-            indicator.statusClass('s-status-ok');
-            indicator.text('Following timer ' + timer.name);
-        } else {
-            indicator.iconClass('icon-timer');
-            indicator.statusClass('');
-            indicator.text('No timer being followed');
-        }
-    }
-
     /**
      * Indicator that displays the active timer, as well as its
      * current state.
      * @memberof platform/features/clock
      */
     return function installFollowIndicator(openmct, timerService) {
-        var indicator = openmct.indicators.create();
+        var indicator = openmct.indicators.simpleIndicator();
         var timer = timerService.getTimer();
-        var setIndicatorStatusFromTimer = setIndicatorStatus.bind(this, indicator);
-        
-        setIndicatorStatusFromTimer(timer);
-        timerService.on('change', setIndicatorStatusFromTimer);
+      
+        function setIndicatorStatus(timer) {
+            if (timer !== undefined) {
+                indicator.iconClass('icon-timer');
+                indicator.statusClass('s-status-ok');
+                indicator.text('Following timer ' + timer.name);
+            } else {
+                indicator.iconClass('icon-timer');
+                indicator.statusClass('');
+                indicator.text('No timer being followed');
+            }
+        }
+
+        setIndicatorStatus(timer);
+        timerService.on('change', setIndicatorStatus);
+
+        openmct.indicators.add(indicator);
     };
 });
