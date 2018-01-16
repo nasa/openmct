@@ -78,11 +78,11 @@
 }
 
 .s-menu {
-	border-radius: $basicCr;
-	@include containerSubtle($colorMenuBg, $colorMenuFg);
-	@include boxShdw($shdwMenu);
-	@include txtShdw($shdwMenuText);
-	padding: $interiorMarginSm 0;
+    border-radius: $basicCr;
+    @include containerSubtle($colorMenuBg, $colorMenuFg);
+    @include boxShdw($shdwMenu);
+    @include txtShdw($shdwMenuText);
+    padding: $interiorMarginSm 0;
 }
 
 .menu {
