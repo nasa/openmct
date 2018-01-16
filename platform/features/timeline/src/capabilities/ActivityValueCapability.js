@@ -28,9 +28,9 @@ define(
          * Exposes costs associated with a subsystem mode.
          * @constructor
          */
-        function CostCapability(domainObject) {
+        function ActivityValueCapability(domainObject) {
             var model = domainObject.getModel();
-            
+
             return {
                 /**
                  * Get a list of resource types which have associated
@@ -66,10 +66,10 @@ define(
         }
 
         // Only applies to subsystem modes.
-        CostCapability.appliesTo = function (model) {
-            return (model || {}).type === 'mode';
+        ActivityValueCapability.appliesTo = function (model) {
+            return (model || {}).type === 'activity';
         };
 
-        return CostCapability;
+        return ActivityValueCapability;
     }
 );

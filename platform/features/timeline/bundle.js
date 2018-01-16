@@ -32,6 +32,7 @@ define([
     "./src/controllers/TimelineTOIController",
     "./src/controllers/ActivityModeValuesController",
     "./src/capabilities/ActivityTimespanCapability",
+    "./src/capabilities/ActivityValueCapability",
     "./src/capabilities/TimelineTimespanCapability",
     "./src/capabilities/UtilizationCapability",
     "./src/capabilities/GraphCapability",
@@ -64,6 +65,7 @@ define([
     TimelineTOIController,
     ActivityModeValuesController,
     ActivityTimespanCapability,
+    ActivityValueCapability,
     TimelineTimespanCapability,
     UtilizationCapability,
     GraphCapability,
@@ -557,6 +559,10 @@ define([
                 {
                     "key": "cost",
                     "implementation": CostCapability
+                },
+                {
+                    "key": "activityValue",
+                    "implementation": ActivityValueCapability
                 }
             ],
             "directives": [
