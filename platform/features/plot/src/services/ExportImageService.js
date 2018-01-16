@@ -104,7 +104,10 @@ define(
                 self.$log.warn("html2canvas failed with error: " + e);
             }
 
-            defer.promise.finally(renderTimeout.cancel);
+            defer.promise.finally(function () {
+                renderTimeout.cancel();
+                self.changeBackgroundColor(element, originalColor);
+            });
 
             return defer.promise;
         }
