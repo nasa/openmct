@@ -7,9 +7,11 @@ define(
     return function (opts) {
         return function install(openmct) {
             var simpleIndicator = openmct.indicators.simpleIndicator();
+            var urlIndicator = new URLIndicator(opts, openmct, simpleIndicator);
+            
             openmct.indicators.add(simpleIndicator);
 
-            return new URLIndicator(opts, openmct, simpleIndicator);
+            return urlIndicator;
         };
     };
 });
