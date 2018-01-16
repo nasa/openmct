@@ -30,16 +30,17 @@ define(
         // DISCONNECTED: HTTP failed; maybe misconfigured, disconnected.
         // PENDING: Still trying to connect, and haven't failed yet.
         var CONNECTED = {
-                statusClass: "ok"
+                statusClass: "s-status-ok"
             },
             PENDING = {
-                statusClass: "caution"
+                statusClass: "s-status-warning-lo"
             },
             DISCONNECTED = {
-                statusClass: "err"
+                statusClass: "s-status-warning-hi"
             };
         function URLIndicator(options, openmct, simpleIndicator) {
             this.bindMethods();
+            this.count = 0;
 
             this.indicator = simpleIndicator;
             this.setDefaultsFromOptions(options);
@@ -77,14 +78,14 @@ define(
         };
 
         URLIndicator.prototype.get = function (url) {
-            return new Promise(function(resolve, reject){
+            return new Promise(function(resolve, reject) {
                 $.ajax({
                     type: 'GET',
                     url: url,
                     success: resolve,
                     error: reject
                 });
-            }.bind(this));
+            });
         };
         
         URLIndicator.prototype.handleError = function (e) {
@@ -98,8 +99,8 @@ define(
         URLIndicator.prototype.setDefaultsFromOptions = function (options) {
             this.URLpath = options.url;
             this.label = options.label || options.url;
-            this.interval = options.inverval || 10000;
-            this.indicator.iconClass(options.iconClass || 'icon-database');
+            this.interval = options.interval || 10000;
+            this.indicator.iconClass(options.iconClass || 'icon-connectivity');
         }
 
         URLIndicator.prototype.bindMethods = function () {

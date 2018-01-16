@@ -20,39 +20,80 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(["../../src/indicators/FollowIndicator"], function (FollowIndicator) {
+define([
+    "../../src/indicators/FollowIndicator",
+    "../../src/services/TimerService",
+    "../../../../../src/MCT",
+    'zepto'
+], function (
+    FollowIndicator,
+    TimerService,
+    MCT,
+    $
+) {
     var TIMER_SERVICE_METHODS =
         ['setTimer', 'getTimer', 'clearTimer', 'on', 'off'];
 
     describe("The timer-following indicator", function () {
-        var mockTimerService;
-        var indicator;
+        var timerService;
+        var openmct;
 
         beforeEach(function () {
-            mockTimerService =
-                jasmine.createSpyObj('timerService', TIMER_SERVICE_METHODS);
-            indicator = new FollowIndicator(mockTimerService);
+            openmct = new MCT();
+            timerService = new TimerService(openmct);
+            spyOn(openmct.indicators, "add");
         });
 
-        it("implements the Indicator interface", function () {
-            expect(indicator.getGlyphClass()).toEqual(jasmine.any(String));
-            expect(indicator.getCssClass()).toEqual(jasmine.any(String));
-            expect(indicator.getText()).toEqual(jasmine.any(String));
-            expect(indicator.getDescription()).toEqual(jasmine.any(String));
+        it("adds an indicator when installed", function () {
+            FollowIndicator(openmct, timerService);
+            expect(openmct.indicators.add).toHaveBeenCalled();
+        });
+
+        it("indicates that no timer is being followed", function () {
+            FollowIndicator(openmct, timerService);
+            var simpleIndicator = openmct.indicators.add.mostRecentCall.args[0];
+            var element = simpleIndicator.element;
+            var text = $('.indicator-text', element).text().trim();
+            expect(text).toEqual('No timer being followed');
         });
 
         describe("when a timer is set", function () {
             var testObject;
+            var simpleIndicator;
 
             beforeEach(function () {
-                testObject = { name: "some timer!" };
-                mockTimerService.getTimer.andReturn(testObject);
+                testObject = {
+                    identifier: {
+                        namespace: 'namespace', 
+                        key: 'key'
+                    }, 
+                    name: "some timer!" 
+                };
+                timerService.setTimer(testObject);
+                FollowIndicator(openmct, timerService);
+                simpleIndicator = openmct.indicators.add.mostRecentCall.args[0];
             });
 
             it("displays the timer's name", function () {
-                expect(indicator.getText().indexOf(testObject.name))
-                    .not.toEqual(-1);
+                var element = simpleIndicator.element;
+                var text = $('.indicator-text', element).text().trim();
+                expect(text).toEqual('Following timer ' + testObject.name);
             });
+            
+            it("displays the timer's name when it changes", function () {
+                var secondTimer = {
+                    identifier: {
+                        namespace: 'namespace', 
+                        key: 'key2'
+                    }, 
+                    name: "Some other timer" 
+                };
+                var element = simpleIndicator.element;
+                timerService.setTimer(secondTimer);
+                var text = $('.indicator-text', element).text().trim();
+                expect(text).toEqual('Following timer ' + secondTimer.name);
+            });
+
         });
     });
 });

@@ -21,138 +21,167 @@
  *****************************************************************************/
 
 define(
-    ["./URLIndicator"],
-    function (URLIndicator) {
-
+    [
+        "./URLIndicator",
+        "./URLIndicatorPlugin",
+        "../../MCT",
+        "zepto"
+    ],
+    function (
+        URLIndicator,
+        URLIndicatorPlugin,
+        MCT,
+        $
+    ) {
+        var defaultPrototypeFunction = URLIndicator.prototype.get;
         describe("The URLIndicator", function () {
-            var mockHttp,
-                mockInterval,
-                mockPromise,
-                opts,
-                Indicator,
-                indicatorWrapper;
+            var openmct;
+            var indicatorElement;
+            var urlIndicator;
+            var mockHttpRequestFunction;
+            var returned;
+            var options;
 
             beforeEach(function () {
-                mockHttp = jasmine.createSpyObj("$http", ["get"]);
-                mockInterval = jasmine.createSpy("$interval");
-                mockPromise = jasmine.createSpyObj("promise", ["then"]);
-                opts = {
-                    url: "http://localhost:8080",
-                    interval: 1337 //some number
-                };
-                mockHttp.get.andReturn(mockPromise);
-                Indicator = function () {
-                    this.options = opts;
-                    URLIndicator.call(this, mockHttp, mockInterval);
-                };
-                Indicator.prototype = Object.create(URLIndicator.prototype);
-                indicatorWrapper = new Indicator();
-            });
-            it("polls for changes", function () {
-                expect(mockInterval).toHaveBeenCalledWith(
-                    jasmine.any(Function),
-                    opts.interval,
-                    0,
-                    false
-                );
+                returned = false;
+                jasmine.Clock.useMock();
+                openmct = new MCT();
+                spyOn(openmct.indicators, 'add');
+
+                mockHttpRequest();
             });
 
-            it("has a database cssClass as default", function () {
-                expect(indicatorWrapper.getCssClass()).toEqual("icon-database");
+            afterEach(function () {
+                URLIndicator.prototype.get = defaultPrototypeFunction;
+                jasmine.Clock.reset();
+            })
+
+            function mockHttpRequest() {
+                mockHttpRequestFunction = jasmine.createSpy('get');
+                URLIndicator.prototype.get = mockHttpRequestFunction;
+                mockSuccess();
+            }
+
+            function mockSuccess(){
+                mockHttpRequestFunction
+                    .andReturn(Promise.resolve().then(function() {
+                        returned = true;
+                    }));
+            }
+
+            function mockError(){
+                mockHttpRequestFunction
+                    .andReturn(Promise.reject().then(function() {
+                        returned = true;
+                        //Throw error to ensure chained catch is invoked
+                        throw undefined;
+                    }));
+            }
+
+            function httpRequestReturned() {
+                return returned;
+            }
+
+            function mockInterval(interval) {
+                jasmine.Clock.tick(interval);
+            }
+
+            describe("on initialization", function () {
+                describe("with default options", function () {
+                    beforeEach(function () {
+                        options = {
+                            url: "someURL"
+                        };
+                        urlIndicator = URLIndicatorPlugin(options)(openmct);
+                        indicatorElement = openmct.indicators.add.mostRecentCall.args[0].element;
+                    });
+    
+                    it("has a default icon class if none supplied", function () {
+                        var iconElement = getIconElement();
+                        expect(iconElement.hasClass('icon-connectivity')).toBe(true);
+                    }); 
+
+                    it("defaults to the URL if no label supplied", function () {
+                        var textElement = getTextElement();
+                        expect(textElement.text().indexOf(options.url) >= 0).toBe(true);
+                    });
+                });
+
+                describe("with custom options", function () {
+                    beforeEach(function () {
+                        options = {
+                            url: "customURL",
+                            interval: 1814,
+                            iconClass: "iconClass-checked",
+                            label: "custom label"
+                        };
+                        urlIndicator = URLIndicatorPlugin(options)(openmct);
+                        indicatorElement = openmct.indicators.add.mostRecentCall.args[0].element;
+                    });
+
+                    it("uses the custom iconClass", function () {
+                        var iconElement = getIconElement();
+                        expect(iconElement.hasClass('iconClass-checked')).toBe(true);
+                    });
+                    it("uses custom interval", function () {
+                        expect(mockHttpRequestFunction.calls.length).toEqual(1);
+                        jasmine.Clock.tick(1);
+                        expect(mockHttpRequestFunction.calls.length).toEqual(1);
+                        mockInterval(options.interval + 1);
+                        expect(mockHttpRequestFunction.calls.length).toEqual(2);
+                    });
+                    it("uses custom label if supplied in initialization", function () {
+                        var textElement = getTextElement();
+                        expect(textElement.text().indexOf(options.label) >=0).toBe(true);
+                    });    
+                });
+            })
+
+            describe("when running", function () {
+                beforeEach(function () {
+                    options = {
+                        url: "someURL",
+                        interval: 100
+                    };
+                    urlIndicator = URLIndicatorPlugin(options)(openmct);
+                    indicatorElement = openmct.indicators.add.mostRecentCall.args[0].element;
+                });
+            
+                it("requests the provided URL", function () {
+                    mockInterval(options.interval + 1);
+                    expect(mockHttpRequestFunction).toHaveBeenCalledWith(options.url);
+                });
+
+                it("indicates success if connection is nominal", function () {
+                    mockSuccess();
+                    mockInterval(options.interval + 1);
+
+                    waitsFor(httpRequestReturned);
+                    runs(function () {
+                        var iconElement = getIconElement();
+                        expect(iconElement.hasClass('s-status-ok')).toBe(true);
+                    })
+                });
+
+                it("indicates an error when the server cannot be reached", function () {
+                    mockError();
+                    mockInterval(options.interval + 1);
+
+                    waitsFor(httpRequestReturned);
+                    runs(function () {
+                        var iconElement = getIconElement();
+                        expect(iconElement.hasClass('s-status-warning-hi')).toBe(true);
+                    });
+                });
             });
 
-            it("consults the url with the path supplied", function () {
-                expect(mockHttp.get).toHaveBeenCalledWith(opts.url);
-            });
+            function getIconElement(){
+                return $('.indicator-icon', indicatorElement);
+            }
 
-            it("changes when the database connection is nominal", function () {
-                var initialText = indicatorWrapper.getText(),
-                    initialDescrption = indicatorWrapper.getDescription(),
-                    initialGlyphClass = indicatorWrapper.getGlyphClass();
-
-                // Nominal just means getting back an object, without
-                // an error field.
-                mockPromise.then.mostRecentCall.args[0]({ data: {} });
-
-                // Verify that these values changed;
-                // don't test for specific text.
-                expect(indicatorWrapper.getText()).not.toEqual(initialText);
-                expect(indicatorWrapper.getGlyphClass()).not.toEqual(initialGlyphClass);
-                expect(indicatorWrapper.getDescription()).not.toEqual(initialDescrption);
-
-                // Do check for specific class
-                expect(indicatorWrapper.getGlyphClass()).toEqual("ok");
-            });
-
-            it("changes when the server cannot be reached", function () {
-                var initialText = indicatorWrapper.getText(),
-                    initialDescrption = indicatorWrapper.getDescription(),
-                    initialGlyphClass = indicatorWrapper.getGlyphClass();
-
-                // Nominal just means getting back an object, without
-                // an error field.
-                mockPromise.then.mostRecentCall.args[1]({ data: {} });
-
-                // Verify that these values changed;
-                // don't test for specific text.
-                expect(indicatorWrapper.getText()).not.toEqual(initialText);
-                expect(indicatorWrapper.getGlyphClass()).not.toEqual(initialGlyphClass);
-                expect(indicatorWrapper.getDescription()).not.toEqual(initialDescrption);
-
-                // Do check for specific class
-                expect(indicatorWrapper.getGlyphClass()).toEqual("err");
-            });
-            it("has a customized cssClass if supplied in initialization", function () {
-                opts = {
-                    url: "http://localhost:8080",
-                    cssClass: "cssClass-checked",
-                    interval: 10000
-                };
-                indicatorWrapper = new Indicator();
-                expect(indicatorWrapper.getCssClass()).toEqual("cssClass-checked");
-            });
-            it("has a customized interval if supplied in initialization", function () {
-                opts = {
-                    url: "http://localhost:8080",
-                    interval: 1814
-                };
-                indicatorWrapper = new Indicator();
-                expect(mockInterval).toHaveBeenCalledWith(
-                    jasmine.any(Function),
-                    1814,
-                    0,
-                    false
-                );
-            });
-            it("has a custom label if supplied in initialization", function () {
-                opts = {
-                    url: "http://localhost:8080",
-                    label: "Localhost"
-                };
-                indicatorWrapper = new Indicator();
-                expect(indicatorWrapper.getText()).toEqual("Checking status of Localhost please stand by...");
-            });
-            it("has a default label if not supplied in initialization", function () {
-                opts = {
-                    url: "http://localhost:8080"
-                };
-                indicatorWrapper = new Indicator();
-                expect(indicatorWrapper.getText()).toEqual(
-                  "Checking status of http://localhost:8080 please stand by..."
-                );
-            });
-            it("has a default interval if not supplied in initialization", function () {
-                opts = {
-                    url: "http://localhost:8080"
-                };
-                indicatorWrapper = new Indicator();
-                expect(mockInterval).toHaveBeenCalledWith(
-                    jasmine.any(Function),
-                    10000,
-                    0,
-                    false
-                );
-            });
+            function getTextElement(){
+                return $('.indicator-text', indicatorElement);
+            }
         });
     }
 );
