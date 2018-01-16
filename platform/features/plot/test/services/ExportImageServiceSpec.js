@@ -37,7 +37,8 @@ define(
             mockFileReader,
             mockExportTimeoutConstant,
             testElement,
-            exportImageService;
+            exportImageService,
+            mockChangeBackgroundColor;
 
         describe("ExportImageService", function () {
             beforeEach(function () {
@@ -83,7 +84,9 @@ define(
                     ["readAsDataURL", "onloadend"]
                 );
                 mockExportTimeoutConstant = 0;
-                testElement = {};
+                testElement = {style: {backgroundColor: 'black'}};
+
+                mockChangeBackgroundColor = jasmine.createSpy('changeBackgroundColor');
 
                 exportImageService = new ExportImageService(
                     mockQ,
@@ -92,7 +95,8 @@ define(
                     mockExportTimeoutConstant,
                     mockHtml2Canvas,
                     mockSaveAs,
-                    mockFileReader
+                    mockFileReader,
+                    mockChangeBackgroundColor
                 );
             });
 
@@ -114,6 +118,18 @@ define(
                 expect(mockDeferred.reject).not.toHaveBeenCalled();
                 expect(mockSaveAs).toHaveBeenCalled();
                 expect(mockPromise.finally).toHaveBeenCalled();
+            });
+
+            it("changes background color to white and returns color back to original after snapshot, for better visibility of plot lines on print", function () {
+                exportImageService.exportPNG(testElement, "plot.png");
+
+                expect(mockChangeBackgroundColor).toHaveBeenCalledWith(testElement, 'white');
+                expect(mockChangeBackgroundColor).toHaveBeenCalledWith(testElement, 'black');
+
+                exportImageService.exportJPG(testElement, "plot.jpg");
+
+                expect(mockChangeBackgroundColor).toHaveBeenCalledWith(testElement, 'white');
+                expect(mockChangeBackgroundColor).toHaveBeenCalledWith(testElement, 'black');
             });
         });
     }
