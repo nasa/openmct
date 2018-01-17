@@ -26,7 +26,7 @@ define(
         function MCTIndicators(openmct) {
             return {
                 restrict: "E",
-                link: function link(scope, element, attrs) {
+                link: function link(scope, element) {
                     openmct.indicators.allIndicatorElements().then(function (elements){
                         elements.forEach(function (indicatorElement){
                             element.append(indicatorElement);
