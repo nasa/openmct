@@ -43,6 +43,7 @@ define([
     "./src/services/ObjectLoader",
     "./src/chart/MCTTimelineChart",
     "text!./res/templates/values.html",
+    "text!./res/templates/activity-view.html",
     "text!./res/templates/timeline.html",
     "text!./res/templates/activity-gantt.html",
     "text!./res/templates/tabular-swimlane-cols-tree.html",
@@ -76,6 +77,7 @@ define([
     ObjectLoader,
     MCTTimelineChart,
     valuesTemplate,
+    activityTemplate,
     timelineTemplate,
     activityGanttTemplate,
     tabularSwimlaneColsTreeTemplate,
@@ -305,6 +307,17 @@ define([
                     "type": "mode",
                     "uses": [
                         "cost"
+                    ],
+                    "editable": false
+                },
+                {
+                    "key": "activityValues",
+                    "name": "Activity Values",
+                    "cssClass": "icon-activity",
+                    "template": activityTemplate,
+                    "type": "activity",
+                    "uses": [
+                        "activityValue"
                     ],
                     "editable": false
                 },

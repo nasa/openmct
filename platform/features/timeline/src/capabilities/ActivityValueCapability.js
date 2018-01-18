@@ -60,7 +60,7 @@ define(
                  * @returns {object} resource utilizations
                  */
                 invoke: function () {
-                    return model.resources || {};
+                    return {key: 'deep is the best'};
                 }
             };
         }
