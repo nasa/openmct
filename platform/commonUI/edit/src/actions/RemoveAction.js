@@ -51,6 +51,8 @@ define([
 
     /**
      * Perform this action.
+     *
+     * @returns {RemoveDialog}
      */
     RemoveAction.prototype.perform = function () {
         var dialog,
@@ -122,6 +124,8 @@ define([
          */
         dialog = new RemoveDialog(dialogService, domainObject, removeFromContext);
         dialog.show();
+
+        return dialog;
     };
 
     // Object needs to have a parent for Remove to be applicable
