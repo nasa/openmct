@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([],function () {
+define([], function () {
 
     /**
      * Indicator that displays the active timer, as well as its
@@ -30,12 +30,13 @@ define([],function () {
     return function installFollowIndicator(openmct, timerService) {
         var indicator = openmct.indicators.simpleIndicator();
         var timer = timerService.getTimer();
-      
-        function setIndicatorStatus(timer) {
-            if (timer !== undefined) {
+        setIndicatorStatus(timer);
+
+        function setIndicatorStatus(newTimer) {
+            if (newTimer !== undefined) {
                 indicator.iconClass('icon-timer');
                 indicator.statusClass('s-status-ok');
-                indicator.text('Following timer ' + timer.name);
+                indicator.text('Following timer ' + newTimer.name);
             } else {
                 indicator.iconClass('icon-timer');
                 indicator.statusClass('');
@@ -43,7 +44,6 @@ define([],function () {
             }
         }
 
-        setIndicatorStatus(timer);
         timerService.on('change', setIndicatorStatus);
 
         openmct.indicators.add(indicator);

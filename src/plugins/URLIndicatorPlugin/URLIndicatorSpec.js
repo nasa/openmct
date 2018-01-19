@@ -54,37 +54,7 @@ define(
             afterEach(function () {
                 URLIndicator.prototype.get = defaultPrototypeFunction;
                 jasmine.Clock.reset();
-            })
-
-            function mockHttpRequest() {
-                mockHttpRequestFunction = jasmine.createSpy('get');
-                URLIndicator.prototype.get = mockHttpRequestFunction;
-                mockSuccess();
-            }
-
-            function mockSuccess(){
-                mockHttpRequestFunction
-                    .andReturn(Promise.resolve().then(function() {
-                        returned = true;
-                    }));
-            }
-
-            function mockError(){
-                mockHttpRequestFunction
-                    .andReturn(Promise.reject().then(function() {
-                        returned = true;
-                        //Throw error to ensure chained catch is invoked
-                        throw undefined;
-                    }));
-            }
-
-            function httpRequestReturned() {
-                return returned;
-            }
-
-            function mockInterval(interval) {
-                jasmine.Clock.tick(interval);
-            }
+            });
 
             describe("on initialization", function () {
                 describe("with default options", function () {
@@ -95,11 +65,11 @@ define(
                         urlIndicator = URLIndicatorPlugin(options)(openmct);
                         indicatorElement = openmct.indicators.add.mostRecentCall.args[0].element;
                     });
-    
+
                     it("has a default icon class if none supplied", function () {
                         var iconElement = getIconElement();
                         expect(iconElement.hasClass('icon-connectivity')).toBe(true);
-                    }); 
+                    });
 
                     it("defaults to the URL if no label supplied", function () {
                         var textElement = getTextElement();
@@ -132,10 +102,10 @@ define(
                     });
                     it("uses custom label if supplied in initialization", function () {
                         var textElement = getTextElement();
-                        expect(textElement.text().indexOf(options.label) >=0).toBe(true);
-                    });    
+                        expect(textElement.text().indexOf(options.label) >= 0).toBe(true);
+                    });
                 });
-            })
+            });
 
             describe("when running", function () {
                 beforeEach(function () {
@@ -146,7 +116,7 @@ define(
                     urlIndicator = URLIndicatorPlugin(options)(openmct);
                     indicatorElement = openmct.indicators.add.mostRecentCall.args[0].element;
                 });
-            
+
                 it("requests the provided URL", function () {
                     mockInterval(options.interval + 1);
                     expect(mockHttpRequestFunction).toHaveBeenCalledWith(options.url);
@@ -160,7 +130,7 @@ define(
                     runs(function () {
                         var iconElement = getIconElement();
                         expect(iconElement.hasClass('s-status-ok')).toBe(true);
-                    })
+                    });
                 });
 
                 it("indicates an error when the server cannot be reached", function () {
@@ -175,11 +145,41 @@ define(
                 });
             });
 
-            function getIconElement(){
+            function mockHttpRequest() {
+                mockHttpRequestFunction = jasmine.createSpy('get');
+                URLIndicator.prototype.get = mockHttpRequestFunction;
+                mockSuccess();
+            }
+
+            function mockSuccess() {
+                mockHttpRequestFunction
+                    .andReturn(Promise.resolve().then(function () {
+                        returned = true;
+                    }));
+            }
+
+            function mockError() {
+                mockHttpRequestFunction
+                    .andReturn(Promise.reject().then(function () {
+                        returned = true;
+                        //Throw error to ensure chained catch is invoked
+                        throw undefined;
+                    }));
+            }
+
+            function httpRequestReturned() {
+                return returned;
+            }
+
+            function mockInterval(interval) {
+                jasmine.Clock.tick(interval);
+            }
+
+            function getIconElement() {
                 return $('.indicator-icon', indicatorElement);
             }
 
-            function getTextElement(){
+            function getTextElement() {
                 return $('.indicator-text', indicatorElement);
             }
         });
