@@ -67,7 +67,8 @@ define(
                     this.indicator.description(this.label + " is offline, checking status every " + this.interval + " milliseconds");
                     break;
                 }
-            };
+            }
+
             this.indicator.statusClass(state.statusClass);
         };
 
@@ -78,7 +79,7 @@ define(
         };
 
         URLIndicator.prototype.get = function (url) {
-            return new Promise(function(resolve, reject) {
+            return new Promise(function (resolve, reject) {
                 $.ajax({
                     type: 'GET',
                     url: url,
@@ -87,28 +88,28 @@ define(
                 });
             });
         };
-        
+
         URLIndicator.prototype.handleError = function (e) {
             this.setIndicatorToState(DISCONNECTED);
         };
 
         URLIndicator.prototype.handleSuccess = function () {
             this.setIndicatorToState(CONNECTED);
-        }
+        };
 
         URLIndicator.prototype.setDefaultsFromOptions = function (options) {
             this.URLpath = options.url;
             this.label = options.label || options.url;
             this.interval = options.interval || 10000;
             this.indicator.iconClass(options.iconClass || 'icon-connectivity');
-        }
+        };
 
         URLIndicator.prototype.bindMethods = function () {
             this.fetchUrl = this.fetchUrl.bind(this);
             this.handleSuccess = this.handleSuccess.bind(this);
             this.handleError = this.handleError.bind(this);
             this.setIndicatorToState = this.setIndicatorToState.bind(this);
-        }
+        };
 
         return URLIndicator;
     });

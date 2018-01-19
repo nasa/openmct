@@ -20,12 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-        'text!./res/indicator-template.html'
-    ], function (
-        indicatorTemplate
-    ) {
-
+define(['text!./res/indicator-template.html'],
+    function (indicatorTemplate) {
         var DEFAULT_ICON_CLASS = 'icon-info';
 
         function SimpleIndicator(openmct) {
@@ -48,7 +44,7 @@ define([
             }
 
             return this.textValue;
-        }
+        };
 
         SimpleIndicator.prototype.description = function (description) {
             if (description !== undefined && description !== this.descriptionValue) {
@@ -57,7 +53,7 @@ define([
             }
 
             return this.descriptionValue;
-        }
+        };
 
         SimpleIndicator.prototype.iconClass = function (iconClass) {
             if (iconClass !== undefined && iconClass !== this.iconClassValue) {
@@ -66,7 +62,7 @@ define([
             }
 
             return this.iconClassValue;
-        }
+        };
 
         SimpleIndicator.prototype.statusClass = function (statusClass) {
             if (statusClass !== undefined && statusClass !== this.statusClassValue) {
@@ -75,7 +71,7 @@ define([
             }
 
             return this.statusClassValue;
-        }
+        };
 
         function hideOrShowText(text) {
             if (text && text.length > 0) {
@@ -94,9 +90,10 @@ define([
                 .replace('{{hideOrShowText}}', hideOrShowText(this.text()));
 
             this.element.innerHTML = html;
-            
+
             return this.element;
-        }
+        };
 
         return SimpleIndicator;
-});
+    }
+);

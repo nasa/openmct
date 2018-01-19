@@ -31,9 +31,6 @@ define([
     MCT,
     $
 ) {
-    var TIMER_SERVICE_METHODS =
-        ['setTimer', 'getTimer', 'clearTimer', 'on', 'off'];
-
     describe("The timer-following indicator", function () {
         var timerService;
         var openmct;
@@ -64,10 +61,10 @@ define([
             beforeEach(function () {
                 testObject = {
                     identifier: {
-                        namespace: 'namespace', 
+                        namespace: 'namespace',
                         key: 'key'
-                    }, 
-                    name: "some timer!" 
+                    },
+                    name: "some timer!"
                 };
                 timerService.setTimer(testObject);
                 FollowIndicator(openmct, timerService);
@@ -79,14 +76,14 @@ define([
                 var text = $('.indicator-text', element).text().trim();
                 expect(text).toEqual('Following timer ' + testObject.name);
             });
-            
+
             it("displays the timer's name when it changes", function () {
                 var secondTimer = {
                     identifier: {
-                        namespace: 'namespace', 
+                        namespace: 'namespace',
                         key: 'key2'
-                    }, 
-                    name: "Some other timer" 
+                    },
+                    name: "Some other timer"
                 };
                 var element = simpleIndicator.element;
                 timerService.setTimer(secondTimer);

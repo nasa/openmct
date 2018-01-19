@@ -39,9 +39,9 @@ define(
             var legacyIndicatorsResolved = false;
             var legacyIndicatorsCallback;
 
-            beforeEach(function() {
+            beforeEach(function () {
                 mockLegacyExtensionFunction();
-            
+
                 openmct = new MCT();
                 directive = new MCTIndicators(openmct);
                 holderElement = document.createElement('div');
@@ -57,30 +57,30 @@ define(
                 var legacyIndicators = [{},{},{},{}];
 
                 mockLegacyIndicatorsWith(legacyIndicators);
-                
+
                 renderIndicators();
-                
+
                 waitsFor(legacyIndicatorsToResolve, 1000);
                 runs(function () {
-                    expectIndicatorsShownToBe(legacyIndicators.length)
+                    expectIndicatorsShownToBe(legacyIndicators.length);
                 });
-                                
+
             });
 
             it("If legacy indicator is defined as a constructor function, executes function ", function () {
                 var mockConstructorFunction = jasmine.createSpy('mockIndicatorConstructor');
                 var legacyIndicators = [{}, mockConstructorFunction];
-                
+
                 mockConstructorFunction.andReturn({});
                 mockLegacyIndicatorsWith(legacyIndicators);
                 renderIndicators();
-                
+
                 waitsFor(legacyIndicatorsToResolve, 1000);
                 runs(function () {
-                    expectIndicatorsShownToBe(legacyIndicators.length)
+                    expectIndicatorsShownToBe(legacyIndicators.length);
                     expect(mockConstructorFunction).toHaveBeenCalled();
                 });
-                                
+
             });
 
             describe("The simple indicator", function () {
@@ -91,7 +91,7 @@ define(
                     mockLegacyIndicatorsWith([]);
                     openmct.indicators.add(simpleIndicator);
                     renderIndicators();
-                })
+                });
                 it("applies the set icon class", function () {
                     simpleIndicator.iconClass('testIconClass');
 
@@ -133,7 +133,7 @@ define(
                         expect(getIndicatorElement().hasClass('hidden')).toBe(true);
                     });
                 });
-            })
+            });
 
             it("Supports registration of a completely custom indicator", function () {
                 var customIndicator = $('<div class="customIndicator">A custom indicator</div>')[0];
@@ -149,8 +149,8 @@ define(
 
             function mockLegacyExtensionFunction() {
                 spyOn(MCT.prototype, "legacyExtension");
-                MCT.prototype.legacyExtension.andCallFake(function(extensionName, definition){
-                    if (extensionName === 'runs'){
+                MCT.prototype.legacyExtension.andCallFake(function (extensionName, definition) {
+                    if (extensionName === 'runs') {
                         legacyIndicatorsCallback = definition.implementation;
                     }
                 });
@@ -170,11 +170,11 @@ define(
                     }[service];
                 });
                 openmct.$injector = mockInjector;
-                mockCompile.andCallFake(function() { 
+                mockCompile.andCallFake(function () {
                     return function () {
                         return $('<div></div>');
-                    }
-                })
+                    };
+                });
             }
 
             function renderIndicators() {

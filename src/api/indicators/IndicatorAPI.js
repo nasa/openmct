@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 define([
     './SimpleIndicator',
     '../../../platform/framework/src/Constants',
@@ -29,8 +28,8 @@ define([
     Constants,
     _
 ) {
-
-    var LEGACY_INDICATOR_TEMPLATE = 
+    /* jshint validthis: true */
+    var LEGACY_INDICATOR_TEMPLATE =
         '<mct-include ' +
         '   ng-model="indicator" ' +
         '   key="template" ' +
@@ -41,7 +40,7 @@ define([
     function IndicatorAPI(openmct) {
         this.openmct = openmct;
         this.indicatorElements = [];
-        this.promiseForAllElements = 
+        this.promiseForAllElements =
             fetchLegacyIndicators.call(this)
             .then(addLegacyIndicators.bind(this))
             .then(resolveWithAllIndicatorElements.bind(this));
@@ -49,42 +48,42 @@ define([
 
     IndicatorAPI.prototype.simpleIndicator = function () {
         return new SimpleIndicator(this.openmct);
-    }
+    };
 
     /**
-     * Accepts an indicator object, which is a simple object 
+     * Accepts an indicator object, which is a simple object
      * with a single attribute, 'element' which has an HTMLElement
      * as its value.
-     * 
+     *
      * We provide .simpleIndicator() as a convenience function
-     * which will create a default Open MCT indicator that can 
-     * be passed to .add(indicator). This indicator also exposes 
-     * functions for changing its appearance to support customization 
+     * which will create a default Open MCT indicator that can
+     * be passed to .add(indicator). This indicator also exposes
+     * functions for changing its appearance to support customization
      * and dynamic behavior.
-     * 
+     *
      * Eg.
      * var myIndicator = openmct.indicators.simpleIndicator();
      * openmct.indicators.add(myIndicator);
-     * 
+     *
      * myIndicator.text("Hello World!");
      * myIndicator.iconClass("icon-info");
-     * 
+     *
      */
     IndicatorAPI.prototype.add = function (indicator) {
-        // So that we can consistently position indicator elements, 
+        // So that we can consistently position indicator elements,
         // guarantee that they are wrapped in an element we control
         var wrapperNode = document.createElement('div');
         wrapperNode.className = 'status-block-holder indicator';
         wrapperNode.appendChild(indicator.element);
         this.indicatorElements.push(wrapperNode);
-    }
+    };
 
     /**
      * @private
      */
     IndicatorAPI.prototype.allIndicatorElements = function () {
         return this.promiseForAllElements;
-    }
+    };
 
     function fetchLegacyIndicators() {
         return new Promise(function (resolve) {
@@ -96,18 +95,19 @@ define([
     }
 
     function addLegacyIndicators(legacyIndicators) {
-        legacyIndicators.forEach(function (legacyIndicatorDef){
+        legacyIndicators.forEach(function (legacyIndicatorDef) {
             var legacyIndicator = initializeIfNeeded(legacyIndicatorDef);
             var legacyIndicatorElement = buildLegacyIndicator(this.openmct, legacyIndicator, legacyIndicatorDef.template);
             this.indicatorElements.push(legacyIndicatorElement);
         }.bind(this));
     }
 
-    function initializeIfNeeded(legacyIndicatorDef) {
-        if (typeof legacyIndicatorDef === 'function') {
-            legacyIndicator = new legacyIndicatorDef();
+    function initializeIfNeeded(LegacyIndicatorDef) {
+        var legacyIndicator;
+        if (typeof LegacyIndicatorDef === 'function') {
+            legacyIndicator = new LegacyIndicatorDef();
         } else {
-            legacyIndicator = legacyIndicatorDef;
+            legacyIndicator = LegacyIndicatorDef;
         }
         return legacyIndicator;
     }
@@ -118,7 +118,7 @@ define([
         var scope = $rootScope.$new(true);
         scope.indicator = legacyIndicator;
         scope.template = template || 'indicator';
-        
+
         return $compile(LEGACY_INDICATOR_TEMPLATE)(scope)[0];
     }
 
