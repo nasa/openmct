@@ -28,7 +28,6 @@ define([
 ], function (
     RemoveDialog
 ) {
-    'use strict';
 
     /**
      * Construct an action which will remove the provided object manifestation.
