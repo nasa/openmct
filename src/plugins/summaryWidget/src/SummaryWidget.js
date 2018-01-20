@@ -116,6 +116,8 @@ define([
                     self.onEdit([]);
                 }
             });
+
+        this.executingRules = false;
     }
 
     /**
@@ -263,7 +265,7 @@ define([
         var activeRule = this.rulesById[this.activeId];
         this.applyStyle($('#widget', this.domElement), activeRule.getProperty('style'));
         $('#widget', this.domElement).prop('title', activeRule.getProperty('message'));
-        $('#widgetLabel', this.domElement).html(activeRule.getProperty('label'));
+        $('#widgetLabel', this.domElement)[0].innerText = activeRule.getProperty('label');
         $('#widgetLabel', this.domElement).removeClass().addClass('label widget-label ' + activeRule.getProperty('icon'));
     };
 
@@ -271,11 +273,17 @@ define([
      * Get the active rule and update the Widget's appearance.
      */
     SummaryWidget.prototype.executeRules = function () {
-        this.activeId = this.conditionManager.executeRules(
-            this.domainObject.configuration.ruleOrder,
-            this.rulesById
-        );
-        this.updateWidget();
+        if (!this.executingRules){
+            this.executingRules = true;
+            requestAnimationFrame(function () {
+                this.activeId = this.conditionManager.executeRules(
+                    this.domainObject.configuration.ruleOrder,
+                    this.rulesById
+                );
+                this.updateWidget();
+                this.executingRules = false;
+            }.bind(this));
+        }
     };
 
     /**
