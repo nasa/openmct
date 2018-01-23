@@ -206,7 +206,8 @@ define([
                             "timestamp": 0
                         },
                         "activityStart": {},
-                        "activityDuration": {}
+                        "activityDuration": {},
+                        "activityEnd": {}
                     }
                 },
                 {

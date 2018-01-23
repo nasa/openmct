@@ -47,6 +47,14 @@ define(
                 }
             }
 
+            function getTimelineActivityEnd (domainObjectModel) {
+                if (domainObjectModel.activityEnd && domainObjectModel.activityEnd[model.id]) {
+                    return domainObjectModel.activityEnd[model.id];
+                } else {
+                    return getTimelineActivityStart(parentTimelineModel) + getTimelineActivityDuration(parentTimelineModel);
+                }
+            }
+
             // Get the start time for this timeline
             function getStart() {
                 return getTimelineActivityStart(parentTimelineModel);
@@ -54,10 +62,7 @@ define(
 
             // Get the end time for this timeline
             function getEnd() {
-                var start = getTimelineActivityStart(parentTimelineModel),
-                    duration = getTimelineActivityDuration(parentTimelineModel);
-
-                return start + duration;
+                return getTimelineActivityEnd(parentTimelineModel);
             }
 
             // Get the duration of this timeline
@@ -72,11 +77,9 @@ define(
 
             // Set the start time associated with this object
             function setStart(value) {
-                var end = getEnd();
 
                 parentMutation.mutate(function (m) {
                     m.activityStart[model.id] = Math.max(value,0);
-                    m.activityDuration[model.id] = Math.max(end - value, 0);
                 });
 
                 // mutation.mutate(function (m) {
@@ -99,10 +102,8 @@ define(
 
             // Set the end time associated with this object
             function setEnd(value) {
-                var start = getStart();
-
                 parentMutation.mutate(function (m) {
-                    m.activityDuration[model.id] = Math.max(value - start, 0);
+                    m.activityEnd[model.id] = value;
                 });
 
                 // mutation.mutate(function (m) {
