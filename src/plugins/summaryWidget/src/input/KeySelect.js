@@ -60,13 +60,13 @@ define([
                 self.generateOptions();
             }
             self.select.setSelected(self.config.key);
+            self.objectSelect.on('change', onObjectChange, this);
         }
 
         if (self.manager.metadataLoadCompleted()) {
             onMetadataLoad();
         }
 
-        this.objectSelect.on('change', onObjectChange, this);
         this.manager.on('metadata', onMetadataLoad);
 
         return this.select;
