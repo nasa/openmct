@@ -273,16 +273,16 @@ define([
      * Get the active rule and update the Widget's appearance.
      */
     SummaryWidget.prototype.executeRules = function () {
-        if (!this.executingRules){
+        if (!this.executingRules) {
             this.executingRules = true;
-            requestAnimationFrame(function () {
+            setTimeout(function () {
                 this.activeId = this.conditionManager.executeRules(
                     this.domainObject.configuration.ruleOrder,
                     this.rulesById
                 );
                 this.updateWidget();
                 this.executingRules = false;
-            }.bind(this));
+            }.bind(this), 100);
         }
     };
 
