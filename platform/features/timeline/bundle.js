@@ -344,7 +344,7 @@ define([
                                         "cssClass": "icon-plot-resource",
                                         "description": "Graph Resource Utilization",
                                         "control": "button",
-                                        "method": "toggleGraph"
+                                        "method": "test"
                                     },
                                     {
                                         "cssClass": "icon-activity-mode",
@@ -377,6 +377,35 @@ define([
                                         "description": "Edit Properties...",
                                         "control": "button",
                                         "method": "properties"
+                                    },
+                                    {
+                                        "cssClass": "icon-alert-rect",
+                                        "description": "Fragment Activity into equal parts",
+                                        "control": "dialog-button",
+                                        "dialog": {
+                                            "control": "select",
+                                            "options": [
+                                                {
+                                                    "name": "2",
+                                                    "key": 2
+                                                },
+                                                {
+                                                    "name": "3",
+                                                    "key": 3
+                                                },
+                                                {
+                                                    "name": "4",
+                                                    "key": 4
+                                                },
+                                                {
+                                                    "name": "5",
+                                                    "key": 5
+                                                }
+                                            ],
+                                            "name": "Number of fragments",
+                                            "cssClass": "select"
+                                        },
+                                        "property": "fragment"
                                     }
                                 ]
                             },

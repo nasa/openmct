@@ -54,6 +54,12 @@ define(
                 timespan = t;
             });
 
+            function fragment(num) {
+                if(num !== undefined) {
+                    console.log(num);
+                }
+            }
+
             return {
                 /**
                  * Check if this swimlane is currently visible. (That is,
@@ -155,6 +161,7 @@ define(
                 timespan: function () {
                     return timespan;
                 },
+                fragment: fragment,
                 // Expose domain object, expansion state, indentation depth
                 domainObject: domainObject,
                 expanded: true,
