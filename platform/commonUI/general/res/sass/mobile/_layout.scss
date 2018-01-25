@@ -138,7 +138,7 @@ body.phone.portrait {
         }
         .pane.right.items {
             left: 0 !important;
-            @include transform(translateX($proporMenuOnly));
+            transform: translateX($proporMenuOnly);
             .holder-object-and-inspector {
                 opacity: 0;
             }

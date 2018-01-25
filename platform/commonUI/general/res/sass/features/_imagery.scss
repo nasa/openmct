@@ -15,7 +15,7 @@
         margin-bottom: $interiorMargin;
 	}
 	.l-image-main-controlbar {
-        &.l-flex-row { @include align-items(center); }
+        &.l-flex-row { align-items: center; }
 	}
 }
 

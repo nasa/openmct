@@ -159,7 +159,7 @@
 	@include ellipsize();
 	display: flex;
 	flex-direction: row;
-	@include align-items(center);
+	align-items: center;
 	position: absolute;
 	top: $m; right: auto; bottom: $m; left: 50%;
 	height: auto; width: auto;
@@ -252,7 +252,7 @@
     $iconW: 32px;
     display: flex;
     flex-direction: row;
-    @include align-items(stretch);
+    align-items: stretch;
     padding: $interiorMarginLg;
 
     &:before {
@@ -294,7 +294,7 @@
     }
 
     .message-body {
-        @include flex(1 1 100%);
+        flex: 1 1 100%;
     }
 }
 
@@ -340,7 +340,7 @@
     }
 
     .w-messages {
-        @include flex(1 1 100%);
+        flex: 1 1 100%;
         overflow-y: auto;
         padding-right: $interiorMargin;
     }

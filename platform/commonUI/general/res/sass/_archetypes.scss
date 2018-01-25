@@ -95,7 +95,7 @@
 .l-flex-row,
 .l-flex-col {
     display: flex;
-    @include flex-wrap(nowrap);
+    flex-wrap: nowrap;
     .flex-elem {
         min-height: 0; // Needed to allow element to shrink within parent
         position: relative;
@@ -115,7 +115,7 @@
     .flex-container {
         // Apply to wrapping elements, mct-includes, etc.
         display: flex;
-        @include flex-wrap(nowrap);
+        flex-wrap: nowrap;
         flex: 1 1 auto;
         min-height:0;
     }
@@ -150,7 +150,7 @@
 }
 
 .flex-justify-end {
-    @include justify-content(flex-end);
+    justify-content: flex-end;
 }
 
 /********************************************* POPUPS */

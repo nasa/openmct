@@ -124,7 +124,7 @@
     >.label,
     >.controls {
         line-height: inherit;
-        min-height: inherit;;
+        min-height: inherit;
     }
     >.label {
         flex: 1 1 auto;
@@ -191,8 +191,8 @@
         margin-bottom: $interiorMarginLg;
         li {
             display: flex;
-            @include flex-wrap(wrap);
-            @include align-items(center);
+            flex-wrap: wrap;
+            align-items: center;
             label,
             .control {
                 display: flex;
@@ -202,7 +202,7 @@
                 width: $labelW;
             }
             .controls {
-                @include flex-grow(1);
+                flex-grow: 1;
                 margin-left: $interiorMargin;
                 input[type="text"],
                 input[type="search"],
@@ -232,14 +232,14 @@
 
             &.controls-first {
                 .control {
-                    @include flex-grow(0);
+                    flex-grow: 0;
                     margin-right: $interiorMargin;
                     min-width: 0;
                     order: 1;
                     width: auto;
                 }
                 label {
-                    @include flex-grow(1);
+                    flex-grow: 1;
                     order: 2;
                     width: auto;
                 }

@@ -55,7 +55,7 @@
 
 .widget-rule-header {
     @extend .l-flex-row;
-    @include align-items(center);
+    align-items: center;
     margin-bottom: $interiorMargin;
     > .flex-elem {
         &:not(:first-child) {
@@ -177,8 +177,8 @@
         ul {
             &:last-child { margin: 0; }
             li {
-                @include align-items(flex-start);
-                @include flex-wrap(nowrap);
+                align-items: flex-start;
+                flex-wrap: nowrap;
                 line-height: 230%; // Provide enough space when controls wrap
                 padding: 2px 0;
                 &:not(.widget-rule-header) {
@@ -233,7 +233,7 @@
 
 .l-widget-thumb-wrapper {
     @extend .l-flex-row;
-    @include align-items(center);
+    align-items: center;
     > span { display: block; }
     .grippy-holder,
     .view-control {
