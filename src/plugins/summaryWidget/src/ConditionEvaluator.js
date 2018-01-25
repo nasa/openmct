@@ -55,7 +55,7 @@ define([], function () {
         this.operations = {
             equalTo: {
                 operation: function (input) {
-                    return input[0] === input[1];
+                    return Number(input[0]) === Number(input[1]);
                 },
                 text: 'is equal to',
                 appliesTo: ['number'],
@@ -66,7 +66,7 @@ define([], function () {
             },
             notEqualTo: {
                 operation: function (input) {
-                    return input[0] !== input[1];
+                    return Number(input[0]) !== Number(input[1]);
                 },
                 text: 'is not equal to',
                 appliesTo: ['number'],
@@ -77,7 +77,7 @@ define([], function () {
             },
             greaterThan: {
                 operation: function (input) {
-                    return input[0] > input[1];
+                    return Number(input[0]) > Number(input[1]);
                 },
                 text: 'is greater than',
                 appliesTo: ['number'],
@@ -88,7 +88,7 @@ define([], function () {
             },
             lessThan: {
                 operation: function (input) {
-                    return input[0] < input[1];
+                    return Number(input[0]) < Number(input[1]);
                 },
                 text: 'is less than',
                 appliesTo: ['number'],
@@ -99,7 +99,7 @@ define([], function () {
             },
             greaterThanOrEq: {
                 operation: function (input) {
-                    return input[0] >= input[1];
+                    return Number(input[0]) >= Number(input[1]);
                 },
                 text: 'is greater than or equal to',
                 appliesTo: ['number'],
@@ -110,7 +110,7 @@ define([], function () {
             },
             lessThanOrEq: {
                 operation: function (input) {
-                    return input[0] <= input[1];
+                    return Number(input[0]) <= Number(input[1]);
                 },
                 text: 'is less than or equal to',
                 appliesTo: ['number'],
@@ -121,7 +121,7 @@ define([], function () {
             },
             between: {
                 operation: function (input) {
-                    return input[0] > input[1] && input[0] < input[2];
+                    return Number(input[0]) > Number(input[1]) && Number(input[0]) < Number(input[2]);
                 },
                 text: 'is between',
                 appliesTo: ['number'],
@@ -132,7 +132,7 @@ define([], function () {
             },
             notBetween: {
                 operation: function (input) {
-                    return input[0] < input[1] || input[0] > input[2];
+                    return Number(input[0]) < Number(input[1]) || Number(input[0]) > Number(input[2]);
                 },
                 text: 'is not between',
                 appliesTo: ['number'],
