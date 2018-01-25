@@ -675,7 +675,7 @@ input[type="range"] {
 .l-calendar {
     $colorMuted: pushBack($colorMenuFg, 30%);
     ul.l-cal-row {
-        @include display(flex);
+        display: flex;
         @include flex-flow(row nowrap);
         margin-top: 1px;
         &:first-child {
@@ -763,10 +763,10 @@ textarea {
     &:before {
         position: absolute;
         @include trans-prop-nice(transform, 100ms);
-        @include transform-origin(center);
+        transform-origin: center;
     }
     &.expanded:before {
-        @include transform(rotate(90deg));
+        transform: rotate(90deg);
     }
 }
 

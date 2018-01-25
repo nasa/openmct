@@ -103,7 +103,7 @@
 .l-compact-form label {
     $ruleLabelW: 40%;
     $ruleLabelMaxW: 150px;
-    @include display(flex);
+    display: flex;
     max-width: $ruleLabelMaxW;
     width: $ruleLabelW;
 }
@@ -243,18 +243,18 @@
     }
 
     .widget-thumb {
-        @include flex(1 1 auto);
+        flex: 1 1 auto;
         width: 100%;
     }
 }
 
 .rule-title {
-    @include flex(0 1 auto);
+    flex: 0 1 auto;
     color: pullForward($colorBodyFg, 50%);
 }
 
 .rule-description {
-    @include flex(1 1 auto);
+    flex: 1 1 auto;
     @include ellipsize();
     color: pushBack($colorBodyFg, 20%);
 }

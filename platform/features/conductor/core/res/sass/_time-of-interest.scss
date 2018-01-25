@@ -29,7 +29,7 @@ mct-include.l-toi-holder,
 
 mct-include.l-toi-holder {
     $blockerFadeW: $toiBlockerFadeW;
-    @include transform(translateX(-50%));
+    transform: translateX(-50%);
     color: $toiColorBg;
     position: absolute;
     top: 0;

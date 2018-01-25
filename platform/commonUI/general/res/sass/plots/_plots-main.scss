@@ -172,7 +172,7 @@
 	}
 
     .gl-plot-x-options {
-        @include transform(translateX(-50%));
+        transform: translateX(-50%);
         bottom: 0;
         left: 50%;
     }

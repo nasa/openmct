@@ -45,7 +45,7 @@
         &.grows {
             .l-section-body,
             .form-row {
-                @include flex(1 1 auto);
+                flex: 1 1 auto;
                 .wrapper {
                     height: 100%;
                 }
@@ -87,7 +87,7 @@
 		.controls {
             order: 2;
             position: relative;
-            @include flex(1 1 auto);
+            flex: 1 1 auto;
 
 			.l-composite-control {
 				&.l-checkbox {
@@ -127,13 +127,13 @@
         min-height: inherit;;
     }
     >.label {
-        @include flex(1 1 auto);
+        flex: 1 1 auto;
         min-width: 0;
         width: auto;
         order: 2;
     }
     >.controls {
-        @include flex(0 0 auto);
+        flex: 0 0 auto;
         margin-right: $interiorMargin;
         order: 1;
     }
@@ -141,7 +141,7 @@
 
 .l-controls-under.l-flex-row {
     // Change to use column layout
-    @include flex-direction(column);
+    flex-direction: column;
     .flex-elem {
         margin-bottom: $interiorMarginLg;
     }
@@ -190,12 +190,12 @@
     ul {
         margin-bottom: $interiorMarginLg;
         li {
-            @include display(flex);
+            display: flex;
             @include flex-wrap(wrap);
             @include align-items(center);
             label,
             .control {
-                @include display(flex);
+                display: flex;
             }
             label {
                 line-height: inherit;

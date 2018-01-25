@@ -101,7 +101,7 @@
 
                 .editor .form .form-row.l-flex-row  {
                     // Display elements in a columnar view
-                    @include flex-direction(column);
+                    flex-direction: column;
                     > .flex-elem {
                         &:not(:first-child) {
                             margin-top: $interiorMargin;
