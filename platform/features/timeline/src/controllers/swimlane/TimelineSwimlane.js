@@ -67,7 +67,7 @@ define(
                         var parentComposition = timespan.getParent().getCapability('composition'),
                             timespanModel = timespan.getModel();
                         
-                        for (var i = 1; i < number+1; i++) {
+                        for (var i = 1; i <= number; i++) {
                             var activityId = timespanModel.id + '-copy-' + copy,
                                 activityModel = {
                                     name: timespanModel.name + ' Copy ' + copy,
@@ -76,17 +76,16 @@ define(
                                     type: 'activity',
                                     relationships: timespanModel.relationships,
                                     id: activityId
-                                };
+                                },
+                                activityInstance = instantiate(activityModel, activityId);
 
-                            
-                            var activityInstance = instantiate(activityModel, activityId);
                             activityInstance.getCapability('location').setPrimaryLocation(timespan.getParent().model.id);
                             
                             parentComposition.add(activityInstance);
-                            copy += 1;
+                            copy++;
                         }
                     } else {
-                        window.alert("Please enter a Number between 2 and 5");
+                        window.alert("Please enter a Number between 1 and 5");
                     }
                    } else {
                        window.alert("Please enter a Number");
