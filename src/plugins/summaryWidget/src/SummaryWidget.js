@@ -369,7 +369,7 @@ define([
             };
 
         }
-        ruleConfig = this.domainObject.configuration.ruleConfigById[ruleId];
+        ruleConfig = JSON.parse(JSON.stringify(this.domainObject.configuration.ruleConfigById[ruleId]));
         this.rulesById[ruleId] = new Rule(ruleConfig, this.domainObject, this.openmct,
                                           this.conditionManager, this.widgetDnD, this.container);
         this.rulesById[ruleId].on('remove', this.refreshRules, this);

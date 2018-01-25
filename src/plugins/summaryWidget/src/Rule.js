@@ -302,11 +302,18 @@ define([
     };
 
     /**
-     * Mutate thet domain object with this rule's local configuration
+     * Mutate thet domain object with this rule's local configuration, if it has
+     * changed.
      */
     Rule.prototype.updateDomainObject = function () {
-        this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById.' +
-            this.config.id, this.config);
+        var path = 'configuration.ruleConfigById.' + this.config.id,
+            newConfig = this.config,
+            oldConfig = _.get(this.domainObject, path);
+
+        if (_.isEqual(newConfig, oldConfig)) {
+            return;
+        }
+        this.openmct.objects.mutate(this.domainObject, path, this.config);
     };
 
     /**
