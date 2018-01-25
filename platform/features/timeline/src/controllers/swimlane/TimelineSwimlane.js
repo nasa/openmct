@@ -58,39 +58,39 @@ define(
 
             function makeCopies(input) {
 
-               if (input !== undefined) {
-                   var number = Number(input);
+                if (input !== undefined) {
+                    var number = Number(input);
 
-                   if (!isNaN(number)) {
-                       
-                    if (number >= 1 && number <= 5) {
-                        var parentComposition = timespan.getParent().getCapability('composition'),
-                            timespanModel = timespan.getModel();
-                        
-                        for (var i = 1; i <= number; i++) {
-                            var activityId = timespanModel.id + '-copy-' + copy,
-                                activityModel = {
-                                    name: timespanModel.name + ' Copy ' + copy,
-                                    start: {timestamp: timespan.getStart(), epoch: "SET"},
-                                    duration: {timestamp: timespan.getDuration(), epoch: "SET"},
-                                    type: 'activity',
-                                    relationships: timespanModel.relationships,
-                                    id: activityId
-                                },
-                                activityInstance = instantiate(activityModel, activityId);
+                    if (!isNaN(number)) {
 
-                            activityInstance.getCapability('location').setPrimaryLocation(timespan.getParent().model.id);
-                            
-                            parentComposition.add(activityInstance);
-                            copy++;
+                        if (number >= 1 && number <= 5) {
+                            var parentComposition = timespan.getParent().getCapability('composition'),
+                                timespanModel = timespan.getModel();
+
+                            for (var i = 1; i <= number; i++) {
+                                var activityId = timespanModel.id + '-copy-' + copy,
+                                    activityModel = {
+                                        name: timespanModel.name + ' Copy ' + copy,
+                                        start: {timestamp: timespan.getStart(), epoch: "SET"},
+                                        duration: {timestamp: timespan.getDuration(), epoch: "SET"},
+                                        type: 'activity',
+                                        relationships: timespanModel.relationships,
+                                        id: activityId
+                                    },
+                                    activityInstance = instantiate(activityModel, activityId);
+
+                                activityInstance.getCapability('location').setPrimaryLocation(timespan.getParent().model.id);
+
+                                parentComposition.add(activityInstance);
+                                copy++;
+                            }
+                        } else {
+                            window.alert("Please enter a Number between 1 and 5");
                         }
                     } else {
-                        window.alert("Please enter a Number between 1 and 5");
+                        window.alert("Please enter a Number");
                     }
-                   } else {
-                       window.alert("Please enter a Number");
-                   } 
-               }
+                }
             }
 
             return {

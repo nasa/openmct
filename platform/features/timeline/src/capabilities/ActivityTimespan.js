@@ -31,7 +31,7 @@ define(
             var parentTimelineModel = parentTimeline.getModel(),
                 parentMutation = parentTimeline.getCapability('mutation');
 
-            function getTimelineActivityStart (domainObjectModel) {
+            function getTimelineActivityStart(domainObjectModel) {
                 if (domainObjectModel.activityStart && domainObjectModel.activityStart[model.id]) {
                     return domainObjectModel.activityStart[model.id];
                 } else {
@@ -39,7 +39,7 @@ define(
                 }
             }
 
-            function getTimelineActivityDuration (domainObjectModel) {
+            function getTimelineActivityDuration(domainObjectModel) {
                 if (domainObjectModel.activityDuration && domainObjectModel.activityDuration[model.id]) {
                     return domainObjectModel.activityDuration[model.id];
                 } else {
@@ -47,7 +47,7 @@ define(
                 }
             }
 
-            function getTimelineActivityEnd (domainObjectModel) {
+            function getTimelineActivityEnd(domainObjectModel) {
                 if (domainObjectModel.activityEnd && domainObjectModel.activityEnd[model.id]) {
                     return domainObjectModel.activityEnd[model.id];
                 } else {
@@ -79,7 +79,7 @@ define(
             function setStart(value) {
 
                 parentMutation.mutate(function (m) {
-                    m.activityStart[model.id] = Math.max(value,0);
+                    m.activityStart[model.id] = Math.max(value, 0);
                 });
 
                 // mutation.mutate(function (m) {
