@@ -33,6 +33,8 @@ define([
         eventHelpers.extend(this);
         var self = this;
 
+        this.generateDescription = _.debounce(this.generateDescription.bind(this));
+
         this.config = ruleConfig;
         this.domainObject = domainObject;
         this.openmct = openmct;
