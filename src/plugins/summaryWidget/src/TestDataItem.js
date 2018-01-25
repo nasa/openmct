@@ -37,6 +37,8 @@ define([
 
         this.deleteButton = $('.t-delete', this.domElement);
         this.duplicateButton = $('.t-duplicate', this.domElement);
+        this.equalTo = $('.equal-to', this.domElement);
+
 
         this.selects = {};
         this.valueInputs = [];
@@ -56,6 +58,13 @@ define([
         function onSelectChange(value, property) {
             if (property === 'key') {
                 self.generateValueInput(value);
+            }
+            if (property === 'object') {
+                if (!value) {
+                    self.equalTo.hide();
+                } else {
+                    self.equalTo.show();
+                }
             }
             self.eventEmitter.emit('change', {
                 value: value,

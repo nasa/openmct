@@ -62,6 +62,7 @@ define([
         this.deleteButton = $('.t-delete', this.domElement);
         this.duplicateButton = $('.t-duplicate', this.domElement);
         this.addConditionButton = $('.add-condition', this.domElement);
+        this.insertBefore = $('li:last-of-type', this.conditionArea);
 
         /**
          * The text inputs for this rule: any input included in this object will
@@ -414,9 +415,9 @@ define([
             this.addConditionButton.show();
             self.conditions.forEach(function (condition) {
                 $condition = condition.getDOM();
-                $('li:last-of-type', self.conditionArea).before($condition);
+                self.insertBefore.before($condition);
                 if (loopCnt > 0) {
-                    $('.t-condition-context', $condition).html(triggerContextStr + ' when');
+                    condition.conditionContents.html(triggerContextStr + ' when');
                 }
                 loopCnt++;
             });
@@ -446,6 +447,7 @@ define([
         this.generateDescription();
         this.eventEmitter.emit('conditionChange');
     };
+
 
     /**
      * Build a human-readable description from this rule's conditions

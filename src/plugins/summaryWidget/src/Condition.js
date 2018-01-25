@@ -37,6 +37,9 @@ define([
 
         this.deleteButton = $('.t-delete', this.domElement);
         this.duplicateButton = $('.t-duplicate', this.domElement);
+        this.conditionContents = $('.t-condition-context', this.domElement)
+        this.selectContainer = $('.t-configuration', this.domElement)
+        this.inputArea = $('.t-value-inputs', this.domElement)
 
         this.selects = {};
         this.valueInputs = [];
@@ -106,10 +109,10 @@ define([
         });
 
         Object.values(this.selects).forEach(function (select) {
-            $('.t-configuration', self.domElement).append(select.getDOM());
+            self.selectContainer.append(select.getDOM());
         });
 
-        this.listenTo($(this.domElement), 'input', onValueInput);
+        this.listenTo(this.domElement, 'input', onValueInput);
     }
 
     Condition.prototype.getDOM = function (container) {
@@ -172,13 +175,12 @@ define([
      */
     Condition.prototype.generateValueInputs = function (operation) {
         var evaluator = this.conditionManager.getEvaluator(),
-            inputArea = $('.t-value-inputs', this.domElement),
             inputCount,
             inputType,
             newInput,
             index = 0;
 
-        inputArea.html('');
+        this.inputArea.html('');
         this.valueInputs = [];
 
         if (evaluator.getInputCount(operation)) {
@@ -190,7 +192,7 @@ define([
                 }
                 newInput = $('<input class="sm" type = "' + inputType + '" value = "' + this.config.values[index] + '"> </input>');
                 this.valueInputs.push(newInput.get(0));
-                inputArea.append(newInput);
+                this.inputArea.append(newInput);
                 index += 1;
             }
         }

@@ -21,6 +21,7 @@ define([
         var self = this;
 
         this.domElement = $(selectTemplate);
+        this.$select = $('select', this.domElement);
         this.options = [];
         this.eventEmitter = new EventEmitter();
         this.supportedCallbacks = ['change'];
@@ -40,7 +41,7 @@ define([
             self.eventEmitter.emit('change', value[0]);
         }
 
-        this.listenTo($('select', this.domElement), 'change', onChange, this);
+        this.listenTo(this.$select, 'change', onChange, this);
     }
 
     /**
@@ -74,16 +75,16 @@ define([
         var self = this,
             selectedIndex = 0;
 
-        selectedIndex = $('select', this.domElement).prop('selectedIndex');
+        selectedIndex = this.$select.prop('selectedIndex');
         $('option', this.domElement).remove();
 
         self.options.forEach(function (option, index) {
-            $('select', self.domElement)
+            self.$select
                 .append('<option value = "' + option[0] + '"' + ' >' +
                         option[1] + '</option>');
         });
 
-        $('select', this.domElement).prop('selectedIndex', selectedIndex);
+        this.$select.prop('selectedIndex', selectedIndex);
     };
 
     /**
@@ -120,7 +121,7 @@ define([
                 selectedIndex = index;
             }
         });
-        $('select', this.domElement).prop('selectedIndex', selectedIndex);
+        this.$select.prop('selectedIndex', selectedIndex);
 
         selectedOption = this.options[selectedIndex];
         this.eventEmitter.emit('change', selectedOption[0]);
@@ -131,17 +132,15 @@ define([
      * @return {string}
      */
     Select.prototype.getSelected = function () {
-        return $('select', this.domElement).prop('value');
+        return this.$select.prop('value');
     };
 
     Select.prototype.hide = function () {
-        $(this.domElement).addClass('hidden');
-        $('.equal-to').addClass('hidden');
+        this.domElement.addClass('hidden');
     };
 
     Select.prototype.show = function () {
-        $(this.domElement).removeClass('hidden');
-        $('.equal-to').removeClass('hidden');
+        this.domElement.removeClass('hidden');
     };
 
     Select.prototype.destroy = function () {
