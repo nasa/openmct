@@ -15,6 +15,8 @@ define([
     EventEmitter,
     $
 ) {
+
+    var CURRENT_CONDITION_COUNT = 0;
     /**
      * Represents an individual condition for a summary widget rule. Manages the
      * associated inputs and view.
@@ -26,6 +28,13 @@ define([
      *                                            selects with configuration data
      */
     function Condition(conditionConfig, index, conditionManager) {
+        if (CURRENT_CONDITION_COUNT > 2000) {
+            console.error('Too many Summary Widget Conditions in use, please ' +
+                          'simplify your logic or remove unnecessary summary ' +
+                          'widgets from the current display.');
+              throw 'TOO MANY CONDITIONS';
+        }
+        CURRENT_CONDITION_COUNT += 1;
         eventHelpers.extend(this);
         this.config = conditionConfig;
         this.index = index;
@@ -151,6 +160,7 @@ define([
 
     Condition.prototype.destroy = function () {
         this.stopListening();
+        CURRENT_CONDITION_COUNT -= 1;
         Object.values(this.selects).forEach(function (select) {
             select.destroy();
         });

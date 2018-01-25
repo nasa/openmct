@@ -369,13 +369,20 @@ define([
             };
 
         }
-        ruleConfig = JSON.parse(JSON.stringify(this.domainObject.configuration.ruleConfigById[ruleId]));
-        this.rulesById[ruleId] = new Rule(ruleConfig, this.domainObject, this.openmct,
-                                          this.conditionManager, this.widgetDnD, this.container);
-        this.rulesById[ruleId].on('remove', this.refreshRules, this);
-        this.rulesById[ruleId].on('duplicate', this.duplicateRule, this);
-        this.rulesById[ruleId].on('change', this.updateWidget, this);
-        this.rulesById[ruleId].on('conditionChange', this.executeRules, this);
+        try {
+            ruleConfig = JSON.parse(JSON.stringify(this.domainObject.configuration.ruleConfigById[ruleId]));
+            this.rulesById[ruleId] = new Rule(ruleConfig, this.domainObject, this.openmct,
+                                              this.conditionManager, this.widgetDnD, this.container);
+            this.rulesById[ruleId].on('remove', this.refreshRules, this);
+            this.rulesById[ruleId].on('duplicate', this.duplicateRule, this);
+            this.rulesById[ruleId].on('change', this.updateWidget, this);
+            this.rulesById[ruleId].on('conditionChange', this.executeRules, this);
+        } catch (e) {
+            if (e === 'TOO MANY CONDITIONS') {
+                $('#widgetLabel', this.domElement)[0].innerText = 'TOO MANY CONDITIONS';
+            }
+        }
+
     };
 
     /**
