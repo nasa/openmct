@@ -379,33 +379,15 @@ define([
                                         "method": "properties"
                                     },
                                     {
-                                        "cssClass": "icon-alert-rect",
-                                        "description": "Fragment Activity into equal parts",
+                                        "cssClass": "icon-duplicate",
+                                        "description": "Make copies of activities",
                                         "control": "dialog-button",
                                         "dialog": {
-                                            "control": "select",
-                                            "options": [
-                                                {
-                                                    "name": "2",
-                                                    "key": 2
-                                                },
-                                                {
-                                                    "name": "3",
-                                                    "key": 3
-                                                },
-                                                {
-                                                    "name": "4",
-                                                    "key": 4
-                                                },
-                                                {
-                                                    "name": "5",
-                                                    "key": 5
-                                                }
-                                            ],
-                                            "name": "Number of fragments",
-                                            "cssClass": "select"
+                                            "control": "textfield",
+                                            "name": "Number of copies (1 to 5)",
+                                            "cssClass": "l-input-sm numeric"
                                         },
-                                        "property": "fragment"
+                                        "property": "makeCopies"
                                     }
                                 ]
                             },
@@ -496,7 +478,8 @@ define([
                         "$scope",
                         "$q",
                         "objectLoader",
-                        "TIMELINE_MINIMUM_DURATION"
+                        "TIMELINE_MINIMUM_DURATION",
+                        "openmct"
                     ]
                 },
                 {

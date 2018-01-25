@@ -39,7 +39,7 @@ define(
          * timeline view.
          * @constructor
          */
-        function TimelineSwimlanePopulator(objectLoader, configuration, selection) {
+        function TimelineSwimlanePopulator(objectLoader, configuration, selection, openmct) {
             var swimlanes = [],
                 start = Number.POSITIVE_INFINITY,
                 end = Number.NEGATIVE_INFINITY,
@@ -72,7 +72,8 @@ define(
                         assigner,
                         configuration,
                         parent,
-                        index || 0
+                        index || 0,
+                        openmct
                     ), selection);
                     // Track start & end times of this domain object
                     domainObject.useCapability('timespan').then(trackStartEnd);

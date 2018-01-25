@@ -36,11 +36,12 @@ define(
          * Controller for the Timeline view.
          * @constructor
          */
-        function TimelineController($scope, $q, objectLoader, MINIMUM_DURATION) {
+        function TimelineController($scope, $q, objectLoader, MINIMUM_DURATION, openmct) {
             var swimlanePopulator = new TimelineSwimlanePopulator(
                     objectLoader,
                     $scope.configuration || {},
-                    $scope.selection
+                    $scope.selection,
+                    openmct
                 ),
                 graphPopulator = new TimelineGraphPopulator($q),
                 dragPopulator = new TimelineDragPopulator(objectLoader);

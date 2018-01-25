@@ -147,7 +147,15 @@ define(
                  * start and end times.
                  * @returns {string} the epoch
                  */
-                getEpoch: getEpoch
+                getEpoch: getEpoch,
+
+                getModel: function () {
+                    return model;
+                },
+
+                getParent: function () {
+                    return parentTimeline;
+                }
             };
         }
 

@@ -39,7 +39,7 @@ define(
          * @param configuration the view's configuration object
          * @param {TimelineSwimlane} parent the parent swim lane (if any)
          */
-        function TimelineSwimlane(domainObject, assigner, configuration, parent, index) {
+        function TimelineSwimlane(domainObject, assigner, configuration, parent, index, openmct) {
             var id = domainObject.getId(),
                 highlight = false, // Drop highlight (middle)
                 highlightBottom = false, // Drop highlight (lower)
@@ -47,17 +47,51 @@ define(
                 depth = parent ? (parent.depth + 1) : 0,
                 timespan,
                 path = (!parent || !parent.parent) ? "" : parent.path +
-                        parent.domainObject.getModel().name + " > ";
+                        parent.domainObject.getModel().name + " > ",
+                instantiate = openmct.$injector.get("instantiate"),
+                copy = 1;
 
             // Look up timespan for this object
             domainObject.useCapability('timespan').then(function (t) {
                 timespan = t;
             });
 
-            function fragment(num) {
-                if(num !== undefined) {
-                    console.log(num);
-                }
+            function makeCopies(input) {
+
+               if (input !== undefined) {
+                   var number = Number(input);
+
+                   if (!isNaN(number)) {
+                       
+                    if (number >= 1 && number <= 5) {
+                        var parentComposition = timespan.getParent().getCapability('composition'),
+                            timespanModel = timespan.getModel();
+                        
+                        for (var i = 1; i < number+1; i++) {
+                            var activityId = timespanModel.id + '-copy-' + copy,
+                                activityModel = {
+                                    name: timespanModel.name + ' Copy ' + copy,
+                                    start: {timestamp: timespan.getStart(), epoch: "SET"},
+                                    duration: {timestamp: timespan.getDuration(), epoch: "SET"},
+                                    type: 'activity',
+                                    relationships: timespanModel.relationships,
+                                    id: activityId
+                                };
+
+                            
+                            var activityInstance = instantiate(activityModel, activityId);
+                            activityInstance.getCapability('location').setPrimaryLocation(timespan.getParent().model.id);
+                            
+                            parentComposition.add(activityInstance);
+                            copy += 1;
+                        }
+                    } else {
+                        window.alert("Please enter a Number between 2 and 5");
+                    }
+                   } else {
+                       window.alert("Please enter a Number");
+                   } 
+               }
             }
 
             return {
@@ -161,7 +195,7 @@ define(
                 timespan: function () {
                     return timespan;
                 },
-                fragment: fragment,
+                makeCopies: makeCopies,
                 // Expose domain object, expansion state, indentation depth
                 domainObject: domainObject,
                 expanded: true,
