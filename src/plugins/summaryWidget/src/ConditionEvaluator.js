@@ -321,6 +321,7 @@ define([], function () {
     ConditionEvaluator.prototype.validateNumberInput = function (input) {
         var valid = true;
         input.forEach(function (value) {
+            value = Number(value);
             valid = valid && (typeof value === 'number');
         });
         return valid;
