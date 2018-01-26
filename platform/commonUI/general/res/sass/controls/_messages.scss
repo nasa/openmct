@@ -68,7 +68,7 @@
     }
 }
 
-.status-block-holder {
+/*.status-block-holder {
     // Applied to mct-include element
     // Contains status.block elements
     $transDelay: 1.5s;
@@ -90,6 +90,7 @@
             @include trans-prop-nice(max-width, $transSpeed, $transDelay);
             overflow: hidden;
             max-width: 0px;
+            white-space: nowrap;
         }
         &:hover {
             .label {
@@ -104,10 +105,10 @@
         }
     }
 
-}
+}*/
 
-.status.block {
-    $transDelay: 1.5s;
+.t-indicator {
+    $transDelay: 2.5s;
     $transSpeed: .25s;
 	color: $colorStatusDefault;
 	display: inline-block;
@@ -118,6 +119,34 @@
 		display: inline-block;
 		vertical-align: top;
 	}
+    &.float-right {
+        float: right;
+    }
+    &.no-icon {
+        .status-indicator {
+            display: none;
+        }
+    }
+    &:not(.no-collapse) {
+        .label {
+            // Max-width silliness is necessary for width transition
+            @include trans-prop-nice(max-width, $transSpeed, $transDelay);
+            overflow: hidden;
+            max-width: 0px;
+            white-space: nowrap;
+        }
+        &:hover {
+            .label {
+                @include trans-prop-nice(max-width, $transSpeed, 0s);
+                max-width: 600px;
+                width: auto;
+            }
+            .count {
+                @include trans-prop-nice(max-width, $transSpeed, 0s);
+                opacity: 0;
+            }
+        }
+    }
 
 	.status-indicator {
         background: none !important;
