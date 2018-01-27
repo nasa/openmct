@@ -93,6 +93,47 @@ define(
                 }
             }
 
+            function fragment (input) {
+
+                if (input !== undefined) {
+                    var number = Number(input);
+
+                    if (!isNaN(number)) {
+
+                        if (number >= 2 && number <= 5) {
+                            var parentComposition = timespan.getParent().getCapability('composition'),
+                                timespanModel = timespan.getModel(),
+                                duration = (timespan.getEnd() - timespan.getStart())/number;
+
+                            timespan.setDuration(duration);
+                            timespan.setEnd(timespan.getStart() + duration);
+
+                            for (var i = 1; i < number; i++) {
+                                var activityId = timespanModel.id + '-fragment-' + copy,
+                                    activityModel = {
+                                        name: timespanModel.name + ' Fragment ' + copy,
+                                        start: {timestamp: timespan.getStart(), epoch: "SET"},
+                                        duration: {timestamp: duration, epoch: "SET"},
+                                        type: 'activity',
+                                        relationships: timespanModel.relationships,
+                                        id: activityId
+                                    },
+                                    activityInstance = instantiate(activityModel, activityId);
+
+                                activityInstance.getCapability('location').setPrimaryLocation(timespan.getParent().model.id);
+
+                                parentComposition.add(activityInstance);
+                                copy++;
+                            }
+                        } else {
+                            window.alert("Please enter a Number between 2 and 5");
+                        }
+                    } else {
+                        window.alert("Please enter a Number");
+                    }
+                }
+            }
+
             return {
                 /**
                  * Check if this swimlane is currently visible. (That is,
@@ -195,6 +236,7 @@ define(
                     return timespan;
                 },
                 makeCopies: makeCopies,
+                fragment: fragment,
                 // Expose domain object, expansion state, indentation depth
                 domainObject: domainObject,
                 expanded: true,

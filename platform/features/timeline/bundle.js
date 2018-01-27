@@ -388,6 +388,17 @@ define([
                                             "cssClass": "l-input-sm numeric"
                                         },
                                         "property": "makeCopies"
+                                    },
+                                    {
+                                        "cssClass": "icon-layers",
+                                        "description": "Fragment Activity",
+                                        "control": "dialog-button",
+                                        "dialog": {
+                                            "control": "textfield",
+                                            "name": "Number of fragments (2 to 5)",
+                                            "cssClass": "l-input-sm numeric"
+                                        },
+                                        "property": "fragment"
                                     }
                                 ]
                             },
