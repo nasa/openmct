@@ -1,0 +1,99 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+/* Indicators are generally only displayed in the ue-bottom-bar element of the main interface */
+
+.l-indicator {
+    $transDelayHover: 1.5s;
+    $transDelayWhileExpanded: 2.5s;
+    $transSpeed: .25s;
+    display: inline-block;
+    margin-right: $interiorMarginSm;
+
+    &:before {
+        // Icon
+        display: inline-block;
+        opacity: 0.85;
+    }
+
+    .label,
+    .count {
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    &.float-right {
+        float: right;
+    }
+
+    &.no-icon {
+        &:before {
+            display: none;
+        }
+    }
+
+    &:not(.no-collapse) {
+        .label {
+            // Max-width silliness is necessary for width transition
+            @include trans-prop-nice((max-width, margin-right), $transSpeed, $transDelayWhileExpanded);
+            overflow: hidden;
+            margin-right: 0;
+            max-width: 0px;
+            white-space: nowrap;
+        }
+        &:hover {
+            &:before {
+                opacity: 1;
+            }
+
+            .label {
+                @include trans-prop-nice((max-width, margin-right), 0s);
+                margin-right: $interiorMargin;
+                max-width: 600px;
+                width: auto;
+            }
+
+            .count {
+                @include trans-prop-nice(max-width, 0s);
+                opacity: 0;
+            }
+        }
+    }
+
+    .count {
+        @include trans-prop-nice(opacity, $transSpeed, $transDelayWhileExpanded);
+        font-weight: bold;
+        opacity: 1;
+    }
+
+    .s-button {
+        background: $colorStatusBtnBg;
+        padding: 0 $interiorMargin;
+        height: auto;
+        line-height: inherit;
+    }
+}
+
+.s-indicator {
+    color: $colorStatusDefault;
+
+}

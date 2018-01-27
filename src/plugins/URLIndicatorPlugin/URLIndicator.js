@@ -40,7 +40,7 @@ define(
             };
         function URLIndicator($http, $interval) {
             var self = this;
-            this.cssClass = this.options.cssClass ? this.options.cssClass : "icon-database";
+            this.cssClass = this.options.cssClass ? this.options.cssClass : "icon-chain-links";
             this.URLpath = this.options.url;
             this.label = this.options.label ? this.options.label : this.options.url;
             this.interval = this.options.interval || 10000;

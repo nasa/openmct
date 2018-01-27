@@ -36,11 +36,11 @@ define(
         }
 
         FollowIndicator.prototype.getGlyphClass = function () {
-            return "";
+            return (this.timerService.getTimer()) ? "ok" : "none";
         };
 
         FollowIndicator.prototype.getCssClass = function () {
-            return (this.timerService.getTimer()) ? "icon-timer s-status-ok" : "icon-timer";
+            return "icon-timer";
         };
 
         FollowIndicator.prototype.getText = function () {
