@@ -203,6 +203,7 @@ define(
                             // Update start, then end
                             timespan.setStart(start + delta);
                             timespan.setEnd(end + delta);
+                            timespan.setDuration((end + delta) - (start+delta));
                             // Mark as dirty for subsequent persistence
                             dirty[toId(spanId)] = true;
                         }
