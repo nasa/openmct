@@ -51,7 +51,6 @@ define(
                 handles: function (domainObject) {
                     var type = domainObject.getCapability('type'),
                         id = domainObject.getId();
-
                     // Instantiate a handle
                     function instantiate(Handle) {
                         return new Handle(

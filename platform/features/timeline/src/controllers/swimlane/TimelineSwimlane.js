@@ -96,7 +96,8 @@ define(
             function fragment (input) {
 
                 if (input !== undefined) {
-                    var number = Number(input);
+                    var number = Number(input),
+                        frag = 1;
 
                     if (!isNaN(number)) {
 
@@ -109,9 +110,9 @@ define(
                             timespan.setEnd(timespan.getStart() + duration);
 
                             for (var i = 1; i < number; i++) {
-                                var activityId = timespanModel.id + '-fragment-' + copy,
+                                var activityId = timespanModel.id + '-fragment-' + frag,
                                     activityModel = {
-                                        name: timespanModel.name + ' Fragment ' + copy,
+                                        name: timespanModel.name + ' Fragment ' + frag,
                                         start: {timestamp: timespan.getStart(), epoch: "SET"},
                                         duration: {timestamp: duration, epoch: "SET"},
                                         type: 'activity',
@@ -123,7 +124,7 @@ define(
                                 activityInstance.getCapability('location').setPrimaryLocation(timespan.getParent().model.id);
 
                                 parentComposition.add(activityInstance);
-                                copy++;
+                                frag++;
                             }
                         } else {
                             window.alert("Please enter a Number between 2 and 5");

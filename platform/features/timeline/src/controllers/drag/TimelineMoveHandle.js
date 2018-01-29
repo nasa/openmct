@@ -68,7 +68,6 @@ define(
                     chooseEnd = diffEnd > 0;
                 }
                 // Start is chosen if diffEnd didn't snap, or nothing snapped
-
                 // Our delta is relative to our initial state, but
                 // dragHandler.move is relative to current state, so whichever
                 // end we're snapping to, we need to compute a delta

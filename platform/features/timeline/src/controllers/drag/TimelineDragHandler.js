@@ -120,6 +120,7 @@ define(
                         timespan.setStart(
                             Math.min(Math.max(value, 0), timespan.getEnd())
                         );
+                        timespan.setDuration(timespan.getEnd() - Math.min(Math.max(value, 0)));
                         // Mark as dirty for subsequent persistence
                         dirty[toId(id)] = true;
                     }
@@ -144,6 +145,7 @@ define(
                         timespan.setEnd(
                             Math.max(value, timespan.getStart())
                         );
+                        timespan.setDuration(Math.max(value, timespan.getStart()) - timespan.getStart());
                         // Mark as dirty for subsequent persistence
                         dirty[toId(id)] = true;
                     }
