@@ -49,7 +49,7 @@ define(
 
             function updateSnapshot(img) {
                 $scope.snapshot = img;
-            };
+            }
             // Update set of actions whenever the action capability
             // changes or becomes available.
             $rootScope.$watch("snapshot", updateSnapshot);
