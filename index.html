@@ -29,13 +29,10 @@
     <script>
         var THIRTY_MINUTES = 30 * 60 * 1000;
 
-        require([
-            'openmct',
-            'example/notebook/bundle'
-        ], function (openmct) {
+        require(['openmct'], function (openmct) {
             [
-                'example/styleguide',
-                'example/notebook'
+                'example/eventGenerator',
+                'example/styleguide'
             ].forEach(
                 openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
             );
@@ -43,6 +40,7 @@
             openmct.install(openmct.plugins.LocalStorage());
             openmct.install(openmct.plugins.Espresso());
             openmct.install(openmct.plugins.Generator());
+            openmct.install(openmct.plugins.ExampleImagery());
             openmct.install(openmct.plugins.UTCTimeSystem());
             openmct.install(openmct.plugins.ImportExport());
             openmct.install(openmct.plugins.AutoflowView({
