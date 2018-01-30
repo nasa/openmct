@@ -1,6 +1,6 @@
 define([
     "openmct",
-    "./src/controllers/NotebookController", 
+    "./src/controllers/NotebookController",
     "./src/controllers/NewEntryController",
     "./src/controllers/SelectSnapshotController",
     "./src/controllers/LayoutNotebookController",
@@ -19,10 +19,10 @@ define([
 
 ], function (
     openmct,
-    NotebookController,  
-    NewEntryController, 
-    SelectSnapshotController,    
-    LayoutNotebookController, 
+    NotebookController,
+    NewEntryController,
+    SelectSnapshotController,
+    LayoutNotebookController,
     MCTSnapshot,
     MCTModalNotebook,
     MCTEntryDnd,
@@ -34,9 +34,9 @@ define([
     newEntryAction,
     NotebookCapability,
     CompositionPolicy,
-    ViewPolicy    
+    ViewPolicy
 ) {
-    openmct.legacyRegistry.register("example/notebook", {
+    openmct.legacyRegistry.register("platform/features/notebook", {
         "name": "Notebook Plugin",
         "description": "Create and save timestamped notes with embedded object snapshots.",
         "extensions":
@@ -50,19 +50,19 @@ define([
                  "features": ["creation"],
                  "model": {
                       "entries":[
-                        { "createdOn": 1507512539258, 
+                        { "createdOn": 1507512539258,
                           "text": "Quis qui dolupti atempe non preicias qui dolorro",
                           "embeds":[]
                         },
-                        { "createdOn": 1507570153599, 
+                        { "createdOn": 1507570153599,
                           "text": "Rehek rerspis nis dem re verae remporrunti sintis vendi comnimi ntiusapic teceseque."
                         },
-                        { "createdOn": 1507595098278, 
+                        { "createdOn": 1507595098278,
                           "text": "Rehek rerspis nis dem re verae remporrunti sintis vendi comnimi ntiusapic teceseque."
                         }
                       ],
                       "composition":[],
-                      "entryTypes":[]             
+                      "entryTypes":[]
                   }
             }
           ],
@@ -117,8 +117,8 @@ define([
           "controllers": [
              {
                  "key": "NotebookController",
-                 "implementation": NotebookController,                 
-                 "depends": [ "$scope", 
+                 "implementation": NotebookController,
+                 "depends": [ "$scope",
                              "dialogService",
                              "popupService",
                              "agentService",
@@ -132,21 +132,21 @@ define([
              },
              {
                  "key": "NewEntryController",
-                 "implementation": NewEntryController,                 
-                 "depends": [ "$scope", 
+                 "implementation": NewEntryController,
+                 "depends": [ "$scope",
                               "$rootScope"
                              ]
              },
              {
                  "key": "selectSnapshotController",
-                 "implementation": SelectSnapshotController,                 
-                 "depends": [ "$scope", 
+                 "implementation": SelectSnapshotController,
+                 "depends": [ "$scope",
                               "$rootScope"
                              ]
              },
              {
                  "key": "LayoutNotebookController",
-                 "implementation": LayoutNotebookController,                 
+                 "implementation": LayoutNotebookController,
                  "depends": [ "$scope"]
              }
            ],
@@ -224,7 +224,7 @@ define([
                       "dndService",
                       "$rootScope",
                     ]
-                },    
+                },
 
                 {
                     "key": "remove-embed",
@@ -239,7 +239,7 @@ define([
                     "depends":[
                       "dialogService"
                     ]
-                },            
+                },
                 {
                     "key": "remove-snapshot",
                     "implementation": RemoveSnapshotAction,
