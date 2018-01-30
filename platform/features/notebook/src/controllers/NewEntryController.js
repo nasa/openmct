@@ -40,7 +40,7 @@ define(
 
             $scope.annotateSnapshot = function ($event) {
                 if ($rootScope.currentDialog.value) {
-                    $rootScope.newEntryText = $scope.$parent.$parent.ngModel['entry'];
+                    $rootScope.newEntryText = $scope.$parent.$parent.ngModel.entry;
                     $rootScope.currentDialog.cancel();
                     annotateAction.perform($event, $rootScope.snapshot.src);
                     $rootScope.currentDialog = undefined;
