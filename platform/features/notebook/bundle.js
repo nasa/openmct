@@ -1,5 +1,5 @@
 define([
-    "openmct",
+    "legacyRegistry",
     "./src/controllers/NotebookController",
     "./src/controllers/NewEntryController",
     "./src/controllers/SelectSnapshotController",
@@ -18,7 +18,7 @@ define([
     "./src/policies/ViewPolicy",
 
 ], function (
-    openmct,
+    legacyRegistry,
     NotebookController,
     NewEntryController,
     SelectSnapshotController,
@@ -36,7 +36,7 @@ define([
     CompositionPolicy,
     ViewPolicy
 ) {
-    openmct.legacyRegistry.register("platform/features/notebook", {
+    legacyRegistry.register("platform/features/notebook", {
         "name": "Notebook Plugin",
         "description": "Create and save timestamped notes with embedded object snapshots.",
         "extensions":
