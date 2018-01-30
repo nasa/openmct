@@ -88,7 +88,7 @@ and [`gulp`](http://gulpjs.com/).
 
 To build Open MCT for deployment:
 
-`npm run prepublish`
+`npm run prepare`
 
 This will compile and minify JavaScript sources, as well as copy over assets.
 The contents of the `dist` folder will contain a runnable Open MCT

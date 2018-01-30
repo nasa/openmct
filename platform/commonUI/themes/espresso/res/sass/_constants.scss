@@ -243,6 +243,12 @@ $colorCalCellSelectedBg: $colorItemTreeSelectedBg;
 $colorCalCellSelectedFg: $colorItemTreeSelectedFg;
 $colorCalCellInMonthBg: pushBack($colorMenuBg, 5%);
 
+// Palettes
+$colorPaletteFg: pullForward($colorMenuBg, 30%);
+$colorPaletteSelected: #fff;
+$shdwPaletteFg: black 0 0 2px;
+$shdwPaletteSelected: inset 0 0 0 1px #000;
+
 // About Screen
 $colorAboutLink: #84b3ff;
 

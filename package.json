@@ -16,7 +16,8 @@
     "d3-time-format": "^2.0.3",
     "express": "^4.13.1",
     "minimist": "^1.1.1",
-    "request": "^2.69.0"
+    "request": "^2.69.0",
+    "vue": "^2.5.6"
   },
   "devDependencies": {
     "bower": "^1.7.7",
@@ -50,7 +51,8 @@
     "moment": "^2.11.1",
     "node-bourbon": "^4.2.3",
     "requirejs": "2.1.x",
-    "split": "^1.0.0"
+    "split": "^1.0.0",
+    "v8-compile-cache": "^1.1.0"
   },
   "scripts": {
     "start": "node app.js",
@@ -60,7 +62,7 @@
     "jsdoc": "jsdoc -c jsdoc.json -R API.md -r -d dist/docs/api",
     "otherdoc": "node docs/gendocs.js --in docs/src --out dist/docs --suppress-toc 'docs/src/index.md|docs/src/process/index.md'",
     "docs": "npm run jsdoc ; npm run otherdoc",
-    "prepublish": "node ./node_modules/bower/bin/bower install && node ./node_modules/gulp/bin/gulp.js install"
+    "prepare": "node ./node_modules/bower/bin/bower install && node ./node_modules/gulp/bin/gulp.js install"
   },
   "repository": {
     "type": "git",

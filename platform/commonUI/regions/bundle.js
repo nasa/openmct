@@ -38,7 +38,8 @@ define([
                     "implementation": InspectorController,
                     "depends": [
                         "$scope",
-                        "policyService"
+                        "openmct",
+                        "$document"
                     ]
                 }
             ],

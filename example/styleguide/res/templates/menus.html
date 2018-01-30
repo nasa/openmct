@@ -121,7 +121,7 @@
         <h2>Palettes</h2>
         <div class="cols cols1-1">
             <div class="col">
-                <p>Use a palette to provide color choices. Similar to context menus and dropdowns, palettes should be dismissed when a choice is made within them, or if the user clicks outside one.</p>
+                <p>Use a palette to provide color choices. Similar to context menus and dropdowns, palettes should be dismissed when a choice is made within them, or if the user clicks outside one. Selected palette choices should utilize the <code>selected</code> CSS class to visualize indicate that state.</p>
                 <p>Note that while this example uses static markup for illustrative purposes, don't do this - use a front-end framework with repeaters to build the color choices.</p>
             </div>
             <mct-example><div style="height: 220px" title="Ignore me, I'm just here to provide space for this example.">
@@ -129,9 +129,9 @@
 <div class="s-button s-menu-button menu-element t-color-palette icon-paint-bucket" ng-controller="ClickAwayController as toggle">
     <span class="l-click-area" ng-click="toggle.toggle()"></span>
     <span class="color-swatch" style="background: rgb(255, 0, 0);"></span>
-    <div class="menu l-color-palette" ng-show="toggle.isActive()">
+    <div class="menu l-palette l-color-palette" ng-show="toggle.isActive()">
         <div class="l-palette-row l-option-row">
-            <div class="l-palette-item s-palette-item " ng-click="ngModel[field] = 'transparent'"></div>
+            <div class="l-palette-item s-palette-item no-selection"></div>
             <span class="l-palette-item-label">None</span>
         </div>
         <div class="l-palette-row">
@@ -147,7 +147,7 @@
             <div class="l-palette-item s-palette-item" style="background: rgb(255, 255, 255);"></div>
         </div>
         <div class="l-palette-row">
-            <div class="l-palette-item s-palette-item" style="background: rgb(136, 32, 32);"></div>
+            <div class="l-palette-item s-palette-item selected" style="background: rgb(255, 0, 0);"></div>
             <div class="l-palette-item s-palette-item" style="background: rgb(224, 64, 64);"></div>
             <div class="l-palette-item s-palette-item" style="background: rgb(240, 160, 72);"></div>
             <div class="l-palette-item s-palette-item" style="background: rgb(255, 248, 96);"></div>

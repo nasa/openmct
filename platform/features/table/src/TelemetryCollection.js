@@ -32,6 +32,7 @@ define(
          */
         function TelemetryCollection() {
             EventEmitter.call(this, arguments);
+            this.dupeCheck = false;
             this.telemetry = [];
             this.highBuffer = [];
             this.sortField = undefined;
@@ -161,7 +162,7 @@ define(
                 var startIx = _.sortedIndex(array, item, this.sortField);
                 var endIx;
 
-                if (startIx !== array.length) {
+                if (this.dupeCheck && startIx !== array.length) {
                     endIx = _.sortedLastIndex(array, item, this.sortField);
 
                     // Create an array of potential dupes, based on having the
@@ -189,6 +190,7 @@ define(
         TelemetryCollection.prototype.add = function (items) {
             var added = items.filter(this.addOne);
             this.emit('added', added);
+            this.dupeCheck = true;
         };
 
         /**

@@ -137,6 +137,11 @@
         min-height: 0;
         &.holder:not(:last-child) { margin-bottom: $interiorMarginLg; }
     }
+    &.l-flex-accordion .flex-accordion-holder {
+        display: flex;
+        flex-direction: column;
+        //overflow: hidden !important;
+    }
     .flex-container { @include flex-direction(column); }
 }
 

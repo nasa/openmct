@@ -50,11 +50,18 @@ define([
         this.rootProvider = new RootObjectProvider(this.rootRegistry);
     }
 
+    /**
+     * Set fallback provider, this is an internal API for legacy reasons.
+     * @private
+     */
     ObjectAPI.prototype.supersecretSetFallbackProvider = function (p) {
         this.fallbackProvider = p;
     };
 
-    // Retrieve the provider for a given key.
+    /**
+     * Retrieve the provider for a given identifier.
+     * @private
+     */
     ObjectAPI.prototype.getProvider = function (identifier) {
         if (identifier.key === 'ROOT') {
             return this.rootProvider;
@@ -135,27 +142,28 @@ define([
      * @returns {Promise} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
+    ObjectAPI.prototype.get = function (identifier) {
+        identifier = utils.parseKeyString(identifier);
+        var provider = this.getProvider(identifier);
 
-    [
-        'save',
-        'delete',
-        'get'
-    ].forEach(function (method) {
-        ObjectAPI.prototype[method] = function () {
-            var identifier = arguments[0],
-                provider = this.getProvider(identifier);
+        if (!provider) {
+            throw new Error('No Provider Matched');
+        }
 
-            if (!provider) {
-                throw new Error('No Provider Matched');
-            }
+        if (!provider.get) {
+            throw new Error('Provider does not support get!');
+        }
 
-            if (!provider[method]) {
-                throw new Error('Provider does not support [' + method + '].');
-            }
+        return provider.get(identifier);
+    };
 
-            return provider[method].apply(provider, arguments);
-        };
-    });
+    ObjectAPI.prototype.delete = function () {
+        throw new Error('Delete not implemented');
+    };
+
+    ObjectAPI.prototype.save = function () {
+        throw new Error('Save not implemented');
+    };
 
     /**
      * Add a root-level object.

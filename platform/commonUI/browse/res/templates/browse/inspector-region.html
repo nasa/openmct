@@ -19,12 +19,21 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div ng-controller="InspectorController">
-    <div ng-repeat="region in regions">
+<div ng-controller="InspectorController as controller">
         <mct-representation
-                key="region.content.key"
-                mct-object="domainObject"
+                key="'object-properties'"
+                mct-object="controller.selectedItem()"
                 ng-model="ngModel">
         </mct-representation>
-    </div>
+
+        <div ng-if="!controller.hasProviderView()">
+            <mct-representation
+                    key="inspectorKey"
+                    mct-object="controller.selectedItem()"
+                    ng-model="ngModel">
+            </mct-representation>
+        </div>
+
+        <div class='inspector-provider-view'>
+        </div>
 </div>
