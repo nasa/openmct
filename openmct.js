@@ -69,7 +69,7 @@ requirejs.config({
             "deps": ["moment"]
         },
         "painterro": {
-            "exports": "painterro"
+            "exports": "Painterro"
         },
         "saveAs": {
             "exports": "saveAs"
