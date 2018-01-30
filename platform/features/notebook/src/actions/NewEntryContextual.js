@@ -119,8 +119,8 @@ define(
                     dialogService.getDialogResponse(
                         "overlay-dialog",
                         overlayModel,
-                        function () { 
-                            return overlayModel.value; 
+                        function () {
+                            return overlayModel.value;
                         }
                     ).then(addNewEntry);
 
