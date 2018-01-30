@@ -79,7 +79,7 @@ define(
         }
 
         function validateLocation(newParentObj) {
-            return newParentObj.model.type == 'notebook';
+            return newParentObj.model.type === 'notebook';
         }
 
 
@@ -88,7 +88,6 @@ define(
             var self = this;
             var domainObj = this.domainObject;
             var notification = this.notificationService;
-            var linkService = this.linkService;
             var dialogService = this.dialogService;
             var rootScope = this.$rootScope;
             rootScope.newEntryText = '';
@@ -98,7 +97,7 @@ define(
             var newScope = rootScope.$new();
             newScope.selObj = domainObj;
             newScope.selValue = "";
-            var element = this.$compile(SNAPSHOT_TEMPLATE)(newScope);
+            this.$compile(SNAPSHOT_TEMPLATE)(newScope);
             //newScope.$destroy();
 
             this.$rootScope.$watch("snapshot", setSnapshot);
@@ -115,17 +114,14 @@ define(
                         value: {'entry': rootScope.newEntryText || ""}
                     };
 
-                    // Provide result from the model
-                    function resultGetter() {
-                        return overlayModel.value;
-                    }
-
                     rootScope.currentDialog = overlayModel;
 
                     dialogService.getDialogResponse(
                         "overlay-dialog",
                         overlayModel,
-                        resultGetter
+                        function () { 
+                            return overlayModel.value; 
+                        }
                     ).then(addNewEntry);
 
                     rootScope.lastValue = value;
@@ -153,7 +149,7 @@ define(
                 options.saveNotebook.useCapability('mutation', function (model) {
                     var entries = model.entries;
                     var lastEntry = entries[entries.length - 1];
-                    if (lastEntry == undefined || lastEntry.text || lastEntry.embeds) {
+                    if (lastEntry === undefined || lastEntry.text || lastEntry.embeds) {
                         model.entries.push({
                             'createdOn': Date.now(),
                             'text': options.entry,
