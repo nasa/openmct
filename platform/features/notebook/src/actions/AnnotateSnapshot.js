@@ -24,8 +24,8 @@
  * Module defining viewSnapshot (Originally NewWindowAction). Created by vwoeltje on 11/18/14.
  */
 define(
-    ["painterro"],
-    function () {
+    ["painterro", "zepto"],
+    function (Painterro, $) {
 
         var ANNOTATION_STRUCT = {
             title: "Annotate Snapshot",
@@ -75,7 +75,7 @@ define(
                         if (entryId && embedId) {
                             var elementPos = DOMAIN_OBJECT.model.entries.map(function (x) {
                                 return x.createdOn;
-                            }).indexOf(entryId)
+                            }).indexOf(entryId);
                             var entryEmbeds = DOMAIN_OBJECT.model.entries[elementPos].embeds;
                             var embedPos = entryEmbeds.map(function (x) {
                                 return x.id;
@@ -90,14 +90,14 @@ define(
                     }
                 }).show(snapshot);
 
-            }
+            };
 
             ANNOTATION_STRUCT.model = {'tracker': tracker};
 
 
 
             function saveNotes(param) {
-                if (param == 'ok') {
+                if (param === 'ok') {
                     painterro.save();
                 }else {
                     ROOTSCOPE.snapshot = "annotationCancelled";
