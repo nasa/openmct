@@ -24,8 +24,8 @@
  * Module defining ViewSnapshot
  */
 define(
-    [],
-    function () {
+    ['zepto'],
+    function ($) {
 
         var OVERLAY_TEMPLATE = '' +
         '    <div class="abs blocker"></div>' +
@@ -39,20 +39,20 @@ define(
         '       </div>' +
         '    </div>';
 
+        var toggleOverlay,
+            overlay,
+            closeButton,
+            doneButton,
+            blocker,
+            overlayContainer,
+            img,
+            annotateButton,
+            annotateImg;
 
         function ViewSnapshot($compile,context) {
             context = context || {};
 
             this.$compile = $compile;
-
-            var toggleOverlay,
-                overlay,
-                closeButton,
-                doneButton,
-                blocker,
-                overlayContainer,
-                img,
-                annotateButton;
         }
 
         function openOverlay(url,header) {
