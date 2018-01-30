@@ -49,18 +49,7 @@ define([
                  "description": "Create and save timestamped notes with embedded object snapshots.",
                  "features": ["creation"],
                  "model": {
-                      "entries":[
-                        { "createdOn": 1507512539258,
-                          "text": "Quis qui dolupti atempe non preicias qui dolorro",
-                          "embeds":[]
-                        },
-                        { "createdOn": 1507570153599,
-                          "text": "Rehek rerspis nis dem re verae remporrunti sintis vendi comnimi ntiusapic teceseque."
-                        },
-                        { "createdOn": 1507595098278,
-                          "text": "Rehek rerspis nis dem re verae remporrunti sintis vendi comnimi ntiusapic teceseque."
-                        }
-                      ],
+                      "entries":[],
                       "composition":[],
                       "entryTypes":[]
                   }
