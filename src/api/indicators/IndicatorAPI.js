@@ -33,8 +33,6 @@ define([
         '<mct-include ' +
         '   ng-model="indicator" ' +
         '   key="template" ' +
-        '   class="status-block-holder" ' +
-        '   ng-class="indicator.getGlyphClass()"> ' +
         ' </mct-include>';
 
     function IndicatorAPI(openmct) {
@@ -73,7 +71,7 @@ define([
         // So that we can consistently position indicator elements,
         // guarantee that they are wrapped in an element we control
         var wrapperNode = document.createElement('div');
-        wrapperNode.className = 'status-block-holder indicator';
+        wrapperNode.className = 'l-indicator s-indicator';
         wrapperNode.appendChild(indicator.element);
         this.indicatorElements.push(wrapperNode);
     };

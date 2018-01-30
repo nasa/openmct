@@ -31,6 +31,7 @@ define(['text!./res/indicator-template.html'],
             this.iconClassValue = DEFAULT_ICON_CLASS;
             this.statusClassValue = '';
 
+            // We need to remove this element
             this.element = document.createElement('div');
             this.element.className = 'status-block-holder';
 

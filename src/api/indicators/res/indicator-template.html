@@ -19,8 +19,6 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="status block {{hideOrShowText}}" title="{{indicator.description}}">
-    <span class="status-indicator indicator-icon {{indicator.iconClass}} {{indicator.statusClass}}"></span><span class="label indicator-text">
-    {{indicator.text}}
-    </span>
-</div>
+<span class="{{hideOrShowText}} {{indicator.iconClass}} {{indicator.statusClass}}" title="{{indicator.description}}">
+    <span class="label indicator-text">{{indicator.text}}</span>
+</span>

@@ -81,6 +81,9 @@
         @include absPosDefault(0);// New status bar design
         top: auto;
         height: $ueFooterH;
+
+        mct-indicators { display: block; }
+        
         .indicator-holder {
             box-sizing: border-box;
             @include absPosDefault($interiorMargin);
