@@ -20,9 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-], function (
-) {
+define(['zepto'], function ($) {
 
     /**
 
@@ -34,6 +32,8 @@ define([
             var element = $element[0];
             var layoutContainer = element.parentElement,
                 toggleOverlay,
+                makeImg,
+                saveImg,
                 snapshot = document.createElement('div');
 
             function openOverlay() {
@@ -58,7 +58,7 @@ define([
                 makeImg(element);
             };
 
-            makeImg = function (element) {
+            makeImg = function (el) {
                 var scope = $scope;
                 var dialog = dialogService.showBlockingMessage({
                         title: "Saving...",
@@ -68,53 +68,52 @@ define([
                         delay: true
                     });
                 this.$timeout(function () {
-                        window.EXPORT_IMAGE_TIMEOUT = 5000;
-                        exportImageService.exportPNGtoSRC(element).then(function (img) {
+                    window.EXPORT_IMAGE_TIMEOUT = 5000;
+                    exportImageService.exportPNGtoSRC(el).then(function (img) {
 
-                            if (img) {
-                                if (dialog) {
-                                    dialog.dismiss();
-                                }
-                                if ($element[0].dataset.entry && $element[0].dataset.embed) {
-                                    saveImg(img, +$element[0].dataset.entry, +$element[0].dataset.embed);
-                                    closeOverlay(false);
-                                }else {
-                                    var reader = new window.FileReader();
-                                    reader.readAsDataURL(img);
-                                    reader.onloadend = function () {
-                                            //closeOverlay(true);
-                                            $($element[0]).attr("data-snapshot", reader.result);
-                                            $rootScope.snapshot = {'src': reader.result,
-                                                                     'type': img.type,
-                                                                     'size': img.size,
-                                                                     'modified': Date.now()
-                                                                  };
-                                            closeOverlay(false);
-                                            scope.$destroy();
-                                        };
-
-                                }
-
-                            }else {
-                                console.log('no url');
-                                dialog.dismiss();
-                            }
-
-                        }, function (error) {
-                            console.log('error', error);
+                        if (img) {
                             if (dialog) {
                                 dialog.dismiss();
                             }
-                            closeOverlay();
-                        });
-                    }, 500);
+                            if ($element[0].dataset.entry && $element[0].dataset.embed) {
+                                saveImg(img, +$element[0].dataset.entry, +$element[0].dataset.embed);
+                                closeOverlay(false);
+                            } else {
+                                var reader = new window.FileReader();
+                                reader.readAsDataURL(img);
+                                reader.onloadend = function () {
+                                        //closeOverlay(true);
+                                        $($element[0]).attr("data-snapshot", reader.result);
+                                        $rootScope.snapshot = {'src': reader.result,
+                                                                 'type': img.type,
+                                                                 'size': img.size,
+                                                                 'modified': Date.now()
+                                                              };
+                                        closeOverlay(false);
+                                        scope.$destroy();
+                                    };
+
+                            }
+
+                        } else {
+                            dialog.dismiss();
+                        }
+
+                    }, function (error) {
+                        if (dialog) {
+                            dialog.dismiss();
+                        }
+                        closeOverlay();
+                    });
+                }, 500);
                 window.EXPORT_IMAGE_TIMEOUT = 500;
-            }
+            };
 
             saveImg = function (url,entryId,embedId) {
                 $scope.$parent.$parent.$parent.saveSnap(url, embedId, entryId);
-            }
-            if ($(document.body).find('.overlay.snapshot').length == 0) {
+            };
+
+            if ($(document.body).find('.overlay.snapshot').length === 0) {
                 toggleOverlay();
             }
 
