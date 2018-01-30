@@ -25,7 +25,7 @@
 define(
     [],
     function () {
-        
+
         function NewEntryController($scope,$rootScope) {
 
             $scope.snapshot = undefined;
@@ -36,18 +36,18 @@ define(
 
             $scope.$parent.$parent.ngModel[$scope.$parent.$parent.field] = $rootScope.selObj;
             $scope.objectName = $rootScope.selObj.getModel().name;
-            $scope.cssClass= $rootScope.selObj.getCapability('type').typeDef.cssClass;
+            $scope.cssClass = $rootScope.selObj.getCapability('type').typeDef.cssClass;
 
-            $scope.annotateSnapshot = function($event){
-                if($rootScope.currentDialog.value){
+            $scope.annotateSnapshot = function ($event) {
+                if ($rootScope.currentDialog.value) {
                     $rootScope.newEntryText = $scope.$parent.$parent.ngModel['entry'];
                     $rootScope.currentDialog.cancel();
-                    annotateAction.perform($event,$rootScope.snapshot.src);
+                    annotateAction.perform($event, $rootScope.snapshot.src);
                     $rootScope.currentDialog = undefined;
-                }                
+                }
             };
 
-            function updateSnapshot(img){
+            function updateSnapshot(img) {
                 $scope.snapshot = img;
             };
             // Update set of actions whenever the action capability
@@ -56,8 +56,8 @@ define(
 
             $rootScope.$watch("selValue", toggleEmbed);
 
-            function toggleEmbed(value){
-                $scope.snapToggle =value;
+            function toggleEmbed(value) {
+                $scope.snapToggle = value;
             }
         }
 

@@ -34,7 +34,7 @@ define(
 
 
         RemoveSnapshot.prototype.perform = function ($event,snapshot,embedId,entryId) {
-           
+
             var DOMAIN_OBJ = this.domainObject;
             errorDialog = this.dialogService.showBlockingMessage({
                 severity: "error",
@@ -52,13 +52,17 @@ define(
                         errorDialog.dismiss();
                     }
                 }]
-            }); 
+            });
 
-            function remove(){
-                DOMAIN_OBJ.useCapability('mutation', function(model) {
-                    var elementPos = model.entries.map(function(x) {return x.createdOn; }).indexOf(entryId)
+            function remove() {
+                DOMAIN_OBJ.useCapability('mutation', function (model) {
+                    var elementPos = model.entries.map(function (x) {
+                        return x.createdOn;
+                    }).indexOf(entryId)
                     var entryEmbeds = model.entries[elementPos].embeds;
-                    var embedPos = entryEmbeds.map(function(x) {return x.id; }).indexOf(embedId);
+                    var embedPos = entryEmbeds.map(function (x) {
+                        return x.id;
+                    }).indexOf(embedId);
                     model.entries[elementPos].embeds[embedPos].snapshot = "";
                 });
             }

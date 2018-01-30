@@ -15,7 +15,7 @@ define([
     "./src/actions/NewEntryContextual",
     "./src/capabilities/NotebookCapability",
     "./src/policies/CompositionPolicy",
-    "./src/policies/ViewPolicy",
+    "./src/policies/ViewPolicy"
 
 ], function (
     legacyRegistry,
@@ -41,21 +41,21 @@ define([
         "description": "Create and save timestamped notes with embedded object snapshots.",
         "extensions":
         {
-          "types":[
+            "types": [
             {
-                 "key": "notebook",
-                 "name": "Notebook",
-                 "cssClass": "icon-notebook",
-                 "description": "Create and save timestamped notes with embedded object snapshots.",
-                 "features": ["creation"],
-                 "model": {
-                      "entries":[],
-                      "composition":[],
-                      "entryTypes":[]
+                "key": "notebook",
+                "name": "Notebook",
+                "cssClass": "icon-notebook",
+                "description": "Create and save timestamped notes with embedded object snapshots.",
+                "features": ["creation"],
+                "model": {
+                      "entries": [],
+                      "composition": [],
+                      "entryTypes": []
                   }
             }
           ],
-          "views": [
+            "views": [
             {
                 "key": "notebook.view",
                 "type": "notebook",
@@ -67,9 +67,9 @@ define([
                       "composition",
                       "action"
                   ],
-                  "gestures": [
-                      "drop"
-                  ]
+                "gestures": [
+                    "drop"
+                ]
             },
             {
                 "key": "layoutNotebook",
@@ -103,11 +103,11 @@ define([
                 }
             }
           ],
-          "controllers": [
+            "controllers": [
              {
                  "key": "NotebookController",
                  "implementation": NotebookController,
-                 "depends": [ "$scope",
+                 "depends": ["$scope",
                              "dialogService",
                              "popupService",
                              "agentService",
@@ -122,24 +122,24 @@ define([
              {
                  "key": "NewEntryController",
                  "implementation": NewEntryController,
-                 "depends": [ "$scope",
+                 "depends": ["$scope",
                               "$rootScope"
                              ]
              },
              {
                  "key": "selectSnapshotController",
                  "implementation": SelectSnapshotController,
-                 "depends": [ "$scope",
+                 "depends": ["$scope",
                               "$rootScope"
                              ]
              },
              {
                  "key": "LayoutNotebookController",
                  "implementation": LayoutNotebookController,
-                 "depends": [ "$scope"]
+                 "depends": ["$scope"]
              }
            ],
-           "representations": [
+            "representations": [
                 {
                     "key": "draggedEntry",
                     "templateUrl": "templates/entry.html"
@@ -190,14 +190,14 @@ define([
                     ]
                 }
             ],
-             "actions": [
+            "actions": [
                 {
                     "key": "view-snapshot",
                     "implementation": ViewSnapshotAction,
                     "name": "View Snapshot",
                     "description": "View the large image in a modal",
                     "category": "embed",
-                    "depends":[
+                    "depends": [
                       "$compile"
                     ]
                 },
@@ -208,10 +208,10 @@ define([
                     "cssClass": "icon-pencil labeled",
                     "description": "Annotate embed's snapshot",
                     "category": "embed",
-                    "depends":[
+                    "depends": [
                       "dialogService",
                       "dndService",
-                      "$rootScope",
+                      "$rootScope"
                     ]
                 },
 
@@ -225,7 +225,7 @@ define([
                         "embed",
                         "embed-no-snap"
                     ],
-                    "depends":[
+                    "depends": [
                       "dialogService"
                     ]
                 },
@@ -236,7 +236,7 @@ define([
                     "cssClass": "icon-trash labeled",
                     "description": "Remove Snapshot of the embed",
                     "category": "embed",
-                    "depends":[
+                    "depends": [
                       "dialogService"
                     ]
                 },
@@ -247,7 +247,7 @@ define([
                     "description": "Create a snapshot for the embed",
                     "category": "embed-no-snap",
                     "priority": "preferred",
-                    "depends":[
+                    "depends": [
                       "$compile"
                     ]
                 },
@@ -261,7 +261,7 @@ define([
                         "contextual",
                          "view-control"
                     ],
-                    "depends":[
+                    "depends": [
                       "$compile",
                       "$rootScope",
                       "dialogService",
@@ -290,7 +290,7 @@ define([
                     "description": "Provides a capability for looking for a notebook domain object",
                     "implementation": NotebookCapability,
                     "depends": [
-                        "typeService",
+                        "typeService"
                     ]
                 }
             ],
@@ -315,7 +315,7 @@ define([
                   "templateUrl":  "templates/controls/snapSelect.html"
               }
             ],
-           "stylesheets": [
+            "stylesheets": [
               {
                   "stylesheetUrl": "css/notebook.css",
                   "theme": "espresso"

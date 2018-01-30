@@ -19,16 +19,16 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
- 
+
 define(
     [],
     function () {
 
-        var SNAPSHOT_TEMPLATE = '<mct-representation key="\'draggedEntry\'"'+
-                                    'parameters="{entry:entryId,embed:embedId}"'+
-                                    'class="t-rep-frame holder"'+
-                                    'mct-object="selObj">'+
-                                '</mct-representation>'; 
+        var SNAPSHOT_TEMPLATE = '<mct-representation key="\'draggedEntry\'"' +
+                                    'parameters="{entry:entryId,embed:embedId}"' +
+                                    'class="t-rep-frame holder"' +
+                                    'mct-object="selObj">' +
+                                '</mct-representation>';
 
         function CreateSnapshot($compile,context) {
             context = context || {};
@@ -41,13 +41,17 @@ define(
         CreateSnapshot.prototype.perform = function ($event,snapshot,embedId,entryId,$scope) {
             var compile = this.$compile;
             var model = this.domainObject.model;
-            var elementPos = model.entries.map(function(x) {return x.createdOn; }).indexOf(entryId)
+            var elementPos = model.entries.map(function (x) {
+                return x.createdOn;
+            }).indexOf(entryId)
             var entryEmbeds = model.entries[elementPos].embeds;
-            var embedPos = entryEmbeds.map(function(x) {return x.id; }).indexOf(embedId);
+            var embedPos = entryEmbeds.map(function (x) {
+                return x.id;
+            }).indexOf(embedId);
             var embedType = entryEmbeds[embedPos].type;
 
-            $scope.getDomainObj(embedType).then(function(resp){
-                if(entryId >= 0 && embedId >= 0){
+            $scope.getDomainObj(embedType).then(function (resp) {
+                if (entryId >= 0 && embedId >= 0) {
                     $scope.selObj = resp[embedType];
                     $scope.entryId = elementPos;
                     $scope.embedId = embedPos;

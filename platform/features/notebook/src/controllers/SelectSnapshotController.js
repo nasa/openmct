@@ -25,18 +25,18 @@
 define(
     [],
     function () {
-        
+
         function SelectSnapshotController($scope,$rootScope) {
 
             $scope.selectModel = true;
 
-            function selectprint(value){
+            function selectprint(value) {
                 $rootScope.selValue = value;
                 $scope.$parent.$parent.ngModel[$scope.$parent.$parent.field] = value;
             }
 
-            $scope.$watch("selectModel",selectprint);
-            
+            $scope.$watch("selectModel", selectprint);
+
         }
 
         return SelectSnapshotController;

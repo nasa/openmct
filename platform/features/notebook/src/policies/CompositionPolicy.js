@@ -33,7 +33,7 @@ define(
         CompositionPolicy.prototype.allow = function (parent, child) {
             var parentDef = parent.getCapability('type').getName();
 
-            if(parentDef === 'Notebook' && child.getCapability('status').list().length){
+            if (parentDef === 'Notebook' && child.getCapability('status').list().length) {
                 return false;
             }
             return true;

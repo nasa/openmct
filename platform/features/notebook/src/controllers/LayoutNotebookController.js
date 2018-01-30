@@ -30,7 +30,7 @@ define(
 
         /**
          * The LayoutNotebookController is responsible for supporting the
-         * notebook feature creation on theLayout view. 
+         * notebook feature creation on theLayout view.
          **/
 
         function LayoutNotebookController($scope) {

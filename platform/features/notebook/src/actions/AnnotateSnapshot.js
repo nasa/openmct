@@ -33,13 +33,13 @@ define(
             options: [{
                 name: "OK",
                 key: "ok",
-                description:"save annotation"
+                description: "save annotation"
             },
             {
                 name: "Cancel",
                 key: "cancel",
-                description:"cancel editing"
-            }]            
+                description: "cancel editing"
+            }]
         };
 
         function AnnotateSnapshot(dialogService,dndService,$rootScope,context) {
@@ -52,50 +52,54 @@ define(
             this.$rootScope = $rootScope;
         }
 
-        
+
 
 
         AnnotateSnapshot.prototype.perform = function ($event,snapshot,embedId,entryId,$scope) {
-            
+
             var DOMAIN_OBJECT = this.domainObject;
             var ROOTSCOPE = this.$rootScope;
-           
+
             this.dialogService.getUserChoice(ANNOTATION_STRUCT)
                         .then(saveNotes);
 
             var painterro;
 
-            var tracker = function(){
+            var tracker = function () {
                 $(document.body).find('.l-dialog .outer-holder').addClass('annotation-dialog');
                 painterro = Painterro({
-                id: 'snap-annotation',
-                backgroundFillColor: '#eee',
-                hiddenTools:['save', 'open', 'close','eraser'],
-                saveHandler: function (image, done) {
-                        if(entryId && embedId){
-                            var elementPos = DOMAIN_OBJECT.model.entries.map(function(x) {return x.createdOn; }).indexOf(entryId)
+                    id: 'snap-annotation',
+                    backgroundFillColor: '#eee',
+                    hiddenTools: ['save', 'open', 'close','eraser'],
+                    saveHandler: function (image, done) {
+                        if (entryId && embedId) {
+                            var elementPos = DOMAIN_OBJECT.model.entries.map(function (x) {
+                                return x.createdOn;
+                            }).indexOf(entryId)
                             var entryEmbeds = DOMAIN_OBJECT.model.entries[elementPos].embeds;
-                            var embedPos = entryEmbeds.map(function(x) {return x.id; }).indexOf(embedId);
-                            $scope.saveSnap(image.asBlob(),embedPos,elementPos);
-                        }else{  
-                            ROOTSCOPE.snapshot = {'src':image.asDataURL('image/png'),
-                                                  'modified':Date.now()};                             
+                            var embedPos = entryEmbeds.map(function (x) {
+                                return x.id;
+                            }).indexOf(embedId);
+                            $scope.saveSnap(image.asBlob(), embedPos, elementPos);
+                        }else {
+                            ROOTSCOPE.snapshot = {'src': image.asDataURL('image/png'),
+                                                  'modified': Date.now()};
                         }
-                        
-                   done(true); 
-               }
+
+                        done(true);
+                    }
                 }).show(snapshot);
 
             }
 
-            ANNOTATION_STRUCT.model = {'tracker':tracker};
+            ANNOTATION_STRUCT.model = {'tracker': tracker};
 
 
 
-            function saveNotes(param){
-                if(param=='ok'){
+            function saveNotes(param) {
+                if (param == 'ok') {
                     painterro.save();
-                }else{
+                }else {
                     ROOTSCOPE.snapshot = "annotationCancelled";
                 }
             }

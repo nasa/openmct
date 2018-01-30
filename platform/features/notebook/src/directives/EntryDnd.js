@@ -24,10 +24,10 @@ define([
 ], function (
 ) {
 
-    var SNAPSHOT_TEMPLATE = '<mct-representation key="\'draggedEntry\'"'+
-                                    'parameters="{entry:entryId,embed:embedId}"'+
-                                    'class="t-rep-frame holder"'+
-                                    'mct-object="selObj">'+
+    var SNAPSHOT_TEMPLATE = '<mct-representation key="\'draggedEntry\'"' +
+                                    'parameters="{entry:entryId,embed:embedId}"' +
+                                    'class="t-rep-frame holder"' +
+                                    'mct-object="selObj">' +
                                 '</mct-representation>';
 
     function EntryDnd($rootScope,$compile,dndService,typeService,notificationService) {
@@ -39,94 +39,94 @@ define([
                     selectedObject = dndService.getData('mct-domain-object');
 
                 var selectedModel = selectedObject.getModel();
-                var cssClass= selectedObject.getCapability('type').typeDef.cssClass;
+                var cssClass = selectedObject.getCapability('type').typeDef.cssClass;
                 var entryId = -1;
                 var embedId = -1;
-               
+
                 $scope.clearSearch();
-                if($element[0].id == 'newEntry'){
+                if ($element[0].id == 'newEntry') {
                     entryId = $scope.domainObject.model.entries.length;
                     embedId = 0;
-                    var lastEntry= $scope.domainObject.model.entries[entryId-1];
-                    if(lastEntry==undefined || lastEntry.text || lastEntry.embeds){
-                        $scope.domainObject.useCapability('mutation', function(model) {
-                            model.entries.push({'createdOn':+Date.now(),
-                                                'embeds':[{'type':selectedObject.getId(),
-                                                       'id':''+Date.now(),
-                                                       'cssClass':cssClass,
-                                                       'name':selectedModel.name,
-                                                       'snapshot':''
+                    var lastEntry = $scope.domainObject.model.entries[entryId - 1];
+                    if (lastEntry == undefined || lastEntry.text || lastEntry.embeds) {
+                        $scope.domainObject.useCapability('mutation', function (model) {
+                            model.entries.push({'createdOn': +Date.now(),
+                                                'embeds': [{'type': selectedObject.getId(),
+                                                       'id': '' + Date.now(),
+                                                       'cssClass': cssClass,
+                                                       'name': selectedModel.name,
+                                                       'snapshot': ''
                                                      }]
                                             });
                         });
-                    }else{
-                        $scope.domainObject.useCapability('mutation', function(model) {
-                            model.entries[entryId-1] = 
-                                                    {'createdOn':+Date.now(),
-                                                     'embeds':[{'type':selectedObject.getId(),
-                                                                'id':''+Date.now(),
-                                                                'cssClass':cssClass,
-                                                                'name':selectedModel.name,
-                                                                'snapshot':''
+                    }else {
+                        $scope.domainObject.useCapability('mutation', function (model) {
+                            model.entries[entryId - 1] =
+                                                    {'createdOn': +Date.now(),
+                                                     'embeds': [{'type': selectedObject.getId(),
+                                                                'id': '' + Date.now(),
+                                                                'cssClass': cssClass,
+                                                                'name': selectedModel.name,
+                                                                'snapshot': ''
                                                                }]
                                                     };
                         });
-                    } 
+                    }
 
                     $scope.scrollToTop();
                     notificationService.info({
                         title: "Notebook Entry created"
-                    }); 
+                    });
 
-                }else{  
-                    
-                    entryId = $scope.domainObject.model.entries.map(function(x) {
+                }else {
+
+                    entryId = $scope.domainObject.model.entries.map(function (x) {
                         return x.createdOn;
-                    }).indexOf(+($element[0].id.replace('entry_','')));
-                    if(!$scope.domainObject.model.entries[entryId].embeds){
+                    }).indexOf(+($element[0].id.replace('entry_', '')));
+                    if (!$scope.domainObject.model.entries[entryId].embeds) {
                         $scope.domainObject.model.entries[entryId].embeds = [];
                     }
-                    
-                    $scope.domainObject.useCapability('mutation', function(model) {
-                        model.entries[entryId].embeds.push({'type':selectedObject.getId(),
-                                                                          'id':''+Date.now(),
-                                                                          'cssClass':cssClass,
-                                                                          'name':selectedModel.name,
-                                                                          'snapshot':''
+
+                    $scope.domainObject.useCapability('mutation', function (model) {
+                        model.entries[entryId].embeds.push({'type': selectedObject.getId(),
+                                                                          'id': '' + Date.now(),
+                                                                          'cssClass': cssClass,
+                                                                          'name': selectedModel.name,
+                                                                          'snapshot': ''
                                                                         });
                     });
 
-                    embedId = $scope.domainObject.model.entries[entryId].embeds.length-1;
-                  
+                    embedId = $scope.domainObject.model.entries[entryId].embeds.length - 1;
+
                     if (selectedObject) {
                         e.preventDefault();
 
                     }
                 }
 
-                if(entryId >= 0 && embedId >= 0){
+                if (entryId >= 0 && embedId >= 0) {
                     $scope.selObj = selectedObject;
                     $scope.entryId = entryId;
                     $scope.embedId = embedId;
                     var element = $compile(SNAPSHOT_TEMPLATE)($scope);
                 }
 
-                if($(e.currentTarget).hasClass('drag-active')){
+                if ($(e.currentTarget).hasClass('drag-active')) {
                     $(e.currentTarget).removeClass('drag-active');
-                } 
+                }
 
             }
 
             function dragover(e) {
-                if(!$(e.currentTarget).hasClass('drag-active')){
+                if (!$(e.currentTarget).hasClass('drag-active')) {
                     $(e.currentTarget).addClass('drag-active');
-                }              
+                }
             }
-            
+
             // Listen for the drop itself
             $element.on('dragover', dragover);
             $element.on('drop', drop);
-            
+
 
             $scope.$on('$destroy', function () {
                 $element.off('dragover', dragover);

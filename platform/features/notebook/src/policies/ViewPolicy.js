@@ -22,12 +22,12 @@
 
 define(
     function () {
-        
+
         function ViewPolicy() {
         }
 
         ViewPolicy.prototype.allow = function (view, domainObject) {
-            if(view.key === 'layout'){
+            if (view.key === 'layout') {
                 return false;
             }
 

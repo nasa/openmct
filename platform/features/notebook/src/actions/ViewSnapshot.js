@@ -52,7 +52,7 @@ define(
                 blocker,
                 overlayContainer,
                 img,
-                annotateButton;            
+                annotateButton;
         }
 
         function openOverlay(url,header) {
@@ -70,7 +70,7 @@ define(
             annotateButton.addEventListener('click', annotateImg);
             document.body.appendChild(overlay);
             img = document.createElement('img');
-            img.src = url; 
+            img.src = url;
             overlayContainer.appendChild(header);
             overlayContainer.appendChild(img);
         }
@@ -89,46 +89,46 @@ define(
             img = undefined;
         }
 
-        function headerTemplate(){
-            var template = '<div class="view-header">'+
-                                '<div class="view-info">'+
-                                    '<div ng-class="cssClass" class="embed-icon"></div>'+
-                                    '<div class="embed-title">{{entryName}}</div>'+
-                                    '<div class="object-header">'+
-                                        '<a href="" class="context-available" ng-click="openMenu($event,embedType)""></a>'+
-                                    '</div>'+
-                                    '<div class="hide-menu" ng-show="false">'+
-                                        '<div class="menu-element menu-view context-menu-wrapper mobile-disable-select">'+
-                                            '<div class="menu context-menu">'+
-                                                '<ul>'+
-                                                    '<li ng-repeat="menu in embedActions"'+
-                                                        'ng-click="menu.perform()"'+
-                                                        'title="{{menu.name}}"'+
-                                                        'class="{{menu.cssClass}}">'+
-                                                        '{{menu.name}}'+
-                                                    '</li>'+
-                                                '</ul>'+
-                                            '</div>'+
-                                        '</div>'+
-                                      '</div>'+        
-                                '</div>'+
-                                '<div class="view-date">'+
-                                    '<span class="icon-alert-rect" title="Snapshot">'+
-                                    '</span>  '+
-                                    'SNAPSHOT {{snapDate | date:\'yyyy-MM-dd HH:mm:ss\'}}'+
-                                '</div>'+
-                                '<a class="s-button icon-pencil" title="Annotate">'+
-                                    '<span class="title-label">Annotate</span>'+
-                                '</a>'+
+        function headerTemplate() {
+            var template = '<div class="view-header">' +
+                                '<div class="view-info">' +
+                                    '<div ng-class="cssClass" class="embed-icon"></div>' +
+                                    '<div class="embed-title">{{entryName}}</div>' +
+                                    '<div class="object-header">' +
+                                        '<a href="" class="context-available" ng-click="openMenu($event,embedType)""></a>' +
+                                    '</div>' +
+                                    '<div class="hide-menu" ng-show="false">' +
+                                        '<div class="menu-element menu-view context-menu-wrapper mobile-disable-select">' +
+                                            '<div class="menu context-menu">' +
+                                                '<ul>' +
+                                                    '<li ng-repeat="menu in embedActions"' +
+                                                        'ng-click="menu.perform()"' +
+                                                        'title="{{menu.name}}"' +
+                                                        'class="{{menu.cssClass}}">' +
+                                                        '{{menu.name}}' +
+                                                    '</li>' +
+                                                '</ul>' +
+                                            '</div>' +
+                                        '</div>' +
+                                      '</div>' +
+                                '</div>' +
+                                '<div class="view-date">' +
+                                    '<span class="icon-alert-rect" title="Snapshot">' +
+                                    '</span>  ' +
+                                    'SNAPSHOT {{snapDate | date:\'yyyy-MM-dd HH:mm:ss\'}}' +
+                                '</div>' +
+                                '<a class="s-button icon-pencil" title="Annotate">' +
+                                    '<span class="title-label">Annotate</span>' +
+                                '</a>' +
                             '</div>';
             return template;
         }
 
 
-        ViewSnapshot.prototype.perform = function($event,snapshot,embedId,entryId,$scope,embed) {
+        ViewSnapshot.prototype.perform = function ($event,snapshot,embedId,entryId,$scope,embed) {
             var isOpen = false;
 
-             // Create the overlay element and add it to the document's body
+            // Create the overlay element and add it to the document's body
             $scope.cssClass = embed.cssClass;
             $scope.embedType = embed.type;
             $scope.entryName = embed.name;
@@ -139,7 +139,7 @@ define(
 
             toggleOverlay = function () {
                 if (!isOpen) {
-                    openOverlay(snapshot,element[0]);
+                    openOverlay(snapshot, element[0]);
                     isOpen = true;
                 } else {
                     closeOverlay();
@@ -149,9 +149,9 @@ define(
 
             annotateImg = function () {
                 closeOverlay();
-                annotateAction.perform($event,snapshot,embedId,entryId,$scope);
+                annotateAction.perform($event, snapshot, embedId, entryId, $scope);
             };
-            
+
             toggleOverlay();
         };
 
