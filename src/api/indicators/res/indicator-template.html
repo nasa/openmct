@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2017, United States Government
+ Open MCT, Copyright (c) 2014-2018, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -19,10 +19,8 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class='abs bottom-bar ue-bottom-bar s-status-bar mobile-disable-select'>
-    <div id='status' class='indicator-holder'>
-        <mct-indicators></mct-indicators>
-    </div>
-    <mct-include key="'message-banner'"></mct-include>
-    <mct-include key="'about-logo'"></mct-include>
+<div class="status block {{hideOrShowText}}" title="{{indicator.description}}">
+    <span class="status-indicator indicator-icon {{indicator.iconClass}} {{indicator.statusClass}}"></span><span class="label indicator-text">
+    {{indicator.text}}
+    </span>
 </div>

@@ -128,7 +128,7 @@ define([
     plugins.ExampleImagery = ExampleImagery;
     plugins.SummaryWidget = SummaryWidget;
     plugins.TelemetryMean = TelemetryMean;
-    plugins.URLIndicatorPlugin = URLIndicatorPlugin;
+    plugins.URLIndicator = URLIndicatorPlugin;
 
     return plugins;
 });

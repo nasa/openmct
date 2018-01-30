@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,37 +23,20 @@
 define(
     [],
     function () {
-
-        /**
-         * Controller for the bottombar template. Exposes
-         * available indicators (of extension category "indicators")
-         * @memberof platform/commonUI/general
-         * @constructor
-         */
-        function BottomBarController(indicators) {
-            // Utility function used to make indicators presentable
-            // for display.
-            function present(Indicator) {
-                return {
-                    template: Indicator.template || "indicator",
-                    ngModel: typeof Indicator === 'function' ?
-                            new Indicator() : Indicator
-                };
-            }
-
-            this.indicators = indicators.map(present);
+        function MCTIndicators(openmct) {
+            return {
+                restrict: "E",
+                link: function link(scope, element) {
+                    openmct.indicators.allIndicatorElements().then(function (elements) {
+                        elements.forEach(function (indicatorElement) {
+                            element.append(indicatorElement);
+                        });
+                    });
+                }
+            };
         }
 
-        /**
-         * Get all indicators to display.
-         * @returns {Indicator[]} all indicators
-         *          to display in the bottom bar.
-         * @memberof platform/commonUI/general.BottomBarController#
-         */
-        BottomBarController.prototype.getIndicators = function () {
-            return this.indicators;
-        };
+        return MCTIndicators;
 
-        return BottomBarController;
     }
 );

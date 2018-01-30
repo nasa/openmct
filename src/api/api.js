@@ -27,7 +27,8 @@ define([
     './types/TypeRegistry',
     './ui/Dialog',
     './ui/GestureAPI',
-    './telemetry/TelemetryAPI'
+    './telemetry/TelemetryAPI',
+    './indicators/IndicatorAPI'
 ], function (
     TimeAPI,
     ObjectAPI,
@@ -35,7 +36,8 @@ define([
     TypeRegistry,
     Dialog,
     GestureAPI,
-    TelemetryAPI
+    TelemetryAPI,
+    IndicatorAPI
 ) {
     return {
         TimeAPI: TimeAPI,
@@ -44,6 +46,7 @@ define([
         Dialog: Dialog,
         TypeRegistry: TypeRegistry,
         GestureAPI: GestureAPI,
-        TelemetryAPI: TelemetryAPI
+        TelemetryAPI: TelemetryAPI,
+        IndicatorAPI: IndicatorAPI
     };
 });
