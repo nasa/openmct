@@ -37,7 +37,7 @@ define(
         now,
         actionService,
         $timeout,
-        $element,
+        $element
         ) {
         var showAll = true,
             showCompleted;
