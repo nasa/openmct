@@ -20,10 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-], function (
-) {
-
+define(['zepto'], function ($) {
     var SNAPSHOT_TEMPLATE = '<mct-representation key="\'draggedEntry\'"' +
                                     'parameters="{entry:entryId,embed:embedId}"' +
                                     'class="t-rep-frame holder"' +
@@ -35,20 +32,18 @@ define([
         function link($scope, $element) {
 
             function drop(e) {
-                var event = (e || {}).originalEvent || e,
-                    selectedObject = dndService.getData('mct-domain-object');
-
+                var selectedObject = dndService.getData('mct-domain-object');
                 var selectedModel = selectedObject.getModel();
                 var cssClass = selectedObject.getCapability('type').typeDef.cssClass;
                 var entryId = -1;
                 var embedId = -1;
 
                 $scope.clearSearch();
-                if ($element[0].id == 'newEntry') {
+                if ($element[0].id === 'newEntry') {
                     entryId = $scope.domainObject.model.entries.length;
                     embedId = 0;
                     var lastEntry = $scope.domainObject.model.entries[entryId - 1];
-                    if (lastEntry == undefined || lastEntry.text || lastEntry.embeds) {
+                    if (lastEntry === undefined || lastEntry.text || lastEntry.embeds) {
                         $scope.domainObject.useCapability('mutation', function (model) {
                             model.entries.push({'createdOn': +Date.now(),
                                                 'embeds': [{'type': selectedObject.getId(),
@@ -108,7 +103,7 @@ define([
                     $scope.selObj = selectedObject;
                     $scope.entryId = entryId;
                     $scope.embedId = embedId;
-                    var element = $compile(SNAPSHOT_TEMPLATE)($scope);
+                    $compile(SNAPSHOT_TEMPLATE)($scope);
                 }
 
                 if ($(e.currentTarget).hasClass('drag-active')) {
