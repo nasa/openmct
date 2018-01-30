@@ -245,7 +245,7 @@ define(
                         snapshot = reader.result;
                         $scope.domainObject.useCapability('mutation', function (model) {
                             if (model.entries[entryPos]) {
-                                model.entries[entryPos].embeds[embedPos]['snapshot'] = {'src': snapshot,
+                                model.entries[entryPos].embeds[embedPos].snapshot = {'src': snapshot,
                                                                                  'type': url.type,
                                                                                  'size': url.size,
                                                                                  'modified': Date.now()
@@ -257,7 +257,7 @@ define(
                 }
             }else {
                 $scope.domainObject.useCapability('mutation', function (model) {
-                    model.entries[entryPos].embeds[embedPos]['snapshot'] = snapshot;
+                    model.entries[entryPos].embeds[embedPos].snapshot = snapshot;
                 });
             }
         };
