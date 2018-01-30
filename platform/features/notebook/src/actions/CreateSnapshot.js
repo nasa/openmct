@@ -43,7 +43,7 @@ define(
             var model = this.domainObject.model;
             var elementPos = model.entries.map(function (x) {
                 return x.createdOn;
-            }).indexOf(entryId)
+            }).indexOf(entryId);
             var entryEmbeds = model.entries[elementPos].embeds;
             var embedPos = entryEmbeds.map(function (x) {
                 return x.id;
@@ -55,7 +55,7 @@ define(
                     $scope.selObj = resp[embedType];
                     $scope.entryId = elementPos;
                     $scope.embedId = embedPos;
-                    var element = compile(SNAPSHOT_TEMPLATE)($scope);
+                    compile(SNAPSHOT_TEMPLATE)($scope);
                 }
             });
         };
