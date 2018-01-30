@@ -34,7 +34,7 @@ define(
 
         RemoveEmbed.prototype.perform = function ($event,snapshot,embedId,entryId) {
             var DOMAIN_OBJ = this.domainObject;
-            errorDialog = this.dialogService.showBlockingMessage({
+            var errorDialog = this.dialogService.showBlockingMessage({
                 severity: "error",
                 title: "This action will permanently delete this Embed. Do you want to continue?",
                 minimized: true, // want the notification to be minimized initially (don't show banner)
@@ -56,7 +56,7 @@ define(
                 DOMAIN_OBJ.useCapability('mutation', function (model) {
                     var elementPos = model.entries.map(function (x) {
                         return x.createdOn;
-                    }).indexOf(entryId)
+                    }).indexOf(entryId);
                     var entryEmbeds = model.entries[elementPos].embeds;
                     var embedPos = entryEmbeds.map(function (x) {
                         return x.id;
