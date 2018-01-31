@@ -19,7 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.mct-notebook{
+.w-notebook {
+    //@include test($a: 0.1);
+    //display: flex;
+    //flex-direction: column;
+    //flex-wrap: nowrap;
+    font-size: 0.8rem;
     overflow: hidden;
     position: absolute;
     top: 0px;
@@ -28,6 +33,9 @@
     left: 0px;
     width: auto;
     height: auto;
+}
+
+.mct-notebook {
     div.example-button-group {
         margin-top: 12px;
         margin-bottom: 12px;
@@ -59,19 +67,19 @@
     } 
 } 
 
-.notebook-new-entry{
+.notebook-new-entry {
     height: 350px;
 }
 
-.drag-area{
-    border: 2px dashed #006080;
-    border-radius: 5px;
+.l-notebook-drag-area {
+    border: 1px dashed #006080;
+    border-radius: $controlCr;
     padding: 10px 0;
-    margin: 15px 0;
+    //margin: 15px 0;
     font-style: italic;
     cursor: pointer;
     &.drag-active{
-        border: 2px dashed $colorKey;
+        border-color: $colorKey;
     }
     .glyph{
         flex: 1 1 0;
@@ -80,7 +88,7 @@
             position: relative;
         }
     }
-    p{
+    p {
         flex: 4 1 0;
         margin: 0;
     }
@@ -96,79 +104,83 @@
     white-space: normal;
 }
 
-.entries-wrapper{
-    display: block;
+.w-notebook-entries {
+    //@include test($a: 0.1);
+    padding-right: $interiorMarginSm;
     position: relative;
-    overflow: scroll;
-    height: calc(100% - 92px);
-    .entries-list{
-        .entry{
-            border-bottom: 1px solid #999;
-            padding: 10px 0;
-            &:first-child{
-                border-top: 1px solid #999;
-            }
-            &.active,&:hover{
-                background-color: rgba(0, 153, 204, 0.2);
-                .entry-info .entry-text{
-                    .unedited-text{
-                        display: none;
-                    }
-                    textarea{
-                        background-color: $colorBodyBg;
-                        min-height: 50px;
-                        height: auto;
-                        resize: none;
-                        display: block;
-                    }
-                }                
-            }
-            .entry-time{
-                flex: 1 1 0;
-                text-align: center;
-            }
-            .entry-info{
-                 flex: 4 1 0;
-                 padding: 0 15px;
-                 min-height: 65px;
-                 .embeds{
-                    flex-wrap: wrap;                    
-                 }
-                 .snap-thumb,.embed-icon{
-                    cursor: pointer;
-                 }
-                 .entry-text{
-                    min-height: 50px;
-                    margin-bottom:15px;
-                    display: block;
-                    overflow: hidden;
-                    .unedited-text{
-                        margin: 0;
-                        min-height: 50px;
-                        p{
-                           margin: 0;
-                       }                        
-                    }
+    overflow-x: hidden;
+    overflow-y: scroll;
+    .t-entries-list {
+    }
+}
 
-                    textarea{
-                        display: none;
-                    }
-                 }
-                 .entry-embedded{
-                        margin-right: 20px;
-                        height: 100px;
-                        position: relative;
-                        margin-bottom: 20px
+.l-notebook-entry {
+    box-sizing: border-box;
+    margin-bottom: $interiorMarginSm;
+    padding: $interiorMargin $interiorMarginLg;
 
-                 }
+    &.active, &:hover {
+        background-color: rgba($colorBodyFg, 0.2);
+        .entry-info .entry-text{
+            .unedited-text{
+                display: none;
             }
-            .entry-delete{
-                padding: 0 15px;
+            textarea{
+                //background-color: $colorBodyBg;
+                min-height: 50px;
+                height: auto;
+                resize: none;
+                display: block;
+            }
+        }
+    }
+    .entry-time{
+        //flex: 1 1 0;
+        //text-align: center;
+    }
+    .entry-info{
+        //flex: 4 1 0;
+        //padding: 0 15px;
+        //min-height: 65px;
+        .embeds{
+            flex-wrap: wrap;
+        }
+        .snap-thumb,.embed-icon{
+            cursor: pointer;
+        }
+        .entry-text {
+            //min-height: 50px;
+            //margin-bottom:15px;
+            display: block;
+            overflow: hidden;
+            .unedited-text{
+                margin: 0;
+                //min-height: 50px;
+                p{
+                    margin: 0;
+                }
             }
 
+            textarea{
+                display: none;
+            }
+        }
+        .entry-embedded{
+            margin-right: 20px;
+            height: 100px;
+            position: relative;
+            margin-bottom: 20px
 
         }
     }
+    .entry-delete{
+        //padding: 0 15px;
+    }
+}
+
+.s-notebook-entry {
+    background-color: rgba($colorBodyFg, 0.1);
+    border-radius: $basicCr;
 }
 
 .embed{
@@ -377,7 +389,7 @@
 }
 
 @media screen and (max-width: 1024px){
-    .entries-wrapper{
+    .w-notebook-entries{
         font-size: 14px;
     }
 

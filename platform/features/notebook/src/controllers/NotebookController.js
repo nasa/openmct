@@ -40,7 +40,7 @@ define(
                 $element
         ) {
 
-            $scope.entriesEl = $(document.body).find('.entries-list');
+            $scope.entriesEl = $(document.body).find('.t-entries-list');
             $scope.sortEntries = '-createdOn';
             $scope.showTime = "0";
             $scope.editEntry = false;
