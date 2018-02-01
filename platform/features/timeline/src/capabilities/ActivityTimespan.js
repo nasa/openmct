@@ -79,6 +79,10 @@ define(
             function setStart(value) {
 
                 parentMutation.mutate(function (m) {
+                    if (!m.activityStart) {
+                        m.activityStart = {};
+                    }
+
                     m.activityStart[model.id] = Math.max(value, 0);
                 });
 
@@ -92,6 +96,10 @@ define(
             // Set the duration associated with this object
             function setDuration(value) {
                 parentMutation.mutate(function (m) {
+                    if (!m.activityDuration) {
+                        m.activityDuration = {};
+                    }
+
                     m.activityDuration[model.id] = Math.max(value, 0);
                 });
 
@@ -103,6 +111,10 @@ define(
             // Set the end time associated with this object
             function setEnd(value) {
                 parentMutation.mutate(function (m) {
+                    if (!m.activityEnd) {
+                        m.activityEnd = {};
+                    }
+
                     m.activityEnd[model.id] = value;
                 });
 
