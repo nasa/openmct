@@ -48,24 +48,62 @@ Open MCT's code, design, and architecture are periodically reviewed
 
 ## Security Concerns
 
-* Identity spoofing may occur if source code is compromiesd.
-  * Prevent man-in-the-middle attacks using SSL (https rather than http).
-    * Avoid serving up a malicious version of Open MCT or your plugins.
+Certain security concerns deserve special attention when deploying Open MCT,
+or when authoring plugins.
 
-* Information disclosure.
-  * Don't send sensitive data to third-party servers or insecure APIs.
+### Identity Spoofing
 
-* Tampering with data
-  * Assume that the server validates data.
-  * Plugins which serialize and write data to server must escape that data.
+Open MCT issues calls to web services with the privileges of a logged in user.
+Compromised sources (either for Open MCT itself or a plugin) could
+therefore allow malicious code to execute with those privileges.
 
-* Repudiation
-  * Assume server logs relevant actions associated with a user identity.
-  * If client-side behavior must be logged, plugins must do this.
+To avoid this:
 
-* Denial-of-service
-  * We assume resource-intensive tasks cannot be initiated by untrusted users.
+* Serve Open MCT and other scripts over SSL (https rather than http)
+  to prevent man-in-the-middle attacks.
+* Exercise precautions such as security reviews for any plugins or
+  applications built for or with Open MCT to reject malicious changes.
 
-* Elevation of privilege
-  * Assume this
+### Information Disclosure
 
+If Open MCT is used to handle or display sensitive data, any components
+(such as adapter plugins) must take care to avoid leaking or disclosing
+this information. For example, avoid sending sensitive data to third-party
+servers or insecure APIs.
+
+### Data Tampering
+
+The web application architecture leaves open the possibility that direct
+calls will be made to back-end services, circumventing Open MCT entirely.
+As such, Open MCT assumes that server components will perform any necessary
+data validation during calls issues to the server.
+
+Additionally, plugins which serialize and write data to the server must
+escape that data to avoid database injection attacks, and similar.
+
+### Repudiation
+
+Open MCT assumes that servers log any relevant interactions and associates
+these with a user identity; the specific user actions taken within the
+application are assumed not to be of concern for auditing.
+
+In the absence of server-side logging, users may disclaim (maliciously,
+mistakenly, or otherwise) actions taken within the system without any
+way to prove otherwise.
+
+If keeping client-level interactions is important, this will need to be
+implemented via a plugin.
+
+### Denial-of-service
+
+Open MCT assumes that server-side components will be insulated against
+denial-of-service attacks. Services should only permit resource-intensive
+tasks to be initiated by known or trusted users.
+
+### Elevation of privilege
+
+Corollary to the assumption that servers guide against identity spoofing,
+Open MCT assumes that services do not allow a user to act with
+inappropriately escalated privileges. Open MCT cannot protect against
+such escalation; in the clearest case, a malicious actor could interact
+with web services directly to exploit such a vulnerability.
