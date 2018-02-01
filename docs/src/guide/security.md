@@ -1,4 +1,4 @@
-# Security
+# Security Guide
 
 Open MCT is a rich client with plugin support that executes as a single page
 web application in a browser environment. Security concerns and
