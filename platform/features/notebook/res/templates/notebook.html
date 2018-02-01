@@ -53,17 +53,18 @@
             <div class="holder flex-elem entry-time">{{entry.createdOn | date:'yyyy-MM-dd HH:mm:ss'}}</div>
             <div class="holder flex-elem grows entry-info">
                 <div class="entry-text">
+                    <div>Rows: {{parseText(entry.text).length}} Chars: {{entry.text.length}}</div>
                     <div class="unedited-text">
                         <p ng-repeat="line in parseText(entry.text) track by $index">{{line}}</p>
                     </div>
-                    <textarea ng-blur="textBlur($event,entry.createdOn)"
-                              ng-focus="textFocus($event)"
-                              ng-model="entry.text"
-                              placeholder="Enter text here"
-                              class="sm"
-                              rows="{{parseText(entry.text).length}}">
+                    <div contenteditable="true"
+                        ng-blur="textBlur($event,entry.createdOn)"
+                        ng-focus="textFocus($event)"
+                        ng-model="entry.text"
+                        placeholder="Enter text here"
+                        class="t-entry-input">
                         {{entry.text}}
-                    </textarea>
+                    </div>
                 </div>
                 <!-- embeds -->
                 <div class="embeds l-flex-row">

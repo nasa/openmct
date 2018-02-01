@@ -119,19 +119,19 @@ define(
             };
 
             $scope.textFocus = function ($event) {
-                if ($event.currentTarget && $event.currentTarget.value) {
-                    $scope.currentEntryValue = $event.currentTarget.value;
+                if ($event.currentTarget && $event.currentTarget.innerText) {
+                    $scope.currentEntryValue = $event.currentTarget.innerText;
                 }
             };
 
             $scope.textBlur = function ($event,entryId) {
-                if ($event.target && $event.target.value !== "") {
+                if ($event.target && $event.target.innerText !== "") {
                     var elementPos = $scope.domainObject.model.entries.map(function (x) {
                         return x.createdOn;
                     }).indexOf(+(entryId));
                     $scope.domainObject.useCapability('mutation', function (model) {
-                        model.entries[elementPos].text = $event.target.value;
-                        if ($scope.currentEntryValue !== $event.target.value) {
+                        model.entries[elementPos].text = $event.target.innerText;
+                        if ($scope.currentEntryValue !== $event.target.innerText) {
                             model.entries[elementPos].createdOn = now();
                         }
                     });
@@ -142,7 +142,7 @@ define(
                 var lastEntry = model[model.length - 1];
                 if (!lastEntry.text) {
                     var newEntry = $scope.entriesEl.find('#entry_' + lastEntry.createdOn).addClass('active');
-                    newEntry.find('textarea').focus();
+                    newEntry.find('.t-entry-input').focus();
                 }
             };
 

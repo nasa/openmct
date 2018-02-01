@@ -119,21 +119,25 @@
     margin-bottom: $interiorMarginSm;
     padding: $interiorMargin $interiorMarginLg;
 
-    &.active, &:hover {
+    &:hover {
         background-color: rgba($colorBodyFg, 0.2);
         .entry-info .entry-text{
             .unedited-text{
-                display: none;
+                //display: none;
             }
             textarea{
                 //background-color: $colorBodyBg;
                 min-height: 50px;
                 height: auto;
                 resize: none;
-                display: block;
+                //display: block;
             }
         }
     }
+    &.active {
+        background-color: rgba($colorBodyFg, 0.5);
+    }
+
     .entry-time{
         //flex: 1 1 0;
         //text-align: center;
@@ -154,6 +158,7 @@
             display: block;
             overflow: hidden;
             .unedited-text{
+                font-style: italic;
                 margin: 0;
                 //min-height: 50px;
                 p{
@@ -163,6 +168,11 @@
 
             textarea{
                 display: none;
+            }
+
+            .t-entry-input {
+                background-color: rgba(black, 0.1);
+                padding: 2px;
             }
         }
         .entry-embedded{
