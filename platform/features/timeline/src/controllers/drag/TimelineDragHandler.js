@@ -201,9 +201,9 @@ define(
                             start = timespan.getStart();
                             end = timespan.getEnd();
                             // Update start, then end
+                            timespan.setDuration((end + delta) - (start+delta));
                             timespan.setStart(start + delta);
                             timespan.setEnd(end + delta);
-                            timespan.setDuration((end + delta) - (start+delta));
                             // Mark as dirty for subsequent persistence
                             dirty[toId(spanId)] = true;
                         }
