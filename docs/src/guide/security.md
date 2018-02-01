@@ -19,21 +19,31 @@ Open MCT has been architected assuming the following deployment pattern:
 * A tagged, tested Open MCT version will be used.
 * Externally authored plugins will be installed.
 * A server will provide persistent storage, telemetry, and other shared data.
-* Authorization, authentication, and auditing will be handled by the server.
+* Authorization, authentication, and auditing will be handled by a server.
 
 
 ## Security Procedures
 
-* **Code review**: All contributions are reviewed by internal team members.
-  External contributors receive increased scrutiny for security and quality,
-  and must sign a licensing agreement.
-* **Dependency review**: Before integrating third-party dependencies, they
-  are reviewed for security and quality, with consideration given to authors
-  and users of these dependencies, as well as review of open source code.
-* **Periodic security reviews**: Open MCT's code, design, and architecture
-  are periodically reviewed (approximately annually) for common security
-  issues, such as the
-  [OWASP Top Ten](https://www.owasp.org/index.php/Category:OWASP_Top_Ten_Project).
+The Open MCT team secures our code base using a combination of code review,
+dependency review, and periodic security reviews.
+
+### Code Review
+
+All contributions are reviewed by internal team members. External
+contributors receive increased scrutiny for security and quality,
+and must sign a licensing agreement.
+
+### Dependency Review
+
+Before integrating third-party dependencies, they are reviewed for security
+and quality, with consideration given to authors and users of these
+dependencies, as well as review of open source code.
+
+### Periodic Security Reviews
+
+Open MCT's code, design, and architecture are periodically reviewed
+(approximately annually) for common security issues, such as the
+[OWASP Top Ten](https://www.owasp.org/index.php/Category:OWASP_Top_Ten_Project).
 
 
 ## Security Concerns
