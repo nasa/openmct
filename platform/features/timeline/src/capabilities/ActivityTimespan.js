@@ -85,12 +85,6 @@ define(
 
                     m.activityStart[model.id] = Math.max(value, 0);
                 });
-
-                // mutation.mutate(function (m) {
-                //     m.start.timestamp = Math.max(value, 0);
-                //     // Update duration to keep end time
-                //     m.duration.timestamp = Math.max(end - value, 0);
-                // }, model.modified);
             }
 
             // Set the duration associated with this object
@@ -102,10 +96,6 @@ define(
 
                     m.activityDuration[model.id] = Math.max(value, 0);
                 });
-
-                // mutation.mutate(function (m) {
-                //     m.duration.timestamp = Math.max(value, 0);
-                // }, model.modified);
             }
 
             // Set the end time associated with this object
@@ -117,10 +107,6 @@ define(
 
                     m.activityEnd[model.id] = value;
                 });
-
-                // mutation.mutate(function (m) {
-                //     m.duration.timestamp = Math.max(value - start, 0);
-                // }, model.modified);
             }
 
             return {

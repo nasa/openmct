@@ -93,7 +93,7 @@ define(
                 }
             }
 
-            function fragment (input) {
+            function fragment(input) {
 
                 if (input !== undefined) {
                     var number = Number(input),
@@ -104,7 +104,7 @@ define(
                         if (number >= 2 && number <= 5) {
                             var parentComposition = timespan.getParent().getCapability('composition'),
                                 timespanModel = timespan.getModel(),
-                                duration = (timespan.getEnd() - timespan.getStart())/number;
+                                duration = (timespan.getEnd() - timespan.getStart()) / number;
 
                             timespan.setDuration(duration);
                             timespan.setEnd(timespan.getStart() + duration);

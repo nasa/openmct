@@ -115,12 +115,13 @@ define(
                     var timespan = timespans[toId(id)];
                     // Use as setter if argument is present
                     if ((typeof value === 'number') && timespan) {
-                        // Set the start (ensuring that it's non-negative,
+                        // Set the start and duration(ensuring that it's non-negative,
                         // and not after the end time.)
                         timespan.setStart(
                             Math.min(Math.max(value, 0), timespan.getEnd())
                         );
                         timespan.setDuration(timespan.getEnd() - Math.min(Math.max(value, 0)));
+
                         // Mark as dirty for subsequent persistence
                         dirty[toId(id)] = true;
                     }
@@ -141,11 +142,12 @@ define(
                     var timespan = timespans[toId(id)];
                     // Use as setter if argument is present
                     if ((typeof value === 'number') && timespan) {
-                        // Set the end (ensuring it doesn't precede start)
+                        // Set the end and duration (ensuring it doesn't precede start)
                         timespan.setEnd(
                             Math.max(value, timespan.getStart())
                         );
                         timespan.setDuration(Math.max(value, timespan.getStart()) - timespan.getStart());
+
                         // Mark as dirty for subsequent persistence
                         dirty[toId(id)] = true;
                     }
@@ -200,10 +202,12 @@ define(
                             // own adjustments
                             start = timespan.getStart();
                             end = timespan.getEnd();
-                            // Update start, then end
-                            timespan.setDuration((end + delta) - (start+delta));
+
+                            // Update duration, start, then end
+                            timespan.setDuration((end + delta) - (start + delta));
                             timespan.setStart(start + delta);
                             timespan.setEnd(end + delta);
+
                             // Mark as dirty for subsequent persistence
                             dirty[toId(spanId)] = true;
                         }
