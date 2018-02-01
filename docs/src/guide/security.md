@@ -100,10 +100,19 @@ Open MCT assumes that server-side components will be insulated against
 denial-of-service attacks. Services should only permit resource-intensive
 tasks to be initiated by known or trusted users.
 
-### Elevation of privilege
+### Elevation of Privilege
 
 Corollary to the assumption that servers guide against identity spoofing,
 Open MCT assumes that services do not allow a user to act with
 inappropriately escalated privileges. Open MCT cannot protect against
 such escalation; in the clearest case, a malicious actor could interact
 with web services directly to exploit such a vulnerability.
+
+## Additional Reading
+
+The following resources have been used as a basis for identifying potential
+security threats to Open MCT deployments in preparation of this document:
+
+* [STRIDE model](https://www.owasp.org/index.php/Threat_Risk_Modeling#STRIDE)
+* [Attack Surface Analysis Cheat Sheet](https://www.owasp.org/index.php/Attack_Surface_Analysis_Cheat_Sheet)
+* [XSS Prevention Cheat Sheet](https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet)
