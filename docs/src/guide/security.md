@@ -25,7 +25,10 @@ Open MCT has been architected assuming the following deployment pattern:
 ## Security Procedures
 
 The Open MCT team secures our code base using a combination of code review,
-dependency review, and periodic security reviews.
+dependency review, and periodic security reviews. Static analysis performed 
+during automated verification additionally safeguards against common 
+coding errors which may result in vulnerabilities.
+
 
 ### Code Review
 
