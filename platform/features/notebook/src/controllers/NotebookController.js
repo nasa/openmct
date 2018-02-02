@@ -120,15 +120,22 @@ define(
 
             $scope.textFocus = function ($event) {
                 if ($event.currentTarget && $event.currentTarget.innerText) {
+                    /*
+                     On focus, if the currentTarget isn't blank, set the global currentEntryValue = the
+                     content of the current focus. This will be used at blur to determine if the
+                     current entry has been modified or not.
+                     */
                     $scope.currentEntryValue = $event.currentTarget.innerText;
                 }
             };
 
             $scope.textBlur = function ($event,entryId) {
                 if ($event.target && $event.target.innerText !== "") {
+                    console.log("textBlur for " + entryId + "; currentEntryValue=" + $scope.currentEntryValue + "; $event.target.innerText=" + $event.target.innerText);
                     var elementPos = $scope.domainObject.model.entries.map(function (x) {
                         return x.createdOn;
                     }).indexOf(+(entryId));
+                    console.log(entryId + " is now elementPos " + elementPos);
                     $scope.domainObject.useCapability('mutation', function (model) {
                         model.entries[elementPos].text = $event.target.innerText;
                         if ($scope.currentEntryValue !== $event.target.innerText) {
