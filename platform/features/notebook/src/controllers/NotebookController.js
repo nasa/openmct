@@ -55,6 +55,16 @@ define(
 
             this.scope = $scope;
 
+            $scope.reportModel = function () {
+                var entries = $scope.domainObject.model.entries;
+                console.log("REPORT_MODEL:");
+                console.log(entries.length + " entries");
+                for (var i=0; i<entries.length; i++) {
+                    var cEntry = entries[i];
+                    console.log(cEntry.id + ": " + cEntry.createdOn + " / " + cEntry.text);
+                }
+            }
+
             $scope.hoursFilter = function (hours,entryTime) {
                 if (+hours) {
                     return entryTime > (now() - SECONDS_IN_AN_HOUR * (+hours));
@@ -71,14 +81,15 @@ define(
             /*--create a new entry--*/
             $scope.newEntry = function ($event) {
                 $scope.scrollToTop();
+                $scope.reportModel();
                 var entries = $scope.domainObject.model.entries;
                 var lastEntry = entries[entries.length - 1];
                 if (lastEntry === undefined || lastEntry.text || lastEntry.embeds) {
                     $scope.domainObject.useCapability('mutation', function (model) {
-                    model.entries.push({'createdOn': now()});
-                });
-
-                }else {
+                        var id = now();
+                        model.entries.push({'id': id, 'createdOn': id});
+                    });
+                } else {
                     $scope.domainObject.useCapability('mutation', function (model) {
                         model.entries[entries.length - 1].createdOn = now();
                     });
@@ -88,7 +99,9 @@ define(
 
             /*--delete an entry--*/
             $scope.deleteEntry = function ($event) {
+                /* This is really brittle - change the markup and this doesn't work */
                 var delId = $event.currentTarget.parentElement.parentElement.id;
+                console.log("Trying to delete " + delId);
                 var errorDialog = dialogService.showBlockingMessage({
                     severity: "error",
                     title: "This action will permanently delete this Notebook entry. Do you want to continue?",
@@ -98,7 +111,7 @@ define(
                         callback: function () {
                             errorDialog.dismiss();
                             var elementPos = $scope.domainObject.model.entries.map(function (x) {
-                                return x.createdOn;
+                                return x.id;
                             }).indexOf(+delId.replace('entry_', ''));
                             if (elementPos !== -1) {
                                 $scope.domainObject.useCapability('mutation', function (model) {
@@ -118,37 +131,53 @@ define(
                 });
             };
 
-            $scope.textFocus = function ($event) {
-                if ($event.currentTarget && $event.currentTarget.innerText) {
+            $scope.textFocus = function ($event, entryId) {
+                console.log("textFocus for " + entryId);
+                // if ($event.currentTarget && $event.currentTarget.innerText) {
                     /*
                      On focus, if the currentTarget isn't blank, set the global currentEntryValue = the
                      content of the current focus. This will be used at blur to determine if the
                      current entry has been modified or not.
+                     Not sure this is right, would think we'd always want to set curEntVal even if blank
                      */
                     $scope.currentEntryValue = $event.currentTarget.innerText;
-                }
+                // }
             };
 
-            $scope.textBlur = function ($event,entryId) {
+            $scope.textBlur = function ($event, entryId) {
+                // entryId is the unique numeric based on the original createdOn
                 if ($event.target && $event.target.innerText !== "") {
                     console.log("textBlur for " + entryId + "; currentEntryValue=" + $scope.currentEntryValue + "; $event.target.innerText=" + $event.target.innerText);
                     var elementPos = $scope.domainObject.model.entries.map(function (x) {
-                        return x.createdOn;
+                        return x.id;
                     }).indexOf(+(entryId));
-                    console.log(entryId + " is now elementPos " + elementPos);
-                    $scope.domainObject.useCapability('mutation', function (model) {
+                    console.log("You just blurred out of " + entryId + " which is now elementPos " + elementPos);
+
+                    // If the text of an entry has been changed, then update the text and the createdOn numeric
+                    // Otherwise, don't do anything
+                    if ($scope.currentEntryValue !== $event.target.innerText) {
+                        console.log("Entry " + entryId + " was changed, updating");
+                        $scope.domainObject.useCapability('mutation', function (model) {
+                            model.entries[elementPos].text = $event.target.innerText;
+                            model.entries[elementPos].createdOn = now();
+                        });
+                    } else {
+                        console.log("Entry " + entryId + " was NOT changed, doing nothing");
+                    }
+
+/*                    $scope.domainObject.useCapability('mutation', function (model) {
                         model.entries[elementPos].text = $event.target.innerText;
                         if ($scope.currentEntryValue !== $event.target.innerText) {
                             model.entries[elementPos].createdOn = now();
                         }
-                    });
+                    });*/
                 }
             };
 
             $scope.finished = function (model) {
                 var lastEntry = model[model.length - 1];
                 if (!lastEntry.text) {
-                    var newEntry = $scope.entriesEl.find('#entry_' + lastEntry.createdOn).addClass('active');
+                    var newEntry = $scope.entriesEl.find('#entry_' + lastEntry.id).addClass('active');
                     newEntry.find('.t-entry-input').focus();
                 }
             };

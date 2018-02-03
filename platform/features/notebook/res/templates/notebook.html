@@ -43,23 +43,26 @@
     </div>
 
     <!-- entries -->
-    <div class="holder flex-elem grows w-notebook-entries" ng-mouseover="handleActive()">
-        <ul class="t-entries-list">
+    <div class="holder flex-elem grows w-notebook-entries t-entries-list" ng-mouseover="handleActive()">
+        <ul>
             <li class="l-flex-row l-notebook-entry s-notebook-entry"
-              id="{{'entry_'+entry.createdOn}}"
+              id="{{'entry_'+ entry.id}}"
               ng-if="hoursFilter(showTime,entry.createdOn)"
               ng-repeat="entry in model.entries | filter:entrySearch | orderBy: sortEntries track by $index" ng-init="$last && finished(model.entries)"
               mct-entry-dnd>
-            <div class="holder flex-elem entry-time">{{entry.createdOn | date:'yyyy-MM-dd HH:mm:ss'}}</div>
+            <div class="holder flex-elem entry-time">
+                <div>{{'entry_'+entry.id}}</div>
+                <div>{{entry.createdOn | date:'yyyy-MM-dd HH:mm:ss'}}</div>
+            </div>
             <div class="holder flex-elem grows entry-info">
                 <div class="entry-text">
-                    <div>ID={{'entry_'+entry.createdOn}} Rows: {{parseText(entry.text).length}} Chars: {{entry.text.length}}</div>
+                    <div>Rows: {{parseText(entry.text).length}} Chars: {{entry.text.length}}</div>
                     <div class="unedited-text">
                         <p ng-repeat="line in parseText(entry.text) track by $index">{{line}}</p>
                     </div>
                     <div contenteditable="true"
-                        ng-blur="textBlur($event,entry.createdOn)"
-                        ng-focus="textFocus($event)"
+                        ng-blur="textBlur($event, entry.id)"
+                        ng-focus="textFocus($event, entry.id)"
                         ng-model="entry.text"
                         placeholder="Enter text here"
                         class="t-entry-input">
