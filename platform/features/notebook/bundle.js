@@ -316,10 +316,17 @@ define([
               }
             ],
             "stylesheets": [
-              {
-                  "stylesheetUrl": "css/notebook.css",
-                  "theme": "espresso"
-              }
+                {
+                    "stylesheetUrl": "css/notebook.css"
+                },
+                {
+                    "stylesheetUrl": "css/notebook-espresso.css",
+                    "theme": "espresso"
+                },
+                {
+                    "stylesheetUrl": "css/notebook-snow.css",
+                    "theme": "snow"
+                }
           ]
         }
     });

@@ -41,6 +41,7 @@ define(
         ) {
 
             $scope.entriesEl = $(document.body).find('.t-entries-list');
+            $scope.consoleDiv = $(document.body).find('.t-console');
             $scope.sortEntries = '-createdOn';
             $scope.showTime = "0";
             $scope.editEntry = false;
@@ -142,6 +143,8 @@ define(
                      */
                     $scope.currentEntryValue = $event.currentTarget.innerText;
                 // }
+                $scope.pushToConsoleDiv('focus: ' + entryId + '; currentEntryValue: ' + $scope.currentEntryValue);
+                $scope.pushToConsoleDiv('----');
             };
 
             $scope.textBlur = function ($event, entryId) {
@@ -172,6 +175,7 @@ define(
                         }
                     });*/
                 }
+                $scope.pushToConsoleDiv('blur: ' + entryId + '; currentEntryValue: ' + $scope.currentEntryValue);
             };
 
             $scope.finished = function (model) {
@@ -361,6 +365,14 @@ define(
 
 
             $scope.$on('$destroy', function () {});
+
+            $scope.pushToConsoleDiv = function (string) {
+                var $cd = $scope.consoleDiv,
+                    curContent = $cd.html() + '<br />'  + string;
+                // curContent += '<br />'  + string;
+                $cd.html(curContent);
+                $cd.scrollTop($cd[0].scrollHeight);
+            }
         }
 
         return NotebookController;

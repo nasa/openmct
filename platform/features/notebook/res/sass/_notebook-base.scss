@@ -72,15 +72,10 @@
 }
 
 .l-notebook-drag-area {
-    border: 1px dashed #006080;
-    border-radius: $controlCr;
     padding: 10px 0;
     //margin: 15px 0;
     font-style: italic;
     cursor: pointer;
-    &.drag-active{
-        border-color: $colorKey;
-    }
     .glyph{
         flex: 1 1 0;
         &:before{
@@ -120,8 +115,7 @@
     padding: $interiorMargin $interiorMarginLg;
 
     &:hover {
-        background-color: rgba($colorBodyFg, 0.2);
-        .entry-info .entry-text{
+        .entry-content .entry-text{
             .unedited-text{
                 //display: none;
             }
@@ -139,10 +133,9 @@
     }
 
     .entry-time{
-        //flex: 1 1 0;
-        //text-align: center;
     }
-    .entry-info{
+
+    .entry-content{
         //flex: 4 1 0;
         //padding: 0 15px;
         //min-height: 65px;
@@ -170,10 +163,17 @@
                 display: none;
             }
 
-            .t-entry-input {
+            .s-entry-input {
                 background-color: rgba(black, 0.1);
                 padding: 2px;
+                &:active {
+                    background-color: red;
+                }
             }
+        }
+
+        .s-entry-input {
+
         }
         .entry-embedded{
             margin-right: 20px;
@@ -186,11 +186,6 @@
     .entry-delete{
         //padding: 0 15px;
     }
-}
-
-.s-notebook-entry {
-    background-color: rgba($colorBodyFg, 0.1);
-    border-radius: $basicCr;
 }
 
 .embed{
@@ -229,12 +224,11 @@
 }
 
 
-.snapshot{
+.snapshot {
     z-index: -9999;
-    background: $colorBodyBg;
 }
 
-.t-contents,.snap-annotation{
+.t-contents,.snap-annotation {
     overflow: hidden;
     img{
         width: 100%;
@@ -398,11 +392,17 @@
     }
 }
 
+.t-console {
+    // Temp console-like reporting element
+    max-height: 200px;
+    box-sizing: border-box;
+    padding: 5px;
+}
+
 @media screen and (max-width: 1024px){
     .w-notebook-entries{
         font-size: 14px;
     }
-
     .l-message{
         display: inline-block;
         width: 100%;
