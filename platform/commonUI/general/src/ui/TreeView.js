@@ -41,7 +41,6 @@ define([
 
     TreeView.prototype.setSize = function (sz) {
         var nodeView;
-        
         while (this.nodeViews.length < sz) {
             nodeView = new TreeNodeView(
                 this.gestureService,
@@ -61,11 +60,9 @@ define([
     TreeView.prototype.loadComposition = function () {
         var self = this,
         domainObject = this.activeObject;
-    
         function addNode(domainObj, index) {
-            self.nodeViews[index].model(domainObj);     
+            self.nodeViews[index].model(domainObj);
         }
-
         function addNodes(domainObjects) {
             if (self.pending) {
                 self.pending = false;
