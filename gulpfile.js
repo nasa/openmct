@@ -22,6 +22,8 @@
 
 /*global require,__dirname*/
 
+require("v8-compile-cache");
+
 var gulp = require('gulp'),
     sourcemaps = require('gulp-sourcemaps'),
     path = require('path'),

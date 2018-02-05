@@ -1,3 +1,11 @@
+machine:
+  node:
+    version: 4.7.0
+
+dependencies:
+  pre:
+    - npm install -g npm@latest
+
 deployment:
   production:
     branch: master

@@ -66,7 +66,7 @@ requirejs.config({
         "vue": "node_modules/vue/dist/vue.min",
         "zepto": "bower_components/zepto/zepto.min",
         "lodash": "bower_components/lodash/lodash",
-        "d3-selection": "node_modules/d3-selection/build/d3-selection.min",
+        "d3-selection": "node_modules/d3-selection/dist/d3-selection.min",
         "d3-scale": "node_modules/d3-scale/build/d3-scale.min",
         "d3-axis": "node_modules/d3-axis/build/d3-axis.min",
         "d3-array": "node_modules/d3-array/build/d3-array.min",

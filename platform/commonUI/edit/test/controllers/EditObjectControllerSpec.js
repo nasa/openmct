@@ -104,10 +104,10 @@ define(
                 mockEditorCapability.isEditContextRoot.andReturn(false);
                 mockEditorCapability.dirty.andReturn(false);
 
-                expect(checkFn()).toBe(false);
+                expect(checkFn()).toBe("Continuing will cause the loss of any unsaved changes.");
 
                 mockEditorCapability.isEditContextRoot.andReturn(true);
-                expect(checkFn()).toBe(false);
+                expect(checkFn()).toBe("Continuing will cause the loss of any unsaved changes.");
 
                 mockEditorCapability.dirty.andReturn(true);
                 expect(checkFn())

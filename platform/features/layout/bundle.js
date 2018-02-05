@@ -272,7 +272,8 @@ define([
                         "$scope",
                         "$q",
                         "dialogService",
-                        "openmct"
+                        "openmct",
+                        "$element"
                     ]
                 }
             ],

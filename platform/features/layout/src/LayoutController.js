@@ -515,7 +515,7 @@ define(
         LayoutController.prototype.selectIfNew = function (selector, domainObject) {
             if (domainObject.getId() === this.droppedIdToSelectAfterRefresh) {
                 setTimeout(function () {
-                    $('.' + selector)[0].click();
+                    $('[data-layout-id="' + selector + '"]')[0].click();
                     delete this.droppedIdToSelectAfterRefresh;
                 }.bind(this), 0);
             }

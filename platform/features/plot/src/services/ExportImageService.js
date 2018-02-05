@@ -43,7 +43,7 @@ define(
          * @param {constant} EXPORT_IMAGE_TIMEOUT time in milliseconds before a timeout error is returned
          * @constructor
          */
-        function ExportImageService($q, $timeout, $log, EXPORT_IMAGE_TIMEOUT, injHtml2Canvas, injSaveAs, injFileReader) {
+        function ExportImageService($q, $timeout, $log, EXPORT_IMAGE_TIMEOUT, injHtml2Canvas, injSaveAs, injFileReader, injChangeBackgroundColor) {
             self.$q = $q;
             self.$timeout = $timeout;
             self.$log = $log;
@@ -51,6 +51,7 @@ define(
             self.html2canvas = injHtml2Canvas || html2canvas;
             self.saveAs = injSaveAs || saveAs;
             self.reader = injFileReader || new FileReader();
+            self.changeBackgroundColor = injChangeBackgroundColor || self.changeBackgroundColor;
         }
 
         /**
@@ -60,14 +61,23 @@ define(
          * @param {string} type of image to convert the element to
          * @returns {promise}
          */
-        function renderElement(element, type) {
+        function renderElement(element, type, color) {
             var defer = self.$q.defer(),
                 validTypes = ["png", "jpg", "jpeg"],
-                renderTimeout;
+                renderTimeout,
+                originalColor;
 
             if (validTypes.indexOf(type) === -1) {
                 self.$log.error("Invalid type requested. Try: (" + validTypes.join(",") + ")");
                 return;
+            }
+
+            if (color) {
+                // Save color to be restored later
+                originalColor = element.style.backgroundColor || '';
+
+                // Defaulting to white so we can see the chart when printed
+                self.changeBackgroundColor(element, color);
             }
 
             renderTimeout = self.$timeout(function () {
@@ -78,13 +88,15 @@ define(
             try {
                 self.html2canvas(element, {
                     onrendered: function (canvas) {
+                        if (color) {
+                            self.changeBackgroundColor(element, originalColor);
+                        }
+
                         switch (type.toLowerCase()) {
                             case "png":
                                 canvas.toBlob(defer.resolve, "image/png");
                                 break;
 
-                            default:
-                            case "jpg":
                             case "jpeg":
                                 canvas.toBlob(defer.resolve, "image/jpeg");
                                 break;
@@ -96,7 +108,13 @@ define(
                 self.$log.warn("html2canvas failed with error: " + e);
             }
 
-            defer.promise.finally(renderTimeout.cancel);
+            defer.promise.finally(function () {
+                renderTimeout.cancel();
+
+                if (color) {
+                    self.changeBackgroundColor(element, originalColor);
+                }
+            });
 
             return defer.promise;
         }
@@ -126,13 +144,20 @@ define(
         }
 
         /**
+         * @private
+         */
+        self.changeBackgroundColor = function (element, color) {
+            element.style.backgroundColor = color;
+        };
+
+        /**
          * Takes a screenshot of a DOM node and exports to JPG.
          * @param {node} element to be exported
          * @param {string} filename the exported image
          * @returns {promise}
          */
-        ExportImageService.prototype.exportJPG = function (element, filename) {
-            return renderElement(element, "jpeg").then(function (img) {
+        ExportImageService.prototype.exportJPG = function (element, filename, color) {
+            return renderElement(element, "jpeg", color).then(function (img) {
                 self.saveAs(img, filename);
             });
         };
@@ -143,8 +168,8 @@ define(
          * @param {string} filename the exported image
          * @returns {promise}
          */
-        ExportImageService.prototype.exportPNG = function (element, filename) {
-            return renderElement(element, "png").then(function (img) {
+        ExportImageService.prototype.exportPNG = function (element, filename, color) {
+            return renderElement(element, "png", color).then(function (img) {
                 self.saveAs(img, filename);
             });
         };

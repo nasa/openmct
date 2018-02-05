@@ -2283,7 +2283,7 @@ To install build dependencies (only needs to be run once):
 
 To build:
 
-`npm run prepublish`
+`npm run prepare`
 
 This will compile and minify JavaScript sources, as well as copy over assets.
 The contents of the `dist` folder will contain a runnable Open MCT

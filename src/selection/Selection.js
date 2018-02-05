@@ -115,7 +115,7 @@ define(['EventEmitter'], function (EventEmitter) {
         element.addEventListener('click', selectCapture);
 
         if (select) {
-            this.select(selectable);
+            element.click();
         }
 
         return function () {

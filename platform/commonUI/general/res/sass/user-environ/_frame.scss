@@ -23,7 +23,6 @@
     $ohH: $btnFrameH;
     $bc: $colorInteriorBorder;
     &.child-frame.panel {
-        border: 1px solid transparent;
         z-index: 0; // Needed to prevent child-frame controls from showing through when another child-frame is above
         &:not(.no-frame) {
             background: $colorBodyBg;
@@ -91,7 +90,7 @@
 
     &.no-frame {
         background: transparent !important;
-        border: none;
+        border-color: transparent;
         .object-browse-bar .right {
             $m: 0;
             background: rgba(black, 0.3);
