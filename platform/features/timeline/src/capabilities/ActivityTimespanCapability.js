@@ -34,11 +34,16 @@ define(
         function ActivityTimespanCapability($q, domainObject) {
 
             function findTimeline(object) {
-                var parent = domainObject.getCapability('context').parentObject;
+                var parent = object.getCapability('context') ? object.getCapability('context').parentObject : undefined;
 
-                while (parent.getModel().type !== 'timeline') {
-                    parent = parent.getCapability('context').parentObject;
-                    findTimeline(parent);
+                while (parent && parent.getModel().type !== 'timeline') {
+                    var newParent = parent.getCapability('context') ? parent.getCapability('context').parentObject : undefined;
+
+                    if (newParent) {
+                        parent = newParent;
+                    } else {
+                        return parent;
+                    }
                 }
 
                 return parent;

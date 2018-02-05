@@ -44,6 +44,7 @@ define(['d3-dsv'], function (d3Dsv) {
             newActivity.start = {timestamp: 0, epoch: "SET"};
             newActivity.duration = {timestamp: Number(activity.duration), epoch: "SET"};
             newActivity.type = "activity";
+            newActivity.composition = [];
             newActivity.relationships = {modes: []};
 
             activitiesObjects.push(newActivity);
