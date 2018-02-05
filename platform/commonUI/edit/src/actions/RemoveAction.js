@@ -27,6 +27,7 @@ define(
     [],
     function () {
 
+        
         /**
          * Construct an action which will remove the provided object manifestation.
          * The object will be removed from its parent's composition; the parent
@@ -52,6 +53,7 @@ define(
         RemoveAction.prototype.perform = function () {
             var navigationService = this.navigationService,
                 domainObject = this.domainObject;
+                //
             /*
              * Check whether an object ID matches the ID of the object being
              * removed (used to filter a parent's composition to handle the
@@ -91,7 +93,10 @@ define(
                     // Traverses to parent of current object, moving
                     // up the ascendant path
                     context = traverseObject.getCapability('context');
+                    console.log(context);
                     traverseObject = context && context.getParent();
+                    
+
                 }
             }
 
@@ -103,7 +108,7 @@ define(
             function removeFromContext(object) {
                 var contextCapability = object.getCapability('context'),
                     parent = contextCapability.getParent();
-
+                    
                 // If currently within path of removed object(s),
                 // navigates to existing object up tree
                 checkObjectNavigation(object, parent);

@@ -149,21 +149,16 @@
             if(domainObject) {
                 if ( domainObject.hasCapability('composition')) {
                     let elementCount = domainObject.__proto__.model.composition.length;
-                     console.log(elementCount);
                         if(elementCount > 0) {
-                            console.log("Add");
-
                               $(this.toggleView.elements()).addClass('has-children');
                         }
                         else {
-                            console.log("Remved");
                               $(this.toggleView.elements()).removeClass('has-children');
                         }
                 }
             }
         }
 
-         //this.labelView.hasChildren(domainObject);
 
         return TreeNodeView;
     });

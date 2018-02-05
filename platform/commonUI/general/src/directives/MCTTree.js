@@ -54,7 +54,6 @@ define([
             }
 
             var unobserve = treeView.observe(setSelection);
-
             element.append(angular.element(treeView.elements()));
 
             scope.$watch('selectedObject', function (object) {

@@ -41,7 +41,7 @@ define([
 
     TreeView.prototype.setSize = function (sz) {
         var nodeView;
-
+        
         while (this.nodeViews.length < sz) {
             nodeView = new TreeNodeView(
                 this.gestureService,
@@ -60,17 +60,15 @@ define([
 
     TreeView.prototype.loadComposition = function () {
         var self = this,
-            domainObject = this.activeObject;
-      
+        domainObject = this.activeObject;
              let nodeView = new TreeNodeView(
                 this.gestureService,
                 this.newTreeView.bind(this),
                 this.selectFn
             );
-        function addNode(domainObj, index) {
-            self.nodeViews[index].model(domainObj);
-            self.elements().parent().siblings().children().addClass('has-children');
 
+        function addNode(domainObj, index) {
+            self.nodeViews[index].model(domainObj);     
         }
 
         function addNodes(domainObjects) {
@@ -85,11 +83,19 @@ define([
                 domainObjects.forEach(addNode);
                 self.updateNodeViewSelection();
             }
+            let element = $(self.elements()[0])
+                          .parent()
+                          .siblings()
+                          .children()
+
+            $(element[0]).addClass('has-children');
         }
 
         domainObject.useCapability('composition')
             .then(addNodes);
     };
+
+
 
     TreeView.prototype.model = function (domainObject) {
         if (this.unlisten) {
