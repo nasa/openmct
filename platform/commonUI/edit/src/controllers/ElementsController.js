@@ -77,10 +77,10 @@ define(
             if (!selection[0]) {
                 return;
             }
-            
+
             var selected = selection[0].context.oldItem;
             var selectedObjectComposition = selected && selected.useCapability('composition');
-            
+
             if (selectedObjectComposition) {
                 selectedObjectComposition.then(function (composition) {
                     this.scope.composition = composition;
