@@ -121,15 +121,25 @@ define(
             });
 
             it("changes background color to white and returns color back to original after snapshot, for better visibility of plot lines on print", function () {
-                exportImageService.exportPNG(testElement, "plot.png");
+                exportImageService.exportPNG(testElement, "plot.png", 'white');
 
                 expect(mockChangeBackgroundColor).toHaveBeenCalledWith(testElement, 'white');
                 expect(mockChangeBackgroundColor).toHaveBeenCalledWith(testElement, 'black');
+
+                exportImageService.exportJPG(testElement, "plot.jpg", 'white');
+
+                expect(mockChangeBackgroundColor).toHaveBeenCalledWith(testElement, 'white');
+                expect(mockChangeBackgroundColor).toHaveBeenCalledWith(testElement, 'black');
+            });
+
+            it("does not change background color when color is not specified in parameters", function () {
+                exportImageService.exportPNG(testElement, "plot.png");
+
+                expect(mockChangeBackgroundColor).not.toHaveBeenCalled();
 
                 exportImageService.exportJPG(testElement, "plot.jpg");
 
-                expect(mockChangeBackgroundColor).toHaveBeenCalledWith(testElement, 'white');
-                expect(mockChangeBackgroundColor).toHaveBeenCalledWith(testElement, 'black');
+                expect(mockChangeBackgroundColor).not.toHaveBeenCalled();
             });
         });
     }
