@@ -148,7 +148,9 @@
 
             if(domainObject) {
                 if ( domainObject.hasCapability('composition')) {
-                    let elementCount = domainObject.__proto__.model.composition.length;
+
+                    var proto = Object.getPrototypeOf(domainObject); 
+                    var elementCount = proto.model.composition.length;
                         if(elementCount > 0) {
                               $(this.toggleView.elements()).addClass('has-children');
                         }
@@ -157,7 +159,7 @@
                         }
                 }
             }
-        }
+        };
 
 
         return TreeNodeView;
