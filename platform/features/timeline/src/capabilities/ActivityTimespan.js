@@ -27,9 +27,9 @@ define(
          * Describes the time span of an activity object.
          * @param model the activity's object model
          */
-        function ActivityTimespan(model, mutation, parentTimeline) {
-            var parentTimelineModel = parentTimeline.getModel(),
-                parentMutation = parentTimeline.getCapability('mutation');
+        function ActivityTimespan(model, mutation, parent) {
+            var parentTimelineModel = parent.getModel(),
+                parentMutation = parent.getCapability('mutation');
 
             function getTimelineActivityStart(domainObjectModel) {
                 if (domainObjectModel.activityStart && domainObjectModel.activityStart[model.id]) {
@@ -152,7 +152,7 @@ define(
                 },
 
                 getParent: function () {
-                    return parentTimeline;
+                    return parent;
                 }
             };
         }
