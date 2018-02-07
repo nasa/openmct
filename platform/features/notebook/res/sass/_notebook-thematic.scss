@@ -41,6 +41,19 @@
     }
 }
 
+.l-entry-embed {
+    &.has-snapshot {
+        &:before {
+            color: $colorBodyFg;
+        }
+    }
+}
+
 .snapshot {
     background: $colorBodyBg;
+}
+
+
+.snap-thumb {
+    border: 1px solid $colorInteriorBorder;
 }

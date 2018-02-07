@@ -19,39 +19,33 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
+<!--
+This element appears in the overlay dialog when initiating a new Notebook Entry from a view's Notebook button -->
 <div class='form-control'>
-     <ng-form name="mctControl">
+    <ng-form name="mctControl">
         <div class='fields' ng-controller="NewEntryController">
-          <div class="l-flex-row new-display-embed">
-             <div class="l-flex-row embed">  
-                <div ng-if="snapToggle" class="l-flex-row">
-                  <div class="snap-thumb l-flex-row">
-                    <div ng-class="cssClass" class="abs embed-icon"></div>
-                    <img ng-src="{{snapshot.src}}" alt="{{snapshot.modified}}" >
-                  </div>      
-                  <div class="embed-info l-flex-col">
-                    <div class="embed-title">{{objectName}}</div>  
-                    <div class="embed-date">{{snapshot.modified| date:'yyyy-MM-dd HH:mm:ss'}}</div>
-                  </div>    
+            <div class="l-flex-row new-notebook-entry-embed l-entry-embed {{cssClass}}"
+                 ng-class="{ 'has-snapshot' : snapToggle }">
+                <div class="holder flex-elem snap-thumb"
+                    ng-if="snapToggle">
+                    <img ng-src="{{snapshot.src}}" alt="{{snapshot.modified}}">
                 </div>
-                <div ng-if="!snapToggle" class="l-flex-row nosnapshot">
-                    <div class="l-flex-row">
-                       <span ng-class="cssClass" class="abs embed-icon"></span>
-                       <div class="embed-info">
-                         <span class="embed-title">{{objectName}}</span>  
-                         <span class="embed-date">{{snapshot.modified| date:'yyyy-MM-dd HH:mm:ss'}}
-                         </span>
-                        </div> 
-                    </div> 
+
+                <div class="holder flex-elem embed-info">
+                    <div class="embed-title">{{objectName}}</div>
+                    <div class="embed-date"
+                         ng-if="snapToggle">{{snapshot.modified| date:'yyyy-MM-dd HH:mm:ss'}}</div>
                 </div>
-                          
-             </div>
-             <div class="l-flex-row embed annotate-new" ng-if="snapToggle">  
-                <a class="s-button icon-pencil" title="Edit" ng-click="annotateSnapshot()">
-                    <span class="title-label">Annotate</span>
-                </a>     
-             </div>
-           </div>            
+
+                <div class="holder flex-elem annotate-new"
+                     ng-if="snapToggle">
+                    <a class="s-button flex-elem icon-pencil "
+                       title="Annotate this snapshot"
+                       ng-click="annotateSnapshot()">
+                        <span class="title-label">Annotate</span>
+                    </a>
+                </div>
+            </div>
         </div>
     </ng-form>
 </div>

@@ -139,29 +139,14 @@
         //flex: 4 1 0;
         //padding: 0 15px;
         //min-height: 65px;
-        .embeds{
+        .entry-embeds{
             flex-wrap: wrap;
         }
-        .snap-thumb,.embed-icon{
+        .snap-thumb {
             cursor: pointer;
         }
         .entry-text {
-            //min-height: 50px;
-            //margin-bottom:15px;
             display: block;
-            overflow: hidden;
-            .unedited-text{
-                font-style: italic;
-                margin: 0;
-                //min-height: 50px;
-                p{
-                    margin: 0;
-                }
-            }
-
-            textarea{
-                display: none;
-            }
 
             .s-entry-input {
                 background-color: rgba(black, 0.1);
@@ -175,79 +160,57 @@
         .s-entry-input {
 
         }
-        .entry-embedded{
-            margin-right: 20px;
-            height: 100px;
-            position: relative;
-            margin-bottom: 20px
-
-        }
     }
     .entry-delete{
         //padding: 0 15px;
     }
 }
 
-.embed{
-    .embed-info{
-        .embed-title{
-            z-index: 99;
-            text-transform: uppercase;
-            max-width: 200px;
-        }  
-        .embed-date{
-            font-size: 14px;
-            margin-top: 5px;
-        }  
-                              
+.l-entry-embed {
+    $m: $interiorMargin;
+    margin: 0 $m $m 0;
+    position: relative;
+
+    &:not(.has-snapshot) {
+
     }
-    .embed-icon{
-        margin: 10px;
-        position: absolute;
-    }  
-    .btn-annotate{
-        margin: 0 15px;
-        z-index: 3;
+
+    &.has-snapshot {
+        &:before {
+            position: absolute;
+            top: $m;
+            left: $m;
+            text-shadow: rgba(black, 0.7) 0 1px 5px;
+            z-index: 2;
+        }
     }
-    &.nosnapshot{
-        .embed-icon{
-            margin: 2px;  
-            cursor: initial;         
-        }  
-        .embed-info{
-            padding-left: 25px;            
-        }  
-        .embed-title{
-            max-width: 200px;
+    .snap-thumb {
+        $d: 50px;
+        width: $d;
+        height: $d;
+        border-radius: 5px;
+        overflow: hidden;
+        img {
+            height: 100%;
+            width: 100%;
+        }
+    }
+
+    .embed-info {
+        margin-left: $interiorMargin;
+        .embed-title {
+            font-weight: bold;
         }
     }
 }
 
-
-.snapshot {
-    z-index: -9999;
-}
-
 .t-contents,.snap-annotation {
+    // Todo: don't write this to t-contents, add a l- class
     overflow: hidden;
     img{
         width: 100%;
     }
 }
-
-.snap-thumb{
-    width: 100px;    
-    height: 100px;                       
-    border-radius: 5px;
-    overflow: hidden;
-    border: 1px solid #999;   
-    margin-right: 15px;
-    img{
-       height: 100%;
-       width: 100%;
-    }                         
-}
-
 
 
 .notebook-filters{
@@ -257,54 +220,8 @@
     }
 }
 
-.embed-info{
-    .embed-title{
-        text-transform: uppercase;
-        font-weight: bold;
-    }
-}
-
-.user-folders{
-    border-top: 1px solid #999;
-    padding-top: 10px;
-    .t-item-icon{
-        margin-right: 10px;
-    }
-}
-
-.options-menu-container{
-    margin: 0;
-    padding: 0;
-    display: block;
-
-    .embed-option{
-        box-sizing: border-box;
-        border-top: 1px solid #878787;
-        color: white;
-        line-height: 1.5rem;
-        padding: 3px 10px 3px 28px;
-        position: relative;
-        white-space: nowrap;
-        display: list-item;
-        &:first-child{
-            border: none;
-        }
-    }
-}
-
-.new-display-embed{
-    font-size: 14px;
-    .nosnapshot{
-        .embed-icon{
-            margin: 2px;
-        }
-        .embed-info{
-            padding-left: 25px;
-        }
-    }
-}
-
-.view-header{
+/********************************************* SNAPSHOT VIEWING IN OVERLAY CONTEXT */
+.view-header {
     .view-date{
         float: right;
     }
@@ -330,10 +247,24 @@
             display: inline-block;
         }
     }
-
 }
 
-.context-available{
+.ptro-color-main{
+    top: 0;
+    z-index: 10;
+    position: relative;
+    height: auto;
+    min-height: 41px;
+}
+
+.ptro-wrapper{
+    bottom: 0;
+    top: 40px;
+}
+
+
+/********************************************* NO IDEA WHAT THERE ARE APPLYING TO */
+.context-available {
     outline: none;
 }
 
@@ -341,7 +272,7 @@
     z-index: 999;
 }
 
-.new-notebook-entry{
+.new-notebook-entry {
     float: left;
     .title-label{
         margin-left: 5px;
@@ -356,19 +287,6 @@
 .container-notebook{
     top:64px;
     height: calc(100% - 30px);
-}
-
-.ptro-color-main{
-    top: 0;
-    z-index: 10;
-    position: relative;
-    height: auto;
-    min-height: 41px;
-}
-
-.ptro-wrapper{
-    bottom: 0;
-    top: 40px;
 }
 
 .overlay.l-dialog .abs.editor{
@@ -386,9 +304,9 @@
 
 .annotate-new{
     .s-button{
-        margin-left: 25px;
-        margin-top: 10px;
-        z-index: 9;
+        //margin-left: 25px;
+        //margin-top: 10px;
+        //z-index: 9;
     }
 }
 
@@ -399,7 +317,7 @@
     padding: 5px;
 }
 
-@media screen and (max-width: 1024px){
+/*@media screen and (max-width: 1024px){
     .w-notebook-entries{
         font-size: 14px;
     }
@@ -432,5 +350,5 @@
     .ptro-bar>div {
         white-space: normal;
     }
-}
+}*/
 
