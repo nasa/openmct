@@ -57,11 +57,11 @@ define(
 
             $scope.reportModel = function () {
                 var entries = $scope.domainObject.model.entries;
-                console.log("REPORT_MODEL:");
-                console.log(entries.length + " entries");
+                // console.log("REPORT_MODEL:");
+                // console.log(entries.length + " entries");
                 for (var i=0; i<entries.length; i++) {
                     var cEntry = entries[i];
-                    console.log(cEntry.id + ": " + cEntry.createdOn + " / " + cEntry.text);
+                    // console.log(cEntry.id + ": " + cEntry.createdOn + " / " + cEntry.text);
                 }
             }
 
@@ -101,7 +101,7 @@ define(
             $scope.deleteEntry = function ($event) {
                 /* This is really brittle - change the markup and this doesn't work */
                 var delId = $event.currentTarget.parentElement.parentElement.id;
-                console.log("Trying to delete " + delId);
+                // console.log("Trying to delete " + delId);
                 var errorDialog = dialogService.showBlockingMessage({
                     severity: "error",
                     title: "This action will permanently delete this Notebook entry. Do you want to continue?",
@@ -132,7 +132,6 @@ define(
             };
 
             $scope.textFocus = function ($event, entryId) {
-                console.log("textFocus for " + entryId);
                 // if ($event.currentTarget && $event.currentTarget.innerText) {
                     /*
                      On focus, if the currentTarget isn't blank, set the global currentEntryValue = the
@@ -142,27 +141,24 @@ define(
                      */
                     $scope.currentEntryValue = $event.currentTarget.innerText;
                 // }
+                // console.log('focus: ' + entryId + '; currentEntryValue: ' + $scope.currentEntryValue);
+                // console.log('----');
             };
 
             $scope.textBlur = function ($event, entryId) {
                 // entryId is the unique numeric based on the original createdOn
                 if ($event.target && $event.target.innerText !== "") {
-                    console.log("textBlur for " + entryId + "; currentEntryValue=" + $scope.currentEntryValue + "; $event.target.innerText=" + $event.target.innerText);
                     var elementPos = $scope.domainObject.model.entries.map(function (x) {
                         return x.id;
                     }).indexOf(+(entryId));
-                    console.log("You just blurred out of " + entryId + " which is now elementPos " + elementPos);
 
                     // If the text of an entry has been changed, then update the text and the createdOn numeric
                     // Otherwise, don't do anything
                     if ($scope.currentEntryValue !== $event.target.innerText) {
-                        console.log("Entry " + entryId + " was changed, updating");
                         $scope.domainObject.useCapability('mutation', function (model) {
                             model.entries[elementPos].text = $event.target.innerText;
                             model.entries[elementPos].createdOn = now();
                         });
-                    } else {
-                        console.log("Entry " + entryId + " was NOT changed, doing nothing");
                     }
 
 /*                    $scope.domainObject.useCapability('mutation', function (model) {
@@ -172,6 +168,7 @@ define(
                         }
                     });*/
                 }
+                // console.log('blur: ' + entryId + '; currentEntryValue: ' + $scope.currentEntryValue);
             };
 
             $scope.finished = function (model) {
@@ -361,6 +358,7 @@ define(
 
 
             $scope.$on('$destroy', function () {});
+
         }
 
         return NotebookController;
