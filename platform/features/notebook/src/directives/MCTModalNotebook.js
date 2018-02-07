@@ -38,7 +38,7 @@ define([
 '       </div>' +
 '    </div>';
 
-    var NEW_NOTEBOOK_TEMPLATE = '<a class="s-button icon-notebook new-notebook-entry" title="New Notebook Entry">' +
+    var NEW_NOTEBOOK_BUTTON_TEMPLATE = '<a class="s-button labeled icon-notebook new-notebook-entry" title="New Notebook Entry">' +
                                     '<span class="title-label">New Notebook Entry</span>' +
                                 '</a>';
 
@@ -83,7 +83,6 @@ define([
                 notebookButtonEl;
 
             function openOverlay() {
-
                 // Remove frame classes from being applied in a non-frame context
                 $(frame).removeClass('frame frame-template');
                 overlay = document.createElement('div');
@@ -106,10 +105,10 @@ define([
                 if (notebookAction.length > 0) {
                     notebookButtonEl = document.createElement('div');
                     $(notebookButtonEl).addClass('notebook-button-container');
-                    notebookButtonEl.innerHTML = NEW_NOTEBOOK_TEMPLATE;
-                    notebookButton = frame.querySelector('.object-browse-bar .left');
-                    notebookButton.appendChild(notebookButtonEl);
-                    $(frame.querySelector('.object-holder')).addClass('container-notebook');
+                    notebookButtonEl.innerHTML = NEW_NOTEBOOK_BUTTON_TEMPLATE;
+                    notebookButton = frame.querySelector('.object-browse-bar .right');
+                    notebookButton.prepend(notebookButtonEl);
+                    // $(frame.querySelector('.object-holder')).addClass('container-notebook');
                     notebookButton.addEventListener('click', function () {
                         notebookAction[0].perform();
                     });

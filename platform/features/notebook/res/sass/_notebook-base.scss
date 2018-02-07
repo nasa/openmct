@@ -204,7 +204,8 @@
     }
 }
 
-.t-contents,.snap-annotation {
+.t-contents,
+.snap-annotation {
     // Todo: don't write this to t-contents, add a l- class
     overflow: hidden;
     img{
@@ -262,6 +263,10 @@
     top: 40px;
 }
 
+/********************************************* New Notebook Entry from Large View overlay */
+.notebook-button-container {
+    //margin-right: $interiorMargin; // TODO: change to apply margin-left to view switcher button in Large View
+}
 
 /********************************************* NO IDEA WHAT THERE ARE APPLYING TO */
 .context-available {
@@ -270,23 +275,6 @@
 
 .menu-element.menu-view{
     z-index: 999;
-}
-
-.new-notebook-entry {
-    float: left;
-    .title-label{
-        margin-left: 5px;
-    }    
-}
-
-.notebook-button-container{
-    position: absolute; 
-    top:30px;
-}
-
-.container-notebook{
-    top:64px;
-    height: calc(100% - 30px);
 }
 
 .overlay.l-dialog .abs.editor{
@@ -300,14 +288,6 @@
 
 .snap-annotation-wrapper{
     padding-top: 40px;
-}
-
-.annotate-new{
-    .s-button{
-        //margin-left: 25px;
-        //margin-top: 10px;
-        //z-index: 9;
-    }
 }
 
 .t-console {
