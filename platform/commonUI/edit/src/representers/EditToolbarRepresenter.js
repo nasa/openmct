@@ -48,23 +48,24 @@ define(
                 }
             }
 
-            // Handle changes to the current selection
-            function updateSelection(selection) {
+            // Handle changes to the toolbar structure based on the selection
+            function updateStructure(selectedControl) {
                 // Only update if there is a toolbar to update
                 if (self.toolbar) {
                     // Make sure selection is array-like
-                    selection = Array.isArray(selection) ?
-                            selection :
-                            (selection ? [selection] : []);
+                    selectedControl = Array.isArray(selectedControl) ?
+                            selectedControl :
+                            (selectedControl ? [selectedControl] : []);
 
-                    // Update the toolbar's selection
-                    self.toolbar.setSelection(selection);
+                    var structure = self.openmct.toolbars.get(self.selection) || [];
+
+                    // Update the toolbar's structure
+                    self.toolbar.updateToolbar(structure, selectedControl);
 
                     // ...and expose its structure/state
-                    self.toolbarObject.structure =
-                        self.toolbar.getStructure();
-                    self.toolbarObject.state =
-                        self.toolbar.getState();
+                    self.toolbarObject.structure = self.toolbar.getStructure();
+                    self.toolbarObject.state = self.toolbar.getState();
+                    self.exposeToolbar();
                 }
             }
 
@@ -106,50 +107,39 @@ define(
 
             this.commit = commit;
             this.attrs = attrs;
-            this.updateSelection = updateSelection;
+            this.updateStructure = updateStructure;
             this.toolbar = undefined;
             this.toolbarObject = {};
             this.openmct = openmct;
 
             // If this representation exposes a toolbar, set up watches
-            // to synchronize with it.
+            // and listen for selection change event.
             if (attrs && attrs.toolbar) {
                 // Detect and handle changes to state from the toolbar
                 scope.$watchCollection(getState, updateState);
                 // Watch for changes in the current selection state
-                scope.$watchCollection("selection.all()", updateSelection);
+                scope.$watchCollection("selection.all()", updateStructure);
                 // Expose toolbar state under that name
                 scope.$parent[attrs.toolbar] = this.toolbarObject;
+
+                openmct.selection.on('change', function (selection) {
+                    this.selection = selection;
+                }.bind(this));
             } else {
                 // No toolbar declared, so do nothing.
                 return NOOP_REPRESENTER;
             }
-
         }
 
         // Represent a domain object using this definition
         EditToolbarRepresenter.prototype.represent = function (representation) {
-            // Get the newest toolbar definition from the view
-            var definition = (representation || {}).toolbar || {},
-                self = this;
-
-            // Initialize toolbar (expose object to parent scope)
-            function initialize(def) {
-                // If we have been asked to expose toolbar state...
-                if (self.attrs.toolbar) {
-                    // Initialize toolbar object
-                    self.toolbar = new EditToolbar(def, self.commit);
-                    // Ensure toolbar state is exposed
-                    self.exposeToolbar();
-                }
+            if (this.attrs.toolbar) {
+                // Initialize toolbar object
+                this.toolbar = new EditToolbar(this.commit);
             }
-
-            // Expose the toolbar object to the parent scope
-            initialize(definition);
+            
             // Create a selection scope
             this.setSelection(new EditToolbarSelection(this.openmct));
-            // Initialize toolbar to an empty selection
-            this.updateSelection([]);
         };
 
         // Destroy; remove toolbar object from parent scope

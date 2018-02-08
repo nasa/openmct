@@ -31,19 +31,17 @@ define(
             return a || b;
         }
 
-
         /**
          * Provides initial structure and state (as suitable for provision
          * to the `mct-toolbar` directive) for a view's tool bar, based on
          * that view's declaration of what belongs in its tool bar and on
          * the current selection.
          *
-         * @param structure toolbar structure, as provided by view definition
          * @param {Function} commit callback to invoke after changes
          * @memberof platform/commonUI/edit
          * @constructor
          */
-        function EditToolbar(structure, commit) {
+        function EditToolbar(commit) {
             var self = this;
 
             // Generate a new key for an item's property
@@ -80,21 +78,11 @@ define(
                 return converted;
             }
 
-            // Prepare a toolbar section
-            function convertSection(section) {
-                var converted = Object.create(section || {});
-                converted.items =
-                    ((section || {}).items || [])
-                            .map(convertItem);
-                return converted;
-            }
-
-            this.toolbarState = [];
+            this.toolbarStructure = [];
             this.selection = undefined;
             this.properties = [];
-            this.toolbarStructure = Object.create(structure || {});
-            this.toolbarStructure.sections =
-                ((structure || {}).sections || []).map(convertSection);
+            this.toolbarState = [];
+            this.convertItem = convertItem;
         }
 
         // Check if all elements of the selection which have this
@@ -156,23 +144,17 @@ define(
         };
 
         /**
-         * Set the current selection. Visibility of sections
-         * and items in the toolbar will be updated to match this.
-         * @param {Array} s the new selection
+         * Updates the visibility of items in the toolbar 
+         * to match the selected control.
+         *
+         * @param {Array} selection the new selected control
          */
-        EditToolbar.prototype.setSelection = function (s) {
+        EditToolbar.prototype.updateToolbar = function (structure, selection) {
             var self = this;
 
-            // Show/hide controls in this section per applicability
-            function refreshSectionApplicability(section) {
-                var count = 0;
-                // Show/hide each item
-                (section.items || []).forEach(function (item) {
-                    item.hidden = !self.isApplicable(item);
-                    count += item.hidden ? 0 : 1;
-                });
-                // Hide this section if there are no applicable items
-                section.hidden = !count;
+            // Show/hide controls per applicability
+            function refreshApplicability(item) {
+                item.hidden = !self.isApplicable(item);
             }
 
             // Get initial value for a given property
@@ -189,8 +171,9 @@ define(
                 return result;
             }
 
-            this.selection = s;
-            this.toolbarStructure.sections.forEach(refreshSectionApplicability);
+            this.selection = selection;
+            this.toolbarStructure = structure.map(this.convertItem);
+            this.toolbarStructure.forEach(refreshApplicability);
             this.toolbarState = this.properties.map(initializeState);
         };
 

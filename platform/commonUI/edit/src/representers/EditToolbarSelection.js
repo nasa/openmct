@@ -55,6 +55,7 @@ define(
                 if (selected && selected.context.viewProxy) {
                     this.proxy(selected.context.viewProxy);
                 }
+
             }.bind(this));
         }
 

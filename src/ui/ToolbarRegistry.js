@@ -23,6 +23,12 @@
 
  define([], function () {
 
+   /**
+     * A ToolbarRegistry maintains the definitions for toolbars.
+     *
+     * @interface ToolbarRegistry
+     * @memberof module:openmct
+     */
     function ToolbarRegistry() {
         this.providers = {};
     }

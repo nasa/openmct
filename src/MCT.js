@@ -29,7 +29,8 @@ define([
     './api/objects/object-utils',
     './plugins/plugins',
     './ui/ViewRegistry',
-    './ui/InspectorViewRegistry'
+    './ui/InspectorViewRegistry',
+    './ui/ToolbarRegistry'
 ], function (
     EventEmitter,
     legacyRegistry,
@@ -39,7 +40,8 @@ define([
     objectUtils,
     plugins,
     ViewRegistry,
-    InspectorViewRegistry
+    InspectorViewRegistry,
+    ToolbarRegistry
 ) {
     /**
      * Open MCT is an extensible web application for building mission
@@ -143,17 +145,13 @@ define([
 
         /**
          * Registry for views which should appear in the toolbar area while
-         * editing.
+         * editing. These views will be chosen based on the selection state.
          *
-         * These views will be chosen based on selection state, so
-         * providers should be prepared to test arbitrary objects for
-         * viewability.
-         *
-         * @type {module:openmct.ViewRegistry}
+         * @type {module:openmct.ToolbarRegistry}
          * @memberof module:openmct.MCT#
          * @name toolbars
          */
-        this.toolbars = new ViewRegistry();
+        this.toolbars = new ToolbarRegistry();
 
         /**
          * Registry for domain object types which may exist within this
