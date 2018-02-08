@@ -80,11 +80,6 @@ define(
                 }
             }
 
-            // Avoid attaching scope to this;
-            // http://errors.angularjs.org/1.2.26/ng/cpws
-            this.setSelection = function (s) {
-                scope.selection = s;
-            };
             this.clearExposedToolbar = function () {
                 // Clear exposed toolbar state (if any)
                 if (attrs.toolbar) {
@@ -129,9 +124,6 @@ define(
                 // Initialize toolbar object
                 this.toolbar = new EditToolbar(this.commit);
             }
-            
-            // Create a selection scope
-            this.setSelection(new EditToolbarSelection(this.openmct));
         };
 
         // Destroy; remove toolbar object from parent scope
