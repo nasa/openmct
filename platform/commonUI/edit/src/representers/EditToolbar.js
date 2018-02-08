@@ -144,10 +144,10 @@ define(
         };
 
         /**
-         * Updates the visibility of items in the toolbar 
-         * to match the selected control.
+         * Updates the toolbar with a new structure.
          *
-         * @param {Array} selection the new selected control
+         * @param {Array} structure the toolbar structure
+         * @param {Array} selection the new selected control in the toolbar
          */
         EditToolbar.prototype.updateToolbar = function (structure, selection) {
             var self = this;

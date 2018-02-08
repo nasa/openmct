@@ -48,21 +48,11 @@ define(
                 }
             }
 
-            // Handle changes to the toolbar structure based on the selection
-            function updateStructure(selectedControl) {
+            // Update the toolbar's structure.
+            function updateStructure(structure, selectedControl) {
                 // Only update if there is a toolbar to update
                 if (self.toolbar) {
-                    // Make sure selection is array-like
-                    selectedControl = Array.isArray(selectedControl) ?
-                            selectedControl :
-                            (selectedControl ? [selectedControl] : []);
-
-                    var structure = self.openmct.toolbars.get(self.selection) || [];
-
-                    // Update the toolbar's structure
                     self.toolbar.updateToolbar(structure, selectedControl);
-
-                    // ...and expose its structure/state
                     self.toolbarObject.structure = self.toolbar.getStructure();
                     self.toolbarObject.state = self.toolbar.getState();
                     self.exposeToolbar();
@@ -117,13 +107,15 @@ define(
             if (attrs && attrs.toolbar) {
                 // Detect and handle changes to state from the toolbar
                 scope.$watchCollection(getState, updateState);
-                // Watch for changes in the current selection state
-                scope.$watchCollection("selection.all()", updateStructure);
                 // Expose toolbar state under that name
                 scope.$parent[attrs.toolbar] = this.toolbarObject;
 
                 openmct.selection.on('change', function (selection) {
-                    this.selection = selection;
+                    var structure = self.openmct.toolbars.get(selection) || [];
+                    var selected = selection[0];
+                    var selectedControl = selected && selected.context.toolbar;
+
+                    this.updateStructure(structure, selectedControl ? [selectedControl] : []);
                 }.bind(this));
             } else {
                 // No toolbar declared, so do nothing.
