@@ -67,7 +67,7 @@ define(
 
             $scope.hoursFilter = function (hours,entryTime) {
                 if (+hours) {
-                    return entryTime > (now() - SECONDS_IN_AN_HOUR * (+hours));
+                    return entryTime > (Date.now() - SECONDS_IN_AN_HOUR * (+hours));
                 }else {
                     return true;
                 }
@@ -83,15 +83,16 @@ define(
                 $scope.scrollToTop();
                 $scope.reportModel();
                 var entries = $scope.domainObject.model.entries;
+                console.log(entries);
                 var lastEntry = entries[entries.length - 1];
                 if (lastEntry === undefined || lastEntry.text || lastEntry.embeds) {
                     $scope.domainObject.useCapability('mutation', function (model) {
-                        var id = now();
+                        var id = Date.now();
                         model.entries.push({'id': id, 'createdOn': id});
                     });
                 } else {
                     $scope.domainObject.useCapability('mutation', function (model) {
-                        model.entries[entries.length - 1].createdOn = now();
+                        model.entries[entries.length - 1].createdOn = Date.now();
                     });
                 }
                 $scope.entrySearch = '';
@@ -101,7 +102,6 @@ define(
             $scope.deleteEntry = function ($event) {
                 /* This is really brittle - change the markup and this doesn't work */
                 var delId = $event.currentTarget.parentElement.parentElement.id;
-                // console.log("Trying to delete " + delId);
                 var errorDialog = dialogService.showBlockingMessage({
                     severity: "error",
                     title: "This action will permanently delete this Notebook entry. Do you want to continue?",
@@ -132,7 +132,7 @@ define(
             };
 
             $scope.textFocus = function ($event, entryId) {
-                // if ($event.currentTarget && $event.currentTarget.innerText) {
+                if ($event.currentTarget && $event.currentTarget.innerText) {
                     /*
                      On focus, if the currentTarget isn't blank, set the global currentEntryValue = the
                      content of the current focus. This will be used at blur to determine if the
@@ -140,7 +140,7 @@ define(
                      Not sure this is right, would think we'd always want to set curEntVal even if blank
                      */
                     $scope.currentEntryValue = $event.currentTarget.innerText;
-                // }
+                }
                 // console.log('focus: ' + entryId + '; currentEntryValue: ' + $scope.currentEntryValue);
                 // console.log('----');
             };
@@ -157,16 +157,16 @@ define(
                     if ($scope.currentEntryValue !== $event.target.innerText) {
                         $scope.domainObject.useCapability('mutation', function (model) {
                             model.entries[elementPos].text = $event.target.innerText;
-                            model.entries[elementPos].createdOn = now();
+                            model.entries[elementPos].createdOn = Date.now();
                         });
                     }
 
-/*                    $scope.domainObject.useCapability('mutation', function (model) {
-                        model.entries[elementPos].text = $event.target.innerText;
-                        if ($scope.currentEntryValue !== $event.target.innerText) {
-                            model.entries[elementPos].createdOn = now();
-                        }
-                    });*/
+                    // $scope.domainObject.useCapability('mutation', function (model) {
+                    //     model.entries[elementPos].text = $event.target.innerText;
+                    //     if ($scope.currentEntryValue !== $event.target.innerText) {
+                    //         model.entries[elementPos].createdOn = now();
+                    //     }
+                    // });
                 }
                 // console.log('blur: ' + entryId + '; currentEntryValue: ' + $scope.currentEntryValue);
             };

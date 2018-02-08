@@ -37,7 +37,6 @@ define(['zepto'], function ($) {
                 var cssClass = selectedObject.getCapability('type').typeDef.cssClass;
                 var entryId = -1;
                 var embedId = -1;
-
                 $scope.clearSearch();
                 if ($element[0].id === 'newEntry') {
                     entryId = $scope.domainObject.model.entries.length;
@@ -46,6 +45,7 @@ define(['zepto'], function ($) {
                     if (lastEntry === undefined || lastEntry.text || lastEntry.embeds) {
                         $scope.domainObject.useCapability('mutation', function (model) {
                             model.entries.push({'createdOn': +Date.now(),
+                                                'id': +Date.now(),
                                                 'embeds': [{'type': selectedObject.getId(),
                                                        'id': '' + Date.now(),
                                                        'cssClass': cssClass,
@@ -74,10 +74,10 @@ define(['zepto'], function ($) {
                     });
 
                 }else {
-
                     entryId = $scope.domainObject.model.entries.map(function (x) {
-                        return x.createdOn;
-                    }).indexOf(+($element[0].id.replace('entry_', '')));
+                        return (x.id);
+                    }).indexOf(Number($element[0].id.replace('entry_', '')));
+
                     if (!$scope.domainObject.model.entries[entryId].embeds) {
                         $scope.domainObject.model.entries[entryId].embeds = [];
                     }

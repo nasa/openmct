@@ -77,7 +77,7 @@ define(['zepto'], function ($) {
                             }
                             if ($element[0].dataset.entry && $element[0].dataset.embed) {
                                 saveImg(img, +$element[0].dataset.entry, +$element[0].dataset.embed);
-                                closeOverlay(false);
+                                closeOverlay();
                             } else {
                                 var reader = new window.FileReader();
                                 reader.readAsDataURL(img);
