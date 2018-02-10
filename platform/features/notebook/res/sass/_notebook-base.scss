@@ -167,19 +167,11 @@
 }
 
 .l-entry-embed {
-    $m: $interiorMargin;
-    margin: 0 $m $m 0;
     position: relative;
-
-    &:not(.has-snapshot) {
-
-    }
 
     &.has-snapshot {
         &:before {
             position: absolute;
-            top: $m;
-            left: $m;
             text-shadow: rgba(black, 0.7) 0 1px 5px;
             z-index: 2;
         }
