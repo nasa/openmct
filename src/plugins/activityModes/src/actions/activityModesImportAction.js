@@ -7,7 +7,7 @@ define(['d3-dsv'], function (d3Dsv) {
         this.parent = this.context.domainObject;
         this.instantiate = this.openmct.$injector.get("instantiate");
         this.objectService = this.openmct.$injector.get("objectService").objectService;
-        this.instantiateActivities = this.instantiateActivities.bind(this);
+        this.populateActivities = this.populateActivities.bind(this);
     }
 
     ActivityModesImportAction.prototype.perform = function () {
@@ -17,7 +17,7 @@ define(['d3-dsv'], function (d3Dsv) {
                 this.displayError();
             }
 
-            this.csvParse(form.selectFile.body).then(this.instantiateActivities);
+            this.csvParse(form.selectFile.body).then(this.populateActivities);
         }.bind(this));
     };
 
@@ -29,11 +29,12 @@ define(['d3-dsv'], function (d3Dsv) {
         });
     };
 
-    ActivityModesImportAction.prototype.instantiateActivities = function (csvObjects) {
-        var parent = this.context.domainObject,
-            parentId = parent.getId(),
-            parentComposition = parent.getCapability("composition"),
-            activitiesObjects = [],
+    ActivityModesImportAction.prototype.populateActivities = function (csvObjects) {
+        this.parent = this.context.domainObject;
+        this.parentId = this.parent.getId();
+        this.parentComposition = this.parent.getCapability("composition");
+
+        var activitiesObjects = [],
             activityModesObjects = [];
 
         csvObjects.forEach(function (activity) {
@@ -59,24 +60,31 @@ define(['d3-dsv'], function (d3Dsv) {
         this.createActivityModesFolder().then(function (folder) {
             var folderComposition = folder.getCapability('composition');
 
-            activityModesObjects.forEach(function (activityMode, index) {
-                var objectId = 'activity-mode-' + index;
-    
-                this.objectService.getObjects([objectId]).then(
-                    function (previousActivityMode) {
-                        previousActivityMode[objectId].getCapability('mutation').mutate(function (prev) {
-                            prev.name = activityMode.name;
-                            prev.resources = activityMode.resources;
-                            prev.type = activityMode.type;
-                        });
-    
-                        previousActivityMode[objectId].getCapability('location').setPrimaryLocation('activity-modes-folder');
-                        folderComposition.add(previousActivityMode[objectId]); 
-                    }
-                );
-            }.bind(this));
+            this.instantiateActivityModes(activityModesObjects, folderComposition);
+            this.instantiateActivities(activitiesObjects);
         }.bind(this));
+    };
 
+    ActivityModesImportAction.prototype.instantiateActivityModes = function (activityModesObjects, folderComposition) {
+        activityModesObjects.forEach(function (activityMode, index) {
+            var objectId = 'activity-mode-' + index;
+
+            this.objectService.getObjects([objectId]).then(
+                function (previousActivityMode) {
+                    previousActivityMode[objectId].getCapability('mutation').mutate(function (prev) {
+                        prev.name = activityMode.name;
+                        prev.resources = activityMode.resources;
+                        prev.type = activityMode.type;
+                    });
+
+                    previousActivityMode[objectId].getCapability('location').setPrimaryLocation('activity-modes-folder');
+                    folderComposition.add(previousActivityMode[objectId]); 
+                }
+            );
+        }.bind(this));
+    };
+
+    ActivityModesImportAction.prototype.instantiateActivities = function (activitiesObjects) {
         activitiesObjects.forEach(function (activity, index) {
             activity.relationships.modes.push('activity-mode-' + index);
             activity.id = 'activity-' + index;
@@ -93,9 +101,9 @@ define(['d3-dsv'], function (d3Dsv) {
                         prevActivity.id = activity.id;
                     });
 
-                    objects[activity.id].getCapability('location').setPrimaryLocation(parentId);
-                    parentComposition.add(objects[activity.id]);
-                }
+                    objects[activity.id].getCapability('location').setPrimaryLocation(this.parentId);
+                    this.parentComposition.add(objects[activity.id]);
+                }.bind(this)
             );
         }.bind(this));
     };
