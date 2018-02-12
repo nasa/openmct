@@ -56,23 +56,25 @@ define(['d3-dsv'], function (d3Dsv) {
             activityModesObjects.push(newActivityMode);
         });
 
-        var folderComposition = this.createActivityModesFolder().getCapability('composition');
+        this.createActivityModesFolder().then(function (folder) {
+            var folderComposition = folder.getCapability('composition');
 
-        activityModesObjects.forEach(function (activityMode, index) {
-            var objectId = 'activity-mode-' + index;
-            
-            this.objectService.getObjects([objectId]).then(
-                function (previousActivityMode) {
-                    previousActivityMode[objectId].getCapability('mutation').mutate(function (prev) {
-                        prev.name = activityMode.name;
-                        prev.resources = activityMode.resources;
-                        prev.type = activityMode.type;
-                    });
-
-                    previousActivityMode[objectId].getCapability('location').setPrimaryLocation('activity-modes-folder');
-                    folderComposition.add(previousActivityMode[objectId]); 
-                }
-            );
+            activityModesObjects.forEach(function (activityMode, index) {
+                var objectId = 'activity-mode-' + index;
+    
+                this.objectService.getObjects([objectId]).then(
+                    function (previousActivityMode) {
+                        previousActivityMode[objectId].getCapability('mutation').mutate(function (prev) {
+                            prev.name = activityMode.name;
+                            prev.resources = activityMode.resources;
+                            prev.type = activityMode.type;
+                        });
+    
+                        previousActivityMode[objectId].getCapability('location').setPrimaryLocation('activity-modes-folder');
+                        folderComposition.add(previousActivityMode[objectId]); 
+                    }
+                );
+            }.bind(this));
         }.bind(this));
 
         activitiesObjects.forEach(function (activity, index) {
@@ -99,11 +101,22 @@ define(['d3-dsv'], function (d3Dsv) {
     };
 
     ActivityModesImportAction.prototype.createActivityModesFolder = function () {
-        var folderInstance = this.instantiate({name: 'Activity-Modes', type: 'folder', composition: []}, 'activity-modes-folder');
-        folderInstance.getCapability('location').setPrimaryLocation(this.parent.getId());
-        this.parent.getCapability('composition').add(folderInstance);
+        return new Promise(function (resolve, reject) {
+            this.objectService.getObjects(['activity-modes-folder']).then(function (objects) {
+                var folder = objects['activity-modes-folder'];
+    
+                folder.getCapability('mutation').mutate(function (persistedObject) {
+                    persistedObject.name = 'Activity-Modes';
+                    persistedObject.type = 'folder';
+                    persistedObject.composition = [];
+                });
+                folder.getCapability('location').setPrimaryLocation(this.parent.getId());
+    
+                this.parent.getCapability('composition').add(folder);
 
-        return folderInstance;
+                resolve(folder);
+            }.bind(this));
+        }.bind(this));
     };
 
     ActivityModesImportAction.prototype.displayError = function () {
