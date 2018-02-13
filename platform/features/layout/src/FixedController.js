@@ -272,7 +272,7 @@ define(
                     self.resizeHandles = self.generateDragHandles(self.selectedElementProxy);
                 } else {
                     // Make fixed view selectable if it's not already.
-                    if (!self.fixedViewSelectable) {
+                    if (!self.fixedViewSelectable && selectable.length === 1) {
                         self.fixedViewSelectable = true;
                         selection.context.viewProxy = new FixedProxy(addElement, $q, dialogService);
                         self.openmct.selection.select(selection);

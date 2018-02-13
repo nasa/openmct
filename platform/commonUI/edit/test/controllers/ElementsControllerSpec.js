@@ -127,6 +127,16 @@ define(
                 expect(mockUnlisten).toHaveBeenCalled();
             });
 
+            it("does not listen on mutation for element proxy selectable", function () {
+                selectable[0] = {
+                    context: {
+                        elementProxy: {}
+                    }
+                };
+                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+
+                expect(mockDomainObject.getCapability).not.toHaveBeenCalledWith('mutation');
+            });
         });
     }
 );
