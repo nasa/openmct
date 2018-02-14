@@ -34,11 +34,6 @@ $pad: $interiorMargin * $baseRatio;
     line-height: $btnStdH;
     padding: 0 $pad;
 
-    &.labeled:before {
-        // Icon when it's included
-        margin-right: $interiorMarginSm;
-    }
-
 	&.lg {
 		font-size: 1rem;
 	}
