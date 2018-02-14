@@ -83,7 +83,6 @@ define(
                 $scope.scrollToTop();
                 $scope.reportModel();
                 var entries = $scope.domainObject.model.entries;
-                console.log(entries);
                 var lastEntry = entries[entries.length - 1];
                 if (lastEntry === undefined || lastEntry.text || lastEntry.embeds) {
                     $scope.domainObject.useCapability('mutation', function (model) {
@@ -140,6 +139,8 @@ define(
                      Not sure this is right, would think we'd always want to set curEntVal even if blank
                      */
                     $scope.currentEntryValue = $event.currentTarget.innerText;
+                } else {
+                   $event.target.innerText = '';
                 }
                 // console.log('focus: ' + entryId + '; currentEntryValue: ' + $scope.currentEntryValue);
                 // console.log('----');
@@ -152,30 +153,22 @@ define(
                         return x.id;
                     }).indexOf(+(entryId));
 
-                    // If the text of an entry has been changed, then update the text and the createdOn numeric
+                    // If the text of an entry has been changed, then update the text and the modifiedOn numeric
                     // Otherwise, don't do anything
                     if ($scope.currentEntryValue !== $event.target.innerText) {
                         $scope.domainObject.useCapability('mutation', function (model) {
                             model.entries[elementPos].text = $event.target.innerText;
-                            model.entries[elementPos].createdOn = Date.now();
+                            model.entries[elementPos].modified = Date.now();
                         });
                     }
-
-                    // $scope.domainObject.useCapability('mutation', function (model) {
-                    //     model.entries[elementPos].text = $event.target.innerText;
-                    //     if ($scope.currentEntryValue !== $event.target.innerText) {
-                    //         model.entries[elementPos].createdOn = now();
-                    //     }
-                    // });
                 }
-                // console.log('blur: ' + entryId + '; currentEntryValue: ' + $scope.currentEntryValue);
             };
 
             $scope.finished = function (model) {
                 var lastEntry = model[model.length - 1];
                 if (!lastEntry.text) {
-                    var newEntry = $scope.entriesEl.find('#entry_' + lastEntry.id).addClass('active');
-                    newEntry.find('.t-notebook-entry-input').focus();
+                    var newEntry = $scope.entriesEl.children().children()[0];
+                    $(newEntry).find('.t-notebook-entry-input').focus();
                 }
             };
 
