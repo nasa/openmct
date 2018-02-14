@@ -38,38 +38,31 @@
     </div>
 
     <!--  drag area -->
-    <div class="holder flex-elem l-flex-row l-notebook-drag-area icon-plus" ng-click="newEntry($event)" id="newEntry" mct-entry-dnd>
+    <div class="holder flex-elem l-flex-row icon-plus labeled l-notebook-drag-area" ng-click="newEntry($event)" id="newEntry" mct-entry-dnd>
         <span class="label">To start a new entry, click here or drag and drop any object</span>
     </div>
 
     <!-- entries -->
     <div class="holder flex-elem grows w-notebook-entries t-entries-list" ng-mouseover="handleActive()">
         <ul>
-            <li class="l-flex-row l-notebook-entry s-notebook-entry"
+            <li class="l-flex-row has-local-controls l-notebook-entry s-notebook-entry"
               id="{{'entry_'+ entry.id}}"
               ng-if="hoursFilter(showTime,entry.createdOn)"
               ng-repeat="entry in model.entries | filter:entrySearch | orderBy: sortEntries track by $index"
               ng-init="$last && finished(model.entries)"
               mct-entry-dnd>
-            <div class="holder flex-elem entry-time">
+            <div class="holder flex-elem s-notebook-entry-time">
                 <span>{{entry.createdOn | date:'yyyy-MM-dd'}}</span>
                 <span>{{entry.createdOn | date:'HH:mm:ss'}}</span>
-                <!--<div>{{'entry_'+entry.id}}</div>-->
             </div>
-            <div class="holder flex-elem l-flex-col grows entry-content">
-                <div class="holder flex-elem entry-text">
-                    <!--<div>Rows: {{parseText(entry.text).length}} Chars: {{entry.text.length}}</div>
-                    <div class="unedited-text">
-                        <p ng-repeat="line in parseText(entry.text) track by $index">{{line}}</p>
-                    </div>-->
-                    <div contenteditable="true"
-                        ng-blur="textBlur($event, entry.id)"
-                        ng-focus="textFocus($event, entry.id)"
-                        ng-model="entry.text"
-                        placeholder="Enter text here"
-                        class="t-entry-input s-entry-input">
-                        {{entry.text}}
-                    </div>
+            <div class="holder flex-elem l-flex-col grows l-notebook-entry-content">
+                <div contenteditable="true"
+                     ng-blur="textBlur($event, entry.id)"
+                     ng-focus="textFocus($event, entry.id)"
+                     ng-model="entry.text"
+                     placeholder="Enter text here"
+                     class="holder flex-elem s-input-inline t-notebook-entry-input s-notebook-entry-text">
+                    {{entry.text}}
                 </div>
                 <!-- embeds -->
                 <div class="holder flex-elem entry-embeds l-flex-row">
@@ -77,7 +70,6 @@
                          ng-repeat="embed in entry.embeds track by $index"
                          ng-class="{ 'has-snapshot' : embed.snapshot }"
                          id="{{embed.id}}">
-                        <!--<div ng-class="embed.cssClass" class="embed-icon" ng-click="viewSnapshot($event,embed.snapshot.src,embed.id,entry.createdOn,this,embed)"></div>-->
                         <div class="snap-thumb"
                              ng-if="embed.snapshot"
                              ng-click="viewSnapshot($event,embed.snapshot.src,embed.id,entry.createdOn,this,embed)">
@@ -123,8 +115,8 @@
                 </div>
             </div>
             <!-- delete entry -->
-            <div class="holder flex-elem entry-delete">
-              <a class="s-icon-button icon-trash" title="Delete Entry" ng-click="deleteEntry($event)"></a>
+            <div class="holder flex-elem local-control notebook-entry-delete">
+                <a class="s-icon-button icon-trash" title="Delete Entry" ng-click="deleteEntry($event)"></a>
             </div>
           </li>
         </ul>

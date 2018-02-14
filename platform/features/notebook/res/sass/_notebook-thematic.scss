@@ -20,26 +20,33 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+.l-notebook-drag-area {
+    border: 1px dashed rgba($colorKey, 0.7);
+    border-radius: $controlCr;
+    color: rgba($colorBodyFg, 0.7);
+    &:hover {
+        background: rgba($colorKey, 0.2);
+        color: $colorBodyFg;
+    }
+    &.drag-active{
+        border-color: $colorKey;
+    }
+}
+
 .s-notebook-entry {
     background-color: rgba($colorBodyFg, 0.1);
     border-radius: $basicCr;
+
     &:hover {
         background-color: rgba($colorBodyFg, 0.2);
     }
 
-    .entry-time{
+    .s-notebook-entry-time {
         color: rgba($colorBodyFg, 0.5);
     }
 }
 
 
-.l-notebook-drag-area {
-    border: 1px dashed $colorKey;
-    border-radius: $controlCr;
-    &.drag-active{
-        border-color: $colorKey;
-    }
-}
 
 .l-entry-embed {
     $m: $interiorMarginSm;

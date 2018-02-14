@@ -72,21 +72,10 @@
 }
 
 .l-notebook-drag-area {
-    padding: 10px 0;
-    //margin: 15px 0;
+    padding: 10px;
     font-style: italic;
     cursor: pointer;
-    .glyph{
-        flex: 1 1 0;
-        &:before{
-            left:10px;
-            position: relative;
-        }
-    }
-    p {
-        flex: 4 1 0;
-        margin: 0;
-    }
+    &:before { margin-right: 7px !important; }
 }
 
 .frame{
@@ -114,8 +103,8 @@
     margin-bottom: $interiorMarginSm;
     padding: $interiorMargin $interiorMarginLg;
 
-    &:hover {
-        .entry-content .entry-text{
+/*    &:hover {
+        .l-notebook-entry-content .entry-text{
             .unedited-text{
                 //display: none;
             }
@@ -130,38 +119,29 @@
     }
     &.active {
         background-color: rgba(red, 0.5);
+    }*/
+
+    .s-notebook-entry-time,
+    .s-notebook-entry-text,
+    .notebook-entry-delete {
+        $p: $interiorMarginSm;
+        padding-top: $p;
+        padding-bottom: $p;
     }
 
-    .entry-time{
+    .s-notebook-entry-time {
+        border: 1px solid transparent; // Needed to maintain vertical alignment with s-notebook-entry-text
     }
 
-    .entry-content{
-        //flex: 4 1 0;
-        //padding: 0 15px;
-        //min-height: 65px;
+    .l-notebook-entry-content{
         .entry-embeds{
             flex-wrap: wrap;
         }
         .snap-thumb {
             cursor: pointer;
         }
-        .entry-text {
-            display: block;
-
-            .s-entry-input {
-                background-color: rgba(black, 0.1);
-                padding: 2px;
-                &:active {
-                    background-color: red;
-                }
-            }
-        }
-
-        .s-entry-input {
-
-        }
     }
-    .entry-delete{
+    .notebook-entry-delete {
         //padding: 0 15px;
     }
 }

@@ -175,7 +175,7 @@ define(
                 var lastEntry = model[model.length - 1];
                 if (!lastEntry.text) {
                     var newEntry = $scope.entriesEl.find('#entry_' + lastEntry.id).addClass('active');
-                    newEntry.find('.t-entry-input').focus();
+                    newEntry.find('.t-notebook-entry-input').focus();
                 }
             };
 
