@@ -64,8 +64,10 @@ define(
                 var domainObject = selection[0].context.oldItem;
                 self.refreshComposition(domainObject);
 
-                self.mutationListener = domainObject.getCapability('mutation')
-                    .listen(self.refreshComposition.bind(self, domainObject));
+                if (domainObject) {
+                    self.mutationListener = domainObject.getCapability('mutation')
+                        .listen(self.refreshComposition.bind(self, domainObject));
+                }
             }
 
             $scope.filterBy = filterBy;
@@ -86,7 +88,7 @@ define(
          * @private
          */
         ElementsController.prototype.refreshComposition = function (domainObject) {
-            var selectedObjectComposition = domainObject.useCapability('composition');
+            var selectedObjectComposition = domainObject && domainObject.useCapability('composition');
 
             if (selectedObjectComposition) {
                 selectedObjectComposition.then(function (composition) {
