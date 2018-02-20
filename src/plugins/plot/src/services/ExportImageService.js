@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -51,7 +51,7 @@ define(
 
         function changeBackgroundColor(element, color) {
             element.style.backgroundColor = color;
-        };
+        }
 
         /**
          * Renders an HTML element into a base64 encoded image
@@ -141,29 +141,29 @@ define(
             });
         };
 
-       /**
-        * canvas.toBlob() not supported in IE < 10, Opera, and Safari. This polyfill
-        * implements the method in browsers that would not otherwise support it.
-        * https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob
-        */
-       function polyfillToBlob() {
-           if (!HTMLCanvasElement.prototype.toBlob) {
-               Object.defineProperty(HTMLCanvasElement.prototype, "toBlob", {
-                   value: function (callback, type, quality) {
+        /**
+         * canvas.toBlob() not supported in IE < 10, Opera, and Safari. This polyfill
+         * implements the method in browsers that would not otherwise support it.
+         * https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob
+         */
+        function polyfillToBlob() {
+            if (!HTMLCanvasElement.prototype.toBlob) {
+                Object.defineProperty(HTMLCanvasElement.prototype, "toBlob", {
+                    value: function (callback, type, quality) {
 
-                       var binStr = atob(this.toDataURL(type, quality).split(',')[1]),
-                           len = binStr.length,
-                           arr = new Uint8Array(len);
+                        var binStr = atob(this.toDataURL(type, quality).split(',')[1]),
+                            len = binStr.length,
+                            arr = new Uint8Array(len);
 
-                       for (var i = 0; i < len; i++) {
-                           arr[i] = binStr.charCodeAt(i);
-                       }
+                        for (var i = 0; i < len; i++) {
+                            arr[i] = binStr.charCodeAt(i);
+                        }
 
-                       callback(new Blob([arr], {type: type || "image/png"}));
-                   }
-               });
-           }
-       }
+                        callback(new Blob([arr], {type: type || "image/png"}));
+                    }
+                });
+            }
+        }
 
         polyfillToBlob();
 
