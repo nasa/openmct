@@ -1,4 +1,4 @@
-/*global define,requestAnimationFrame,Float32Array*/
+/*global define*/
 
 /**
  * Module defining MCTChart. Created by vwoeltje on 11/12/14.
@@ -8,7 +8,6 @@ define([
 ], function (
     MCTChartController
 ) {
-    'use strict';
 
     var TEMPLATE = "<canvas style='position: absolute; background: none; width: 100%; height: 100%;'></canvas>";
     TEMPLATE += TEMPLATE;
@@ -33,7 +32,7 @@ define([
             controller: MCTChartController,
             scope: {
                 config: "=",
-                draw: "=" ,
+                draw: "=",
                 rectangles: "=",
                 series: "=",
                 xAxis: "=theXAxis",

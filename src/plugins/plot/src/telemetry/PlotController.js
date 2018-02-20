@@ -1,4 +1,5 @@
-/*global define,Promise*/
+/*global define*/
+/*jscs:disable disallowDanglingUnderscores */
 
 define([
     'lodash',
@@ -11,7 +12,6 @@ define([
     configStore,
     eventHelpers
 ) {
-    'use strict';
 
     /**
     TODO: Need to separate off plot configuration and specifying of defaults,
@@ -75,7 +75,7 @@ define([
     PlotController.prototype.addSeries = function (series) {
         this.listenTo(series, 'change:yKey', function () {
             this.loadSeriesData(series);
-        }, this)
+        }, this);
         this.loadSeriesData(series);
     };
 

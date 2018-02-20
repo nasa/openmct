@@ -5,7 +5,6 @@ define([
 ], function (
     MCTChartSeriesElement
 ) {
-    'use strict';
 
     var MCTChartLineStepAfter = MCTChartSeriesElement.extend({
         removePoint: function (point, index, count) {

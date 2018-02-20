@@ -1,13 +1,14 @@
 /*global define*/
+/*jscs:disable disallowDanglingUnderscores */
 
 define([
 
 ], function (
 
 ) {
-    'use strict';
 
     function extend(props) {
+        /*jshint validthis: true*/
         var parent = this,
             child,
             Surrogate;
@@ -15,7 +16,9 @@ define([
         if (props && props.hasOwnProperty('constructor')) {
             child = props.constructor;
         } else {
-            child = function () { return parent.apply(this, arguments); };
+            child = function () {
+                return parent.apply(this, arguments);
+            };
         }
 
         Object.keys(parent).forEach(function copyStaticProperties(propKey) {
@@ -23,7 +26,9 @@ define([
         });
 
         // Surrogate allows inheriting from parent without invoking constructor.
-        Surrogate = function () { this.constructor = child; };
+        Surrogate = function () {
+            this.constructor = child;
+        };
         Surrogate.prototype = parent.prototype;
         child.prototype = new Surrogate();
 

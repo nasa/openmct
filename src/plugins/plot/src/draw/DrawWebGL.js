@@ -1,8 +1,10 @@
 /*global define,Float32Array*/
 
-define([],
-function () {
-    "use strict";
+define([
+
+], function (
+
+) {
 
     // WebGL shader sources (for drawing plain colors)
     var FRAGMENT_SHADER = [
@@ -197,7 +199,7 @@ function () {
                 limitSize
             );
         }
-    }
+    };
 
     return DrawWebGL;
 });

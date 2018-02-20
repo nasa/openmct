@@ -100,7 +100,7 @@ define([
             delete valueMetadata.hints.y;
         }
 
-        if (valueMetadata.format == 'enum') {
+        if (valueMetadata.format === 'enum') {
             if (!valueMetadata.values) {
                 valueMetadata.values = _.pluck(valueMetadata.enumerations, 'value');
             }

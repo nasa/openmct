@@ -21,7 +21,6 @@ function (
     eventHelpers,
     _
 ) {
-    'use strict';
 
     var MARKER_SIZE = 6.0,
         HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
@@ -147,17 +146,17 @@ function (
         });
         this.pointSets.forEach(function (pointSet) {
             pointSet.reset();
-        })
+        });
     };
 
-    MCTChartController.prototype.setOffset = function (point, index, series) {
+    MCTChartController.prototype.setOffset = function (offsetPoint, index, series) {
         if (this.offset.x && this.offset.y) {
             return;
         }
 
         var offsets = {
-            x: series.getXVal(point),
-            y: series.getYVal(point)
+            x: series.getXVal(offsetPoint),
+            y: series.getYVal(offsetPoint)
         };
 
         this.offset.x = function (x) {

@@ -35,12 +35,14 @@ define([
                 this.set('label', xMetadata.name);
                 this.set('format', xFormat.format.bind(xFormat));
             } else {
-                this.set('format', function (x) { return x;});
+                this.set('format', function (x) {
+                    return x;
+                });
                 this.set('label', newKey);
             }
-            this.plot.series.forEach(function (series) {
-                series.set('xKey', newKey);
-                series.reset();
+            this.plot.series.forEach(function (plotSeries) {
+                plotSeries.set('xKey', newKey);
+                plotSeries.reset();
             });
         },
         defaults: function (options) {

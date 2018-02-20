@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -32,7 +32,7 @@ define([
     objectUtils,
     _
 ) {
-    "use strict";
+
     /**
      * The LayoutController is responsible for supporting the
      * Layout view. It arranges frames according to saved configuration
@@ -128,7 +128,7 @@ define([
                 newRange.max = Number(range.max);
             }
             return newRange;
-        }, function validateRange (range) {
+        }, function validateRange(range) {
             if (!range) {
                 return 'Need range';
             }
@@ -178,7 +178,7 @@ define([
                     value: o.key
                 };
             })
-        }
+        };
         var seriesObject = series.domainObject;
         var seriesId = objectUtils.makeKeyString(seriesObject.identifier);
         var configPath = 'configuration.series[' + index + '].';
@@ -204,7 +204,7 @@ define([
         this.config.series.forEach(this.removeSeries, this);
         this.$scope.form.series = [];
         this.config.series.forEach(this.addSeries, this);
-    }
+    };
 
     PlotOptionsController.prototype.removeSeries = function (series) {
         this.stopListening(series);
@@ -220,10 +220,14 @@ define([
         objectPath
     ) {
         if (!coerce) {
-            coerce = function (v) { return v; };
+            coerce = function (v) {
+                return v;
+            };
         }
         if (!validate) {
-            validate = function () { return true; };
+            validate = function () {
+                return true;
+            };
         }
         this.listenTo(model, 'change:' + prop, function (newVal, oldVal) {
             if (!_.isEqual(coerce(_.get(this.$scope, scopePath)), coerce(newVal))) {
@@ -246,7 +250,7 @@ define([
                 if (objectPath && this.$scope.domainObject.getCapability('editor').isEditContextRoot()) {
                     this.openmct.objects.mutate(this.domainObject, objectPath, coerce(newVal));
                 }
-            };
+            }
         }, this);
         _.set(this.$scope, scopePath, coerce(model.get(prop)));
     };

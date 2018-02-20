@@ -1,4 +1,4 @@
-/*global define,Float32Array*/
+/*global define*/
 
 define([
     '../lib/extend',
@@ -7,7 +7,6 @@ define([
     extend,
     eventHelpers
 ) {
-    'use strict';
 
     function MCTChartAlarmPointSet(series, chart, offset) {
         this.series = series;
@@ -20,12 +19,12 @@ define([
         this.listenTo(series, 'reset', this.reset, this);
         this.listenTo(series, 'destroy', this.destroy, this);
         series.data.forEach(function (point, index) {
-            this.append(point, index, series)
+            this.append(point, index, series);
         }, this);
     }
 
     MCTChartAlarmPointSet.prototype.append = function (datum) {
-        if (datum._limit) {
+        if (datum.mctLimitState) {
             this.points.push({
                 x: this.offset.xVal(datum, this.series),
                 y: this.offset.yVal(datum, this.series),

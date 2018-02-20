@@ -11,7 +11,6 @@ define([
     extend,
     EventEmitter
 ) {
-    'use strict';
 
     /**
      * Plot series handle interpreting telemetry metadata for a single telemetry
@@ -81,7 +80,7 @@ define([
                 markers: true,
                 markerSize: 2.0,
                 alarmMarkers: true
-            }
+            };
         },
 
         /**
@@ -158,11 +157,11 @@ define([
         },
 
         formatX: function (point) {
-            return this.formats[this.get('xKey')].format(point)
+            return this.formats[this.get('xKey')].format(point);
         },
 
         formatY: function (point) {
-            return this.formats[this.get('yKey')].format(point)
+            return this.formats[this.get('yKey')].format(point);
         },
 
         /**
@@ -290,7 +289,7 @@ define([
                 }
             }
             this.updateStats(point);
-            point._limit = this.evaluate(point);
+            point.mctLimitState = this.evaluate(point);
             this.data.splice(insertIndex, 0, point);
             this.emit('add', point, insertIndex, this);
         },

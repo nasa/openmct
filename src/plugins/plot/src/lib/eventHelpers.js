@@ -1,11 +1,11 @@
 /*global define*/
+/*jscs:disable disallowDanglingUnderscores */
 
 define([
 
 ], function (
 
 ) {
-    'use strict';
 
     var helperFunctions = {
         listenTo: function (object, event, callback, context) {

@@ -2,12 +2,11 @@ define([
 ], function (
 ) {
 
-    var CONFIG_STORE = {};
-
     function ConfigStore() {
         this.store = {};
         this.tracking = {};
     }
+
     ConfigStore.prototype.track = function (id) {
         if (!this.tracking[id]) {
             this.tracking[id] = 0;
@@ -22,7 +21,7 @@ define([
             this.store[id].destroy();
             delete this.store[id];
         }
-    }
+    };
 
     ConfigStore.prototype.add = function (id, config) {
         this.store[id] = config;

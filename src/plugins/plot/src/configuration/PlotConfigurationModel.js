@@ -1,4 +1,4 @@
-/*global define, Promise*/
+/*global define*/
 
 define([
     './Collection',
@@ -17,7 +17,6 @@ define([
     LegendModel,
     _
 ) {
-    'use strict';
 
     /**
      * PlotConfiguration model stores the configuration of a plot and some

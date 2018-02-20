@@ -1,7 +1,7 @@
 /*global define*/
 
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,9 +23,11 @@
  *****************************************************************************/
 /*global define*/
 
-define([],
-function () {
-    "use strict";
+define([
+
+], function (
+
+) {
 
     /**
     * Create a new draw API utilizing the Canvas's 2D API for rendering.
@@ -39,8 +41,8 @@ function () {
         this.c2d = canvas.getContext('2d');
         this.width = canvas.width;
         this.height = canvas.height;
-        this.dimensions = [ this.width, this.height ];
-        this.origin = [ 0, 0 ];
+        this.dimensions = [this.width, this.height];
+        this.origin = [0, 0];
 
         if (!this.c2d) {
             throw new Error("Canvas 2d API unavailable.");
@@ -153,7 +155,7 @@ function () {
                 limitSize
             );
         }
-    }
+    };
 
 
     return Draw2D;

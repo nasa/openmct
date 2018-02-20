@@ -65,7 +65,7 @@ define([
             this.formatter.parse = function (string) {
                 if (typeof string === "string") {
                     if (this.enumerations.byString.hasOwnProperty(string)) {
-                        return this.enumerations.byString[string]
+                        return this.enumerations.byString[string];
                     }
                 }
                 return Number(string);

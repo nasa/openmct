@@ -215,7 +215,7 @@ define([
                             "features": "creation",
                             "contains": [
                                 "telemetry.plot.overlay",
-                                {"has": "telemetry"},
+                                {"has": "telemetry"}
                             ],
                             "model": {
                                 "composition": []
@@ -242,8 +242,8 @@ define([
             });
 
             openmct.legacyRegistry.enable("openmct/plot");
-        }
+        };
     }
 
-    return PlotPlugin
+    return PlotPlugin;
 });

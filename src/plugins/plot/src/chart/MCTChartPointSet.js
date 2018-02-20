@@ -5,7 +5,6 @@ define([
 ], function (
     MCTChartSeriesElement
 ) {
-    'use strict';
 
     var MCTChartPointSet = MCTChartSeriesElement.extend({
         addPoint: function (point, start, count) {

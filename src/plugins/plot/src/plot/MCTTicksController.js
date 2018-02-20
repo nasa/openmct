@@ -7,7 +7,6 @@ define([
     _,
     eventHelpers
 ) {
-    'use strict';
 
     var e10 = Math.sqrt(50),
         e5 = Math.sqrt(10),
@@ -43,7 +42,9 @@ define([
 
         var precision = Math.max(0, -(+exponential.slice(i + 1)));
 
-        if (precision > 20) precision = 20;
+        if (precision > 20) {
+            precision = 20;
+        }
 
         return precision;
     }
@@ -150,7 +151,7 @@ define([
     };
 
     MCTTicksController.prototype.updateTicks = function () {
-        var range = this.axis.get('displayRange')
+        var range = this.axis.get('displayRange');
         if (!range) {
             delete this.$scope.min;
             delete this.$scope.max;
@@ -183,7 +184,7 @@ define([
                     };
                 }, this);
 
-            if (newTicks.length && typeof newTicks[0].text === 'string' ) {
+            if (newTicks.length && typeof newTicks[0].text === 'string') {
                 var tickText = newTicks.map(function (t) {
                     return t.text;
                 });
@@ -198,10 +199,9 @@ define([
                     }
                 });
             }
-            this.$scope.ticks = newTicks
+            this.$scope.ticks = newTicks;
             this.shouldCheckWidth = true;
         }
-        // todo: break out tick updating.
         this.scheduleTickUpdate();
     };
 
@@ -217,8 +217,8 @@ define([
         if (this.shouldCheckWidth) {
             this.$scope.$digest();
             var element = this.$element[0],
-                ticks = element.querySelectorAll('.gl-plot-tick > span'),
-                tickWidth = Number([].reduce.call(ticks, function (memo, first) {
+                tickElements = element.querySelectorAll('.gl-plot-tick > span'),
+                tickWidth = Number([].reduce.call(tickElements, function (memo, first) {
                     return Math.max(memo, first.offsetWidth);
                 }, 0));
 

@@ -6,27 +6,27 @@ define([
     _
 ) {
 
-   /**
-    * YAxis model
+    /**
+     * YAxis model
+      *
+     * TODO: docstrings.
      *
-    * TODO: docstrings.
-    *
-    * has the following Model properties:
-    *
-    * `autoscale`: boolean, whether or not to autoscale.
-    * `autoscalePadding`: float, percent of padding to display in plots.
-    * `displayRange`: the current display range for the x Axis.
-    * `format`: the formatter for the axis.
-    * `frozen`: boolean, if true, displayRange will not be updated automatically.
-    *           Used to temporarily disable automatic updates during user interaction.
-    * `label`: label to display on axis.
-    * `stats`: Min and Max Values of data, automatically updated by observing
-    *          plot series.
-    * `values`: for enumerated types, an array of possible display values.
-    * `range`: the user-configured range to use for display, when autoscale is
-    *         disabled.
-    *
-    */
+     * has the following Model properties:
+     *
+     * `autoscale`: boolean, whether or not to autoscale.
+     * `autoscalePadding`: float, percent of padding to display in plots.
+     * `displayRange`: the current display range for the x Axis.
+     * `format`: the formatter for the axis.
+     * `frozen`: boolean, if true, displayRange will not be updated automatically.
+     *           Used to temporarily disable automatic updates during user interaction.
+     * `label`: label to display on axis.
+     * `stats`: Min and Max Values of data, automatically updated by observing
+     *          plot series.
+     * `values`: for enumerated types, an array of possible display values.
+     * `range`: the user-configured range to use for display, when autoscale is
+     *         disabled.
+     *
+     */
     var YAxisModel = Model.extend({
         initialize: function (options) {
             this.plot = options.plot;
@@ -67,7 +67,7 @@ define([
             }
             return {
                 min: range.min - padding,
-                max: range.max + padding,
+                max: range.max + padding
             };
         },
         updatePadding: function (newPadding) {
@@ -146,7 +146,7 @@ define([
                 return;
             }
 
-            var yKey = sampleSeries.get('yKey')
+            var yKey = sampleSeries.get('yKey');
             var yMetadata = sampleSeries.metadata.value(yKey);
             var yFormat = sampleSeries.formats[yKey];
             this.set('format', yFormat.format.bind(yFormat));

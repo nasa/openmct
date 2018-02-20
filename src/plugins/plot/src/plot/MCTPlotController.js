@@ -7,7 +7,6 @@ define([
     LinearScale,
     eventHelpers
 ) {
-    'use strict';
 
     /**
      * MCTPlotController handles user interactions with the plot canvas.
@@ -39,7 +38,7 @@ define([
 
     MCTPlotController.$inject = ['$scope', '$element', '$window'];
 
-    eventHelpers.extend(MCTPlotController.prototype)
+    eventHelpers.extend(MCTPlotController.prototype);
 
     MCTPlotController.prototype.initialize = function () {
         this.$canvas = this.$element.find('canvas');
@@ -184,7 +183,9 @@ define([
     };
 
     MCTPlotController.prototype.updateMarquee = function () {
-        if (!this.marquee) { return; }
+        if (!this.marquee) {
+            return;
+        }
         this.marquee.end = this.positionOverPlot;
     };
 
@@ -232,7 +233,9 @@ define([
 
     MCTPlotController.prototype.updatePan = function () {
         // calculate offset between points.  Apply that offset to viewport.
-        if (!this.pan) { return; }
+        if (!this.pan) {
+            return;
+        }
         var dX = this.pan.start.x - this.positionOverPlot.x,
             dY = this.pan.start.y - this.positionOverPlot.y,
             xRange = this.config.xAxis.get('displayRange'),

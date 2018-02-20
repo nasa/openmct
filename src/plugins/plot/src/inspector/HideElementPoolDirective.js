@@ -10,8 +10,8 @@ define(function () {
         return {
             restrict: "A",
             link: function ($scope, $element) {
-                var splitter = $element.parent(),
-                    elementsContainer;
+                var splitter = $element.parent();
+
                 while (splitter[0].tagName !== 'MCT-SPLIT-PANE') {
                     splitter = splitter.parent();
                 }

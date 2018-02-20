@@ -1,11 +1,10 @@
 /*global define*/
-
+/*jscs:disable disallowDanglingUnderscores */
 define([
 
 ], function (
 
 ) {
-    'use strict';
 
     /**
      * A scale has an input domain and an output range.  It provides functions

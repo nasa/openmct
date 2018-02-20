@@ -1,4 +1,4 @@
-/*global define, Promise*/
+/*global define*/
 
 define([
     'lodash',
@@ -13,7 +13,6 @@ define([
     extend,
     eventHelpers
 ) {
-    'use strict';
 
     function Collection(options) {
         if (options.models) {
@@ -87,7 +86,9 @@ define([
     Collection.prototype.indexOf = function (model) {
         return _.findIndex(
             this.models,
-            function (m) { return m === model; }
+            function (m) {
+                return m === model;
+            }
         );
     };
 

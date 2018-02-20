@@ -2,12 +2,14 @@ define([
     './PlotSeries',
     './Collection',
     './Model',
-    '../lib/color'
+    '../lib/color',
+    'lodash'
 ], function (
     PlotSeries,
     Collection,
     Model,
-    color
+    color,
+    _
 ) {
 
     var SeriesCollection = Collection.extend({
@@ -75,11 +77,11 @@ define([
                 // to defer mutation of our plot object, otherwise we might
                 // mutate an outdated version of the plotObject.
                 setTimeout(function () {
-                    var plotObject = this.plot.get('domainObject');
-                    var cSeries = plotObject.configuration.series.slice();
+                    var newPlotObject = this.plot.get('domainObject');
+                    var cSeries = newPlotObject.configuration.series.slice();
                     cSeries.splice(index, 1);
-                    this.openmct.objects.mutate(plotObject, 'configuration.series', cSeries);
-                }.bind(this))
+                    this.openmct.objects.mutate(newPlotObject, 'configuration.series', cSeries);
+                }.bind(this));
             }
         },
         onSeriesAdd: function (series) {

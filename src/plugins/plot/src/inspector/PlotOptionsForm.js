@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,7 +24,7 @@
 define([
 
 ], function () {
-    "use strict";
+
 
     /**
      * A class for encapsulating structure and behaviour of the plot
@@ -39,7 +39,7 @@ define([
          Defined below are the form structures for the plot options.
          */
         this.xAxisForm = {
-            name:'x-axis',
+            name: 'x-axis',
             sections: [{
                 name: 'x-axis',
                 rows: [
@@ -67,10 +67,10 @@ define([
                         ]
                     }
                 ]
-        }]};
+            }]};
 
         this.yAxisForm = {
-            name:'y-axis',
+            name: 'y-axis',
             sections: [{
                 // Will need to be repeated for each y-axis, with a
                 // distinct name for each. Ideally the name of the axis
@@ -123,7 +123,7 @@ define([
             }]
         };
         this.plotSeriesForm = {
-            name:'Series Options',
+            name: 'Series Options',
             sections: [
                 {
                     rows: [

@@ -7,7 +7,6 @@ define([
     extend,
     eventHelpers
 ) {
-    'use strict';
 
     function MCTChartSeriesElement(series, chart, offset) {
         this.series = series;
@@ -20,7 +19,7 @@ define([
         this.listenTo(series, 'reset', this.reset, this);
         this.listenTo(series, 'destroy', this.destroy, this);
         series.data.forEach(function (point, index) {
-            this.append(point, index, series)
+            this.append(point, index, series);
         }, this);
     }
 
@@ -76,7 +75,7 @@ define([
         this.count -= (vertexCount / 2);
     };
 
-    MCTChartSeriesElement.prototype.makePoint = function(point, series) {
+    MCTChartSeriesElement.prototype.makePoint = function (point, series) {
         if (!this.offset.xVal) {
             this.chart.setOffset(point, undefined, series);
         }
@@ -106,9 +105,8 @@ define([
                 this.isTempBuffer = true;
             }
             var target = insertionPoint + pointsRequired,
-                start = insertionPoint,
-                end = this.count * 2 + pointsRequired;
-            for (;start < target; start++) {
+                start = insertionPoint;
+            for (; start < target; start++) {
                 this.buffer.splice(start, 0, 0);
             }
         }

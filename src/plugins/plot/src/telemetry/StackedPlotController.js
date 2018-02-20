@@ -5,7 +5,6 @@ define([
 ], function (
     _
 ) {
-    'use strict';
 
     function StackedPlotController($scope, openmct, objectService, $element, exportImageService) {
         var tickWidth = 0,
@@ -30,11 +29,14 @@ define([
         }
 
         function onDomainObjectChange(domainObject) {
-            var thisRequest = currentRequest = $scope.currentRequest = {
+            var thisRequest = {
                 pending: 0
             };
+            currentRequest = thisRequest;
+            $scope.currentRequest = thisRequest;
             var telemetryObjects = $scope.telemetryObjects = [];
-            var thisTickWidthMap = tickWidthMap = {};
+            var thisTickWidthMap = {};
+            tickWidthMap = thisTickWidthMap;
 
             if (unlisten) {
                 unlisten();

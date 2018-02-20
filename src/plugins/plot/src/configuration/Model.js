@@ -1,4 +1,4 @@
-/*global define, Promise*/
+/*global define*/
 
 define([
     'lodash',
@@ -11,7 +11,6 @@ define([
     extend,
     eventHelpers
 ) {
-    'use strict';
 
     function Model(options) {
         if (!options) {

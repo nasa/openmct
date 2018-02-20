@@ -1,4 +1,4 @@
-/*global define,window*/
+/*global define*/
 
 define([
     './MCTPlotController',
@@ -7,7 +7,6 @@ define([
     MCTPlotController,
     PlotTemplate
 ) {
-    'use strict';
 
     function MCTPlot() {
 

@@ -1,11 +1,10 @@
-/*global define,window*/
+/*global define*/
 
 define([
     './MCTTicksController'
 ], function (
     MCTTicksController
 ) {
-    'use strict';
 
     function MCTTicksDirective() {
         return {
