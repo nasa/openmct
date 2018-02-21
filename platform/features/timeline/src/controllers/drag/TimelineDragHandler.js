@@ -204,7 +204,7 @@ define(
                             end = timespan.getEnd();
 
                             // Update duration, start, then end
-                            timespan.setDuration((end + delta) - (start + delta));
+                            timespan.setDuration(end - start);
                             timespan.setStart(start + delta);
                             timespan.setEnd(end + delta);
 

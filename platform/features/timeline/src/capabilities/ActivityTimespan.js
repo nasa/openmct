@@ -105,7 +105,7 @@ define(
                         m.activityEnd = {};
                     }
 
-                    m.activityEnd[model.id] = value;
+                    m.activityEnd[model.id] = Math.max(value, 0);
                 });
             }
 

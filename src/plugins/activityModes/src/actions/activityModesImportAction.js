@@ -67,7 +67,7 @@ define(['d3-dsv'], function (d3Dsv) {
 
     ActivityModesImportAction.prototype.instantiateActivityModes = function (activityModesObjects, folderComposition) {
         activityModesObjects.forEach(function (activityMode, index) {
-            var objectId = 'activity-mode-' + index;
+            var objectId = 'activity-mode-' + index + ' ' + this.parentId;
 
             this.objectService.getObjects([objectId]).then(
                 function (previousActivityMode) {
@@ -86,8 +86,8 @@ define(['d3-dsv'], function (d3Dsv) {
 
     ActivityModesImportAction.prototype.instantiateActivities = function (activitiesObjects) {
         activitiesObjects.forEach(function (activity, index) {
-            activity.relationships.modes.push('activity-mode-' + index);
-            activity.id = 'activity-' + index;
+            activity.relationships.modes.push('activity-mode-' + index + ' ' + this.parentId);
+            activity.id = 'activity-' + index + ' ' + this.parentId;
 
             this.objectService.getObjects([activity.id]).then(
                 function (objects) {
