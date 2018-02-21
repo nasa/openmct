@@ -5,6 +5,7 @@ define(['d3-dsv'], function (d3Dsv) {
         this.openmct = openmct;
         this.context = context;
         this.parent = this.context.domainObject;
+        this.parentId = this.parent.getId();
         this.instantiate = this.openmct.$injector.get("instantiate");
         this.objectService = this.openmct.$injector.get("objectService").objectService;
         this.populateActivities = this.populateActivities.bind(this);
@@ -31,7 +32,6 @@ define(['d3-dsv'], function (d3Dsv) {
 
     ActivityModesImportAction.prototype.populateActivities = function (csvObjects) {
         this.parent = this.context.domainObject;
-        this.parentId = this.parent.getId();
         this.parentComposition = this.parent.getCapability("composition");
 
         var activitiesObjects = [],
@@ -57,17 +57,13 @@ define(['d3-dsv'], function (d3Dsv) {
             activityModesObjects.push(newActivityMode);
         });
 
-        this.createActivityModesFolder().then(function (folder) {
-            var folderComposition = folder.getCapability('composition');
-
-            this.instantiateActivityModes(activityModesObjects, folderComposition);
-            this.instantiateActivities(activitiesObjects);
-        }.bind(this));
+        this.instantiateActivityModes(activityModesObjects);
+        this.instantiateActivities(activitiesObjects);
     };
 
-    ActivityModesImportAction.prototype.instantiateActivityModes = function (activityModesObjects, folderComposition) {
+    ActivityModesImportAction.prototype.instantiateActivityModes = function (activityModesObjects) {
         activityModesObjects.forEach(function (activityMode, index) {
-            var objectId = 'activity-mode-' + index + ' ' + this.parentId;
+            var objectId = 'activity-mode-' + index + '-' + this.parentId;
 
             this.objectService.getObjects([objectId]).then(
                 function (previousActivityMode) {
@@ -76,9 +72,6 @@ define(['d3-dsv'], function (d3Dsv) {
                         prev.resources = activityMode.resources;
                         prev.type = activityMode.type;
                     });
-
-                    previousActivityMode[objectId].getCapability('location').setPrimaryLocation('activity-modes-folder');
-                    folderComposition.add(previousActivityMode[objectId]); 
                 }
             );
         }.bind(this));
@@ -86,8 +79,8 @@ define(['d3-dsv'], function (d3Dsv) {
 
     ActivityModesImportAction.prototype.instantiateActivities = function (activitiesObjects) {
         activitiesObjects.forEach(function (activity, index) {
-            activity.relationships.modes.push('activity-mode-' + index + ' ' + this.parentId);
-            activity.id = 'activity-' + index + ' ' + this.parentId;
+            activity.relationships.modes.push('activity-mode-' + index + '-' + this.parentId);
+            activity.id = 'activity-' + index + '-' + this.parentId;
 
             this.objectService.getObjects([activity.id]).then(
                 function (objects) {
@@ -105,25 +98,6 @@ define(['d3-dsv'], function (d3Dsv) {
                     this.parentComposition.add(objects[activity.id]);
                 }.bind(this)
             );
-        }.bind(this));
-    };
-
-    ActivityModesImportAction.prototype.createActivityModesFolder = function () {
-        return new Promise(function (resolve, reject) {
-            this.objectService.getObjects(['activity-modes-folder']).then(function (objects) {
-                var folder = objects['activity-modes-folder'];
-    
-                folder.getCapability('mutation').mutate(function (persistedObject) {
-                    persistedObject.name = 'Activity-Modes';
-                    persistedObject.type = 'folder';
-                    persistedObject.composition = [];
-                });
-                folder.getCapability('location').setPrimaryLocation(this.parent.getId());
-    
-                this.parent.getCapability('composition').add(folder);
-
-                resolve(folder);
-            }.bind(this));
         }.bind(this));
     };
 
