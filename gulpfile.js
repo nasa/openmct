@@ -52,7 +52,9 @@ var gulp = require('gulp'),
                     var buildVariables = {
                         version: project.version,
                         timestamp: moment.utc(Date.now()).format(),
-                        revision: fs.existsSync('.git') ? git.long() : 'Unknown',
+                        revision: fs.existsSync('.git') ? git.long() :
+                                project._resolved ? project._resolved.replace(/^.*#/g, "") :
+                                        'Unknown',
                         branch: fs.existsSync('.git') ? git.branch() : 'Unknown'
                     };
                     return fs.readFileSync("src/start.frag", 'utf-8')
