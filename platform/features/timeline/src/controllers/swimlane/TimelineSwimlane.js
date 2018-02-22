@@ -57,7 +57,6 @@ define(
             });
 
             function makeCopies(input) {
-
                 if (input !== undefined) {
                     var number = Number(input);
 
@@ -77,7 +76,7 @@ define(
                                         relationships: timespanModel.relationships,
                                         id: activityId
                                     },
-                                    activityInstance = instantiate(activityModel, activityId);
+                                    activityInstance = instantiate(activityModel);
 
                                 activityInstance.getCapability('location').setPrimaryLocation(timespan.getParent().model.id);
 
@@ -119,7 +118,7 @@ define(
                                         relationships: timespanModel.relationships,
                                         id: activityId
                                     },
-                                    activityInstance = instantiate(activityModel, activityId);
+                                    activityInstance = instantiate(activityModel);
 
                                 activityInstance.getCapability('location').setPrimaryLocation(timespan.getParent().model.id);
 
