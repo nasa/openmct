@@ -23,4 +23,6 @@ $output-bourbon-deprecation-warnings: false;
 @import "bourbon";
 @import "../../../../commonUI/general/res/sass/constants";
 @import "../../../../commonUI/general/res/sass/mixins";
+@import "../../../../commonUI/general/res/sass/mobile/constants";
+@import "../../../../commonUI/general/res/sass/mobile/mixins";
 @import "notebook-base";

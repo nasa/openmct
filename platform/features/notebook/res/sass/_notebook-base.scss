@@ -36,6 +36,9 @@
     font-style: italic;
     cursor: pointer;
     &:before { margin-right: 7px !important; }
+    .label {
+        @include ellipsize();
+    }
 }
 
 .frame {
@@ -141,17 +144,15 @@
 }
 
 /********************************************* MOBILE */
-body.mobile {
-    &.phone {
-        &.portrait {
-            .w-notebook-entry-time-and-content {
-                flex-direction: column !important;
-            }
-            .s-notebook-entry-time,
-            .notebook-entry-delete {
-                padding-top: 0;
-                padding-bottom: 0;
-            }
+@include phonePortrait() {
+    body.phone {
+        .w-notebook-entry-time-and-content {
+            flex-direction: column !important;
+        }
+        .s-notebook-entry-time,
+        .notebook-entry-delete {
+            padding-top: 0;
+            padding-bottom: 0;
         }
     }
 }
