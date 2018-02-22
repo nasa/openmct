@@ -150,20 +150,22 @@
     }
 }
 
-.has-local-controls {
-    // Hide local controls, show them when the .has element gets hover
-    .s-local-controls,
-    .local-control {
-        @include trans-prop-nice($props: opacity, $dur: 500ms);
-        opacity: 0;
-    }
-    &:hover {
+body:not(.touch) {
+    .has-local-controls {
+        // Hide local controls, show them when the .has element gets hover
         .s-local-controls,
         .local-control {
-            @include trans-prop-nice($props: opacity, $dur: 0);
-            opacity: 1;
+            @include trans-prop-nice($props: opacity, $dur: 500ms);
+            opacity: 0;
         }
+        &:hover {
+            .s-local-controls,
+            .local-control {
+                @include trans-prop-nice($props: opacity, $dur: 0);
+                opacity: 1;
+            }
 
+        }
     }
 }
 
