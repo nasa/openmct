@@ -49,9 +49,6 @@
 
 
 .l-entry-embed {
-    $m: $interiorMarginSm;
-    margin: 0 $m $m 0;
-    padding: $interiorMarginSm;
     border-radius: $controlCr;
     background-color: rgba($colorBodyFg, 0.1);
     &.has-snapshot {

@@ -20,10 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .w-notebook {
-    //@include test($a: 0.1);
-    //display: flex;
-    //flex-direction: column;
-    //flex-wrap: nowrap;
     font-size: 0.8rem;
     overflow: hidden;
     position: absolute;
@@ -35,42 +31,6 @@
     height: auto;
 }
 
-.mct-notebook {
-    div.example-button-group {
-        margin-top: 12px;
-        margin-bottom: 12px;
-    }
-
-    .example-button-group a {
-        padding: 3px;
-        margin: 3px;
-    }
-
-    .example-button-group a.selected {
-        border: 1px gray solid;
-        border-radius: 3px;
-        background: #444;
-    }
-
-    .example-task-completed .example-task-description {
-        text-decoration: line-through;
-        opacity: 0.75;
-    }
-
-    .example-task-description.selected {
-        background: #46A;
-        border-radius: 3px;
-    }
-
-    .example-message {
-        font-style: italic;
-    } 
-} 
-
-.notebook-new-entry {
-    height: 350px;
-}
-
 .l-notebook-drag-area {
     padding: 10px;
     font-style: italic;
@@ -78,8 +38,8 @@
     &:before { margin-right: 7px !important; }
 }
 
-.frame{
-   .icon-notebook{
+.frame {
+   .icon-notebook {
         margin-right: 5px;
     } 
 }
@@ -99,32 +59,14 @@
 }
 
 .l-notebook-entry {
+    $p: $interiorMarginSm;
     box-sizing: border-box;
-    margin-bottom: $interiorMarginSm;
-    padding: $interiorMargin $interiorMarginLg;
-
-/*    &:hover {
-        .l-notebook-entry-content .entry-text{
-            .unedited-text{
-                //display: none;
-            }
-            textarea{
-                //background-color: $colorBodyBg;
-                min-height: 50px;
-                height: auto;
-                resize: none;
-                //display: block;
-            }
-        }
-    }
-    &.active {
-        background-color: rgba(red, 0.5);
-    }*/
+    margin-bottom: $p;
+    padding: $p $interiorMargin;
 
     .s-notebook-entry-time,
     .s-notebook-entry-text,
     .notebook-entry-delete {
-        $p: $interiorMarginSm;
         padding-top: $p;
         padding-bottom: $p;
     }
@@ -134,6 +76,10 @@
     }
 
     .l-notebook-entry-content{
+        .s-notebook-entry-text {
+            // Contenteditable div that holds text
+            min-height: 24px; // Needed in Firefox when field is blank
+        }
         .entry-embeds{
             flex-wrap: wrap;
         }
@@ -147,7 +93,10 @@
 }
 
 .l-entry-embed {
+    $m: $interiorMarginSm;
     position: relative;
+    margin: $m $m 0 0;
+    padding: $interiorMarginSm;
 
     &.has-snapshot {
         &:before {
@@ -268,39 +217,3 @@
     box-sizing: border-box;
     padding: 5px;
 }
-
-/*@media screen and (max-width: 1024px){
-    .w-notebook-entries{
-        font-size: 14px;
-    }
-    .l-message{
-        display: inline-block;
-        width: 100%;
-        .type-icon.message-type{
-            margin: 0 auto 40px;
-        }
-
-        .top-bar .title{
-            text-align: center;
-            white-space: normal;
-        }
-    }
-
-    .ptro-color-main{
-        height: 80px;
-        .tool-controls,>div>span:not(.ptro-info){
-            float: left;
-        }
-    }
-
-    .ptro-wrapper{
-        top: 80px;
-    }
-}
-
-@media screen and (max-width: 768px){
-    .ptro-bar>div {
-        white-space: normal;
-    }
-}*/
-
