@@ -82,7 +82,6 @@ define(['zepto'], function ($) {
                                 var reader = new window.FileReader();
                                 reader.readAsDataURL(img);
                                 reader.onloadend = function () {
-                                        //closeOverlay(true);
                                         $($element[0]).attr("data-snapshot", reader.result);
                                         $rootScope.snapshot = {'src': reader.result,
                                                                  'type': img.type,

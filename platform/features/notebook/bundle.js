@@ -5,7 +5,7 @@ define([
     "./src/controllers/SelectSnapshotController",
     "./src/controllers/LayoutNotebookController",
     "./src/directives/MCTSnapshot",
-    "./src/directives/MCTModalNotebook",
+    "../layout/src/MCTTriggerModal",
     "./src/directives/EntryDnd",
     "./src/actions/ViewSnapshot",
     "./src/actions/AnnotateSnapshot",
