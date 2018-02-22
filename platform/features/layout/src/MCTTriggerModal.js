@@ -80,7 +80,23 @@ define([
                 blocker,
                 overlayContainer,
                 notebookButtonEl,
-                notebookButton;
+                notebookButton,
+                actions = $scope.domainObject.getCapability('action'),
+                notebookAction = actions.getActions({'key': 'notebook-new-entry'});
+
+                if (notebookAction) {
+                    if (notebookAction.length > 0) {
+                        notebookButtonEl = document.createElement('div');
+                        $(notebookButtonEl).addClass('notebook-button-container');
+                        notebookButtonEl.innerHTML = NEW_NOTEBOOK_BUTTON_TEMPLATE;
+                        notebookButton = frame.querySelector('.object-browse-bar .right');
+                        notebookButton.prepend(notebookButtonEl);
+                        // $(frame.querySelector('.object-holder')).addClass('container-notebook');
+                        notebookButton.addEventListener('click', function () {
+                            notebookAction[0].perform();
+                        });
+                    }
+                }
 
             function openOverlay() {
 
@@ -99,24 +115,6 @@ define([
                 document.body.appendChild(overlay);
                 layoutContainer.removeChild(frame);
                 overlayContainer.appendChild(frame);
-
-                var actions = $scope.domainObject.getCapability('action');
-                var notebookAction = actions.getActions({'key': 'notebook-new-entry'});
-                console.log(notebookAction);
-                if (notebookAction) {
-                    if (notebookAction.length > 0) {
-                        notebookButtonEl = document.createElement('div');
-                        $(notebookButtonEl).addClass('notebook-button-container');
-                        notebookButtonEl.innerHTML = NEW_NOTEBOOK_BUTTON_TEMPLATE;
-                        notebookButton = frame.querySelector('.object-browse-bar .right');
-                        notebookButton.prepend(notebookButtonEl);
-                        // $(frame.querySelector('.object-holder')).addClass('container-notebook');
-                        notebookButton.addEventListener('click', function () {
-                            notebookAction[0].perform();
-                        });
-                    }
-                }
-                
             }
 
             function closeOverlay() {
