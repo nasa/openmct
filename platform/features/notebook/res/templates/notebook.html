@@ -1,32 +1,27 @@
 <div ng-controller="NotebookController as controller" class="mct-notebook w-notebook l-flex-col">
     <div class="l-notebook-head holder l-flex-row flex-elem">
-        <div class="l-flex-row holder holder-search">
-            <!-- TODO: clean this up and make it layout well in mobile -->
-            <div class="search-bar flex-elem l-flex-row"
-                   ng-class="{ holder: !(entrySearch === '' || entrySearch === undefined) }">
-                  <div class="holder flex-elem grows">
-                      <input class="search-input"
-                             type="text" tabindex="10000"
-                             ng-model="entrySearch"
-                             ng-keyup="controller.search()"/>
-                      <a class="clear-icon clear-input icon-x-in-circle"
-                         ng-class="{show: !(entrySearch === '' || entrySearch === undefined)}"
-                         ng-click="entrySearch = ''; controller.search()"></a>
-                  </div>
-                  <a class="holder s-button flex-elem btn-cancel"
-                     ng-show="!(entrySearch === '' || entrySearch === undefined)"
-                     ng-click="entrySearch = ''; ngModel.checkAll = true; menuController.checkAll(); controller.search()">
-                      Cancel</a>
-              </div>
+        <div class="l-flex-row holder grows holder-search">
+            <div class="search-bar flex-elem l-flex-row grows"
+                 ng-class="{ holder: !(entrySearch === '' || entrySearch === undefined) }">
+                <div class="holder flex-elem grows">
+                    <input class="search-input"
+                           type="text" tabindex="10000"
+                           ng-model="entrySearch"
+                           ng-keyup="controller.search()"/>
+                    <a class="clear-icon clear-input icon-x-in-circle"
+                       ng-class="{show: !(entrySearch === '' || entrySearch === undefined)}"
+                       ng-click="entrySearch = ''; controller.search()"></a>
+                </div>
             </div>
+        </div>
 
         <div class="notebook-filters right l-flex-row flex-elem grows flex-justify-end">
             <div class="select">
                 <select ng-model="showTime">
                     <option value="0" selected="selected">Show all</option>
-                    <option value="1">Last Hour</option>
-                    <option value="8">Last 8 Hours</option>
-                    <option value="24">Last 24 Hours</option>
+                    <option value="1">Last hour</option>
+                    <option value="8">Last 8 hours</option>
+                    <option value="24">Last 24 hours</option>
                 </select>
             </div>
             <div class="select">
@@ -39,7 +34,8 @@
     </div>
 
     <!--  drag area -->
-    <div class="holder flex-elem l-flex-row icon-plus labeled l-notebook-drag-area" ng-click="newEntry($event)" id="newEntry" mct-entry-dnd>
+    <div class="holder flex-elem l-flex-row icon-plus labeled l-notebook-drag-area" ng-click="newEntry($event)"
+         id="newEntry" mct-entry-dnd>
         <span class="label">To start a new entry, click here or drag and drop any object</span>
     </div>
 
@@ -47,11 +43,11 @@
     <div class="holder flex-elem grows w-notebook-entries t-entries-list" ng-mouseover="handleActive()">
         <ul>
             <li class="l-flex-row has-local-controls l-notebook-entry s-notebook-entry"
-              id="{{'entry_'+ entry.id}}"
-              ng-if="hoursFilter(showTime,entry.createdOn)"
-              ng-repeat="entry in model.entries | filter:entrySearch | orderBy: sortEntries track by $index"
-              ng-init="$last && finished(model.entries)"
-              mct-entry-dnd>
+                id="{{'entry_'+ entry.id}}"
+                ng-if="hoursFilter(showTime,entry.createdOn)"
+                ng-repeat="entry in model.entries | filter:entrySearch | orderBy: sortEntries track by $index"
+                ng-init="$last && finished(model.entries)"
+                mct-entry-dnd>
                 <div class="holder flex-elem l-flex-row grows w-notebook-entry-time-and-content">
                     <div class="holder flex-elem s-notebook-entry-time">
                         <span>{{entry.createdOn | date:'yyyy-MM-dd'}}</span>
@@ -75,7 +71,7 @@
                                 <div class="snap-thumb"
                                      ng-if="embed.snapshot"
                                      ng-click="viewSnapshot($event,embed.snapshot.src,embed.id,entry.createdOn,this,embed)">
-                                    <img ng-src="{{embed.snapshot.src}}" src="//:0" alt="{{embed.id}}" >
+                                    <img ng-src="{{embed.snapshot.src}}" src="//:0" alt="{{embed.id}}">
                                 </div>
                                 <div class="embed-info l-flex-col">
                                     <div class="embed-title object-header">
@@ -111,7 +107,8 @@
                                         </div>
                                     </div>
                                     <div class="embed-date"
-                                         ng-if="embed.snapshot">{{embed.id| date:'yyyy-MM-dd HH:mm:ss'}}</div>
+                                         ng-if="embed.snapshot">{{embed.id| date:'yyyy-MM-dd HH:mm:ss'}}
+                                    </div>
                                 </div>
                             </div>
                         </div>
