@@ -87,9 +87,6 @@
             cursor: pointer;
         }
     }
-    .notebook-entry-delete {
-        //padding: 0 15px;
-    }
 }
 
 .l-entry-embed {
@@ -135,10 +132,27 @@
 }
 
 
-.notebook-filters{
-    .select{
-        margin-left: 10px;
-        border-radius: 5px;
+
+
+.notebook-filters {
+    .select {
+        margin-left: $interiorMargin;
+    }
+}
+
+/********************************************* MOBILE */
+body.mobile {
+    &.phone {
+        &.portrait {
+            .w-notebook-entry-time-and-content {
+                flex-direction: column !important;
+            }
+            .s-notebook-entry-time,
+            .notebook-entry-delete {
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 <div ng-controller="NotebookController as controller" class="mct-notebook w-notebook l-flex-col">
     <div class="l-notebook-head holder l-flex-row flex-elem">
         <div class="l-flex-row holder holder-search">
+            <!-- TODO: clean this up and make it layout well in mobile -->
             <div class="search-bar flex-elem l-flex-row"
                    ng-class="{ holder: !(entrySearch === '' || entrySearch === undefined) }">
                   <div class="holder flex-elem grows">
@@ -51,74 +52,76 @@
               ng-repeat="entry in model.entries | filter:entrySearch | orderBy: sortEntries track by $index"
               ng-init="$last && finished(model.entries)"
               mct-entry-dnd>
-            <div class="holder flex-elem s-notebook-entry-time">
-                <span>{{entry.createdOn | date:'yyyy-MM-dd'}}</span>
-                <span>{{entry.createdOn | date:'HH:mm:ss'}}</span>
-            </div>
-            <div class="holder flex-elem l-flex-col grows l-notebook-entry-content">
-                <div contenteditable="true"
-                     ng-blur="textBlur($event, entry.id)"
-                     ng-focus="textFocus($event, entry.id)"
-                     ng-model="entry.text"
-                     placeholder="Enter text here"
-                     class="flex-elem s-input-inline t-notebook-entry-input s-notebook-entry-text">
-                    {{entry.text}}
-                </div>
-                <!-- embeds -->
-                <div class="flex-elem entry-embeds l-flex-row">
-                    <div class="l-flex-row l-entry-embed {{embed.cssClass}}"
-                         ng-repeat="embed in entry.embeds track by $index"
-                         ng-class="{ 'has-snapshot' : embed.snapshot }"
-                         id="{{embed.id}}">
-                        <div class="snap-thumb"
-                             ng-if="embed.snapshot"
-                             ng-click="viewSnapshot($event,embed.snapshot.src,embed.id,entry.createdOn,this,embed)">
-                            <img ng-src="{{embed.snapshot.src}}" src="//:0" alt="{{embed.id}}" >
+                <div class="holder flex-elem l-flex-row grows w-notebook-entry-time-and-content">
+                    <div class="holder flex-elem s-notebook-entry-time">
+                        <span>{{entry.createdOn | date:'yyyy-MM-dd'}}</span>
+                        <span>{{entry.createdOn | date:'HH:mm:ss'}}</span>
+                    </div>
+                    <div class="holder flex-elem l-flex-col grows l-notebook-entry-content">
+                        <div contenteditable="true"
+                             ng-blur="textBlur($event, entry.id)"
+                             ng-focus="textFocus($event, entry.id)"
+                             ng-model="entry.text"
+                             placeholder="Enter text here"
+                             class="flex-elem s-input-inline t-notebook-entry-input s-notebook-entry-text">
+                            {{entry.text}}
                         </div>
-                        <div class="embed-info l-flex-col">
-                            <div class="embed-title object-header">
-                                <a ng-click='navigate($event,embed.type)'>{{embed.name}}</a>
-                                <a class='context-available' ng-click='openMenu($event,embed.type)'></a>
-                            </div>
-                            <div class="hide-menu" ng-show="false">
-                                <div class="menu-element context-menu-wrapper mobile-disable-select">
-                                    <div class="menu context-menu">
-                                        <ul>
-                                            <li ng-repeat="menu in menuEmbed"
-                                                ng-click="menu.perform($event,embed.snapshot.src,embed.id,entry.createdOn,this,embed)"
-                                                title="{{menu.getMetadata().description}}"
-                                                class="{{menu.getMetadata().cssClass}}"
-                                                ng-if="embed.snapshot">
-                                                {{menu.getMetadata().name}}
-                                            </li>
-                                            <li ng-repeat="menu in menuEmbedNoSnap"
-                                                ng-click="menu.perform($event,embed.snapshot.src,embed.id,entry.createdOn,this)"
-                                                title="{{menu.getMetadata().description}}"
-                                                class="{{menu.getMetadata().cssClass}}"
-                                                ng-if="!embed.snapshot">
-                                                {{menu.getMetadata().name}}
-                                            </li>
-                                            <li ng-repeat="menu in embedActions"
-                                                ng-click="menu.perform()"
-                                                title="{{menu.name}}"
-                                                class="{{menu.cssClass}}">
-                                                {{menu.name}}
-                                            </li>
-                                        </ul>
+                        <!-- embeds -->
+                        <div class="flex-elem entry-embeds l-flex-row">
+                            <div class="l-flex-row l-entry-embed {{embed.cssClass}}"
+                                 ng-repeat="embed in entry.embeds track by $index"
+                                 ng-class="{ 'has-snapshot' : embed.snapshot }"
+                                 id="{{embed.id}}">
+                                <div class="snap-thumb"
+                                     ng-if="embed.snapshot"
+                                     ng-click="viewSnapshot($event,embed.snapshot.src,embed.id,entry.createdOn,this,embed)">
+                                    <img ng-src="{{embed.snapshot.src}}" src="//:0" alt="{{embed.id}}" >
+                                </div>
+                                <div class="embed-info l-flex-col">
+                                    <div class="embed-title object-header">
+                                        <a ng-click='navigate($event,embed.type)'>{{embed.name}}</a>
+                                        <a class='context-available' ng-click='openMenu($event,embed.type)'></a>
                                     </div>
+                                    <div class="hide-menu" ng-show="false">
+                                        <div class="menu-element context-menu-wrapper mobile-disable-select">
+                                            <div class="menu context-menu">
+                                                <ul>
+                                                    <li ng-repeat="menu in menuEmbed"
+                                                        ng-click="menu.perform($event,embed.snapshot.src,embed.id,entry.createdOn,this,embed)"
+                                                        title="{{menu.getMetadata().description}}"
+                                                        class="{{menu.getMetadata().cssClass}}"
+                                                        ng-if="embed.snapshot">
+                                                        {{menu.getMetadata().name}}
+                                                    </li>
+                                                    <li ng-repeat="menu in menuEmbedNoSnap"
+                                                        ng-click="menu.perform($event,embed.snapshot.src,embed.id,entry.createdOn,this)"
+                                                        title="{{menu.getMetadata().description}}"
+                                                        class="{{menu.getMetadata().cssClass}}"
+                                                        ng-if="!embed.snapshot">
+                                                        {{menu.getMetadata().name}}
+                                                    </li>
+                                                    <li ng-repeat="menu in embedActions"
+                                                        ng-click="menu.perform()"
+                                                        title="{{menu.name}}"
+                                                        class="{{menu.cssClass}}">
+                                                        {{menu.name}}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="embed-date"
+                                         ng-if="embed.snapshot">{{embed.id| date:'yyyy-MM-dd HH:mm:ss'}}</div>
                                 </div>
                             </div>
-                            <div class="embed-date"
-                                 ng-if="embed.snapshot">{{embed.id| date:'yyyy-MM-dd HH:mm:ss'}}</div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- delete entry -->
-            <div class="holder flex-elem local-control notebook-entry-delete">
-                <a class="s-icon-button icon-trash" title="Delete Entry" ng-click="deleteEntry($event)"></a>
-            </div>
-          </li>
+                <!-- delete entry -->
+                <div class="holder flex-elem local-control notebook-entry-delete">
+                    <a class="s-icon-button icon-trash" title="Delete Entry" ng-click="deleteEntry($event)"></a>
+                </div>
+            </li>
         </ul>
     </div>
 </div>
