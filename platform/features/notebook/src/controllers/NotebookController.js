@@ -55,7 +55,7 @@ define(
 
             this.scope = $scope;
 
-            $scope.reportModel = function () {
+            $scope.logModel = function () {
                 var entries = $scope.domainObject.model.entries;
                 // console.log("REPORT_MODEL:");
                 // console.log(entries.length + " entries");
@@ -81,7 +81,6 @@ define(
             /*--create a new entry--*/
             $scope.newEntry = function ($event) {
                 $scope.scrollToTop();
-                $scope.reportModel();
                 var entries = $scope.domainObject.model.entries;
                 var lastEntry = entries[entries.length - 1];
                 if (lastEntry === undefined || lastEntry.text || lastEntry.embeds) {
@@ -142,8 +141,6 @@ define(
                 } else {
                    $event.target.innerText = '';
                 }
-                // console.log('focus: ' + entryId + '; currentEntryValue: ' + $scope.currentEntryValue);
-                // console.log('----');
             };
 
             $scope.textBlur = function ($event, entryId) {
@@ -203,7 +200,7 @@ define(
             $scope.getDomainObj = function (id) {
                 return objectService.getObjects([id]);
             };
-            /*-----*/
+
             function refreshComp(change) {
                 if (change && change.length) {
                     change[0].getCapability('action').getActions({key: 'remove'})[0].perform();
@@ -258,11 +255,12 @@ define(
                             snapshot = reader.result;
                             $scope.domainObject.useCapability('mutation', function (model) {
                                 if (model.entries[entryPos]) {
-                                    model.entries[entryPos].embeds[embedPos].snapshot = {'src': snapshot,
-                                                                                     'type': url.type,
-                                                                                     'size': url.size,
-                                                                                     'modified': Date.now()
-                                                                                 };
+                                    model.entries[entryPos].embeds[embedPos].snapshot = {
+                                        'src': snapshot,
+                                        'type': url.type,
+                                        'size': url.size,
+                                        'modified': Date.now()
+                                    };
                                     model.entries[entryPos].embeds[embedPos].id = Date.now();
                                 }
                             });

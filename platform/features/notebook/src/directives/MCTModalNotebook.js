@@ -137,7 +137,9 @@ define([
 
             }
 
-            toggleOverlay = function () {
+            toggleOverlay = function (event) {
+                event.stopPropagation();
+
                 if (!isOpen) {
                     openOverlay();
                     isOpen = true;
