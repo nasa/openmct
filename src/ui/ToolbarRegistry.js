@@ -45,10 +45,10 @@
         var providers = this.getAllProviders().filter(function (provider) {
             return provider.forSelection(selection);    
         });
-        
-        if (providers && providers.length > 0) {
-            return providers[0].toolbar();
-        }
+
+        return providers.map(function (provider) {
+            return provider.toolbar(selection);
+        });
     };
 
     /**
@@ -112,6 +112,7 @@
      *
      * @method toolbar
      * @memberof module:openmct.ToolbarProvider#
+     * @param {object} selection the selection object
      * @returns {Object[]} an array of objects defining controls for the toolbar.
      */
 

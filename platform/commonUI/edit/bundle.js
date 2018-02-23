@@ -424,6 +424,18 @@ define([
                         "transactionService"
                     ]
                 }
+            ],
+            "runs": [
+                {
+                    depends: [
+                        "toolbars[]",
+                        "openmct"
+                    ],
+                    implementation: function (toolbars, openmct) {
+                        console.log(openmct, toolbars);
+                        toolbars.forEach(openmct.toolbars.addProvider, openmct.toolbars);
+                    }
+                }
             ]
         }
     });

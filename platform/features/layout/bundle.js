@@ -305,6 +305,35 @@ define([
                     "implementation": LayoutCompositionPolicy
                 }
             ],
+            "toolbars": [
+                {
+                    name: "Display Layout Toolbar",
+                    key: "layout",
+                    description: "A toolbar for objects inside a display layout.",
+                    forSelection: function (selection) {
+                        // Apply the layout toolbar if the selected object is inside a layout.
+                        return (selection && selection[1] && selection[1].context.item.type === 'layout');
+                    },
+                    toolbar: function (selection) {
+                        return [
+                            {
+                                "control": "button",
+                                "method": "showFrame",
+                                "cssClass": "icon-frame-show",
+                                "title": "Show frame",
+                                "description": "Show frame"
+                            },
+                            {
+                                "control": "button",
+                                "method": "hideFrame",
+                                "cssClass": "icon-frame-hide",
+                                "title": "Hide frame",
+                                "description": "Hide frame"
+                            }
+                        ];
+                    }
+                }
+            ],
             "types": [
                 {
                     "key": "layout",
