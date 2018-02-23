@@ -158,30 +158,32 @@
 }
 
 /********************************************* SNAPSHOT VIEWING IN OVERLAY CONTEXT */
-.view-header {
-    .view-date{
-        float: right;
-    }
-    .view-snap-info{
-        float: left;
-    }
-    .s-button{
-        clear: both;
-        float: left;
-        margin-top: 10px;
-        font-size: 14px;
-    }
-    .view-info{
-        float: left;
-        .embed-icon{
-            display: inline-block;
+.t-snapshot {
+    .l-view-header {
+        .view-date {
+            float: right;
         }
-        .embed-title{
-            display: inline-block;
-            margin: 0 5px 0 10px;
+        .view-snap-info {
+            float: left;
         }
-        .object-header{
-            display: inline-block;
+        .s-button {
+            clear: both;
+            float: left;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .view-info {
+            float: left;
+            .embed-icon {
+                display: inline-block;
+            }
+            .embed-title {
+                display: inline-block;
+                margin: 0 5px 0 10px;
+            }
+            .object-header {
+                display: inline-block;
+            }
         }
     }
 }

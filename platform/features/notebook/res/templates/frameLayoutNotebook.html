@@ -29,16 +29,16 @@
             </mct-representation>
         </div>
         <div class="btn-bar right l-flex-row flex-elem flex-justify-end flex-fixed">
+            <a class="s-button icon-notebook"
+               title="New Notebook Entry"
+               ng-if="parameters"
+               ng-click="ngModel()">
+            </a>
             <mct-representation
                     key="'switcher'"
                     ng-model="representation"
                     mct-object="domainObject">
             </mct-representation>
-            <a class="s-button icon-notebook t-btn-view-large"
-               title="New Notebook Entry"
-               ng-if="parameters"
-               ng-click="ngModel()">
-            </a>
             <a class="s-button icon-expand t-btn-view-large"
                title="View large"
                mct-modal-notebook>

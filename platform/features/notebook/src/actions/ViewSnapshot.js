@@ -90,7 +90,7 @@ define(
         }
 
         function headerTemplate() {
-            var template = '<div class="view-header">' +
+            var template = '<div class="t-snapshot l-view-header">' +
                                 '<div class="view-info">' +
                                     '<div ng-class="cssClass" class="embed-icon"></div>' +
                                     '<div class="embed-title">{{entryName}}</div>' +
