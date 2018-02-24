@@ -33,12 +33,13 @@ define([
      * It supports pan and zoom, implements zoom history, and supports locating
      * values near the cursor.
      */
-    function MCTPlotController($scope, $element, $window) {
+    function MCTPlotController($scope, $element, $window, openmct) {
         this.$scope = $scope;
         this.$scope.config = this.config;
         this.$scope.plot = this;
         this.$element = $element;
         this.$window = $window;
+        this.openmct = openmct;
 
         this.xScale = new LinearScale(this.config.xAxis.get('displayRange'));
         this.yScale = new LinearScale(this.config.yAxis.get('displayRange'));
@@ -356,6 +357,13 @@ define([
         this.config.xAxis.set('displayRange', previousAxisRanges.x);
         this.config.yAxis.set('displayRange', previousAxisRanges.y);
         this.$scope.$emit('user:viewport:change:end');
+    };
+
+
+    MCTPlotController.prototype.syncConductor = function () {
+        var xDisplayRange = this.config.xAxis.get('displayRange');
+        this.openmct.time.stopClock();
+        this.openmct.time.bounds({start: xDisplayRange.min, end: xDisplayRange.max});
     };
 
     MCTPlotController.prototype.destroy = function () {
