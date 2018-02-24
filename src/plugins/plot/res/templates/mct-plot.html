@@ -166,6 +166,11 @@
                      ng-show="plotHistory.length"
                      style="position: absolute; top: 8px; right: 8px;">
 
+                    <a class="s-button icon-brackets"
+                        ng-click="plot.syncConductor()"
+                        title="Synchronize Time Conductor to plot bounds">
+                    </a>
+
                     <a class="s-button icon-arrow-left"
                        ng-click="plot.back()"
                        title="Restore previous pan/zoom">

@@ -33,7 +33,7 @@ define([
         return {
             restrict: "E",
             template: PlotTemplate,
-            controller: MCTPlotController,
+            controller: ['$scope', '$element', '$window', 'openmct', MCTPlotController],
             controllerAs: 'mctPlotController',
             bindToController: {
                 config: "="
