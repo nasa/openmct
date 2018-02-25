@@ -34,11 +34,10 @@
     }
 
     /**
-     * Gets a provider which can provide a toolbar for this selection.
+     * Gets toolbar controls from providers which can provide a toolbar for this selection.
      *
      * @param {object} selection the selection object
-     * @returns {module:openmct.ToolbarRegistry[]} any providers which can
-     *          provide toolbar for this selection.
+     * @returns {Object[]} an array of objects defining controls for the toolbar
      * @private for platform-internal use
      */
     ToolbarRegistry.prototype.get = function (selection) {
@@ -46,9 +45,15 @@
             return provider.forSelection(selection);    
         });
 
-        return providers.map(function (provider) {
-            return provider.toolbar(selection);
+        var structure = [];
+
+        providers.map(function (provider) {
+            provider.toolbar(selection).forEach(function (item) {
+                structure.push(item);
+            });
         });
+
+        return structure;
     };
 
     /**
