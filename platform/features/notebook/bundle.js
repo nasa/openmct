@@ -146,7 +146,7 @@ define([
                 },
                 {
                     "key": "frameLayoutNotebook",
-                    "templateUrl": "templates/frameLayoutNotebook.html"
+                    "templateUrl": "../../layout/res/templates/frame.html"
                 }
             ],
             "templates": [
