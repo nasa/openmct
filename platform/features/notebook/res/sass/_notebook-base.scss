@@ -1,0 +1,414 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2016, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+.mct-notebook{
+    overflow: hidden;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    width: auto;
+    height: auto;
+    div.example-button-group {
+        margin-top: 12px;
+        margin-bottom: 12px;
+    }
+
+    .example-button-group a {
+        padding: 3px;
+        margin: 3px;
+    }
+
+    .example-button-group a.selected {
+        border: 1px gray solid;
+        border-radius: 3px;
+        background: #444;
+    }
+
+    .example-task-completed .example-task-description {
+        text-decoration: line-through;
+        opacity: 0.75;
+    }
+
+    .example-task-description.selected {
+        background: #46A;
+        border-radius: 3px;
+    }
+
+    .example-message {
+        font-style: italic;
+    } 
+} 
+
+.notebook-new-entry{
+    height: 350px;
+}
+
+.drag-area{
+    border: 2px dashed #006080;
+    border-radius: 5px;
+    padding: 10px 0;
+    margin: 15px 0;
+    font-style: italic;
+    cursor: pointer;
+    &.drag-active{
+        border: 2px dashed $colorKey;
+    }
+    .glyph{
+        flex: 1 1 0;
+        &:before{
+            left:10px;
+            position: relative;
+        }
+    }
+    p{
+        flex: 4 1 0;
+        margin: 0;
+    }
+}
+
+.frame{
+   .icon-notebook{
+        margin-right: 5px;
+    } 
+}
+
+.overlay.l-dialog .title{
+    white-space: normal;
+}
+
+.entries-wrapper{
+    display: block;
+    position: relative;
+    overflow: scroll;
+    height: calc(100% - 92px);
+    .entries-list{
+        .entry{
+            border-bottom: 1px solid #999;
+            padding: 10px 0;
+            &:first-child{
+                border-top: 1px solid #999;
+            }
+            &.active,&:hover{
+                background-color: rgba(0, 153, 204, 0.2);
+                .entry-info .entry-text{
+                    .unedited-text{
+                        display: none;
+                    }
+                    textarea{
+                        background-color: $colorBodyBg;
+                        min-height: 50px;
+                        height: auto;
+                        resize: none;
+                        display: block;
+                    }
+                }                
+            }
+            .entry-time{
+                flex: 1 1 0;
+                text-align: center;
+            }
+            .entry-info{
+                 flex: 4 1 0;
+                 padding: 0 15px;
+                 min-height: 65px;
+                 .embeds{
+                    flex-wrap: wrap;                    
+                 }
+                 .snap-thumb,.embed-icon{
+                    cursor: pointer;
+                 }
+                 .entry-text{
+                    min-height: 50px;
+                    margin-bottom:15px;
+                    display: block;
+                    overflow: hidden;
+                    .unedited-text{
+                        margin: 0;
+                        min-height: 50px;
+                        p{
+                           margin: 0;
+                       }                        
+                    }
+
+                    textarea{
+                        display: none;
+                    }
+                 }
+                 .entry-embedded{
+                        margin-right: 20px;
+                        height: 100px;
+                        position: relative;
+                        margin-bottom: 20px
+
+                 }
+            }
+            .entry-delete{
+                padding: 0 15px;
+            }
+
+
+        }
+    }
+}
+
+.embed{
+    .embed-info{
+        .embed-title{
+            z-index: 99;
+            text-transform: uppercase;
+            max-width: 200px;
+        }  
+        .embed-date{
+            font-size: 14px;
+            margin-top: 5px;
+        }  
+                              
+    }
+    .embed-icon{
+        margin: 10px;
+        position: absolute;
+    }  
+    .btn-annotate{
+        margin: 0 15px;
+        z-index: 3;
+    }
+    &.nosnapshot{
+        .embed-icon{
+            margin: 2px;  
+            cursor: initial;         
+        }  
+        .embed-info{
+            padding-left: 25px;            
+        }  
+        .embed-title{
+            max-width: 200px;
+        }
+    }
+}
+
+
+.snapshot{
+    z-index: -9999;
+    background: $colorBodyBg;
+}
+
+.t-contents,.snap-annotation{
+    overflow: hidden;
+    img{
+        width: 100%;
+    }
+}
+
+.snap-thumb{
+    width: 100px;    
+    height: 100px;                       
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid #999;   
+    margin-right: 15px;
+    img{
+       height: 100%;
+       width: 100%;
+    }                         
+}
+
+
+
+.notebook-filters{
+    .select{
+        margin-left: 10px;
+        border-radius: 5px;
+    }
+}
+
+.embed-info{
+    .embed-title{
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+}
+
+.user-folders{
+    border-top: 1px solid #999;
+    padding-top: 10px;
+    .t-item-icon{
+        margin-right: 10px;
+    }
+}
+
+.options-menu-container{
+    margin: 0;
+    padding: 0;
+    display: block;
+
+    .embed-option{
+        box-sizing: border-box;
+        border-top: 1px solid #878787;
+        color: white;
+        line-height: 1.5rem;
+        padding: 3px 10px 3px 28px;
+        position: relative;
+        white-space: nowrap;
+        display: list-item;
+        &:first-child{
+            border: none;
+        }
+    }
+}
+
+.new-display-embed{
+    font-size: 14px;
+    .nosnapshot{
+        .embed-icon{
+            margin: 2px;
+        }
+        .embed-info{
+            padding-left: 25px;
+        }
+    }
+}
+
+.view-header{
+    .view-date{
+        float: right;
+    }
+    .view-snap-info{
+        float: left;
+    }
+    .s-button{
+        clear: both;
+        float: left;
+        margin-top: 10px;
+        font-size: 14px;
+    }
+    .view-info{
+        float: left;
+        .embed-icon{
+            display: inline-block;
+        }
+        .embed-title{
+            display: inline-block;
+            margin: 0 5px 0 10px;
+        }
+        .object-header{
+            display: inline-block;
+        }
+    }
+
+}
+
+.context-available{
+    outline: none;
+}
+
+.menu-element.menu-view{
+    z-index: 999;
+}
+
+.new-notebook-entry{
+    float: left;
+    .title-label{
+        margin-left: 5px;
+    }    
+}
+
+.notebook-button-container{
+    position: absolute; 
+    top:30px;
+}
+
+.container-notebook{
+    top:64px;
+    height: calc(100% - 30px);
+}
+
+.ptro-color-main{
+    top: 0;
+    z-index: 10;
+    position: relative;
+    height: auto;
+    min-height: 41px;
+}
+
+.ptro-wrapper{
+    bottom: 0;
+    top: 40px;
+}
+
+.overlay.l-dialog .abs.editor{
+    padding-right: 0;
+}
+
+.overlay.l-dialog .outer-holder.annotation-dialog{
+    width: 90%;
+    height: 90%;
+}
+
+.snap-annotation-wrapper{
+    padding-top: 40px;
+}
+
+.annotate-new{
+    .s-button{
+        margin-left: 25px;
+        margin-top: 10px;
+        z-index: 9;
+    }
+}
+
+@media screen and (max-width: 1024px){
+    .entries-wrapper{
+        font-size: 14px;
+    }
+
+    .l-message{
+        display: inline-block;
+        width: 100%;
+        .type-icon.message-type{
+            margin: 0 auto 40px;
+        }
+
+        .top-bar .title{
+            text-align: center;
+            white-space: normal;
+        }
+    }
+
+    .ptro-color-main{
+        height: 80px;
+        .tool-controls,>div>span:not(.ptro-info){
+            float: left;
+        }
+    }
+
+    .ptro-wrapper{
+        top: 80px;
+    }
+}
+
+@media screen and (max-width: 768px){
+    .ptro-bar>div {
+        white-space: normal;
+    }
+}
+

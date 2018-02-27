@@ -38,6 +38,10 @@ define([
 '       </div>' +
 '    </div>';
 
+    var NEW_NOTEBOOK_TEMPLATE = '<a class="s-button icon-notebook new-notebook-entry" title="New Notebook Entry">' +
+                                    '<span class="title-label">New Notebook Entry</span>' +
+                                '</a>';
+
     /**
      * MCT Trigger Modal is intended for use in only one location: inside the
      * object-header to allow views in a layout to be popped out in a modal.
@@ -49,7 +53,7 @@ define([
      * should be able to handle slight relocations so long as it is always a
      * descendent of a `.frame` element.
      */
-    function MCTTriggerModal($document) {
+    function MCTModalNotebook($document) {
         var document = $document[0];
 
         function link($scope, $element) {
@@ -73,8 +77,10 @@ define([
                 overlay,
                 closeButton,
                 doneButton,
+                notebookButton,
                 blocker,
-                overlayContainer;
+                overlayContainer,
+                notebookButtonEl;
 
             function openOverlay() {
 
@@ -93,6 +99,22 @@ define([
                 document.body.appendChild(overlay);
                 layoutContainer.removeChild(frame);
                 overlayContainer.appendChild(frame);
+
+                //verify if there is a new notebook entry action
+                var actions = $scope.domainObject.getCapability('action');
+                var notebookAction = actions.getActions({'key': 'notebook-new-entry'});
+                if (notebookAction.length > 0) {
+                    notebookButtonEl = document.createElement('div');
+                    $(notebookButtonEl).addClass('notebook-button-container');
+                    notebookButtonEl.innerHTML = NEW_NOTEBOOK_TEMPLATE;
+                    notebookButton = frame.querySelector('.object-browse-bar .left');
+                    notebookButton.appendChild(notebookButtonEl);
+                    $(frame.querySelector('.object-holder')).addClass('container-notebook');
+                    notebookButton.addEventListener('click', function () {
+                        notebookAction[0].perform();
+                    });
+                }
+
             }
 
             function closeOverlay() {
@@ -108,6 +130,12 @@ define([
                 blocker = undefined;
                 overlayContainer = undefined;
                 overlay = undefined;
+
+
+                if (notebookButton) {
+                    notebookButton.removeChild(notebookButtonEl);
+                }
+
             }
 
             toggleOverlay = function () {
@@ -132,6 +160,6 @@ define([
         };
     }
 
-    return MCTTriggerModal;
+    return MCTModalNotebook;
 
 });

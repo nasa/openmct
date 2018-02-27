@@ -1,0 +1,122 @@
+<div ng-controller="NotebookController as controller" class="mct-notebook">
+
+     <!-- Reuse of native styles the more as I can -->
+  <div class="notebook-head l-flex-row flex-elem grows">
+    <div class="l-flex-row holder holder-search">
+
+     <div class="search-bar flex-elem l-flex-row"
+           ng-class="{ holder: !(entrySearch === '' || entrySearch === undefined) }">
+          <div class="holder flex-elem grows">
+              <input class="search-input"
+                     type="text" tabindex="10000"
+                     ng-model="entrySearch"
+                     ng-keyup="controller.search()"/>
+              <a class="clear-icon clear-input icon-x-in-circle"
+                 ng-class="{show: !(entrySearch === '' || entrySearch === undefined)}"
+                 ng-click="entrySearch = ''; controller.search()"></a>
+          </div>
+
+          <a class="holder s-button flex-elem btn-cancel"
+             ng-show="!(entrySearch === '' || entrySearch === undefined)"
+             ng-click="entrySearch = ''; ngModel.checkAll = true; menuController.checkAll(); controller.search()">
+              Cancel</a>
+      </div>
+    </div>
+
+    <div class="notebook-filters right l-flex-row flex-elem grows flex-justify-end">
+      <div class="select">
+          <select ng-model="showTime">
+              <option value="0" selected="selected">Show all</option>
+              <option value="1">Last Hour</option>
+              <option value="8">Last 8 Hours</option>
+              <option value="24">Last 24 Hours</option>
+          </select>
+      </div>
+      <div class="select">
+          <select ng-model="sortEntries">
+              <option value="-createdOn" selected="selected">Newest first</option>
+              <option value="createdOn">Oldest first</option>
+          </select>
+      </div>
+    </div>
+  </div>
+
+
+ <!--  drag area -->
+
+ <div class="drag-area l-flex-row" ng-click="newEntry($event)" id="newEntry" mct-entry-dnd>
+    <div class="glyph icon-plus" title="new"></div>
+    <p>To start a new entry, click here or drag and drop any object</p>
+  </div>
+
+  <!-- entries -->
+
+  <div class="entries-wrapper" ng-mouseover="handleActive()">
+    <ul class="entries-list">
+      <li class="entry l-flex-row" id="{{'entry_'+entry.createdOn}}" ng-if="hoursFilter(showTime,entry.createdOn)" ng-repeat="entry in model.entries | filter:entrySearch | orderBy: sortEntries track by $index" ng-init="$last && finished(model.entries)" mct-entry-dnd>
+        <div class="entry-time">{{entry.createdOn | date:'yyyy-MM-dd HH:mm:ss'}}</div>
+        <div class="entry-info">
+          <div class="entry-text">
+            <div class="unedited-text">
+              <p ng-repeat="line in parseText(entry.text) track by $index">
+                      {{line}}
+              </p>
+            </div>             
+            <textarea ng-blur="textBlur($event,entry.createdOn)" ng-focus="textFocus($event)" ng-model="entry.text" placeholder="Enter text here" class="sm" rows="{{parseText(entry.text).length}}">{{entry.text}}</textarea>
+          </div>
+           <!-- embeds -->
+          <div class="embeds l-flex-row">
+            <div class="entry-embedded" ng-repeat="embed in entry.embeds track by $index" id="{{embed.id}}">        
+                 <div class="l-flex-row embed" ng-class="{ 'nosnapshot' : !embed.snapshot}">
+                    <div ng-class="embed.cssClass" class="embed-icon" ng-click="viewSnapshot($event,embed.snapshot.src,embed.id,entry.createdOn,this,embed)"></div>
+                    <div class="snap-thumb" ng-if="embed.snapshot" ng-click="viewSnapshot($event,embed.snapshot.src,embed.id,entry.createdOn,this,embed)">
+                      <img ng-src="{{embed.snapshot.src}}" src="//:0" alt="{{embed.id}}" >
+                    </div>      
+                    <div class="embed-info l-flex-col">
+                      <div class="embed-title object-header">
+                          <a href="#" ng-click='navigate($event,embed.type)'>{{embed.name}}</a>
+                          <a href="#" class='context-available' ng-click='openMenu($event,embed.type)'></a>
+                      </div>
+                      
+                      <div class="hide-menu" ng-show="false">
+                        <div class="menu-element context-menu-wrapper mobile-disable-select">
+                            <div class="menu context-menu">
+                                <ul>
+                                    <li ng-repeat="menu in menuEmbed"
+                                        ng-click="menu.perform($event,embed.snapshot.src,embed.id,entry.createdOn,this,embed)"
+                                        title="{{menu.getMetadata().description}}"
+                                        class="{{menu.getMetadata().cssClass}}"
+                                        ng-if="embed.snapshot">
+                                        {{menu.getMetadata().name}}
+                                    </li>
+                                    <li ng-repeat="menu in menuEmbedNoSnap"
+                                        ng-click="menu.perform($event,embed.snapshot.src,embed.id,entry.createdOn,this)"
+                                        title="{{menu.getMetadata().description}}"
+                                        class="{{menu.getMetadata().cssClass}}"
+                                        ng-if="!embed.snapshot">
+                                        {{menu.getMetadata().name}}
+                                    </li>
+                                    <li ng-repeat="menu in embedActions"
+                                        ng-click="menu.perform()"
+                                        title="{{menu.name}}"
+                                        class="{{menu.cssClass}}">
+                                        {{menu.name}}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                      </div>                      
+                      <div class="embed-date">{{embed.id| date:'yyyy-MM-dd HH:mm:ss'}}</div>
+                    </div>              
+                 </div>                
+            </div> 
+          </div>                  
+        </div>
+        <!-- delete entry -->
+        <div class="entry-delete">
+          <a class="s-icon-button icon-trash" title="Delete Entry" ng-click="deleteEntry($event)"></a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

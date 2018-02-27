@@ -3,6 +3,7 @@
   "version": "0.13.2-SNAPSHOT",
   "description": "The Open MCT core platform",
   "dependencies": {
+    "@cristian77/painterro": "^0.2.48",
     "d3-array": "^1.0.2",
     "d3-axis": "^1.0.4",
     "d3-collection": "^1.0.2",
