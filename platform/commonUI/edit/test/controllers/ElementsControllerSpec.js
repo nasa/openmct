@@ -31,11 +31,34 @@ define(
                 mockSelection,
                 mockDomainObject,
                 mockMutationCapability,
+                mockCompositionCapability,
+                mockCompositionObjects,
+                mockComposition,
                 mockUnlisten,
                 selectable = [],
                 controller;
 
+            function mockPromise(value) {
+                return {
+                    then: function (thenFunc) {
+                        return mockPromise(thenFunc(value));
+                    }
+                };
+            }
+
+            function createDomainObject() {
+                return {
+                    useCapability: function () {
+                        return mockCompositionCapability;
+                    }
+                };
+            }
+
             beforeEach(function () {
+                mockComposition = ["a", "b"];
+                mockCompositionObjects = mockComposition.map(createDomainObject);
+                mockCompositionCapability = mockPromise(mockCompositionObjects);
+
                 mockUnlisten = jasmine.createSpy('unlisten');
                 mockMutationCapability = jasmine.createSpyObj("mutationCapability", [
                     "listen"
@@ -45,7 +68,7 @@ define(
                     "getCapability",
                     "useCapability"
                 ]);
-                mockDomainObject.useCapability.andCallThrough();
+                mockDomainObject.useCapability.andReturn(mockCompositionCapability);
                 mockDomainObject.getCapability.andReturn(mockMutationCapability);
 
                 mockScope = jasmine.createSpyObj("$scope", ['$on']);
@@ -65,7 +88,7 @@ define(
                     }
                 };
 
-                spyOn(ElementsController.prototype, 'refreshComposition');
+                spyOn(ElementsController.prototype, 'refreshComposition').andCallThrough();
 
                 controller = new ElementsController(mockScope, mockOpenMCT);
             });
@@ -136,6 +159,25 @@ define(
                 mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
 
                 expect(mockDomainObject.getCapability).not.toHaveBeenCalledWith('mutation');
+            });
+
+            it("checks concurrent changes to composition", function () {
+                var secondMockComposition = ["a", "b", "c"],
+                    secondMockCompositionObjects = secondMockComposition.map(createDomainObject),
+                    firstCompositionCallback,
+                    secondCompositionCallback;
+
+                spyOn(mockCompositionCapability, "then").andCallThrough();
+
+                controller.refreshComposition(mockDomainObject);
+                controller.refreshComposition(mockDomainObject);
+
+                firstCompositionCallback = mockCompositionCapability.then.calls[0].args[0];
+                secondCompositionCallback = mockCompositionCapability.then.calls[1].args[0];
+                secondCompositionCallback(secondMockCompositionObjects);
+                firstCompositionCallback(mockCompositionObjects);
+
+                expect(mockScope.composition).toBe(secondMockCompositionObjects);
             });
         });
     }
