@@ -88,11 +88,15 @@ define(
          * @private
          */
         ElementsController.prototype.refreshComposition = function (domainObject) {
-            var selectedObjectComposition = domainObject && domainObject.useCapability('composition');
+            var refreshTracker = {};
+            this.currentRefresh = refreshTracker;
 
+            var selectedObjectComposition = domainObject && domainObject.useCapability('composition');
             if (selectedObjectComposition) {
                 selectedObjectComposition.then(function (composition) {
-                    this.scope.composition = composition;
+                    if (this.currentRefresh === refreshTracker) {
+                        this.scope.composition = composition;
+                    }
                 }.bind(this));
             } else {
                 this.scope.composition = [];
