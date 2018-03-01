@@ -30,7 +30,8 @@ define([
     '../../platform/import-export/bundle',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
-    './telemetryMean/plugin'
+    './telemetryMean/plugin',
+    './ladTable/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -41,7 +42,8 @@ define([
     ImportExport,
     SummaryWidget,
     URLIndicatorPlugin,
-    TelemetryMean
+    TelemetryMean,
+    LADTable
 ) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
@@ -129,6 +131,8 @@ define([
     plugins.SummaryWidget = SummaryWidget;
     plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicatorPlugin = URLIndicatorPlugin;
+
+    plugins.LADTable = LADTable;
 
     return plugins;
 });
