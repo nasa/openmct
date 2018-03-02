@@ -38,7 +38,6 @@ define([
     '../example/msl/bundle',
     '../example/notifications/bundle',
     '../example/persistence/bundle',
-    '../example/plotOptions/bundle',
     '../example/policy/bundle',
     '../example/profiling/bundle',
     '../example/scratchpad/bundle',
