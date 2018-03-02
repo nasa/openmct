@@ -165,10 +165,13 @@ define([
                 return;
             }
             var valueMetadata = this.metadata.value(newKey);
-            if (valueMetadata.format === 'enum') {
-                this.set('interpolate', 'stepAfter');
-            } else {
-                this.set('interpolate', 'linear');
+            var persistedConfig = this.get('persistedConfiguration');
+            if (!persistedConfig || !persistedConfig.interpolate) {
+                if (valueMetadata.format === 'enum') {
+                    this.set('interpolate', 'stepAfter');
+                } else {
+                    this.set('interpolate', 'linear');
+                }
             }
             this.evaluate = function (datum) {
                 return this.limitEvaluator.evaluate(datum, valueMetadata);

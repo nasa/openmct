@@ -41,6 +41,7 @@ define([
             this.palette = new color.ColorPalette();
             this.listenTo(this, 'add', this.onSeriesAdd, this);
             this.listenTo(this, 'remove', this.onSeriesRemove, this);
+            this.listenTo(this.plot, 'change:domainObject', this.trackPersistedConfig, this);
 
             var domainObject = this.plot.get('domainObject');
             if (domainObject.telemetry) {
@@ -48,6 +49,14 @@ define([
             } else {
                 this.watchTelemetryContainer(domainObject);
             }
+        },
+        trackPersistedConfig: function (domainObject) {
+            domainObject.configuration.series.forEach(function (seriesConfig) {
+                var series = this.byIdentifier(seriesConfig.identifier);
+                if (series) {
+                    series.set('persistedConfiguration', seriesConfig);
+                }
+            }, this);
         },
         watchTelemetryContainer: function (domainObject) {
             var composition = this.openmct.composition.get(domainObject);
@@ -74,6 +83,9 @@ define([
                 // Clone to prevent accidental mutation by ref.
                 seriesConfig = JSON.parse(JSON.stringify(seriesConfig));
             }
+
+            seriesConfig.persistedConfiguration =
+                this.plot.getPersistedSeriesConfig(domainObject.identifier);
 
             this.add(new PlotSeries({
                 model: seriesConfig,
@@ -131,6 +143,13 @@ define([
             if (!seriesWithColor) {
                 this.palette.return(oldColor);
             }
+        },
+        byIdentifier: function (identifier) {
+            return this.filter(function (series) {
+                var seriesIdentifier = series.get('identifier');
+                return seriesIdentifier.namespace === identifier.namespace &&
+                    seriesIdentifier.key === identifier.key;
+            })[0];
         }
     });
 
