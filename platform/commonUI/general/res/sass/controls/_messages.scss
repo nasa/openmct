@@ -398,10 +398,6 @@ body.desktop .t-message-list {
     .object-header {
         .t-object-alert {
             display: inline;
-            &.t-alert-unsynced {
-                @extend .icon-alert-triangle;
-                color: $colorPausedBg;
-            }
         }
     }
 }

@@ -89,7 +89,8 @@ module.exports = function(config) {
                 "dist/reports/coverage",
             check: {
                 global: {
-                    lines: 80
+                    lines: 80,
+                    excludes: ['src/plugins/plot/**/*.js']
                 }
             }
         },

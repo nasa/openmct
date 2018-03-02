@@ -58,11 +58,7 @@
         position: relative;
     }
 
-    .w-mct-example {
-        div {
-            margin-bottom: $interiorMarginLg;
-        }
-    }
+    .w-mct-example > div { margin-bottom: $interiorMarginLg; }
 
     code,
     pre {
