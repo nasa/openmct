@@ -48,7 +48,6 @@ define([
 
         this.configId = $scope.domainObject.getId();
         this.setUpScope();
-        window.config = this;
     }
 
     eventHelpers.extend(PlotOptionsController.prototype);

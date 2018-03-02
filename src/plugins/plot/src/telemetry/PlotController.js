@@ -71,7 +71,6 @@ define([
         this.config.series.forEach(this.addSeries, this);
 
         this.followTimeConductor();
-        window.plot = this;
     }
 
     eventHelpers.extend(PlotController.prototype);

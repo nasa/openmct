@@ -117,12 +117,6 @@ define([
         this.$scope = $scope;
         this.$element = $element;
 
-        if (!window.ticks) {
-            window.ticks = [];
-        }
-
-        window.ticks.push(this);
-
         this.tickCount = 4;
         this.tickUpdate = false;
         this.listenTo(this.axis, 'change:displayRange', this.updateTicks, this);

@@ -53,7 +53,6 @@ define([
         this.listenTo(this.$scope, 'plot:clearHistory', this.clear, this);
 
         this.initialize();
-        window.control = this;
     }
 
     MCTPlotController.$inject = ['$scope', '$element', '$window'];

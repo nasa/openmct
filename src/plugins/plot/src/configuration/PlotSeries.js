@@ -236,8 +236,6 @@ define([
          * @returns {Promise}
          */
         load: function (options) {
-            this.resetOnAppend = true;
-
             return this.fetch(options)
                 .then(function (res) {
                     this.emit('load');
