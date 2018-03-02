@@ -125,7 +125,7 @@ define([
         },
         updateColorPalette: function (newColor, oldColor) {
             this.palette.remove(newColor);
-            var seriesWithColor = this.series.filter(function (series) {
+            var seriesWithColor = this.filter(function (series) {
                 return series.get('color') === newColor;
             })[0];
             if (!seriesWithColor) {
