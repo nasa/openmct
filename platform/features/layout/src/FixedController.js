@@ -374,7 +374,7 @@ define(
         FixedController.prototype.updateView = function (telemetryObject, datum) {
             var metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             var telemetryKeyToDisplay = this.chooseTelemetryKeyToDisplay(metadata);
-            var formattedTelemetryValue = this.getFormattedTelemetryValueForKey(telemetryKeyToDisplay, datum, metadata);
+            var formattedTelemetryValue = this.getFormattedTelemetryValueForKey(metadata, datum);
             var limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
             var alarm = limitEvaluator && limitEvaluator.evaluate(datum, telemetryKeyToDisplay);
 
@@ -389,11 +389,11 @@ define(
         /**
          * @private
          */
-        FixedController.prototype.getFormattedTelemetryValueForKey = function (telemetryKeyToDisplay, datum, metadata) {
-            var valueMetadata = metadata.value(telemetryKeyToDisplay);
-            var formatter = this.openmct.telemetry.getValueFormatter(valueMetadata);
+        FixedController.prototype.getFormattedTelemetryValueForKey = function (metadata, datum) {
+            var valueMetadata = metadata.valuesForHints(['range'])[0],
+                formatter = this.openmct.telemetry.getValueFormatter(valueMetadata);
 
-            return formatter.format(datum[valueMetadata.key]);
+            return formatter.format(datum);
         };
 
         /**

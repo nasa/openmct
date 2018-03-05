@@ -106,8 +106,8 @@ define(
                     'telemetryFormatter',
                     ['format']
                 );
-                mockFormatter.format.andCallFake(function (value) {
-                    return "Formatted " + value;
+                mockFormatter.format.andCallFake(function (valueMetadata) {
+                    return "Formatted " + valueMetadata.value;
                 });
 
                 mockDomainObject = jasmine.createSpyObj(
