@@ -374,9 +374,9 @@ define(
         FixedController.prototype.updateView = function (telemetryObject, datum) {
             var metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             var telemetryKeyToDisplay = this.chooseTelemetryKeyToDisplay(metadata);
-            var formattedTelemetryValue = this.getFormattedTelemetryValueForKey(metadata, datum);
+            var formattedTelemetryValue = this.getFormattedTelemetryValueForKey(telemetryKeyToDisplay, datum);
             var limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
-            var alarm = limitEvaluator && limitEvaluator.evaluate(datum, telemetryKeyToDisplay);
+            var alarm = limitEvaluator && limitEvaluator.evaluate(datum, telemetryKeyToDisplay.source);
 
             this.setDisplayedValue(
                 telemetryObject,
@@ -389,9 +389,8 @@ define(
         /**
          * @private
          */
-        FixedController.prototype.getFormattedTelemetryValueForKey = function (metadata, datum) {
-            var valueMetadata = metadata.valuesForHints(['range'])[0],
-                formatter = this.openmct.telemetry.getValueFormatter(valueMetadata);
+        FixedController.prototype.getFormattedTelemetryValueForKey = function (telemetryKeyToDisplay, datum) {
+            var formatter = this.openmct.telemetry.getValueFormatter(telemetryKeyToDisplay);
 
             return formatter.format(datum);
         };
@@ -411,7 +410,7 @@ define(
                 })[0];
             }
 
-            return telemetryKeyToDisplay.source;
+            return telemetryKeyToDisplay;
         };
 
         /**
