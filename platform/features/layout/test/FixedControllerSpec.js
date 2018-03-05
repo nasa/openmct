@@ -697,7 +697,7 @@ define(
                             source: 'range'
                         }
                     ]);
-                    var key = controller.chooseTelemetryKeyToDisplay(mockMetadata).source;
+                    var key = controller.getValueMetadata(mockMetadata).source;
                     expect(key).toEqual('range');
                 });
 
@@ -719,7 +719,7 @@ define(
                             }
                         }
                     ]);
-                    var key = controller.chooseTelemetryKeyToDisplay(mockMetadata).source;
+                    var key = controller.getValueMetadata(mockMetadata).source;
                     expect(key).toEqual('image');
                 });
 
