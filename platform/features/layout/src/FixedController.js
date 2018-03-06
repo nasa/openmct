@@ -373,7 +373,7 @@ define(
          */
         FixedController.prototype.updateView = function (telemetryObject, datum) {
             var metadata = this.openmct.telemetry.getMetadata(telemetryObject);
-            var valueMetadata = this.getValueMetadata(metadata);
+            var valueMetadata = this.chooseValueMetadataToDisplay(metadata);
             var formattedTelemetryValue = this.getFormattedTelemetryValueForKey(valueMetadata, datum);
             var limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
             var alarm = limitEvaluator && limitEvaluator.evaluate(datum, valueMetadata);
@@ -398,7 +398,7 @@ define(
         /**
          * @private
          */
-        FixedController.prototype.getValueMetadata = function (metadata) {
+        FixedController.prototype.chooseValueMetadataToDisplay = function (metadata) {
             // If there is a range value, show that preferentially
             var valueMetadata = metadata.valuesForHints(['range'])[0];
 
