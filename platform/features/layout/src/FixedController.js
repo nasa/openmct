@@ -373,10 +373,10 @@ define(
          */
         FixedController.prototype.updateView = function (telemetryObject, datum) {
             var metadata = this.openmct.telemetry.getMetadata(telemetryObject);
-            var telemetryKeyToDisplay = this.chooseTelemetryKeyToDisplay(metadata);
-            var formattedTelemetryValue = this.getFormattedTelemetryValueForKey(telemetryKeyToDisplay, datum, metadata);
+            var valueMetadata = this.chooseValueMetadataToDisplay(metadata);
+            var formattedTelemetryValue = this.getFormattedTelemetryValueForKey(valueMetadata, datum);
             var limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
-            var alarm = limitEvaluator && limitEvaluator.evaluate(datum, telemetryKeyToDisplay);
+            var alarm = limitEvaluator && limitEvaluator.evaluate(datum, valueMetadata);
 
             this.setDisplayedValue(
                 telemetryObject,
@@ -389,29 +389,28 @@ define(
         /**
          * @private
          */
-        FixedController.prototype.getFormattedTelemetryValueForKey = function (telemetryKeyToDisplay, datum, metadata) {
-            var valueMetadata = metadata.value(telemetryKeyToDisplay);
+        FixedController.prototype.getFormattedTelemetryValueForKey = function (valueMetadata, datum) {
             var formatter = this.openmct.telemetry.getValueFormatter(valueMetadata);
 
-            return formatter.format(datum[valueMetadata.key]);
+            return formatter.format(datum);
         };
 
         /**
          * @private
          */
-        FixedController.prototype.chooseTelemetryKeyToDisplay = function (metadata) {
+        FixedController.prototype.chooseValueMetadataToDisplay = function (metadata) {
             // If there is a range value, show that preferentially
-            var telemetryKeyToDisplay = metadata.valuesForHints(['range'])[0];
+            var valueMetadata = metadata.valuesForHints(['range'])[0];
 
             // If no range is defined, default to the highest priority non time-domain data.
-            if (telemetryKeyToDisplay === undefined) {
+            if (valueMetadata === undefined) {
                 var valuesOrderedByPriority = metadata.values();
-                telemetryKeyToDisplay = valuesOrderedByPriority.filter(function (valueMetadata) {
-                    return !(valueMetadata.hints.domain);
+                valueMetadata = valuesOrderedByPriority.filter(function (values) {
+                    return !(values.hints.domain);
                 })[0];
             }
 
-            return telemetryKeyToDisplay.source;
+            return valueMetadata;
         };
 
         /**
