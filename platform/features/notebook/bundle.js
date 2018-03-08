@@ -116,7 +116,8 @@ define([
                              "now",
                              "actionService",
                              "$timeout",
-                             "$element"
+                             "$element",
+                             "$sce"
                              ]
              },
              {

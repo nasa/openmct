@@ -59,8 +59,8 @@
                              ng-focus="textFocus($event, entry.id)"
                              ng-model="entry.text"
                              placeholder="Enter text here"
-                             class="flex-elem s-input-inline t-notebook-entry-input s-notebook-entry-text">
-                            {{entry.text}}
+                             class="flex-elem s-input-inline t-notebook-entry-input s-notebook-entry-text"
+                             ng-bind-html="trustedHtml(entry.text)">
                         </div>
                         <!-- embeds -->
                         <div class="flex-elem entry-embeds l-flex-row">

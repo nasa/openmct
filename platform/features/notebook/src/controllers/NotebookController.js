@@ -37,7 +37,8 @@ define(
                 now,
                 actionService,
                 $timeout,
-                $element
+                $element,
+                $sce
         ) {
 
             $scope.entriesEl = $(document.body).find('.t-entries-list');
@@ -149,7 +150,7 @@ define(
                     var elementPos = $scope.domainObject.model.entries.map(function (x) {
                         return x.id;
                     }).indexOf(+(entryId));
-
+                    
                     // If the text of an entry has been changed, then update the text and the modifiedOn numeric
                     // Otherwise, don't do anything
                     if ($scope.currentEntryValue !== $event.target.innerText) {
@@ -190,6 +191,12 @@ define(
             $scope.parseText = function (text) {
                 if (text) {
                     return text.split(/\r\n|\r|\n/gi);
+                }
+            };
+
+            $scope.trustedHtml = function (text) {
+                if(text) {
+                    return $sce.trustAsHtml(this.parseText(text).join('<br>'));
                 }
             };
 
