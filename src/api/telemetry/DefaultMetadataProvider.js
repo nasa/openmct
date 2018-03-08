@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/* global console */
 define([
     'lodash'
 ], function (
@@ -103,11 +102,6 @@ define([
     DefaultMetadataProvider.prototype.getMetadata = function (domainObject) {
         var metadata = domainObject.telemetry || {};
         if (this.typeHasTelemetry(domainObject)) {
-            console.warn('DEPRECATION WARNING: Telemetry data on type ' +
-                'registrations will be deprecated in a future version, please ' +
-                'convert to a custom telemetry metadata provider for type: ' +
-                domainObject.type
-            );
             var typeMetadata = this.typeService.getType(domainObject.type).typeDef.telemetry;
             _.extend(metadata, typeMetadata);
             if (!metadata.values) {
