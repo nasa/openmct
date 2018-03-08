@@ -56,16 +56,6 @@ define(
 
             this.scope = $scope;
 
-            $scope.logModel = function () {
-                var entries = $scope.domainObject.model.entries;
-                // console.log("REPORT_MODEL:");
-                // console.log(entries.length + " entries");
-                for (var i=0; i<entries.length; i++) {
-                    var cEntry = entries[i];
-                    // console.log(cEntry.id + ": " + cEntry.createdOn + " / " + cEntry.text);
-                }
-            }
-
             $scope.hoursFilter = function (hours,entryTime) {
                 if (+hours) {
                     return entryTime > (Date.now() - SECONDS_IN_AN_HOUR * (+hours));
@@ -79,7 +69,6 @@ define(
                 entriesContainer[0].scrollTop = 0;
             };
 
-            /*--create a new entry--*/
             $scope.newEntry = function ($event) {
                 $scope.scrollToTop();
                 var entries = $scope.domainObject.model.entries;
@@ -97,7 +86,7 @@ define(
                 $scope.entrySearch = '';
             };
 
-            /*--delete an entry--*/
+
             $scope.deleteEntry = function ($event) {
                 /* This is really brittle - change the markup and this doesn't work */
                 var delId = $event.currentTarget.parentElement.parentElement.id;
@@ -144,6 +133,7 @@ define(
                 }
             };
 
+            //On text blur(when focus is removed)
             $scope.textBlur = function ($event, entryId) {
                 // entryId is the unique numeric based on the original createdOn
                 if ($event.target && $event.target.innerText !== "") {
@@ -194,6 +184,7 @@ define(
                 }
             };
 
+            //parse text and add line breaks where needed
             $scope.trustedHtml = function (text) {
                 if(text) {
                     return $sce.trustAsHtml(this.parseText(text).join('<br>'));
