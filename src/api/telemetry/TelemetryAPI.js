@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open openmct, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * Open openmct is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT includes source code licensed under additional open source
+ * Open openmct includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -23,11 +23,13 @@
 define([
     './TelemetryMetadataManager',
     './TelemetryValueFormatter',
+    './DefaultMetadataProvider',
     '../objects/object-utils',
     'lodash'
 ], function (
     TelemetryMetadataManager,
     TelemetryValueFormatter,
+    DefaultMetadataProvider,
     objectUtils,
     _
 ) {
@@ -131,10 +133,11 @@ define([
      * @augments module:openmct.TelemetryAPI~TelemetryProvider
      * @memberof module:openmct
      */
-    function TelemetryAPI(MCT) {
-        this.MCT = MCT;
+    function TelemetryAPI(openmct) {
+        this.openmct = openmct;
         this.requestProviders = [];
         this.subscriptionProviders = [];
+        this.metadataProviders = [new DefaultMetadataProvider(this.openmct)];
         this.metadataCache = new WeakMap();
         this.formatMapCache = new WeakMap();
         this.valueFormatterCache = new WeakMap();
@@ -201,13 +204,13 @@ define([
      */
     TelemetryAPI.prototype.standardizeRequestOptions = function (options) {
         if (!options.hasOwnProperty('start')) {
-            options.start = this.MCT.time.bounds().start;
+            options.start = this.openmct.time.bounds().start;
         }
         if (!options.hasOwnProperty('end')) {
-            options.end = this.MCT.time.bounds().end;
+            options.end = this.openmct.time.bounds().end;
         }
         if (!options.hasOwnProperty('domain')) {
-            options.domain = this.MCT.time.timeSystem().key;
+            options.domain = this.openmct.time.timeSystem().key;
         }
     };
 
@@ -300,15 +303,28 @@ define([
      */
     TelemetryAPI.prototype.getMetadata = function (domainObject) {
         if (!this.metadataCache.has(domainObject)) {
-            if (!this.typeService) {
-                this.typeService = this.MCT.$injector.get('typeService');
-            }
+
+            var metadataProvider = this.metadataProviders.filter(function (p) {
+                return p.appliesTo(domainObject);
+            })[0];
+
+            var metadata = metadataProvider.getMetadata(domainObject);
+
             this.metadataCache.set(
                 domainObject,
-                new TelemetryMetadataManager(domainObject, this.typeService)
+                new TelemetryMetadataManager(metadata)
             );
         }
         return this.metadataCache.get(domainObject);
+    };
+
+    /**
+     * Register a telemetry metadata provider.  This allows a developer to
+     * provide telemetry metadata for objects dynamically, instead of using
+     * the default provider.
+     */
+    TelemetryAPI.prototype.addMetadataProvider = function (provider) {
+        this.metadataProviders.unshift(provider);
     };
 
     /**
@@ -343,7 +359,7 @@ define([
     TelemetryAPI.prototype.getValueFormatter = function (valueMetadata) {
         if (!this.valueFormatterCache.has(valueMetadata)) {
             if (!this.formatService) {
-                this.formatService = this.MCT.$injector.get('formatService');
+                this.formatService = this.openmct.$injector.get('formatService');
             }
             this.valueFormatterCache.set(
                 valueMetadata,
@@ -375,7 +391,7 @@ define([
      * @param {Format} format the
      */
     TelemetryAPI.prototype.addFormat = function (format) {
-        this.MCT.legacyExtension('formats', {
+        this.openmct.legacyExtension('formats', {
             key: format.key,
             implementation: function () {
                 return format;
