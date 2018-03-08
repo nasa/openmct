@@ -24,11 +24,13 @@
 define([
     "./GeneratorProvider",
     "./SinewaveLimitCapability",
-    "./StateGeneratorProvider"
+    "./StateGeneratorProvider",
+    "./GeneratorMetadataProvider"
 ], function (
     GeneratorProvider,
     SinewaveLimitCapability,
-    StateGeneratorProvider
+    StateGeneratorProvider,
+    GeneratorMetadataProvider
 ) {
 
     var legacyExtensions = {
@@ -70,47 +72,7 @@ define([
             ],
             initialize: function (object) {
                 object.telemetry = {
-                    duration: 5,
-                    values: [
-                        {
-                            key: "name",
-                            name: "Name"
-                        },
-                        {
-                            key: "utc",
-                            name: "Time",
-                            format: "utc",
-                            hints: {
-                                domain: 1
-                            }
-                        },
-                        {
-                            key: "state",
-                            source: "value",
-                            name: "State",
-                            format: "enum",
-                            enumerations: [
-                                {
-                                    value: 0,
-                                    string: "OFF"
-                                },
-                                {
-                                    value: 1,
-                                    string: "ON"
-                                }
-                            ],
-                            hints: {
-                                range: 1
-                            }
-                        },
-                        {
-                            key: "value",
-                            name: "Value",
-                            hints: {
-                                range: 2
-                            }
-                        }
-                    ]
+                    duration: 5
                 }
             }
         });
@@ -190,48 +152,13 @@ define([
                     amplitude: 1,
                     offset: 0,
                     dataRateInHz: 1,
-                    phase: 0,
-                    values: [
-                        {
-                            key: "name",
-                            name: "Name"
-                        },
-                        {
-                            key: "utc",
-                            name: "Time",
-                            format: "utc",
-                            hints: {
-                                domain: 1
-                            }
-                        },
-                        {
-                            key: "yesterday",
-                            name: "Yesterday",
-                            format: "utc",
-                            hints: {
-                                domain: 2
-                            }
-                        },
-                        {
-                            key: "sin",
-                            name: "Sine",
-                            hints: {
-                                range: 1
-                            }
-                        },
-                        {
-                            key: "cos",
-                            name: "Cosine",
-                            hints: {
-                                range: 2
-                            }
-                        }
-                    ]
+                    phase: 0
                 };
             }
         });
 
         openmct.telemetry.addProvider(new GeneratorProvider());
+        openmct.telemetry.addMetadataProvider(new GeneratorMetadataProvider());
     };
 
 });
