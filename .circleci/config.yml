@@ -24,7 +24,7 @@ jobs:
             command: npm run test
         - run:
             name: lint
-            command: gulp lint
+            command: npm run lint
         - run:
             name: checkstyle
             command: gulp checkstyle
