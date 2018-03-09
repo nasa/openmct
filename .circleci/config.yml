@@ -1,0 +1,39 @@
+version: 2
+jobs:
+  build:
+    docker:
+        - image: circleci/node:4-browsers
+          environment:
+            CHROME_BIN: "/usr/bin/google-chrome"
+    steps:
+        - checkout
+        - run:
+            name: Update npm
+            command: 'sudo npm install -g npm@latest'
+        - restore_cache:
+            key: dependency-cache-{{ checksum "package.json" }}
+        - run:
+            name: Install npm
+            command: npm install
+        - run:
+            name: Install gulp
+            command: npm install gulp
+        - save_cache:
+            key: dependency-cache-{{ checksum "package.json" }}
+            paths:
+              - node_modules
+        - run:
+            name: test
+            command: npm run test
+        - run:
+            name: lint
+            command: gulp lint
+        - run:
+            name: checkstyle
+            command: gulp checkstyle
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - build
