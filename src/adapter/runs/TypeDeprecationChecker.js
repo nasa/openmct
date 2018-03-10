@@ -42,6 +42,6 @@ define([
         types.forEach(checkForDeprecatedFunctionality);
     }
 
-    return TypeDeprecationChecker
+    return TypeDeprecationChecker;
 
 });
