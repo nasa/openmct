@@ -308,6 +308,10 @@ define([
                 return p.appliesTo(domainObject);
             })[0];
 
+            if (!metadataProvider) {
+                return;
+            }
+
             var metadata = metadataProvider.getMetadata(domainObject);
 
             this.metadataCache.set(
