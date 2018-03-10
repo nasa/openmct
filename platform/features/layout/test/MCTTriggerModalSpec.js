@@ -52,8 +52,12 @@ define([
 
         beforeEach(function () {
             $scope = jasmine.createSpyObj('$scope', ['$on']);
-            $scope.domainObject = {getCapability: function(){return {getActions: function(){}};}};
-            
+            $scope.domainObject = { getCapability: function () {
+                return { getActions: function () {
+
+                }};
+            }};
+
             $element = jasmine.createSpyObj('$element', [
                 'parent',
                 'remove',

@@ -129,7 +129,7 @@ define(
                      */
                     $scope.currentEntryValue = $event.currentTarget.innerText;
                 } else {
-                   $event.target.innerText = '';
+                    $event.target.innerText = '';
                 }
             };
 
@@ -140,7 +140,7 @@ define(
                     var elementPos = $scope.domainObject.model.entries.map(function (x) {
                         return x.id;
                     }).indexOf(+(entryId));
-                    
+
                     // If the text of an entry has been changed, then update the text and the modifiedOn numeric
                     // Otherwise, don't do anything
                     if ($scope.currentEntryValue !== $event.target.innerText) {
@@ -186,7 +186,7 @@ define(
 
             //parse text and add line breaks where needed
             $scope.trustedHtml = function (text) {
-                if(text) {
+                if (text) {
                     return $sce.trustAsHtml(this.parseText(text).join('<br>'));
                 }
             };
