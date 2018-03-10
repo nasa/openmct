@@ -67,7 +67,7 @@ define(['zepto'], function ($) {
                         severity: "info",
                         delay: true
                     });
-                this.$timeout(function () {
+                window.setTimeout(function () {
                     window.EXPORT_IMAGE_TIMEOUT = 5000;
                     exportImageService.exportPNGtoSRC(el).then(function (img) {
 
