@@ -31,7 +31,9 @@ define([
     '../../platform/import-export/bundle',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
-    './telemetryMean/plugin'
+    './telemetryMean/plugin',
+    './plot/plugin',
+    './staticRootPlugin/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -43,7 +45,9 @@ define([
     ImportExport,
     SummaryWidget,
     URLIndicatorPlugin,
-    TelemetryMean
+    TelemetryMean,
+    PlotPlugin,
+    StaticRootPlugin
 ) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
@@ -66,6 +70,8 @@ define([
     plugins.UTCTimeSystem = UTCTimeSystem;
 
     plugins.ImportExport = ImportExport;
+
+    plugins.StaticRootPlugin = StaticRootPlugin;
 
     /**
      * A tabular view showing the latest values of multiple telemetry points at
@@ -129,6 +135,8 @@ define([
     };
 
     plugins.ExampleImagery = ExampleImagery;
+    plugins.Plot = PlotPlugin;
+
     plugins.SummaryWidget = SummaryWidget;
     plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicatorPlugin = URLIndicatorPlugin;

@@ -105,6 +105,7 @@ define([
     var openmct = new MCT();
 
     openmct.legacyRegistry = defaultRegistry;
+    openmct.install(openmct.plugins.Plot());
 
     if (typeof BUILD_CONSTANTS !== 'undefined') {
         openmct.install(buildInfo(BUILD_CONSTANTS));

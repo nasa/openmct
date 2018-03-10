@@ -181,6 +181,8 @@ $colorPlotHash: $colorTick;
 $stylePlotHash: dashed;
 $colorPlotAreaBorder: $colorInteriorBorder;
 $colorPlotLabelFg: pushBack($colorPlotFg, 20%);
+$legendCollapsedNameMaxW: 50%;
+$legendHoverValueBg: rgba($colorBodyFg, 0.2);
 
 // Tree
 $colorItemTreeHoverBg: pullForward($colorBodyBg, $hoverRatioPercent);

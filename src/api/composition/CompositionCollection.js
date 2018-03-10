@@ -76,20 +76,22 @@ define([
             throw new Error('Event not supported by composition: ' + event);
         }
 
-        if (event === 'add') {
-            this.provider.on(
-                this.domainObject,
-                'add',
-                this.onProviderAdd,
-                this
-            );
-        } if (event === 'remove') {
-            this.provider.on(
-                this.domainObject,
-                'remove',
-                this.onProviderRemove,
-                this
-            );
+        if (this.provider.on && this.provider.off) {
+            if (event === 'add') {
+                this.provider.on(
+                    this.domainObject,
+                    'add',
+                    this.onProviderAdd,
+                    this
+                );
+            } if (event === 'remove') {
+                this.provider.on(
+                    this.domainObject,
+                    'remove',
+                    this.onProviderRemove,
+                    this
+                );
+            }
         }
 
         this.listeners[event].push({
@@ -124,20 +126,22 @@ define([
         if (this.listeners[event].length === 0) {
             // Remove provider listener if this is the last callback to
             // be removed.
-            if (event === 'add') {
-                this.provider.off(
-                    this.domainObject,
-                    'add',
-                    this.onProviderAdd,
-                    this
-                );
-            } else if (event === 'remove') {
-                this.provider.off(
-                    this.domainObject,
-                    'remove',
-                    this.onProviderRemove,
-                    this
-                );
+            if (this.provider.off && this.provider.on) {
+                if (event === 'add') {
+                    this.provider.off(
+                        this.domainObject,
+                        'add',
+                        this.onProviderAdd,
+                        this
+                    );
+                } else if (event === 'remove') {
+                    this.provider.off(
+                        this.domainObject,
+                        'remove',
+                        this.onProviderRemove,
+                        this
+                    );
+                }
             }
         }
     };
