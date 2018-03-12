@@ -123,21 +123,21 @@ define ([
      *                   has completed and types have been parsed
      */
     ConditionManager.prototype.parsePropertyTypes = function (object) {
-        var telemetryAPI = this.openmct.telemetry,
-            key,
-            type,
-            self = this;
 
-        self.telemetryTypesById[object.identifier.key] = {};
-        return telemetryAPI.request(object, {size: 1, strategy: 'latest'}).then(function (telemetry) {
-            Object.entries(telemetry[telemetry.length - 1]).forEach(function (telem) {
-                key = telem[0];
-                type = typeof telem[1];
-                self.telemetryTypesById[object.identifier.key][key] = type;
-                self.subscriptionCache[object.identifier.key][key] = telem[1];
-                self.addGlobalPropertyType(key, type);
-            });
-        });
+        this.telemetryTypesById[object.identifier.key] = {};
+        Object.values(this.telemetryMetadataById[object.identifier.key]).forEach(function(valueMetadata) {
+            if (valueMetadata.hints.hasOwnProperty('range')) {
+                type = 'number';
+            } else if (valueMetadata.hints.hasOwnProperty('domain')) {
+                type = 'number';
+            } else if (valueMetadata.key == 'name') {
+                type = 'string';
+            } else {
+                type = 'string';
+            }
+            this.telemetryTypesById[object.identifier.key][valueMetadata.key] = type;
+            this.addGlobalPropertyType(valueMetadata.key, type);
+        }, this);
     };
 
     /**
@@ -147,23 +147,9 @@ define ([
      *                   and property types parsed
      */
     ConditionManager.prototype.parseAllPropertyTypes = function () {
-        var self = this,
-            index = 0,
-            objs = Object.values(self.compositionObjs),
-            promise = new Promise(function (resolve, reject) {
-                if (objs.length === 0) {
-                    resolve();
-                }
-                objs.forEach(function (obj) {
-                    self.parsePropertyTypes(obj).then(function () {
-                        if (index === objs.length - 1) {
-                            resolve();
-                        }
-                        index += 1;
-                    });
-                });
-            });
-        return promise;
+        Object.values(this.compositionObjs).forEach(this.parsePropertyTypes, this);
+        this.metadataLoadComplete = true;
+        this.eventEmitter.emit('metadata');
     };
 
     /**
@@ -212,6 +198,12 @@ define ([
             self.subscriptions[objId] = telemetryAPI.subscribe(obj, function (datum) {
                 self.handleSubscriptionCallback(objId, datum);
             }, {});
+            telemetryAPI.request(obj, {strategy: 'latest', size: 1})
+                .then(function (results) {
+                    if (results && results.length) {
+                        self.handleSubscriptionCallback(objId, results[results.length - 1]);
+                    }
+                });
 
             /**
              * if this is the initial load, parsing property types will be postponed
@@ -253,13 +245,9 @@ define ([
      * @private
      */
     ConditionManager.prototype.onCompositionLoad = function () {
-        var self = this;
-        self.loadComplete = true;
-        self.eventEmitter.emit('load');
-        self.parseAllPropertyTypes().then(function () {
-            self.metadataLoadComplete = true;
-            self.eventEmitter.emit('metadata');
-        });
+        this.loadComplete = true;
+        this.eventEmitter.emit('load');
+        this.parseAllPropertyTypes()
     };
 
     /**
