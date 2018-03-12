@@ -68,7 +68,7 @@ define(['d3-dsv'], function (d3Dsv) {
 
     ActivityModesImportAction.prototype.instantiateActivityModes = function (activityModesObjects) {
         activityModesObjects.forEach(function (activityMode, index) {
-            var activityModeId = 'activity-mode-' + index + '-' + this.parentId;
+            var activityModeId = activityMode.id || 'activity-mode-' + index + '-' + this.parentId;
 
             this.objectService.getObjects([activityModeId]).then(
                 function (previousActivityMode) {
