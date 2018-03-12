@@ -41,6 +41,11 @@ define(['d3-dsv'], function (d3Dsv) {
             var newActivity = {},
                 newActivityMode = {};
 
+            if (activity.id) {
+                newActivity.id = 'activity-' + activity.id;
+                newActivityMode.id = 'activity-mode-' + activity.id;
+            }
+
             newActivity.name = activity.name;
             newActivity.start = {timestamp: 0, epoch: "SET"};
             newActivity.duration = {timestamp: Number(activity.duration), epoch: "SET"};
@@ -63,11 +68,11 @@ define(['d3-dsv'], function (d3Dsv) {
 
     ActivityModesImportAction.prototype.instantiateActivityModes = function (activityModesObjects) {
         activityModesObjects.forEach(function (activityMode, index) {
-            var objectId = 'activity-mode-' + index + '-' + this.parentId;
+            var activityModeId = 'activity-mode-' + index + '-' + this.parentId;
 
-            this.objectService.getObjects([objectId]).then(
+            this.objectService.getObjects([activityModeId]).then(
                 function (previousActivityMode) {
-                    previousActivityMode[objectId].getCapability('mutation').mutate(function (prev) {
+                    previousActivityMode[activityModeId].getCapability('mutation').mutate(function (prev) {
                         prev.name = activityMode.name;
                         prev.resources = activityMode.resources;
                         prev.type = activityMode.type;
@@ -80,7 +85,7 @@ define(['d3-dsv'], function (d3Dsv) {
     ActivityModesImportAction.prototype.instantiateActivities = function (activitiesObjects) {
         activitiesObjects.forEach(function (activity, index) {
             activity.relationships.modes.push('activity-mode-' + index + '-' + this.parentId);
-            activity.id = 'activity-' + index + '-' + this.parentId;
+            activity.id = activity.id || ('activity-' + index + '-' + this.parentId);
 
             this.objectService.getObjects([activity.id]).then(
                 function (objects) {
