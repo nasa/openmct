@@ -37,7 +37,7 @@ define(['d3-dsv'], function (d3Dsv) {
         var activitiesObjects = [],
             activityModesObjects = [];
 
-        csvObjects.forEach(function (activity) {
+        csvObjects.forEach(function (activity, index) {
             var newActivity = {},
                 newActivityMode = {};
 
@@ -47,18 +47,21 @@ define(['d3-dsv'], function (d3Dsv) {
             }
 
             newActivity.name = activity.name;
+            newActivity.id = activity.id ? ('activity-' + activity.id) : ('activity-' + index + '-' + this.parentId);
             newActivity.start = {timestamp: 0, epoch: "SET"};
             newActivity.duration = {timestamp: Number(activity.duration), epoch: "SET"};
             newActivity.type = "activity";
             newActivity.composition = [];
             newActivity.relationships = {modes: []};
 
-            activitiesObjects.push(newActivity);
-
             newActivityMode.name = activity.name + ' Resources';
+            newActivityMode.id = activity.id ? ('activity-mode-' + activity.id) : ('activity-mode-' + index + '-' + this.parentId);
             newActivityMode.resources = {comms: Number(activity.comms), power: Number(activity.power)};
             newActivityMode.type = 'mode';
 
+            newActivity.relationships.modes.push(newActivityMode.id);
+
+            activitiesObjects.push(newActivity);
             activityModesObjects.push(newActivityMode);
         });
 
@@ -68,14 +71,14 @@ define(['d3-dsv'], function (d3Dsv) {
 
     ActivityModesImportAction.prototype.instantiateActivityModes = function (activityModesObjects) {
         activityModesObjects.forEach(function (activityMode, index) {
-            var activityModeId = 'activity-mode-' + index + '-' + this.parentId;
 
-            this.objectService.getObjects([activityModeId]).then(
+            this.objectService.getObjects([activityMode.id]).then(
                 function (previousActivityMode) {
-                    previousActivityMode[activityModeId].getCapability('mutation').mutate(function (prev) {
+                    previousActivityMode[activityMode.id].getCapability('mutation').mutate(function (prev) {
                         prev.name = activityMode.name;
                         prev.resources = activityMode.resources;
                         prev.type = activityMode.type;
+                        prev.id = activityMode.id;
                     });
                 }
             );
@@ -84,8 +87,6 @@ define(['d3-dsv'], function (d3Dsv) {
 
     ActivityModesImportAction.prototype.instantiateActivities = function (activitiesObjects) {
         activitiesObjects.forEach(function (activity, index) {
-            activity.relationships.modes.push('activity-mode-' + index + '-' + this.parentId);
-            activity.id = activity.id || ('activity-' + index + '-' + this.parentId);
 
             this.objectService.getObjects([activity.id]).then(
                 function (objects) {
