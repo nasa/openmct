@@ -31,7 +31,6 @@ define(['d3-dsv'], function (d3Dsv) {
     };
 
     ActivityModesImportAction.prototype.populateActivities = function (csvObjects) {
-        this.parent = this.context.domainObject;
         this.parentComposition = this.parent.getCapability("composition");
 
         var activitiesObjects = [],
@@ -40,11 +39,6 @@ define(['d3-dsv'], function (d3Dsv) {
         csvObjects.forEach(function (activity, index) {
             var newActivity = {},
                 newActivityMode = {};
-
-            if (activity.id) {
-                newActivity.id = 'activity-' + activity.id;
-                newActivityMode.id = 'activity-mode-' + activity.id;
-            }
 
             newActivity.name = activity.name;
             newActivity.id = activity.id ? ('activity-' + activity.id) : ('activity-' + index + '-' + this.parentId);
@@ -70,7 +64,7 @@ define(['d3-dsv'], function (d3Dsv) {
     };
 
     ActivityModesImportAction.prototype.instantiateActivityModes = function (activityModesObjects) {
-        activityModesObjects.forEach(function (activityMode, index) {
+        activityModesObjects.forEach(function (activityMode) {
 
             this.objectService.getObjects([activityMode.id]).then(
                 function (previousActivityMode) {
@@ -86,7 +80,7 @@ define(['d3-dsv'], function (d3Dsv) {
     };
 
     ActivityModesImportAction.prototype.instantiateActivities = function (activitiesObjects) {
-        activitiesObjects.forEach(function (activity, index) {
+        activitiesObjects.forEach(function (activity) {
 
             this.objectService.getObjects([activity.id]).then(
                 function (objects) {
