@@ -1,34 +1,57 @@
 define([
     './SummaryWidgetRule',
     '../eventHelpers',
-    '../../../../api/objects/object-utils'
+    '../../../../api/objects/object-utils',
+    'lodash'
 ], function (
     SummaryWidgetRule,
     eventHelpers,
-    objectUtils
+    objectUtils,
+    _
 ) {
 
-    function SummaryWidgetEvaluator(domainObject, openmct, callback) {
+    /**
+     * evaluates rules defined in a summary widget against either lad or
+     * realtime state.
+     *
+     * Does not handle mutation.
+     */
+    function SummaryWidgetEvaluator(domainObject, openmct) {
         this.openmct = openmct;
-        this.telemetryState = {};
-        this.callback = callback;
-        this.loaded = false;
-        this.destroyed = false;
-
-        var composition = openmct.composition.get(domainObject);
-
-        this.listenTo(composition, 'add', this.addChild, this);
-        this.listenTo(composition, 'remove', this.removeChild, this);
+        this.baseState = {};
 
         this.rules = domainObject.configuration.ruleOrder.map(function (ruleId) {
             return new SummaryWidgetRule(domainObject.configuration.ruleConfigById[ruleId]);
         });
 
-        composition.load()
+        var composition = openmct.composition.get(domainObject);
+
+        this.listenTo(composition, 'add', this.addChild, this);
+        this._loadPromise = composition.load();
+
+        this.load()
             .then(function () {
-                this.loaded = true;
+                this.stopListening();
             }.bind(this));
     }
+
+    SummaryWidgetEvaluator.prototype.load = function () {
+        return this._loadPromise;
+    };
+
+    /**
+     * return a promise for a clone of the base state object.
+     */
+    SummaryWidgetEvaluator.prototype.getBaseStateClone = function () {
+        return this.load()
+            .then(function () {
+                return _(this.baseState)
+                    .values()
+                    .map(_.clone)
+                    .indexBy('id')
+                    .value();
+            }.bind(this));
+    };
 
     eventHelpers.extend(SummaryWidgetEvaluator.prototype);
 
@@ -36,78 +59,162 @@ define([
         var childId = objectUtils.makeKeyString(childObject.identifier);
         var metadata = this.openmct.telemetry.getMetadata(childObject);
         var formats = this.openmct.telemetry.getFormatMap(metadata);
-        var unsubscribe = this.openmct.telemetry.subscribe(
-            childObject,
-            this.updateDatum.bind(this, childId)
-        );
 
-        this.telemetryState[childId] = {
+        this.baseState[childId] = {
+            id: childId,
             domainObject: childObject,
             metadata: metadata,
-            formats: formats,
-            unsubscribe: unsubscribe,
-            lastDatum: undefined,
-            testDatum: undefined
+            formats: formats
         };
     };
 
-    SummaryWidgetEvaluator.prototype.removeChild = function (childObject) {
-        var childId = objectUtils.makeKeyString(childObject.identifier);
-        var telemetrySource = this.telemetrySources[childId];
-        delete this.telemetrySources[childId];
-        telemetrySource.unsubscribe();
+    /**
+     * Subscribes to realtime updates for a given objectState, and invokes
+     * the supplied callback when objectState has been updated.  Returns
+     * a function to unsubscribe.
+     * @private.
+     */
+    SummaryWidgetEvaluator.prototype.subscribeToObjectState = function (callback, objectState) {
+        return this.openmct.telemetry.subscribe(
+            objectState.domainObject,
+            function (datum) {
+                objectState.lastDatum = datum;
+                objectState.timestamps = this.getTimestamps(objectState.id, datum);
+                callback();
+            }.bind(this)
+        );
     };
 
-    SummaryWidgetEvaluator.prototype.getTimestampedDatum = function (childId, datum) {
+    /**
+     * Subscribes to realtime telemetry for the given summary widget.
+     */
+    SummaryWidgetEvaluator.prototype.subscribe = function (callback) {
+        var active = true;
+        var unsubscribes = [];
+
+        this.getBaseStateClone()
+            .then(function (realtimeStates) {
+                if (!active) {
+                    return;
+                }
+                var updateCallback = function () {
+                    var datum = this.evaluateState(
+                        realtimeStates,
+                        this.openmct.time.timeSystem().key
+                    );
+                    callback(datum);
+                }.bind(this);
+
+                unsubscribes = _.map(
+                    realtimeStates,
+                    this.subscribeToObjectState.bind(this, updateCallback)
+                );
+            }.bind(this));
+
+        return function unsubscribe() {
+            active = false;
+            unsubscribes.forEach(function (unsubscribe) {
+                unsubscribe();
+            });
+        };
+    };
+
+    /**
+     * Returns a promise for a telemetry datum obtained by evaluating the
+     * current lad data.
+     */
+    SummaryWidgetEvaluator.prototype.requestLatest = function (options) {
+        return this.getBaseStateClone()
+            .then(function (ladState) {
+                var promises = Object.values(ladState)
+                    .map(this.updateObjectStateFromLAD.bind(this, options));
+
+                return Promise.all(promises)
+                    .then(function () {
+                        return ladState;
+                    });
+            }.bind(this))
+            .then(function (ladStates) {
+                return this.evaluateState(ladStates, options.domain);
+            }.bind(this));
+    };
+
+    /**
+     * Given an object state, will return a promise that is resolved when the
+     * object state has been updated from the LAD.
+     * @private.
+     */
+    SummaryWidgetEvaluator.prototype.updateObjectStateFromLAD = function (options, objectState) {
+        options = _.extend({}, options, {
+            strategy: 'latest',
+            size: 1
+        });
+        return this.openmct
+            .telemetry
+            .request(
+                objectState.domainObject,
+                options
+            )
+            .then(function (results) {
+                objectState.lastDatum = results[results.length - 1];
+                objectState.timestamps = this.getTimestamps(
+                    objectState.id,
+                    objectState.lastDatum
+                );
+            }.bind(this));
+    };
+
+    /**
+     * Returns an object containing all domain values in a datum.
+     * @private.
+     */
+    SummaryWidgetEvaluator.prototype.getTimestamps = function (childId, datum) {
         var timestampedDatum = {};
         this.openmct.time.getAllTimeSystems().forEach(function (timeSystem) {
             timestampedDatum[timeSystem.key] =
-                this.telemetryState[childId].formats[timeSystem.key].parse(datum);
+                this.baseState[childId].formats[timeSystem.key].parse(datum);
         }, this);
         return timestampedDatum;
     };
 
-    SummaryWidgetEvaluator.prototype.updateDatum = function (childId, datum) {
-        var timestampedDatum = this.getTimestampedDatum(childId, datum);
-        this.telemetryState[childId].lastDatum = datum;
-        this.updateState(timestampedDatum);
-    };
-
-    SummaryWidgetEvaluator.prototype.addCallback = function (callback) {
-        this.callbacks.push(callback);
-    };
-
-    SummaryWidgetEvaluator.prototype.updateStateFromRule = function (ruleIndex, newState) {
+    /**
+     * Given a base datum(containing timestamps) and rule index, adds values
+     * from the matching rule.
+     */
+    SummaryWidgetEvaluator.prototype.makeDatumFromRule = function (ruleIndex, baseDatum) {
         var rule = this.rules[ruleIndex];
 
-        newState.color = rule.color;
-        newState.ruleName = rule.name;
-        newState.ruleIndex = ruleIndex;
-        newState.backgroundColor = rule.style['background-color'];
-        newState.textColor = rule.style.color;
-        newState.borderColor = rule.style['border-color'];
-        newState.icon = rule.icon;
+        baseDatum.color = rule.color;
+        baseDatum.ruleName = rule.name;
+        baseDatum.ruleIndex = ruleIndex;
+        baseDatum.backgroundColor = rule.style['background-color'];
+        baseDatum.textColor = rule.style.color;
+        baseDatum.borderColor = rule.style['border-color'];
+        baseDatum.icon = rule.icon;
 
-        this.callback(newState);
+        return baseDatum;
     };
 
-    SummaryWidgetEvaluator.prototype.updateState = function (timestampedDatum) {
+    /**
+     * evaluate a state object and return a summary widget telemetry datum.
+     * Will use the specified timestampKey to decide which timestamps to apply.
+     * @private.
+     */
+    SummaryWidgetEvaluator.prototype.evaluateState = function (state, timestampKey) {
+        var latestTimestamp = _(state)
+            .map('timestamps')
+            .sortBy(timestampKey)
+            .first();
+
+        latestTimestamp = _.clone(latestTimestamp);
+
         for (var i = this.rules.length - 1; i > 0; i--) {
-            if (this.rules[i].evaluate(this.telemetryState, false)) {
+            if (this.rules[i].evaluate(state, false)) {
                 break;
             }
         }
-        this.updateStateFromRule(i, timestampedDatum);
-    };
 
-    SummaryWidgetEvaluator.prototype.destroy = function () {
-        Object.keys(this.telemetryState).forEach(function (stateKey) {
-            this.telemetryState[stateKey].unsubscribe();
-        }, this);
-        this.stopListening();
-        this.destroyed = true;
-        delete this.telemetryState;
-        delete this.callback;
+        return this.makeDatumFromRule(i, latestTimestamp);
     };
 
     return SummaryWidgetEvaluator;
