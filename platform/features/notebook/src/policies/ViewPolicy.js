@@ -27,9 +27,9 @@ define(
         }
 
         ViewPolicy.prototype.allow = function (view, domainObject) {
-            if (view.key === 'layout') {
-                return false;
-            }
+            // if (view.key === 'layout') {
+            //     return false;
+            // }
 
             return true;
         };
