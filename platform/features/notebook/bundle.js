@@ -15,8 +15,15 @@ define([
     "./src/actions/NewEntryContextual",
     "./src/capabilities/NotebookCapability",
     "./src/policies/CompositionPolicy",
-    "./src/policies/ViewPolicy"
-
+    "./src/policies/ViewPolicy",
+    "text!./res/templates/layoutNotebook.html",
+    "text!./res/templates/notebook.html",
+    "text!./res/templates/entry.html",
+    "text!./res/templates/annotation.html",
+    "text!./res/templates/notifications.html",
+    "text!../layout/res/templates/frame.html",
+    "text!./res/templates/controls/embedControl.html",
+    "text!./res/templates/controls/snapSelect.html"
 ], function (
     legacyRegistry,
     NotebookController,
@@ -34,7 +41,15 @@ define([
     newEntryAction,
     NotebookCapability,
     CompositionPolicy,
-    ViewPolicy
+    ViewPolicy,
+    layoutNotebookTemplate,
+    notebookTemplate,
+    entryTemplate,
+    annotationTemplate,
+    notificationsTemplate,
+    frameTemplate,
+    embedControlTemplate,
+    snapSelectTemplate
 ) {
     legacyRegistry.register("platform/features/notebook", {
         "name": "Notebook Plugin",
@@ -61,7 +76,7 @@ define([
                 "type": "notebook",
                 "cssClass": "icon-notebook",
                 "name": "notebook",
-                "templateUrl": "templates/notebook.html",
+                "template": notebookTemplate,
                 "editable": false,
                 "uses": [
                       "composition",
@@ -76,7 +91,7 @@ define([
                 "name": "Display Layout",
                 "cssClass": "icon-layout",
                 "type": "layout",
-                "templateUrl": "templates/layoutNotebook.html",
+                "template": layoutNotebookTemplate,
                 "editable": true,
                 "uses": [],
                 "toolbar": {
@@ -143,21 +158,21 @@ define([
             "representations": [
                 {
                     "key": "draggedEntry",
-                    "templateUrl": "templates/entry.html"
+                    "template": entryTemplate
                 },
                 {
                     "key": "frameLayoutNotebook",
-                    "templateUrl": "../../layout/res/templates/frame.html"
+                    "template": frameTemplate
                 }
             ],
             "templates": [
                 {
                     "key": "annotate-snapshot",
-                    "templateUrl": "templates/annotation.html"
+                    "template": annotationTemplate
                 },
                 {
                     "key": "notificationTemplate",
-                    "templateUrl": "templates/notifications.html"
+                    "template": notificationsTemplate
                 }
             ],
             "directives": [
@@ -309,11 +324,11 @@ define([
             "controls": [
               {
                   "key": "embed-control",
-                  "templateUrl": "templates/controls/embedControl.html"
+                  "template": embedControlTemplate
               },
                {
                   "key": "snapshot-select",
-                  "templateUrl":  "templates/controls/snapSelect.html"
+                  "template":  snapSelectTemplate
               }
             ],
             "stylesheets": [
