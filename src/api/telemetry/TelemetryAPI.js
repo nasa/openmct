@@ -398,7 +398,11 @@ define([
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
     TelemetryAPI.prototype.limitEvaluator = function () {
-        return this.legacyProvider.limitEvaluator.apply(this.legacyProvider, arguments);
+        if (arguments[0].limitEvaluator && typeof arguments[0].limitEvaluator.evaluate  === 'function') {
+            return arguments[0].limitEvaluator;
+        } else {
+            return this.legacyProvider.limitEvaluator.apply(this.legacyProvider, arguments);
+        }
     };
 
     return TelemetryAPI;
