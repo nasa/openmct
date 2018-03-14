@@ -1,13 +1,13 @@
 define([
-    './src/SummaryWidget',
     './SummaryWidgetsCompositionPolicy',
     './src/telemetry/SummaryWidgetMetadataProvider',
-    './src/telemetry/SummaryWidgetTelemetryProvider'
+    './src/telemetry/SummaryWidgetTelemetryProvider',
+    './src/views/SummaryWidgetViewProvider'
 ], function (
-    SummaryWidget,
     SummaryWidgetsCompositionPolicy,
     SummaryWidgetMetadataProvider,
-    SummaryWidgetTelemetryProvider
+    SummaryWidgetTelemetryProvider,
+    SummaryWidgetViewProvider
 ) {
 
     function plugin() {
@@ -50,28 +50,14 @@ define([
             ]
         };
 
-        function initViewProvider(openmct) {
-            return {
-                name: 'Widget View',
-                view: function (domainObject) {
-                    return new SummaryWidget(domainObject, openmct);
-                },
-                canView: function (domainObject) {
-                    return (domainObject.type === 'summary-widget');
-                },
-                editable: true,
-                key: 'summaryWidgets'
-            };
-        }
-
         return function install(openmct) {
             openmct.types.addType('summary-widget', widgetType);
-            openmct.objectViews.addProvider(initViewProvider(openmct));
             openmct.legacyExtension('policies', {category: 'composition',
                 implementation: SummaryWidgetsCompositionPolicy, depends: ['openmct']
             });
             openmct.telemetry.addMetadataProvider(new SummaryWidgetMetadataProvider(openmct));
             openmct.telemetry.addProvider(new SummaryWidgetTelemetryProvider(openmct));
+            openmct.objectViews.addProvider(new SummaryWidgetViewProvider(openmct));
         };
     }
 
