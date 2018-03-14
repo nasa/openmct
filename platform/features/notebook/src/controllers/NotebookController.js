@@ -101,6 +101,7 @@ define(
                             var elementPos = $scope.domainObject.model.entries.map(function (x) {
                                 return x.id;
                             }).indexOf(+delId.replace('entry_', ''));
+
                             if (elementPos !== -1) {
                                 $scope.domainObject.useCapability('mutation', function (model) {
                                     model.entries.splice(elementPos, 1);

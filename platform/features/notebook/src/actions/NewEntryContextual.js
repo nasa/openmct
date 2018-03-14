@@ -149,12 +149,15 @@ define(
                 options.saveNotebook.useCapability('mutation', function (model) {
                     var entries = model.entries;
                     var lastEntry = entries[entries.length - 1];
+                    var date = Date.now();
+
                     if (lastEntry === undefined || lastEntry.text || lastEntry.embeds) {
                         model.entries.push({
-                            'createdOn': Date.now(),
+                            'id': date,
+                            'createdOn': date,
                             'text': options.entry,
                             'embeds': [{'type': options.embedObject.getId(),
-                                       'id': '' + Date.now(),
+                                       'id': '' + date,
                                        'cssClass': options.cssClass,
                                        'name': options.selectedModel.name,
                                        'snapshot': options.snapshot
@@ -162,10 +165,11 @@ define(
                         });
                     }else {
                         model.entries[entries.length - 1] = {
-                            'createdOn': Date.now(),
+                            'id': date,
+                            'createdOn': date,
                             'text': options.entry,
                             'embeds': [{'type': options.embedObject.getId(),
-                                       'id': '' + Date.now(),
+                                       'id': '' + date,
                                        'cssClass': options.cssClass,
                                        'name': options.selectedModel.name,
                                        'snapshot': options.snapshot
