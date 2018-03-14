@@ -9,6 +9,7 @@ define([
         this.id = definition.id;
         this.icon = definition.icon;
         this.style = definition.style;
+        this.message = definition.message;
         this.description = definition.description;
         this.conditions = definition.conditions.map(function (cDefinition) {
             return new SummaryWidgetCondition(cDefinition);

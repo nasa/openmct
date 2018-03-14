@@ -50,8 +50,18 @@ define([
                     }
                 },
                 {
+                    name: 'Rule Label',
+                    key: 'ruleLabel',
+                    format: 'string'
+                },
+                {
                     name: 'Rule Name',
                     key: 'ruleName',
+                    format: 'string'
+                },
+                {
+                    name: 'Message',
+                    key: 'message',
                     format: 'string'
                 },
                 {
