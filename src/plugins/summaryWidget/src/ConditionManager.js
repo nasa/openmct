@@ -125,12 +125,13 @@ define ([
     ConditionManager.prototype.parsePropertyTypes = function (object) {
 
         this.telemetryTypesById[object.identifier.key] = {};
-        Object.values(this.telemetryMetadataById[object.identifier.key]).forEach(function(valueMetadata) {
+        Object.values(this.telemetryMetadataById[object.identifier.key]).forEach(function (valueMetadata) {
+            var type;
             if (valueMetadata.hints.hasOwnProperty('range')) {
                 type = 'number';
             } else if (valueMetadata.hints.hasOwnProperty('domain')) {
                 type = 'number';
-            } else if (valueMetadata.key == 'name') {
+            } else if (valueMetadata.key === 'name') {
                 type = 'string';
             } else {
                 type = 'string';
@@ -247,7 +248,7 @@ define ([
     ConditionManager.prototype.onCompositionLoad = function () {
         this.loadComplete = true;
         this.eventEmitter.emit('load');
-        this.parseAllPropertyTypes()
+        this.parseAllPropertyTypes();
     };
 
     /**

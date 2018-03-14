@@ -32,7 +32,7 @@ define([
         this.listenTo(composition, 'add', this.addChild, this);
         this.listenTo(composition, 'remove', this.removeChild, this);
 
-        this._loadPromise = composition.load();
+        this.loadPromise = composition.load();
     }
 
     eventHelpers.extend(SummaryWidgetEvaluator.prototype);
@@ -63,7 +63,7 @@ define([
                 );
             }.bind(this));
 
-        return function unsubscribe() {
+        return function () {
             active = false;
             unsubscribes.forEach(function (unsubscribe) {
                 unsubscribe();
@@ -116,7 +116,7 @@ define([
     };
 
     SummaryWidgetEvaluator.prototype.load = function () {
-        return this._loadPromise;
+        return this.loadPromise;
     };
 
     /**

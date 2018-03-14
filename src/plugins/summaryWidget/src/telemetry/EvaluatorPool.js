@@ -10,13 +10,12 @@ define([
         this.openmct = openmct;
         this.byObjectId = {};
         this.byEvaluator = new WeakMap();
-    };
+    }
 
     EvaluatorPool.prototype.get = function (domainObject) {
         var objectId = objectUtils.makeKeyString(domainObject);
         var poolEntry = this.byObjectId[objectId];
         if (!poolEntry) {
-            console.log('new evaluator!');
             poolEntry = {
                 leases: 0,
                 objectId: objectId,
@@ -33,7 +32,6 @@ define([
         var poolEntry = this.byEvaluator.get(evaluator);
         poolEntry.leases -= 1;
         if (poolEntry.leases === 0) {
-            console.log('destroy evaluator!');
             evaluator.destroy();
             this.byEvaluator.delete(evaluator);
             delete this.byObjectId[poolEntry.objectId];
