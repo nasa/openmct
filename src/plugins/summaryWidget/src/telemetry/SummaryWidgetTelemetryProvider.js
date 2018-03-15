@@ -9,11 +9,14 @@ define([
     }
 
     SummaryWidgetTelemetryProvider.prototype.supportsRequest = function (domainObject, options) {
-        return domainObject.type === 'summary-widget' &&
-            (options.strategy === 'latest' || options.size === 1);
+        return domainObject.type === 'summary-widget';
     };
 
     SummaryWidgetTelemetryProvider.prototype.request = function (domainObject, options) {
+        if (options.strategy !== 'latest' && options.size !== 1) {
+            return Promise.resolve([]);
+        }
+
         var evaluator = this.pool.get(domainObject);
         return evaluator.requestLatest(options)
             .then(function (latestDatum) {
