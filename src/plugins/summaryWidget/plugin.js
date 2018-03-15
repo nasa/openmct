@@ -19,8 +19,40 @@ define([
             cssClass: 'icon-summary-widget',
             initialize: function (domainObject) {
                 domainObject.composition = [];
-                domainObject.configuration = {};
+                domainObject.configuration = {
+                    ruleOrder: ['default'],
+                    ruleConfigById: {
+                        default: {
+                            name: 'Default',
+                            label: 'Unnamed Rule',
+                            message: '',
+                            id: 'default',
+                            icon: ' ',
+                            style: {
+                                'color': '#ffffff',
+                                'background-color': '#38761d',
+                                'border-color': 'rgba(0,0,0,0)'
+                            },
+                            description: 'Default appearance for the widget',
+                            conditions: [{
+                                object: '',
+                                key: '',
+                                operation: '',
+                                values: []
+                            }],
+                            jsCondition: '',
+                            trigger: 'any',
+                            expanded: 'true'
+                        }
+                    },
+                    testDataConfig: [{
+                        object: '',
+                        key: '',
+                        value: ''
+                    }]
+                };
                 domainObject.openNewTab = 'thisTab';
+                domainObject.telemetry = {};
             },
             form: [
                 {

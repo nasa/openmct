@@ -26,9 +26,11 @@ define([
     };
 
     SummaryWidgetMetadataProvider.prototype.getMetadata = function (domainObject) {
-        var enumerations = domainObject
-            .configuration
-            .ruleOrder
+        var ruleOrder = domainObject.configuration.ruleOrder || [];
+        var enumerations = ruleOrder
+            .filter(function (ruleId) {
+                return !!domainObject.configuration.ruleConfigById[ruleId];
+            })
             .map(function (ruleId, ruleIndex) {
                 return {
                     string: domainObject.configuration.ruleConfigById[ruleId].label,
