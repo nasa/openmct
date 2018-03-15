@@ -31,7 +31,8 @@ define([
     './policies/AdapterCompositionPolicy',
     './policies/AdaptedViewPolicy',
     './runs/AlternateCompositionInitializer',
-    './runs/TimeSettingsURLHandler'
+    './runs/TimeSettingsURLHandler',
+    './runs/TypeDeprecationChecker'
 ], function (
     legacyRegistry,
     ActionDialogDecorator,
@@ -43,7 +44,8 @@ define([
     AdapterCompositionPolicy,
     AdaptedViewPolicy,
     AlternateCompositionInitializer,
-    TimeSettingsURLHandler
+    TimeSettingsURLHandler,
+    TypeDeprecationChecker
 ) {
     legacyRegistry.register('src/adapter', {
         "extensions": {
@@ -107,6 +109,10 @@ define([
                 }
             ],
             runs: [
+                {
+                    implementation: TypeDeprecationChecker,
+                    depends: ["types[]"]
+                },
                 {
                     implementation: AlternateCompositionInitializer,
                     depends: ["openmct"]
