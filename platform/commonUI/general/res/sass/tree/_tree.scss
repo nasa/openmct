@@ -23,7 +23,7 @@
 ul.tree {
     @include menuUlReset();
     @include user-select(none);
-    li {
+    > li {
         display: block;
         position: relative;
     }
@@ -53,12 +53,10 @@ ul.tree {
     .view-control {
         color: $colorItemTreeVC;
         margin-right: $interiorMargin;
-        height: 100%;
-        line-height: inherit;
         width: $treeVCW;
-        &:before { display: none; }
-        &.has-children {
-            &:before { display: block; }
+        &:before { display: block; }
+        &.no-children {
+            &:before { display: none; }
         }
     }
 

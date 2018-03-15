@@ -53,6 +53,7 @@
     .l-inspector-part {
         box-sizing: border-box;
         padding-right: $interiorMargin;
+
         .tree .form {
             margin-left: $treeVCW + $interiorMarginLg;
         }
@@ -78,6 +79,7 @@
                 }
             }
             .form-row {
+                // To be replaced with .inspector-config, see below.
                 @include align-items(center);
                 border: none !important;
                 margin-bottom: 0 !important;
@@ -99,15 +101,12 @@
         position: relative;
     }
 
-    ul li {
-        margin-bottom: $interiorMarginLg;
-    }
-
     em.t-inspector-part-header {
         border-radius: $basicCr;
         background-color: $colorInspectorSectionHeaderBg;
         color: $colorInspectorSectionHeaderFg;
-        margin-bottom: $interiorMargin;
+        margin-top: $interiorMarginLg;
+        //margin-bottom: $interiorMargin;
         padding: floor($formTBPad * .75) $formLRPad;
         text-transform: uppercase;
     }
@@ -201,3 +200,102 @@ mct-representation:not(.s-status-editing) .l-inspect {
         pointer-events: inherit;
     }
 }
+
+// NEW COMPACT FORM, FOR USE IN INSPECTOR
+// ul > li > label, control
+// Make a new UL for each form section
+// Allow control-first, controls-below
+
+.l-inspect .tree ul li,
+.inspector-config ul li {
+    padding: 2px 0;
+}
+
+
+.inspector-config {
+    $labelW: 40%;
+    $minW: $labelW;
+    ul {
+        margin-bottom: $interiorMarginLg;
+        li {
+            @include display(flex);
+            @include flex-wrap(wrap);
+            @include align-items(center);
+            label,
+            .control {
+                @include display(flex);
+                min-width: $minW;
+            }
+            label {
+                line-height: inherit;
+                padding: $interiorMarginSm 0;
+                width: $labelW;
+            }
+            .control {
+                @include flex-grow(1);
+            }
+
+            &:not(.section-header) {
+                &:not(.connects-to-previous) {
+                    //border-top: 1px solid $colorFormLines;
+                }
+            }
+
+            &.connects-to-previous {
+                padding-top: 0 !important;
+            }
+
+            &.section-header {
+                margin-top: $interiorMarginLg;
+                border-top: 1px solid $colorFormLines;
+            }
+
+            &.controls-first {
+                .control {
+                    @include flex-grow(0);
+                    margin-right: $interiorMargin;
+                    min-width: 0;
+                    order: 1;
+                    width: auto;
+                }
+                label {
+                    @include flex-grow(1);
+                    order: 2;
+                    width: auto;
+                }
+            }
+            &.controls-under {
+                display: block;
+                .control, label {
+                    display: block;
+                    width: auto;
+                }
+
+                ul li {
+                    border-top: none !important;
+                    padding: 0;
+                }
+            }
+        }
+    }
+
+    .form-error {
+        // Block element that visually flags an error and contains a message
+        background-color: $colorFormFieldErrorBg;
+        color: $colorFormFieldErrorFg;
+        border-radius: $basicCr;
+        display: block;
+        padding: 1px 6px;
+        &:before {
+            content: $glyph-icon-alert-triangle;
+            display: inline;
+            font-family: symbolsfont;
+            margin-right: $interiorMarginSm;
+        }
+    }
+}
+
+.tree .inspector-config {
+    margin-left: $treeVCW + $interiorMarginLg;
+}
+

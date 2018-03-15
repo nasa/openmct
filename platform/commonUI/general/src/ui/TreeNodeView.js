@@ -83,6 +83,7 @@ define([
         this.activeObject = domainObject;
         this.hasChildren(domainObject);
 
+
         if (domainObject && domainObject.hasCapability('status')) {
             this.unlisten = domainObject.getCapability('status')
                 .listen(this.updateStatusClasses.bind(this));

@@ -106,8 +106,8 @@ define(
                     'telemetryFormatter',
                     ['format']
                 );
-                mockFormatter.format.andCallFake(function (value) {
-                    return "Formatted " + value;
+                mockFormatter.format.andCallFake(function (valueMetadata) {
+                    return "Formatted " + valueMetadata.value;
                 });
 
                 mockDomainObject = jasmine.createSpyObj(
@@ -697,7 +697,7 @@ define(
                             source: 'range'
                         }
                     ]);
-                    var key = controller.chooseTelemetryKeyToDisplay(mockMetadata);
+                    var key = controller.chooseValueMetadataToDisplay(mockMetadata).source;
                     expect(key).toEqual('range');
                 });
 
@@ -719,7 +719,7 @@ define(
                             }
                         }
                     ]);
-                    var key = controller.chooseTelemetryKeyToDisplay(mockMetadata);
+                    var key = controller.chooseValueMetadataToDisplay(mockMetadata).source;
                     expect(key).toEqual('image');
                 });
 
