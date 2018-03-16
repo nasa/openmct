@@ -149,15 +149,14 @@ define([
     TreeNodeView.prototype.hasChildren = function (domainObject) {
 
         if (domainObject) {
-            if (domainObject.hasCapability('composition')) {
-                var proto = Object.getPrototypeOf(domainObject);
-                var elementCount = proto.model.composition.length;
-                if (elementCount > 0) {
-                    $(this.toggleView.elements()).addClass('has-children');
-                }else {
-                    $(this.toggleView.elements()).removeClass('has-children');
-                }
+            var elementCount = domainObject.getModel().length;
+            if (elementCount > 0) {
+
+                $(this.toggleView.elements()).removeClass('no-children');
+            } else {
+                $(this.toggleView.elements()).addClass('no-children');
             }
+
         }
     };
 

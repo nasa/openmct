@@ -60,6 +60,7 @@ define([
     TreeView.prototype.loadComposition = function () {
         var self = this,
         domainObject = this.activeObject;
+
         function addNode(domainObj, index) {
             self.nodeViews[index].model(domainObj);
         }
@@ -80,7 +81,7 @@ define([
                           .siblings()
                           .children();
 
-            $(element[0]).addClass('has-children');
+            $(element[0]).removeClass('no-children');
         }
 
         domainObject.useCapability('composition')
