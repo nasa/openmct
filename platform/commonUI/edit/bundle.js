@@ -432,7 +432,6 @@ define([
                         "openmct"
                     ],
                     implementation: function (toolbars, openmct) {
-                        console.log(openmct, toolbars);
                         toolbars.forEach(openmct.toolbars.addProvider, openmct.toolbars);
                     }
                 }

@@ -90,7 +90,6 @@ define(
                 var structure = self.openmct.toolbars.get(selection) || [];
                 createStructure(structure);
                 self.registerListeners(structure);
-                window.rep = self;
             }
 
             this.clearExposedToolbar = function () {
@@ -134,7 +133,6 @@ define(
         EditToolbarRepresenter.prototype.represent = function (representation) {
             if (this.attrs.toolbar) {
                 this.editToolbar = new EditToolbar(this.openmct);
-                window.et = this.editToolbar;
             }
         };
 
@@ -148,7 +146,7 @@ define(
             var self = this;
 
             function observeObject(domainObject, id) {
-                var unobserveObject = self.openmct.objects.observe(domainObject, '*', function(newObject) {
+                var unobserveObject = self.openmct.objects.observe(domainObject, '*', function (newObject) {
 
                     self.domainObjectsById[id].properties.map(function (property) {
                         var currentValue = _.get(domainObject, property);
@@ -171,7 +169,7 @@ define(
                 self.unobserveObjects.push(unobserveObject);
             }
 
-            function addListener(item) {
+            structure.forEach(function (item) {
                 var domainObject = item.domainObject;
                 var id = objectUtils.makeKeyString(domainObject.identifier);
 
@@ -182,9 +180,7 @@ define(
 
                 self.domainObjectsById[id].properties = self.domainObjectsById[id].properties || [];
                 self.domainObjectsById[id].properties.push(item.property);
-            }
-
-            structure.forEach(addListener);
+            });
         };
 
         EditToolbarRepresenter.prototype.deregisterListeners = function () {

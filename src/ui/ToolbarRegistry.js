@@ -21,9 +21,9 @@
  *****************************************************************************/
  /*global console */
 
- define([], function () {
+define([], function () {
 
-   /**
+    /**
      * A ToolbarRegistry maintains the definitions for toolbars.
      *
      * @interface ToolbarRegistry
@@ -42,7 +42,7 @@
      */
     ToolbarRegistry.prototype.get = function (selection) {
         var providers = this.getAllProviders().filter(function (provider) {
-            return provider.forSelection(selection);    
+            return provider.forSelection(selection);
         });
 
         var structure = [];
@@ -122,4 +122,4 @@
      */
 
     return ToolbarRegistry;
- });
+});

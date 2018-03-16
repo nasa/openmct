@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 define(
-    [],
-    function () {
+    ['lodash'],
+    function (_) {
 
         /**
          * Provides initial structure and state (as suitable for provision
@@ -32,8 +32,6 @@ define(
          * @constructor
          */
         function EditToolbar(openmct) {
-            var self = this;
-
             this.toolbarStructure = [];
             this.properties = [];
             this.toolbarState = [];
@@ -117,7 +115,7 @@ define(
          */
         EditToolbar.prototype.updateDomainObject = function (domainObject, property, value) {
             this.openmct.objects.mutate(domainObject, property, value);
-        }
+        };
 
         /**
          * Updates state with the new value.
