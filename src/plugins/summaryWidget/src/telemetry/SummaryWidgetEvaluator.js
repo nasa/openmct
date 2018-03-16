@@ -14,7 +14,6 @@ define([
      * evaluates rules defined in a summary widget against either lad or
      * realtime state.
      *
-     * Does not handle mutation.
      */
     function SummaryWidgetEvaluator(domainObject, openmct) {
         this.openmct = openmct;
@@ -191,6 +190,7 @@ define([
     /**
      * Given a base datum(containing timestamps) and rule index, adds values
      * from the matching rule.
+     * @private
      */
     SummaryWidgetEvaluator.prototype.makeDatumFromRule = function (ruleIndex, baseDatum) {
         var rule = this.rules[ruleIndex];
@@ -229,6 +229,9 @@ define([
         return this.makeDatumFromRule(i, latestTimestamp);
     };
 
+    /**
+     * remove all listeners and clean up any resources.
+     */
     SummaryWidgetEvaluator.prototype.destroy = function () {
         this.stopListening();
         this.removeObserver();
