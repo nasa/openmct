@@ -69,18 +69,34 @@ define(
                 entriesContainer[0].scrollTop = 0;
             };
 
+            $scope.findEntryEl = function (entryId) {
+                var element = $($scope.entriesEl).find('#entry_' + entryId);
+
+                if (element[0]) {
+                    return element.find("[contenteditable='true']");
+                } else {
+                    return $($scope.entriesEl.children().children()[0]).find("[contenteditable='true']");
+                }
+            };
+
             $scope.newEntry = function ($event) {
                 $scope.scrollToTop();
-                var entries = $scope.domainObject.model.entries;
-                var lastEntry = entries[entries.length - 1];
+
+                var entries = $scope.domainObject.model.entries,
+                    lastEntry = entries[entries.length - 1],
+                    id = Date.now();
+
                 if (lastEntry === undefined || lastEntry.text || lastEntry.embeds) {
+                    var createdEntry = {'id': id, 'createdOn': id};
+
                     $scope.domainObject.useCapability('mutation', function (model) {
-                        var id = Date.now();
-                        model.entries.push({'id': id, 'createdOn': id});
+                        model.entries.push(createdEntry);
                     });
                 } else {
+                    $scope.findEntryEl(lastEntry.id).focus();
+
                     $scope.domainObject.useCapability('mutation', function (model) {
-                        model.entries[entries.length - 1].createdOn = Date.now();
+                        model.entries[entries.length - 1].createdOn = id;
                     });
                 }
                 $scope.entrySearch = '';
@@ -88,8 +104,7 @@ define(
 
 
             $scope.deleteEntry = function ($event) {
-                /* This is really brittle - change the markup and this doesn't work */
-                var delId = $event.currentTarget.parentElement.parentElement.id;
+                var delId = +$event.currentTarget.id;
                 var errorDialog = dialogService.showBlockingMessage({
                     severity: "error",
                     title: "This action will permanently delete this Notebook entry. Do you want to continue?",
@@ -100,7 +115,7 @@ define(
                             errorDialog.dismiss();
                             var elementPos = $scope.domainObject.model.entries.map(function (x) {
                                 return x.id;
-                            }).indexOf(+delId.replace('entry_', ''));
+                            }).indexOf(delId);
 
                             if (elementPos !== -1) {
                                 $scope.domainObject.useCapability('mutation', function (model) {
@@ -176,9 +191,9 @@ define(
 
             $scope.finished = function (model) {
                 var lastEntry = model[model.length - 1];
+
                 if (!lastEntry.text) {
-                    var newEntry = $scope.entriesEl.children().children()[0];
-                    $(newEntry).find('.t-notebook-entry-input').focus();
+                    $scope.findEntryEl(lastEntry.id).focus();
                 }
             };
 
