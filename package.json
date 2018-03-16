@@ -1,6 +1,6 @@
 {
   "name": "openmct",
-  "version": "0.13.2",
+  "version": "0.13.3-SNAPSHOT",
   "description": "The Open MCT core platform",
   "dependencies": {
     "@cristian77/painterro": "^0.2.48",
