@@ -93,10 +93,8 @@ define(
                 // gets selected during refresh composition
                 self.droppedIdToSelectAfterRefresh = id;
 
-                // Mark change as persistable
-                if ($scope.commit) {
-                    $scope.commit("Dropped a frame.");
-                }
+                self.commit();
+
                 // Populate template-facing position for this id
                 self.rawPositions[id] =
                     $scope.configuration.panels[id];
@@ -157,10 +155,7 @@ define(
                 $scope.configuration.panels[self.activeDragId].dimensions =
                     self.rawPositions[self.activeDragId].dimensions;
 
-                // Mark this object as dirty to encourage persistence
-                if ($scope.commit) {
-                    $scope.commit("Moved frame.");
-                }
+                self.commit();
             };
 
             // Sets the selectable object in response to the selection change event.
@@ -194,9 +189,23 @@ define(
 
             $scope.$on("$destroy", function () {
                 openmct.selection.off("change", setSelection);
+                self.unlisten();
             });
 
             $scope.$on("mctDrop", handleDrop);
+
+            self.unlisten = self.$scope.domainObject.getCapability('mutation').listen(function (model) {
+                $scope.configuration = model.configuration.layout;
+                $scope.model = model;
+
+                var panels = $scope.configuration.panels;
+
+                Object.keys(panels).forEach(function (key) {
+                    if (self.frames.hasOwnProperty(key)) {
+                        self.frames[key] = panels[key].hasFrame;
+                    }
+                });
+            });
         }
 
         // Utility function to copy raw positions from configuration,
@@ -504,6 +513,17 @@ define(
                 oldItem: domainObject,
                 toolbar: toolbar ? this.getToolbar(domainObject.getId(), domainObject) : undefined
             };
+        };
+
+        LayoutController.prototype.commit = function () {
+            var model = this.$scope.model;
+
+            model.configuration = model.configuration || {};
+            model.configuration.layout = this.$scope.configuration;
+
+            this.$scope.domainObject.useCapability('mutation', function () {
+                return model;
+            });
         };
 
         /**

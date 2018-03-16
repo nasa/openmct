@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -295,18 +295,10 @@ define([
                     toolbar: function (selection) {
                         return [
                             {
-                                "control": "button",
-                                "method": "showFrame",
-                                "cssClass": "icon-frame-show",
-                                "title": "Show frame",
-                                "description": "Show frame"
-                            },
-                            {
-                                "control": "button",
-                                "method": "hideFrame",
-                                "cssClass": "icon-frame-hide",
-                                "title": "Hide frame",
-                                "description": "Hide frame"
+                                control: "checkbox",
+                                name: "Show frame",
+                                domainObject: selection[1].context.item,
+                                property: "configuration.layout.panels[" + selection[0].context.oldItem.id + "].hasFrame"
                             }
                         ];
                     }

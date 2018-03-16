@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,172 +23,85 @@ define(
     [],
     function () {
 
-        // Utility functions for reducing truth arrays
-        function and(a, b) {
-            return a && b;
-        }
-        function or(a, b) {
-            return a || b;
-        }
-
         /**
          * Provides initial structure and state (as suitable for provision
-         * to the `mct-toolbar` directive) for a view's tool bar, based on
-         * that view's declaration of what belongs in its tool bar and on
-         * the current selection.
+         * to the `mct-toolbar` directive) for the tool bar.
          *
-         * @param {Function} commit callback to invoke after changes
+         * @param {Object} openmct the openmct object
          * @memberof platform/commonUI/edit
          * @constructor
          */
-        function EditToolbar(commit) {
+        function EditToolbar(openmct) {
             var self = this;
 
-            // Generate a new key for an item's property
-            function addKey(property) {
-                self.properties.push(property);
-                return self.properties.length - 1; // Return index of property
-            }
-
-            // Invoke all functions in selections with the given name
-            function invoke(method, value) {
-                if (method) {
-                    // Make the change in the selection
-                    self.selection.forEach(function (selected) {
-                        if (typeof selected[method] === 'function') {
-                            selected[method](value);
-                        }
-                    });
-                    // ...and commit!
-                    commit();
-                }
-            }
-
-            // Prepare a toolbar item based on current selection
-            function convertItem(item) {
-                var converted = Object.create(item || {});
-                if (item.property) {
-                    converted.key = addKey(item.property);
-                }
-                if (item.method) {
-                    converted.click = function (v) {
-                        invoke(item.method, v);
-                    };
-                }
-                return converted;
-            }
-
             this.toolbarStructure = [];
-            this.selection = undefined;
             this.properties = [];
             this.toolbarState = [];
-            this.convertItem = convertItem;
+            this.openmct = openmct;
         }
-
-        // Check if all elements of the selection which have this
-        // property have the same value for this property.
-        EditToolbar.prototype.isConsistent = function (property) {
-            var self = this,
-                consistent = true,
-                observed = false,
-                state;
-
-            // Check if a given element of the selection is consistent
-            // with previously-observed elements for this property.
-            function checkConsistency(selected) {
-                var next;
-                // Ignore selections which don't have this property
-                if (selected[property] !== undefined) {
-                    // Look up state of this element in the selection
-                    next = self.lookupState(property, selected);
-                    // Detect inconsistency
-                    if (observed) {
-                        consistent = consistent && (next === state);
-                    }
-                    // Track state for next iteration
-                    state = next;
-                    observed = true;
-                }
-            }
-
-            // Iterate through selections
-            self.selection.forEach(checkConsistency);
-
-            return consistent;
-        };
-
-        // Used to filter out items which are applicable (or not)
-        // to the current selection.
-        EditToolbar.prototype.isApplicable = function (item) {
-            var property = (item || {}).property,
-                method = (item || {}).method,
-                exclusive = !!(item || {}).exclusive;
-
-            // Check if a selected item defines this property
-            function hasProperty(selected) {
-                return (property && (selected[property] !== undefined)) ||
-                    (method && (typeof selected[method] === 'function'));
-            }
-
-            return this.selection.map(hasProperty).reduce(
-                    exclusive ? and : or,
-                    exclusive
-                ) && this.isConsistent(property);
-        };
-
-
-        // Look up the current value associated with a property
-        EditToolbar.prototype.lookupState = function (property, selected) {
-            var value = selected[property];
-            return (typeof value === 'function') ? value() : value;
-        };
 
         /**
          * Updates the toolbar with a new structure.
          *
          * @param {Array} structure the toolbar structure
-         * @param {Array} selection the new selected control in the toolbar
+         * @returns {Array} an array that tracks domain object
+         * and property for every element in the state array
          */
-        EditToolbar.prototype.updateToolbar = function (structure, selection) {
+        EditToolbar.prototype.updateToolbar = function (structure) {
             var self = this;
+            var stateTracker = [];
 
-            // Show/hide controls per applicability
-            function refreshApplicability(item) {
-                item.hidden = !self.isApplicable(item);
+            function addKey(item) {
+                stateTracker.push({
+                    domainObject: item.domainObject,
+                    property: item.property
+                });
+
+                self.properties.push(item.property);
+                return self.properties.length - 1; // Return index of property
+            }
+
+            function convertItem(item) {
+                var converted = Object.create(item || {});
+                if (item.property) {
+                    converted.key = addKey(item);
+                }
+
+                return converted;
             }
 
             // Get initial value for a given property
             function initializeState(property) {
                 var result;
-                // Look through all selections for this property;
-                // values should all match by the time we perform
-                // this lookup anyway.
-                self.selection.forEach(function (selected) {
-                    result = (selected[property] !== undefined) ?
-                        self.lookupState(property, selected) :
-                        result;
+                structure.forEach(function (item) {
+                    if (item.property === property) {
+                        result = _.get(item.domainObject, item.property);
+                    }
                 });
                 return result;
             }
 
-            this.selection = selection;
-            this.toolbarStructure = structure.map(this.convertItem);
-            this.toolbarStructure.forEach(refreshApplicability);
+            this.properties = [];
+            this.toolbarStructure = structure.map(convertItem);
             this.toolbarState = this.properties.map(initializeState);
+
+            return stateTracker;
         };
 
         /**
-         * Get the structure of the toolbar, as appropriate to
+         * Gets the structure of the toolbar, as appropriate to
          * pass to `mct-toolbar`.
-         * @returns the toolbar structure
+         *
+         * @returns {Array} the toolbar structure
          */
         EditToolbar.prototype.getStructure = function () {
             return this.toolbarStructure;
         };
 
         /**
-         * Get the current state of the toolbar, as appropriate
+         * Gets the current state of the toolbar, as appropriate
          * to two-way bind to the state handled by `mct-toolbar`.
+         *
          * @returns {Array} state of the toolbar
          */
         EditToolbar.prototype.getState = function () {
@@ -196,44 +109,24 @@ define(
         };
 
         /**
-         * Update state within the current selection.
-         * @param {number} index the index of the corresponding
-         *        element in the state array
-         * @param value the new value to convey to the selection
+         * Mutates the domain object to update the given property with a new value.
+         *
+         * @param {Object} dominObject the domain object
+         * @param {string} property the domain object's property to update
+         * @param value the property's new value
+         */
+        EditToolbar.prototype.updateDomainObject = function (domainObject, property, value) {
+            this.openmct.objects.mutate(domainObject, property, value);
+        }
+
+        /**
+         * Updates state with the new value.
+         *
+         * @param {number} index the index in the state array
+         * @param value the new value to update the state array with
          */
         EditToolbar.prototype.updateState = function (index, value) {
-            var self = this;
-
-            // Update value for this property in all elements of the
-            // selection which have this property.
-            function updateProperties(property, val) {
-                var changed = false;
-
-                // Update property in a selected element
-                function updateProperty(selected) {
-                    // Ignore selected elements which don't have this property
-                    if (selected[property] !== undefined) {
-                        // Check if this is a setter, or just assignable
-                        if (typeof selected[property] === 'function') {
-                            changed =
-                                changed || (selected[property]() !== val);
-                            selected[property](val);
-                        } else {
-                            changed =
-                                changed || (selected[property] !== val);
-                            selected[property] = val;
-                        }
-                    }
-                }
-
-                // Update property in all selected elements
-                self.selection.forEach(updateProperty);
-
-                // Return whether or not anything changed
-                return changed;
-            }
-
-            return updateProperties(this.properties[index], value);
+            this.toolbarState[index] = value;
         };
 
         return EditToolbar;
