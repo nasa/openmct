@@ -313,7 +313,14 @@ define([
                     "priority": 900,
                     "features": "creation",
                     "model": {
-                        "composition": []
+                        "composition": [],
+                        configuration: {
+                            layout: {
+                                panels: {
+
+                                }
+                            }
+                        }
                     },
                     "properties": [
                         {
