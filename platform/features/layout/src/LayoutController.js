@@ -397,40 +397,6 @@ define(
         };
 
         /**
-         * Callback to show/hide the object frame.
-         *
-         * @param {string} id the object id
-         * @private
-         */
-        LayoutController.prototype.toggleFrame = function (id, domainObject) {
-            var configuration = this.$scope.configuration;
-
-            if (!configuration.panels[id]) {
-                configuration.panels[id] = {};
-            }
-
-            this.frames[id] = configuration.panels[id].hasFrame = !this.frames[id];
-
-            var selection = this.openmct.selection.get();
-            selection[0].context.toolbar = this.getToolbar(id, domainObject);
-            this.openmct.selection.select(selection);  // reselect so toolbar updates
-        };
-
-        /**
-         * Gets the toolbar object for the given domain object.
-         *
-         * @param id the domain object id
-         * @param domainObject the domain object
-         * @returns {object}
-         * @private
-         */
-        LayoutController.prototype.getToolbar = function (id, domainObject) {
-            var toolbarObj = {};
-            toolbarObj[this.frames[id] ? 'hideFrame' : 'showFrame'] = this.toggleFrame.bind(this, id, domainObject);
-            return toolbarObj;
-        };
-
-        /**
          * Bypasses selection if drag is in progress.
          *
          * @param event the angular event object
@@ -504,14 +470,12 @@ define(
          * Gets the selection context.
          *
          * @param domainObject the domain object
-         * @returns {object} the context object which includes
-         *                  item, oldItem and toolbar
+         * @returns {object} the context object which includes item and oldItem
          */
         LayoutController.prototype.getContext = function (domainObject, toolbar) {
             return {
                 item: domainObject.useCapability('adapter'),
-                oldItem: domainObject,
-                toolbar: toolbar ? this.getToolbar(domainObject.getId(), domainObject) : undefined
+                oldItem: domainObject
             };
         };
 
