@@ -87,7 +87,7 @@ define([
             openmct.legacyExtension('policies', {category: 'composition',
                 implementation: SummaryWidgetsCompositionPolicy, depends: ['openmct']
             });
-            openmct.telemetry.addMetadataProvider(new SummaryWidgetMetadataProvider(openmct));
+            openmct.telemetry.addProvider(new SummaryWidgetMetadataProvider(openmct));
             openmct.telemetry.addProvider(new SummaryWidgetTelemetryProvider(openmct));
             openmct.objectViews.addProvider(new SummaryWidgetViewProvider(openmct));
         };

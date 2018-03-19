@@ -30,7 +30,7 @@ define([
         this.openmct = openmct;
     }
 
-    SummaryWidgetMetadataProvider.prototype.appliesTo = function (domainObject) {
+    SummaryWidgetMetadataProvider.prototype.supportsMetadata = function (domainObject) {
         return domainObject.type === 'summary-widget';
     };
 
