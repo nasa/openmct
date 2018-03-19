@@ -20,8 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['zepto'], function ($) {
-
+define(['zepto', 'dom-to-image'], function ($) {
     /**
 
      */
@@ -68,8 +67,7 @@ define(['zepto'], function ($) {
                         delay: true
                     });
                 window.setTimeout(function () {
-                    window.EXPORT_IMAGE_TIMEOUT = 5000;
-                    exportImageService.exportPNGtoSRC(el).then(function (img) {
+                    window.domtoimage.toBlob(el).then(function (img) {    
 
                         if (img) {
                             if (dialog) {
@@ -105,7 +103,6 @@ define(['zepto'], function ($) {
                         closeOverlay();
                     });
                 }, 500);
-                window.EXPORT_IMAGE_TIMEOUT = 500;
             };
 
             saveImg = function (url,entryId,embedId) {

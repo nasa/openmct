@@ -50,6 +50,7 @@ requirejs.config({
         "d3-interpolate": "node_modules/d3-interpolate/build/d3-interpolate.min",
         "d3-time": "node_modules/d3-time/build/d3-time.min",
         "d3-time-format": "node_modules/d3-time-format/build/d3-time-format.min",
+        "dom-to-image": "node_modules/dom-to-image/src/dom-to-image",
         "painterro": "node_modules/@cristian77/painterro/build/painterro.min"
     },
     "shim": {
@@ -92,6 +93,9 @@ requirejs.config({
         },
         "d3-axis": {
             "exports": "d3-axis"
+        },
+        "dom-to-image": {
+            "exports": "dom-to-image"
         }
     }
 });
