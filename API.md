@@ -293,7 +293,7 @@ In future, object providers will support other methods to enable other operation
 
 ## Composition Providers
 
-The _composition_ of a domain object is the list of objects it contains, a
+The _composition_ of a domain object is the list of objects it contains, as
 shown (for example) in the tree for browsing. Open MCT provides a
 [default solution](#default-composition-provider) for composition, but there
 may be cases where you want to provide the composition of a certain object
