@@ -13,7 +13,7 @@ define([
     }
 
     EvaluatorPool.prototype.get = function (domainObject) {
-        var objectId = objectUtils.makeKeyString(domainObject);
+        var objectId = objectUtils.makeKeyString(domainObject.identifier);
         var poolEntry = this.byObjectId[objectId];
         if (!poolEntry) {
             poolEntry = {
