@@ -91,7 +91,7 @@ define([
 
     }
 
-    GeneratorMetadataProvider.prototype.appliesTo = function (domainObject) {
+    GeneratorMetadataProvider.prototype.supportsMetadata = function (domainObject) {
         return METADATA_BY_TYPE.hasOwnProperty(domainObject.type);
     };
 

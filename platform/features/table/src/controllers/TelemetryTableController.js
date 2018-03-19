@@ -399,14 +399,14 @@ define(
             var compositionApi = this.openmct.composition;
 
             function filterForTelemetry(objects) {
-                return objects.filter(telemetryApi.canProvideTelemetry.bind(telemetryApi));
+                return objects.filter(telemetryApi.isTelemetryObject.bind(telemetryApi));
             }
 
             /*
              * If parent object is a telemetry object, subscribe to it. Do not
              * test composees.
              */
-            if (telemetryApi.canProvideTelemetry(this.domainObject)) {
+            if (telemetryApi.isTelemetryObject(this.domainObject)) {
                 return Promise.resolve([this.domainObject]);
             } else {
                 /*

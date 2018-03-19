@@ -43,7 +43,7 @@ define([
      * Applies to any domain object with a telemetry property, or whose type
      * definition has a telemetry property.
      */
-    DefaultMetadataProvider.prototype.appliesTo = function (domainObject) {
+    DefaultMetadataProvider.prototype.supportsMetadata = function (domainObject) {
         return !!domainObject.telemetry || !!this.typeHasTelemetry(domainObject);
     };
 

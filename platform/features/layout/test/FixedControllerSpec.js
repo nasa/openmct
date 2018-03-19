@@ -150,13 +150,13 @@ define(
                     [
                         'subscribe',
                         'request',
-                        'canProvideTelemetry',
+                        'isTelemetryObject',
                         'getMetadata',
                         'limitEvaluator',
                         'getValueFormatter'
                     ]
                 );
-                mockTelemetryAPI.canProvideTelemetry.andReturn(true);
+                mockTelemetryAPI.isTelemetryObject.andReturn(true);
                 mockTelemetryAPI.request.andReturn(Promise.resolve([]));
 
                 testGrid = [123, 456];

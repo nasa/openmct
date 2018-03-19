@@ -178,7 +178,7 @@ define(['../src/ConditionManager'], function (ConditionManager) {
 
             mockTelemetryAPI = jasmine.createSpyObj('telemetryAPI', [
                 'request',
-                'canProvideTelemetry',
+                'isTelemetryObject',
                 'getMetadata',
                 'subscribe',
                 'triggerTelemetryCallback'
@@ -188,7 +188,7 @@ define(['../src/ConditionManager'], function (ConditionManager) {
                     resolve(mockTelemetryValues[obj.identifer.key]);
                 });
             });
-            mockTelemetryAPI.canProvideTelemetry.andReturn(true);
+            mockTelemetryAPI.isTelemetryObject.andReturn(true);
             mockTelemetryAPI.getMetadata.andCallFake(function (obj) {
                 return mockMetadataManagers[obj.identifier.key];
             });

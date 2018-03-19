@@ -23,33 +23,17 @@
 
 define([
     "./GeneratorProvider",
-    "./SinewaveLimitCapability",
+    "./SinewaveLimitProvider",
     "./StateGeneratorProvider",
     "./GeneratorMetadataProvider"
 ], function (
     GeneratorProvider,
-    SinewaveLimitCapability,
+    SinewaveLimitProvider,
     StateGeneratorProvider,
     GeneratorMetadataProvider
 ) {
 
-    var legacyExtensions = {
-        "capabilities": [
-            {
-                "key": "limit",
-                "implementation": SinewaveLimitCapability
-            }
-        ]
-    };
-
     return function(openmct){
-        //Register legacy extensions for things not yet supported by the new API
-        Object.keys(legacyExtensions).forEach(function (type){
-            var extensionsOfType = legacyExtensions[type];
-            extensionsOfType.forEach(function (extension) {
-                openmct.legacyExtension(type, extension)
-            })
-        });
 
         openmct.types.addType("example.state-generator", {
             name: "State Generator",
@@ -158,7 +142,8 @@ define([
         });
 
         openmct.telemetry.addProvider(new GeneratorProvider());
-        openmct.telemetry.addMetadataProvider(new GeneratorMetadataProvider());
+        openmct.telemetry.addProvider(new GeneratorMetadataProvider());
+        openmct.telemetry.addProvider(new SinewaveLimitProvider());
     };
 
 });

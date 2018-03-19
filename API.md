@@ -31,6 +31,7 @@
         - [Registering Formats](#registering-formats)
       - [Telemetry Data](#telemetry-data)
         - [Telemetry Datums](#telemetry-datums)
+      - [Limit Evaluators **draft**](#limit-evaluators-draft)
     - [Telemetry Visualization APIs **draft**](#telemetry-visualization-apis-draft)
   - [Time API](#time-api)
     - [Time Systems and Bounds](#time-systems-and-bounds)
@@ -451,6 +452,8 @@ A telemetry provider is a javascript object with up to four methods:
 * `request(domainObject, options)` required if `supportsRequest` is implemented.  Must return a promise for an array of telemetry datums that fulfills the request.  The `options` argument will include a `start`, `end`, and `domain` attribute representing the query bounds.  For more request properties, see Request Properties below.
 * `supportsMetadata(domainObject)` optional.  Implement and return `true` for objects that you want to provide dynamic metadata for.
 * `getMetadata(domainObject)` required if `supportsMetadata` is implemented.  Must return a valid telemetry metadata definition that includes at least one valueMetadata definition.
+* `supportsLimits(domainObject)` optional.  Implement and return `true` for domain objects that you want to provide a limit evaluator for.
+* `getLimitEvaluator(domainObject)` required if `supportsLimits` is implemented.  Must return a valid LimitEvaluator for a given domain object.
 
 Telemetry providers are registered by calling `openmct.telemetry.addProvider(provider)`, e.g.
 
@@ -458,8 +461,6 @@ Telemetry providers are registered by calling `openmct.telemetry.addProvider(pro
 openmct.telemetry.addProvider({
     supportsRequest: function (domainObject, options) { /*...*/ },
     request: function (domainObject, options) { /*...*/ },
-    supportsSubscribe: function (domainObject, callback, options) { /*...*/ },
-    subscribe: function (domainObject, callback, options) { /*...*/ }
 })
 ```
 
@@ -584,6 +585,12 @@ A telemetry datum is a simple javascript object, e.g.:
 The key-value pairs of this object are described by the telemetry metadata of
 a domain object, as discussed in the [Telemetry Metadata](#telemetry-metadata)
 section.
+
+#### Limit Evaluators **draft**
+
+Limit evaluators allow a telemetry integrator to define how limits should be 
+applied to telemetry from a given domain object.  For an example of a limit 
+evaluator, take a look at `examples/generator/SinewaveLimitProvider.js`.
 
 ### Telemetry Visualization APIs **draft**
 
