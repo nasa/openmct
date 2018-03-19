@@ -79,6 +79,19 @@ define(
                 }
             };
 
+            $scope.findEntryPositionById = function (id) {
+                var foundId = -1;
+
+                $scope.domainObject.model.entries.forEach(function (element, index) {
+                    if (element.id === id) {
+                        foundId = index;
+                        return;
+                    }
+                });
+
+                return foundId;
+            };
+
             $scope.newEntry = function ($event) {
                 $scope.scrollToTop();
 
@@ -113,9 +126,7 @@ define(
                         label: "OK",
                         callback: function () {
                             errorDialog.dismiss();
-                            var elementPos = $scope.domainObject.model.entries.map(function (x) {
-                                return x.id;
-                            }).indexOf(delId);
+                            var elementPos = $scope.findEntryPositionById(delId);
 
                             if (elementPos !== -1) {
                                 $scope.domainObject.useCapability('mutation', function (model) {
@@ -174,10 +185,8 @@ define(
             $scope.textBlur = function ($event, entryId) {
                 // entryId is the unique numeric based on the original createdOn
                 if ($event.target && $event.target.innerText !== "") {
-                    var elementPos = $scope.domainObject.model.entries.map(function (x) {
-                        return x.id;
-                    }).indexOf(+(entryId));
-
+                    var elementPos = $scope.findEntryPositionById(+entryId);
+                    
                     // If the text of an entry has been changed, then update the text and the modifiedOn numeric
                     // Otherwise, don't do anything
                     if ($scope.currentEntryValue !== $event.target.innerText) {
