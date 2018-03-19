@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/*global console*/
 define([
     './TelemetryMetadataManager',
     './TelemetryValueFormatter',
@@ -153,6 +153,26 @@ define([
      */
     TelemetryAPI.prototype.isTelemetryObject = function (domainObject) {
         return !!this.findMetadataProvider(domainObject);
+    };
+
+    /**
+     * Check if this provider can supply telemetry data associated with
+     * this domain object.
+     *
+     * @method canProvideTelemetry
+     * @param {module:openmct.DomainObject} domainObject the object for
+     *        which telemetry would be provided
+     * @returns {boolean} true if telemetry can be provided
+     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+     */
+    TelemetryAPI.prototype.canProvideTelemetry = function (domainObject) {
+        console.warn(
+            'DEPRECATION WARNING: openmct.telemetry.canProvideTelemetry ' +
+            'will not be supported in future versions of Open MCT.  Please ' +
+            'use openmct.telemetry.isTelemetryObject instead.'
+        );
+        return !!this.findSubscriptionProvider(domainObject) ||
+               !!this.findRequestProvider(domainObject);
     };
 
     /**
@@ -430,31 +450,31 @@ define([
         return this.getLimitEvaluator(domainObject);
     };
 
-   /**
-    * Get a limit evaluator for this domain object.
-    * Limit Evaluators help you evaluate limit and alarm status of individual
-    * telemetry datums for display purposes without having to interact directly
-    * with the Limit API.
-    *
-    * This method is optional.
-    * If a provider does not implement this method, it is presumed
-    * that no limits are defined for this domain object's telemetry.
-    *
-    * @param {module:openmct.DomainObject} domainObject the domain
-    *        object for which to evaluate limits
-    * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
-    * @method limitEvaluator
-    * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
-    */
-   TelemetryAPI.prototype.getLimitEvaluator = function (domainObject) {
-       var provider = this.findLimitEvaluator(domainObject);
-       if (!provider) {
-           return {
-               evaluate: function () {}
-           };
-       }
-       return provider.getLimitEvaluator(domainObject);
-   };
+    /**
+     * Get a limit evaluator for this domain object.
+     * Limit Evaluators help you evaluate limit and alarm status of individual
+     * telemetry datums for display purposes without having to interact directly
+     * with the Limit API.
+     *
+     * This method is optional.
+     * If a provider does not implement this method, it is presumed
+     * that no limits are defined for this domain object's telemetry.
+     *
+     * @param {module:openmct.DomainObject} domainObject the domain
+     *        object for which to evaluate limits
+     * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
+     * @method limitEvaluator
+     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+     */
+    TelemetryAPI.prototype.getLimitEvaluator = function (domainObject) {
+        var provider = this.findLimitEvaluator(domainObject);
+        if (!provider) {
+            return {
+                evaluate: function () {}
+            };
+        }
+        return provider.getLimitEvaluator(domainObject);
+    };
 
     return TelemetryAPI;
 });
