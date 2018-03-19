@@ -71,63 +71,58 @@ define([
             form: [
                 {
                     name: "Period",
-                    control: "textfield",
+                    control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
                     key: "period",
                     required: true,
                     property: [
                         "telemetry",
                         "period"
-                    ],
-                    pattern: "^\\d*(\\.\\d*)?$"
+                    ]
                 },
                 {
                     name: "Amplitude",
-                    control: "textfield",
+                    control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
                     key: "amplitude",
                     required: true,
                     property: [
                         "telemetry",
                         "amplitude"
-                    ],
-                    pattern: "^\\d*(\\.\\d*)?$"
+                    ]
                 },
                 {
                     name: "Offset",
-                    control: "textfield",
+                    control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
                     key: "offset",
                     required: true,
                     property: [
                         "telemetry",
                         "offset"
-                    ],
-                    pattern: "^\\d*(\\.\\d*)?$"
+                    ]
                 },
                 {
                     name: "Data Rate (hz)",
-                    control: "textfield",
+                    control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
                     key: "dataRateInHz",
                     required: true,
                     property: [
                         "telemetry",
                         "dataRateInHz"
-                    ],
-                    pattern: "^\\d*(\\.\\d*)?$"
+                    ]
                 },
                 {
                     name: "Phase (radians)",
-                    control: "textfield",
+                    control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
                     key: "phase",
                     required: true,
                     property: [
                         "telemetry",
                         "phase"
-                    ],
-                    pattern: "^\\d*(\\.\\d*)?$"
+                    ]
                 }
             ],
             initialize: function (object) {
