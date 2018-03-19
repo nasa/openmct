@@ -74,9 +74,7 @@ define(['zepto'], function ($) {
                     });
 
                 }else {
-                    entryId = $scope.domainObject.model.entries.map(function (x) {
-                        return (x.id);
-                    }).indexOf(Number($element[0].id.replace('entry_', '')));
+                    entryId = $scope.findEntryPositionById(Number($element[0].id.replace('entry_', '')));
 
                     if (!$scope.domainObject.model.entries[entryId].embeds) {
                         $scope.domainObject.model.entries[entryId].embeds = [];
