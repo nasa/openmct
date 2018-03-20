@@ -21,5 +21,6 @@
     "shadow": "outer",
     "strict": "implied",
     "undef": true,
-    "unused": "vars"
+    "unused": "vars",
+    "latedef": "nofunc"
 }

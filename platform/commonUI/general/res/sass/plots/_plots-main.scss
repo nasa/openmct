@@ -20,17 +20,63 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .abs.holder-plot {
-    // Fend off the scrollbar when less than min-height;
-    right: $interiorMargin;
+    right: $interiorMargin; // Fend off the scrollbar when less than min-height;
+    .t-object-alert.t-alert-unsynced {
+        display: none;
+    }
 }
+
+/********************************************* STACKED PLOT LAYOUT */
+.t-plot-stacked {
+    .l-view-section {
+        //  Make this a flex container
+        display: flex;
+        flex-flow: column nowrap;
+        .gl-plot.child-frame {
+            mct-plot { 
+                display: flex; 
+                flex: 1 1 auto;
+                height: 100%;
+                position: relative;
+            }
+            flex: 1 1 auto;
+            &:not(:first-child) {
+                margin-top: $interiorMargin;
+            }
+        }
+    }
+
+    .s-status-timeconductor-unsynced .holder-plot {
+        .t-object-alert.t-alert-unsynced {
+            display: block;
+        }
+    }
+
+}
+
+
 
 .gl-plot {
 	color: $colorPlotFg;
+    display: flex;
 	font-size: 0.7rem;
 	position: relative;
 	width: 100%;
 	height: 100%;
     min-height: $plotMinH;
+
+    /********************************************* AXIS AND DISPLAY AREA */
+    .plot-wrapper-axis-and-display-area {
+        margin-top: $interiorMargin; // Keep the top tick label from getting clipped
+        position: relative;
+        flex: 1 1 auto;
+        .t-object-alert {
+            position: absolute;
+            display: block;
+            font-size: 1.5em;
+            top: $interiorMarginSm; left: $interiorMarginSm;
+        }
+    }
 
     .gl-plot-wrapper-display-area-and-x-axis {
         // Holds the plot area and the X-axis only
@@ -49,7 +95,6 @@
         }
 
         .gl-plot-axis-area.gl-plot-x {
-            //@include test(green);
             top: auto;
             right: 0;
             bottom: 0;
@@ -63,7 +108,7 @@
 	.gl-plot-axis-area {
 		position: absolute;
 		&.gl-plot-y {
-			top: $plotLegendH + $interiorMargin;
+			top: nth($plotDisplayArea, 1);
 			right: auto;
 			bottom: nth($plotDisplayArea, 3);
 			left: 0;
@@ -158,17 +203,6 @@
 		}
 	}
 
-	.gl-plot-legend {
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: auto;
-		left: 0;
-		height: $plotLegendH;
-		overflow-x: hidden;
-		overflow-y: auto;
-	}
-
 	/****************************** Limits and Out-of-Bounds data */
 
 	.l-limit-bar,
@@ -233,39 +267,6 @@
     @if $colorPlotBg != none { background-color: $colorPlotBg; }
     cursor: crosshair;
     border: 1px solid $colorPlotAreaBorder;
-}
-
-.gl-plot-legend,
-.legend {
-	.plot-legend-item,
-	.legend-item {
-		display: inline-block;
-		margin-right: $interiorMarginLg;
-		margin-bottom: $interiorMarginSm;
-		span {
-			vertical-align: middle;
-		}
-		.plot-color-swatch,
-		.color-swatch {
-			border-radius: 2px;
-			display: inline-block;
-			height: $plotSwatchD;
-			width: $plotSwatchD;
-		}
-	}
-}
-
-.gl-plot-legend {
-	.plot-legend-item {
-		border-radius: $smallCr;
-		line-height: 1.5em;
-		padding: 0px $itemPadLR;
-		.plot-color-swatch {
-			border: 1px solid $colorBodyBg;
-			height: $plotSwatchD + 1;
-			width: $plotSwatchD + 1;
-		}
-	}
 }
 
 .tick {
