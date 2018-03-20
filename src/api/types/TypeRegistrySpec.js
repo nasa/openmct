@@ -47,7 +47,7 @@ define(['./TypeRegistry', './Type'], function (TypeRegistry, Type) {
         it('new types are registered successfully and can be retrieved', function () {
             expect(typeRegistryInstance.get('testType').definition.name).toBe('Test Type');
         });
-        
+
         it('type registry contains new keys', function () {
             expect(typeRegistryInstance.listKeys ()).toContain('testType');
         });
