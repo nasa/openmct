@@ -60,11 +60,12 @@
 
 .overlay.snapshot {
     // Applied in overlay when taking a snapshot
-    background: red; // $colorBodyBg;
+    background: $colorBodyBg;
 }
 
 .s-snapshot-datetime {
-    color: rgba($colorBodyFg, 0.5);
+    color: rgba($colorBodyFg, 0.4);
+    font-size: 0.8em;
 }
 
 
