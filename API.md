@@ -480,13 +480,24 @@ Telemetry requests support time bounded queries. A call to a _Telemetry Provider
 
 In this case, the `domain` is the currently selected time-system, and the start and end dates are valid dates in that time system.
 
+The response to a telemetry request is an array of telemetry datums.  
+These datums must be sorted by `domain` in ascending order.
+
 #### Request Strategies **draft**
 
 To improve performance views may request a certain strategy for data reduction.  These are intended to improve visualization performance by reducing the amount of data needed to be sent to the client.  These strategies will be indicated by additional parameters in the request options.  You may choose to handle them or ignore them.  
 
+These strategies all include a ``
+
 Note: these strategies are currently being tested in core plugins and may change based on developer feedback.
 
 ##### `latest` request strategy
+
+This request is a "depth based" strategy.  When a view is only capable of
+displaying a single value (or perhaps the last ten values), then it can
+use the `latest` request strategy with a `size` parameter that specifies
+the number of results it desires.  The `size` parameter is a hint; views
+must not assume the response will have the exact number of results requested.
 
 example:
 ```javascript
@@ -592,9 +603,10 @@ Limit evaluators allow a telemetry integrator to define how limits should be
 applied to telemetry from a given domain object.  For an example of a limit 
 evaluator, take a look at `examples/generator/SinewaveLimitProvider.js`.
 
-### Telemetry Visualization APIs **draft**
+### Telemetry Consumer APIs **draft**
 
-The APIs for fetching and visualizing telemetry-- those that would be used in custom views-- are currently in draft state and are being revised.  If you'd like to experiement with them before they are finalized, please contact the  team via the contact-us link on our website.
+The APIs for requesting telemetry from Open MCT -- e.g. for use in custom views -- are currently in draft state and are being revised.  If you'd like to experiement with them before they are finalized, please contact the team via the contact-us link on our website.
+
 
 ## Time API
 
