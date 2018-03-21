@@ -191,7 +191,7 @@ define ([
             telemetryMetadata,
             self = this;
 
-        if (telemetryAPI.canProvideTelemetry(obj)) {
+        if (telemetryAPI.isTelemetryObject(obj)) {
             self.compositionObjs[objId] = obj;
             self.telemetryMetadataById[objId] = {};
 
