@@ -464,7 +464,7 @@ define(
 
             function filterForTelemetryObjects(objects) {
                 return objects.filter(function (object) {
-                    return self.openmct.telemetry.canProvideTelemetry(object);
+                    return self.openmct.telemetry.isTelemetryObject(object);
                 });
             }
 

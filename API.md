@@ -1,3 +1,57 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents** 
+
+- [Building Applications With Open MCT](#building-applications-with-open-mct)
+  - [Scope and purpose of this document](#scope-and-purpose-of-this-document)
+  - [Building From Source](#building-from-source)
+  - [Starting an Open MCT application](#starting-an-open-mct-application)
+  - [Plugins](#plugins)
+    - [Defining and Installing a New Plugin](#defining-and-installing-a-new-plugin)
+  - [Domain Objects and Identifiers](#domain-objects-and-identifiers)
+    - [Object Attributes](#object-attributes)
+    - [Domain Object Types](#domain-object-types)
+  - [Root Objects](#root-objects)
+  - [Object Providers](#object-providers)
+  - [Composition Providers](#composition-providers)
+    - [Adding Composition Providers](#adding-composition-providers)
+    - [Default Composition Provider](#default-composition-provider)
+  - [Telemetry API](#telemetry-api)
+    - [Integrating Telemetry Sources](#integrating-telemetry-sources)
+      - [Telemetry Metadata](#telemetry-metadata)
+        - [Values](#values)
+          - [Value Hints](#value-hints)
+        - [The Time Conductor and Telemetry](#the-time-conductor-and-telemetry)
+      - [Telemetry Providers](#telemetry-providers)
+      - [Telemetry Requests](#telemetry-requests)
+      - [Request Strategies **draft**](#request-strategies-draft)
+        - [`latest` request strategy](#latest-request-strategy)
+        - [`minmax` request strategy](#minmax-request-strategy)
+      - [Telemetry Formats **draft**](#telemetry-formats-draft)
+        - [Registering Formats](#registering-formats)
+      - [Telemetry Data](#telemetry-data)
+        - [Telemetry Datums](#telemetry-datums)
+      - [Limit Evaluators **draft**](#limit-evaluators-draft)
+    - [Telemetry Visualization APIs **draft**](#telemetry-visualization-apis-draft)
+  - [Time API](#time-api)
+    - [Time Systems and Bounds](#time-systems-and-bounds)
+      - [Defining and Registering Time Systems](#defining-and-registering-time-systems)
+      - [Getting and Setting the Active Time System](#getting-and-setting-the-active-time-system)
+    - [Time Bounds](#time-bounds)
+    - [Clocks](#clocks)
+      - [Defining and registering clocks](#defining-and-registering-clocks)
+      - [Getting and setting active clock](#getting-and-setting-active-clock)
+      - [Stopping an active clock](#stopping-an-active-clock)
+      - [Clock Offsets](#clock-offsets)
+    - [Time Events](#time-events)
+      - [List of Time Events](#list-of-time-events)
+    - [The Time Conductor](#the-time-conductor)
+      - [Time Conductor Configuration](#time-conductor-configuration)
+      - [Example conductor configuration](#example-conductor-configuration)
+  - [Included Plugins](#included-plugins)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Building Applications With Open MCT
 
 ## Scope and purpose of this document
@@ -154,7 +208,7 @@ registry.
 
 eg.
 ```javascript
-openmct.types.addType('my-type', {
+openmct.types.addType('example.my-type', {
     name: "My Type",
     description: "This is a type that I added!",
     creatable: true
@@ -162,8 +216,9 @@ openmct.types.addType('my-type', {
 ```
 
 The `addType` function accepts two arguments:
-* A `string` key identifying the type. This key is used when specifying a type 
-for an object.
+* A `string` key identifying the type. This key is used when specifying a type
+for an object.  We recommend prefixing your types with a namespace to avoid
+conflicts with other plugins.
 * An object type specification. An object type definition supports the following 
 attributes      
     * `name`: a `string` naming this object type
@@ -194,7 +249,7 @@ To do so, use the `addRoot` method of the object API.
 eg.
 ```javascript
 openmct.objects.addRoot({
-        namespace: "my-namespace",
+        namespace: "example.namespace",
         key: "my-key"
     });
 ```
@@ -235,13 +290,12 @@ It is expected that the `get` function will return a
 [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) 
 that resolves with the object being requested.
 
-In future, object providers will support other methods to enable other operations 
-with persistence stores, such as creating, updating, and deleting objects.
+In future, object providers will support other methods to enable other operations with persistence stores, such as creating, updating, and deleting objects.
 
 ## Composition Providers
 
-The _composition_ of a domain object is the list of objects it contains, as shown 
-(for example) in the tree for browsing. Open MCT provides a
+The _composition_ of a domain object is the list of objects it contains, as
+shown (for example) in the tree for browsing. Open MCT provides a
 [default solution](#default-composition-provider) for composition, but there
 may be cases where you want to provide the composition of a certain object
 (or type of object) dynamically.
@@ -255,7 +309,7 @@ Composition Provider:
 ```javascript
 openmct.composition.addProvider({
     appliesTo: function (domainObject) {
-        return domainObject.type === 'my-type';
+        return domainObject.type === 'example.my-type';
     },
     load: function (domainObject) {
         return Promise.resolve(myDomainObjects);
@@ -273,8 +327,9 @@ These identifiers will be used to fetch Domain Objects from an [Object Provider]
 
 ### Default Composition Provider
 
-The default composition provider applies to any domain object with a `composition` 
-property. The value of `composition` should be an array of identifiers, e.g.:
+The default composition provider applies to any domain object with a 
+`composition` property. The value of `composition` should be an array of 
+identifiers, e.g.:
 
 ```javascript
 var domainObject = {
@@ -295,13 +350,17 @@ var domainObject = {
 
 ## Telemetry API
 
-The Open MCT telemetry API provides two main sets of interfaces-- one for integrating telemetry data into Open MCT, and another for developing Open MCT visualization plugins utilizing telemetry API.  
+The Open MCT telemetry API provides two main sets of interfaces-- one for
+integrating telemetry data into Open MCT, and another for developing Open MCT
+visualization plugins utilizing the telemetry API.  
 
-The APIs for visualization plugins are still a work in progress and docs may change at any time.  However, the APIs for integrating telemetry metadata into Open MCT are stable and documentation is included below.
+The APIs for visualization plugins are still a work in progress and docs may
+change at any time.  However, the APIs for integrating telemetry metadata into
+Open MCT are stable and documentation is included below.
 
 ### Integrating Telemetry Sources
 
-There are two main tasks for integrating telemetry sources-- describing telemetry objects with relevant metadata, and then providing telemetry data for those objects.  You'll use an [Object Provider](#object-providers) to provide objects with the necessary [Telemetry Metadata](#telemetry-metadata), and then register a [Telemetry Provider](#telemetry-providers) to retrieve telemetry data for those objects.
+There are two main tasks for integrating telemetry sources-- describing telemetry objects with relevant metadata, and then providing telemetry data for those objects.  You'll use an [Object Provider](#object-providers) to provide objects with the necessary [Telemetry Metadata](#telemetry-metadata), and then register a [Telemetry Provider](#telemetry-providers) to retrieve telemetry data for those objects.  Alternatively, you can register a telemetry metadata provider to provide the necessary telemetry metadata.
 
 For a step-by-step guide to building a telemetry adapter, please see the 
 [Open MCT Tutorials](https://github.com/nasa/openmct-tutorial).
@@ -355,7 +414,7 @@ attribute      | type   | flags    | notes
 ---            |  ---   |  ---     | ---
 `key`          | string | required | unique identifier for this field.  
 `hints`        | object | required | Hints allow views to intelligently select relevant attributes for display, and are required for most views to function.  See section on "Value Hints" below.
-`name`         | string | optional | a human readible label for this field.  If omitted, defaults to `key`.
+`name`         | string | optional | a human readable label for this field.  If omitted, defaults to `key`.
 `source`       | string | optional | identifies the property of a datum where this value is stored.  If omitted, defaults to `key`.
 `format`       | string | optional | a specific format identifier, mapping to a formatter.  If omitted, uses a default formatter.  For enumerations, use `enum`.  For timestamps, use `utc` if you are using utc dates, otherwise use a key mapping to your custom date format.  
 `units`        | string | optional | the units of this value, e.g. `km`, `seconds`, `parsecs`
@@ -383,7 +442,7 @@ In order for the time conductor to work, there will always be an active "time sy
 
 #### Telemetry Providers
 
-Telemetry providers are responsible for providing historical and real time telemetry data for telemetry objects.  Each telemetry provider determines which objects it can provide telemetry for, and then must implement methods to provide telemetry for those objects.
+Telemetry providers are responsible for providing historical and real-time telemetry data for telemetry objects.  Each telemetry provider determines which objects it can provide telemetry for, and then must implement methods to provide telemetry for those objects.
 
 A telemetry provider is a javascript object with up to four methods:
 
@@ -391,6 +450,10 @@ A telemetry provider is a javascript object with up to four methods:
 * `subscribe(domainObject, callback, options)` required if `supportsSubscribe` is implemented.  Establish a subscription for realtime data for the given domain object.  Should invoke `callback` with a single telemetry datum every time data is received.  Must return an unsubscribe function.  Multiple views can subscribe to the same telemetry object, so it should always return a new unsubscribe function.
 * `supportsRequest(domainObject, options)` optional.  Must be implemented to provide historical telemetry.  Should return `true` if the provider supports historical requests for the given domain object.
 * `request(domainObject, options)` required if `supportsRequest` is implemented.  Must return a promise for an array of telemetry datums that fulfills the request.  The `options` argument will include a `start`, `end`, and `domain` attribute representing the query bounds.  For more request properties, see Request Properties below.
+* `supportsMetadata(domainObject)` optional.  Implement and return `true` for objects that you want to provide dynamic metadata for.
+* `getMetadata(domainObject)` required if `supportsMetadata` is implemented.  Must return a valid telemetry metadata definition that includes at least one valueMetadata definition.
+* `supportsLimits(domainObject)` optional.  Implement and return `true` for domain objects that you want to provide a limit evaluator for.
+* `getLimitEvaluator(domainObject)` required if `supportsLimits` is implemented.  Must return a valid LimitEvaluator for a given domain object.
 
 Telemetry providers are registered by calling `openmct.telemetry.addProvider(provider)`, e.g.
 
@@ -398,14 +461,15 @@ Telemetry providers are registered by calling `openmct.telemetry.addProvider(pro
 openmct.telemetry.addProvider({
     supportsRequest: function (domainObject, options) { /*...*/ },
     request: function (domainObject, options) { /*...*/ },
-    supportsSubscribe: function (domainObject, callback, options) { /*...*/ },
-    subscribe: function (domainObject, callback, options) { /*...*/ }
 })
 ```
+
+Note: it is not required to implement all of the methods on every provider.  Depending on the complexity of your implementation, it may be helpful to instantiate and register your realtime, historical, and metadata providers separately.
 
 #### Telemetry Requests
 
 Telemetry requests support time bounded queries. A call to a _Telemetry Provider_'s `request` function will include an `options` argument. These are simply javascript objects with attributes for the request parameters. An example of a telemetry request object with a start and end time is included below:
+
 ```javascript
 {
     start: 1487981997240,
@@ -414,7 +478,54 @@ Telemetry requests support time bounded queries. A call to a _Telemetry Provider
 }
 ```
 
-#### Telemetry Formats
+In this case, the `domain` is the currently selected time-system, and the start and end dates are valid dates in that time system.
+
+The response to a telemetry request is an array of telemetry datums.  
+These datums must be sorted by `domain` in ascending order.
+
+#### Request Strategies **draft**
+
+To improve performance views may request a certain strategy for data reduction.  These are intended to improve visualization performance by reducing the amount of data needed to be sent to the client.  These strategies will be indicated by additional parameters in the request options.  You may choose to handle them or ignore them.  
+
+Note: these strategies are currently being tested in core plugins and may change based on developer feedback.
+
+##### `latest` request strategy
+
+This request is a "depth based" strategy.  When a view is only capable of
+displaying a single value (or perhaps the last ten values), then it can
+use the `latest` request strategy with a `size` parameter that specifies
+the number of results it desires.  The `size` parameter is a hint; views
+must not assume the response will have the exact number of results requested.
+
+example:
+```javascript
+{
+    start: 1487981997240,
+    end: 1487982897240,
+    domain: 'utc',
+    strategy: 'latest',
+    size: 1
+}
+```
+
+This strategy says "I want the lastest data point in this time range".  A provider which recognizes this request should return only one value-- the latest-- in the requested time range.  Depending on your back-end implementation, performing these queries in bulk can be a large performance increase.  These are generally issued by views that are only capable of displaying a single value and only need to show the latest value.
+
+##### `minmax` request strategy
+
+example:
+```javascript
+{
+    start: 1487981997240,
+    end: 1487982897240,
+    domain: 'utc',
+    strategy: 'minmax',
+    size: 720
+}
+```
+
+MinMax queries are issued by plots, and may be issued by other types as well.  The aim is to reduce the amount of data returned but still faithfully represent the full extent of the data.  In order to do this, the view calculates the maximum data resolution it can display (i.e. the number of horizontal pixels in a plot) and sends that as the `size`.  The response should include at least one minimum and one maximum value per point of resolution.
+
+#### Telemetry Formats **draft**
 
 Telemetry format objects define how to interpret and display telemetry data. 
 They have a simple structure:
@@ -483,6 +594,17 @@ A telemetry datum is a simple javascript object, e.g.:
 The key-value pairs of this object are described by the telemetry metadata of
 a domain object, as discussed in the [Telemetry Metadata](#telemetry-metadata)
 section.
+
+#### Limit Evaluators **draft**
+
+Limit evaluators allow a telemetry integrator to define how limits should be 
+applied to telemetry from a given domain object.  For an example of a limit 
+evaluator, take a look at `examples/generator/SinewaveLimitProvider.js`.
+
+### Telemetry Consumer APIs **draft**
+
+The APIs for requesting telemetry from Open MCT -- e.g. for use in custom views -- are currently in draft state and are being revised.  If you'd like to experiement with them before they are finalized, please contact the team via the contact-us link on our website.
+
 
 ## Time API
 
@@ -591,7 +713,7 @@ openmct.time.bounds({start: now - ONE_HOUR, now);
 To respond to bounds change events, listen for the [`'bounds'`](#time-events)
 event.
 
-## Clocks
+### Clocks
 
 The Time API can be set to follow a clock source which will cause the bounds
 to be updated automatically whenever the clock source "ticks". A clock is simply
@@ -610,7 +732,7 @@ be defined to tick on some remote timing source.
 The values provided by clocks are simple `number`s, which are interpreted in the
 context of the active [Time System](#defining-and-registering-time-systems).
 
-### Defining and registering clocks
+#### Defining and registering clocks
 
 A clock is an object that defines certain required metadata and functions:
 
@@ -724,7 +846,7 @@ __Note:__ Setting the clock offsets will trigger an immediate bounds change, as
 new bounds will be calculated based on the `currentValue()` of the active clock. 
 Clock offsets are only relevant when a clock source is active.
 
-## Time Events
+### Time Events
 
 The Time API is a standard event emitter; you can register callbacks for events using the `on` method and remove callbacks for events with the `off` method.
 
@@ -766,7 +888,7 @@ The events emitted by the Time API are:
   * `clockOffsets`: The new [clock offsets](#clock-offsets).
 
 
-## The Time Conductor
+### The Time Conductor
 
 The Time Conductor provides a user interface for managing time bounds in Open 
 MCT. It allows a user to select from configured time systems and clocks, and to set bounds and clock offsets.
