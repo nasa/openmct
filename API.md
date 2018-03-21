@@ -487,8 +487,6 @@ These datums must be sorted by `domain` in ascending order.
 
 To improve performance views may request a certain strategy for data reduction.  These are intended to improve visualization performance by reducing the amount of data needed to be sent to the client.  These strategies will be indicated by additional parameters in the request options.  You may choose to handle them or ignore them.  
 
-These strategies all include a ``
-
 Note: these strategies are currently being tested in core plugins and may change based on developer feedback.
 
 ##### `latest` request strategy
