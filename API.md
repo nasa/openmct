@@ -38,14 +38,14 @@
       - [Defining and Registering Time Systems](#defining-and-registering-time-systems)
       - [Getting and Setting the Active Time System](#getting-and-setting-the-active-time-system)
     - [Time Bounds](#time-bounds)
-  - [Clocks](#clocks)
-    - [Defining and registering clocks](#defining-and-registering-clocks)
+    - [Clocks](#clocks)
+      - [Defining and registering clocks](#defining-and-registering-clocks)
       - [Getting and setting active clock](#getting-and-setting-active-clock)
       - [Stopping an active clock](#stopping-an-active-clock)
       - [Clock Offsets](#clock-offsets)
-  - [Time Events](#time-events)
+    - [Time Events](#time-events)
       - [List of Time Events](#list-of-time-events)
-  - [The Time Conductor](#the-time-conductor)
+    - [The Time Conductor](#the-time-conductor)
       - [Time Conductor Configuration](#time-conductor-configuration)
       - [Example conductor configuration](#example-conductor-configuration)
   - [Included Plugins](#included-plugins)
@@ -703,7 +703,7 @@ openmct.time.bounds({start: now - ONE_HOUR, now);
 To respond to bounds change events, listen for the [`'bounds'`](#time-events)
 event.
 
-## Clocks
+### Clocks
 
 The Time API can be set to follow a clock source which will cause the bounds
 to be updated automatically whenever the clock source "ticks". A clock is simply
@@ -722,7 +722,7 @@ be defined to tick on some remote timing source.
 The values provided by clocks are simple `number`s, which are interpreted in the
 context of the active [Time System](#defining-and-registering-time-systems).
 
-### Defining and registering clocks
+#### Defining and registering clocks
 
 A clock is an object that defines certain required metadata and functions:
 
@@ -836,7 +836,7 @@ __Note:__ Setting the clock offsets will trigger an immediate bounds change, as
 new bounds will be calculated based on the `currentValue()` of the active clock. 
 Clock offsets are only relevant when a clock source is active.
 
-## Time Events
+### Time Events
 
 The Time API is a standard event emitter; you can register callbacks for events using the `on` method and remove callbacks for events with the `off` method.
 
@@ -878,7 +878,7 @@ The events emitted by the Time API are:
   * `clockOffsets`: The new [clock offsets](#clock-offsets).
 
 
-## The Time Conductor
+### The Time Conductor
 
 The Time Conductor provides a user interface for managing time bounds in Open 
 MCT. It allows a user to select from configured time systems and clocks, and to set bounds and clock offsets.
