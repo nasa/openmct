@@ -58,8 +58,13 @@
     }
 }
 
-.snapshot {
-    background: $colorBodyBg;
+.overlay.snapshot {
+    // Applied in overlay when taking a snapshot
+    background: red; // $colorBodyBg;
+}
+
+.s-snapshot-datetime {
+    color: rgba($colorBodyFg, 0.5);
 }
 
 

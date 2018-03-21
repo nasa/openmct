@@ -45,6 +45,7 @@ define(
             doneButton,
             blocker,
             overlayContainer,
+            imgHolder,
             img,
             annotateButton,
             annotateImg;
@@ -69,8 +70,9 @@ define(
             annotateButton = header.querySelector('a.icon-pencil');
             annotateButton.addEventListener('click', annotateImg);
             document.body.appendChild(overlay);
-            img = document.createElement('img');
-            img.src = url;
+            img = document.createElement('div');
+            $(img).addClass('abs object-holder t-image-holder s-image-holder');
+            img.innerHTML = '<div class="image-main s-image-main" style="background-image: url(' + url + ');"></div>';
             overlayContainer.appendChild(header);
             overlayContainer.appendChild(img);
         }
@@ -92,11 +94,11 @@ define(
         function headerTemplate() {
             var template = '<div class="t-snapshot abs l-view-header">' +
                                 '<div class="abs object-browse-bar l-flex-row">' +
-                                    '<div class="left flex-elem l-flew-row grows">' +
-                                        '<div class="object-header flex-elem l-flew-row grows">' +
-                                            '<span class="type-icon flex-elem embed-icon"></span>' +
-                                            '<span class="title-label flex-elem holder flex-can-shrink">{{entryName}}</span>' +
-                                            '<a class="context-available" ng-click="openMenu($event,embedType)""></a>' +
+                                    '<div class="left flex-elem l-flex-row grows">' +
+                                        '<div class="object-header flex-elem l-flex-row grows">' +
+                                            '<div class="type-icon flex-elem embed-icon holder" ng-class="cssClass"></div>' +
+                                            '<div class="title-label flex-elem holder flex-can-shrink">{{entryName}}</div>' +
+                                            '<a class="context-available flex-elem holder" ng-click="openMenu($event,embedType)""></a>' +
                                             '<div class="hide-menu" ng-show="false">' +
                                                 '<div class="menu-element menu-view context-menu-wrapper mobile-disable-select">' +
                                                     '<div class="menu context-menu">' +
@@ -111,51 +113,17 @@ define(
                                                     '</div>' +
                                                 '</div>' +
                                             '</div>' +
-
-                                            '<span class="flex-elem holder flex-can-shrink view-date">' +
-                                                '<span class="icon-alert-rect" title="Snapshot"></span>' +
-                                                'SNAPSHOT {{snapDate | date:\'yyyy-MM-dd HH:mm:ss\'}}' +
-                                            '</span>' +
                                         '</div><!-- closes object-header -->' +
                                     '</div><!-- closes left -->' +
                                     '<div class="btn-bar right l-flex-row flex-elem flex-justify-end flex-fixed">' +
+                                        '<div class="flex-elem holder flex-can-shrink s-snapshot-datetime">' +
+                                        'SNAPSHOT {{snapDate | date:\'yyyy-MM-dd HH:mm:ss\'}}' +
+                                        '</div>' +
                                         '<a class="s-button icon-pencil" title="Annotate">' +
                                             '<span class="title-label">Annotate</span>' +
                                         '</a>' +
                                     '</div><!-- closes right -->' +
                                 '</div><!-- closes object-browse-bar -->' +
-
-
-/*                                '<div class="view-info">' +
-                                    '<div ng-class="cssClass" class="embed-icon"></div>' +
-                                    '<div class="embed-title">{{entryName}}</div>' +
-                                    '<div class="object-header">' +
-                                        '<a href="" class="context-available" ng-click="openMenu($event,embedType)""></a>' +
-                                    '</div>' +
-                                    '<div class="hide-menu" ng-show="false">' +
-                                        '<div class="menu-element menu-view context-menu-wrapper mobile-disable-select">' +
-                                            '<div class="menu context-menu">' +
-                                                '<ul>' +
-                                                    '<li ng-repeat="menu in embedActions"' +
-                                                        'ng-click="menu.perform()"' +
-                                                        'title="{{menu.name}}"' +
-                                                        'class="{{menu.cssClass}}">' +
-                                                        '{{menu.name}}' +
-                                                    '</li>' +
-                                                '</ul>' +
-                                            '</div>' +
-                                        '</div>' +
-                                    '</div>' +
-                                '</div>' +
-                                '<div class="view-date">' +
-                                    '<span class="icon-alert-rect" title="Snapshot"></span>' +
-                                    'SNAPSHOT {{snapDate | date:\'yyyy-MM-dd HH:mm:ss\'}}' +
-                                '</div>' +
-
-                                '<a class="s-button icon-pencil" title="Annotate">' +
-                                    '<span class="title-label">Annotate</span>' +
-                                '</a>' +
- */
                             '</div><!-- closes t-snapshot -->';
             return template;
         }

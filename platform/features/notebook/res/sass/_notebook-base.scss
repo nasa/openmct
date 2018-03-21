@@ -129,9 +129,6 @@
 .snap-annotation {
     // Todo: don't write this to t-contents, add a l- class
     overflow: hidden;
-    img{
-        width: 100%;
-    }
 }
 
 
@@ -158,7 +155,7 @@
 }
 
 /********************************************* SNAPSHOT VIEWING IN OVERLAY CONTEXT */
-.t-snapshot {
+/*.t-snapshot {
     .l-view-header {
         .view-date {
             float: right;
@@ -186,7 +183,7 @@
             }
         }
     }
-}
+}*/
 
 .ptro-color-main{
     top: 0;
