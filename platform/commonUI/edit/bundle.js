@@ -39,7 +39,6 @@ define([
     "./src/policies/EditableMovePolicy",
     "./src/policies/EditContextualActionPolicy",
     "./src/representers/EditRepresenter",
-    "./src/representers/EditToolbarRepresenter",
     "./src/capabilities/EditorCapability",
     "./src/capabilities/TransactionCapabilityDecorator",
     "./src/services/TransactionManager",
@@ -78,7 +77,6 @@ define([
     EditableMovePolicy,
     EditContextualActionPolicy,
     EditRepresenter,
-    EditToolbarRepresenter,
     EditorCapability,
     TransactionCapabilityDecorator,
     TransactionManager,
@@ -380,12 +378,6 @@ define([
                     "implementation": EditRepresenter,
                     "depends": [
                         "$log"
-                    ]
-                },
-                {
-                    "implementation": EditToolbarRepresenter,
-                    "depends": [
-                        "openmct"
                     ]
                 }
             ],

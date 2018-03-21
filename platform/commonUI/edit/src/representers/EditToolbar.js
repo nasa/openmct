@@ -20,8 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 define(
-    ['lodash'],
-    function (_) {
+    [
+        '../../../../../src/api/objects/object-utils',
+        'lodash'
+    ],
+    function (
+        objectUtils,
+        _
+    ) {
 
         /**
          * Provides initial structure and state (as suitable for provision
@@ -31,11 +37,25 @@ define(
          * @memberof platform/commonUI/edit
          * @constructor
          */
-        function EditToolbar(openmct) {
+        function EditToolbar($scope, openmct, structure) {
+            var self = this;
+
             this.toolbarStructure = [];
             this.properties = [];
             this.toolbarState = [];
             this.openmct = openmct;
+            this.domainObjectsById = {};
+            this.unobserveObjects = [];
+            this.stateTracker = [];
+
+            $scope.$watchCollection(this.getState.bind(this), this.handleStateChanges.bind(this));
+
+            $scope.$on("$destroy", function () {
+                self.destroy();
+            });
+
+            this.updateToolbar(structure);
+            this.registerListeners(structure);
         }
 
         /**
@@ -47,10 +67,9 @@ define(
          */
         EditToolbar.prototype.updateToolbar = function (structure) {
             var self = this;
-            var stateTracker = [];
 
             function addKey(item) {
-                stateTracker.push({
+                self.stateTracker.push({
                     domainObject: item.domainObject,
                     property: item.property
                 });
@@ -79,11 +98,10 @@ define(
                 return result;
             }
 
-            this.properties = [];
+            // Tracks the domain object and property for every element in the state array
+            this.stateTracker = [];
             this.toolbarStructure = structure.map(convertItem);
             this.toolbarState = this.properties.map(initializeState);
-
-            return stateTracker;
         };
 
         /**
@@ -125,6 +143,74 @@ define(
          */
         EditToolbar.prototype.updateState = function (index, value) {
             this.toolbarState[index] = value;
+        };
+
+        // Register listeners for domain objects to watch for updates.
+        EditToolbar.prototype.registerListeners = function (structure) {
+            var self = this;
+
+            function observeObject(domainObject, id) {
+                var unobserveObject = self.openmct.objects.observe(domainObject, '*', function (newObject) {
+
+                    self.domainObjectsById[id].properties.map(function (property) {
+                        var currentValue = _.get(domainObject, property);
+                        var newValue = _.get(newObject, property);
+                        var index = _.findIndex(self.stateTracker, {
+                            'domainObject': domainObject,
+                            'property': property
+                        });
+
+                        self.stateTracker[index].domainObject = newObject;
+
+                        if (currentValue !== newValue) {
+                            self.updateState(index, newValue);
+                        }
+                    });
+
+                    domainObject = newObject;
+                });
+
+                self.unobserveObjects.push(unobserveObject);
+            }
+
+            structure.forEach(function (item) {
+                var domainObject = item.domainObject;
+                var id = objectUtils.makeKeyString(domainObject.identifier);
+
+                if (!self.domainObjectsById[id]) {
+                    self.domainObjectsById[id] = {};
+                    observeObject(domainObject, id);
+                }
+
+                self.domainObjectsById[id].properties = self.domainObjectsById[id].properties || [];
+                self.domainObjectsById[id].properties.push(item.property);
+            });
+        };
+
+        EditToolbar.prototype.deregisterListeners = function () {
+            this.unobserveObjects.forEach(function (unobserveObject) {
+                unobserveObject();
+            });
+
+            this.unobserveObjects = [];
+        };
+
+        EditToolbar.prototype.handleStateChanges = function (state) {
+            var self = this;
+
+            (state || []).map(function (value, index) {
+                var domainObject = self.stateTracker[index].domainObject;
+                var property = self.stateTracker[index].property;
+                var currentValue = _.get(domainObject, property);
+
+                if (currentValue !== value) {
+                    self.updateDomainObject(domainObject, property, value);
+                }
+            });
+        };
+
+        EditToolbar.prototype.destroy = function () {
+            this.deregisterListeners();
         };
 
         return EditToolbar;
