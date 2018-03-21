@@ -44,7 +44,7 @@ define(
 
             this.openmct = openmct;
             this.$scope = $scope;
-            $scope['editToolbar'] = {};
+            $scope.editToolbar = {};
             $scope.getRegExp = getRegExp;
 
             $scope.$on("$destroy", function () {
@@ -67,9 +67,9 @@ define(
 
             var structure = this.openmct.toolbars.get(selection) || [];
             this.editToolbar = new EditToolbar(this.$scope, this.openmct, structure);
-            this.$scope.$parent['editToolbar'] = this.editToolbar;
-            this.$scope.$parent['editToolbar'].structure = this.editToolbar.getStructure();
-            this.$scope.$parent['editToolbar'].state = this.editToolbar.getState();
+            this.$scope.$parent.editToolbar = this.editToolbar;
+            this.$scope.$parent.editToolbar.structure = this.editToolbar.getStructure();
+            this.$scope.$parent.editToolbar.state = this.editToolbar.getState();
         };
 
         return ToolbarController;
