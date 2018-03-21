@@ -90,8 +90,43 @@ define(
         }
 
         function headerTemplate() {
-            var template = '<div class="t-snapshot l-view-header">' +
-                                '<div class="view-info">' +
+            var template = '<div class="t-snapshot abs l-view-header">' +
+                                '<div class="abs object-browse-bar l-flex-row">' +
+                                    '<div class="left flex-elem l-flew-row grows">' +
+                                        '<div class="object-header flex-elem l-flew-row grows">' +
+                                            '<span class="type-icon flex-elem embed-icon"></span>' +
+                                            '<span class="title-label flex-elem holder flex-can-shrink">{{entryName}}</span>' +
+                                            '<a class="context-available" ng-click="openMenu($event,embedType)""></a>' +
+                                            '<div class="hide-menu" ng-show="false">' +
+                                                '<div class="menu-element menu-view context-menu-wrapper mobile-disable-select">' +
+                                                    '<div class="menu context-menu">' +
+                                                        '<ul>' +
+                                                            '<li ng-repeat="menu in embedActions"' +
+                                                                'ng-click="menu.perform()"' +
+                                                                'title="{{menu.name}}"' +
+                                                                'class="{{menu.cssClass}}">' +
+                                                                '{{menu.name}}' +
+                                                            '</li>' +
+                                                        '</ul>' +
+                                                    '</div>' +
+                                                '</div>' +
+                                            '</div>' +
+
+                                            '<span class="flex-elem holder flex-can-shrink view-date">' +
+                                                '<span class="icon-alert-rect" title="Snapshot"></span>' +
+                                                'SNAPSHOT {{snapDate | date:\'yyyy-MM-dd HH:mm:ss\'}}' +
+                                            '</span>' +
+                                        '</div><!-- closes object-header -->' +
+                                    '</div><!-- closes left -->' +
+                                    '<div class="btn-bar right l-flex-row flex-elem flex-justify-end flex-fixed">' +
+                                        '<a class="s-button icon-pencil" title="Annotate">' +
+                                            '<span class="title-label">Annotate</span>' +
+                                        '</a>' +
+                                    '</div><!-- closes right -->' +
+                                '</div><!-- closes object-browse-bar -->' +
+
+
+/*                                '<div class="view-info">' +
                                     '<div ng-class="cssClass" class="embed-icon"></div>' +
                                     '<div class="embed-title">{{entryName}}</div>' +
                                     '<div class="object-header">' +
@@ -110,17 +145,18 @@ define(
                                                 '</ul>' +
                                             '</div>' +
                                         '</div>' +
-                                      '</div>' +
+                                    '</div>' +
                                 '</div>' +
                                 '<div class="view-date">' +
-                                    '<span class="icon-alert-rect" title="Snapshot">' +
-                                    '</span>  ' +
+                                    '<span class="icon-alert-rect" title="Snapshot"></span>' +
                                     'SNAPSHOT {{snapDate | date:\'yyyy-MM-dd HH:mm:ss\'}}' +
                                 '</div>' +
+
                                 '<a class="s-button icon-pencil" title="Annotate">' +
                                     '<span class="title-label">Annotate</span>' +
                                 '</a>' +
-                            '</div>';
+ */
+                            '</div><!-- closes t-snapshot -->';
             return template;
         }
 
