@@ -45,7 +45,6 @@ define(
             doneButton,
             blocker,
             overlayContainer,
-            imgHolder,
             img,
             annotateButton,
             annotateImg;
@@ -104,7 +103,7 @@ define(
                                                     '<div class="menu context-menu">' +
                                                         '<ul>' +
                                                             '<li ng-repeat="menu in embedActions"' +
-                                                                'ng-click="menu.perform()"' +
+                                                                'ng-click="menuPerform(menu)"' +
                                                                 'title="{{menu.name}}"' +
                                                                 'class="{{menu.cssClass}}">' +
                                                                 '{{menu.name}}' +
@@ -131,6 +130,12 @@ define(
 
         ViewSnapshot.prototype.perform = function ($event,snapshot,embedId,entryId,$scope,embed) {
             var isOpen = false;
+
+            // onclick for menu items in overlay header context menu
+            $scope.menuPerform = function (menu) {
+                menu.perform();
+                closeOverlay();
+            };
 
             // Create the overlay element and add it to the document's body
             $scope.cssClass = embed.cssClass;

@@ -186,7 +186,7 @@ define(
                 // entryId is the unique numeric based on the original createdOn
                 if ($event.target && $event.target.innerText !== "") {
                     var elementPos = $scope.findEntryPositionById(+entryId);
-                    
+
                     // If the text of an entry has been changed, then update the text and the modifiedOn numeric
                     // Otherwise, don't do anything
                     if ($scope.currentEntryValue !== $event.target.innerText) {

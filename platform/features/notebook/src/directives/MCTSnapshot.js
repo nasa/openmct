@@ -67,7 +67,7 @@ define(['zepto', 'dom-to-image'], function ($) {
                         delay: true
                     });
                 window.setTimeout(function () {
-                    window.domtoimage.toBlob(el).then(function (img) {    
+                    window.domtoimage.toBlob(el).then(function (img) {
 
                         if (img) {
                             if (dialog) {
