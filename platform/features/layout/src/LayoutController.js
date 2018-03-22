@@ -472,7 +472,7 @@ define(
          * @param domainObject the domain object
          * @returns {object} the context object which includes item and oldItem
          */
-        LayoutController.prototype.getContext = function (domainObject, toolbar) {
+        LayoutController.prototype.getContext = function (domainObject) {
             return {
                 item: domainObject.useCapability('adapter'),
                 oldItem: domainObject

@@ -41,7 +41,7 @@
          ng-class="{ 'no-frame': !controller.hasFrame(childObject), 's-drilled-in': controller.isDrilledIn(childObject) }"
          ng-repeat="childObject in composition"
          ng-init="controller.selectIfNew(childObject.getId() + '-' + $id, childObject)"
-         mct-selectable="controller.getContext(childObject, true)"
+         mct-selectable="controller.getContext(childObject)"
          ng-dblclick="controller.drill($event, childObject)"
          ng-style="controller.getFrameStyle(childObject.getId())">
 
