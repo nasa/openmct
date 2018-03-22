@@ -50,7 +50,8 @@ define(['zepto', 'dom-to-image'], function ($) {
                     });
                 window.setTimeout(function () {
                     window.domtoimage.toBlob(el).then(function (img) {
-
+                        $(objectElement).removeClass("s-status-taking-snapshot");
+                        
                         if (img) {
                             if (dialog) {
                                 dialog.dismiss();
@@ -80,8 +81,6 @@ define(['zepto', 'dom-to-image'], function ($) {
                             dialog.dismiss();
                         }
                     });
-
-                    $(objectElement).removeClass("s-status-taking-snapshot");
 
                 }, 500);
             };
