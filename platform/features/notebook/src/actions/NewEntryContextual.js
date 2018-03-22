@@ -84,7 +84,6 @@ define(
 
 
         NewEntryContextual.prototype.perform = function () {
-
             var self = this;
             var domainObj = this.domainObject;
             var notification = this.notificationService;
