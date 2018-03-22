@@ -39,6 +39,10 @@ define(['zepto', 'dom-to-image'], function ($) {
                 makeImg(objectElement);
             };
 
+            saveImg = function (url,entryId,embedId) {
+                $scope.$parent.$parent.$parent.saveSnap(url, embedId, entryId);
+            };
+
             makeImg = function (el) {
                 var scope = $scope;
                 var dialog = dialogService.showBlockingMessage({
@@ -51,11 +55,8 @@ define(['zepto', 'dom-to-image'], function ($) {
                 window.setTimeout(function () {
                     window.domtoimage.toBlob(el).then(function (img) {
                         $(objectElement).removeClass("s-status-taking-snapshot");
-                        
+
                         if (img) {
-                            if (dialog) {
-                                dialog.dismiss();
-                            }
                             if ($element[0].dataset.entry && $element[0].dataset.embed) {
                                 saveImg(img, +$element[0].dataset.entry, +$element[0].dataset.embed);
                             } else {
@@ -63,18 +64,18 @@ define(['zepto', 'dom-to-image'], function ($) {
                                 reader.readAsDataURL(img);
                                 reader.onloadend = function () {
                                     $($element[0]).attr("data-snapshot", reader.result);
-                                    $rootScope.snapshot = {'src': reader.result,
-                                                                'type': img.type,
-                                                                'size': img.size,
-                                                                'modified': Date.now()
-                                                            };
+                                    $rootScope.snapshot = {
+                                        'src': reader.result,
+                                        'type': img.type,
+                                        'size': img.size,
+                                        'modified': Date.now()
+                                    };
                                     scope.$destroy();
                                 };
                             }
-
-                        } else {
-                            dialog.dismiss();
                         }
+
+                        dialog.dismiss();
 
                     }, function (error) {
                         if (dialog) {
@@ -83,10 +84,6 @@ define(['zepto', 'dom-to-image'], function ($) {
                     });
 
                 }, 500);
-            };
-
-            saveImg = function (url,entryId,embedId) {
-                $scope.$parent.$parent.$parent.saveSnap(url, embedId, entryId);
             };
 
             takeSnapshot();

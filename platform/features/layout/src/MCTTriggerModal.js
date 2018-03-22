@@ -38,10 +38,6 @@ define([
 '       </div>' +
 '    </div>';
 
-    var NEW_NOTEBOOK_BUTTON_TEMPLATE = '<a class="s-button labeled icon-notebook new-notebook-entry" title="New Notebook Entry">' +
-    '<span class="title-label">New Notebook Entry</span>' +
-    '</a>';
-
     /**
      * MCT Trigger Modal is intended for use in only one location: inside the
      * object-header to allow views in a layout to be popped out in a modal.
@@ -78,25 +74,7 @@ define([
                 closeButton,
                 doneButton,
                 blocker,
-                overlayContainer,
-                notebookButtonEl,
-                notebookButton,
-                actions = $scope.domainObject.getCapability('action'),
-                notebookAction = actions.getActions({'key': 'notebook-new-entry'});
-
-            if (notebookAction) {
-                if (notebookAction.length > 0) {
-                    notebookButtonEl = document.createElement('div');
-                    $(notebookButtonEl).addClass('notebook-button-container');
-                    notebookButtonEl.innerHTML = NEW_NOTEBOOK_BUTTON_TEMPLATE;
-                    notebookButton = frame.querySelector('.object-browse-bar .right');
-                    notebookButton.prepend(notebookButtonEl);
-                    // $(frame.querySelector('.object-holder')).addClass('container-notebook');
-                    notebookButton.addEventListener('click', function () {
-                        notebookAction[0].perform();
-                    });
-                }
-            }
+                overlayContainer;
 
             function openOverlay() {
 
