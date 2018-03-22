@@ -179,26 +179,54 @@
     flex: 0 0 auto;
     height: auto;
     background-color: transparent !important;
+    margin-bottom: $interiorMargin;
 
+    > div,
+    > div > span,
     .ptro-icon-btn,
-    .ptro-bordered-btn {
+    .ptro-named-btn,
+    .ptro-color-btn,
+    .ptro-bordered-btn,
+    .ptro-tool-ctl-name,
+    .ptro-color-btn,
+    .tool-controls,
+    .ptro-input {
+        // Lot of resets for crappy CSS in Painterro
+        &:first-child { margin-left: 0 !important; }
         $h: $btnToolbarH;
+        display: inline-block;
+        font-family: inherit;
+        font-size: auto;
         height: $h !important;
+        margin: 0 0 0 5px;
+        position: relative;
         width: auto !important;
         line-height: $h !important;
+        top: auto; right: auto; bottom: auto; left: auto;
+        vertical-align: top;
     }
 
-    .ptro-icon-btn {
+    .ptro-tool-ctl-name {
+        border-radius: 0;
+        background: none;
+        top: auto;
+        font-family: inherit;
+        padding: 0;
+    }
+
+
+    .ptro-color-btn { width: $btnToolbarH !important; }
+
+    .ptro-icon-btn,
+    .ptro-named-btn {
         // .s-button class is added via JS in AnnotateSnapshot.js
-        &:first-child { margin-left: 0 !important; }
-        //background: none;
         i {
             font-size: 1.25em !important;
         }
-        margin-top: 0;
     }
 
-    .tool-controls .ptro-btn-color-checkers-bar {
+    .tool-controls .ptro-btn-color-checkers-bar,
+    .ptro-info {
         display: none;
     }
 }
@@ -221,14 +249,18 @@
     padding-right: 0;
 }
 
+/*
 .overlay.l-dialog .outer-holder.annotation-dialog{
     width: 90%;
     height: 90%;
 }
+*/
 
+/*
 .snap-annotation-wrapper{
     padding-top: 40px;
 }
+
 
 .t-console {
     // Temp console-like reporting element
@@ -236,3 +268,4 @@
     box-sizing: border-box;
     padding: 5px;
 }
+*/

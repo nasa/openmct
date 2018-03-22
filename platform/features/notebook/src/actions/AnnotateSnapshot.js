@@ -78,7 +78,7 @@ define(
                     defaultFontSize: 16,
                     defaultLineWidth: 2,
                     defaultTool: 'ellipse',
-                    hiddenTools: ['save', 'open', 'close', 'eraser', 'pixelize', 'rotate', 'settings'],
+                    hiddenTools: ['save', 'open', 'close', 'eraser', 'pixelize', 'rotate', 'settings', 'scale'],
                     toolbarPosition: 'top',
                     // colorScheme: {
                     //     main: '#333',
