@@ -68,7 +68,7 @@
 .s-status-taking-snapshot,
 .overlay.snapshot {
     // Applied to an object view when it's in the process of being snapshotted
-    background-color: $colorBodyBg;
+    background: $colorBodyBg;
 }
 
 /********************************************* PAINTERRO OVERRIDES */
