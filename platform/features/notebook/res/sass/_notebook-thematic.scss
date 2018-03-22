@@ -46,8 +46,6 @@
     }
 }
 
-
-
 .l-entry-embed {
     border-radius: $controlCr;
     background-color: rgba($colorBodyFg, 0.1);
@@ -68,7 +66,11 @@
     font-size: 0.8em;
 }
 
-
 .snap-thumb {
     border: 1px solid $colorInteriorBorder;
+}
+
+/********************************************* PAINTERRO OVERRIDES */
+.ptro-wrapper {
+    background: rgba($colorBodyBg, 0.3) !important;
 }

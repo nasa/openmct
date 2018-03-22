@@ -131,9 +131,6 @@
     overflow: hidden;
 }
 
-
-
-
 .notebook-filters {
     .select {
         margin-left: $interiorMargin;
@@ -154,48 +151,56 @@
     }
 }
 
-/********************************************* SNAPSHOT VIEWING IN OVERLAY CONTEXT */
-/*.t-snapshot {
-    .l-view-header {
-        .view-date {
-            float: right;
-        }
-        .view-snap-info {
-            float: left;
-        }
-        .s-button {
-            clear: both;
-            float: left;
-            margin-top: 10px;
-            font-size: 14px;
-        }
-        .view-info {
-            float: left;
-            .embed-icon {
-                display: inline-block;
-            }
-            .embed-title {
-                display: inline-block;
-                margin: 0 5px 0 10px;
-            }
-            .object-header {
-                display: inline-block;
-            }
-        }
-    }
-}*/
-
-.ptro-color-main{
-    top: 0;
-    z-index: 10;
-    position: relative;
-    height: auto;
-    min-height: 41px;
+/********************************************* PAINTERRO OVERRIDES */
+.annotation-dialog .abs.editor {
+    border-radius: 0;
 }
 
-.ptro-wrapper{
-    bottom: 0;
-    top: 40px;
+#snap-annotation {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+}
+
+#snap-annotation-wrapper,
+#snap-annotation-bar {
+    position: relative;
+    top: auto; right: auto; bottom: auto; left: auto;
+}
+
+#snap-annotation-wrapper {
+    order: 2;
+    flex: 10 0 auto;
+}
+
+#snap-annotation-bar {
+    order: 1;
+    flex: 0 0 auto;
+    height: auto;
+    background-color: transparent !important;
+
+    .ptro-icon-btn,
+    .ptro-bordered-btn {
+        $h: $btnToolbarH;
+        height: $h !important;
+        width: auto !important;
+        line-height: $h !important;
+    }
+
+    .ptro-icon-btn {
+        // .s-button class is added via JS in AnnotateSnapshot.js
+        &:first-child { margin-left: 0 !important; }
+        //background: none;
+        i {
+            font-size: 1.25em !important;
+        }
+        margin-top: 0;
+    }
+
+    .tool-controls .ptro-btn-color-checkers-bar {
+        display: none;
+    }
 }
 
 /********************************************* New Notebook Entry from Large View overlay */

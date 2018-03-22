@@ -69,8 +69,21 @@ define(
                 $(document.body).find('.l-dialog .outer-holder').addClass('annotation-dialog');
                 painterro = Painterro({
                     id: 'snap-annotation',
-                    backgroundFillColor: '#eee',
-                    hiddenTools: ['save', 'open', 'close','eraser'],
+                    activeColor: '#ff0000',
+                    activeColorAlpha: 1.0,
+                    activeFillColor: '#fff',
+                    activeFillColorAlpha: 0.0,
+                    backgroundFillColor: '#000',
+                    backgroundFillColorAlpha: 0.0,
+                    defaultFontSize: 16,
+                    defaultLineWidth: 2,
+                    defaultTool: 'ellipse',
+                    hiddenTools: ['save', 'open', 'close', 'eraser', 'pixelize', 'rotate', 'settings'],
+                    toolbarPosition: 'top',
+                    // colorScheme: {
+                    //     main: '#333',
+                    //     control: '#ffcc00'
+                    // },
                     saveHandler: function (image, done) {
                         if (entryId && embedId) {
                             var elementPos = DOMAIN_OBJECT.model.entries.map(function (x) {
@@ -89,7 +102,8 @@ define(
                         done(true);
                     }
                 }).show(snapshot);
-
+                $(document.body).find('.ptro-icon-btn').addClass('s-button');
+                $(document.body).find('.ptro-input').addClass('s-button');
             };
 
             ANNOTATION_STRUCT.model = {'tracker': tracker};
