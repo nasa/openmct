@@ -21,11 +21,6 @@
  *****************************************************************************/
 
 define(['zepto'], function ($) {
-    var SNAPSHOT_TEMPLATE = '<mct-representation key="\'draggedEntry\'"' +
-                                    'parameters="{entry:entryId,embed:embedId}"' +
-                                    'class="t-rep-frame holder"' +
-                                    'mct-object="selObj">' +
-                                '</mct-representation>';
 
     function EntryDnd($rootScope,$compile,dndService,typeService,notificationService) {
 
@@ -95,13 +90,6 @@ define(['zepto'], function ($) {
                         e.preventDefault();
 
                     }
-                }
-
-                if (entryId >= 0 && embedId >= 0) {
-                    $scope.selObj = selectedObject;
-                    $scope.entryId = entryId;
-                    $scope.embedId = embedId;
-                    $compile(SNAPSHOT_TEMPLATE)($scope);
                 }
 
                 if ($(e.currentTarget).hasClass('drag-active')) {

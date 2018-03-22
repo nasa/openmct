@@ -27,34 +27,16 @@ define(['zepto', 'dom-to-image'], function ($) {
     function MCTSnapshot($rootScope,$document,exportImageService,dialogService,notificationService) {
         var document = $document[0];
 
-        function link($scope, $element,$attrs) {
-            var element = $element[0];
-            var layoutContainer = element.parentElement,
-                toggleOverlay,
+        function link($scope, $element, $attrs) {
+            var objectElement = $(document.body).find("[mct-object='navigatedObject']")[1],
+                takeSnapshot,
                 makeImg,
-                saveImg,
-                snapshot = document.createElement('div');
+                saveImg;
 
-            function openOverlay() {
-                // Remove frame classes from being applied in a non-frame context
-                $(snapshot).addClass('abs overlay l-large-view snapshot');
-                snapshot.appendChild(element);
-                document.body.appendChild(snapshot);
-            }
+            $(objectElement).addClass("s-status-taking-snapshot");
 
-            function closeOverlay() {
-                if (snapshot) {
-                    snapshot.removeChild(element);
-                    layoutContainer.remove();
-                }
-                document.body.removeChild(snapshot);
-                snapshot = undefined;
-                $element.remove();
-            }
-
-            toggleOverlay = function () {
-                openOverlay();
-                makeImg(element);
+            takeSnapshot = function () {
+                makeImg(objectElement);
             };
 
             makeImg = function (el) {
@@ -75,21 +57,18 @@ define(['zepto', 'dom-to-image'], function ($) {
                             }
                             if ($element[0].dataset.entry && $element[0].dataset.embed) {
                                 saveImg(img, +$element[0].dataset.entry, +$element[0].dataset.embed);
-                                closeOverlay();
                             } else {
                                 var reader = new window.FileReader();
                                 reader.readAsDataURL(img);
                                 reader.onloadend = function () {
-                                        $($element[0]).attr("data-snapshot", reader.result);
-                                        $rootScope.snapshot = {'src': reader.result,
-                                                                 'type': img.type,
-                                                                 'size': img.size,
-                                                                 'modified': Date.now()
-                                                              };
-                                        closeOverlay(false);
-                                        scope.$destroy();
-                                    };
-
+                                    $($element[0]).attr("data-snapshot", reader.result);
+                                    $rootScope.snapshot = {'src': reader.result,
+                                                                'type': img.type,
+                                                                'size': img.size,
+                                                                'modified': Date.now()
+                                                            };
+                                    scope.$destroy();
+                                };
                             }
 
                         } else {
@@ -100,8 +79,10 @@ define(['zepto', 'dom-to-image'], function ($) {
                         if (dialog) {
                             dialog.dismiss();
                         }
-                        closeOverlay();
                     });
+
+                    $(objectElement).removeClass("s-status-taking-snapshot");
+
                 }, 500);
             };
 
@@ -109,12 +90,9 @@ define(['zepto', 'dom-to-image'], function ($) {
                 $scope.$parent.$parent.$parent.saveSnap(url, embedId, entryId);
             };
 
-            if ($(document.body).find('.overlay.snapshot').length === 0) {
-                toggleOverlay();
-            }
+            takeSnapshot();
 
             $scope.$on('$destroy', function () {
-                $element.off('click', toggleOverlay);
                 $element.remove();
             });
         }
