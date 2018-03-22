@@ -142,6 +142,17 @@ define(
         };
 
         /**
+         * Takes a screenshot of a DOM node in PNG format.
+         * @param {node} element to be exported
+         * @param {string} filename the exported image
+         * @returns {promise}
+         */
+
+        ExportImageService.prototype.exportPNGtoSRC = function (element) {
+            return this.renderElement(element, "png");
+        };
+
+        /**
          * canvas.toBlob() not supported in IE < 10, Opera, and Safari. This polyfill
          * implements the method in browsers that would not otherwise support it.
          * https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob
