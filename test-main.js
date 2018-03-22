@@ -113,7 +113,7 @@ requirejs.config({
             "exports": "d3-axis"
         },
         "dom-to-image": {
-            "exports": "dom-to-image"
+            "exports": "domtoimage"
         }
     },
 
