@@ -28,7 +28,7 @@ define(['zepto', 'dom-to-image'], function ($) {
         var document = $document[0];
 
         function link($scope, $element, $attrs) {
-            var objectElement = $(document.body).find("[mct-object='navigatedObject']")[1],
+            var objectElement = $(document.body).find("[key='representation.selected.key']")[0],
                 takeSnapshot,
                 makeImg,
                 saveImg;
