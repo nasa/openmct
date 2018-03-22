@@ -74,3 +74,12 @@
 .ptro-wrapper {
     background: rgba($colorBodyBg, 0.3) !important;
 }
+
+.s-button.ptro-color-active-control {
+    background: $colorBtnMajorBg  !important;
+    color: $colorBtnMajorFg !important;
+    &:hover {
+        background: $colorBtnMajorBgHov !important;
+        color: $colorBtnMajorFgHov !important;
+    }
+}

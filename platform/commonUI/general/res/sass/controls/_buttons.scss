@@ -54,6 +54,10 @@ $pad: $interiorMargin * $baseRatio;
         .label, .title-label { display: none; }
     }
 
+    &[disabled="true"] {
+        opacity: 0.3;
+    }
+
     &.pause-play {
         @extend .icon-pause;
         &.paused {
