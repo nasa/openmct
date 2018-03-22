@@ -26,8 +26,10 @@ define(['EventEmitter'], function (EventEmitter) {
      * Manages selection state for Open MCT
      * @private
      */
-    function Selection() {
+    function Selection(openmct) {
         EventEmitter.call(this);
+
+        this.openmct = openmct;
         this.selected = [];
     }
 
@@ -114,6 +116,12 @@ define(['EventEmitter'], function (EventEmitter) {
         element.addEventListener('click', capture, true);
         element.addEventListener('click', selectCapture);
 
+        if (context.item) {
+            var unlistener = this.openmct.objects.observe(context.item, "*", function (newItem) {
+                context.item = newItem;
+            });
+        }
+
         if (select) {
             element.click();
         }
@@ -121,6 +129,10 @@ define(['EventEmitter'], function (EventEmitter) {
         return function () {
             element.removeEventListener('click', capture);
             element.removeEventListener('click', selectCapture);
+
+            if (unlistener) {
+                unlistener();
+            }
         };
     };
 
