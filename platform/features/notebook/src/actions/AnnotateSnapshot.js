@@ -78,12 +78,18 @@ define(
                     defaultFontSize: 16,
                     defaultLineWidth: 2,
                     defaultTool: 'ellipse',
-                    hiddenTools: ['save', 'open', 'close', 'eraser', 'pixelize', 'rotate', 'settings', 'scale'],
-                    toolbarPosition: 'top',
-                    // colorScheme: {
-                    //     main: '#333',
-                    //     control: '#ffcc00'
-                    // },
+                    hiddenTools: ['save', 'open', 'close', 'eraser', 'pixelize', 'rotate', 'settings', 'resize'],
+                    translation: {
+                        name: 'en',
+                        strings: {
+                            lineColor: 'Line',
+                            fillColor: 'Fill',
+                            lineWidth: 'Size',
+                            textColor: 'Color',
+                            fontSize: 'Size',
+                            fontStyle: 'Style'
+                        }
+                    },
                     saveHandler: function (image, done) {
                         if (entryId && embedId) {
                             var elementPos = DOMAIN_OBJECT.model.entries.map(function (x) {

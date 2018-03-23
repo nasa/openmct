@@ -192,7 +192,9 @@
     .tool-controls,
     .ptro-input {
         // Lot of resets for crappy CSS in Painterro
-        &:first-child { margin-left: 0 !important; }
+        &:first-child {
+            margin-left: 0 !important;
+        }
         $h: $btnToolbarH;
         display: inline-block;
         font-family: inherit;
@@ -202,7 +204,10 @@
         position: relative;
         width: auto !important;
         line-height: $h !important;
-        top: auto; right: auto; bottom: auto; left: auto;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        left: auto;
         vertical-align: top;
     }
 
@@ -214,26 +219,33 @@
         padding: 0;
     }
 
-
-    .ptro-color-btn { width: $btnToolbarH !important; }
+    .ptro-color-btn {
+        width: $btnToolbarH !important;
+    }
 
     .ptro-icon-btn,
     .ptro-named-btn {
         // .s-button class is added via JS in AnnotateSnapshot.js
+        // TODO: redo this so that we don't need to use Zepto and JS
         i {
             font-size: 1.25em !important;
         }
     }
 
-    .tool-controls .ptro-btn-color-checkers-bar,
-    .ptro-info {
+    .tool-controls {
+        font-size: 0.8rem !important;
+    }
+
+    .ptro-info,
+    .ptro-btn-color-checkers-bar,
+    *[title="Font name"],
+    *[title="Stroke color"],
+    *[title="Stroke width"],
+    *[data-id="fontName"],
+    *[data-id="fontStrokeSize"],
+    *[data-id="stroke"] {
         display: none;
     }
-}
-
-/********************************************* New Notebook Entry from Large View overlay */
-.notebook-button-container {
-    //margin-right: $interiorMargin; // TODO: change to apply margin-left to view switcher button in Large View
 }
 
 /********************************************* NO IDEA WHAT THERE ARE APPLYING TO */
@@ -245,7 +257,7 @@
     z-index: 999;
 }
 
-.overlay.l-dialog .abs.editor{
+.overlay.l-dialog .abs.editor {
     padding-right: 0;
 }
 

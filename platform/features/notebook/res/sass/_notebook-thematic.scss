@@ -76,6 +76,12 @@
     background: rgba($colorBodyBg, 0.3) !important;
 }
 
+#snap-annotation-bar {
+    .tool-controls {
+        color: $colorBodyFg !important;
+    }
+}
+
 .s-button.ptro-color-active-control {
     background: $colorBtnMajorBg  !important;
     color: $colorBtnMajorFg !important;
