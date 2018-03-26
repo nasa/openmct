@@ -20,16 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'zepto'
-], function (
-    $
-) {
-
+define(['zepto'], function ($) {
+    
     var OVERLAY_TEMPLATE = '' +
 '    <div class="abs blocker"></div>' +
 '    <div class="abs outer-holder">' +
 '       <a class="close icon-x-in-circle"></a>' +
+'       <div class="top-bar flex-elem holder"></div>' + 
 '       <div class="abs inner-holder l-flex-col">' +
 '           <div class="t-contents flex-elem holder grows"></div>' +
 '           <div class="bottom-bar flex-elem holder">' +
@@ -39,42 +36,16 @@ define([
 '    </div>';
 
     var NEW_NOTEBOOK_BUTTON_TEMPLATE = '<a class="s-button labeled icon-notebook new-notebook-entry" title="New Notebook Entry">' +
-        '<span class="title-label">New Notebook Entry</span>' +
-        '</a>';
-
-
+    '<span class="title-label">New Notebook Entry</span>' +
+    '</a>';
     /**
-     * MCT Trigger Modal is intended for use in only one location: inside the
-     * object-header to allow views in a layout to be popped out in a modal.
-     * Users can close the modal and go back to normal, and everything generally
-     * just works fine.
-     *
-     * This code is sensitive to how our html is constructed-- particularly with
-     * how it locates the the container of an element in a layout. However, it
-     * should be able to handle slight relocations so long as it is always a
-     * descendent of a `.frame` element.
+
      */
-    function MCTTriggerModal($document) {
+    function MCTPreview($rootScope,$document,exportImageService,dialogService,notificationService) {
         var document = $document[0];
 
-        function link($scope, $element) {
-            var frame = $element.parent();
-
-            for (var i = 0; i < 10; i++) {
-                if (frame.hasClass('frame')) {
-                    break;
-                }
-                frame = frame.parent();
-            }
-            if (!frame.hasClass('frame')) {
-                $element.remove();
-                return;
-            }
-
-            frame = frame[0];
-            
-            var layoutContainer = frame.parentElement,
-                isOpen = false,
+        function link($scope, $element, $attrs) {
+            var isOpen = false,
                 toggleOverlay,
                 overlay,
                 closeButton,
@@ -84,13 +55,10 @@ define([
                 notebookButtonEl,
                 browseBar;
 
+            var actions = $scope.domainObject.getCapability('action'),
+            notebookAction = actions.getActions({key: 'notebook-new-entry'});
+
             function openOverlay() {
-
-                var actions = $scope.domainObject.getCapability('action'),
-                notebookAction = actions.getActions({key: 'notebook-new-entry'});
-
-                // Remove frame classes from being applied in a non-frame context
-                $(frame).removeClass('frame frame-template');
                 overlay = document.createElement('div');
                 $(overlay).addClass('abs overlay l-large-view');
                 overlay.innerHTML = OVERLAY_TEMPLATE;
@@ -102,14 +70,13 @@ define([
                 blocker = overlay.querySelector('.abs.blocker');
                 blocker.addEventListener('click', toggleOverlay);
                 document.body.appendChild(overlay);
-                layoutContainer.removeChild(frame);
-                overlayContainer.appendChild(frame);
+                overlayContainer.appendChild($element[0]);
 
                 if (notebookAction) {
                     notebookButtonEl = document.createElement('div');
                     $(notebookButtonEl).addClass('notebook-button-container');
                     notebookButtonEl.innerHTML = NEW_NOTEBOOK_BUTTON_TEMPLATE;
-                    browseBar = overlay.querySelector('.object-browse-bar .right');
+                    browseBar = overlay.querySelector('.top-bar');
                     browseBar.prepend(notebookButtonEl);
                     notebookButtonEl.addEventListener('click', function () {
                         notebookAction[0].perform();
@@ -123,9 +90,7 @@ define([
                     notebookButtonEl.remove();
                 }
 
-                $(frame).addClass('frame frame-template');
-                overlayContainer.removeChild(frame);
-                layoutContainer.appendChild(frame);
+                overlayContainer.removeChild($element[0]);
                 document.body.removeChild(overlay);
                 closeButton.removeEventListener('click', toggleOverlay);
                 closeButton = undefined;
@@ -151,9 +116,10 @@ define([
                 }
             };
 
-            $element.on('click', toggleOverlay);
+            toggleOverlay();
+
             $scope.$on('$destroy', function () {
-                $element.off('click', toggleOverlay);
+                $element.remove();
             });
         }
 
@@ -163,6 +129,6 @@ define([
         };
     }
 
-    return MCTTriggerModal;
+    return MCTPreview;
 
 });
