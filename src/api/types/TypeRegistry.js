@@ -90,7 +90,7 @@ define(['./Type'], function (Type) {
     /**
      * Retrieve a registered type by its key.
      * @method get
-     * @param {string} typeKey the key for htis type
+     * @param {string} typeKey the key for this type
      * @memberof module:openmct.TypeRegistry#
      * @returns {module:openmct.Type} the registered type
      */
