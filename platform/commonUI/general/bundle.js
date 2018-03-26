@@ -412,7 +412,7 @@ define([
                         "dialogService",
                         "notificationService"
                     ]
-                },
+                }
             ],
             "actions": [
                 {

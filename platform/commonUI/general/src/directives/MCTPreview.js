@@ -21,12 +21,12 @@
  *****************************************************************************/
 
 define(['zepto'], function ($) {
-    
+
     var OVERLAY_TEMPLATE = '' +
 '    <div class="abs blocker"></div>' +
 '    <div class="abs outer-holder">' +
 '       <a class="close icon-x-in-circle"></a>' +
-'       <div class="top-bar flex-elem holder"></div>' + 
+'       <div class="top-bar flex-elem holder"></div>' +
 '       <div class="abs inner-holder l-flex-col">' +
 '           <div class="t-contents flex-elem holder grows"></div>' +
 '           <div class="bottom-bar flex-elem holder">' +

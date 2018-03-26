@@ -72,7 +72,7 @@ define([
             }
 
             frame = frame[0];
-            
+
             var layoutContainer = frame.parentElement,
                 isOpen = false,
                 toggleOverlay,
