@@ -419,7 +419,7 @@ define([
                     "key": "mct-preview-action",
                     "implementation": MCTPreviewAction,
                     "name": "Preview",
-                    "cssClass": "icon-notebook labeled",
+                    "cssClass": "icon-eye-open labeled",
                     "description": "Preview Object In Overlay",
                     "category": [
                         "contextual",

@@ -76,7 +76,7 @@ define(['zepto'], function ($) {
                     notebookButtonEl = document.createElement('div');
                     $(notebookButtonEl).addClass('notebook-button-container');
                     notebookButtonEl.innerHTML = NEW_NOTEBOOK_BUTTON_TEMPLATE;
-                    browseBar = overlay.querySelector('.top-bar');
+                    browseBar = overlay.querySelector('.object-browse-bar .right');
                     browseBar.prepend(notebookButtonEl);
                     notebookButtonEl.addEventListener('click', function () {
                         notebookAction[0].perform();
