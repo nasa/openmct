@@ -55,7 +55,10 @@ define(
         };
 
         MCTPreview.appliesTo = function (context) {
-            return true;
+            var domainObject = (context || {}).domainObject,
+                status = domainObject.getCapability('status');
+
+            return !(status && status.get('editing')); 
         };
 
         return MCTPreview;

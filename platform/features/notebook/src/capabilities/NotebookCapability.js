@@ -42,7 +42,7 @@ define(
          * @returns {Boolean}
          */
         NotebookCapability.prototype.isNotebook = function () {
-            return this.typeService.getType('notebook');
+            return !!this.typeService.getType('notebook');
         };
 
         return NotebookCapability;
