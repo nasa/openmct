@@ -185,7 +185,7 @@ define(
 
         NewEntryContextual.appliesTo = function (context) {
             var domainObject = context.domainObject;
-            return !!(domainObject && domainObject.getModel().type !=='notebook');
+            return !!(domainObject && domainObject.getModel().type !== 'notebook');
         };
 
         return NewEntryContextual;

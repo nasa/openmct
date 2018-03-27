@@ -39,26 +39,26 @@ define(
             this.$compile = $compile;
         }
 
-        MCTPreview.prototype.perform = function () {
-            var domainObj = this.domainObject;
-            var rootScope = this.$rootScope;
+        MCTPreview.prototype.perform = function (object) {
+            var domainObj = object || this.domainObject,
+                rootScope = this.$rootScope;
+
             rootScope.newEntryText = '';
-            // Create the overlay element and add it to the document's body
             this.$rootScope.selObj = domainObj;
             this.$rootScope.selValue = "";
+
             var newScope = rootScope.$new();
             newScope.selObj = domainObj;
             newScope.selValue = "";
-            this.$compile(PREVIEW_TEMPLATE)(newScope);
-            // newScope.$destroy();
 
+            this.$compile(PREVIEW_TEMPLATE)(newScope);
         };
 
         MCTPreview.appliesTo = function (context) {
             var domainObject = (context || {}).domainObject,
                 status = domainObject.getCapability('status');
 
-            return !(status && status.get('editing')); 
+            return !(status && status.get('editing'));
         };
 
         return MCTPreview;

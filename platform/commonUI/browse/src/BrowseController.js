@@ -56,7 +56,21 @@ define(
                     navigationService.setNavigation(object, true);
                 },
                 allowSelection: function (object) {
-                    return navigationService.shouldNavigate();
+                    // return navigationService.shouldNavigate();
+                    if (navigationService.anyChecksBeforeNavigation()) {
+                        var actions = $scope.domainObject.getCapability('action'),
+                        previewAction = actions.getActions({key: 'mct-preview-action'})[0];
+
+                        if (previewAction && previewAction.perform) {
+                            previewAction.perform(object);
+                            return false;
+                        } else {
+                            return navigationService.shouldNavigate();
+                        }
+
+                    } else {
+                        return true;
+                    }
                 }
             };
 
