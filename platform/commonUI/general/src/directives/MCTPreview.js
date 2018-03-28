@@ -56,9 +56,10 @@ define(['zepto'], function ($) {
                 browseBar;
 
             var actions = $scope.domainObject.getCapability('action'),
-            notebookAction = actions.getActions({key: 'notebook-new-entry'});
+                notebookAction = actions.getActions({key: 'notebook-new-entry'});
 
             function openOverlay() {
+
                 overlay = document.createElement('div');
                 $(overlay).addClass('abs overlay l-large-view');
                 overlay.innerHTML = OVERLAY_TEMPLATE;
@@ -85,9 +86,11 @@ define(['zepto'], function ($) {
             }
 
             function closeOverlay() {
+
                 if (notebookButtonEl) {
                     browseBar.removeChild(notebookButtonEl);
                     notebookButtonEl.remove();
+                    notebookButtonEl = undefined;
                 }
 
                 overlayContainer.removeChild($element[0]);

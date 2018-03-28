@@ -81,13 +81,13 @@ define([
                 doneButton,
                 blocker,
                 overlayContainer,
-                notebookButtonEl,
+                notebookButtonLg,
                 browseBar;
 
-            function openOverlay() {
-
-                var actions = $scope.domainObject.getCapability('action'),
+            var actions = $scope.domainObject.getCapability('action'),
                 notebookAction = actions.getActions({key: 'notebook-new-entry'});
+
+            function openOverlay() {
 
                 // Remove frame classes from being applied in a non-frame context
                 $(frame).removeClass('frame frame-template');
@@ -106,21 +106,21 @@ define([
                 overlayContainer.appendChild(frame);
 
                 if (notebookAction) {
-                    notebookButtonEl = document.createElement('div');
-                    $(notebookButtonEl).addClass('notebook-button-container');
-                    notebookButtonEl.innerHTML = NEW_NOTEBOOK_BUTTON_TEMPLATE;
+                    notebookButtonLg = document.createElement('div');
+                    $(notebookButtonLg).addClass('notebook-button-container');
+                    notebookButtonLg.innerHTML = NEW_NOTEBOOK_BUTTON_TEMPLATE;
                     browseBar = overlay.querySelector('.object-browse-bar .right');
-                    browseBar.prepend(notebookButtonEl);
-                    notebookButtonEl.addEventListener('click', function () {
-                        notebookAction[0].perform();
+                    browseBar.prepend(notebookButtonLg);
+                    notebookButtonLg.addEventListener('click', function () {
+                        notebookAction[0].perform(overlayContainer);
                     });
                 }
             }
 
             function closeOverlay() {
-                if (notebookButtonEl) {
-                    browseBar.removeChild(notebookButtonEl);
-                    notebookButtonEl.remove();
+                if (notebookButtonLg) {
+                    browseBar.removeChild(notebookButtonLg);
+                    notebookButtonLg.remove();
                 }
 
                 $(frame).addClass('frame frame-template');
