@@ -52,6 +52,9 @@ body.touch {
     }
 
     .selector-list .tree-item {
-        @include containerBase($bg: $colorMobileSelectListTreeItemBg);
+        background: $colorMobileSelectListTreeItemBg;
+        box-sizing: border-box;
+        color: $colorBodyFg;
     }
+
 }

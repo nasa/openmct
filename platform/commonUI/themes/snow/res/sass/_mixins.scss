@@ -1,5 +1,6 @@
 @mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $gradRatio: 5%) {
-	@include containerBase($bg, $fg);
+    background: $bg;
+    color: $fg;
 	@include boxShdw($shdwBtns);
 }
 

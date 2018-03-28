@@ -283,12 +283,12 @@
 
 /*********************************************** CONTROLS, FORM ELEMENTS */
 
-@mixin containerBase($bg: $colorBodyBg, $fg: $colorBodyFg) {
-	background: $bg;
-	//border-radius: $controlCr;
-	box-sizing: border-box;
-	color: $fg;
-}
+//@mixin containerBase($bg: $colorBodyBg, $fg: $colorBodyFg) {
+//	background: $bg;
+//	//border-radius: $controlCr;
+//	//box-sizing: border-box;
+//	color: $fg;
+//}
 
 @mixin btnBase($bg: $colorBtnBg, $bgHov: $colorBtnBgHov, $fg: $colorBtnFg, $fgHov: $colorBtnFgHov, $ic: $colorBtnIcon, $icHov: $colorBtnIconHov) {
 	@include user-select(none);
@@ -311,17 +311,29 @@
 }
 
 @mixin btnSubtle($bg: $colorBtnBg, $bgHov: $colorBtnBgHov, $fg: $colorBtnFg, $fgHov: $colorBtnFgHov, $ic: $colorBtnIcon, $icHov: $colorBtnIconHov) {
-    @include containerSubtle($bg, $fg);
+    @include containerSubtle($bg, $fg); // Varies per theme
     @include btnBase($bgHov: $bgHov, $fg: $fg, $fgHov: $fgHov, $ic: $ic, $icHov: $icHov);
     text-shadow: $shdwItemText;
 }
 
-@mixin sButton($bg: $colorBtnBg, $bgHov: $colorBtnBgHov, $fg: $colorBtnFg, $fgHov: $colorBtnFgHov, $ic: $colorBtnIcon, $icHov: $colorBtnIconHov) {
+@mixin sButton(
+    $bg: $colorBtnBg,
+    $bgHov: $colorBtnBgHov,
+    $fg: $colorBtnFg,
+    $fgHov: $colorBtnFgHov,
+    $ic: $colorBtnIcon,
+    $icHov: $colorBtnIconHov,
+    $important: false) {
     $baseRatio: 1.5;
     $pad: $interiorMargin * $baseRatio;
-    @include user-select(none);
+    $imp: '';
+    @if $important == true {
+        $imp: !important;
+    }
+    //@include user-select(none);
     @include btnSubtle($bg: $colorBtnBg, $bgHov: $colorBtnBgHov, $fg: $colorBtnFg, $ic: $colorBtnIcon);
     box-sizing: border-box;
+
     cursor: pointer;
     display: inline-block;
     font-size: 0.7rem;
