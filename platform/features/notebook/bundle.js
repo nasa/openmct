@@ -241,7 +241,7 @@ define([
                     "implementation": newEntryAction,
                     "name": "New Notebook Entry",
                     "cssClass": "icon-notebook labeled",
-                    "description": "Add a new entry",
+                    "description": "Add a new Notebook entry",
                     "category": [
                         "contextual",
                          "view-control"
