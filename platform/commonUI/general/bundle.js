@@ -419,8 +419,8 @@ define([
                     "key": "mct-preview-action",
                     "implementation": MCTPreviewAction,
                     "name": "Preview",
-                    "cssClass": "icon-eye-open labeled",
-                    "description": "Preview Object In Overlay",
+                    "cssClass": "hide-in-t-main-view icon-eye-open",
+                    "description": "Preview in large dialog",
                     "category": [
                         "contextual",
                          "view-control"
