@@ -19,62 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-$baseRatio: 1.5;
-$pad: $interiorMargin * $baseRatio;
-
 .s-button {
-    @include user-select(none);
-    @include btnSubtle($bg: $colorBtnBg, $bgHov: $colorBtnBgHov, $fg: $colorBtnFg, $ic: $colorBtnIcon);
-    box-sizing: border-box;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 0.7rem;
-    text-decoration: none;
-    height: $btnStdH;
-    line-height: $btnStdH;
-    padding: 0 $pad;
-
-    &.labeled:before {
-        // Icon when it's included
-        margin-right: $interiorMarginSm;
-    }
-
-	&.lg {
-		font-size: 1rem;
-	}
-
-    &.sm {
-        padding: 0 $pad / $baseRatio;
-    }
-
-    &.vsm {
-        padding: 0 ($pad / $baseRatio) / 2;
-    }
-
-    &.major {
-        @include btnSubtle($bg: $colorBtnMajorBg, $bgHov: $colorBtnMajorBgHov, $fg: $colorBtnMajorFg, $fgHov: $colorBtnMajorFgHov, $ic: $colorBtnMajorFg, $icHov: $colorBtnMajorFgHov);
-    }
-
-    &.no-label {
-        .label, .title-label { display: none; }
-    }
-
-    &.pause-play {
-        @extend .icon-pause;
-        &.paused {
-            @include btnSubtle($bg: $colorPausedBg, $bgHov: pushBack($colorPausedBg, 10%), $fg: $colorPausedFg, $ic: $colorPausedFg);
-            @extend .icon-play;
-            &:before { @include pulse($dur: 1000ms); }
-        }
-    }
-
-    .icon {
-        font-size: 0.8rem;
-    }
-
-    .title-label {
-        vertical-align: top;
-    }
+    @include sButton();
 }
 
 body.desktop .mini-tab-icon {

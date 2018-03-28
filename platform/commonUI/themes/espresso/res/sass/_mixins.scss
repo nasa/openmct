@@ -1,6 +1,6 @@
 @mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $gradRatio: 5%) {
 	@include containerBase($bg, $fg);
-	@include background-image(linear-gradient(pullForward($bg, $gradRatio), $bg));
+	@include background-image(linear-gradient(lighten($bg, $gradRatio), $bg));
 	@include boxShdw($shdwBtns);
 }
 

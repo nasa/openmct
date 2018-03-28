@@ -284,7 +284,7 @@
 /*********************************************** CONTROLS, FORM ELEMENTS */
 
 @mixin containerBase($bg: $colorBodyBg, $fg: $colorBodyFg) {
-	background-color: $bg;
+	background: $bg;
 	//border-radius: $controlCr;
 	box-sizing: border-box;
 	color: $fg;
@@ -314,6 +314,62 @@
     @include containerSubtle($bg, $fg);
     @include btnBase($bgHov: $bgHov, $fg: $fg, $fgHov: $fgHov, $ic: $ic, $icHov: $icHov);
     text-shadow: $shdwItemText;
+}
+
+@mixin sButton($bg: $colorBtnBg, $bgHov: $colorBtnBgHov, $fg: $colorBtnFg, $fgHov: $colorBtnFgHov, $ic: $colorBtnIcon, $icHov: $colorBtnIconHov) {
+    $baseRatio: 1.5;
+    $pad: $interiorMargin * $baseRatio;
+    @include user-select(none);
+    @include btnSubtle($bg: $colorBtnBg, $bgHov: $colorBtnBgHov, $fg: $colorBtnFg, $ic: $colorBtnIcon);
+    box-sizing: border-box;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 0.7rem;
+    text-decoration: none;
+    height: $btnStdH;
+    line-height: $btnStdH;
+    padding: 0 $pad;
+
+    &.lg {
+        font-size: 1rem;
+    }
+
+    &.sm {
+        padding: 0 $pad / $baseRatio;
+    }
+
+    &.vsm {
+        padding: 0 ($pad / $baseRatio) / 2;
+    }
+
+    &.major {
+        @include btnSubtle($bg: $colorBtnMajorBg, $bgHov: $colorBtnMajorBgHov, $fg: $colorBtnMajorFg, $fgHov: $colorBtnMajorFgHov, $ic: $colorBtnMajorFg, $icHov: $colorBtnMajorFgHov);
+    }
+
+    &.no-label {
+        .label, .title-label { display: none; }
+    }
+
+    &[disabled="true"] {
+        opacity: 0.3;
+    }
+
+    &.pause-play {
+        @extend .icon-pause;
+        &.paused {
+            @include btnSubtle($bg: $colorPausedBg, $bgHov: pushBack($colorPausedBg, 10%), $fg: $colorPausedFg, $ic: $colorPausedFg);
+            @extend .icon-play;
+            &:before { @include pulse($dur: 1000ms); }
+        }
+    }
+
+    .icon {
+        font-size: 0.8rem;
+    }
+
+    .title-label {
+        vertical-align: top;
+    }
 }
 
 @mixin input-base() {
@@ -444,4 +500,43 @@
 @mixin s-stale($a: 0.5) {
     color: rgba($colorTelemFresh, $a) !important;
     font-style: italic;
+}
+
+/********************************************* EFFECTS */
+@mixin pulse($animName: pulse, $dur: 500ms, $iteration: infinite, $opacity0: 0.5, $opacity100: 1) {
+    @include keyframes($animName) {
+        0%   { opacity: $opacity0; }
+        100% { opacity: $opacity100; }
+    }
+    @include animation-name($animName);
+    @include animation-duration($dur);
+    @include animation-direction(alternate);
+    @include animation-iteration-count($iteration);
+    @include animation-timing-function(ease-in-out);
+}
+
+.pulse {
+    @include pulse($animName: pulse, $dur: 750ms);
+}
+
+.pulse-subtle {
+    @include pulse($animName: pulse-subtle, $dur: 500ms, $opacity0: 0.7);
+}
+
+@mixin animTo($animName, $propName, $propValStart, $propValEnd, $dur: 500ms, $delay: 0, $dir: normal, $count: 1) {
+    @include keyframes($animName) {
+        from { #{propName}: $propValStart; }
+        to { #{$propName}: $propValEnd; }
+    }
+    @include animToParams($animName, $dur: $dur, $delay: $delay, $dir: $dir, $count: $count)
+}
+
+@mixin animToParams($animName, $dur: 500ms, $delay: 0, $dir: normal, $count: 1) {
+    @include animation-name($animName);
+    @include animation-duration($dur);
+    @include animation-delay($delay);
+    @include animation-fill-mode(both);
+    @include animation-direction($dir);
+    @include animation-iteration-count($count);
+    @include animation-timing-function(ease-in-out);
 }
