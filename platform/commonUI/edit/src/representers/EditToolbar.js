@@ -49,10 +49,7 @@ define(
             this.stateTracker = [];
 
             $scope.$watchCollection(this.getState.bind(this), this.handleStateChanges.bind(this));
-
-            $scope.$on("$destroy", function () {
-                self.destroy();
-            });
+            $scope.$on("$destroy", this.destroy.bind(this));
 
             this.updateToolbar(structure);
             this.registerListeners(structure);
@@ -70,10 +67,10 @@ define(
 
             function addKey(item) {
                 self.stateTracker.push({
+                    id: objectUtils.makeKeyString(item.domainObject.identifier),
                     domainObject: item.domainObject,
                     property: item.property
                 });
-
                 self.properties.push(item.property);
                 return self.properties.length - 1; // Return index of property
             }
@@ -83,7 +80,6 @@ define(
                 if (item.property) {
                     converted.key = addKey(item);
                 }
-
                 return converted;
             }
 
@@ -151,25 +147,9 @@ define(
 
             function observeObject(domainObject, id) {
                 var unobserveObject = self.openmct.objects.observe(domainObject, '*', function (newObject) {
-
-                    self.domainObjectsById[id].properties.map(function (property) {
-                        var currentValue = _.get(domainObject, property);
-                        var newValue = _.get(newObject, property);
-                        var index = _.findIndex(self.stateTracker, {
-                            'domainObject': domainObject,
-                            'property': property
-                        });
-
-                        self.stateTracker[index].domainObject = newObject;
-
-                        if (currentValue !== newValue) {
-                            self.updateState(index, newValue);
-                        }
-                    });
-
-                    domainObject = newObject;
+                    self.domainObjectsById[id].newObject = newObject;
+                    self.scheduleStateUpdate();
                 });
-
                 self.unobserveObjects.push(unobserveObject);
             }
 
@@ -178,35 +158,69 @@ define(
                 var id = objectUtils.makeKeyString(domainObject.identifier);
 
                 if (!self.domainObjectsById[id]) {
-                    self.domainObjectsById[id] = {};
+                    self.domainObjectsById[id] = {
+                        domainObject: domainObject,
+                        properties: []
+                    };
                     observeObject(domainObject, id);
                 }
-
-                self.domainObjectsById[id].properties = self.domainObjectsById[id].properties || [];
                 self.domainObjectsById[id].properties.push(item.property);
             });
+        };
+
+        EditToolbar.prototype.scheduleStateUpdate = function () {
+            if (this.stateUpdateScheduled) {
+                return;
+            }
+            
+            // _.map(this.stateTracker, 'property')
+            this.stateUpdateScheduled = true;
+            setTimeout(this.updateStateAfterMutation.bind(this));
+        };
+
+        EditToolbar.prototype.updateStateAfterMutation = function () {
+            this.stateTracker.forEach(function (state, index) {
+                if (!this.domainObjectsById[state.id].newObject) {
+                    return;
+                }
+                var domainObject = this.domainObjectsById[state.id].domainObject;
+                var newObject = this.domainObjectsById[state.id].newObject;
+                var currentValue = _.get(domainObject, state.property);
+                var newValue = _.get(newObject, state.property);
+
+                state.domainObject = newObject;
+
+                if (currentValue !== newValue) {
+                    this.updateState(index, newValue);
+                }
+            }, this);
+
+            Object.values(this.domainObjectsById).forEach(function (tracker) {
+                if (tracker.newObject) {
+                    tracker.domainObject = tracker.newObject;
+                }
+                delete tracker.newObject;
+            });
+            this.stateUpdateScheduled = false;
         };
 
         EditToolbar.prototype.deregisterListeners = function () {
             this.unobserveObjects.forEach(function (unobserveObject) {
                 unobserveObject();
             });
-
             this.unobserveObjects = [];
         };
 
         EditToolbar.prototype.handleStateChanges = function (state) {
-            var self = this;
-
-            (state || []).map(function (value, index) {
-                var domainObject = self.stateTracker[index].domainObject;
-                var property = self.stateTracker[index].property;
+            (state || []).map(function (newValue, index) {
+                var domainObject = this.stateTracker[index].domainObject;
+                var property = this.stateTracker[index].property;
                 var currentValue = _.get(domainObject, property);
 
-                if (currentValue !== value) {
-                    self.updateDomainObject(domainObject, property, value);
+                if (currentValue !== newValue) {
+                    this.updateDomainObject(domainObject, property, newValue);
                 }
-            });
+            }, this);
         };
 
         EditToolbar.prototype.destroy = function () {
@@ -216,5 +230,3 @@ define(
         return EditToolbar;
     }
 );
-
-

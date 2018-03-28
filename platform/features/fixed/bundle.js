@@ -42,239 +42,141 @@ define([
                     "uses": [
                         "composition"
                     ],
-                    "editable": true,
-                    "toolbar": {
-                        "sections": [
-                            {
-                                "items": [
-                                    {
-                                        "method": "add",
-                                        "cssClass": "icon-plus",
-                                        "control": "menu-button",
-                                        "text": "Add",
-                                        "options": [
-                                            {
-                                                "name": "Box",
-                                                "cssClass": "icon-box",
-                                                "key": "fixed.box"
-                                            },
-                                            {
-                                                "name": "Line",
-                                                "cssClass": "icon-line-horz",
-                                                "key": "fixed.line"
-                                            },
-                                            {
-                                                "name": "Text",
-                                                "cssClass": "icon-T",
-                                                "key": "fixed.text"
-                                            },
-                                            {
-                                                "name": "Image",
-                                                "cssClass": "icon-image",
-                                                "key": "fixed.image"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "items": [
-                                    {
-                                        "method": "order",
-                                        "cssClass": "icon-layers",
-                                        "control": "menu-button",
-                                        "title": "Layering",
-                                        "description": "Move the selected object above or below other objects",
-                                        "options": [
-                                            {
-                                                "name": "Move to Top",
-                                                "cssClass": "icon-arrow-double-up",
-                                                "key": "top"
-                                            },
-                                            {
-                                                "name": "Move Up",
-                                                "cssClass": "icon-arrow-up",
-                                                "key": "up"
-                                            },
-                                            {
-                                                "name": "Move Down",
-                                                "cssClass": "icon-arrow-down",
-                                                "key": "down"
-                                            },
-                                            {
-                                                "name": "Move to Bottom",
-                                                "cssClass": "icon-arrow-double-down",
-                                                "key": "bottom"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "property": "fill",
-                                        "cssClass": "icon-paint-bucket",
-                                        "title": "Fill color",
-                                        "description": "Set fill color",
-                                        "control": "color"
-                                    },
-                                    {
-                                        "property": "stroke",
-                                        "cssClass": "icon-line-horz",
-                                        "title": "Border color",
-                                        "description": "Set border color",
-                                        "control": "color"
-                                    },
-                                    {
-                                        "property": "url",
-                                        "cssClass": "icon-image",
-                                        "control": "dialog-button",
-                                        "title": "Image Properties",
-                                        "description": "Edit image properties",
-                                        "dialog": {
-                                            "control": "textfield",
-                                            "name": "Image URL",
-                                            "cssClass": "l-input-lg",
-                                            "required": true
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "items": [
-                                    {
-                                        "property": "color",
-                                        "cssClass": "icon-T",
-                                        "title": "Text color",
-                                        "description": "Set text color",
-                                        "mandatory": true,
-                                        "control": "color"
-                                    },
-                                    {
-                                        "property": "size",
-                                        "title": "Text size",
-                                        "description": "Set text size",
-                                        "control": "select",
-                                        "options": [9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96].map(function (size) {
-                                            return { "name": size + " px", "value": size + "px" };
-                                        })
-                                    }
-                                ]
-                            },
-                            {
-                                "items": [
-                                    {
-                                        "property": "editX",
-                                        "text": "X",
-                                        "name": "X",
-                                        "cssClass": "l-input-sm",
-                                        "control": "numberfield",
-                                        "min": "0"
-                                    },
-                                    {
-                                        "property": "editY",
-                                        "text": "Y",
-                                        "name": "Y",
-                                        "cssClass": "l-input-sm",
-                                        "control": "numberfield",
-                                        "min": "0"
-                                    },
-                                    {
-                                        "property": "editX1",
-                                        "text": "X1",
-                                        "name": "X1",
-                                        "cssClass": "l-input-sm",
-                                        "control" : "numberfield",
-                                        "min": "0"
-                                    },
-                                    {
-                                        "property": "editY1",
-                                        "text": "Y1",
-                                        "name": "Y1",
-                                        "cssClass": "l-input-sm",
-                                        "control" : "numberfield",
-                                        "min": "0"
-                                    },
-                                    {
-                                        "property": "editX2",
-                                        "text": "X2",
-                                        "name": "X2",
-                                        "cssClass": "l-input-sm",
-                                        "control" : "numberfield",
-                                        "min": "0"
-                                    },
-                                    {
-                                        "property": "editY2",
-                                        "text": "Y2",
-                                        "name": "Y2",
-                                        "cssClass": "l-input-sm",
-                                        "control" : "numberfield",
-                                        "min": "0"
-                                    },
-                                    {
-                                        "property": "editHeight",
-                                        "text": "H",
-                                        "name": "H",
-                                        "cssClass": "l-input-sm",
-                                        "control": "numberfield",
-                                        "description": "Resize object height",
-                                        "min": "1"
-                                    },
-                                    {
-                                        "property": "editWidth",
-                                        "text": "W",
-                                        "name": "W",
-                                        "cssClass": "l-input-sm",
-                                        "control": "numberfield",
-                                        "description": "Resize object width",
-                                        "min": "1"
-                                    },
-                                    {
-                                        "property": "useGrid",
-                                        "name": "Snap to Grid",
-                                        "control": "checkbox"
-                                    }
-                                ]
-                            },
-                            {
-                                "items": [
-                                    {
-                                        "property": "text",
-                                        "cssClass": "icon-gear",
-                                        "control": "dialog-button",
-                                        "title": "Text Properties",
-                                        "description": "Edit text properties",
-                                        "dialog": {
-                                            "control": "textfield",
-                                            "name": "Text",
-                                            "required": true
-                                        }
-                                    },
-                                    {
-                                        "method": "showTitle",
-                                        "cssClass": "icon-two-parts-both",
-                                        "control": "button",
-                                        "title": "Show title",
-                                        "description": "Show telemetry element title"
-                                    },
-                                    {
-                                        "method": "hideTitle",
-                                        "cssClass": "icon-two-parts-one-only",
-                                        "control": "button",
-                                        "title": "Hide title",
-                                        "description": "Hide telemetry element title"
-                                    }
-                                ]
-                            },
-                            {
-                                "items": [
-                                    {
-                                        "method": "remove",
-                                        "control": "button",
-                                        "cssClass": "icon-trash"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+                    "editable": true
                 }
+            ],
+            "toolbars": [
+                {
+                    name: "Fixed Position Toolbar",
+                    key: "fixed.position",
+                    description: "A common toolbar for objects inside a fixed position display.",
+                    forSelection: function (selection) {
+                        return (selection &&
+                            selection[0] && selection[0].context.elementProxy &&
+                            selection[1] && selection[1].context.item.type === 'telemetry.fixed');
+                    },
+                    toolbar: function (selection) {
+                        var element = "configuration['fixed-display'].elements[" + selection[0].context.elementProxy.index + "]";
+                        return [
+                            // {
+                            //     control: "color",
+                            //     domainObject: selection[1].context.item,
+                            //     property: element + ".stroke",
+                            //     cssClass: "icon-line-horz",
+                            //     title: "Border color",
+                            //     description: "Set border color",
+                            // },
+                            {
+                                control: "numberfield",
+                                domainObject: selection[1].context.item,
+                                property: element + ".x",
+                                text: "X",
+                                name: "X",
+                                cssClass: "l-input-sm",
+                                min: "0"
+                            },
+                            {
+                                control: "numberfield",
+                                domainObject: selection[1].context.item,
+                                property: element + ".y",
+                                text: "Y",
+                                name: "Y",
+                                cssClass: "l-input-sm",
+                                min: "0"
+                            },
+                            {
+                                control: "numberfield",
+                                domainObject: selection[1].context.item,
+                                property: element + ".height",                                
+                                text: "H",
+                                name: "H",
+                                cssClass: "l-input-sm",
+                                description: "Resize object height",
+                                min: "1"
+                            },
+                            {
+                                control: "numberfield",
+                                domainObject: selection[1].context.item,
+                                property: element + ".width",
+                                text: "W",
+                                name: "W",
+                                cssClass: "l-input-sm",
+                                description: "Resize object width",
+                                min: "1"
+                            },
+                            {
+                                control: "checkbox",
+                                domainObject: selection[1].context.item,
+                                property: element + ".useGrid",
+                                name: "Snap to Grid"
+                            },
+                        ];
+                    }
+                },
+                // {
+                //     name: "Fixed Line Element Toolbar",
+                //     key: "fixed.line",
+                //     description: "A toolbar specific to fixed line elements inside a fixed position display.",
+                //     forSelection: function (selection) {
+                //         return (selection &&
+                //             selection[0] && selection[0].context.elementProxy &&
+                //             selection[0].context.elementProxy.element.type === 'fixed.line' &&
+                //             selection[1] && selection[1].context.item.type === 'telemetry.fixed');
+                //     },
+                //     toolbar: function (selection) {
+                //         var element = "configuration['fixed-display'].elements[" + selection[0].context.elementProxy.index + "]";
+                //         return [
+                //             {
+                //                 control: "numberfield",
+                //                 domainObject: selection[1].context.item,
+                //                 property: element + ".x2",
+                //                 text: "X2",
+                //                 name: "X2",
+                //                 cssClass: "l-input-sm",
+                //                 min: "0"
+                //             },
+                //             {
+                //                 control: "numberfield",
+                //                 domainObject: selection[1].context.item,
+                //                 property: element + ".y2",
+                //                 text: "Y2",
+                //                 name: "Y2",
+                //                 cssClass: "l-input-sm",
+                //                 min: "0"
+                //             }
+                //         ];
+                //     }
+                // },
+                // {
+                //     name: "Fixed Image Element Toolbar",
+                //     key: "fixed.image",
+                //     description: "A toolbar sepecific to fixed image elements inside a fixed position display.",
+                //     forSelection: function (selection) {
+                //         return (selection &&
+                //             selection[0] && selection[0].context.elementProxy &&
+                //             selection[0].context.elementProxy.element.type === 'fixed.image' &&
+                //             selection[1] && selection[1].context.item.type === 'telemetry.fixed');
+                //     },
+                //     toolbar: function (selection) {
+                //         var element = "configuration['fixed-display'].elements[" + selection[0].context.elementProxy.index + "]";
+                //         return [
+                //             {
+                //                 control: "dialog-button",
+                //                 domainObject: selection[1].context.item,
+                //                 property: element + ".url",
+                //                 cssClass: "icon-image",
+                //                 title: "Image Properties",
+                //                 description: "Edit image properties",
+                //                 dialog: {
+                //                     control: "textfield",
+                //                     name: "Image URL",
+                //                     cssClass: "l-input-lg",
+                //                     required: true
+                //                 }
+                //             }
+                //         ];
+                //     }
+                // }
             ],
             "types": [
                 {

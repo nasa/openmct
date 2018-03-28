@@ -15,7 +15,6 @@ define(
          */
         function ToolbarController($scope, openmct) {
             var regexps = [];
-            var self = this;
 
             // ng-pattern seems to want a RegExp, and not a
             // string (despite what documentation says) but
@@ -47,19 +46,19 @@ define(
             $scope.editToolbar = {};
             $scope.getRegExp = getRegExp;
 
-            $scope.$on("$destroy", function () {
-                self.openmct.selection.off("change", self.handleSelection);
-            });
-
+            $scope.$on("$destroy", this.destroy.bind(this));
             openmct.selection.on('change', this.handleSelection.bind(this));
         }
 
         ToolbarController.prototype.handleSelection = function (selection) {
-            if (selection[0].context.oldItem === this.selectedItem) {
+            var domainObject = selection[0].context.oldItem;
+            var element = selection[0].context.elementProxy
+
+            if ((domainObject && domainObject === this.selectedObject) || (element && element === this.selectedObject)) {
                 return;
             }
 
-            this.selectedItem = selection[0].context.oldItem;
+            this.selectedObject = domainObject || element;
 
             if (this.editToolbar) {
                 this.editToolbar.destroy();
@@ -70,6 +69,10 @@ define(
             this.$scope.$parent.editToolbar = this.editToolbar;
             this.$scope.$parent.editToolbar.structure = this.editToolbar.getStructure();
             this.$scope.$parent.editToolbar.state = this.editToolbar.getState();
+        };
+
+        ToolbarController.prototype.destroy = function () {
+            this.openmct.selection.off("change", this.handleSelection);
         };
 
         return ToolbarController;

@@ -57,8 +57,11 @@ define(
             this.openmct = openmct;
             this.$element = $element;
             this.$scope = $scope;
+            this.dialogService = dialogService;
+            this.$q = $q;
 
             this.gridSize = $scope.domainObject && $scope.domainObject.getModel().layoutGrid;
+
             this.fixedViewSelectable = false;
 
             var self = this;
@@ -100,7 +103,7 @@ define(
                     elementHandle,
                     self.gridSize,
                     updateSelectionStyle,
-                    $scope.commit
+                    self.commit.bind(self)
                 );
             }
 
@@ -135,12 +138,33 @@ define(
                 return e;
             }
 
+            function removeUnlisteners() {
+                self.unlisteners.forEach(function (unlisten) {
+                    unlisten();
+                });
+                self.unlisteners = [];
+            }
+
             // Decorate elements in the current configuration
             function refreshElements() {
                 var elements = (($scope.configuration || {}).elements || []);
 
                 // Create the new proxies...
                 self.elementProxies = elements.map(makeProxyElement);
+                removeUnlisteners();
+
+                var domainObject = $scope.domainObject.useCapability('adapter');
+
+                self.elementProxies.map(function (elementProxy, index) {
+                    var path = "configuration['fixed-display'].elements[" + index + "]";
+                    var unlisten = self.openmct.objects.observe(domainObject, path + ".useGrid", function (newValue) {
+                        if (elementProxy.useGrid() !== newValue) {
+                            elementProxy.useGrid(newValue);
+                            self.openmct.objects.mutate($scope.domainObject.useCapability('adapter'), path, _.clone(elementProxy.element));
+                        }
+                    });
+                    self.unlisteners.push(unlisten);  
+                });
 
                 // If selection is not in array, select parent.
                 // Otherwise, set the element to select after refresh.
@@ -179,10 +203,8 @@ define(
                 }
                 self.getTelemetry($scope.domainObject);
                 refreshElements();
-                // Mark change as persistable
-                if (self.$scope.commit) {
-                    self.$scope.commit("Objects removed.");
-                }
+
+                self.commit();
             }
 
             // Handle changes in the object's composition
@@ -225,10 +247,7 @@ define(
                 // Refresh displayed elements
                 refreshElements();
 
-                // Mark change as persistable
-                if ($scope.commit) {
-                    $scope.commit("Dropped an element.");
-                }
+                self.commit();
             }
 
             // Position a panel after a drop event
@@ -258,36 +277,13 @@ define(
                 self.getTelemetry($scope.domainObject);
             }
 
-            // Sets the selectable object in response to the selection change event.
-            function setSelection(selectable) {
-                var selection = selectable[0];
-
-                if (!selection) {
-                    return;
-                }
-
-                if (selection.context.elementProxy) {
-                    self.selectedElementProxy = selection.context.elementProxy;
-                    self.mvHandle = self.generateDragHandle(self.selectedElementProxy);
-                    self.resizeHandles = self.generateDragHandles(self.selectedElementProxy);
-                } else {
-                    // Make fixed view selectable if it's not already.
-                    if (!self.fixedViewSelectable && selectable.length === 1) {
-                        self.fixedViewSelectable = true;
-                        selection.context.viewProxy = new FixedProxy(addElement, $q, dialogService);
-                        self.openmct.selection.select(selection);
-                    }
-
-                    self.resizeHandles = [];
-                    self.mvHandle = undefined;
-                    self.selectedElementProxy = undefined;
-                }
-            }
-
             this.elementProxies = [];
             this.generateDragHandle = generateDragHandle;
             this.generateDragHandles = generateDragHandles;
             this.updateSelectionStyle = updateSelectionStyle;
+            this.addElement = addElement;
+            this.refreshElements = refreshElements;
+            this.unlisteners = [];
 
             // Detect changes to grid size
             $scope.$watch("model.layoutGrid", updateElementPositions);
@@ -297,25 +293,66 @@ define(
 
             // Position panes when the model field changes
             $scope.$watch("model.composition", updateComposition);
-
+            
             // Refresh list of elements whenever model changes
             $scope.$watch("model.modified", refreshElements);
 
             // Subscribe to telemetry when an object is available
             $scope.$watch("domainObject", this.getTelemetry);
 
-            // Free up subscription on destroy
-            $scope.$on("$destroy", function () {
-                self.unsubscribe();
-                self.openmct.time.off("bounds", updateDisplayBounds);
-                self.openmct.selection.off("change", setSelection);
-            });
+            $scope.$on("$destroy", this.destroy.bind(this));
 
             // Respond to external bounds changes
             this.openmct.time.on("bounds", updateDisplayBounds);
-            this.openmct.selection.on('change', setSelection);
+            this.openmct.selection.on('change', this.setSelection.bind(this));
             this.$element.on('click', this.bypassSelection.bind(this));
+
+            self.unlisten = self.$scope.domainObject.getCapability('mutation')
+                .listen(this.handleModelChanges.bind(this));
         }
+
+        FixedController.prototype.handleModelChanges = function (model) {
+            if (this.selectedElementProxy) {
+                var index = this.$scope.configuration.elements.indexOf(this.selectedElementProxy.element);
+                if (index !== -1) {
+                    this.selectedElementProxy.element = model.configuration['fixed-display'].elements[index];
+                }
+            }
+
+            this.$scope.configuration = model.configuration['fixed-display'];
+            this.$scope.model = model;
+        };
+
+        FixedController.prototype.setSelection = function (selectable) {
+            var selection = selectable[0];
+            if (!selection) {
+                return;
+            }
+
+            if (selection.context.elementProxy) {
+                this.selectedElementProxy = selection.context.elementProxy;
+                this.mvHandle = this.generateDragHandle(this.selectedElementProxy);
+                this.resizeHandles = this.generateDragHandles(this.selectedElementProxy);
+            } else {
+                // Make fixed view selectable if it's not already.
+                if (!this.fixedViewSelectable && selectable.length === 1) {
+                    this.fixedViewSelectable = true;
+                    selection.context.viewProxy = new FixedProxy(this.addElement, this.$q, this.dialogService);
+                    this.openmct.selection.select(selection);
+                }
+
+                this.resizeHandles = [];
+                this.mvHandle = undefined;
+                this.selectedElementProxy = undefined;
+            }
+        };
+
+        FixedController.prototype.destroy = function () {
+            this.unsubscribe();
+            this.unlisten();
+            this.openmct.time.off("bounds", this.updateDisplayBounds);
+            this.openmct.selection.off("change", this.setSelection);
+        };
 
         /**
          * A rate-limited digest function. Caps digests at 60Hz
@@ -542,6 +579,7 @@ define(
          *
          * @returns the selected element
          */
+         // TODO: unused function, remove it
         FixedController.prototype.getSelectedElement = function () {
             return this.selectedElementProxy;
         };
@@ -579,12 +617,11 @@ define(
          * Gets the selection context.
          *
          * @param elementProxy the element proxy
-         * @returns {object} the context object which includes elementProxy and toolbar
+         * @returns {object} the context object which includes elementProxy
          */
         FixedController.prototype.getContext = function (elementProxy) {
             return {
-                elementProxy: elementProxy,
-                toolbar: elementProxy
+                elementProxy: elementProxy
             };
         };
 
@@ -605,6 +642,16 @@ define(
             } else {
                 this.moveHandle().endDrag();
             }
+        };
+
+        FixedController.prototype.commit = function () {
+            var model = this.$scope.model;
+            model.configuration = model.configuration || {};
+            model.configuration['fixed-display'] = this.$scope.configuration;
+
+            this.$scope.domainObject.useCapability('mutation', function () {
+                return model;
+            });
         };
 
         return FixedController;
