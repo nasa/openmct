@@ -107,7 +107,7 @@ define([
 
                 if (notebookAction) {
                     notebookButtonLg = document.createElement('div');
-                    $(notebookButtonLg).addClass('notebook-button-container');
+                    $(notebookButtonLg).addClass('notebook-button-container holder flex-elem');
                     notebookButtonLg.innerHTML = NEW_NOTEBOOK_BUTTON_TEMPLATE;
                     browseBar = overlay.querySelector('.object-browse-bar .right');
                     browseBar.prepend(notebookButtonLg);
