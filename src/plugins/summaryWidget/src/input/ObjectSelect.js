@@ -1,4 +1,10 @@
-define(['./Select'], function (Select) {
+define([
+    './Select',
+    '../../../../api/objects/object-utils'
+], function (
+    Select,
+    objectUtils
+) {
 
     /**
      * Create a {Select} element whose composition is dynamically updated with
@@ -37,7 +43,7 @@ define(['./Select'], function (Select) {
          * @private
          */
         function onCompositionAdd(obj) {
-            self.select.addOption(obj.identifier.key, obj.name);
+            self.select.addOption(objectUtils.makeKeyString(obj.identifier), obj.name);
         }
 
         /**
@@ -75,7 +81,7 @@ define(['./Select'], function (Select) {
      */
     ObjectSelect.prototype.generateOptions = function () {
         var items = Object.values(this.compositionObjs).map(function (obj) {
-            return [obj.identifier.key, obj.name];
+            return [objectUtils.makeKeyString(obj.identifier), obj.name];
         });
         this.baseOptions.forEach(function (option, index) {
             items.splice(index, 0, option);

@@ -1,10 +1,12 @@
 define ([
     './ConditionEvaluator',
+    '../../../api/objects/object-utils',
     'EventEmitter',
     'zepto',
     'lodash'
 ], function (
     ConditionEvaluator,
+    objectUtils,
     EventEmitter,
     $,
     _
@@ -123,21 +125,23 @@ define ([
      *                   has completed and types have been parsed
      */
     ConditionManager.prototype.parsePropertyTypes = function (object) {
-        var telemetryAPI = this.openmct.telemetry,
-            key,
-            type,
-            self = this;
+        var objectId = objectUtils.makeKeyString(object.identifier);
 
-        self.telemetryTypesById[object.identifier.key] = {};
-        return telemetryAPI.request(object, {size: 1, strategy: 'latest'}).then(function (telemetry) {
-            Object.entries(telemetry[telemetry.length - 1]).forEach(function (telem) {
-                key = telem[0];
-                type = typeof telem[1];
-                self.telemetryTypesById[object.identifier.key][key] = type;
-                self.subscriptionCache[object.identifier.key][key] = telem[1];
-                self.addGlobalPropertyType(key, type);
-            });
-        });
+        this.telemetryTypesById[objectId] = {};
+        Object.values(this.telemetryMetadataById[objectId]).forEach(function (valueMetadata) {
+            var type;
+            if (valueMetadata.hints.hasOwnProperty('range')) {
+                type = 'number';
+            } else if (valueMetadata.hints.hasOwnProperty('domain')) {
+                type = 'number';
+            } else if (valueMetadata.key === 'name') {
+                type = 'string';
+            } else {
+                type = 'string';
+            }
+            this.telemetryTypesById[objectId][valueMetadata.key] = type;
+            this.addGlobalPropertyType(valueMetadata.key, type);
+        }, this);
     };
 
     /**
@@ -147,23 +151,9 @@ define ([
      *                   and property types parsed
      */
     ConditionManager.prototype.parseAllPropertyTypes = function () {
-        var self = this,
-            index = 0,
-            objs = Object.values(self.compositionObjs),
-            promise = new Promise(function (resolve, reject) {
-                if (objs.length === 0) {
-                    resolve();
-                }
-                objs.forEach(function (obj) {
-                    self.parsePropertyTypes(obj).then(function () {
-                        if (index === objs.length - 1) {
-                            resolve();
-                        }
-                        index += 1;
-                    });
-                });
-            });
-        return promise;
+        Object.values(this.compositionObjs).forEach(this.parsePropertyTypes, this);
+        this.metadataLoadComplete = true;
+        this.eventEmitter.emit('metadata');
     };
 
     /**
@@ -187,7 +177,7 @@ define ([
     ConditionManager.prototype.onCompositionAdd = function (obj) {
         var compositionKeys,
             telemetryAPI = this.openmct.telemetry,
-            objId = obj.identifier.key,
+            objId = objectUtils.makeKeyString(obj.identifier),
             telemetryMetadata,
             self = this;
 
@@ -195,10 +185,9 @@ define ([
             self.compositionObjs[objId] = obj;
             self.telemetryMetadataById[objId] = {};
 
-            compositionKeys = self.domainObject.composition.map(function (object) {
-                return object.key;
-            });
-            if (!compositionKeys.includes(obj.identifier.key)) {
+            // FIXME: this should just update based on listener.
+            compositionKeys = self.domainObject.composition.map(objectUtils.makeKeyString);
+            if (!compositionKeys.includes(objId)) {
                 self.domainObject.composition.push(obj.identifier);
             }
 
@@ -212,6 +201,12 @@ define ([
             self.subscriptions[objId] = telemetryAPI.subscribe(obj, function (datum) {
                 self.handleSubscriptionCallback(objId, datum);
             }, {});
+            telemetryAPI.request(obj, {strategy: 'latest', size: 1})
+                .then(function (results) {
+                    if (results && results.length) {
+                        self.handleSubscriptionCallback(objId, results[results.length - 1]);
+                    }
+                });
 
             /**
              * if this is the initial load, parsing property types will be postponed
@@ -234,11 +229,14 @@ define ([
      * @private
      */
     ConditionManager.prototype.onCompositionRemove = function (identifier) {
+        var objectId = objectUtils.makeKeyString(identifier);
+        // FIXME: this should just update by listener.
         _.remove(this.domainObject.composition, function (id) {
-            return id.key === identifier.key;
+            return id.key === identifier.key &&
+                id.namespace === identifier.namespace;
         });
-        delete this.compositionObjs[identifier.key];
-        this.subscriptions[identifier.key](); //unsubscribe from telemetry source
+        delete this.compositionObjs[objectId];
+        this.subscriptions[objectId](); //unsubscribe from telemetry source
         this.eventEmitter.emit('remove', identifier);
 
         if (_.isEmpty(this.compositionObjs)) {
@@ -253,13 +251,9 @@ define ([
      * @private
      */
     ConditionManager.prototype.onCompositionLoad = function () {
-        var self = this;
-        self.loadComplete = true;
-        self.eventEmitter.emit('load');
-        self.parseAllPropertyTypes().then(function () {
-            self.metadataLoadComplete = true;
-            self.eventEmitter.emit('metadata');
-        });
+        this.loadComplete = true;
+        this.eventEmitter.emit('load');
+        this.parseAllPropertyTypes();
     };
 
     /**
