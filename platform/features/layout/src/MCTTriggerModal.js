@@ -38,6 +38,11 @@ define([
 '       </div>' +
 '    </div>';
 
+    var NEW_NOTEBOOK_BUTTON_TEMPLATE = '<a class="s-button labeled icon-notebook new-notebook-entry" title="New Notebook Entry">' +
+        '<span class="title-label">New Notebook Entry</span>' +
+        '</a>';
+
+
     /**
      * MCT Trigger Modal is intended for use in only one location: inside the
      * object-header to allow views in a layout to be popped out in a modal.
@@ -67,6 +72,7 @@ define([
             }
 
             frame = frame[0];
+
             var layoutContainer = frame.parentElement,
                 isOpen = false,
                 toggleOverlay,
@@ -74,9 +80,15 @@ define([
                 closeButton,
                 doneButton,
                 blocker,
-                overlayContainer;
+                overlayContainer,
+                notebookButtonLg,
+                browseBar;
+
+            var actions = $scope.domainObject.getCapability('action'),
+                notebookAction = actions.getActions({key: 'notebook-new-entry'});
 
             function openOverlay() {
+
                 // Remove frame classes from being applied in a non-frame context
                 $(frame).removeClass('frame frame-template');
                 overlay = document.createElement('div');
@@ -92,9 +104,25 @@ define([
                 document.body.appendChild(overlay);
                 layoutContainer.removeChild(frame);
                 overlayContainer.appendChild(frame);
+
+                if (notebookAction) {
+                    notebookButtonLg = document.createElement('div');
+                    $(notebookButtonLg).addClass('notebook-button-container holder flex-elem');
+                    notebookButtonLg.innerHTML = NEW_NOTEBOOK_BUTTON_TEMPLATE;
+                    browseBar = overlay.querySelector('.object-browse-bar .right');
+                    browseBar.prepend(notebookButtonLg);
+                    notebookButtonLg.addEventListener('click', function () {
+                        notebookAction[0].perform(overlayContainer);
+                    });
+                }
             }
 
             function closeOverlay() {
+                if (notebookButtonLg) {
+                    browseBar.removeChild(notebookButtonLg);
+                    notebookButtonLg.remove();
+                }
+
                 $(frame).addClass('frame frame-template');
                 overlayContainer.removeChild(frame);
                 layoutContainer.appendChild(frame);
@@ -109,7 +137,11 @@ define([
                 overlay = undefined;
             }
 
-            toggleOverlay = function () {
+            toggleOverlay = function (event) {
+                if (event) {
+                    event.stopPropagation();
+                }
+
                 if (!isOpen) {
                     openOverlay();
                     isOpen = true;

@@ -11,7 +11,6 @@
 	}
 	min-width: 150px;
 	.l-image-main {
-		background-color: $colorPlotBg;
         margin-bottom: $interiorMargin;
 	}
 	.l-image-main-controlbar {
@@ -76,6 +75,7 @@
 }
 
 .s-image-main {
+    background-color: $colorPlotBg;
 	border: 1px solid transparent;
 	&.paused {
 		@extend .s-unsynced;
