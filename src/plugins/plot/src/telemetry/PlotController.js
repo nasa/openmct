@@ -159,15 +159,16 @@ define([
     PlotController.prototype.loadMoreData = function (range, purge) {
         this.config.series.map(function (plotSeries) {
             this.startLoading();
+            plotSeries.reset();
             plotSeries.load({
                     size: this.$element[0].offsetWidth,
                     start: range.min,
                     end: range.max
                 })
                 .then(this.stopLoading.bind(this));
-            if (purge) {
+            /*if (purge) {
                 plotSeries.purgeRecordsOutsideRange(range);
-            }
+            }*/
         }, this);
     };
 
