@@ -67,49 +67,55 @@ define(
 
             var tracker = function () {
                 $(document.body).find('.l-dialog .outer-holder').addClass('annotation-dialog');
-                painterro = Painterro({
-                    id: 'snap-annotation',
-                    activeColor: '#ff0000',
-                    activeColorAlpha: 1.0,
-                    activeFillColor: '#fff',
-                    activeFillColorAlpha: 0.0,
-                    backgroundFillColor: '#000',
-                    backgroundFillColorAlpha: 0.0,
-                    defaultFontSize: 16,
-                    defaultLineWidth: 2,
-                    defaultTool: 'ellipse',
-                    hiddenTools: ['save', 'open', 'close', 'eraser', 'pixelize', 'rotate', 'settings', 'resize'],
-                    translation: {
-                        name: 'en',
-                        strings: {
-                            lineColor: 'Line',
-                            fillColor: 'Fill',
-                            lineWidth: 'Size',
-                            textColor: 'Color',
-                            fontSize: 'Size',
-                            fontStyle: 'Style'
-                        }
-                    },
-                    saveHandler: function (image, done) {
-                        if (entryId && embedId) {
-                            var elementPos = DOMAIN_OBJECT.model.entries.map(function (x) {
-                                return x.createdOn;
-                            }).indexOf(entryId);
-                            var entryEmbeds = DOMAIN_OBJECT.model.entries[elementPos].embeds;
-                            var embedPos = entryEmbeds.map(function (x) {
-                                return x.id;
-                            }).indexOf(embedId);
-                            $scope.saveSnap(image.asBlob(), embedPos, elementPos);
-                        }else {
-                            ROOTSCOPE.snapshot = {'src': image.asDataURL('image/png'),
-                                                  'modified': Date.now()};
-                        }
 
-                        done(true);
-                    }
-                }).show(snapshot);
-                $(document.body).find('.ptro-icon-btn').addClass('s-button');
-                $(document.body).find('.ptro-input').addClass('s-button');
+                try {
+                    painterro = Painterro({
+                        id: 'snap-annotation',
+                        activeColor: '#ff0000',
+                        activeColorAlpha: 1.0,
+                        activeFillColor: '#fff',
+                        activeFillColorAlpha: 0.0,
+                        backgroundFillColor: '#000',
+                        backgroundFillColorAlpha: 0.0,
+                        defaultFontSize: 16,
+                        defaultLineWidth: 2,
+                        defaultTool: 'ellipse',
+                        hiddenTools: ['save', 'open', 'close', 'eraser', 'pixelize', 'rotate', 'settings', 'resize'],
+                        translation: {
+                            name: 'en',
+                            strings: {
+                                lineColor: 'Line',
+                                fillColor: 'Fill',
+                                lineWidth: 'Size',
+                                textColor: 'Color',
+                                fontSize: 'Size',
+                                fontStyle: 'Style'
+                            }
+                        },
+                        saveHandler: function (image, done) {
+                            if (entryId && embedId) {
+                                var elementPos = DOMAIN_OBJECT.model.entries.map(function (x) {
+                                    return x.createdOn;
+                                }).indexOf(entryId);
+                                var entryEmbeds = DOMAIN_OBJECT.model.entries[elementPos].embeds;
+                                var embedPos = entryEmbeds.map(function (x) {
+                                    return x.id;
+                                }).indexOf(embedId);
+                                $scope.saveSnap(image.asBlob(), embedPos, elementPos);
+                            }else {
+                                ROOTSCOPE.snapshot = {'src': image.asDataURL('image/png'),
+                                                    'modified': Date.now()};
+                            }
+
+                            done(true);
+                        }
+                    }).show(snapshot);
+                    $(document.body).find('.ptro-icon-btn').addClass('s-button');
+                    $(document.body).find('.ptro-input').addClass('s-button');
+
+                } catch(error) {
+                    // error caused because of snap-annotation div created asynchronously by dialog service
+                }
             };
 
             ANNOTATION_STRUCT.model = {'tracker': tracker};

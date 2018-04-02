@@ -21,28 +21,12 @@
  *****************************************************************************/
 
 define([
-    'zepto'
+    'zepto',
+    '../../../commonUI/general/src/services/Overlay'
 ], function (
-    $
+    $,
+    Overlay
 ) {
-
-    var OVERLAY_TEMPLATE = '' +
-'    <div class="abs blocker"></div>' +
-'    <div class="abs outer-holder">' +
-'       <a class="close icon-x-in-circle"></a>' +
-'       <div class="abs inner-holder l-flex-col">' +
-'           <div class="t-contents flex-elem holder grows"></div>' +
-'           <div class="bottom-bar flex-elem holder">' +
-'               <a class="t-done s-button major">Done</a>' +
-'           </div>' +
-'       </div>' +
-'    </div>';
-
-    var NEW_NOTEBOOK_BUTTON_TEMPLATE = '<a class="s-button labeled icon-notebook new-notebook-entry" title="New Notebook Entry">' +
-        '<span class="title-label">New Notebook Entry</span>' +
-        '</a>';
-
-
     /**
      * MCT Trigger Modal is intended for use in only one location: inside the
      * object-header to allow views in a layout to be popped out in a modal.
@@ -55,7 +39,6 @@ define([
      * descendent of a `.frame` element.
      */
     function MCTTriggerModal($document) {
-        var document = $document[0];
 
         function link($scope, $element) {
             var frame = $element.parent();
@@ -73,87 +56,25 @@ define([
 
             frame = frame[0];
 
-            var layoutContainer = frame.parentElement,
-                isOpen = false,
-                toggleOverlay,
-                overlay,
-                closeButton,
-                doneButton,
-                blocker,
-                overlayContainer,
-                notebookButtonLg,
-                browseBar;
+            var layoutContainer = frame.parentElement;
 
-            var actions = $scope.domainObject.getCapability('action'),
-                notebookAction = actions.getActions({key: 'notebook-new-entry'});
-
-            function openOverlay() {
-
-                // Remove frame classes from being applied in a non-frame context
-                $(frame).removeClass('frame frame-template');
-                overlay = document.createElement('div');
-                $(overlay).addClass('abs overlay l-large-view');
-                overlay.innerHTML = OVERLAY_TEMPLATE;
-                overlayContainer = overlay.querySelector('.t-contents');
-                closeButton = overlay.querySelector('a.close');
-                closeButton.addEventListener('click', toggleOverlay);
-                doneButton = overlay.querySelector('a.t-done');
-                doneButton.addEventListener('click', toggleOverlay);
-                blocker = overlay.querySelector('.abs.blocker');
-                blocker.addEventListener('click', toggleOverlay);
-                document.body.appendChild(overlay);
-                layoutContainer.removeChild(frame);
-                overlayContainer.appendChild(frame);
-
-                if (notebookAction) {
-                    notebookButtonLg = document.createElement('div');
-                    $(notebookButtonLg).addClass('notebook-button-container holder flex-elem');
-                    notebookButtonLg.innerHTML = NEW_NOTEBOOK_BUTTON_TEMPLATE;
-                    browseBar = overlay.querySelector('.object-browse-bar .right');
-                    browseBar.prepend(notebookButtonLg);
-                    notebookButtonLg.addEventListener('click', function () {
-                        notebookAction[0].perform(overlayContainer);
-                    });
+            var overlayService = new Overlay ({
+                $document: $document,
+                $scope: $scope,
+                $element: frame,
+                overlayWillMount: function () {
+                    $(frame).removeClass('frame frame-template');
+                    layoutContainer.removeChild(frame);
+                },
+                overlayDidUnmount: function () {
+                    $(frame).addClass('frame frame-template');
+                    layoutContainer.appendChild(frame);
                 }
-            }
+            });
 
-            function closeOverlay() {
-                if (notebookButtonLg) {
-                    browseBar.removeChild(notebookButtonLg);
-                    notebookButtonLg.remove();
-                }
-
-                $(frame).addClass('frame frame-template');
-                overlayContainer.removeChild(frame);
-                layoutContainer.appendChild(frame);
-                document.body.removeChild(overlay);
-                closeButton.removeEventListener('click', toggleOverlay);
-                closeButton = undefined;
-                doneButton.removeEventListener('click', toggleOverlay);
-                doneButton = undefined;
-                blocker.removeEventListener('click', toggleOverlay);
-                blocker = undefined;
-                overlayContainer = undefined;
-                overlay = undefined;
-            }
-
-            toggleOverlay = function (event) {
-                if (event) {
-                    event.stopPropagation();
-                }
-
-                if (!isOpen) {
-                    openOverlay();
-                    isOpen = true;
-                } else {
-                    closeOverlay();
-                    isOpen = false;
-                }
-            };
-
-            $element.on('click', toggleOverlay);
+            $element.on('click', overlayService.toggleOverlay);
             $scope.$on('$destroy', function () {
-                $element.off('click', toggleOverlay);
+                $element.off('click', overlayService.toggleOverlay);
             });
         }
 
