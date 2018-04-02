@@ -54,7 +54,7 @@ define([
             $scope = jasmine.createSpyObj('$scope', ['$on']);
             $scope.domainObject = { getCapability: function () {
                 return { getActions: function () {
-
+                    return [];
                 }};
             }};
 
