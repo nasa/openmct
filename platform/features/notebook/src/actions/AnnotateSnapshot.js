@@ -113,7 +113,7 @@ define(
                     $(document.body).find('.ptro-icon-btn').addClass('s-button');
                     $(document.body).find('.ptro-input').addClass('s-button');
 
-                } catch(error) {
+                } catch (error) {
                     // error caused because of snap-annotation div created asynchronously by dialog service
                 }
             };

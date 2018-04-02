@@ -45,11 +45,11 @@ define(['zepto'], function ($) {
      *  An Overlay Service when instantiated creates an overlay dialog.
      *  @param {Object} options The options object required to instantiate the overlay service
      *  options = {
-     *      $document: document object, 
-     *      $scope: angular $scope object, 
+     *      $document: document object,
+     *      $scope: angular $scope object,
      *      element: node to be injected into overlay as a view,
      *      overlayWillMount: callback executed before overlay is injected,
-     *      overlayWillUnmount: callback executed before overlay is removed, 
+     *      overlayWillUnmount: callback executed before overlay is removed,
      *      overlayDidMount: callback executed after overlay is injected,
      *      overlayDidUnmount: callback executed after overlay is removed
      *  }
