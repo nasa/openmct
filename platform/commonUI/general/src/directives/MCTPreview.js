@@ -27,11 +27,26 @@ define(['zepto', '../services/Overlay'], function ($, Overlay) {
     function MCTPreview($rootScope,$document,exportImageService,dialogService,notificationService) {
 
         function link($scope, $element, $attrs) {
+            var actions = $scope.domainObject.getCapability('action'),
+                notebookAction = actions.getActions({key: 'notebook-new-entry'})[0];
+
+            var notebookButton = notebookAction ?
+            [
+                {
+                    class: 'icon-notebook new-notebook-entry',
+                    title: 'New Notebook Entry',
+                    clickHandler: function (event) {
+                        event.stopPropagation();
+                        notebookAction.perform();
+                    }
+                }
+            ] : [];
 
             var overlayService = new Overlay({
                 $document: $document,
                 $element: $element[0],
-                $scope: $scope
+                $scope: $scope,
+                browseBarButtons: notebookButton
             });
 
             overlayService.toggleOverlay();

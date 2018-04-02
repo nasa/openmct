@@ -41,6 +41,9 @@ define([
     function MCTTriggerModal($document) {
 
         function link($scope, $element) {
+            var actions = $scope.domainObject.getCapability('action'),
+                notebookAction = actions.getActions({key: 'notebook-new-entry'})[0];
+
             var frame = $element.parent();
 
             for (var i = 0; i < 10; i++) {
@@ -58,6 +61,18 @@ define([
 
             var layoutContainer = frame.parentElement;
 
+            var notebookButton = notebookAction ?
+                [
+                    {
+                        class: 'icon-notebook new-notebook-entry',
+                        title: 'New Notebook Entry',
+                        clickHandler: function (event) {
+                            event.stopPropagation();
+                            notebookAction.perform();
+                        }
+                    }
+                ] : [];
+
             var overlayService = new Overlay ({
                 $document: $document,
                 $scope: $scope,
@@ -69,7 +84,8 @@ define([
                 overlayDidUnmount: function () {
                     $(frame).addClass('frame frame-template');
                     layoutContainer.appendChild(frame);
-                }
+                },
+                browseBarButtons: notebookButton
             });
 
             $element.on('click', overlayService.toggleOverlay);

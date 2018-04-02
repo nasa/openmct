@@ -37,10 +37,6 @@ define(['zepto'], function ($) {
 '       </div>' +
 '    </div>';
 
-    var NEW_NOTEBOOK_BUTTON_TEMPLATE = '<a class="s-button labeled icon-notebook new-notebook-entry" title="New Notebook Entry">' +
-        '<span class="title-label">New Notebook Entry</span>' +
-        '</a>';
-
     /*
      *  An Overlay Service when instantiated creates an overlay dialog.
      *  @param {Object} options The options object required to instantiate the overlay service
@@ -52,6 +48,11 @@ define(['zepto'], function ($) {
      *      overlayWillUnmount: callback executed before overlay is removed,
      *      overlayDidMount: callback executed after overlay is injected,
      *      overlayDidUnmount: callback executed after overlay is removed
+     *      browseBarButtons: an array of desired buttons to be added to the browse bar of the overlay.
+     *                        the array should consist of button objects containing:
+     *                              a) class - css class to be added to the button div
+     *                              b) title - desired button title
+     *                              c) clickHandler - callback to be added to the click event listener of the button
      *  }
      *  $document, $scope and element are required
      */
@@ -67,12 +68,13 @@ define(['zepto'], function ($) {
         this.overlayDidMount = options.overlayDidMount;
         this.overlayDidUnmount = options.overlayDidUnmount;
 
-        var actions = this.$scope.domainObject.getCapability('action');
-        this.notebookAction = actions.getActions({key: 'notebook-new-entry'})[0];
+        this.browseBarButtons = options.browseBarButtons || [];
+        this.buttons = [];
 
         this.openOverlay = this.openOverlay.bind(this);
         this.closeOverlay = this.closeOverlay.bind(this);
         this.toggleOverlay = this.toggleOverlay.bind(this);
+        this.removeButtons = this.removeButtons.bind(this);
 
         this.isOverlayOpen = false;
     }
@@ -102,20 +104,15 @@ define(['zepto'], function ($) {
 
         this.overlayContainer.appendChild(this.element);
 
-        if (this.notebookAction) {
-            this.notebookButton = document.createElement('div');
-            $(this.notebookButton).addClass('notebook-button-container holder flex-elem');
-            this.notebookButton.innerHTML = NEW_NOTEBOOK_BUTTON_TEMPLATE;
+        this.browseBar = this.overlay.querySelector('.object-browse-bar .right');
 
-            this.browseBar = this.overlay.querySelector('.object-browse-bar .right');
-            this.browseBar.prepend(this.notebookButton);
-
-            var perform = this.notebookAction.perform;
-
-            this.notebookButton.addEventListener('click', function (event) {
-                event.stopPropagation();
-                perform();
-            });
+        if (this.browseBarButtons && Array.isArray(this.browseBarButtons)) {
+            this.browseBarButtons.forEach(function (buttonObject) {
+                var button = newButtonTemplate(buttonObject.class, buttonObject.title);
+                this.browseBar.prepend(button);
+                button.addEventListener('click', buttonObject.clickHandler);
+                this.buttons.push(button);
+            }.bind(this));
         }
 
         if (this.overlayDidMount && typeof this.overlayDidMount === 'function') {
@@ -144,11 +141,13 @@ define(['zepto'], function ($) {
         this.overlayContainer = undefined;
         this.overlay = undefined;
 
-        if (this.notebookButton) {
-            this.browseBar.removeChild(this.notebookButton);
-            this.notebookButton.remove();
-            this.notebookButton = undefined;
-        }
+        // if (this.notebookButton) {
+        //     this.browseBar.removeChild(this.notebookButton);
+        //     this.notebookButton.remove();
+        //     this.notebookButton = undefined;
+        // }
+
+        this.removeButtons();
 
         if (this.overlayDidUnmount && typeof this.overlayDidUnmount === 'function') {
             this.overlayDidUnmount();
@@ -168,6 +167,25 @@ define(['zepto'], function ($) {
             this.isOverlayOpen = false;
         }
     };
+
+    Overlay.prototype.removeButtons = function () {
+        this.buttons.forEach(function (button) {
+            button.remove();
+        }.bind(this));
+
+        this.buttons = [];
+    };
+
+    function newButtonTemplate(classString, title) {
+        var NEW_BUTTON_TEMPLATE = '<a class="s-button labeled' + classString + '">' +
+        '<span class="title-label">' + title + '</span>' +
+        '</a>';
+
+        var button = document.createElement('div');
+        $(button).addClass('notebook-button-container holder flex-elem');
+        button.innerHTML = NEW_BUTTON_TEMPLATE;
+        return button;
+    }
 
     return Overlay;
 });
