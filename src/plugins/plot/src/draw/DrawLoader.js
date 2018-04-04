@@ -30,7 +30,7 @@ define(
 
         var CHARTS = [
                 {
-                    MAX_INSTANCES: 16,
+                    MAX_INSTANCES: 14,
                     API: DrawWebGL,
                     ALLOCATIONS: []
                 },
