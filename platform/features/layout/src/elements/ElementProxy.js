@@ -58,166 +58,179 @@ define(
          * @param {Array} elements the full array of elements
          * @param {number[]} gridSize the current layout grid size in [x,y] from
          */
-        function ElementProxy(element, index, elements, gridSize) {
-            /**
-             * The element as stored in the view configuration.
-             * @memberof platform/features/layout.ElementProxy#
-             */
-            this.element = element;
+        class ElementProxy {
+            constructor (element, index, elements, gridSize) {
+                /**
+                 * The element as stored in the view configuration.
+                 * @memberof platform/features/layout.ElementProxy#
+                 */
+                this.element = element;
+
+                /**
+                 * The current grid size of the layout.
+                 * @memberof platform/features/layout.ElementProxy#
+                 */
+                this.gridSize = gridSize || [1,1]; //Ensure a reasonable default
+
+                this.resizeHandles = [new ResizeHandle(
+                                        this.element,
+                                        this.getMinWidth(),
+                                        this.getMinHeight(),
+                                        this.getGridSize()
+                                      )];
+
+                /**
+                 * Get and/or set the x position of this element.
+                 * Units are in fixed position grid space.
+                 * @param {number} [x] the new x position (if setting)
+                 * @returns {number} the x position
+                 * @memberof platform/features/layout.ElementProxy#
+                 */
+                this.x = new AccessorMutator(element, 'x', clamp);
+
+                /**
+                 * Get and/or set the y position of this element.
+                 * Units are in fixed position grid space.
+                 * @param {number} [y] the new y position (if setting)
+                 * @returns {number} the y position
+                 * @memberof platform/features/layout.ElementProxy#
+                 */
+                this.y = new AccessorMutator(element, 'y', clamp);
+
+                /**
+                 * Get and/or set the stroke color of this element.
+                 * @param {string} [stroke] the new stroke color (if setting)
+                 * @returns {string} the stroke color
+                 * @memberof platform/features/layout.ElementProxy#
+                 */
+                this.stroke = new AccessorMutator(element, 'stroke');
+
+                /**
+                 * Get and/or set the width of this element.
+                 * Units are in fixed position grid space.
+                 * @param {number} [w] the new width (if setting)
+                 * @returns {number} the width
+                 * @memberof platform/features/layout.ElementProxy#
+                 */
+                this.width = new AccessorMutator(element, 'width');
+
+                /**
+                 * Get and/or set the height of this element.
+                 * Units are in fixed position grid space.
+                 * @param {number} [h] the new height (if setting)
+                 * @returns {number} the height
+                 * @memberof platform/features/layout.ElementProxy#
+                 */
+                this.height = new AccessorMutator(element, 'height');
+
+                this.useGrid = new UnitAccessorMutator(this);
+
+                this.index = index;
+                this.elements = elements;
+            }
+
+            set element (value) {
+                console.log('setting element', JSON.stringify(value));
+                this._element = value;
+            }
+
+            get element () {
+                // console.log('getting element', JSON.stringify(this._element));
+                return this._element;
+            }
 
             /**
-             * The current grid size of the layout.
-             * @memberof platform/features/layout.ElementProxy#
+             * Change the display order of this element.
+             * @param {string} o where to move this element;
+             *        one of "top", "up", "down", or "bottom"
              */
-            this.gridSize = gridSize || [1,1]; //Ensure a reasonable default
-
-            this.resizeHandles = [new ResizeHandle(
-                                    this.element,
-                                    this.getMinWidth(),
-                                    this.getMinHeight(),
-                                    this.getGridSize()
-                                  )];
+            order (o) {
+                var index = this.index,
+                    elements = this.elements,
+                    element = this.element,
+                    delta = ORDERS[o] || 0,
+                    desired = Math.max(
+                        Math.min(index + delta, elements.length - 1),
+                        0
+                    );
+                // Move to the desired index, if this is a change
+                if ((desired !== index) && (elements[index] === element)) {
+                    // Splice out the current element
+                    elements.splice(index, 1);
+                    // Splice it back in at the correct index
+                    elements.splice(desired, 0, element);
+                    // Track change in index (proxy should be recreated
+                    // anyway, but be consistent)
+                    this.index = desired;
+                }
+            }
 
             /**
-             * Get and/or set the x position of this element.
-             * Units are in fixed position grid space.
-             * @param {number} [x] the new x position (if setting)
-             * @returns {number} the x position
-             * @memberof platform/features/layout.ElementProxy#
+             * Remove this element from the fixed position view.
              */
-            this.x = new AccessorMutator(element, 'x', clamp);
+            remove () {
+                var index = this.index;
+                if (this.elements[index] === this.element) {
+                    this.elements.splice(index, 1);
+                }
+            }
 
             /**
-             * Get and/or set the y position of this element.
-             * Units are in fixed position grid space.
-             * @param {number} [y] the new y position (if setting)
-             * @returns {number} the y position
-             * @memberof platform/features/layout.ElementProxy#
+             * Get handles to control specific features of this element,
+             * e.g. corner size.
+             * @return {platform/features/layout.ElementHandle[]} handles
+             *         for moving/resizing this element
              */
-            this.y = new AccessorMutator(element, 'y', clamp);
+            handles () {
+                return this.resizeHandles;
+            }
 
             /**
-             * Get and/or set the stroke color of this element.
-             * @param {string} [stroke] the new stroke color (if setting)
-             * @returns {string} the stroke color
-             * @memberof platform/features/layout.ElementProxy#
+             * Returns which grid size the element is currently using.
+             * @return {number[]} The current grid size in [x,y] form if the element
+             *                    is currently using the grid, [1,1] if it is using
+             *                    pixels.
              */
-            this.stroke = new AccessorMutator(element, 'stroke');
+            getGridSize () {
+                var gridSize;
+                // Default to using the grid if useGrid was not defined
+                if (typeof this.element.useGrid === 'undefined') {
+                    this.element.useGrid = true;
+                }
+                if (this.element.useGrid) {
+                    gridSize = this.gridSize;
+                } else {
+                    gridSize = [1,1];
+                }
+                return gridSize;
+            }
 
             /**
-             * Get and/or set the width of this element.
-             * Units are in fixed position grid space.
-             * @param {number} [w] the new width (if setting)
-             * @returns {number} the width
-             * @memberof platform/features/layout.ElementProxy#
+             * Set the current grid size stored by this element proxy
+             * @param {number[]} gridSize The current layout grid size in [x,y] form
              */
-            this.width = new AccessorMutator(element, 'width');
+            setGridSize (gridSize) {
+                this.gridSize = gridSize;
+            }
 
             /**
-             * Get and/or set the height of this element.
-             * Units are in fixed position grid space.
-             * @param {number} [h] the new height (if setting)
-             * @returns {number} the height
-             * @memberof platform/features/layout.ElementProxy#
+             * Get the current minimum element width in grid units
+             * @return {number} The current minimum element width
              */
-            this.height = new AccessorMutator(element, 'height');
+            getMinWidth () {
+                return Math.ceil(MIN_WIDTH / this.getGridSize()[0]);
 
-            this.useGrid = new UnitAccessorMutator(this);
+            }
 
-            this.index = index;
-            this.elements = elements;
+            /**
+             * Get the current minimum element height in grid units
+             * @return {number} The current minimum element height
+             */
+            getMinHeight () {
+                return Math.ceil(MIN_HEIGHT / this.getGridSize()[1]);
+            }
+
         }
-
-        /**
-         * Change the display order of this element.
-         * @param {string} o where to move this element;
-         *        one of "top", "up", "down", or "bottom"
-         */
-        ElementProxy.prototype.order = function (o) {
-            var index = this.index,
-                elements = this.elements,
-                element = this.element,
-                delta = ORDERS[o] || 0,
-                desired = Math.max(
-                    Math.min(index + delta, elements.length - 1),
-                    0
-                );
-            // Move to the desired index, if this is a change
-            if ((desired !== index) && (elements[index] === element)) {
-                // Splice out the current element
-                elements.splice(index, 1);
-                // Splice it back in at the correct index
-                elements.splice(desired, 0, element);
-                // Track change in index (proxy should be recreated
-                // anyway, but be consistent)
-                this.index = desired;
-            }
-        };
-
-        /**
-         * Remove this element from the fixed position view.
-         */
-        ElementProxy.prototype.remove = function () {
-            var index = this.index;
-            if (this.elements[index] === this.element) {
-                this.elements.splice(index, 1);
-            }
-        };
-
-        /**
-         * Get handles to control specific features of this element,
-         * e.g. corner size.
-         * @return {platform/features/layout.ElementHandle[]} handles
-         *         for moving/resizing this element
-         */
-        ElementProxy.prototype.handles = function () {
-            return this.resizeHandles;
-        };
-
-        /**
-         * Returns which grid size the element is currently using.
-         * @return {number[]} The current grid size in [x,y] form if the element
-         *                    is currently using the grid, [1,1] if it is using
-         *                    pixels.
-         */
-        ElementProxy.prototype.getGridSize = function () {
-            var gridSize;
-            // Default to using the grid if useGrid was not defined
-            if (typeof this.element.useGrid === 'undefined') {
-                this.element.useGrid = true;
-            }
-            if (this.element.useGrid) {
-                gridSize = this.gridSize;
-            } else {
-                gridSize = [1,1];
-            }
-            return gridSize;
-        };
-
-        /**
-         * Set the current grid size stored by this element proxy
-         * @param {number[]} gridSize The current layout grid size in [x,y] form
-         */
-        ElementProxy.prototype.setGridSize = function (gridSize) {
-            this.gridSize = gridSize;
-        };
-
-        /**
-         * Get the current minimum element width in grid units
-         * @return {number} The current minimum element width
-         */
-        ElementProxy.prototype.getMinWidth = function () {
-            return Math.ceil(MIN_WIDTH / this.getGridSize()[0]);
-
-        };
-
-        /**
-         * Get the current minimum element height in grid units
-         * @return {number} The current minimum element height
-         */
-        ElementProxy.prototype.getMinHeight = function () {
-            return Math.ceil(MIN_HEIGHT / this.getGridSize()[1]);
-        };
 
         return ElementProxy;
     }

@@ -38,6 +38,19 @@ define(
 
         var DEFAULT_DIMENSIONS = [2, 1];
 
+        // Convert from element x/y/width/height to an
+        // appropriate ng-style argument, to position elements.
+        function convertPosition(elementProxy) {
+            var gridSize = elementProxy.getGridSize();
+            // Multiply position/dimensions by grid size
+            return {
+                left: (gridSize[0] * elementProxy.element.x) + 'px',
+                top: (gridSize[1] * elementProxy.element.y) + 'px',
+                width: (gridSize[0] * elementProxy.element.width) + 'px',
+                height: (gridSize[1] * elementProxy.element.height) + 'px'
+            };
+        }
+
         /**
          * The FixedController is responsible for supporting the
          * Fixed Position view. It arranges frames according to saved
@@ -59,8 +72,9 @@ define(
             this.$scope = $scope;
             this.dialogService = dialogService;
             this.$q = $q;
+            this.newDomainObject = $scope.domainObject.useCapability('adapter');
 
-            this.gridSize = $scope.domainObject && $scope.domainObject.getModel().layoutGrid;
+            this.gridSize = this.newDomainObject.layoutGrid;
 
             this.fixedViewSelectable = false;
 
@@ -76,41 +90,6 @@ define(
             ].forEach(function (name) {
                 self[name] = self[name].bind(self);
             });
-
-            // Convert from element x/y/width/height to an
-            // appropriate ng-style argument, to position elements.
-            function convertPosition(elementProxy) {
-                var gridSize = elementProxy.getGridSize();
-                // Multiply position/dimensions by grid size
-                return {
-                    left: (gridSize[0] * elementProxy.x()) + 'px',
-                    top: (gridSize[1] * elementProxy.y()) + 'px',
-                    width: (gridSize[0] * elementProxy.width()) + 'px',
-                    height: (gridSize[1] * elementProxy.height()) + 'px'
-                };
-            }
-
-            // Update the style for a selected element
-            function updateSelectionStyle() {
-                if (self.selectedElementProxy) {
-                    self.selectedElementProxy.style = convertPosition(self.selectedElementProxy);
-                }
-            }
-
-            // Generate a specific drag handle
-            function generateDragHandle(elementHandle) {
-                return new FixedDragHandle(
-                    elementHandle,
-                    self.gridSize,
-                    updateSelectionStyle,
-                    self.commit.bind(self)
-                );
-            }
-
-            // Generate drag handles for an element
-            function generateDragHandles(element) {
-                return element.handles().map(generateDragHandle);
-            }
 
             // Update element positions when grid size changes
             function updateElementPositions(layoutGrid) {
@@ -147,24 +126,11 @@ define(
 
             // Decorate elements in the current configuration
             function refreshElements() {
-                var elements = (($scope.configuration || {}).elements || []);
+                console.log('refresh elements');
+                var elements = (((self.newDomainObject.configuration || {})['fixed-display'] || {}).elements || []);
 
                 // Create the new proxies...
                 self.elementProxies = elements.map(makeProxyElement);
-                removeUnlisteners();
-
-                var domainObject = $scope.domainObject.useCapability('adapter');
-
-                self.elementProxies.map(function (elementProxy, index) {
-                    var path = "configuration['fixed-display'].elements[" + index + "]";
-                    var unlisten = self.openmct.objects.observe(domainObject, path + ".useGrid", function (newValue) {
-                        if (elementProxy.useGrid() !== newValue) {
-                            elementProxy.useGrid(newValue);
-                            self.openmct.objects.mutate($scope.domainObject.useCapability('adapter'), path, _.clone(elementProxy.element));
-                        }
-                    });
-                    self.unlisteners.push(unlisten);  
-                });
 
                 // If selection is not in array, select parent.
                 // Otherwise, set the element to select after refresh.
@@ -205,19 +171,6 @@ define(
                 refreshElements();
 
                 self.commit();
-            }
-
-            // Handle changes in the object's composition
-            function updateComposition(composition, previousComposition) {
-                var removedIds = [];
-                // Resubscribe - objects in view have changed
-                if (composition !== previousComposition) {
-                    //remove any elements no longer in the composition
-                    removedIds = _.difference(previousComposition, composition);
-                    if (removedIds.length > 0) {
-                        removeObjects(removedIds);
-                    }
-                }
             }
 
             // Trigger a new query for telemetry data
@@ -278,27 +231,29 @@ define(
             }
 
             this.elementProxies = [];
-            this.generateDragHandle = generateDragHandle;
-            this.generateDragHandles = generateDragHandles;
-            this.updateSelectionStyle = updateSelectionStyle;
             this.addElement = addElement;
             this.refreshElements = refreshElements;
             this.unlisteners = [];
 
             // Detect changes to grid size
-            $scope.$watch("model.layoutGrid", updateElementPositions);
+            // $scope.$watch("model.layoutGrid", updateElementPositions);
 
             // Position panes where they are dropped
-            $scope.$on("mctDrop", handleDrop);
+            // $scope.$on("mctDrop", handleDrop);
 
             // Position panes when the model field changes
-            $scope.$watch("model.composition", updateComposition);
-            
+            // $scope.$watch("model.composition", updateComposition);
+            // TODO: implement Composition
+            var composition = this.openmct.composition.get(this.newDomainObject);
+            composition.on('add', this.addObject, this);
+            composition.on('remove', this.removeObject, this);
+            composition.load();
+
             // Refresh list of elements whenever model changes
-            $scope.$watch("model.modified", refreshElements);
+            // $scope.$watch("model.modified", refreshElements);
 
             // Subscribe to telemetry when an object is available
-            $scope.$watch("domainObject", this.getTelemetry);
+            // $scope.$watch("domainObject", this.getTelemetry);
 
             $scope.$on("$destroy", this.destroy.bind(this));
 
@@ -307,30 +262,82 @@ define(
             this.openmct.selection.on('change', this.setSelection.bind(this));
             this.$element.on('click', this.bypassSelection.bind(this));
 
-            self.unlisten = self.$scope.domainObject.getCapability('mutation')
-                .listen(this.handleModelChanges.bind(this));
+            this.unlisten = this.openmct.objects.observe(this.newDomainObject, '*', function (obj) {
+                this.newDomainObject = JSON.parse(JSON.stringify(obj));
+            }.bind(this));
+
+            refreshElements();
+
+            window.fc = this;
         }
 
-        FixedController.prototype.handleModelChanges = function (model) {
-            if (this.selectedElementProxy) {
-                var index = this.$scope.configuration.elements.indexOf(this.selectedElementProxy.element);
-                if (index !== -1) {
-                    this.selectedElementProxy.element = model.configuration['fixed-display'].elements[index];
-                }
-            }
+        FixedController.prototype.generateDragHandle = function (elementHandle) {
+            var index = this.elementProxies.indexOf(elementHandle);
+            return new FixedDragHandle(
+                elementHandle,
+                "configuration['fixed-display'].elements[" + index + "]",
+                this
+            );
+        };
 
-            this.$scope.configuration = model.configuration['fixed-display'];
-            this.$scope.model = model;
+        FixedController.prototype.generateDragHandles = function (elementHandle) {
+            return elementHandle.handles().map(this.generateDragHandle, this);
+        };
+
+        FixedController.prototype.updateSelectionStyle = function () {
+            this.selectedElementProxy.style = convertPosition(this.selectedElementProxy);
         };
 
         FixedController.prototype.setSelection = function (selectable) {
+            console.log('setSelection', selectable);
             var selection = selectable[0];
+            if (this.selectionListeners) {
+                this.selectionListeners.forEach(function (l) {
+                    l();
+                });
+            }
+            this.selectionListeners = [];
             if (!selection) {
                 return;
             }
 
             if (selection.context.elementProxy) {
                 this.selectedElementProxy = selection.context.elementProxy;
+                var index = this.elementProxies.indexOf(this.selectedElementProxy);
+                var path = "configuration['fixed-display'].elements[" + index + "]";
+                var unlisten = this.openmct.objects.observe(this.newDomainObject, path + ".useGrid", function (newValue) {
+                    if (this.selectedElementProxy.useGrid() !== newValue) {
+                        console.log('before', JSON.stringify(this.selectedElementProxy.element));
+                        this.selectedElementProxy.useGrid(newValue);
+                        console.log('after', JSON.stringify(this.selectedElementProxy.element));
+                        this.openmct.objects.mutate(this.newDomainObject, path, this.selectedElementProxy.element);
+                    }
+                }.bind(this));
+
+                var unlistenTwo = this.openmct.objects.observe(this.newDomainObject, path, function (newValue) {
+                    this.selectedElementProxy.element = newValue;
+                    this.updateSelectionStyle();
+                }.bind(this));
+                this.selectionListeners.push(unlisten);
+                this.selectionListeners.push(unlistenTwo);
+
+                this.selectionListeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".x", function (newValue) {
+                    this.selectedElementProxy.element.x = newValue;
+                    this.updateSelectionStyle();
+                }.bind(this)));
+                this.selectionListeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".y", function (newValue) {
+                    this.selectedElementProxy.element.y = newValue;
+                    this.updateSelectionStyle();
+                }.bind(this)));
+                this.selectionListeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".width", function (newValue) {
+                    this.selectedElementProxy.element.width = newValue;
+                    this.updateSelectionStyle();
+                }.bind(this)));
+                this.selectionListeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".height", function (newValue) {
+                    this.selectedElementProxy.element.height = newValue;
+                    this.updateSelectionStyle();
+                }.bind(this)));
+
                 this.mvHandle = this.generateDragHandle(this.selectedElementProxy);
                 this.resizeHandles = this.generateDragHandles(this.selectedElementProxy);
             } else {
@@ -644,14 +651,13 @@ define(
             }
         };
 
-        FixedController.prototype.commit = function () {
-            var model = this.$scope.model;
-            model.configuration = model.configuration || {};
-            model.configuration['fixed-display'] = this.$scope.configuration;
+        FixedController.prototype.mutate = function (property, value) {
+            var newDomainObject = this.$scope.domainObject.useCapability('adapter');
+            this.openmct.objects.mutate(this.newDomainObject, property, value);
+        };
 
-            this.$scope.domainObject.useCapability('mutation', function () {
-                return model;
-            });
+        FixedController.prototype.commit = function () {
+
         };
 
         return FixedController;

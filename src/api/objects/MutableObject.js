@@ -76,7 +76,6 @@ define([
      * @memberof module:openmct.MutableObject#
      */
     MutableObject.prototype.set = function (path, value) {
-
         _.set(this.object, path, value);
         _.set(this.object, 'modified', Date.now());
 

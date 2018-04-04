@@ -39,9 +39,7 @@ define([
                     "cssClass": "icon-box-with-dashed-lines",
                     "type": "telemetry.fixed",
                     "template": fixedTemplate,
-                    "uses": [
-                        "composition"
-                    ],
+                    "uses": [],
                     "editable": true
                 }
             ],
@@ -87,7 +85,7 @@ define([
                             {
                                 control: "numberfield",
                                 domainObject: selection[1].context.item,
-                                property: element + ".height",                                
+                                property: element + ".height",
                                 text: "H",
                                 name: "H",
                                 cssClass: "l-input-sm",

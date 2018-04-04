@@ -41,7 +41,7 @@
         <mct-include key="element.template"
                      parameters="{ gridSize: controller.getGridSize() }"
                      ng-model="element">
-        </mct-include>       
+        </mct-include>
     </div>
     <!-- Selection highlight, handles -->
     <span class="s-selected s-moveable" ng-if="controller.isElementSelected()">
@@ -51,12 +51,12 @@
              mct-drag-up="controller.endDrag()"
              ng-style="controller.getSelectedElementStyle()">
         </div>
-        <div ng-repeat="handle in controller.handles()"
+        <!-- <div ng-repeat="handle in controller.handles()"
              class="l-fixed-position-item-handle edit-corner"
              ng-style="handle.style()"
              mct-drag-down="handle.startDrag()"
              mct-drag="handle.continueDrag(delta)"
              mct-drag-up="controller.endDrag(handle)">
-        </div>
+        </div> -->
     </span>
 </div>

@@ -53,6 +53,7 @@ define(
 
             this.updateToolbar(structure);
             this.registerListeners(structure);
+            window.et = this;
         }
 
         /**
@@ -147,7 +148,7 @@ define(
 
             function observeObject(domainObject, id) {
                 var unobserveObject = self.openmct.objects.observe(domainObject, '*', function (newObject) {
-                    self.domainObjectsById[id].newObject = newObject;
+                    self.domainObjectsById[id].newObject = JSON.parse(JSON.stringify(newObject));
                     self.scheduleStateUpdate();
                 });
                 self.unobserveObjects.push(unobserveObject);
@@ -172,7 +173,7 @@ define(
             if (this.stateUpdateScheduled) {
                 return;
             }
-            
+
             // _.map(this.stateTracker, 'property')
             this.stateUpdateScheduled = true;
             setTimeout(this.updateStateAfterMutation.bind(this));
