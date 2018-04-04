@@ -24,7 +24,6 @@ define(
     [],
     function () {
 
-
         // Drag handle dimensions
         var DRAG_HANDLE_SIZE = [6, 6];
 
@@ -34,8 +33,8 @@ define(
          * @memberof platform/features/layout
          * @constructor
          */
-        function FixedDragHandle(elementHandle, configPath, fixedControl) {
-            this.elementHandle = elementHandle;
+        function FixedDragHandle(elementProxy, configPath, fixedControl) {
+            this.elementProxy = elementProxy;
             this.configPath = configPath;
             this.gridSize = fixedControl.gridSize;
             this.fixedControl = fixedControl;
@@ -47,10 +46,11 @@ define(
          * @memberof platform/features/layout.FixedDragHandle#
          */
         FixedDragHandle.prototype.style = function () {
-            var gridSize = this.elementHandle.getGridSize();
+            var gridSize = this.elementProxy.getGridSize();
+
             // Adjust from grid to pixel coordinates
-            var x = this.elementHandle.element.x * gridSize[0],
-                y = this.elementHandle.element.y * gridSize[1];
+            var x = this.elementProxy.element.x * gridSize[0],
+                y = this.elementProxy.element.y * gridSize[1];
 
             // Convert to a CSS style centered on that point
             return {
@@ -68,8 +68,8 @@ define(
         FixedDragHandle.prototype.startDrag = function () {
             // Cache initial x/y positions
             this.dragging = {
-                x: this.elementHandle.element.x,
-                y: this.elementHandle.element.y
+                x: this.elementProxy.element.x,
+                y: this.elementProxy.element.y
             };
         };
 
@@ -79,14 +79,14 @@ define(
          *                   started
          */
         FixedDragHandle.prototype.continueDrag = function (delta) {
-            var gridSize = this.elementHandle.getGridSize();
+            var gridSize = this.elementProxy.getGridSize();
+
             if (this.dragging) {
                 // Update x/y positions (snapping to grid)
                 var newX = this.dragging.x + Math.round(delta[0] / gridSize[0]);
                 var newY = this.dragging.y + Math.round(delta[1] / gridSize[1]);
-                this.elementHandle.element.x = Math.max(0, newX);
-                this.elementHandle.element.y = Math.max(0, newY);
-                // Invoke update callback
+                this.elementProxy.element.x = Math.max(0, newX);
+                this.elementProxy.element.y = Math.max(0, newY);
                 this.fixedControl.updateSelectionStyle();
             }
         };
@@ -96,14 +96,8 @@ define(
          * concludes to trigger commit of changes.
          */
         FixedDragHandle.prototype.endDrag = function () {
-            // Clear cached state
             this.dragging = undefined;
-            // Mark change as complete
-
-            this.fixedControl.mutate(this.configPath, this.elementHandle.element);
-            // if (this.commit) {
-            //     this.commit("Dragged handle.");
-            // }
+            this.fixedControl.mutate(this.configPath, this.elementProxy.element);
         };
 
         return FixedDragHandle;

@@ -42,6 +42,7 @@ define(
         // appropriate ng-style argument, to position elements.
         function convertPosition(elementProxy) {
             var gridSize = elementProxy.getGridSize();
+
             // Multiply position/dimensions by grid size
             return {
                 left: (gridSize[0] * elementProxy.element.x) + 'px',
@@ -64,7 +65,6 @@ define(
             this.names = {}; // Cache names by ID
             this.values = {}; // Cache values by ID
             this.elementProxiesById = {};
-
             this.telemetryObjects = [];
             this.subscriptions = [];
             this.openmct = openmct;
@@ -73,9 +73,7 @@ define(
             this.dialogService = dialogService;
             this.$q = $q;
             this.newDomainObject = $scope.domainObject.useCapability('adapter');
-
             this.gridSize = this.newDomainObject.layoutGrid;
-
             this.fixedViewSelectable = false;
 
             var self = this;
@@ -117,24 +115,16 @@ define(
                 return e;
             }
 
-            function removeUnlisteners() {
-                self.unlisteners.forEach(function (unlisten) {
-                    unlisten();
-                });
-                self.unlisteners = [];
-            }
-
             // Decorate elements in the current configuration
             function refreshElements() {
-                console.log('refresh elements');
                 var elements = (((self.newDomainObject.configuration || {})['fixed-display'] || {}).elements || []);
 
                 // Create the new proxies...
                 self.elementProxies = elements.map(makeProxyElement);
 
-                // If selection is not in array, select parent.
-                // Otherwise, set the element to select after refresh.
                 if (self.selectedElementProxy) {
+                    // If selection is not in array, select parent.
+                    // Otherwise, set the element to select after refresh.
                     var index = elements.indexOf(self.selectedElementProxy.element);
                     if (index === -1) {
                         self.$element[0].click();
@@ -233,7 +223,6 @@ define(
             this.elementProxies = [];
             this.addElement = addElement;
             this.refreshElements = refreshElements;
-            this.unlisteners = [];
 
             // Detect changes to grid size
             // $scope.$watch("model.layoutGrid", updateElementPositions);
@@ -248,9 +237,6 @@ define(
             composition.on('add', this.addObject, this);
             composition.on('remove', this.removeObject, this);
             composition.load();
-
-            // Refresh list of elements whenever model changes
-            // $scope.$watch("model.modified", refreshElements);
 
             // Subscribe to telemetry when an object is available
             // $scope.$watch("domainObject", this.getTelemetry);
@@ -271,17 +257,17 @@ define(
             window.fc = this;
         }
 
-        FixedController.prototype.generateDragHandle = function (elementHandle) {
-            var index = this.elementProxies.indexOf(elementHandle);
+        FixedController.prototype.generateDragHandle = function (elementProxy) {
+            var index = this.elementProxies.indexOf(elementProxy);
             return new FixedDragHandle(
-                elementHandle,
+                elementProxy,
                 "configuration['fixed-display'].elements[" + index + "]",
                 this
             );
         };
 
-        FixedController.prototype.generateDragHandles = function (elementHandle) {
-            return elementHandle.handles().map(this.generateDragHandle, this);
+        FixedController.prototype.generateDragHandles = function (elementProxy) {
+            return elementProxy.handles().map(this.generateDragHandle, this);
         };
 
         FixedController.prototype.updateSelectionStyle = function () {
@@ -289,14 +275,16 @@ define(
         };
 
         FixedController.prototype.setSelection = function (selectable) {
-            console.log('setSelection', selectable);
             var selection = selectable[0];
+
             if (this.selectionListeners) {
                 this.selectionListeners.forEach(function (l) {
                     l();
                 });
             }
+
             this.selectionListeners = [];
+
             if (!selection) {
                 return;
             }
@@ -305,22 +293,14 @@ define(
                 this.selectedElementProxy = selection.context.elementProxy;
                 var index = this.elementProxies.indexOf(this.selectedElementProxy);
                 var path = "configuration['fixed-display'].elements[" + index + "]";
-                var unlisten = this.openmct.objects.observe(this.newDomainObject, path + ".useGrid", function (newValue) {
+
+                this.selectionListeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".useGrid", function (newValue) {
                     if (this.selectedElementProxy.useGrid() !== newValue) {
-                        console.log('before', JSON.stringify(this.selectedElementProxy.element));
                         this.selectedElementProxy.useGrid(newValue);
-                        console.log('after', JSON.stringify(this.selectedElementProxy.element));
+                        this.updateSelectionStyle();
                         this.openmct.objects.mutate(this.newDomainObject, path, this.selectedElementProxy.element);
                     }
-                }.bind(this));
-
-                var unlistenTwo = this.openmct.objects.observe(this.newDomainObject, path, function (newValue) {
-                    this.selectedElementProxy.element = newValue;
-                    this.updateSelectionStyle();
-                }.bind(this));
-                this.selectionListeners.push(unlisten);
-                this.selectionListeners.push(unlistenTwo);
-
+                }.bind(this)));
                 this.selectionListeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".x", function (newValue) {
                     this.selectedElementProxy.element.x = newValue;
                     this.updateSelectionStyle();
@@ -652,7 +632,6 @@ define(
         };
 
         FixedController.prototype.mutate = function (property, value) {
-            var newDomainObject = this.$scope.domainObject.useCapability('adapter');
             this.openmct.objects.mutate(this.newDomainObject, property, value);
         };
 

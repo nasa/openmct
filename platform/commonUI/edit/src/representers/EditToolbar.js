@@ -174,7 +174,6 @@ define(
                 return;
             }
 
-            // _.map(this.stateTracker, 'property')
             this.stateUpdateScheduled = true;
             setTimeout(this.updateStateAfterMutation.bind(this));
         };
