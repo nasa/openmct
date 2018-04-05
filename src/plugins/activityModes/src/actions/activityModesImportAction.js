@@ -38,12 +38,13 @@ define(['d3-dsv'], function (d3Dsv) {
 
         csvObjects.forEach(function (activity, index) {
             var newActivity = {},
-                newActivityMode = {};
+                newActivityMode = {},
+                duration = activity.duration || 0;
 
             newActivity.name = activity.name;
             newActivity.id = activity.id ? ('activity-' + activity.id) : ('activity-' + index + '-' + this.parentId);
             newActivity.start = {timestamp: 0, epoch: "SET"};
-            newActivity.duration = {timestamp: Number(activity.duration), epoch: "SET"};
+            newActivity.duration = {timestamp: (1000*Number(duration)), epoch: "SET"};
             newActivity.type = "activity";
             newActivity.composition = [];
             newActivity.relationships = {modes: []};
