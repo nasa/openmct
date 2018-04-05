@@ -75,7 +75,9 @@ define([
                         realtimeStates,
                         this.openmct.time.timeSystem().key
                     );
-                    callback(datum);
+                    if (datum) {
+                        callback(datum);
+                    }
                 }.bind(this);
 
                 unsubscribes = _.map(
@@ -235,6 +237,12 @@ define([
      * @private.
      */
     SummaryWidgetEvaluator.prototype.evaluateState = function (state, timestampKey) {
+        var hasRequiredData = Object.keys(state).reduce(function (itDoes, k) {
+            return itDoes && state[k].lastDatum;
+        }, true);
+        if (!hasRequiredData) {
+            return;
+        }
         var latestTimestamp = _(state)
             .map('timestamps')
             .sortBy(timestampKey)
