@@ -32,7 +32,7 @@ define(
             var parentType = parent.getCapability('type');
             var newStyleChild = child.useCapability('adapter');
 
-            if (parentType.instanceOf('summary-widget') && !this.openmct.telemetry.canProvideTelemetry(newStyleChild)) {
+            if (parentType.instanceOf('summary-widget') && !this.openmct.telemetry.isTelemetryObject(newStyleChild)) {
                 return false;
             }
 

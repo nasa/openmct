@@ -48,8 +48,9 @@ define([
                 "https://www.hq.nasa.gov/alsj/a16/AS16-117-18748.jpg"
             ];
 
-        function pointForTimestamp(timestamp) {
+        function pointForTimestamp(timestamp, name) {
             return {
+                name: name,
                 utc: Math.floor(timestamp / 5000) * 5000,
                 url: IMAGE_SAMPLES[Math.floor(timestamp / 5000) % IMAGE_SAMPLES.length]
             };
@@ -61,7 +62,7 @@ define([
             },
             subscribe: function (domainObject, callback) {
                 var interval = setInterval(function () {
-                    callback(pointForTimestamp(Date.now()));
+                    callback(pointForTimestamp(Date.now(), domainObject.name));
                 }, 5000);
 
                 return function (interval) {
@@ -79,8 +80,8 @@ define([
                 var start = options.start;
                 var end = options.end;
                 var data = [];
-                while (start < end && data.length < 5000) {
-                    data.push(pointForTimestamp(start));
+                while (start <= end && data.length < 5000) {
+                    data.push(pointForTimestamp(start, domainObject.name));
                     start += 5000;
                 }
                 return Promise.resolve(data);
@@ -93,7 +94,7 @@ define([
                     options.strategy === 'latest';
             },
             request: function (domainObject, options) {
-                return Promise.resolve([pointForTimestamp(Date.now())]);
+                return Promise.resolve([pointForTimestamp(Date.now(), domainObject.name)]);
             }
         };
 
@@ -109,6 +110,10 @@ define([
                 initialize: function (object) {
                     object.telemetry = {
                         values: [
+                            {
+                                name: 'Name',
+                                key: 'name'
+                            },
                             {
                                 name: 'Time',
                                 key: 'utc',

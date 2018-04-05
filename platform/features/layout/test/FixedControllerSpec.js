@@ -106,8 +106,8 @@ define(
                     'telemetryFormatter',
                     ['format']
                 );
-                mockFormatter.format.andCallFake(function (value) {
-                    return "Formatted " + value;
+                mockFormatter.format.andCallFake(function (valueMetadata) {
+                    return "Formatted " + valueMetadata.value;
                 });
 
                 mockDomainObject = jasmine.createSpyObj(
@@ -150,13 +150,13 @@ define(
                     [
                         'subscribe',
                         'request',
-                        'canProvideTelemetry',
+                        'isTelemetryObject',
                         'getMetadata',
                         'limitEvaluator',
                         'getValueFormatter'
                     ]
                 );
-                mockTelemetryAPI.canProvideTelemetry.andReturn(true);
+                mockTelemetryAPI.isTelemetryObject.andReturn(true);
                 mockTelemetryAPI.request.andReturn(Promise.resolve([]));
 
                 testGrid = [123, 456];
@@ -697,7 +697,7 @@ define(
                             source: 'range'
                         }
                     ]);
-                    var key = controller.chooseTelemetryKeyToDisplay(mockMetadata);
+                    var key = controller.chooseValueMetadataToDisplay(mockMetadata).source;
                     expect(key).toEqual('range');
                 });
 
@@ -719,7 +719,7 @@ define(
                             }
                         }
                     ]);
-                    var key = controller.chooseTelemetryKeyToDisplay(mockMetadata);
+                    var key = controller.chooseValueMetadataToDisplay(mockMetadata).source;
                     expect(key).toEqual('image');
                 });
 

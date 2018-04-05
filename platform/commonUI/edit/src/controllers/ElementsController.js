@@ -52,8 +52,22 @@ define(
             }
 
             function setSelection(selection) {
-                self.scope.selection = selection;
-                self.refreshComposition(selection);
+                if (!selection[0]) {
+                    return;
+                }
+
+                if (self.mutationListener) {
+                    self.mutationListener();
+                    delete self.mutationListener;
+                }
+
+                var domainObject = selection[0].context.oldItem;
+                self.refreshComposition(domainObject);
+
+                if (domainObject) {
+                    self.mutationListener = domainObject.getCapability('mutation')
+                        .listen(self.refreshComposition.bind(self, domainObject));
+                }
             }
 
             $scope.filterBy = filterBy;
@@ -70,20 +84,19 @@ define(
         /**
          * Gets the composition for the selected object and populates the scope with it.
          *
-         * @param selection the selection object
+         * @param domainObject the selected object
          * @private
          */
-        ElementsController.prototype.refreshComposition = function (selection) {
-            if (!selection[0]) {
-                return;
-            }
+        ElementsController.prototype.refreshComposition = function (domainObject) {
+            var refreshTracker = {};
+            this.currentRefresh = refreshTracker;
 
-            var selected = selection[0].context.oldItem;
-            var selectedObjectComposition = selected && selected.useCapability('composition');
-
+            var selectedObjectComposition = domainObject && domainObject.useCapability('composition');
             if (selectedObjectComposition) {
                 selectedObjectComposition.then(function (composition) {
-                    this.scope.composition = composition;
+                    if (this.currentRefresh === refreshTracker) {
+                        this.scope.composition = composition;
+                    }
                 }.bind(this));
             } else {
                 this.scope.composition = [];
