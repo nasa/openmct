@@ -15,6 +15,7 @@ define([
         this.widget.style.backgroundColor = datum.backgroundColor;
         this.widget.style.borderColor = datum.borderColor;
         this.widget.title = datum.message;
+        this.label.title = datum.message;
         this.label.innerHTML = datum.ruleLabel;
         this.label.className = 'label widget-label ' + datum.icon;
     };
