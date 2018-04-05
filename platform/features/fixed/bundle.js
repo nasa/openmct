@@ -47,27 +47,87 @@ define([
                 {
                     name: "Fixed Position Toolbar",
                     key: "fixed.position",
-                    description: "A common toolbar for objects inside a fixed position display.",
+                    description: "Toolbar for the selected element inside a fixed position display.",
                     forSelection: function (selection) {
-                        return (selection &&
+                        if (!selection) {
+                            return;
+                        }
+
+                        return (
                             selection[0] && selection[0].context.elementProxy &&
-                            selection[1] && selection[1].context.item.type === 'telemetry.fixed');
+                            selection[1] && selection[1].context.item.type === 'telemetry.fixed'
+                        );
                     },
                     toolbar: function (selection) {
-                        var element = "configuration['fixed-display'].elements[" + selection[0].context.elementProxy.index + "]";
+                        var elementProxy = selection[0] && selection[0].context.elementProxy;
+                        var type = elementProxy.element.type;
+                        var path = "configuration['fixed-display'].elements[" + elementProxy.index + "]";
+
+                        var imageProperties = ["stroke", "useGrid", "x", "y", "height", "width", "url"];
+                        var boxProperties = ["stroke", "useGrid", "x", "y", "height", "width", "fill"];
+                        var textProperties = ["stroke", "useGrid", "x", "y", "height", "width", "fill", "color", "size", "text"];
+                        var lineProperties = ["stroke", "useGrid", "x1", "y1", "x2", "y2"];
+
+                        var properties =
+                                type === 'fixed.image' ? imageProperties :
+                                type === 'fixed.text' ? textProperties :
+                                type === 'fixed.box' ? boxProperties :
+                                type === 'fixed.line' ? lineProperties : [];
+
                         return [
-                            // {
-                            //     control: "color",
-                            //     domainObject: selection[1].context.item,
-                            //     property: element + ".stroke",
-                            //     cssClass: "icon-line-horz",
-                            //     title: "Border color",
-                            //     description: "Set border color",
-                            // },
+                            {
+                                control: "color",
+                                domainObject: selection[1].context.item,
+                                property: path + ".fill",
+                                cssClass: "icon-paint-bucket",
+                                title: "Fill color",
+                                description: "Set fill color",
+                            },
+                            {
+                                control: "color",
+                                domainObject: selection[1].context.item,
+                                property: path + ".stroke",
+                                cssClass: "icon-line-horz",
+                                title: "Border color",
+                                description: "Set border color",
+                            },
+                            {
+                                control: "dialog-button",
+                                domainObject: selection[1].context.item,
+                                property: path + ".url",
+                                cssClass: "icon-image",
+                                title: "Image Properties",
+                                description: "Edit image properties",
+                                dialog: {
+                                    control: "textfield",
+                                    name: "Image URL",
+                                    cssClass: "l-input-lg",
+                                    required: true
+                                }
+                            },
+                            {
+                                control: "color",
+                                domainObject: selection[1].context.item,
+                                property: path + ".color",
+                                cssClass: "icon-T",
+                                title: "Text color",
+                                mandatory: true,
+                                description: "Set text color",
+                            },
+                            {
+                                control: "select",
+                                domainObject: selection[1].context.item,
+                                property: path + ".size",
+                                title: "Text size",
+                                description: "Set text size",
+                                "options": [9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96].map(function (size) {
+                                    return { "name": size + " px", "value": size + "px" };
+                                })
+                            },
                             {
                                 control: "numberfield",
                                 domainObject: selection[1].context.item,
-                                property: element + ".x",
+                                property: path + ".x",
                                 text: "X",
                                 name: "X",
                                 cssClass: "l-input-sm",
@@ -76,7 +136,7 @@ define([
                             {
                                 control: "numberfield",
                                 domainObject: selection[1].context.item,
-                                property: element + ".y",
+                                property: path + ".y",
                                 text: "Y",
                                 name: "Y",
                                 cssClass: "l-input-sm",
@@ -85,7 +145,43 @@ define([
                             {
                                 control: "numberfield",
                                 domainObject: selection[1].context.item,
-                                property: element + ".height",
+                                property: path + ".x1",
+                                text: "X1",
+                                name: "X1",
+                                cssClass: "l-input-sm",
+                                min: "0"
+                            },
+                            {
+                                control: "numberfield",
+                                domainObject: selection[1].context.item,
+                                property: path + ".y1",
+                                text: "Y1",
+                                name: "Y1",
+                                cssClass: "l-input-sm",
+                                min: "0"
+                            },
+                            {
+                                control: "numberfield",
+                                domainObject: selection[1].context.item,
+                                property: path + ".x2",
+                                text: "X2",
+                                name: "X2",
+                                cssClass: "l-input-sm",
+                                min: "0"
+                            },
+                            {
+                                control: "numberfield",
+                                domainObject: selection[1].context.item,
+                                property: path + ".y2",
+                                text: "Y2",
+                                name: "Y2",
+                                cssClass: "l-input-sm",
+                                min: "0"
+                            },
+                            {
+                                control: "numberfield",
+                                domainObject: selection[1].context.item,
+                                property: path + ".height",
                                 text: "H",
                                 name: "H",
                                 cssClass: "l-input-sm",
@@ -95,7 +191,7 @@ define([
                             {
                                 control: "numberfield",
                                 domainObject: selection[1].context.item,
-                                property: element + ".width",
+                                property: path + ".width",
                                 text: "W",
                                 name: "W",
                                 cssClass: "l-input-sm",
@@ -105,76 +201,35 @@ define([
                             {
                                 control: "checkbox",
                                 domainObject: selection[1].context.item,
-                                property: element + ".useGrid",
+                                property: path + ".useGrid",
                                 name: "Snap to Grid"
                             },
-                        ];
+                            {
+                                control: "dialog-button",
+                                domainObject: selection[1].context.item,
+                                property: path + ".text",
+                                cssClass: "icon-gear",
+                                title: "Text Properties",
+                                description: "Edit text properties",
+                                dialog: {
+                                    control: "textfield",
+                                    name: "Text",
+                                    required: true
+                                }
+                            },
+                        ].filter(function (item) {
+                            var filtered;
+
+                            properties.forEach(function (property) {
+                                if (item.property.endsWith("." + property)) {
+                                    filtered = item;
+                                }
+                            });
+
+                            return filtered;
+                        });
                     }
-                },
-                // {
-                //     name: "Fixed Line Element Toolbar",
-                //     key: "fixed.line",
-                //     description: "A toolbar specific to fixed line elements inside a fixed position display.",
-                //     forSelection: function (selection) {
-                //         return (selection &&
-                //             selection[0] && selection[0].context.elementProxy &&
-                //             selection[0].context.elementProxy.element.type === 'fixed.line' &&
-                //             selection[1] && selection[1].context.item.type === 'telemetry.fixed');
-                //     },
-                //     toolbar: function (selection) {
-                //         var element = "configuration['fixed-display'].elements[" + selection[0].context.elementProxy.index + "]";
-                //         return [
-                //             {
-                //                 control: "numberfield",
-                //                 domainObject: selection[1].context.item,
-                //                 property: element + ".x2",
-                //                 text: "X2",
-                //                 name: "X2",
-                //                 cssClass: "l-input-sm",
-                //                 min: "0"
-                //             },
-                //             {
-                //                 control: "numberfield",
-                //                 domainObject: selection[1].context.item,
-                //                 property: element + ".y2",
-                //                 text: "Y2",
-                //                 name: "Y2",
-                //                 cssClass: "l-input-sm",
-                //                 min: "0"
-                //             }
-                //         ];
-                //     }
-                // },
-                // {
-                //     name: "Fixed Image Element Toolbar",
-                //     key: "fixed.image",
-                //     description: "A toolbar sepecific to fixed image elements inside a fixed position display.",
-                //     forSelection: function (selection) {
-                //         return (selection &&
-                //             selection[0] && selection[0].context.elementProxy &&
-                //             selection[0].context.elementProxy.element.type === 'fixed.image' &&
-                //             selection[1] && selection[1].context.item.type === 'telemetry.fixed');
-                //     },
-                //     toolbar: function (selection) {
-                //         var element = "configuration['fixed-display'].elements[" + selection[0].context.elementProxy.index + "]";
-                //         return [
-                //             {
-                //                 control: "dialog-button",
-                //                 domainObject: selection[1].context.item,
-                //                 property: element + ".url",
-                //                 cssClass: "icon-image",
-                //                 title: "Image Properties",
-                //                 description: "Edit image properties",
-                //                 dialog: {
-                //                     control: "textfield",
-                //                     name: "Image URL",
-                //                     cssClass: "l-input-lg",
-                //                     required: true
-                //                 }
-                //             }
-                //         ];
-                //     }
-                // }
+                }
             ],
             "types": [
                 {

@@ -301,22 +301,27 @@ define(
                         this.openmct.objects.mutate(this.newDomainObject, path, this.selectedElementProxy.element);
                     }
                 }.bind(this)));
-                this.selectionListeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".x", function (newValue) {
-                    this.selectedElementProxy.element.x = newValue;
-                    this.updateSelectionStyle();
-                }.bind(this)));
-                this.selectionListeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".y", function (newValue) {
-                    this.selectedElementProxy.element.y = newValue;
-                    this.updateSelectionStyle();
-                }.bind(this)));
-                this.selectionListeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".width", function (newValue) {
-                    this.selectedElementProxy.element.width = newValue;
-                    this.updateSelectionStyle();
-                }.bind(this)));
-                this.selectionListeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".height", function (newValue) {
-                    this.selectedElementProxy.element.height = newValue;
-                    this.updateSelectionStyle();
-                }.bind(this)));
+
+                [
+                    "width",
+                    "height",
+                    "stroke",
+                    "fill",
+                    "x",
+                    "y",
+                    "x1",
+                    "y1",
+                    "x2",
+                    "y2",
+                    "color",
+                    "size",
+                    "text"
+                ].forEach(function (property) {
+                    this.selectionListeners.push(this.openmct.objects.observe(this.newDomainObject, path + "." + property, function (newValue) {
+                        this.selectedElementProxy.element[property] = newValue;
+                        this.updateSelectionStyle();
+                    }.bind(this)));
+                }.bind(this));
 
                 this.mvHandle = this.generateDragHandle(this.selectedElementProxy);
                 this.resizeHandles = this.generateDragHandles(this.selectedElementProxy);
