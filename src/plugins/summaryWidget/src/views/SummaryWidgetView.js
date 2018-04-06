@@ -48,7 +48,7 @@ define([
             strategy: 'latest',
             size: 1
         }).then(function (results) {
-            if (this.hasUpdated || this.renderTracker !== renderTracker) {
+            if (this.destroyed || this.hasUpdated || this.renderTracker !== renderTracker) {
                 return;
             }
             this.updateState(results[results.length - 1]);
@@ -72,6 +72,7 @@ define([
     SummaryWidgetView.prototype.destroy = function (container) {
         this.unsubscribe();
         this.removeMutationListener();
+        this.destroyed = true;
         delete this.widget;
         delete this.label;
         delete this.openmct;
