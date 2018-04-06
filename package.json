@@ -49,6 +49,7 @@
     "mkdirp": "^0.5.1",
     "moment": "^2.11.1",
     "node-bourbon": "^4.2.3",
+    "printj": "^1.1.0",
     "requirejs": "2.1.x",
     "split": "^1.0.0",
     "v8-compile-cache": "^1.1.0"
