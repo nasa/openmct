@@ -63,10 +63,10 @@ define([
                         var type = elementProxy.element.type;
                         var path = "configuration['fixed-display'].elements[" + elementProxy.index + "]";
 
-                        var imageProperties = ["stroke", "useGrid", "x", "y", "height", "width", "url"];
-                        var boxProperties = ["stroke", "useGrid", "x", "y", "height", "width", "fill"];
-                        var textProperties = ["stroke", "useGrid", "x", "y", "height", "width", "fill", "color", "size", "text"];
-                        var lineProperties = ["stroke", "useGrid", "x1", "y1", "x2", "y2"];
+                        var imageProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "height", "width", "url"];
+                        var boxProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "height", "width", "fill"];
+                        var textProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "height", "width", "fill", "color", "size", "text"];
+                        var lineProperties = ["add", "remove", "order", "stroke", "useGrid", "x1", "y1", "x2", "y2"];
 
                         var properties =
                                 type === 'fixed.image' ? imageProperties :
@@ -75,6 +75,65 @@ define([
                                 type === 'fixed.line' ? lineProperties : [];
 
                         return [
+                            {
+                                control: "menu-button",
+                                domainObject: selection[1].context.item,
+                                method: "add",
+                                cssClass: "icon-plus",
+                                text: "Add",
+                                options: [
+                                    {
+                                        "name": "Box",
+                                        "cssClass": "icon-box",
+                                        "key": "fixed.box"
+                                    },
+                                    {
+                                        "name": "Line",
+                                        "cssClass": "icon-line-horz",
+                                        "key": "fixed.line"
+                                    },
+                                    {
+                                        "name": "Text",
+                                        "cssClass": "icon-T",
+                                        "key": "fixed.text"
+                                    },
+                                    {
+                                        "name": "Image",
+                                        "cssClass": "icon-image",
+                                        "key": "fixed.image"
+                                    }
+                                ]
+                            },
+                            {
+                                control: "menu-button",
+                                domainObject: selection[1].context.item,
+                                method: "order",
+                                cssClass: "icon-layers",
+                                title: "Layering",
+                                description: "Move the selected object above or below other objects",
+                                options: [
+                                    {
+                                        "name": "Move to Top",
+                                        "cssClass": "icon-arrow-double-up",
+                                        "key": "top"
+                                    },
+                                    {
+                                        "name": "Move Up",
+                                        "cssClass": "icon-arrow-up",
+                                        "key": "up"
+                                    },
+                                    {
+                                        "name": "Move Down",
+                                        "cssClass": "icon-arrow-down",
+                                        "key": "down"
+                                    },
+                                    {
+                                        "name": "Move to Bottom",
+                                        "cssClass": "icon-arrow-double-down",
+                                        "key": "bottom"
+                                    }
+                                ]
+                            },
                             {
                                 control: "color",
                                 domainObject: selection[1].context.item,
@@ -217,11 +276,18 @@ define([
                                     required: true
                                 }
                             },
+                            {
+                                control: "button",
+                                domainObject: selection[1].context.item,
+                                method: "remove",
+                                cssClass: "icon-trash"
+                            }
                         ].filter(function (item) {
                             var filtered;
 
                             properties.forEach(function (property) {
-                                if (item.property.endsWith("." + property)) {
+                                if (item.property && item.property.endsWith("." + property) ||
+                                    item.method && item.method.endsWith(property)) {
                                     filtered = item;
                                 }
                             });
