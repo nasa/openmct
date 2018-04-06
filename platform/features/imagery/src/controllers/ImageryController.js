@@ -111,6 +111,10 @@ define(
                             this.updateHistory(datum);
                         }, this);
                         this.requestLad(true);
+
+                        if(values.length > 0) {
+                            this.updateValues(values[values.length-1]);
+                        }
                     }.bind(this));
         };
 
