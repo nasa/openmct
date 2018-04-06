@@ -243,10 +243,11 @@ define([
         if (!hasRequiredData) {
             return;
         }
+
         var latestTimestamp = _(state)
             .map('timestamps')
             .sortBy(timestampKey)
-            .first();
+            .last();
 
         if (!latestTimestamp) {
             latestTimestamp = {};
