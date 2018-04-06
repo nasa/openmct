@@ -111,9 +111,9 @@ define(
                             this.updateHistory(datum);
                         }, this);
                         this.requestLad(true);
-
-                        if(values.length > 0) {
-                            this.updateValues(values[values.length-1]);
+                        console.log(this.$scope.imageHistory);
+                        if (this.$scope.imageHistory.length) {
+                            this.updateValues(this.$scope.imageHistory[this.$scope.imageHistory.length - 1]);
                         }
                     }.bind(this));
         };
