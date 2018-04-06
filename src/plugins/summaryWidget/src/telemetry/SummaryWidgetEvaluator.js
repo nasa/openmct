@@ -248,6 +248,10 @@ define([
             .sortBy(timestampKey)
             .first();
 
+        if (!latestTimestamp) {
+            latestTimestamp = {};
+        }
+
         latestTimestamp = _.clone(latestTimestamp);
 
         for (var i = this.rules.length - 1; i > 0; i--) {
