@@ -107,14 +107,12 @@ define(
                         if (this.requestCount > requestId) {
                             return Promise.resolve('Stale request');
                         }
+
                         values.forEach(function (datum) {
                             this.updateHistory(datum);
                         }, this);
-                        this.requestLad(true);
 
-                        if (this.$scope.imageHistory.length) {
-                            this.updateValues(this.$scope.imageHistory[this.$scope.imageHistory.length - 1]);
-                        }
+                        this.requestLad(true);
                     }.bind(this));
         };
 
@@ -134,9 +132,12 @@ define(
                     size: 1
                 })
                 .then(function (values) {
-                    this.updateValues(values[0]);
+                    var datum = values[values.length - 1];
+
+                    this.updateValues(datum);
+                    
                     if (addToHistory !== false) {
-                        this.updateHistory(values[0]);
+                        this.updateHistory(datum);
                     }
                 }.bind(this));
         };
