@@ -135,7 +135,7 @@ define(
                     var datum = values[values.length - 1];
 
                     this.updateValues(datum);
-                    
+
                     if (addToHistory !== false) {
                         this.updateHistory(datum);
                     }
