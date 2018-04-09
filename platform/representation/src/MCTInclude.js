@@ -62,8 +62,10 @@ define(
                     scope.key && templateMap[scope.key]
                 );
 
-                scope.$watch('key', function (key) {
-                    changeTemplate(key && templateMap[key]);
+                scope.$watch('key', function (newKey, oldKey) {
+                    if (newKey !== oldKey) {
+                        changeTemplate(newKey && templateMap[newKey]);
+                    }
                 });
             }
 
