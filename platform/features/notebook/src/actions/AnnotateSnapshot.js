@@ -24,9 +24,8 @@
  * Module defining viewSnapshot (Originally NewWindowAction). Created by vwoeltje on 11/18/14.
  */
 define(
-    ["painterro", "zepto"],
-    function (Painterro, $) {
-
+    ["painterro", "zepto", "../shims/painterro-shim"],
+    function (Painterro, $, painterroShim) {
         var ANNOTATION_STRUCT = {
             title: "Annotate Snapshot",
             template: "annotate-snapshot",
@@ -52,23 +51,15 @@ define(
             this.$rootScope = $rootScope;
         }
 
-
-
-
-        AnnotateSnapshot.prototype.perform = function ($event,snapshot,embedId,entryId,$scope) {
+        AnnotateSnapshot.prototype.perform = function ($event, snapshot, embedId, entryId) {
 
             var DOMAIN_OBJECT = this.domainObject;
             var ROOTSCOPE = this.$rootScope;
-
-            this.dialogService.getUserChoice(ANNOTATION_STRUCT)
-                        .then(saveNotes);
-
             var painterro;
 
-            var tracker = function () {
+            var controller = ['$scope', '$timeout', function PainterroController($scope, $timeout) {
                 $(document.body).find('.l-dialog .outer-holder').addClass('annotation-dialog');
-
-                try {
+                $timeout(function () {
                     painterro = Painterro({
                         id: 'snap-annotation',
                         activeColor: '#ff0000',
@@ -106,21 +97,21 @@ define(
                                 ROOTSCOPE.snapshot = {'src': image.asDataURL('image/png'),
                                                     'modified': Date.now()};
                             }
-
                             done(true);
                         }
                     }).show(snapshot);
-                    $(document.body).find('.ptro-icon-btn').addClass('s-button');
-                    $(document.body).find('.ptro-input').addClass('s-button');
+                });
+                painterroShim(painterro);
 
-                } catch (error) {
-                    // error caused because of snap-annotation div created asynchronously by dialog service
-                }
-            };
+                $(document.body).find('.ptro-icon-btn').addClass('s-button');
+                $(document.body).find('.ptro-input').addClass('s-button');
 
-            ANNOTATION_STRUCT.model = {'tracker': tracker};
+                $scope.$on('$destroy', function () {
+                    painterro.removeEventHandlers();
+                });
+            }];
 
-
+            ANNOTATION_STRUCT.model = {'controller': controller};
 
             function saveNotes(param) {
                 if (param === 'ok') {
@@ -129,6 +120,9 @@ define(
                     ROOTSCOPE.snapshot = "annotationCancelled";
                 }
             }
+
+            this.dialogService.getUserChoice(ANNOTATION_STRUCT)
+            .then(saveNotes);
 
         };
 
