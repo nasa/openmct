@@ -5,13 +5,14 @@ define(['d3-dsv'], function (d3Dsv) {
         this.openmct = openmct;
         this.context = context;
         this.parent = this.context.domainObject;
-        this.parentId = this.parent.getId();
         this.instantiate = this.openmct.$injector.get("instantiate");
         this.objectService = this.openmct.$injector.get("objectService").objectService;
         this.populateActivities = this.populateActivities.bind(this);
     }
 
     ActivityModesImportAction.prototype.perform = function () {
+        this.parentId = this.parent.getId();
+
         this.dialogService.getUserInput(this.getFormModel(), function () {})
         .then(function (form) {
             if (form.selectFile.name.slice(-3) !== 'csv') {
@@ -44,7 +45,7 @@ define(['d3-dsv'], function (d3Dsv) {
             newActivity.name = activity.name;
             newActivity.id = activity.id ? ('activity-' + activity.id) : ('activity-' + index + '-' + this.parentId);
             newActivity.start = {timestamp: 0, epoch: "SET"};
-            newActivity.duration = {timestamp: (1000*Number(duration)), epoch: "SET"};
+            newActivity.duration = {timestamp: (1000 * Number(duration)), epoch: "SET"};
             newActivity.type = "activity";
             newActivity.composition = [];
             newActivity.relationships = {modes: []};

@@ -235,6 +235,13 @@ define(
                 timespan: function () {
                     return timespan;
                 },
+                updateDuration: function () {
+                    var duration = timespan.getDuration('model'),
+                        start = timespan.getStart();
+
+                    timespan.setDuration(duration);
+                    timespan.setEnd(start + duration);
+                },
                 makeCopies: makeCopies,
                 fragment: fragment,
                 // Expose domain object, expansion state, indentation depth

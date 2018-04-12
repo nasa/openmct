@@ -1,32 +1,11 @@
-define(['./src/actions/activityModesImportAction'], function (ActivityModes) {
+define([
+    './src/actions/activityModesImportAction',
+    './src/policies/ActionPolicy'
+],
+function (ActivityModes, ActionPolicy) {
     function plugin() {
 
         return function install(openmct) {
-
-            openmct.legacyRegistry.register("src/plugins/activityModes", {
-                "name": "Activity Import",
-                "description": "Defines a root named My Items",
-                "extensions": {
-                    "roots": [
-                        {
-                            "id": "activity-import"
-                        }
-                    ],
-                    "models": [
-                        {
-                            "id": "activity-import",
-                            "model": {
-                                "name": "Activity Import",
-                                "type": "folder",
-                                "composition": [],
-                                "location": "ROOT"
-                            }
-                        }
-                    ]
-                }
-            });
-
-            openmct.legacyRegistry.enable("src/plugins/activityModes");
 
             openmct.legacyExtension('actions', {
                 key: "import-csv",
@@ -39,6 +18,11 @@ define(['./src/actions/activityModesImportAction'], function (ActivityModes) {
                     "dialogService",
                     "openmct"
                 ]
+            });
+
+            openmct.legacyExtension('policies', {
+                category: 'action',
+                implementation: ActionPolicy
             });
         };
     }

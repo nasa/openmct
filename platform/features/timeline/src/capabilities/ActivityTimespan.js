@@ -66,7 +66,10 @@ define(
             }
 
             // Get the duration of this timeline
-            function getDuration() {
+            function getDuration(flag) {
+                if (flag === 'model') {
+                    return model.duration.timestamp;
+                }
                 return getTimelineActivityDuration(parentTimelineModel);
             }
 

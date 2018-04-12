@@ -399,7 +399,14 @@ define([
                                             "cssClass": "l-input-sm numeric"
                                         },
                                         "property": "fragment"
+                                    },
+                                    {
+                                        "cssClass": "icon-resync",
+                                        "description": "Fragment Activity",
+                                        "control": "button",
+                                        "method": "updateDuration"
                                     }
+
                                 ]
                             },
                             {
