@@ -33,60 +33,67 @@ define(['d3-dsv'], function (d3Dsv) {
 
     ActivityModesImportAction.prototype.populateActivities = function (csvObjects) {
         this.parentComposition = this.parent.getCapability("composition");
+        this.blockingDialog = this.showBlockingMessage();
 
-        var activitiesObjects = [],
-            activityModesObjects = [];
+        var activitiesObjects = {},
+            activityModesObjects = {};
 
         csvObjects.forEach(function (activity, index) {
             var newActivity = {},
                 newActivityMode = {},
-                duration = activity.duration || 0;
+                duration = !isNaN(Number(activity.duration)) ? 1000 * Number(activity.duration) : 0;
 
             newActivity.name = activity.name;
             newActivity.id = activity.id ? ('activity-' + activity.id) : ('activity-' + index + '-' + this.parentId);
             newActivity.start = {timestamp: 0, epoch: "SET"};
-            newActivity.duration = {timestamp: (1000 * Number(duration)), epoch: "SET"};
+            newActivity.duration = {timestamp: duration, epoch: "SET"};
             newActivity.type = "activity";
             newActivity.composition = [];
             newActivity.relationships = {modes: []};
 
             newActivityMode.name = activity.name + ' Resources';
             newActivityMode.id = activity.id ? ('activity-mode-' + activity.id) : ('activity-mode-' + index + '-' + this.parentId);
-            newActivityMode.resources = {comms: Number(activity.comms), power: Number(activity.power)};
+            newActivityMode.resources = {comms: Number(activity.comms) || 0, power: Number(activity.power) || 0};
             newActivityMode.type = 'mode';
 
             newActivity.relationships.modes.push(newActivityMode.id);
 
-            activitiesObjects.push(newActivity);
-            activityModesObjects.push(newActivityMode);
-        });
+            activitiesObjects[newActivity.id] = newActivity;
+            activityModesObjects[newActivityMode.id] = newActivityMode;
+        }.bind(this));
 
         this.instantiateActivityModes(activityModesObjects);
         this.instantiateActivities(activitiesObjects);
     };
 
     ActivityModesImportAction.prototype.instantiateActivityModes = function (activityModesObjects) {
-        activityModesObjects.forEach(function (activityMode) {
+        var activityModesArray = Object.keys(activityModesObjects);
 
-            this.objectService.getObjects([activityMode.id]).then(
-                function (previousActivityMode) {
-                    previousActivityMode[activityMode.id].getCapability('mutation').mutate(function (prev) {
+        this.objectService.getObjects(activityModesArray).then(
+            function (previousActivityModes) {
+                activityModesArray.forEach(function (activityModeId) {
+                    previousActivityModes[activityModeId].getCapability('mutation').mutate(function (prev) {
+                        var activityMode = activityModesObjects[activityModeId];
+
                         prev.name = activityMode.name;
                         prev.resources = activityMode.resources;
                         prev.type = activityMode.type;
                         prev.id = activityMode.id;
                     });
-                }
-            );
-        }.bind(this));
+                });
+            }
+        );
     };
 
     ActivityModesImportAction.prototype.instantiateActivities = function (activitiesObjects) {
-        activitiesObjects.forEach(function (activity) {
+        var activityObjectArray = Object.keys(activitiesObjects);
 
-            this.objectService.getObjects([activity.id]).then(
-                function (objects) {
-                    objects[activity.id].getCapability('mutation').mutate(function (prevActivity) {
+        this.objectService.getObjects(activityObjectArray).then(
+            function (objects) {
+                activityObjectArray.forEach(function (activityId, index) {
+                    var activity = activitiesObjects[activityId];
+
+                    objects[activityId].getCapability('mutation').mutate(function (prevActivity) {
                         prevActivity.name = activity.name;
                         prevActivity.start = activity.start;
                         prevActivity.duration = activity.duration;
@@ -96,11 +103,29 @@ define(['d3-dsv'], function (d3Dsv) {
                         prevActivity.id = activity.id;
                     });
 
-                    objects[activity.id].getCapability('location').setPrimaryLocation(this.parentId);
-                    this.parentComposition.add(objects[activity.id]);
-                }.bind(this)
-            );
-        }.bind(this));
+                    objects[activityId].getCapability('location').setPrimaryLocation(this.parentId);
+
+                    if ((index === (activityObjectArray.length - 1)) && this.blockingDialog) {
+                        this.blockingDialog.dismiss();
+                    }
+                }.bind(this));
+
+                this.parentComposition.domainObject.getCapability('mutation').mutate(function (parentComposition) {
+                    parentComposition.composition = activityObjectArray;
+                });
+            }.bind(this)
+        );
+    };
+
+    ActivityModesImportAction.prototype.showBlockingMessage = function () {
+        var model = {
+            title: "Importing",
+            actionText:  "Importing Activities from CSV",
+            severity: "info",
+            unknownProgress: true
+        };
+
+        return this.dialogService.showBlockingMessage(model);
     };
 
     ActivityModesImportAction.prototype.displayError = function () {
