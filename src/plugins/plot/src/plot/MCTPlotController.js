@@ -70,7 +70,7 @@ define([
         this.listenTo(this.$canvas, 'mousedown', this.onMouseDown, this);
 
         this.watchForMarquee();
-    }
+    };
 
     MCTPlotController.prototype.initialize = function () {
         this.$canvas = this.$element.find('canvas');
