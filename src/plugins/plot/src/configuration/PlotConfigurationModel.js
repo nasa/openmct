@@ -75,11 +75,14 @@ define([
                 openmct: options.openmct
             });
 
-            this.removeMutationListener = this.openmct.objects.observe(
-                this.get('domainObject'),
-                '*',
-                this.updateDomainObject.bind(this)
-            );
+            if (this.get('domainObject').type === 'telemetry.plot.overlay') {
+                this.removeMutationListener = this.openmct.objects.observe(
+                    this.get('domainObject'),
+                    '*',
+                    this.updateDomainObject.bind(this)
+                );
+            }
+
             this.yAxis.listenToSeriesCollection(this.series);
             this.legend.listenToSeriesCollection(this.series);
 
@@ -112,7 +115,9 @@ define([
             this.yAxis.destroy();
             this.series.destroy();
             this.legend.destroy();
-            this.removeMutationListener();
+            if (this.removeMutationListener) {
+                this.removeMutationListener();
+            }
         },
         /**
          * Return defaults, which are extracted from the passed in domain
