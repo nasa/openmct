@@ -43,6 +43,7 @@ define([
             restrict: "E",
             template: TEMPLATE,
             link: function ($scope, $element, attrs, ctrl) {
+                ctrl.TEMPLATE = TEMPLATE;
                 var mainCanvas = $element.find("canvas")[1];
                 var overlayCanvas = $element.find("canvas")[0];
 

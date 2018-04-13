@@ -197,7 +197,27 @@ function (
         this.canvas = canvas;
         this.overlay = overlay;
         this.drawAPI = DrawLoader.getDrawAPI(canvas, overlay);
+        if (this.drawAPI) {
+            this.listenTo(this.drawAPI, 'error', this.fallbackToCanvas, this);
+        }
         return !!this.drawAPI;
+    };
+
+    MCTChartController.prototype.fallbackToCanvas = function () {
+        this.stopListening(this.drawAPI);
+        DrawLoader.releaseDrawAPI(this.drawAPI);
+        // Have to throw away the old canvas elements and replace with new
+        // canvas elements in order to get new drawing contexts.
+        var div = document.createElement('div');
+        div.innerHTML = this.TEMPLATE;
+        var mainCanvas = div.querySelectorAll("canvas")[1];
+        var overlayCanvas = div.querySelectorAll("canvas")[0];
+        this.canvas.parentNode.replaceChild(mainCanvas, this.canvas);
+        this.canvas = mainCanvas;
+        this.overlay.parentNode.replaceChild(overlayCanvas, this.overlay);
+        this.overlay = overlayCanvas;
+        this.drawAPI = DrawLoader.getFallbackDrawAPI(this.canvas, this.overlay);
+        this.$scope.$emit('plot:reinitializeCanvas');
     };
 
     MCTChartController.prototype.removeChartElement = function (series) {
