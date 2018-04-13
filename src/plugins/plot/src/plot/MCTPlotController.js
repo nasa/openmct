@@ -59,6 +59,19 @@ define([
 
     eventHelpers.extend(MCTPlotController.prototype);
 
+    MCTPlotController.prototype.initCanvas = function () {
+        if (this.$canvas) {
+            this.stopListening(this.$canvas);
+        }
+        this.$canvas = this.$element.find('canvas');
+
+        this.listenTo(this.$canvas, 'mousemove', this.trackMousePosition, this);
+        this.listenTo(this.$canvas, 'mouseleave', this.untrackMousePosition, this);
+        this.listenTo(this.$canvas, 'mousedown', this.onMouseDown, this);
+
+        this.watchForMarquee();
+    }
+
     MCTPlotController.prototype.initialize = function () {
         this.$canvas = this.$element.find('canvas');
 
@@ -82,6 +95,7 @@ define([
         this.listenTo(this.$scope, '$destroy', this.destroy, this);
         this.listenTo(this.$scope, 'plot:tickWidth', this.onTickWidthChange, this);
         this.listenTo(this.$scope, 'plot:highlight:set', this.onPlotHighlightSet, this);
+        this.listenTo(this.$scope, 'plot:reinitializeCanvas', this.initCanvas, this);
 
         this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
         this.listenTo(this.config.yAxis, 'change:displayRange', this.onYAxisChange, this);
