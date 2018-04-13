@@ -231,6 +231,10 @@ function (
             this.pointSets.splice(this.pointSets.indexOf(pointSet), 1);
             pointSet.destroy();
         }, this);
+        if (elements.alarmSet) {
+            elements.alarmSet.destroy();
+            this.alarmSets.splice(this.alarmSets.indexOf(elements.alarmSet), 1);
+        }
         this.seriesElements.delete(series);
     };
 
