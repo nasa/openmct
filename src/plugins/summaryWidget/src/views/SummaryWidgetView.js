@@ -7,6 +7,7 @@ define([
         this.openmct = openmct;
         this.domainObject = domainObject;
         this.hasUpdated = false;
+        this.render = this.render.bind(this);
     }
 
     SummaryWidgetView.prototype.updateState = function (datum) {
@@ -20,7 +21,7 @@ define([
         this.label.className = 'label widget-label ' + datum.icon;
     };
 
-    SummaryWidgetView.prototype.render = function (domainObject) {
+    SummaryWidgetView.prototype.render = function () {
         if (this.unsubscribe) {
             this.unsubscribe();
         }
@@ -31,13 +32,13 @@ define([
         this.label = this.container.querySelector('.widget-label');
 
 
-        if (domainObject.url) {
-            this.widget.setAttribute('href', domainObject.url);
+        if (this.domainObject.url) {
+            this.widget.setAttribute('href', this.domainObject.url);
         } else {
             this.widget.removeAttribute('href');
         }
 
-        if (domainObject.openNewTab === 'newTab') {
+        if (this.domainObject.openNewTab === 'newTab') {
             this.widget.setAttribute('target', '_blank');
         } else {
             this.widget.removeAttribute('target');
@@ -56,22 +57,29 @@ define([
 
         this.unsubscribe = this.openmct
             .telemetry
-            .subscribe(domainObject, this.updateState.bind(this));
+            .subscribe(this.domainObject, this.updateState.bind(this));
     };
 
     SummaryWidgetView.prototype.show = function (container) {
         this.container = container;
-        this.render(this.domainObject);
+        this.render();
         this.removeMutationListener = this.openmct.objects.observe(
             this.domainObject,
             '*',
-            this.render.bind(this)
+            this.onMutation.bind(this)
         );
+        this.openmct.time.on('timeSystem', this.render);
+    };
+
+    SummaryWidgetView.prototype.onMutation = function (domainObject) {
+        this.domainObject = domainObject;
+        this.render();
     };
 
     SummaryWidgetView.prototype.destroy = function (container) {
         this.unsubscribe();
         this.removeMutationListener();
+        this.openmct.time.off('timeSystem', this.render);
         this.destroyed = true;
         delete this.widget;
         delete this.label;
