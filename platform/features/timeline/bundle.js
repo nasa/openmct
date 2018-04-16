@@ -402,7 +402,7 @@ define([
                                     },
                                     {
                                         "cssClass": "icon-resync",
-                                        "description": "Fragment Activity",
+                                        "description": "Update Duration from imported activity",
                                         "control": "button",
                                         "method": "updateDuration"
                                     }

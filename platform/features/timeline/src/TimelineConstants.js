@@ -25,7 +25,7 @@
  */
 define({
     // Pixel width of start/end handles
-    HANDLE_WIDTH: 32,
+    HANDLE_WIDTH: 16,
     // Pixel tolerance for snapping behavior
     SNAP_WIDTH: 16
 });
