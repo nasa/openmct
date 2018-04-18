@@ -35,7 +35,7 @@ define(
                     ALLOCATIONS: []
                 },
                 {
-                    MAX_INSTANCES: Number.MAX_INFINITY,
+                    MAX_INSTANCES: Number.POSITIVE_INFINITY,
                     API: Draw2D,
                     ALLOCATIONS: []
                 }
@@ -83,12 +83,24 @@ define(
                 return api;
             },
 
+            /**
+             * Returns a fallback draw api.
+             */
+            getFallbackDrawAPI: function (canvas, overlay) {
+                var api = new CHARTS[1].API(canvas, overlay);
+                CHARTS[1].ALLOCATIONS.push(api);
+                return api;
+            },
+
             releaseDrawAPI: function (api) {
                 CHARTS.forEach(function (CHART_TYPE) {
                     if (api instanceof CHART_TYPE.API) {
                         CHART_TYPE.ALLOCATIONS.splice(CHART_TYPE.ALLOCATIONS.indexOf(api), 1);
                     }
                 });
+                if (api.destroy) {
+                    api.destroy();
+                }
             }
         };
     }
