@@ -251,8 +251,8 @@ define([
             options.end = this.openmct.time.bounds().end;
         }
         if (!options.hasOwnProperty('domain'))  {
-            if (this.MCT.time.timeSystem()) {
-                options.domain = this.MCT.time.timeSystem().key;
+            if (this.openmct.time.timeSystem()) {
+                options.domain = this.openmct.time.timeSystem().key;
             }
         }
     };
