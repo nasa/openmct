@@ -92,7 +92,7 @@ define(
                             this.updateHistory(datum);
                             this.updateValues(datum);
                         }.bind(this));
-                    this.requestLad(false);
+
                     this.requestHistory(this.openmct.time.bounds());
                 }.bind(this));
         };
@@ -112,34 +112,8 @@ define(
                             this.updateHistory(datum);
                         }, this);
 
-                        this.requestLad(true);
+                        this.updateValues(values[values.length - 1]);
                     }.bind(this));
-        };
-
-        /**
-         * Makes a request for the most recent datum in the
-         * telelmetry store. Optional addToHistory argument
-         * determines whether the requested telemetry should
-         * be added to history or only used to update the current
-         * image url and timestamp.
-         * @private
-         * @param {boolean} [addToHistory] if true, adds to history
-         */
-        ImageryController.prototype.requestLad = function (addToHistory) {
-            this.openmct.telemetry
-                .request(this.domainObject, {
-                    strategy: 'latest',
-                    size: 1
-                })
-                .then(function (values) {
-                    var datum = values[values.length - 1];
-
-                    this.updateValues(datum);
-
-                    if (addToHistory !== false) {
-                        this.updateHistory(datum);
-                    }
-                }.bind(this));
         };
 
         ImageryController.prototype.stopListening = function () {
