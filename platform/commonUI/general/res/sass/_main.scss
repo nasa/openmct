@@ -76,9 +76,11 @@
 @import "items/item";
 @import "mobile/item";
 
-
 /********************************* TO BE MOVED */
 @import "autoflow";
 @import "features/imagery";
 @import "features/time-display";
 @import "widgets";
+
+/********************************* APP STARTUP */
+@import "app-start";
