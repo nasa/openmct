@@ -26,6 +26,7 @@ define([
     "./src/InspectorPaneController",
     "./src/BrowseObjectController",
     "./src/MenuArrowController",
+    "./src/ObjectHeaderController",
     "./src/navigation/NavigationService",
     "./src/navigation/NavigateAction",
     "./src/navigation/OrphanNavigationHandler",
@@ -36,6 +37,7 @@ define([
     "text!./res/templates/browse-object.html",
     "text!./res/templates/items/grid-item.html",
     "text!./res/templates/browse/object-header.html",
+    "text!./res/templates/browse/object-header-frame.html",
     "text!./res/templates/menu-arrow.html",
     "text!./res/templates/back-arrow.html",
     "text!./res/templates/items/items.html",
@@ -48,6 +50,7 @@ define([
     InspectorPaneController,
     BrowseObjectController,
     MenuArrowController,
+    ObjectHeaderController,
     NavigationService,
     NavigateAction,
     OrphanNavigationHandler,
@@ -58,6 +61,7 @@ define([
     browseObjectTemplate,
     gridItemTemplate,
     objectHeaderTemplate,
+    objectHeaderFrameTemplate,
     menuArrowTemplate,
     backArrowTemplate,
     itemsTemplate,
@@ -140,6 +144,13 @@ define([
                         "$location",
                         "$attrs"
                     ]
+                },
+                {
+                    "key": "ObjectHeaderController",
+                    "implementation": ObjectHeaderController,
+                    "depends": [
+                        "$scope"
+                    ]
                 }
             ],
             "representations": [
@@ -169,6 +180,13 @@ define([
                 {
                     "key": "object-header",
                     "template": objectHeaderTemplate,
+                    "uses": [
+                        "type"
+                    ]
+                },
+                {
+                    "key": "object-header-frame",
+                    "template": objectHeaderFrameTemplate,
                     "uses": [
                         "type"
                     ]

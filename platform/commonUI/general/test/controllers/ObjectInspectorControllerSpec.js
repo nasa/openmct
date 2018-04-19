@@ -39,10 +39,8 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    ["$watch"]
+                    ["$watch", "$on"]
                 );
-                mockScope.ngModel = {};
-                mockScope.ngModel.selectedObject = 'mock selected object';
 
                 mockObjectService = jasmine.createSpyObj(
                     "objectService",
@@ -69,22 +67,27 @@ define(
                     "location capability",
                     ["isLink"]
                 );
+
                 mockDomainObject.getCapability.andCallFake(function (param) {
                     if (param === 'location') {
                         return mockLocationCapability;
                     } else if (param === 'context') {
                         return mockContextCapability;
+                    } else if (param === 'mutation') {
+                        return {
+                            listen: function () {
+                                return true;
+                            }
+                        };
                     }
                 });
 
+                mockScope.domainObject = mockDomainObject;
                 controller = new ObjectInspectorController(mockScope, mockObjectService);
-
-                // Change the selected object to trigger the watch call
-                mockScope.ngModel.selectedObject = mockDomainObject;
             });
 
             it("watches for changes to the selected object", function () {
-                expect(mockScope.$watch).toHaveBeenCalledWith('ngModel.selectedObject', jasmine.any(Function));
+                expect(mockScope.$watch).toHaveBeenCalledWith('domainObject', jasmine.any(Function));
             });
 
             it("looks for contextual parent objects", function () {

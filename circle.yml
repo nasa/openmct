@@ -1,15 +1,17 @@
+machine:
+  node:
+    version: 4.7.0
+
+dependencies:
+  pre:
+    - npm install -g npm@latest
+
 deployment:
   production:
     branch: master
     commands:
         - npm install canvas nomnoml
         - ./build-docs.sh
-        - git fetch --unshallow
-        - git push git@heroku.com:openmctweb-demo.git $CIRCLE_SHA1:refs/heads/master
-  openmct-demo:
-    branch: live_demo
-    heroku:
-      appname: openmct-demo
   openmctweb-staging-deux:
     branch: mobile
     heroku:

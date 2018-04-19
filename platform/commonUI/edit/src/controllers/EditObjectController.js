@@ -28,16 +28,6 @@ define(
     [],
     function () {
 
-        function isDirty(domainObject) {
-            var navigatedObject = domainObject,
-                editorCapability = navigatedObject &&
-                    navigatedObject.getCapability("editor");
-
-            return editorCapability &&
-                editorCapability.isEditContextRoot() &&
-                editorCapability.dirty();
-        }
-
         function cancelEditing(domainObject) {
             var navigatedObject = domainObject,
                 editorCapability = navigatedObject &&
@@ -59,10 +49,7 @@ define(
 
             var removeCheck = navigationService
                 .checkBeforeNavigation(function () {
-                    if (isDirty(domainObject)) {
-                        return "Continuing will cause the loss of any unsaved changes.";
-                    }
-                    return false;
+                    return "Continuing will cause the loss of any unsaved changes.";
                 });
 
             $scope.$on('$destroy', function () {

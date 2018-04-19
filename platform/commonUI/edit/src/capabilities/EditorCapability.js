@@ -101,10 +101,15 @@ define(
          */
         EditorCapability.prototype.finish = function () {
             var domainObject = this.domainObject;
-            return this.transactionService.cancel().then(function () {
-                domainObject.getCapability("status").set("editing", false);
-                return domainObject;
-            });
+
+            if (this.transactionService.isActive()) {
+                return this.transactionService.cancel().then(function () {
+                    domainObject.getCapability("status").set("editing", false);
+                    return domainObject;
+                });
+            } else {
+                return Promise.resolve(domainObject);
+            }
         };
 
         /**

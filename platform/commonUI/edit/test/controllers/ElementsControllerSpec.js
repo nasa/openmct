@@ -27,11 +27,70 @@ define(
 
         describe("The Elements Pane controller", function () {
             var mockScope,
+                mockOpenMCT,
+                mockSelection,
+                mockDomainObject,
+                mockMutationCapability,
+                mockCompositionCapability,
+                mockCompositionObjects,
+                mockComposition,
+                mockUnlisten,
+                selectable = [],
                 controller;
 
+            function mockPromise(value) {
+                return {
+                    then: function (thenFunc) {
+                        return mockPromise(thenFunc(value));
+                    }
+                };
+            }
+
+            function createDomainObject() {
+                return {
+                    useCapability: function () {
+                        return mockCompositionCapability;
+                    }
+                };
+            }
+
             beforeEach(function () {
-                mockScope = jasmine.createSpy("$scope");
-                controller = new ElementsController(mockScope);
+                mockComposition = ["a", "b"];
+                mockCompositionObjects = mockComposition.map(createDomainObject);
+                mockCompositionCapability = mockPromise(mockCompositionObjects);
+
+                mockUnlisten = jasmine.createSpy('unlisten');
+                mockMutationCapability = jasmine.createSpyObj("mutationCapability", [
+                    "listen"
+                ]);
+                mockMutationCapability.listen.andReturn(mockUnlisten);
+                mockDomainObject = jasmine.createSpyObj("domainObject", [
+                    "getCapability",
+                    "useCapability"
+                ]);
+                mockDomainObject.useCapability.andReturn(mockCompositionCapability);
+                mockDomainObject.getCapability.andReturn(mockMutationCapability);
+
+                mockScope = jasmine.createSpyObj("$scope", ['$on']);
+                mockSelection = jasmine.createSpyObj("selection", [
+                    'on',
+                    'off',
+                    'get'
+                ]);
+                mockSelection.get.andReturn([]);
+                mockOpenMCT = {
+                    selection: mockSelection
+                };
+
+                selectable[0] = {
+                    context: {
+                        oldItem: mockDomainObject
+                    }
+                };
+
+                spyOn(ElementsController.prototype, 'refreshComposition').andCallThrough();
+
+                controller = new ElementsController(mockScope, mockOpenMCT);
             });
 
             function getModel(model) {
@@ -63,6 +122,63 @@ define(
                 expect(objects.filter(mockScope.searchElements).length).toBe(4);
             });
 
+            it("refreshes composition on selection", function () {
+                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+
+                expect(ElementsController.prototype.refreshComposition).toHaveBeenCalledWith(mockDomainObject);
+            });
+
+            it("listens on mutation and refreshes composition", function () {
+                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+
+                expect(mockDomainObject.getCapability).toHaveBeenCalledWith('mutation');
+                expect(mockMutationCapability.listen).toHaveBeenCalled();
+                expect(ElementsController.prototype.refreshComposition.calls.length).toBe(1);
+
+                mockMutationCapability.listen.mostRecentCall.args[0](mockDomainObject);
+
+                expect(ElementsController.prototype.refreshComposition.calls.length).toBe(2);
+            });
+
+            it("cleans up mutation listener when selection changes", function () {
+                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+
+                expect(mockMutationCapability.listen).toHaveBeenCalled();
+
+                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+
+                expect(mockUnlisten).toHaveBeenCalled();
+            });
+
+            it("does not listen on mutation for element proxy selectable", function () {
+                selectable[0] = {
+                    context: {
+                        elementProxy: {}
+                    }
+                };
+                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+
+                expect(mockDomainObject.getCapability).not.toHaveBeenCalledWith('mutation');
+            });
+
+            it("checks concurrent changes to composition", function () {
+                var secondMockComposition = ["a", "b", "c"],
+                    secondMockCompositionObjects = secondMockComposition.map(createDomainObject),
+                    firstCompositionCallback,
+                    secondCompositionCallback;
+
+                spyOn(mockCompositionCapability, "then").andCallThrough();
+
+                controller.refreshComposition(mockDomainObject);
+                controller.refreshComposition(mockDomainObject);
+
+                firstCompositionCallback = mockCompositionCapability.then.calls[0].args[0];
+                secondCompositionCallback = mockCompositionCapability.then.calls[1].args[0];
+                secondCompositionCallback(secondMockCompositionObjects);
+                firstCompositionCallback(mockCompositionObjects);
+
+                expect(mockScope.composition).toBe(secondMockCompositionObjects);
+            });
         });
     }
 );

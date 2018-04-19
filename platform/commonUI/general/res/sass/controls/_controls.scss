@@ -150,6 +150,26 @@
     }
 }
 
+/******************************************************** VIEW CONTROLS */
+// Expand/collapse > and v arrows, used in tree and plot legend
+// Moved this over from a tree-only context 5/18/17
+
+.view-control {
+    @extend .ui-symbol;
+    cursor: pointer;
+    height: 1em; width: 1em;
+    line-height: inherit;
+    &:before {
+        position: absolute;
+        @include trans-prop-nice(transform, 100ms);
+        content: $glyph-icon-arrow-right;
+        @include transform-origin(center);
+    }
+    &.expanded:before {
+        @include transform(rotate(90deg));
+    }
+}
+
 /******************************************************** CUSTOM CHECKBOXES */
 label.checkbox.custom,
 label.radio.custom {
@@ -234,12 +254,16 @@ textarea {
 }
 
 /******************************************************** INPUTS */
+%input-base {
+    @include input-base();
+}
+
 input[type="text"],
 input[type="search"],
 input[type="number"] {
     @include nice-input();
     vertical-align: baseline;
-    padding: $inputTextP;
+    padding: $inputTextPTopBtm $inputTextPLeftRight;
     &.numeric {
         text-align: right;
     }
@@ -257,7 +281,7 @@ input[type="number"] {
 input[type="text"].lg {  width: 100% !important; }
 .l-input-med input[type="text"],
 input[type="text"].med { width: 200px !important; }
-input[type="text"].sm {  width: 50px !important; }
+input[type="text"].sm, input[type="number"].sm {  width: 50px !important; }
 .l-numeric input[type="text"],
 input[type="text"].numeric { text-align: right; }
 
@@ -283,21 +307,44 @@ textarea.lg { position: relative; height: 300px; }
     }
 }
 
+*[contenteditable].s-input-inline,
+input[type="text"].s-input-inline,
+.s-input-inline input[type="text"] {
+    // A text input or contenteditable element that indicates edit affordance on hover and looks like an input on focus
+    @extend %input-base;
+    @include trans-prop-nice((padding, box-shadow), 250ms);
+    background: none;
+    box-shadow: none;
+    border: 1px solid transparent;
+    min-width: 20px;
+    padding-left: 0;
+    padding-right: 0;
+    &:hover,
+    &:focus {
+        padding-left: $inputTextPLeftRight;
+        padding-right: $inputTextPLeftRight;
+    }
+    &:hover {
+        border-color: rgba($colorBodyFg, 0.2);
+    }
+    &:focus {
+        @include s-input();
+        border-color: transparent;
+    }
+}
+
 /******************************************************** SELECTS */
 .select {
     @include btnSubtle($bg: $colorSelectBg);
     @extend .icon-arrow-down; // Context arrow
-    @if $shdwBtns != none {
-        margin: 0 0 2px 0; // Needed to avoid dropshadow from being clipped by parent containers
-    }
     display: inline-block;
     padding: 0 $interiorMargin;
     overflow: hidden;
     position: relative;
-    line-height: $formInputH;
     select {
         @include appearance(none);
         box-sizing: border-box;
+        &:focus { outline: 0; }
         background: none;
         color: $colorSelectFg;
         cursor: pointer;
@@ -309,11 +356,13 @@ textarea.lg { position: relative; height: 300px; }
         }
     }
     &:before {
-        pointer-events: none;
+        @include transform(translateY(-50%));
         color: rgba($colorInvokeMenu, percentToDecimal($contrastInvokeMenuPercent));
         display: block;
+        pointer-events: none;
         position: absolute;
-        right: $interiorMargin; top: 0;
+        right: $interiorMargin;
+        top: 50%;
     }
 }
 
@@ -365,8 +414,7 @@ textarea.lg { position: relative; height: 300px; }
     .l-elem-wrapper {
         mct-representation {
             // Holds the context-available item
-            // Must have min-width to make flex work properly
-            // in Safari
+            // Must have min-width to make flex work properly in Safari
             min-width: 0.7em;
         }
     }
@@ -532,7 +580,6 @@ textarea.lg { position: relative; height: 300px; }
     height: $h;
     margin-top: 1 + floor($h/2) * -1;
     @include btnSubtle(pullForward($colorBtnBg, 10%));
-    //border-radius: 50% !important;
 }
 
 @mixin sliderKnobRound() {
@@ -547,7 +594,6 @@ textarea.lg { position: relative; height: 300px; }
 
 input[type="range"] {
     // HTML5 range inputs
-
     -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
     background: transparent; /* Otherwise white in Chrome */
     &:focus {
@@ -705,6 +751,30 @@ textarea {
     }
 }
 
+.view-switcher,
+.t-btn-view-large {
+    @include trans-prop-nice-fade($controlFadeMs);
+}
+
+.view-control {
+    @extend .icon-arrow-right;
+    cursor: pointer;
+    font-size: 0.75em;
+    &:before {
+        position: absolute;
+        @include trans-prop-nice(transform, 100ms);
+        @include transform-origin(center);
+    }
+    &.expanded:before {
+        @include transform(rotate(90deg));
+    }
+}
+
+.grippy {
+    @extend .icon-grippy;
+    cursor: move;
+}
+
 /******************************************************** BROWSER ELEMENTS */
 body.desktop {
     ::-webkit-scrollbar {
@@ -722,9 +792,13 @@ body.desktop {
     }
 
     .overlay ::-webkit-scrollbar-thumb {
-        $lr: 15%;
         background: $scrollbarThumbColorOverlay;
         &:hover { background: $scrollbarThumbColorOverlayHov; }
+    }
+
+    .menu ::-webkit-scrollbar-thumb {
+        background: $scrollbarThumbColorMenu;
+        &:hover { background: $scrollbarThumbColorMenuHov; }
     }
 
     ::-webkit-scrollbar-corner {

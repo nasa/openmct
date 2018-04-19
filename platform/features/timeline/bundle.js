@@ -29,6 +29,7 @@ define([
     "./src/controllers/TimelineTickController",
     "./src/controllers/TimelineTableController",
     "./src/controllers/TimelineGanttController",
+    "./src/controllers/TimelineTOIController",
     "./src/controllers/ActivityModeValuesController",
     "./src/capabilities/ActivityTimespanCapability",
     "./src/capabilities/TimelineTimespanCapability",
@@ -37,6 +38,7 @@ define([
     "./src/capabilities/CostCapability",
     "./src/directives/MCTSwimlaneDrop",
     "./src/directives/MCTSwimlaneDrag",
+    "./src/directives/MCTResourceGraphDrop",
     "./src/services/ObjectLoader",
     "./src/chart/MCTTimelineChart",
     "text!./res/templates/values.html",
@@ -59,6 +61,7 @@ define([
     TimelineTickController,
     TimelineTableController,
     TimelineGanttController,
+    TimelineTOIController,
     ActivityModeValuesController,
     ActivityTimespanCapability,
     TimelineTimespanCapability,
@@ -67,6 +70,7 @@ define([
     CostCapability,
     MCTSwimlaneDrop,
     MCTSwimlaneDrag,
+    MCTResourceGraphDrop,
     ObjectLoader,
     MCTTimelineChart,
     valuesTemplate,
@@ -503,6 +507,15 @@ define([
                     ]
                 },
                 {
+                    "key": "TimelineTOIController",
+                    "implementation": TimelineTOIController,
+                    "depends": [
+                        "openmct",
+                        "timerService",
+                        "$scope"
+                    ]
+                },
+                {
                     "key": "ActivityModeValuesController",
                     "implementation": ActivityModeValuesController,
                     "depends": [
@@ -565,6 +578,13 @@ define([
                     "depends": [
                         "$interval",
                         "$log"
+                    ]
+                },
+                {
+                    "key": "mctResourceGraphDrop",
+                    "implementation": MCTResourceGraphDrop,
+                    "depends": [
+                        "dndService"
                     ]
                 }
             ],

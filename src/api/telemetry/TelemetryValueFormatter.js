@@ -41,8 +41,6 @@ define([
         };
 
         this.valueMetadata = valueMetadata;
-        this.parseCache = new WeakMap();
-        this.formatCache = new WeakMap();
         try {
             this.formatter = formatService
                 .getFormat(valueMetadata.format, valueMetadata);
@@ -51,7 +49,7 @@ define([
             this.formatter = numberFormatter;
         }
 
-        if (valueMetadata.type === 'enum') {
+        if (valueMetadata.format === 'enum') {
             this.formatter = {};
             this.enumerations = valueMetadata.enumerations.reduce(function (vm, e) {
                 vm.byValue[e.value] = e.string;
@@ -59,11 +57,16 @@ define([
                 return vm;
             }, {byValue: {}, byString: {}});
             this.formatter.format = function (value) {
-                return this.enumerations.byValue[value];
+                if (typeof value === "number") {
+                    return this.enumerations.byValue[value] || value;
+                }
+                return value;
             }.bind(this);
             this.formatter.parse = function (string) {
-                if (typeof string === "string" && this.enumerations.hasOwnProperty(string)) {
-                    return this.enumerations.byString[string];
+                if (typeof string === "string") {
+                    if (this.enumerations.byString.hasOwnProperty(string)) {
+                        return this.enumerations.byString[string];
+                    }
                 }
                 return Number(string);
             }.bind(this);
@@ -72,26 +75,14 @@ define([
 
     TelemetryValueFormatter.prototype.parse = function (datum) {
         if (_.isObject(datum)) {
-            if (!this.parseCache.has(datum)) {
-                this.parseCache.set(
-                    datum,
-                    this.formatter.parse(datum[this.valueMetadata.source])
-                );
-            }
-            return this.parseCache.get(datum);
+            return this.formatter.parse(datum[this.valueMetadata.source]);
         }
         return this.formatter.parse(datum);
     };
 
     TelemetryValueFormatter.prototype.format = function (datum) {
         if (_.isObject(datum)) {
-            if (!this.formatCache.has(datum)) {
-                this.formatCache.set(
-                    datum,
-                    this.formatter.format(datum[this.valueMetadata.source])
-                );
-            }
-            return this.formatCache.get(datum);
+            return this.formatter.format(datum[this.valueMetadata.source]);
         }
         return this.formatter.format(datum);
     };

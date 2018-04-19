@@ -55,8 +55,8 @@ define(
          * @param element the fixed position element, as stored in its
          *        configuration
          * @param index the element's index within its array
-         * @param {number[]} gridSize the current layout grid size in [x,y] from
          * @param {Array} elements the full array of elements
+         * @param {number[]} gridSize the current layout grid size in [x,y] from
          */
         function ElementProxy(element, index, elements, gridSize) {
             /**

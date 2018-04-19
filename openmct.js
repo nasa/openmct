@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global requirejs*/
+/*global requirejs,BUILD_CONSTANTS*/
 
 requirejs.config({
     "paths": {
@@ -33,13 +33,14 @@ requirejs.config({
         "moment": "bower_components/moment/moment",
         "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
         "moment-timezone": "bower_components/moment-timezone/builds/moment-timezone-with-data",
-        "saveAs": "bower_components/FileSaver.js/FileSaver.min",
+        "saveAs": "bower_components/file-saver/FileSaver.min",
         "screenfull": "bower_components/screenfull/dist/screenfull.min",
         "text": "bower_components/text/text",
         "uuid": "bower_components/node-uuid/uuid",
+        "vue": "node_modules/vue/dist/vue.min",
         "zepto": "bower_components/zepto/zepto.min",
         "lodash": "bower_components/lodash/lodash",
-        "d3-selection": "node_modules/d3-selection/build/d3-selection.min",
+        "d3-selection": "node_modules/d3-selection/dist/d3-selection.min",
         "d3-scale": "node_modules/d3-scale/build/d3-scale.min",
         "d3-axis": "node_modules/d3-axis/build/d3-axis.min",
         "d3-array": "node_modules/d3-array/build/d3-array.min",
@@ -66,6 +67,9 @@ requirejs.config({
         "moment-duration-format": {
             "deps": ["moment"]
         },
+        "saveAs": {
+            "exports": "saveAs"
+        },
         "screenfull": {
             "exports": "screenfull"
         },
@@ -91,11 +95,17 @@ requirejs.config({
 define([
     './platform/framework/src/Main',
     './src/defaultRegistry',
-    './src/MCT'
-], function (Main, defaultRegistry, MCT) {
+    './src/MCT',
+    './src/plugins/buildInfo/plugin'
+], function (Main, defaultRegistry, MCT, buildInfo) {
     var openmct = new MCT();
 
     openmct.legacyRegistry = defaultRegistry;
+    openmct.install(openmct.plugins.Plot());
+
+    if (typeof BUILD_CONSTANTS !== 'undefined') {
+        openmct.install(buildInfo(BUILD_CONSTANTS));
+    }
 
     openmct.on('start', function () {
         return new Main().run(defaultRegistry);

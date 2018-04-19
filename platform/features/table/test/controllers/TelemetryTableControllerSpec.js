@@ -91,7 +91,7 @@ define(
                 mockScope.domainObject = mockDomainObject;
 
                 mockTelemetryAPI = jasmine.createSpyObj("telemetryAPI", [
-                    "canProvideTelemetry",
+                    "isTelemetryObject",
                     "subscribe",
                     "getMetadata",
                     "commonValuesForHints",
@@ -117,7 +117,7 @@ define(
                     return formatter;
                 });
 
-                mockTelemetryAPI.canProvideTelemetry.andReturn(false);
+                mockTelemetryAPI.isTelemetryObject.andReturn(false);
 
                 mockTimeout = jasmine.createSpy("timeout");
                 mockTimeout.andReturn(1); // Return something
@@ -199,7 +199,7 @@ define(
                     mockComposition.load.andReturn(Promise.resolve(mockChildren));
                     mockCompositionAPI.get.andReturn(mockComposition);
 
-                    mockTelemetryAPI.canProvideTelemetry.andCallFake(function (obj) {
+                    mockTelemetryAPI.isTelemetryObject.andCallFake(function (obj) {
                         return obj.identifier.key === mockTelemetryObject.identifier.key;
                     });
 
@@ -287,7 +287,7 @@ define(
                     mockChildren = mockChildren.concat(mockTelemetryChildren);
                     mockComposition.load.andReturn(Promise.resolve(mockChildren));
 
-                    mockTelemetryAPI.canProvideTelemetry.andCallFake(function (object) {
+                    mockTelemetryAPI.isTelemetryObject.andCallFake(function (object) {
                         if (object === mockTelemetryObject) {
                             return false;
                         } else {
@@ -436,5 +436,28 @@ define(
                 expect(mockScope.$broadcast).toHaveBeenCalledWith("remove:rows", discardedRows);
             });
 
+            describe('when telemetry is added', function () {
+                var testRows;
+                var expectedRows;
+
+                beforeEach(function () {
+                    testRows = [{ a: 0 }, { a: 1 }, { a: 2 }];
+                    mockScope.rows = [{ a: -1 }];
+                    expectedRows = mockScope.rows.concat(testRows);
+
+                    spyOn(controller.telemetry, "on").andCallThrough();
+                    controller.registerChangeListeners();
+
+                    controller.telemetry.on.calls.forEach(function (call) {
+                        if (call.args[0] === 'added') {
+                            call.args[1](testRows);
+                        }
+                    });
+                });
+
+                it("adds it to rows in scope", function () {
+                    expect(mockScope.rows).toEqual(expectedRows);
+                });
+            });
         });
     });

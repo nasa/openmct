@@ -181,6 +181,8 @@ $colorPlotHash: $colorTick;
 $stylePlotHash: dashed;
 $colorPlotAreaBorder: $colorInteriorBorder;
 $colorPlotLabelFg: pushBack($colorPlotFg, 20%);
+$legendCollapsedNameMaxW: 50%;
+$legendHoverValueBg: rgba($colorBodyFg, 0.1);
 
 // Tree
 $colorItemTreeHoverBg: pullForward($colorBodyBg, $hoverRatioPercent);
@@ -201,13 +203,15 @@ $shdwItemTreeIcon: 0.6;
 $colorThumbHoverBg: $colorItemTreeHoverBg;
 
 // Scrollbar
-$scrollbarTrackSize: 10px;
-$scrollbarTrackShdw: rgba(#000, 0.7) 0 1px 5px;
-$scrollbarTrackColorBg: rgba(#000, 0.4);
+$scrollbarTrackSize: 7px;
+$scrollbarTrackShdw: rgba(#000, 0.5) 0 1px 5px;
+$scrollbarTrackColorBg: transparent; //rgba(#000, 0.4);
 $scrollbarThumbColor: pullForward($colorBodyBg, 10%);
 $scrollbarThumbColorHov: pullForward($scrollbarThumbColor, 2%);
 $scrollbarThumbColorOverlay: pullForward($colorOvrBg, 10%);
 $scrollbarThumbColorOverlayHov: pullForward($scrollbarThumbColorOverlay, 2%);
+$scrollbarThumbColorMenu: pullForward($colorMenuBg, 20%);
+$scrollbarThumbColorMenuHov: pullForward($scrollbarThumbColorMenu, 2%);
 
 // Splitter
 // All splitterD* values MUST both be either odd or even numbers
@@ -240,6 +244,12 @@ $colorCalCellHovFg: $colorKeyFg;
 $colorCalCellSelectedBg: $colorItemTreeSelectedBg;
 $colorCalCellSelectedFg: $colorItemTreeSelectedFg;
 $colorCalCellInMonthBg: pushBack($colorMenuBg, 5%);
+
+// Palettes
+$colorPaletteFg: pullForward($colorMenuBg, 30%);
+$colorPaletteSelected: #fff;
+$shdwPaletteFg: black 0 0 2px;
+$shdwPaletteSelected: inset 0 0 0 1px #000;
 
 // About Screen
 $colorAboutLink: #84b3ff;

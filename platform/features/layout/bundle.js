@@ -260,7 +260,9 @@ define([
                     "key": "LayoutController",
                     "implementation": LayoutController,
                     "depends": [
-                        "$scope"
+                        "$scope",
+                        "$element",
+                        "openmct"
                     ]
                 },
                 {
@@ -270,7 +272,8 @@ define([
                         "$scope",
                         "$q",
                         "dialogService",
-                        "openmct"
+                        "openmct",
+                        "$element"
                     ]
                 }
             ],
@@ -331,46 +334,6 @@ define([
                                 }
                             ],
                             "key": "layoutGrid",
-                            "conversion": "number[]"
-                        }
-                    ]
-                },
-                {
-                    "key": "telemetry.panel",
-                    "name": "Telemetry Panel",
-                    "cssClass": "icon-telemetry-panel",
-                    "description": "A panel for collecting telemetry elements.",
-                    "priority": 899,
-                    "delegates": [
-                        "telemetry"
-                    ],
-                    "features": "creation",
-                    "contains": [
-                        {
-                            "has": "telemetry"
-                        }
-                    ],
-                    "model": {
-                        "composition": []
-                    },
-                    "properties": [
-                        {
-                            "name": "Layout Grid",
-                            "control": "composite",
-                            "items": [
-                                {
-                                    "name": "Horizontal grid (px)",
-                                    "control": "textfield",
-                                    "cssClass": "l-input-sm l-numeric"
-                                },
-                                {
-                                    "name": "Vertical grid (px)",
-                                    "control": "textfield",
-                                    "cssClass": "l-input-sm l-numeric"
-                                }
-                            ],
-                            "pattern": "^(\\d*[1-9]\\d*)?$",
-                            "property": "layoutGrid",
                             "conversion": "number[]"
                         }
                     ]

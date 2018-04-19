@@ -24,10 +24,15 @@ define([
     'lodash',
     './utcTimeSystem/plugin',
     '../../example/generator/plugin',
-    '../../platform/features/autoflow/plugin',
+    './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
-    '../../platform/import-export/bundle'
+    '../../platform/import-export/bundle',
+    './summaryWidget/plugin',
+    './URLIndicatorPlugin/URLIndicatorPlugin',
+    './telemetryMean/plugin',
+    './plot/plugin',
+    './staticRootPlugin/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -35,7 +40,12 @@ define([
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
-    ImportExport
+    ImportExport,
+    SummaryWidget,
+    URLIndicatorPlugin,
+    TelemetryMean,
+    PlotPlugin,
+    StaticRootPlugin
 ) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
@@ -57,6 +67,8 @@ define([
     plugins.UTCTimeSystem = UTCTimeSystem;
 
     plugins.ImportExport = ImportExport;
+
+    plugins.StaticRootPlugin = StaticRootPlugin;
 
     /**
      * A tabular view showing the latest values of multiple telemetry points at
@@ -120,6 +132,11 @@ define([
     };
 
     plugins.ExampleImagery = ExampleImagery;
+    plugins.Plot = PlotPlugin;
+
+    plugins.SummaryWidget = SummaryWidget;
+    plugins.TelemetryMean = TelemetryMean;
+    plugins.URLIndicatorPlugin = URLIndicatorPlugin;
 
     return plugins;
 });

@@ -30,7 +30,8 @@ define([
         amplitude: 1,
         period: 10,
         offset: 0,
-        dataRateInHz: 1
+        dataRateInHz: 1,
+        phase: 0
     };
 
     function GeneratorProvider() {
@@ -50,8 +51,11 @@ define([
             'amplitude',
             'period',
             'offset',
-            'dataRateInHz'
+            'dataRateInHz',
+            'phase',
         ];
+
+        request = request || {};
 
         var workerRequest = {};
 
@@ -59,15 +63,15 @@ define([
             if (domainObject.telemetry && domainObject.telemetry.hasOwnProperty(prop)) {
                 workerRequest[prop] = domainObject.telemetry[prop];
             }
-            if (request.hasOwnProperty(prop)) {
+            if (request && request.hasOwnProperty(prop)) {
                 workerRequest[prop] = request[prop];
             }
-            if (!workerRequest[prop]) {
+            if (!workerRequest.hasOwnProperty(prop)) {
                 workerRequest[prop] = REQUEST_DEFAULTS[prop];
             }
             workerRequest[prop] = Number(workerRequest[prop]);
         });
-
+        workerRequest.name = domainObject.name;
         return workerRequest;
     };
 

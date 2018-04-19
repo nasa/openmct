@@ -34,6 +34,7 @@ define(
                 mockUnsubscribe,
                 telemetry,
                 mockTelemetryAPI,
+                mockMetadata,
                 mockAPI;
 
             function mockPromise(value) {
@@ -90,13 +91,22 @@ define(
                     "findRequestProvider",
                     "findSubscriptionProvider"
                 ]);
-                mockTelemetryAPI.getMetadata.andReturn({
-                    valuesForHints: function (hint) {
-                        var metadatum = {};
-                        metadatum[hint] = "foo";
-                        return [metadatum];
-                    }
+
+                mockMetadata = jasmine.createSpyObj('telemetryMetadata', [
+                    'valuesForHints',
+                    'values'
+                ]);
+
+                mockMetadata.valuesForHints.andCallFake(function (hints) {
+                    var hint = hints[0];
+                    var metadatum = {
+                        key: 'default' + hint
+                    };
+                    metadatum[hint] = "foo";
+                    return [metadatum];
                 });
+
+                mockTelemetryAPI.getMetadata.andReturn(mockMetadata);
 
                 mockAPI = {
                     telemetry: mockTelemetryAPI,
@@ -150,8 +160,8 @@ define(
                         key: "testKey", // from model
                         start: 42, // from argument
                         domain: 'mockTimeSystem',
-                        domains: [{ domain: "foo" }],
-                        ranges: [{ range: "foo" }]
+                        domains: [{ domain: "foo", key: 'defaultdomain' }],
+                        ranges: [{ range: "foo", key: 'defaultrange' }]
                     }]);
             });
 
@@ -172,8 +182,8 @@ define(
                     start: 0,
                     end: 1,
                     domain: 'mockTimeSystem',
-                    domains: [{ domain: "foo" }],
-                    ranges: [{ range: "foo" }]
+                    domains: [{ domain: "foo", key: 'defaultdomain' }],
+                    ranges: [{ range: "foo", key: 'defaultrange' }]
                 });
             });
 
@@ -191,8 +201,8 @@ define(
                     start: 0,
                     end: 1,
                     domain: 'mockTimeSystem',
-                    domains: [{ domain: "foo" }],
-                    ranges: [{ range: "foo" }]
+                    domains: [{ domain: "foo", key: 'defaultdomain' }],
+                    ranges: [{ range: "foo", key: 'defaultrange' }]
                 });
             });
 
@@ -240,6 +250,21 @@ define(
                 var mockProvider = {};
                 var dunzo = false;
 
+                mockMetadata.values.andReturn([
+                    {
+                        key: 'defaultrange',
+                        source: 'prop1'
+                    },
+                    {
+                        key: 'defaultdomain',
+                        source: 'prop2'
+                    },
+                    {
+                        key: 'prop3',
+                        source: 'prop3'
+                    }
+                ]);
+
                 mockTelemetryAPI.findRequestProvider.andReturn(mockProvider);
                 mockTelemetryAPI.request.andReturn(Promise.resolve(mockTelemetry));
 
@@ -257,6 +282,18 @@ define(
                     expect(returnedTelemetry.getDomainValue).toBeDefined();
                     expect(returnedTelemetry.getRangeValue).toBeDefined();
                     expect(returnedTelemetry.getPointCount()).toBe(2);
+                    // Default domain + remap should work.
+                    expect(returnedTelemetry.getDomainValue(0)).toBe('val2');
+                    expect(returnedTelemetry.getDomainValue(1)).toBe('val5');
+                    // explicit domain should work
+                    expect(returnedTelemetry.getDomainValue(0, 'prop3')).toBe('val3');
+                    expect(returnedTelemetry.getDomainValue(1, 'prop3')).toBe('val6');
+                    // default range + remap should work
+                    expect(returnedTelemetry.getRangeValue(0)).toBe('val1');
+                    expect(returnedTelemetry.getRangeValue(1)).toBe('val4');
+                    // explicit range should work
+                    expect(returnedTelemetry.getRangeValue(0, 'prop3')).toBe('val3');
+                    expect(returnedTelemetry.getRangeValue(1, 'prop3')).toBe('val6');
                 });
 
             });
@@ -275,8 +312,8 @@ define(
                         start: 0,
                         end: 1,
                         domain: 'mockTimeSystem',
-                        domains: [{ domain: "foo" }],
-                        ranges: [{ range: "foo" }]
+                        domains: [{ domain: "foo", key: "defaultdomain" }],
+                        ranges: [{ range: "foo", key: "defaultrange" }]
                     }]
                 );
 

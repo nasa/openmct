@@ -2,7 +2,7 @@
   "metadata": {
     "name": "openmct-symbols-16px",
     "lastOpened": 0,
-    "created": 1505151140023
+    "created": 1506973656040
   },
   "iconSets": [
     {
@@ -899,6 +899,14 @@
           "prevSize": 24,
           "code": 921904,
           "tempChar": ""
+        },
+        {
+          "order": 139,
+          "id": 117,
+          "name": "icon-notebook",
+          "prevSize": 24,
+          "code": 921905,
+          "tempChar": ""
         }
       ],
       "metadata": {
@@ -3521,6 +3529,29 @@
           ],
           "colorPermutations": {
             "1161751207457516161751": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 117,
+          "paths": [
+            "M896 110.8c0-79.8-55.4-127.4-123-105.4l-773 250.6h896v-145.2z",
+            "M896 320h-896v576c0 70.4 57.6 128 128 128h768c70.4 0 128-57.6 128-128v-448c0-70.4-57.6-128-128-128zM832 832h-384v-320h384v320z"
+          ],
+          "attrs": [
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-notebook"
+          ],
+          "colorPermutations": {
+            "1161751207457516161751": [
+              {},
               {}
             ]
           }

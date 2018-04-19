@@ -201,7 +201,7 @@ define(
             var options = [{
                 key: 'fixed',
                 name: 'Fixed Timespan Mode',
-                description: 'Query and explore data that falls between two fixed datetimes',
+                description: 'Query and explore data that falls between two fixed datetimes.',
                 cssClass: 'icon-calendar'
             }];
             var clocks = {};

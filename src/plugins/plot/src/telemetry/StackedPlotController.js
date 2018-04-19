@@ -1,0 +1,146 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2018, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+define([
+    'lodash'
+], function (
+    _
+) {
+
+    function StackedPlotController($scope, openmct, objectService, $element, exportImageService) {
+        var tickWidth = 0,
+            newFormatObject,
+            composition,
+            currentRequest,
+            unlisten,
+            tickWidthMap = {};
+
+        this.$element = $element;
+        this.exportImageService = exportImageService;
+
+        $scope.telemetryObjects = [];
+
+        function oldId(newIdentifier) {
+            var idParts = [];
+            if (newIdentifier.namespace) {
+                idParts.push(newIdentifier.namespace.replace(/\:/g, '\\:'));
+            }
+            idParts.push(newIdentifier.key);
+            return idParts.join(':');
+        }
+
+        function onDomainObjectChange(domainObject) {
+            var thisRequest = {
+                pending: 0
+            };
+            currentRequest = thisRequest;
+            $scope.currentRequest = thisRequest;
+            var telemetryObjects = $scope.telemetryObjects = [];
+            var thisTickWidthMap = {};
+            tickWidthMap = thisTickWidthMap;
+
+            if (unlisten) {
+                unlisten();
+                unlisten = undefined;
+            }
+
+            function addChild(child) {
+                var id = oldId(child.identifier);
+                thisTickWidthMap[id] = 0;
+                thisRequest.pending += 1;
+                objectService.getObjects([id])
+                    .then(function (objects) {
+                        thisRequest.pending -= 1;
+                        var childObj = objects[id];
+                        telemetryObjects.push(childObj);
+                    });
+            }
+
+            function removeChild(childIdentifier) {
+                var id = oldId(childIdentifier);
+                delete thisTickWidthMap[id];
+                var childObj = telemetryObjects.filter(function (c) {
+                    return c.getId() === id;
+                })[0];
+                if (childObj) {
+                    var index = telemetryObjects.indexOf(childObj);
+                    telemetryObjects.splice(index, 1);
+                    $scope.$broadcast('plot:tickWidth', _.max(tickWidthMap));
+                }
+            }
+            thisRequest.pending += 1;
+            openmct.objects.get(domainObject.getId())
+                    .then(function (obj) {
+                        thisRequest.pending -= 1;
+                        if (thisRequest !== currentRequest) {
+                            return;
+                        }
+                        newFormatObject = obj;
+                        composition = openmct.composition.get(obj);
+                        composition.on('add', addChild);
+                        composition.on('remove', removeChild);
+                        composition.load();
+                        unlisten = function () {
+                            composition.off('add', addChild);
+                            composition.off('remove', removeChild);
+                        };
+                    });
+        }
+
+        $scope.$watch('domainObject', onDomainObjectChange);
+
+        $scope.$on('plot:tickWidth', function ($e, width) {
+            var plotId = $e.targetScope.domainObject.getId();
+            if (!tickWidthMap.hasOwnProperty(plotId)) {
+                return;
+            }
+            tickWidthMap[plotId] = Math.max(width, tickWidthMap[plotId]);
+            var newTickWidth = _.max(tickWidthMap);
+            if (newTickWidth !== tickWidth || width !== tickWidth) {
+                tickWidth = newTickWidth;
+                $scope.$broadcast('plot:tickWidth', tickWidth);
+            }
+        });
+
+        $scope.$on('plot:highlight:update', function ($e, point) {
+            $scope.$broadcast('plot:highlight:set', point);
+        });
+    }
+
+    StackedPlotController.prototype.exportJPG = function () {
+        this.hideExportButtons = true;
+        this.exportImageService.exportJPG(this.$element[0], 'stacked-plot.jpg')
+            .finally(function () {
+                this.hideExportButtons = false;
+            }.bind(this));
+    };
+
+    StackedPlotController.prototype.exportPNG = function () {
+        this.hideExportButtons = true;
+        this.exportImageService.exportPNG(this.$element[0], 'stacked-plot.png')
+            .finally(function () {
+                this.hideExportButtons = false;
+            }.bind(this));
+    };
+
+    return StackedPlotController;
+});

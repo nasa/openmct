@@ -436,9 +436,31 @@ define(
          * @param {Object} searchElement Object to find the insertion point for
          */
         MCTTableController.prototype.findInsertionPoint = function (searchArray, searchElement) {
-            //First, use a binary search to find the correct insertion point
-            var index = this.binarySearch(searchArray, searchElement, 0, searchArray.length - 1);
-            var testIndex = index;
+            var index;
+            var testIndex;
+            var first = searchArray[0];
+            var last = searchArray[searchArray.length - 1];
+
+            if (first) {
+                first = first[this.$scope.sortColumn].text;
+            }
+            if (last) {
+                last = last[this.$scope.sortColumn].text;
+            }
+            // Shortcut check for append/prepend
+            if (first && this.sortComparator(first, searchElement) >= 0) {
+                index = testIndex = 0;
+            } else if (last && this.sortComparator(last, searchElement) <= 0) {
+                index = testIndex = searchArray.length;
+            } else {
+                // use a binary search to find the correct insertion point
+                index = testIndex =  this.binarySearch(
+                    searchArray,
+                    searchElement,
+                    0,
+                    searchArray.length - 1
+                );
+            }
 
             //It's possible that the insertion point is a duplicate of the element to be inserted
             var isDupe = function () {

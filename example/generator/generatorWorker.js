@@ -62,10 +62,11 @@
                 self.postMessage({
                     id: message.id,
                     data: {
+                        name: data.name,
                         utc: nextStep,
                         yesterday: nextStep - 60*60*24*1000,
-                        sin: sin(nextStep, data.period, data.amplitude, data.offset),
-                        cos: cos(nextStep, data.period, data.amplitude, data.offset)
+                        sin: sin(nextStep, data.period, data.amplitude, data.offset, data.phase),
+                        cos: cos(nextStep, data.period, data.amplitude, data.offset, data.phase)
                     }
                 });
                 nextStep += step;
@@ -82,21 +83,22 @@
     }
 
     function onRequest(message) {
-        var data = message.data;
-        if (data.end == undefined) {
-            data.end = Date.now();
+        var request = message.data;
+        if (request.end == undefined) {
+            request.end = Date.now();
         }
-        if (data.start == undefined){
-            data.start = data.end - FIFTEEN_MINUTES;
+        if (request.start == undefined){
+            request.start = request.end - FIFTEEN_MINUTES;
         }
 
         var now = Date.now();
-        var start = data.start;
-        var end = data.end > now ? now : data.end;
-        var amplitude = data.amplitude;
-        var period = data.period;
-        var offset = data.offset;
-        var dataRateInHz = data.dataRateInHz;
+        var start = request.start;
+        var end = request.end > now ? now : request.end;
+        var amplitude = request.amplitude;
+        var period = request.period;
+        var offset = request.offset;
+        var dataRateInHz = request.dataRateInHz;
+        var phase = request.phase;
 
         var step = 1000 / dataRateInHz;
         var nextStep = start - (start % step) + step;
@@ -105,10 +107,11 @@
 
         for (; nextStep < end && data.length < 5000; nextStep += step) {
             data.push({
+                name: request.name,
                 utc: nextStep,
                 yesterday: nextStep - 60*60*24*1000,
-                sin: sin(nextStep, period, amplitude, offset),
-                cos: cos(nextStep, period, amplitude, offset)
+                sin: sin(nextStep, period, amplitude, offset, phase),
+                cos: cos(nextStep, period, amplitude, offset, phase)
             });
         }
         self.postMessage({
@@ -117,14 +120,14 @@
         });
     }
 
-    function cos(timestamp, period, amplitude, offset) {
+    function cos(timestamp, period, amplitude, offset, phase) {
         return amplitude *
-            Math.cos(timestamp / period / 1000 * Math.PI * 2) + offset;
+            Math.cos(phase + (timestamp / period / 1000 * Math.PI * 2)) + offset;
     }
 
-    function sin(timestamp, period, amplitude, offset) {
+    function sin(timestamp, period, amplitude, offset, phase) {
         return amplitude *
-            Math.sin(timestamp / period / 1000 * Math.PI * 2) + offset;
+            Math.sin(phase + (timestamp / period / 1000 * Math.PI * 2)) + offset;
     }
 
     function sendError(error, message) {
