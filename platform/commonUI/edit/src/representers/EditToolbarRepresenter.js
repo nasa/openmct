@@ -125,13 +125,12 @@ define(
         // Represent a domain object using this definition
         EditToolbarRepresenter.prototype.represent = function (representation) {
             // Get the newest toolbar definition from the view
-            var definition = (representation || {}).toolbar || {},
-                self = this;
+            var definition = (representation || {}).toolbar || {};
 
             // If we have been asked to expose toolbar state...
             if (this.attrs.toolbar) {
                 // Initialize toolbar object
-                this.toolbar = new EditToolbar(def, this.commit);
+                this.toolbar = new EditToolbar(definition, this.commit);
                 // Ensure toolbar state is exposed
                 this.exposeToolbar();
             }

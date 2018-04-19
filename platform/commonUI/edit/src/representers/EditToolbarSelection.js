@@ -44,7 +44,7 @@ define(
             this.selectedObj = undefined;
             var self = this;
 
-            function setSelection (selection) {
+            function setSelection(selection) {
                 var selected = selection[0];
 
                 if (selected && selected.context.toolbar) {
