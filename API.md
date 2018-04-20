@@ -23,7 +23,7 @@
           - [Value Hints](#value-hints)
         - [The Time Conductor and Telemetry](#the-time-conductor-and-telemetry)
       - [Telemetry Providers](#telemetry-providers)
-      - [Telemetry Requests](#telemetry-requests)
+      - [Telemetry Requests and Responses.](#telemetry-requests-and-responses)
       - [Request Strategies **draft**](#request-strategies-draft)
         - [`latest` request strategy](#latest-request-strategy)
         - [`minmax` request strategy](#minmax-request-strategy)
@@ -32,7 +32,7 @@
       - [Telemetry Data](#telemetry-data)
         - [Telemetry Datums](#telemetry-datums)
       - [Limit Evaluators **draft**](#limit-evaluators-draft)
-    - [Telemetry Visualization APIs **draft**](#telemetry-visualization-apis-draft)
+    - [Telemetry Consumer APIs **draft**](#telemetry-consumer-apis-draft)
   - [Time API](#time-api)
     - [Time Systems and Bounds](#time-systems-and-bounds)
       - [Defining and Registering Time Systems](#defining-and-registering-time-systems)
@@ -449,7 +449,7 @@ A telemetry provider is a javascript object with up to four methods:
 * `supportsSubscribe(domainObject, callback, options)` optional.  Must be implemented to provide realtime telemetry.  Should return `true` if the provider supports subscriptions for the given domain object (and request options).
 * `subscribe(domainObject, callback, options)` required if `supportsSubscribe` is implemented.  Establish a subscription for realtime data for the given domain object.  Should invoke `callback` with a single telemetry datum every time data is received.  Must return an unsubscribe function.  Multiple views can subscribe to the same telemetry object, so it should always return a new unsubscribe function.
 * `supportsRequest(domainObject, options)` optional.  Must be implemented to provide historical telemetry.  Should return `true` if the provider supports historical requests for the given domain object.
-* `request(domainObject, options)` required if `supportsRequest` is implemented.  Must return a promise for an array of telemetry datums that fulfills the request.  The `options` argument will include a `start`, `end`, and `domain` attribute representing the query bounds.  For more request properties, see Request Properties below.
+* `request(domainObject, options)` required if `supportsRequest` is implemented.  Must return a promise for an array of telemetry datums that fulfills the request.  The `options` argument will include a `start`, `end`, and `domain` attribute representing the query bounds.  See [Telemetry Requests and Responses](#telemetry-requests-and-responses) for more info on how to respond to requests.
 * `supportsMetadata(domainObject)` optional.  Implement and return `true` for objects that you want to provide dynamic metadata for.
 * `getMetadata(domainObject)` required if `supportsMetadata` is implemented.  Must return a valid telemetry metadata definition that includes at least one valueMetadata definition.
 * `supportsLimits(domainObject)` optional.  Implement and return `true` for domain objects that you want to provide a limit evaluator for.
@@ -466,7 +466,7 @@ openmct.telemetry.addProvider({
 
 Note: it is not required to implement all of the methods on every provider.  Depending on the complexity of your implementation, it may be helpful to instantiate and register your realtime, historical, and metadata providers separately.
 
-#### Telemetry Requests
+#### Telemetry Requests and Responses.
 
 Telemetry requests support time bounded queries. A call to a _Telemetry Provider_'s `request` function will include an `options` argument. These are simply javascript objects with attributes for the request parameters. An example of a telemetry request object with a start and end time is included below:
 
@@ -480,8 +480,7 @@ Telemetry requests support time bounded queries. A call to a _Telemetry Provider
 
 In this case, the `domain` is the currently selected time-system, and the start and end dates are valid dates in that time system.
 
-The response to a telemetry request is an array of telemetry datums.  
-These datums must be sorted by `domain` in ascending order.
+A telemetry provider's `request` method should return a promise for an array of telemetry datums.  These datums must be sorted by `domain` in ascending order.
 
 #### Request Strategies **draft**
 
