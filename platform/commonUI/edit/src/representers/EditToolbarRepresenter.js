@@ -140,7 +140,7 @@ define(
                 this.scope,
                 this.openmct
             );
-            // Initialize toolbar to an empty selection
+            // Initialize toolbar to current selection
             this.updateSelection(this.scope.selection.all());
         };
 
