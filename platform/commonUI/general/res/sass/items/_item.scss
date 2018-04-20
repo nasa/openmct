@@ -85,14 +85,14 @@
 	            z-index: 1;
                 .item-type,
                 .t-item-icon {
-                    @include transform(translateX(-50%) translateY(-55%));
+                    transform: translateX(-50%) translateY(-55%);
                     position: absolute;
                     top: 50%; left: 50%;
                     font-size: $iconD * 0.95;
                     &.l-icon-link {
                         .t-item-icon-glyph {
                             &:after {
-                                @include transform(scale(0.25));
+                                transform: scale(0.25);
                             }
                         }
                     }

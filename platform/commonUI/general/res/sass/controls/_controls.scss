@@ -356,7 +356,7 @@ input[type="text"].s-input-inline,
         }
     }
     &:before {
-        @include transform(translateY(-50%));
+        transform: translateY(-50%);
         color: rgba($colorInvokeMenu, percentToDecimal($contrastInvokeMenuPercent));
         display: block;
         pointer-events: none;
@@ -434,7 +434,7 @@ input[type="text"].s-input-inline,
 
     .context-available {
         font-size: 0.7em;
-        @include flex(0 0 1);
+        flex: 0 0 1;
     }
 
     .t-object-alert {
@@ -675,14 +675,14 @@ input[type="range"] {
 .l-calendar {
     $colorMuted: pushBack($colorMenuFg, 30%);
     ul.l-cal-row {
-        @include display(flex);
-        @include flex-flow(row nowrap);
+        display: flex;
+        flex-flow: row nowrap;
         margin-top: 1px;
         &:first-child {
             margin-top: 0;
         }
         li {
-            @include flex(1 0);
+            flex: 1 0;
             margin-left: 1px;
             padding: $interiorMargin;
             text-align: center;
@@ -763,10 +763,10 @@ textarea {
     &:before {
         position: absolute;
         @include trans-prop-nice(transform, 100ms);
-        @include transform-origin(center);
+        transform-origin: center;
     }
     &.expanded:before {
-        @include transform(rotate(90deg));
+        transform: rotate(90deg);
     }
 }
 

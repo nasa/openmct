@@ -157,16 +157,16 @@
 	$lh: $ueFooterH - ($m*2) - 1;
 	box-sizing: border-box;
 	@include ellipsize();
-	@include display(flex);
-	@include flex-direction(row);
-	@include align-items(center);
+	display: flex;
+	flex-direction: row;
+	align-items: center;
 	position: absolute;
 	top: $m; right: auto; bottom: $m; left: 50%;
 	height: auto; width: auto;
 	line-height: $lh;
 	max-width: 300px;
 	padding: 0 $interiorMargin 0 $interiorMargin;
-	@include transform(translateX(-50%));
+	transform: translateX(-50%);
 
 	&.minimized {
         @include transition-property(left, opacity);
@@ -185,7 +185,7 @@
     }
 
 	.banner-elem {
-		@include flex(0 1 auto);
+		flex: 0 1 auto;
 		margin-left: $interiorMargin;
 	}
 	a {
@@ -250,14 +250,14 @@
 // Archetypal message
 .l-message {
     $iconW: 32px;
-    @include display(flex);
-    @include flex-direction(row);
-    @include align-items(stretch);
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
     padding: $interiorMarginLg;
 
     &:before {
         // Icon
-        @include flex(0 1 auto);
+        flex: 0 1 auto;
         @include txtShdw($shdwStatusIc);
         @extend .icon-bell;
         color: $colorStatusDefault;
@@ -283,9 +283,9 @@
 
 
 .w-message-contents {
-    @include flex(1 1 auto);
-    @include display(flex);
-    @include flex-direction(column);
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
 
     > div,
     > span {
@@ -294,7 +294,7 @@
     }
 
     .message-body {
-        @include flex(1 1 100%);
+        flex: 1 1 100%;
     }
 }
 
@@ -331,8 +331,8 @@
 // In a list
 .t-message-list {
     @include absPosDefault();
-    @include display(flex);
-    @include flex-direction(column);
+    display: flex;
+    flex-direction: column;
 
     > div,
     > span {
@@ -340,7 +340,7 @@
     }
 
     .w-messages {
-        @include flex(1 1 100%);
+        flex: 1 1 100%;
         overflow-y: auto;
         padding-right: $interiorMargin;
     }
@@ -360,7 +360,7 @@
 @include phonePortrait {
     .t-message-single .l-message,
     .t-message-single.l-message {
-        @include flex-direction(column);
+        flex-direction: column;
         &:before {
             margin-right: 0;
             margin-bottom: $interiorMarginLg;

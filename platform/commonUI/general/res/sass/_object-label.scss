@@ -22,8 +22,8 @@
 
 // mct-representation surrounding an object-label key="'label'"
 .rep-object-label {
-    @include flex-direction(row);
-    @include flex(1 1 auto);
+    flex-direction: row;
+    flex: 1 1 auto;
     height: inherit;
     line-height: inherit;
     min-width: 0;

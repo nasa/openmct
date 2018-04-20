@@ -55,7 +55,7 @@
     div[class*="hand"] {
         $handW: 2px;
         $handH: $d * 0.4;
-        @include transform(translate(-50%, -50%));
+        transform: translate(-50%, -50%);
         @include animation-iteration-count(infinite);
         @include animation-timing-function(linear);
         position: absolute;
@@ -258,7 +258,7 @@
         align-items: center;
         margin-top: $interiorMargin;
         .l-time-conductor-zoom-w {
-            @include justify-content(flex-end);
+            justify-content: flex-end;
             .time-conductor-zoom {
                 height: $r3H;
                 min-width: 100px;
@@ -327,7 +327,7 @@
         $i: $glyph-icon-calendar;
         .time-conductor-icon div[class*="hand"] {
             &.hand-little {
-                @include transform(rotate(120deg));
+                transform: rotate(120deg);
             }
         }
         .mode-selector .s-menu-button:before {
