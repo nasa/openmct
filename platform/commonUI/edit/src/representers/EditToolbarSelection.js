@@ -38,24 +38,37 @@ define(
          * @memberof platform/commonUI/edit
          * @constructor
          */
-        function EditToolbarSelection(openmct) {
+        function EditToolbarSelection($scope, openmct) {
             this.selection = [{}];
             this.selecting = false;
             this.selectedObj = undefined;
+            this.openmct = openmct;
+            var self = this;
 
-            openmct.selection.on('change', function (selection) {
+            function setSelection(selection) {
                 var selected = selection[0];
 
                 if (selected && selected.context.toolbar) {
-                    this.select(selected.context.toolbar);
+                    self.select(selected.context.toolbar);
                 } else {
-                    this.deselect();
+                    self.deselect();
                 }
 
                 if (selected && selected.context.viewProxy) {
-                    this.proxy(selected.context.viewProxy);
+                    self.proxy(selected.context.viewProxy);
                 }
-            }.bind(this));
+
+                setTimeout(function () {
+                    $scope.$apply();
+                });
+            }
+
+            $scope.$on("$destroy", function () {
+                self.openmct.selection.off('change', setSelection);
+            });
+
+            this.openmct.selection.on('change', setSelection);
+            setSelection(this.openmct.selection.get());
         }
 
         /**
