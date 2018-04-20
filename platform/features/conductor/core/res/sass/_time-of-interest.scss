@@ -29,7 +29,7 @@ mct-include.l-toi-holder,
 
 mct-include.l-toi-holder {
     $blockerFadeW: $toiBlockerFadeW;
-    @include transform(translateX(-50%));
+    transform: translateX(-50%);
     color: $toiColorBg;
     position: absolute;
     top: 0;
@@ -66,7 +66,7 @@ mct-include.l-toi-holder {
         box-sizing: content-box;
         height: $toiH;
         left: $toiPad * -2;
-        @include transform(translateY(-50%)); top: 50%;
+        transform: translateY(-50%); top: 50%;
         padding: $toiPad;
         z-index: 1;
 
@@ -207,7 +207,7 @@ table {
                             border-radius: 20%;
                             height: auto;
                             padding: $toiPad;
-                            @include transform(translate(-50%, -50%));
+                            transform: translate(-50%, -50%);
                             left: 50%; right: auto; top: 0;
                             .l-toi-buttons {
                                 padding: 1px;
@@ -233,7 +233,7 @@ table {
             z-index: 3;
 
             .l-toi {
-                @include transform(translateY(100%));
+                transform: translateY(100%);
 
             }
 
@@ -257,13 +257,13 @@ table {
         }
 
         &:before {
-            @include transform(translate(-50%, $linesVOffset * -1));
+            transform: translate(-50%, $linesVOffset * -1);
             top: 0px;
             bottom: auto;
         }
 
         &:after {
-            @include transform(translate(-50%, $linesVOffset));
+            transform: translate(-50%, $linesVOffset);
             top: auto;
             bottom: 0px;
         }

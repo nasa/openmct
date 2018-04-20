@@ -152,8 +152,8 @@
 		&.l-plot-y-label {
 			$x: -50%;
 			$r: -90deg;
-			@include transform-origin(50% 0);
-			@include transform(translateX($x) rotate($r));
+			transform-origin: 50% 0;
+			transform: translateX($x) rotate($r);
 			display: inline-block;
 			margin-left: $interiorMargin; // Kick off the left edge
 			left: 0;
@@ -172,13 +172,13 @@
 	}
 
     .gl-plot-x-options {
-        @include transform(translateX(-50%));
+        transform: translateX(-50%);
         bottom: 0;
         left: 50%;
     }
 
     .gl-plot-y-options {
-        @include transform(translateY(-50%));
+        transform: translateY(-50%);
         min-width: 150px; // Need this due to enclosure of .select
         top: 50%;
         left: $plotYLabelW + $interiorMargin * 2;

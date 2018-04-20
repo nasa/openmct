@@ -94,19 +94,19 @@
 /********************************************* FLEX STYLES */
 .l-flex-row,
 .l-flex-col {
-    @include display(flex);
-    @include flex-wrap(nowrap);
+    display: flex;
+    flex-wrap: nowrap;
     .flex-elem {
         min-height: 0; // Needed to allow element to shrink within parent
         position: relative;
         &:not(.grows) {
-            @include flex(0 0 auto);
+            flex: 0 0 auto;
             &.flex-can-shrink {
-                @include flex(0 1 auto);
+                flex: 0 1 auto;
             }
         }
         &.grows {
-            @include flex(1 1 auto);
+            flex: 1 1 auto;
         }
         &.contents-align-right {
             text-align: right;
@@ -114,25 +114,25 @@
     }
     .flex-container {
         // Apply to wrapping elements, mct-includes, etc.
-        @include display(flex);
-        @include flex-wrap(nowrap);
-        @include flex(1 1 auto);
+        display: flex;
+        flex-wrap: nowrap;
+        flex: 1 1 auto;
         min-height:0;
     }
 }
 
 .l-flex-row {
-    @include flex-direction(row);
-    &.flex-elem { @include flex(1 1 auto); }
+    flex-direction: row;
+    &.flex-elem { flex: 1 1 auto; }
     > .flex-elem {
         min-width: 0;
         &.holder:not(:last-child) { margin-right: $interiorMargin; }
     }
-    .flex-container { @include flex-direction(row); }
+    .flex-container { flex-direction: row; }
 }
 
 .l-flex-col {
-    @include flex-direction(column);
+    flex-direction: column;
     > .flex-elem {
         min-height: 0;
         &.holder:not(:last-child) { margin-bottom: $interiorMarginLg; }
@@ -142,15 +142,15 @@
         flex-direction: column;
         //overflow: hidden !important;
     }
-    .flex-container { @include flex-direction(column); }
+    .flex-container { flex-direction: column; }
 }
 
 .flex-fixed {
-    @include flex(0 0 auto);
+    flex: 0 0 auto;
 }
 
 .flex-justify-end {
-    @include justify-content(flex-end);
+    justify-content: flex-end;
 }
 
 /********************************************* POPUPS */

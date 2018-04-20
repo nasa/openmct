@@ -89,7 +89,7 @@
         > .abs.outer-holder {
             @include desktopandtablet {
                 $max: 1280px;
-                @include transform(translateX(-50%) translateY(-50%));
+                transform: translate(-50%, -50%);
                 border-radius: $overlayCr;
                 top: 50%; right: auto; bottom: auto; left: 50%;
                 width: 70%; height: 70%;
@@ -101,7 +101,7 @@
 
                 .editor .form .form-row.l-flex-row  {
                     // Display elements in a columnar view
-                    @include flex-direction(column);
+                    flex-direction: column;
                     > .flex-elem {
                         &:not(:first-child) {
                             margin-top: $interiorMargin;

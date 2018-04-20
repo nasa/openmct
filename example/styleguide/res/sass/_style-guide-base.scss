@@ -101,11 +101,11 @@
         padding-top: 1em;
 
         .cols {
-            @include display(flex);
-            @include flex-direction(row);
+            display: flex;
+            flex-direction: row;
 
             .col {
-                @include flex(1 1 auto);
+                flex: 1 1 auto;
                 &:not(:last-child) {
                     $v: $interiorMargin * 4;
                     border-right: 1px solid $colorInteriorBorder;
@@ -199,7 +199,7 @@
                 border-radius: 15%;
                 position: absolute;
                 left: 50%;
-                @include transform(translateX(-50%));
+                transform: translateX(-50%);
             }
         }
     }

@@ -152,7 +152,7 @@
             opacity: 1;
         }
 		.load-more-button {
-            @include transform(translateX(-50%));
+            transform: translateX(-50%);
             display: inline-block;
 			margin-top: $interiorMargin;
             padding: 0 $interiorMarginLg;
