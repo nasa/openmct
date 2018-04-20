@@ -131,15 +131,20 @@ define([
      */
     TestDataManager.prototype.refreshItems = function () {
         var self = this;
+        if (this.items) {
+            this.items.forEach(function (item) {
+                this.stopListening(item);
+            }, this);
+        }
 
         self.items = [];
         $('.t-test-data-item', this.domElement).remove();
 
         this.config.forEach(function (item, index) {
             var newItem = new TestDataItem(item, index, self.manager);
-            newItem.on('remove', self.removeItem, self);
-            newItem.on('duplicate', self.initItem, self);
-            newItem.on('change', self.onItemChange, self);
+            self.listenTo(newItem, 'remove', self.removeItem, self);
+            self.listenTo(newItem, 'duplicate', self.initItem, self);
+            self.listenTo(newItem, 'change', self.onItemChange, self);
             self.items.push(newItem);
         });
 
@@ -190,10 +195,10 @@ define([
     };
 
     TestDataManager.prototype.destroy = function () {
+        this.stopListening();
         this.items.forEach(function (item) {
             item.remove();
         });
-        this.stopListening();
     };
 
     return TestDataManager;
