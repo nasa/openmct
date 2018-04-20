@@ -98,6 +98,10 @@ define(
                     waitsFor(legacyIndicatorsToResolve);
                     runs(function () {
                         expect(getIconElement().hasClass('testIconClass')).toBe(true);
+
+                        simpleIndicator.iconClass('anotherIconClass');
+                        expect(getIconElement().hasClass('testIconClass')).toBe(false);
+                        expect(getIconElement().hasClass('anotherIconClass')).toBe(true);
                     });
                 });
                 it("applies the set status class", function () {
@@ -106,6 +110,9 @@ define(
                     waitsFor(legacyIndicatorsToResolve);
                     runs(function () {
                         expect(getIconElement().hasClass('testStatusClass')).toBe(true);
+                        simpleIndicator.statusClass('anotherStatusClass');
+                        expect(getIconElement().hasClass('testStatusClass')).toBe(false);
+                        expect(getIconElement().hasClass('anotherStatusClass')).toBe(true);
                     });
                 });
                 it("displays the set text", function () {
@@ -125,7 +132,7 @@ define(
                     });
                 });
 
-                it("Hides indicator text if no text is set", function () {
+                it("Hides indicator icon if no text is set", function () {
                     simpleIndicator.text('');
 
                     waitsFor(legacyIndicatorsToResolve);

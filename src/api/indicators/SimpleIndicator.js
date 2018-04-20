@@ -20,27 +20,34 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['text!./res/indicator-template.html'],
-    function (indicatorTemplate) {
+define(['zepto', 'text!./res/indicator-template.html'],
+    function ($, indicatorTemplate) {
         var DEFAULT_ICON_CLASS = 'icon-info';
 
         function SimpleIndicator(openmct) {
             this.openmct = openmct;
-            this.textValue = 'New Indicator';
-            this.descriptionValue = 'A simple indicator';
-            this.iconClassValue = DEFAULT_ICON_CLASS;
-            this.statusClassValue = '';
+            this.element = $(indicatorTemplate)[0];
 
-            this.element = document.createElement('div');
-            this.element.className = 'status-block-holder';
+            this.textElement = this.element.querySelector('.indicator-text');
+            this.iconElement = this.element.querySelector('.indicator-icon');
 
-            defaultDisplayFunction.call(this);
+            //Set defaults
+            this.text('New Indicator');
+            this.description('A simple indicator');
+            this.iconClass(DEFAULT_ICON_CLASS);
+            this.statusClass('');
         }
 
         SimpleIndicator.prototype.text = function (text) {
             if (text !== undefined && text !== this.textValue) {
                 this.textValue = text;
-                defaultDisplayFunction.call(this);
+                this.textElement.innerText = text;
+
+                if (!text) {
+                    this.element.classList.add('hidden');
+                } else {
+                    this.element.classList.remove('hidden');
+                }
             }
 
             return this.textValue;
@@ -49,7 +56,7 @@ define(['text!./res/indicator-template.html'],
         SimpleIndicator.prototype.description = function (description) {
             if (description !== undefined && description !== this.descriptionValue) {
                 this.descriptionValue = description;
-                defaultDisplayFunction.call(this);
+                this.element.title = description;
             }
 
             return this.descriptionValue;
@@ -57,8 +64,15 @@ define(['text!./res/indicator-template.html'],
 
         SimpleIndicator.prototype.iconClass = function (iconClass) {
             if (iconClass !== undefined && iconClass !== this.iconClassValue) {
+                // element.classList is precious and throws errors if you try and add
+                // or remove empty strings
+                if (this.iconClassValue) {
+                    this.iconElement.classList.remove(this.iconClassValue);
+                }
+                if (iconClass) {
+                    this.iconElement.classList.add(iconClass);
+                }
                 this.iconClassValue = iconClass;
-                defaultDisplayFunction.call(this);
             }
 
             return this.iconClassValue;
@@ -66,32 +80,16 @@ define(['text!./res/indicator-template.html'],
 
         SimpleIndicator.prototype.statusClass = function (statusClass) {
             if (statusClass !== undefined && statusClass !== this.statusClassValue) {
+                if (this.statusClassValue) {
+                    this.iconElement.classList.remove(this.statusClassValue);
+                }
+                if (statusClass) {
+                    this.iconElement.classList.add(statusClass);
+                }
                 this.statusClassValue = statusClass;
-                defaultDisplayFunction.call(this);
             }
 
             return this.statusClassValue;
-        };
-
-        function hideOrShowText(text) {
-            if (text && text.length > 0) {
-                return '';
-            } else {
-                return 'hidden';
-            }
-        }
-
-        function defaultDisplayFunction() {
-            var html = indicatorTemplate
-                .replace('{{indicator.text}}', this.text())
-                .replace('{{indicator.iconClass}}', this.iconClass())
-                .replace('{{indicator.statusClass}}', this.statusClass())
-                .replace('{{indicator.description}}', this.description())
-                .replace('{{hideOrShowText}}', hideOrShowText(this.text()));
-
-            this.element.innerHTML = html;
-
-            return this.element;
         };
 
         return SimpleIndicator;
