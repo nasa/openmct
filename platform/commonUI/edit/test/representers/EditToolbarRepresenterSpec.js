@@ -36,7 +36,7 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     '$scope',
-                    ['$on', '$watch', '$watchCollection', "commit"]
+                    ['$on', '$watch', '$watchCollection', "commit", "$apply"]
                 );
                 mockElement = {};
                 testAttrs = { toolbar: 'testToolbar' };

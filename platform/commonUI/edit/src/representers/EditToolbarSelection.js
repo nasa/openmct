@@ -42,6 +42,7 @@ define(
             this.selection = [{}];
             this.selecting = false;
             this.selectedObj = undefined;
+            this.openmct = openmct;
             var self = this;
 
             function setSelection(selection) {
@@ -56,6 +57,7 @@ define(
                 if (selected && selected.context.viewProxy) {
                     self.proxy(selected.context.viewProxy);
                 }
+
                 setTimeout(function () {
                     $scope.$apply();
                 });
@@ -65,8 +67,8 @@ define(
                 self.openmct.selection.off('change', setSelection);
             });
 
-            openmct.selection.on('change', setSelection);
-            setSelection(openmct.selection.get());
+            this.openmct.selection.on('change', setSelection);
+            setSelection(this.openmct.selection.get());
         }
 
         /**
