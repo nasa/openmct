@@ -143,7 +143,10 @@ define([
     };
 
     /**
-     * return a promise for a clone of the base state object.
+     * Return a promise for a 2-deep clone of the base state object: object
+     * states are shallow cloned, and then assembled and returned as a new base
+     * state.  Allows object states to be mutated while sharing telemetry
+     * metadata and formats.
      */
     SummaryWidgetEvaluator.prototype.getBaseStateClone = function () {
         return this.load()
@@ -232,8 +235,10 @@ define([
     };
 
     /**
-     * evaluate a state object and return a summary widget telemetry datum.
-     * Will use the specified timestampKey to decide which timestamps to apply.
+     * Evaluate a `state` object and return a summary widget telemetry datum.
+     * Datum timestamps will be taken from the "latest" datum in the `state`
+     * where "latest" is the datum with the largest value for the given
+     * `timestampKey`.
      * @private.
      */
     SummaryWidgetEvaluator.prototype.evaluateState = function (state, timestampKey) {
@@ -242,6 +247,12 @@ define([
         }, true);
         if (!hasRequiredData) {
             return;
+        }
+
+        for (var i = this.rules.length - 1; i > 0; i--) {
+            if (this.rules[i].evaluate(state, false)) {
+                break;
+            }
         }
 
         var latestTimestamp = _(state)
@@ -253,15 +264,8 @@ define([
             latestTimestamp = {};
         }
 
-        latestTimestamp = _.clone(latestTimestamp);
-
-        for (var i = this.rules.length - 1; i > 0; i--) {
-            if (this.rules[i].evaluate(state, false)) {
-                break;
-            }
-        }
-
-        return this.makeDatumFromRule(i, latestTimestamp);
+        var baseDatum = _.clone(latestTimestamp);
+        return this.makeDatumFromRule(i, baseDatum);
     };
 
     /**
