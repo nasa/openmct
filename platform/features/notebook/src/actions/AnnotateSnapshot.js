@@ -56,6 +56,7 @@ define(
             var DOMAIN_OBJECT = this.domainObject;
             var ROOTSCOPE = this.$rootScope;
             var painterro;
+            var save = false;
 
             var controller = ['$scope', '$timeout', function PainterroController($scope, $timeout) {
                 $(document.body).find('.l-dialog .outer-holder').addClass('annotation-dialog');
@@ -87,18 +88,20 @@ define(
                             }
                         },
                         saveHandler: function (image, done) {
-                            if (entryId && embedId) {
-                                var elementPos = DOMAIN_OBJECT.model.entries.map(function (x) {
-                                    return x.createdOn;
-                                }).indexOf(entryId);
-                                var entryEmbeds = DOMAIN_OBJECT.model.entries[elementPos].embeds;
-                                var embedPos = entryEmbeds.map(function (x) {
-                                    return x.id;
-                                }).indexOf(embedId);
-                                $scope.saveSnap(image.asBlob(), embedPos, elementPos);
-                            }else {
-                                ROOTSCOPE.snapshot = {'src': image.asDataURL('image/png'),
-                                                    'modified': Date.now()};
+                            if (save) {
+                                if (entryId && embedId) {
+                                    var elementPos = DOMAIN_OBJECT.model.entries.map(function (x) {
+                                        return x.createdOn;
+                                    }).indexOf(entryId);
+                                    var entryEmbeds = DOMAIN_OBJECT.model.entries[elementPos].embeds;
+                                    var embedPos = entryEmbeds.map(function (x) {
+                                        return x.id;
+                                    }).indexOf(embedId);
+                                    $scope.saveSnap(image.asBlob(), embedPos, elementPos);
+                                }else {
+                                    ROOTSCOPE.snapshot = {'src': image.asDataURL('image/png'),
+                                                        'modified': Date.now()};
+                                }
                             }
                             done(true);
                         }
@@ -113,10 +116,12 @@ define(
 
             function saveNotes(param) {
                 if (param === 'ok') {
-                    painterro.save();
+                    save = true;
                 }else {
+                    save = false;
                     ROOTSCOPE.snapshot = "annotationCancelled";
                 }
+                painterro.save();
             }
 
             this.dialogService.getUserChoice(ANNOTATION_STRUCT)
