@@ -107,10 +107,10 @@ define(
                             done(true);
                         }
                     }).show(snapshot);
-                });
 
-                $(document.body).find('.ptro-icon-btn').addClass('s-button');
-                $(document.body).find('.ptro-input').addClass('s-button');
+                    $(document.body).find('.ptro-icon-btn').addClass('s-button');
+                    $(document.body).find('.ptro-input').addClass('s-button');
+                });
             }];
 
             ANNOTATION_STRUCT.model = {'controller': controller};
