@@ -82,6 +82,10 @@ define([
     };
 
     PlotController.prototype.loadSeriesData = function (series) {
+        if (this.$element[0].offsetWidth === 0) {
+            this.scheduleLoad(series);
+            return;
+        }
         this.startLoading();
         var options = {
             size: this.$element[0].offsetWidth,
@@ -90,6 +94,26 @@ define([
 
         series.load(options)
             .then(this.stopLoading.bind(this));
+    };
+
+    PlotController.prototype.scheduleLoad = function (series) {
+        if (!this.scheduledLoads) {
+            this.startLoading();
+            this.scheduledLoads = [];
+            this.checkForSize = setInterval(function () {
+                if (this.$element[0].offsetWidth === 0) {
+                    return;
+                }
+                this.stopLoading();
+                this.scheduledLoads.forEach(this.loadSeriesData, this);
+                delete this.scheduledLoads;
+                clearInterval(this.checkForSize);
+                delete this.checkForSize;
+            }.bind(this));
+        }
+        if (this.scheduledLoads.indexOf(series) === -1) {
+            this.scheduledLoads.push(series);
+        }
     };
 
     PlotController.prototype.addSeries = function (series) {
@@ -126,6 +150,10 @@ define([
     PlotController.prototype.destroy = function () {
         configStore.untrack(this.config.id);
         this.stopListening();
+        if (this.checkForSize) {
+            clearInterval(this.checkForSize);
+            delete this.checkForSize;
+        }
     };
 
     PlotController.prototype.loadMoreData = function (range, purge) {

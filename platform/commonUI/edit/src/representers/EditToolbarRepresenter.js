@@ -88,12 +88,6 @@ define(
                     commit("Changes from toolbar.");
                 }
             }
-
-            // Avoid attaching scope to this;
-            // http://errors.angularjs.org/1.2.26/ng/cpws
-            this.setSelection = function (s) {
-                scope.selection = s;
-            };
             this.clearExposedToolbar = function () {
                 // Clear exposed toolbar state (if any)
                 if (attrs.toolbar) {
@@ -110,6 +104,7 @@ define(
             this.toolbar = undefined;
             this.toolbarObject = {};
             this.openmct = openmct;
+            this.scope = scope;
 
             // If this representation exposes a toolbar, set up watches
             // to synchronize with it.
@@ -130,26 +125,23 @@ define(
         // Represent a domain object using this definition
         EditToolbarRepresenter.prototype.represent = function (representation) {
             // Get the newest toolbar definition from the view
-            var definition = (representation || {}).toolbar || {},
-                self = this;
+            var definition = (representation || {}).toolbar || {};
 
-            // Initialize toolbar (expose object to parent scope)
-            function initialize(def) {
-                // If we have been asked to expose toolbar state...
-                if (self.attrs.toolbar) {
-                    // Initialize toolbar object
-                    self.toolbar = new EditToolbar(def, self.commit);
-                    // Ensure toolbar state is exposed
-                    self.exposeToolbar();
-                }
+            // If we have been asked to expose toolbar state...
+            if (this.attrs.toolbar) {
+                // Initialize toolbar object
+                this.toolbar = new EditToolbar(definition, this.commit);
+                // Ensure toolbar state is exposed
+                this.exposeToolbar();
             }
 
-            // Expose the toolbar object to the parent scope
-            initialize(definition);
-            // Create a selection scope
-            this.setSelection(new EditToolbarSelection(this.openmct));
-            // Initialize toolbar to an empty selection
-            this.updateSelection([]);
+            // Add toolbar selection to scope.
+            this.scope.selection = new EditToolbarSelection(
+                this.scope,
+                this.openmct
+            );
+            // Initialize toolbar to current selection
+            this.updateSelection(this.scope.selection.all());
         };
 
         // Destroy; remove toolbar object from parent scope

@@ -30,7 +30,8 @@ define(
                 otherElement,
                 selection,
                 mockSelection,
-                mockOpenMCT;
+                mockOpenMCT,
+                mockScope;
 
             beforeEach(function () {
                 testProxy = { someKey: "some value" };
@@ -46,7 +47,12 @@ define(
                 mockOpenMCT = {
                     selection: mockSelection
                 };
-                selection = new EditToolbarSelection(mockOpenMCT);
+                mockScope = jasmine.createSpyObj('$scope', [
+                    '$on',
+                    '$apply'
+                ]);
+
+                selection = new EditToolbarSelection(mockScope, mockOpenMCT);
                 selection.proxy(testProxy);
             });
 
@@ -101,6 +107,20 @@ define(
             it("treats selection of the proxy as a no-op", function () {
                 selection.select(testProxy);
                 expect(selection.all()).toEqual([testProxy]);
+            });
+
+            it("cleans up selection on scope destroy", function () {
+                expect(mockScope.$on).toHaveBeenCalledWith(
+                    '$destroy',
+                    jasmine.any(Function)
+                );
+
+                mockScope.$on.mostRecentCall.args[1]();
+
+                expect(mockOpenMCT.selection.off).toHaveBeenCalledWith(
+                    'change',
+                    jasmine.any(Function)
+                );
             });
 
         });

@@ -55,7 +55,7 @@
 
 .widget-rule-header {
     @extend .l-flex-row;
-    @include align-items(center);
+    align-items: center;
     margin-bottom: $interiorMargin;
     > .flex-elem {
         &:not(:first-child) {
@@ -103,7 +103,7 @@
 .l-compact-form label {
     $ruleLabelW: 40%;
     $ruleLabelMaxW: 150px;
-    @include display(flex);
+    display: flex;
     max-width: $ruleLabelMaxW;
     width: $ruleLabelW;
 }
@@ -177,8 +177,8 @@
         ul {
             &:last-child { margin: 0; }
             li {
-                @include align-items(flex-start);
-                @include flex-wrap(nowrap);
+                align-items: flex-start;
+                flex-wrap: nowrap;
                 line-height: 230%; // Provide enough space when controls wrap
                 padding: 2px 0;
                 &:not(.widget-rule-header) {
@@ -233,7 +233,7 @@
 
 .l-widget-thumb-wrapper {
     @extend .l-flex-row;
-    @include align-items(center);
+    align-items: center;
     > span { display: block; }
     .grippy-holder,
     .view-control {
@@ -243,18 +243,18 @@
     }
 
     .widget-thumb {
-        @include flex(1 1 auto);
+        flex: 1 1 auto;
         width: 100%;
     }
 }
 
 .rule-title {
-    @include flex(0 1 auto);
+    flex: 0 1 auto;
     color: pullForward($colorBodyFg, 50%);
 }
 
 .rule-description {
-    @include flex(1 1 auto);
+    flex: 1 1 auto;
     @include ellipsize();
     color: pushBack($colorBodyFg, 20%);
 }

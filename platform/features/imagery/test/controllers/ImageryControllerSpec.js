@@ -59,7 +59,8 @@ define(
                         'timeSystem',
                         'clock',
                         'on',
-                        'off'
+                        'off',
+                        'bounds'
                     ]),
                     telemetry: jasmine.createSpyObj('telemetryAPI', [
                         'subscribe',
@@ -118,7 +119,8 @@ define(
 
             describe("when loaded", function () {
                 var callback,
-                    boundsListener;
+                    boundsListener,
+                    bounds;
 
                 beforeEach(function () {
                     waitsFor(function () {
@@ -137,13 +139,9 @@ define(
                     });
                 });
 
-                it("uses LAD telemetry", function () {
+                it("requests history", function () {
                     expect(openmct.telemetry.request).toHaveBeenCalledWith(
-                        newDomainObject,
-                        {
-                            strategy: 'latest',
-                            size: 1
-                        }
+                        newDomainObject, bounds
                     );
                     expect(controller.getTime()).toEqual(prefix + 1434600258123);
                     expect(controller.getImageUrl()).toEqual('some/url');
@@ -204,7 +202,7 @@ define(
                 it("requests telemetry", function () {
                     expect(openmct.telemetry.request).toHaveBeenCalledWith(
                         newDomainObject,
-                        jasmine.any(Object)
+                        bounds
                     );
                 });
 

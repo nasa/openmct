@@ -150,13 +150,13 @@ define(
                     [
                         'subscribe',
                         'request',
-                        'canProvideTelemetry',
+                        'isTelemetryObject',
                         'getMetadata',
                         'limitEvaluator',
                         'getValueFormatter'
                     ]
                 );
-                mockTelemetryAPI.canProvideTelemetry.andReturn(true);
+                mockTelemetryAPI.isTelemetryObject.andReturn(true);
                 mockTelemetryAPI.request.andReturn(Promise.resolve([]));
 
                 testGrid = [123, 456];
@@ -201,7 +201,7 @@ define(
                     'off',
                     'get'
                 ]);
-                mockSelection.get.andCallThrough();
+                mockSelection.get.andReturn([]);
 
                 mockOpenMCT = {
                     time: mockConductor,
@@ -596,7 +596,7 @@ define(
                 expect(controller.getSelectedElementStyle()).not.toEqual(oldStyle);
             });
 
-            it("cleans up slection on scope destroy", function () {
+            it("cleans up selection on scope destroy", function () {
                 expect(mockScope.$on).toHaveBeenCalledWith(
                     '$destroy',
                     jasmine.any(Function)

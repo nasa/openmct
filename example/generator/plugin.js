@@ -23,31 +23,17 @@
 
 define([
     "./GeneratorProvider",
-    "./SinewaveLimitCapability",
-    "./StateGeneratorProvider"
+    "./SinewaveLimitProvider",
+    "./StateGeneratorProvider",
+    "./GeneratorMetadataProvider"
 ], function (
     GeneratorProvider,
-    SinewaveLimitCapability,
-    StateGeneratorProvider
+    SinewaveLimitProvider,
+    StateGeneratorProvider,
+    GeneratorMetadataProvider
 ) {
 
-    var legacyExtensions = {
-        "capabilities": [
-            {
-                "key": "limit",
-                "implementation": SinewaveLimitCapability
-            }
-        ]
-    };
-
     return function(openmct){
-        //Register legacy extensions for things not yet supported by the new API
-        Object.keys(legacyExtensions).forEach(function (type){
-            var extensionsOfType = legacyExtensions[type];
-            extensionsOfType.forEach(function (extension) {
-                openmct.legacyExtension(type, extension)
-            })
-        });
 
         openmct.types.addType("example.state-generator", {
             name: "State Generator",
@@ -70,47 +56,7 @@ define([
             ],
             initialize: function (object) {
                 object.telemetry = {
-                    duration: 5,
-                    values: [
-                        {
-                            key: "name",
-                            name: "Name"
-                        },
-                        {
-                            key: "utc",
-                            name: "Time",
-                            format: "utc",
-                            hints: {
-                                domain: 1
-                            }
-                        },
-                        {
-                            key: "state",
-                            source: "value",
-                            name: "State",
-                            format: "enum",
-                            enumerations: [
-                                {
-                                    value: 0,
-                                    string: "OFF"
-                                },
-                                {
-                                    value: 1,
-                                    string: "ON"
-                                }
-                            ],
-                            hints: {
-                                range: 1
-                            }
-                        },
-                        {
-                            key: "value",
-                            name: "Value",
-                            hints: {
-                                range: 2
-                            }
-                        }
-                    ]
+                    duration: 5
                 }
             }
         });
@@ -125,63 +71,58 @@ define([
             form: [
                 {
                     name: "Period",
-                    control: "textfield",
+                    control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
                     key: "period",
                     required: true,
                     property: [
                         "telemetry",
                         "period"
-                    ],
-                    pattern: "^\\d*(\\.\\d*)?$"
+                    ]
                 },
                 {
                     name: "Amplitude",
-                    control: "textfield",
+                    control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
                     key: "amplitude",
                     required: true,
                     property: [
                         "telemetry",
                         "amplitude"
-                    ],
-                    pattern: "^\\d*(\\.\\d*)?$"
+                    ]
                 },
                 {
                     name: "Offset",
-                    control: "textfield",
+                    control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
                     key: "offset",
                     required: true,
                     property: [
                         "telemetry",
                         "offset"
-                    ],
-                    pattern: "^\\d*(\\.\\d*)?$"
+                    ]
                 },
                 {
                     name: "Data Rate (hz)",
-                    control: "textfield",
+                    control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
                     key: "dataRateInHz",
                     required: true,
                     property: [
                         "telemetry",
                         "dataRateInHz"
-                    ],
-                    pattern: "^\\d*(\\.\\d*)?$"
+                    ]
                 },
                 {
                     name: "Phase (radians)",
-                    control: "textfield",
+                    control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
                     key: "phase",
                     required: true,
                     property: [
                         "telemetry",
                         "phase"
-                    ],
-                    pattern: "^\\d*(\\.\\d*)?$"
+                    ]
                 }
             ],
             initialize: function (object) {
@@ -190,48 +131,14 @@ define([
                     amplitude: 1,
                     offset: 0,
                     dataRateInHz: 1,
-                    phase: 0,
-                    values: [
-                        {
-                            key: "name",
-                            name: "Name"
-                        },
-                        {
-                            key: "utc",
-                            name: "Time",
-                            format: "utc",
-                            hints: {
-                                domain: 1
-                            }
-                        },
-                        {
-                            key: "yesterday",
-                            name: "Yesterday",
-                            format: "utc",
-                            hints: {
-                                domain: 2
-                            }
-                        },
-                        {
-                            key: "sin",
-                            name: "Sine",
-                            hints: {
-                                range: 1
-                            }
-                        },
-                        {
-                            key: "cos",
-                            name: "Cosine",
-                            hints: {
-                                range: 2
-                            }
-                        }
-                    ]
+                    phase: 0
                 };
             }
         });
 
         openmct.telemetry.addProvider(new GeneratorProvider());
+        openmct.telemetry.addProvider(new GeneratorMetadataProvider());
+        openmct.telemetry.addProvider(new SinewaveLimitProvider());
     };
 
 });

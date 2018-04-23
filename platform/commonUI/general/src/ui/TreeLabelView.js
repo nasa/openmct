@@ -40,9 +40,17 @@ define([
         return type.getCssClass();
     }
 
+    function removePreviousIconClass(el) {
+        $(el).removeClass(function (index, className) {
+            return (className.match (/\bicon-\S+/g) || []).join(' ');
+        });
+    }
+
     TreeLabelView.prototype.updateView = function (domainObject) {
         var titleEl = this.el.find('.t-title-label'),
             iconEl = this.el.find('.t-item-icon');
+
+        removePreviousIconClass(iconEl);
 
         titleEl.text(domainObject ? domainObject.getModel().name : "");
         iconEl.addClass(domainObject ? getClass(domainObject) : "");
