@@ -97,7 +97,8 @@ define(
                                     var embedPos = entryEmbeds.map(function (x) {
                                         return x.id;
                                     }).indexOf(embedId);
-                                    $scope.saveSnap(image.asBlob(), embedPos, elementPos);
+
+                                    saveSnap(image.asBlob(), embedPos, elementPos, DOMAIN_OBJECT);
                                 }else {
                                     ROOTSCOPE.snapshot = {'src': image.asDataURL('image/png'),
                                                         'modified': Date.now()};
@@ -122,6 +123,29 @@ define(
                     ROOTSCOPE.snapshot = "annotationCancelled";
                 }
                 painterro.save();
+            }
+
+            function saveSnap(url, embedPos, entryPos, domainObject) {
+                var snap = false;
+
+                if (embedPos !== -1 && entryPos !== -1) {
+                    var reader = new window.FileReader();
+                    reader.readAsDataURL(url);
+                    reader.onloadend = function () {
+                        snap = reader.result;
+                        domainObject.useCapability('mutation', function (model) {
+                            if (model.entries[entryPos]) {
+                                model.entries[entryPos].embeds[embedPos].snapshot = {
+                                    'src': snap,
+                                    'type': url.type,
+                                    'size': url.size,
+                                    'modified': Date.now()
+                                };
+                                model.entries[entryPos].embeds[embedPos].id = Date.now();
+                            }
+                        });
+                    };
+                }
             }
 
             this.dialogService.getUserChoice(ANNOTATION_STRUCT)
