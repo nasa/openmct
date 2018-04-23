@@ -167,13 +167,7 @@ define(
             };
 
             $scope.textFocus = function ($event, entryId) {
-                if ($event.srcElement && $event.srcElement.innerText) {
-                    /*
-                     On focus, if the currentTarget isn't blank, set the global currentEntryValue = the
-                     content of the current focus. This will be used at blur to determine if the
-                     current entry has been modified or not.
-                     Not sure this is right, would think we'd always want to set curEntVal even if blank
-                     */
+                if ($event.srcElement) {
                     $scope.currentEntryValue = $event.srcElement.innerText;
                     setCaretToEndOfContenteditable($event.srcElement);
                 } else {
@@ -184,7 +178,7 @@ define(
             //On text blur(when focus is removed)
             $scope.textBlur = function ($event, entryId) {
                 // entryId is the unique numeric based on the original createdOn
-                if ($event.target && $event.target.innerText !== "") {
+                if ($event.target) {
                     var elementPos = $scope.findEntryPositionById(+entryId);
 
                     // If the text of an entry has been changed, then update the text and the modifiedOn numeric
