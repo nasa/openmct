@@ -315,6 +315,8 @@ define(
             this.openmct.time.on("bounds", updateDisplayBounds);
             this.openmct.selection.on('change', setSelection);
             this.$element.on('click', this.bypassSelection.bind(this));
+
+            setSelection(this.openmct.selection.get());
         }
 
         /**
@@ -464,7 +466,7 @@ define(
 
             function filterForTelemetryObjects(objects) {
                 return objects.filter(function (object) {
-                    return self.openmct.telemetry.canProvideTelemetry(object);
+                    return self.openmct.telemetry.isTelemetryObject(object);
                 });
             }
 

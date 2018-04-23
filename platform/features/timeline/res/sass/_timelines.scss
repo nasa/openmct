@@ -177,7 +177,7 @@
 		            top: 20px; bottom: 5px;
 		            .l-labels-holder {
 			            @include absPosDefault();
-                        @include justify-content(space-between);
+                        justify-content: space-between;
 			            left: $m;
 			            .t-resource-graph-tick-label {
                             font-size: 0.9em;

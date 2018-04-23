@@ -142,7 +142,7 @@
         .l-hyperlink.s-button {
             .label {
                 @include ellipsize();
-                @include transform(translateY(-50%));
+                transform: translateY(-50%);
                 padding: 0 $interiorMargin;
                 position: absolute;
                 min-width: 0;

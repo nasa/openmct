@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 @mixin  spinner($b: 5px, $c: $colorKey) {
-    @include transform-origin(center);
+    transform-origin: center;
     @include animation-name(rotation-centered);
     @include animation-duration(0.5s);
     @include animation-iteration-count(infinite);

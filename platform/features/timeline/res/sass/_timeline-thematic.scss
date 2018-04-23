@@ -53,7 +53,7 @@
             width: $d;
             position: absolute;
             top: 0;
-            @include transform(translateX(-50%));
+            transform: translateX(-50%);
         }
         &:before {
             // Icon blocker
