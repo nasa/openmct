@@ -186,9 +186,8 @@ define([
                     "key": "remove",
                     "category": "contextual",
                     "implementation": RemoveAction,
-                    "cssClass": "icon-trash",
-                    "name": "Remove",
-                    "description": "Remove this object from its containing object.",
+                    "name": "Delete...",
+                    "description": "Delete this object.",
                     "depends": [
                         "navigationService"
                     ]
