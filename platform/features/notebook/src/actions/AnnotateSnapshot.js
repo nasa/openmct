@@ -60,7 +60,7 @@ define(
 
             var controller = ['$scope', '$timeout', function PainterroController($scope, $timeout) {
                 $(document.body).find('.l-dialog .outer-holder').addClass('annotation-dialog');
-                
+
                 // Timeout is necessary because Painterro uses document.getElementById, and mct-include
                 // hasn't added the dialog to the DOM yet.
                 $timeout(function () {
