@@ -26,7 +26,6 @@
 define(
     ["painterro", "zepto"],
     function (Painterro, $) {
-
         var ANNOTATION_STRUCT = {
             title: "Annotate Snapshot",
             template: "annotate-snapshot",
@@ -52,23 +51,19 @@ define(
             this.$rootScope = $rootScope;
         }
 
-
-
-
-        AnnotateSnapshot.prototype.perform = function ($event,snapshot,embedId,entryId,$scope) {
+        AnnotateSnapshot.prototype.perform = function ($event, snapshot, embedId, entryId) {
 
             var DOMAIN_OBJECT = this.domainObject;
             var ROOTSCOPE = this.$rootScope;
-
-            this.dialogService.getUserChoice(ANNOTATION_STRUCT)
-                        .then(saveNotes);
-
             var painterro;
+            var save = false;
 
-            var tracker = function () {
+            var controller = ['$scope', '$timeout', function PainterroController($scope, $timeout) {
                 $(document.body).find('.l-dialog .outer-holder').addClass('annotation-dialog');
 
-                try {
+                // Timeout is necessary because Painterro uses document.getElementById, and mct-include
+                // hasn't added the dialog to the DOM yet.
+                $timeout(function () {
                     painterro = Painterro({
                         id: 'snap-annotation',
                         activeColor: '#ff0000',
@@ -93,42 +88,44 @@ define(
                             }
                         },
                         saveHandler: function (image, done) {
-                            if (entryId && embedId) {
-                                var elementPos = DOMAIN_OBJECT.model.entries.map(function (x) {
-                                    return x.createdOn;
-                                }).indexOf(entryId);
-                                var entryEmbeds = DOMAIN_OBJECT.model.entries[elementPos].embeds;
-                                var embedPos = entryEmbeds.map(function (x) {
-                                    return x.id;
-                                }).indexOf(embedId);
-                                $scope.saveSnap(image.asBlob(), embedPos, elementPos);
-                            }else {
-                                ROOTSCOPE.snapshot = {'src': image.asDataURL('image/png'),
-                                                    'modified': Date.now()};
+                            if (save) {
+                                if (entryId && embedId) {
+                                    var elementPos = DOMAIN_OBJECT.model.entries.map(function (x) {
+                                        return x.createdOn;
+                                    }).indexOf(entryId);
+                                    var entryEmbeds = DOMAIN_OBJECT.model.entries[elementPos].embeds;
+                                    var embedPos = entryEmbeds.map(function (x) {
+                                        return x.id;
+                                    }).indexOf(embedId);
+                                    $scope.saveSnap(image.asBlob(), embedPos, elementPos);
+                                }else {
+                                    ROOTSCOPE.snapshot = {'src': image.asDataURL('image/png'),
+                                                        'modified': Date.now()};
+                                }
                             }
-
                             done(true);
                         }
                     }).show(snapshot);
-                    $(document.body).find('.ptro-icon-btn').addClass('s-button');
-                    $(document.body).find('.ptro-input').addClass('s-button');
+                });
 
-                } catch (error) {
-                    // error caused because of snap-annotation div created asynchronously by dialog service
-                }
-            };
+                $(document.body).find('.ptro-icon-btn').addClass('s-button');
+                $(document.body).find('.ptro-input').addClass('s-button');
+            }];
 
-            ANNOTATION_STRUCT.model = {'tracker': tracker};
-
-
+            ANNOTATION_STRUCT.model = {'controller': controller};
 
             function saveNotes(param) {
                 if (param === 'ok') {
-                    painterro.save();
+                    save = true;
                 }else {
+                    save = false;
                     ROOTSCOPE.snapshot = "annotationCancelled";
                 }
+                painterro.save();
             }
+
+            this.dialogService.getUserChoice(ANNOTATION_STRUCT)
+            .then(saveNotes);
 
         };
 
