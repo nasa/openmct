@@ -38,6 +38,7 @@ define([
     "./src/policies/EditableLinkPolicy",
     "./src/policies/EditableMovePolicy",
     "./src/policies/EditContextualActionPolicy",
+    "./src/policies/RemoveActionPolicy",
     "./src/representers/EditRepresenter",
     "./src/representers/EditToolbarRepresenter",
     "./src/capabilities/EditorCapability",
@@ -77,6 +78,7 @@ define([
     EditableLinkPolicy,
     EditableMovePolicy,
     EditContextualActionPolicy,
+    RemoveActionPolicy,
     EditRepresenter,
     EditToolbarRepresenter,
     EditorCapability,
@@ -267,6 +269,10 @@ define([
                 {
                     "category": "action",
                     "implementation": EditableLinkPolicy
+                },
+                {
+                    "category": "action",
+                    "implementation": RemoveActionPolicy
                 },
                 {
                     "implementation": CreationPolicy,
