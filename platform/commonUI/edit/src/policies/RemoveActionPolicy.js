@@ -24,11 +24,10 @@
 define(
     [],
     function () {
-        "use strict";
 
         function RemoveActionPolicy() {
 
-            function isAnyViewEditable(views){
+            function isAnyViewEditable(views) {
                 var isEditable = false;
 
                 views.forEach(function (view) {
@@ -50,7 +49,7 @@ define(
                         views = domainObject.useCapability('view'),
                         metadata = action.getMetadata() || {};
 
-                    if(metadata.key === 'remove') {
+                    if (metadata.key === 'remove') {
                         return isAnyViewEditable(views);
                     }
                     return true;
