@@ -89,14 +89,14 @@ define(
 
             $scope.exportAsCSV = function () {
                 var headers = $scope.displayHeaders,
-                    filename = $(element[0]).attr('exportAs') || 'export';
+                    filename = $(element[0]).attr('export-as');
 
                 exportService.exportCSV($scope.displayRows.map(function (row) {
                     return headers.reduce(function (r, header) {
                         r[header] = row[header].text;
                         return r;
                     }, {});
-                }), { 
+                }), {
                     headers: headers,
                     filename: filename
                 });
