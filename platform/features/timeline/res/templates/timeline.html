@@ -106,30 +106,32 @@
 
                 <!-- TOP PANE GANTT BARS -->
                 <div class="split-pane-component l-timeline-pane t-pane-h l-pane-top t-timeline-gantt l-timeline-gantt s-timeline-gantt">
-                    <div class="l-hover-btns-holder s-hover-btns-holder">
+                    <div class="h-local-controls l-hover-btns-holder s-hover-btns-holder">
                         <a class="s-button icon-timer"
                            ng-click="scroll.follow = true"
                            ng-show="!toiController.isFollowing() && toiController.isActive()"
                            title="Follow time bounds">
                         </a>
 
-                        <a class="s-button icon-arrows-out"
-                           ng-click="scroll.follow = false; zoomController.fit()"
-                           ng-show="true"
-                           title="Zoom to fit">
-                        </a>
+                        <div class="l-btn-set">
+                            <a class="s-button icon-reset"
+                               ng-click="scroll.follow = false; zoomController.fit()"
+                               ng-show="true"
+                               title="Zoom to fit">
+                            </a>
 
-                        <a class="s-button icon-magnify-in"
-                           ng-click="scroll.follow = false; zoomController.zoom(-1)"
-                           ng-show="true"
-                           title="Zoom in">
-                        </a>
+                            <a class="s-button icon-magnify-in"
+                               ng-click="scroll.follow = false; zoomController.zoom(-1)"
+                               ng-show="true"
+                               title="Zoom in">
+                            </a>
 
-                        <a class="s-button icon-magnify-out"
-                           ng-click="scroll.follow = false; zoomController.zoom(1)"
-                           ng-show="true"
-                           title="Zoom out">
-                        </a>
+                            <a class="s-button icon-magnify-out"
+                               ng-click="scroll.follow = false; zoomController.zoom(1)"
+                               ng-show="true"
+                               title="Zoom out">
+                            </a>
+                        </div>
                     </div>
 
                     <div style="overflow: hidden; position: absolute; left: 0; top: 0; right: 0; height: 30px;" mct-scroll-x="scroll.x">

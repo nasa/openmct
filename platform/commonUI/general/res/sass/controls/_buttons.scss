@@ -114,10 +114,11 @@ body.desktop .mini-tab-icon {
 .l-btn-set {
     // Buttons that have a very tight conceptual grouping - no internal space between them.
     font-size: 0; // Remove space between s-button elements due to white space in markup
+    white-space: nowrap;
 
     .s-button {
         border-radius: 0;
-        margin-left: 1px;
+        margin-left: 1px !important;
     }
 
     > .s-button {

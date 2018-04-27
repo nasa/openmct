@@ -169,6 +169,8 @@ body.desktop .has-local-controls {
     font-size: 0.7rem;
     display: flex;
     flex-direction: row;
+    justify-content: flex-end;
+
 
     &.h-local-controls-overlay-content {
         position: absolute;
@@ -176,11 +178,11 @@ body.desktop .has-local-controls {
         z-index: 2;
     }
 
-    .local-controls {
-        display: block;
-        flex: 1 1 auto;
-        position: relative;
-
+    .l-btn-set,
+    .s-button {
+        &:not(:first-child) {
+            margin-left: $interiorMargin;
+        }
     }
 }
 
