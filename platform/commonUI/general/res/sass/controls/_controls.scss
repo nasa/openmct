@@ -128,55 +128,53 @@
     }
 }
 
-.l-local-controls {
-    // Control shown when hovering over an object, like plots and imagery
-    // Default position is upper right
-    $p: $interiorMargin;
-    position: absolute;
-    top: $p; right: $p; bottom: auto;
-    text-align: right;
-    z-index: 5;
 
-    &.l-flex-row {
-        align-items: center;
-    }
+
+/******************************************************** LOCAL CONTROLS */
+// Controls placed in proximity to or overlaid on components and views
+
+.local-controls-persist {
+
 }
 
-.s-local-controls {
-    @include trans-prop-nice(opacity);
-    font-size: 0.7rem;
-    &.s-wrapper-transluc {
-        // Semi-opaque wrapper to visually distinguish a control
-        // from the background
-        background: rgba($colorTransLucBg, 0.7);
-        box-sizing: border-box;
-        border-radius: $controlCr;
-    }
+.local-controls-hidden {
+    // Used within .has-local-controls, hidden by default
+
 }
 
-.new-has-local-controls {
+.local-controls-flyout {
+
+}
+
+body.desktop .has-local-controls {
     // Helper class, provides hover ability to show local controls
 
-    .controls-hidden {
-        @include trans-prop-nice(opacity, 150ms);
-        opacity: 0;
-        pointer-events: none;
-    }
-
-    &:hover .controls-hidden {
+    &:hover .local-controls-hidden {
+        @include trans-prop-nice($props: opacity, $dur: 50ms);
         opacity: 1;
         pointer-events: inherit;
+    }
+
+    .local-controls-hidden {
+        @include trans-prop-nice($props: opacity, $dur: 1000ms);
+        opacity: 0;
+        pointer-events: none;
     }
 }
 
 .h-local-controls {
-    // An explicit outer holder for controls
+    // An explicit outer holder for controls. Typically placed in upper right.
     $p: $interiorMargin;
-    position: absolute;
-    top: $p; right: $p;
+    align-items: center;
+    font-size: 0.7rem;
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
+
+    &.h-local-controls-overlay-content {
+        position: absolute;
+        top: $p; right: $p;
+        z-index: 2;
+    }
 
     .local-controls {
         display: block;
@@ -184,19 +182,22 @@
         position: relative;
 
     }
+}
 
-    .controls-persist {
-
+.h-local-controls-overlay-content {
+    background: $colorBodyBg;
+    border-radius: $controlCr + 1;
+    box-sizing: border-box;
+    border-radius: $controlCr;
+    padding: 1px;
+    .s-button {
+        background: $colorBtnBg;
     }
+}
 
-    .controls-hidden {
-        // Used within .has-local-controls, hidden by default
-
-    }
-
-    .controls-flyout {
-
-    }
+.h-local-controls-trans {
+    background: rgba($colorTransLucBg, 0.5);
+    padding: $interiorMargin;
 }
 
 /******************************************************** VIEW CONTROLS */

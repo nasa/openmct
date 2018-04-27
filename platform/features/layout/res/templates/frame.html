@@ -19,7 +19,7 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="frame frame-template t-frame-inner abs t-object-type-{{ domainObject.getModel().type }}">
+<div class="frame frame-template t-frame-inner abs has-local-controls t-object-type-{{ domainObject.getModel().type }}">
     <div class="abs object-browse-bar l-flex-row">
         <div class="left flex-elem l-flex-row grows">
             <mct-representation
@@ -28,7 +28,7 @@
                     class="l-flex-row flex-elem object-header grows">
             </mct-representation>
         </div>
-        <div class="btn-bar right l-flex-row flex-elem flex-justify-end flex-fixed">
+        <div class="btn-bar right l-flex-row flex-elem flex-justify-end flex-fixed local-controls local-controls-hidden">
             <mct-representation
                     key="'switcher'"
                     ng-model="representation"

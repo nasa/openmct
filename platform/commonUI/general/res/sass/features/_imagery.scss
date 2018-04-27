@@ -139,15 +139,12 @@
 
 /*************************************** LOCAL CONTROLS */
 .t-imagery {
-	.l-local-controls {
+	.h-local-controls {
 		max-width: 200px;
 		min-width: 100px;
 		width: 35%;
-
-		&.s-wrapper-transluc {
-			left: auto;
-			padding: $interiorMargin $interiorMarginLg;
-		}
+        align-items: center;
+        padding: $interiorMargin $interiorMarginLg;
 
 		input[type="range"] {
 			display: block;

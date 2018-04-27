@@ -1,10 +1,9 @@
 <div class="t-imagery" ng-controller="ImageryController as imagery">
     <mct-split-pane class='abs' anchor="bottom" alias="imagery">
-    <div class="split-pane-component l-image-main-wrapper l-flex-col"
+    <div class="split-pane-component has-local-controls l-image-main-wrapper l-flex-col"
         ng-mouseenter="showLocalControls = true;"
         ng-mouseleave="showLocalControls = false;">
-        <div class="l-local-controls s-local-controls s-wrapper-transluc l-flex-row"
-            ng-class="{ 'hide-nice': !showLocalControls }">
+        <div class="h-local-controls h-local-controls-overlay-content h-local-controls-trans s-local-controls local-controls-hidden l-flex-row">
             <span class="holder flex-elem grows">
                 <input class="icon-brightness" type="range"
                        min="0"
@@ -38,7 +37,7 @@
                     ng-click="showThumbsBubble = (showThumbsBubble) ? false:true"></a>
                 <span class="l-time">{{imagery.getTime()}}</span>
             </div>
-            <div class="l-controls-w flex-elem">
+            <div class="local-controls flex-elem">
                 <a class="s-button pause-play"
                     ng-click="imagery.paused(!imagery.paused())"
                     ng-class="{ paused: imagery.paused() }"></a>
