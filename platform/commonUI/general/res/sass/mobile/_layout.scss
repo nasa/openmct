@@ -131,16 +131,18 @@ body.mobile {
     }
 }
 
-body.phone.portrait {
-    .pane-tree-showing {
-        .pane.left.treeview {
-            width: $proporMenuOnly !important;
-        }
-        .pane.right.items {
-            left: 0 !important;
-            transform: translateX($proporMenuOnly);
-            .holder-object-and-inspector {
-                opacity: 0;
+@include phonePortrait() {
+    body.phone {
+        .pane-tree-showing {
+            .pane.left.treeview {
+                width: $proporMenuOnly !important;
+            }
+            .pane.right.items {
+                left: 0 !important;
+                @include transform(translateX($proporMenuOnly));
+                .holder-object-and-inspector {
+                    opacity: 0;
+                }
             }
         }
     }

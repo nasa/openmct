@@ -38,6 +38,8 @@ module.exports = function(config) {
             {pattern: 'node_modules/d3-*/**/*.js', included: false},
             {pattern: 'node_modules/vue/**/*.js', included: false},
             {pattern: 'src/**/*', included: false},
+            {pattern: 'node_modules/painterro/build/*.js', included: false},
+            {pattern: 'node_modules/dom-to-image/dist/*', included: false},
             {pattern: 'example/**/*.html', included: false},
             {pattern: 'example/**/*.js', included: false},
             {pattern: 'example/**/*.json', included: false},

@@ -299,7 +299,7 @@
 		color: $ic;
 	}
   @if $bgHov != none {
-      &:not(.disabled):hover {
+      &:not([disabled="true"]):not(.disabled):hover {
           background: $bgHov;
           color: $fgHov;
           >.icon,

@@ -68,6 +68,7 @@
                 ]
             }));
             openmct.install(openmct.plugins.SummaryWidget());
+            openmct.install(openmct.plugins.Notebook());
             openmct.time.clock('local', {start: -THIRTY_MINUTES, end: 0});
             openmct.time.timeSystem('utc');
             openmct.start();
