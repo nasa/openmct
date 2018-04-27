@@ -164,7 +164,6 @@ body.desktop .has-local-controls {
 
 .h-local-controls {
     // An explicit outer holder for controls. Typically placed in upper right.
-    $p: $interiorMargin;
     align-items: center;
     font-size: 0.7rem;
     display: flex;
@@ -173,6 +172,7 @@ body.desktop .has-local-controls {
 
 
     &.h-local-controls-overlay-content {
+        $p: $interiorMargin;
         position: absolute;
         top: $p; right: $p;
         z-index: 2;
