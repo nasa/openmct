@@ -162,20 +162,18 @@
                            the-y-axis="yAxis">
                 </mct-chart>
 
-                <div class="l-local-controls gl-plot-local-controls"
-                     ng-show="plotHistory.length"
-                     style="position: absolute; top: 8px; right: 8px;">
-
-                    <a class="s-button icon-arrow-left"
-                       ng-click="plot.back()"
-                       title="Restore previous pan/zoom">
-                    </a>
-
-                    <a class="s-button icon-arrows-out"
-                       ng-click="plot.clear()"
-                       title="Reset pan/zoom">
-                    </a>
-
+                <div class="h-local-controls"
+                     ng-show="plotHistory.length">
+                    <div class="local-controls controls-persist">
+                        <a class="s-button icon-arrow-left"
+                           ng-click="plot.back()"
+                           title="Restore previous pan/zoom">
+                        </a>
+                        <a class="s-button icon-reset"
+                           ng-click="plot.clear()"
+                           title="Reset pan/zoom">
+                        </a>
+                    </div>
                 </div>
 
                 <span class="t-wait-spinner loading" ng-show="plot.isRequestPending()">

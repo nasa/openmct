@@ -136,6 +136,10 @@
     top: $p; right: $p; bottom: auto;
     text-align: right;
     z-index: 5;
+
+    &.l-flex-row {
+        align-items: center;
+    }
 }
 
 .s-local-controls {
@@ -147,6 +151,51 @@
         background: rgba($colorTransLucBg, 0.7);
         box-sizing: border-box;
         border-radius: $controlCr;
+    }
+}
+
+.new-has-local-controls {
+    // Helper class, provides hover ability to show local controls
+
+    .controls-hidden {
+        @include trans-prop-nice(opacity, 150ms);
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &:hover .controls-hidden {
+        opacity: 1;
+        pointer-events: inherit;
+    }
+}
+
+.h-local-controls {
+    // An explicit outer holder for controls
+    $p: $interiorMargin;
+    position: absolute;
+    top: $p; right: $p;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+
+    .local-controls {
+        display: block;
+        flex: 1 1 auto;
+        position: relative;
+
+    }
+
+    .controls-persist {
+
+    }
+
+    .controls-hidden {
+        // Used within .has-local-controls, hidden by default
+
+    }
+
+    .controls-flyout {
+
     }
 }
 

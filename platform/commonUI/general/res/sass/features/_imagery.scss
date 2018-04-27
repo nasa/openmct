@@ -138,53 +138,53 @@
 }
 
 /*************************************** LOCAL CONTROLS */
-.l-local-controls {
-    max-width: 200px;
-    min-width: 100px;
-    width: 35%;
-    input[type="range"] {
-        display: block;
-        width: 100%;
-        &:not(:first-child) {
-            margin-top: $interiorMarginLg;
-        }
+.t-imagery {
+	.l-local-controls {
+		max-width: 200px;
+		min-width: 100px;
+		width: 35%;
 
-        &:before {
-            margin-right: $interiorMarginSm;
-        }
-    }
+		&.s-wrapper-transluc {
+			left: auto;
+			padding: $interiorMargin $interiorMarginLg;
+		}
 
-    .t-reset-btn-holder {
-        $bc: $scrollbarTrackColorBg;
-        &:before,
-        &:after {
-            border-right: 1px solid $bc;
-            content:'';
-            display: block;
-            width: 5px;
-            height: 4px;
-        }
+		input[type="range"] {
+			display: block;
+			width: 100%;
+			&:not(:first-child) {
+				margin-top: $interiorMarginLg;
+			}
 
-        &:before {
-            border-top: 1px solid $bc;
-            margin-bottom: 2px;
-        }
+			&:before {
+				margin-right: $interiorMarginSm;
+			}
+		}
 
-        &:after {
-            border-bottom: 1px solid $bc;
-            margin-top: 2px;
-        }
-    }
+		.t-reset-btn-holder {
+			$bc: $scrollbarTrackColorBg;
+			&:before,
+			&:after {
+				border-right: 1px solid $bc;
+				content:'';
+				display: block;
+				width: 5px;
+				height: 4px;
+			}
 
-    &.s-wrapper-transluc {
-        left: auto;
-        padding: $interiorMargin $interiorMarginLg;
-    }
+			&:before {
+				border-top: 1px solid $bc;
+				margin-bottom: 2px;
+			}
 
-    &.l-flex-row {
-        align-items: center;
-    }
+			&:after {
+				border-bottom: 1px solid $bc;
+				margin-top: 2px;
+			}
+		}
+	}
 }
+
 
 /*************************************** WHEN IN FRAME */
 .frame .t-imagery {
