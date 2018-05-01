@@ -96,7 +96,14 @@ define(
                 updateFromView($scope.textValue);
             }
 
+            function forceBlur($event) {
+                if ($event.keyCode === 13) {
+                    $event.target.blur();
+                }
+            }
+
             $scope.restoreTextValue = restoreTextValue;
+            $scope.forceBlur = forceBlur;
 
             $scope.picker = { active: false };
 
