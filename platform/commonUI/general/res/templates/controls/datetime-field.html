@@ -23,6 +23,7 @@
     <input type="text" autocorrect="off" spellcheck="false"
            ng-model="textValue"
            ng-blur="restoreTextValue(); ngBlur()"
+           ng-keypress="ngKeypress({$event: $event})"
            ng-mouseup="ngMouseup()"
            ng-disabled="ngDisabled"
            ng-class="{

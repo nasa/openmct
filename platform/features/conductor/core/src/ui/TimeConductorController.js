@@ -313,6 +313,18 @@ define(
         };
 
         /**
+         * Triggers an application-wide bounds change if enter keypress event was
+         * detected. Solves Issue #925
+         * @param {object} boundsModel
+         * @param {$event} event
+         */
+        TimeConductorController.prototype.setBoundsFromViewOnEnter = function (boundsModel, event) {
+            if (event.which === 13) {
+                this.setBoundsFromView(boundsModel);
+            }
+        };
+
+        /**
          * When form values for bounds change, update the bounds in the Time API
          * to trigger an application-wide bounds change.
          * @param {object} formModel

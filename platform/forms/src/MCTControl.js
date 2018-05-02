@@ -71,7 +71,10 @@ define(
                     // Allow controls to trigger blur-like events
                     ngBlur: "&",
 
-                    // Allow controls to trigger blur-like events
+                    // Allow controls to trigger keypress events
+                    ngKeypress: "&",
+
+                    // Allow controls to trigger mouseup events
                     ngMouseup: "&",
 
                     // The state of the form value itself
