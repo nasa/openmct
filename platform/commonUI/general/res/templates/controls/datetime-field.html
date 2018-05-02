@@ -21,6 +21,7 @@
 -->
 <span ng-controller="DateTimeFieldController">
     <input type="text" autocorrect="off" spellcheck="false"
+           ng-keyup="forceBlur($event)"
            ng-model="textValue"
            ng-blur="restoreTextValue(); ngBlur()"
            ng-mouseup="ngMouseup()"
