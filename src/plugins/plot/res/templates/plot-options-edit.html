@@ -22,7 +22,7 @@
 <div ng-controller="PlotOptionsController">
     <ul class="tree l-inspector-part">
         <h2 title="Display properties for this object">Plot Series Options</h2>
-        <li ng-repeat="series in config.series.models">
+        <li ng-repeat="series in config.series.models" ng-init="seriesForm = form.series[$index]">
             <span class="tree-item menus-to-left">
                 <span class='ui-symbol view-control flex-elem'
                       ng-class="{ expanded: series.expanded }"
@@ -40,10 +40,10 @@
                          title="The field to be plotted as a value for this series.">Value</div>
                     <div class="grid-cell value">
                         <div class="select">
-                            <select ng-model="form.series[$index].yKey">
-                                <option ng-repeat="option in form.series[$index].yAxisOptions"
+                            <select ng-model="seriesForm.yKey">
+                                <option ng-repeat="option in seriesForm.yAxisOptions"
                                         value="{{option.value}}"
-                                        ng-selected="option.value == form.series[$index].yKey">
+                                        ng-selected="option.value == seriesForm.yKey">
                                     {{option.name}}
                                 </option>
                             </select>
@@ -55,7 +55,7 @@
                          title="The line rendering style for this series.">Line Style</div>
                     <div class="grid-cell value">
                         <div class="select">
-                            <select ng-model="form.series[$index].interpolate">
+                            <select ng-model="seriesForm.interpolate">
                                 <option value="none">None</option>
                                 <option value="linear">Linear interpolate</option>
                                 <option value="stepAfter">Step after</option>
@@ -66,21 +66,21 @@
                 <li class="grid-row">
                     <div class="grid-cell label"
                          title="Whether markers are displayed.">Markers</div>
-                    <div class="grid-cell value"><input type="checkbox" ng-model="form.series[$index].markers"/></div>
+                    <div class="grid-cell value"><input type="checkbox" ng-model="seriesForm.markers"/></div>
                 </li>
                 <li class="grid-row">
                     <div class="grid-cell label"
                          title="Display markers visually denoting points in alarm.">Alarm Markers</div>
-                    <div class="grid-cell value"><input type="checkbox" ng-model="form.series[$index].alarmMarkers"/></div>
+                    <div class="grid-cell value"><input type="checkbox" ng-model="seriesForm.alarmMarkers"/></div>
                 </li>
-                <li class="grid-row" ng-show="form.series[$index].markers || form.series[$index].alarmMarkers">
+                <li class="grid-row" ng-show="seriesForm.markers || seriesForm.alarmMarkers">
                     <div class="grid-cell label"
                          title="The size of regular and alarm markers for this series.">Marker Size:</div>
-                    <div class="grid-cell value"><input class="sm" type="text" ng-model="form.series[$index].markerSize"/></div>
+                    <div class="grid-cell value"><input class="sm" type="text" ng-model="seriesForm.markerSize"/></div>
                 </li>
                 <li class="grid-row"
                     ng-controller="ClickAwayController as toggle"
-                    ng-show="form.series[$index].interpolate !== 'none' || form.series[$index].markers">
+                    ng-show="seriesForm.interpolate !== 'none' || seriesForm.markers">
                     <div class="grid-cell label"
                          title="Manually set the plot line and marker color for this series.">Color</div>
                     <div class="grid-cell value">
