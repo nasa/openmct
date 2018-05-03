@@ -146,10 +146,14 @@ define([
                     this.updateStats(seriesStats);
                 }
             }, this);
+            this.listenTo(series, 'change:yKey', function () {
+                this.updateFromSeries(this.seriesCollection);
+            }, this);
         },
         untrackSeries: function (series) {
             this.stopListening(series);
             this.resetStats();
+            this.updateFromSeries(this.seriesCollection);
         },
         toggleAutoscale: function (autoscale) {
             if (autoscale) {
