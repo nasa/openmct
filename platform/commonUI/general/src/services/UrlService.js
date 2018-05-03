@@ -73,10 +73,17 @@ define(
          * @returns {string} URL for the domain object
          */
         UrlService.prototype.urlForNewTab = function (mode, domainObject) {
-            var viewPath = "?view=" + this.$location.search().view,
+            var search = this.$location.search(),
+                arr = [];
+            for (var key in search) {
+                if (search.hasOwnProperty(key)) {
+                    arr.push(key + '=' + search[key]);
+                }
+            }
+            var searchPath = "?" + arr.join('&'),
                 newTabPath =
                     "index.html#" + this.urlForLocation(mode, domainObject) +
-                            viewPath;
+                            searchPath;
             return newTabPath;
         };
 
