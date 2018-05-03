@@ -47,7 +47,9 @@ define([
 
         var interval = setInterval(function () {
             var now = Date.now();
-            callback(pointForTimestamp(now, duration, domainObject.name));
+            var datum = pointForTimestamp(now, duration, domainObject.name);
+            datum.value += "";
+            callback(datum);
         }, duration);
 
         return function () {

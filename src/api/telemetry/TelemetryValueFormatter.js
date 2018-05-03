@@ -57,8 +57,8 @@ define([
                 return vm;
             }, {byValue: {}, byString: {}});
             this.formatter.format = function (value) {
-                if (typeof value === "number") {
-                    return this.enumerations.byValue[value] || value;
+                if (this.enumerations.byValue.hasOwnProperty(value)) {
+                    return this.enumerations.byValue[value];
                 }
                 return value;
             }.bind(this);
