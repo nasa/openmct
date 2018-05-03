@@ -36,7 +36,7 @@ define(
                     name: 'Entry',
                     key: 'entry',
                     control: 'textarea',
-                    required: true,
+                    required: false,
                     "cssClass": "l-textarea-sm"
                 },
                 {
