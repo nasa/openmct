@@ -2,12 +2,14 @@ define([
     './SummaryWidgetsCompositionPolicy',
     './src/telemetry/SummaryWidgetMetadataProvider',
     './src/telemetry/SummaryWidgetTelemetryProvider',
-    './src/views/SummaryWidgetViewProvider'
+    './src/views/SummaryWidgetViewProvider',
+    './SummaryWidgetViewPolicy'
 ], function (
     SummaryWidgetsCompositionPolicy,
     SummaryWidgetMetadataProvider,
     SummaryWidgetTelemetryProvider,
-    SummaryWidgetViewProvider
+    SummaryWidgetViewProvider,
+    SummaryWidgetViewPolicy
 ) {
 
     function plugin() {
@@ -86,6 +88,11 @@ define([
             openmct.types.addType('summary-widget', widgetType);
             openmct.legacyExtension('policies', {category: 'composition',
                 implementation: SummaryWidgetsCompositionPolicy, depends: ['openmct']
+            });
+            openmct.legacyExtension('policies', {
+                category: 'view',
+                implementation: SummaryWidgetViewPolicy,
+                depends: ['openmct']
             });
             openmct.telemetry.addProvider(new SummaryWidgetMetadataProvider(openmct));
             openmct.telemetry.addProvider(new SummaryWidgetTelemetryProvider(openmct));
