@@ -28,7 +28,8 @@ $output-bourbon-deprecation-warnings: false;
 }
 
 body, html {
-    overflow: hidden;
+    height: 100%;
+    width: 100%;
 }
 
 .l-splash-holder {
