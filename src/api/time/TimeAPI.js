@@ -41,7 +41,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * @interface
      * @memberof module:openmct
      */
-    function TimeAPI() {
+    function TimeAPI(openmct) {
         EventEmitter.call(this);
 
         //The Time System
@@ -60,6 +60,12 @@ define(['EventEmitter'], function (EventEmitter) {
         this.offsets = undefined;
 
         this.tick = this.tick.bind(this);
+
+        openmct.on('start', () => {
+            if (this.getAllTimeSystems().length === 0) {
+                throw 'Open MCT must be configured with at least one time system';
+            }
+        })
 
     }
 
