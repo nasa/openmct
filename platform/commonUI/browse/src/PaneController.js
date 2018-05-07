@@ -24,14 +24,14 @@
 define(
     [],
     function () {
-
+        var navigationListenerAdded = false;
         /**
          * Controller to provide the ability to show/hide the tree in
          * Browse mode.
          * @constructor
          * @memberof platform/commonUI/browse
          */
-        function PaneController($scope, agentService, $window, $location, $attrs) {
+        function PaneController($scope, agentService, $window, $location, $attrs, navigationService) {
             var self = this;
             this.agentService = agentService;
             var hideParameterPresent = $location.search().hasOwnProperty($attrs.hideParameter);
@@ -56,11 +56,16 @@ define(
                 // declared as a method but as a property which happens to
                 // be a function.
                 if (agentService.isPhone() && agentService.isPortrait()) {
-                    // On phones, trees should collapse in portrait mode
+                    // On phones, πs should collapse in portrait mode
                     // when something is navigated-to.
                     self.state = false;
                 }
             };
+
+            if (navigationService && navigationService.addListener && !navigationListenerAdded) {
+                navigationService.addListener(this.callback);
+                navigationListenerAdded = true;
+            }
         }
 
         /**

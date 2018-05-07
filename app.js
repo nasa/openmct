@@ -78,7 +78,7 @@
     app.use(express['static'](options.directory));
 
     // Finally, open the HTTP server and log the instance to the console
-    app.listen(options.port, function() {
+    app.listen(options.port, '0.0.0.0', function() {
         console.log('Open MCT application running at localhost:' + options.port)
     });
 }());
