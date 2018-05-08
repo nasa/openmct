@@ -226,17 +226,6 @@ define([
                     ]
                 },
                 {
-                    "key": "create-snapshot",
-                    "implementation": CreateSnapshotAction,
-                    "name": "Create Snapshot",
-                    "description": "Create a snapshot for the embed",
-                    "category": "embed-no-snap",
-                    "priority": "preferred",
-                    "depends": [
-                      "$compile"
-                    ]
-                },
-                {
                     "key": "notebook-new-entry",
                     "implementation": newEntryAction,
                     "name": "New Notebook Entry",

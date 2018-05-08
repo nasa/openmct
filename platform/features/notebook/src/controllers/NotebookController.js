@@ -318,7 +318,10 @@ define(
                     $scope.getDomainObj(embedType).then(function (resp) {
                         $scope.embedActions = [];
                         $scope.embedActions.push($scope.actionToMenuOption(
-                                                    $scope.action.getActions({key: 'window',selectedObject: resp[embedType]})[0]
+                                                    $scope.action.getActions({key: 'mct-preview-action', selectedObject: resp[embedType]})[0]
+                                              ));
+                        $scope.embedActions.push($scope.actionToMenuOption(
+                                                    $scope.action.getActions({key: 'window', selectedObject: resp[embedType]})[0]
                                               ));
                         $scope.embedActions.push({
                                                 key: 'navigate',
