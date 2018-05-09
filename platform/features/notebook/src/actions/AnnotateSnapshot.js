@@ -125,6 +125,12 @@ define(
                 painterro.save();
             }
 
+            function rejectNotes() {
+                save = false;
+                ROOTSCOPE.snapshot = "annotationCancelled";
+                painterro.save();
+            }
+
             function saveSnap(url, embedPos, entryPos, domainObject) {
                 var snap = false;
 
@@ -149,7 +155,7 @@ define(
             }
 
             this.dialogService.getUserChoice(ANNOTATION_STRUCT)
-            .then(saveNotes);
+            .then(saveNotes, rejectNotes);
 
         };
 
