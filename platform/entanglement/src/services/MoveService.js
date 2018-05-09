@@ -50,7 +50,8 @@ define(
             if (parentCandidate.getId() === object.getId()) {
                 return false;
             }
-            if (parentCandidate.getModel().composition.indexOf(object.getId()) !== -1) {
+            if (Array.isArray(parentCandidate.getModel().composition) &&
+                parentCandidate.getModel().composition.indexOf(object.getId()) !== -1) {
                 return false;
             }
             return this.policyService.allow(
