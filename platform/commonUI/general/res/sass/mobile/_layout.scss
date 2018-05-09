@@ -90,12 +90,19 @@ body.mobile {
     }
 
     .object-browse-bar {
-        &.t-primary { margin-left: 45px; }
+        &.t-primary {
+            margin-left: 45px;
+
+            .title-label {
+                // Prevent inline editing of the object title in the main view in mobile
+                pointer-events: none;
+            }
+        }
         .context-available {
+            font-size: 0.9em;
             opacity: 1 !important;
         }
         .view-switcher {
-            margin-right: 0 !important;
             .title-label {
                 // Hide the name in mobile
                 display: none;
