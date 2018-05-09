@@ -52,9 +52,12 @@ define(
                     self.textValue = formatter(timeDelta);
                     self.signValue = timeDelta < 0 ? "-" :
                         timeDelta >= 1000 ? "+" : "";
+                    self.signCssClass = timeDelta < 0 ? "icon-minus" :
+                        timeDelta >= 1000 ? "icon-plus" : "";
                 } else {
                     self.textValue = "";
                     self.signValue = "";
+                    self.signCssClass = "";
                 }
             }
 
@@ -213,6 +216,15 @@ define(
          */
         TimerController.prototype.sign = function () {
             return this.signValue;
+        };
+
+        /**
+         * Get the sign (+ or -) of the current timer value, as
+         * a CSS class.
+         * @returns {string} sign of the current timer value
+         */
+        TimerController.prototype.signClass = function () {
+            return this.signCssClass;
         };
 
         /**
