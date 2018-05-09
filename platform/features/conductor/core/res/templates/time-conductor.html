@@ -23,7 +23,6 @@
                                          }"
                                          ng-model="boundsModel"
                                          ng-blur="tcController.setBoundsFromView(boundsModel)"
-                                         ng-keypress="tcController.setBoundsFromViewOnEnter(boundsModel, $event)"
                                          field="'start'"
                                          class="time-range-input">
                             </mct-control>
@@ -56,7 +55,6 @@
                                          }"
                                          ng-model="boundsModel"
                                          ng-blur="tcController.setBoundsFromView(boundsModel)"
-                                         ng-keypress="tcController.setBoundsFromViewOnEnter(boundsModel, $event)"
                                          ng-disabled="!tcController.isFixed"
                                          field="'end'"
                                          class="time-range-input">
