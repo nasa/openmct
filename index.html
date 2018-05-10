@@ -38,7 +38,8 @@
                     openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
                 );
                 openmct.install(openmct.plugins.MyItems());
-                openmct.install(openmct.plugins.LocalStorage());
+                // openmct.install(openmct.plugins.LocalStorage());
+                openmct.install(openmct.plugins.CouchDB('http://128.102.236.75:5984/openmct'));
                 openmct.install(openmct.plugins.Espresso());
                 openmct.install(openmct.plugins.Generator());
                 openmct.install(openmct.plugins.ExampleImagery());
