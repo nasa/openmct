@@ -1,0 +1,3206 @@
+<html>
+    <head>
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/styles.css">
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/documentation.css">
+    </head>
+    <body>
+
+<a name="table-of-contents" href="#table-of-contents"><h1 id="undefinedtable-of-contents">Table of Contents</h1>
+</a><ul>
+<li><a href="#open-mct-tutorials">Open MCT Tutorials</a></li>
+<li><a href="#introduction">Introduction</a><ul>
+<li><a href="#this-document">This document</a></li>
+<li><a href="#setting-up-open-mct">Setting Up Open MCT</a><ul>
+<li><a href="#prerequisites">Prerequisites</a></li>
+<li><a href="#check-out-open-mct-sources">Check out Open MCT Sources</a></li>
+<li><a href="#building-open-mct">Building Open MCT</a></li>
+<li><a href="#run-a-web-server">Run a Web Server</a></li>
+<li><a href="#viewing-in-browser">Viewing in Browser</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#tutorials">Tutorials</a><ul>
+<li><a href="#to-do-list">To-do List</a><ul>
+<li><a href="#step-1-create-the-plugin">Step 1-Create the Plugin</a>
+~ <a href="#before">Before</a>
+~ <a href="#after">After</a></li>
+<li><a href="#step-2-add-a-domain-object-type">Step 2-Add a Domain Object Type</a></li>
+<li><a href="#step-3-add-a-view">Step 3-Add a View</a></li>
+<li><a href="#step-4-add-a-controller">Step 4-Add a Controller</a></li>
+<li><a href="#step-5-support-editing">Step 5-Support Editing</a></li>
+<li><a href="#step-6-customizing-look-and-feel">Step 6-Customizing Look and Feel</a></li>
+</ul>
+</li>
+<li><a href="#bar-graph">Bar Graph</a><ul>
+<li><a href="#step-1-define-the-view">Step 1-Define the View</a></li>
+<li><a href="#step-2-add-a-controller">Step 2-Add a Controller</a></li>
+<li><a href="#step-3-using-telemetry-data">Step 3-Using Telemetry Data</a></li>
+<li><a href="#step-4-view-configuration">Step 4-View Configuration</a></li>
+</ul>
+</li>
+<li><a href="#telemetry-adapter">Telemetry Adapter</a><ul>
+<li><a href="#step-0-expose-your-telemetry">Step 0-Expose Your Telemetry</a></li>
+<li><a href="#step-1-add-a-top-level-object">Step 1-Add a Top-level Object</a></li>
+<li><a href="#step-2-expose-the-telemetry-dictionary">Step 2-Expose the Telemetry Dictionary</a></li>
+<li><a href="#step-3-historical-telemetry">Step 3-Historical Telemetry</a></li>
+<li><a href="#step-4-real-time-telemetry">Step 4-Real-time Telemetry</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<a name="open-mct-tutorials" href="#open-mct-tutorials"><h1 id="undefinedopen-mct-tutorials">Open MCT Tutorials</h1>
+</a><p>Victor Woeltjen
+victor.woeltjen@nasa.gov</p>
+<p>October 14, 2015
+Document Version 2.2</p>
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Version</th>
+<th>Summary of Changes</th>
+<th>Author</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>May 12, 2015</td>
+<td>0</td>
+<td>Initial Draft</td>
+<td>Victor Woeltjen</td>
+</tr>
+<tr>
+<td>June 4, 2015</td>
+<td>1.0</td>
+<td>Name changes</td>
+<td>Victor Woeltjen</td>
+</tr>
+<tr>
+<td>July 28, 2015</td>
+<td>2.0</td>
+<td>Telemetry adapter tutorial</td>
+<td>Victor Woeltjen</td>
+</tr>
+<tr>
+<td>July 31, 2015</td>
+<td>2.1</td>
+<td>Clarify telemetry adapter details</td>
+<td>Victor Woeltjen</td>
+</tr>
+<tr>
+<td>October 14, 2015</td>
+<td>2.2</td>
+<td>Conversion to markdown</td>
+<td>Andrew Henry</td>
+</tr>
+</tbody>
+</table>
+<a name="introduction" href="#introduction"><h1 id="undefinedintroduction">Introduction</h1>
+</a><a name="this-document" href="#this-document"><h2 id="undefinedthis-document">This document</h2>
+</a><p>This document contains a number of code examples in formatted code blocks. In 
+many cases these code blocks are repeated in order to highlight code that has 
+been added or removed as part of the tutorial. In these cases, any lines added 
+will be indicated with a &#39;+&#39; at the start of the line. Any lines removed will 
+be indicated with a &#39;-&#39;.</p>
+<a name="setting-up-open-mct" href="#setting-up-open-mct"><h2 id="undefinedsetting-up-open-mct">Setting Up Open MCT</h2>
+</a><p>In this section, we will cover the steps necessary to get a minimal Open MCT 
+developer environment up and running. Once we have this, we will be able to 
+proceed with writing plugins as described in this tutorial.</p>
+<a name="prerequisites" href="#prerequisites"><h3 id="undefinedprerequisites">Prerequisites</h3>
+</a><p>This tutorial assumes you have the following software installed. Version numbers 
+record what was used in writing this tutorial; the same steps should work with 
+more recent versions, but this cannot be guaranteed.</p>
+<ul>
+<li>Node.js v0.12.2: <a href="https://nodejs.org/">https://nodejs.org/</a></li>
+<li>git v1.8.3.4: <a href="http://git-scm.com/">http://git-scm.com/</a></li>
+<li>Google Chrome v42: <a href="https://www.google.com/chrome/">https://www.google.com/chrome/</a></li>
+<li>A text editor.</li>
+</ul>
+<p>Open MCT can be run without any of these tools, provided suitable 
+alternatives are taken; see the <a href="../guide/index.html">Open MCT Developer Guide</a> 
+for a more general overview of how to run and deploy a Open MCT application.</p>
+<a name="check-out-open-mct-sources" href="#check-out-open-mct-sources"><h3 id="undefinedcheck-out-open-mct-sources">Check out Open MCT Sources</h3>
+</a><p>First step is to check out Open MCT from the source repository. </p>
+<p><code>git clone https://github.com/nasa/openmctweb.git openmctweb</code></p>
+<p>This will create a copy of the Open MCT source code repository in the folder 
+<code>openmctweb</code> (relative to the path from which you ran the command.)
+If you have a repository URL, use that as the &quot;path to repo&quot; above. Alternately, 
+if you received Open MCT as a git bundle, the path to that bundle on the 
+local filesystem can be used instead.
+At this point, it will also be useful to branch off of Open MCT v0.6.2 
+(which was used when writing these tutorials) to begin adding plugins.</p>
+<pre><code>cd openmctweb
+git branch &lt;my branch name&gt; open-v0.6.2
+git checkout &lt;my branch name&gt;
+</code></pre><a name="building-open-mct" href="#building-open-mct"><h3 id="undefinedbuilding-open-mct">Building Open MCT</h3>
+</a><p>Once downloaded, Open MCT can be built with the following command:</p>
+<pre><code>npm install
+</code></pre><p>This will install various dependencies, build CSS from Sass files, run tests, 
+and lint the source code. </p>
+<p>It&#39;s not necessary to do this after every code change, unless you are making 
+changes to stylesheets, or you are running the minified version of the app 
+(under <code>dist</code>). </p>
+<a name="run-a-web-server" href="#run-a-web-server"><h3 id="undefinedrun-a-web-server">Run a Web Server</h3>
+</a><p>The next step is to run a web server so that you can view the Open MCT 
+client (including the plugins you add to it) in browser. Any web server can 
+be used for hosting OpenMCTWeb, and a trivial web server is provided in this 
+package for the purposes of running the tutorials. The provided web server 
+should not be used in a production environment</p>
+<p>To run the tutorial web server</p>
+<pre><code>npm start
+</code></pre><a name="viewing-in-browser" href="#viewing-in-browser"><h3 id="undefinedviewing-in-browser">Viewing in Browser</h3>
+</a><p>Once running, you should be able to view Open MCT from your browser at 
+<a href="http://localhost:8080/">http://localhost:8080/</a> (assuming the web server is running on port 8080, 
+and OpenMCTWeb is installed at the server&#39;s root path). 
+<a href="https://www.google.com/chrome/">Google Chrome</a> is recommended for these 
+tutorials, as Chrome is Open MCT&#39;s &quot;test-to&quot; browser. The browser cache 
+can sometimes interfere with development (masking changes by 
+using older versions of sources); to avoid this, it is easiest to run Chrome 
+with Developer Tools expanded, and &quot;Disable cache&quot; selected from the Network 
+tab, as shown below.</p>
+<p><img src="images/chrome.png" alt="Chrome Developer Tools"></p>
+<a name="tutorials" href="#tutorials"><h1 id="undefinedtutorials">Tutorials</h1>
+</a><p>These tutorials cover three of the common tasks in Open MCT:</p>
+<ul>
+<li>The &quot;to-do list&quot; tutorial illustrates how to add a new application feature.</li>
+<li>The &quot;bar graph&quot; tutorial illustrates how to add a new telemetry visualization.</li>
+<li>The &quot;data set reader&quot; tutorial illustrates how to integrate with a telemetry 
+backend.</li>
+</ul>
+<a name="to-do-list" href="#to-do-list"><h2 id="undefinedto-do-list">To-do List</h2>
+</a><p>The goal of this tutorial is to add a new application feature to Open MCT: 
+To-do lists. Users should be able to create and manage these to track items that 
+they need to do. This is modelled after the to-do lists at <a href="http://todomvc.com/">http://todomvc.com/</a>.</p>
+<a name="step-1-create-the-plugin" href="#step-1-create-the-plugin"><h3 id="undefinedstep-1-create-the-plugin">Step 1-Create the Plugin</h3>
+</a><p>The first step to adding a new feature to Open MCT is to create the plugin 
+which will expose that feature. A plugin in Open MCT is represented by what 
+is called a bundle; a bundle, in turn, is a directory which contains a file 
+bundle.js, which in turn describes where other relevant sources &amp; resources 
+will be. The syntax of this file is described in more detail in the Open MCT 
+Developer Guide.</p>
+<p>We will create this file in the directory tutorials/todo (we can hereafter refer 
+to this plugin as tutorials/todo as well.) We will start with an &quot;empty bundle&quot;, 
+one which exposes no extensions - which looks like:</p>
+<pre><code class="lang-diff">
+define([
+    &#39;legacyRegistry&#39;
+], function (
+    legacyRegistry
+) {
+    legacyRegistry.register(&quot;tutorials/todo&quot;, {
+        &quot;name&quot;: &quot;To-do Plugin&quot;,
+        &quot;description&quot;: &quot;Allows creating and editing to-do lists.&quot;,
+        &quot;extensions&quot;:
+        {
+        }
+    });
+});
+</code></pre>
+<p><strong>tutorials/todo/bundle.js</strong></p>
+<p>With the new bundle defined, it is now necessary to register the bundle with 
+the application. The details of how a new bundle is defined are in the 
+process of changing. The Open MCT codebase has started to shift from a 
+declarative registration style toward an imperative registration style. 
+The tutorials will be updated with the new bundle registration mechanism once it 
+has been finalized. </p>
+<a name="before" href="#before"><h4 id="undefinedbefore">Before</h4>
+</a><pre><code class="lang-diff">requirejs.config({
+    &quot;paths&quot;: {
+        &quot;legacyRegistry&quot;: &quot;src/legacyRegistry&quot;,
+        &quot;angular&quot;: &quot;bower_components/angular/angular.min&quot;,
+        &quot;angular-route&quot;: &quot;bower_components/angular-route/angular-route.min&quot;,
+        &quot;csv&quot;: &quot;bower_components/comma-separated-values/csv.min&quot;,
+        &quot;es6-promise&quot;: &quot;bower_components/es6-promise/promise.min&quot;,
+        &quot;moment&quot;: &quot;bower_components/moment/moment&quot;,
+        &quot;moment-duration-format&quot;: &quot;bower_components/moment-duration-format/lib/moment-duration-format&quot;,
+        &quot;saveAs&quot;: &quot;bower_components/FileSaver.js/FileSaver.min&quot;,
+        &quot;screenfull&quot;: &quot;bower_components/screenfull/dist/screenfull.min&quot;,
+        &quot;text&quot;: &quot;bower_components/text/text&quot;,
+        &quot;uuid&quot;: &quot;bower_components/node-uuid/uuid&quot;,
+        &quot;zepto&quot;: &quot;bower_components/zepto/zepto.min&quot;
+    },
+    &quot;shim&quot;: {
+        &quot;angular&quot;: {
+            &quot;exports&quot;: &quot;angular&quot;
+        },
+        &quot;angular-route&quot;: {
+            &quot;deps&quot;: [ &quot;angular&quot; ]
+        },
+        &quot;moment-duration-format&quot;: {
+            &quot;deps&quot;: [ &quot;moment&quot; ]
+        },
+        &quot;screenfull&quot;: {
+            &quot;exports&quot;: &quot;screenfull&quot;
+        },
+        &quot;zepto&quot;: {
+            &quot;exports&quot;: &quot;Zepto&quot;
+        }
+    }
+});
+
+define([
+    &#39;./platform/framework/src/Main&#39;,
+    &#39;legacyRegistry&#39;,
+
+    &#39;./platform/framework/bundle&#39;,
+    &#39;./platform/core/bundle&#39;,
+    &#39;./platform/representation/bundle&#39;,
+    &#39;./platform/commonUI/about/bundle&#39;,
+    &#39;./platform/commonUI/browse/bundle&#39;,
+    &#39;./platform/commonUI/edit/bundle&#39;,
+    &#39;./platform/commonUI/dialog/bundle&#39;,
+    &#39;./platform/commonUI/formats/bundle&#39;,
+    &#39;./platform/commonUI/general/bundle&#39;,
+    &#39;./platform/commonUI/inspect/bundle&#39;,
+    &#39;./platform/commonUI/mobile/bundle&#39;,
+    &#39;./platform/commonUI/themes/espresso/bundle&#39;,
+    &#39;./platform/commonUI/notification/bundle&#39;,
+    &#39;./platform/containment/bundle&#39;,
+    &#39;./platform/execution/bundle&#39;,
+    &#39;./platform/exporters/bundle&#39;,
+    &#39;./platform/telemetry/bundle&#39;,
+    &#39;./platform/features/clock/bundle&#39;,
+    &#39;./platform/features/imagery/bundle&#39;,
+    &#39;./platform/features/layout/bundle&#39;,
+    &#39;./platform/features/pages/bundle&#39;,
+    &#39;./platform/features/plot/bundle&#39;,
+    &#39;./platform/features/timeline/bundle&#39;,
+    &#39;./platform/features/table/bundle&#39;,
+    &#39;./platform/forms/bundle&#39;,
+    &#39;./platform/identity/bundle&#39;,
+    &#39;./platform/persistence/aggregator/bundle&#39;,
+    &#39;./platform/persistence/local/bundle&#39;,
+    &#39;./platform/persistence/queue/bundle&#39;,
+    &#39;./platform/policy/bundle&#39;,
+    &#39;./platform/entanglement/bundle&#39;,
+    &#39;./platform/search/bundle&#39;,
+    &#39;./platform/status/bundle&#39;,
+    &#39;./platform/commonUI/regions/bundle&#39;
+], function (Main, legacyRegistry) {
+    return {
+        legacyRegistry: legacyRegistry,
+        run: function () {
+            return new Main().run(legacyRegistry);
+        }
+    };
+});
+</code></pre>
+<p><strong>main.js</strong></p>
+<a name="after" href="#after"><h4 id="undefinedafter">After</h4>
+</a><pre><code class="lang-diff">requirejs.config({
+    &quot;paths&quot;: {
+        &quot;legacyRegistry&quot;: &quot;src/legacyRegistry&quot;,
+        &quot;angular&quot;: &quot;bower_components/angular/angular.min&quot;,
+        &quot;angular-route&quot;: &quot;bower_components/angular-route/angular-route.min&quot;,
+        &quot;csv&quot;: &quot;bower_components/comma-separated-values/csv.min&quot;,
+        &quot;es6-promise&quot;: &quot;bower_components/es6-promise/promise.min&quot;,
+        &quot;moment&quot;: &quot;bower_components/moment/moment&quot;,
+        &quot;moment-duration-format&quot;: &quot;bower_components/moment-duration-format/lib/moment-duration-format&quot;,
+        &quot;saveAs&quot;: &quot;bower_components/FileSaver.js/FileSaver.min&quot;,
+        &quot;screenfull&quot;: &quot;bower_components/screenfull/dist/screenfull.min&quot;,
+        &quot;text&quot;: &quot;bower_components/text/text&quot;,
+        &quot;uuid&quot;: &quot;bower_components/node-uuid/uuid&quot;,
+        &quot;zepto&quot;: &quot;bower_components/zepto/zepto.min&quot;
+    },
+    &quot;shim&quot;: {
+        &quot;angular&quot;: {
+            &quot;exports&quot;: &quot;angular&quot;
+        },
+        &quot;angular-route&quot;: {
+            &quot;deps&quot;: [ &quot;angular&quot; ]
+        },
+        &quot;moment-duration-format&quot;: {
+            &quot;deps&quot;: [ &quot;moment&quot; ]
+        },
+        &quot;screenfull&quot;: {
+            &quot;exports&quot;: &quot;screenfull&quot;
+        },
+        &quot;zepto&quot;: {
+            &quot;exports&quot;: &quot;Zepto&quot;
+        }
+    }
+});
+
+define([
+    &#39;./platform/framework/src/Main&#39;,
+    &#39;legacyRegistry&#39;,
+
+    &#39;./platform/framework/bundle&#39;,
+    &#39;./platform/core/bundle&#39;,
+    &#39;./platform/representation/bundle&#39;,
+    &#39;./platform/commonUI/about/bundle&#39;,
+    &#39;./platform/commonUI/browse/bundle&#39;,
+    &#39;./platform/commonUI/edit/bundle&#39;,
+    &#39;./platform/commonUI/dialog/bundle&#39;,
+    &#39;./platform/commonUI/formats/bundle&#39;,
+    &#39;./platform/commonUI/general/bundle&#39;,
+    &#39;./platform/commonUI/inspect/bundle&#39;,
+    &#39;./platform/commonUI/mobile/bundle&#39;,
+    &#39;./platform/commonUI/themes/espresso/bundle&#39;,
+    &#39;./platform/commonUI/notification/bundle&#39;,
+    &#39;./platform/containment/bundle&#39;,
+    &#39;./platform/execution/bundle&#39;,
+    &#39;./platform/exporters/bundle&#39;,
+    &#39;./platform/telemetry/bundle&#39;,
+    &#39;./platform/features/clock/bundle&#39;,
+    &#39;./platform/features/imagery/bundle&#39;,
+    &#39;./platform/features/layout/bundle&#39;,
+    &#39;./platform/features/pages/bundle&#39;,
+    &#39;./platform/features/plot/bundle&#39;,
+    &#39;./platform/features/timeline/bundle&#39;,
+    &#39;./platform/features/table/bundle&#39;,
+    &#39;./platform/forms/bundle&#39;,
+    &#39;./platform/identity/bundle&#39;,
+    &#39;./platform/persistence/aggregator/bundle&#39;,
+    &#39;./platform/persistence/local/bundle&#39;,
+    &#39;./platform/persistence/queue/bundle&#39;,
+    &#39;./platform/policy/bundle&#39;,
+    &#39;./platform/entanglement/bundle&#39;,
+    &#39;./platform/search/bundle&#39;,
+    &#39;./platform/status/bundle&#39;,
+    &#39;./platform/commonUI/regions/bundle&#39;,
+
++   &#39;./tutorials/todo/bundle&#39;
+], function (Main, legacyRegistry) {
+    return {
+        legacyRegistry: legacyRegistry,
+        run: function () {
+            return new Main().run(legacyRegistry);
+        }
+    };
+});
+</code></pre>
+<p><strong>main.js</strong></p>
+<p>At this point, we can reload Open MCT. We haven&#39;t introduced any new 
+functionality, so we don&#39;t see anything different, but if we run with logging 
+enabled ( <a href="http://localhost:8080/?log=info">http://localhost:8080/?log=info</a> ) and check the browser console, we 
+should see:</p>
+<p><code>Resolving extensions for bundle tutorials/todo(To-do Plugin)</code></p>
+<p>...which shows that our plugin has loaded.</p>
+<a name="step-2-add-a-domain-object-type" href="#step-2-add-a-domain-object-type"><h3 id="undefinedstep-2-add-a-domain-object-type">Step 2-Add a Domain Object Type</h3>
+</a><p>Features in a Open MCT application are most commonly expressed as domain 
+objects and/or views thereof. A domain object is some thing that is relevant to 
+the work that the Open MCT application is meant to support. Domain objects 
+can be created, organized, edited, placed in layouts, and so forth. (For a 
+deeper explanation of domain objects, see the Open MCT Developer Guide.)</p>
+<p>In the case of our to-do list feature, the to-do list itself is the thing we&#39;ll 
+want users to be able to create and edit. So, we will add that as a new type in 
+our bundle definition:</p>
+<pre><code class="lang-diff">define([
+    &#39;legacyRegistry&#39;
+], function (
+    legacyRegistry
+) {
+    legacyRegistry.register(&quot;tutorials/todo&quot;, {
+        &quot;name&quot;: &quot;To-do Plugin&quot;,
+        &quot;description&quot;: &quot;Allows creating and editing to-do lists.&quot;,
+        &quot;extensions&quot;:
+        {
++         &quot;types&quot;: [
++          {
++              &quot;key&quot;: &quot;example.todo&quot;,
++              &quot;name&quot;: &quot;To-Do List&quot;,
++              &quot;glyph&quot;: &quot;2&quot;,
++              &quot;description&quot;: &quot;A list of things that need to be done.&quot;,
++              &quot;features&quot;: [&quot;creation&quot;]
++          }
++       ]}
+    });
+});
+</code></pre>
+<p><strong>tutorials/todo/bundle.js</strong></p>
+<p>What have we done here? We&#39;ve stated that this bundle includes extensions of the 
+category <em>types</em>, which is used to describe domain object types. Then, we&#39;ve 
+included a definition for one such extension, which is the to-do list object.</p>
+<p>Going through the properties we&#39;ve defined:</p>
+<ul>
+<li>The <code>key</code> of <code>example.todo</code> will be stored as the machine-readable name for 
+domain objects of this type.</li>
+<li>The <code>name</code> of &quot;To-Do List&quot; is the human-readable name for this type, and will 
+be shown to users.</li>
+<li>The <code>glyph</code> refers to a special character in Open MCT&#39;s custom font set; 
+this will be used as an icon.</li>
+<li>The <code>description</code> is also human-readable, and will be used whenever a longer 
+explanation of what this type is should be shown.</li>
+<li>Finally, the <code>features</code> property describes some special features of objects of 
+this type. Including <code>creation</code> here means that we want users to be able to 
+create this (in other cases, we may wish to expose things as domain objects 
+which aren&#39;t user-created, in which case we would omit this.)</li>
+</ul>
+<p>If we reload Open MCT, we see that our new domain object type appears in the 
+Create menu:</p>
+<p><img src="images/todo.png" alt="To-Do List"></p>
+<p>At this point, our to-do list doesn&#39;t do much of anything; we can create them 
+and give them names, but they don&#39;t have any specific functionality attached, 
+because we haven&#39;t defined any yet.</p>
+<a name="step-3-add-a-view" href="#step-3-add-a-view"><h3 id="undefinedstep-3-add-a-view">Step 3-Add a View</h3>
+</a><p>In order to allow a to-do list to be used, we need to define and display its 
+contents. In Open MCT, the pattern that the user expects is that they&#39;ll 
+click on an object in the left-hand tree, and see a visualization of it to the 
+right; in Open MCT, these visualizations are called views.
+A view in Open MCT is defined by an Angular template. We&#39;ll add that in the 
+directory <code>tutorials/todo/res/templates</code> (<code>res</code> is, by default, the directory 
+where bundle-related resources are kept, and <code>templates</code> is where HTML templates 
+are stored by convention.)</p>
+<pre><code class="lang-diff">&lt;div&gt;
+    &lt;a href=&quot;&quot;&gt;All&lt;/a&gt;
+    &lt;a href=&quot;&quot;&gt;Incomplete&lt;/a&gt;
+    &lt;a href=&quot;&quot;&gt;Complete&lt;/a&gt;
+&lt;/div&gt;
+
+&lt;ul&gt;
+    &lt;li ng-repeat=&quot;task in model.tasks&quot;&gt;
+        &lt;input type=&quot;checkbox&quot; ng-checked=&quot;task.completed&quot;&gt;
+        {{task.description}}
+    &lt;/li&gt;
+&lt;/ul&gt;
+</code></pre>
+<p><strong>tutorials/todo/res/templates/todo.html</strong></p>
+<p>A summary of what&#39;s included:</p>
+<ul>
+<li>At the top, we have some buttons that we will later wire in to allow the user 
+to filter down to either complete or incomplete tasks.</li>
+<li>After that, we have a list of tasks. The scope variable <code>model</code> is the model 
+of the domain object being viewed; this contains all of the persistent state 
+associated with that object. This model is effectively just a JSON document, so 
+we can choose what goes into it (so long as we take care not to collide with 
+platform-defined properties; see the Open MCT Developer Guide.) Here, we 
+assume that all tasks will be stored in a property <code>tasks</code>, and that each will be 
+an object containing a <code>description</code> (the readable summary of the task) and a 
+boolean <code>completed</code> flag.</li>
+</ul>
+<p>To expose this view in Open MCT, we need to declare it in our bundle 
+definition:</p>
+<pre><code class="lang-diff">define([
+    &#39;legacyRegistry&#39;
+], function (
+    legacyRegistry
+) {
+    legacyRegistry.register(&quot;tutorials/todo&quot;, {
+    &quot;name&quot;: &quot;To-do Plugin&quot;,
+    &quot;description&quot;: &quot;Allows creating and editing to-do lists.&quot;,
+    &quot;extensions&quot;: {
+        &quot;types&quot;: [
+            {
+                &quot;key&quot;: &quot;example.todo&quot;,
+                &quot;name&quot;: &quot;To-Do List&quot;,
+                &quot;glyph&quot;: &quot;2&quot;,
+                &quot;description&quot;: &quot;A list of things that need to be done.&quot;,
+                &quot;features&quot;: [&quot;creation&quot;]
+            }
+        ],
++       &quot;views&quot;: [
++           {
++               &quot;key&quot;: &quot;example.todo&quot;,
++               &quot;type&quot;: &quot;example.todo&quot;,
++               &quot;glyph&quot;: &quot;2&quot;,
++               &quot;name&quot;: &quot;List&quot;,
++               &quot;templateUrl&quot;: &quot;templates/todo.html&quot;,
++               &quot;editable&quot;: true
++           }
++       ]
+    }
+    });
+});
+</code></pre>
+<p><strong>tutorials/todo/bundle.js</strong></p>
+<p>Here, we&#39;ve added another extension, this time belonging to category <code>views</code>. It 
+contains the following properties:</p>
+<ul>
+<li><p>Its <code>key</code> is its machine-readable name; we&#39;ve given it the same name here as 
+the domain object type, but could have chosen any unique name. </p>
+</li>
+<li><p>The <code>type</code> property tells Open MCT that this view is only applicable to 
+domain objects of that type. This means that we&#39;ll see this view for To-do Lists 
+that we create, but not for other domain objects (such as Folders.)</p>
+</li>
+<li><p>The <code>glyph</code> and <code>name</code> properties describe the icon and human-readable name 
+for this view to display in the UI where needed (if multiple views are available 
+for To-do Lists, the user will be able to choose one.)</p>
+</li>
+<li><p>Finally, the <code>templateUrl</code> points to the Angular template we wrote; this path is 
+relative to the bundle&#39;s <code>res</code> folder.</p>
+</li>
+</ul>
+<p>This template looks like it should display tasks, but we don&#39;t have any way for 
+the user to create these yet. As a temporary workaround to test the view, we 
+will specify an initial state for To-do List domain object models in the 
+definition of that type.</p>
+<pre><code class="lang-diff">define([
+    &#39;legacyRegistry&#39;
+], function (
+    legacyRegistry
+) {
+    legacyRegistry.register(&quot;tutorials/todo&quot;, {
+    &quot;name&quot;: &quot;To-do Plugin&quot;,
+    &quot;description&quot;: &quot;Allows creating and editing to-do lists.&quot;,
+    &quot;extensions&quot;: {
+        &quot;types&quot;: [
+            {
+                &quot;key&quot;: &quot;example.todo&quot;,
+                &quot;name&quot;: &quot;To-Do List&quot;,
+                &quot;glyph&quot;: &quot;2&quot;,
+                &quot;description&quot;: &quot;A list of things that need to be done.&quot;,
+                &quot;features&quot;: [&quot;creation&quot;],
++               &quot;model&quot;: {
++                   &quot;tasks&quot;: [
++                       { &quot;description&quot;: &quot;Add a type&quot;, &quot;completed&quot;: true },
++                       { &quot;description&quot;: &quot;Add a view&quot; }
++                   ]
+                }
+            }
+        ],
+        &quot;views&quot;: [
+            {
+                &quot;key&quot;: &quot;example.todo&quot;,
+                &quot;type&quot;: &quot;example.todo&quot;,
+                &quot;glyph&quot;: &quot;2&quot;,
+                &quot;name&quot;: &quot;List&quot;,
+                &quot;templateUrl&quot;: &quot;templates/todo.html&quot;,
+                &quot;editable&quot;: true
+            }
+        ]
+    }
+    });
+});
+</code></pre>
+<p><strong>tutorials/todo/bundle.js</strong></p>
+<p>Now, when To-do List objects are created in Open MCT, they will initially 
+have the state described by that model property.</p>
+<p>If we reload Open MCT, create a To-do List, and navigate to it in the tree, 
+we should now see:</p>
+<p><img src="images/todo-list.png" alt="To-Do List"></p>
+<p>This looks roughly like what we want. We&#39;ll handle styling later, so let&#39;s work 
+on adding functionality. Currently, the filter choices do nothing, and while the 
+checkboxes can be checked/unchecked, we&#39;re not actually making the changes in 
+the domain object - if we click over to My Items and come back to our 
+To-Do List, for instance, we&#39;ll see that those check boxes have returned to 
+their initial state.</p>
+<a name="step-4-add-a-controller" href="#step-4-add-a-controller"><h3 id="undefinedstep-4-add-a-controller">Step 4-Add a Controller</h3>
+</a><p>We need to do some scripting to add dynamic behavior to that view. In 
+particular, we want to:</p>
+<ul>
+<li>Filter by complete/incomplete status.</li>
+<li>Change the completion state of tasks in the model.</li>
+</ul>
+<p>To do this, we will support this by adding an Angular controller. (See 
+<a href="https://docs.angularjs.org/guide/controller">https://docs.angularjs.org/guide/controller</a> for an overview of controllers.) 
+We will define that in an AMD module (see <a href="http://requirejs.org/docs/whyamd.html">http://requirejs.org/docs/whyamd.html</a>) 
+in the directory <code>tutorials/todo/src/controllers</code> (<code>src</code> is, by default, the 
+directory where bundle-related source code is kept, and controllers is where 
+Angular controllers are stored by convention.)</p>
+<pre><code class="lang-diff">define(function () {
+    function TodoController($scope) {
+        var showAll = true,
+            showCompleted;
+
+        // Persist changes made to a domain object&#39;s model
+        function persist() {
+            var persistence = 
+                $scope.domainObject.getCapability(&#39;persistence&#39;);
+            return persistence &amp;&amp; persistence.persist();
+        }
+
+        // Change which tasks are visible
+        $scope.setVisibility = function (all, completed) {
+            showAll = all;
+            showCompleted = completed;
+        };
+
+        // Toggle the completion state of a task
+        $scope.toggleCompletion = function (taskIndex) {
+            $scope.domainObject.useCapability(&#39;mutation&#39;, function (model) {
+                var task = model.tasks[taskIndex];
+                task.completed = !task.completed;
+            });
+            persist();
+        };
+
+        // Check whether a task should be visible
+        $scope.showTask = function (task) {
+            return showAll || (showCompleted === !!(task.completed));
+        };
+    }
+
+    return TodoController;
+});
+</code></pre>
+<p><strong>tutorials/todo/src/controllers/TodoController.js</strong></p>
+<p>Here, we&#39;ve defined three new functions and placed them in our <code>$scope</code>, which 
+will make them available from the template:</p>
+<ul>
+<li><p><code>setVisibility</code> changes which tasks are meant to be visible. The first argument 
+is a boolean, which, if true, means we want to show everything; the second 
+argument is the completion state we want to show (which is only relevant if the 
+first argument is falsy.)</p>
+</li>
+<li><p><code>toggleCompletion</code> changes whether or not a task is complete. We make the 
+change via the domain object&#39;s <code>mutation</code> capability, and then persist the 
+change via its <code>persistence</code> capability. See the Open MCT Developer Guide 
+for more information on these capabilities.</p>
+</li>
+<li><p><code>showTask</code> is meant to be used to help decide if a task should be shown, based 
+on the current visibility settings. It is true when we have decided to show 
+everything, or when the completion state matches the state we&#39;ve chosen. (Note 
+the use of the double-not !! to coerce the completed flag to a boolean, for 
+equality testing.)</p>
+</li>
+</ul>
+<p>Note that these functions make reference to <code>$scope.domainObject;</code> this is the 
+domain object being viewed, which is passed into the scope by Open MCT 
+prior to our template being utilized.</p>
+<p>On its own, this controller merely exposes these functions; the next step is to 
+use them from our template:</p>
+<pre><code class="lang-diff">+  &lt;div ng-controller=&quot;TodoController&quot;&gt;
+        &lt;div&gt;
++          &lt;a ng-click=&quot;setVisibility(true)&quot;&gt;All&lt;/a&gt;
++          &lt;a ng-click=&quot;setVisibility(false, false)&quot;&gt;Incomplete&lt;/a&gt;
++          &lt;a ng-click=&quot;setVisibility(false, true)&quot;&gt;Complete&lt;/a&gt;
+        &lt;/div&gt;
+
+        &lt;ul&gt;
+            &lt;li ng-repeat=&quot;task in model.tasks&quot;
++              ng-if=&quot;showTask(task)&quot;&gt;
+               &lt;input type=&quot;checkbox&quot;
+                      ng-checked=&quot;task.completed&quot;
++                     ng-click=&quot;toggleCompletion($index)&quot;&gt;
+                {{task.description}}
+            &lt;/li&gt;
+        &lt;/ul&gt;
++ &lt;/div&gt;
+</code></pre>
+<p><strong>tutorials/todo/res/templates/todo.html</strong></p>
+<p>Summary of changes here:</p>
+<ul>
+<li>First, we surround everything in a <code>div</code> which we use to utilize our 
+<code>TodoController</code>. This <code>div</code> will also come in handy later for styling.</li>
+<li>From our filters at the top, we change the visibility settings when a different 
+option is clicked.</li>
+<li>When showing tasks, we check with <code>showTask</code> to see if the task matches current 
+filter settings.</li>
+<li>Finally, when the checkbox for a task is clicked, we make the change in the 
+model via <code>toggleCompletion</code>.</li>
+</ul>
+<p>If we were to try to run at this point, we&#39;d run into problems because the 
+<code>TodoController</code> has not been registered with Angular. We need to first declare 
+it in our bundle definition, as an extension of category <code>controllers</code>:</p>
+<pre><code class="lang-diff">define([
+    &#39;legacyRegistry&#39;,
+    &#39;./src/controllers/TodoController&#39;
+], function (
+    legacyRegistry,
+    TodoController
+) {
+    legacyRegistry.register(&quot;tutorials/todo&quot;, {
+    &quot;name&quot;: &quot;To-do Plugin&quot;,
+    &quot;description&quot;: &quot;Allows creating and editing to-do lists.&quot;,
+    &quot;extensions&quot;: {
+        &quot;types&quot;: [
+            {
+                &quot;key&quot;: &quot;example.todo&quot;,
+                &quot;name&quot;: &quot;To-Do List&quot;,
+                &quot;glyph&quot;: &quot;2&quot;,
+                &quot;description&quot;: &quot;A list of things that need to be done.&quot;,
+                &quot;features&quot;: [&quot;creation&quot;],
+                &quot;model&quot;: {
+                    &quot;tasks&quot;: [
+                        { &quot;description&quot;: &quot;Add a type&quot;, &quot;completed&quot;: true },
+                        { &quot;description&quot;: &quot;Add a view&quot; }
+                    ]
+                }
+            }
+        ],
+        &quot;views&quot;: [
+            {
+                &quot;key&quot;: &quot;example.todo&quot;,
+                &quot;type&quot;: &quot;example.todo&quot;,
+                &quot;glyph&quot;: &quot;2&quot;,
+                &quot;name&quot;: &quot;List&quot;,
+                &quot;templateUrl&quot;: &quot;templates/todo.html&quot;,
+                &quot;editable&quot;: true
+            }
+        ],
++       &quot;controllers&quot;: [
++           {
++               &quot;key&quot;: &quot;TodoController&quot;,
++               &quot;implementation&quot;: TodoController,
++               &quot;depends&quot;: [ &quot;$scope&quot; ]
++           }
++       ]
+    }
+    });
+});
+</code></pre>
+<p><strong>tutorials/todo/bundle.js</strong></p>
+<p>In this extension definition we have:</p>
+<ul>
+<li>A <code>key</code>, which again is a machine-readable identifier. This is the name that 
+templates will reference.</li>
+<li>An <code>implementation</code>, which refers to an AMD module. The path is relative to the 
+<code>src</code> directory within the bundle.</li>
+<li>The <code>depends</code> property declares the dependencies of this controller. Here, we 
+want Angular to inject <code>$scope</code>, the current Angular scope (which, going back 
+to our controller, is expected as our first argument.)</li>
+</ul>
+<p>If we reload the browser now, our To-do List looks much the same, but now we are 
+able to filter down the visible list, and the changes we make will stick around 
+if we go to My Items and come back.</p>
+<a name="step-5-support-editing" href="#step-5-support-editing"><h3 id="undefinedstep-5-support-editing">Step 5-Support Editing</h3>
+</a><p>We now have a somewhat-functional view of our To-Do List, but we&#39;re still 
+missing some important functionality: Adding and removing tasks!</p>
+<p>This is a good place to discuss the user interface style of Open MCT. Open 
+MCT Web draws a distinction between &quot;using&quot; and &quot;editing&quot; a domain object; in 
+general, you can only make changes to a domain object while in Edit mode, which 
+is reachable from the button with a pencil icon. This distinction helps users 
+keep these tasks separate.</p>
+<p>The distinction between &quot;using&quot; and &quot;editing&quot; may vary depending on what domain 
+objects or views are being used. While it may be convenient for a developer to 
+think of &quot;editing&quot; as &quot;any changes made to a domain object,&quot; in practice some of 
+these activities will be thought of as &quot;using.&quot; </p>
+<p>For this tutorial we&#39;ll consider checking/unchecking tasks as &quot;using&quot; To-Do 
+Lists, and adding/removing tasks as &quot;editing.&quot; We&#39;ve already implemented the 
+&quot;using&quot; part, in this case, so let&#39;s focus on editing.</p>
+<p>There are two new pieces of functionality we&#39;ll want out of this step:</p>
+<ul>
+<li>The ability to add new tasks.</li>
+<li>The ability to remove existing tasks.</li>
+</ul>
+<p>An Editing user interface is typically handled in a tool bar associated with a 
+view. The contents of this tool bar are defined declaratively in a view&#39;s 
+extension definition.</p>
+<pre><code class="lang-diff">define([
+    &#39;legacyRegistry&#39;,
+    &#39;./src/controllers/TodoController&#39;
+], function (
+    legacyRegistry,
+    TodoController
+) {
+    legacyRegistry.register(&quot;tutorials/todo&quot;, {
+    &quot;name&quot;: &quot;To-do Plugin&quot;,
+    &quot;description&quot;: &quot;Allows creating and editing to-do lists.&quot;,
+    &quot;extensions&quot;: {
+        &quot;types&quot;: [
+            {
+                &quot;key&quot;: &quot;example.todo&quot;,
+                &quot;name&quot;: &quot;To-Do List&quot;,
+                &quot;glyph&quot;: &quot;2&quot;,
+                &quot;description&quot;: &quot;A list of things that need to be done.&quot;,
+                &quot;features&quot;: [&quot;creation&quot;],
+                &quot;model&quot;: {
+                    &quot;tasks&quot;: [
+                        { &quot;description&quot;: &quot;Add a type&quot;, &quot;completed&quot;: true },
+                        { &quot;description&quot;: &quot;Add a view&quot; }
+                    ]
+                }
+            }
+        ],
+        &quot;views&quot;: [
+            {
+                &quot;key&quot;: &quot;example.todo&quot;,
+                &quot;type&quot;: &quot;example.todo&quot;,
+                &quot;glyph&quot;: &quot;2&quot;,
+                &quot;name&quot;: &quot;List&quot;,
+                &quot;templateUrl&quot;: &quot;templates/todo.html&quot;,
+                &quot;editable&quot;: true,
++               &quot;toolbar&quot;: {
++                   &quot;sections&quot;: [
++                       {
++                           &quot;items&quot;: [
++                               {
++                                   &quot;text&quot;: &quot;Add Task&quot;,
++                                   &quot;glyph&quot;: &quot;+&quot;,
++                                   &quot;method&quot;: &quot;addTask&quot;,
++                                   &quot;control&quot;: &quot;button&quot;
++                               }
++                           ]
++                       },
++                       {
++                           &quot;items&quot;: [
++                               {
++                                   &quot;glyph&quot;: &quot;Z&quot;,
++                                   &quot;method&quot;: &quot;removeTask&quot;,
++                                   &quot;control&quot;: &quot;button&quot;
++                               }
++                           ]
++                       }
++                   ]
++               }
+            }
+        ],
+        &quot;controllers&quot;: [
+            {
+                &quot;key&quot;: &quot;TodoController&quot;,
+                &quot;implementation&quot;: TodoController,
+                &quot;depends&quot;: [ &quot;$scope&quot; ]
+            }
+        ]
+    }
+    });
+});
+</code></pre>
+<p><strong>tutorials/todo/bundle.js</strong></p>
+<p>What we&#39;ve stated here is that the To-Do List&#39;s view will have a toolbar which 
+contains two sections (which will be visually separated by a divider), each of 
+which contains one button. The first is a button labelled &quot;Add Task&quot; that will 
+invoke an <code>addTask</code> method; the second is a button with a glyph (which will appear 
+as a trash can in Open MCT&#39;s custom font set) which will invoke a <code>removeTask</code> 
+method. For more information on forms and tool bars in Open MCT, see the 
+Open MCT Developer Guide.</p>
+<p>If we reload and run Open MCT, we won&#39;t see any tool bar when we switch over 
+to Edit mode. This is because the aforementioned methods are expected to be 
+found on currently-selected elements; we haven&#39;t done anything with selections 
+in our view yet, so the Open MCT platform will filter this tool bar down to 
+all the applicable controls, which means no controls at all.</p>
+<p>To support selection, we will need to make some changes to our controller:</p>
+<pre><code class="lang-diff">define(function () {
++    // Form to display when adding new tasks
++    var NEW_TASK_FORM = {
++        name: &quot;Add a Task&quot;,
++        sections: [{
++            rows: [{
++                name: &#39;Description&#39;,
++                key: &#39;description&#39;,
++                control: &#39;textfield&#39;,
++                required: true
++            }]
++        }]
++    };
+
++   function TodoController($scope, dialogService) {
+        var showAll = true,
+            showCompleted;
+
+        // Persist changes made to a domain object&#39;s model
+        function persist() {
+            var persistence = 
+                $scope.domainObject.getCapability(&#39;persistence&#39;);
+            return persistence &amp;&amp; persistence.persist();
+        }
+
++       // Remove a task
++       function removeTaskAtIndex(taskIndex) {
++           $scope.domainObject.useCapability(&#39;mutation&#39;, function 
++       (model) {
++               model.tasks.splice(taskIndex, 1);
++           });
++           persist();
++       }
+
++       // Add a task
++       function addNewTask(task) {
++           $scope.domainObject.useCapability(&#39;mutation&#39;, function 
++           (model) {
++               model.tasks.push(task);
++           });
++           persist();
++       }
+
+        // Change which tasks are visible
+        $scope.setVisibility = function (all, completed) {
+            showAll = all;
+            showCompleted = completed;
+        };
+
+        // Toggle the completion state of a task
+        $scope.toggleCompletion = function (taskIndex) {
+            $scope.domainObject.useCapability(&#39;mutation&#39;, function (model) {
+                var task = model.tasks[taskIndex];
+                task.completed = !task.completed;
+            });
+            persist();
+        };
+
+        // Check whether a task should be visible
+        $scope.showTask = function (task) {
+            return showAll || (showCompleted === !!(task.completed));
+        };
+
+        // Handle selection state in edit mode
++       if ($scope.selection) {
++           // Expose the ability to select tasks
++           $scope.selectTask = function (taskIndex) {
++               $scope.selection.select({
++                   removeTask: function () {
++                       removeTaskAtIndex(taskIndex);
++                       $scope.selection.deselect();
++                   }
++               });
++           };
+
++           // Expose a view-level selection proxy
++           $scope.selection.proxy({
++               addTask: function () {
++                   dialogService.getUserInput(NEW_TASK_FORM, {})
++                       .then(addNewTask);
++               }
++           });
++       }
+    }
+
+    return TodoController;
+});
+</code></pre>
+<p><strong>tutorials/todo/src/controllers/TodoController.js</strong></p>
+<p>There are a few changes to pay attention to here. Let&#39;s review them:</p>
+<ul>
+<li>At the top, we describe the form that should be shown to the user when they 
+click the <em>Add Task</em> button. This form is described declaratively, and populates 
+an object that has the same format as tasks in the <code>tasks</code> array of our 
+To-Do List&#39;s model.</li>
+<li>We&#39;ve added an argument to the <code>TodoController</code>: The <code>dialogService</code>, which is 
+exposed by the Open MCT platform to handle showing dialogs.</li>
+<li>Some utility functions for handling the actual adding and removing of tasks. 
+These use the <code>mutation</code> capability to modify the tasks in the To-Do List&#39;s 
+model. </li>
+<li>Finally, we check for the presence of a <code>selection</code> object in our scope. This 
+object is provided by Edit mode to manage current selections for editing. When 
+it is present, we expose a <code>selectTask</code> function to our scope to allow selecting 
+individual tasks; when this occurs, we expose an object to <code>selection</code> which has 
+a <code>removeTask</code> method, as expected by the tool bar we&#39;ve defined. We additionally 
+expose a view proxy, to handle view-level changes (e.g. not associated with any 
+specific selected object); this has an <code>addTask</code> method, which again is expected 
+by the tool bar we&#39;ve defined.</li>
+</ul>
+<p>Additionally, we need to make changes to our template to select specific tasks 
+in response to some user gesture. Here, we will select tasks when a user clicks 
+the description.</p>
+<pre><code class="lang-diff">&lt;div ng-controller=&quot;TodoController&quot;&gt;
+    &lt;div&gt;
+        &lt;a ng-click=&quot;setVisibility(true)&quot;&gt;All&lt;/a&gt;
+        &lt;a ng-click=&quot;setVisibility(false, false)&quot;&gt;Incomplete&lt;/a&gt;
+        &lt;a ng-click=&quot;setVisibility(false, true)&quot;&gt;Complete&lt;/a&gt;
+    &lt;/div&gt;
+
+    &lt;ul&gt;
+        &lt;li ng-repeat=&quot;task in model.tasks&quot;
+            ng-if=&quot;showTask(task)&quot;&gt;
+            &lt;input type=&quot;checkbox&quot;
+                   ng-checked=&quot;task.completed&quot;
+                   ng-click=&quot;toggleCompletion($index)&quot;&gt;
++           &lt;span ng-click=&quot;selectTask($index)&quot;&gt;
+                {{task.description}}
++           &lt;/span&gt;
+        &lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;
+</code></pre>
+<p><strong>tutorials/todo/res/templates/todo.html</strong></p>
+<p>Finally, the <code>TodoController</code> uses the <code>dialogService</code> now, so we need to 
+declare that dependency in its extension definition:</p>
+<pre><code class="lang-diff">define([
+    &#39;legacyRegistry&#39;,
+    &#39;./src/controllers/TodoController&#39;
+], function (
+    legacyRegistry,
+    TodoController
+) {
+    legacyRegistry.register(&quot;tutorials/todo&quot;, {
+    &quot;name&quot;: &quot;To-do Plugin&quot;,
+    &quot;description&quot;: &quot;Allows creating and editing to-do lists.&quot;,
+    &quot;extensions&quot;: {
+        &quot;types&quot;: [
+            {
+                &quot;key&quot;: &quot;example.todo&quot;,
+                &quot;name&quot;: &quot;To-Do List&quot;,
+                &quot;glyph&quot;: &quot;2&quot;,
+                &quot;description&quot;: &quot;A list of things that need to be done.&quot;,
+                &quot;features&quot;: [&quot;creation&quot;],
+                &quot;model&quot;: {
+                    &quot;tasks&quot;: [
+                        { &quot;description&quot;: &quot;Add a type&quot;, &quot;completed&quot;: true },
+                        { &quot;description&quot;: &quot;Add a view&quot; }
+                    ]
+                }
+            }
+        ],
+        &quot;views&quot;: [
+            {
+                &quot;key&quot;: &quot;example.todo&quot;,
+                &quot;type&quot;: &quot;example.todo&quot;,
+                &quot;glyph&quot;: &quot;2&quot;,
+                &quot;name&quot;: &quot;List&quot;,
+                &quot;templateUrl&quot;: &quot;templates/todo.html&quot;,
+                &quot;editable&quot;: true,
+                &quot;toolbar&quot;: {
+                    &quot;sections&quot;: [
+                        {
+                            &quot;items&quot;: [
+                                {
+                                    &quot;text&quot;: &quot;Add Task&quot;,
+                                    &quot;glyph&quot;: &quot;+&quot;,
+                                    &quot;method&quot;: &quot;addTask&quot;,
+                                    &quot;control&quot;: &quot;button&quot;
+                                }
+                            ]
+                        },
+                        {
+                            &quot;items&quot;: [
+                                {
+                                    &quot;glyph&quot;: &quot;Z&quot;,
+                                    &quot;method&quot;: &quot;removeTask&quot;,
+                                    &quot;control&quot;: &quot;button&quot;
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ],
+        &quot;controllers&quot;: [
+            {
+                &quot;key&quot;: &quot;TodoController&quot;,
+                &quot;implementation&quot;: TodoController,
++               &quot;depends&quot;: [ &quot;$scope&quot;, &quot;dialogService&quot; ]
+            }
+        ]
+    }
+    });
+});
+</code></pre>
+<p><strong>tutorials/todo/bundle.js</strong></p>
+<p>If we now reload Open MCT, we&#39;ll be able to see the new functionality we&#39;ve 
+added. If we Create a new To-Do List, navigate to it, and click the button with 
+the Pencil icon in the top-right, we&#39;ll be in edit mode. We see, first, that our 
+&quot;Add Task&quot; button appears in the tool bar:</p>
+<p><img src="images/todo-edit.png" alt="Edit"></p>
+<p>If we click on this, we&#39;ll get a dialog allowing us to add a new task:</p>
+<p><img src="images/add-task.png" alt="Add task"></p>
+<p>Finally, if we click on the description of a specific task, we&#39;ll see a new 
+button appear, which we can then click on to remove that task:</p>
+<p><img src="images/remove-task.png" alt="Remove task"></p>
+<p>As always in Edit mode, the user will be able to Save or Cancel any changes they have made. 
+In terms of functionality, our To-Do List can do all the things we want, but the appearance is still lacking. In particular, we can&#39;t distinguish our current filter choice or our current selection state.</p>
+<a name="step-6-customizing-look-and-feel" href="#step-6-customizing-look-and-feel"><h3 id="undefinedstep-6-customizing-look-and-feel">Step 6-Customizing Look and Feel</h3>
+</a><p>In this section, our goal is to:</p>
+<ul>
+<li>Display the current filter choice.</li>
+<li>Display the current task selection (when in Edit mode.)</li>
+<li>Tweak the general aesthetics to our liking.</li>
+<li>Get rid of those default tasks (we can create our own now.)</li>
+</ul>
+<p>To support the first two, we&#39;ll need to expose some methods for checking these 
+states in the controller:</p>
+<pre><code class="lang-diff">define(function () {
+    // Form to display when adding new tasks
+    var NEW_TASK_FORM = {
+        name: &quot;Add a Task&quot;,
+        sections: [{
+            rows: [{
+                name: &#39;Description&#39;,
+                key: &#39;description&#39;,
+                control: &#39;textfield&#39;,
+                required: true
+            }]
+        }]
+    };
+
+    function TodoController($scope, dialogService) {
+        var showAll = true,
+            showCompleted;
+
+        // Persist changes made to a domain object&#39;s model
+        function persist() {
+            var persistence = 
+                $scope.domainObject.getCapability(&#39;persistence&#39;);
+            return persistence &amp;&amp; persistence.persist();
+        }
+
+        // Remove a task
+        function removeTaskAtIndex(taskIndex) {
+            $scope.domainObject.useCapability(&#39;mutation&#39;, function (model) {
+                model.tasks.splice(taskIndex, 1);
+            });
+            persist();
+        }
+
+        // Add a task
+        function addNewTask(task) {
+            $scope.domainObject.useCapability(&#39;mutation&#39;, function (model) {
+                model.tasks.push(task);
+            });
+            persist();
+        }
+
+        // Change which tasks are visible
+        $scope.setVisibility = function (all, completed) {
+            showAll = all;
+            showCompleted = completed;
+        };
+
++       // Check if current visibility settings match
++       $scope.checkVisibility = function (all, completed) {
++           return showAll ? all : (completed === showCompleted);
++       };
+
+        // Toggle the completion state of a task
+        $scope.toggleCompletion = function (taskIndex) {
+            $scope.domainObject.useCapability(&#39;mutation&#39;, function (model) {
+                var task = model.tasks[taskIndex];
+                task.completed = !task.completed;
+            });
+            persist();
+        };
+
+        // Check whether a task should be visible
+        $scope.showTask = function (task) {
+            return showAll || (showCompleted === !!(task.completed));
+        };
+
+        // Handle selection state in edit mode
+        if ($scope.selection) {
+            // Expose the ability to select tasks
+            $scope.selectTask = function (taskIndex) {
+                $scope.selection.select({
+                    removeTask: function () {
+                        removeTaskAtIndex(taskIndex);
+                        $scope.selection.deselect();
+                    },
++                   taskIndex: taskIndex
+                });
+            };
+
++           // Expose a check for current selection state
++           $scope.isSelected = function (taskIndex) {
++               return ($scope.selection.get() || {}).taskIndex === 
++               taskIndex;
++           };
+
+            // Expose a view-level selection proxy
+            $scope.selection.proxy({
+                addTask: function () {
+                    dialogService.getUserInput(NEW_TASK_FORM, {})
+                        .then(addNewTask);
+                }
+            });
+        }
+    }
+
+    return TodoController;
+});
+</code></pre>
+<p><strong>tutorials/todo/src/controllers/TodoController.js</strong></p>
+<p>A summary of these changes:</p>
+<ul>
+<li><code>checkVisibility</code> has the same arguments as <code>setVisibility</code>, but instead of 
+making a change, it simply returns a boolean true/false indicating whether those 
+settings are in effect. The logic reflects the fact that the second parameter is 
+ignored when showing all.</li>
+<li>To support checking for selection, the index of the currently-selected task is 
+tracked as part of the selection object.</li>
+<li>Finally, an isSelected function is exposed which checks if the indicated task 
+is currently selected, using the index from above.</li>
+</ul>
+<p>Additionally, we will want to define some CSS rules in order to reflect these 
+states visually, and to generally improve the appearance of our view. We add 
+another file to the res directory of our bundle; this time, it is <code>css/todo.css</code> 
+(with the <code>css</code> directory again being a convention.)</p>
+<pre><code class="lang-diff">.example-todo div.example-button-group {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+.example-todo .example-button-group a {
+    padding: 3px;
+    margin: 3px;
+}
+
+.example-todo .example-button-group a.selected {
+    border: 1px gray solid;
+    border-radius: 3px;
+    background: #444;
+}
+
+.example-todo .example-task-completed .example-task-description {
+    text-decoration: line-through;
+    opacity: 0.75;
+}
+
+.example-todo .example-task-description.selected {
+    background: #46A;
+    border-radius: 3px;
+}
+
+.example-todo .example-message {
+    font-style: italic;
+}
+</code></pre>
+<p><strong>tutorials/todo/res/css/todo.css</strong></p>
+<p>Here, we have defined classes and appearances for:</p>
+<ul>
+<li>Our filter choosers (<code>example-button-group</code>).</li>
+<li>Our selected and/or completed tasks (<code>example-task-description</code>).</li>
+<li>A message, which we will add next, to display when there are no tasks 
+(<code>example-message</code>).</li>
+</ul>
+<p>To include this CSS file in our running instance of Open MCT, we need to 
+declare it in our bundle definition, this time as an extension of category 
+<code>stylesheets</code>:</p>
+<pre><code class="lang-diff">define([
+    &#39;legacyRegistry&#39;,
+    &#39;./src/controllers/TodoController&#39;
+], function (
+    legacyRegistry,
+    TodoController
+) {
+    legacyRegistry.register(&quot;tutorials/todo&quot;, {
+    &quot;name&quot;: &quot;To-do Plugin&quot;,
+    &quot;description&quot;: &quot;Allows creating and editing to-do lists.&quot;,
+    &quot;extensions&quot;: {
+        &quot;types&quot;: [
+            {
+                &quot;key&quot;: &quot;example.todo&quot;,
+                &quot;name&quot;: &quot;To-Do List&quot;,
+                &quot;glyph&quot;: &quot;2&quot;,
+                &quot;description&quot;: &quot;A list of things that need to be done.&quot;,
+                &quot;features&quot;: [&quot;creation&quot;],
+                &quot;model&quot;: {
+                    &quot;tasks&quot;: []
+                }
+            }
+        ],
+        &quot;views&quot;: [
+            {
+                &quot;key&quot;: &quot;example.todo&quot;,
+                &quot;type&quot;: &quot;example.todo&quot;,
+                &quot;glyph&quot;: &quot;2&quot;,
+                &quot;name&quot;: &quot;List&quot;,
+                &quot;templateUrl&quot;: &quot;templates/todo.html&quot;,
+                &quot;editable&quot;: true,
+                &quot;toolbar&quot;: {
+                    &quot;sections&quot;: [
+                        {
+                            &quot;items&quot;: [
+                                {
+                                    &quot;text&quot;: &quot;Add Task&quot;,
+                                    &quot;glyph&quot;: &quot;+&quot;,
+                                    &quot;method&quot;: &quot;addTask&quot;,
+                                    &quot;control&quot;: &quot;button&quot;
+                                }
+                            ]
+                        },
+                        {
+                            &quot;items&quot;: [
+                                {
+                                    &quot;glyph&quot;: &quot;Z&quot;,
+                                    &quot;method&quot;: &quot;removeTask&quot;,
+                                    &quot;control&quot;: &quot;button&quot;
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ],
+        &quot;controllers&quot;: [
+            {
+                &quot;key&quot;: &quot;TodoController&quot;,
+                &quot;implementation&quot;: TodoController,
+                &quot;depends&quot;: [ &quot;$scope&quot;, &quot;dialogService&quot; ]
+            }
+        ],
++       &quot;stylesheets&quot;: [
++           {
++               &quot;stylesheetUrl&quot;: &quot;css/todo.css&quot;
++           }
++       ]
+    }
+    });
+});
+</code></pre>
+<p><strong>tutorials/todo/bundle.js</strong></p>
+<p>Note that we&#39;ve also removed our placeholder tasks from the <code>model</code> of the 
+To-Do List&#39;s type above; now To-Do Lists will start off empty.</p>
+<p>Finally, let&#39;s utilize these changes from our view&#39;s template:</p>
+<pre><code class="lang-diff">+ &lt;div ng-controller=&quot;TodoController&quot; class=&quot;example-todo&quot;&gt;
++     &lt;div class=&quot;example-button-group&quot;&gt;
++         &lt;a ng-class=&quot;{ selected: checkVisibility(true) }&quot;
+             ng-click=&quot;setVisibility(true)&quot;&gt;All&lt;/a&gt;
++         &lt;a ng-class=&quot;{ selected: checkVisibility(false, false) }&quot;
+             ng-click=&quot;setVisibility(false, false)&quot;&gt;Incomplete&lt;/a&gt;
++         &lt;a ng-class=&quot;{ selected: checkVisibility(false, true) }&quot;
+             ng-click=&quot;setVisibility(false, true)&quot;&gt;Complete&lt;/a&gt;
+      &lt;/div&gt;
+
+      &lt;ul&gt;
+          &lt;li ng-repeat=&quot;task in model.tasks&quot;
++             ng-class=&quot;{ &#39;example-task-completed&#39;: task.completed }&quot;
+              ng-if=&quot;showTask(task)&quot;&gt;
+              &lt;input type=&quot;checkbox&quot;
+                   ng-checked=&quot;task.completed&quot;
+                   ng-click=&quot;toggleCompletion($index)&quot;&gt;
+              &lt;span ng-click=&quot;selectTask($index)&quot;
++                 ng-class=&quot;{ selected: isSelected($index) }&quot;
++                 class=&quot;example-task-description&quot;&gt;
+                {{task.description}}
+              &lt;/span&gt;
+          &lt;/li&gt;
+      &lt;/ul&gt;
++     &lt;div ng-if=&quot;model.tasks.length &lt; 1&quot; class=&quot;example-message&quot;&gt;
++          There are no tasks to show.
++     &lt;/div&gt;
++ &lt;/div&gt;
+</code></pre>
+<p><strong>tutorials/todo/res/templates/todo.html</strong></p>
+<p>Now, if we reload our page and create a new To-Do List, we will initially see:</p>
+<p><img src="images/todo-restyled.png" alt="Todo Restyled"></p>
+<p>If we then go into Edit mode, add some tasks, and select one, it will now be 
+much clearer what the current selection is (e.g. before we hit the remove button 
+in the toolbar):</p>
+<p><img src="images/todo-selection.png" alt="Todo Restyled"></p>
+<a name="bar-graph" href="#bar-graph"><h2 id="undefinedbar-graph">Bar Graph</h2>
+</a><p>In this tutorial, we will look at creating a bar graph plugin for visualizing 
+telemetry data. Specifically, we want some bars that raise and lower to match 
+the observed state of real-time telemetry; this is particularly useful for 
+monitoring things like battery charge levels.
+It is recommended that the reader completes (or is familiar with) the To-Do 
+List tutorial before completing this tutorial, as certain concepts discussed 
+there will be addressed in more brevity here.</p>
+<a name="step-1-define-the-view" href="#step-1-define-the-view"><h3 id="undefinedstep-1-define-the-view">Step 1-Define the View</h3>
+</a><p>Since the goal is to introduce a new view and expose it from a plugin, we will 
+want to create a new bundle which declares an extension of category <code>views</code>. 
+We&#39;ll also be defining some custom styles, so we&#39;ll include that extension as 
+well. We&#39;ll be creating this plugin in <code>tutorials/bargraph</code>, so our initial 
+bundle definition looks like:</p>
+<pre><code class="lang-diff">define([
+    &#39;legacyRegistry&#39;
+], function (
+    legacyRegistry
+) {
+    legacyRegistry.register(&quot;tutorials/bargraph&quot;, {
+    &quot;name&quot;: &quot;Bar Graph&quot;,
+    &quot;description&quot;: &quot;Provides the Bar Graph view of telemetry elements.&quot;,
+    &quot;extensions&quot;: {
+        &quot;views&quot;: [
+            {
+                &quot;name&quot;: &quot;Bar Graph&quot;,
+                &quot;key&quot;: &quot;example.bargraph&quot;,
+                &quot;glyph&quot;: &quot;H&quot;,
+                &quot;templateUrl&quot;: &quot;templates/bargraph.html&quot;,
+                &quot;needs&quot;: [ &quot;telemetry&quot; ],
+                &quot;delegation&quot;: true
+            }
+        ],
+        &quot;stylesheets&quot;: [
+            {
+                &quot;stylesheetUrl&quot;: &quot;css/bargraph.css&quot;
+            }
+        ]
+    }
+    });
+});
+</code></pre>
+<p><strong>tutorials/bargraph/bundle.js</strong></p>
+<p>The view definition should look familiar after the To-Do List tutorial, with 
+some additions:</p>
+<ul>
+<li>The <code>needs</code> property indicates that this view is only applicable to domain 
+objects with a <code>telemetry</code> capability. This ensures that this view is available 
+for telemetry points, but not for other objects (like folders.)</li>
+<li>The <code>delegation</code> property indicates that the above constraint can be satisfied 
+via capability delegation; that is, by domain objects which delegate the 
+<code>telemetry</code> capability to their contained objects. This allows this view to be 
+used for Telemetry Panel objects as well as for individual telemetry-providing 
+domain objects.</li>
+</ul>
+<p>For this tutorial, we&#39;ll assume that we&#39;ve sketched out our template and CSS 
+file ahead of time to describe the general look we want for the view. These 
+look like:</p>
+<pre><code class="lang-diff">&lt;div class=&quot;example-bargraph&quot;&gt;
+    &lt;div class=&quot;example-tick-labels&quot;&gt;
+        &lt;div class=&quot;example-tick-label&quot; style=&quot;bottom: 0%&quot;&gt;High&lt;/div&gt;
+        &lt;div class=&quot;example-tick-label&quot; style=&quot;bottom: 50%&quot;&gt;Middle&lt;/div&gt;
+        &lt;div class=&quot;example-tick-label&quot; style=&quot;bottom: 100%&quot;&gt;Low&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;example-graph-area&quot;&gt;
+        &lt;div style=&quot;left: 0; width: 33.3%;&quot; class=&quot;example-bar-holder&quot;&gt;
+            &lt;div class=&quot;example-bar&quot; style=&quot;top: 25%; bottom: 50%;&quot;&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div style=&quot;left: 33.3%; width: 33.3%;&quot; class=&quot;example-bar-holder&quot;&gt;
+            &lt;div class=&quot;example-bar&quot; style=&quot;top: 40%; bottom: 10%;&quot;&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div style=&quot;left: 66.6%; width: 33.3%;&quot; class=&quot;example-bar-holder&quot;&gt;
+            &lt;div class=&quot;example-bar&quot; style=&quot;top: 30%; bottom: 40%;&quot;&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div style=&quot;bottom: 50%&quot; class=&quot;example-graph-tick&quot;&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;example-bar-labels&quot;&gt;
+        &lt;div style=&quot;left: 0; width: 33.3%;&quot; 
+             class=&quot;example-bar-holder example-label&quot;&gt;
+            Label A
+        &lt;/div&gt;
+        &lt;div style=&quot;left: 33.3%; width: 33.3%;&quot; 
+             class=&quot;example-bar-holder example-label&quot;&gt;
+            Label B
+        &lt;/div&gt;
+        &lt;div style=&quot;left: 66.6%; width: 33.3%;&quot; 
+             class=&quot;example-bar-holder example-label&quot;&gt;
+            Label C
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+<p><strong>tutorials/bargraph/res/templates/bargraph.html</strong></p>
+<p>Here, three regions are defined. The first will be for tick labels along the 
+vertical axis, showing the numeric value that certain heights correspond to. The 
+second will be for the actual bar graphs themselves; three are included here. 
+The third is for labels along the horizontal axis, which will indicate which 
+bar corresponds to which telemetry point. Inline <code>style</code> attributes are used 
+wherever dynamic positioning (handled by a script) is anticipated.
+The corresponding CSS file which styles and positions these elements:</p>
+<pre><code class="lang-diff">.example-bargraph {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    mid-width: 160px;
+    min-height: 160px;
+}
+
+.example-bargraph .example-tick-labels {
+    position: absolute;
+    left: 0;
+    top: 24px;
+    bottom: 32px;
+    width: 72px;
+    font-size: 75%;
+}
+
+.example-bargraph .example-tick-label {
+    position: absolute;
+    right: 0;
+    height: 1em;
+    margin-bottom: -0.5em;
+    padding-right: 6px;
+    text-align: right;
+}
+
+.example-bargraph .example-graph-area {
+    position: absolute;
+    border: 1px gray solid;
+    left: 72px;
+    top: 24px;
+    bottom: 32px;
+    right: 0;
+}
+
+.example-bargraph .example-bar-labels {
+    position: absolute;
+    left: 72px;
+    bottom: 0;
+    right: 0;
+    height: 32px;
+}
+
+.example-bargraph .example-bar-holder {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+}
+
+.example-bargraph .example-graph-tick {
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    border-bottom: 1px gray dashed;
+}
+
+.example-bargraph .example-bar {
+    position: absolute;
+    background: darkcyan;
+    right: 4px;
+    left: 4px;
+}
+
+.example-bargraph .example-label {
+    text-align: center;
+    font-size: 85%;
+    padding-top: 6px;
+}
+</code></pre>
+<p><strong>tutorials/bargraph/res/css/bargraph.css</strong></p>
+<p>This is already enough that, if we add <code>&quot;tutorials/bargraph&quot;</code> to <code>main.js</code>, 
+we should be able to run Open MCT and see our Bar Graph as an available view 
+for domain objects which provide telemetry (such as the example 
+<em>Sine Wave Generator</em>) as well as for <em>Telemetry Panel</em> objects:</p>
+<p><img src="images/bar-plot.png" alt="Bar Plot"></p>
+<p>This means that our remaining work will be to populate and position these 
+elements based on the actual contents of the domain object.</p>
+<a name="step-2-add-a-controller" href="#step-2-add-a-controller"><h3 id="undefinedstep-2-add-a-controller">Step 2-Add a Controller</h3>
+</a><p>Our next step will be to begin dynamically populating this template&#39;s contents. 
+Specifically, our goals for this step will be to:</p>
+<ul>
+<li>Show one bar per telemetry-providing domain object (for which we&#39;ll be getting 
+actual telemetry data in subsequent steps.)</li>
+<li>Show correct labels for these objects at the bottom.</li>
+<li>Show numeric labels on the left-hand side.</li>
+</ul>
+<p>Notably, we will not try to show telemetry data after this step.</p>
+<p>To support this, we will add a new controller which supports our Bar Graph view:</p>
+<pre><code class="lang-diff">define(function () {
+    function BarGraphController($scope, telemetryHandler) {
+        var handle;
+
+        // Add min/max defaults
+        $scope.low = -1;
+        $scope.middle = 0;
+        $scope.high = 1;
+
+        // Convert value to a percent between 0-100, keeping values in points
+        $scope.toPercent = function (value) {
+            var pct = 100 * (value - $scope.low) / ($scope.high - $scope.low);
+            return Math.min(100, Math.max(0, pct));
+        };
+
+        // Use the telemetryHandler to get telemetry objects here
+        handle = telemetryHandler.handle($scope.domainObject, function () {
+            $scope.telemetryObjects = handle.getTelemetryObjects();
+            $scope.barWidth = 
+                100 / Math.max(($scope.telemetryObjects).length, 1);
+        });
+
+        // Release subscriptions when scope is destroyed
+        $scope.$on(&#39;$destroy&#39;, handle.unsubscribe);
+    }
+
+    return BarGraphController;
+});
+</code></pre>
+<p><strong>tutorials/bargraph/src/controllers/BarGraphController.js</strong></p>
+<p>A summary of what we&#39;ve done here:</p>
+<ul>
+<li>We&#39;re exposing some numeric values that will correspond to the <em>low</em>, <em>middle</em>, 
+and <em>high</em> end of the graph. (The <code>medium</code> attribute will be useful for 
+positioning the middle line, which are graphs will ultimately descend down or 
+push up from.)</li>
+<li>Add a utility function which converts from numeric values to percentages. This 
+will help support some positioning in the template.</li>
+<li>Utilize the <code>telemetryHandler</code>, provided by the platform, to start listening 
+to real-time telemetry updates. This will deal with most of the complexity of 
+dealing with telemetry (e.g. differentiating between individual telemetry points 
+and telemetry panels, monitoring latest values) and provide us with a useful 
+interface for populating our view. The the Open MCT Developer Guide for more 
+information on dealing with telemetry.</li>
+</ul>
+<p>Whenever the telemetry handler invokes its callbacks, we update the set of 
+telemetry objects in view, as well as the width for each bar.</p>
+<p>We will also utilize this from our template:</p>
+<pre><code class="lang-diff">+ &lt;div class=&quot;example-bargraph&quot; ng-controller=&quot;BarGraphController&quot;&gt;
+    &lt;div class=&quot;example-tick-labels&quot;&gt;
++       &lt;div ng-repeat=&quot;value in [low, middle, high] track by $index&quot;
++             class=&quot;example-tick-label&quot;
++             style=&quot;bottom: {{ toPercent(value) }}%&quot;&gt;
++            {{value}}
++       &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;example-graph-area&quot;&gt;
++       &lt;div ng-repeat=&quot;telemetryObject in telemetryObjects&quot;
++           style=&quot;left: {{barWidth * $index}}%; width: {{barWidth}}%&quot;
++           class=&quot;example-bar-holder&quot;&gt;
+            &lt;div class=&quot;example-bar&quot;
+                style=&quot;top: 25%; bottom: 50%;&quot;&gt;
+            &lt;/div&gt;
++        &lt;/div&gt;
++        &lt;div style=&quot;bottom: {{ toPercent(middle) }}%&quot;
+             class=&quot;example-graph-tick&quot;&gt;
+         &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;example-bar-labels&quot;&gt;
++       &lt;div ng-repeat=&quot;telemetryObject in telemetryObjects&quot;
++            style=&quot;left: {{barWidth * $index}}%; width: {{barWidth}}%&quot;
++            class=&quot;example-bar-holder example-label&quot;&gt;
++           &lt;mct-representation key=&quot;&#39;label&#39;&quot;
++                               mct-object=&quot;telemetryObject&quot;&gt;
++           &lt;/mct-representation&gt;
++       &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+<p><strong>tutorials/bargraph/res/templates/bargraph.html</strong></p>
+<p>Summarizing these changes:</p>
+<ul>
+<li>Utilize the exposed <code>low</code>, <code>middle</code>, and <code>high</code> values to populate our labels 
+along the vertical axis. Additionally, use the <code>toPercent</code> function to position 
+these from the bottom.</li>
+<li>Replace our three hard-coded bars with a repeater that looks at the 
+<code>telemetryObjects</code> exposed by the controller and adds one bar each.</li>
+<li>Position the dashed tick-line using the <code>middle</code> value and the <code>toPercent</code> 
+function, lining it up with its label to the left.</li>
+<li>At the bottom, repeat a set of labels for the telemetry-providing domain 
+objects, with matching alignment to the bars above. We use an existing 
+representation, <code>label</code>, to make this easier.</li>
+</ul>
+<p>Finally, we expose our controller from our bundle definition. Note that the 
+depends declaration includes both <code>$scope</code> as well as the <code>telemetryHandler</code> 
+service we made use of.</p>
+<pre><code class="lang-diff">define([
+    &#39;legacyRegistry&#39;,
+    &#39;./src/controllers/BarGraphController&#39;
+], function (
+    legacyRegistry,
+    BarGraphController
+) {
+    legacyRegistry.register(&quot;tutorials/bargraph&quot;, {
+    &quot;name&quot;: &quot;Bar Graph&quot;,
+    &quot;description&quot;: &quot;Provides the Bar Graph view of telemetry elements.&quot;,
+    &quot;extensions&quot;: {
+        &quot;views&quot;: [
+            {
+                &quot;name&quot;: &quot;Bar Graph&quot;,
+                &quot;key&quot;: &quot;example.bargraph&quot;,
+                &quot;glyph&quot;: &quot;H&quot;,
+                &quot;templateUrl&quot;: &quot;templates/bargraph.html&quot;,
+                &quot;needs&quot;: [ &quot;telemetry&quot; ],
+                &quot;delegation&quot;: true
+            }
+        ],
+        &quot;stylesheets&quot;: [
+            {
+                &quot;stylesheetUrl&quot;: &quot;css/bargraph.css&quot;
+            }
+        ],
++       &quot;controllers&quot;: [
++           {
++               &quot;key&quot;: &quot;BarGraphController&quot;,
++               &quot;implementation&quot;: BarGraphController,
++               &quot;depends&quot;: [ &quot;$scope&quot;, &quot;telemetryHandler&quot; ]
++           }
++       ]
+    }
+    });
+});
+</code></pre>
+<p><strong>tutorials/bargraph/bundle.js</strong></p>
+<p>When we reload Open MCT, we are now able to see that our bar graph view 
+correctly labels one bar per telemetry-providing domain object, as shown for 
+this Telemetry Panel containing four Sine Wave Generators.</p>
+<p><img src="images/bar-plot-2.png" alt="Bar Plot"></p>
+<a name="step-3-using-telemetry-data" href="#step-3-using-telemetry-data"><h3 id="undefinedstep-3-using-telemetry-data">Step 3-Using Telemetry Data</h3>
+</a><p>Now that our bar graph is labeled correctly, it&#39;s time to start putting data 
+into the view.</p>
+<p>First, let&#39;s add expose some more functionality from our controller. To make it 
+simple, we&#39;ll expose the top and bottom for a bar graph for a given 
+telemetry-providing domain object, as percentages.</p>
+<pre><code class="lang-diff">define(function () {
+    function BarGraphController($scope, telemetryHandler) {
+        var handle;
+
+        // Add min/max defaults
+        $scope.low = -1;
+        $scope.middle = 0;
+        $scope.high = 1;
+
+        // Convert value to a percent between 0-100, keeping values in points
+        $scope.toPercent = function (value) {
+            var pct = 100 * (value - $scope.low) / ($scope.high - $scope.low);
+            return Math.min(100, Math.max(0, pct));
+        };
+
+        // Get bottom and top (as percentages) for current value
++       $scope.getBottom = function (telemetryObject) {
++           var value = handle.getRangeValue(telemetryObject);
++           return $scope.toPercent(Math.min($scope.middle, value));
++       }
++       $scope.getTop = function (telemetryObject) {
++           var value = handle.getRangeValue(telemetryObject);
++           return 100 - $scope.toPercent(Math.max($scope.middle, value));
++       }        
+
+        // Use the telemetryHandler to get telemetry objects here
+        handle = telemetryHandler.handle($scope.domainObject, function () {
+            $scope.telemetryObjects = handle.getTelemetryObjects();
+            $scope.barWidth = 
+                100 / Math.max(($scope.telemetryObjects).length, 1);
+        });
+
+        // Release subscriptions when scope is destroyed
+        $scope.$on(&#39;$destroy&#39;, handle.unsubscribe);
+    }
+
+    return BarGraphController;
+});
+</code></pre>
+<p><strong>tutorials/bargraph/src/controllers/BarGraphController.js</strong></p>
+<p>The <code>telemetryHandler</code> exposes a method to provide us with our latest data value 
+(the <code>getRangeValue</code> method), and we already have a function to convert from a 
+numeric value to a percentage within the view, so we just use those. The only 
+slight complication is that we want our bar to move up or down from the middle 
+value, so either of our top or bottom position for the bar itself could be 
+either the middle line, or the data value. We let <code>Math.min</code> and <code>Math.max</code> 
+decide this.</p>
+<p>Next, we utilize this functionality from the template:</p>
+<pre><code class="lang-diff">&lt;div class=&quot;example-bargraph&quot; ng-controller=&quot;BarGraphController&quot;&gt;
+    &lt;div class=&quot;example-tick-labels&quot;&gt;
+        &lt;div ng-repeat=&quot;value in [low, middle, high] track by $index&quot;
+             class=&quot;example-tick-label&quot;
+             style=&quot;bottom: {{ toPercent(value) }}%&quot;&gt;
+            {{value}}
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;example-graph-area&quot;&gt;
+        &lt;div ng-repeat=&quot;telemetryObject in telemetryObjects&quot;
+             style=&quot;left: {{barWidth * $index}}%; width: {{barWidth}}%&quot;
+             class=&quot;example-bar-holder&quot;&gt;
+            &lt;div class=&quot;example-bar&quot;
++                ng-style=&quot;{
++                    bottom: getBottom(telemetryObject) + &#39;%&#39;,
++                    top: getTop(telemetryObject) + &#39;%&#39;
++                }&quot;&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div style=&quot;bottom: {{ toPercent(middle) }}%&quot;
+             class=&quot;example-graph-tick&quot;&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;example-bar-labels&quot;&gt;
+        &lt;div ng-repeat=&quot;telemetryObject in telemetryObjects&quot;
+             style=&quot;left: {{barWidth * $index}}%; width: {{barWidth}}%&quot;
+             class=&quot;example-bar-holder example-label&quot;&gt;
+            &lt;mct-representation key=&quot;&#39;label&#39;&quot;
+                                mct-object=&quot;telemetryObject&quot;&gt;
+            &lt;/mct-representation&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+<p><strong>tutorials/bargraph/res/templates/bargraph.html</strong></p>
+<p>Here, we utilize the functions we just provided from the controller to position 
+the bar, using an ng-style attribute.</p>
+<p>When we reload Open MCT, our bar graph view now looks like:</p>
+<p><img src="images/bar-plot-3.png" alt="Bar Plot"></p>
+<a name="step-4-view-configuration" href="#step-4-view-configuration"><h3 id="undefinedstep-4-view-configuration">Step 4-View Configuration</h3>
+</a><p>The default minimum and maximum values we&#39;ve provided happen to make sense for 
+sine waves, but what about other values? We want to provide the user with a 
+means of configuring these boundaries.</p>
+<p>This is normally done via Edit mode. Since view configuration is a common 
+problem, the Open MCT platform exposes a configuration object - called 
+<code>configuration</code> - into our view&#39;s scope. We can populate it as we please, and 
+when we return to our view later, those changes will be persisted.</p>
+<p>First, let&#39;s add a tool bar for changing these three values in Edit mode:</p>
+<pre><code class="lang-diff">define([
+    &#39;legacyRegistry&#39;,
+    &#39;./src/controllers/BarGraphController&#39;
+], function (
+    legacyRegistry,
+    BarGraphController
+) {
+    legacyRegistry.register(&quot;tutorials/bargraph&quot;, {
+    &quot;name&quot;: &quot;Bar Graph&quot;,
+    &quot;description&quot;: &quot;Provides the Bar Graph view of telemetry elements.&quot;,
+    &quot;extensions&quot;: {
+        &quot;views&quot;: [
+            {
+                &quot;name&quot;: &quot;Bar Graph&quot;,
+                &quot;key&quot;: &quot;example.bargraph&quot;,
+                &quot;glyph&quot;: &quot;H&quot;,
+                &quot;templateUrl&quot;: &quot;templates/bargraph.html&quot;,
+                &quot;needs&quot;: [ &quot;telemetry&quot; ],
+                &quot;delegation&quot;: true,
++               &quot;toolbar&quot;: {
++                   &quot;sections&quot;: [
++                       {
++                           &quot;items&quot;: [
++                               {
++                                   &quot;name&quot;: &quot;Low&quot;,
++                                   &quot;property&quot;: &quot;low&quot;,
++                                   &quot;required&quot;: true,
++                                   &quot;control&quot;: &quot;textfield&quot;,
++                                   &quot;size&quot;: 4
++                               },
++                               {
++                                   &quot;name&quot;: &quot;Middle&quot;,
++                                   &quot;property&quot;: &quot;middle&quot;,
++                                   &quot;required&quot;: true,
++                                   &quot;control&quot;: &quot;textfield&quot;,
++                                   &quot;size&quot;: 4
++                               },
++                               {
++                                   &quot;name&quot;: &quot;High&quot;,
++                                   &quot;property&quot;: &quot;high&quot;,
++                                   &quot;required&quot;: true,
++                                   &quot;control&quot;: &quot;textfield&quot;,
++                                   &quot;size&quot;: 4
++                               }
++                           ]
++                       }
+                    ]
+                }
+            }
+        ],
+        &quot;stylesheets&quot;: [
+            {
+                &quot;stylesheetUrl&quot;: &quot;css/bargraph.css&quot;
+            }
+        ],
+        &quot;controllers&quot;: [
+            {
+                &quot;key&quot;: &quot;BarGraphController&quot;,
+                &quot;implementation&quot;: BarGraphController,
+                &quot;depends&quot;: [ &quot;$scope&quot;, &quot;telemetryHandler&quot; ]
+            }
+        ]
+    }
+    });
+});
+</code></pre>
+<p><strong>tutorials/bargraph/bundle.js</strong></p>
+<p>As we saw in to To-Do List plugin, a tool bar needs either a selected object or 
+a view proxy to work from. We will add this to our controller, and additionally 
+will start reading/writing those properties to the view&#39;s <code>configuration</code> 
+object.</p>
+<pre><code class="lang-diff">define(function () {
+    function BarGraphController($scope, telemetryHandler) {
+        var handle;
+
++       // Expose configuration constants directly in scope
++       function exposeConfiguration() {
++           $scope.low = $scope.configuration.low;
++           $scope.middle = $scope.configuration.middle;
++           $scope.high = $scope.configuration.high;
++       }
+
++       // Populate a default value in the configuration
++       function setDefault(key, value) {
++           if ($scope.configuration[key] === undefined) {
++               $scope.configuration[key] = value;
++           }
++       }
+
++       // Getter-setter for configuration properties (for view proxy)
++       function getterSetter(property) {
++           return function (value) {
++               value = parseFloat(value);
++               if (!isNaN(value)) {
++                   $scope.configuration[property] = value;
++                   exposeConfiguration();
++               }
++               return $scope.configuration[property];
++           };
+        }
+
++       // Add min/max defaults
++       setDefault(&#39;low&#39;, -1);
++       setDefault(&#39;middle&#39;, 0);
++       setDefault(&#39;high&#39;, 1);
++       exposeConfiguration($scope.configuration);
+
++       // Expose view configuration options
++       if ($scope.selection) {
++           $scope.selection.proxy({
++               low: getterSetter(&#39;low&#39;),
++               middle: getterSetter(&#39;middle&#39;),
++               high: getterSetter(&#39;high&#39;)
++           });
++       }
+
+        // Convert value to a percent between 0-100
+        $scope.toPercent = function (value) {
+            var pct = 100 * (value - $scope.low) / 
+                ($scope.high - $scope.low);
+            return Math.min(100, Math.max(0, pct));
+        };
+
+        // Get bottom and top (as percentages) for current value
+        $scope.getBottom = function (telemetryObject) {
+            var value = handle.getRangeValue(telemetryObject);
+            return $scope.toPercent(Math.min($scope.middle, value));
+        }
+        $scope.getTop = function (telemetryObject) {
+            var value = handle.getRangeValue(telemetryObject);
+            return 100 - $scope.toPercent(Math.max($scope.middle, value));
+        }        
+
+        // Use the telemetryHandler to get telemetry objects here
+        handle = telemetryHandler.handle($scope.domainObject, function () {
+            $scope.telemetryObjects = handle.getTelemetryObjects();
+            $scope.barWidth = 
+                100 / Math.max(($scope.telemetryObjects).length, 1);
+        });
+
+        // Release subscriptions when scope is destroyed
+        $scope.$on(&#39;$destroy&#39;, handle.unsubscribe);
+    }
+
+    return BarGraphController;
+});
+</code></pre>
+<p><strong>tutorials/bargraph/src/controllers/BarGraphController.js</strong></p>
+<p>A summary of these changes:</p>
+<ul>
+<li>First, read <code>low</code>, <code>middle</code>, and <code>high</code> from the view configuration instead of 
+initializing them to explicit values. This is placed into its own function, 
+since it will be called a lot.</li>
+<li>The function <code>setDefault</code> is included; it will be used to set the default 
+values for <code>low</code>, <code>middle</code>, and <code>high</code> in the view configuration, but only if 
+they aren&#39;t present.</li>
+<li>The tool bar will treat properties in a view proxy as getter-setters if 
+they are functions; that is, they will be called with an argument to be used 
+as a setter, and with no argument to use as a getter. We provide ourselves a 
+function for making these getter-setters (since we&#39;ll need three) that 
+additionally handles some checking to ensure that these are actually numbers.</li>
+<li>After that, we actually initialize both the view <code>configuration</code> object with 
+defaults (if needed), and expose its state into the scope.</li>
+<li>Finally, we expose a view proxy which will handle changes to <code>low</code>, <code>middle</code>, 
+and <code>high</code> as entered by the user from the tool bar. This uses the 
+getter-setters we defined previously.</li>
+</ul>
+<p>If we reload Open MCT and go to a Bar Graph view in Edit mode, we now see 
+that we can change these bounds from the tool bar.</p>
+<p><img src="images/bar-plot-4.png" alt="Bar plot"></p>
+<a name="telemetry-adapter" href="#telemetry-adapter"><h2 id="undefinedtelemetry-adapter">Telemetry Adapter</h2>
+</a><p>The goal of this tutorial is to demonstrate how to integrate Open MCT 
+with an existing telemetry system.</p>
+<p>A summary of the steps we will take:</p>
+<ul>
+<li>Expose the telemetry dictionary within the user interface.</li>
+<li>Support subscription/unsubscription to real-time streaming data.</li>
+<li>Support historical retrieval of telemetry data.</li>
+</ul>
+<a name="step-0-expose-your-telemetry" href="#step-0-expose-your-telemetry"><h3 id="undefinedstep-0-expose-your-telemetry">Step 0-Expose Your Telemetry</h3>
+</a><p>As a precondition to integrating telemetry data into Open MCT, this 
+information needs to be available over web-based interfaces. In practice, 
+this will most likely mean exposing data over HTTP, or over WebSockets.
+For purposes of this tutorial, a simple node server is provided to stand 
+in place of this existing telemetry system. It generates real-time data 
+and exposes it over a WebSocket connection.</p>
+<pre><code class="lang-diff">/*global require,process,console*/
+
+var CONFIG = {
+    port: 8081,
+    dictionary: &quot;dictionary.json&quot;,
+    interval: 1000
+};
+
+(function () {
+    &quot;use strict&quot;;
+
+    var WebSocketServer = require(&#39;ws&#39;).Server,
+        fs = require(&#39;fs&#39;),
+        wss = new WebSocketServer({ port: CONFIG.port }),
+        dictionary = JSON.parse(fs.readFileSync(CONFIG.dictionary, &quot;utf8&quot;)),
+        spacecraft = {
+            &quot;prop.fuel&quot;: 77,
+            &quot;prop.thrusters&quot;: &quot;OFF&quot;,
+            &quot;comms.recd&quot;: 0,
+            &quot;comms.sent&quot;: 0,
+            &quot;pwr.temp&quot;: 245,
+            &quot;pwr.c&quot;: 8.15,
+            &quot;pwr.v&quot;: 30
+        },
+        histories = {},
+        listeners = [];
+
+    function updateSpacecraft() {
+        spacecraft[&quot;prop.fuel&quot;] = Math.max(
+            0,
+            spacecraft[&quot;prop.fuel&quot;] -
+                (spacecraft[&quot;prop.thrusters&quot;] === &quot;ON&quot; ? 0.5 : 0)
+        );
+        spacecraft[&quot;pwr.temp&quot;] = spacecraft[&quot;pwr.temp&quot;] * 0.985
+            + Math.random() * 0.25 + Math.sin(Date.now());
+        spacecraft[&quot;pwr.c&quot;] = spacecraft[&quot;pwr.c&quot;] * 0.985;
+        spacecraft[&quot;pwr.v&quot;] = 30 + Math.pow(Math.random(), 3);
+    }
+
+    function generateTelemetry() {
+        var timestamp = Date.now(), sent = 0;
+        Object.keys(spacecraft).forEach(function (id) {
+            var state = { timestamp: timestamp, value: spacecraft[id] };
+            histories[id] = histories[id] || []; // Initialize
+            histories[id].push(state);
+            spacecraft[&quot;comms.sent&quot;] += JSON.stringify(state).length;
+        });
+        listeners.forEach(function (listener) {
+            listener();
+        });
+    }
+
+    function update() {
+        updateSpacecraft();
+        generateTelemetry();
+    }
+
+    function handleConnection(ws) {
+        var subscriptions = {}, // Active subscriptions for this connection
+            handlers = {        // Handlers for specific requests
+                dictionary: function () {
+                    ws.send(JSON.stringify({
+                        type: &quot;dictionary&quot;,
+                        value: dictionary
+                    }));
+                },
+                subscribe: function (id) {
+                    subscriptions[id] = true;
+                },
+                unsubscribe: function (id) {
+                    delete subscriptions[id];
+                },
+                history: function (id) {
+                    ws.send(JSON.stringify({
+                        type: &quot;history&quot;,
+                        id: id,
+                        value: histories[id]
+                    }));
+                }
+            };
+
+        function notifySubscribers() {
+            Object.keys(subscriptions).forEach(function (id) {
+                var history = histories[id];
+                if (history) {
+                    ws.send(JSON.stringify({
+                        type: &quot;data&quot;,
+                        id: id,
+                        value: history[history.length - 1]
+                    }));
+                }
+            });
+        }
+
+        // Listen for requests
+        ws.on(&#39;message&#39;, function (message) {
+            var parts = message.split(&#39; &#39;),
+                handler = handlers[parts[0]];
+            if (handler) {
+                handler.apply(handlers, parts.slice(1));
+            }
+        });
+
+        // Stop sending telemetry updates for this connection when closed
+        ws.on(&#39;close&#39;, function () {
+            listeners = listeners.filter(function (listener) {
+                return listener !== notifySubscribers;
+            });
+        });
+
+        // Notify subscribers when telemetry is updated
+        listeners.push(notifySubscribers);
+    }
+
+    update();
+    setInterval(update, CONFIG.interval);
+
+    wss.on(&#39;connection&#39;, handleConnection);
+
+    console.log(&quot;Example spacecraft running on port &quot;);
+    console.log(&quot;Press Enter to toggle thruster state.&quot;);
+    process.stdin.on(&#39;data&#39;, function (data) {
+        spacecraft[&#39;prop.thrusters&#39;] =
+            (spacecraft[&#39;prop.thrusters&#39;] === &quot;OFF&quot;) ? &quot;ON&quot; : &quot;OFF&quot;;
+        console.log(&quot;Thrusters &quot; + spacecraft[&quot;prop.thrusters&quot;]);
+    });
+}());
+</code></pre>
+<p><strong>tutorial-server/app.js</strong></p>
+<p>For purposes of this tutorial, how this server has been implemented is 
+not important; it has just enough functionality to resemble a WebSocket 
+interface to a real telemetry system, and niceties such as error-handling 
+have been omitted. (For more information on using WebSockets, both in the 
+client and on the server, 
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API">https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API</a> is an 
+excellent starting point.)</p>
+<p>What does matter for this tutorial is the interfaces that are exposed. Once a 
+WebSocket connection has been established to this server, it accepts plain text 
+messages in the following formats, and issues JSON-formatted responses.</p>
+<p>The requests it handles are:</p>
+<ul>
+<li><code>dictionary</code>: Responds with a JSON response with the following fields:<ul>
+<li><code>type</code>: &quot;dictionary&quot;</li>
+<li><code>value</code>: … the telemetry dictionary (see below) …</li>
+</ul>
+</li>
+<li><code>subscribe &lt;id&gt;</code>: Subscribe to new telemetry data for the measurement with 
+the provided identifier. The server will begin sending messages of the 
+following form:<ul>
+<li><code>type</code>: &quot;data&quot;</li>
+<li><code>id</code>: The identifier for the measurement.</li>
+<li><code>value</code>: An object containing the actual measurement, in two fields:<ul>
+<li><code>timestamp</code>: A UNIX timestamp (in milliseconds) for the &quot;measurement&quot;</li>
+<li><code>value</code>: The data value for the measurement (either a number, or a 
+string)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>unsubscribe &lt;id&gt;</code>: Stop receiving new data for the identified measurement.</li>
+<li><code>history &lt;id&gt;</code>: Request a history of all telemetry data for the identified 
+measurement.<ul>
+<li><code>type</code>: &quot;history&quot;</li>
+<li><code>id</code>: The identifier for the measurement.</li>
+<li><code>value</code>: An array of objects containing the actual measurement, each of 
+which having two fields:<ul>
+<li><code>timestamp</code>: A UNIX timestamp (in milliseconds) for the &quot;measurement&quot;</li>
+<li><code>value</code>: The data value for the measurement (either a number, or 
+a string)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>(Note that the term &quot;measurement&quot; is used to describe a distinct data series 
+within this system; in other systems, these have been called channels, 
+mnemonics, telemetry points, or other names. No preference is made here; 
+Open MCT is easily adapted to use the terminology appropriate to your 
+system.)
+Additionally, while running the server from the terminal we can toggle the 
+state of the &quot;spacecraft&quot; by hitting enter; this will turn the &quot;thrusters&quot; 
+on and off, having observable changes in telemetry.</p>
+<p>The telemetry dictionary referenced previously is contained in a separate file, 
+used by the server. It uses a custom format and, for purposes of example, 
+contains three &quot;subsystems&quot; containing a mix of numeric and string-based 
+telemetry.</p>
+<pre><code class="lang-diff">{
+    &quot;name&quot;: &quot;Example Spacecraft&quot;,
+    &quot;identifier&quot;: &quot;sc&quot;,
+    &quot;subsystems&quot;: [
+        {
+            &quot;name&quot;: &quot;Propulsion&quot;,
+            &quot;identifier&quot;: &quot;prop&quot;,
+            &quot;measurements&quot;: [
+                {
+                    &quot;name&quot;: &quot;Fuel&quot;,
+                    &quot;identifier&quot;: &quot;prop.fuel&quot;,
+                    &quot;units&quot;: &quot;kilograms&quot;,
+                    &quot;type&quot;: &quot;float&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;Thrusters&quot;,
+                    &quot;identifier&quot;: &quot;prop.thrusters&quot;,
+                    &quot;units&quot;: &quot;None&quot;,
+                    &quot;type&quot;: &quot;string&quot;
+                }
+            ]
+        },
+        {
+            &quot;name&quot;: &quot;Communications&quot;,
+            &quot;identifier&quot;: &quot;comms&quot;,
+            &quot;measurements&quot;: [
+                {
+                    &quot;name&quot;: &quot;Received&quot;,
+                    &quot;identifier&quot;: &quot;comms.recd&quot;,
+                    &quot;units&quot;: &quot;bytes&quot;,
+                    &quot;type&quot;: &quot;integer&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;Sent&quot;,
+                    &quot;identifier&quot;: &quot;comms.sent&quot;,
+                    &quot;units&quot;: &quot;bytes&quot;,
+                    &quot;type&quot;: &quot;integer&quot;
+                }
+            ]
+        },
+        {
+            &quot;name&quot;: &quot;Power&quot;,
+            &quot;identifier&quot;: &quot;pwr&quot;,
+            &quot;measurements&quot;: [
+                {
+                    &quot;name&quot;: &quot;Generator Temperature&quot;,
+                    &quot;identifier&quot;: &quot;pwr.temp&quot;,
+                    &quot;units&quot;: &quot;\u0080C&quot;,
+                    &quot;type&quot;: &quot;float&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;Generator Current&quot;,
+                    &quot;identifier&quot;: &quot;pwr.c&quot;,
+                    &quot;units&quot;: &quot;A&quot;,
+                    &quot;type&quot;: &quot;float&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;Generator Voltage&quot;,
+                    &quot;identifier&quot;: &quot;pwr.v&quot;,
+                    &quot;units&quot;: &quot;V&quot;,
+                    &quot;type&quot;: &quot;float&quot;
+                }
+            ]
+        }
+    ]
+}
+</code></pre>
+<p><strong>tutorial-server/dictionary.json</strong></p>
+<p>It should be noted that neither the interface for the example server nor the 
+dictionary format are expected by Open MCT; rather, these are intended to 
+stand in for some existing source of telemetry data to which we wish to adapt 
+Open MCT.</p>
+<p>We can run this example server by:</p>
+<pre><code>cd tutorial-server
+npm install ws
+node app.js
+</code></pre><p>To verify that this is running and try out its interface, we can use a tool 
+like <a href="https://www.npmjs.com/package/wscat">https://www.npmjs.com/package/wscat</a> : </p>
+<pre><code>wscat -c ws://localhost:8081
+connected (press CTRL+C to quit)
+&gt; dictionary
+&lt; {&quot;type&quot;:&quot;dictionary&quot;,&quot;value&quot;:{&quot;name&quot;:&quot;Example Spacecraft&quot;,&quot;identifier&quot;:&quot;sc&quot;,&quot;subsystems&quot;:[{&quot;name&quot;:&quot;Propulsion&quot;,&quot;identifier&quot;:&quot;prop&quot;,&quot;measurements&quot;:[{&quot;name&quot;:&quot;Fuel&quot;,&quot;identifier&quot;:&quot;prop.fuel&quot;,&quot;units&quot;:&quot;kilograms&quot;,&quot;type&quot;:&quot;float&quot;},{&quot;name&quot;:&quot;Thrusters&quot;,&quot;identifier&quot;:&quot;prop.thrusters&quot;,&quot;units&quot;:&quot;None&quot;,&quot;type&quot;:&quot;string&quot;}]},{&quot;name&quot;:&quot;Communications&quot;,&quot;identifier&quot;:&quot;comms&quot;,&quot;measurements&quot;:[{&quot;name&quot;:&quot;Received&quot;,&quot;identifier&quot;:&quot;comms.recd&quot;,&quot;units&quot;:&quot;bytes&quot;,&quot;type&quot;:&quot;integer&quot;},{&quot;name&quot;:&quot;Sent&quot;,&quot;identifier&quot;:&quot;comms.sent&quot;,&quot;units&quot;:&quot;bytes&quot;,&quot;type&quot;:&quot;integer&quot;}]},{&quot;name&quot;:&quot;Power&quot;,&quot;identifier&quot;:&quot;pwr&quot;,&quot;measurements&quot;:[{&quot;name&quot;:&quot;Generator Temperature&quot;,&quot;identifier&quot;:&quot;pwr.temp&quot;,&quot;units&quot;:&quot;C&quot;,&quot;type&quot;:&quot;float&quot;},{&quot;name&quot;:&quot;Generator Current&quot;,&quot;identifier&quot;:&quot;pwr.c&quot;,&quot;units&quot;:&quot;A&quot;,&quot;type&quot;:&quot;float&quot;},{&quot;name&quot;:&quot;Generator Voltage&quot;,&quot;identifier&quot;:&quot;pwr.v&quot;,&quot;units&quot;:&quot;V&quot;,&quot;type&quot;:&quot;float&quot;}]}]}}
+</code></pre><p>Now that the example server&#39;s interface is reasonably well-understood, a plugin 
+can be written to adapt Open MCT to utilize it.</p>
+<a name="step-1-add-a-top-level-object" href="#step-1-add-a-top-level-object"><h3 id="undefinedstep-1-add-a-top-level-object">Step 1-Add a Top-level Object</h3>
+</a><p>Since Open MCT uses an &quot;object-first&quot; approach to accessing data, before 
+we&#39;ll be able to do anything with this new data source, we&#39;ll need to have a 
+way to explore the available measurements in the tree. In this step, we will 
+add a top-level object which will serve as a container; in the next step, we 
+will populate this with the contents of the telemetry dictionary (which we 
+will retrieve from the server.)</p>
+<p>define([
+    &#39;legacyRegistry&#39;
+], function (
+    legacyRegistry
+) {
+    legacyRegistry.register(&quot;tutorials/telemetry&quot;, {
+        &quot;name&quot;: &quot;Example Telemetry Adapter&quot;,
+        &quot;extensions&quot;: {
+            &quot;types&quot;: [
+                {
+                    &quot;name&quot;: &quot;Spacecraft&quot;,
+                    &quot;key&quot;: &quot;example.spacecraft&quot;,
+                    &quot;glyph&quot;: &quot;o&quot;
+                }
+            ],
+            &quot;roots&quot;: [
+                {
+                    &quot;id&quot;: &quot;example:sc&quot;,
+                    &quot;priority&quot;: &quot;preferred&quot;,
+                    &quot;model&quot;: {
+                        &quot;type&quot;: &quot;example.spacecraft&quot;,
+                        &quot;name&quot;: &quot;My Spacecraft&quot;,
+                        &quot;composition&quot;: []
+                    }
+                }
+            ]
+        }
+    });
+});
+<strong>tutorials/telemetry/bundle.js</strong></p>
+<p>Here, we&#39;ve created our initial telemetry plugin. This exposes a new domain 
+object type (the &quot;Spacecraft&quot;, which will be represented by the contents of the 
+telemetry dictionary) and also adds one instance of it as a root-level object 
+(by declaring an extension of category roots.) We have also set priority to 
+preferred so that this shows up near the top, instead of below My Items.</p>
+<p>If we include this in our set of active bundles:</p>
+<pre><code class="lang-diff">requirejs.config({
+    &quot;paths&quot;: {
+        &quot;legacyRegistry&quot;: &quot;src/legacyRegistry&quot;,
+        &quot;angular&quot;: &quot;bower_components/angular/angular.min&quot;,
+        &quot;angular-route&quot;: &quot;bower_components/angular-route/angular-route.min&quot;,
+        &quot;csv&quot;: &quot;bower_components/comma-separated-values/csv.min&quot;,
+        &quot;es6-promise&quot;: &quot;bower_components/es6-promise/promise.min&quot;,
+        &quot;moment&quot;: &quot;bower_components/moment/moment&quot;,
+        &quot;moment-duration-format&quot;: &quot;bower_components/moment-duration-format/lib/moment-duration-format&quot;,
+        &quot;saveAs&quot;: &quot;bower_components/FileSaver.js/FileSaver.min&quot;,
+        &quot;screenfull&quot;: &quot;bower_components/screenfull/dist/screenfull.min&quot;,
+        &quot;text&quot;: &quot;bower_components/text/text&quot;,
+        &quot;uuid&quot;: &quot;bower_components/node-uuid/uuid&quot;,
+        &quot;zepto&quot;: &quot;bower_components/zepto/zepto.min&quot;
+    },
+    &quot;shim&quot;: {
+        &quot;angular&quot;: {
+            &quot;exports&quot;: &quot;angular&quot;
+        },
+        &quot;angular-route&quot;: {
+            &quot;deps&quot;: [ &quot;angular&quot; ]
+        },
+        &quot;moment-duration-format&quot;: {
+            &quot;deps&quot;: [ &quot;moment&quot; ]
+        },
+        &quot;screenfull&quot;: {
+            &quot;exports&quot;: &quot;screenfull&quot;
+        },
+        &quot;zepto&quot;: {
+            &quot;exports&quot;: &quot;Zepto&quot;
+        }
+    }
+});
+
+define([
+    &#39;./platform/framework/src/Main&#39;,
+    &#39;legacyRegistry&#39;,
+
+    &#39;./platform/framework/bundle&#39;,
+    &#39;./platform/core/bundle&#39;,
+    &#39;./platform/representation/bundle&#39;,
+    &#39;./platform/commonUI/about/bundle&#39;,
+    &#39;./platform/commonUI/browse/bundle&#39;,
+    &#39;./platform/commonUI/edit/bundle&#39;,
+    &#39;./platform/commonUI/dialog/bundle&#39;,
+    &#39;./platform/commonUI/formats/bundle&#39;,
+    &#39;./platform/commonUI/general/bundle&#39;,
+    &#39;./platform/commonUI/inspect/bundle&#39;,
+    &#39;./platform/commonUI/mobile/bundle&#39;,
+    &#39;./platform/commonUI/themes/espresso/bundle&#39;,
+    &#39;./platform/commonUI/notification/bundle&#39;,
+    &#39;./platform/containment/bundle&#39;,
+    &#39;./platform/execution/bundle&#39;,
+    &#39;./platform/exporters/bundle&#39;,
+    &#39;./platform/telemetry/bundle&#39;,
+    &#39;./platform/features/clock/bundle&#39;,
+    &#39;./platform/features/imagery/bundle&#39;,
+    &#39;./platform/features/layout/bundle&#39;,
+    &#39;./platform/features/pages/bundle&#39;,
+    &#39;./platform/features/plot/bundle&#39;,
+    &#39;./platform/features/timeline/bundle&#39;,
+    &#39;./platform/features/table/bundle&#39;,
+    &#39;./platform/forms/bundle&#39;,
+    &#39;./platform/identity/bundle&#39;,
+    &#39;./platform/persistence/aggregator/bundle&#39;,
+    &#39;./platform/persistence/local/bundle&#39;,
+    &#39;./platform/persistence/queue/bundle&#39;,
+    &#39;./platform/policy/bundle&#39;,
+    &#39;./platform/entanglement/bundle&#39;,
+    &#39;./platform/search/bundle&#39;,
+    &#39;./platform/status/bundle&#39;,
+    &#39;./platform/commonUI/regions/bundle&#39;,
+
++   &#39;./tutorials/telemetry/bundle&#39;
+], function (Main, legacyRegistry) {
+    return {
+        legacyRegistry: legacyRegistry,
+        run: function () {
+            return new Main().run(legacyRegistry);
+        }
+    };
+});
+</code></pre>
+<p><strong>main.js</strong></p>
+<p>...we will be able to reload Open MCT and see that it is present:</p>
+<p><img src="images/telemetry-1.png" alt="Telemetry"></p>
+<p>Now, we have somewhere in the UI to put the contents of our telemetry 
+dictionary. </p>
+<a name="step-2-expose-the-telemetry-dictionary" href="#step-2-expose-the-telemetry-dictionary"><h3 id="undefinedstep-2-expose-the-telemetry-dictionary">Step 2-Expose the Telemetry Dictionary</h3>
+</a><p>In order to expose the telemetry dictionary, we first need to read it from the 
+server. Our first step will be to add a service that will handle interactions 
+with the server; this will not be used by Open MCT directly, but will be 
+used by subsequent components we add.</p>
+<pre><code>/*global define,WebSocket*/
+
+define(
+    [],
+    function () {
+        &quot;use strict&quot;;
+
+        function ExampleTelemetryServerAdapter($q, wsUrl) {
+            var ws = new WebSocket(wsUrl),
+                dictionary = $q.defer();
+
+            // Handle an incoming message from the server
+            ws.onmessage = function (event) {
+                var message = JSON.parse(event.data);
+
+                switch (message.type) {
+                case &quot;dictionary&quot;:
+                    dictionary.resolve(message.value);
+                    break;
+                }
+            };
+
+            // Request dictionary once connection is established
+            ws.onopen = function () {
+                ws.send(&quot;dictionary&quot;);
+            };
+
+            return {
+                dictionary: function () {
+                    return dictionary.promise;
+                }
+            };
+        }
+
+        return ExampleTelemetryServerAdapter;
+    }
+);
+</code></pre><p><strong>tutorials/telemetry/src/ExampleTelemetryServerAdapter.js</strong></p>
+<p>When created, this service initiates a connection to the server, and begins 
+loading the dictionary. This will occur asynchronously, so the <code>dictionary()</code> 
+method it exposes returns a <code>Promise</code> for the loaded dictionary 
+(<code>dictionary.json</code> from above), using Angular&#39;s <code>$q</code> 
+(see <a href="https://docs.angularjs.org/api/ng/service/$q">https://docs.angularjs.org/api/ng/service/$q</a> .) Note that error- and 
+close-handling for this WebSocket connection have been omitted for brevity.</p>
+<p>Once the dictionary has been loaded, we will want to represent its contents 
+as domain objects. Specifically, we want subsystems to appear as objects 
+under My Spacecraft, and measurements to appear as objects within those 
+subsystems. This means that we need to convert the data from the dictionary 
+into domain object models, and expose these to Open MCT via a 
+<code>modelService</code>.</p>
+<pre><code>/*global define*/
+
+define(
+    function () {
+        &quot;use strict&quot;;
+
+        var PREFIX = &quot;example_tlm:&quot;,
+            FORMAT_MAPPINGS = {
+                float: &quot;number&quot;,
+                integer: &quot;number&quot;,
+                string: &quot;string&quot;
+            };
+
+        function ExampleTelemetryModelProvider(adapter, $q) {
+            var modelPromise, empty = $q.when({});
+
+            // Check if this model is in our dictionary (by prefix)
+            function isRelevant(id) {
+                return id.indexOf(PREFIX) === 0;
+            }
+
+            // Build a domain object identifier by adding a prefix
+            function makeId(element) {
+                return PREFIX + element.identifier;
+            }
+
+            // Create domain object models from this dictionary
+            function buildTaxonomy(dictionary) {
+                var models = {};
+
+                // Create &amp; store a domain object model for a measurement
+                function addMeasurement(measurement) {
+                    var format = FORMAT_MAPPINGS[measurement.type];
+                    models[makeId(measurement)] = {
+                        type: &quot;example.measurement&quot;,
+                        name: measurement.name,
+                        telemetry: {
+                            key: measurement.identifier,
+                            ranges: [{
+                                key: &quot;value&quot;,
+                                name: &quot;Value&quot;,
+                                units: measurement.units,
+                                format: format
+                            }]
+                        }
+                    };
+                }
+
+                // Create &amp; store a domain object model for a subsystem
+                function addSubsystem(subsystem) {
+                    var measurements =
+                        (subsystem.measurements || []);
+                    models[makeId(subsystem)] = {
+                        type: &quot;example.subsystem&quot;,
+                        name: subsystem.name,
+                        composition: measurements.map(makeId)
+                    };
+                    measurements.forEach(addMeasurement);
+                }
+
+                (dictionary.subsystems || []).forEach(addSubsystem);
+
+                return models;
+            }
+
+            // Begin generating models once the dictionary is available
+            modelPromise = adapter.dictionary().then(buildTaxonomy);
+
+            return {
+                getModels: function (ids) {
+                    // Return models for the dictionary only when they
+                    // are relevant to the request.
+                    return ids.some(isRelevant) ? modelPromise : empty;
+                }
+            };
+        }
+
+        return ExampleTelemetryModelProvider;
+    }
+);
+</code></pre><p><strong>tutorials/telemetry/src/ExampleTelemetryModelProvider.js</strong></p>
+<p>This script implements a <code>provider</code> for <code>modelService</code>; the <code>modelService</code> is a 
+composite service, meaning that multiple such services can exist side by side. 
+(For example, there is another <code>provider</code> for <code>modelService</code> that reads domain 
+object models from the persistence store.)</p>
+<p>Here, we read the dictionary using the server adapter from above; since this 
+will be loaded asynchronously, we use promise-chaining (see 
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then#Chaining">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then#Chaining</a> ) 
+to take that result and build up an object mapping identifiers to new domain 
+object models. This is returned from our <code>modelService</code>, but only when the 
+request actually calls for identifiers that look like they&#39;re from the 
+dictionary. This means that loading other models is not blocked by loading the 
+dictionary. (Note that the <code>modelService</code> contract allows us to return either a 
+sub- or superset of the requested models, so it is fine to always return the 
+whole dictionary.)</p>
+<p>Some notable points to call out here:</p>
+<ul>
+<li>Every subsystem and every measurement from the dictionary has an <code>identifier</code> 
+field declared. We use this as part of the domain object identifier, but we 
+also prefix it with <code>example_tlm</code>:. This accomplishes a few things:<ul>
+<li>We can easily tell whether an identifier is expected to be in the 
+dictionary or not.</li>
+<li>We avoid naming collisions with other model providers.</li>
+<li>Finally, Open MCT uses the colon prefix as a hint that this domain 
+object will not be in the persistence store.</li>
+</ul>
+</li>
+<li>A couple of new types are introduced here (in the <code>type</code> field of the domain 
+object models we create); we will need to define these as extensions as well in 
+order for them to display correctly.</li>
+<li>The <code>composition</code> field of each subsystem contained the Open MCT 
+identifiers of all the measurements in that subsystem. This <code>composition</code> field 
+will be used by Open MCT to determine what domain objects contain other 
+domain objects (e.g. to populate the tree.)</li>
+<li>The <code>telemetry</code> field of each measurement will be used by Open MCT to 
+understand how to request and interpret telemetry data for this object. The 
+<code>key</code> is the machine-readable identifier for this measurement within the 
+telemetry system; the <code>ranges</code> provide metadata about the values for this data. 
+(A separate field, <code>domains</code>, provides metadata about timestamps or other 
+ordering properties of the data, but this will be the same for all 
+measurements, so we will define that later at the type level.)<ul>
+<li>This field (whose contents will be merged atop the telemetry property we 
+define at the type-level) will serve as a template for later <code>telemetry</code> 
+requests to the <code>telemetryService</code>, so we&#39;ll see the properties we define here 
+again later in Steps 3 and 4.</li>
+</ul>
+</li>
+</ul>
+<p>This allows our telemetry dictionary to be expressed as domain object models 
+(and, in turn, as domain objects), but these objects still aren&#39;t reachable. To 
+fix this, we will need another script which will add these subsystems to the 
+root-level object we added in Step 1.</p>
+<pre><code>/*global define*/
+
+define(
+    function () {
+        &quot;use strict&quot;;
+
+        var TAXONOMY_ID = &quot;example:sc&quot;,
+            PREFIX = &quot;example_tlm:&quot;;
+
+        function ExampleTelemetryInitializer(adapter, objectService) {
+            // Generate a domain object identifier for a dictionary element
+            function makeId(element) {
+                return PREFIX + element.identifier;
+            }
+
+            // When the dictionary is available, add all subsystems
+            // to the composition of My Spacecraft
+            function initializeTaxonomy(dictionary) {
+                // Get the top-level container for dictionary objects
+                // from a group of domain objects.
+                function getTaxonomyObject(domainObjects) {
+                    return domainObjects[TAXONOMY_ID];
+                }
+
+                // Populate
+                function populateModel(taxonomyObject) {
+                    return taxonomyObject.useCapability(
+                        &quot;mutation&quot;,
+                        function (model) {
+                            model.name =
+                                dictionary.name;
+                            model.composition =
+                                dictionary.subsystems.map(makeId);
+                        }
+                    );
+                }
+
+                // Look up My Spacecraft, and populate it accordingly.
+                objectService.getObjects([TAXONOMY_ID])
+                    .then(getTaxonomyObject)
+                    .then(populateModel);
+            }
+
+            adapter.dictionary().then(initializeTaxonomy);
+        }
+
+        return ExampleTelemetryInitializer;
+    }
+);
+</code></pre><p><strong>tutorials/telemetry/src/ExampleTelemetryInitializer.js</strong></p>
+<p>At the conclusion of Step 1, the top-level My Spacecraft object was empty. This 
+script will wait for the dictionary to be loaded, then load My Spacecraft (by 
+its identifier), and &quot;mutate&quot; it. The <code>mutation</code> capability allows changes to be 
+made to a domain object&#39;s model. Here, we take this top-level object, update its 
+name to match what was in the dictionary, and set its <code>composition</code> to an array 
+of domain object identifiers for all subsystems contained in the dictionary 
+(using the same identifier prefix as before.)</p>
+<p>Finally, we wire in these changes by modifying our plugin&#39;s <code>bundle.js</code> to 
+provide metadata about how these pieces interact (both with each other, and 
+with the platform):</p>
+<pre><code class="lang-diff">define([
+    &#39;legacyRegistry&#39;,
+    &#39;./src/ExampleTelemetryServerAdapter&#39;,
+    &#39;./src/ExampleTelemetryInitializer&#39;,
+    &#39;./src/ExampleTelemetryModelProvider&#39;
+], function (
+    legacyRegistry,
+    ExampleTelemetryServerAdapter,
+    ExampleTelemetryInitializer,
+    ExampleTelemetryModelProvider
+) {
+    legacyRegistry.register(&quot;tutorials/telemetry&quot;, {
+    &quot;name&quot;: &quot;Example Telemetry Adapter&quot;,
+    &quot;extensions&quot;: {
+        &quot;types&quot;: [
+            {
+                &quot;name&quot;: &quot;Spacecraft&quot;,
+                &quot;key&quot;: &quot;example.spacecraft&quot;,
+                &quot;glyph&quot;: &quot;o&quot;
+            },
+            {
++               &quot;name&quot;: &quot;Subsystem&quot;,
++               &quot;key&quot;: &quot;example.subsystem&quot;,
++               &quot;glyph&quot;: &quot;o&quot;,
++               &quot;model&quot;: { &quot;composition&quot;: [] }
++           },
++           {
++               &quot;name&quot;: &quot;Measurement&quot;,
++               &quot;key&quot;: &quot;example.measurement&quot;,
++               &quot;glyph&quot;: &quot;T&quot;,
++               &quot;model&quot;: { &quot;telemetry&quot;: {} },
++               &quot;telemetry&quot;: {
++                   &quot;source&quot;: &quot;example.source&quot;,
++                   &quot;domains&quot;: [
++                       {
++                           &quot;name&quot;: &quot;Time&quot;,
++                           &quot;key&quot;: &quot;timestamp&quot;
++                       }
++                   ]
++               }
++           }
+        ],
+        &quot;roots&quot;: [
+            {
+                &quot;id&quot;: &quot;example:sc&quot;,
+                &quot;priority&quot;: &quot;preferred&quot;,
+                &quot;model&quot;: {
+                    &quot;type&quot;: &quot;example.spacecraft&quot;,
+                    &quot;name&quot;: &quot;My Spacecraft&quot;,
+                    &quot;composition&quot;: []
+                }
+            }
+        ],
++       &quot;services&quot;: [
++           {
++               &quot;key&quot;: &quot;example.adapter&quot;,
++               &quot;implementation&quot;: ExampleTelemetryServerAdapter,
++               &quot;depends&quot;: [ &quot;$q&quot;, &quot;EXAMPLE_WS_URL&quot; ]
++           }
++       ],
++       &quot;constants&quot;: [
++           {
++               &quot;key&quot;: &quot;EXAMPLE_WS_URL&quot;,
++               &quot;priority&quot;: &quot;fallback&quot;,
++               &quot;value&quot;: &quot;ws://localhost:8081&quot;
++           }
++       ],
++       &quot;runs&quot;: [
++           {
++               &quot;implementation&quot;: ExampleTelemetryInitializer,
++               &quot;depends&quot;: [ &quot;example.adapter&quot;, &quot;objectService&quot; ]
++           }
++       ],
++       &quot;components&quot;: [
++           {
++               &quot;provides&quot;: &quot;modelService&quot;,
++               &quot;type&quot;: &quot;provider&quot;,
++               &quot;implementation&quot;: ExampleTelemetryModelProvider,
++               &quot;depends&quot;: [ &quot;example.adapter&quot;, &quot;$q&quot; ]
++           }
++       ]
+        }
+    });
+});
+</code></pre>
+<p><strong>tutorials/telemetry/bundle.js</strong></p>
+<p>A summary of what we&#39;ve added here:</p>
+<ul>
+<li>New type definitions have been added to represent Subsystems and Measurements, 
+respectively.<ul>
+<li>Measurements have a <code>telemetry</code> field; this is similar to the <code>telemetry</code> 
+field added in the model, but contains properties that will be common among 
+all Measurements. In particular, the <code>source</code> field will be used later as a 
+symbolic identifier for the telemetry data source.</li>
+<li>We have also added some &quot;initial models&quot; for these two types using the 
+<code>model</code> field. While domain objects of these types cannot be created via the 
+Create menu, some policies will look at initial models to predict what 
+capabilities domain objects of certain types would have, so we want to 
+ensure that Subsystems and Measurements will be recognized as having 
+<code>composition</code> and <code>telemetry</code> capabilities, respectively.</li>
+</ul>
+</li>
+<li>The adapter to the WebSocket server has been added as a service with the 
+symbolic name <code>example.adapter</code>; it is depended-upon elsewhere within this 
+plugin.</li>
+<li>A constant, <code>EXAMPLE_WS_URL</code>, is defined, and depended-upon by 
+<code>example.server</code>. Setting <code>priority</code> to <code>fallback</code> means this constant will be 
+overridden if defined anywhere else, allowing configuration bundles to specify 
+different URLs for the WebSocket connection.</li>
+<li>The initializer script is registered using the <code>runs</code> category of extension, 
+to ensure that this executes (and populates the contents of the top-level My 
+Spacecraft object) once Open MCT is started.<ul>
+<li>This depends upon the <code>example.adapter</code> service we exposed above, as well 
+as Angular&#39;s <code>$q</code>; these services will be made available in the constructor 
+call.</li>
+</ul>
+</li>
+<li>Finally, the <code>modelService</code> provider which presents dictionary elements as 
+domain object models is exposed. Since <code>modelService</code> is a composite service, 
+this is registered under the extension category <code>components</code>.<ul>
+<li>As with the initializer, this depends upon the <code>example.adapter</code> service 
+we exposed above, as well as Angular&#39;s <code>$q</code>; these services will be made 
+available in the constructor call.</li>
+</ul>
+</li>
+</ul>
+<p>Now if we run Open MCT (assuming our example telemetry server is also 
+running) and expand our top-level node completely, we see the contents of our 
+dictionary:</p>
+<p><img src="images/telemetry-2.png" alt="Telemetry 2"></p>
+<p>Note that &quot;My Spacecraft&quot; has changed its name to &quot;Example Spacecraft&quot;, which 
+is the name it had in the dictionary.</p>
+<a name="step-3-historical-telemetry" href="#step-3-historical-telemetry"><h3 id="undefinedstep-3-historical-telemetry">Step 3-Historical Telemetry</h3>
+</a><p>After Step 2, we are able to see our dictionary in the user interface and click 
+around our different measurements, but we don&#39;t see any data. We need to give 
+ourselves the ability to retrieve this data from the server. In this step, we 
+will do so for the server&#39;s historical telemetry.</p>
+<p>Our first step will be to add a method to our server adapter which allows us to 
+send history requests to the server:</p>
+<pre><code class="lang-diff">/*global define,WebSocket*/
+
+define(
+    [],
+    function () {
+        &quot;use strict&quot;;
+
+        function ExampleTelemetryServerAdapter($q, wsUrl) {
+            var ws = new WebSocket(wsUrl),
++               histories = {},
+                dictionary = $q.defer();
+
+            // Handle an incoming message from the server
+            ws.onmessage = function (event) {
+                var message = JSON.parse(event.data);
+
+                switch (message.type) {
+                case &quot;dictionary&quot;:
+                    dictionary.resolve(message.value);
+                    break;
++               case &quot;history&quot;:
++                   histories[message.id].resolve(message);
++                   delete histories[message.id];
++                   break;
+                }
+            };
+
+            // Request dictionary once connection is established
+            ws.onopen = function () {
+                ws.send(&quot;dictionary&quot;);
+            };
+
+            return {
+                dictionary: function () {
+                    return dictionary.promise;
+                },
++               history: function (id) {
++                   histories[id] = histories[id] || $q.defer();
++                   ws.send(&quot;history &quot; + id);
++                   return histories[id].promise;
++               }
+            };
+        }
+
+        return ExampleTelemetryServerAdapter;
+    }
+);
+</code></pre>
+<p><strong>tutorials/telemetry/src/ExampleTelemetryServerAdapter.js</strong></p>
+<p>When the <code>history</code> method is called, a new request is issued to the server for 
+historical telemetry, <em>unless</em> a request for the same historical telemetry is 
+still pending. Similarly, when historical telemetry arrives for a given 
+identifier, the pending promise is resolved.</p>
+<p>This <code>history</code> method will be used by a <code>telemetryService</code> provider which we 
+will implement:</p>
+<pre><code class="lang-diff">/*global define*/
+
+define(
+    [&#39;./src/ExampleTelemetrySeries&#39;],
+    function (ExampleTelemetrySeries) {
+        &quot;use strict&quot;;
+
+        var SOURCE = &quot;example.source&quot;;
+
+        function ExampleTelemetryProvider(adapter, $q) {
+            // Used to filter out requests for telemetry
+            // from some other source
+            function matchesSource(request) {
+                return (request.source === SOURCE);
+            }
+
+            return {
+                requestTelemetry: function (requests) {
+                    var packaged = {},
+                        relevantReqs = requests.filter(matchesSource);
+
+                    // Package historical telemetry that has been received
+                    function addToPackage(history) {
+                        packaged[SOURCE][history.id] =
+                            new ExampleTelemetrySeries(history.value);
+                    }
+
+                    // Retrieve telemetry for a specific measurement
+                    function handleRequest(request) {
+                        var key = request.key;
+                        return adapter.history(key).then(addToPackage);
+                    }
+
+                    packaged[SOURCE] = {};
+                    return $q.all(relevantReqs.map(handleRequest))
+                        .then(function () { return packaged; });
+                },
+                subscribe: function (callback, requests) {
+                    return function () {};
+                }
+            };
+        }
+
+        return ExampleTelemetryProvider;
+    }
+);
+</code></pre>
+<p><strong>tutorials/telemetry/src/ExampleTelemetryProvider.js</strong></p>
+<p>The <code>requestTelemetry</code> method of a <code>telemetryService</code> is expected to take an 
+array of requests (each with <code>source</code> and <code>key</code> parameters, identifying the 
+general source of data and the specific element within that source, respectively) and 
+return a Promise for any telemetry data it knows of which satisfies those 
+requests, packaged in a specific way. This packaging is as an object containing 
+key-value pairs, where keys correspond to <code>source</code> properties of requests and 
+values are key-value pairs, where keys correspond to <code>key</code> properties of requests 
+and values are <code>TelemetrySeries</code> objects. (We will see our implementation 
+below.)</p>
+<p>To do this, we create a container for our telemetry source, and consult the 
+adapter to get telemetry histories for any relevant requests, then package 
+them as they come in. The <code>$q.all</code> method is used to return a single Promise 
+that will resolve only when all histories have been packaged. Promise-chaining 
+is used to ensure that the resolved value will be the fully-packaged data.</p>
+<p>It is worth mentioning here that the <code>requests</code> we receive should look a little 
+familiar. When Open MCT generates a <code>request</code> object associated with a 
+domain object, it does so by merging together three JavaScript objects:</p>
+<ul>
+<li>First, the <code>telemetry</code> property from that domain object&#39;s type definition.</li>
+<li>Second, the <code>telemetry</code> property from that domain object&#39;s model.</li>
+<li>Finally, the <code>request</code> object that was passed in via that domain object&#39;s 
+<code>telemetry</code> capability.</li>
+</ul>
+<p>As such, the <code>source</code> and <code>key</code> properties we observe here will come from the 
+type definition and domain object model, respectively, as we specified them 
+during Step 2. (Or, they might come from somewhere else entirely, if we have 
+other telemetry-providing domain objects in our system; that is something we 
+check for using the <code>source</code> property.)</p>
+<p>Finally, note that we also have a <code>subscribe</code> method, to satisfy the interface of 
+<code>telemetryService</code>, but this <code>subscribe</code> method currently does nothing.</p>
+<p>This script uses an <code>ExampleTelemetrySeries</code> class, which looks like:</p>
+<pre><code class="lang-diff">/*global define*/
+
+define(
+    function () {
+        &quot;use strict&quot;;
+
+        function ExampleTelemetrySeries(data) {
+            return {
+                getPointCount: function () {
+                    return data.length;
+                },
+                getDomainValue: function (index) {
+                    return (data[index] || {}).timestamp;
+                },
+                getRangeValue: function (index) {
+                    return (data[index] || {}).value;
+                }
+            };
+        }
+
+        return ExampleTelemetrySeries;
+    }
+);
+</code></pre>
+<p><strong>tutorials/telemetry/src/ExampleTelemetrySeries.js</strong></p>
+<p>This takes the array of telemetry values (as returned by the server) and wraps 
+it with the interface expected by the platform (the methods shown.)</p>
+<p>Finally, we expose this <code>telemetryService</code> provider declaratively:</p>
+<pre><code class="lang-diff">define([
+    &#39;legacyRegistry&#39;,
+    &#39;./src/ExampleTelemetryServerAdapter&#39;,
+    &#39;./src/ExampleTelemetryInitializer&#39;,
+    &#39;./src/ExampleTelemetryModelProvider&#39;
+], function (
+    legacyRegistry,
+    ExampleTelemetryServerAdapter,
+    ExampleTelemetryInitializer,
+    ExampleTelemetryModelProvider
+) {
+    legacyRegistry.register(&quot;tutorials/telemetry&quot;, {
+    &quot;name&quot;: &quot;Example Telemetry Adapter&quot;,
+    &quot;extensions&quot;: {
+        &quot;types&quot;: [
+            {
+                &quot;name&quot;: &quot;Spacecraft&quot;,
+                &quot;key&quot;: &quot;example.spacecraft&quot;,
+                &quot;glyph&quot;: &quot;o&quot;
+            },
+            {
+                &quot;name&quot;: &quot;Subsystem&quot;,
+                &quot;key&quot;: &quot;example.subsystem&quot;,
+                &quot;glyph&quot;: &quot;o&quot;,
+                &quot;model&quot;: { &quot;composition&quot;: [] }
+            },
+            {
+                &quot;name&quot;: &quot;Measurement&quot;,
+                &quot;key&quot;: &quot;example.measurement&quot;,
+                &quot;glyph&quot;: &quot;T&quot;,
+                &quot;model&quot;: { &quot;telemetry&quot;: {} },
+                &quot;telemetry&quot;: {
+                    &quot;source&quot;: &quot;example.source&quot;,
+                    &quot;domains&quot;: [
+                        {
+                            &quot;name&quot;: &quot;Time&quot;,
+                            &quot;key&quot;: &quot;timestamp&quot;
+                        }
+                    ]
+                }
+            }
+        ],
+        &quot;roots&quot;: [
+            {
+                &quot;id&quot;: &quot;example:sc&quot;,
+                &quot;priority&quot;: &quot;preferred&quot;,
+                &quot;model&quot;: {
+                    &quot;type&quot;: &quot;example.spacecraft&quot;,
+                    &quot;name&quot;: &quot;My Spacecraft&quot;,
+                    &quot;composition&quot;: []
+                }
+            }
+        ],
+        &quot;services&quot;: [
+            {
+                &quot;key&quot;: &quot;example.adapter&quot;,
+                &quot;implementation&quot;: &quot;ExampleTelemetryServerAdapter.js&quot;,
+                &quot;depends&quot;: [ &quot;$q&quot;, &quot;EXAMPLE_WS_URL&quot; ]
+            }
+        ],
+        &quot;constants&quot;: [
+            {
+                &quot;key&quot;: &quot;EXAMPLE_WS_URL&quot;,
+                &quot;priority&quot;: &quot;fallback&quot;,
+                &quot;value&quot;: &quot;ws://localhost:8081&quot;
+            }
+        ],
+        &quot;runs&quot;: [
+            {
+                &quot;implementation&quot;: &quot;ExampleTelemetryInitializer.js&quot;,
+                &quot;depends&quot;: [ &quot;example.adapter&quot;, &quot;objectService&quot; ]
+            }
+        ],
+        &quot;components&quot;: [
+            {
+                &quot;provides&quot;: &quot;modelService&quot;,
+                &quot;type&quot;: &quot;provider&quot;,
+                &quot;implementation&quot;: &quot;ExampleTelemetryModelProvider.js&quot;,
+                &quot;depends&quot;: [ &quot;example.adapter&quot;, &quot;$q&quot; ]
+            },
++           {
++               &quot;provides&quot;: &quot;telemetryService&quot;,
++               &quot;type&quot;: &quot;provider&quot;,
++               &quot;implementation&quot;: &quot;ExampleTelemetryProvider.js&quot;,
++               &quot;depends&quot;: [ &quot;example.adapter&quot;, &quot;$q&quot; ]
++           }
+        ]
+        }
+    });
+});
+</code></pre>
+<p><strong>tutorials/telemetry/bundle.js</strong></p>
+<p>Now, if we navigate to one of our numeric measurements, we should see a plot of 
+its historical telemetry:</p>
+<p><img src="images/telemetry-3.png" alt="Telemetry"></p>
+<p>We can now visualize our data, but it doesn&#39;t update over time - we know the 
+server is continually producing new data, but we have to click away and come 
+back to see it. We can fix this by adding support for telemetry subscriptions.</p>
+<a name="step-4-real-time-telemetry" href="#step-4-real-time-telemetry"><h3 id="undefinedstep-4-real-time-telemetry">Step 4-Real-time Telemetry</h3>
+</a><p>Finally, we want to utilize the server&#39;s ability to subscribe to telemetry 
+from Open MCT. To do this, first we want to expose some new methods for 
+this from our server adapter:</p>
+<pre><code class="lang-diff">/*global define,WebSocket*/
+
+define(
+    [],
+    function () {
+        &quot;use strict&quot;;
+
+        function ExampleTelemetryServerAdapter($q, wsUrl) {
+            var ws = new WebSocket(wsUrl),
+                histories = {},
++               listeners = [],
+                dictionary = $q.defer();
+
+            // Handle an incoming message from the server
+            ws.onmessage = function (event) {
+                var message = JSON.parse(event.data);
+
+                switch (message.type) {
+                case &quot;dictionary&quot;:
+                    dictionary.resolve(message.value);
+                    break;
+                case &quot;history&quot;:
+                    histories[message.id].resolve(message);
+                    delete histories[message.id];
+                    break;
++               case &quot;data&quot;:
++                   listeners.forEach(function (listener) {
++                       listener(message);
++                   });
++                   break;
+                }
+            };
+
+            // Request dictionary once connection is established
+            ws.onopen = function () {
+                ws.send(&quot;dictionary&quot;);
+            };
+
+            return {
+                dictionary: function () {
+                    return dictionary.promise;
+                },
+                history: function (id) {
+                    histories[id] = histories[id] || $q.defer();
+                    ws.send(&quot;history &quot; + id);
+                    return histories[id].promise;
+                },
++               subscribe: function (id) {
++                   ws.send(&quot;subscribe &quot; + id);
++               },
++               unsubscribe: function (id) {
++                   ws.send(&quot;unsubscribe &quot; + id);
++               },
++               listen: function (callback) {
++                   listeners.push(callback);
++               }
+            };
+        }
+
+        return ExampleTelemetryServerAdapter;
+    }
+);
+</code></pre>
+<p><strong>tutorials/telemetry/src/ExampleTelemetryServerAdapter.js</strong></p>
+<p>Here, we have added <code>subscribe</code> and <code>unsubscribe</code> methods which issue the 
+corresponding requests to the server. Seperately, we introduce the ability to 
+listen for <code>data</code> messages as they come in: These will contain the data associated 
+with these subscriptions.</p>
+<p>We then need only to utilize these methods from our <code>telemetryService</code>:</p>
+<pre><code class="lang-diff">/*global define*/
+
+define(
+    [&#39;./src/ExampleTelemetrySeries&#39;],
+    function (ExampleTelemetrySeries) {
+        &quot;use strict&quot;;
+
+        var SOURCE = &quot;example.source&quot;;
+
+        function ExampleTelemetryProvider(adapter, $q) {
++           var subscribers = {};
+
+            // Used to filter out requests for telemetry
+            // from some other source
+            function matchesSource(request) {
+                return (request.source === SOURCE);
+            }
+
++           // Listen for data, notify subscribers
++           adapter.listen(function (message) {
++               var packaged = {};
++               packaged[SOURCE] = {};
++               packaged[SOURCE][message.id] =
++                   new ExampleTelemetrySeries([message.value]);
++               (subscribers[message.id] || []).forEach(function (cb) {
++                   cb(packaged);
++               });
++           });
+
+            return {
+                requestTelemetry: function (requests) {
+                    var packaged = {},
+                        relevantReqs = requests.filter(matchesSource);
+
+                    // Package historical telemetry that has been received
+                    function addToPackage(history) {
+                        packaged[SOURCE][history.id] =
+                            new ExampleTelemetrySeries(history.value);
+                    }
+
+                    // Retrieve telemetry for a specific measurement
+                    function handleRequest(request) {
+                        var key = request.key;
+                        return adapter.history(key).then(addToPackage);
+                    }
+
+                    packaged[SOURCE] = {};
+                    return $q.all(relevantReqs.map(handleRequest))
+                        .then(function () { return packaged; });
+                },
+                subscribe: function (callback, requests) {
++                   var keys = requests.filter(matchesSource)
++                       .map(function (req) { return req.key; });
++
++                   function notCallback(cb) {
++                       return cb !== callback;
++                   }
++
++                   function unsubscribe(key) {
++                       subscribers[key] =
++                           (subscribers[key] || []).filter(notCallback);
++                       if (subscribers[key].length &lt; 1) {
++                           adapter.unsubscribe(key);
++                       }
++                   }
++
++                   keys.forEach(function (key) {
++                       subscribers[key] = subscribers[key] || [];
++                       adapter.subscribe(key);
++                       subscribers[key].push(callback);
++                   });
++
++                   return function () {
++                       keys.forEach(unsubscribe);
++                   };
+                }
+            };
+        }
+
+        return ExampleTelemetryProvider;
+    }
+);
+</code></pre>
+<p><strong>tutorials/telemetry/src/ExampleTelemetryProvider.js</strong></p>
+<p>A quick summary of these changes:</p>
+<ul>
+<li>First, we maintain current subscribers (callbacks) in an object containing 
+key-value pairs, where keys are request key properties, and values are callback 
+arrays.</li>
+<li>We listen to new data coming in from the server adapter, and invoke any 
+relevant callbacks when this happens. We package the data in the same manner 
+that historical telemetry is packaged (even though in this case we are 
+providing single-element series objects.)</li>
+<li>Finally, in our <code>subscribe</code> method we add callbacks to the lists of active 
+subscribers. This method is expected to return a function which terminates the 
+subscription when called, so we do some work to remove subscribers in this 
+situations. When our subscriber count for a given measurement drops to zero, 
+we issue an unsubscribe request. (We don&#39;t take any care to avoid issuing 
+multiple subscribe requests to the server, because we happen to know that the 
+server can handle this.)</li>
+</ul>
+<p>Running Open MCT again, we can still plot our historical telemetry - but 
+now we also see that it updates in real-time as more data comes in from the 
+server.</p>
+        <hr>
+    </body>
+</html>

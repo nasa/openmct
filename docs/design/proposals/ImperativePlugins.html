@@ -1,0 +1,142 @@
+<html>
+    <head>
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/styles.css">
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/documentation.css">
+    </head>
+    <body>
+
+<a name="table-of-contents" href="#table-of-contents"><h1 id="undefinedtable-of-contents">Table of Contents</h1>
+</a><ul>
+<li><a href="#imperative-plugins">Imperative Plugins</a><ul>
+<li><a href="#developer-use-cases">Developer Use Cases</a></li>
+<li><a href="#interfaces">Interfaces</a></li>
+<li><a href="#examples">Examples</a><ul>
+<li><a href="#1-add-new-extension-instances">1. Add new extension instances.</a></li>
+<li><a href="#2-use-existing-services">2. Use existing services</a></li>
+<li><a href="#3-add-new-service-implementations">3. Add new service implementations</a></li>
+<li><a href="#4-decorate-service-implementations">4. Decorate service implementations</a></li>
+<li><a href="#5-decorate-extension-instances">5. Decorate extension instances</a></li>
+<li><a href="#6-add-new-types-of-services">6. Add new types of services</a></li>
+<li><a href="#7-add-new-extension-categories">7. Add new extension categories.</a></li>
+</ul>
+</li>
+<li><a href="#evaluation">Evaluation</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<a name="imperative-plugins" href="#imperative-plugins"><h1 id="undefinedimperative-plugins">Imperative Plugins</h1>
+</a><p>This is a design proposal for handling
+<a href="APIRedesign.html#bundle-declarations-in-javascript">bundle declarations in JavaScript</a>.</p>
+<a name="developer-use-cases" href="#developer-use-cases"><h2 id="undefineddeveloper-use-cases">Developer Use Cases</h2>
+</a><p>Developers will want to use bundles/plugins to (in rough order
+of occurrence):</p>
+<ol>
+<li>Add new extension instances.</li>
+<li>Use existing services</li>
+<li>Add new service implementations.</li>
+<li>Decorate service implementations.</li>
+<li>Decorate extension instances.</li>
+<li>Add new types of services.</li>
+<li>Add new extension categories.</li>
+</ol>
+<p>Notably, bullets 4 and 5 above are currently handled implicitly,
+which has been cited as a source of confusion.</p>
+<a name="interfaces" href="#interfaces"><h2 id="undefinedinterfaces">Interfaces</h2>
+</a><p>Two base classes may be used to satisfy these use cases:</p>
+<ul>
+<li>The <code>CompositeServiceFactory</code> provides composite service instances.
+Decorators may be added; the approach used for compositing may be
+modified; and individual services may be registered to support compositing.</li>
+<li>The <code>ExtensionRegistry</code> allows for the simpler case where what is desired
+is an array of all instances of some kind of thing within the system.</li>
+</ul>
+<p>Note that additional developer use cases may be supported by using the
+more general-purpose <code>Registry</code></p>
+<p><img src="ImperativePlugins-1.png" alt="Diagram 1"></p>
+<a name="examples" href="#examples"><h2 id="undefinedexamples">Examples</h2>
+</a><a name="1--add-new-extension-instances-" href="#1--add-new-extension-instances-"><h3 id="undefined1-add-new-extension-instances-">1. Add new extension instances.</h3>
+</a><pre><code class="lang-js">// Instance-style registration
+mct.types.register(new mct.Type({
+    key: &quot;timeline&quot;,
+    name: &quot;Timeline&quot;,
+    description: &quot;A container for activities ordered in time.&quot;
+});
+
+// Factory-style registration
+mct.actions.register(function (domainObject) {
+    return new RemoveAction(domainObject);
+}, { priority: 200 });
+</code></pre>
+<a name="2--use-existing-services" href="#2--use-existing-services"><h3 id="undefined2-use-existing-services">2. Use existing services</h3>
+</a><pre><code class="lang-js">mct.actions.register(function (domainObject) {
+    var dialogService = mct.ui.dialogServiceFactory();
+    return new PropertiesAction(dialogService, domainObject);
+});
+</code></pre>
+<a name="3--add-new-service-implementations" href="#3--add-new-service-implementations"><h3 id="undefined3-add-new-service-implementations">3. Add new service implementations</h3>
+</a><pre><code class="lang-js">// Instance-style registration
+mct.persistenceServiceFactory.register(new LocalPersistenceService());
+
+// Factory-style registration
+mct.persistenceServiceFactory.register(function () {
+    var $http = angular.injector([&#39;ng&#39;]).get(&#39;$http&#39;);
+    return new LocalPersistenceService($http);
+});
+</code></pre>
+<a name="4--decorate-service-implementations" href="#4--decorate-service-implementations"><h3 id="undefined4-decorate-service-implementations">4. Decorate service implementations</h3>
+</a><pre><code class="lang-js">mct.modelServiceFactory.decorate(function (modelService) {
+    return new CachingModelDecorator(modelService);
+}, { priority: 100 });
+</code></pre>
+<a name="5--decorate-extension-instances" href="#5--decorate-extension-instances"><h3 id="undefined5-decorate-extension-instances">5. Decorate extension instances</h3>
+</a><pre><code class="lang-js">mct.capabilities.decorate(function (capabilities) {
+    return capabilities.map(decorateIfApplicable);
+});
+</code></pre>
+<p>This use case is not well-supported by these API changes. The most
+common case for decoration is capabilities, which are under reconsideration;
+should consider handling decoration of capabilities in a different way.</p>
+<a name="6--add-new-types-of-services" href="#6--add-new-types-of-services"><h3 id="undefined6-add-new-types-of-services">6. Add new types of services</h3>
+</a><pre><code class="lang-js">myModule.myServiceFactory = new mct.CompositeServiceFactory();
+
+// In cases where a custom composition strategy is desired
+myModule.myServiceFactory.composite(function (services) {
+    return new MyServiceCompositor(services);
+});
+</code></pre>
+<a name="7--add-new-extension-categories-" href="#7--add-new-extension-categories-"><h3 id="undefined7-add-new-extension-categories-">7. Add new extension categories.</h3>
+</a><pre><code class="lang-js">myModule.hamburgers = new mct.ExtensionRegistry();
+</code></pre>
+<a name="evaluation" href="#evaluation"><h2 id="undefinedevaluation">Evaluation</h2>
+</a><a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Encourages separation of registration from declaration (individual
+components are decoupled from the manner in which they are added
+to the architecture.)</li>
+<li>Minimizes &quot;magic.&quot; Dependencies are acquired, managed, and exposed
+using plain-old-JavaScript without any dependency injector present
+to obfuscate what is happening.</li>
+<li>Offers comparable expressive power to existing APIs; can still
+extend the behavior of platform components in a variety of ways.</li>
+<li>Does not force or limit formalisms to use;</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Does not encourage separation of dependency acquisition from
+declaration; that is, it would be quite natural using this API
+to acquire references to services during the constructor call
+to an extension or service. But, passing these in as constructor
+arguments is preferred (to separate implementation from architecture.)</li>
+<li>Adds (negligible?) boilerplate relative to declarative syntax.</li>
+<li>Relies on factories, increasing number of interfaces to be concerned
+with.</li>
+</ul>
+        <hr>
+    </body>
+</html>

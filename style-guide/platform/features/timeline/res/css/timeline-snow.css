@@ -1,0 +1,238 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/************************** FEATURES */
+/************************** VERY INFLUENTIAL GLOBAL DIMENSIONS */
+/************************** RATIOS */
+/************************** LAYOUT */
+/*************** Panes */
+/*************** Overlay */
+/*************** Progress Overlay */
+/*************** Items */
+/*************** Tree */
+/*************** Tabular */
+/*************** Imagery */
+/*************** Ticks */
+/*************** Plots */
+/* min plot height is based on user testing to find minimum useful height */
+/*************** Bubbles */
+/*************** Forms */
+/*************** Wait Spinner Defaults */
+/************************** CONTROLS */
+/************************** PATHS */
+/************************** TIMINGS */
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*********************************************** CONTROLS, FORM ELEMENTS */
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 26, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+.l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-legend .l-legend-items {
+  color: #666; }
+
+/* line 35, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+.s-timeline-gantt .bar {
+  color: #fff;
+  background-image: -webkit-linear-gradient(#7777bb, #5555aa);
+  background-image: linear-gradient(#7777bb, #5555aa);
+  box-shadow: rgba(0, 0, 0, 0.1) 0 1px 3px; }
+  /* line 39, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+  .s-timeline-gantt .bar .s-toggle {
+    color: #0099cc; }
+
+/* line 47, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+.s-timeline-tabular .l-header .l-cols .l-col {
+  border-left: 1px solid #c9c9c9; }
+
+/* line 55, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+.s-timeline-tabular .l-pane-l .l-cols .t-object-label .t-item-icon {
+  color: #444488; }
+
+/* line 65, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+.edit-mode .s-timeline-gantt .bar:hover,
+.s-status-editing .s-timeline-gantt .bar:hover {
+  background-image: -webkit-linear-gradient(#9999cc, #7777bb);
+  background-image: linear-gradient(#9999cc, #7777bb); }
+
+/* line 72, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+.s-timeline {
+  font-size: 0.75rem; }
+  /* line 74, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+  .s-timeline .s-header {
+    background-color: #efefef; }
+  /* line 77, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+  .s-timeline .s-swimlane {
+    border-bottom: 1px solid #e3e3e3;
+    line-height: 20px; }
+    /* line 80, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+    .s-timeline .s-swimlane.exceeded {
+      background-image: -webkit-linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.05) 75%, transparent 75%, transparent 100%);
+      background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.05) 75%, transparent 75%, transparent 100%);
+      background-repeat: repeat;
+      background-size: 22px 22px; }
+    /* line 84, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+    .s-timeline .s-swimlane.selected {
+      background-color: rgba(85, 85, 170, 0.25);
+      color: #4d4d4d; }
+      /* line 88, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+      .s-timeline .s-swimlane.selected .s-timeline-gantt .bar {
+        background-image: -webkit-linear-gradient(#7777bb, #5555aa);
+        background-image: linear-gradient(#7777bb, #5555aa);
+        color: #fff; }
+    /* line 94, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+    .s-timeline .s-swimlane.drop-into {
+      background-color: rgba(85, 85, 170, 0.7); }
+      /* line 96, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+      .s-timeline .s-swimlane.drop-into .s-timeline-gantt {
+        opacity: 0.7; }
+    /* line 100, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+    .s-timeline .s-swimlane.drop-after {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-bottom-color: #5555aa; }
+  /* line 106, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+  .s-timeline .s-ticks {
+    background-image: -webkit-linear-gradient(-360deg, #d6d6d6 1px, transparent 1px, transparent 100%);
+    background-image: linear-gradient(90deg, #d6d6d6 1px, transparent 1px, transparent 100%);
+    background-repeat: repeat-x; }
+  /* line 109, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+  .s-timeline .s-hover-btns-holder {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: -webkit-linear-gradient(-90deg, #efefef, #efefef 70%, rgba(239, 239, 239, 0) 100%);
+    background-image: linear-gradient(-90deg, #efefef, #efefef 70%, rgba(239, 239, 239, 0) 100%); }
+    /* line 115, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+    .s-timeline .s-hover-btns-holder .s-button {
+      height: 16px;
+      line-height: 16px; }
+      /* line 118, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+      .s-timeline .s-hover-btns-holder .s-button .icon {
+        font-size: 0.7rem !important; }
+  /* line 125, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+  .s-timeline .l-timeline-resource-graph .l-graph {
+    background: rgba(0, 0, 0, 0.05); }
+  /* line 128, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timeline-thematic.scss */
+  .s-timeline .l-timeline-resource-graph .l-title {
+    color: #666; }
+
+/*# sourceMappingURL=timeline-snow.css.map */

@@ -1,0 +1,130 @@
+<html>
+    <head>
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/styles.css">
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/documentation.css">
+    </head>
+    <body>
+
+<a name="table-of-contents" href="#table-of-contents"><h1 id="undefinedtable-of-contents">Table of Contents</h1>
+</a><ul>
+<li><a href="#roles">Roles</a><ul>
+<li><a href="#developer-use-cases">Developer Use Cases</a></li>
+<li><a href="#overview-of-proposed-solution">Overview of Proposed Solution</a></li>
+<li><a href="#interfaces">Interfaces</a></li>
+<li><a href="#examples">Examples</a><ul>
+<li><a href="#1-checking-for-the-existence-of-behavior">1. Checking for the existence of behavior</a></li>
+<li><a href="#2-using-behavior">2. Using behavior</a></li>
+<li><a href="#3-augmenting-existing-behaviors">3. Augmenting existing behaviors</a></li>
+<li><a href="#4-overriding-existing-behaviors">4. Overriding existing behaviors</a></li>
+<li><a href="#5-adding-new-behaviors">5. Adding new behaviors</a></li>
+</ul>
+</li>
+<li><a href="#evaluation">Evaluation</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<a name="roles" href="#roles"><h1 id="undefinedroles">Roles</h1>
+</a><p>Roles are presented as an alternative formulation to capabilities
+(dynamic behavior associated with individual domain objects.)</p>
+<p>Specific goals here:</p>
+<ul>
+<li>Dependencies of individual scripts should be clear.</li>
+<li>Domain objects should be able to selectively exhibit a wide
+variety of behaviors.</li>
+</ul>
+<a name="developer-use-cases" href="#developer-use-cases"><h2 id="undefineddeveloper-use-cases">Developer Use Cases</h2>
+</a><ol>
+<li>Checking for the existence of behavior.</li>
+<li>Using behavior.</li>
+<li>Augmenting existing behaviors.</li>
+<li>Overriding existing behaviors.</li>
+<li>Adding new behaviors.</li>
+</ol>
+<a name="overview-of-proposed-solution" href="#overview-of-proposed-solution"><h2 id="undefinedoverview-of-proposed-solution">Overview of Proposed Solution</h2>
+</a><p>Remove <code>getCapability</code> from domain objects; add roles as external
+services which can be applied to domain objects.</p>
+<a name="interfaces" href="#interfaces"><h2 id="undefinedinterfaces">Interfaces</h2>
+</a><p><img src="Roles-1.png" alt="Diagram 1"></p>
+<a name="examples" href="#examples"><h2 id="undefinedexamples">Examples</h2>
+</a><a name="1--checking-for-the-existence-of-behavior" href="#1--checking-for-the-existence-of-behavior"><h3 id="undefined1-checking-for-the-existence-of-behavior">1. Checking for the existence of behavior</h3>
+</a><pre><code class="lang-js">function PlotViewPolicy(telemetryRole) {
+    this.telemetryRole = telemetryRole;
+}
+PlotViewPolicy.prototype.allow = function (view, domainObject) {
+    return this.telemetryRole.validate(domainObject);
+};
+</code></pre>
+<a name="2--using-behavior" href="#2--using-behavior"><h3 id="undefined2-using-behavior">2. Using behavior</h3>
+</a><pre><code class="lang-js">PropertiesAction.prototype.perform = function () {
+    var mutation = this.mutationRole(this.domainObject);
+    return this.showDialog.then(function (newModel) {
+        return mutation.mutate(function () {
+            return newModel;
+        });
+    });
+};
+</code></pre>
+<a name="3--augmenting-existing-behaviors" href="#3--augmenting-existing-behaviors"><h3 id="undefined3-augmenting-existing-behaviors">3. Augmenting existing behaviors</h3>
+</a><pre><code class="lang-js">// Non-Angular style
+mct.roles.persistenceRole.decorate(function (persistence) {
+    return new DecoratedPersistence(persistence);
+});
+
+// Angular style
+myModule.decorate(&#39;persistenceRole&#39;, [&#39;$delegate&#39;, function ($delegate) {
+    return new DecoratedPersistence(persistence);
+}]);
+</code></pre>
+<a name="4--overriding-existing-behaviors" href="#4--overriding-existing-behaviors"><h3 id="undefined4-overriding-existing-behaviors">4. Overriding existing behaviors</h3>
+</a><pre><code class="lang-js">// Non-Angular style
+mct.roles.persistenceRole.decorate(function (persistence, domainObject) {
+    return domainObject.getModel().type === &#39;someType&#39; ?
+            new DifferentPersistence(domainObject) :
+            persistence;
+}, {
+    validate: function (domainObject, next) {
+        return domainObject.getModel().type === &#39;someType&#39; || next();
+    }
+});
+</code></pre>
+<a name="5--adding-new-behaviors" href="#5--adding-new-behaviors"><h3 id="undefined5-adding-new-behaviors">5. Adding new behaviors</h3>
+</a><pre><code class="lang-js">function FooRole() {
+    mct.Role.apply(this, [function (domainObject) {
+        return new Foo(domainObject);
+    }]);
+}
+
+FooRole.prototype = Object.create(mct.Role.prototype);
+
+FooRole.prototype.validate = function (domainObject) {
+    return domainObject.getModel().type === &#39;some-type&#39;;
+};
+
+//
+myModule.roles.fooRole = new FooRole();
+</code></pre>
+<a name="evaluation" href="#evaluation"><h2 id="undefinedevaluation">Evaluation</h2>
+</a><a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Simplifies/standardizes augmentation or replacement of behavior associated
+with specific domain objects.</li>
+<li>Minimizes number of abstractions; roles are just factories.</li>
+<li>Clarifies dependencies; roles used must be declared/acquired in the
+same manner as services.</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Externalizes functionality which is conceptually associated with a
+domain object.</li>
+<li>Relies on factories, increasing number of interfaces to be concerned
+with.</li>
+</ul>
+        <hr>
+    </body>
+</html>

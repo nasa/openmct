@@ -1,0 +1,137 @@
+<html>
+    <head>
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/styles.css">
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/documentation.css">
+    </head>
+    <body>
+
+<a name="table-of-contents" href="#table-of-contents"><h1 id="undefinedtable-of-contents">Table of Contents</h1>
+</a><ul>
+<li><a href="#test-plan">Test Plan</a><ul>
+<li><a href="#test-levels">Test Levels</a><ul>
+<li><a href="#smoke-testing">Smoke Testing</a></li>
+<li><a href="#unit-testing">Unit Testing</a></li>
+<li><a href="#user-testing">User Testing</a></li>
+<li><a href="#long-duration-testing">Long-duration Testing</a></li>
+</ul>
+</li>
+<li><a href="#test-performance">Test Performance</a><ul>
+<li><a href="#per-merge-testing">Per-merge Testing</a></li>
+<li><a href="#per-sprint-testing">Per-sprint Testing</a></li>
+<li><a href="#per-release-testing">Per-release Testing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<a name="test-plan" href="#test-plan"><h1 id="undefinedtest-plan">Test Plan</h1>
+</a><a name="test-levels" href="#test-levels"><h2 id="undefinedtest-levels">Test Levels</h2>
+</a><p>Testing for Open MCT includes:</p>
+<ul>
+<li><em>Smoke testing</em>: Brief, informal testing to verify that no major issues
+or regressions are present in the software, or in specific features of
+the software.</li>
+<li><em>Unit testing</em>: Automated verification of the performance of individual
+software components.</li>
+<li><em>User testing</em>: Testing with a representative user base to verify
+that application behaves usably and as specified.</li>
+<li><em>Long-duration testing</em>: Testing which takes place over a long period
+of time to detect issues which are not readily noticeable during
+shorter test periods.</li>
+</ul>
+<a name="smoke-testing" href="#smoke-testing"><h3 id="undefinedsmoke-testing">Smoke Testing</h3>
+</a><p>Manual, non-rigorous testing of the software and/or specific features
+of interest. Verifies that the software runs and that basic functionality
+is present.</p>
+<a name="unit-testing" href="#unit-testing"><h3 id="undefinedunit-testing">Unit Testing</h3>
+</a><p>Unit tests are automated tests which exercise individual software
+components. Tests are subject to code review along with the actual
+implementation, to ensure that tests are applicable and useful.</p>
+<p>Unit tests should meet
+<a href="https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#test-standards">test standards</a>
+as described in the contributing guide.</p>
+<a name="user-testing" href="#user-testing"><h3 id="undefineduser-testing">User Testing</h3>
+</a><p>User testing is performed at scheduled times involving target users
+of the software or reasonable representatives, along with members of
+the development team exercising known use cases. Users test the
+software directly; the software should be configured as similarly to
+its planned production configuration as is feasible without introducing
+other risks (e.g. damage to data in a production instance.)</p>
+<p>User testing will focus on the following activities:</p>
+<ul>
+<li>Verifying issues resolved since the last test session.</li>
+<li>Checking for regressions in areas related to recent changes.</li>
+<li>Using major or important features of the software,
+as determined by the user.</li>
+<li>General &quot;trying to break things.&quot;</li>
+</ul>
+<p>During user testing, users will
+<a href="https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#issue-reporting">report issues</a>
+as they are encountered.</p>
+<p>Desired outcomes of user testing are:</p>
+<ul>
+<li>Identified software defects.</li>
+<li>Areas for usability improvement.</li>
+<li>Feature requests (particularly missed requirements.)</li>
+<li>Recorded issue verification.</li>
+</ul>
+<a name="long-duration-testing" href="#long-duration-testing"><h3 id="undefinedlong-duration-testing">Long-duration Testing</h3>
+</a><p>Long-duration testing occurs over a twenty-four hour period. The
+software is run in one or more stressing cases representative of expected
+usage. After twenty-four hours, the software is evaluated for:</p>
+<ul>
+<li>Performance metrics: Have memory usage or CPU utilization increased
+during this time period in unexpected or undesirable ways?</li>
+<li>Subjective usability: Does the software behave in the same way it did
+at the start of the test? Is it as responsive?</li>
+</ul>
+<p>Any defects or unexpected behavior identified during testing should be
+<a href="https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#issue-reporting">reported as issues</a>
+and reviewed for severity.</p>
+<a name="test-performance" href="#test-performance"><h2 id="undefinedtest-performance">Test Performance</h2>
+</a><p>Tests are performed at various levels of frequency.</p>
+<ul>
+<li><em>Per-merge</em>: Performed before any new changes are integrated into
+the software.</li>
+<li><em>Per-sprint</em>: Performed at the end of every <a href="../cycle.html">sprint</a>.</li>
+<li><em>Per-release</em>: Performed at the end of every <a href="../cycle.html">release</a>.</li>
+</ul>
+<a name="per-merge-testing" href="#per-merge-testing"><h3 id="undefinedper-merge-testing">Per-merge Testing</h3>
+</a><p>Before changes are merged, the author of the changes must perform:</p>
+<ul>
+<li><em>Smoke testing</em> (both generally, and for areas which interact with
+the new changes.)</li>
+<li><em>Unit testing</em> (as part of the automated build step.)</li>
+</ul>
+<p>Changes are not merged until the author has affirmed that both
+forms of testing have been performed successfully; this is documented
+by the <a href="https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#author-checklist">Author Checklist</a>.</p>
+<a name="per-sprint-testing" href="#per-sprint-testing"><h3 id="undefinedper-sprint-testing">Per-sprint Testing</h3>
+</a><p>Before a sprint is closed, the development team must additionally
+perform:</p>
+<ul>
+<li>A relevant subset of <a href="procedures.html#user-test-procedures"><em>user testing</em></a>
+identified by the acting <a href="../cycle.html#roles">project manager</a>.</li>
+<li><a href="procedures.html#long-duration-testng"><em>Long-duration testing</em></a>
+(specifically, for 24 hours.)</li>
+</ul>
+<p>Issues are reported as a product of both forms of testing.</p>
+<p>A sprint is not closed until both categories have been performed on
+the latest snapshot of the software, <em>and</em> no issues labelled as
+<a href="https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#issue-reporting">&quot;blocker&quot;</a>
+remain open.</p>
+<a name="per-release-testing" href="#per-release-testing"><h3 id="undefinedper-release-testing">Per-release Testing</h3>
+</a><p>As <a href="#per-sprint-testing">per-sprint testing</a>, except that <em>user testing</em>
+should cover all test cases, with less focus on changes from the specific
+sprint or release.</p>
+<p>Per-release testing should also include any acceptance testing steps
+agreed upon with recipients of the software.</p>
+<p>A release is not closed until both categories have been performed on
+the latest snapshot of the software, <em>and</em> no issues labelled as
+<a href="https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#issue-reporting">&quot;blocker&quot; or &quot;critical&quot;</a>
+remain open.</p>
+        <hr>
+    </body>
+</html>

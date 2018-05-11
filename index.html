@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Open MCT - Open Source Mission Control Software — Open MCT</title>
+    <link rel="icon" type="image/png"
+          href="./static/res/images/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="./static/res/images/favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="./static/res/images/favicons/favicon-16x16.png" sizes="16x16">
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="./static/res/css/normalize.min.css">
+    <link rel="stylesheet" href="./static/res/css/styles.css">
+    <link rel="shortcut icon" href="./static/res/images/favicons/favicon.ico">
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-76951009-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script>
+        (function () {
+            var loc = window.location;
+            if (!loc.host.match(/^localhost:[0-9]*$/) && !loc.host.match(/^127\.0\.0\.1:[0-9]*$/) &&
+                loc.protocol === 'http:') {
+                loc.protocol = 'https:'
+            }
+        })();
+    </script>
+    <script src="./static/res/scripts/jquery-3.1.1.min.js"></script>
+    <script src="./static/res/scripts/utils.js"></script>
+    <script src="static/res/scripts/home.js"></script>
+</head>
+<body>
+<nav class="wo">
+    <div class="main-nav wi">
+        <a href="https://www.nasa.gov"
+           class="logo logo-bg logo-nasa"
+           target="_blank"
+           alt="NASA logo"
+           title="Link to NASA.com"></a>
+
+        <a href="./"
+           class="logo logo-bg logo-openmct"
+           alt="Open MCT logo"></a>
+
+        <div class="l-nav-links">
+            <a href="./"
+               class="nav-link mobile-sm-only">Home</a>
+            
+            <a href="./about-open-mct/" class="nav-link">About</a></li>
+            
+            <a href="./getting-started/" class="nav-link">Getting Started</a></li>
+            
+            <a href="./contributing/" class="nav-link">Contributing</a></li>
+            
+            <a href="./documentation/" class="nav-link">Documentation</a></li>
+            
+            <a href="https://openmct-demo.herokuapp.com/" class="nav-link"
+               target="_blank" rel="noreferrer">Try it live</a>
+            <a href="https://github.com/nasa/openmct"
+               class="nav-link t-nav-link-github-repo mobile-sm-only"
+               target="_blank" rel="noreferrer">Github Repository</a>
+            <a href="https://github.com/nasa/openmct"
+               class="logo logo-github"
+               target="_blank"
+               alt="Link to Open MCT Github repository"
+               title="Link to Open MCT Github repository"></a>
+        </div>
+
+        <a class="icon-menu"
+           onclick="toggleClass('.l-nav-links','expanded')"
+           alt="Main navigation"></a>
+    </div>
+</nav>
+<div class="l-main wo">
+    
+<div class="p-home">
+    <div class="t-hero l-hero-holder">
+        <!--div class="hero-pager"></div><!-- Uncomment when there are multiple heroes -->
+        <!--div class="l-hero-main hero-intern2017 trans-to-next">
+            <div class="l-hero-text-bg-fade">
+                <div class="l-hero-text cols cols-equal wi">
+                    <div class="col col-left">
+                        <img src="static/res/images/macbook-warp-2-m20.png" />
+                    </div>
+                    <div class="col col-right">
+                        <h2>Come Work with Us</h2>
+                        <p>We are hiring! Join us on the Open MCT team and write code that will be used daily in support of NASA’s robotic interplanetary explorers and our upcoming Lunar rover mission.</p>
+                        <a target="_blank" href="http://www.sgt-inc.com/careers/career-opportunities/?p=job/oOxU4fw3&nl=1" class="btn major arw">Find Out More</a>
+                    </div>
+                </div>
+            </div>
+        </div-->
+        <!--div class="l-hero-main hero-comiccon2017 trans-to-next hidden">
+            <div class="l-hero-text-bg-fade">
+                <div class="l-hero-text cols cols-equal wi">
+                    <div class="col col-left">
+                        <h2><b>Comic Con Silicon Valley<br />April 21 - 23</b></h2>
+                        <p>Open MCT and developers will be at Comic Con Silicon Valley! Visit us in the NASA booth area and learn more about Open MCT in person. Hope to see you there!</p>
+                        <a target="_blank" href="http://svcomiccon.com/" class="comiccon2017-logo">
+                            <img class="logo_icon" src="http://svcomiccon.com/static/img/svcc-logo.svg">
+                            <img class="logo_type" src="http://svcomiccon.com/static/img/svcc-logo_type.svg">
+                        </a>
+                    </div>
+                    <div class="col col-right">
+                    </div>
+                </div>
+            </div>
+        </div-->
+        <div class="l-hero-main hero-overview trans-to-next">
+            <div class="l-hero-text-bg-fade">
+                <div class="l-hero-text cols cols-equal wi">
+                    <div class="col col-left">
+                        <p><p>Open MCT is a next-generation mission control framework being developed at NASA's Ames Research Center in Silicon Valley, in collaboration with the Jet Propulsion Laboratory.</p>
+<p>Web-based, for desktop and mobile.</p>
+</p>
+                    </div>
+                    <div class="col col-right">
+                        <a href="https://openmct-demo.herokuapp.com/"
+                           class="btn major try arw" target="_blank" rel="noreferrer">Try it now</a><br/>
+                        <a href="https://www.github.com/nasa/openmct"
+                           class="link" target="_blank">Get Source</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="l-page-section l-graphic-boxes bg l-boxes wo">
+        <div class="cols cols-equal wi">
+            <div class="col t-what-is">
+                <div class="c-wrap">
+                    <h2>How is NASA using Open MCT?</h2>
+                    <p><p>Software based on Open MCT is being used for mission planning and operations in the lead up to the <a href="https://www.nasa.gov/resource-prospector" target="_blank">Resource Prospector mission</a> at NASA's Ames Research Center,  and as a data visualization tool at the Jet Propulsion Laboratory.</p>
+<p><a href="about-open-mct#how-nasa-using" class="arw">Find out more</a></p>
+</p>
+                </div>
+                <div class="c-wrap graphic">
+                    <img class="graphic" src="static/res/images/graphic-operator-dishes-rover.svg"/>
+                </div>
+            </div>
+            <div class="col t-how-use">
+                <div class="c-wrap">
+                    <h2>How Can You Use Open MCT?</h2>
+                    <p><p>Open MCT can be adapted for planning and operations of any system that produces telemetry. While Open MCT is developed to support space missions, its core concepts are not unique to that domain. It can display streaming and historical data, imagery, timelines, procedures, and other data visualizations, all in one place.</p>
+<p><a href="about-open-mct#possibilities" class="arw">Learn more</a></p>
+</p>
+                </div>
+                <div class="c-wrap graphic">
+                    <img class="graphic" src="static/res/images/graphic-sat-rocket-rover.svg"/>
+                </div>
+            </div>
+            <div class="col t-contrib">
+                <div class="c-wrap">
+                    <h2>How to Contribute</h2>
+                    <p><p>We are looking for enthusiastic people who want to help contribute to NASA’s exploration of the solar system. Are you a student, professional software developer, or just a space enthusiast? We’d love to hear your ideas for new features or ways of visualizing data. If you’re a coder you can help us develop new features or capabilities, and fix bugs.</p>
+<p><a href="contributing" class="arw">Get more info</a></p>
+</p>
+                </div>
+                <div class="c-wrap graphic">
+                    <img class="graphic" src="static/res/images/graphic-puzzle-pieces.svg"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="l-page-section t-feature l-start-using wo">
+        <div class="wi">
+            <h1>Developers: Start Using Open MCT</h1>
+            <div class="cols cols-equal">
+                <div class="col col-left">
+                    <ul class="t-list-steps t-list-code no-bullets">
+    <li>
+        <p><b>1</b>Clone the source code</p>
+<label for=" id="code-line-1">git clone https://github.com/nasa/openmct.git</label>
+        <input id="code-line-1" readonly class="code-wrapper" value="git clone https://github.com/nasa/openmct.git" onClick="this.setSelectionRange(0, this.value.length)" />
+    </li>
+    <li>
+        <p><b>2</b>Install development Dependencies</p>
+<label for=" id="code-line-2">npm install</label>
+        <input id="code-line-2" readonly class="code-wrapper" value="npm install" onClick="this.setSelectionRange(0, this.value.length)" />
+    </li>
+    <li>
+        <p><b>3</b>Run a local development server</p>
+<label for=" id="code-line-3">npm start</label>
+        <input id="code-line-3" readonly class="code-wrapper" value="npm start" onClick="this.setSelectionRange(0, this.value.length)" />
+    </li>
+</ul>
+                </div>
+                
+                    <div class="col col-right">
+                        <p>Running and building Open MCT in your local dev environment is very easy. Be sure you have <a href="https://git-scm.com/downloads" target="_blank">Git</a> and <a href="https://nodejs.org/" target="_blank">Node.js</a> installed, then follow the directions on the left. Need additional information? Check out our <a href="./getting-started">Getting Started</a> page.</p>
+
+                    </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="l-page-section t-feature m-see-action wo">
+        <div class="wi">
+            <h1>See Open MCT in Action</h1>
+            <div class="cols cols-equal">
+                <div class="col col-left">
+                    <div class="w-image">
+<a href="https://openmct-demo.herokuapp.com/" target="_blank"  rel="noreferrer">
+<img src="static/res/images/Open-MCT.Browse.Layout.Mars-Weather-1.jpg" alt="Image of an Open MCT Display Layout" />
+</a>
+</div>
+                </div>
+                <div class="col col-right">
+                    <p>This is a demonstration of Open MCT showing some of its major features. This demo shows the basic concepts behind Open MCT including objects and their role within composition. It demonstrates the capability of Open MCT to view telemetry data in different ways, within the same application.</p>
+<p>Also demonstrated is the ability to compose and modify screen layouts, bringing together various telemetry objects and other object types in a single screen.</p>
+<p><a href="https://openmct-demo.herokuapp.com" target="_blank" rel="noreferrer" class="arw">Try the live demo</a></p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+<div class="l-page-section t-footer wo">
+    <div class="t-footer-content wi">
+        <ul class="list-vertical no-bullets">
+            <li>Site Editor <b>Andrew Henry</b></li>
+            <li>NASA Official <b>Jay Trimble</b></li>
+        </ul>
+        <ul class="list-vertical no-bullets">
+            <li><a href="mailto:arc-dl-openmct@mail.nasa.gov">Contact Us</a></li>
+            <li><a href="https://www.nasa.gov/about/highlights/HP_Privacy.html" target="_blank">Privacy Policy and
+                Important Notices</a></li>
+            <li><a href="https://www.usa.gov/" target="_blank">USA.gov</a></li>
+        </ul>
+    </div>
+
+</div>
+
+</div>
+</body>
+</html>

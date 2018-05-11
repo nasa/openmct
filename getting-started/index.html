@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Getting Started — Open MCT</title>
+    <link rel="icon" type="image/png"
+          href="../static/res/images/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="../static/res/images/favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="../static/res/images/favicons/favicon-16x16.png" sizes="16x16">
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="../static/res/css/normalize.min.css">
+    <link rel="stylesheet" href="../static/res/css/styles.css">
+    <link rel="shortcut icon" href="../static/res/images/favicons/favicon.ico">
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-76951009-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script>
+        (function () {
+            var loc = window.location;
+            if (!loc.host.match(/^localhost:[0-9]*$/) && !loc.host.match(/^127\.0\.0\.1:[0-9]*$/) &&
+                loc.protocol === 'http:') {
+                loc.protocol = 'https:'
+            }
+        })();
+    </script>
+    <script src="../static/res/scripts/jquery-3.1.1.min.js"></script>
+    <script src="../static/res/scripts/utils.js"></script>
+    
+</head>
+<body>
+<nav class="wo">
+    <div class="main-nav wi">
+        <a href="https://www.nasa.gov"
+           class="logo logo-bg logo-nasa"
+           target="_blank"
+           alt="NASA logo"
+           title="Link to NASA.com"></a>
+
+        <a href="../"
+           class="logo logo-bg logo-openmct"
+           alt="Open MCT logo"></a>
+
+        <div class="l-nav-links">
+            <a href="../"
+               class="nav-link mobile-sm-only">Home</a>
+            
+            <a href="../about-open-mct/" class="nav-link">About</a></li>
+            
+            <a href="../getting-started/" class="nav-link">Getting Started</a></li>
+            
+            <a href="../contributing/" class="nav-link">Contributing</a></li>
+            
+            <a href="../documentation/" class="nav-link">Documentation</a></li>
+            
+            <a href="https://openmct-demo.herokuapp.com/" class="nav-link"
+               target="_blank" rel="noreferrer">Try it live</a>
+            <a href="https://github.com/nasa/openmct"
+               class="nav-link t-nav-link-github-repo mobile-sm-only"
+               target="_blank" rel="noreferrer">Github Repository</a>
+            <a href="https://github.com/nasa/openmct"
+               class="logo logo-github"
+               target="_blank"
+               alt="Link to Open MCT Github repository"
+               title="Link to Open MCT Github repository"></a>
+        </div>
+
+        <a class="icon-menu"
+           onclick="toggleClass('.l-nav-links','expanded')"
+           alt="Main navigation"></a>
+    </div>
+</nav>
+<div class="l-main wo">
+    
+<div class="p-body getting-started">
+    <div class="t-hero l-hero-holder">
+      <div class="l-hero-main wo">
+        <div class="l-hero-text cols cols-equal wi">
+          <div class="col">
+            <h1>Getting Started</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="l-page-section  wo">
+    <div class="wi">
+        <h2>Download and build Open MCT locally</h2>
+        
+        <div class="cols cols-equal">
+            <div class="col col-left ">
+                <div class="c-wrap">
+                    
+                    <p>In order to build Open MCT from source there are a number of prerequisites that you must have installed in your development environment. With the build prerequisites installed, Open MCT can be downloaded and built using the steps at right. Starting with an empty directory, these steps will check out Open MCT from github, build it, and run a local web server.</p>
+<p><h3>Git</h3>
+<a href="https://git-scm.com/" target="_blank">Git</a> is the source control system used, and a <a href="https://git-scm.com/downloads" target="_blank">git client</a> must be installed. Git is available for most operating systems, and may already be installed on your system. Try running <code>git</code> at a command prompt. If it’s not currently installed, you can download a git client from <a href="https://git-scm.com/downloads" target="_blank">https://git-scm.com/downloads</a></p>
+<p><h3>Node.js</h3>
+Node.js is used to build the source code, and npm is used to manage build dependencies. Node is available to download from <a href="https://nodejs.org/" target="_blank">https://nodejs.org/</a></p>
+
+                </div>
+                
+            </div>
+            <div class="col col-right ">
+                <div class="c-wrap">
+                    
+                    <ul class="t-list-steps t-list-code no-bullets">
+    <li>
+        <p><b>1</b>Clone the source code</p>
+<label for=" id="code-line-1">git clone https://github.com/nasa/openmct.git</label>
+        <input id="code-line-1" readonly class="code-wrapper" value="git clone https://github.com/nasa/openmct.git" onClick="this.setSelectionRange(0, this.value.length)" />
+    </li>
+    <li>
+        <p><b>2</b>Install development Dependencies</p>
+<label for=" id="code-line-2">npm install</label>
+        <input id="code-line-2" readonly class="code-wrapper" value="npm install" onClick="this.setSelectionRange(0, this.value.length)" />
+    </li>
+    <li>
+        <p><b>3</b>Run a local development server</p>
+<label for=" id="code-line-3">npm start</label>
+        <input id="code-line-3" readonly class="code-wrapper" value="npm start" onClick="this.setSelectionRange(0, this.value.length)" />
+    </li>
+</ul>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="l-page-section wo">
+    <div class="wi">
+        <h2>A New API</h2>
+        <div class="cols cols-equal">
+            <div class="col">
+                <p>A new API is currently under development that will deprecate much of the documentation and tutorials below, however Open MCT will remain compatible with the currently documented API. An updated set of tutorials is being developed with the new API, and currently covers how to register object and telemetry providers in the new API.</p>
+<p>The new API moves away from a declarative system of JSON configuration files, and instead presents an imperative system based on function calls. Developers will be able to extend and build on Open MCT by making direct function calls to a public API. Open MCT is also being refactored to minimize the dependencies that using Open MCT imposes on developers, such as the current requirement to use Angular JS.</p>
+<p>Questions, comments, or feedback on the new APIs is appreciated and should be <a href="../getting-started/(mailto:arc-dl-openmct@mail.nasa.gov">emailed to the team</a> or posted in the <a href="https://github.com/nasa/openmct/issues">Open MCT issue tracker</a>.</p>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="l-page-section wo">
+    <div class="wi">
+        <h2>Developing for Open MCT</h2>
+        <div class="cols cols-equal">
+            <div class="col">
+                <p>Open MCT provides a plugin mechanism for adding new telemetry sources, object providers, and visualization functionality.  <a href="../documentation/">Documentation</a> and <a href="../docs/tutorials">tutorials</a> are provided to help developers get started developing Open MCT plugins.</p>
+<ul class="link-list arw">
+<li><a href='https://github.com/nasa/openmct-tutorial' target='_blank'>Tutorials</a></li>
+<li><a href='https://github.com/nasa/openmct/blob/master/API.md' target='_blank'>API Documentation</a></li>
+<li><a href='https://github.com/nasa/openmct/blob/master/CONTRIBUTING.md' target='_blank'>Contributor’s Guide</a></li>
+</ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="l-page-section wo">
+    <div class="wi">
+        <h2>Integrating with Telemetry Sources</h2>
+        <div class="cols cols-equal">
+            <div class="col">
+                <p>Open MCT is a rich web client  that is designed to be integrated with telemetry sources. Integrating with a new data source requires a little JavaScript to define a new telemetry provider that fetches data and makes it available to the platform for display. The visualizations provided by Open MCT will then be able to display the data provided by the new data source, or new visualizations can be built using the plugin mechanism. Any extensions to Open MCT, including telemetry sources, are defined as plugins.</p>
+<p>Broadly speaking, there are two types of telemetry sources that you might want to integrate with: Those that provide real-time streaming data, and those that provide historical data. The nature of the connections used to receive telemetry data (such as via HTTP request, or WebSockets) is not prescribed by Open MCT, nor is the format of the telemetry, and developers are encouraged to use the method that best suits their needs.</p>
+<p>A <a href="https://github.com/nasa/openmct-tutorial">tutorial</a> is provided that gives an example of writing a telemetry provider and integrating with real-time and historical telemetry sources.</p>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="l-page-section wo">
+    <div class="wi">
+        <h2>Extending Open MCT</h2>
+        <div class="cols cols-equal">
+            <div class="col">
+                <p>Open MCT can be extended to provide new ways of visualizing and interacting with data, while offering a consistent user experience. Plugins may utilize Open MCT's provided extension points to define new:</p>
+<ul>
+<li>Views</li>
+<li>Object Types</li>
+<li>Toolbars, and toolbar items</li>
+<li>User actions (e.g. context menu items)</li>
+<li>Status indicators</li>
+</ul>
+<p>These extension points are not fully documented or implemented in the new API.  This page will be updated as we continue to develop the documentation and related tutorials.  If you are interested in trying out these extension points now, please <a href="mailto:arc-dl-openmct@mail.nasa.gov">contact us</a>.</p>
+<p>For more information on our timeline for updating the API and these documents, please check out the API Roadmap under <a href="../documentation/">Documentation</a></p>
+
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+</div>
+<div class="l-page-section t-footer wo">
+    <div class="t-footer-content wi">
+        <ul class="list-vertical no-bullets">
+            <li>Site Editor <b>Andrew Henry</b></li>
+            <li>NASA Official <b>Jay Trimble</b></li>
+        </ul>
+        <ul class="list-vertical no-bullets">
+            <li><a href="mailto:arc-dl-openmct@mail.nasa.gov">Contact Us</a></li>
+            <li><a href="https://www.nasa.gov/about/highlights/HP_Privacy.html" target="_blank">Privacy Policy and
+                Important Notices</a></li>
+            <li><a href="https://www.usa.gov/" target="_blank">USA.gov</a></li>
+        </ul>
+    </div>
+
+</div>
+
+</div>
+</body>
+</html>

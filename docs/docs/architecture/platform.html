@@ -1,0 +1,427 @@
+<html>
+    <head>
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/styles.css">
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/documentation.css">
+    </head>
+    <body>
+
+<a name="table-of-contents" href="#table-of-contents"><h1 id="undefinedtable-of-contents">Table of Contents</h1>
+</a><ul>
+<li><a href="#overview">Overview</a><ul>
+<li><a href="#platform-architecture">Platform Architecture</a></li>
+<li><a href="#application-start-up">Application Start-up</a></li>
+</ul>
+</li>
+<li><a href="#presentation-layer">Presentation Layer</a><ul>
+<li><a href="#angular-built-ins">Angular built-ins</a></li>
+<li><a href="#domain-object-representation">Domain object representation</a></li>
+</ul>
+</li>
+<li><a href="#information-model">Information Model</a><ul>
+<li><a href="#capabilities-and-services">Capabilities and Services</a></li>
+</ul>
+</li>
+<li><a href="#service-infrastructure">Service Infrastructure</a><ul>
+<li><a href="#object-service">Object Service</a></li>
+<li><a href="#model-service">Model Service</a></li>
+<li><a href="#capability-service">Capability Service</a></li>
+<li><a href="#telemetry-service">Telemetry Service</a></li>
+<li><a href="#persistence-service">Persistence Service</a></li>
+<li><a href="#action-service">Action Service</a></li>
+<li><a href="#view-service">View Service</a></li>
+<li><a href="#policy-service">Policy Service</a></li>
+<li><a href="#type-service">Type Service</a></li>
+</ul>
+</li>
+</ul>
+<a name="overview" href="#overview"><h1 id="undefinedoverview">Overview</h1>
+</a><p>The Open MCT platform utilizes the <a href="Framework.html">framework layer</a>
+to provide an extensible baseline for applications which includes:</p>
+<ul>
+<li>A common user interface (and user interface paradigm) for dealing with
+domain objects of various sorts.</li>
+<li>A variety of extension points for introducing new functionality
+of various kinds within the context of the common user interface.</li>
+<li>A service infrastructure to support building additional components.</li>
+</ul>
+<a name="platform-architecture" href="#platform-architecture"><h2 id="undefinedplatform-architecture">Platform Architecture</h2>
+</a><p>While the framework provides a more general architectural paradigm for
+building application, the platform adds more specificity by defining
+additional extension types and allowing for integration with back end
+components.</p>
+<p>The run-time architecture of an Open MCT application can be categorized
+into certain high-level tiers:</p>
+<p><img src="platform-1.png" alt="Diagram 1"></p>
+<p>Applications built using Open MCT may add or configure functionality
+in <strong>any of these tiers</strong>.</p>
+<ul>
+<li><em>DOM</em>: The rendered HTML document, composed from HTML templates which
+have been processed by AngularJS and will be updated by AngularJS
+to reflect changes from the presentation layer. User interactions
+are initiated from here and invoke behavior in the presentation layer. HTML 
+templates are written in Angular’s template syntax; see the <a href="https://docs.angularjs.org/guide/templates">Angular documentation on templates</a>​. 
+These describe the page as actually seen by the user. Conceptually, 
+stylesheets (controlling the look­and­feel of the rendered templates) belong 
+in this grouping as well. </li>
+<li><a href="#presentation-layer"><em>Presentation layer</em></a>: The presentation layer
+is responsible for updating (and providing information to update)
+the displayed state of the application. The presentation layer consists
+primarily of <em>controllers</em> and <em>directives</em>. The presentation layer is
+concerned with inspecting the information model and preparing it for
+display.</li>
+<li><a href="#information-model"><em>Information model</em></a>: ​Provides a common (within Open MCT 
+Web) set of interfaces for dealing with “things” ­ domain objects ­ within the 
+system. User­facing concerns in a Open MCT Web application are expressed as 
+domain objects; examples include folders (used to organize other domain 
+objects), layouts (used to build displays), or telemetry points (used as 
+handles for streams of remote measurements.) These domain objects expose a 
+common set of interfaces to allow reusable user interfaces to be built in the 
+presentation and template tiers; the specifics of these behaviors are then 
+mapped to interactions with underlying services. </li>
+<li><a href="#service-infrastructure"><em>Service infrastructure</em></a>: The service
+infrastructure is responsible for providing the underlying general
+functionality needed to support the information model. This includes
+exposing underlying sets of extensions and mediating with the
+back-end.</li>
+<li><em>Back-end</em>: The back-end is out of the scope of Open MCT, except
+for the interfaces which are utilized by adapters participating in the
+service infrastructure. Includes the underlying persistence stores, telemetry 
+streams, and so forth which the Open MCT Web client is being used to interact 
+with.</li>
+</ul>
+<a name="application-start-up" href="#application-start-up"><h2 id="undefinedapplication-start-up">Application Start-up</h2>
+</a><p>Once the
+<a href="Framework.html#application-initialization">application has been initialized</a>
+Open MCT primarily operates in an event-driven paradigm; various
+events (mouse clicks, timers firing, receiving responses to XHRs) trigger
+the invocation of functions, typically in the presentation layer for
+user actions or in the service infrastructure for server responses.</p>
+<p>The &quot;main point of entry&quot; into an initialized Open MCT application
+is effectively the
+<a href="https://docs.angularjs.org/api/ngRoute/service/$route#example">route</a>
+which is associated with the URL used to access Open MCT (or a
+default route.) This route will be associated with a template which
+will be displayed; this template will include references to directives
+and controllers which will be interpreted by Angular and used to
+initialize the state of the display in a manner which is backed by
+both the information model and the service infrastructure.</p>
+<p><img src="platform-2.png" alt="Diagram 2"></p>
+<a name="presentation-layer" href="#presentation-layer"><h1 id="undefinedpresentation-layer">Presentation Layer</h1>
+</a><p>The presentation layer of Open MCT is responsible for providing
+information to display within templates, and for handling interactions
+which are initiated from templated DOM elements. AngularJS acts as
+an intermediary between the web page as the user sees it, and the
+presentation layer implemented as Open MCT extensions.</p>
+<p><img src="platform-3.png" alt="Diagram 3"></p>
+<a name="angular-built-ins" href="#angular-built-ins"><h2 id="undefinedangular-built-ins">Angular built-ins</h2>
+</a><p>Several extension categories in the presentation layer map directly
+to primitives from AngularJS:</p>
+<ul>
+<li><a href="https://docs.angularjs.org/guide/controller"><em>Controllers</em></a> provide
+data to templates, and expose functionality that can be called from
+templates.</li>
+<li><a href="https://docs.angularjs.org/guide/directive"><em>Directives</em></a> effectively
+extend HTML to provide custom behavior associated with specific
+attributes and tags.</li>
+<li><a href="https://docs.angularjs.org/api/ngRoute/service/$route#example"><em>Routes</em></a>
+are used to associate specific URLs (including the fragment identifier)
+with specific application states. (In Open MCT, these are used to
+describe the mode of usage - e.g. browse or edit - as well as to
+identify the object being used.)</li>
+<li><a href="https://docs.angularjs.org/guide/templates"><em>Templates</em></a> are partial
+HTML documents that will be rendered and kept up-to-date by AngularJS.
+Open MCT introduces a custom <code>mct-include</code> directive which acts
+as a wrapper around <code>ng-include</code> to allow templates to be referred
+to by symbolic names.</li>
+</ul>
+<a name="domain-object-representation" href="#domain-object-representation"><h2 id="undefineddomain-object-representation">Domain object representation</h2>
+</a><p>The remaining extension categories in the presentation layer are specific
+to displaying domain objects.</p>
+<ul>
+<li><em>Representations</em> are templates that will be used to display
+domain objects in specific ways (e.g. &quot;as a tree node.&quot;)</li>
+<li><em>Views</em> are representations which are exposed to the user as options
+for displaying domain objects.</li>
+<li><em>Representers</em> are extensions which modify or augment the process
+of representing domain objects generally (e.g. by attaching
+gestures to them.)</li>
+<li><em>Gestures</em> provide associations between specific user actions
+(expressed as DOM events) and resulting behavior upon domain objects
+(typically expressed as members of the <code>actions</code> extension category)
+that can be reused across domain objects. For instance, <code>drag</code> and
+<code>drop</code> are both gestures associated with using drag-and-drop to
+modify the composition of domain objects by interacting with their
+representations.</li>
+</ul>
+<a name="information-model" href="#information-model"><h1 id="undefinedinformation-model">Information Model</h1>
+</a><p><img src="platform-4.png" alt="Diagram 4"></p>
+<p>Domain objects are the most fundamental component of Open MCT&#39;s
+information model. A domain object is some distinct thing relevant to a
+user&#39;s work flow, such as a telemetry channel, display, or similar.
+Open MCT is a tool for viewing, browsing, manipulating, and otherwise
+interacting with a graph of domain objects.</p>
+<p>A domain object should be conceived of as the union of the following:</p>
+<ul>
+<li><em>Identifier</em>: A machine-readable string that uniquely identifies the
+domain object within this application instance.</li>
+<li><em>Model</em>: The persistent state of the domain object. A domain object&#39;s
+model is a JavaScript object that can be losslessly converted to JSON.</li>
+<li><em>Capabilities</em>: Dynamic behavior associated with the domain object.
+Capabilities are JavaScript objects which provide additional methods
+for interacting with the domain objects which expose those capabilities.
+Not all domain objects expose all capabilities. The interface exposed
+by any given capability will depend on its type (as identified
+by the <code>key</code> argument.) For instance, a <code>persistence</code> capability
+has a different interface from a <code>telemetry</code> capability. Using
+capabilities requires some prior knowledge of their interface.</li>
+</ul>
+<a name="capabilities-and-services" href="#capabilities-and-services"><h2 id="undefinedcapabilities-and-services">Capabilities and Services</h2>
+</a><p><img src="platform-5.png" alt="Diagram 5"></p>
+<p>At run-time, the user is primarily concerned with interacting with
+domain objects. These interactions are ultimately supported via back-end
+services, but to allow customization per-object, these are often mediated
+by capabilities.</p>
+<p>A common pattern that emerges in the Open MCT Platform is as follows:</p>
+<ul>
+<li>A <code>DomainObject</code> has some particular behavior that will be supported
+by a service.</li>
+<li>A <code>Capability</code> of that domain object will define that behavior,
+<em>for that domain object</em>, supported by a service.</li>
+<li>A <code>Service</code> utilized by that capability will perform the actual behavior.</li>
+<li>An extension category will be utilized by that capability to determine
+the set of possible behaviors.</li>
+</ul>
+<p>Concrete examples of capabilities which follow this pattern
+(or a subset of this pattern) include:</p>
+<p><img src="platform-6.png" alt="Diagram 6"></p>
+<a name="service-infrastructure" href="#service-infrastructure"><h1 id="undefinedservice-infrastructure">Service Infrastructure</h1>
+</a><p>Most services exposed by the Open MCT platform follow the
+<a href="Framework.html#composite-services">composite services</a> to permit
+a higher degree of flexibility in how a service can be modified
+or customized for specific applications.</p>
+<p>To simplify usage for plugin developers, the platform also usually
+includes a provider implementation for these service type that consumes
+some extension category. For instance, an <code>ActionService</code> provider is
+included which depends upon extension category <code>actions</code>, and exposes
+all actions declared as such to the system. As such, plugin developers
+can simply implement the new actions they wish to be made available without
+worrying about the details of composite services or implementing a new
+<code>ActionService</code> provider; however, the ability to implement a new provider
+remains useful when the expressive power of individual extensions is
+insufficient.</p>
+<p><img src="platform-7.png" alt="Diagram 7"></p>
+<p>A short summary of the roles of these services:</p>
+<ul>
+<li><em><a href="#object-service">ObjectService</a></em>: Allows retrieval of domain objects by
+their identifiers; in practice, often the main point of entry into the
+<a href="#information-model">information model</a>.</li>
+<li><em><a href="#model-service">ModelService</a></em>: Provides domain object models, retrieved
+by their identifier.</li>
+<li><em><a href="#capability-service">CapabilityService</a></em>: Provides capabilities, as they
+apply to specific domain objects (as judged from their model.)</li>
+<li><em><a href="#telemetry-service">TelemetryService</a></em>: Provides access to historical
+and real-time telemetry data.</li>
+<li><em><a href="#persistence-service">PersistenceService</a></em>: Provides the ability to
+store and retrieve documents (such as domain object models.)</li>
+<li><em><a href="#action-service">ActionService</a></em>: Provides distinct user actions that
+can take place within the system (typically, upon or using domain objects.)</li>
+<li><em><a href="#view-service">ViewService</a></em>: Provides views for domain objects. A view
+is a user-selectable representation of a domain object (in practice, an
+HTML template.)</li>
+<li><em><a href="#policy-service">PolicyService</a></em>: Handles decisions about which
+behavior are allowed within certain specific contexts.</li>
+<li><em><a href="#type-service">TypeService</a></em>: Provides information to distinguish
+different types of domain objects from one another within the system.</li>
+</ul>
+<a name="object-service" href="#object-service"><h2 id="undefinedobject-service">Object Service</h2>
+</a><p><img src="platform-8.png" alt="Diagram 8"></p>
+<p>As domain objects are central to Open MCT&#39;s information model,
+acquiring domain objects is equally important.</p>
+<p><img src="platform-9.png" alt="Diagram 9"></p>
+<p>Open MCT includes an implementation of an <code>ObjectService</code> which
+satisfies this capability by:</p>
+<ul>
+<li>Consulting the <a href="#model-service">Model Service</a> to acquire domain object
+models by identifier.</li>
+<li>Passing these models to a <a href="#capability-service">Capability Service</a> to
+determine which capabilities are applicable.</li>
+<li>Combining these results together as <a href="#information-model">DomainObject</a>
+instances.</li>
+</ul>
+<a name="model-service" href="#model-service"><h2 id="undefinedmodel-service">Model Service</h2>
+</a><p><img src="platform-10.png" alt="Diagram 10"></p>
+<p>The platform&#39;s model service is responsible for providing domain object
+models (effectively, JSON documents describing the persistent state
+associated with domain objects.) These are retrieved by identifier.</p>
+<p>The platform includes multiple components of this variety:</p>
+<ul>
+<li><code>PersistedModelProvider</code> looks up domain object models from
+a persistence store (the <a href="#persistence-service"><code>PersistenceService</code></a>);
+this is how user-created and user-modified
+domain object models are retrieved.</li>
+<li><code>RootModelProvider</code> provides domain object models that have been
+declared via the <code>roots</code> extension category. These will appear at the
+top level of the tree hierarchy in the user interface.</li>
+<li><code>StaticModelProvider</code> provides domain object models that have been
+declared via the <code>models</code> extension category. This is useful for
+allowing plugins to expose new domain objects declaratively.</li>
+<li><code>ModelAggregator</code> merges together the results from multiple providers.
+If multiple providers return models for the same domain object,
+the most recently modified version (as determined by the <code>modified</code>
+property of the model) is chosen.</li>
+<li><code>CachingModelDecorator</code> caches model instances in memory. This
+ensures that only a single instance of a domain object model is
+present at any given time within the application, and prevent
+redundant retrievals.</li>
+<li><code>MissingModelDecorator</code> adds in placeholders when no providers
+have returned domain object models for a specific identifier. This
+allows the user to easily see that something was expected to be
+present, but wasn&#39;t.</li>
+</ul>
+<a name="capability-service" href="#capability-service"><h2 id="undefinedcapability-service">Capability Service</h2>
+</a><p><img src="platform-11.png" alt="Diagram 11"></p>
+<p>The capability service is responsible for determining which capabilities
+are applicable for a given domain object, based on its model. Primarily,
+this is handled by the <code>CoreCapabilityProvider</code>, which examines
+capabilities exposed via the <code>capabilities</code> extension category.</p>
+<p>Additionally, <code>platform/persistence/queue</code> decorates the persistence
+capability specifically to batch persistence attempts among multiple
+objects (this allows failures to be recognized and handled in groups.)</p>
+<a name="telemetry-service" href="#telemetry-service"><h2 id="undefinedtelemetry-service">Telemetry Service</h2>
+</a><p><img src="platform-12.png" alt="Diagram 12"></p>
+<p>The telemetry service is responsible for acquiring telemetry data.</p>
+<p>Notably, the platform does not include any providers for
+<code>TelemetryService</code>; applications built on Open MCT will need to
+implement a provider for this service if they wish to expose telemetry
+data. This is usually the most important step for integrating Open MCT
+into an existing telemetry system.</p>
+<p>Requests for telemetry data are usually initiated in the
+<a href="#presentation-layer">presentation layer</a> by some <code>Controller</code> referenced
+from a view. The <code>telemetryHandler</code> service is most commonly used (although
+one could also use an object&#39;s <code>telemetry</code> capability directly) as this
+handles capability delegation, by which a domain object such as a Telemetry
+Panel can declare that its <code>telemetry</code> capability should be handled by the
+objects it contains. Ultimately, the request for historical data and the
+new subscriptions will reach the <code>TelemetryService</code>, and, by way of the
+provider(s) which are present for that <code>TelemetryService</code>, will pass the
+same requests to the back-end.</p>
+<p><img src="platform-13.png" alt="Diagram 13"></p>
+<p>The back-end, in turn, is expected to provide whatever historical
+telemetry is available to satisfy the request that has been issue.</p>
+<p><img src="platform-14.png" alt="Diagram 14"></p>
+<p>One peculiarity of this approach is that we package many responses
+together at once in the <code>TelemetryService</code>, then unpack these in the
+<code>TelemetryCapability</code>, then repackage these in the <code>TelemetryHandler</code>.
+The rationale for this is as follows:</p>
+<ul>
+<li>In the <code>TelemetryService</code>, we want to have the ability to combine
+multiple requests into one call to the back-end, as many back-ends
+will support this. It follows that we give the response as a single
+object, packages in a manner that allows responses to individual
+requests to be easily identified.</li>
+<li>In the <code>TelemetryCapability</code>, we want to provide telemetry for a
+<em>single object</em>, so the telemetry data gets unpacked. This allows
+for the unpacking of data to be handled in a single place, and
+also permits a flexible substitution method; domain objects may have
+implementations of the <code>telemetry</code> capability that do not use the
+<code>TelemetryService</code> at all, while still maintaining compatibility
+with any presentation layer code written to utilize this capability.
+(This is true of capabilities generally.)</li>
+<li>In the <code>TelemetryHandler</code>, we want to group multiple responses back
+together again to make it easy for the presentation layer to consume.
+In this case, the grouping is different from what may have occurred
+in the <code>TelemetryService</code>; this grouping is based on what is expected
+to be useful <em>in a specific view</em>. The <code>TelemetryService</code>
+may be receiving requests from multiple views.</li>
+</ul>
+<p><img src="platform-15.png" alt="Diagram 15"></p>
+<p>The flow of real-time data is similar, and is handled by a sequence
+of callbacks between the presentation layer component which is
+interested in data and the telemetry service. Providers in the
+telemetry service listen to the back-end for new data (via whatever
+mechanism their specific back-end supports), package this data in
+the same manner as historical data, and pass that to the callbacks
+which are associated with relevant requests.</p>
+<a name="persistence-service" href="#persistence-service"><h2 id="undefinedpersistence-service">Persistence Service</h2>
+</a><p><img src="platform-16.png" alt="Diagram 16"></p>
+<p>Closely related to the notion of domain objects models is their
+persistence. The <code>PersistenceService</code> allows these to be saved
+and loaded. (Currently, this capability is only used for domain
+object models, but the interface has been designed without this idea
+in mind; other kinds of documents could be saved and loaded in the
+same manner.)</p>
+<p>There is no single definitive implementation of a <code>PersistenceService</code> in
+the platform. Optional adapters are provided to store and load documents
+from CouchDB and ElasticSearch, respectively; plugin authors may also
+write additional adapters to utilize different back end technologies.</p>
+<a name="action-service" href="#action-service"><h2 id="undefinedaction-service">Action Service</h2>
+</a><p><img src="platform-17.png" alt="Diagram 17"></p>
+<p>Actions are discrete tasks or behaviors that can be initiated by a user
+upon or using a domain object. Actions may appear as menu items or
+buttons in the user interface, or may be triggered by certain gestures.</p>
+<p>Responsibilities of platform components of the action service are as
+follows:</p>
+<ul>
+<li><code>ActionProvider</code> exposes actions registered via extension category
+<code>actions</code>, supporting simple addition of new actions. Actions are
+filtered down to match action contexts based on criteria defined as
+part of an action&#39;s extension definition.</li>
+<li><code>CreateActionProvider</code> provides the various Create actions which
+populate the Create menu. These are driven by the available types,
+so do not map easily ot extension category <code>actions</code>; instead, these
+are generated after looking up which actions are available from the
+<a href="#type-service"><code>TypeService</code></a>.</li>
+<li><code>ActionAggregator</code> merges together actions from multiple providers.</li>
+<li><code>PolicyActionDecorator</code> enforces the <code>action</code> policy category by
+filtering out actions which violate this policy, as determined by
+consulting the <a href="#policy-service"><code>PolicyService</code></a>.</li>
+<li><code>LoggingActionDecorator</code> wraps exposed actions and writes to the
+console when they are performed.</li>
+</ul>
+<a name="view-service" href="#view-service"><h2 id="undefinedview-service">View Service</h2>
+</a><p><img src="platform-18.png" alt="Diagram 18"></p>
+<p>The view service provides views that are relevant to a specified domain
+object. A &quot;view&quot; is a user-selectable visualization of a domain object.</p>
+<p>The responsibilities of components of the view service are as follows:</p>
+<ul>
+<li><code>ViewProvider</code> exposes views registered via extension category
+<code>views</code>, supporting simple addition of new views. Views are
+filtered down to match domain objects based on criteria defined as
+part of a view&#39;s extension definition.</li>
+<li><code>PolicyViewDecorator</code> enforces the <code>view</code> policy category by
+filtering out views which violate this policy, as determined by
+consulting the <a href="#policy-service"><code>PolicyService</code></a>.</li>
+</ul>
+<a name="policy-service" href="#policy-service"><h2 id="undefinedpolicy-service">Policy Service</h2>
+</a><p><img src="platform-19.png" alt="Diagram 19"></p>
+<p>The policy service provides a general-purpose extensible decision-making
+mechanism; plugins can add new extensions of category <code>policies</code> to
+modify decisions of a known category.</p>
+<p>Often, the policy service is referenced from a decorator for another
+service, to filter down the results of using that service based on some
+appropriate policy category.</p>
+<p>The policy provider works by looking up all registered policy extensions
+which are relevant to a particular <em>category</em>, then consulting each in
+order to see if they allow a particular <em>candidate</em> in a particular
+<em>context</em>; the types for the <code>candidate</code> and <code>context</code> arguments will
+vary depending on the <code>category</code>. Any one policy may disallow the
+decision as a whole.</p>
+<p><img src="platform-20.png" alt="Diagram 20"></p>
+<p>The policy decision is effectively an &quot;and&quot; operation over the individual
+policy decisions: That is, all policies must agree to allow a particular
+policy decision, and the first policy to disallow a decision will cause
+the entire decision to be disallowed. As a consequence of this, policies
+should generally be written with a default behavior of &quot;allow&quot;, and
+should only disallow the specific circumstances they are intended to
+disallow.</p>
+<a name="type-service" href="#type-service"><h2 id="undefinedtype-service">Type Service</h2>
+</a><p><img src="platform-21.png" alt="Diagram 21"></p>
+<p>The type service provides metadata about the different types of domain
+objects that exist within an Open MCT application. The platform
+implementation reads these types in from extension category <code>types</code>
+and wraps them in a JavaScript interface.</p>
+        <hr>
+    </body>
+</html>

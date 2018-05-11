@@ -1,0 +1,1083 @@
+/********************************** PAGE COLORS */
+/* line 1, /home/ubuntu/openmct-website/styles/sass/_resets.scss */
+html, body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  line-spacing: normal;
+  margin: 0;
+  padding: 0; }
+
+/* line 10, /home/ubuntu/openmct-website/styles/sass/_resets.scss */
+div, li {
+  box-sizing: border-box; }
+
+/* line 14, /home/ubuntu/openmct-website/styles/sass/_resets.scss */
+h1, h2, .h2, h3, .h3,
+.h1, .h2, .h3 {
+  line-height: 1;
+  margin-top: 1em;
+  margin-bottom: 0.3em; }
+
+/* line 21, /home/ubuntu/openmct-website/styles/sass/_resets.scss */
+iframe {
+  border: none;
+  display: block; }
+
+/* line 26, /home/ubuntu/openmct-website/styles/sass/_resets.scss */
+p, ol {
+  margin: 0 0 0.6em 0; }
+
+/* line 30, /home/ubuntu/openmct-website/styles/sass/_resets.scss */
+ol, ul {
+  margin: 0; }
+
+/* line 34, /home/ubuntu/openmct-website/styles/sass/_resets.scss */
+ul.no-bullets, ul.link-list {
+  margin: 0 !important;
+  padding: 0 !important; }
+  /* line 37, /home/ubuntu/openmct-website/styles/sass/_resets.scss */
+  ul.no-bullets li, ul.link-list li {
+    list-style: none; }
+
+/* line 1, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+.l-hero-holder {
+  position: relative; }
+  /* line 3, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+  .l-hero-holder .l-hero-main {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    line-height: 230%;
+    position: absolute; }
+    /* line 10, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+    .l-hero-holder .l-hero-main.trans-to-next {
+      -webkit-transition-property: opacity;
+      -moz-transition-property: opacity;
+      transition-property: opacity;
+      -webkit-transition-duration: 1s;
+      -moz-transition-duration: 1s;
+      transition-duration: 1s;
+      -webkit-transition-timing-function: ease-in-out;
+      -moz-transition-timing-function: ease-in-out;
+      transition-timing-function: ease-in-out;
+      -webkit-transition-delay: 0;
+      -moz-transition-delay: 0;
+      transition-delay: 0; }
+    /* line 14, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+    .l-hero-holder .l-hero-main .l-hero-text-bg-fade {
+      background-color: transparent;
+      background-image: -webkit-linear-gradient(transparent, rgba(0, 0, 0, 0.4) 50%);
+      background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.4) 50%);
+      position: absolute;
+      top: auto;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      min-height: 55%; }
+    /* line 23, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+    .l-hero-holder .l-hero-main .l-hero-text {
+      -webkit-box-align: center;
+      -moz-box-align: center;
+      box-align: center;
+      -webkit-align-items: center;
+      -moz-align-items: center;
+      -ms-align-items: center;
+      -o-align-items: center;
+      align-items: center;
+      -ms-flex-align: center;
+      z-index: 2;
+      color: #ccc; }
+      /* line 27, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+      .l-hero-holder .l-hero-main .l-hero-text * :not(.btn) {
+        text-shadow: rgba(0, 0, 0, 0.6) 0 1px 10px; }
+      /* line 31, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+      .l-hero-holder .l-hero-main .l-hero-text a, .l-hero-holder .l-hero-main .l-hero-text b {
+        color: white; }
+
+/* line 38, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+.p-home .l-hero-holder {
+  height: 540px; }
+  /* line 41, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+  .p-home .l-hero-holder .l-hero-main .cols {
+    padding: 0 64px; }
+
+/* line 46, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+.p-body .l-hero-holder {
+  height: 200px;
+  text-transform: uppercase; }
+  /* line 50, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+  .p-body .l-hero-holder .l-hero-main:before {
+    background-color: #017ac6;
+    background-image: -webkit-linear-gradient(#017ac6 10%, rgba(1, 122, 198, 0.3));
+    background-image: linear-gradient(#017ac6 10%, rgba(1, 122, 198, 0.3));
+    background-color: transparent;
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1; }
+  /* line 58, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+  .p-body .l-hero-holder .l-hero-main .cols {
+    padding-top: 100px; }
+    /* line 60, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+    .p-body .l-hero-holder .l-hero-main .cols .col {
+      z-index: 1; }
+
+/******************************************** SPECIFIC HEROES */
+/* line 69, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+.p-home .hero-overview {
+  background-image: url("../images/hero-rp-dot-1.jpg"); }
+  /* line 71, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+  .p-home .hero-overview .col-left {
+    font-size: 1.35em; }
+  /* line 74, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+  .p-home .hero-overview .col-right {
+    text-align: center;
+    text-transform: uppercase; }
+
+/* line 80, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+.p-home .hero-intern2017 {
+  background-image: url("../images/hero-bg-apollo-moon-2.jpg"); }
+  /* line 82, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+  .p-home .hero-intern2017 .col-left {
+    min-width: 50%; }
+    /* line 84, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+    .p-home .hero-intern2017 .col-left img {
+      width: 100%; }
+  /* line 87, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+  .p-home .hero-intern2017 .l-hero-text-bg-fade {
+    background-color: transparent;
+    background-image: -webkit-linear-gradient(transparent, rgba(0, 0, 0, 0.3) 40%);
+    background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.3) 40%);
+    min-height: 75%; }
+
+/* line 93, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+.p-home .hero-comiccon2017 {
+  background-image: url("../images/NASA_journeytomars2.jpg"); }
+  /* line 95, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+  .p-home .hero-comiccon2017 a.comiccon2017-logo {
+    display: inline-block;
+    min-width: 230px; }
+    /* line 98, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+    .p-home .hero-comiccon2017 a.comiccon2017-logo img {
+      display: inline-block;
+      vertical-align: middle; }
+      /* line 101, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+      .p-home .hero-comiccon2017 a.comiccon2017-logo img.logo_icon {
+        max-width: 70px;
+        max-height: 91px; }
+      /* line 105, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+      .p-home .hero-comiccon2017 a.comiccon2017-logo img.logo_type {
+        margin-left: 15px;
+        max-width: 135px;
+        max-height: 50px; }
+  /* line 112, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+  .p-home .hero-comiccon2017 .col-left {
+    min-width: 50%; }
+  /* line 116, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+  .p-home .hero-comiccon2017 .l-hero-text-bg-fade {
+    background-color: transparent;
+    background-image: -webkit-linear-gradient(transparent, rgba(0, 0, 0, 0.3) 40%);
+    background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.3) 40%);
+    min-height: 75%; }
+
+/* line 124, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+.p-body.about-open-mct .l-hero-holder .l-hero-main {
+  background-image: url("../images/hero-body-packets-1.jpg"); }
+
+/* line 125, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+.p-body.getting-started .l-hero-holder .l-hero-main {
+  background-image: url("../images/hero-body-panel-1.jpg"); }
+
+/* line 126, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+.p-body.contributing .l-hero-holder .l-hero-main {
+  background-image: url("../images/hero-body-stacked-plot-1.jpg"); }
+
+/* line 127, /home/ubuntu/openmct-website/styles/sass/_heroes.scss */
+.p-body.documentation .l-hero-holder .l-hero-main {
+  background-image: url("../images/hero-body-timeline-1.jpg"); }
+
+/* line 3, /home/ubuntu/openmct-website/styles/sass/_body-pages.scss */
+.p-body .l-page-section:not(:first-child) .wi {
+  border-top: 1px solid rgba(0, 0, 0, 0.1); }
+
+/* line 6, /home/ubuntu/openmct-website/styles/sass/_body-pages.scss */
+.p-body .l-page-section.no-margin {
+  padding-top: 0.6em;
+  padding-bottom: 0.6em; }
+
+/* line 10, /home/ubuntu/openmct-website/styles/sass/_body-pages.scss */
+.p-body .l-page-section h2, .p-body .l-page-section .h2,
+.p-body .l-page-section .h2 {
+  font-size: 1.5em;
+  text-align: left; }
+
+/* line 16, /home/ubuntu/openmct-website/styles/sass/_body-pages.scss */
+.p-body .l-page-section h2:first-child, .p-body .l-page-section .h2:first-child,
+.p-body .l-page-section .h2:first-child {
+  margin-top: inherit; }
+
+/* line 23, /home/ubuntu/openmct-website/styles/sass/_body-pages.scss */
+img.img-medium {
+  width: 640px; }
+
+/* line 27, /home/ubuntu/openmct-website/styles/sass/_body-pages.scss */
+img.img-small {
+  width: 320px; }
+
+/* line 31, /home/ubuntu/openmct-website/styles/sass/_body-pages.scss */
+ul.t-list-steps {
+  padding: 0; }
+
+/* line 36, /home/ubuntu/openmct-website/styles/sass/_body-pages.scss */
+.l-page-section ul {
+  padding: 0 0 20px 40px; }
+
+/* line 40, /home/ubuntu/openmct-website/styles/sass/_body-pages.scss */
+.l-page-section img {
+  max-width: 100%; }
+
+/* line 1, /home/ubuntu/openmct-website/styles/sass/_jsdoc.scss */
+.jsdoc nav {
+  display: block;
+  float: right;
+  margin-top: 28px;
+  width: 30%;
+  box-sizing: border-box;
+  border-left: 1px solid #ccc;
+  padding-left: 16px; }
+  /* line 11, /home/ubuntu/openmct-website/styles/sass/_jsdoc.scss */
+  .jsdoc nav ul {
+    font-size: 100%;
+    line-height: 17px;
+    padding: 0;
+    margin: 0;
+    list-style-type: none; }
+    /* line 18, /home/ubuntu/openmct-website/styles/sass/_jsdoc.scss */
+    .jsdoc nav ul li {
+      list-style: none;
+      text-transform: none; }
+
+/* line 1, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+html, body {
+  background-color: #2e2e2e;
+  font-family: 'Helvetica Neue', sans-serif; }
+
+/* line 6, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+body {
+  min-width: 800px; }
+
+/* line 10, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+a {
+  color: #017ac6;
+  cursor: pointer;
+  text-decoration: none; }
+  /* line 14, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  a:hover {
+    color: #16a4fe; }
+
+/* line 19, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.list-vertical {
+  margin-bottom: 1.2em !important; }
+
+/* line 24, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+nav,
+h1, h2, .h2, h3, .h3,
+a.arw,
+ul.link-list.arw li a, ul.link-list.arw li a, .l-hero-text, .t-footer, .t-list-steps:not(code) {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: normal;
+  letter-spacing: -0.03em; }
+
+/* line 32, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+nav,
+h2,
+.h2, h3, .h3,
+.t-footer {
+  text-transform: uppercase; }
+
+/* line 39, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+h2:first-child, .h2:first-child, h3:first-child, .h3:first-child {
+  margin-top: 0; }
+
+/* line 47, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.padX, .wi, .main-nav {
+  box-sizing: border-box;
+  padding: 0 32px; }
+
+/******************************************** SYMBOLS */
+@font-face {
+  font-family: 'omct-symbols';
+  src: url("../fonts/omct-symbols.eot?yyn1qj");
+  src: url("../fonts/omct-symbols.eot?yyn1qj#iefix") format("embedded-opentype"), url("../fonts/omct-symbols.ttf?yyn1qj") format("truetype"), url("../fonts/omct-symbols.woff?yyn1qj") format("woff"), url("../fonts/omct-symbols.svg?yyn1qj#omct-symbols") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+/******************************************** WRAPPERS */
+/* line 65, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.wo {
+  width: 100%; }
+
+/* line 70, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.wi {
+  max-width: 1024px;
+  margin: 0 auto; }
+
+/* line 77, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.w-image {
+  position: relative; }
+
+/******************************************** ARCHETYPES */
+/* line 84, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.btn {
+  white-space: nowrap; }
+  /* line 86, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .btn.major {
+    background-color: #0199f9;
+    background-image: -webkit-linear-gradient(#0199f9, #017ac6);
+    background-image: linear-gradient(#0199f9, #017ac6);
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.4) 0 2px 10px;
+    color: white;
+    display: inline-block;
+    line-height: normal;
+    padding: 10px 20px; }
+    /* line 95, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+    .btn.major:hover {
+      background-color: #48b8fe;
+      background-image: -webkit-linear-gradient(#48b8fe, #0199f9);
+      background-image: linear-gradient(#48b8fe, #0199f9); }
+    /* line 98, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+    .btn.major.overlaid {
+      font-size: 2.5rem;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      -moz-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      -o-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%); }
+
+/* line 109, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+a.arw, ul.link-list.arw li a {
+  text-transform: uppercase; }
+  /* line 111, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  a.arw:after, ul.link-list.arw li a:after {
+    content: ' \e900';
+    font-size: 0.8em; }
+
+/* line 127, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.hero-pager {
+  position: absolute;
+  top: auto;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  z-index: 5; }
+  /* line 135, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .hero-pager .pager-dot {
+    border-radius: 50%;
+    box-shadow: 0 2px 20px 5px black;
+    cursor: pointer;
+    display: inline-block;
+    background: #999;
+    height: 12px;
+    width: 12px; }
+    /* line 143, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+    .hero-pager .pager-dot:not(:first-child) {
+      margin-left: 0.6em; }
+    /* line 146, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+    .hero-pager .pager-dot.active, .hero-pager .pager-dot:hover {
+      background: #fff; }
+
+/******************************************** LOGOS */
+/* line 151, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.logo {
+  display: inline-block; }
+
+/* line 155, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.logo-bg, .logo-nasa, .t-footer .t-footer-content:before, .logo-openmct {
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain; }
+
+/******************************************** EFFECTS AND TRANSITIONS */
+/* line 162, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.hidden {
+  opacity: 0;
+  pointer-events: none; }
+
+/* line 167, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.trans-to-next {
+  -webkit-transition-property: opacity;
+  -moz-transition-property: opacity;
+  transition-property: opacity;
+  -webkit-transition-duration: 500ms;
+  -moz-transition-duration: 500ms;
+  transition-duration: 500ms;
+  -webkit-transition-timing-function: ease-in-out;
+  -moz-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  -webkit-transition-delay: 0;
+  -moz-transition-delay: 0;
+  transition-delay: 0; }
+
+/******************************************** LAYOUT */
+/* line 187, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.cols {
+  -webkit-box-align: stretch;
+  -moz-box-align: stretch;
+  box-align: stretch;
+  -webkit-align-items: stretch;
+  -moz-align-items: stretch;
+  -ms-align-items: stretch;
+  -o-align-items: stretch;
+  align-items: stretch;
+  -ms-flex-align: stretch;
+  display: -webkit-box;
+  display: -moz-box;
+  display: box;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+  box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -moz-box-direction: normal;
+  box-direction: normal;
+  -webkit-flex-direction: row;
+  -moz-flex-direction: row;
+  flex-direction: row;
+  -ms-flex-direction: row;
+  -webkit-box-lines: single;
+  -moz-box-lines: single;
+  box-lines: single;
+  -webkit-flex-wrap: nowrap;
+  -moz-flex-wrap: nowrap;
+  -ms-flex-wrap: nowrap;
+  flex-wrap: nowrap; }
+  /* line 192, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .cols .col {
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    -moz-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    margin-left: 32px;
+    padding-left: 32px; }
+    /* line 196, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+    .cols .col:first-child {
+      margin-left: 0;
+      padding-left: 0; }
+    /* line 200, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+    .cols .col .c-wrap {
+      -webkit-box-flex: 1;
+      -moz-box-flex: 1;
+      box-flex: 1;
+      -webkit-flex: 1 1 auto;
+      -moz-flex: 1 1 auto;
+      -ms-flex: 1 1 auto;
+      flex: 1 1 auto; }
+    /* line 203, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+    .cols .col .c-wrap.graphic {
+      -webkit-box-flex: 0;
+      -moz-box-flex: 0;
+      box-flex: 0;
+      -webkit-flex: 0 1 auto;
+      -moz-flex: 0 1 auto;
+      -ms-flex: 0 1 auto;
+      flex: 0 1 auto;
+      margin-top: 0.6em;
+      display: block; }
+  /* line 209, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .cols.cols-equal .col {
+    -webkit-flex-basis: 0;
+    -moz-flex-basis: 0;
+    flex-basis: 0;
+    -ms-flex-preferred-size: 0; }
+  /* line 179, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .cols.cols-1-2 .col.col-left {
+    width: 33.33333%; }
+  /* line 180, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .cols.cols-1-2 .col.col-right {
+    width: 66.66667%; }
+  /* line 179, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .cols.cols-1-3 .col.col-left {
+    width: 25%; }
+  /* line 180, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .cols.cols-1-3 .col.col-right {
+    width: 75%; }
+  /* line 179, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .cols.cols-1-4 .col.col-left {
+    width: 20%; }
+  /* line 180, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .cols.cols-1-4 .col.col-right {
+    width: 80%; }
+  /* line 179, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .cols.cols-1-5 .col.col-left {
+    width: 16.66667%; }
+  /* line 180, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .cols.cols-1-5 .col.col-right {
+    width: 83.33333%; }
+  /* line 182, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .cols.cols-2-1 .col.col-left {
+    width: 66.66667%; }
+  /* line 183, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .cols.cols-2-1 .col.col-right {
+    width: 33.33333%; }
+  /* line 182, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .cols.cols-3-1 .col.col-left {
+    width: 75%; }
+  /* line 183, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .cols.cols-3-1 .col.col-right {
+    width: 25%; }
+  /* line 182, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .cols.cols-4-1 .col.col-left {
+    width: 80%; }
+  /* line 183, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .cols.cols-4-1 .col.col-right {
+    width: 20%; }
+  /* line 182, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .cols.cols-5-1 .col.col-left {
+    width: 83.33333%; }
+  /* line 183, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .cols.cols-5-1 .col.col-right {
+    width: 16.66667%; }
+
+/* line 224, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.t-list-steps b {
+  color: #949494;
+  display: inline-block;
+  width: 20px; }
+
+/* line 229, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.t-list-steps .code-wrapper {
+  background-color: #333;
+  border-radius: 5px;
+  border: none;
+  box-sizing: border-box;
+  color: #ccc;
+  display: block;
+  font-family: monospace;
+  padding: 10px 10px;
+  width: 100%; }
+  /* line 239, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .t-list-steps .code-wrapper:focus {
+    outline: none; }
+  /* line 242, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .t-list-steps .code-wrapper::selection {
+    background-color: #017ac6;
+    color: white; }
+  /* line 247, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .t-list-steps .code-wrapper::-moz-selection {
+    background-color: #017ac6;
+    color: white; }
+
+/* line 252, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.t-list-steps label {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute; }
+
+/* line 257, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.t-list-steps li {
+  margin-bottom: 1.2em; }
+
+/* line 260, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.t-list-steps p {
+  font-size: 1.25em;
+  text-transform: uppercase; }
+
+/* line 266, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.icon, a.arw:after, ul.link-list.arw li a:after, .btn.download:after, .logo-github:before, .icon-menu:before {
+  font-family: 'omct-symbols' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1; }
+
+/* line 276, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.video-wrapper {
+  position: relative;
+  height: 0; }
+  /* line 279, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .video-wrapper.aspect16x9 {
+    padding-bottom: 56.25%; }
+  /* line 280, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .video-wrapper.aspect3x1 {
+    padding-bottom: 66.6%; }
+  /* line 281, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .video-wrapper.aspect4x3 {
+    padding-bottom: 75%; }
+  /* line 283, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .video-wrapper iframe.video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; }
+
+/* line 291, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.area-scrolling {
+  overflow: auto; }
+
+/******************************************** PAGE SECTIONS */
+/* line 296, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.l-page-section {
+  background-color: white;
+  color: #2e2e2e;
+  font-size: 0.9rem; }
+  /* line 301, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .l-page-section .wi {
+    padding-top: 32px;
+    padding-bottom: 32px; }
+  /* line 306, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .l-page-section h1, .l-page-section h1 a, .l-page-section h2, .l-page-section .h2, .l-page-section h2 a, .l-page-section .h2 a, .l-page-section h3, .l-page-section .h3 {
+    color: #666; }
+  /* line 308, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .l-page-section h1 {
+    font-size: 2.25em;
+    text-align: center;
+    margin-bottom: 32px; }
+  /* line 314, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .l-page-section h2, .l-page-section .h2 {
+    font-size: 1.2em;
+    font-weight: 400;
+    margin-top: 0; }
+  /* line 320, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .l-page-section.c-ltgray {
+    background-color: #fbfbfb; }
+  /* line 324, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .l-page-section.t-feature {
+    background-color: #fff;
+    background-image: -webkit-linear-gradient(#fff 90%, #f6f6f6);
+    background-image: linear-gradient(#fff 90%, #f6f6f6); }
+  /* line 328, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .l-page-section .area-scrolling {
+    height: 200px;
+    margin-bottom: 1.2em;
+    width: 100%; }
+  /* line 334, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .l-page-section .t-intro {
+    margin-bottom: 32px; }
+
+/******************************************** NAV */
+/* line 340, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+nav {
+  background: #2e2e2e;
+  height: 65px;
+  position: fixed;
+  z-index: 2; }
+
+/* line 347, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.main-nav {
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  box-align: center;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  -o-align-items: center;
+  align-items: center;
+  -ms-flex-align: center;
+  display: flex;
+  align-items: center;
+  flex-flow: row nowrap;
+  font-size: 0.8rem;
+  height: 100%; }
+  /* line 355, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .main-nav a {
+    color: #ccc; }
+    /* line 358, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+    .main-nav a:hover {
+      color: #f2f2f2; }
+  /* line 362, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .main-nav .logo-bg, .main-nav .logo-nasa, .main-nav .t-footer .t-footer-content:before, .t-footer .main-nav .t-footer-content:before, .main-nav .logo-openmct {
+    flex-shrink: 0;
+    height: 65px; }
+
+/* line 368, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.l-nav-links {
+  -webkit-transition-property: height, min-height, padding-bottom, padding-top;
+  -moz-transition-property: height, min-height, padding-bottom, padding-top;
+  transition-property: height, min-height, padding-bottom, padding-top;
+  -webkit-transition-duration: 250ms;
+  -moz-transition-duration: 250ms;
+  transition-duration: 250ms;
+  -webkit-transition-timing-function: ease-in-out;
+  -moz-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  -webkit-transition-delay: 0;
+  -moz-transition-delay: 0;
+  transition-delay: 0;
+  display: flex;
+  align-items: center;
+  flex-flow: row nowrap;
+  flex: 2 1 auto;
+  justify-content: flex-end;
+  white-space: nowrap; }
+  /* line 376, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .l-nav-links .logo {
+    vertical-align: middle; }
+  /* line 379, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .l-nav-links .mobile-sm-only {
+    display: none; }
+
+/* line 384, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.nav-link {
+  display: inline-block;
+  vertical-align: middle; }
+  /* line 387, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .nav-link:not(:first-child) {
+    margin-left: 16px; }
+
+/******************************************** SPECIFIC ELEMENTS */
+/* line 391, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.l-main {
+  padding-top: 65px; }
+
+/* line 399, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.btn.download:after {
+  color: #62c2fe;
+  content: ' \e901';
+  font-size: .8em; }
+
+/* line 405, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.btn.download:hover:after {
+  color: #aedfff; }
+
+/* line 410, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.logo-nasa, .t-footer .t-footer-content:before {
+  background-image: url("../images/logo-nasa.svg");
+  width: 58.5px; }
+
+/* line 415, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.logo-openmct {
+  background-image: url("../images/logo-openmct.svg");
+  margin-left: 16px;
+  width: 132.275px; }
+
+/* line 422, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.logo-github {
+  margin-left: 16px; }
+  /* line 424, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .logo-github:before {
+    content: '\e950';
+    font-size: 1.5em; }
+
+/* line 431, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.icon-menu {
+  display: none; }
+  /* line 433, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .icon-menu:before {
+    content: '\e902';
+    font-size: 2em;
+    vertical-align: middle; }
+
+/* line 441, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.l-graphic-boxes {
+  -webkit-box-align: stretch;
+  -moz-box-align: stretch;
+  box-align: stretch;
+  -webkit-align-items: stretch;
+  -moz-align-items: stretch;
+  -ms-align-items: stretch;
+  -o-align-items: stretch;
+  align-items: stretch;
+  -ms-flex-align: stretch; }
+  /* line 443, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .l-graphic-boxes .col {
+    display: -webkit-box;
+    display: -moz-box;
+    display: box;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -moz-box-orient: vertical;
+    box-orient: vertical;
+    -webkit-box-direction: normal;
+    -moz-box-direction: normal;
+    box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-flex-direction: column;
+    flex-direction: column;
+    -ms-flex-direction: column;
+    -webkit-box-lines: single;
+    -moz-box-lines: single;
+    box-lines: single;
+    -webkit-flex-wrap: nowrap;
+    -moz-flex-wrap: nowrap;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    position: relative; }
+  /* line 449, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .l-graphic-boxes.bg {
+    background-color: #ccc; }
+    /* line 451, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+    .l-graphic-boxes.bg .col:not(:first-child) {
+      border-left: 1px solid rgba(255, 255, 255, 0.5);
+      font-size: 0.9em; }
+
+/* line 459, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.t-list-steps .code-wrapper.dev-prereqs {
+  background-image: url("../images/logo-dev-prereqs.png");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  height: 100px; }
+
+/* line 466, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.t-list-steps .code-wrapper .btn.major {
+  text-transform: uppercase; }
+
+/* line 471, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.t-footer {
+  background-color: rgba(0, 0, 0, 0.4);
+  background-image: -webkit-linear-gradient(rgba(0, 0, 0, 0.4), transparent 15px);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.4), transparent 15px);
+  color: #999;
+  padding-bottom: 200px;
+  line-height: 140%; }
+  /* line 478, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .t-footer b {
+    color: #cccccc; }
+  /* line 479, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .t-footer .t-footer-content {
+    font-size: 0.8em;
+    padding-left: 105px;
+    position: relative; }
+    /* line 483, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+    .t-footer .t-footer-content:before {
+      content: '';
+      display: block;
+      height: 65px;
+      position: absolute;
+      left: 32px; }
+
+/* line 494, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+#lektor-edit-link {
+  font-size: 1em !important;
+  width: 20px !important; }
+
+/************************************************* DOCUMENTATION */
+/* line 500, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+code {
+  background-color: #eee;
+  border-radius: 2px;
+  display: inline-block;
+  padding: 1px 5px; }
+
+/* line 507, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+.documentation-toc {
+  line-height: 100%; }
+  /* line 509, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+  .documentation-toc ul {
+    color: #7b7b7b;
+    list-style-type: none;
+    padding: 0; }
+    /* line 514, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+    .documentation-toc ul li a {
+      border-left: 3px solid transparent;
+      display: inline-block;
+      margin-bottom: 4px;
+      padding: 3px 5px 3px 5px; }
+      /* line 519, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+      .documentation-toc ul li a.current {
+        border-color: #00aa00;
+        font-weight: bold; }
+      /* line 523, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+      .documentation-toc ul li a:hover {
+        border-color: rgba(0, 0, 0, 0.05); }
+    /* line 527, /home/ubuntu/openmct-website/styles/sass/_styles-base.scss */
+    .documentation-toc ul ul {
+      padding: 0 0 0 15px; }
+
+/************************** BREAKPOINTS */
+/************************** STYLES */
+@media only screen and (max-width: 868px) {
+  /* line 8, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  body {
+    min-width: inherit !important; }
+  /* line 12, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  nav {
+    height: auto !important;
+    position: relative; }
+  /* line 17, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  .l-main {
+    padding-top: 0; }
+  /* line 19, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  .main-nav {
+    flex-wrap: wrap; }
+  /* line 23, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  .mobile-hide {
+    display: block; }
+  /* line 27, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  .l-nav-links {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    justify-content: flex-start;
+    margin-bottom: 10px;
+    padding: 5px 0;
+    width: 100%; }
+  /* line 35, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  .l-page-section {
+    max-width: inherit !important; }
+  /* line 39, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  .cols {
+    display: flex;
+    flex-direction: column; }
+    /* line 42, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+    .cols .col {
+      margin: 0;
+      padding: 0;
+      width: 100% !important; }
+      /* line 46, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+      .cols .col.documentation {
+        margin-top: 20px;
+        order: 2; }
+      /* line 51, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+      .cols .col.documentation-toc h2, .cols .col.documentation-toc .h2 {
+        margin-top: 0; }
+  /* line 59, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  .l-graphic-boxes .cols .col {
+    border-left: none !important;
+    display: block;
+    padding: 32px 0;
+    margin-bottom: 32px 0; }
+    /* line 60, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+    .l-graphic-boxes .cols .col:not(:first-child) {
+      border-top: 1px solid rgba(255, 255, 255, 0.5); }
+    /* line 67, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+    .l-graphic-boxes .cols .col .c-wrap.graphic {
+      text-align: center; }
+      /* line 69, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+      .l-graphic-boxes .cols .col .c-wrap.graphic .graphic {
+        display: inline-block;
+        min-width: 220px;
+        width: 65%; }
+  /* line 80, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  .toc-header:after {
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    transform: rotate(90deg);
+    -webkit-transition-property: rotate;
+    -moz-transition-property: rotate;
+    transition-property: rotate;
+    -webkit-transition-duration: 500ms;
+    -moz-transition-duration: 500ms;
+    transition-duration: 500ms;
+    -webkit-transition-timing-function: ease-in-out;
+    -moz-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    -webkit-transition-delay: 0;
+    -moz-transition-delay: 0;
+    transition-delay: 0;
+    display: inline-block;
+    font-family: 'omct-symbols' !important;
+    font-size: 0.7em;
+    content: '\e900';
+    line-height: 100%;
+    margin-left: 5px; }
+  /* line 90, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  .toc-header.expanded:after {
+    -webkit-transform: rotate(270deg);
+    -moz-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);
+    -o-transform: rotate(270deg);
+    transform: rotate(270deg); }
+  /* line 95, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  .toc-content {
+    height: 0 !important;
+    max-height: 0;
+    overflow: hidden;
+    -webkit-transition-property: height, max-height;
+    -moz-transition-property: height, max-height;
+    transition-property: height, max-height;
+    -webkit-transition-duration: 500ms;
+    -moz-transition-duration: 500ms;
+    transition-duration: 500ms;
+    -webkit-transition-timing-function: ease-in-out;
+    -moz-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    -webkit-transition-delay: 0;
+    -moz-transition-delay: 0;
+    transition-delay: 0; }
+    /* line 98, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+    .toc-content.expanded {
+      height: auto !important;
+      max-height: 1000px;
+      overflow: visible; }
+  /************************** HEROES */
+  /* line 103, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  .l-hero-holder .l-hero-main .cols {
+    padding: 32px !important; } }
+
+@media only screen and (max-width: 620px) {
+  /* line 109, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  .mobile-sm-only {
+    display: inherit; }
+  /* line 112, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  .icon-menu {
+    display: inline-block; }
+  /* line 115, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  .logo-github {
+    display: none; }
+  /* line 118, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  .l-nav-links {
+    background: #484848;
+    box-sizing: border-box;
+    display: block;
+    line-height: 250%;
+    padding: 0 32px;
+    position: absolute;
+    text-align: left;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 0 !important;
+    max-height: 0;
+    overflow: hidden; }
+    /* line 128, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+    .l-nav-links .nav-link {
+      display: block;
+      margin: 0; }
+      /* line 129, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+      .l-nav-links .nav-link:not(:first-child) {
+        border-top: 1px solid rgba(255, 255, 255, 0.2); }
+    /* line 133, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+    .l-nav-links.expanded {
+      height: auto !important;
+      max-height: 1000px;
+      overflow: visible;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+      padding: 10px 32px; }
+  /* line 139, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  .icon-menu {
+    flex-grow: 9;
+    text-align: right; }
+  /************************** HEROES */
+  /* line 144, /home/ubuntu/openmct-website/styles/sass/_responsive.scss */
+  .l-hero-holder {
+    font-size: 0.8em; } }
+
+/*# sourceMappingURL=styles.css.map */

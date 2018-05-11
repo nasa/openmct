@@ -1,0 +1,74 @@
+<html>
+    <head>
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/styles.css">
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/documentation.css">
+    </head>
+    <body>
+
+<a name="table-of-contents" href="#table-of-contents"><h1 id="undefinedtable-of-contents">Table of Contents</h1>
+</a><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#overview">Overview</a><ul>
+<li><a href="#software-architecture">Software Architecture</a></li>
+</ul>
+</li>
+</ul>
+<a name="introduction" href="#introduction"><h1 id="undefinedintroduction">Introduction</h1>
+</a><p>The purpose of this document is to familiarize developers with the
+overall architecture of Open MCT.</p>
+<p>The target audience includes:</p>
+<ul>
+<li><em>Platform maintainers</em>: Individuals involved in developing,
+extending, and maintaining capabilities of the platform.</li>
+<li><em>Integration developers</em>: Individuals tasked with integrated
+Open MCT into a larger system, who need to understand
+its inner workings sufficiently to complete this integration.</li>
+</ul>
+<p>As the focus of this document is on architecture, whenever possible
+implementation details (such as relevant API or JSON syntax) have been
+omitted. These details may be found in the developer guide.</p>
+<a name="overview" href="#overview"><h1 id="undefinedoverview">Overview</h1>
+</a><p>Open MCT is client software: It runs in a web browser and
+provides a user interface, while communicating with various
+server-side resources through browser APIs.</p>
+<p><img src="index-1.png" alt="Diagram 1"></p>
+<p>While Open MCT can be configured to run as a standalone client,
+this is rarely very useful. Instead, it is intended to be used as a
+display and interaction layer for information obtained from a
+variety of back-end services. Doing so requires authoring or utilizing
+adapter plugins which allow Open MCT to interact with these services.</p>
+<p>Typically, the pattern here is to provide a known interface that
+Open MCT can utilize, and implement it such that it interacts with
+whatever back-end provides the relevant information.
+Examples of back-ends that can be utilized in this fashion include
+databases for the persistence of user-created objects, or sources of
+telemetry data.</p>
+<a name="software-architecture" href="#software-architecture"><h2 id="undefinedsoftware-architecture">Software Architecture</h2>
+</a><p>The simplest overview of Open MCT is to look at it as a &quot;layered&quot;
+architecture, where each layer more clearly specifies the behavior
+of the software.</p>
+<p><img src="index-2.png" alt="Diagram 2"></p>
+<p>These layers are:</p>
+<ul>
+<li><a href="framework.html"><em>Framework</em></a>: The framework layer is responsible for
+managing the interactions between application components. It has no
+application-specific knowledge; at this layer, we have only
+established an abstraction by which different software components
+may communicate and/or interact.</li>
+<li><a href="platform.html"><em>Platform</em></a>: The platform layer defines the general look,
+feel, and behavior of Open MCT. This includes user-facing components like
+Browse mode and Edit mode, as well as underlying elements of the
+information model and the general service infrastructure.</li>
+<li><em>Application</em>: The application layer defines specific features of
+an application built on Open MCT. This includes adapters to
+specific back-ends, new types of things for users to create, and
+new ways of visualizing objects within the system. This layer
+typically consists of a mix of custom plug-ins to Open MCT,
+as well as optional features (such as Plot view) included alongside
+the platform.</li>
+</ul>
+        <hr>
+    </body>
+</html>

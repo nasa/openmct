@@ -1,0 +1,295 @@
+<html>
+    <head>
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/styles.css">
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/documentation.css">
+    </head>
+    <body>
+
+<a name="table-of-contents" href="#table-of-contents"><h1 id="undefinedtable-of-contents">Table of Contents</h1>
+</a><ul>
+<li><a href="#test-procedures">Test Procedures</a><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#writing-procedures">Writing Procedures</a><ul>
+<li><a href="#template">Template</a>
+~ <a href="#example-procedure---edit-a-layout">Example Procedure - Edit a Layout</a></li>
+<li><a href="#guidelines">Guidelines</a></li>
+</ul>
+</li>
+<li><a href="#glossary">Glossary</a></li>
+<li><a href="#procedures">Procedures</a><ul>
+<li><a href="#user-testing-setup">User Testing Setup</a></li>
+<li><a href="#user-test-procedures">User Test Procedures</a></li>
+<li><a href="#long-duration-testing">Long-Duration Testing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<a name="test-procedures" href="#test-procedures"><h1 id="undefinedtest-procedures">Test Procedures</h1>
+</a><a name="introduction" href="#introduction"><h2 id="undefinedintroduction">Introduction</h2>
+</a><p>This document is intended to be used:</p>
+<ul>
+<li>By testers, to verify that Open MCT behaves as specified.</li>
+<li>By the development team, to document new test cases and to provide
+guidance on how to author these.</li>
+</ul>
+<a name="writing-procedures" href="#writing-procedures"><h2 id="undefinedwriting-procedures">Writing Procedures</h2>
+</a><a name="template" href="#template"><h3 id="undefinedtemplate">Template</h3>
+</a><p>Procedures for individual tests should use the following template,
+adapted from <a href="">https://swehb.nasa.gov/display/7150/SWE-114</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test ID</td>
+<td></td>
+</tr>
+<tr>
+<td>Relevant reqs.</td>
+<td></td>
+</tr>
+<tr>
+<td>Prerequisites</td>
+<td></td>
+</tr>
+<tr>
+<td>Test input</td>
+<td></td>
+</tr>
+<tr>
+<td>Instructions</td>
+<td></td>
+</tr>
+<tr>
+<td>Expectation</td>
+<td></td>
+</tr>
+<tr>
+<td>Eval. criteria</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>For multi-line descriptions, use an asterisk or similar indicator to refer
+to a longer-form description below.</p>
+<a name="example-procedure---edit-a-layout" href="#example-procedure---edit-a-layout"><h4 id="undefinedexample-procedure-edit-a-layout">Example Procedure - Edit a Layout</h4>
+</a><table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test ID</td>
+<td>MCT-TEST-000X - Edit a layout</td>
+</tr>
+<tr>
+<td>Relevant reqs.</td>
+<td>MCT-EDIT-000Y</td>
+</tr>
+<tr>
+<td>Prerequisites</td>
+<td>Create a layout, as in MCT-TEST-000Z</td>
+</tr>
+<tr>
+<td>Test input</td>
+<td>Domain object database XYZ</td>
+</tr>
+<tr>
+<td>Instructions</td>
+<td>See below &ast;</td>
+</tr>
+<tr>
+<td>Expectation</td>
+<td>Change to editing context &dagger;</td>
+</tr>
+<tr>
+<td>Eval. criteria</td>
+<td>Visual inspection</td>
+</tr>
+</tbody>
+</table>
+<p>&ast; Follow the following steps:</p>
+<ol>
+<li>Verify that the created layout is currently navigated-to,
+as in MCT-TEST-00ZZ.</li>
+<li>Click the Edit button, identified by a pencil icon and the text &quot;Edit&quot;
+displayed on hover.</li>
+</ol>
+<p>&dagger; Right-hand viewing area should be surrounded by a dashed
+blue border when a domain object is being edited.</p>
+<a name="guidelines" href="#guidelines"><h3 id="undefinedguidelines">Guidelines</h3>
+</a><p>Test procedures should be written assuming minimal prior knowledge of the
+application: Non-standard terms should only be used when they are documented
+in <a href="#glossary">the glossary</a>, and shorthands used for user actions should
+be accompanied by useful references to test procedures describing those
+actions (when available) or descriptions in user documentation.</p>
+<p>Test cases should be narrow in scope; if a list of steps is excessively
+long (or must be written vaguely to be kept short) it should be broken
+down into multiple tests which reference one another.</p>
+<p>All requirements satisfied by Open MCT should be verifiable using
+one or more test procedures.</p>
+<a name="glossary" href="#glossary"><h2 id="undefinedglossary">Glossary</h2>
+</a><p>This section will contain terms used in test procedures. This may link to
+a common glossary, to avoid replication of content.</p>
+<a name="procedures" href="#procedures"><h2 id="undefinedprocedures">Procedures</h2>
+</a><p>This section will contain specific test procedures. Presently, procedures
+are placeholders describing general patterns for setting up and conducting
+testing.</p>
+<a name="user-testing-setup" href="#user-testing-setup"><h3 id="undefineduser-testing-setup">User Testing Setup</h3>
+</a><p>These procedures describes a general pattern for setting up for user
+testing. Specific deployments should customize this pattern with
+relevant data and any additional steps necessary.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test ID</td>
+<td>MCT-TEST-SETUP0 - User Testing Setup</td>
+</tr>
+<tr>
+<td>Relevant reqs.</td>
+<td>TBD</td>
+</tr>
+<tr>
+<td>Prerequisites</td>
+<td>Build of relevant components</td>
+</tr>
+<tr>
+<td>Test input</td>
+<td>Exemplary database; exemplary telemetry data set</td>
+</tr>
+<tr>
+<td>Instructions</td>
+<td>See below</td>
+</tr>
+<tr>
+<td>Expectation</td>
+<td>Able to load application in a web browser (Google Chrome)</td>
+</tr>
+<tr>
+<td>Eval. criteria</td>
+<td>Visual inspection</td>
+</tr>
+</tbody>
+</table>
+<p>Instructions:</p>
+<ol>
+<li>Start telemetry server.</li>
+<li>Start ElasticSearch.</li>
+<li>Restore database snapshot to ElasticSearch.</li>
+<li>Start telemetry playback.</li>
+<li>Start HTTP server for client sources.</li>
+</ol>
+<a name="user-test-procedures" href="#user-test-procedures"><h3 id="undefineduser-test-procedures">User Test Procedures</h3>
+</a><p>Specific user test cases have not yet been authored. In their absence,
+user testing is conducted by:</p>
+<ul>
+<li>Reviewing the text of issues from the issue tracker to understand the
+desired behavior, and exercising this behavior in the running application.
+(For instance, by following steps to reproduce from the original issue.)<ul>
+<li>Issues which appear to be resolved should be marked as such with comments
+on the original issue (e.g. &quot;verified during user testing MM/DD/YYYY&quot;.)</li>
+<li>Issues which appear not to have been resolved should be reopened with an
+explanation of what unexpected behavior has been observed.</li>
+<li>In cases where an issue appears resolved as-worded but other related
+undesirable behavior is observed during testing, a new issue should be
+opened, and linked to from a comment in the original issues.</li>
+</ul>
+</li>
+<li>General usage of new features and/or existing features which have undergone
+recent changes. Defects or problems with usability should be documented
+by filing issues in the issue tracker.</li>
+<li>Open-ended testing to discover defects, identify usability issues, and
+generate feature requests.</li>
+</ul>
+<a name="long-duration-testing" href="#long-duration-testing"><h3 id="undefinedlong-duration-testing">Long-Duration Testing</h3>
+</a><p>The purpose of long-duration testing is to identify performance issues
+and/or other defects which are sensitive to the amount of time the
+application is kept running. (Memory leaks, for instance.)</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test ID</td>
+<td>MCT-TEST-LDT0 - Long-duration Testing</td>
+</tr>
+<tr>
+<td>Relevant reqs.</td>
+<td>TBD</td>
+</tr>
+<tr>
+<td>Prerequisites</td>
+<td>MCT-TEST-SETUP0</td>
+</tr>
+<tr>
+<td>Test input</td>
+<td>(As for test setup.)</td>
+</tr>
+<tr>
+<td>Instructions</td>
+<td>See &quot;Instructions&quot; below &ast;</td>
+</tr>
+<tr>
+<td>Expectation</td>
+<td>See &quot;Expectations&quot; below &dagger;</td>
+</tr>
+<tr>
+<td>Eval. criteria</td>
+<td>Visual inspection</td>
+</tr>
+</tbody>
+</table>
+<p>&ast; Instructions:</p>
+<ol>
+<li>Start <code>top</code> or a similar tool to measure CPU usage and memory utilization.</li>
+<li>Open several user-created displays (as many as would be realistically
+opened during actual usage in a stressing case) in some combination of
+separate tabs and windows (approximately as many tabs-per-window as
+total windows.)</li>
+<li>Ensure that playback data is set to run continuously for at least 24 hours
+(e.g. on a loop.)</li>
+<li>Record CPU usage and memory utilization.</li>
+<li>In at least one tab, try some general user interface gestures and make
+notes about the subjective experience of using the application. (Particularly,
+the degree of responsiveness.)</li>
+<li>Leave client displays open for 24 hours.</li>
+<li>Record CPU usage and memory utilization again.</li>
+<li>Make additional notes about the subjective experience of using the
+application (again, particularly responsiveness.)</li>
+<li>Check logs for any unexpected warnings or errors.</li>
+</ol>
+<p>&dagger; Expectations:</p>
+<ul>
+<li>At the end of the test, CPU usage and memory usage should both be similar
+to their levels at the start of the test.</li>
+<li>At the end of the test, subjective usage of the application should not
+be observably different from the way it was at the start of the test.
+(In particular, responsiveness should not decrease.)</li>
+<li>Logs should not contain any unexpected warnings or errors (&quot;expected&quot;
+warnings or errors are those that have been documented and prioritized
+as known issues, or those that are explained by transient conditions
+external to the software, such as network outages.)</li>
+</ul>
+        <hr>
+    </body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Contributing — Open MCT</title>
+    <link rel="icon" type="image/png"
+          href="../static/res/images/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="../static/res/images/favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="../static/res/images/favicons/favicon-16x16.png" sizes="16x16">
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="../static/res/css/normalize.min.css">
+    <link rel="stylesheet" href="../static/res/css/styles.css">
+    <link rel="shortcut icon" href="../static/res/images/favicons/favicon.ico">
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-76951009-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script>
+        (function () {
+            var loc = window.location;
+            if (!loc.host.match(/^localhost:[0-9]*$/) && !loc.host.match(/^127\.0\.0\.1:[0-9]*$/) &&
+                loc.protocol === 'http:') {
+                loc.protocol = 'https:'
+            }
+        })();
+    </script>
+    <script src="../static/res/scripts/jquery-3.1.1.min.js"></script>
+    <script src="../static/res/scripts/utils.js"></script>
+    
+</head>
+<body>
+<nav class="wo">
+    <div class="main-nav wi">
+        <a href="https://www.nasa.gov"
+           class="logo logo-bg logo-nasa"
+           target="_blank"
+           alt="NASA logo"
+           title="Link to NASA.com"></a>
+
+        <a href="../"
+           class="logo logo-bg logo-openmct"
+           alt="Open MCT logo"></a>
+
+        <div class="l-nav-links">
+            <a href="../"
+               class="nav-link mobile-sm-only">Home</a>
+            
+            <a href="../about-open-mct/" class="nav-link">About</a></li>
+            
+            <a href="../getting-started/" class="nav-link">Getting Started</a></li>
+            
+            <a href="../contributing/" class="nav-link">Contributing</a></li>
+            
+            <a href="../documentation/" class="nav-link">Documentation</a></li>
+            
+            <a href="https://openmct-demo.herokuapp.com/" class="nav-link"
+               target="_blank" rel="noreferrer">Try it live</a>
+            <a href="https://github.com/nasa/openmct"
+               class="nav-link t-nav-link-github-repo mobile-sm-only"
+               target="_blank" rel="noreferrer">Github Repository</a>
+            <a href="https://github.com/nasa/openmct"
+               class="logo logo-github"
+               target="_blank"
+               alt="Link to Open MCT Github repository"
+               title="Link to Open MCT Github repository"></a>
+        </div>
+
+        <a class="icon-menu"
+           onclick="toggleClass('.l-nav-links','expanded')"
+           alt="Main navigation"></a>
+    </div>
+</nav>
+<div class="l-main wo">
+    
+<div class="p-body contributing">
+    <div class="t-hero l-hero-holder">
+      <div class="l-hero-main wo">
+        <div class="l-hero-text cols cols-equal wi">
+          <div class="col">
+            <h1>Contributing</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="l-page-section  wo">
+    <div class="wi">
+        <h2>Contributing to Open MCT</h2>
+        <div class="t-intro"><p>Open MCT is an open source project <a href="https://github.com/nasa/openmct" target="_blank">hosted on Github</a>. To get started with Open MCT, see our Getting Started guide.</p>
+<p>This is an opportunity to contribute in a tangible way to NASA's exploration of the solar system. Your contributions may potentially be used to study Mars, explore the poles of the Moon, or improve our understanding of the Earth. There are opportunities for coders and non-coders alike to contribute.</p>
+<h3>Contributor License Agreement</h3>
+<p>Before we can merge any code into our repository and potentially start using it on a mission, there is a Contributor License Agreement that must be completed.</p>
+<ol>
+<li>For individual contributions, please download the <a href="../contributing/ind-cla-open-mct.pdf">Individual Contributor License Agreement</a>. For companies, use the <a href="../contributing/corp-cla-open-mct.pdf">Corporate Contributor License Agreement</a>. </li>
+<li>Once completed,  please email the completed form to the address at the bottom of the PDF, and cc <a href="mailto:arc-dl-openmct@mail.nasa.gov">arc-dl-openmct@mail.nasa.gov</a>. </li>
+<li>In the email, please also include your GitHub username.</li>
+</ol>
+</div>
+        <div class="cols cols-equal">
+            <div class="col col-left ">
+                <div class="c-wrap">
+                    <h2>I&#39;m a coder, where do I start?</h2>
+                    <p>Start here, young padawan: <a href="../documentation">documentation and tutorials</a>. The tutorials will take you through a number of common use-cases for extending Open MCT. We also have a <a href="https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md" target="_blank">contributor's guide</a> that will take you through some of the specifics of submitting your own code to our repository.</p>
+<p>When you're ready to start writing code, you can either start hacking away at your own ideas, or take a look at our <a href="https://github.com/nasa/openmctweb/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22" target="_blank">Help Wanted</a> list.</p>
+<p>We also have a <a href="../about-open-mct#roadmap">roadmap of upcoming features</a>. If you’d like to help out with any of these features specifically, please <a href="mailto:arc-dl-openmct@mail.nasa.gov">contact us</a> to discuss next steps.</p>
+
+                </div>
+                
+            </div>
+            <div class="col col-right ">
+                <div class="c-wrap">
+                    <h2>I&#39;m not a coder, can I still help?</h2>
+                    <p>Absolutely. <a href="../getting-started/">Try our software out</a>, and let the world know about it.  If you have any suggestions for improving it, find any bugs, know of novel ways of visualizing complex data, have outreach ideas, or anything else please let us know by <a href="https://github.com/nasa/openmctweb/issues/new" target="_blank">filing an issue on Github</a> or <a href="mailto:arc-dl-openmct@mail.nasa.gov">emailing us</a>.</p>
+
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="l-page-section wo">
+    <div class="wi">
+        <h2>I am using Open MCT in my own project</h2>
+        <div class="cols cols-equal">
+            <div class="col">
+                <p>That's great! Please <a href="mailto:arc-dl-openmct@mail.nasa.gov">let us know</a> if you are using Open MCT, we would love to hear about it. Are you using Open MCT for your mobile robotics project? Have you integrated it with Kerbal Space Program? Anything you do with Open MCT is of interest to us.  Also, if you have created plugins, visualizations, bug fixes, or anything else in your own project based on Open MCT, we would love to incorporate them into our software. Please file a pull request!</p>
+
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+</div>
+<div class="l-page-section t-footer wo">
+    <div class="t-footer-content wi">
+        <ul class="list-vertical no-bullets">
+            <li>Site Editor <b>Andrew Henry</b></li>
+            <li>NASA Official <b>Jay Trimble</b></li>
+        </ul>
+        <ul class="list-vertical no-bullets">
+            <li><a href="mailto:arc-dl-openmct@mail.nasa.gov">Contact Us</a></li>
+            <li><a href="https://www.nasa.gov/about/highlights/HP_Privacy.html" target="_blank">Privacy Policy and
+                Important Notices</a></li>
+            <li><a href="https://www.usa.gov/" target="_blank">USA.gov</a></li>
+        </ul>
+    </div>
+
+</div>
+
+</div>
+</body>
+</html>

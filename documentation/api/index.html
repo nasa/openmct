@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>API Documentation — Open MCT</title>
+    <link rel="icon" type="image/png"
+          href="../../static/res/images/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="../../static/res/images/favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="../../static/res/images/favicons/favicon-16x16.png" sizes="16x16">
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="../../static/res/css/normalize.min.css">
+    <link rel="stylesheet" href="../../static/res/css/styles.css">
+    <link rel="shortcut icon" href="../../static/res/images/favicons/favicon.ico">
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-76951009-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script>
+        (function () {
+            var loc = window.location;
+            if (!loc.host.match(/^localhost:[0-9]*$/) && !loc.host.match(/^127\.0\.0\.1:[0-9]*$/) &&
+                loc.protocol === 'http:') {
+                loc.protocol = 'https:'
+            }
+        })();
+    </script>
+    <script src="../../static/res/scripts/jquery-3.1.1.min.js"></script>
+    <script src="../../static/res/scripts/utils.js"></script>
+    
+</head>
+<body>
+<nav class="wo">
+    <div class="main-nav wi">
+        <a href="https://www.nasa.gov"
+           class="logo logo-bg logo-nasa"
+           target="_blank"
+           alt="NASA logo"
+           title="Link to NASA.com"></a>
+
+        <a href="../../"
+           class="logo logo-bg logo-openmct"
+           alt="Open MCT logo"></a>
+
+        <div class="l-nav-links">
+            <a href="../../"
+               class="nav-link mobile-sm-only">Home</a>
+            
+            <a href="../../about-open-mct/" class="nav-link">About</a></li>
+            
+            <a href="../../getting-started/" class="nav-link">Getting Started</a></li>
+            
+            <a href="../../contributing/" class="nav-link">Contributing</a></li>
+            
+            <a href="../../documentation/" class="nav-link">Documentation</a></li>
+            
+            <a href="https://openmct-demo.herokuapp.com/" class="nav-link"
+               target="_blank" rel="noreferrer">Try it live</a>
+            <a href="https://github.com/nasa/openmct"
+               class="nav-link t-nav-link-github-repo mobile-sm-only"
+               target="_blank" rel="noreferrer">Github Repository</a>
+            <a href="https://github.com/nasa/openmct"
+               class="logo logo-github"
+               target="_blank"
+               alt="Link to Open MCT Github repository"
+               title="Link to Open MCT Github repository"></a>
+        </div>
+
+        <a class="icon-menu"
+           onclick="toggleClass('.l-nav-links','expanded')"
+           alt="Main navigation"></a>
+    </div>
+</nav>
+<div class="l-main wo">
+    
+<div class="p-body documentation">
+    <div class="t-hero l-hero-holder">
+      <div class="l-hero-main wo">
+        <div class="l-hero-text cols cols-equal wi">
+          <div class="col">
+            <h1>API Documentation</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="l-page-section  wo">
+    <div class="wi">
+        
+        
+        <div class="cols cols-3-1">
+            <div class="col col-left documentation">
+                <div class="c-wrap">
+                    <h2>Lorem Ipsum</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vestibulum hendrerit ante, a congue mi ultrices a. Curabitur ac odio fermentum, mattis dui a, rhoncus ligula. Integer convallis ante nec nulla dictum, et auctor ante suscipit. Maecenas dapibus arcu eu orci accumsan, nec bibendum arcu tempor. Etiam non mollis odio. Vestibulum ut nisi dignissim, iaculis felis a, ultricies ex. Phasellus vulputate ullamcorper sapien ac dignissim. Etiam dignissim laoreet ipsum, ac fringilla ante fringilla ut. Quisque a cursus tellus. Duis vehicula lectus quis mauris dignissim, eget volutp.</p>
+<h3>This is an H3</h3>
+<p>Proin facilisis elit id massa interdum, eu ornare libero commodo. Nunc at varius purus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Curabitur et lacus quis turpis porttitor pellentesque. Sed sollicitudin rutrum volutpat. Orci varius natoque penatibus et magnis</p>
+<h3>This is an H3</h3>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vestibulum hendrerit ante, a congue mi ultrices a. Curabitur ac odio fermentum, mattis dui a, rhoncus ligula. Integer convallis ante nec nulla dictum, et auctor ante suscipit. Maecenas dapibus arcu eu orci accumsan, nec bibendum arcu tempor. Etiam non mollis odio. Vestibulum ut nisi dignissim, iaculis felis a, ultricies ex. Phasellus vulputate ullamcorper sapien ac dignissim. Etiam dignissim laoreet ipsum, ac fringilla ante fringilla ut. Quisque a cursus tellus. Duis vehicula lectus quis mauris dignissim, eget volutp.</p>
+<p>Lurabitur ac odio fermentum, mattis dui a, rhoncus ligula. Integer convallis ante nec nulla dictum, et auctor ante suscipit. Maecenas dapibus arcu eu orci accumsan, nec bibendum arcu tempor. Etiam non mollis odio. Vestibulum ut nisi dignissim, iaculis felis a, ultricies ex. Phasellus vulputate ullamcorper sapien ac dignissim. Etiam dignissim laoreet ipsum, ac fringilla ante fringilla ut. Quisque a cursus tellus. Duis vehicula lectus quis mauris dignissim, eget volutp.</p>
+                </div>
+                
+            </div>
+            <div class="col col-right documentation-toc">
+                <div class="c-wrap">
+                    
+                    <p><h2 class="t-expanding toc-header"><a onclick="toggleClass('.t-expanding','expanded')">Contents</a></h2></p>
+<div class="t-expanding toc-content">
+<ul>
+<li><a>Loremm Ipsum</a></li>
+<li><a>Dolor Sit</a></li>
+<li><a>Loremm Ipsum dolor sit nonummy nonsectatru</a></li>
+<li><a>Dolor Sit</a></li>
+<li><a class="current">Loremm Ipsum Current</a>
+    <ul>
+    <li><a>Loremm Ipsum</a></li>
+    <li><a>Dolor Sit</a></li>
+    <li><a>Loremm Ipsum dolor sit nonummy nonsectatru</a></li>
+    </ul>
+</li>
+<li><a>Dolor Sit</a></li>
+<li><a>Loremm Ipsum dolor sit nonummy nonsectatru</a></li>
+<li><a>Dolor Sit</a></li>
+<li><a>Lorem Ipsum Ct</a>
+    <ul>
+    <li><a>Loremm Ipsum</a></li>
+    <li><a>Dolor Sit</a></li>
+    <li><a>Loremm Ipsum dolor sit nonummy nonsectatru</a></li>
+    <li><a>Loremm Ipsum</a></li>
+    <li><a>Dolor Sit</a></li>
+    </ul>
+</li>
+</ul>
+</div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+</div>
+<div class="l-page-section t-footer wo">
+    <div class="t-footer-content wi">
+        <ul class="list-vertical no-bullets">
+            <li>Site Editor <b>Andrew Henry</b></li>
+            <li>NASA Official <b>Jay Trimble</b></li>
+        </ul>
+        <ul class="list-vertical no-bullets">
+            <li><a href="mailto:arc-dl-openmct@mail.nasa.gov">Contact Us</a></li>
+            <li><a href="https://www.nasa.gov/about/highlights/HP_Privacy.html" target="_blank">Privacy Policy and
+                Important Notices</a></li>
+            <li><a href="https://www.usa.gov/" target="_blank">USA.gov</a></li>
+        </ul>
+    </div>
+
+</div>
+
+</div>
+</body>
+</html>
