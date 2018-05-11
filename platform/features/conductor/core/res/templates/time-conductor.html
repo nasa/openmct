@@ -11,7 +11,7 @@
         <!-- Holds inputs and ticks -->
         <div class="l-time-conductor-inputs-and-ticks l-row-elem flex-elem no-margin">
             <form class="l-time-conductor-inputs-holder"
-                  ng-submit="tcController.setBoundsFromView(boundsModel)">
+                  ng-submit="tcController.isFixed ? tcController.setBoundsFromView(boundsModel) : tcController.setOffsetsFromView(boundsModel)">
                 <span class="l-time-range-w start-w">
                     <span class="l-time-conductor-inputs">
                         <span class="l-time-range-input-w start-date">
@@ -77,7 +77,7 @@
                     </span>
                 </span>
 
-                <input type="submit" class="hidden">
+                <input type="submit" class="off">
             </form>
             <conductor-axis view-service="tcController.conductorViewService"></conductor-axis>
         </div>
