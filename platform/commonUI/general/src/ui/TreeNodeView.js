@@ -160,6 +160,6 @@ define([
         }
     };
 
-
+    console.log(TreeNodeView.setOpenMct);
     return TreeNodeView;
 });

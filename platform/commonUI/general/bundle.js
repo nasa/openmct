@@ -394,7 +394,7 @@ define([
                 {
                     "key": "mctTree",
                     "implementation": MCTTree,
-                    "depends": ['gestureService']
+                    "depends": ['gestureService', 'openmct']
                 }
             ],
             "constants": [
