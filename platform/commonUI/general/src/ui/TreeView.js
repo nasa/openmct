@@ -41,6 +41,7 @@ define([
 
     TreeView.prototype.setSize = function (sz) {
         var nodeView;
+
         while (this.nodeViews.length < sz) {
             nodeView = new TreeNodeView(
                 this.gestureService,
@@ -64,6 +65,7 @@ define([
         function addNode(domainObj, index) {
             self.nodeViews[index].model(domainObj);
         }
+
         function addNodes(domainObjects) {
             if (self.pending) {
                 self.pending = false;
@@ -76,19 +78,11 @@ define([
                 domainObjects.forEach(addNode);
                 self.updateNodeViewSelection();
             }
-            var element = $(self.elements()[0])
-                .parent()
-                .siblings()
-                .children();
-
-            $(element[0]).removeClass('no-children');
         }
 
         domainObject.useCapability('composition')
             .then(addNodes);
     };
-
-
 
     TreeView.prototype.model = function (domainObject) {
         if (this.unlisten) {
