@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -76,9 +76,11 @@
 @import "items/item";
 @import "mobile/item";
 
-
 /********************************* TO BE MOVED */
 @import "autoflow";
 @import "features/imagery";
 @import "features/time-display";
 @import "widgets";
+
+/********************************* APP STARTUP */
+@import "app-start";

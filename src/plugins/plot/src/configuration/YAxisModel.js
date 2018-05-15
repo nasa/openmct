@@ -152,7 +152,7 @@ define([
             this.resetStats();
         },
         toggleAutoscale: function (autoscale) {
-            if (autoscale) {
+            if (autoscale && this.has('stats')) {
                 this.set('displayRange', this.applyPadding(this.get('stats')));
             } else {
                 this.set('displayRange', this.get('range'));
