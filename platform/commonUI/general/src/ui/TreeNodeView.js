@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -81,9 +81,15 @@ define([
         }
 
         this.activeObject = domainObject;
-        this.hasChildren(domainObject);
-
-
+        if (domainObject) {
+            var obj = domainObject.useCapability('adapter');
+            var hasComposition =  this.openmct.composition.get(obj) !== undefined;
+            if (hasComposition) {
+                $(this.toggleView.elements()).removeClass('no-children');
+            } else {
+                $(this.toggleView.elements()).addClass('no-children');
+            }
+        }
         if (domainObject && domainObject.hasCapability('status')) {
             this.unlisten = domainObject.getCapability('status')
                 .listen(this.updateStatusClasses.bind(this));
@@ -146,20 +152,10 @@ define([
         return this.li;
     };
 
-    TreeNodeView.prototype.hasChildren = function (domainObject) {
-
-        if (domainObject) {
-            var elementCount = domainObject.getModel().length;
-            if (elementCount > 0) {
-
-                $(this.toggleView.elements()).removeClass('no-children');
-            } else {
-                $(this.toggleView.elements()).addClass('no-children');
-            }
-
-        }
+    TreeNodeView.prototype.setOpenMct = function (openmct) {
+        this.openmct = openmct;
     };
 
-    console.log(TreeNodeView.setOpenMct);
+
     return TreeNodeView;
 });

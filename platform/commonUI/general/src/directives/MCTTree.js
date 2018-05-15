@@ -38,7 +38,7 @@ define([
             var currentSelection = scope.selectedObject;
             var treeView = new TreeView(gestureService);
 
-            TreeNodeView.prototype.setOpenMct = openmct;
+            TreeNodeView.prototype.setOpenMct(openmct);
 
             function setSelection(domainObject, event) {
                 if (currentSelection === domainObject) {
