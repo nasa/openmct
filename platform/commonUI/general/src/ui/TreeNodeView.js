@@ -81,7 +81,7 @@ define([
         }
 
         this.activeObject = domainObject;
-        if (domainObject) {
+        if (domainObject && domainObject.hasCapability('adapter')) {
             var obj = domainObject.useCapability('adapter');
             var hasComposition =  this.openmct.composition.get(obj) !== undefined;
             if (hasComposition) {
