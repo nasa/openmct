@@ -78,6 +78,8 @@ define(
             this.domainObject = objectUtils.toNewFormat($scope.domainObject.getModel(),
                 $scope.domainObject.getId());
 
+            this.$scope.exportAs = this.$scope.domainObject.getModel().name;
+
             _.bindAll(this, [
                 'destroy',
                 'sortByTimeSystem',
