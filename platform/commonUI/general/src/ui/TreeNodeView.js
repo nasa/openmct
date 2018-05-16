@@ -81,13 +81,15 @@ define([
         }
 
         this.activeObject = domainObject;
-
-        if (domainObject && domainObject.hasCapability('composition')) {
-            $(this.toggleView.elements()).removeClass('no-children');
-        } else {
-            $(this.toggleView.elements()).addClass('no-children');
+        if (domainObject && domainObject.hasCapability('adapter')) {
+            var obj = domainObject.useCapability('adapter');
+            var hasComposition =  this.openmct.composition.get(obj) !== undefined;
+            if (hasComposition) {
+                $(this.toggleView.elements()).removeClass('no-children');
+            } else {
+                $(this.toggleView.elements()).addClass('no-children');
+            }
         }
-
         if (domainObject && domainObject.hasCapability('status')) {
             this.unlisten = domainObject.getCapability('status')
                 .listen(this.updateStatusClasses.bind(this));
@@ -127,9 +129,9 @@ define([
             !!domainObject &&
             !!this.activeObject &&
             (activeIdPath.length <= selectedIdPath.length) &&
-                activeIdPath.every(function (id, index) {
-                    return selectedIdPath[index] === id;
-                });
+            activeIdPath.every(function (id, index) {
+                return selectedIdPath[index] === id;
+            });
 
         if (this.onSelectionPath) {
             if (activeIdPath.length === selectedIdPath.length) {
@@ -148,6 +150,10 @@ define([
      */
     TreeNodeView.prototype.elements = function () {
         return this.li;
+    };
+
+    TreeNodeView.prototype.setOpenMct = function (openmct) {
+        this.openmct = openmct;
     };
 
 
