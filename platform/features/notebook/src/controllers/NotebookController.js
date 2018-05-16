@@ -73,7 +73,10 @@ define(
                 if (element[0]) {
                     return element.find("[contenteditable='true']");
                 } else {
-                    return $($scope.entriesEl.children().children()[0]).find("[contenteditable='true']");
+                    var entries = $scope.entriesEl.children().children(),
+                        lastOrFirst = $scope.sortEntries === "-createdOn" ? 0 : (entries.length - 1);
+
+                    return $(entries[lastOrFirst]).find("[contenteditable='true']");
                 }
             };
 
