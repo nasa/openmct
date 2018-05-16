@@ -67,7 +67,25 @@ define([
                       "entries": [],
                       "composition": [],
                       "entryTypes": []
-                  }
+                  },
+                "properties": [
+                    {
+                        "key": "defaultSort",
+                        "name": "Default Sort",
+                        "control": "select",
+                        "options": [
+                                {
+                                    "name": "Newest First",
+                                    "value": "-createdOn"
+                                },
+                                {
+                                    "name": "Oldest First",
+                                    "value": "createdOn"
+                                }
+                            ],
+                        "cssClass": "l-inline"
+                    }
+                ]
             }
           ],
             "views": [
@@ -91,18 +109,19 @@ define([
              {
                  "key": "NotebookController",
                  "implementation": NotebookController,
-                 "depends": ["$scope",
-                             "dialogService",
-                             "popupService",
-                             "agentService",
-                             "objectService",
-                             "navigationService",
-                             "now",
-                             "actionService",
-                             "$timeout",
-                             "$element",
-                             "$sce"
-                             ]
+                 "depends": [
+                                "$scope",
+                                "dialogService",
+                                "popupService",
+                                "agentService",
+                                "objectService",
+                                "navigationService",
+                                "now",
+                                "actionService",
+                                "$timeout",
+                                "$element",
+                                "$sce"
+                            ]
              },
              {
                  "key": "NewEntryController",

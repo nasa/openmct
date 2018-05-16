@@ -42,15 +42,13 @@ define(
         ) {
 
             $scope.entriesEl = $(document.body).find('.t-entries-list');
-            $scope.sortEntries = '-createdOn';
+            $scope.sortEntries = $scope.domainObject.getModel().defaultSort || "-createdOn";
             $scope.showTime = "0";
             $scope.editEntry = false;
             $scope.entrySearch = '';
             $scope.entryTypes = [];
             $scope.embedActions = [];
             $scope.currentEntryValue = '';
-
-            /*--seconds in an hour--*/
 
             var SECONDS_IN_AN_HOUR  = 60 * 60 * 1000;
 
