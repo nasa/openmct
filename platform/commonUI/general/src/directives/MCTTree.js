@@ -35,6 +35,7 @@ define([
             if (!scope.onSelection) {
                 scope.onSelection = function () {};
             }
+
             var currentSelection = scope.selectedObject;
             var treeView = new TreeView(gestureService);
 
