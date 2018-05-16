@@ -22,6 +22,9 @@
 .frame {
     $ohH: $btnFrameH;
     $bc: $colorInteriorBorder;
+
+    position: absolute;
+
     &.child-frame.panel {
         z-index: 0; // Needed to prevent child-frame controls from showing through when another child-frame is above
         &:not(.no-frame) {
@@ -169,5 +172,38 @@ body.desktop .frame {
             opacity: 1;
             pointer-events: inherit;
         }
+    }
+}
+
+.l-layout {
+    &.column,
+    &.row,
+    &.fit-all {
+        display: flex;
+        flex-wrap: nowrap;
+        > .frame {
+            display: block;
+            flex: 1 1 auto;
+            width: auto !important;
+            top: auto !important;
+            left: auto !important;
+            height: auto !important;
+            position: relative;
+            min-height: 300px;
+            min-width: 300px;
+        }
+    }
+    &.column {
+        flex-direction: column;
+        padding-right: $interiorMargin;
+    }
+    &.row {
+        flex-direction: row;
+        padding-bottom: $interiorMargin;
+    }
+
+    &.fit-all {
+        align-content: stretch;
+        flex-wrap: wrap;
     }
 }
