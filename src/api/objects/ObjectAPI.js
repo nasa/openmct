@@ -91,6 +91,14 @@ define([
     };
 
     /**
+     * @param {module:openmct.ObjectAPI~Identifier} identifier
+     * @returns {string} A string representation of the given identifier, including namespace and key
+     */
+    ObjectAPI.prototype.makeKeyString = function (identifier) {
+        return utils.makeKeyString(identifier);
+    }
+
+    /**
      * Provides the ability to read, write, and delete domain objects.
      *
      * When registering a new object provider, all methods on this interface

@@ -31,12 +31,14 @@ define([], function () {
      * @memberof platform/import-export
      */
     function ExportAsJSONAction(
+        openmct,
         exportService,
         policyService,
         identifierService,
+        typeService,
         context
     ) {
-
+        this.openmct = openmct;
         this.root = {};
         this.tree = {};
         this.calls = 0;
@@ -45,15 +47,16 @@ define([], function () {
         this.exportService = exportService;
         this.policyService = policyService;
         this.identifierService = identifierService;
+        this.typeService = typeService;
     }
 
     ExportAsJSONAction.prototype.perform = function () {
-        this.root = this.context.domainObject;
-        this.tree[this.root.getId()] = this.root.getModel();
+        this.root = this.context.domainObject.useCapability('adapter');
+        this.tree[this.getId(this.root)] = this.root;
         this.saveAs = function (completedTree) {
             this.exportService.exportJSON(
                 completedTree,
-                {filename: this.root.getModel().name + '.json'}
+                {filename: this.root.name + '.json'}
             );
         };
 
@@ -68,22 +71,24 @@ define([], function () {
      * @param {Object} parent
      */
     ExportAsJSONAction.prototype.write = function (parent) {
-
+        var openmct = this.openmct;
         this.calls++;
-        if (parent.hasCapability('composition')) {
-            parent.useCapability('composition')
+
+        var composition = openmct.composition.get(parent);
+        if (composition !== undefined) {
+            composition.load()
                 .then(function (children) {
                     children.forEach(function (child, index) {
                         // Only export if object is creatable
                         if (this.isCreatable(child)) {
                             // Prevents infinite export of self-contained objs
-                            if (!this.tree.hasOwnProperty(child.getId())) {
+                            if (!this.tree.hasOwnProperty(this.getId(child))) {
                                 // If object is a link to something absent from
                                 // tree, generate new id and treat as new object
                                 if (this.isExternal(child, parent)) {
                                     this.rewriteLink(child, parent);
                                 } else {
-                                    this.tree[child.getId()] = child.getModel();
+                                    this.tree[this.getId(child)] = child;
                                 }
                                 this.write(child);
                             }
@@ -109,29 +114,28 @@ define([], function () {
      * @private
      */
     ExportAsJSONAction.prototype.rewriteLink = function (child, parent) {
-        this.externalIdentifiers.push(child.getId());
-        var parentModel = parent.getModel();
-        var childModel = child.getModel();
-        var index = parentModel.composition.indexOf(child.getId());
-        var newModel = this.copyModel(childModel);
+        this.externalIdentifiers.push(this.getId(child));
+        var index = parent.composition.indexOf(this.getId(child));
+        var newModel = this.copyObject(child);
         var newId = this.identifierService.generate();
+        var parentId = this.getId(parent);
 
-        newModel.location = parent.getId();
+        newModel.location = parentId;
         this.tree[newId] = newModel;
-        this.tree[parent.getId()] = this.copyModel(parentModel);
-        this.tree[parent.getId()].composition[index] = newId;
+        this.tree[parentId] = this.copyObject(parent);
+        this.tree[parentId].composition[index] = newId;
     };
 
-    ExportAsJSONAction.prototype.copyModel = function (model) {
-        var jsonString = JSON.stringify(model);
+    ExportAsJSONAction.prototype.copyObject = function (object) {
+        var jsonString = JSON.stringify(object);
         return JSON.parse(jsonString);
     };
 
     ExportAsJSONAction.prototype.isExternal = function (child, parent) {
-        if (child.getModel().location !== parent.getId() &&
-            !Object.keys(this.tree).includes(child.getModel().location) &&
-            child.getId() !== this.root.getId() ||
-            this.externalIdentifiers.includes(child.getId())) {
+        if (child.location !== this.getId(parent) &&
+            !Object.keys(this.tree).includes(child.location) &&
+            this.getId(child) !== this.getId(this.root) ||
+            this.externalIdentifiers.includes(this.getId(child))) {
 
             return true;
         }
@@ -147,15 +151,20 @@ define([], function () {
     ExportAsJSONAction.prototype.wrapTree = function () {
         return {
             "openmct": this.tree,
-            "rootId": this.root.getId()
+            "rootId": this.getId(this.root)
         };
     };
 
     ExportAsJSONAction.prototype.isCreatable = function (domainObject) {
+        var type = this.typeService.getType(domainObject.type);
         return this.policyService.allow(
             "creation",
-            domainObject.getCapability("type")
+            type
         );
+    };
+
+    ExportAsJSONAction.prototype.getId = function (domainObject) {
+        return this.openmct.objects.makeKeyString(domainObject.identifier);
     };
 
     return ExportAsJSONAction;

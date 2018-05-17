@@ -23,9 +23,11 @@
 define(
     [
         "../../src/actions/ExportAsJSONAction",
-        "../../../entanglement/test/DomainObjectFactory"
+        "../../../entanglement/test/DomainObjectFactory",
+        "../../../../src/MCT",
+        '../../../../src/adapter/capabilities/AdapterCapability'
     ],
-    function (ExportAsJSONAction, domainObjectFactory) {
+    function (ExportAsJSONAction, domainObjectFactory, MCT, AdapterCapability) {
 
         describe("The export JSON action", function () {
 
@@ -33,29 +35,41 @@ define(
                 action,
                 exportService,
                 identifierService,
+                typeService,
+                openmct,
                 policyService,
                 mockType,
                 exportedTree;
 
             beforeEach(function () {
+                openmct = new MCT();
                 exportService = jasmine.createSpyObj('exportService',
                 ['exportJSON']);
                 identifierService = jasmine.createSpyObj('identifierService',
                             ['generate']);
                 policyService = jasmine.createSpyObj('policyService',
                     ['allow']);
-                mockType =
-                    jasmine.createSpyObj('type', ['hasFeature']);
+                mockType = jasmine.createSpyObj('type', ['hasFeature']);
+                typeService = jasmine.createSpyObj('typeService', [
+                    'getType'
+                ]);
 
                 mockType.hasFeature.andCallFake(function (feature) {
                     return feature === 'creation';
                 });
+
+                typeService.getType.andReturn(mockType);
+
                 context = {};
                 context.domainObject = domainObjectFactory(
                     {
                         name: 'test',
                         id: 'someID',
-                        capabilities: {type: mockType}
+                        capabilities: {'adapter': {
+                            invoke: function () {
+                                return new AdapterCapability(context.domainObject).invoke();
+                            }
+                        }}
                     });
                 identifierService.generate.andReturn('brandNewId');
                 exportService.exportJSON.andCallFake(function (tree, options) {
@@ -65,8 +79,8 @@ define(
                     return type.hasFeature(capability);
                 });
 
-                action = new ExportAsJSONAction(exportService, policyService,
-                        identifierService, context);
+                action = new ExportAsJSONAction(openmct, exportService, policyService,
+                        identifierService, typeService, context);
             });
 
             it("initializes happily", function () {
