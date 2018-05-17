@@ -23,13 +23,11 @@
 
 .l-grid-holder {
     display: none;
-    position: relative;
-    height: 100%;
-    width: 100%;
+    @extend .abs;
+    pointer-events: none;
+    z-index: 0;
     .l-grid {
         @extend .abs;
-        pointer-events: none;
-        z-index: 0;
         &.l-grid-y { background-position: 0 1px; }
     }
 }
