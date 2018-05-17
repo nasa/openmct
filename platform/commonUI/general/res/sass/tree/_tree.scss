@@ -26,6 +26,12 @@ ul.tree {
     > li {
         display: block;
         position: relative;
+        .drag-vertical {
+            font-size: 0.6em;
+            margin-right: $interiorMargin;
+            opacity: 0.5;
+            width: 1em;
+        }
     }
     ul.tree {
         margin-left: $treeVCW + $interiorMargin;
