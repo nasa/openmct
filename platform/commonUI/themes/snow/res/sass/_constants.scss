@@ -72,8 +72,8 @@ $colorObjHdrTxt: $colorBodyFg;
 $colorObjHdrIc: lighten($colorObjHdrTxt, 30%);
 $colorTick: rgba(black, 0.2);
 $colorSelectableSelectedPrimary: $colorKey;
-$colorSelectableSelectedSecondary: pushBack($colorSelectableSelectedPrimary, 20%);
-$colorSelectableHov: $colorSelectableSelectedSecondary;
+//$colorSelectableSelectedSecondary: pushBack($colorSelectableSelectedPrimary, 20%);
+$colorSelectableHov: rgba($colorBodyFg, 0.4);
 
 // Menu colors
 $colorMenuBg: pushBack($colorBodyBg, 10%);
