@@ -176,9 +176,9 @@ body.desktop .frame {
 }
 
 .l-layout {
-    &.column,
-    &.row,
-    &.fit-all {
+    &.fl-column,
+    &.fl-row,
+    &.fl-wrap {
         display: flex;
         flex-wrap: nowrap;
         > .frame {
@@ -193,16 +193,16 @@ body.desktop .frame {
             min-width: 300px;
         }
     }
-    &.column {
+    &.fl-column {
         flex-direction: column;
         padding-right: $interiorMargin;
     }
-    &.row {
+    &.fl-row {
         flex-direction: row;
         padding-bottom: $interiorMargin;
     }
 
-    &.fit-all {
+    &.fl-wrap {
         align-content: stretch;
         flex-wrap: wrap;
     }
