@@ -191,7 +191,7 @@ body.desktop .frame {
             left: auto !important;
             height: auto !important;
             position: relative;
-            min-height: 300px;
+            min-height: 200px;
             min-width: 300px;
             &.no-frame.t-frame-outer > .t-rep-frame {
                 &.contents {
@@ -229,12 +229,15 @@ body.desktop .frame {
     }
 }
 
-.body.phone {
-    &.portrait {
-        .l-layout {
-            &.fl-phone-best-fit {
-
-            }
-        }
+body.phone {
+    .l-layout.fl-phone-best-fit {
+        flex-wrap: wrap !important;
+        padding: 0 !important;
+    }
+    &.portrait .l-layout.fl-phone-best-fit {
+        flex-direction: row !important;
+    }
+    &.landscape .l-layout.fl-phone-best-fit {
+        flex-direction: column !important;
     }
 }
