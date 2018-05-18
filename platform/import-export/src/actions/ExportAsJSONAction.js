@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define(['lodash'], function (_) {
 
     /**
      * The ExportAsJSONAction is available from context menus and allows a user
@@ -48,11 +48,16 @@ define([], function () {
         this.policyService = policyService;
         this.identifierService = identifierService;
         this.typeService = typeService;
+
+        this.idMap = {};
     }
 
     ExportAsJSONAction.prototype.perform = function () {
-        this.root = this.context.domainObject.useCapability('adapter');
-        this.tree[this.getId(this.root)] = this.root;
+        var root = this.context.domainObject.useCapability('adapter');
+        this.root = this.copyObject(root);
+        var rootId = this.getId(this.root);
+        this.tree[rootId] = this.root;
+
         this.saveAs = function (completedTree) {
             this.exportService.exportJSON(
                 completedTree,
@@ -71,10 +76,9 @@ define([], function () {
      * @param {Object} parent
      */
     ExportAsJSONAction.prototype.write = function (parent) {
-        var openmct = this.openmct;
         this.calls++;
+        var composition = this.openmct.composition.get(parent);
 
-        var composition = openmct.composition.get(parent);
         if (composition !== undefined) {
             composition.load()
                 .then(function (children) {
@@ -86,7 +90,7 @@ define([], function () {
                                 // If object is a link to something absent from
                                 // tree, generate new id and treat as new object
                                 if (this.isExternal(child, parent)) {
-                                    this.rewriteLink(child, parent);
+                                    child = this.rewriteLink(child, parent);
                                 } else {
                                     this.tree[this.getId(child)] = child;
                                 }
@@ -96,12 +100,14 @@ define([], function () {
                     }.bind(this));
                     this.calls--;
                     if (this.calls === 0) {
+                        this.rewriteReferences();
                         this.saveAs(this.wrapTree());
                     }
                 }.bind(this));
         } else {
             this.calls--;
             if (this.calls === 0) {
+                this.rewriteReferences();
                 this.saveAs(this.wrapTree());
             }
         }
@@ -115,15 +121,21 @@ define([], function () {
      */
     ExportAsJSONAction.prototype.rewriteLink = function (child, parent) {
         this.externalIdentifiers.push(this.getId(child));
-        var index = parent.composition.indexOf(this.getId(child));
-        var newModel = this.copyObject(child);
-        var newId = this.identifierService.generate();
+        var index = _.findIndex(parent.composition, function (id) {
+            return _.isEqual(child.identifier, id);
+        });
+        var copyOfChild = this.copyObject(child);
+        copyOfChild.identifier.key = this.identifierService.generate();
+        var newIdString = this.getId(copyOfChild);
         var parentId = this.getId(parent);
 
-        newModel.location = parentId;
-        this.tree[newId] = newModel;
-        this.tree[parentId] = this.copyObject(parent);
-        this.tree[parentId].composition[index] = newId;
+        this.idMap[this.getId(child)] = newIdString;
+        copyOfChild.location = parentId;
+        parent.composition[index] = copyOfChild.identifier;
+        this.tree[newIdString] = copyOfChild;
+        this.tree[parentId].composition[index] = newIdString;
+
+        return copyOfChild;
     };
 
     ExportAsJSONAction.prototype.copyObject = function (object) {
@@ -163,8 +175,23 @@ define([], function () {
         );
     };
 
+    /**
+     * @private
+     */
     ExportAsJSONAction.prototype.getId = function (domainObject) {
         return this.openmct.objects.makeKeyString(domainObject.identifier);
+    };
+
+    /**
+     * @private
+     */
+    ExportAsJSONAction.prototype.rewriteReferences = function () {
+        var treeString = JSON.stringify(this.tree);
+        Object.keys(this.idMap).forEach(function (oldId) {
+            var newId = this.idMap[oldId];
+            treeString = treeString.split(oldId).join(newId);
+        }.bind(this));
+        this.tree = JSON.parse(treeString);
     };
 
     return ExportAsJSONAction;
