@@ -56,7 +56,7 @@ define(
                 // declared as a method but as a property which happens to
                 // be a function.
                 if (agentService.isPhone() && agentService.isPortrait()) {
-                    // On phones, πs should collapse in portrait mode
+                    // On phones, trees should collapse in portrait mode
                     // when something is navigated-to.
                     self.state = false;
                 }

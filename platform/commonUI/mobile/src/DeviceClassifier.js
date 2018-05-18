@@ -49,20 +49,6 @@ define(
                 if (DeviceMatchers[key](agentService)) {
                     body.addClass(key);
                 }
-
-                if ((index === (array.length - 1)) && agentService.isMobile()) {
-                    var mediaQuery = window.matchMedia('(orientation: landscape)');
-
-                    mediaQuery.addListener(function (event) {
-                        if (event.matches) {
-                            body.removeClass('portrait');
-                            body.addClass('landscape');
-                        } else {
-                            body.removeClass('landscape');
-                            body.addClass('portrait');
-                        }
-                    });
-                }
             });
 
             if (agentService.isMobile()) {
