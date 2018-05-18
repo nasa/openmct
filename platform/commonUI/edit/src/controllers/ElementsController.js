@@ -32,6 +32,9 @@ define(
         function ElementsController($scope, openmct) {
             this.scope = $scope;
             this.scope.composition = [];
+            this.dragDown = this.dragDown.bind(this);
+            this.dragUp = this.dragUp.bind(this);
+
             var self = this;
 
             function filterBy(text) {
@@ -79,6 +82,52 @@ define(
             $scope.$on("$destroy", function () {
                 openmct.selection.off("change", setSelection);
             });
+            $scope.dragDown = this.dragDown;
+            $scope.drag = this.drag;
+            $scope.dragUp = this.dragUp;
+        }
+
+        ElementsController.prototype.dragDown = function (event) {
+            this.selectedObjectId = event.target.getAttribute('data-id');
+        }
+        
+        function findObjectInCompositionFromId (id, composition) {
+            var mapped = composition.map(function (element) {
+                return element.id;
+            })
+
+            return mapped.indexOf(id);
+        }
+
+        ElementsController.prototype.dragUp = function (event) {
+            this.targetObjectId = event.target.getAttribute('data-id');
+
+            if (this.targetObjectId && this.selectedObjectId) {
+                var selectedObjectPosition,
+                    targetObjectPosition;
+
+                selectedObjectPosition = findObjectInCompositionFromId(this.selectedObjectId, this.scope.composition);
+                targetObjectPosition = findObjectInCompositionFromId(this.targetObjectId, this.scope.composition);
+
+                console.log(selectedObjectPosition);
+                console.log(targetObjectPosition);
+
+                if ((selectedObjectPosition !== -1) && (targetObjectPosition !== -1)) {
+                    var buffer = this.scope.composition[selectedObjectPosition];
+
+                    this.scope.composition[selectedObjectPosition] = this.scope.composition[targetObjectPosition];
+                    this.scope.composition[targetObjectPosition] = buffer;
+
+                    // this.domainObject.getCapability('mutation').mutate(function (model) {
+                    //     model.composition = this.composition;
+                    // }.bind(this));
+                }
+                // console.log(this.scope.composition);
+            }
+        }
+
+        ElementsController.prototype.drag = function (event) {
+
         }
 
         /**

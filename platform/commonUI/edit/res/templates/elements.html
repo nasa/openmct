@@ -28,12 +28,17 @@
         <ul class="tree" ng-if="composition.length > 0">
             <li ng-repeat="containedObject in composition | filter:searchElements">
                 <span class="tree-item">
-                    <span class="drag-vertical"></span>
                     <mct-representation
                             class="rep-object-label"
                             key="'label'"
                             mct-object="containedObject">
                     </mct-representation>
+                    <span class="drag-vertical"
+                          data-id="{{ containedObject.id }}"
+                          mct-drag-down="dragDown($event)"
+                          mct-drag="drag($event)"
+                          mct-drag-up="dragUp($event)">
+                    </span>
                 </span>
             </li>
         </ul>

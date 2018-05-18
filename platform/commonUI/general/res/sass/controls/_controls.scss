@@ -778,7 +778,7 @@ textarea {
 
 .drag-vertical {
     // Used in editor Elements pool
-    @extend .icon-menu-hamburger;
+    @extend .icon-grippy;
     cursor: ns-resize;
 }
 
