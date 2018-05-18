@@ -61,18 +61,19 @@ define(
                     $event,
                     delta;
 
-                touchEvents = isMobile ?
-                {
-                    start: 'touchstart',
-                    end: 'touchend',
-                    move: 'touchmove'
+                if (isMobile) {
+                    touchEvents = {
+                        start: 'touchstart',
+                        end: 'touchend',
+                        move: 'touchmove'
+                    };
+                } else {
+                    touchEvents = {
+                        start: 'mousedown',
+                        end: "mouseup",
+                        move: "mousemove"
+                    };
                 }
-                :
-                {
-                    start: 'mousedown',
-                    end: "mouseup",
-                    move: "mousemove"
-                };
 
                 // Utility function to cause evaluation of mctDrag,
                 // mctDragUp, etc
