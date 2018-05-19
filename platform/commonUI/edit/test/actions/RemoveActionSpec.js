@@ -124,16 +124,21 @@ define(
             describe("after the remove callback is triggered", function () {
                 var mockChildContext,
                     mockChildObject,
+                    mockDialogHandle,
                     mockGrandchildContext,
                     mockGrandchildObject,
                     mockRootContext,
-                    mockRootObject,
-                    removeDialog;
+                    mockRootObject;
 
                 beforeEach(function () {
                     mockChildObject = jasmine.createSpyObj(
                         "domainObject",
                         ["getId", "getCapability"]
+                    );
+
+                    mockDialogHandle = jasmine.createSpyObj(
+                        "dialogHandle",
+                        ["dismiss"]
                     );
 
                     mockGrandchildObject = jasmine.createSpyObj(
@@ -149,11 +154,14 @@ define(
                     mockChildContext = jasmine.createSpyObj("context", ["getParent"]);
                     mockGrandchildContext = jasmine.createSpyObj("context", ["getParent"]);
                     mockRootContext = jasmine.createSpyObj("context", ["getParent"]);
+
+                    mockDialogService.showBlockingMessage.andReturn(mockDialogHandle);
                 });
 
                 it("mutates the parent when performed", function () {
-                    removeDialog = action.perform();
-                    removeDialog.removeCallback(removeDialog.domainObject);
+                    action.perform();
+                    mockDialogService.showBlockingMessage.mostRecentCall.args[0]
+                        .primaryOption.callback();
 
                     expect(mockMutation.invoke)
                         .toHaveBeenCalledWith(jasmine.any(Function));
@@ -162,8 +170,9 @@ define(
                 it("changes composition from its mutation function", function () {
                     var mutator, result;
 
-                    removeDialog = action.perform();
-                    removeDialog.removeCallback(removeDialog.domainObject);
+                    action.perform();
+                    mockDialogService.showBlockingMessage.mostRecentCall.args[0]
+                        .primaryOption.callback();
 
                     mutator = mockMutation.invoke.mostRecentCall.args[0];
                     result = mutator(model);
@@ -199,8 +208,9 @@ define(
 
                     mockType.hasFeature.andReturn(true);
 
-                    removeDialog = action.perform();
-                    removeDialog.removeCallback(removeDialog.domainObject);
+                    action.perform();
+                    mockDialogService.showBlockingMessage.mostRecentCall.args[0]
+                        .primaryOption.callback();
 
                     // Expects navigation to parent of domainObject (removed object)
                     expect(mockNavigationService.setNavigation).toHaveBeenCalledWith(mockParent);
@@ -228,8 +238,9 @@ define(
 
                     mockType.hasFeature.andReturn(true);
 
-                    removeDialog = action.perform();
-                    removeDialog.removeCallback(removeDialog.domainObject);
+                    action.perform();
+                    mockDialogService.showBlockingMessage.mostRecentCall.args[0]
+                        .primaryOption.callback();
 
                     // Expects no navigation to occur
                     expect(mockNavigationService.setNavigation).not.toHaveBeenCalled();
