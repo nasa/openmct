@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    [],
-    function () {
+    ['zepto'],
+    function ($) {
 
         /**
          * The ElementsController prepares the elements view for display
@@ -32,6 +32,7 @@ define(
         function ElementsController($scope, openmct) {
             this.scope = $scope;
             this.scope.composition = [];
+            this.openmct = openmct;
             this.dragDown = this.dragDown.bind(this);
             this.dragUp = this.dragUp.bind(this);
 
@@ -68,6 +69,7 @@ define(
                 self.refreshComposition(domainObject);
 
                 if (domainObject) {
+
                     self.mutationListener = domainObject.getCapability('mutation')
                         .listen(self.refreshComposition.bind(self, domainObject));
                 }
@@ -79,26 +81,37 @@ define(
             openmct.selection.on('change', setSelection);
             setSelection(openmct.selection.get());
 
-            $scope.$on("$destroy", function () {
-                openmct.selection.off("change", setSelection);
-            });
             $scope.dragDown = this.dragDown;
             $scope.drag = this.drag;
             $scope.dragUp = this.dragUp;
+
+            $scope.$on("$destroy", function () {
+                openmct.selection.off("change", setSelection);
+            });
         }
 
+        /**
+         * Invoked on DragStart - Adds dragging class to parent UL element
+         * Sets selected object ID, to be used on Drag End
+         *
+         * @param {object} event | Mouse Event
+         */
         ElementsController.prototype.dragDown = function (event) {
+            if (!this.parentUL) {
+                this.parentUL = $(document).find('#inspector-elements-tree');
+            }
+
             this.selectedObjectId = event.target.getAttribute('data-id');
-        }
-        
-        function findObjectInCompositionFromId (id, composition) {
-            var mapped = composition.map(function (element) {
-                return element.id;
-            })
+            this.parentUL.addClass('dragging');
+        };
 
-            return mapped.indexOf(id);
-        }
-
+        /**
+         * Invoked on dragEnd - Removes selected object from position in composition
+         * and replaces it at the target position. Composition is then updated with current
+         * scope
+         *
+         * @param {object} event - Mouse Event
+         */
         ElementsController.prototype.dragUp = function (event) {
             this.targetObjectId = event.target.getAttribute('data-id');
 
@@ -109,26 +122,31 @@ define(
                 selectedObjectPosition = findObjectInCompositionFromId(this.selectedObjectId, this.scope.composition);
                 targetObjectPosition = findObjectInCompositionFromId(this.targetObjectId, this.scope.composition);
 
-                console.log(selectedObjectPosition);
-                console.log(targetObjectPosition);
-
                 if ((selectedObjectPosition !== -1) && (targetObjectPosition !== -1)) {
-                    var buffer = this.scope.composition[selectedObjectPosition];
+                    var selectedObject = this.scope.composition.splice(selectedObjectPosition, 1),
+                        selection = this.openmct.selection.get(),
+                        domainObject = selection ? selection[0].context.oldItem : undefined;
 
-                    this.scope.composition[selectedObjectPosition] = this.scope.composition[targetObjectPosition];
-                    this.scope.composition[targetObjectPosition] = buffer;
+                    this.scope.composition.splice(targetObjectPosition, 0, selectedObject[0]);
 
-                    // this.domainObject.getCapability('mutation').mutate(function (model) {
-                    //     model.composition = this.composition;
-                    // }.bind(this));
+                    if (domainObject) {
+                        domainObject.getCapability('mutation').mutate(function (model) {
+                            model.composition = this.scope.composition.map(function (dObject) {
+                                return dObject.id;
+                            });
+                        }.bind(this));
+                    }
                 }
-                // console.log(this.scope.composition);
             }
-        }
+
+            if (this.parentUL) {
+                this.parentUL.removeClass('dragging');
+            }
+        };
 
         ElementsController.prototype.drag = function (event) {
 
-        }
+        };
 
         /**
          * Gets the composition for the selected object and populates the scope with it.
@@ -151,6 +169,21 @@ define(
                 this.scope.composition = [];
             }
         };
+
+        /**
+         * Finds position of object with given ID in Composition
+         *
+         * @param {String} id
+         * @param {Array} composition
+         * @private
+         */
+        function findObjectInCompositionFromId(id, composition) {
+            var mapped = composition.map(function (element) {
+                return element.id;
+            });
+
+            return mapped.indexOf(id);
+        }
 
         return ElementsController;
     }
