@@ -229,15 +229,6 @@ body.desktop .frame {
     }
 }
 
-<<<<<<< HEAD
-.body.phone {
-    &.portrait {
-        .l-layout {
-            &.fl-phone-best-fit {
-
-            }
-        }
-=======
 body.phone {
     .l-layout.fl-phone-best-fit {
         flex-wrap: wrap !important;
@@ -248,6 +239,5 @@ body.phone {
     }
     &.landscape .l-layout.fl-phone-best-fit {
         flex-direction: column !important;
->>>>>>> 5f592099fb68e653f055a5c58ba2a708169f6294
     }
 }
