@@ -179,7 +179,8 @@ body.desktop .frame {
     &.fl-column,
     &.fl-row,
     &.fl-wrap,
-    &.fl-phone-best-fit {
+    &.fl-phone-best-fit,
+    &.fl-mobile-best-fit {
         display: flex;
         flex-wrap: nowrap;
         align-content: stretch;
@@ -193,13 +194,6 @@ body.desktop .frame {
             position: relative;
             min-height: 200px;
             min-width: 300px;
-            &.no-frame.t-frame-outer > .t-rep-frame {
-                &.contents {
-                    // When frame is hidden, add a bit of margin to the contents
-                    $m: $interiorMargin;
-                    top: $m; right: $m; bottom: $m; left: $m;
-                }
-            }
             &.t-object-type-clock,
             &.t-object-type-timer,
             &.t-object-type-hyperlink,
@@ -208,6 +202,13 @@ body.desktop .frame {
                 min-width: 170px;
                 max-height: 80px;
                 max-width: 200px;
+                &.no-frame.t-frame-outer > .t-rep-frame {
+                  &.contents {
+                    // When frame is hidden, add a bit of margin to the contents
+                    $m: $interiorMargin;
+                    top: $m; right: $m; bottom: $m; left: $m;
+                  }
+                }
             }
             &.t-object-type-clock {
                 max-width: 300px;
@@ -239,5 +240,18 @@ body.phone {
     }
     &.landscape .l-layout.fl-phone-best-fit {
         flex-direction: column !important;
+    }
+}
+
+body.mobile {
+    .l-layout.fl-mobile-best-fit {
+        flex-wrap: wrap !important;
+        padding: 0 !important;
+    }
+    &.portrait .l-layout.fl-mobile-best-fit {
+        flex-direction: column !important;
+    }
+    &.landscape .l-layout.fl-mobile-best-fit {
+        flex-direction: row !important;
     }
 }
