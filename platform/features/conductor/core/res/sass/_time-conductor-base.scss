@@ -145,14 +145,14 @@
                 margin-right: $interiorMarginSm;
             }
             &.start-w {
-                @include background-image(linear-gradient(270deg, transparent, $wBgColor $ticksBlockerFadeW));
+                @include background-image(linear-gradient(270deg, rgba($wBgColor,0), rgba($wBgColor,1) $ticksBlockerFadeW));
                 padding-right: $ticksBlockerFadeW;
                 .title:before {
                     content: 'Start';
                 }
             }
             &.end-w {
-                @include background-image(linear-gradient(90deg, transparent, $wBgColor $ticksBlockerFadeW));
+                @include background-image(linear-gradient(90deg, rgba($wBgColor,0), rgba($wBgColor,1) $ticksBlockerFadeW));
                 padding-left: $ticksBlockerFadeW;
                 right: 0;
                 .title:before {

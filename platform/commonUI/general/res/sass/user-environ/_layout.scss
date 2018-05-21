@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+.user-environ,
 .browse-area,
 .edit-area,
 .editor {
@@ -47,6 +48,9 @@
 }
 
 .user-environ {
+    height: 100%;
+    width: 100%;
+    overflow: hidden !important;
     .browse-area,
     .editor {
         top: 0; left: 0; right: 0; bottom: $ueFooterH;

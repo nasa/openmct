@@ -28,6 +28,7 @@
         <ul class="tree" ng-if="composition.length > 0">
             <li ng-repeat="containedObject in composition | filter:searchElements">
                 <span class="tree-item">
+                    <span class="drag-vertical"></span>
                     <mct-representation
                             class="rep-object-label"
                             key="'label'"
