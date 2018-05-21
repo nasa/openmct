@@ -25,6 +25,7 @@ ul.tree {
     @include user-select(none);
     > li {
         display: block;
+        align-content: flex-end;
         position: relative;
         .drag-vertical {
             font-size: 0.6em;
