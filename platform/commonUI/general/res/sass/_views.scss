@@ -5,7 +5,7 @@
 }
 
 .l-view-section {
-	@include absPosDefault(0);
+	@include absPosDefault($overflow: auto);
 	h2 {
 		color: #fff;
 		margin-bottom: $interiorMargin;

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -141,15 +141,20 @@ define([
         return capability.subscribe(callbackWrapper, request);
     };
 
-    LegacyTelemetryProvider.prototype.limitEvaluator = function (domainObject) {
+    LegacyTelemetryProvider.prototype.supportsLimits = function (domainObject) {
         var oldObject = this.instantiate(
             utils.toOldFormat(domainObject),
-            utils.makeKeyString(domainObject.identifier));
-        var limitEvaluator = oldObject.getCapability("limit");
+            utils.makeKeyString(domainObject.identifier)
+        );
+        return oldObject.hasCapability("limit");
+    };
 
-        if (!limitEvaluator) {
-            return;
-        }
+    LegacyTelemetryProvider.prototype.getLimitEvaluator = function (domainObject) {
+        var oldObject = this.instantiate(
+            utils.toOldFormat(domainObject),
+            utils.makeKeyString(domainObject.identifier)
+        );
+        var limitEvaluator = oldObject.getCapability("limit");
 
         return {
             evaluate: function (datum, property) {
@@ -164,6 +169,7 @@ define([
         openmct.telemetry.legacyProvider = provider;
         openmct.telemetry.requestProviders.push(provider);
         openmct.telemetry.subscriptionProviders.push(provider);
+        openmct.telemetry.limitProviders.push(provider);
     };
 
 });

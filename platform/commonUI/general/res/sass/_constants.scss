@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -99,7 +99,7 @@ $plotXBarH: 32px;
 $plotLegendH: 20px;
 $plotSwatchD: 8px;
 // 1: Top, 2: right, 3: bottom, 4: left
-$plotDisplayArea: ($plotLegendH + $interiorMargin, 0, $plotXBarH, $plotYBarW);
+$plotDisplayArea: (0, 0, $plotXBarH, $plotYBarW);
 /* min plot height is based on user testing to find minimum useful height */
 $plotMinH: 95px;
 /*************** Bubbles */

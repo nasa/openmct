@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,7 +30,9 @@ define([
     '../../platform/import-export/bundle',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
-    './telemetryMean/plugin'
+    './telemetryMean/plugin',
+    './plot/plugin',
+    './staticRootPlugin/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -41,7 +43,9 @@ define([
     ImportExport,
     SummaryWidget,
     URLIndicatorPlugin,
-    TelemetryMean
+    TelemetryMean,
+    PlotPlugin,
+    StaticRootPlugin
 ) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
@@ -63,6 +67,8 @@ define([
     plugins.UTCTimeSystem = UTCTimeSystem;
 
     plugins.ImportExport = ImportExport;
+
+    plugins.StaticRootPlugin = StaticRootPlugin;
 
     /**
      * A tabular view showing the latest values of multiple telemetry points at
@@ -126,6 +132,8 @@ define([
     };
 
     plugins.ExampleImagery = ExampleImagery;
+    plugins.Plot = PlotPlugin;
+
     plugins.SummaryWidget = SummaryWidget;
     plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicatorPlugin = URLIndicatorPlugin;

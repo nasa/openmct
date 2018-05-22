@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -106,8 +106,8 @@ define(
                     'telemetryFormatter',
                     ['format']
                 );
-                mockFormatter.format.andCallFake(function (value) {
-                    return "Formatted " + value;
+                mockFormatter.format.andCallFake(function (valueMetadata) {
+                    return "Formatted " + valueMetadata.value;
                 });
 
                 mockDomainObject = jasmine.createSpyObj(
@@ -150,13 +150,13 @@ define(
                     [
                         'subscribe',
                         'request',
-                        'canProvideTelemetry',
+                        'isTelemetryObject',
                         'getMetadata',
                         'limitEvaluator',
                         'getValueFormatter'
                     ]
                 );
-                mockTelemetryAPI.canProvideTelemetry.andReturn(true);
+                mockTelemetryAPI.isTelemetryObject.andReturn(true);
                 mockTelemetryAPI.request.andReturn(Promise.resolve([]));
 
                 testGrid = [123, 456];
@@ -201,7 +201,7 @@ define(
                     'off',
                     'get'
                 ]);
-                mockSelection.get.andCallThrough();
+                mockSelection.get.andReturn([]);
 
                 mockOpenMCT = {
                     time: mockConductor,
@@ -596,7 +596,7 @@ define(
                 expect(controller.getSelectedElementStyle()).not.toEqual(oldStyle);
             });
 
-            it("cleans up slection on scope destroy", function () {
+            it("cleans up selection on scope destroy", function () {
                 expect(mockScope.$on).toHaveBeenCalledWith(
                     '$destroy',
                     jasmine.any(Function)
@@ -697,7 +697,7 @@ define(
                             source: 'range'
                         }
                     ]);
-                    var key = controller.chooseTelemetryKeyToDisplay(mockMetadata);
+                    var key = controller.chooseValueMetadataToDisplay(mockMetadata).source;
                     expect(key).toEqual('range');
                 });
 
@@ -719,7 +719,7 @@ define(
                             }
                         }
                     ]);
-                    var key = controller.chooseTelemetryKeyToDisplay(mockMetadata);
+                    var key = controller.chooseValueMetadataToDisplay(mockMetadata).source;
                     expect(key).toEqual('image');
                 });
 

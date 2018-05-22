@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-@mixin absPosDefault($offset: 0px, $overflowHidden: hidden) {
-    overflow: $overflowHidden;
+@mixin absPosDefault($offset: 0px, $overflow: hidden) {
+    overflow: $overflow;
     position: absolute;
     top: $offset;
     right: $offset;
@@ -382,7 +382,7 @@
     /* This doesn't work on an element inside an element with absolute positioning that has height: auto */
     //position: relative;
     top: 50%;
-    @include transform(translateY(-50%));
+    transform: translateY(-50%);
 }
 
 @mixin verticalCenterBlock($holderH, $itemH) {

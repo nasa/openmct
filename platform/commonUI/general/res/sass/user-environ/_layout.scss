@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -159,20 +159,20 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
 
     &.toggle-tree.anchor-left {
         left: 0;
-        @include transform(translateX(-1 * $paneExpandedOffset));
+        transform: translateX(-1 * $paneExpandedOffset);
         &.collapsed {
-            @include transform(translateX(-1 * $ueCollapsedPaneEdgeM));
+            transform: translateX(-1 * $ueCollapsedPaneEdgeM);
         }
     }
 
     &.toggle-inspect.anchor-right {
         right: 0;
-        @include transform(translateX($paneExpandedOffset));
+        transform: translateX($paneExpandedOffset);
         &.flush-right {
-            @include transform(translateX(($uePaneMiniTabW + ceil($splitterD / 2))));
+            transform: translateX(($uePaneMiniTabW + ceil($splitterD / 2)));
         }
         &.collapsed {
-            @include transform(translateX($ueCollapsedPaneEdgeM));
+            transform: translateX($ueCollapsedPaneEdgeM);
         }
     }
 }
