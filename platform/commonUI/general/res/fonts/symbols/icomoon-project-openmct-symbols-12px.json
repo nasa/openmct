@@ -2,7 +2,7 @@
   "metadata": {
     "name": "openmct-symbols-12px",
     "lastOpened": 0,
-    "created": 1502213994889
+    "created": 1527031065005
   },
   "iconSets": [
     {
@@ -16,12 +16,20 @@
           "tempChar": ""
         },
         {
+          "order": 10,
+          "id": 7,
+          "name": "icon12-list-view",
+          "prevSize": 12,
+          "code": 921666,
+          "tempChar": ""
+        },
+        {
           "order": 6,
           "id": 3,
           "prevSize": 12,
           "code": 921865,
           "name": "icon12-folder",
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 0,
@@ -59,6 +67,32 @@
           "colorPermutations": {
             "1161751": [
               {},
+              {},
+              {},
+              {}
+            ]
+          }
+        },
+        {
+          "id": 7,
+          "paths": [
+            "M0 0h1024v170.667h-1024v-170.667z",
+            "M0 426.667h1024v170.667h-1024v-170.667z",
+            "M0 853.333h1024v170.667h-1024v-170.667z"
+          ],
+          "attrs": [
+            {},
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "icon12-list-view"
+          ],
+          "colorPermutations": {
+            "1161751": [
               {},
               {},
               {}
@@ -139,6 +173,5 @@
     "historySize": 100,
     "gridSize": 16
   },
-  "uid": -1,
-  "time": 1502216581486
+  "uid": -1
 }
