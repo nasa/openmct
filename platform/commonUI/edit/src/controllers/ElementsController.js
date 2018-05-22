@@ -101,11 +101,11 @@ define(
                 this.parentUL = $(document).find('#inspector-elements-tree');
             }
 
-            this.selectedElement = $(event.target);
+            this.selectedTreeItem = $(event.target).parent();
             this.selectedObjectId = event.target.getAttribute('data-id');
 
             this.parentUL.addClass('reordering');
-            this.selectedElement.addClass('reorder-actor');
+            this.selectedTreeItem.addClass('reorder-actor');
         };
 
         /**
@@ -146,8 +146,8 @@ define(
                 this.parentUL.removeClass('reordering');
             }
 
-            if (this.selectedElement) {
-                this.selectedElement.removeClass('reorder-actor');
+            if (this.selectedTreeItem) {
+                this.selectedTreeItem.removeClass('reorder-actor');
             }
         };
 
