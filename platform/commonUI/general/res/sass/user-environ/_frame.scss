@@ -175,71 +175,63 @@ body.desktop .frame {
     }
 }
 
-.l-layout {
-    &.fl-column,
-    &.fl-row,
-    &.fl-wrap,
-    &.fl-phone-best-fit,
-    &.fl-mobile-best-fit {
-        display: flex;
-        flex-wrap: nowrap;
-        align-content: stretch;
-        > .frame {
-            display: block;
-            flex: 1 1 auto;
-            width: auto !important;
-            top: auto !important;
-            left: auto !important;
-            height: auto !important;
-            position: relative;
-            min-height: 200px;
-            min-width: 300px;
-            &.t-object-type-clock,
-            &.t-object-type-timer,
-            &.t-object-type-hyperlink,
-            &.t-object-type-summary-widget {
-                min-height: 50px;
-                min-width: 170px;
-                max-height: 80px;
-                max-width: 200px;
-                &.no-frame.t-frame-outer > .t-rep-frame {
-                  &.contents {
-                    // When frame is hidden, add a bit of margin to the contents
-                    $m: $interiorMargin;
-                    top: $m; right: $m; bottom: $m; left: $m;
-                  }
+.holder-object:not(.s-status-editing) {
+    .l-layout {
+        &.fl-column,
+        &.fl-row,
+        &.fl-wrap,
+        &.fl-phone-best-fit,
+        &.fl-mobile-best-fit {
+            display: flex;
+            flex-wrap: nowrap;
+            align-content: stretch;
+            align-items: stretch;
+            > .frame {
+                display: block;
+                flex: 1 1 auto;
+                width: auto !important;
+                height: auto !important;
+                &.t-object-type-summary-widget {
+                    &.no-frame.t-frame-outer > .t-rep-frame {
+                        &.contents {
+                            // When frame is hidden, add a bit of margin to the contents
+                            $m: $interiorMargin;
+                            top: $m; right: $m; bottom: $m; left: $m;
+                        }
+                    }
                 }
             }
-            &.t-object-type-clock {
-                max-width: 300px;
-            }
         }
-    }
-    &.fl-column {
-        flex-direction: column;
-        padding-right: $interiorMargin;
-    }
-    &.fl-row {
-        flex-direction: row;
-        padding-bottom: $interiorMargin;
-    }
+        &.fl-column {
+            flex-direction: column;
+            padding-right: $interiorMargin;
+        }
+        &.fl-row {
+            flex-direction: row;
+            padding-bottom: $interiorMargin;
+        }
 
-    &.fl-wrap {
-        //align-items: stretch;
-        flex-wrap: wrap;
+        &.fl-wrap {
+            align-content: flex-start;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
     }
 }
 
-body.phone {
-    .l-layout.fl-phone-best-fit {
-        flex-wrap: wrap !important;
-        padding: 0 !important;
-    }
-    &.portrait .l-layout.fl-phone-best-fit {
-        flex-direction: row !important;
-    }
-    &.landscape .l-layout.fl-phone-best-fit {
-        flex-direction: column !important;
+.holder-object {
+    .l-layout {
+        &.fl-column,
+        &.fl-row,
+        &.fl-wrap,
+        &.fl-phone-best-fit,
+        &.fl-mobile-best-fit {
+            > .frame {
+                top: auto !important;
+                left: auto !important;
+                position: relative;
+            }
+        }
     }
 }
 
