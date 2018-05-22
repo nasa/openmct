@@ -101,8 +101,11 @@ define(
                 this.parentUL = $(document).find('#inspector-elements-tree');
             }
 
+            this.selectedElement = $(event.target);
             this.selectedObjectId = event.target.getAttribute('data-id');
+
             this.parentUL.addClass('reordering');
+            this.selectedElement.addClass('reorder-actor');
         };
 
         /**
@@ -141,6 +144,10 @@ define(
 
             if (this.parentUL) {
                 this.parentUL.removeClass('reordering');
+            }
+
+            if (this.selectedElement) {
+                this.selectedElement.removeClass('reorder-actor');
             }
         };
 
