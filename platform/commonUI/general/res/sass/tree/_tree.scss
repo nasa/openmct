@@ -128,6 +128,14 @@ body.desktop {
     }
 }
 
+ul.tree.reordering {
+    // User is drag reordering a tree item in a container that allows the action
+    //background: rgba($colorBodyFg, 0.2);
+    .tree-item:not(.reorder-actor):hover{
+        background: rgba($colorKey, 0.4);
+    }
+}
+
 mct-representation {
     &.s-status-pending {
         .t-object-label {

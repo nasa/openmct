@@ -779,7 +779,7 @@ textarea {
 .drag-vertical {
     // Used in editor Elements pool
     @extend .icon-menu-hamburger;
-    cursor: ns-resize;
+    cursor: move;
 }
 
 /******************************************************** BROWSER ELEMENTS */

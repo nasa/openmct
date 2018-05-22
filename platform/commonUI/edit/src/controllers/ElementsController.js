@@ -91,7 +91,7 @@ define(
         }
 
         /**
-         * Invoked on DragStart - Adds dragging class to parent UL element
+         * Invoked on DragStart - Adds reordering class to parent UL element
          * Sets selected object ID, to be used on Drag End
          *
          * @param {object} event | Mouse Event
@@ -102,7 +102,7 @@ define(
             }
 
             this.selectedObjectId = event.target.getAttribute('data-id');
-            this.parentUL.addClass('dragging');
+            this.parentUL.addClass('reordering');
         };
 
         /**
@@ -140,7 +140,7 @@ define(
             }
 
             if (this.parentUL) {
-                this.parentUL.removeClass('dragging');
+                this.parentUL.removeClass('reordering');
             }
         };
 
