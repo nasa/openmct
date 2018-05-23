@@ -27,8 +27,8 @@ ul.tree {
         display: block;
         align-content: flex-end;
         position: relative;
-        .drag-vertical {
-            font-size: 0.6em;
+        .grippy-sm {
+            font-size: 12px;
             margin-right: $interiorMargin;
             opacity: 0.5;
             width: 1em;

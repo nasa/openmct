@@ -28,7 +28,7 @@
         <ul class="tree" id="inspector-elements-tree" ng-if="composition.length > 0">
             <li ng-repeat="containedObject in composition | filter:searchElements">
                 <span class="tree-item">
-                    <span class="drag-vertical"
+                    <span class="grippy-sm"
                           data-id="{{ containedObject.id }}"
                           mct-drag-down="dragDown($event)"
                           mct-drag="drag($event)"
