@@ -64,6 +64,20 @@ define(
                     });
                 }
             });
+
+            if (agentService.isMobile()) {
+                var mediaQuery = window.matchMedia('(orientation: landscape)');
+
+                mediaQuery.addListener(function (event) {
+                    if (event.matches) {
+                        body.removeClass('portrait');
+                        body.addClass('landscape');
+                    } else {
+                        body.removeClass('landscape');
+                        body.addClass('portrait');
+                    }
+                });
+            }
         }
 
         return MobileClassifier;
