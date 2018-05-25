@@ -41,6 +41,7 @@ define(
          */
         function ContextMenuGesture($timeout, agentService, element, domainObject) {
             var isPressing,
+                isDragging,
                 longTouchTime = 500;
 
             function showMenu(event) {
@@ -67,16 +68,22 @@ define(
                         // After the timeout, if 'isPressing' is
                         // true, display context menu for object
                         $timeout(function () {
-                            if (isPressing) {
+                            if (isPressing && !isDragging) {
                                 showMenu(event);
                             }
                         }, longTouchTime);
                     }
                 });
 
-                // Whenever the touch event ends, 'isPressing' is false.
+                // If on Mobile Device, and user scrolls/drags set flag to true
+                element.on('touchmove', function () {
+                    isDragging = true;
+                });
+
+                // Whenever the touch event ends, 'isPressing' & 'isDragging' is false.
                 element.on('touchend', function () {
                     isPressing = false;
+                    isDragging = false;
                 });
             }
 

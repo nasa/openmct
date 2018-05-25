@@ -327,7 +327,8 @@ define([
                     "key": "mctDrag",
                     "implementation": MCTDrag,
                     "depends": [
-                        "$document"
+                        "$document",
+                        "agentService"
                     ]
                 },
                 {

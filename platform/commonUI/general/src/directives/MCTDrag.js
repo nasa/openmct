@@ -46,7 +46,7 @@ define(
          * @constructor
          *
          */
-        function MCTDrag($document) {
+        function MCTDrag($document, agentService) {
 
             // Link; install event handlers.
             function link(scope, element, attrs) {
@@ -55,9 +55,25 @@ define(
                 // only be attached to the element being linked, as the
                 // mouse may leave this element during the drag.
                 var body = $document.find('body'),
+                    isMobile = agentService.isMobile(),
+                    touchEvents,
                     initialPosition,
                     $event,
                     delta;
+
+                if (isMobile) {
+                    touchEvents = {
+                        start: 'touchstart',
+                        end: 'touchend',
+                        move: 'touchmove'
+                    };
+                } else {
+                    touchEvents = {
+                        start: 'mousedown',
+                        end: "mouseup",
+                        move: "mousemove"
+                    };
+                }
 
                 // Utility function to cause evaluation of mctDrag,
                 // mctDragUp, etc
@@ -103,8 +119,8 @@ define(
                 // Called only when the drag ends (on mouseup)
                 function endDrag(event) {
                     // Detach event handlers
-                    body.off("mouseup", endDrag);
-                    body.off("mousemove", continueDrag);
+                    body.off(touchEvents.end, endDrag);
+                    body.off(touchEvents.move, continueDrag);
 
                     // Also call continueDrag, to fire mctDrag
                     // and do its usual position update
@@ -125,8 +141,8 @@ define(
                     // Listen for mouse events at the body level,
                     // since the mouse may leave the element during
                     // the drag.
-                    body.on("mouseup", endDrag);
-                    body.on("mousemove", continueDrag);
+                    body.on(touchEvents.end, endDrag);
+                    body.on(touchEvents.move, continueDrag);
 
                     // Set an initial position
                     updatePosition(event);
@@ -141,8 +157,8 @@ define(
                     return false;
                 }
 
-                // Listen for mousedown on the element
-                element.on("mousedown", startDrag);
+                // Listen for start event on the element
+                element.on(touchEvents.start, startDrag);
             }
 
             return {

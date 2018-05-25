@@ -26,8 +26,9 @@ define(
 
         var JQLITE_METHODS = ["on", "off", "find"];
 
-        describe("The mct-drag directive", function () {
+        describe("The mct-drag directive in Mobile", function () {
             var mockDocument,
+                mockAgentService,
                 mockScope,
                 mockElement,
                 testAttrs,
@@ -45,6 +46,8 @@ define(
             beforeEach(function () {
                 mockDocument =
                     jasmine.createSpyObj("$document", JQLITE_METHODS);
+                mockAgentService =
+                    jasmine.createSpyObj("agentService", ["isMobile"]);
                 mockScope =
                     jasmine.createSpyObj("$scope", ["$eval", "$apply"]);
                 mockElement =
@@ -59,8 +62,137 @@ define(
                 };
 
                 mockDocument.find.andReturn(mockBody);
+                mockAgentService.isMobile.andReturn(true);
 
-                mctDrag = new MCTDrag(mockDocument);
+                mctDrag = new MCTDrag(mockDocument, mockAgentService);
+                mctDrag.link(mockScope, mockElement, testAttrs);
+            });
+
+            it("is valid as an attribute", function () {
+                expect(mctDrag.restrict).toEqual("A");
+            });
+
+            it("listens for touchstart on its element", function () {
+                expect(mockElement.on).toHaveBeenCalledWith(
+                    "touchstart",
+                    jasmine.any(Function)
+                );
+
+                // Verify no interactions with body as well
+                expect(mockBody.on).not.toHaveBeenCalled();
+            });
+
+            it("invokes mctDragDown when dragging begins", function () {
+                var event = testEvent(42, 60);
+                mockElement.on.mostRecentCall.args[1](event);
+                expect(mockScope.$eval).toHaveBeenCalledWith(
+                    testAttrs.mctDragDown,
+                    { delta: [0, 0], $event: event }
+                );
+            });
+
+            it("listens for touchmove after dragging begins", function () {
+                mockElement.on.mostRecentCall.args[1](testEvent(42, 60));
+                expect(mockBody.on).toHaveBeenCalledWith(
+                    "touchmove",
+                    jasmine.any(Function)
+                );
+                expect(mockBody.on).toHaveBeenCalledWith(
+                    "touchend",
+                    jasmine.any(Function)
+                );
+            });
+
+            it("invokes mctDrag expression during drag", function () {
+                var event;
+
+                mockElement.on.mostRecentCall.args[1](testEvent(42, 60));
+
+                // Find and invoke the touchmove listener
+                mockBody.on.calls.forEach(function (call) {
+                    if (call.args[0] === 'touchmove') {
+                        call.args[1](event = testEvent(52, 200));
+                    }
+                });
+
+                // Should have passed that delta to mct-drag expression
+                expect(mockScope.$eval).toHaveBeenCalledWith(
+                    testAttrs.mctDrag,
+                    { delta: [10, 140], $event: event }
+                );
+            });
+
+            it("invokes mctDragUp expression after drag", function () {
+                var event;
+
+                mockElement.on.mostRecentCall.args[1](testEvent(42, 60));
+
+                // Find and invoke the touchmove listener
+                mockBody.on.calls.forEach(function (call) {
+                    if (call.args[0] === 'touchmove') {
+                        call.args[1](testEvent(52, 200));
+                    }
+                });
+                // Find and invoke the touchmove listener
+                mockBody.on.calls.forEach(function (call) {
+                    if (call.args[0] === 'touchend') {
+                        call.args[1](event = testEvent(40, 71));
+                    }
+                });
+
+                // Should have passed that delta to mct-drag-up expression
+                // and that delta should have been relative to the
+                // initial position
+                expect(mockScope.$eval).toHaveBeenCalledWith(
+                    testAttrs.mctDragUp,
+                    { delta: [-2, 11], $event: event }
+                );
+
+                // Should also have unregistered listeners
+                expect(mockBody.off).toHaveBeenCalled();
+            });
+
+        });
+
+        describe("The mct-drag directive in Desktop", function () {
+            var mockDocument,
+                mockAgentService,
+                mockScope,
+                mockElement,
+                testAttrs,
+                mockBody,
+                mctDrag;
+
+            function testEvent(x, y) {
+                return {
+                    pageX: x,
+                    pageY: y,
+                    preventDefault: jasmine.createSpy("preventDefault")
+                };
+            }
+
+            beforeEach(function () {
+                mockDocument =
+                    jasmine.createSpyObj("$document", JQLITE_METHODS);
+                mockAgentService =
+                    jasmine.createSpyObj("agentService", ["isMobile"]);
+                mockScope =
+                    jasmine.createSpyObj("$scope", ["$eval", "$apply"]);
+                mockElement =
+                    jasmine.createSpyObj("element", JQLITE_METHODS);
+                mockBody =
+                    jasmine.createSpyObj("body", JQLITE_METHODS);
+
+                testAttrs = {
+                    mctDragDown: "starting a drag",
+                    mctDrag: "continuing a drag",
+                    mctDragUp: "ending a drag"
+                };
+
+                mockDocument.find.andReturn(mockBody);
+                mockAgentService.isMobile.andReturn(false);
+
+                mctDrag = new MCTDrag(mockDocument, mockAgentService);
                 mctDrag.link(mockScope, mockElement, testAttrs);
             });
 
