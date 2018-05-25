@@ -52,7 +52,6 @@
 }
 
 .w-notebook-entries {
-    //@include test($a: 0.1);
     padding-right: $interiorMarginSm;
     position: relative;
     overflow-x: hidden;
@@ -138,8 +137,17 @@
 }
 
 /********************************************* MOBILE */
-@include phonePortrait() {
-    body.phone {
+body.mobile {
+    // Hide the start entry area, and disable ability to edit or delete an entry in mobile context
+    .l-notebook-drag-area {
+        display: none;
+    }
+
+    .l-notebook-entry {
+        pointer-events: none;
+    }
+
+    &.phone.portrait {
         .w-notebook-entry-time-and-content {
             flex-direction: column !important;
         }
