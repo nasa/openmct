@@ -127,6 +127,7 @@ define(
                 mockNow.andReturn(TEST_TIMESTAMP);
                 mockWindow.requestAnimationFrame.mostRecentCall.args[0]();
                 expect(controller.sign()).toEqual("");
+                expect(controller.signClass()).toEqual("");
                 expect(controller.text()).toEqual("");
             });
 
@@ -139,16 +140,19 @@ define(
                 mockNow.andReturn(TEST_TIMESTAMP + 121000);
                 mockWindow.requestAnimationFrame.mostRecentCall.args[0]();
                 expect(controller.sign()).toEqual("+");
+                expect(controller.signClass()).toEqual("icon-plus");
                 expect(controller.text()).toEqual("0D 00:02:01");
 
                 mockNow.andReturn(TEST_TIMESTAMP - 121000);
                 mockWindow.requestAnimationFrame.mostRecentCall.args[0]();
                 expect(controller.sign()).toEqual("-");
+                expect(controller.signClass()).toEqual("icon-minus");
                 expect(controller.text()).toEqual("0D 00:02:01");
 
                 mockNow.andReturn(TEST_TIMESTAMP);
                 mockWindow.requestAnimationFrame.mostRecentCall.args[0]();
                 expect(controller.sign()).toEqual("");
+                expect(controller.signClass()).toEqual("");
                 expect(controller.text()).toEqual("0D 00:00:00");
             });
 

@@ -205,3 +205,14 @@
 		display: none;
 	}
 }
+
+/*************************************** MOBILE */
+body.mobile.phone {
+  .t-imagery {
+    .l-image-main-wrapper,
+    .l-image-thumbs-wrapper {
+      //background: red;
+      min-height: 10px !important;
+    }
+  }
+}

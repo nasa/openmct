@@ -21,13 +21,14 @@
 -->
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title></title>
-    <script src="bower_components/requirejs/require.js"> </script>
-    <script>
-        var THIRTY_MINUTES = 30 * 60 * 1000;
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <title></title>
+        <script src="bower_components/requirejs/require.js"> </script>
+        <script>
+            var THIRTY_MINUTES = 30 * 60 * 1000;
 
         require(['openmct'], function (openmct) {
             [
@@ -81,7 +82,7 @@
     <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-16x16.png" sizes="16x16">
     <link rel="shortcut icon" href="platform/commonUI/general/res/images/favicons/favicon.ico">
 </head>
-<body class="user-environ">
+<body>
     <div class="l-splash-holder s-splash-holder">
         <div class="l-splash s-splash"></div>
     </div>
