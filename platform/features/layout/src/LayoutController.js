@@ -244,7 +244,9 @@ define(
                 left: (gridSize[0] * raw.position[0]) + 'px',
                 top: (gridSize[1] * raw.position[1]) + 'px',
                 width: (gridSize[0] * raw.dimensions[0]) + 'px',
-                height: (gridSize[1] * raw.dimensions[1]) + 'px'
+                height: (gridSize[1] * raw.dimensions[1]) + 'px',
+                minWidth: (gridSize[0] * raw.dimensions[0]) + 'px',
+                minHeight: (gridSize[1] * raw.dimensions[1]) + 'px'
             };
         };
 
