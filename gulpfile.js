@@ -38,7 +38,7 @@ var gulp = require('gulp'),
         reports: 'dist/reports',
         scss: ['./platform/**/*.scss', './example/**/*.scss'],
         assets: [
-            './{example,platform}/**/*.{css,css.map,png,svg,ico,woff,eot,ttf}'
+            './{example,platform}/**/*.{css,css.map,png,jpg,svg,ico,woff,eot,ttf}'
         ],
         scripts: [ 'openmct.js', 'platform/**/*.js', 'src/**/*.js' ],
         specs: [ 'platform/**/*Spec.js', 'src/**/*Spec.js' ],
