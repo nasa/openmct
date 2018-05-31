@@ -55,35 +55,44 @@ define([
 
                         return (
                             selection[0] && selection[0].context.elementProxy &&
-                            selection[1] && selection[1].context.item.type === 'telemetry.fixed'
+                            selection[1] && selection[1].context.item.type === 'telemetry.fixed' ||
+                            selection[0] && selection[0].context.item.type === 'telemetry.fixed'
                         );
                     },
                     toolbar: function (selection) {
-                        var elementProxy = selection[0] && selection[0].context.elementProxy;
-                        var type = elementProxy.element.type;
-                        var path = "configuration['fixed-display'].elements[" + elementProxy.index + "]";
-
                         var imageProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "height", "width", "url"];
                         var boxProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "height", "width", "fill"];
                         var textProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "height", "width", "fill", "color", "size", "text"];
                         var lineProperties = ["add", "remove", "order", "stroke", "useGrid", "x1", "y1", "x2", "y2"];
+                        var telemetryProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "height", "width", "fill", "color", "size"];
+                        var itemProperties = ["add"];
+                        var properties = [];
 
-                        var properties =
+                        var item = selection[0] && selection[0].context.item;
+                        var elementProxy = selection[0] && selection[0].context.elementProxy;
+                        var domainObject = selection[1] && selection[1].context.item;
+
+                        if (elementProxy) {
+                            var type = elementProxy.element.type;
+                            var path = "configuration['fixed-display'].elements[" + elementProxy.index + "]";
+                            properties =
                                 type === 'fixed.image' ? imageProperties :
                                 type === 'fixed.text' ? textProperties :
                                 type === 'fixed.box' ? boxProperties :
-                                type === 'fixed.line' ? lineProperties : [];
+                                type === 'fixed.line' ? lineProperties :
+                                type === 'fixed.telemetry' ? telemetryProperties : [];
+                        } else if (item) {
+                            properties = itemProperties;
+                        }
 
                         return [
                             {
                                 control: "menu-button",
-                                domainObject: selection[1].context.item,
+                                domainObject: domainObject || selection[0].context.item,
                                 method: function (value) {
-                                    selection[0].context.fixedController.add(
-                                        selection[1].context.viewProxy,
-                                        value
-                                    );
+                                    selection[0].context.fixedController.add(value);
                                 },
+                                methodName: "add",
                                 cssClass: "icon-plus",
                                 text: "Add",
                                 options: [
@@ -111,13 +120,14 @@ define([
                             },
                             {
                                 control: "menu-button",
-                                domainObject: selection[1].context.item,
+                                domainObject: domainObject,
                                 method: function (value) {
                                     selection[0].context.fixedController.order(
                                         selection[0].context.elementProxy,
                                         value
                                     );
                                 },
+                                methodName: "order",
                                 cssClass: "icon-layers",
                                 title: "Layering",
                                 description: "Move the selected object above or below other objects",
@@ -146,7 +156,7 @@ define([
                             },
                             {
                                 control: "color",
-                                domainObject: selection[1].context.item,
+                                domainObject: domainObject,
                                 property: path + ".fill",
                                 cssClass: "icon-paint-bucket",
                                 title: "Fill color",
@@ -154,7 +164,7 @@ define([
                             },
                             {
                                 control: "color",
-                                domainObject: selection[1].context.item,
+                                domainObject: domainObject,
                                 property: path + ".stroke",
                                 cssClass: "icon-line-horz",
                                 title: "Border color",
@@ -162,7 +172,7 @@ define([
                             },
                             {
                                 control: "dialog-button",
-                                domainObject: selection[1].context.item,
+                                domainObject: domainObject,
                                 property: path + ".url",
                                 cssClass: "icon-image",
                                 title: "Image Properties",
@@ -176,7 +186,7 @@ define([
                             },
                             {
                                 control: "color",
-                                domainObject: selection[1].context.item,
+                                domainObject: domainObject,
                                 property: path + ".color",
                                 cssClass: "icon-T",
                                 title: "Text color",
@@ -185,7 +195,7 @@ define([
                             },
                             {
                                 control: "select",
-                                domainObject: selection[1].context.item,
+                                domainObject: domainObject,
                                 property: path + ".size",
                                 title: "Text size",
                                 description: "Set text size",
@@ -195,7 +205,7 @@ define([
                             },
                             {
                                 control: "numberfield",
-                                domainObject: selection[1].context.item,
+                                domainObject: domainObject,
                                 property: path + ".x",
                                 text: "X",
                                 name: "X",
@@ -204,7 +214,7 @@ define([
                             },
                             {
                                 control: "numberfield",
-                                domainObject: selection[1].context.item,
+                                domainObject: domainObject,
                                 property: path + ".y",
                                 text: "Y",
                                 name: "Y",
@@ -213,7 +223,7 @@ define([
                             },
                             {
                                 control: "numberfield",
-                                domainObject: selection[1].context.item,
+                                domainObject: domainObject,
                                 property: path + ".x1",
                                 text: "X1",
                                 name: "X1",
@@ -222,7 +232,7 @@ define([
                             },
                             {
                                 control: "numberfield",
-                                domainObject: selection[1].context.item,
+                                domainObject: domainObject,
                                 property: path + ".y1",
                                 text: "Y1",
                                 name: "Y1",
@@ -231,7 +241,7 @@ define([
                             },
                             {
                                 control: "numberfield",
-                                domainObject: selection[1].context.item,
+                                domainObject: domainObject,
                                 property: path + ".x2",
                                 text: "X2",
                                 name: "X2",
@@ -240,7 +250,7 @@ define([
                             },
                             {
                                 control: "numberfield",
-                                domainObject: selection[1].context.item,
+                                domainObject: domainObject,
                                 property: path + ".y2",
                                 text: "Y2",
                                 name: "Y2",
@@ -249,7 +259,7 @@ define([
                             },
                             {
                                 control: "numberfield",
-                                domainObject: selection[1].context.item,
+                                domainObject: domainObject,
                                 property: path + ".height",
                                 text: "H",
                                 name: "H",
@@ -259,7 +269,7 @@ define([
                             },
                             {
                                 control: "numberfield",
-                                domainObject: selection[1].context.item,
+                                domainObject: domainObject,
                                 property: path + ".width",
                                 text: "W",
                                 name: "W",
@@ -269,13 +279,13 @@ define([
                             },
                             {
                                 control: "checkbox",
-                                domainObject: selection[1].context.item,
+                                domainObject: domainObject,
                                 property: path + ".useGrid",
                                 name: "Snap to Grid"
                             },
                             {
                                 control: "dialog-button",
-                                domainObject: selection[1].context.item,
+                                domainObject: domainObject,
                                 property: path + ".text",
                                 cssClass: "icon-gear",
                                 title: "Text Properties",
@@ -288,12 +298,13 @@ define([
                             },
                             {
                                 control: "button",
-                                domainObject: selection[1].context.item,
+                                domainObject: domainObject,
                                 method: function () {
                                     selection[0].context.fixedController.remove(
                                         selection[0].context.elementProxy
                                     );
                                 },
+                                methodName: "remove",
                                 cssClass: "icon-trash"
                             }
                         ].filter(function (item) {
@@ -301,7 +312,7 @@ define([
 
                             properties.forEach(function (property) {
                                 if (item.property && item.property.endsWith("." + property) ||
-                                    item.method) {
+                                    item.method && item.methodName === property) {
                                     filtered = item;
                                 }
                             });

@@ -161,16 +161,22 @@ define(
 
             // Add an element to this view
             function addElement(element) {
+                var index;
                 var elements = (((self.newDomainObject.configuration || {})['fixed-display'] || {}).elements || []);
-                var selectedElemenetIndex = elements.indexOf(self.selectedElementProxy.element);
-
                 elements.push(element);
+
+                if (self.selectedElementProxy) {
+                    index = elements.indexOf(self.selectedElementProxy.element);
+                }
+
                 self.mutate("configuration['fixed-display'].elements", elements);
                 elements = (self.newDomainObject.configuration)['fixed-display'].elements || [];
                 self.elementToSelectAfterRefresh = elements[elements.length - 1];
 
-                // Update the selected element with the new value since newDomainOject is mutated.
-                self.selectedElementProxy.element = elements[selectedElemenetIndex];
+                if (self.selectedElementProxy) {
+                    // Update the selected element with the new value since newDomainOject is mutated.
+                    self.selectedElementProxy.element = elements[index];
+                }
                 refreshElements();
             }
 
@@ -204,6 +210,7 @@ define(
             this.elementProxies = [];
             this.addElement = addElement;
             this.refreshElements = refreshElements;
+            this.fixedProxy = new FixedProxy(this.addElement, this.$q, this.dialogService);
 
             // Detect changes to grid size
             // $scope.$watch("model.layoutGrid", updateElementPositions);
@@ -263,15 +270,14 @@ define(
         /**
          * Adds a new element to the view.
          *
-         * @param {object} fixedProxy
          * @param {string} type the type of element to add. Supported types are:
          * `fixed.image`
          * `fixed.box`
          * `fixed.text`
          * `fixed.line`
          */
-        FixedController.prototype.add = function (fixedProxy, type) {
-            fixedProxy.add(type);
+        FixedController.prototype.add = function (type) {
+            this.fixedProxy.add(type);
         };
 
         /**
@@ -362,7 +368,7 @@ define(
                 // Make fixed view selectable if it's not already.
                 if (!this.fixedViewSelectable && selectable.length === 1) {
                     this.fixedViewSelectable = true;
-                    selection.context.viewProxy = new FixedProxy(this.addElement, this.$q, this.dialogService);
+                    selection.context.fixedController = this;
                     this.openmct.selection.select(selection);
                 }
 
