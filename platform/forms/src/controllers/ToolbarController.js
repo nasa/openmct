@@ -52,7 +52,7 @@ define(
 
         ToolbarController.prototype.handleSelection = function (selection) {
             var domainObject = selection[0].context.oldItem;
-            var element = selection[0].context.elementProxy
+            var element = selection[0].context.elementProxy;
 
             if ((domainObject && domainObject === this.selectedObject) || (element && element === this.selectedObject)) {
                 return;

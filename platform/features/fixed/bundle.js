@@ -78,7 +78,12 @@ define([
                             {
                                 control: "menu-button",
                                 domainObject: selection[1].context.item,
-                                method: "add",
+                                method: function (value) {
+                                    selection[0].context.fixedController.add(
+                                        selection[1].context.viewProxy,
+                                        value
+                                    );
+                                },
                                 cssClass: "icon-plus",
                                 text: "Add",
                                 options: [
@@ -107,7 +112,12 @@ define([
                             {
                                 control: "menu-button",
                                 domainObject: selection[1].context.item,
-                                method: "order",
+                                method: function (value) {
+                                    selection[0].context.fixedController.order(
+                                        selection[0].context.elementProxy,
+                                        value
+                                    );
+                                },
                                 cssClass: "icon-layers",
                                 title: "Layering",
                                 description: "Move the selected object above or below other objects",
@@ -279,7 +289,11 @@ define([
                             {
                                 control: "button",
                                 domainObject: selection[1].context.item,
-                                method: "remove",
+                                method: function () {
+                                    selection[0].context.fixedController.remove(
+                                        selection[0].context.elementProxy
+                                    );
+                                },
                                 cssClass: "icon-trash"
                             }
                         ].filter(function (item) {
@@ -287,7 +301,7 @@ define([
 
                             properties.forEach(function (property) {
                                 if (item.property && item.property.endsWith("." + property) ||
-                                    item.method && item.method.endsWith(property)) {
+                                    item.method) {
                                     filtered = item;
                                 }
                             });

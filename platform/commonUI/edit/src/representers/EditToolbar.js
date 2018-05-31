@@ -38,8 +38,6 @@ define(
          * @constructor
          */
         function EditToolbar($scope, openmct, structure) {
-            var self = this;
-
             this.toolbarStructure = [];
             this.properties = [];
             this.toolbarState = [];
@@ -80,6 +78,12 @@ define(
                 var converted = Object.create(item || {});
                 if (item.property) {
                     converted.key = addKey(item);
+                }
+
+                if (item.method) {
+                    converted.click = function (value) {
+                        item.method(value);
+                    };
                 }
                 return converted;
             }

@@ -101,7 +101,12 @@ define(['EventEmitter'], function (EventEmitter) {
      * Attaches the click handlers to the element.
      *
      * @param element an html element
-     * @param context object with oldItem, item and toolbar properties
+     * @param context object which defines item or other arbitrary properties.
+     * e.g. {
+     *          item: domainObject,
+     *          elementProxy: element,
+     *          controller: fixedController
+     *       }
      * @param select a flag to select the element if true
      * @returns a function that removes the click handlers from the element
      * @public

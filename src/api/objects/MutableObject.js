@@ -80,7 +80,7 @@ define([
         _.set(this.object, 'modified', Date.now());
 
         var handleRecursiveMutation = function (newObject) {
-            this.object = newObject
+            this.object = newObject;
         }.bind(this);
 
         this.eventEmitter.on(qualifiedEventName(this.object, '*'), handleRecursiveMutation);

@@ -148,21 +148,6 @@ define(
                 });
             }
 
-            function removeObjects(ids) {
-                var configuration = self.$scope.configuration;
-
-                if (configuration &&
-                    configuration.elements) {
-                    configuration.elements = configuration.elements.filter(function (proxy) {
-                        return ids.indexOf(proxy.id) === -1;
-                    });
-                }
-                self.getTelemetry($scope.domainObject);
-                refreshElements();
-
-                self.commit();
-            }
-
             // Trigger a new query for telemetry data
             function updateDisplayBounds(bounds, isTick) {
                 if (!isTick) {
@@ -176,21 +161,17 @@ define(
 
             // Add an element to this view
             function addElement(element) {
-                // Ensure that configuration field is populated
-                $scope.configuration = $scope.configuration || {};
-                // Make sure there is a "elements" field in the
-                // view configuration.
-                $scope.configuration.elements =
-                    $scope.configuration.elements || [];
-                // Store the position of this element.
-                $scope.configuration.elements.push(element);
+                var elements = (((self.newDomainObject.configuration || {})['fixed-display'] || {}).elements || []);
+                var selectedElemenetIndex = elements.indexOf(self.selectedElementProxy.element);
 
-                self.elementToSelectAfterRefresh = element;
+                elements.push(element);
+                self.mutate("configuration['fixed-display'].elements", elements);
+                elements = (self.newDomainObject.configuration)['fixed-display'].elements || [];
+                self.elementToSelectAfterRefresh = elements[elements.length - 1];
 
-                // Refresh displayed elements
+                // Update the selected element with the new value since newDomainOject is mutated.
+                self.selectedElementProxy.element = elements[selectedElemenetIndex];
                 refreshElements();
-
-                self.commit();
             }
 
             // Position a panel after a drop event
@@ -230,13 +211,11 @@ define(
             // Position panes where they are dropped
             // $scope.$on("mctDrop", handleDrop);
 
-            // Position panes when the model field changes
-            // $scope.$watch("model.composition", updateComposition);
-            // TODO: implement Composition
-            var composition = this.openmct.composition.get(this.newDomainObject);
-            composition.on('add', this.addObject, this);
-            composition.on('remove', this.removeObject, this);
-            composition.load();
+            this.composition = this.openmct.composition.get(this.newDomainObject);
+            this.composition.on('add', this.onCompositionAdd, this);
+            this.composition.on('remove', this.onCompositionRemove, this);
+            this.composition.on('load', this.onCompositionLoad, this);
+            this.composition.load();
 
             // Subscribe to telemetry when an object is available
             // $scope.$watch("domainObject", this.getTelemetry);
@@ -256,6 +235,61 @@ define(
 
             window.fc = this;
         }
+
+        FixedController.prototype.onCompositionAdd = function (obj) {
+            // TODO: implement
+        };
+
+        FixedController.prototype.onCompositionRemove = function (identifier) {
+            // TODO: implement
+        };
+
+        FixedController.prototype.onCompositionLoad = function () {
+            this.getTelemetry(this.$scope.domainObject);
+        };
+
+        /**
+         * Removes an element from the view.
+         *
+         * @param elementProxy the element proxy to remove.
+         */
+        FixedController.prototype.remove = function (elementProxy) {
+            var elements = this.newDomainObject.configuration['fixed-display'].elements || [];
+            elements.splice(elements.indexOf(elementProxy.element), 1);
+            this.mutate("configuration['fixed-display'].elements", elements);
+            this.refreshElements();
+        };
+
+        /**
+         * Adds a new element to the view.
+         *
+         * @param {object} fixedProxy
+         * @param {string} type the type of element to add. Supported types are:
+         * `fixed.image`
+         * `fixed.box`
+         * `fixed.text`
+         * `fixed.line`
+         */
+        FixedController.prototype.add = function (fixedProxy, type) {
+            fixedProxy.add(type);
+        };
+
+        /**
+         * Change the display order of the element proxy.
+         */
+        FixedController.prototype.order = function (elementProxy, position) {
+            var elements = elementProxy.order(position);
+
+            // Find the selected element index in the updated array.
+            var selectedElemenetIndex = elements.indexOf(this.selectedElementProxy.element);
+
+            this.mutate("configuration['fixed-display'].elements", elements);
+            elements = (this.newDomainObject.configuration)['fixed-display'].elements || [];
+
+            // Update the selected element with the new value since newDomainOject is mutated.
+            this.selectedElementProxy.element = elements[selectedElemenetIndex];
+            this.refreshElements();
+        };
 
         FixedController.prototype.generateDragHandle = function (elementProxy) {
             var index = this.elementProxies.indexOf(elementProxy);
@@ -301,7 +335,6 @@ define(
                         this.openmct.objects.mutate(this.newDomainObject, path, this.selectedElementProxy.element);
                     }
                 }.bind(this)));
-
                 [
                     "width",
                     "height",
@@ -344,6 +377,9 @@ define(
             this.unlisten();
             this.openmct.time.off("bounds", this.updateDisplayBounds);
             this.openmct.selection.off("change", this.setSelection);
+            this.composition.off('add', this.onCompositionAdd, this);
+            this.composition.off('remove', this.onCompositionRemove, this);
+            this.composition.off('load', this.onCompositionLoad, this);
         };
 
         /**
@@ -484,6 +520,7 @@ define(
         };
 
         FixedController.prototype.getTelemetry = function (domainObject) {
+            // TODO: no need to pass domainObject, instead use this.newDomainObject.
             var newObject = domainObject.useCapability('adapter');
             var self = this;
 
@@ -612,7 +649,8 @@ define(
          */
         FixedController.prototype.getContext = function (elementProxy) {
             return {
-                elementProxy: elementProxy
+                elementProxy: elementProxy,
+                fixedController: this
             };
         };
 
@@ -635,12 +673,8 @@ define(
             }
         };
 
-        FixedController.prototype.mutate = function (property, value) {
-            this.openmct.objects.mutate(this.newDomainObject, property, value);
-        };
-
-        FixedController.prototype.commit = function () {
-
+        FixedController.prototype.mutate = function (path, value) {
+            this.openmct.objects.mutate(this.newDomainObject, path, value);
         };
 
         return FixedController;

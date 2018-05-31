@@ -143,6 +143,7 @@ define(
              * Change the display order of this element.
              * @param {string} o where to move this element;
              *        one of "top", "up", "down", or "bottom"
+             * @return {Array} the full array of elements
              */
             order (o) {
                 var index = this.index,
@@ -163,16 +164,8 @@ define(
                     // anyway, but be consistent)
                     this.index = desired;
                 }
-            }
 
-            /**
-             * Remove this element from the fixed position view.
-             */
-            remove () {
-                var index = this.index;
-                if (this.elements[index] === this.element) {
-                    this.elements.splice(index, 1);
-                }
+                return elements;
             }
 
             /**
