@@ -67,7 +67,6 @@
 		&:before {
             // Magnify glass icon
             left: $interiorMarginSm;
-            //@include trans-prop-nice(color, 250ms);
             pointer-events: none;
             z-index: 1;
         }
