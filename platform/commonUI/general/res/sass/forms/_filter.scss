@@ -87,7 +87,6 @@
     $iconD: $formInputH - ($iconEdgeM * 2);
     @extend .icon-magnify;
     // Adds a magnifying glass before, holds an input and a clear button
-    display: inline-block;
     position: relative;
 
     input[type="search"] {

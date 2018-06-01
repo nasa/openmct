@@ -43,8 +43,8 @@
                         width: columnWidths[$index] + 'px',
                         'max-width': columnWidths[$index] + 'px',
                     }">
-                    <div class="holder flex-elem grows">
-                        <input type="text"
+                    <div class="holder l-filter flex-elem grows">
+                        <input type="search"
                             ng-model="filters[header]"/>
                         <a class="clear-icon clear-input icon-x-in-circle" ng-class="{show: filters[header]}" ng-click="filters[header] = undefined"></a>
                     </div>
