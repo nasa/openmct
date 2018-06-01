@@ -22,6 +22,9 @@
 .frame {
     $ohH: $btnFrameH;
     $bc: $colorInteriorBorder;
+
+    position: absolute;
+
     &.child-frame.panel {
         z-index: 0; // Needed to prevent child-frame controls from showing through when another child-frame is above
         &:not(.no-frame) {
@@ -171,5 +174,78 @@ body.desktop .frame {
             opacity: 1;
             pointer-events: inherit;
         }
+    }
+}
+
+.holder-object:not(.s-status-editing) {
+    .l-layout {
+        &.fl-column,
+        &.fl-row,
+        &.fl-wrap,
+        &.fl-phone-best-fit,
+        &.fl-mobile-best-fit {
+            display: flex;
+            flex-wrap: nowrap;
+            align-content: stretch;
+            align-items: stretch;
+            > .frame {
+                display: block;
+                flex: 1 1 auto;
+                width: auto !important;
+                height: auto !important;
+                &.t-object-type-summary-widget {
+                    &.no-frame.t-frame-outer > .t-rep-frame {
+                        &.contents {
+                            // When frame is hidden, add a bit of margin to the contents
+                            $m: $interiorMargin;
+                            top: $m; right: $m; bottom: $m; left: $m;
+                        }
+                    }
+                }
+            }
+        }
+        &.fl-column {
+            flex-direction: column;
+            padding-right: $interiorMargin;
+        }
+        &.fl-row {
+            flex-direction: row;
+            padding-bottom: $interiorMargin;
+        }
+
+        &.fl-wrap {
+            align-content: flex-start;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+    }
+}
+
+.holder-object {
+    .l-layout {
+        &.fl-column,
+        &.fl-row,
+        &.fl-wrap,
+        &.fl-phone-best-fit,
+        &.fl-mobile-best-fit {
+            > .frame {
+                top: auto !important;
+                left: auto !important;
+                position: relative;
+            }
+        }
+    }
+}
+
+body.mobile {
+    .l-layout.fl-mobile-best-fit {
+        flex-wrap: wrap !important;
+        padding: 0 !important;
+    }
+    &.portrait .l-layout.fl-mobile-best-fit {
+        flex-direction: column !important;
+    }
+    &.landscape .l-layout.fl-mobile-best-fit {
+        flex-direction: row !important;
     }
 }
