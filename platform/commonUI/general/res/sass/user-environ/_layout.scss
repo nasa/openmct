@@ -75,7 +75,7 @@
             height: $tbH;
             line-height: $btnToolbarH;
         }
-        .object-holder.work-area {
+        .holder-object.work-area {
             top: $tbH + $interiorMargin * 2;
             overflow: auto;
         }
@@ -205,7 +205,7 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
         right: 0;
         bottom: 0;
         left: 0;
-        .holder-object {
+        .holder-object.l-main-view {
             top: $bodyMargin;
             bottom: $interiorMargin;
             // Clip element that have min-widths
@@ -226,7 +226,7 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
     }
 }
 
-.object-holder {
+.holder-object {
     @include absPosDefault(0, auto);
     top: $ueTopBarH + $interiorMarginLg;
 }

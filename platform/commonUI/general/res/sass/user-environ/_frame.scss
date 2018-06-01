@@ -53,7 +53,7 @@
         .object-browse-bar .right { display: none; }
     }
 
-    > .object-holder.abs {
+    > .holder-object.abs {
         top: $ohH + $interiorMargin;
     }
     .contents {
@@ -115,7 +115,7 @@
                 > .object-browse-bar .left {
                     display: none;
                 }
-                > .object-holder.abs {
+                > .holder-object.abs {
                     overflow: hidden;
                     top: 0 !important;
                 }
@@ -131,13 +131,13 @@
     /********************************************************** OBJECT TYPES */
     .t-object-type-hyperlink,
     .t-object-type-summary-widget {
-        .object-holder {
+        .holder-object {
             overflow: hidden;
         }
         .w-summary-widget,
         .l-summary-widget,
         .l-hyperlink.s-button {
-            // Some object types expand to the full size of the object-holder.
+            // Some object types expand to the full size of the holder-object.
             @extend .abs;
         }
 

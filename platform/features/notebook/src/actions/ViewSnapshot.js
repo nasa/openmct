@@ -70,7 +70,7 @@ define(
             annotateButton.addEventListener('click', annotateImg);
             document.body.appendChild(overlay);
             img = document.createElement('div');
-            $(img).addClass('abs object-holder t-image-holder s-image-holder');
+            $(img).addClass('abs holder-object t-image-holder s-image-holder');
             img.innerHTML = '<div class="image-main s-image-main" style="background-image: url(' + url + ');"></div>';
             overlayContainer.appendChild(header);
             overlayContainer.appendChild(img);
