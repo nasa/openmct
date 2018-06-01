@@ -64,7 +64,7 @@ define([
                         var boxProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "height", "width", "fill"];
                         var textProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "height", "width", "fill", "color", "size", "text"];
                         var lineProperties = ["add", "remove", "order", "stroke", "useGrid", "x1", "y1", "x2", "y2"];
-                        var telemetryProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "height", "width", "fill", "color", "size"];
+                        var telemetryProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "height", "width", "fill", "color", "size", "titled"];
                         var itemProperties = ["add"];
                         var properties = [];
 
@@ -295,6 +295,12 @@ define([
                                     name: "Text",
                                     required: true
                                 }
+                            },
+                            {
+                                control: "checkbox",
+                                domainObject: domainObject,
+                                property: path + ".titled",
+                                name: "Show Title"
                             },
                             {
                                 control: "button",

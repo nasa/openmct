@@ -331,37 +331,7 @@ define(
 
             if (selection.context.elementProxy) {
                 this.selectedElementProxy = selection.context.elementProxy;
-                var index = this.elementProxies.indexOf(this.selectedElementProxy);
-                var path = "configuration['fixed-display'].elements[" + index + "]";
-
-                this.selectionListeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".useGrid", function (newValue) {
-                    if (this.selectedElementProxy.useGrid() !== newValue) {
-                        this.selectedElementProxy.useGrid(newValue);
-                        this.updateSelectionStyle();
-                        this.openmct.objects.mutate(this.newDomainObject, path, this.selectedElementProxy.element);
-                    }
-                }.bind(this)));
-                [
-                    "width",
-                    "height",
-                    "stroke",
-                    "fill",
-                    "x",
-                    "y",
-                    "x1",
-                    "y1",
-                    "x2",
-                    "y2",
-                    "color",
-                    "size",
-                    "text"
-                ].forEach(function (property) {
-                    this.selectionListeners.push(this.openmct.objects.observe(this.newDomainObject, path + "." + property, function (newValue) {
-                        this.selectedElementProxy.element[property] = newValue;
-                        this.updateSelectionStyle();
-                    }.bind(this)));
-                }.bind(this));
-
+                this.attachSelectionListeners();
                 this.mvHandle = this.generateDragHandle(this.selectedElementProxy);
                 this.resizeHandles = this.generateDragHandles(this.selectedElementProxy);
             } else {
@@ -376,6 +346,40 @@ define(
                 this.mvHandle = undefined;
                 this.selectedElementProxy = undefined;
             }
+        };
+
+        FixedController.prototype.attachSelectionListeners = function () {
+            var index = this.elementProxies.indexOf(this.selectedElementProxy);
+            var path = "configuration['fixed-display'].elements[" + index + "]";
+
+            this.selectionListeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".useGrid", function (newValue) {
+                if (this.selectedElementProxy.useGrid() !== newValue) {
+                    this.selectedElementProxy.useGrid(newValue);
+                    this.updateSelectionStyle();
+                    this.openmct.objects.mutate(this.newDomainObject, path, this.selectedElementProxy.element);
+                }
+            }.bind(this)));
+            [
+                "width",
+                "height",
+                "stroke",
+                "fill",
+                "x",
+                "y",
+                "x1",
+                "y1",
+                "x2",
+                "y2",
+                "color",
+                "size",
+                "text",
+                "titled"
+            ].forEach(function (property) {
+                this.selectionListeners.push(this.openmct.objects.observe(this.newDomainObject, path + "." + property, function (newValue) {
+                    this.selectedElementProxy.element[property] = newValue;
+                    this.updateSelectionStyle();
+                }.bind(this)));
+            }.bind(this));
         };
 
         FixedController.prototype.destroy = function () {
