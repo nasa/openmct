@@ -69,6 +69,10 @@ define(
             this.$scope.$parent.editToolbar = this.editToolbar;
             this.$scope.$parent.editToolbar.structure = this.editToolbar.getStructure();
             this.$scope.$parent.editToolbar.state = this.editToolbar.getState();
+
+            setTimeout(function () {
+                this.$scope.$apply();
+            }.bind(this));
         };
 
         ToolbarController.prototype.destroy = function () {
