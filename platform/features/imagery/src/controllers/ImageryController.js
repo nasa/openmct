@@ -161,14 +161,18 @@ define(
          * @returns {boolean} falsy when a duplicate datum is given
          */
         ImageryController.prototype.updateHistory = function (datum) {
-            if (this.$scope.imageHistory.length === 0 ||
-                !_.isEqual(this.$scope.imageHistory.slice(-1)[0], datum)) {
-                var index = _.sortedIndex(this.$scope.imageHistory, datum, this.timeFormat.format.bind(this.timeFormat));
-                this.$scope.imageHistory.splice(index, 0, datum);
-                return true;
+            if (this.$scope.imageHistory.length !== 0) {
+                var datumTime       = this.timeFormat.format(datum);
+                var datumURL        = this.imageFormat.format(datum);
+                var lastHistoryTime = this.timeFormat.format(this.$scope.imageHistory.slice(-1)[0]);
+                var lastHistoryURL  = this.imageFormat.format(this.$scope.imageHistory.slice(-1)[0]);
+                if (datumTime === lastHistoryTime && datumURL === lastHistoryURL) {
+                    return false;
+                }
             }
-
-            return false;
+            var index = _.sortedIndex(this.$scope.imageHistory, datum, this.timeFormat.format.bind(this.timeFormat));
+            this.$scope.imageHistory.splice(index, 0, datum);
+            return true;
         };
 
         ImageryController.prototype.onScroll = function (event) {
