@@ -120,8 +120,8 @@
         }
     }
 
-    &.t-frame-outer .s-input-inline {
-        // Prevent inline inputs from being edited when nested in a Layout
+    &.t-frame-outer .title-label.s-input-inline {
+        // Prevent frame titles from being edited when nested in a Layout
         pointer-events: none !important;
     }
 

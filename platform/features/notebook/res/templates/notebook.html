@@ -48,7 +48,7 @@
                 ng-repeat="entry in model.entries | filter:entrySearch | orderBy: sortEntries track by $index"
                 ng-init="$last && finished(model.entries)"
                 mct-entry-dnd>
-                <div class="holder flex-elem l-flex-row grows w-notebook-entry-time-and-content" ng-click="selectContentEditable($event)">
+                <div class="holder flex-elem l-flex-row grows w-notebook-entry-time-and-content">
                     <div class="holder flex-elem s-notebook-entry-time">
                         <span>{{entry.createdOn | date:'yyyy-MM-dd'}}</span>
                         <span>{{entry.createdOn | date:'HH:mm:ss'}}</span>
