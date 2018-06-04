@@ -5,7 +5,6 @@ define([
     "./src/controllers/SelectSnapshotController",
     "./src/controllers/LayoutNotebookController",
     "./src/directives/MCTSnapshot",
-    "../layout/src/MCTTriggerModal",
     "./src/directives/EntryDnd",
     "./src/actions/ViewSnapshot",
     "./src/actions/AnnotateSnapshot",
@@ -16,7 +15,6 @@ define([
     "./src/capabilities/NotebookCapability",
     "./src/policies/CompositionPolicy",
     "./src/policies/ViewPolicy",
-    "text!./res/templates/layoutNotebook.html",
     "text!./res/templates/notebook.html",
     "text!./res/templates/entry.html",
     "text!./res/templates/annotation.html",
@@ -31,7 +29,6 @@ define([
     SelectSnapshotController,
     LayoutNotebookController,
     MCTSnapshot,
-    MCTModalNotebook,
     MCTEntryDnd,
     ViewSnapshotAction,
     AnnotateSnapshotAction,
@@ -42,7 +39,6 @@ define([
     NotebookCapability,
     CompositionPolicy,
     ViewPolicy,
-    layoutNotebookTemplate,
     notebookTemplate,
     entryTemplate,
     annotationTemplate,
@@ -184,13 +180,6 @@ define([
                         "dndService",
                         "typeService",
                         "notificationService"
-                    ]
-                },
-                 {
-                    "key": "mctModalNotebook",
-                    "implementation": MCTModalNotebook,
-                    "depends": [
-                        "$document"
                     ]
                 }
             ],
