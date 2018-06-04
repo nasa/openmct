@@ -21,68 +21,69 @@
 -->
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title></title>
-    <script src="bower_components/requirejs/require.js"> </script>
-    <script>
-        var THIRTY_MINUTES = 30 * 60 * 1000;
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <title></title>
+        <script src="bower_components/requirejs/require.js"> </script>
+        <script>
+            var THIRTY_MINUTES = 30 * 60 * 1000;
 
-        require(['openmct'], function (openmct) {
-            [
-                'example/eventGenerator',
-                'example/styleguide'
-            ].forEach(
-                openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
-            );
-            openmct.install(openmct.plugins.MyItems());
-            openmct.install(openmct.plugins.LocalStorage());
-            openmct.install(openmct.plugins.Espresso());
-            openmct.install(openmct.plugins.Generator());
-            openmct.install(openmct.plugins.ExampleImagery());
-            openmct.install(openmct.plugins.UTCTimeSystem());
-            openmct.install(openmct.plugins.ImportExport());
-            openmct.install(openmct.plugins.AutoflowView({
-                type: "telemetry.panel"
-            }));
-            openmct.install(openmct.plugins.Conductor({
-                menuOptions: [
-                    {
-                        name: "Fixed",
-                        timeSystem: 'utc',
-                        bounds: {
-                            start: Date.now() - THIRTY_MINUTES,
-                            end: Date.now()
+            require(['openmct'], function (openmct) {
+                [
+                    'example/eventGenerator',
+                    'example/styleguide'
+                ].forEach(
+                    openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
+                );
+                openmct.install(openmct.plugins.MyItems());
+                openmct.install(openmct.plugins.LocalStorage());
+                openmct.install(openmct.plugins.Espresso());
+                openmct.install(openmct.plugins.Generator());
+                openmct.install(openmct.plugins.ExampleImagery());
+                openmct.install(openmct.plugins.UTCTimeSystem());
+                openmct.install(openmct.plugins.ImportExport());
+                openmct.install(openmct.plugins.AutoflowView({
+                    type: "telemetry.panel"
+                }));
+                openmct.install(openmct.plugins.Conductor({
+                    menuOptions: [
+                        {
+                            name: "Fixed",
+                            timeSystem: 'utc',
+                            bounds: {
+                                start: Date.now() - THIRTY_MINUTES,
+                                end: Date.now()
+                            }
+                        },
+                        {
+                            name: "Realtime",
+                            timeSystem: 'utc',
+                            clock: 'local',
+                            clockOffsets: {
+                                start: -25 * 60 * 1000,
+                                end: 5 * 60 * 1000
+                            }
                         }
-                    },
-                    {
-                        name: "Realtime",
-                        timeSystem: 'utc',
-                        clock: 'local',
-                        clockOffsets: {
-                            start: -25 * 60 * 1000,
-                            end: 5 * 60 * 1000
-                        }
-                    }
-                ]
-            }));
-            openmct.install(openmct.plugins.SummaryWidget());
-            openmct.time.clock('local', {start: -THIRTY_MINUTES, end: 0});
-            openmct.time.timeSystem('utc');
-            openmct.start();
-        });
-    </script>
-    <link rel="stylesheet" href="platform/commonUI/general/res/css/startup-base.css">
-    <link rel="stylesheet" href="platform/commonUI/general/res/css/openmct.css">
-    <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-96x96.png" sizes="96x96">
-    <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-16x16.png" sizes="16x16">
-    <link rel="shortcut icon" href="platform/commonUI/general/res/images/favicons/favicon.ico">
-</head>
-<body class="user-environ">
-    <div class="l-splash-holder s-splash-holder">
-        <div class="l-splash s-splash"></div>
-    </div>
-</body>
+                    ]
+                }));
+                openmct.install(openmct.plugins.SummaryWidget());
+                openmct.time.clock('local', {start: -THIRTY_MINUTES, end: 0});
+                openmct.time.timeSystem('utc');
+                openmct.start();
+            });
+        </script>
+        <link rel="stylesheet" href="platform/commonUI/general/res/css/startup-base.css">
+        <link rel="stylesheet" href="platform/commonUI/general/res/css/openmct.css">
+        <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-32x32.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-96x96.png" sizes="96x96">
+        <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-16x16.png" sizes="16x16">
+        <link rel="shortcut icon" href="platform/commonUI/general/res/images/favicons/favicon.ico">
+    </head>
+    <body>
+        <div class="l-splash-holder s-splash-holder">
+            <div class="l-splash s-splash"></div>
+        </div>
+    </body>
 </html>
