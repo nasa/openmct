@@ -60,9 +60,33 @@ define(
          * @returns {boolean} true on a phone
          */
         AgentService.prototype.isPhone = function () {
-            // iOS is test-to device for mobile, so only
-            // make this distinction for iPhones
-            return this.mobileName === 'iPhone';
+            if (this.isMobile()) {
+                if (this.isAndroidTablet()) {
+                    return false;
+                } else if (this.mobileName === 'iPad') {
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        };
+
+        /**
+         * Check if the user is on a tablet sized android device
+         * @returns {boolean} true on an android tablet
+         */
+        AgentService.prototype.isAndroidTablet = function () {
+            if (this.mobileName === 'Android') {
+                if (this.isPortrait() && window.innerWidth >= 768) {
+                    return true;
+                } else if (this.isLandscape() && window.innerHeight >= 768) {
+                    return true;
+                }
+            } else {
+                return false;
+            }
         };
 
         /**
@@ -70,7 +94,7 @@ define(
          * @returns {boolean} true on a tablet
          */
         AgentService.prototype.isTablet = function () {
-            return this.isMobile() && !this.isPhone();
+            return (this.isMobile() && !this.isPhone() && this.mobileName !== 'Android') || (this.isMobile() && this.isAndroidTablet());
         };
 
         /**

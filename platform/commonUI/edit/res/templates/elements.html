@@ -25,10 +25,12 @@
                  ng-model="filterBy">
     </mct-include>
     <div class="flex-elem grows vscroll">
-        <ul class="tree" id="inspector-elements-tree" ng-if="composition.length > 0">
+        <ul class="tree" id="inspector-elements-tree"
+            ng-if="composition.length > 0">
             <li ng-repeat="containedObject in composition | filter:searchElements">
                 <span class="tree-item">
                     <span class="grippy-sm"
+                          ng-if="composition.length > 1"
                           data-id="{{ containedObject.id }}"
                           mct-drag-down="dragDown($event)"
                           mct-drag="drag($event)"
