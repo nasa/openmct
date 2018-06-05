@@ -109,6 +109,10 @@ define(
             });
         };
 
+        NavigationService.prototype.anyChecksBeforeNavigation = function () {
+            return this.checks.length;
+        };
+
         /**
          * Check if navigation should proceed.  May prompt a user for input
          * if any checkFns return messages.  Returns true if the user wishes to
@@ -162,7 +166,6 @@ define(
          */
         NavigationService.prototype.shouldWarnBeforeNavigate = function () {
             var reasons = [];
-
             this.checks.forEach(function (checkFn) {
                 var reason = checkFn();
                 if (reason) {

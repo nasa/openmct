@@ -271,36 +271,3 @@
     @extend .l-summary-widget;
     padding: $interiorMarginSm $interiorMargin;
 }
-
-// Hide and show elements in the rule-header on hover
-.l-widget-rule,
-.l-widget-test-data-item {
-    .grippy,
-    .l-rule-action-buttons-wrapper,
-    .l-condition-action-buttons-wrapper,
-    .l-widget-test-data-item-action-buttons-wrapper {
-        @include trans-prop-nice($props: opacity, $dur: 500ms);
-        opacity: 0;
-    }
-    &:hover {
-        .grippy,
-        .l-rule-action-buttons-wrapper,
-        .l-widget-test-data-item-action-buttons-wrapper {
-            @include trans-prop-nice($props: opacity, $dur: 0);
-            opacity: 1;
-        }
-    }
-    .l-rule-action-buttons-wrapper {
-          .t-delete {
-            margin-left: 10px;
-          }
-    }
-    .t-condition {
-        &:hover {
-            .l-condition-action-buttons-wrapper {
-                @include trans-prop-nice($props: opacity, $dur: 0);
-                opacity: 1;
-            }
-        }
-    }
-}

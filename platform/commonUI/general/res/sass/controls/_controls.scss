@@ -139,7 +139,6 @@
 }
 
 .s-local-controls {
-    @include trans-prop-nice(opacity);
     font-size: 0.7rem;
     &.s-wrapper-transluc {
         // Semi-opaque wrapper to visually distinguish a control
@@ -147,6 +146,19 @@
         background: rgba($colorTransLucBg, 0.7);
         box-sizing: border-box;
         border-radius: $controlCr;
+    }
+}
+
+.has-local-controls {
+    .local-control {
+        @include trans-prop-nice($props: opacity, $dur: 250ms);
+        opacity: 0;
+    }
+    &:hover {
+        .local-control {
+            @include trans-prop-nice($props: opacity, $dur: 10ms);
+            opacity: 1;
+        }
     }
 }
 
@@ -338,7 +350,7 @@ input[type="text"].s-input-inline,
     @include btnSubtle($bg: $colorSelectBg);
     @extend .icon-arrow-down; // Context arrow
     display: inline-block;
-    padding: 0 $interiorMargin;
+    line-height: 180%;
     overflow: hidden;
     position: relative;
     select {
@@ -349,8 +361,8 @@ input[type="text"].s-input-inline,
         color: $colorSelectFg;
         cursor: pointer;
         border: none !important;
-        padding: 4px 25px 2px 0px;
-        width: 130%;
+        padding: 0 20px 0 $interiorMargin;
+        width: 100%;
         option {
             margin: $interiorMargin 0; // Firefox
         }
@@ -359,6 +371,7 @@ input[type="text"].s-input-inline,
         transform: translateY(-50%);
         color: rgba($colorInvokeMenu, percentToDecimal($contrastInvokeMenuPercent));
         display: block;
+        font-size: 0.8em;
         pointer-events: none;
         position: absolute;
         right: $interiorMargin;

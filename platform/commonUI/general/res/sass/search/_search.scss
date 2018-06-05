@@ -34,7 +34,7 @@
 		$iconEdgeM: 4px;
 		$iconD: $treeSearchInputBarH - ($iconEdgeM*2);
         @extend .icon-magnify;
-		font-size: 0.8em;
+		font-size: 0.8rem;
 		position: relative;
 
 		.search-input {
@@ -60,7 +60,7 @@
 			position: relative;
 			width: 100%;
 			padding-left: $iconD + $interiorMargin !important;
-			padding-right: ($iconD * 2) + ($interiorMargin * 2) !important;
+			padding-right: $iconD + $interiorMargin !important;
 
 			// Make work for mct-control textfield
 			input {
@@ -82,8 +82,7 @@
 		}
 
 		.clear-input {
-            // Hiding for now with addition of Cancel button
-			right: $iconD + $interiorMargin;
+			right: $interiorMargin;
 
 			// Icon is visible only when there is text input
             visibility: hidden;
@@ -98,16 +97,25 @@
 			}
 		}
 
-		.menu-icon {
-            // 'v' invoke menu icon
-			font-size: 0.8em;
-			padding-right: $iconEdgeM;
-			right: $iconEdgeM;
-			text-align: right;
-			&:hover {
-				color: pullForward($colorInputIcon, 10%);
-			}
-		}
+        &.search-filter-by-type {
+            .search-input {
+                padding-right: ($iconD * 2) + ($interiorMargin * 2) !important; // Allow room for menu-icon
+            }
+            .menu-icon {
+                // 'v' invoke menu icon for filtering by type
+                font-size: 0.8em;
+                padding-right: $iconEdgeM;
+                right: $iconEdgeM;
+                text-align: right;
+                &:hover {
+                    color: pullForward($colorInputIcon, 10%);
+                }
+            }
+            .clear-input {
+                right: $iconD + $interiorMargin;
+            }
+
+        }
 
 		.search-menu-holder {
 			float: right;
