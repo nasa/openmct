@@ -98,6 +98,8 @@ define(
                     elementProxy.setGridSize(self.gridSize);
                     elementProxy.style = convertPosition(elementProxy);
                 });
+
+                // TODO: mutate newDomainObject configuration
             }
 
             // Decorate an element for display
@@ -183,13 +185,14 @@ define(
             // Position a panel after a drop event
             function handleDrop(e, id, position) {
                 // Don't handle this event if it has already been handled
-                // color is set to "" to let the CSS theme determine the default color
                 if (e.defaultPrevented) {
                     return;
                 }
 
                 e.preventDefault();
+
                 // Store the position of this element.
+                // color is set to "" to let the CSS theme determine the default color
                 addElement({
                     type: "fixed.telemetry",
                     x: Math.floor(position.x / self.gridSize[0]),
@@ -204,7 +207,7 @@ define(
                 });
 
                 //Re-initialize objects, and subscribe to new object
-                self.getTelemetry($scope.domainObject);
+                self.getTelemetry(false);
             }
 
             this.elementProxies = [];
@@ -216,16 +219,13 @@ define(
             // $scope.$watch("model.layoutGrid", updateElementPositions);
 
             // Position panes where they are dropped
-            // $scope.$on("mctDrop", handleDrop);
+            $scope.$on("mctDrop", handleDrop);
 
             this.composition = this.openmct.composition.get(this.newDomainObject);
             this.composition.on('add', this.onCompositionAdd, this);
             this.composition.on('remove', this.onCompositionRemove, this);
             this.composition.on('load', this.onCompositionLoad, this);
-            this.composition.load();
-
-            // Subscribe to telemetry when an object is available
-            // $scope.$watch("domainObject", this.getTelemetry);
+            this.compositionPromise = this.composition.load();
 
             $scope.$on("$destroy", this.destroy.bind(this));
 
@@ -244,15 +244,26 @@ define(
         }
 
         FixedController.prototype.onCompositionAdd = function (obj) {
-            // TODO: implement
+            console.log("composition added");
+            // TODO: get telemetry for the new obj
         };
 
         FixedController.prototype.onCompositionRemove = function (identifier) {
-            // TODO: implement
+            console.log("composition removed");
+            console.log(identifier);
+            var elements = this.newDomainObject.configuration['fixed-display'].elements || [];
+            var newElements = elements.filter(function (proxy) {
+                console.log(proxy.id);
+                return proxy.id !== identifier.key;
+            });
+            this.mutate("configuration['fixed-display'].elements", newElements);
+            this.getTelemetry(false); // TODO: is this needed?
+            this.refreshElements();
         };
 
         FixedController.prototype.onCompositionLoad = function () {
-            this.getTelemetry(this.$scope.domainObject);
+            console.log("composition loaded");
+            this.getTelemetry(true);
         };
 
         /**
@@ -261,6 +272,8 @@ define(
          * @param elementProxy the element proxy to remove.
          */
         FixedController.prototype.remove = function (elementProxy) {
+            // TODO: if elementProxy is of type "telemetry.fixed",
+            // update the newDoaminObject compposition
             var elements = this.newDomainObject.configuration['fixed-display'].elements || [];
             elements.splice(elements.indexOf(elementProxy.element), 1);
             this.mutate("configuration['fixed-display'].elements", elements);
@@ -529,9 +542,7 @@ define(
             });
         };
 
-        FixedController.prototype.getTelemetry = function (domainObject) {
-            // TODO: no need to pass domainObject, instead use this.newDomainObject.
-            var newObject = domainObject.useCapability('adapter');
+        FixedController.prototype.getTelemetry = function (compositionLoaded) {
             var self = this;
 
             if (this.subscriptions.length > 0) {
@@ -553,7 +564,11 @@ define(
                 return objects;
             }
 
-            return this.openmct.composition.get(newObject).load()
+            if (!compositionLoaded) {
+                this.compositionPromise = this.composition.load();
+            }
+
+            return this.compositionPromise
                 .then(filterForTelemetryObjects)
                 .then(initializeDisplay)
                 .then(this.fetchHistoricalData)
