@@ -31,8 +31,8 @@
  * @namespace platform/commonUI/notification
  */
 define(
-    [],
-    function () {
+    ['moment'],
+    function (moment) {
 
         /**
          * A representation of a user action. Options are provided to
@@ -122,7 +122,7 @@ define(
             this.AUTO_DISMISS_TIMEOUT = defaultAutoDismissTimeout;
             this.MINIMIZE_ANIMATION_TIMEOUT = minimizeAnimationTimeout;
             this.topic = topic;
-
+                    
             /*
              * A context in which to hold the active notification and a
              * handle to its timeout.
@@ -313,6 +313,7 @@ define(
                 topic = this.topic();
 
             notificationModel.severity = notificationModel.severity || "info";
+            notificationModel.timestamp = moment.utc().format('YYYY-MM-DD hh:mm:ss.ms');
 
             notification = {
                 model: notificationModel,

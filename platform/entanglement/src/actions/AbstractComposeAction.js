@@ -118,7 +118,6 @@ define(
                 currentParent = this.currentParent,
                 newParent = this.newParent,
                 object = this.object;
-
             if (newParent) {
                 return composeService.perform(object, newParent);
             }
@@ -159,4 +158,3 @@ define(
         return AbstractComposeAction;
     }
 );
-
