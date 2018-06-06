@@ -65,8 +65,8 @@ define(
             this.names = {}; // Cache names by ID
             this.values = {}; // Cache values by ID
             this.elementProxiesById = {};
-            this.telemetryObjects = [];
-            this.subscriptions = [];
+            this.telemetryObjects = {};
+            this.subscriptions = {};
             this.openmct = openmct;
             this.$element = $element;
             this.$scope = $scope;
@@ -82,7 +82,7 @@ define(
                 'fetchHistoricalData',
                 'getTelemetry',
                 'setDisplayedValue',
-                'subscribeToObjects',
+                'subscribeToObject',
                 'unsubscribe',
                 'updateView'
             ].forEach(function (name) {
@@ -119,6 +119,7 @@ define(
 
             // Decorate elements in the current configuration
             function refreshElements() {
+                console.log("refreshElements");
                 var elements = (((self.newDomainObject.configuration || {})['fixed-display'] || {}).elements || []);
 
                 // Create the new proxies...
@@ -156,8 +157,11 @@ define(
                     //Reset values
                     self.values = {};
                     refreshElements();
+
                     //Fetch new data
-                    self.fetchHistoricalData(self.telemetryObjects);
+                    Object.values(self.telemetryObjects).forEach(function (object) {
+                        self.fetchHistoricalData(object);
+                    });
                 }
             }
 
@@ -206,8 +210,10 @@ define(
                     useGrid: true
                 });
 
-                //Re-initialize objects, and subscribe to new object
-                self.getTelemetry(false);
+                // Subscribe to the new object to get telemetry
+                self.openmct.objects.get(id).then(function (object) {
+                    self.getTelemetry(object);
+                });
             }
 
             this.elementProxies = [];
@@ -224,8 +230,7 @@ define(
             this.composition = this.openmct.composition.get(this.newDomainObject);
             this.composition.on('add', this.onCompositionAdd, this);
             this.composition.on('remove', this.onCompositionRemove, this);
-            this.composition.on('load', this.onCompositionLoad, this);
-            this.compositionPromise = this.composition.load();
+            this.composition.load();
 
             $scope.$on("$destroy", this.destroy.bind(this));
 
@@ -243,27 +248,28 @@ define(
             window.fc = this;
         }
 
-        FixedController.prototype.onCompositionAdd = function (obj) {
-            console.log("composition added");
-            // TODO: get telemetry for the new obj
+        FixedController.prototype.onCompositionAdd = function (object) {
+            console.log("composition added", object);
+            this.getTelemetry(object);
         };
 
         FixedController.prototype.onCompositionRemove = function (identifier) {
-            console.log("composition removed");
-            console.log(identifier);
+            console.log("composition removed", identifier);
+            console.log(this.newDomainObject);
+            var id = objectUtils.makeKeyString(identifier);
             var elements = this.newDomainObject.configuration['fixed-display'].elements || [];
             var newElements = elements.filter(function (proxy) {
-                console.log(proxy.id);
-                return proxy.id !== identifier.key;
+                return proxy.id !== id;
             });
             this.mutate("configuration['fixed-display'].elements", newElements);
-            this.getTelemetry(false); // TODO: is this needed?
-            this.refreshElements();
-        };
 
-        FixedController.prototype.onCompositionLoad = function () {
-            console.log("composition loaded");
-            this.getTelemetry(true);
+            if (this.subscriptions[id]) {
+                this.subscriptions[id]();
+                delete this.subscriptions[id];
+            }
+
+            delete this.telemetryObjects[id];
+            this.refreshElements();
         };
 
         /**
@@ -272,12 +278,19 @@ define(
          * @param elementProxy the element proxy to remove.
          */
         FixedController.prototype.remove = function (elementProxy) {
-            // TODO: if elementProxy is of type "telemetry.fixed",
-            // update the newDoaminObject compposition
-            var elements = this.newDomainObject.configuration['fixed-display'].elements || [];
-            elements.splice(elements.indexOf(elementProxy.element), 1);
+            var element = elementProxy.element;
+            var elements = this.newDomainObject.configuration['fixed-display'].elements || [];            
+            elements.splice(elements.indexOf(element), 1);
+
+            if (element.type === 'fixed.telemetry') {
+                this.newDomainObject.composition = this.newDomainObject.composition.filter(function (identifier) {
+                    return objectUtils.makeKeyString(identifier) !== element.id;
+                });
+            }
+
             this.mutate("configuration['fixed-display'].elements", elements);
             this.refreshElements();
+            
         };
 
         /**
@@ -402,7 +415,6 @@ define(
             this.openmct.selection.off("change", this.setSelection);
             this.composition.off('add', this.onCompositionAdd, this);
             this.composition.off('remove', this.onCompositionRemove, this);
-            this.composition.off('load', this.onCompositionLoad, this);
         };
 
         /**
@@ -426,31 +438,30 @@ define(
          * @private
          */
         FixedController.prototype.unsubscribe = function () {
-            this.subscriptions.forEach(function (unsubscribeFunc) {
+            Object.values(this.subscriptions).forEach(function (unsubscribeFunc) {
                 unsubscribeFunc();
             });
-            this.subscriptions = [];
-            this.telemetryObjects = [];
+            this.subscriptions = {};
+            this.telemetryObjects = {};
         };
 
         /**
-         * Subscribe to all given domain objects
+         * Subscribe to the given domain object
          * @private
-         * @param {object[]} objects  Domain objects to subscribe to
-         * @returns {object[]} The provided objects, for chaining.
+         * @param {object} object  Domain object to subscribe to
+         * @returns {object} The provided object, for chaining.
          */
-        FixedController.prototype.subscribeToObjects = function (objects) {
+        FixedController.prototype.subscribeToObject = function (object) {
             var self = this;
             var timeAPI = this.openmct.time;
+            var id = objectUtils.makeKeyString(object.identifier);
+            this.subscriptions[id] = self.openmct.telemetry.subscribe(object, function (datum) {
+                if (timeAPI.clock() !== undefined) {
+                    self.updateView(object, datum);
+                }
+            }, {});
 
-            this.subscriptions = objects.map(function (object) {
-                return self.openmct.telemetry.subscribe(object, function (datum) {
-                    if (timeAPI.clock() !== undefined) {
-                        self.updateView(object, datum);
-                    }
-                }, {});
-            });
-            return objects;
+            return object;
         };
 
         /**
@@ -502,23 +513,22 @@ define(
         };
 
         /**
-         * Request the last historical data point for the given domain objects
-         * @param {object[]} objects
-         * @returns {object[]} the provided objects for chaining.
+         * Request the last historical data point for the given domain object
+         * @param {object} object
+         * @returns {object} the provided object for chaining.
          */
-        FixedController.prototype.fetchHistoricalData = function (objects) {
+        FixedController.prototype.fetchHistoricalData = function (object) {
             var bounds = this.openmct.time.bounds();
             var self = this;
 
-            objects.forEach(function (object) {
-                self.openmct.telemetry.request(object, {start: bounds.start, end: bounds.end, size: 1})
-                    .then(function (data) {
-                        if (data.length > 0) {
-                            self.updateView(object, data[data.length - 1]);
-                        }
-                    });
-            });
-            return objects;
+            self.openmct.telemetry.request(object, {start: bounds.start, end: bounds.end, size: 1})
+                .then(function (data) {
+                    if (data.length > 0) {
+                        self.updateView(object, data[data.length - 1]);
+                    }
+                });
+
+            return object;
         };
 
 
@@ -542,37 +552,27 @@ define(
             });
         };
 
-        FixedController.prototype.getTelemetry = function (compositionLoaded) {
-            var self = this;
+        FixedController.prototype.getTelemetry = function (domainObject) {
+            console.log("getTelemetry");
+            var id = objectUtils.makeKeyString(domainObject.identifier);
 
-            if (this.subscriptions.length > 0) {
-                this.unsubscribe();
+            if (this.subscriptions[id]) {
+                this.subscriptions[id]();
+                delete this.subscriptions[id];
+            }
+            delete this.telemetryObjects[id];
+
+            if (!this.openmct.telemetry.isTelemetryObject(domainObject)) {
+                return;
             }
 
-            function filterForTelemetryObjects(objects) {
-                return objects.filter(function (object) {
-                    return self.openmct.telemetry.isTelemetryObject(object);
-                });
-            }
+            // Initialize display
+            this.telemetryObjects[id] = domainObject;
+            this.setDisplayedValue(domainObject, "");
 
-            function initializeDisplay(objects) {
-                self.telemetryObjects = objects;
-                objects.forEach(function (object) {
-                    // Initialize values
-                    self.setDisplayedValue(object, "");
-                });
-                return objects;
-            }
-
-            if (!compositionLoaded) {
-                this.compositionPromise = this.composition.load();
-            }
-
-            return this.compositionPromise
-                .then(filterForTelemetryObjects)
-                .then(initializeDisplay)
+            Promise.resolve(domainObject)
                 .then(this.fetchHistoricalData)
-                .then(this.subscribeToObjects);
+                .then(this.subscribeToObject);
         };
 
         /**

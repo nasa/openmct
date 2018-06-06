@@ -130,7 +130,7 @@ define(
             }
 
             set element (value) {
-                console.log('setting element', JSON.stringify(value));
+                // console.log('setting element', JSON.stringify(value));
                 this._element = value;
             }
 
