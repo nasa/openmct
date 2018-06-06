@@ -119,7 +119,6 @@ define(
 
             // Decorate elements in the current configuration
             function refreshElements() {
-                console.log("refreshElements");
                 var elements = (((self.newDomainObject.configuration || {})['fixed-display'] || {}).elements || []);
 
                 // Create the new proxies...
@@ -249,27 +248,28 @@ define(
         }
 
         FixedController.prototype.onCompositionAdd = function (object) {
-            console.log("composition added", object);
             this.getTelemetry(object);
         };
 
         FixedController.prototype.onCompositionRemove = function (identifier) {
-            console.log("composition removed", identifier);
-            console.log(this.newDomainObject);
-            var id = objectUtils.makeKeyString(identifier);
-            var elements = this.newDomainObject.configuration['fixed-display'].elements || [];
-            var newElements = elements.filter(function (proxy) {
-                return proxy.id !== id;
-            });
-            this.mutate("configuration['fixed-display'].elements", newElements);
+            // Defer mutation of newDomainObject to prevent mutating an
+            // outdated version since this is triggered by a composition change.
+            setTimeout(function () {
+                var id = objectUtils.makeKeyString(identifier);
+                var elements = this.newDomainObject.configuration['fixed-display'].elements || [];
+                var newElements = elements.filter(function (proxy) {
+                    return proxy.id !== id;
+                });
+                this.mutate("configuration['fixed-display'].elements", newElements);
 
-            if (this.subscriptions[id]) {
-                this.subscriptions[id]();
-                delete this.subscriptions[id];
-            }
+                if (this.subscriptions[id]) {
+                    this.subscriptions[id]();
+                    delete this.subscriptions[id];
+                }
 
-            delete this.telemetryObjects[id];
-            this.refreshElements();
+                delete this.telemetryObjects[id];
+                this.refreshElements();
+            }.bind(this));
         };
 
         /**
@@ -553,7 +553,6 @@ define(
         };
 
         FixedController.prototype.getTelemetry = function (domainObject) {
-            console.log("getTelemetry");
             var id = objectUtils.makeKeyString(domainObject.identifier);
 
             if (this.subscriptions[id]) {
