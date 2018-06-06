@@ -47,7 +47,7 @@ define(
                 mockDialog,
                 mockLog,
                 abstractComposePromise,
-                domainObject = {model: {name: "mockObject"}};
+                domainObject = {model: {name: "mockObject"}},
                 progress = {phase: "copying", totalObjects: 10, processed: 1};
 
             beforeEach(function () {

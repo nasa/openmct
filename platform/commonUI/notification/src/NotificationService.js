@@ -122,7 +122,7 @@ define(
             this.AUTO_DISMISS_TIMEOUT = defaultAutoDismissTimeout;
             this.MINIMIZE_ANIMATION_TIMEOUT = minimizeAnimationTimeout;
             this.topic = topic;
-                    
+
             /*
              * A context in which to hold the active notification and a
              * handle to its timeout.
