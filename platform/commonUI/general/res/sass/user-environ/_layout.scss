@@ -145,20 +145,18 @@
 body.desktop .pane .mini-tab-icon.toggle-pane {
     $hi: splitterHandleInset($splitterD, $splitterHandleD);
     $paneExpandedOffset: $hi + $splitterHandleD + $uePaneMiniTabW;
-    top: $bodyMargin + ($ueTopBarH - $uePaneMiniTabH)/2;
+    top: 0;
 
     &.toggle-tree.anchor-left.collapsed,
     &.toggle-inspect.anchor-right:not(.collapsed) {
         @extend .icon-arrow-right;
         border-bottom-right-radius: $controlCr;
-        border-top-right-radius: $controlCr;
     }
 
     &.toggle-tree.anchor-left:not(.collapsed),
     &.toggle-inspect.anchor-right.collapsed {
         @extend .icon-arrow-left;
         border-bottom-left-radius: $controlCr;
-        border-top-left-radius: $controlCr;
     }
 
     &.toggle-tree.anchor-left {

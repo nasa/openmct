@@ -226,8 +226,6 @@ $colorSplitterHover: pullForward($colorSplitterBg, $hoverRatioPercent);
 $colorSplitterActive: $colorKey;
 
 // Minitabs
-$uePaneMiniTabH: 24px;
-$uePaneMiniTabW: 8px;
 $colorMiniTabBg: $colorSplitterBg;
 $colorMiniTabFg: pushBack($colorMiniTabBg, 10%);
 $colorMiniTabBgHov: $colorSplitterHover;
