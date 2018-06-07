@@ -265,7 +265,12 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
 
     .left {
         .l-back {
-            margin-right: $interiorMarginLg;
+            a {
+                display: inline-block;
+                text-align: center;
+                width: 24px;
+            }
+            margin-right: $interiorMargin;
             &.s-status-editing { display: none; }
         }
     }
