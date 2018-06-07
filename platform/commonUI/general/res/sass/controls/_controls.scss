@@ -214,7 +214,7 @@ body.desktop .has-local-controls {
     &:before {
         position: absolute;
         @include trans-prop-nice(transform, 100ms);
-        content: $glyph-icon-arrow-right;
+        content: $glyph-icon-arrow-right-equilateral;
         @include transform-origin(center);
     }
     &.expanded:before {
@@ -812,13 +812,17 @@ textarea {
     @extend .icon-arrow-right;
     cursor: pointer;
     font-size: 0.75em;
+    width: $treeVCW;
     &:before {
+        // Arrow glyph
+        left: 50%;
         position: absolute;
         @include trans-prop-nice(transform, 100ms);
+        transform: translateX(-50%);
         transform-origin: center;
     }
     &.expanded:before {
-        transform: rotate(90deg);
+        transform: translateX(-50%) rotate(90deg);
     }
 }
 

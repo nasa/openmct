@@ -67,6 +67,7 @@ $glyph-icon-x: '\e928';
 $glyph-icon-brackets: '\e929';
 $glyph-icon-crosshair: '\e930';
 $glyph-icon-grippy: '\e931';
+$glyph-icon-arrow-right-equilateral: '\e932';
 $glyph-icon-arrows-out: '\e1000';
 $glyph-icon-arrows-right-left: '\e1001';
 $glyph-icon-arrows-up-down: '\e1002';
@@ -182,6 +183,7 @@ $glyph-icon-notebook: '\e1131';
 .icon-brackets {  @include glyphBefore($glyph-icon-brackets); }
 .icon-crosshair {  @include glyphBefore($glyph-icon-crosshair); }
 .icon-grippy {  @include glyphBefore($glyph-icon-grippy); }
+.icon-arrow-right-equilateral {  @include glyphBefore($glyph-icon-arrow-right-equilateral); }
 .icon-arrows-out {  @include glyphBefore($glyph-icon-arrows-out); }
 .icon-arrows-right-left {  @include glyphBefore($glyph-icon-arrows-right-left); }
 .icon-arrows-up-down {  @include glyphBefore($glyph-icon-arrows-up-down); }
