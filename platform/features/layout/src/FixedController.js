@@ -323,8 +323,14 @@ define(
             this.refreshElements();
         };
 
-        FixedController.prototype.generateDragHandle = function (elementProxy) {
+        FixedController.prototype.generateDragHandle = function (elementProxy, elementHandle) {
             var index = this.elementProxies.indexOf(elementProxy);
+
+            if (elementHandle) {
+                elementHandle.element = elementProxy.element;
+                elementProxy = elementHandle;
+            }
+
             return new FixedDragHandle(
                 elementProxy,
                 "configuration['fixed-display'].elements[" + index + "]",
@@ -333,7 +339,9 @@ define(
         };
 
         FixedController.prototype.generateDragHandles = function (elementProxy) {
-            return elementProxy.handles().map(this.generateDragHandle, this);
+            return elementProxy.handles().map(function (handle) {
+                return this.generateDragHandle(elementProxy, handle);
+            }, this);
         };
 
         FixedController.prototype.updateSelectionStyle = function () {

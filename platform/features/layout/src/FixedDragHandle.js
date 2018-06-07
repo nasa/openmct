@@ -33,10 +33,9 @@ define(
          * @memberof platform/features/layout
          * @constructor
          */
-        function FixedDragHandle(elementProxy, configPath, fixedControl) {
-            this.elementProxy = elementProxy;
+        function FixedDragHandle(elementHandle, configPath, fixedControl) {
+            this.elementHandle = elementHandle;
             this.configPath = configPath;
-            this.gridSize = fixedControl.gridSize;
             this.fixedControl = fixedControl;
         }
 
@@ -46,11 +45,11 @@ define(
          * @memberof platform/features/layout.FixedDragHandle#
          */
         FixedDragHandle.prototype.style = function () {
-            var gridSize = this.elementProxy.getGridSize();
+            var gridSize = this.elementHandle.getGridSize();
 
             // Adjust from grid to pixel coordinates
-            var x = this.elementProxy.element.x * gridSize[0],
-                y = this.elementProxy.element.y * gridSize[1];
+            var x = this.elementHandle.x() * gridSize[0],
+                y = this.elementHandle.y() * gridSize[1];
 
             // Convert to a CSS style centered on that point
             return {
@@ -68,8 +67,8 @@ define(
         FixedDragHandle.prototype.startDrag = function () {
             // Cache initial x/y positions
             this.dragging = {
-                x: this.elementProxy.element.x,
-                y: this.elementProxy.element.y
+                x: this.elementHandle.x(),
+                y: this.elementHandle.y()
             };
         };
 
@@ -79,14 +78,15 @@ define(
          *                   started
          */
         FixedDragHandle.prototype.continueDrag = function (delta) {
-            var gridSize = this.elementProxy.getGridSize();
+            var gridSize = this.elementHandle.getGridSize();
 
             if (this.dragging) {
                 // Update x/y positions (snapping to grid)
                 var newX = this.dragging.x + Math.round(delta[0] / gridSize[0]);
                 var newY = this.dragging.y + Math.round(delta[1] / gridSize[1]);
-                this.elementProxy.element.x = Math.max(0, newX);
-                this.elementProxy.element.y = Math.max(0, newY);
+
+                this.elementHandle.x(Math.max(0, newX));
+                this.elementHandle.y(Math.max(0, newY));
                 this.fixedControl.updateSelectionStyle();
             }
         };
@@ -97,7 +97,7 @@ define(
          */
         FixedDragHandle.prototype.endDrag = function () {
             this.dragging = undefined;
-            this.fixedControl.mutate(this.configPath, this.elementProxy.element);
+            this.fixedControl.mutate(this.configPath, this.elementHandle.element);
         };
 
         return FixedDragHandle;

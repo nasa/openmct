@@ -39,8 +39,8 @@ define(
         function LineProxy(element, index, elements, gridSize) {
             var proxy = new ElementProxy(element, index, elements, gridSize),
                 handles = [
-                    new LineHandle(element, 'x', 'y', 'x2', 'y2', proxy.getGridSize()),
-                    new LineHandle(element, 'x2', 'y2', 'x', 'y', proxy.getGridSize())
+                    new LineHandle(element, proxy, 'x', 'y', 'x2', 'y2'),
+                    new LineHandle(element, proxy, 'x2', 'y2', 'x', 'y')
                 ];
 
             /**

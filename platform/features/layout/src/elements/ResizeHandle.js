@@ -35,14 +35,13 @@ define(
          * @memberof platform/features/layout
          * @constructor
          */
-        function ResizeHandle(element, minWidth, minHeight, gridSize) {
+        function ResizeHandle(elementProxy, element, minWidth, minHeight) {
+            this.elementProxy = elementProxy;
             this.element = element;
 
             // Ensure reasonable defaults
             this.minWidth = minWidth || 0;
             this.minHeight = minHeight || 0;
-
-            this.gridSize = gridSize;
         }
 
         ResizeHandle.prototype.x = function (value) {
@@ -68,7 +67,7 @@ define(
         };
 
         ResizeHandle.prototype.getGridSize = function () {
-            return this.gridSize;
+            return this.elementProxy.getGridSize();
         };
 
         return ResizeHandle;

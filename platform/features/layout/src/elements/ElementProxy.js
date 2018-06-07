@@ -72,13 +72,6 @@ define(
                  */
                 this.gridSize = gridSize || [1,1]; //Ensure a reasonable default
 
-                this.resizeHandles = [new ResizeHandle(
-                                        this.element,
-                                        this.getMinWidth(),
-                                        this.getMinHeight(),
-                                        this.getGridSize()
-                                      )];
-
                 /**
                  * Get and/or set the x position of this element.
                  * Units are in fixed position grid space.
@@ -127,6 +120,13 @@ define(
 
                 this.index = index;
                 this.elements = elements;
+
+                this.resizeHandles = [new ResizeHandle(
+                                        this,
+                                        this.element,
+                                        this.getMinWidth(),
+                                        this.getMinHeight()
+                                      )];
             }
 
             set element (value) {
