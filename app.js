@@ -19,6 +19,7 @@
 
     // Defaults
     options.port = options.port || options.p || 8080;
+    options.host = options.host || options.h || 'localhost'
     options.directory = options.directory || options.D || '.';
     ['include', 'exclude', 'i', 'x'].forEach(function (opt) {
         options[opt] = options[opt] || [];
@@ -78,7 +79,7 @@
     app.use(express['static'](options.directory));
 
     // Finally, open the HTTP server and log the instance to the console
-    app.listen(options.port, function() {
-        console.log('Open MCT application running at localhost:' + options.port)
+    app.listen(options.port, options.host, function() {
+        console.log('Open MCT application running at %s:%s', options.host, options.port)
     });
 }());
