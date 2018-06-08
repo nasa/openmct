@@ -157,3 +157,28 @@
 .t-popup {
     z-index: 75;
 }
+
+/********************************************* GRID STYLES */
+.grid-two-column {
+    display: grid;
+    grid-row-gap: 0;
+    grid-template-columns: 1fr 2fr;
+    align-items: top;
+}
+
+.grid-two-column-span-cols {
+    grid-column: 1 / 3;
+}
+
+.grid-elem {
+    &:not(:first-child) {
+        border-top: 1px solid $colorInteriorBorder;
+    }
+    &.label {
+        background-color: rgba(0,0,128,0.2);
+    }
+    &.value {
+        background-color: rgba(0,128,0,0.2);
+    }
+
+}

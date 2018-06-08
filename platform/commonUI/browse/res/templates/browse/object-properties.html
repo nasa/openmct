@@ -20,40 +20,45 @@
  at runtime from the About dialog for additional information.
 -->
 <div ng-controller="ObjectInspectorController as controller">
-    <ul class="flex-elem grows l-inspector-part">
-        <li>
-            <em class="t-inspector-part-header">Properties</em>
-            <div class="inspector-properties"
-                 ng-repeat="data in metadata"
-                 ng-class="{ first:$index === 0 }">
-                <div class="label">{{ data.name }}</div>
-                <div class="value">{{ data.value }}</div>
+    <div class="flex-elem grows l-inspector-part">
+        <h2>Properties</h2>
+        <div class="t-repeater inspector-properties"
+             ng-repeat="data in metadata"
+             ng-class="{ first:$index === 0 }">
+            <div class="label">{{ data.name }}</div>
+            <div class="value">{{ data.value }}</div>
+        </div>
+    </div>
+
+    <div class="flex-elem grows l-inspector-part" ng-if="contextutalParents.length > 0">
+        <h2 title="The location of this linked object.">Location</h2>
+        <div class="inspector-properties first">
+            <div class="label" ng-if="primaryParents.length > 0">This Link</div>
+            <div class="value">
+                <div class="t-repeater inspector-location"
+                     ng-repeat="parent in contextutalParents"
+                     ng-class="{ last:($index + 1) === contextualParents.length }">
+                    <mct-representation key="'label'"
+                                        mct-object="parent"
+                                        ng-click="parent.getCapability('action').perform('navigate')"
+                                        class="location-item">
+                    </mct-representation>
+                </div>
             </div>
-        </li>
-        <li ng-if="contextutalParents.length > 0">
-            <em class="t-inspector-part-header" title="The location of this linked object.">Location</em>
-            <div ng-if="primaryParents.length > 0" class="section-header">This Object</div>
-            <span class="inspector-location"
-                  ng-repeat="parent in contextutalParents"
-                  ng-class="{ last:($index + 1) === contextualParents.length }">
+        </div>
+    </div>
+    <div class="t-angular-wrapper inspector-properties" ng-if="primaryParents.length > 0">
+        <div class="label">Original</div>
+        <div class="value">
+            <div class="t-repeater inspector-location value"
+                 ng-repeat="parent in primaryParents"
+                 ng-class="{ last:($index + 1) === primaryParents.length }">
                 <mct-representation key="'label'"
                                     mct-object="parent"
                                     ng-click="parent.getCapability('action').perform('navigate')"
                                     class="location-item">
                 </mct-representation>
-            </span>
-        </li>
-        <li ng-if="primaryParents.length > 0">
-            <div class="section-header">Object's Original</div>
-            <span class="inspector-location"
-                  ng-repeat="parent in primaryParents"
-                  ng-class="{ last:($index + 1) === primaryParents.length }">
-                <mct-representation key="'label'"
-                                    mct-object="parent"
-                                    ng-click="parent.getCapability('action').perform('navigate')"
-                                    class="location-item">
-                </mct-representation>
-            </span>
-        </li>
-    </ul>
+            </div>
+        </div>
+    </div>
 </div>

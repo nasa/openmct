@@ -19,6 +19,61 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
+/* New grid layout for the Inspector pane */
+.l-inspect {
+    .l-inspector-part,
+    .inspector-properties,
+    .l-inspector-table {
+        @extend .grid-two-column;
+        @extend .grid-two-column-span-cols;
+    }
+
+    .l-inspector-part {
+        &:not(:first-child) {
+            margin-top: $interiorMargin;
+        }
+    }
+
+    .inspector-properties {
+        &:not(.first) {
+            border-top: 1px solid $colorInspectorSectionHeaderBg;
+        }
+        .label,
+        .value {
+            padding: 3px 3px 3px 0;
+        }
+        .label {
+            color: $colorInspectorPropName;
+        }
+        .value {
+            color: $colorInspectorPropVal;
+            word-break: break-all;
+            &:first-child {
+                // If there is no preceding .label element, make value span columns
+                @extend .grid-two-column-span-cols;
+            }
+        }
+    }
+
+    .inspector-location {
+        display: inline-block;
+    }
+
+    h2 {
+        // Headers for .l-inspector-part elements
+        @extend .grid-two-column-span-cols;
+        border-radius: $basicCr;
+        background-color: $colorInspectorSectionHeaderBg;
+        color: $colorInspectorSectionHeaderFg;
+        font-size: 0.8rem;
+        font-weight: normal;
+        margin-bottom: $interiorMargin;
+        padding: floor($formTBPad * .75) $formLRPad;
+        text-transform: uppercase;
+    }
+}
+
 /* Styles for the Inspector pane */
 
 .l-inspect,
@@ -53,7 +108,8 @@
     .l-inspector-part {
         box-sizing: border-box;
         padding-right: $interiorMargin;
-        .tree .form {
+
+        .tree > li > .inspector-config {
             margin-left: $treeVCW + $interiorMarginLg;
         }
         .section-header {
@@ -64,33 +120,33 @@
             padding: $interiorMarginSm 0;
         }
 
-        mct-form:not(:last-child) .form {
-            border-bottom: 1px solid $colorInspectorSectionHeaderBg;
-        }
+        /*        mct-form:not(:last-child) .form {
+                    border-bottom: 1px solid $colorInspectorSectionHeaderBg;
+                }*/
 
-        .form {
-            margin-bottom: $interiorMarginSm;
-            padding-bottom: $interiorMarginLg;
-            .l-section-body {
-                margin-bottom: 0;
-                &:not(.first) {
-                    border-top: 1px solid $colorFormLines;
-                }
-            }
-            .form-row {
-                align-items: center;
-                border: none !important;
-                margin-bottom: 0 !important;
-                padding: $interiorMarginSm 0;
-                .label {
-                    min-width: 80px;
-                }
-                input[type='text'],
-                input[type='search'] {
-                    width: 100%;
-                }
-            }
-        }
+        /*        .form {
+                    margin-bottom: $interiorMarginSm;
+                    padding-bottom: $interiorMarginLg;
+                    .l-section-body {
+                        margin-bottom: 0;
+                        &:not(.first) {
+                            border-top: 1px solid $colorFormLines;
+                        }
+                    }
+                    .form-row {
+                        align-items: center;
+                        border: none !important;
+                        margin-bottom: 0 !important;
+                        padding: $interiorMarginSm 0;
+                        .label {
+                            min-width: 80px;
+                        }
+                        input[type='text'],
+                        input[type='search'] {
+                            width: 100%;
+                        }
+                    }
+                }*/
     }
 
     ul li,
@@ -112,20 +168,6 @@
         text-transform: uppercase;
     }
 
-    .inspector-properties {
-        &:not(.first) {
-            border-top: 1px solid $colorInspectorSectionHeaderBg;
-        }
-        padding: $interiorMarginSm 0;
-        .label {
-            color: $colorInspectorPropName;
-            text-transform: uppercase;
-        }
-        .value {
-            color: $colorInspectorPropVal;
-            word-break: break-all;
-        }
-    }
 
     .inspector-location {
         .location-item {

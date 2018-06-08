@@ -40,7 +40,7 @@
                         mct-object="series.oldObject">
                     </mct-representation>
                 </span>
-                <div class="inspector-config" ng-show="series.expanded">
+                <div class="inspector-config l-inspect-panel s-inspect-panel-edit" ng-show="series.expanded">
                     <ul>
                         <li>
                             <label>Value:</label>
@@ -68,11 +68,11 @@
                                 </div>
                             </span>
                         </li>
-                        <li class="controls-first">
+                        <li>
                             <label>Show Markers</label>
                             <span class="control"><input type="checkbox" ng-model="form.series[$index].markers"/></span>
                         </li>
-                        <li class="controls-first">
+                        <li>
                             <label>Show Alarm Markers</label>
                             <span class="control"><input type="checkbox" ng-model="form.series[$index].alarmMarkers"/></span>
                         </li>
@@ -107,7 +107,7 @@
             </li>
         </ul>
     </ul>
-    <form class="inspector-config"
+    <form class="inspector-config l-inspect-panel s-inspect-panel-edit"
           ng-show="!!config.series.models.length">
         <em class="t-inspector-part-header"
             title="Options for plot axes display">
@@ -121,7 +121,7 @@
         </ul>
         <ul ng-show="!(form.yAxis.key == 'enum')">
             <li class="section-header">Scaling</li>
-            <li class="controls-first">
+            <li>
                 <label>Autoscale</label>
                 <span class="control">
                     <input type="checkbox" ng-model="form.yAxis.autoscale"/>
@@ -171,7 +171,7 @@
                     </div>
                 </span>
             </li>
-            <li class="controls-first">
+            <li>
                 <label>Expand by default</label>
                 <span class="control">
                     <input type="checkbox" ng-model="form.legend.expandByDefault"/>
@@ -194,28 +194,28 @@
             <li class="controls-under">
                 <ul>
                     <li><label>Show when expanded:</label></li>
-                    <li class="controls-first">
+                    <li>
                       <label>Nearest Timestamp</label>
                       <span class="control">
                         <input type="checkbox"
                           ng-model="form.legend.showTimestampWhenExpanded"/>
                       </span>
                     </li>
-                    <li class="controls-first">
+                    <li>
                       <label>Nearest Value</label>
                       <span class="control">
                         <input type="checkbox"
                                ng-model="form.legend.showValueWhenExpanded"/>
                       </span>
                     </li>
-                    <li class="controls-first">
+                    <li>
                       <label>Minimum</label>
                       <span class="control">
                         <input type="checkbox"
                                ng-model="form.legend.showMinimumWhenExpanded"/>
                       </span>
                     </li>
-                    <li class="controls-first">
+                    <li>
                       <label>Maximum</label>
                       <span class="control">
                         <input type="checkbox"
