@@ -19,23 +19,23 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div ng-controller="ObjectInspectorController as controller">
-    <div class="flex-elem grows l-inspector-part">
-        <h2>Properties</h2>
-        <div class="t-repeater inspector-properties"
+<div ng-controller="ObjectInspectorController as controller" class="grid-properties">
+    <ul class="l-inspector-part">
+        <h2 class="first">Properties</h2>
+        <li class="t-repeat grid-row"
              ng-repeat="data in metadata"
              ng-class="{ first:$index === 0 }">
-            <div class="label">{{ data.name }}</div>
-            <div class="value">{{ data.value }}</div>
-        </div>
-    </div>
+            <div class="grid-cell label">{{ data.name }}</div>
+            <div class="grid-cell value">{{ data.value }}</div>
+        </li>
+    </ul>
 
-    <div class="flex-elem grows l-inspector-part" ng-if="contextutalParents.length > 0">
+    <ul class="l-inspector-part" ng-if="contextutalParents.length > 0">
         <h2 title="The location of this linked object.">Location</h2>
-        <div class="inspector-properties first">
+        <li class="grid-row">
             <div class="label" ng-if="primaryParents.length > 0">This Link</div>
-            <div class="value">
-                <div class="t-repeater inspector-location"
+            <div class="grid-cell value">
+                <div class="t-repeat inspector-location"
                      ng-repeat="parent in contextutalParents"
                      ng-class="{ last:($index + 1) === contextualParents.length }">
                     <mct-representation key="'label'"
@@ -45,20 +45,20 @@
                     </mct-representation>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="t-angular-wrapper inspector-properties" ng-if="primaryParents.length > 0">
-        <div class="label">Original</div>
-        <div class="value">
-            <div class="t-repeater inspector-location value"
-                 ng-repeat="parent in primaryParents"
-                 ng-class="{ last:($index + 1) === primaryParents.length }">
-                <mct-representation key="'label'"
-                                    mct-object="parent"
-                                    ng-click="parent.getCapability('action').perform('navigate')"
-                                    class="location-item">
-                </mct-representation>
+        </li>
+        <li class="grid-row" ng-if="primaryParents.length > 0">
+            <div class="grid-cell label">Original</div>
+            <div class="grid-cell value">
+                <div class="t-repeat inspector-location value"
+                     ng-repeat="parent in primaryParents"
+                     ng-class="{ last:($index + 1) === primaryParents.length }">
+                    <mct-representation key="'label'"
+                                        mct-object="parent"
+                                        ng-click="parent.getCapability('action').perform('navigate')"
+                                        class="location-item">
+                    </mct-representation>
+                </div>
             </div>
-        </div>
-    </div>
+        </li>
+    </ul>
 </div>

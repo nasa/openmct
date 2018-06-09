@@ -19,94 +19,196 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div ng-controller="PlotOptionsController"
-     class="flex-elem grows l-inspector-part">
-    <em class="t-inspector-part-header"
-        title="Display properties for this object">
-        Series Options
-    </em>
-    <ul class="first flex-elem grows vscroll">
-        <ul class="tree">
-            <li ng-repeat="series in config.series.models">
-                <span class="tree-item menus-to-left">
-                    <span
-                        class='ui-symbol view-control flex-elem'
-                        ng-class="{ expanded: series.expanded }"
-                        ng-click="series.expanded = !series.expanded">
-                    </span>
-                    <mct-representation
-                        class="rep-object-label"
-                        key="'label'"
-                        mct-object="series.oldObject">
-                    </mct-representation>
+<div ng-controller="PlotOptionsController">
+    <ul class="tree l-inspector-part">
+        <h2 title="Display properties for this object">Plot Series Options</h2>
+        <li ng-repeat="series in config.series.models">
+            <span class="tree-item menus-to-left">
+                <span class='ui-symbol view-control flex-elem'
+                      ng-class="{ expanded: series.expanded }"
+                      ng-click="series.expanded = !series.expanded">
                 </span>
-                <div class="inspector-config l-inspect-panel s-inspect-panel-edit" ng-show="series.expanded">
-                    <ul>
-                        <li>
-                            <label>Value:</label>
-                            <span class="control">
-                                <div class="select">
-                                    <select ng-model="form.series[$index].yKey">
-                                        <option ng-repeat="option in form.series[$index].yAxisOptions"
-                                                value="{{option.value}}"
-                                                ng-selected="option.value == form.series[$index].yKey">
-                                            {{option.name}}
-                                        </option>
-                                    </select>
-                                </div>
+                <mct-representation class="rep-object-label"
+                                    key="'label'"
+                                    mct-object="series.oldObject">
+                </mct-representation>
+            </span>
+            <ul class="grid-properties" ng-show="series.expanded">
+                <li class="grid-row">
+                <!-- Value to be displayed -->
+                    <div class="grid-cell label"
+                         title="The field to be plotted as a value for this series.">Value</div>
+                    <div class="grid-cell value">
+                        <div class="select">
+                            <select ng-model="form.series[$index].yKey">
+                                <option ng-repeat="option in form.series[$index].yAxisOptions"
+                                        value="{{option.value}}"
+                                        ng-selected="option.value == form.series[$index].yKey">
+                                    {{option.name}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </li>
+                <li class="grid-row">
+                    <div class="grid-cell label"
+                         title="The line rendering style for this series.">Line Style</div>
+                    <div class="grid-cell value">
+                        <div class="select">
+                            <select ng-model="form.series[$index].interpolate">
+                                <option value="none">None</option>
+                                <option value="linear">Linear interpolate</option>
+                                <option value="stepAfter">Step after</option>
+                            </select>
+                        </div>
+                    </div>
+                </li>
+                <li class="grid-row">
+                    <div class="grid-cell label"
+                         title="Whether markers are displayed.">Markers</div>
+                    <div class="grid-cell value"><input type="checkbox" ng-model="form.series[$index].markers"/></div>
+                </li>
+                <li class="grid-row">
+                    <div class="grid-cell label"
+                         title="Display markers visually denoting points in alarm.">Alarm Markers</div>
+                    <div class="grid-cell value"><input type="checkbox" ng-model="form.series[$index].alarmMarkers"/></div>
+                </li>
+                <li class="grid-row" ng-show="form.series[$index].markers || form.series[$index].alarmMarkers">
+                    <div class="grid-cell label"
+                         title="The size of regular and alarm markers for this series.">Marker Size:</div>
+                    <div class="grid-cell value"><input class="sm" type="text" ng-model="form.series[$index].markerSize"/></div>
+                </li>
+                <li class="grid-row"
+                    ng-controller="ClickAwayController as toggle"
+                    ng-show="form.series[$index].interpolate !== 'none' || form.series[$index].markers">
+                    <div class="grid-cell label"
+                         title="Manually set the plot line and marker color for this series.">Color</div>
+                    <div class="grid-cell value">
+                        <div class="s-menu-button" ng-click="toggle.toggle()">
+                            <span class="color-swatch" ng-style="{ background: series.get('color').asHexString() }">
                             </span>
-                        </li>
-                        <li>
-                            <label>Line Style:</label>
-                            <span class="control">
-                                <div class="select">
-                                    <select ng-model="form.series[$index].interpolate">
-                                        <option value="none">None</option>
-                                        <option value="linear">Linear interpolate</option>
-                                        <option value="stepAfter">Step After</option>
-                                    </select>
+                        </div>
+                        <div class="l-inline-palette" ng-show="toggle.isActive()">
+                            <!-- TODO: redo this as a grid -->
+                            <div class="l-palette-row" ng-repeat="group in config.series.palette.groups()">
+                                <div class="l-palette-item s-palette-item"
+                                     ng-repeat="color in group"
+                                     xng-class="{ 'icon-check': series.get('color') === color }"
+                                     ng-style="{ background: color.asHexString() }"
+                                     ng-click="setColor(series, color, config.series.models.indexOf(series))">
                                 </div>
-                            </span>
-                        </li>
-                        <li>
-                            <label>Show Markers</label>
-                            <span class="control"><input type="checkbox" ng-model="form.series[$index].markers"/></span>
-                        </li>
-                        <li>
-                            <label>Show Alarm Markers</label>
-                            <span class="control"><input type="checkbox" ng-model="form.series[$index].alarmMarkers"/></span>
-                        </li>
-                        <li ng-show="form.series[$index].markers || form.series[$index].alarmMarkers">
-                            <label>Marker Size:</label>
-                            <span class="control"><input class="sm" type="text" ng-model="form.series[$index].markerSize"/></span>
-                        </li>
-                        <ul ng-controller="ClickAwayController as toggle" ng-show="form.series[$index].interpolate !== 'none' || form.series[$index].markers">
-                            <li>
-                                <label>Color:</label>
-                                <span class="control">
-                                <div class="s-menu-button" ng-click="toggle.toggle()">
-                                    <span class="color-swatch" ng-style="{ background: series.get('color').asHexString() }">
-                                    </span>
-                                </div>
-                            </span>
-                            </li>
-                            <li class="connects-to-previous l-inline-palette" ng-show="toggle.isActive()">
-                                <div class="l-palette-row" ng-repeat="group in config.series.palette.groups()">
-                                    <div class="l-palette-item s-palette-item"
-                                         ng-repeat="color in group"
-                                         xng-class="{ 'icon-check': series.get('color') === color }"
-                                         ng-style="{ background: color.asHexString() }"
-                                         ng-click="setColor(series, color, config.series.models.indexOf(series))">
-                                    </div>
-                                </div>
-                            </li>
-
-                        </ul>
-                    </ul>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <div class="grid-properties" ng-show="!!config.series.models.length">
+        <ul class="l-inspector-part">
+            <h2>Y Axis</h2>
+            <li class="grid-row">
+                <div class="grid-cell label"
+                     title="Manually override how the Y axis is labeled.">Label</div>
+                <div class="grid-cell value"><input class="control" type="text" ng-model="form.yAxis.label"/></div>
+            </li>
+        </ul>
+        <ul class="l-inspector-part" ng-show="!(form.yAxis.key == 'enum')">
+            <h2>Y Axis Scaling</h2>
+            <li class="grid-row">
+                <div class="grid-cell label"
+                     title="Automatically scale the Y axis to keep all values in view.">Autoscale</div>
+                <div class="grid-cell value"><input type="checkbox" ng-model="form.yAxis.autoscale"/></div>
+            </li>
+            <li class="grid-row" ng-show="form.yAxis.autoscale">
+                <div class="grid-cell label"
+                     title="Percentage of padding above and below plotted min and max values. 0.1, 1.0, etc.">
+                    Padding</div>
+                <div class="grid-cell value">
+                    <input class="sm" type="text" ng-model="form.yAxis.autoscalePadding"/>
                 </div>
             </li>
         </ul>
-    </ul>
+        <ul class="l-inspector-part" ng-show="!form.yAxis.autoscale">
+            <div class="grid-span-all form-error"
+                 ng-show="!(form.yAxis.key == 'enum') && !form.yAxis.autoscale && validation['form.yAxis.range']">
+                {{ validation['form.yAxis.range'] }}
+            </div>
+            <li class="grid-row force-border">
+                <div class="grid-cell label"
+                     title="Minimum Y axis value.">Minimum Value</div>
+                <div class="grid-cell value">
+                    <input class="sm" type="text" ng-model="form.yAxis.range.min"/>
+                </div>
+            </li>
+            <li class="grid-row">
+                <div class="grid-cell label"
+                     title="Maximum Y axis value.">Maximum Value</div>
+                <div class="grid-cell value"><input class="sm" type="text" ng-model="form.yAxis.range.max"/></div>
+            </li>
+        </ul>
+        <ul class="l-inspector-part">
+            <h2 title="Legend options">Legend</h2>
+            <li class="grid-row">
+                <div class="grid-cell label"
+                     title="The position of the legend relative to the plot display area.">Position</div>
+                <div class="grid-cell value">
+                    <div class="select">
+                        <select ng-model="form.legend.position">
+                            <option value="hidden">Hidden</option>
+                            <option value="top">Top</option>
+                            <option value="right">Right</option>
+                            <option value="bottom">Bottom</option>
+                            <option value="left">Left</option>
+                        </select>
+                    </div>
+                </div>
+            </li>
+            <li class="grid-row">
+                <div class="grid-cell label"
+                     title="Show the legend expanded by default">Expand by default</div>
+                <div class="grid-cell value"><input type="checkbox" ng-model="form.legend.expandByDefault"/></div>
+            </li>
+            <li class="grid-row">
+                <div class="grid-cell label"
+                     title="What to display in the legend when it's collapsed.">When collapsed show</div>
+                <div class="grid-cell value">
+                    <div class="select">
+                        <select ng-model="form.legend.valueToShowWhenCollapsed">
+                            <option value="none">nothing</option>
+                            <option value="nearestTimestamp">nearest timestamp</option>
+                            <option value="nearestValue">nearest Value</option>
+                            <option value="min">minimum value</option>
+                            <option value="max">maximum value</option>
+                        </select>
+                    </div>
+                </div>
+            </li>
+            <li class="grid-row">
+                <div class="grid-cell label"
+                     title="What to display in the legend when it's expanded.">When expanded show</div>
+                <div class="grid-cell value">
+                    <ul>
+                        <li><input type="checkbox"
+                                   ng-model="form.legend.showTimestampWhenExpanded"/> Nearest timestamp</li>
+                        <li><input type="checkbox"
+                                   ng-model="form.legend.showValueWhenExpanded"/> Nearest value</li>
+                        <li><input type="checkbox"
+                                   ng-model="form.legend.showMinimumWhenExpanded"/> Minimum value</li>
+                        <li><input type="checkbox"
+                                   ng-model="form.legend.showMaximumWhenExpanded"/> Maximum value</li>
+                    </ul>
+
+                </div>
+            </li>
+        </ul>
+    </div>
+
+
+
+
+<!--
+
     <form class="inspector-config l-inspect-panel s-inspect-panel-edit"
           ng-show="!!config.series.models.length">
         <em class="t-inspector-part-header"
@@ -226,4 +328,5 @@
             </li>
         </ul>
     </form>
+    -->
 </div>

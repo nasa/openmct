@@ -22,27 +22,38 @@
 
 /* New grid layout for the Inspector pane */
 .l-inspect {
-    .l-inspector-part,
-    .inspector-properties,
-    .l-inspector-table {
-        @extend .grid-two-column;
-        @extend .grid-two-column-span-cols;
+    // Overall layout
+    @extend .abs;
+    background: $colorInspectorBg;
+    color: $colorInspectorFg;
+    line-height: 140%;
+
+    .pane-header {
+        color: pushBack($colorInspectorFg, 20%);
+        font-size: 0.8rem;
+    }
+
+    .split-layout {
+        .split-pane-component.pane {
+            &.bottom {
+                height: 30%;
+                min-height: 20%;
+                max-height: 80%;
+            }
+        }
     }
 
     .l-inspector-part {
-        &:not(:first-child) {
-            margin-top: $interiorMargin;
+        display: contents;
+    }
+
+    .tree {
+        .grid-properties {
+            margin-left: $treeVCW + $interiorMarginLg;
         }
     }
 
-    .inspector-properties {
-        &:not(.first) {
-            border-top: 1px solid $colorInspectorSectionHeaderBg;
-        }
-        .label,
-        .value {
-            padding: 3px 3px 3px 0;
-        }
+    .grid-properties {
         .label {
             color: $colorInspectorPropName;
         }
@@ -63,111 +74,18 @@
     h2 {
         // Headers for .l-inspector-part elements
         @extend .grid-two-column-span-cols;
-        border-radius: $basicCr;
+        border-radius: $controlCr;
         background-color: $colorInspectorSectionHeaderBg;
         color: $colorInspectorSectionHeaderFg;
         font-size: 0.8rem;
         font-weight: normal;
-        margin-bottom: $interiorMargin;
+        margin: $interiorMarginLg 0 $interiorMarginSm 0;
         padding: floor($formTBPad * .75) $formLRPad;
         text-transform: uppercase;
-    }
-}
-
-/* Styles for the Inspector pane */
-
-.l-inspect,
-.l-inspect table tr td {
-    font-size: 0.75rem;
-}
-
-.l-inspect {
-    @extend .abs;
-    background: $colorInspectorBg;
-    color: $colorInspectorFg;
-    line-height: 140%;
-
-    .flex-elem.holder:not(:last-child) {
-        margin-bottom: $interiorMargin;
-    }
-
-    .pane-header {
-        color: pushBack($colorInspectorFg, 20%);
-        font-size: 0.8rem;
-    }
-
-    .split-layout {
-        .split-pane-component.pane {
-            &.bottom {
-                height: 30%;
-                min-height: 20%;
-                max-height: 80%;
-            }
+        &.first {
+            margin-top: 0;
         }
     }
-    .l-inspector-part {
-        box-sizing: border-box;
-        padding-right: $interiorMargin;
-
-        .tree > li > .inspector-config {
-            margin-left: $treeVCW + $interiorMarginLg;
-        }
-        .section-header {
-            background: none;
-            color: $colorInspectorPropName;
-            border-radius: unset;
-            font-size: inherit;
-            padding: $interiorMarginSm 0;
-        }
-
-        /*        mct-form:not(:last-child) .form {
-                    border-bottom: 1px solid $colorInspectorSectionHeaderBg;
-                }*/
-
-        /*        .form {
-                    margin-bottom: $interiorMarginSm;
-                    padding-bottom: $interiorMarginLg;
-                    .l-section-body {
-                        margin-bottom: 0;
-                        &:not(.first) {
-                            border-top: 1px solid $colorFormLines;
-                        }
-                    }
-                    .form-row {
-                        align-items: center;
-                        border: none !important;
-                        margin-bottom: 0 !important;
-                        padding: $interiorMarginSm 0;
-                        .label {
-                            min-width: 80px;
-                        }
-                        input[type='text'],
-                        input[type='search'] {
-                            width: 100%;
-                        }
-                    }
-                }*/
-    }
-
-    ul li,
-    em.t-inspector-part-header {
-        display: block;
-        position: relative;
-    }
-
-    ul li {
-        margin-bottom: $interiorMarginLg;
-    }
-
-    em.t-inspector-part-header {
-        border-radius: $basicCr;
-        background-color: $colorInspectorSectionHeaderBg;
-        color: $colorInspectorSectionHeaderFg;
-        margin-bottom: $interiorMargin;
-        padding: floor($formTBPad * .75) $formLRPad;
-        text-transform: uppercase;
-    }
-
 
     .inspector-location {
         .location-item {
@@ -204,6 +122,149 @@
             width: 4px;
         }
     }
+
+    // Elements pool
+    .holder-elements {
+        .current-elements {
+            position: relative;
+            .tree-item {
+                .t-object-label {
+                    // Elements pool is a flat list, so don't indent items.
+                    font-size: 0.75rem;
+                    left: 0;
+                }
+            }
+        }
+    }
+}
+
+/* Styles for the Inspector pane */
+
+.l-inspect,
+.l-inspect table tr td {
+    font-size: 0.75rem;
+}
+
+.l-inspect {
+    //@extend .abs;
+    //background: $colorInspectorBg;
+    //color: $colorInspectorFg;
+    //line-height: 140%;
+
+    .flex-elem.holder:not(:last-child) {
+        margin-bottom: $interiorMargin;
+    }
+
+    //.pane-header {
+    //    color: pushBack($colorInspectorFg, 20%);
+    //    font-size: 0.8rem;
+    //}
+    //
+    //.split-layout {
+    //    .split-pane-component.pane {
+    //        &.bottom {
+    //            height: 30%;
+    //            min-height: 20%;
+    //            max-height: 80%;
+    //        }
+    //    }
+    //}
+    .l-inspector-part {
+        //box-sizing: border-box;
+        //padding-right: $interiorMargin;
+
+        //.section-header {
+        //    background: none;
+        //    color: $colorInspectorPropName;
+        //    border-radius: unset;
+        //    font-size: inherit;
+        //    padding: $interiorMarginSm 0;
+        //}
+
+        /*        mct-form:not(:last-child) .form {
+                    border-bottom: 1px solid $colorInspectorSectionHeaderBg;
+                }*/
+
+        /*        .form {
+                    margin-bottom: $interiorMarginSm;
+                    padding-bottom: $interiorMarginLg;
+                    .l-section-body {
+                        margin-bottom: 0;
+                        &:not(.first) {
+                            border-top: 1px solid $colorFormLines;
+                        }
+                    }
+                    .form-row {
+                        align-items: center;
+                        border: none !important;
+                        margin-bottom: 0 !important;
+                        padding: $interiorMarginSm 0;
+                        .label {
+                            min-width: 80px;
+                        }
+                        input[type='text'],
+                        input[type='search'] {
+                            width: 100%;
+                        }
+                    }
+                }*/
+    }
+
+    //ul li,
+    //em.t-inspector-part-header {
+    //    display: block;
+    //    position: relative;
+    //}
+
+    //ul li {
+    //    margin-bottom: $interiorMarginLg;
+    //}
+
+    //em.t-inspector-part-header {
+    //    border-radius: $basicCr;
+    //    background-color: $colorInspectorSectionHeaderBg;
+    //    color: $colorInspectorSectionHeaderFg;
+    //    margin-bottom: $interiorMargin;
+    //    padding: floor($formTBPad * .75) $formLRPad;
+    //    text-transform: uppercase;
+    //}
+
+/*
+    .inspector-location {
+        .location-item {
+            $h: 1.2em;
+            box-sizing: border-box;
+            cursor: pointer;
+            display: inline-block;
+            line-height: $h;
+            position: relative;
+            padding: 2px 4px;
+            .t-object-label {
+                .t-item-icon {
+                    height: $h;
+                    width: 0.7rem;
+                }
+            }
+            &:hover {
+                background: $colorItemTreeHoverBg;
+                color: $colorItemTreeHoverFg;
+                .icon {
+                    color: $colorItemTreeIconHover;
+                }
+            }
+        }
+        &:not(.last) .t-object-label .t-title-label:after {
+            color: pushBack($colorInspectorFg, 15%);
+            content: '\e904';
+            display: inline-block;
+            font-family: symbolsfont;
+            font-size: 8px;
+            font-style: normal !important;
+            line-height: inherit;
+            margin-left: $interiorMarginSm;
+            width: 4px;
+        }
+    }*/
     .holder-elements {
         .current-elements {
             position: relative;

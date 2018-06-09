@@ -180,5 +180,34 @@
     &.value {
         background-color: rgba(0,128,0,0.2);
     }
+}
 
+// Properties grids
+.grid-properties {
+    @extend .grid-two-column;
+}
+
+.grid-row {
+    display: contents;
+}
+
+.grid-span-all {
+    @extend .grid-two-column-span-cols;
+}
+
+.grid-row {
+    .grid-cell {
+        padding: 3px $interiorMarginLg 3px 0;
+        &[title] {
+            // When a cell has a title, assume it's helpful text
+            cursor: help;
+        }
+    }
+    &.force-border,
+    &:not(:first-of-type) {
+        // Row borders, effected via border-top on child elements of the row
+        .grid-cell {
+            border-top: 1px solid $colorInspectorSectionHeaderBg;
+        }
+    }
 }

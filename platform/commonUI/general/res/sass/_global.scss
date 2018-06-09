@@ -201,6 +201,9 @@ a.disabled {
 
 .vscroll {
     overflow-y: auto;
+    &.scroll-pad {
+        padding-right: $interiorMargin;
+    }
 }
 
 .slidable {
@@ -222,6 +225,10 @@ a.disabled {
 
 .ds {
     box-shadow: rgba(#000, 0.7) 0 4px 10px 2px;
+}
+
+.capitalize {
+    text-transform: capitalize;
 }
 
 .hide,

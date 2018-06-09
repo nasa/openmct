@@ -259,19 +259,19 @@
             }
         }
     }
+}
 
-    .form-error {
-        // Block element that visually flags an error and contains a message
-        background-color: $colorFormFieldErrorBg;
-        color: $colorFormFieldErrorFg;
-        border-radius: $basicCr;
-        display: block;
-        padding: 1px 6px;
-        &:before {
-            content: $glyph-icon-alert-triangle;
-            display: inline;
-            font-family: symbolsfont;
-            margin-right: $interiorMarginSm;
-        }
+.form-error {
+    // Block element that visually flags an error and contains a message
+    background-color: $colorFormFieldErrorBg;
+    color: $colorFormFieldErrorFg;
+    border-radius: $basicCr;
+    display: block;
+    padding: 1px 6px;
+    &:before {
+        content: $glyph-icon-alert-triangle;
+        display: inline-block;
+        font-family: symbolsfont;
+        margin-right: $interiorMarginSm;
     }
 }
