@@ -35,20 +35,16 @@ define(
          * @memberof platform/features/layout
          * @constructor
          */
-        function ResizeHandle(elementProxy, element, minWidth, minHeight) {
+        function ResizeHandle(elementProxy, element) {
             this.elementProxy = elementProxy;
             this.element = element;
-
-            // Ensure reasonable defaults
-            this.minWidth = minWidth || 0;
-            this.minHeight = minHeight || 0;
         }
 
         ResizeHandle.prototype.x = function (value) {
             var element = this.element;
             if (arguments.length > 0) {
                 element.width = Math.max(
-                    this.minWidth,
+                    this.elementProxy.getMinWidth(),
                     value - element.x
                 );
             }
@@ -59,7 +55,7 @@ define(
             var element = this.element;
             if (arguments.length > 0) {
                 element.height = Math.max(
-                    this.minHeight,
+                    this.elementProxy.getMinHeight(),
                     value - element.y
                 );
             }

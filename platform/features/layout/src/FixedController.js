@@ -73,7 +73,6 @@ define(
             this.dialogService = dialogService;
             this.$q = $q;
             this.newDomainObject = $scope.domainObject.useCapability('adapter');
-            this.gridSize = this.newDomainObject.layoutGrid;
             this.fixedViewSelectable = false;
 
             var self = this;
@@ -91,15 +90,12 @@ define(
 
             // Update element positions when grid size changes
             function updateElementPositions(layoutGrid) {
-                // Update grid size from model
                 self.gridSize = layoutGrid;
 
                 self.elementProxies.forEach(function (elementProxy) {
                     elementProxy.setGridSize(self.gridSize);
                     elementProxy.style = convertPosition(elementProxy);
                 });
-
-                // TODO: mutate newDomainObject configuration
             }
 
             // Decorate an element for display
@@ -220,31 +216,29 @@ define(
             this.refreshElements = refreshElements;
             this.fixedProxy = new FixedProxy(this.addElement, this.$q, this.dialogService);
 
-            // Detect changes to grid size
-            // $scope.$watch("model.layoutGrid", updateElementPositions);
-
-            // Position panes where they are dropped
-            $scope.$on("mctDrop", handleDrop);
-
             this.composition = this.openmct.composition.get(this.newDomainObject);
             this.composition.on('add', this.onCompositionAdd, this);
             this.composition.on('remove', this.onCompositionRemove, this);
             this.composition.load();
 
+            // Position panes where they are dropped
+            $scope.$on("mctDrop", handleDrop);
+
             $scope.$on("$destroy", this.destroy.bind(this));
 
             // Respond to external bounds changes
             this.openmct.time.on("bounds", updateDisplayBounds);
+
             this.openmct.selection.on('change', this.setSelection.bind(this));
             this.$element.on('click', this.bypassSelection.bind(this));
 
             this.unlisten = this.openmct.objects.observe(this.newDomainObject, '*', function (obj) {
                 this.newDomainObject = JSON.parse(JSON.stringify(obj));
+                updateElementPositions(this.newDomainObject.layoutGrid);
             }.bind(this));
 
+            updateElementPositions(this.newDomainObject.layoutGrid);
             refreshElements();
-
-            window.fc = this;
         }
 
         FixedController.prototype.onCompositionAdd = function (object) {

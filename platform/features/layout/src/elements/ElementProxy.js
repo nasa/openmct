@@ -120,13 +120,7 @@ define(
 
                 this.index = index;
                 this.elements = elements;
-
-                this.resizeHandles = [new ResizeHandle(
-                                        this,
-                                        this.element,
-                                        this.getMinWidth(),
-                                        this.getMinHeight()
-                                      )];
+                this.resizeHandles = [new ResizeHandle(this, this.element)];
             }
 
             set element (value) {
