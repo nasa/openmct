@@ -982,7 +982,7 @@ openmct.install(openmct.plugins.Conductor({
 Indicators are small widgets that reside at the bottom of the screen and are visible from 
 every screen in Open MCT. They can be used to convey system state using an icon and text.
 Indicators tend to be collapsed to an icon by default (though this behavior can be customized 
-by defining a [custom indicator](#custom-indicators)), and hovering over them will reveal 
+by defining a [custom indicator](#custom-indicators)). Hovering over a collapsed indicator will reveal 
 text providing more information.
 
 ### The URL Status Indicator
@@ -994,13 +994,16 @@ returing a 2xx status code. The URL Status Indicator is made available as a defa
 [Included Plugins](#included-plugins) below for details on how to install and configure the 
 URL Status Indicator.
 
-### Creating a New Indicator
+### Creating a Simple Indicator
 
-A new indicator can be created with a simple API call, eg.
+A simple indicator with an icon and some text can be created and added with minimal code. An indicator 
+of this type exposes functions for customizing the text, icon, and style of the indicator.
 
+eg.
 ``` javascript
-var myIndicator = openmct.indicators.create();
+var myIndicator = openmct.indicators.simpleIndicator();
 myIndicator.text("Hello World!");
+openmct.indicators.add(myIndicator);
 ```
 
 This will create a new indicator and add it to the bottom of the screen in Open MCT.
@@ -1027,38 +1030,17 @@ different colors to indicate status.
 
 ### Custom Indicators
 
-A completely custom indicator can be added by registering a factory function that produces 
-a DOM element for your custom indicator. eg.
+A completely custom indicator can be added by simple providing a DOM element to place alongside the other indicators
+at the bottom of the application.
 
 ``` javascript
-openmct.indicators.create(function () {
     var domNode = document.createElement('div');
     domNode.innerText = new Date().toString();
     setInterval(function () {
         domNode.innerText = new Date().toString();
     }, 1000);
-    return domNode;
-});
-```
 
-### Priority
-
-When creating a new indicator or defining a custom indicator, a `number` can optionally be 
-provided that will determine the order that the indicator appears on the screen. An indicator 
-with a higher `priority` number will be shown to the left of indicators with lower 
-priority numbers. The lowest possible `priority` (and the default value if no `priority` is specified) 
-is `Number.NEGATIVE_INFINTY`, and the highest possible priority is `Number.POSITIVE_INFINITY`.
-
-eg.
-``` javascript
-var myIndicator = openmct.indicators.create(1);
-myIndicator.text("I'm on the left!");
-
-openmct.indicators.create(0, function () {
-    var domNode = document.createElement('div');
-    domNode.innerText = "I'm on the right!";
-    return domNode;
-});
+    openmct.indicators.add(domNode);
 ```
 
 ## Included Plugins
