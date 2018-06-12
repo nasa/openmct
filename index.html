@@ -69,6 +69,8 @@
                     ]
                 }));
                 openmct.install(openmct.plugins.SummaryWidget());
+                openmct.install(openmct.plugins.BarGraph());
+            
                 openmct.time.clock('local', {start: -THIRTY_MINUTES, end: 0});
                 openmct.time.timeSystem('utc');
                 openmct.start();
@@ -80,6 +82,8 @@
         <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-96x96.png" sizes="96x96">
         <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-16x16.png" sizes="16x16">
         <link rel="shortcut icon" href="platform/commonUI/general/res/images/favicons/favicon.ico">
+
+        <link rel="stylesheet" href="src/plugins/barGraph/res/styles/barGraph.css">
     </head>
     <body>
         <div class="l-splash-holder s-splash-holder">
