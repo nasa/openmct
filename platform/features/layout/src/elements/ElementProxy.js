@@ -58,8 +58,7 @@ define(
          * @param {Array} elements the full array of elements
          * @param {number[]} gridSize the current layout grid size in [x,y] from
          */
-        class ElementProxy {
-            constructor (element, index, elements, gridSize) {
+        function ElementProxy (element, index, elements, gridSize) {
                 /**
                  * The element as stored in the view configuration.
                  * @memberof platform/features/layout.ElementProxy#
@@ -128,7 +127,7 @@ define(
              *        one of "top", "up", "down", or "bottom"
              * @return {Array} the full array of elements
              */
-            order (o) {
+            ElementProxy.prototype.order = function (o) {
                 var index = this.index,
                     elements = this.elements,
                     element = this.element,
@@ -149,7 +148,7 @@ define(
                 }
 
                 return elements;
-            }
+            };
 
             /**
              * Get handles to control specific features of this element,
@@ -157,9 +156,9 @@ define(
              * @return {platform/features/layout.ElementHandle[]} handles
              *         for moving/resizing this element
              */
-            handles () {
+            ElementProxy.prototype.handles = function () {
                 return this.resizeHandles;
-            }
+            };
 
             /**
              * Returns which grid size the element is currently using.
@@ -167,7 +166,7 @@ define(
              *                    is currently using the grid, [1,1] if it is using
              *                    pixels.
              */
-            getGridSize () {
+            ElementProxy.prototype.getGridSize = function () {
                 var gridSize;
                 // Default to using the grid if useGrid was not defined
                 if (typeof this.element.useGrid === 'undefined') {
@@ -179,34 +178,31 @@ define(
                     gridSize = [1,1];
                 }
                 return gridSize;
-            }
+            };
 
             /**
              * Set the current grid size stored by this element proxy
              * @param {number[]} gridSize The current layout grid size in [x,y] form
              */
-            setGridSize (gridSize) {
+            ElementProxy.prototype.setGridSize = function (gridSize) {
                 this.gridSize = gridSize;
-            }
+            };
 
             /**
              * Get the current minimum element width in grid units
              * @return {number} The current minimum element width
              */
-            getMinWidth () {
+            ElementProxy.prototype.getMinWidth = function () {
                 return Math.ceil(MIN_WIDTH / this.getGridSize()[0]);
-
-            }
+            };
 
             /**
              * Get the current minimum element height in grid units
              * @return {number} The current minimum element height
              */
-            getMinHeight () {
+            ElementProxy.prototype.getMinHeight = function () {
                 return Math.ceil(MIN_HEIGHT / this.getGridSize()[1]);
-            }
-
-        }
+            };
 
         return ElementProxy;
     }
