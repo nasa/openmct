@@ -32,7 +32,7 @@ define(
          * @constructor
          * @param element the line element
          * @param {string} xProperty field which stores x position
-         * @param {string} yProperty field which stores x position
+         * @param {string} yProperty field which stores y position
          * @param {string} xOther field which stores x of other end
          * @param {string} yOther field which stores y of other end
          * @implements {platform/features/layout.ElementHandle}

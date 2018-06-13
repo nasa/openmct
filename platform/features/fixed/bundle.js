@@ -63,7 +63,7 @@ define([
                         var imageProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "height", "width", "url"];
                         var boxProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "height", "width", "fill"];
                         var textProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "height", "width", "fill", "color", "size", "text"];
-                        var lineProperties = ["add", "remove", "order", "stroke", "useGrid", "x1", "y1", "x2", "y2"];
+                        var lineProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "x2", "y2"];
                         var telemetryProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "height", "width", "fill", "color", "size", "titled"];
                         var itemProperties = ["add"];
                         var properties = [];
@@ -92,7 +92,7 @@ define([
                                 method: function (value) {
                                     selection[0].context.fixedController.add(value);
                                 },
-                                methodName: "add",
+                                key: "add",
                                 cssClass: "icon-plus",
                                 text: "Add",
                                 options: [
@@ -127,7 +127,7 @@ define([
                                         value
                                     );
                                 },
-                                methodName: "order",
+                                key: "order",
                                 cssClass: "icon-layers",
                                 title: "Layering",
                                 description: "Move the selected object above or below other objects",
@@ -161,6 +161,7 @@ define([
                                 cssClass: "icon-paint-bucket",
                                 title: "Fill color",
                                 description: "Set fill color",
+                                key: 'fill'
                             },
                             {
                                 control: "color",
@@ -169,6 +170,7 @@ define([
                                 cssClass: "icon-line-horz",
                                 title: "Border color",
                                 description: "Set border color",
+                                key: 'stroke'
                             },
                             {
                                 control: "dialog-button",
@@ -177,6 +179,7 @@ define([
                                 cssClass: "icon-image",
                                 title: "Image Properties",
                                 description: "Edit image properties",
+                                key: 'url',
                                 dialog: {
                                     control: "textfield",
                                     name: "Image URL",
@@ -192,6 +195,7 @@ define([
                                 title: "Text color",
                                 mandatory: true,
                                 description: "Set text color",
+                                key: 'color'
                             },
                             {
                                 control: "select",
@@ -201,7 +205,8 @@ define([
                                 description: "Set text size",
                                 "options": [9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96].map(function (size) {
                                     return { "name": size + " px", "value": size + "px" };
-                                })
+                                }),
+                                key: 'size'
                             },
                             {
                                 control: "numberfield",
@@ -209,6 +214,7 @@ define([
                                 property: path + ".x",
                                 text: "X",
                                 name: "X",
+                                key: "x",
                                 cssClass: "l-input-sm",
                                 min: "0"
                             },
@@ -218,24 +224,27 @@ define([
                                 property: path + ".y",
                                 text: "Y",
                                 name: "Y",
+                                key: "y",
                                 cssClass: "l-input-sm",
                                 min: "0"
                             },
                             {
                                 control: "numberfield",
                                 domainObject: domainObject,
-                                property: path + ".x1",
+                                property: path + ".x",
                                 text: "X1",
                                 name: "X1",
+                                key: "x1",
                                 cssClass: "l-input-sm",
                                 min: "0"
                             },
                             {
                                 control: "numberfield",
                                 domainObject: domainObject,
-                                property: path + ".y1",
+                                property: path + ".y",
                                 text: "Y1",
                                 name: "Y1",
+                                key: "y1",
                                 cssClass: "l-input-sm",
                                 min: "0"
                             },
@@ -245,6 +254,7 @@ define([
                                 property: path + ".x2",
                                 text: "X2",
                                 name: "X2",
+                                key: "x2",
                                 cssClass: "l-input-sm",
                                 min: "0"
                             },
@@ -254,6 +264,7 @@ define([
                                 property: path + ".y2",
                                 text: "Y2",
                                 name: "Y2",
+                                key: "y2",
                                 cssClass: "l-input-sm",
                                 min: "0"
                             },
@@ -263,6 +274,7 @@ define([
                                 property: path + ".height",
                                 text: "H",
                                 name: "H",
+                                key: "height",
                                 cssClass: "l-input-sm",
                                 description: "Resize object height",
                                 min: "1"
@@ -273,6 +285,7 @@ define([
                                 property: path + ".width",
                                 text: "W",
                                 name: "W",
+                                key: "width",
                                 cssClass: "l-input-sm",
                                 description: "Resize object width",
                                 min: "1"
@@ -281,7 +294,8 @@ define([
                                 control: "checkbox",
                                 domainObject: domainObject,
                                 property: path + ".useGrid",
-                                name: "Snap to Grid"
+                                name: "Snap to Grid",
+                                key: "useGrid"
                             },
                             {
                                 control: "dialog-button",
@@ -290,6 +304,7 @@ define([
                                 cssClass: "icon-gear",
                                 title: "Text Properties",
                                 description: "Edit text properties",
+                                key: "text",
                                 dialog: {
                                     control: "textfield",
                                     name: "Text",
@@ -300,7 +315,8 @@ define([
                                 control: "checkbox",
                                 domainObject: domainObject,
                                 property: path + ".titled",
-                                name: "Show Title"
+                                name: "Show Title",
+                                key: "titled"
                             },
                             {
                                 control: "button",
@@ -310,15 +326,15 @@ define([
                                         selection[0].context.elementProxy
                                     );
                                 },
-                                methodName: "remove",
+                                key: "remove",
                                 cssClass: "icon-trash"
                             }
                         ].filter(function (item) {
                             var filtered;
 
                             properties.forEach(function (property) {
-                                if (item.property && item.property.endsWith("." + property) ||
-                                    item.method && item.methodName === property) {
+                                if (item.property && item.key === property ||
+                                    item.method && item.key === property) {
                                     filtered = item;
                                 }
                             });

@@ -41,6 +41,10 @@ define(
         // Convert from element x/y/width/height to an
         // appropriate ng-style argument, to position elements.
         function convertPosition(elementProxy) {
+            if (elementProxy.getStyle) {
+                return elementProxy.getStyle();
+            }
+
             var gridSize = elementProxy.getGridSize();
 
             // Multiply position/dimensions by grid size

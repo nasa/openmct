@@ -43,6 +43,17 @@ define(
                     new LineHandle(element, proxy, 'x2', 'y2', 'x', 'y')
                 ];
 
+            proxy.getStyle = function () {
+                var gridSize = proxy.getGridSize();
+
+                return {
+                    left: (gridSize[0] * proxy.x()) + 'px',
+                    top: (gridSize[1] * proxy.y()) + 'px',
+                    width: (gridSize[0] * proxy.width()) + 'px',
+                    height: (gridSize[1] * proxy.height()) + 'px'
+                };
+            };
+
             /**
              * Get the top-left x coordinate, in grid space, of
              * this line's bounding box.
