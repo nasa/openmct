@@ -82,7 +82,7 @@ define([
                                 type === 'fixed.box' ? boxProperties :
                                 type === 'fixed.line' ? lineProperties :
                                 type === 'fixed.telemetry' ? telemetryProperties : [];
-                        } else if (fixedItem) {
+                        } else if (fixedItem && domainObject.type !== 'layout') {
                             properties = fixedPageProperties;
                         }
 
