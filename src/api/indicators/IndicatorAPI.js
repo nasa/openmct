@@ -33,8 +33,6 @@ define([
         '<mct-include ' +
         '   ng-model="indicator" ' +
         '   key="template" ' +
-        '   class="status-block-holder" ' +
-        '   ng-class="indicator.getGlyphClass()"> ' +
         ' </mct-include>';
 
     function IndicatorAPI(openmct) {
