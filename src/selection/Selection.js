@@ -122,7 +122,7 @@ define(['EventEmitter'], function (EventEmitter) {
         element.addEventListener('click', selectCapture);
 
         if (context.item) {
-            var unlistener = this.openmct.objects.observe(context.item, "*", function (newItem) {
+            var unlisten = this.openmct.objects.observe(context.item, "*", function (newItem) {
                 context.item = newItem;
             });
         }
@@ -135,8 +135,8 @@ define(['EventEmitter'], function (EventEmitter) {
             element.removeEventListener('click', capture);
             element.removeEventListener('click', selectCapture);
 
-            if (unlistener) {
-                unlistener();
+            if (unlisten) {
+                unlisten();
             }
         };
     };

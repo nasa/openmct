@@ -31,9 +31,13 @@ define(
 
         /**
          * Provides initial structure and state (as suitable for provision
-         * to the `mct-toolbar` directive) for the tool bar.
+         * to the `mct-toolbar` directive) for a view's toolbar, based on
+         * that view's declaration of what belongs in its toolbar and on
+         * the current selection.
          *
+         * @param $scope the Angular scope
          * @param {Object} openmct the openmct object
+         * @param structure the toolbar structure
          * @memberof platform/commonUI/edit
          * @constructor
          */
@@ -51,15 +55,12 @@ define(
 
             this.updateToolbar(structure);
             this.registerListeners(structure);
-            window.et = this;
         }
 
         /**
          * Updates the toolbar with a new structure.
          *
          * @param {Array} structure the toolbar structure
-         * @returns {Array} an array that tracks domain object
-         * and property for every element in the state array
          */
         EditToolbar.prototype.updateToolbar = function (structure) {
             var self = this;
@@ -71,11 +72,13 @@ define(
                     property: item.property
                 });
                 self.properties.push(item.property);
+
                 return self.properties.length - 1; // Return index of property
             }
 
             function convertItem(item) {
                 var converted = Object.create(item || {});
+
                 if (item.property) {
                     converted.key = addKey(item);
                 }
@@ -85,6 +88,7 @@ define(
                         item.method(value);
                     };
                 }
+
                 return converted;
             }
 
@@ -96,6 +100,7 @@ define(
                         result = _.get(item.domainObject, item.property);
                     }
                 });
+
                 return result;
             }
 
@@ -126,7 +131,7 @@ define(
         };
 
         /**
-         * Mutates the domain object to update the given property with a new value.
+         * Mutates the domain object's property with a new value.
          *
          * @param {Object} dominObject the domain object
          * @param {string} property the domain object's property to update
@@ -139,14 +144,19 @@ define(
         /**
          * Updates state with the new value.
          *
-         * @param {number} index the index in the state array
+         * @param {number} index the index of the corresponding
+         *        element in the state array
          * @param value the new value to update the state array with
          */
         EditToolbar.prototype.updateState = function (index, value) {
             this.toolbarState[index] = value;
         };
 
-        // Register listeners for domain objects to watch for updates.
+        /**
+         * Register listeners for domain objects to watch for updates.
+         *
+         * @param {Array} the toolbar structure
+         */
         EditToolbar.prototype.registerListeners = function (structure) {
             var self = this;
 
@@ -169,10 +179,14 @@ define(
                     };
                     observeObject(domainObject, id);
                 }
+
                 self.domainObjectsById[id].properties.push(item.property);
             });
         };
 
+        /**
+         * Delays updating the state.
+         */
         EditToolbar.prototype.scheduleStateUpdate = function () {
             if (this.stateUpdateScheduled) {
                 return;
@@ -187,6 +201,7 @@ define(
                 if (!this.domainObjectsById[state.id].newObject) {
                     return;
                 }
+
                 var domainObject = this.domainObjectsById[state.id].domainObject;
                 var newObject = this.domainObjectsById[state.id].newObject;
                 var currentValue = _.get(domainObject, state.property);
@@ -208,6 +223,9 @@ define(
             this.stateUpdateScheduled = false;
         };
 
+        /**
+         * Removes the listeners.
+         */
         EditToolbar.prototype.deregisterListeners = function () {
             this.unobserveObjects.forEach(function (unobserveObject) {
                 unobserveObject();

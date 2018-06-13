@@ -197,7 +197,6 @@ define(
             self.unlisten = self.$scope.domainObject.getCapability('mutation').listen(function (model) {
                 $scope.configuration = model.configuration.layout;
                 $scope.model = model;
-
                 var panels = $scope.configuration.panels;
 
                 Object.keys(panels).forEach(function (key) {

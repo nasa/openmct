@@ -179,7 +179,8 @@ define(
                 self.elementToSelectAfterRefresh = elements[elements.length - 1];
 
                 if (self.selectedElementProxy) {
-                    // Update the selected element with the new value since newDomainOject is mutated.
+                    // Update the selected element with the new
+                    // value since newDomainOject is mutated.
                     self.selectedElementProxy.element = elements[index];
                 }
                 refreshElements();
@@ -235,7 +236,6 @@ define(
 
             this.openmct.selection.on('change', this.setSelection.bind(this));
             this.$element.on('click', this.bypassSelection.bind(this));
-
             this.unlisten = this.openmct.objects.observe(this.newDomainObject, '*', function (obj) {
                 this.newDomainObject = JSON.parse(JSON.stringify(obj));
                 updateElementPositions(this.newDomainObject.layoutGrid);
@@ -273,11 +273,11 @@ define(
         /**
          * Removes an element from the view.
          *
-         * @param elementProxy the element proxy to remove.
+         * @param {Object} elementProxy the element proxy to remove.
          */
         FixedController.prototype.remove = function (elementProxy) {
             var element = elementProxy.element;
-            var elements = this.newDomainObject.configuration['fixed-display'].elements || [];            
+            var elements = this.newDomainObject.configuration['fixed-display'].elements || [];
             elements.splice(elements.indexOf(element), 1);
 
             if (element.type === 'fixed.telemetry') {
@@ -288,7 +288,7 @@ define(
 
             this.mutate("configuration['fixed-display'].elements", elements);
             this.refreshElements();
-            
+
         };
 
         /**
@@ -316,7 +316,8 @@ define(
             this.mutate("configuration['fixed-display'].elements", elements);
             elements = (this.newDomainObject.configuration)['fixed-display'].elements || [];
 
-            // Update the selected element with the new value since newDomainOject is mutated.
+            // Update the selected element with the new
+            // value since newDomainOject is mutated.
             this.selectedElementProxy.element = elements[selectedElemenetIndex];
             this.refreshElements();
         };
@@ -637,7 +638,6 @@ define(
          *
          * @returns the selected element
          */
-         // TODO: unused function, remove it
         FixedController.prototype.getSelectedElement = function () {
             return this.selectedElementProxy;
         };

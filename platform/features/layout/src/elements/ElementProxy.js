@@ -117,20 +117,9 @@ define(
                 this.height = new AccessorMutator(element, 'height');
 
                 this.useGrid = new UnitAccessorMutator(this);
-
                 this.index = index;
                 this.elements = elements;
                 this.resizeHandles = [new ResizeHandle(this, this.element)];
-            }
-
-            set element (value) {
-                // console.log('setting element', JSON.stringify(value));
-                this._element = value;
-            }
-
-            get element () {
-                // console.log('getting element', JSON.stringify(this._element));
-                return this._element;
             }
 
             /**

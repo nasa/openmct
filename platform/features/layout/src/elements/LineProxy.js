@@ -43,14 +43,17 @@ define(
                     new LineHandle(element, proxy, 'x2', 'y2', 'x', 'y')
                 ];
 
+            /**
+             * Gets style specific to line proxy.
+             */
             proxy.getStyle = function () {
-                var gridSize = proxy.getGridSize();
+                var layoutGridSize = proxy.getGridSize();
 
                 return {
-                    left: (gridSize[0] * proxy.x()) + 'px',
-                    top: (gridSize[1] * proxy.y()) + 'px',
-                    width: (gridSize[0] * proxy.width()) + 'px',
-                    height: (gridSize[1] * proxy.height()) + 'px'
+                    left: (layoutGridSize[0] * proxy.x()) + 'px',
+                    top: (layoutGridSize[1] * proxy.y()) + 'px',
+                    width: (layoutGridSize[0] * proxy.width()) + 'px',
+                    height: (layoutGridSize[1] * proxy.height()) + 'px'
                 };
             };
 
@@ -159,12 +162,6 @@ define(
             proxy.handles = function () {
                 return handles;
             };
-
-            // Expose endpoint coordinates for editing
-            proxy.editX1 = new AccessorMutator(element, 'x');
-            proxy.editY1 = new AccessorMutator(element, 'y');
-            proxy.editX2 = new AccessorMutator(element, 'x2');
-            proxy.editY2 = new AccessorMutator(element, 'y2');
 
             return proxy;
         }

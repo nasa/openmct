@@ -30,6 +30,10 @@ define(
         /**
          * Template-displayable drag handle for an element in fixed
          * position mode.
+         *
+         * @param elementHandle the element handle
+         * @param configPath the configuration path of an element
+         * @param {Object} fixedControl the fixed controller
          * @memberof platform/features/layout
          * @constructor
          */
@@ -41,6 +45,7 @@ define(
 
         /**
          * Get a CSS style to position this drag handle.
+         *
          * @returns CSS style object (for `ng-style`)
          * @memberof platform/features/layout.FixedDragHandle#
          */
@@ -74,8 +79,8 @@ define(
 
         /**
          * Continue a drag gesture; update x/y positions.
-         * @param {number[]} delta x/y pixel difference since drag
-         *                   started
+         *
+         * @param {number[]} delta x/y pixel difference since drag started
          */
         FixedDragHandle.prototype.continueDrag = function (delta) {
             var gridSize = this.elementHandle.getGridSize();

@@ -65,24 +65,25 @@ define([
                         var textProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "height", "width", "fill", "color", "size", "text"];
                         var lineProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "x2", "y2"];
                         var telemetryProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "height", "width", "fill", "color", "size", "titled"];
-                        var itemProperties = ["add"];
-                        var properties = [];
+                        var fixedPageProperties = ["add"];
 
-                        var item = selection[0] && selection[0].context.item;
-                        var elementProxy = selection[0] && selection[0].context.elementProxy;
-                        var domainObject = selection[1] && selection[1].context.item;
+                        var properties = [],
+                            fixedItem = selection[0] && selection[0].context.item,
+                            elementProxy = selection[0] && selection[0].context.elementProxy,
+                            domainObject = selection[1] && selection[1].context.item,
+                            path;
 
                         if (elementProxy) {
                             var type = elementProxy.element.type;
-                            var path = "configuration['fixed-display'].elements[" + elementProxy.index + "]";
+                            path = "configuration['fixed-display'].elements[" + elementProxy.index + "]";
                             properties =
                                 type === 'fixed.image' ? imageProperties :
                                 type === 'fixed.text' ? textProperties :
                                 type === 'fixed.box' ? boxProperties :
                                 type === 'fixed.line' ? lineProperties :
                                 type === 'fixed.telemetry' ? telemetryProperties : [];
-                        } else if (item) {
-                            properties = itemProperties;
+                        } else if (fixedItem) {
+                            properties = fixedPageProperties;
                         }
 
                         return [
