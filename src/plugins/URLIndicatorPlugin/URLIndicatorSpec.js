@@ -68,7 +68,7 @@ define(
 
                     it("has a default icon class if none supplied", function () {
                         var iconElement = getIconElement();
-                        expect(iconElement.hasClass('icon-connectivity')).toBe(true);
+                        expect(iconElement.hasClass('icon-chain-links')).toBe(true);
                     });
 
                     it("defaults to the URL if no label supplied", function () {

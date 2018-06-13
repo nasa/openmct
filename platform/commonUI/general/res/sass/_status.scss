@@ -52,7 +52,7 @@
     &:before {
         content:'';
         font-family: symbolsfont;
-        font-size: 0.8em;
+        //font-size: 0.8em; // TODO: This change must be unit tested against these classes applied to other elements
         margin-right: $interiorMarginSm;
     }
 }
