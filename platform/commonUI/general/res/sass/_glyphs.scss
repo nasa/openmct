@@ -266,3 +266,5 @@ $glyph-icon-notebook: '\e1131';
 /************************** 12 PX CLASSES */
 .icon-crosshair-12px {  @include glyphBefore($glyph-icon-crosshair,'symbolsfont-12px'); }
 .icon-folder-12px {  @include glyphBefore($glyph-icon-folder,'symbolsfont-12px'); }
+.icon-list-view-12px {  @include glyphBefore($glyph-icon-list-view,'symbolsfont-12px'); }
+.icon-grippy-12px {  @include glyphBefore($glyph-icon-grippy,'symbolsfont-12px'); }

@@ -24,14 +24,14 @@
 define(
     [],
     function () {
-
+        var navigationListenerAdded = false;
         /**
          * Controller to provide the ability to show/hide the tree in
          * Browse mode.
          * @constructor
          * @memberof platform/commonUI/browse
          */
-        function PaneController($scope, agentService, $window, $location, $attrs) {
+        function PaneController($scope, agentService, $window, $location, $attrs, navigationService) {
             var self = this;
             this.agentService = agentService;
             var hideParameterPresent = $location.search().hasOwnProperty($attrs.hideParameter);
@@ -61,6 +61,11 @@ define(
                     self.state = false;
                 }
             };
+
+            if (navigationService && navigationService.addListener && !navigationListenerAdded) {
+                navigationService.addListener(this.callback);
+                navigationListenerAdded = true;
+            }
         }
 
         /**

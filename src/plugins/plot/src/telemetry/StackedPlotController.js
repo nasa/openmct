@@ -106,7 +106,21 @@ define([
                     });
         }
 
+        function onCompositionChange(newComp, oldComp) {
+            if (newComp !== oldComp) {
+
+                $scope.telemetryObjects = [];
+
+                objectService.getObjects(newComp).then(function (objects) {
+                    newComp.forEach(function (id) {
+                        $scope.telemetryObjects.push(objects[id]);
+                    });
+                });
+            }
+        }
+
         $scope.$watch('domainObject', onDomainObjectChange);
+        $scope.$watch('domainObject.getModel().composition', onCompositionChange);
 
         $scope.$on('plot:tickWidth', function ($e, width) {
             var plotId = $e.targetScope.domainObject.getId();

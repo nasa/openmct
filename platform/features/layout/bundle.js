@@ -341,6 +341,12 @@ define([
                             ],
                             "key": "layoutGrid",
                             "conversion": "number[]"
+                        },
+                        {
+                            "name": "Advanced",
+                            "control": "textfield",
+                            "key": "layoutAdvancedCss",
+                            "cssClass": "l-input-lg"
                         }
                     ]
                 }

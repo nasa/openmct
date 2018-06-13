@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    [],
-    function () {
+    ['zepto'],
+    function ($) {
 
         /**
          * The ElementsController prepares the elements view for display
@@ -32,6 +32,10 @@ define(
         function ElementsController($scope, openmct) {
             this.scope = $scope;
             this.scope.composition = [];
+            this.openmct = openmct;
+            this.dragDown = this.dragDown.bind(this);
+            this.dragUp = this.dragUp.bind(this);
+
             var self = this;
 
             function filterBy(text) {
@@ -65,6 +69,7 @@ define(
                 self.refreshComposition(domainObject);
 
                 if (domainObject) {
+
                     self.mutationListener = domainObject.getCapability('mutation')
                         .listen(self.refreshComposition.bind(self, domainObject));
                 }
@@ -76,10 +81,79 @@ define(
             openmct.selection.on('change', setSelection);
             setSelection(openmct.selection.get());
 
+            $scope.dragDown = this.dragDown;
+            $scope.drag = this.drag;
+            $scope.dragUp = this.dragUp;
+
             $scope.$on("$destroy", function () {
                 openmct.selection.off("change", setSelection);
             });
         }
+
+        /**
+         * Invoked on DragStart - Adds reordering class to parent UL element
+         * Sets selected object ID, to be used on Drag End
+         *
+         * @param {object} event | Mouse Event
+         */
+        ElementsController.prototype.dragDown = function (event) {
+            if (!this.parentUL) {
+                this.parentUL = $(document).find('#inspector-elements-tree');
+            }
+
+            this.selectedTreeItem = $(event.target).parent();
+            this.selectedObjectId = event.target.getAttribute('data-id');
+
+            this.parentUL.addClass('reordering');
+            this.selectedTreeItem.addClass('reorder-actor');
+        };
+
+        /**
+         * Invoked on dragEnd - Removes selected object from position in composition
+         * and replaces it at the target position. Composition is then updated with current
+         * scope
+         *
+         * @param {object} event - Mouse Event
+         */
+        ElementsController.prototype.dragUp = function (event) {
+            this.targetObjectId = event.target.getAttribute('data-id');
+
+            if (this.targetObjectId && this.selectedObjectId) {
+                var selectedObjectPosition,
+                    targetObjectPosition;
+
+                selectedObjectPosition = findObjectInCompositionFromId(this.selectedObjectId, this.scope.composition);
+                targetObjectPosition = findObjectInCompositionFromId(this.targetObjectId, this.scope.composition);
+
+                if ((selectedObjectPosition !== -1) && (targetObjectPosition !== -1)) {
+                    var selectedObject = this.scope.composition.splice(selectedObjectPosition, 1),
+                        selection = this.openmct.selection.get(),
+                        domainObject = selection ? selection[0].context.oldItem : undefined;
+
+                    this.scope.composition.splice(targetObjectPosition, 0, selectedObject[0]);
+
+                    if (domainObject) {
+                        domainObject.getCapability('mutation').mutate(function (model) {
+                            model.composition = this.scope.composition.map(function (dObject) {
+                                return dObject.id;
+                            });
+                        }.bind(this));
+                    }
+                }
+            }
+
+            if (this.parentUL) {
+                this.parentUL.removeClass('reordering');
+            }
+
+            if (this.selectedTreeItem) {
+                this.selectedTreeItem.removeClass('reorder-actor');
+            }
+        };
+
+        ElementsController.prototype.drag = function (event) {
+
+        };
 
         /**
          * Gets the composition for the selected object and populates the scope with it.
@@ -102,6 +176,21 @@ define(
                 this.scope.composition = [];
             }
         };
+
+        /**
+         * Finds position of object with given ID in Composition
+         *
+         * @param {String} id
+         * @param {Array} composition
+         * @private
+         */
+        function findObjectInCompositionFromId(id, composition) {
+            var mapped = composition.map(function (element) {
+                return element.id;
+            });
+
+            return mapped.indexOf(id);
+        }
 
         return ElementsController;
     }

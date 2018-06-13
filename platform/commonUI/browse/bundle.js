@@ -113,7 +113,8 @@ define([
                         "agentService",
                         "$window",
                         "$location",
-                        "$attrs"
+                        "$attrs",
+                        "navigationService"
                     ]
                 },
                 {
