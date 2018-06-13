@@ -78,27 +78,30 @@ define(
                 }
 
                 $scope.configuration = $scope.configuration || {};
-                $scope.configuration.panels =
-                    $scope.configuration.panels || {};
+                $scope.configuration.panels = $scope.configuration.panels || {};
 
-                $scope.configuration.panels[id] = {
-                    position: [
-                        Math.floor(position.x / self.gridSize[0]),
-                        Math.floor(position.y / self.gridSize[1])
-                    ],
-                    dimensions: self.defaultDimensions()
-                };
+                self.openmct.objects.get(id).then(function (object) {
+                    $scope.configuration.panels[id] = {
+                        position: [
+                            Math.floor(position.x / self.gridSize[0]),
+                            Math.floor(position.y / self.gridSize[1])
+                        ],
+                        dimensions: self.defaultDimensions(),
+                        hasFrame: self.getDefaultFrame(object.type)
+                    };
 
-                // Store the id so that the newly-dropped object
-                // gets selected during refresh composition
-                self.droppedIdToSelectAfterRefresh = id;
+                    // Store the id so that the newly-dropped object
+                    // gets selected during refresh composition
+                    self.droppedIdToSelectAfterRefresh = id;
 
-                self.commit();
+                    self.commit();
 
-                // Populate template-facing position for this id
-                self.rawPositions[id] =
-                    $scope.configuration.panels[id];
-                self.populatePosition(id);
+                    // Populate template-facing position for this id
+                    self.rawPositions[id] = $scope.configuration.panels[id];
+                    self.populatePosition(id);
+                    refreshComposition();
+                });
+
                 // Layout may contain embedded views which will
                 // listen for drops, so call preventDefault() so
                 // that they can recognize that this event is handled.
@@ -200,7 +203,7 @@ define(
                 var panels = $scope.configuration.panels;
 
                 Object.keys(panels).forEach(function (key) {
-                    if (self.frames.hasOwnProperty(key)) {
+                    if (self.frames && self.frames.hasOwnProperty(key)) {
                         self.frames[key] = panels[key].hasFrame;
                     }
                 });
@@ -228,7 +231,6 @@ define(
          */
         LayoutController.prototype.setFrames = function (ids) {
             var panels = shallowCopy(this.$scope.configuration.panels || {}, ids);
-
             this.frames = {};
 
             this.$scope.composition.forEach(function (object) {
@@ -238,9 +240,20 @@ define(
                 if (panels[id].hasOwnProperty('hasFrame')) {
                     this.frames[id] = panels[id].hasFrame;
                 } else {
-                    this.frames[id] = DEFAULT_HIDDEN_FRAME_TYPES.indexOf(object.getModel().type) === -1;
+                    this.frames[id] = this.getDefaultFrame(object.getModel().type);
                 }
             }, this);
+        };
+
+        /**
+         * Gets the default value for frame.
+         *
+         * @param type the domain object type
+         * @return {boolean} true if the object should have
+         *         frame by default, false, otherwise
+         */
+        LayoutController.prototype.getDefaultFrame = function (type) {
+            return DEFAULT_HIDDEN_FRAME_TYPES.indexOf(type) === -1;
         };
 
         // Convert from { positions: ..., dimensions: ... } to an
@@ -482,7 +495,6 @@ define(
 
         LayoutController.prototype.commit = function () {
             var model = this.$scope.model;
-
             model.configuration = model.configuration || {};
             model.configuration.layout = this.$scope.configuration;
 
