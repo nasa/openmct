@@ -41,6 +41,7 @@
     width: 100%;
 
     .l-form-section {
+        margin-bottom: $interiorMarginLg * 2;
         position: relative;
         &.grows {
             .l-section-body,
@@ -57,7 +58,6 @@
 		$m: $interiorMargin;
 		box-sizing: border-box;
 		border-top: 1px solid $colorFormLines;
-        margin-bottom: $interiorMarginLg * 2;
 		padding: $formTBPad 0;
 		position: relative;
 
