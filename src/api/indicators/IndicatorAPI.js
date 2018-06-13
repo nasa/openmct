@@ -32,7 +32,7 @@ define([
     var LEGACY_INDICATOR_TEMPLATE =
         '<mct-include ' +
         '   ng-model="indicator" ' +
-        '   key="template" ' +
+        '   key="template">' +
         ' </mct-include>';
 
     function IndicatorAPI(openmct) {
