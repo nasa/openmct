@@ -108,6 +108,7 @@
         @include indicatorStatusColors($colorStatusAlert);
     }
 
+    &.s-status-error,
     &.status-error,
     &.status-err {
         @include indicatorStatusColors($colorStatusError);

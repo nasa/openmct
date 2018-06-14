@@ -103,27 +103,30 @@ mct-indicators {
             &:before {
                 @include trans-prop-nice((margin-right), $transSpeedExpand);
                 margin-right: $interiorMarginSm;
-                //opacity: 1;
             }
 
             .label {
                 @include trans-prop-nice((max-width, background), $transSpeedExpand);
-                //margin-right: $interiorMargin;
                 max-width: 600px;
                 width: auto;
             }
 
             .count {
-                @include trans-prop-nice(max-width, $transSpeedExpand);
+                @include trans-prop-nice((opacity, max-width, margin), $transSpeedExpand);
                 opacity: 0;
+                max-width: 0;
+                margin-left: 0;
+                visibility: hidden;
             }
         }
     }
 
     .count {
-        @include trans-prop-nice(opacity, $transSpeedCollapse, $transDelayWhileExpanded);
+        @include trans-prop-nice((opacity, max-width, margin), $transSpeedCollapse, $transDelayWhileExpanded);
         font-weight: bold;
+        max-width: 30px;
         opacity: 1;
+        margin-left: $interiorMarginSm;
     }
 
     .s-button {
