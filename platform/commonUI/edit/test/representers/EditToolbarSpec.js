@@ -26,6 +26,7 @@ define(
 
         describe("An Edit mode toolbar", function () {
             var mockCommit,
+                mockScope,
                 testStructure,
                 testAB,
                 testABC,
@@ -41,6 +42,12 @@ define(
 
             beforeEach(function () {
                 mockCommit = jasmine.createSpy('commit');
+                mockScope = jasmine.createSpyObj("$scope", [
+                    "$watchCollection",
+                    "$on"
+                ]);
+                mockScope.$watchCollection.andReturn();
+
                 testStructure = {
                     sections: [
                         {

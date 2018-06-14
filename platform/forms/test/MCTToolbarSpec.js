@@ -26,16 +26,29 @@ define(
 
         describe("The mct-toolbar directive", function () {
             var mockScope,
+                mockOpenMCT,
+                mockSelection,
                 mctToolbar;
 
             function installController() {
-                var Controller = mctToolbar.controller[1];
-                return new Controller(mockScope);
+                var Controller = mctToolbar.controller[2];
+                console.log(Controller);
+                return new Controller(mockScope, mockOpenMCT);
             }
 
             beforeEach(function () {
-                mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
+                mockScope = jasmine.createSpyObj("$scope", [
+                    "$watch",
+                    "$on"
+                ]);
                 mockScope.$parent = {};
+                mockSelection = jasmine.createSpyObj("selection", [
+                    'on',
+                    'off'
+                ]);
+                mockOpenMCT = {
+                    selection: mockSelection
+                };
                 mctToolbar = new MCTToolbar();
             });
 
