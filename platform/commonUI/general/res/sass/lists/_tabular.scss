@@ -28,10 +28,16 @@
     @include absPosDefault();
     display: flex;
     flex-flow: column nowrap;
+    justify-content: flex-start;
     > * {
-        //display: block;
         position: relative;
         flex: 1 1 auto;
+    }
+
+    &.l-sticky-headers {
+        .l-tabular-body {
+            flex: 1 1 99%;
+        }
     }
 }
 
@@ -131,32 +137,6 @@ table {
 		}
 	}
 
-	&.fixed-header {
-		height: 100%;
-		thead, .thead,
-		tbody tr, .tbody .tr {
-			display: table;
-			table-layout: fixed;
-		}
-		thead, .thead {
-			width: calc(100% - 10px);
-			&:before {
-				content: "";
-				display: block;
-				z-index: 0;
-				position: absolute;
-				width: 100%;
-				height: $tabularHeaderH;
-				background-color: $colorTabHeaderBg;
-			}
-		}
-		tbody, .tbody {
-			@include absPosDefault(0);
-			top: $tabularHeaderH;
-			display: block;
-			overflow-y: scroll;
-		}
-	}
 	&.t-event-messages {
 		td, .td {
 			min-width: 150px;
