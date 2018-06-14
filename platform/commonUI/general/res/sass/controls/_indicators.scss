@@ -137,8 +137,11 @@ mct-indicators {
 .s-indicator {
     background: transparent !important;
     color: $colorStatusDefault;
-    &:hover {
-        background: rgba(#fff, 0.2) !important;
+    &:not(.no-collapse) {
+        &:hover {
+            background: rgba(#fff, 0.2) !important;
+        }
+
     }
 
     &.subdued {
