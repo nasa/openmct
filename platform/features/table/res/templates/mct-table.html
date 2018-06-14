@@ -5,50 +5,50 @@
         Export
     </a>
 </div>
-<table class="mct-table"
+<table class="mct-table filterable"
             ng-style="{
                 'max-width': totalWidth
             }">
     <thead>
-            <tr>
-                <th ng-repeat="header in displayHeaders"
-                    ng-style="{
-                        width: columnWidths[$index] + 'px',
-                        'max-width': columnWidths[$index] + 'px',
-                    }"
-                    ng-class="[
-                        enableSort ? 'sortable' : '',
-                        sortColumn === header ? 'sort' : '',
-                        sortDirection || ''
-                    ].join(' ')"
-                    ng-click="toggleSort(header)">
-                    {{ header }}
-                </th>
-            </tr>
-            <tr ng-if="enableFilter" class="s-filters">
-                <th ng-repeat="header in displayHeaders"
-                    ng-style="{
-                        width: columnWidths[$index] + 'px',
-                        'max-width': columnWidths[$index] + 'px',
-                    }">
-                    <input type="text"
-                            ng-model="filters[header]"/>
-                </th>
-            </tr>
-        </thead>
+        <tr>
+            <th ng-repeat="header in displayHeaders"
+                ng-style="{
+                    width: columnWidths[$index] + 'px',
+                    'max-width': columnWidths[$index] + 'px',
+                }"
+                ng-class="[
+                    enableSort ? 'sortable' : '',
+                    sortColumn === header ? 'sort' : '',
+                    sortDirection || ''
+                ].join(' ')"
+                ng-click="toggleSort(header)">
+                {{ header }}
+            </th>
+        </tr>
+        <tr ng-if="enableFilter" class="s-filters">
+            <th ng-repeat="header in displayHeaders"
+                ng-style="{
+                    width: columnWidths[$index] + 'px',
+                    'max-width': columnWidths[$index] + 'px',
+                }">
+                <input type="text"
+                        ng-model="filters[header]"/>
+            </th>
+        </tr>
+    </thead>
 </table>
-<table class="sizing-table">
-        <tbody>
-            <tr>
-                <td ng-repeat="header in displayHeaders">{{header}}</td>
-            </tr>
-            <tr><td ng-repeat="header in displayHeaders" >
-                {{sizingRow[header].text}}
-            </td></tr>
-        </tbody>
+<table class="mct-sizing-table t-sizing-table">
+    <tbody>
+        <tr>
+            <td ng-repeat="header in displayHeaders">{{header}}</td>
+        </tr>
+        <tr><td ng-repeat="header in displayHeaders" >
+            {{sizingRow[header].text}}
+        </td></tr>
+    </tbody>
 </table>
-<div class="l-view-section scrolling" mct-resize="resize()">
-    <table class="filterable mct-table"
+<div class="t-scrolling vscroll" mct-resize="resize()">
+    <table class="mct-table"
            ng-style="{
             height: totalHeight + 'px',
             'max-width': totalWidth

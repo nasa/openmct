@@ -23,9 +23,9 @@ define(
             this.$window = $window;
             this.maxDisplayRows = 100;
 
-            this.scrollable = this.element.find('.l-view-section.scrolling').first();
+            this.scrollable = this.element.find('.t-scrolling').first();
             this.resultsHeader = this.element.find('.mct-table>thead').first();
-            this.sizingTableBody = this.element.find('.sizing-table>tbody').first();
+            this.sizingTableBody = this.element.find('.t-sizing-table>tbody').first();
             this.$scope.sizingRow = {};
             this.timeApi = openmct.time;
             this.toiFormatter = undefined;

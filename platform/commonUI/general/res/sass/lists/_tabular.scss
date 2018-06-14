@@ -26,6 +26,13 @@
 
 .tabular-holder {
     @include absPosDefault();
+    display: flex;
+    flex-flow: column nowrap;
+    > * {
+        //display: block;
+        position: relative;
+        flex: 1 1 auto;
+    }
 }
 
 .tabular,
