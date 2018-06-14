@@ -32,6 +32,10 @@ define(function () {
 
         this.utc = formatService.getFormat('utc');
 
+        setTimeout(function () {
+            $scope.$apply();
+        });
+
         $scope.$on('$destroy', function () {
             unlisten();
         });
