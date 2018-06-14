@@ -290,7 +290,6 @@ define(
                 topScroll = target.scrollTop,
                 firstVisible;
 
-           
             firstVisible = Math.floor(
                 (topScroll) / this.$scope.rowHeight
             );
@@ -396,8 +395,7 @@ define(
          * for individual rows.
          */
         MCTTableController.prototype.setElementSizes = function () {
-            var thead = this.resultsHeader,
-                tbody = this.sizingTableBody,
+            var tbody = this.sizingTableBody,
                 firstRow = tbody.find('tr'),
                 column = firstRow.find('td'),
                 rowHeight = firstRow.prop('offsetHeight'),

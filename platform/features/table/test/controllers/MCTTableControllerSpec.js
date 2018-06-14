@@ -29,7 +29,7 @@ define(
     function ($, moment, MCTTableController) {
 
         var MOCK_ELEMENT_TEMPLATE =
-            '<div><div class="l-view-section scrolling">' +
+            '<div><div class="l-view-section t-scrolling">' +
                 '<table class="sizing-table"><tbody></tbody></table>' +
                 '<table class="mct-table"><thead></thead></table>' +
             '</div></div>';
