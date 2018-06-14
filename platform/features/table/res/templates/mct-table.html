@@ -5,23 +5,11 @@
         Export
     </a>
 </div>
-<div class="l-view-section scrolling" mct-resize="resize()">
-    <table class="sizing-table">
-        <tbody>
-            <tr>
-                <td ng-repeat="header in displayHeaders">{{header}}</td>
-            </tr>
-            <tr><td ng-repeat="header in displayHeaders" >
-                {{sizingRow[header].text}}
-            </td></tr>
-        </tbody>
-    </table>
-    <table class="filterable mct-table"
-           ng-style="{
-            height: totalHeight + 'px',
-            'max-width': totalWidth
+<table class="mct-table"
+            ng-style="{
+                'max-width': totalWidth
             }">
-        <thead>
+    <thead>
             <tr>
                 <th ng-repeat="header in displayHeaders"
                     ng-style="{
@@ -44,10 +32,28 @@
                         'max-width': columnWidths[$index] + 'px',
                     }">
                     <input type="text"
-                           ng-model="filters[header]"/>
+                            ng-model="filters[header]"/>
                 </th>
             </tr>
         </thead>
+</table>
+<table class="sizing-table">
+        <tbody>
+            <tr>
+                <td ng-repeat="header in displayHeaders">{{header}}</td>
+            </tr>
+            <tr><td ng-repeat="header in displayHeaders" >
+                {{sizingRow[header].text}}
+            </td></tr>
+        </tbody>
+</table>
+<div class="l-view-section scrolling" mct-resize="resize()">
+    <table class="filterable mct-table"
+           ng-style="{
+            height: totalHeight + 'px',
+            'max-width': totalWidth
+            }">
+        
         <tbody>
             <tr ng-repeat-start="visibleRow in visibleRows track by $index"
                 ng-if="visibleRow.rowIndex === toiRowIndex"
