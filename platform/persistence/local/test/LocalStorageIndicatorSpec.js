@@ -38,7 +38,7 @@ define(
             });
 
             it("has a database icon", function () {
-                expect(indicator.getCssClass()).toEqual("icon-database");
+                expect(indicator.getCssClass()).toEqual("icon-database status-caution");
             });
 
             it("has a 'caution' class to draw attention", function () {

@@ -163,7 +163,6 @@ define(
                     .andReturn(Promise.reject().then(function () {
                         returned = true;
                         //Throw error to ensure chained catch is invoked
-                        throw undefined;
                     }));
             }
 
@@ -176,7 +175,7 @@ define(
             }
 
             function getIconElement() {
-                return $('.indicator-icon', indicatorElement);
+                return $(indicatorElement);
             }
 
             function getTextElement() {
