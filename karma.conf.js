@@ -54,10 +54,10 @@ module.exports = function(config) {
 
         // Preprocess matching files before serving them to the browser.
         // https://npmjs.org/browse/keyword/karma-preprocessor
-        preprocessors: {
-            'src/**/!(*Spec).js': [ 'coverage' ],
-            'platform/**/src/**/!(*Spec).js': [ 'coverage' ]
-        },
+        // preprocessors: {
+        //     'src/**/!(*Spec).js': [ 'coverage' ],
+        //     'platform/**/src/**/!(*Spec).js': [ 'coverage' ]
+        // },
 
         // Test results reporter to use
         // Possible values: 'dots', 'progress'
