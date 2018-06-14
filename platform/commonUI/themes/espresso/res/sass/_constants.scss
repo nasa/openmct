@@ -55,7 +55,7 @@ $colorTransLucBg: #666; // Used as a visual blocking element over variable backg
 
 // Foundation Colors
 $colorAlt1: #ffc700;
-$colorAlert: #ff3c00;
+$colorAlert: #ff9900;
 $colorWarningHi: #cc0000;
 $colorWarningLo: #ff9900;
 $colorDiagnostic: #a4b442;
@@ -114,11 +114,12 @@ $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #ccc;
-$colorStatusDefault: #ccc;
+$colorStatusDefault: #999;
 $colorStatusInfo: $colorInfo;
 $colorStatusAlert: $colorAlert;
 $colorStatusError: #d4585c;
 $colorStatusAvailable: $colorKey;
+$colorStatusDisabled: #666;
 $colorStatusBtnBg: $colorBtnBg;
 $colorProgressBarOuter: rgba(#000, 0.1);
 $colorProgressBarAmt: $colorKey;

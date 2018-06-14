@@ -32,6 +32,7 @@ define([
     var LEGACY_INDICATOR_TEMPLATE =
         '<mct-include ' +
         '   ng-model="indicator" ' +
+        '   class="h-indicator" ' +
         '   key="template">' +
         ' </mct-include>';
 
@@ -71,7 +72,7 @@ define([
         // So that we can consistently position indicator elements,
         // guarantee that they are wrapped in an element we control
         var wrapperNode = document.createElement('div');
-        wrapperNode.className = 'status-block-holder indicator';
+        wrapperNode.className = 'h-indicator';
         wrapperNode.appendChild(indicator.element);
         this.indicatorElements.push(wrapperNode);
     };

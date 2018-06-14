@@ -27,7 +27,6 @@
 }
 
 @mixin indicatorStatusColors($c) {
-    background: transparent !important;
     &:before, .count { color: $c; }
 }
 
@@ -87,12 +86,20 @@
 /*************************************************** INDICATORS */
 
 .s-indicator {
+    &.status-info,
     &.s-status-info {
         @include indicatorStatusColors($colorInfo);
     }
 
-    &.s-status-ok {
+    &.status-ok,
+    &.s-status-ok,
+    &.status-enabled {
         @include indicatorStatusColors($colorOk);
+    }
+
+    &.status-disabled,
+    &.s-status-disabled {
+        @include indicatorStatusColors($colorStatusDisabled);
     }
 
     &.status-caution,
@@ -109,35 +116,7 @@
     &.status-available {
         @include indicatorStatusColors($colorStatusAvailable);
     }
-
-    &.status-subdued {
-        opacity: 0.7;
-    }
 }
-
-
-/*
-
-
-.s-indicator.s-status-info {
-    @include indicatorStatusColors($colorInfo);
-}
-.s-indicator.s-status-ok {
-    @include indicatorStatusColors($colorOk);
-}
-.s-indicator-status-caution, .s-indicator-status-warning, .s-indicator-status-alert {
-    @include indicatorStatusColors($colorStatusAlert);
-}
-.s-indicator-status-error, .s-indicator-status-err {
-    @include indicatorStatusColors($colorStatusError);
-}
-.s-indicator-status-available {
-    @include indicatorStatusColors($colorStatusAvailable);
-}
-.s-indicator-status-subdued {
-    opacity: 0.7;
-}
-*/
 
 
 
