@@ -32,7 +32,7 @@ mct-indicators {
 
 .l-indicator {
     $bg: rgba(white, 0.2) !important;
-    $hbg: $colorStatusBarBg; //pullForward($colorBodyBg, 10%);
+    $hbg: $colorStatusBarBg;
     $hshdw: rgba(white, 0.4) 0 0 3px;
     $br: $controlCr;
     $hoverYOffset: -30px;
@@ -48,18 +48,27 @@ mct-indicators {
 
     .label {
         display: inline-block;
-        a {
+        a,
+        button,
+        .s-button {
             // Make <a> in label look like buttons
             @include trans-prop-nice($props: all, $dur: 100ms);
+            background: transparent;
             border: 1px solid rgba($colorStatusBarFg, 0.5);
             border-radius: $br;
+            box-sizing: border-box;
             color: inherit;
+            font-size: inherit;
+            height: auto;
+            line-height: normal;
             padding: 0 2px;
             &:hover {
                 background: $bg;
                 color: #fff;
             }
         }
+
+        button { text-transform: uppercase !important; }
     }
 
     &.no-collapse {
@@ -85,7 +94,7 @@ mct-indicators {
             opacity: 0;
             padding: $interiorMarginSm $interiorMargin;
             position: absolute;
-            transform: translateY($hoverYOffset + 10px);
+            transform: translateY($hoverYOffset + ($hoverYOffset * -0.5));
             left: 0;
             top: 0;
             white-space: nowrap;
