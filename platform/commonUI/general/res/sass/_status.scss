@@ -51,7 +51,6 @@
     &:before {
         content:'';
         font-family: symbolsfont;
-        //font-size: 0.8em; // TODO: This change must be unit tested against these classes applied to other elements
         margin-right: $interiorMarginSm;
     }
 }
@@ -92,8 +91,10 @@
     }
 
     &.status-ok,
+    &.status-enabled,
     &.s-status-ok,
-    &.status-enabled {
+    &.s-status-enabled
+    {
         @include indicatorStatusColors($colorOk);
     }
 
@@ -102,19 +103,24 @@
         @include indicatorStatusColors($colorStatusDisabled);
     }
 
+
     &.status-caution,
     &.status-warning,
-    &.status-alert {
+    &.status-alert,
+    &.s-status-caution,
+    &.s-status-warning,
+    &.s-status-alert {
         @include indicatorStatusColors($colorStatusAlert);
     }
 
-    &.s-status-error,
     &.status-error,
-    &.status-err {
+    &.status-err,
+    &.s-status-error {
         @include indicatorStatusColors($colorStatusError);
     }
 
-    &.status-available {
+    &.status-available,
+    &.s-status-available {
         @include indicatorStatusColors($colorStatusAvailable);
     }
 }

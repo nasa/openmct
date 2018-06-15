@@ -21,7 +21,7 @@
  *****************************************************************************/
 /******************************************************************* STATUS BLOCK ELEMS */
 @mixin statusBannerColors($bg, $fg: $colorStatusFg) {
-	$bgPb: 30%;
+	$bgPb: 10%;
 	$bgPbD: 10%;
 	background-color: darken($bg, $bgPb);
 	color: $fg;

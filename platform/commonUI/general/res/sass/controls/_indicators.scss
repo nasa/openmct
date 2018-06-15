@@ -48,7 +48,6 @@ mct-indicators {
 
     .label {
         display: inline-block;
-        font-size: .6rem;
         a {
             // Make <a> in label look like buttons
             @include trans-prop-nice($props: all, $dur: 100ms);
@@ -82,6 +81,7 @@ mct-indicators {
             @include trans-prop-nice($props: all, $dur: 250ms, $delay: 0);
             background: $hbg;
             border-radius: $br;
+            font-size: .6rem;
             opacity: 0;
             padding: $interiorMarginSm $interiorMargin;
             position: absolute;
