@@ -1,7 +1,8 @@
 <!-- DO NOT ADD SPACES BETWEEN THE SPANS - IT ADDS WHITE SPACE!! -->
-<a ng-click="showNotificationsList()" ng-show="notifications.length > 0" class="l-indicator s-indicator status-{{highest.severity}} icon-bell"
+<div ng-show="notifications.length > 0" class="l-indicator s-indicator status-{{highest.severity}} icon-bell"
       ng-controller="NotificationIndicatorController">
     <span class="label">
-        {{notifications.length}} Notification<span ng-show="notifications.length > 1">s</span>
+        <a ng-click="showNotificationsList()">
+           {{notifications.length}} Notification<span ng-show="notifications.length > 1">s</span></a>
     </span><span class="count">{{notifications.length}}</span>
-</a>
+</div>

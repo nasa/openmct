@@ -82,20 +82,20 @@
     }
 
     .ue-bottom-bar {
-        @include absPosDefault(0);// New status bar design
+        @include absPosDefault(0, $overflow: visible);// New status bar design
         top: auto;
         height: $ueFooterH;
         line-height: $ueFooterH - ($interiorMargin * 2);
         background: $colorStatusBarBg;
-        color: lighten($colorBodyBg, 30%);
+        color: $colorStatusBarFg;
+        cursor: default;
         font-size: .7rem;
         .status-holder {
             box-sizing: border-box;
-            @include absPosDefault($interiorMargin);
-            @include ellipsize();
+            @include absPosDefault($interiorMarginSm, $overflow: visible);
             right: 120px;
             text-transform: uppercase;
-            z-index: 1;
+            z-index: 10;
         }
         .app-logo {
             background-position: right center;

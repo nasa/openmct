@@ -23,9 +23,6 @@
 /* Indicators are generally only displayed in the ue-bottom-bar element of the main interface */
 
 mct-indicators {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: flex-start;
     mct-include,
     .h-indicator {
         display: inline; // Fallback for display: contents
@@ -34,121 +31,71 @@ mct-indicators {
 }
 
 .l-indicator {
-    $transDelayHover: 1.5s;
-    $transDelayWhileExpanded: 2.5s;
-    $transSpeedExpand: 0ms;
-    $transSpeedCollapse: 350ms;
-    align-items: center;
-    border-radius: 2px;
-    display: flex;
-    flex-flow: row nowrap;
-    height: 100%;
-    line-height: auto;
-    //margin-right: $interiorMarginSm;
-    padding: 0px $interiorMarginSm;
-
-    &:before,
-    .label,
-    .count {
-        display: inline-block;
-        flex: 1 1 auto;
-    }
+    $bg: rgba(white, 0.2) !important;
+    $hbg: $colorStatusBarBg; //pullForward($colorBodyBg, 10%);
+    $hshdw: rgba(white, 0.4) 0 0 3px;
+    $br: $controlCr;
+    $hoverYOffset: -30px;
+    background: transparent !important;
+    border-radius: $br;
+    display: inline-block;
+    position: relative;
+    padding: 1px $interiorMarginSm; // Use padding instead of margin to keep hover chatter to a minimum
 
     &:before {
-        // Icon
-        margin-right: 0; // $interiorMarginSm;
-        //display: inline-block;
-        //opacity: 0.85;
+        display: inline-block;
+        margin: 0;
     }
 
-    .label,
-    .count {
-        //margin-left: $interiorMarginSm;
-        //@include test(green, 1);
-        //display: inline-block;
-        //vertical-align: middle;
+    .label {
+        display: inline-block;
+        a {
+            // Make <a> in label look like buttons
+            @include trans-prop-nice($props: all, $dur: 100ms);
+            border: 1px solid rgba($colorStatusBarFg, 0.5);
+            border-radius: $br;
+            color: inherit;
+            padding: 0 2px;
+            &:hover {
+                background: $bg;
+                color: #fff;
+            }
+        }
+    }
+
+    &:not(.no-collapse) {
+        .label {
+            @include trans-prop-nice($props: all, $dur: 250ms, $delay: 0);
+            background: $hbg;
+            border-radius: $br;
+            opacity: 0;
+            padding: $interiorMarginSm $interiorMargin;
+            position: absolute;
+            transform: translateY($hoverYOffset + 10px);
+            left: 0;
+            top: 0;
+            white-space: nowrap;
+            &:before {
+                // Infobubble-style arrow element
+                content: '';
+                display: block;
+                position: absolute;
+                top: 100%;
+                @include triangle('down', $size: 4px, $ratio: 1, $color: $hbg);
+            }
+        }
+
+        &:hover {
+            background: $bg;
+            .label {
+                //@include transition-delay(200ms);
+                opacity: 1;
+                transform: translateY($hoverYOffset);
+            }
+        }
     }
 
     &.float-right {
-        //float: right;
-        order: 999;
+        float: right;
     }
-
-    &.no-icon {
-        &:before {
-            display: none;
-        }
-    }
-
-    &.no-collapse {
-        &:before {
-            margin-right: $interiorMarginSm;
-        }
-    }
-
-    &:not(.no-collapse) {
-        &:before,
-        .label {
-            @include trans-prop-nice((max-width, margin-right, background), $transSpeedCollapse, $transDelayWhileExpanded);
-        }
-
-        .label {
-            // Max-width silliness is necessary for width transition
-            overflow: hidden;
-            max-width: 0px;
-            white-space: nowrap;
-        }
-
-        &:hover {
-            &:before {
-                @include trans-prop-nice((margin-right), $transSpeedExpand);
-                margin-right: $interiorMarginSm;
-            }
-
-            .label {
-                @include trans-prop-nice((max-width, background), $transSpeedExpand);
-                max-width: 600px;
-                width: auto;
-            }
-
-            .count {
-                @include trans-prop-nice((opacity, max-width, margin), $transSpeedExpand);
-                opacity: 0;
-                max-width: 0;
-                margin-left: 0;
-                visibility: hidden;
-            }
-        }
-    }
-
-    .count {
-        @include trans-prop-nice((opacity, max-width, margin), $transSpeedCollapse, $transDelayWhileExpanded);
-        font-weight: bold;
-        max-width: 30px;
-        opacity: 1;
-        margin-left: $interiorMarginSm;
-    }
-
-    .s-button {
-        background: $colorStatusBtnBg;
-        padding: 0 $interiorMargin;
-        height: auto;
-        line-height: inherit;
-    }
-}
-
-.s-indicator {
-    background: transparent !important;
-    color: $colorStatusDefault;
-    &:not(.no-collapse) {
-        &:hover {
-            background: rgba(#fff, 0.2) !important;
-        }
-
-    }
-
-    &.subdued {
-        opacity: 0.7;
-    }
-
 }
