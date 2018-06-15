@@ -110,10 +110,12 @@ define(
                     return "Formatted " + valueMetadata.value;
                 });
 
+                mockUseCapability = jasmine.createSpy('useCapability');
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
                     ['getId', 'getModel', 'getCapability', 'useCapability']
                 );
+                mockDomainObject.useCapability.andReturn(mockUseCapability);
 
                 mockHandle = jasmine.createSpyObj(
                     'subscription',
