@@ -74,7 +74,8 @@ define(
             function makeMockDomainObject(id) {
                 return {
                     identifier: {
-                        key: "domainObject-" + id
+                        key: "domainObject-" + id,
+                        namespace: ""
                     },
                     name: "Point " + id
                 };
@@ -265,59 +266,51 @@ define(
                 spyOn(controller, "mutate");
             });
 
-            it("subscribes when a domain object is available", function () {
-                var dunzo = false;
+            it("subscribes a domain object", function () {
+                var object = makeMockDomainObject("mock");
+                var done = false;
 
-                findWatch("domainObject")(mockDomainObject).then(function () {
-                    dunzo = true;
+                controller.getTelemetry(object).then(function () {
+                    done = true;
                 });
 
                 waitsFor(function () {
-                    return dunzo;
-                }, "Telemetry fetched", 200);
+                    return done;
+                });
 
                 runs(function () {
-                    mockChildren.forEach(function (child) {
-                        expect(mockTelemetryAPI.subscribe).toHaveBeenCalledWith(
-                            child,
-                            jasmine.any(Function),
-                            jasmine.any(Object)
-                        );
-                    });
+                    expect(mockTelemetryAPI.subscribe).toHaveBeenCalledWith(
+                        object,
+                        jasmine.any(Function),
+                        jasmine.any(Object)
+                    );
                 });
             });
 
-            it("releases subscriptions when domain objects change", function () {
-                var dunzo = false;
+            it("releases subscription when a domain objects is removed", function () {
+                var done = false;
                 var unsubscribe = jasmine.createSpy('unsubscribe');
+                var object = makeMockDomainObject("mock");
 
                 mockTelemetryAPI.subscribe.andReturn(unsubscribe);
-
-                findWatch("domainObject")(mockDomainObject).then(function () {
-                    dunzo = true;
+                controller.getTelemetry(object).then(function () {
+                    done = true;
                 });
 
                 waitsFor(function () {
-                    return dunzo;
-                }, "Telemetry fetched", 200);
+                    return done;
+                });
 
                 runs(function () {
-                    expect(unsubscribe).not.toHaveBeenCalled();
-
-                    dunzo = false;
-
-                    findWatch("domainObject")(mockDomainObject).then(function () {
-                        dunzo = true;
-                    });
+                    controller.onCompositionRemove(object.identifier);
 
                     waitsFor(function () {
-                        return dunzo;
-                    }, "Telemetry fetched", 200);
-
-                    runs(function () {
-                        expect(unsubscribe.calls.length).toBe(mockChildren.length);
+                        return unsubscribe.calls.length > 0;
                     });
 
+                    runs(function () {
+                        expect(unsubscribe).toHaveBeenCalled();
+                    });
                 });
             });
 
@@ -407,17 +400,13 @@ define(
             });
 
             it("updates elements styles when grid size changes", function () {
-                var originalLeft;
+                // Grid size is initially set to testGrid which is [123, 456]
+                var originalLeft = controller.getElements()[0].style.left;
 
-                mockScope.model = testModel;
-                findWatch("domainObject")(mockDomainObject);
-                findWatch("model.modified")(1);
-                findWatch("model.composition")(mockScope.model.composition);
-                findWatch("model.layoutGrid")([10, 10]);
-                originalLeft = controller.getElements()[0].style.left;
-                findWatch("model.layoutGrid")([20, 20]);
-                expect(controller.getElements()[0].style.left)
-                    .not.toEqual(originalLeft);
+                // Change the grid size
+                controller.updateElementPositions([20, 20]);
+
+                expect(controller.getElements()[0].style.left).not.toEqual(originalLeft);
             });
 
             it("listens for drop events", function () {
@@ -470,26 +459,26 @@ define(
             });
 
             it("unsubscribes when destroyed", function () {
-                var dunzo = false;
+                var done = false;
                 var unsubscribe = jasmine.createSpy('unsubscribe');
+                var object = makeMockDomainObject("mock");
 
                 mockTelemetryAPI.subscribe.andReturn(unsubscribe);
 
-                findWatch("domainObject")(mockDomainObject).then(function () {
-                    dunzo = true;
+                controller.getTelemetry(object).then(function () {
+                    done = true;
                 });
 
                 waitsFor(function () {
-                    return dunzo;
-                }, "Telemetry fetched", 200);
+                    return done;
+                });
 
                 runs(function () {
                     expect(unsubscribe).not.toHaveBeenCalled();
                     // Destroy the scope
                     findOn('$destroy')();
 
-                    //Check that the same unsubscribe function returned by the
-                    expect(unsubscribe.calls.length).toBe(mockChildren.length);
+                    expect(unsubscribe).toHaveBeenCalled();
                 });
             });
 
@@ -631,7 +620,7 @@ define(
                         value: testValue
                     }]));
 
-                    controller.fetchHistoricalData([mockTelemetryObject]);
+                    controller.fetchHistoricalData(mockTelemetryObject);
 
                     waitsFor(function () {
                         return controller.digesting === false;

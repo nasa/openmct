@@ -92,16 +92,6 @@ define(
                 self[name] = self[name].bind(self);
             });
 
-            // Update element positions when grid size changes
-            function updateElementPositions(layoutGrid) {
-                self.gridSize = layoutGrid;
-
-                self.elementProxies.forEach(function (elementProxy) {
-                    elementProxy.setGridSize(self.gridSize);
-                    elementProxy.style = convertPosition(elementProxy);
-                });
-            }
-
             // Decorate an element for display
             function makeProxyElement(element, index, elements) {
                 var ElementProxy = ElementProxies[element.type],
@@ -238,12 +228,21 @@ define(
             this.$element.on('click', this.bypassSelection.bind(this));
             this.unlisten = this.openmct.objects.observe(this.newDomainObject, '*', function (obj) {
                 this.newDomainObject = JSON.parse(JSON.stringify(obj));
-                updateElementPositions(this.newDomainObject.layoutGrid);
+                this.updateElementPositions(this.newDomainObject.layoutGrid);
             }.bind(this));
 
-            updateElementPositions(this.newDomainObject.layoutGrid);
+            this.updateElementPositions(this.newDomainObject.layoutGrid);
             refreshElements();
         }
+
+        FixedController.prototype.updateElementPositions = function (layoutGrid) {
+            this.gridSize = layoutGrid;
+
+            this.elementProxies.forEach(function (elementProxy) {
+                elementProxy.setGridSize(this.gridSize);
+                elementProxy.style = convertPosition(elementProxy);
+            }.bind(this));
+        };
 
         FixedController.prototype.onCompositionAdd = function (object) {
             this.getTelemetry(object);
@@ -576,7 +575,7 @@ define(
             this.telemetryObjects[id] = domainObject;
             this.setDisplayedValue(domainObject, "");
 
-            Promise.resolve(domainObject)
+            return Promise.resolve(domainObject)
                 .then(this.fetchHistoricalData)
                 .then(this.subscribeToObject);
         };
