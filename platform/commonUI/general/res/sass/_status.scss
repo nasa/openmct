@@ -84,7 +84,7 @@
 
 /*************************************************** INDICATORS */
 
-.s-indicator {
+.ls-indicator {
     &.status-info,
     &.s-status-info {
         @include indicatorStatusColors($colorInfo);
