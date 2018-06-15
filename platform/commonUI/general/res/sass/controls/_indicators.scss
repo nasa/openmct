@@ -102,7 +102,6 @@ mct-indicators {
         &:hover {
             background: $bg;
             .label {
-                //@include transition-delay(200ms);
                 opacity: 1;
                 transform: translateY($hoverYOffset);
             }
