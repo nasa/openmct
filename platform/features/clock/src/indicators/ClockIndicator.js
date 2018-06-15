@@ -49,7 +49,7 @@ define(
         };
 
         ClockIndicator.prototype.getCssClass = function () {
-            return "icon-clock no-collapse float-right";
+            return "t-indicator-clock icon-clock no-collapse float-right";
         };
 
         ClockIndicator.prototype.getText = function () {

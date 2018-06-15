@@ -113,3 +113,11 @@ mct-indicators {
         float: right;
     }
 }
+
+/* Mobile */
+// Hide the clock indicator when we're phone portrait
+body.phone.portrait {
+    .l-indicator.t-indicator-clock {
+        display: none;
+    }
+}
