@@ -44,11 +44,11 @@ mct-indicators {
 
     &:before {
         display: inline-block;
-        margin: 0;
     }
 
     .label {
         display: inline-block;
+        font-size: .6rem;
         a {
             // Make <a> in label look like buttons
             @include trans-prop-nice($props: all, $dur: 100ms);
@@ -60,6 +60,20 @@ mct-indicators {
                 background: $bg;
                 color: #fff;
             }
+        }
+    }
+
+    &.no-collapse {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        > *,
+        &:before {
+            flex: 1 1 auto;
+        }
+
+        &:before {
+            margin-right: $interiorMarginSm;
         }
     }
 
