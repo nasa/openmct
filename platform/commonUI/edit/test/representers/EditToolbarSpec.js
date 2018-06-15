@@ -27,6 +27,8 @@ define(
         describe("An Edit mode toolbar", function () {
             var mockOpenMCT,
                 mockScope,
+                mockObjects,
+                mockDomainObject,
                 testStructure,
                 testAB,
                 testABC,
@@ -35,10 +37,6 @@ define(
                 testABCYZ,
                 testM,
                 toolbar;
-
-            function getVisibility(obj) {
-                return !obj.hidden;
-            }
 
             beforeEach(function () {
                 mockOpenMCT = jasmine.createSpy('openmct', ['objects']);

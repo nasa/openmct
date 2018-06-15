@@ -42,6 +42,7 @@ define(
                 mockOpenMCT,
                 mockSelection,
                 mockDomainObjectCapability,
+                mockObjects,
                 unlistenFunc,
                 $element = [],
                 selectable = [];

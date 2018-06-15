@@ -52,7 +52,6 @@ define(
                 mockMetadata,
                 mockTimeSystem,
                 mockLimitEvaluator,
-                mockComposition,
                 mockSelection,
                 mockObjects,
                 mockNewDomainObject,
@@ -183,7 +182,7 @@ define(
                 ]);
                 mockNewDomainObject.layoutGrid = testGrid;
                 mockNewDomainObject.configuration = {
-                    'fixed-display': testConfiguration,
+                    'fixed-display': testConfiguration
                 };
                 mockNewDomainObject.composition = ['a', 'b', 'c'];
 
