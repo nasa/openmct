@@ -74,7 +74,7 @@ define(
                 toolbar = new EditToolbar(mockScope, mockOpenMCT, testStructure);
             });
 
-            it("adds click for controls that define a method", function () {
+            it("adds click functions when a method is specified", function () {
                 var structure = toolbar.getStructure();
                 expect(structure[6].click).toBeDefined();
             });
@@ -82,66 +82,6 @@ define(
             it("adds key for controls that define a property", function () {
                 var structure = toolbar.getStructure();
                 expect(structure[0].key).toEqual(0);
-            });
-
-            xit("reads properties from getters", function () {
-                var structure, state;
-
-                testABC.a = function () {
-                    return "from a getter!";
-                };
-
-                toolbar.updateToolbar([testABC]);
-                structure = toolbar.getStructure();
-                state = toolbar.getState();
-
-                expect(state[structure.items[0].key])
-                    .toEqual("from a getter!");
-            });
-
-            xit("sets properties on update", function () {
-                toolbar.updateToolbar([testABC]);
-                toolbar.updateState(
-                    toolbar.getStructure().items[0].key,
-                    "new value"
-                );
-                // Should have updated the underlying object
-                expect(testABC.a).toEqual("new value");
-            });
-
-            xit("invokes setters on update", function () {
-                var structure;
-
-                testABC.a = jasmine.createSpy('a');
-
-                toolbar.updateToolbar([testABC]);
-                structure = toolbar.getStructure();
-
-                toolbar.updateState(
-                    structure.items[0].key,
-                    "new value"
-                );
-                // Should have updated the underlying object
-                expect(testABC.a).toHaveBeenCalledWith("new value");
-            });
-
-            xit("provides a return value describing update status", function () {
-                // Should return true if actually updated, otherwise false
-                var key;
-                toolbar.updateToolbar([testABC]);
-                key = toolbar.getStructure().items[0].key;
-                expect(toolbar.updateState(key, testABC.a)).toBeFalsy();
-                expect(toolbar.updateState(key, "new value")).toBeTruthy();
-            });
-
-            xit("adds click functions when a method is specified", function () {
-                toolbar.setSelection([testM]);
-                // Verify precondition
-                expect(testM.m).not.toHaveBeenCalled();
-                // Click!
-                toolbar.getStructure().items[5].click();
-                // Should have called the underlying function
-                expect(testM.m).toHaveBeenCalled();
             });
         });
     }

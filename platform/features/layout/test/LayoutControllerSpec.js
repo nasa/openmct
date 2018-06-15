@@ -42,6 +42,7 @@ define(
                 mockOpenMCT,
                 mockSelection,
                 mockDomainObjectCapability,
+                unlistenFunc,
                 $element = [],
                 selectable = [];
 
@@ -107,7 +108,6 @@ define(
                 };
 
                 unlistenFunc = jasmine.createSpy("unlisten");
-
                 mockDomainObjectCapability = jasmine.createSpyObj('capability',
                     ['inEditContext', 'listen']
                 );
@@ -346,13 +346,17 @@ define(
                 testModel.layoutGrid = [1, 1];
                 mockScope.$watch.calls[0].args[1](testModel.layoutGrid);
 
+                // Add a new object to the composition
+                mockComposition = ["a", "b", "c", "d"];
+                mockCompositionObjects = mockComposition.map(mockDomainObject);
+                mockCompositionCapability = mockPromise(mockCompositionObjects);
+
                 // Notify that a drop occurred
                 mockScope.$on.mostRecentCall.args[1](
                     mockEvent,
                     'd',
                     { x: 300, y: 100 }
                 );
-                mockScope.$watch.calls[0].args[1](['d']);
 
                 style = controller.getFrameStyle("d");
 
