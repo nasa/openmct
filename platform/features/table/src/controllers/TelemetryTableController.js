@@ -295,7 +295,7 @@ define(
                 function finishProcessing() {
                     telemetryCollection.add(rowData);
                     scope.rows = telemetryCollection.telemetry;
-                    scope.loading = false;
+                    self.loading(false);
 
                     resolve(scope.rows);
                 }
@@ -349,7 +349,7 @@ define(
                 if (objects.length > 0) {
                     objects.forEach(requestData);
                 } else {
-                    scope.loading = false;
+                    self.loading(false);
                     resolve([]);
                 }
             }.bind(this));
@@ -437,20 +437,23 @@ define(
             this.telemetry.clear();
             this.telemetry.bounds(this.openmct.time.bounds());
 
-            this.$scope.loading = true;
-
-            function error(e) {
-                scope.loading = false;
-                console.error(e.stack);
-            }
-
+            this.loading(true);
             scope.rows = [];
 
             return this.getTelemetryObjects()
                 .then(this.loadColumns)
                 .then(this.subscribeToNewData)
                 .then(this.getHistoricalData)
-                .catch(error);
+                .catch(function error(e) {
+                    this.loading(false);
+                    console.error(e.stack || e);
+                }.bind(this));
+        };
+
+        TelemetryTableController.prototype.loading = function (loading) {
+            this.$timeout(function () {
+                this.$scope.loading = loading;
+            }.bind(this));
         };
 
         /**
