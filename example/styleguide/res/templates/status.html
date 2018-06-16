@@ -103,6 +103,10 @@
                         <li><code>s-status-diagnostic</code></li>
                         <li><code>s-status-info</code></li>
                         <li><code>s-status-ok</code></li>
+                        <li><code>s-status-available</code> When something is available.</li>
+                        <li><code>s-status-on</code> When something that has on/off states is on.</li>
+                        <li><code>s-status-off</code> When something that has on/off states is off.</li>
+                        <li><code>s-status-disabled</code> When something that might be available has been disabled.</li>
                     </ul>
                     <li>Color and icon</li>
                     <ul>
@@ -125,6 +129,51 @@
 <div class="s-status-info-icon">INFO with icon</div>
 <div class="s-status-ok-icon">OK with icon</div>
 <div class="s-status-warning-hi icon-gear">WARNING HI with custom icon</div>
+</mct-example>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Status Bar Indicators</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Indicators are small iconic notification elements that appear in the Status Bar area of
+                    the application at the window's bottom. They consist of a <code>.ls-indicator</code>
+                    wrapper element with <code>.icon-*</code> classes for the type of thing they represent and
+                    <code>.s-status-*</code> classes to articulate the current status. Title attributes should be used
+                    to provide more verbose information about the thing and/or its status.</p>
+                <p>The wrapper encloses a <code>.label</code> element that is displayed on hover. This element should
+                    include a brief statement of the current status, and can also include clickable elements
+                    as <code>&lt;a&gt;</code> tags.</p>
+                <p>Icon classes are as defined on the
+                    <a href="#/browse/styleguide:home/glyphs?tc.mode=local&tc.timeSystem=utc&tc.startDelta=1800000&tc.endDelta=0&view=styleguide.glyphs">
+                        Glyphs page</a>.
+                    Status classes are as noted above in the &quot;Color only&quot; section of Status section above.</p>
+            </div>
+<mct-example><div class="s-ue-bottom-bar status-holder s-status-bar">
+<span class="ls-indicator icon-database s-status-alert" title="The system is currently lorem ipsum.">
+    <span class="label">Lorem Ipsum</span>
+</span>
+<span class="ls-indicator icon-packet s-status-off" title="Message lorem ipsum dolor sit.">
+    <span class="label">Message Bus</span>
+</span>
+<span class="ls-indicator icon-gear s-status-available" title="Configure lorem ipsum dolor sit.">
+    <span class="label"><a>Preferences</a></span>
+</span>
+<span class="ls-indicator icon-bell s-status-available" title="View alerts and messages.">
+    <span class="label">
+        <a class="icon-alert-triangle">View Alerts</a>
+        <a class="icon-packet">View Messages</a>
+        <a class="icon-gear">Configure</a>
+    </span>
+</span>
+<span class="ls-indicator icon-bell s-status-on" title="System connection status.">
+    <span class="label">
+        Connected to http://lorem-ipsum
+        <a class="icon-gear">Disconnect</a>
+    </span>
+</span>
+</div>
 </mct-example>
         </div>
     </div>

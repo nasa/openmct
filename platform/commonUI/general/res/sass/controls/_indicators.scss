@@ -22,12 +22,10 @@
 
 /* Indicators are generally only displayed in the ue-bottom-bar element of the main interface */
 
-mct-indicators {
-    mct-include,
-    .h-indicator {
-        display: inline; // Fallback for display: contents
-        display: contents;
-    }
+.h-indicator,
+mct-indicators mct-include {
+    display: inline; // Fallback for display: contents
+    display: contents;
 }
 
 .ls-indicator {
@@ -65,6 +63,13 @@ mct-indicators {
             &:hover {
                 background: $bg;
                 color: #fff;
+            }
+        }
+
+        > [class*='icon-'] {
+            &:before {
+                font-size: 0.8em;
+                margin-right: $interiorMarginSm;
             }
         }
 

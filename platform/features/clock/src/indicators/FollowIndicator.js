@@ -35,7 +35,7 @@ define([], function () {
         function setIndicatorStatus(newTimer) {
             if (newTimer !== undefined) {
                 indicator.iconClass('icon-timer');
-                indicator.statusClass('status-enabled');
+                indicator.statusClass('status-on');
                 indicator.text('Following timer ' + newTimer.name);
             } else {
                 indicator.iconClass('icon-timer');

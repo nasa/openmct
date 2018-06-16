@@ -91,18 +91,20 @@
     }
 
     &.status-ok,
+    &.status-on,
     &.status-enabled,
     &.s-status-ok,
-    &.s-status-enabled
-    {
+    &.s-status-on,
+    &.s-status-enabled {
         @include indicatorStatusColors($colorOk);
     }
 
+    &.status-off,
     &.status-disabled,
+    &.s-status-off,
     &.s-status-disabled {
         @include indicatorStatusColors($colorStatusDisabled);
     }
-
 
     &.status-caution,
     &.status-warning,
