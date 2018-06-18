@@ -50,7 +50,7 @@ define(
             },
             PENDING = {
                 text: "Checking connection...",
-                statusClass: "status-caution",
+                statusClass: "status-caution"
             };
 
         /**
