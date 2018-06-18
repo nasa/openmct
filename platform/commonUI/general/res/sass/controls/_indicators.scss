@@ -33,7 +33,7 @@ mct-indicators mct-include {
     $hbg: $colorStatusBarBg;
     $hshdw: rgba(white, 0.4) 0 0 3px;
     $br: $controlCr;
-    $hoverYOffset: -30px;
+    $hoverYOffset: -35px;
     background: transparent !important;
     border-radius: $br;
     display: inline-block;
@@ -91,17 +91,19 @@ mct-indicators mct-include {
     }
 
     &:not(.no-collapse) {
+        z-index: 0;
         .label {
-            @include trans-prop-nice($props: all, $dur: 250ms, $delay: 0);
+            transition: all 250ms ease-in 100ms;
             background: $hbg;
             border-radius: $br;
             font-size: .6rem;
+            left: 0;
+            bottom: 140%;
             opacity: 0;
             padding: $interiorMarginSm $interiorMargin;
             position: absolute;
-            transform: translateY($hoverYOffset + ($hoverYOffset * -0.5));
-            left: 0;
-            top: 0;
+            transform-origin: 10px 100%;
+            transform: scale(0.0);
             white-space: nowrap;
             &:before {
                 // Infobubble-style arrow element
@@ -115,9 +117,11 @@ mct-indicators mct-include {
 
         &:hover {
             background: $bg;
+            z-index: 1;
             .label {
                 opacity: 1;
-                transform: translateY($hoverYOffset);
+                transform: scale(1.0);
+                transition: all 100ms ease-out 0s;
             }
         }
     }
