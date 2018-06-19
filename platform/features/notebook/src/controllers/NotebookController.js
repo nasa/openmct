@@ -197,20 +197,6 @@ define(
                 viewAction.perform($event, snapshot, embedId, entryId, $innerScope, domainObject);
             };
 
-
-            $scope.parseText = function (text) {
-                if (text) {
-                    return text.split(/\r\n|\r|\n/gi);
-                }
-            };
-
-            //parse text and add line breaks where needed
-            $scope.trustedHtml = function (text) {
-                if (text) {
-                    return $sce.trustAsHtml(this.parseText(text).join('<br>'));
-                }
-            };
-
             $scope.renderImage = function (img) {
                 return URL.createObjectURL(img);
             };

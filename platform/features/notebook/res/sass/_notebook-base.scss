@@ -81,6 +81,7 @@
         .s-notebook-entry-text {
             // Contenteditable div that holds text
             min-height: 24px; // Needed in Firefox when field is blank
+            white-space: pre-wrap;
         }
         .entry-embeds{
             flex-wrap: wrap;
