@@ -20,13 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*************************************************** MIXINS */
-@mixin formulateStatusColors($c) {
+@mixin elementStatusColors($c) {
     // Sets bg and icon colors for elements
     background: rgba($c, 0.4) !important;
     &:before { color: $c !important; }
 }
 
-
+@mixin indicatorStatusColors($c) {
+    &:before, .count { color: $c; }
+}
 
 /*************************************************** GENERAL */
 .s-limit-yellow,
@@ -49,19 +51,17 @@
     &:before {
         content:'';
         font-family: symbolsfont;
-        font-size: 0.8em;
         margin-right: $interiorMarginSm;
     }
 }
 
-
 /*************************************************** LIMITS */
 .s-limit-yellow, .s-limit-yellow-icon {
-    @include formulateStatusColors($colorWarningLo);
+    @include elementStatusColors($colorWarningLo);
 }
 
 .s-limit-red, .s-limit-red-icon {
-    @include formulateStatusColors($colorWarningHi);
+    @include elementStatusColors($colorWarningHi);
 }
 
 .s-limit-upr:before { content: $glyph-icon-arrow-double-up; }
@@ -70,16 +70,62 @@
 .s-limit-red-icon:before { content: $glyph-icon-alert-triangle; }
 
 /*************************************************** STATUS */
-.s-status-warning-hi, .s-status-warning-hi-icon {  @include formulateStatusColors($colorWarningHi); }
-.s-status-warning-lo, .s-status-warning-lo-icon {  @include formulateStatusColors($colorWarningLo); }
-.s-status-diagnostic, .s-status-diagnostic-icon {  @include formulateStatusColors($colorDiagnostic); }
-.s-status-info, .s-status-info-icon {  @include formulateStatusColors($colorInfo); }
-.s-status-ok, .s-status-ok-icon {  @include formulateStatusColors($colorOk); }
+.s-status-warning-hi, .s-status-warning-hi-icon {  @include elementStatusColors($colorWarningHi); }
+.s-status-warning-lo, .s-status-warning-lo-icon {  @include elementStatusColors($colorWarningLo); }
+.s-status-diagnostic, .s-status-diagnostic-icon {  @include elementStatusColors($colorDiagnostic); }
+.s-status-info, .s-status-info-icon {  @include elementStatusColors($colorInfo); }
+.s-status-ok, .s-status-ok-icon {  @include elementStatusColors($colorOk); }
 
 .s-status-warning-hi-icon:before { content: $glyph-icon-alert-triangle; }
 .s-status-warning-lo-icon:before { content: $glyph-icon-alert-rect; }
 .s-status-diagnostic-icon:before { content: $glyph-icon-eye-open; }
 .s-status-info-icon:before { content: $glyph-icon-info; }
 .s-status-ok-icon:before { content: $glyph-icon-check; }
+
+/*************************************************** INDICATORS */
+
+.ls-indicator {
+    &.status-info,
+    &.s-status-info {
+        @include indicatorStatusColors($colorInfo);
+    }
+
+    &.status-ok,
+    &.status-on,
+    &.status-enabled,
+    &.s-status-ok,
+    &.s-status-on,
+    &.s-status-enabled {
+        @include indicatorStatusColors($colorOk);
+    }
+
+    &.status-off,
+    &.status-disabled,
+    &.s-status-off,
+    &.s-status-disabled {
+        @include indicatorStatusColors($colorStatusDisabled);
+    }
+
+    &.status-caution,
+    &.status-warning,
+    &.status-alert,
+    &.s-status-caution,
+    &.s-status-warning,
+    &.s-status-alert {
+        @include indicatorStatusColors($colorStatusAlert);
+    }
+
+    &.status-error,
+    &.status-err,
+    &.s-status-error {
+        @include indicatorStatusColors($colorStatusError);
+    }
+
+    &.status-available,
+    &.s-status-available {
+        @include indicatorStatusColors($colorStatusAvailable);
+    }
+}
+
 
 

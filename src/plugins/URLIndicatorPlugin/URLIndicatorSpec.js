@@ -68,7 +68,7 @@ define(
 
                     it("has a default icon class if none supplied", function () {
                         var iconElement = getIconElement();
-                        expect(iconElement.hasClass('icon-connectivity')).toBe(true);
+                        expect(iconElement.hasClass('icon-chain-links')).toBe(true);
                     });
 
                     it("defaults to the URL if no label supplied", function () {
@@ -163,7 +163,6 @@ define(
                     .andReturn(Promise.reject().then(function () {
                         returned = true;
                         //Throw error to ensure chained catch is invoked
-                        throw undefined;
                     }));
             }
 
@@ -176,7 +175,7 @@ define(
             }
 
             function getIconElement() {
-                return $('.indicator-icon', indicatorElement);
+                return $(indicatorElement);
             }
 
             function getTextElement() {

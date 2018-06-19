@@ -207,11 +207,11 @@ define(
             }
 
             function getIconElement() {
-                return $('.indicator-icon', holderElement);
+                return $('.ls-indicator', holderElement);
             }
 
             function getIndicatorElement() {
-                return $('.status', holderElement);
+                return $('.ls-indicator', holderElement);
             }
 
             function getTextElement() {

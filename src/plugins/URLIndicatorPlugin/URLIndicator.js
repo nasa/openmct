@@ -101,7 +101,7 @@ define(
             this.URLpath = options.url;
             this.label = options.label || options.url;
             this.interval = options.interval || 10000;
-            this.indicator.iconClass(options.iconClass || 'icon-connectivity');
+            this.indicator.iconClass(options.iconClass || 'icon-chain-links');
         };
 
         URLIndicator.prototype.bindMethods = function () {

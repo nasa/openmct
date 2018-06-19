@@ -29,7 +29,6 @@ define(['zepto', 'text!./res/indicator-template.html'],
             this.element = $(indicatorTemplate)[0];
 
             this.textElement = this.element.querySelector('.indicator-text');
-            this.iconElement = this.element.querySelector('.indicator-icon');
 
             //Set defaults
             this.text('New Indicator');
@@ -67,10 +66,10 @@ define(['zepto', 'text!./res/indicator-template.html'],
                 // element.classList is precious and throws errors if you try and add
                 // or remove empty strings
                 if (this.iconClassValue) {
-                    this.iconElement.classList.remove(this.iconClassValue);
+                    this.element.classList.remove(this.iconClassValue);
                 }
                 if (iconClass) {
-                    this.iconElement.classList.add(iconClass);
+                    this.element.classList.add(iconClass);
                 }
                 this.iconClassValue = iconClass;
             }
@@ -81,10 +80,10 @@ define(['zepto', 'text!./res/indicator-template.html'],
         SimpleIndicator.prototype.statusClass = function (statusClass) {
             if (statusClass !== undefined && statusClass !== this.statusClassValue) {
                 if (this.statusClassValue) {
-                    this.iconElement.classList.remove(this.statusClassValue);
+                    this.element.classList.remove(this.statusClassValue);
                 }
                 if (statusClass) {
-                    this.iconElement.classList.add(statusClass);
+                    this.element.classList.add(statusClass);
                 }
                 this.statusClassValue = statusClass;
             }
