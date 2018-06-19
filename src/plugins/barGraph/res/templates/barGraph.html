@@ -6,34 +6,22 @@
     </div>
 
     <div class="example-graph-area">
-        <div style="left: 0; width: 33.3%;" class="example-bar-holder">
-            <div class="example-bar" style="top: 25%; bottom: 50%;">
+        <div v-for="(object, index) in telemetryObjects"
+           v-bind:style="{left: (barWidth * index) + '%', width: barWidth + '%'}"
+           class="example-bar-holder">
+            <div class="example-bar"
+                style="top: 25%; bottom: 50%;">
             </div>
         </div>
-        <div style="left: 33.3%; width: 33.3%;" class="example-bar-holder">
-            <div class="example-bar" style="top: 40%; bottom: 10%;">
-            </div>
-        </div>
-        <div style="left: 66.6%; width: 33.3%;" class="example-bar-holder">
-            <div class="example-bar" style="top: 30%; bottom: 40%;">
-            </div>
-        </div>
+
         <div style="bottom: 50%" class="example-graph-tick">
         </div>
     </div>
 
-    <div class="example-bar-labels">
-        <div style="left: 0; width: 33.3%;" 
+    <div class="example-bar-labels" v-for="(object, index) in telemetryObjects">
+        <div    v-bind:style="{left: (barWidth * index) + '%', width: barWidth + '%'}"
                 class="example-bar-holder example-label">
-            Label A
-        </div>
-        <div style="left: 33.3%; width: 33.3%;" 
-                class="example-bar-holder example-label">
-            Label B
-        </div>
-        <div style="left: 66.6%; width: 33.3%;" 
-                class="example-bar-holder example-label">
-            Label C
+            {{ object.name }}
         </div>
     </div>
 </div>
