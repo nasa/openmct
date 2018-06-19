@@ -20,32 +20,36 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
-define(
-    [
-        '../src/IdentityProvider'
-    ],
-    function (IdentityProvider) {
-
-        describe("IdentityProvider", function () {
-            var mockQ, provider;
-
-            beforeEach(function () {
-                mockCallback = jasmine.createSpy('callback');
-                mockQ = jasmine.createSpyObj('$q', ['when']);
-                mockQ.when.andCallFake(function (v) {
-                    return Promise.resolve(v);
-                });
-
-                provider = new IdentityProvider(mockQ);
-            });
-
-            it("provides an undefined user", function () {
-                return provider.getUser().then(function (user) {
-                    expect(user).toBe(undefined);
-                });
-            });
-
-        });
+define([], function () {
+    function DOMObserver(element) {
+        this.element = element;
+        this.observers = [];
     }
-);
+
+    DOMObserver.prototype.when = function (latchFunction) {
+        return new Promise(function (resolve, reject) {
+            //Test latch function at least once
+            if (latchFunction()){
+                resolve();
+            } else {
+                //Latch condition not true yet, create observer on DOM and test again on change.
+                var config = { attributes: true, childList: true, subtree: true };
+                var observer = new MutationObserver(function () {
+                    if (latchFunction()) {
+                        resolve();
+                    }
+                });
+                observer.observe(this.element, config);
+                this.observers.push(observer);
+            }
+        }.bind(this));
+    }
+
+    DOMObserver.prototype.destroy = function () {
+        this.observers.forEach(function (observer){
+            observer.disconnect();
+        }.bind(this));
+    }
+
+    return DOMObserver;
+});

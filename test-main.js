@@ -41,7 +41,7 @@ allTestFiles.unshift('es6-promise');
 
 // Drop legacyRegistry, since it is at a different path by RequireJS config
 allTestFiles = allTestFiles.filter(function (file) {
-    return file.indexOf('legacyRegistry') === -1;
+    return file.indexOf('legacyRegistry') === -1 && file.indexOf('dom-observer') === -1  ;
 });
 
 requirejs.config({
@@ -50,6 +50,7 @@ requirejs.config({
 
     "paths": {
         "legacyRegistry": "src/legacyRegistry",
+        "dom-observer": "src/dom-observer",
         "angular": "bower_components/angular/angular.min",
         "angular-route": "bower_components/angular-route/angular-route.min",
         "csv": "bower_components/comma-separated-values/csv.min",

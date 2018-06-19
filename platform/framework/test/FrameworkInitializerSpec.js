@@ -50,19 +50,7 @@ define(
             it("calls injected stages in order", function () {
                 var result;
 
-                initializer.runApplication([]).then(function (v) {
-                    result = v;
-                });
-
-                waitsFor(
-                    function () {
-                        return result !== undefined;
-                    },
-                                       "promise resolution",
-                                       250
-                                   );
-
-                runs(function () {
+                return initializer.runApplication([]).then(function (result) {
                     expect(result).toEqual(
                         ["loader", "resolver", "registrar", "bootstrapper"]
                     );

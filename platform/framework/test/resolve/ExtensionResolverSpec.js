@@ -46,7 +46,7 @@ define(
                     ["error", "warn", "info", "debug"]
                 );
 
-                mockLoader.load.andReturn(Promise.resolve(Constructor));
+                mockLoader.load.and.returnValue(Promise.resolve(Constructor));
 
                 resolver = new ExtensionResolver(mockLoader, mockLog);
             });
@@ -59,22 +59,10 @@ define(
                     extension = bundle.getExtensions("tests")[0],
                     result;
 
-                resolver.resolve(extension).then(function (v) {
-                    result = v;
-                });
-
-                waitsFor(
-                    function () {
-                        return result !== undefined;
-                    },
-                                       "promise resolution",
-                                       250
-                                   );
-
-                runs(function () {
+                return resolver.resolve(extension).then(function (result) {
                     // Verify that the right file was requested
                     expect(mockLoader.load).toHaveBeenCalledWith("w/x/y/z.js");
-
+                                        
                     // We should have resolved to the constructor from above
                     expect(typeof result).toEqual('function');
                     expect(result().someKey).toEqual("some value");
@@ -93,23 +81,11 @@ define(
                     extension = bundle.getExtensions("tests")[0],
                     result;
 
-                mockLoader.load.andReturn(Promise.reject(new Error("test error")));
-                resolver.resolve(extension).then(function (v) {
-                    result = v;
-                });
-
-                waitsFor(
-                    function () {
-                        return result !== undefined;
-                    },
-                                       "promise resolution",
-                                       250
-                                   );
-
-                runs(function () {
+                mockLoader.load.and.returnValue(Promise.reject(new Error("test error")));
+                
+                return resolver.resolve(extension).then(function (result) {
                     // Should have gotten a warning
-                    expect(mockLog.warn).toHaveBeenCalled();
-
+                    expect(mockLog.warn).toHaveBeenCalled();                    
                     // We should have resolved to the plain definition from above
                     expect(typeof result).not.toEqual('function');
                     expect(result.someOtherKey).toEqual("some other value");
@@ -124,26 +100,13 @@ define(
                     extension = bundle.getExtensions("tests")[0],
                     result;
 
-                resolver.resolve(extension).then(function (v) {
-                    result = v;
-                });
-
-                waitsFor(
-                    function () {
-                        return result !== undefined;
-                    },
-                                       "promise resolution",
-                                       250
-                                   );
-
-                runs(function () {
+                return resolver.resolve(extension).then(function (result) {
                     // Verify that the right file was requested
-                    expect(mockLoader.load).toHaveBeenCalledWith("w/x/y/z.js");
-
+                    expect(mockLoader.load).toHaveBeenCalledWith("w/x/y/z.js");                    
                     // We should have resolved to the constructor from above
                     expect(typeof result).toEqual('function');
                     expect(result().someKey).toEqual("some value");
-                    expect(result.someProperty).toEqual("some static value");
+                    expect(result.someProperty).toEqual("some static value");                    
                 });
             });
 

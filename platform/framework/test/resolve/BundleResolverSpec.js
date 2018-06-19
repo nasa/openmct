@@ -47,7 +47,7 @@ define(
                     ["error", "warn", "info", "debug"]
                 );
 
-                mockExtensionResolver.resolve.andReturn(Promise.resolve("a"));
+                mockExtensionResolver.resolve.and.returnValue(Promise.resolve("a"));
 
                 resolver = new BundleResolver(
                     mockExtensionResolver,
@@ -57,27 +57,11 @@ define(
             });
 
             it("invokes the extension resolver for all bundle extensions", function () {
-                var result;
-
-                resolver.resolveBundles([
+                return resolver.resolveBundles([
                     new Bundle("x", { extensions: { tests: [{}, {}, {}] } }),
                     new Bundle("y", { extensions: { tests: [{}, {}], others: [{}, {}] } }),
                     new Bundle("z", { extensions: { others: [{}] } })
-                ]).then(function (v) {
-                    result = v;
-                });
-
-                waitsFor(
-                    function () {
-                        return result !== undefined;
-                    },
-                                       "promise resolution",
-                                       250
-                                   );
-
-                // Should get back the result from the resolver, and
-                // should be binned by extension category.
-                runs(function () {
+                ]).then(function (result) {
                     expect(result.tests).toEqual(["a", "a", "a", "a", "a"]);
                     expect(result.others).toEqual(["a", "a", "a"]);
                 });

@@ -38,9 +38,7 @@ define([
             objectY,
             objectZ,
             itemsToIndex,
-            onMessage,
-            data,
-            waitForResult;
+            onMessagePromise;
 
         beforeEach(function () {
             worker = new Worker(
@@ -74,17 +72,11 @@ define([
             });
 
             onMessage = jasmine.createSpy('onMessage');
-            worker.addEventListener('message', onMessage);
 
-            waitForResult = function () {
-                waitsFor(function () {
-                    if (onMessage.calls.length > 0) {
-                        data = onMessage.calls[0].args[0].data;
-                        return true;
-                    }
-                    return false;
-                });
-            };
+            onMessagePromise = new Promise(function (resolve) {
+                worker.addEventListener('message', resolve);
+            });
+
         });
 
         afterEach(function () {
@@ -100,10 +92,8 @@ define([
                 queryId: 123
             });
 
-            waitForResult();
-
-            runs(function () {
-                expect(onMessage).toHaveBeenCalled();
+            return onMessagePromise.then(function (message) {
+                var data = message.data;
 
                 expect(data.request).toBe('search');
                 expect(data.total).toBe(3);
@@ -118,7 +108,8 @@ define([
                 expect(data.results[2].item.id).toBe('z');
                 expect(data.results[2].item.model).toEqual(objectZ.model);
                 expect(data.results[2].matchCount).toBe(1);
-            });
+
+            })
         });
 
         it('scores exact term matches higher', function () {
@@ -129,13 +120,11 @@ define([
                 queryId: 234
             });
 
-            waitForResult();
-
-            runs(function () {
-                expect(data.queryId).toBe(234);
-                expect(data.results.length).toBe(3);
-                expect(data.results[0].item.id).toBe('x');
-                expect(data.results[0].matchCount).toBe(1.5);
+            return onMessagePromise.then(function (message) {
+                expect(message.data.queryId).toBe(234);
+                expect(message.data.results.length).toBe(3);
+                expect(message.data.results[0].item.id).toBe('x');
+                expect(message.data.results[0].matchCount).toBe(1.5);                
             });
         });
 
@@ -147,13 +136,11 @@ define([
                 queryId: 345
             });
 
-            waitForResult();
-
-            runs(function () {
-                expect(data.queryId).toBe(345);
-                expect(data.results.length).toBe(1);
-                expect(data.results[0].item.id).toBe('x');
-                expect(data.results[0].matchCount).toBe(1);
+            return onMessagePromise.then(function (message) {
+                expect(message.data.queryId).toBe(345);
+                expect(message.data.results.length).toBe(1);
+                expect(message.data.results[0].item.id).toBe('x');
+                expect(message.data.results[0].matchCount).toBe(1);
             });
         });
 
@@ -165,9 +152,9 @@ define([
                 queryId: 456
             });
 
-            waitForResult();
+            return onMessagePromise.then(function (message) {
+                var data = message.data;
 
-            runs(function () {
                 expect(data.queryId).toBe(456);
                 expect(data.results.length).toBe(3);
                 expect(data.results[0].item.id).toBe('x');
@@ -187,9 +174,9 @@ define([
                 queryId: 567
             });
 
-            waitForResult();
+            return onMessagePromise.then(function (message) {
+                var data = message.data;
 
-            runs(function () {
                 expect(data.queryId).toBe(567);
                 expect(data.results.length).toBe(3);
                 expect(data.results[0].item.id).toBe('x');
@@ -207,9 +194,9 @@ define([
                 queryId: 678
             });
 
-            waitForResult();
+            return onMessagePromise.then(function (message) {
+                var data = message.data;
 
-            runs(function () {
                 expect(data.queryId).toBe(678);
                 expect(data.results.length).toBe(3);
                 expect(data.results[0].item.id).toBe('x');

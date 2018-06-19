@@ -47,7 +47,7 @@ define([], function () {
             "parse"
         ]);
 
-        mockValueFormatter.parse.andCallFake(function (value) {
+        mockValueFormatter.parse.and.callFake(function (value) {
             return value[valueMetadata.key];
         });
 
@@ -55,7 +55,7 @@ define([], function () {
     };
 
     MockTelemetryApi.prototype.mockReceiveTelemetry = function (newTelemetryDatum) {
-        var subscriptionCallback = this.subscribe.mostRecentCall.args[1];
+        var subscriptionCallback = this.subscribe.calls.mostRecent().args[1];
         subscriptionCallback(newTelemetryDatum);
     };
 
@@ -73,7 +73,7 @@ define([], function () {
         var mockMetadataValue = {
             key: rangeKey
         };
-        this.metadata.valuesForHints.andReturn([mockMetadataValue]);
+        this.metadata.valuesForHints.and.returnValue([mockMetadataValue]);
     };
 
     /**
@@ -85,7 +85,7 @@ define([], function () {
             'valuesForHints'
         ]);
 
-        mockMetadata.value.andCallFake(function (key) {
+        mockMetadata.value.and.callFake(function (key) {
             return {
                 key: key
             };
@@ -99,7 +99,7 @@ define([], function () {
     MockTelemetryApi.prototype.createSpy = function (functionName) {
         this[functionName] = this[functionName].bind(this);
         spyOn(this, functionName);
-        this[functionName].andCallThrough();
+        this[functionName].and.callThrough();
     };
 
     return MockTelemetryApi;

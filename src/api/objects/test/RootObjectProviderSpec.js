@@ -24,27 +24,17 @@ define([
 ], function (
     RootObjectProvider
 ) {
-    describe('RootObjectProvider', function () {
+    fdescribe('RootObjectProvider', function () {
         var rootRegistry,
             rootObjectProvider;
 
-        function done() {
-            var isDone = false;
-            waitsFor(function () {
-                return isDone;
-            });
-            return function () {
-                isDone = true;
-            };
-        }
-
         beforeEach(function () {
             rootRegistry = jasmine.createSpyObj('rootRegistry', ['getRoots']);
-            rootRegistry.getRoots.andReturn(Promise.resolve(['some root']));
+            rootRegistry.getRoots.and.returnValue(Promise.resolve(['some root']));
             rootObjectProvider = new RootObjectProvider(rootRegistry);
         });
 
-        it('supports fetching root', function () {
+        it('supports fetching root', function (done) {
             rootObjectProvider.get()
                 .then(function (root) {
                     expect(root).toEqual({
@@ -57,7 +47,7 @@ define([
                         composition: ['some root']
                     });
                 })
-                .then(done());
+                .then(done);
         });
     });
 });
