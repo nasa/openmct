@@ -4,7 +4,7 @@
         <div class="top-bar">
             <div class="title">{{ngModel.title}}</div>
         </div>
-        <div class="hint" ng-hide="ngModel.hint === undefined">{{ngModel.hint}}</div>
+        <div class="hint" ng-hide="ngModel.hint === undefined">{{ngModel.hint + " [" + ngModel.timestamp + "]"}}</div>
         <div class="message-body">
             <div class="message-action">
                 {{ngModel.actionText}}
