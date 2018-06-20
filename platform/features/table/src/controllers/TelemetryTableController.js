@@ -241,7 +241,11 @@ define(
 
             if (objects.length > 0) {
                 var allMetadata = objects.map(telemetryApi.getMetadata.bind(telemetryApi));
-                var allValueMetadata = _.flatten(allMetadata.map(getMetadataValues));
+                var allValueMetadata = _.flatten(allMetadata.map(
+                    function getMetadataValues(metadata) {
+                        return metadata.values();
+                    }
+                ));
 
                 this.table.populateColumns(allValueMetadata);
 
@@ -262,10 +266,6 @@ define(
                     this.sortByTimeSystem(timeSystem);
                 }
 
-            }
-
-            function getMetadataValues(metadata) {
-                return metadata.values();
             }
 
             return objects;
