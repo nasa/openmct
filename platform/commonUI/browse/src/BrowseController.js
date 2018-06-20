@@ -48,9 +48,7 @@ define(
             defaultPath
         ) {
             var initialPath = ($route.current.params.ids || defaultPath).split("/"),
-                currentIds,
-                actions,
-                previewAction;
+                currentIds;
 
             $scope.treeModel = {
                 selectedObject: undefined,
@@ -58,14 +56,16 @@ define(
                     navigationService.setNavigation(object, true);
                 },
                 allowSelection: function (object) {
-                    // return navigationService.shouldNavigate();
-                    if (navigationService.anyChecksBeforeNavigation()) {
+                    var domainObjectInView = navigationService.getNavigation(),
+                        isInEditMode = domainObjectInView.getCapability('status').get('editing');
 
-                        actions = actions || $scope.domainObject.getCapability('action');
-                        previewAction =  previewAction || actions.getActions({key: 'mct-preview-action'})[0];
+                    if (isInEditMode) {
+
+                        var actions = object.getCapability('action'),
+                            previewAction = actions.getActions({key: 'mct-preview-action'})[0];
 
                         if (previewAction && previewAction.perform) {
-                            previewAction.perform(object);
+                            previewAction.perform();
                             return false;
                         } else {
                             return navigationService.shouldNavigate();

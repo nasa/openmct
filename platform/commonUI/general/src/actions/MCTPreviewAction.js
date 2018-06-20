@@ -26,41 +26,31 @@ define(
 
         var PREVIEW_TEMPLATE = '<mct-representation key="\'mct-preview\'"' +
                                     'class="t-rep-frame holder"' +
-                                    'mct-object="selObj">' +
+                                    'mct-object="domainObject">' +
                                 '</mct-representation>';
 
-        function MCTPreview($compile,$rootScope,dialogService,notificationService,linkService,context) {
+        function MCTPreviewAction($compile, $rootScope, context) {
             context = context || {};
-            this.domainObject = context.selectedObject || context.domainObject;
-            this.dialogService = dialogService;
-            this.notificationService = notificationService;
-            this.linkService = linkService;
+            this.domainObject = context.domainObject;
             this.$rootScope = $rootScope;
             this.$compile = $compile;
         }
 
-        MCTPreview.prototype.perform = function (object) {
-            var domainObj = object || this.domainObject,
-                rootScope = this.$rootScope;
+        MCTPreviewAction.prototype.perform = function () {
 
-            rootScope.newEntryText = '';
-            this.$rootScope.selObj = domainObj;
-            this.$rootScope.selValue = "";
-
-            var newScope = rootScope.$new();
-            newScope.selObj = domainObj;
-            newScope.selValue = "";
+            var newScope = this.$rootScope.$new();
+            newScope.domainObject = this.domainObject;
 
             this.$compile(PREVIEW_TEMPLATE)(newScope);
         };
 
-        MCTPreview.appliesTo = function (context) {
+        MCTPreviewAction.appliesTo = function (context) {
             var domainObject = (context || {}).domainObject,
                 status = domainObject.getCapability('status');
 
             return !(status && status.get('editing'));
         };
 
-        return MCTPreview;
+        return MCTPreviewAction;
     }
 );

@@ -141,12 +141,6 @@ define(['zepto'], function ($) {
         this.overlayContainer = undefined;
         this.overlay = undefined;
 
-        // if (this.notebookButton) {
-        //     this.browseBar.removeChild(this.notebookButton);
-        //     this.notebookButton.remove();
-        //     this.notebookButton = undefined;
-        // }
-
         this.removeButtons();
 
         if (this.overlayDidUnmount && typeof this.overlayDidUnmount === 'function') {
@@ -182,7 +176,7 @@ define(['zepto'], function ($) {
         '</a>';
 
         var button = document.createElement('div');
-        $(button).addClass('notebook-button-container holder flex-elem');
+        $(button).addClass('holder flex-elem');
         button.innerHTML = NEW_BUTTON_TEMPLATE;
         return button;
     }

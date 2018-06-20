@@ -109,10 +109,6 @@ define(
             });
         };
 
-        NavigationService.prototype.anyChecksBeforeNavigation = function () {
-            return this.checks.length;
-        };
-
         /**
          * Check if navigation should proceed.  May prompt a user for input
          * if any checkFns return messages.  Returns true if the user wishes to

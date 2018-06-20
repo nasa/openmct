@@ -21,12 +21,9 @@
  *****************************************************************************/
 
 define(['zepto', '../services/Overlay'], function ($, Overlay) {
-    /**
+    function MCTPreview($document) {
 
-     */
-    function MCTPreview($rootScope,$document,exportImageService,dialogService,notificationService) {
-
-        function link($scope, $element, $attrs) {
+        function link($scope, $element) {
             var actions = $scope.domainObject.getCapability('action'),
                 notebookAction = actions.getActions({key: 'notebook-new-entry'})[0];
 

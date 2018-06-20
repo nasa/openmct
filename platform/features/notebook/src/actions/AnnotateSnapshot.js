@@ -26,7 +26,7 @@
 define(
     ["painterro", "zepto"],
     function (Painterro, $) {
-        var ANNOTATION_STRUCT = {
+        var annotationStruct = {
             title: "Annotate Snapshot",
             template: "annotate-snapshot",
             options: [{
@@ -41,7 +41,7 @@ define(
             }]
         };
 
-        function AnnotateSnapshot(dialogService,dndService,$rootScope,context) {
+        function AnnotateSnapshot(dialogService, dndService, $rootScope, context) {
             context = context || {};
 
             // Choose the object to be opened into a new tab
@@ -113,7 +113,7 @@ define(
                 });
             }];
 
-            ANNOTATION_STRUCT.model = {'controller': controller};
+            annotationStruct.model = {'controller': controller};
 
             function saveNotes(param) {
                 if (param === 'ok') {
@@ -154,7 +154,7 @@ define(
                 }
             }
 
-            this.dialogService.getUserChoice(ANNOTATION_STRUCT)
+            this.dialogService.getUserChoice(annotationStruct)
             .then(saveNotes, rejectNotes);
 
         };

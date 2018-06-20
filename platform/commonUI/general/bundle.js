@@ -407,11 +407,7 @@ define([
                     "key": "mctPreview",
                     "implementation": MCTPreview,
                     "depends": [
-                        "$rootScope",
-                        "$document",
-                        "exportImageService",
-                        "dialogService",
-                        "notificationService"
+                        "$document"
                     ]
                 }
             ],
@@ -428,10 +424,7 @@ define([
                     ],
                     "depends": [
                       "$compile",
-                      "$rootScope",
-                      "dialogService",
-                      "notificationService",
-                      "linkService"
+                      "$rootScope"
                     ],
                     "priority": "preferred"
                 }

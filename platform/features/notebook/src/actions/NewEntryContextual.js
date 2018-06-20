@@ -68,7 +68,7 @@ define(
             }]
         };
 
-        function NewEntryContextual($compile,$rootScope,dialogService,notificationService,linkService,context) {
+        function NewEntryContextual($compile, $rootScope, dialogService, notificationService, linkService, context) {
             context = context || {};
             this.domainObject = context.selectedObject || context.domainObject;
             this.dialogService = dialogService;
@@ -97,7 +97,6 @@ define(
             newScope.selObj = domainObj;
             newScope.selValue = "";
             this.$compile(SNAPSHOT_TEMPLATE)(newScope);
-            //newScope.$destroy();
 
             this.$rootScope.$watch("snapshot", setSnapshot);
 
