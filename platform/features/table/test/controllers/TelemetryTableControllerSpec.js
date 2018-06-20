@@ -116,7 +116,7 @@ define(
                     formatter.parse.andCallFake(getter);
                     return formatter;
                 });
-                mockTelemetryAPI.getMetadata.andReturn([]);
+                mockTelemetryAPI.getMetadata.andReturn({values: function(){ return [];}});
                 mockTelemetryAPI.isTelemetryObject.andReturn(false);
 
                 mockTimeout = jasmine.createSpy("timeout");
