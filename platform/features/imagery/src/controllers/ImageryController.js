@@ -161,13 +161,30 @@ define(
          * @returns {boolean} falsy when a duplicate datum is given
          */
         ImageryController.prototype.updateHistory = function (datum) {
-            if (this.$scope.imageHistory.length === 0 ||
-                !_.isEqual(this.$scope.imageHistory.slice(-1)[0], datum)) {
+            if (!this.datumMatchesMostRecent(datum)) {
                 var index = _.sortedIndex(this.$scope.imageHistory, datum, this.timeFormat.format.bind(this.timeFormat));
                 this.$scope.imageHistory.splice(index, 0, datum);
                 return true;
+            } else {
+                return false;
             }
+        };
 
+        /**
+         * Checks to see if the given datum is the same as the most recent in history.
+         * @private
+         * @param {object} [datum] target telemetry datum
+         * @returns {boolean} true if datum is most recent in history, false otherwise
+         */
+        ImageryController.prototype.datumMatchesMostRecent = function (datum) {
+            if (this.$scope.imageHistory.length !== 0) {
+                var datumTime = this.timeFormat.format(datum);
+                var datumURL = this.imageFormat.format(datum);
+                var lastHistoryTime = this.timeFormat.format(this.$scope.imageHistory.slice(-1)[0]);
+                var lastHistoryURL = this.imageFormat.format(this.$scope.imageHistory.slice(-1)[0]);
+
+                return datumTime === lastHistoryTime && datumURL === lastHistoryURL;
+            }
             return false;
         };
 
