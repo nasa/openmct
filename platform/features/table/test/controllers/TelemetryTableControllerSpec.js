@@ -116,7 +116,11 @@ define(
                     formatter.parse.andCallFake(getter);
                     return formatter;
                 });
-                mockTelemetryAPI.getMetadata.andReturn([]);
+                mockTelemetryAPI.getMetadata.andReturn({
+                    values: function () {
+                        return [];
+                    }
+                });
                 mockTelemetryAPI.isTelemetryObject.andReturn(false);
 
                 mockTimeout = jasmine.createSpy("timeout");
@@ -366,9 +370,11 @@ define(
                         }
                     });
 
-                    mockTelemetryAPI.getMetadata.andReturn({values: function () {
-                        return allMetadata;
-                    }});
+                    mockTelemetryAPI.getMetadata.andReturn({
+                        values: function () {
+                            return allMetadata;
+                        }
+                    });
 
                     controller.loadColumns([mockDomainObject]);
                 });
