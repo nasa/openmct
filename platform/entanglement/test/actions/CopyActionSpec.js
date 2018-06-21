@@ -47,6 +47,7 @@ define(
                 mockDialog,
                 mockLog,
                 abstractComposePromise,
+                domainObject = {model: {name: "mockObject"}},
                 progress = {phase: "copying", totalObjects: 10, processed: 1};
 
             beforeEach(function () {
@@ -108,7 +109,7 @@ define(
 
                 abstractComposePromise.then.andCallFake(function (success, error, notify) {
                     notify(progress);
-                    success();
+                    success(domainObject);
                 });
 
                 locationServicePromise.then.andCallFake(function (callback) {
@@ -199,6 +200,10 @@ define(
                         expect(notificationService.info).toHaveBeenCalled();
                     });
 
+                    it("notifies the user with name of object copied", function () {
+                        expect(notificationService.info)
+                            .toHaveBeenCalledWith("mockObject copied successfully.");
+                    });
                 });
             });
 

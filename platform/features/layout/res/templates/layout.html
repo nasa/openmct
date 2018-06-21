@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 
-<div class="abs l-layout"
+<div class="abs l-layout {{ domainObject.getModel().layoutAdvancedCss }}"
      ng-controller="LayoutController as controller"
      ng-click="controller.bypassSelection($event)">
 
@@ -36,7 +36,7 @@
              ng-style="{ 'background-size': '100% ' + controller.getGridSize() [1] + 'px' }"></div>
     </div>
 
-    <div class="abs frame t-frame-outer child-frame panel s-selectable s-moveable s-hover-border t-object-type-{{ childObject.getModel().type }}"
+    <div class="frame t-frame-outer child-frame panel s-selectable s-moveable s-hover-border t-object-type-{{ childObject.getModel().type }}"
          data-layout-id="{{childObject.getId() + '-' + $id}}"
          ng-class="{ 'no-frame': !controller.hasFrame(childObject), 's-drilled-in': controller.isDrilledIn(childObject) }"
          ng-repeat="childObject in composition"

@@ -217,7 +217,9 @@ define(
                     top: "320px",
                     left: "640px",
                     width: "160px",
-                    height: "160px"
+                    height: "160px",
+                    minWidth : '160px',
+                    minHeight : '160px'
                 });
             });
 
