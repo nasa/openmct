@@ -25,13 +25,14 @@
  */
 define(
     [
-        "html2canvas",
+        "dom-to-image",
         "saveAs"
     ],
     function (
-        html2canvas,
+        domToImage,
         saveAs
     ) {
+        var validTypes = ["png", "jpg", "jpeg"];
 
         /**
          * The export image service will export any HTML node to
@@ -39,14 +40,13 @@ define(
          * @param {object} $q
          * @param {object} $timeout
          * @param {object} $log
-         * @param {constant} EXPORT_IMAGE_TIMEOUT time in milliseconds before a timeout error is returned
          * @constructor
          */
-        function ExportImageService($q, $timeout, $log) {
+        function ExportImageService($q, $timeout, $log, dialogService) {
             this.$q = $q;
             this.$timeout = $timeout;
             this.$log = $log;
-            this.EXPORT_IMAGE_TIMEOUT = 1000;
+            this.dialogService = dialogService;
         }
 
         function changeBackgroundColor(element, color) {
@@ -61,15 +61,23 @@ define(
          * @returns {promise}
          */
         ExportImageService.prototype.renderElement = function (element, type, color) {
-            var defer = this.$q.defer(),
-                validTypes = ["png", "jpg", "jpeg"],
-                renderTimeout,
-                originalColor;
 
             if (validTypes.indexOf(type) === -1) {
                 this.$log.error("Invalid type requested. Try: (" + validTypes.join(",") + ")");
                 return;
             }
+
+            var defer = this.$q.defer(),
+                originalColor,
+                log = this.$log,
+                dialogService = this.dialogService,
+                dialog = dialogService.showBlockingMessage({
+                    title: "Capturing...",
+                    hint: "Capturing an image",
+                    unknownProgress: true,
+                    severity: "info",
+                    delay: true
+                });
 
             if (color) {
                 // Save color to be restored later
@@ -78,39 +86,49 @@ define(
                 changeBackgroundColor(element, color);
             }
 
-            renderTimeout = this.$timeout(function () {
-                defer.reject("html2canvas timed out");
-                this.$log.warn("html2canvas timed out");
-            }.bind(this), this.EXPORT_IMAGE_TIMEOUT);
-
-            try {
-                html2canvas(element, {
-                    onrendered: function (canvas) {
-                        if (color) {
-                            changeBackgroundColor(element, originalColor);
-                        }
-                        switch (type.toLowerCase()) {
-                            case "png":
-                                canvas.toBlob(defer.resolve, "image/png");
-                                break;
-
-                            default:
-                            case "jpg":
-                            case "jpeg":
-                                canvas.toBlob(defer.resolve, "image/jpeg");
-                                break;
-                        }
-                    }
-                });
-            } catch (e) {
-                defer.reject(e);
-                this.$log.warn("html2canvas failed with error: " + e);
+            function captureSuccess(image) {
+                if (defer) {
+                    defer.resolve(image);
+                }
             }
 
+            function captureFail(error) {
+                if (dialog) {
+                    dialog.dismiss();
+                }
+
+                if (defer) {
+                    defer.reject(error);
+                }
+
+                var errorDialog,
+                    errorMessage = {
+                        title: "Error capturing image",
+                        severity: "error",
+                        hint: "Image was not captured successfully!",
+                        options: [{
+                            label: "OK",
+                            callback: function () {
+                                errorDialog.dismiss();
+                            }
+                        }]
+                    };
+
+                errorDialog = dialogService.showBlockingMessage(errorMessage);
+
+                log.warn("dom-to-image failed with error: " + error);
+            }
+
+            domToImage.toBlob(element).then(captureSuccess, captureFail);
+
             defer.promise.finally(function () {
-                renderTimeout.cancel();
                 if (color) {
                     changeBackgroundColor(element, originalColor);
+                }
+
+                if (dialog) {
+                    dialog.dismiss();
+                    dialog = undefined;
                 }
             });
 

@@ -104,7 +104,8 @@ define(
                 if (value === "annotationCancelled") {
                     rootScope.snapshot = rootScope.lastValue;
                     rootScope.lastValue = '';
-                }else if (value && value !== rootScope.lastValue) {
+
+                } else if (value && value !== rootScope.lastValue) {
                     var overlayModel = {
                         title: NEW_TASK_FORM.name,
                         message: NEW_TASK_FORM.message,

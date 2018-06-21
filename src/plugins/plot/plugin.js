@@ -180,7 +180,8 @@ define([
                             "depends": [
                                 "$q",
                                 "$timeout",
-                                "$log"
+                                "$log",
+                                "dialogService"
                             ]
                         }
                     ],

@@ -29,7 +29,6 @@ requirejs.config({
         "csv": "bower_components/comma-separated-values/csv.min",
         "EventEmitter": "bower_components/eventemitter3/index",
         "es6-promise": "bower_components/es6-promise/es6-promise.min",
-        "html2canvas": "bower_components/html2canvas/build/html2canvas.min",
         "moment": "bower_components/moment/moment",
         "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
         "moment-timezone": "bower_components/moment-timezone/builds/moment-timezone-with-data",
@@ -62,9 +61,6 @@ requirejs.config({
         },
         "EventEmitter": {
             "exports": "EventEmitter"
-        },
-        "html2canvas": {
-            "exports": "html2canvas"
         },
         "moment-duration-format": {
             "deps": ["moment"]

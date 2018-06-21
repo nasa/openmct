@@ -20,11 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['zepto', 'dom-to-image'], function ($) {
-    /**
-
-     */
-    function MCTSnapshot($rootScope,$document,exportImageService,dialogService,notificationService) {
+define(['zepto', 'dom-to-image'], function ($, domtoimage) {
+    function MCTSnapshot($rootScope, $document, exportImageService, dialogService, notificationService) {
         var document = $document[0];
 
         function link($scope, $element, $attrs) {
@@ -35,55 +32,40 @@ define(['zepto', 'dom-to-image'], function ($) {
 
             $(objectElement).addClass("s-status-taking-snapshot");
 
-            takeSnapshot = function () {
-                makeImg(objectElement);
-            };
-
-            saveImg = function (url,entryId,embedId) {
+            saveImg = function (url, entryId, embedId) {
                 $scope.$parent.$parent.$parent.saveSnap(url, embedId, entryId);
             };
 
             makeImg = function (el) {
                 var scope = $scope;
-                var dialog = dialogService.showBlockingMessage({
-                        title: "Saving...",
-                        hint: "Taking Snapshot...",
-                        unknownProgress: true,
-                        severity: "info",
-                        delay: true
-                    });
-                window.setTimeout(function () {
-                    window.domtoimage.toBlob(el).then(function (img) {
-                        $(objectElement).removeClass("s-status-taking-snapshot");
 
-                        if (img) {
-                            if ($element[0].dataset.entry && $element[0].dataset.embed) {
-                                saveImg(img, +$element[0].dataset.entry, +$element[0].dataset.embed);
-                            } else {
-                                var reader = new window.FileReader();
-                                reader.readAsDataURL(img);
-                                reader.onloadend = function () {
-                                    $($element[0]).attr("data-snapshot", reader.result);
-                                    $rootScope.snapshot = {
-                                        'src': reader.result,
-                                        'type': img.type,
-                                        'size': img.size,
-                                        'modified': Date.now()
-                                    };
-                                    scope.$destroy();
+                exportImageService.exportPNGtoSRC(el).then(function (img) {
+
+                    $(objectElement).removeClass("s-status-taking-snapshot");
+
+                    if (img) {
+                        if ($element[0].dataset.entry && $element[0].dataset.embed) {
+                            saveImg(img, +$element[0].dataset.entry, +$element[0].dataset.embed);
+                        } else {
+                            var reader = new window.FileReader();
+                            reader.readAsDataURL(img);
+                            reader.onloadend = function () {
+                                $($element[0]).attr("data-snapshot", reader.result);
+                                $rootScope.snapshot = {
+                                    'src': reader.result,
+                                    'type': img.type,
+                                    'size': img.size,
+                                    'modified': Date.now()
                                 };
-                            }
+                                scope.$destroy();
+                            };
                         }
+                    }
+                });
+            };
 
-                        dialog.dismiss();
-
-                    }, function (error) {
-                        if (dialog) {
-                            dialog.dismiss();
-                        }
-                    });
-
-                }, 500);
+            takeSnapshot = function () {
+                makeImg(objectElement);
             };
 
             takeSnapshot();
