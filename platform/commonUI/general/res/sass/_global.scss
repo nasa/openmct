@@ -141,7 +141,6 @@ a.disabled {
 
 .s-status-missing {
     // Labels. Expects .s-status-missing to be applied to mct-representation that contains
-    // .t-object-label
     .t-object-label .t-item-icon:before {
         content: $glyph-icon-object-unknown;
     }
