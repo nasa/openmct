@@ -115,8 +115,10 @@ define([
     UTCTimeFormat.prototype.format = function (value) {
         if (arguments.length > 1) {
             return getScaledFormat(value);
-        } else {
+        } else if (value !== undefined) {
             return moment.utc(value).format(DATE_FORMAT) + "Z";
+        } else {
+            return value;
         }
     };
 
