@@ -23,11 +23,8 @@
 /**
  * Module defining ViewSnapshot
  */
-define(
-    ['zepto'],
-    function ($) {
 
-        var OVERLAY_TEMPLATE = '' +
+var OVERLAY_TEMPLATE = '' +
         '    <div class="abs blocker"></div>' +
         '    <div class="abs outer-holder">' +
         '       <a class="close icon-x-in-circle"></a>' +
@@ -39,6 +36,12 @@ define(
         '       </div>' +
         '    </div>';
 
+define([
+    'zepto',
+    "text!../../res/templates/snapshotHeader.html"
+    ],
+    function ($, headerTemplate) {
+
         var toggleOverlay,
             overlay,
             closeButton,
@@ -49,13 +52,11 @@ define(
             annotateButton,
             annotateImg;
 
-        function ViewSnapshot($compile,context) {
-            context = context || {};
-
+        function ViewSnapshot($compile) {
             this.$compile = $compile;
         }
 
-        function openOverlay(url,header) {
+        function openOverlay(url, header) {
             overlay = document.createElement('div');
             $(overlay).addClass('abs overlay l-large-view');
             overlay.innerHTML = OVERLAY_TEMPLATE;
@@ -90,45 +91,7 @@ define(
             img = undefined;
         }
 
-        function headerTemplate() {
-            var template = '<div class="t-snapshot abs l-view-header">' +
-                                '<div class="abs object-browse-bar l-flex-row">' +
-                                    '<div class="left flex-elem l-flex-row grows">' +
-                                        '<div class="object-header flex-elem l-flex-row grows">' +
-                                            '<div class="type-icon flex-elem embed-icon holder" ng-class="cssClass"></div>' +
-                                            '<div class="title-label flex-elem holder flex-can-shrink">{{entryName}}</div>' +
-                                            '<a class="context-available flex-elem holder" ng-click="openMenu($event,embedType)""></a>' +
-                                            '<div class="hide-menu" ng-show="false">' +
-                                                '<div class="menu-element menu-view context-menu-wrapper mobile-disable-select">' +
-                                                    '<div class="menu context-menu">' +
-                                                        '<ul>' +
-                                                            '<li ng-repeat="menu in embedActions"' +
-                                                                'ng-click="menuPerform(menu)"' +
-                                                                'title="{{menu.name}}"' +
-                                                                'class="{{menu.cssClass}}">' +
-                                                                '{{menu.name}}' +
-                                                            '</li>' +
-                                                        '</ul>' +
-                                                    '</div>' +
-                                                '</div>' +
-                                            '</div>' +
-                                        '</div><!-- closes object-header -->' +
-                                    '</div><!-- closes left -->' +
-                                    '<div class="btn-bar right l-flex-row flex-elem flex-justify-end flex-fixed">' +
-                                        '<div class="flex-elem holder flex-can-shrink s-snapshot-datetime">' +
-                                        'SNAPSHOT {{snapDate | date:\'yyyy-MM-dd HH:mm:ss\'}}' +
-                                        '</div>' +
-                                        '<a class="s-button icon-pencil" title="Annotate">' +
-                                            '<span class="title-label">Annotate</span>' +
-                                        '</a>' +
-                                    '</div><!-- closes right -->' +
-                                '</div><!-- closes object-browse-bar -->' +
-                            '</div><!-- closes t-snapshot -->';
-            return template;
-        }
-
-
-        ViewSnapshot.prototype.perform = function ($event,snapshot,embedId,entryId,$scope,embed) {
+        ViewSnapshot.prototype.perform = function ($event, snapshot, embedId, entryId, $scope, embed) {
             var isOpen = false;
 
             // onclick for menu items in overlay header context menu
@@ -142,7 +105,7 @@ define(
             $scope.embedType = embed.type;
             $scope.entryName = embed.name;
             $scope.snapDate = +embedId;
-            var element = this.$compile(headerTemplate())($scope);
+            var element = this.$compile(headerTemplate)($scope);
 
             var annotateAction = $scope.action.getActions({category: 'embed'})[1];
 
