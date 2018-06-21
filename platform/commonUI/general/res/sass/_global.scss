@@ -240,14 +240,16 @@ a.disabled {
     pointer-events: none;
 }
 
-.off {
+.invisible {
+    display: block;
     visibility: hidden;
-    opacity: 0;
     height: 0;
-    margin: 0;
     padding: 0;
     border: 0;
     margin: 0 !important;
+    transform: scale(0);
+    pointer-events: none;
+    position: absolute;
 }
 
 .sep {
