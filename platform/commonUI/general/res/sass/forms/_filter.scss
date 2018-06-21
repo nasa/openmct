@@ -87,7 +87,6 @@
     $iconD: $formInputH - ($iconEdgeM * 2);
     @extend .icon-magnify;
     // Adds a magnifying glass before, holds an input and a clear button
-    display: inline-block;
     position: relative;
 
     input[type="search"] {
@@ -97,6 +96,7 @@
     .menu-icon,
     &:before {
         box-sizing: border-box;
+		color: $colorInputIcon;
         display: inline-block;
         line-height: inherit;
         position: absolute;
@@ -107,9 +107,14 @@
 
     &:before {
         // Magnify glass icon
+        opacity: 0.7;
         left: $interiorMargin;
-        @include trans-prop-nice(color, 250ms);
+        @include trans-prop-nice(opacity, 250ms);
         pointer-events: none;
+    }
+
+    &:hover:before {
+        opacity: 1;
     }
 
     .clear-icon {
