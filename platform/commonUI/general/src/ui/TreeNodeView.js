@@ -90,6 +90,7 @@ define([
                 $(this.toggleView.elements()).addClass('no-children');
             }
         }
+
         if (domainObject && domainObject.hasCapability('status')) {
             this.unlisten = domainObject.getCapability('status')
                 .listen(this.updateStatusClasses.bind(this));
@@ -129,9 +130,9 @@ define([
             !!domainObject &&
             !!this.activeObject &&
             (activeIdPath.length <= selectedIdPath.length) &&
-            activeIdPath.every(function (id, index) {
-                return selectedIdPath[index] === id;
-            });
+                activeIdPath.every(function (id, index) {
+                    return selectedIdPath[index] === id;
+                });
 
         if (this.onSelectionPath) {
             if (activeIdPath.length === selectedIdPath.length) {
@@ -154,4 +155,3 @@ define([
 
     return TreeNodeView;
 });
-
