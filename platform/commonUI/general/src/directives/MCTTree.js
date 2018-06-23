@@ -22,9 +22,10 @@
 
 define([
     'angular',
-    '../ui/TreeView'
-], function (angular, TreeView) {
-    function MCTTree(gestureService) {
+    '../ui/TreeView',
+    '../ui/TreeNodeView'
+], function (angular, TreeView, TreeNodeView) {
+    function MCTTree(gestureService, openmct) {
         function link(scope, element) {
             if (!scope.allowSelection) {
                 scope.allowSelection = function () {
@@ -36,6 +37,8 @@ define([
             }
             var currentSelection = scope.selectedObject;
             var treeView = new TreeView(gestureService);
+
+            TreeNodeView.prototype.setOpenMct(openmct);
 
             function setSelection(domainObject, event) {
                 if (currentSelection === domainObject) {

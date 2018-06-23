@@ -124,8 +124,8 @@ define(
 
             // Only creatable types should be modifiable
             return parent !== undefined &&
-                    Array.isArray(parent.getModel().composition) &&
-                    parentCreatable;
+                Array.isArray(parent.getModel().composition) &&
+                parentCreatable;
         };
 
         return RemoveAction;
