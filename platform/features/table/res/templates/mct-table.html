@@ -5,7 +5,7 @@
         Export
     </a>
 </div>
-<div class="l-view-section scrolling" style="overflow: auto;" mct-resize="resize()">
+<div class="l-view-section scrolling" mct-resize="resize()">
     <table class="sizing-table">
         <tbody>
             <tr>
@@ -43,8 +43,11 @@
                         width: columnWidths[$index] + 'px',
                         'max-width': columnWidths[$index] + 'px',
                     }">
-                    <input type="text"
-                           ng-model="filters[header]"/>
+                    <div class="holder l-filter flex-elem grows">
+                        <input type="search"
+                            ng-model="filters[header]"/>
+                        <a class="clear-icon clear-input icon-x-in-circle" ng-class="{show: filters[header]}" ng-click="filters[header] = undefined"></a>
+                    </div>
                 </th>
             </tr>
         </thead>

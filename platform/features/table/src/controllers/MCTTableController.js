@@ -88,13 +88,18 @@ define(
             setDefaults($scope);
 
             $scope.exportAsCSV = function () {
-                var headers = $scope.displayHeaders;
+                var headers = $scope.displayHeaders,
+                    filename = $(element[0]).attr('export-as');
+
                 exportService.exportCSV($scope.displayRows.map(function (row) {
                     return headers.reduce(function (r, header) {
                         r[header] = row[header].text;
                         return r;
                     }, {});
-                }), { headers: headers });
+                }), {
+                    headers: headers,
+                    filename: filename
+                });
             };
 
             $scope.toggleSort = function (key) {
@@ -174,10 +179,6 @@ define(
             $scope.$on('$destroy', function () {
                 this.scrollable.off('scroll', this.onScroll);
                 this.destroyConductorListeners();
-
-                // In case for some reason this controller instance lingers around,
-                // destroy scope as it can be extremely large for large tables.
-                delete this.$scope;
 
             }.bind(this));
         }

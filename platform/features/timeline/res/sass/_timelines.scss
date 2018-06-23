@@ -183,7 +183,7 @@
                             font-size: 0.9em;
                             &.tick-label-y {
                                 text-align: left;
-                            }
+                             }
 			            }
 		            }
 	            }
@@ -199,12 +199,6 @@
 
         &.l-pane-r {
             left: 0;
-			&:hover {
-				.l-hover-btns-holder {
-					@include trans-prop-nice-fade(100ms);
-					opacity: 1;
-				}
-			}
         }
 
         &.l-pane-top {
@@ -246,8 +240,6 @@
 	.l-hover-btns-holder {
 		@include absPosDefault();
 		box-sizing: border-box;
-		@include trans-prop-nice-fade(500ms);
-		opacity: 0;
 		height: $timelineTopPaneHeaderH;
         left: auto;
 		padding: $interiorMargin $interiorMargin $interiorMargin $interiorMargin * 10;

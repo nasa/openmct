@@ -31,8 +31,8 @@
  * @namespace platform/commonUI/notification
  */
 define(
-    [],
-    function () {
+    ['moment'],
+    function (moment) {
 
         /**
          * A representation of a user action. Options are provided to
@@ -313,6 +313,7 @@ define(
                 topic = this.topic();
 
             notificationModel.severity = notificationModel.severity || "info";
+            notificationModel.timestamp = moment.utc().format('YYYY-MM-DD hh:mm:ss.ms');
 
             notification = {
                 model: notificationModel,

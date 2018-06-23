@@ -118,7 +118,8 @@ table {
 		tbody, .tbody {
 			top: $tabularHeaderH * 2;
 		}
-		input[type="text"] {
+		input[type="text"],
+		input[type="search"] {
 			box-sizing: border-box;
 			width: 100%;
 		}

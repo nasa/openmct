@@ -44,11 +44,26 @@ define(
          */
         function MobileClassifier(agentService, $document) {
             var body = $document.find('body');
-            Object.keys(DeviceMatchers).forEach(function (key) {
+
+            Object.keys(DeviceMatchers).forEach(function (key, index, array) {
                 if (DeviceMatchers[key](agentService)) {
                     body.addClass(key);
                 }
             });
+
+            if (agentService.isMobile()) {
+                var mediaQuery = window.matchMedia('(orientation: landscape)');
+
+                mediaQuery.addListener(function (event) {
+                    if (event.matches) {
+                        body.removeClass('portrait');
+                        body.addClass('landscape');
+                    } else {
+                        body.removeClass('landscape');
+                        body.addClass('portrait');
+                    }
+                });
+            }
         }
 
         return MobileClassifier;

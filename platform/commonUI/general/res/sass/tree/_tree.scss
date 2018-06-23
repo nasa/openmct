@@ -25,7 +25,14 @@ ul.tree {
     @include user-select(none);
     > li {
         display: block;
+        align-content: flex-end;
         position: relative;
+        .grippy-sm {
+            font-size: 12px;
+            margin-right: $interiorMargin;
+            opacity: 0.5;
+            width: 1em;
+        }
     }
     ul.tree {
         margin-left: $treeVCW + $interiorMargin;
@@ -117,6 +124,17 @@ body.desktop {
                     color: $colorItemTreeIconHover;
                 }
             }
+        }
+    }
+}
+
+ul.tree.reordering {
+    // User is drag reordering a tree item in a container that allows the action
+    .tree-item:not(.reorder-actor):hover {
+        background: rgba($colorKey, 0.2);
+        border: 1px dashed rgba($colorKey, 1);
+        > * {
+            opacity: 0.25;
         }
     }
 }
