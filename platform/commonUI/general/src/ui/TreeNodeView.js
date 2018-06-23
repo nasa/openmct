@@ -27,9 +27,9 @@ define([
     './TreeLabelView'
 ], function ($, nodeTemplate, ToggleView, TreeLabelView) {
 
-    function TreeNodeView(gestureService, subtreeFactory, selectFn) {
+    function TreeNodeView(gestureService, subtreeFactory, selectFn, openmct) {
         this.li = $('<li>');
-
+        this.openmct = openmct;
         this.statusClasses = [];
 
         this.toggleView = new ToggleView(false);
@@ -151,11 +151,6 @@ define([
     TreeNodeView.prototype.elements = function () {
         return this.li;
     };
-
-    TreeNodeView.prototype.setOpenMct = function (openmct) {
-        this.openmct = openmct;
-    };
-
 
     return TreeNodeView;
 });
