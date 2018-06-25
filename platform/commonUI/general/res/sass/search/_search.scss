@@ -46,14 +46,10 @@
 		.clear-input,
 		.menu-icon {
             // :before is magnify glass icon
-			box-sizing: border-box;
-			color: $colorInputIcon;
 			height: $iconD;
             width: $iconD;
 			line-height: $iconD;
-            position: absolute;
             text-align: center;
-            top: $iconEdgeM;
 		}
 
 		.search-input {
@@ -71,15 +67,9 @@
 		&:before {
             // Magnify glass icon
             left: $interiorMarginSm;
-            @include trans-prop-nice(color, 250ms);
             pointer-events: none;
             z-index: 1;
         }
-
-		// Make icon lighten when hovering over search bar
-		&:hover:before {
-			color: pullForward($colorInputIcon, 10%);
-		}
 
 		.clear-input {
             // Hiding for now with addition of Cancel button

@@ -180,10 +180,6 @@ define(
                 this.scrollable.off('scroll', this.onScroll);
                 this.destroyConductorListeners();
 
-                // In case for some reason this controller instance lingers around,
-                // destroy scope as it can be extremely large for large tables.
-                delete this.$scope;
-
             }.bind(this));
         }
 

@@ -104,7 +104,7 @@ define(
 
                 scope = jasmine.createSpyObj(
                     "$scope",
-                    ["$on"]
+                    ["$on", "$apply"]
                 );
                 scope.domainObject = domainObject;
 
@@ -146,6 +146,7 @@ define(
                 runs(function () {
                     expect(scope.children.length).toEqual(0);
                 });
+                expect(scope.$apply).toHaveBeenCalled();
             });
             it("releases listeners on $destroy", function () {
                 expect(scope.$on).toHaveBeenCalledWith('$destroy', jasmine.any(Function));
