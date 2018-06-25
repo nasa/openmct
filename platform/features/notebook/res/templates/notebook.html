@@ -1,7 +1,6 @@
 <div ng-controller="NotebookController as controller" class="mct-notebook w-notebook l-flex-col">
     <div class="l-notebook-head holder l-flex-row flex-elem">
-
-        <div class="c-search">
+        <div class="c-search flex-elem holder grows">
             <input class="c-search__search-input"
                    type="text" tabindex="10000"
                    ng-model="entrySearch"
@@ -10,9 +9,8 @@
                ng-class="{show: !(entrySearch === '' || entrySearch === undefined)}"
                ng-click="entrySearch = ''; controller.search()"></a>
         </div>
-
-        <div class="notebook-filters right l-flex-row flex-elem grows flex-justify-end">
-            <div class="select">
+        <div class="notebook-view-controls l-flex-row flex-elem holder">
+            <div class="select notebook-view-controls__filter-time">
                 <select ng-model="showTime">
                     <option value="0" selected="selected">Show all</option>
                     <option value="1">Last hour</option>
@@ -20,7 +18,7 @@
                     <option value="24">Last 24 hours</option>
                 </select>
             </div>
-            <div class="select">
+            <div class="select notebook-view-controls__sort">
                 <select ng-model="sortEntries">
                     <option value="-createdOn" selected="selected">Newest first</option>
                     <option value="createdOn">Oldest first</option>

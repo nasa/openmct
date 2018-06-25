@@ -31,6 +31,13 @@
     height: auto;
 }
 
+.notebook-view-controls.l-flex-row {
+    > * {
+        // filter and sort selects
+        &:not(:first-child) { margin-left: $interiorMargin; }
+    }
+}
+
 .l-notebook-drag-area {
     padding: 10px;
     font-style: italic;
@@ -156,6 +163,15 @@ body.mobile {
         .notebook-entry-delete {
             padding-top: 0;
             padding-bottom: 0;
+        }
+    }
+}
+
+body.phone.portrait {
+    .l-notebook-head.l-flex-row {
+        flex-direction: column !important;
+        > * {
+            &:not(:first-child) { margin-top: $interiorMargin; }
         }
     }
 }

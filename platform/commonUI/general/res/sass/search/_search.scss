@@ -56,6 +56,7 @@
     flex: 1 1 99%;
     font-size: 0.8rem;
     height: $btnStdH;
+    overflow: hidden;
     padding: 1px $interiorMargin;
 
     > * {
@@ -92,10 +93,11 @@
     }
 }
 
-.c-search__search-input {
+input.c-search__search-input {
     background: none  !important;
     box-shadow: none !important; // !important needed to override default for [input]
-    flex: 1 1 99%
+    flex: 1 1 99%;
+    min-width: 10px;
 }
 
 .c-search__search-menu-holder {
