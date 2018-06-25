@@ -1,18 +1,14 @@
 <div ng-controller="NotebookController as controller" class="mct-notebook w-notebook l-flex-col">
     <div class="l-notebook-head holder l-flex-row flex-elem">
-        <div class="l-flex-row holder grows holder-search">
-            <div class="search-bar flex-elem l-flex-row grows"
-                 ng-class="{ holder: !(entrySearch === '' || entrySearch === undefined) }">
-                <div class="holder flex-elem grows">
-                    <input class="search-input"
-                           type="text" tabindex="10000"
-                           ng-model="entrySearch"
-                           ng-keyup="controller.search()"/>
-                    <a class="clear-icon clear-input icon-x-in-circle"
-                       ng-class="{show: !(entrySearch === '' || entrySearch === undefined)}"
-                       ng-click="entrySearch = ''; controller.search()"></a>
-                </div>
-            </div>
+
+        <div class="c-search">
+            <input class="c-search__search-input"
+                   type="text" tabindex="10000"
+                   ng-model="entrySearch"
+                   ng-keyup="controller.search()"/>
+            <a class="c-search__clear-input clear-icon icon-x-in-circle"
+               ng-class="{show: !(entrySearch === '' || entrySearch === undefined)}"
+               ng-click="entrySearch = ''; controller.search()"></a>
         </div>
 
         <div class="notebook-filters right l-flex-row flex-elem grows flex-justify-end">

@@ -350,7 +350,7 @@ input[type="text"].s-input-inline,
     @include btnSubtle($bg: $colorSelectBg);
     @extend .icon-arrow-down; // Context arrow
     display: inline-block;
-    line-height: 180%;
+    padding: 0 $interiorMargin;
     overflow: hidden;
     position: relative;
     select {
@@ -361,8 +361,8 @@ input[type="text"].s-input-inline,
         color: $colorSelectFg;
         cursor: pointer;
         border: none !important;
-        padding: 0 20px 0 $interiorMargin;
-        width: 100%;
+        padding: 4px 25px 2px 0px;
+        width: 130%;
         option {
             margin: $interiorMargin 0; // Firefox
         }
@@ -371,7 +371,6 @@ input[type="text"].s-input-inline,
         transform: translateY(-50%);
         color: rgba($colorInvokeMenu, percentToDecimal($contrastInvokeMenuPercent));
         display: block;
-        font-size: 0.8em;
         pointer-events: none;
         position: absolute;
         right: $interiorMargin;
