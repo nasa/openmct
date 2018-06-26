@@ -33,6 +33,12 @@ define(
         saveAs
     ) {
 
+        var exportObject = {
+            plots: {
+                class: 'export-plot'
+            }
+        };
+
         /**
          * The export image service will export any HTML node to
          * JPG, or PNG.
@@ -49,8 +55,12 @@ define(
             this.EXPORT_IMAGE_TIMEOUT = 1000;
         }
 
-        function changeBackgroundColor(element, color) {
-            element.style.backgroundColor = color;
+        function addOrRemoveClass(element, className, action) {
+            if (action === 'add') {
+                element.classList.add(className);
+            } else if (action === 'remove') {
+                element.classList.remove(className);
+            }
         }
 
         /**
@@ -58,24 +68,22 @@ define(
          * as a BLOB, PNG, or JPG.
          * @param {node} element that will be converted to an image
          * @param {string} type of image to convert the element to
+         * @param {string} object getting captured (for adding and removing corresponding class in exportObject)
          * @returns {promise}
          */
-        ExportImageService.prototype.renderElement = function (element, type, color) {
+        ExportImageService.prototype.renderElement = function (element, type, object) {
+
             var defer = this.$q.defer(),
                 validTypes = ["png", "jpg", "jpeg"],
-                renderTimeout,
-                originalColor;
+                renderTimeout;
 
             if (validTypes.indexOf(type) === -1) {
                 this.$log.error("Invalid type requested. Try: (" + validTypes.join(",") + ")");
                 return;
             }
 
-            if (color) {
-                // Save color to be restored later
-                originalColor = element.style.backgroundColor || '';
-                // Defaulting to white so we can see the chart when printed
-                changeBackgroundColor(element, color);
+            if (object && exportObject[object]) {
+                addOrRemoveClass(element, exportObject[object].class, 'add');
             }
 
             renderTimeout = this.$timeout(function () {
@@ -86,9 +94,11 @@ define(
             try {
                 html2canvas(element, {
                     onrendered: function (canvas) {
-                        if (color) {
-                            changeBackgroundColor(element, originalColor);
+
+                        if (object && exportObject[object]) {
+                            addOrRemoveClass(element, exportObject[object].class, 'remove');
                         }
+
                         switch (type.toLowerCase()) {
                             case "png":
                                 canvas.toBlob(defer.resolve, "image/png");
@@ -109,8 +119,8 @@ define(
 
             defer.promise.finally(function () {
                 renderTimeout.cancel();
-                if (color) {
-                    changeBackgroundColor(element, originalColor);
+                if (object && exportObject[object]) {
+                    addOrRemoveClass(element, exportObject[object].class, 'remove');
                 }
             });
 
@@ -123,8 +133,8 @@ define(
          * @param {string} filename the exported image
          * @returns {promise}
          */
-        ExportImageService.prototype.exportJPG = function (element, filename, color) {
-            return this.renderElement(element, "jpeg", color).then(function (img) {
+        ExportImageService.prototype.exportJPG = function (element, filename, object) {
+            return this.renderElement(element, "jpeg", object).then(function (img) {
                 saveAs(img, filename);
             });
         };
@@ -135,8 +145,8 @@ define(
          * @param {string} filename the exported image
          * @returns {promise}
          */
-        ExportImageService.prototype.exportPNG = function (element, filename, color) {
-            return this.renderElement(element, "png", color).then(function (img) {
+        ExportImageService.prototype.exportPNG = function (element, filename, object) {
+            return this.renderElement(element, "png", object).then(function (img) {
                 saveAs(img, filename);
             });
         };
