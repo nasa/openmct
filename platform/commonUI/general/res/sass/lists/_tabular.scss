@@ -31,12 +31,13 @@
     justify-content: flex-start;
     > * {
         position: relative;
-        flex: 1 1 auto;
+        flex: 0 0 auto;
     }
 
     &.l-sticky-headers {
         .l-tabular-body {
             flex: 1 1 99%;
+			overflow-x: auto;
         }
     }
 }
@@ -54,19 +55,20 @@ table {
 	tbody tr, .tbody .tr {
 		width: 100%;
 	}
-	thead, .thead {
-		border-bottom: 1px solid $colorTabHeaderBorder;
-	}
 
-	&:not(.fixed-header) tr th {
-		background-color: $colorTabHeaderBg;
-	}
+    thead tr th {
+        // Add some bg to the headers. Note that this is overwritten below
+        // by .mct-table-headers-w when headers are wrapped by that container.
+        background-color: $colorTabHeaderBg;
+    }
 
 	tbody, .tbody {
 		display: table-row-group;
+        tr, .tr {
+            border-top: 1px solid $colorTabBorder;
+        }
 	}
 	tr, .tr {
-        border-top: 1px solid $colorTabBorder;
 		display: table-row;
 		&:first-child .td {
 			border-top: none;
@@ -143,4 +145,17 @@ table {
 			min-width: 150px;
 		}
 	}
+}
+
+.mct-sizing-table {
+    $sbW: $scrollbarTrackSize;
+    width: calc(100% - #{$sbW});
+}
+
+.mct-table-headers-w {
+    background: $colorTabHeaderBg;
+    overflow: hidden;
+    thead tr th {
+        background: none;
+    }
 }

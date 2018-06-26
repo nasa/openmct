@@ -204,6 +204,11 @@ a.disabled {
     overflow-y: auto;
 }
 
+.vscroll--persist {
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
 .slidable {
     cursor: move; // Fallback
     cursor: grab;

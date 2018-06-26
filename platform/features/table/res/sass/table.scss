@@ -22,7 +22,6 @@
 
 mct-table {
     .mct-sizing-table {
-        min-width: 100%;
         z-index: -1;
         visibility: hidden;
         position: absolute !important;
@@ -34,6 +33,7 @@ mct-table {
             white-space: nowrap;
         }
     }
+
     .mct-table {
         thead {
             display: block;

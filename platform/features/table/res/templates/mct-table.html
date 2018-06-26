@@ -5,7 +5,7 @@
         Export
     </a>
 </div>
-<div mct-scroll-x="scroll.x" style="overflow: hidden;">
+<div class="mct-table-headers-w" mct-scroll-x="scroll.x">
     <table class="mct-table l-tabular-headers filterable"
                 ng-style="{
                     'max-width': totalWidth
@@ -49,7 +49,7 @@
         </td></tr>
     </tbody>
 </table>
-<div class="l-tabular-body t-scrolling vscroll" style="overflow-x: scroll;" mct-resize="resize()" mct-scroll-x="scroll.x">
+<div class="l-tabular-body t-scrolling vscroll--persist" mct-resize="resize()" mct-scroll-x="scroll.x">
     <table class="mct-table"
            ng-style="{
             height: totalHeight + 'px',
