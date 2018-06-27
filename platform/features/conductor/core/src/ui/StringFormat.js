@@ -23,8 +23,7 @@
 define([], function () {
 
     /**
-     * Formatter for basic numbers. Provides basic support for non-UTC
-     * numbering systems
+     * Formatter for basic strings.
      *
      * @implements {Format}
      * @constructor
