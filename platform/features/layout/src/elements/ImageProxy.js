@@ -50,12 +50,6 @@ define(
              */
             proxy.url = new AccessorMutator(element, 'url');
 
-            //Expose x,y, width and height properties for editing
-            proxy.editWidth = new AccessorMutator(element, 'width');
-            proxy.editHeight = new AccessorMutator(element, 'height');
-            proxy.editX = new AccessorMutator(element, 'x');
-            proxy.editY = new AccessorMutator(element, 'y');
-
             return proxy;
         }
 

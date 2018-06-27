@@ -39,7 +39,6 @@ define([
     "./src/policies/EditableMovePolicy",
     "./src/policies/EditContextualActionPolicy",
     "./src/representers/EditRepresenter",
-    "./src/representers/EditToolbarRepresenter",
     "./src/capabilities/EditorCapability",
     "./src/capabilities/TransactionCapabilityDecorator",
     "./src/services/TransactionManager",
@@ -78,7 +77,6 @@ define([
     EditableMovePolicy,
     EditContextualActionPolicy,
     EditRepresenter,
-    EditToolbarRepresenter,
     EditorCapability,
     TransactionCapabilityDecorator,
     TransactionManager,
@@ -381,12 +379,6 @@ define([
                     "depends": [
                         "$log"
                     ]
-                },
-                {
-                    "implementation": EditToolbarRepresenter,
-                    "depends": [
-                        "openmct"
-                    ]
                 }
             ],
             "constants": [
@@ -423,6 +415,17 @@ define([
                     "depends": [
                         "transactionService"
                     ]
+                }
+            ],
+            "runs": [
+                {
+                    depends: [
+                        "toolbars[]",
+                        "openmct"
+                    ],
+                    implementation: function (toolbars, openmct) {
+                        toolbars.forEach(openmct.toolbars.addProvider, openmct.toolbars);
+                    }
                 }
             ]
         }
