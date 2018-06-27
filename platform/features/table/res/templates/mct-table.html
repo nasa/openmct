@@ -39,7 +39,10 @@
         </thead>
     </table>
 </div>
-<table class="mct-sizing-table t-sizing-table" >
+<table class="mct-sizing-table t-sizing-table"
+    ng-style="{
+        width: calcTableWidthPx
+    }">
     <tbody>
         <tr>
             <td ng-repeat="header in displayHeaders">{{header}}</td>
@@ -54,9 +57,7 @@
            ng-style="{
             height: totalHeight + 'px',
             'max-width': totalWidth
-            }"
-            >
-        
+            }">
         <tbody>
             <tr ng-repeat-start="visibleRow in visibleRows track by $index"
                 ng-if="visibleRow.rowIndex === toiRowIndex"

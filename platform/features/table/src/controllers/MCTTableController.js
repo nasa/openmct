@@ -27,6 +27,7 @@ define(
             this.resultsHeader = this.element.find('.mct-table>thead').first();
             this.sizingTableBody = this.element.find('.t-sizing-table>tbody').first();
             this.$scope.sizingRow = {};
+            this.$scope.calcTableWidthPx = '100%';
             this.timeApi = openmct.time;
             this.toiFormatter = undefined;
             this.formatService = formatService;
@@ -410,6 +411,11 @@ define(
             }
             this.$scope.rowHeight = rowHeight;
             this.$scope.totalHeight = overallHeight;
+
+            var scrollW = this.scrollable[0].offsetWidth - this.scrollable[0].clientWidth;
+            if (scrollW && scrollW > 0) {
+                this.$scope.calcTableWidthPx = 'calc(100% - ' + scrollW + 'px)';
+            }
 
             if (tableWidth > 0) {
                 this.$scope.totalWidth = tableWidth + 'px';
