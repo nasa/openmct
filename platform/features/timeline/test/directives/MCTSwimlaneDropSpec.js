@@ -64,20 +64,20 @@ define(
                     ["getBoundingClientRect"]
                 );
                 mockElement[0].offsetHeight = TEST_HEIGHT;
-                mockElement[0].getBoundingClientRect.andReturn({ top: TEST_TOP });
+                mockElement[0].getBoundingClientRect.and.returnValue({ top: TEST_TOP });
 
                 // Simulate evaluation of expressions in scope
                 scopeExprs.mockSwimlane = mockSwimlane;
-                mockScope.$eval.andCallFake(function (expr) {
+                mockScope.$eval.and.callFake(function (expr) {
                     return scopeExprs[expr];
                 });
 
 
-                mockSwimlane.allowDropIn.andReturn(true);
-                mockSwimlane.allowDropAfter.andReturn(true);
+                mockSwimlane.allowDropIn.and.returnValue(true);
+                mockSwimlane.allowDropAfter.and.returnValue(true);
                 // Simulate getter-setter behavior
-                mockSwimlane.highlight.andCallFake(getterSetter(false));
-                mockSwimlane.highlightBottom.andCallFake(getterSetter(false));
+                mockSwimlane.highlight.and.callFake(getterSetter(false));
+                mockSwimlane.highlightBottom.and.callFake(getterSetter(false));
 
 
 
@@ -88,8 +88,8 @@ define(
                     stopPropagation: jasmine.createSpy()
                 };
 
-                testEvent.dataTransfer.getData.andReturn('abc');
-                mockDndService.getData.andReturn({ domainObject: 'someDomainObject' });
+                testEvent.dataTransfer.getData.and.returnValue('abc');
+                mockDndService.getData.and.returnValue({ domainObject: 'someDomainObject' });
 
                 directive = new MCTSwimlaneDrop(mockDndService);
 
@@ -97,7 +97,7 @@ define(
                 // for testing.
                 directive.link(mockScope, mockElement, testAttrs);
 
-                mockElement.on.calls.forEach(function (call) {
+                mockElement.on.calls.all().forEach(function (call) {
                     handlers[call.args[0]] = call.args[1];
                 });
 
@@ -133,7 +133,7 @@ define(
                 // Near the top
                 testEvent.pageY = TEST_TOP + TEST_HEIGHT / 10;
 
-                mockSwimlane.allowDropIn.andReturn(false);
+                mockSwimlane.allowDropIn.and.returnValue(false);
 
                 handlers.dragover(testEvent);
 
@@ -145,7 +145,7 @@ define(
                 // Near the top
                 testEvent.pageY = TEST_TOP + TEST_HEIGHT - TEST_HEIGHT / 10;
 
-                mockSwimlane.allowDropAfter.andReturn(false);
+                mockSwimlane.allowDropAfter.and.returnValue(false);
 
                 handlers.dragover(testEvent);
 
@@ -165,7 +165,7 @@ define(
             });
 
             it("clears highlights when drag leaves", function () {
-                mockSwimlane.highlight.andReturn(true);
+                mockSwimlane.highlight.and.returnValue(true);
                 handlers.dragleave();
                 expect(mockSwimlane.highlight).toHaveBeenCalledWith(false);
                 expect(mockSwimlane.highlightBottom).toHaveBeenCalledWith(false);

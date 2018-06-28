@@ -61,7 +61,7 @@ define(
 
                 installController();
 
-                mockScope.$watch.mostRecentCall.args[1](someState);
+                mockScope.$watch.calls.mostRecent().args[1](someState);
 
                 expect(mockScope.$parent.someName).toBe(someState);
             });

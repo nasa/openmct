@@ -61,8 +61,8 @@ define(
                     mctDragUp: "ending a drag"
                 };
 
-                mockDocument.find.andReturn(mockBody);
-                mockAgentService.isMobile.andReturn(true);
+                mockDocument.find.and.returnValue(mockBody);
+                mockAgentService.isMobile.and.returnValue(true);
 
                 mctDrag = new MCTDrag(mockDocument, mockAgentService);
                 mctDrag.link(mockScope, mockElement, testAttrs);
@@ -84,7 +84,7 @@ define(
 
             it("invokes mctDragDown when dragging begins", function () {
                 var event = testEvent(42, 60);
-                mockElement.on.mostRecentCall.args[1](event);
+                mockElement.on.calls.mostRecent().args[1](event);
                 expect(mockScope.$eval).toHaveBeenCalledWith(
                     testAttrs.mctDragDown,
                     { delta: [0, 0], $event: event }
@@ -92,7 +92,7 @@ define(
             });
 
             it("listens for touchmove after dragging begins", function () {
-                mockElement.on.mostRecentCall.args[1](testEvent(42, 60));
+                mockElement.on.calls.mostRecent().args[1](testEvent(42, 60));
                 expect(mockBody.on).toHaveBeenCalledWith(
                     "touchmove",
                     jasmine.any(Function)
@@ -106,10 +106,10 @@ define(
             it("invokes mctDrag expression during drag", function () {
                 var event;
 
-                mockElement.on.mostRecentCall.args[1](testEvent(42, 60));
+                mockElement.on.calls.mostRecent().args[1](testEvent(42, 60));
 
                 // Find and invoke the touchmove listener
-                mockBody.on.calls.forEach(function (call) {
+                mockBody.on.calls.all().forEach(function (call) {
                     if (call.args[0] === 'touchmove') {
                         call.args[1](event = testEvent(52, 200));
                     }
@@ -125,16 +125,16 @@ define(
             it("invokes mctDragUp expression after drag", function () {
                 var event;
 
-                mockElement.on.mostRecentCall.args[1](testEvent(42, 60));
+                mockElement.on.calls.mostRecent().args[1](testEvent(42, 60));
 
                 // Find and invoke the touchmove listener
-                mockBody.on.calls.forEach(function (call) {
+                mockBody.on.calls.all().forEach(function (call) {
                     if (call.args[0] === 'touchmove') {
                         call.args[1](testEvent(52, 200));
                     }
                 });
                 // Find and invoke the touchmove listener
-                mockBody.on.calls.forEach(function (call) {
+                mockBody.on.calls.all().forEach(function (call) {
                     if (call.args[0] === 'touchend') {
                         call.args[1](event = testEvent(40, 71));
                     }
@@ -189,8 +189,8 @@ define(
                     mctDragUp: "ending a drag"
                 };
 
-                mockDocument.find.andReturn(mockBody);
-                mockAgentService.isMobile.andReturn(false);
+                mockDocument.find.and.returnValue(mockBody);
+                mockAgentService.isMobile.and.returnValue(false);
 
                 mctDrag = new MCTDrag(mockDocument, mockAgentService);
                 mctDrag.link(mockScope, mockElement, testAttrs);
@@ -212,7 +212,7 @@ define(
 
             it("invokes mctDragDown when dragging begins", function () {
                 var event = testEvent(42, 60);
-                mockElement.on.mostRecentCall.args[1](event);
+                mockElement.on.calls.mostRecent().args[1](event);
                 expect(mockScope.$eval).toHaveBeenCalledWith(
                     testAttrs.mctDragDown,
                     { delta: [0, 0], $event: event }
@@ -220,7 +220,7 @@ define(
             });
 
             it("listens for mousemove after dragging begins", function () {
-                mockElement.on.mostRecentCall.args[1](testEvent(42, 60));
+                mockElement.on.calls.mostRecent().args[1](testEvent(42, 60));
                 expect(mockBody.on).toHaveBeenCalledWith(
                     "mousemove",
                     jasmine.any(Function)
@@ -234,10 +234,10 @@ define(
             it("invokes mctDrag expression during drag", function () {
                 var event;
 
-                mockElement.on.mostRecentCall.args[1](testEvent(42, 60));
+                mockElement.on.calls.mostRecent().args[1](testEvent(42, 60));
 
                 // Find and invoke the mousemove listener
-                mockBody.on.calls.forEach(function (call) {
+                mockBody.on.calls.all().forEach(function (call) {
                     if (call.args[0] === 'mousemove') {
                         call.args[1](event = testEvent(52, 200));
                     }
@@ -253,16 +253,16 @@ define(
             it("invokes mctDragUp expression after drag", function () {
                 var event;
 
-                mockElement.on.mostRecentCall.args[1](testEvent(42, 60));
+                mockElement.on.calls.mostRecent().args[1](testEvent(42, 60));
 
                 // Find and invoke the mousemove listener
-                mockBody.on.calls.forEach(function (call) {
+                mockBody.on.calls.all().forEach(function (call) {
                     if (call.args[0] === 'mousemove') {
                         call.args[1](testEvent(52, 200));
                     }
                 });
                 // Find and invoke the mousemove listener
-                mockBody.on.calls.forEach(function (call) {
+                mockBody.on.calls.all().forEach(function (call) {
                     if (call.args[0] === 'mouseup') {
                         call.args[1](event = testEvent(40, 71));
                     }

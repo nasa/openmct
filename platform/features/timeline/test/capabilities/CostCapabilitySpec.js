@@ -42,7 +42,7 @@ define(
                     }
                 };
 
-                mockDomainObject.getModel.andReturn(testModel);
+                mockDomainObject.getModel.and.returnValue(testModel);
 
                 capability = new CostCapability(mockDomainObject);
             });

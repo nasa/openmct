@@ -46,12 +46,12 @@ define([
 
             splashElement.className = 'some-class-name';
 
-            $document.querySelectorAll.andReturn([splashElement]);
+            $document.querySelectorAll.and.returnValue([splashElement]);
         });
 
         describe('when element exists', function () {
             beforeEach(function () {
-                $document.querySelectorAll.andReturn([splashElement]);
+                $document.querySelectorAll.and.returnValue([splashElement]);
                 return new SplashScreenManager([$document]);
             });
 
@@ -69,14 +69,14 @@ define([
                     .not
                     .toHaveBeenCalled();
 
-                splashElement.addEventListener.mostRecentCall.args[1]();
+                splashElement.addEventListener.calls.mostRecent().args[1]();
                 expect(splashElement.parentNode.removeChild)
                     .toHaveBeenCalledWith(splashElement);
             });
         });
 
         it('does not error when element doesn\'t exist', function () {
-            $document.querySelectorAll.andReturn([]);
+            $document.querySelectorAll.and.returnValue([]);
 
             function run() {
                 return new SplashScreenManager([$document]);

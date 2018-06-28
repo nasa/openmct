@@ -64,8 +64,8 @@ define(
                     ['getEnd']
                 );
 
-                mockQ.when.andCallFake(asPromise);
-                mockQ.all.andCallFake(function (values) {
+                mockQ.when.and.callFake(asPromise);
+                mockQ.all.and.callFake(function (values) {
                     var result = [];
                     function addResult(v) {
                         result.push(v);
@@ -76,7 +76,7 @@ define(
                     values.forEach(promiseResult);
                     return asPromise(result);
                 });
-                mockDomainObject.getModel.andReturn({
+                mockDomainObject.getModel.and.returnValue({
                     start: {
                         timestamp: 42000,
                         epoch: "TEST"
@@ -85,17 +85,17 @@ define(
                         timestamp: 12321
                     }
                 });
-                mockDomainObject.useCapability.andCallFake(function (c) {
+                mockDomainObject.useCapability.and.callFake(function (c) {
                     if (c === 'composition') {
                         return asPromise([mockChildA, mockChildB]);
                     }
                 });
-                mockChildA.hasCapability.andReturn(true);
-                mockChildB.hasCapability.andReturn(true);
-                mockChildA.useCapability.andCallFake(function (c) {
+                mockChildA.hasCapability.and.returnValue(true);
+                mockChildB.hasCapability.and.returnValue(true);
+                mockChildA.useCapability.and.callFake(function (c) {
                     return c === 'timespan' && mockTimespanA;
                 });
-                mockChildB.useCapability.andCallFake(function (c) {
+                mockChildB.useCapability.and.callFake(function (c) {
                     return c === 'timespan' && mockTimespanB;
                 });
 
@@ -129,7 +129,7 @@ define(
                     getEpoch: jasmine.any(Function)
                 });
                 // Finally, verify that getEnd recurses
-                mockCallback.mostRecentCall.args[0].getEnd();
+                mockCallback.calls.mostRecent().args[0].getEnd();
                 expect(mockTimespanA.getEnd).toHaveBeenCalled();
                 expect(mockTimespanB.getEnd).toHaveBeenCalled();
             });

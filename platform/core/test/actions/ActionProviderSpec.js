@@ -176,7 +176,7 @@ define(
 
                 it("reports the error's message", function () {
                     expect(
-                        mockLog.error.mostRecentCall.args[0].indexOf(errorText)
+                        mockLog.error.calls.mostRecent().args[0].indexOf(errorText)
                     ).not.toEqual(-1);
                 });
 

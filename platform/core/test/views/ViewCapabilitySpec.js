@@ -42,7 +42,7 @@ define(
                     "domainObject",
                     ["getId", "getModel", "getCapability"]
                 );
-                mockViewService.getViews.andReturn(views);
+                mockViewService.getViews.and.returnValue(views);
                 view = new ViewCapability(mockViewService, mockDomainObject);
             });
 

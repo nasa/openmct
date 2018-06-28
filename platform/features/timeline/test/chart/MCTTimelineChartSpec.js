@@ -91,15 +91,15 @@ define(
 
                 // Echo back names for uniform locations, so we can
                 // test which of these are set for certain operations.
-                mockGL.getUniformLocation.andCallFake(function (a, name) {
+                mockGL.getUniformLocation.and.callFake(function (a, name) {
                     return name;
                 });
 
-                mockElement.find.andReturn([mockCanvas]);
-                mockCanvas.getContext.andCallFake(function (type) {
+                mockElement.find.and.returnValue([mockCanvas]);
+                mockCanvas.getContext.and.callFake(function (type) {
                     return { webgl: mockGL, '2d': mockC2d }[type];
                 });
-                mockInterval.andReturn(mockPromise);
+                mockInterval.and.returnValue(mockPromise);
 
                 mctChart = new MCTTimelineChart(mockInterval, mockLog);
             });
@@ -121,15 +121,15 @@ define(
 
             it("issues one draw call per line", function () {
                 mctChart.link(mockScope, mockElement);
-                mockScope.$watchCollection.mostRecentCall.args[1]({
+                mockScope.$watchCollection.calls.mostRecent().args[1]({
                     lines: [{}, {}, {}]
                 });
-                expect(mockGL.drawArrays.calls.length).toEqual(3);
+                expect(mockGL.drawArrays.calls.count()).toEqual(3);
             });
 
             it("issues one draw call per box", function () {
                 mctChart.link(mockScope, mockElement);
-                mockScope.$watchCollection.mostRecentCall.args[1]({
+                mockScope.$watchCollection.calls.mostRecent().args[1]({
                     boxes: [
                         { start: [0, 0], end: [1, 1] },
                         { start: [0, 0], end: [1, 1] },
@@ -137,12 +137,12 @@ define(
                         { start: [0, 0], end: [1, 1] }
                     ]
                 });
-                expect(mockGL.drawArrays.calls.length).toEqual(4);
+                expect(mockGL.drawArrays.calls.count()).toEqual(4);
             });
 
             it("does not fail if no draw object is in scope", function () {
                 mctChart.link(mockScope, mockElement);
-                expect(mockScope.$watchCollection.mostRecentCall.args[1])
+                expect(mockScope.$watchCollection.calls.mostRecent().args[1])
                     .not.toThrow();
             });
 
@@ -164,14 +164,14 @@ define(
                 mockCanvas.offsetWidth = 150;
                 mockCanvas.height = 200;
                 mockCanvas.offsetHeight = 200;
-                mockInterval.mostRecentCall.args[0]();
+                mockInterval.calls.mostRecent().args[0]();
 
                 // Use clear as an indication that drawing has occurred
                 expect(mockGL.clear).toHaveBeenCalled();
             });
 
             it("warns if no WebGL context is available", function () {
-                mockCanvas.getContext.andReturn(undefined);
+                mockCanvas.getContext.and.returnValue(undefined);
                 mctChart.link(mockScope, mockElement);
                 expect(mockLog.warn).toHaveBeenCalled();
             });
@@ -181,7 +181,7 @@ define(
                 expect(mockCanvas.addEventListener)
                     .toHaveBeenCalledWith("webglcontextlost", jasmine.any(Function));
                 expect(mockCanvas.getContext).not.toHaveBeenCalledWith('2d');
-                mockCanvas.addEventListener.mostRecentCall.args[1]();
+                mockCanvas.addEventListener.calls.mostRecent().args[1]();
                 expect(mockCanvas.getContext).toHaveBeenCalledWith('2d');
             });
 
@@ -205,7 +205,7 @@ define(
                 expect(mockInterval.cancel).not.toHaveBeenCalled();
 
                 // Broadcast a $destroy
-                mockScope.$on.mostRecentCall.args[1]();
+                mockScope.$on.calls.mostRecent().args[1]();
 
                 // Should have stopped the interval
                 expect(mockInterval.cancel).toHaveBeenCalledWith(mockPromise);

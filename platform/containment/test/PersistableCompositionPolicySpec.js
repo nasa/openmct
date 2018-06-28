@@ -44,15 +44,15 @@ define(
                     'getCapability',
                     'getId'
                 ]);
-                mockParent.hasCapability.andReturn(true);
-                mockParent.getId.andReturn('someNamespace:someId');
+                mockParent.hasCapability.and.returnValue(true);
+                mockParent.getId.and.returnValue('someNamespace:someId');
                 mockChild = {};
                 mockEditorCapability = jasmine.createSpyObj('domainObject', [
                     'isEditContextRoot'
                 ]);
-                mockParent.getCapability.andReturn(mockEditorCapability);
+                mockParent.getCapability.and.returnValue(mockEditorCapability);
 
-                objectAPI.getProvider.andReturn({
+                objectAPI.getProvider.and.returnValue({
                     save: function () {}
                 });
                 persistableCompositionPolicy = new PersistableCompositionPolicy(mockOpenMCT);
@@ -64,18 +64,18 @@ define(
             // - openMct.objects.getProvider
 
             it("Does not allow composition for objects that are not persistable", function () {
-                mockEditorCapability.isEditContextRoot.andReturn(false);
+                mockEditorCapability.isEditContextRoot.and.returnValue(false);
                 expect(persistableCompositionPolicy.allow(mockParent, mockChild)).toBe(true);
-                objectAPI.getProvider.andReturn({});
+                objectAPI.getProvider.and.returnValue({});
                 expect(persistableCompositionPolicy.allow(mockParent, mockChild)).toBe(false);
             });
 
             it("Always allows composition of objects in edit mode to support object creation", function () {
-                mockEditorCapability.isEditContextRoot.andReturn(true);
+                mockEditorCapability.isEditContextRoot.and.returnValue(true);
                 expect(persistableCompositionPolicy.allow(mockParent, mockChild)).toBe(true);
                 expect(objectAPI.getProvider).not.toHaveBeenCalled();
 
-                mockEditorCapability.isEditContextRoot.andReturn(false);
+                mockEditorCapability.isEditContextRoot.and.returnValue(false);
                 expect(persistableCompositionPolicy.allow(mockParent, mockChild)).toBe(true);
                 expect(objectAPI.getProvider).toHaveBeenCalled();
             });

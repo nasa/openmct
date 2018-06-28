@@ -44,8 +44,8 @@ define(
                 );
                 mockType = { someKey: "some value" };
 
-                mockTypeService.getType.andReturn(mockType);
-                mockDomainObject.getModel.andReturn({type: "mockType"});
+                mockTypeService.getType.and.returnValue(mockType);
+                mockDomainObject.getModel.and.returnValue({type: "mockType"});
 
                 type = new TypeCapability(mockTypeService, mockDomainObject);
             });

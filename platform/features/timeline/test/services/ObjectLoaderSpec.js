@@ -57,13 +57,13 @@ define(
                     ['useCapability', 'hasCapability', 'getId']
                 );
 
-                mockDomainObject.getId.andReturn(id);
-                mockDomainObject.useCapability.andCallFake(function (c) {
+                mockDomainObject.getId.and.returnValue(id);
+                mockDomainObject.useCapability.and.callFake(function (c) {
                     return c === 'composition' ?
                             asPromise(children.map(lookupObject)) :
                             undefined;
                 });
-                mockDomainObject.hasCapability.andCallFake(function (c) {
+                mockDomainObject.hasCapability.and.callFake(function (c) {
                     return (capabilities.indexOf(c) !== -1) || (c === 'composition');
                 });
                 mockDomainObjects[id] = mockDomainObject;
@@ -79,8 +79,8 @@ define(
 
                 // Provide subset of q's actual behavior which we
                 // expect object loader to really need
-                mockQ.when.andCallFake(asPromise);
-                mockQ.all.andCallFake(function (values) {
+                mockQ.when.and.callFake(asPromise);
+                mockQ.all.and.callFake(function (values) {
                     var result = [];
                     function addResult(v) {
                         result.push(v);

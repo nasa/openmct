@@ -51,15 +51,15 @@ define(
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
                 mockDataTransfer = jasmine.createSpyObj("dataTransfer", ["setData"]);
 
-                mockDomainObject.getId.andReturn(TEST_ID);
-                mockDomainObject.getModel.andReturn({});
+                mockDomainObject.getId.and.returnValue(TEST_ID);
+                mockDomainObject.getModel.and.returnValue({});
 
                 handlers = {};
 
                 gesture = new DragGesture(mockLog, mockDndService, mockElement, mockDomainObject);
 
                 // Look up all handlers registered by the gesture
-                mockElement.on.calls.forEach(function (call) {
+                mockElement.on.calls.all().forEach(function (call) {
                     handlers[call.args[0]] = call.args[1];
                 });
             });

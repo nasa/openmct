@@ -53,19 +53,19 @@ define(
                 mockScope = jasmine.createSpyObj("scope", ["$destroy"]);
                 mockElements = [];
 
-                mockPopupService.display.andReturn(mockPopup);
-                mockCompile.andCallFake(function () {
+                mockPopupService.display.and.returnValue(mockPopup);
+                mockCompile.and.callFake(function () {
                     var mockCompiledTemplate = jasmine.createSpy('template'),
                         mockElement = jasmine.createSpyObj('element', [
                             'css',
                             'remove',
                             'append'
                         ]);
-                    mockCompiledTemplate.andReturn(mockElement);
+                    mockCompiledTemplate.and.returnValue(mockElement);
                     mockElements.push(mockElement);
                     return mockCompiledTemplate;
                 });
-                mockRootScope.$new.andReturn(mockScope);
+                mockRootScope.$new.and.returnValue(mockScope);
 
                 service = new InfoService(
                     mockCompile,
@@ -92,7 +92,7 @@ define(
             });
 
             it("when on phone device, positions at  bottom", function () {
-                mockAgentService.isPhone.andReturn(true);
+                mockAgentService.isPhone.and.returnValue(true);
                 service = new InfoService(
                     mockCompile,
                     mockRootScope,
@@ -119,10 +119,10 @@ define(
                             ].join('-');
 
                         beforeEach(function () {
-                            mockPopup.goesUp.andReturn(goesUp);
-                            mockPopup.goesDown.andReturn(!goesUp);
-                            mockPopup.goesLeft.andReturn(goesLeft);
-                            mockPopup.goesRight.andReturn(!goesLeft);
+                            mockPopup.goesUp.and.returnValue(goesUp);
+                            mockPopup.goesDown.and.returnValue(!goesUp);
+                            mockPopup.goesLeft.and.returnValue(goesLeft);
+                            mockPopup.goesRight.and.returnValue(!goesLeft);
                             service.display('', '', {}, [10, 10]);
                         });
 

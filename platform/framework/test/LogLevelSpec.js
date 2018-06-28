@@ -62,11 +62,11 @@ define(
                 mockDelegate = jasmine.createSpyObj('$delegate', LOG_METHODS);
 
                 LOG_METHODS.forEach(function (m) {
-                    mockLog[m].andCallFake(mockMethods[m]);
-                    mockDelegate[m].andCallFake(mockMethods[m]);
+                    mockLog[m].and.callFake(mockMethods[m]);
+                    mockDelegate[m].and.callFake(mockMethods[m]);
                 });
 
-                mockApp.decorator.andCallFake(function (key, decoration) {
+                mockApp.decorator.and.callFake(function (key, decoration) {
                     // We only expect $log to be decorated
                     if (key === '$log' && decoration[0] === '$delegate') {
                         decoration[1](mockDelegate);

@@ -38,8 +38,8 @@ define(
                     ['getModel', 'useCapability', 'getCapability', 'hasCapability']
                 );
                 mockModel = {};
-                mockDomainObject.getModel.andReturn(mockModel);
-                mockDomainObject.getCapability.andCallFake(function (name) {
+                mockDomainObject.getModel.and.returnValue(mockModel);
+                mockDomainObject.getCapability.and.callFake(function (name) {
                     return name === 'editor' && {
                         isEditContextRoot: function () {
                             return true;
@@ -53,7 +53,7 @@ define(
                 mockAPI = {
                     telemetry: mockTelemetryAPI
                 };
-                mockTelemetryAPI.getValueFormatter.andCallFake(function (metadata) {
+                mockTelemetryAPI.getValueFormatter.and.callFake(function (metadata) {
                     var formatter = jasmine.createSpyObj(
                         'telemetryFormatter:' + metadata.key,
                         [
@@ -64,8 +64,8 @@ define(
                     var getter = function (datum) {
                         return datum[metadata.key];
                     };
-                    formatter.format.andCallFake(getter);
-                    formatter.parse.andCallFake(getter);
+                    formatter.format.and.callFake(getter);
+                    formatter.parse.and.callFake(getter);
                     return formatter;
                 });
 

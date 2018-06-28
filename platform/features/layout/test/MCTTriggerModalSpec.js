@@ -38,10 +38,10 @@ define([
                 'hasClass',
                 'parent'
             ]);
-            elem.hasClass.andCallFake(function (className) {
+            elem.hasClass.and.callFake(function (className) {
                 return classes.indexOf(className) !== -1;
             });
-            elem.parent.andReturn(parentEl);
+            elem.parent.and.returnValue(parentEl);
             var div = document.createElement('div');
             div.className = classes.join(' ');
             parentEl[0].appendChild(div);
@@ -70,10 +70,10 @@ define([
             for (var i = 0; i < 5; i++) {
                 child = makeElement([], child);
             }
-            $element.parent.andReturn(child);
+            $element.parent.and.returnValue(child);
             $document = [jasmine.createSpyObj('document', ['createElement'])];
             $document[0].body = document.createElement('div');
-            $document[0].createElement.andCallFake(function (tag) {
+            $document[0].createElement.and.callFake(function (tag) {
                 return document.createElement(tag);
             });
 
@@ -102,7 +102,7 @@ define([
                     '$destroy',
                     jasmine.any(Function)
                 );
-                $scope.$on.mostRecentCall.args[1]();
+                $scope.$on.calls.mostRecent().args[1]();
                 expect($element.off).toHaveBeenCalledWith(
                     'click',
                     jasmine.any(Function)
@@ -113,7 +113,7 @@ define([
                 [
                     'a.close', 'a.t-done', '.abs.blocker'
                 ].forEach(function (selector) {
-                    $element.on.mostRecentCall.args[1]();
+                    $element.on.calls.mostRecent().args[1]();
                     var container = $document[0].body.querySelector('.t-contents');
                     expect(container.children[0]).toBe(frame[0]);
                     expect(layoutContainer.children[0]).not.toBe(frame[0]);

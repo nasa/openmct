@@ -40,7 +40,7 @@ define(
                     'domainObject-' + id,
                     ['getId']
                 );
-                mockDomainObject.getId.andReturn(id);
+                mockDomainObject.getId.and.returnValue(id);
                 return mockDomainObject;
             }
 
@@ -59,10 +59,10 @@ define(
                 mockDeferred = jasmine.createSpyObj('deferred', ['resolve']);
                 mockDeferred.promise = jasmine.createSpyObj('promise', ['then']);
                 mockPromise = jasmine.createSpyObj('promise', ['then']);
-                mockQ.defer.andReturn(mockDeferred);
-                mockTimeout.andReturn({});
-                mockHandler.persist.andReturn(mockPromise);
-                mockPromise.then.andReturn(mockPromise);
+                mockQ.defer.and.returnValue(mockDeferred);
+                mockTimeout.and.returnValue({});
+                mockHandler.persist.and.returnValue(mockPromise);
+                mockPromise.then.and.returnValue(mockPromise);
                 queue = new PersistenceQueueImpl(
                     mockQ,
                     mockTimeout,
@@ -87,7 +87,7 @@ define(
                 queue.put(makeMockDomainObject('a'), makeMockPersistence('a'));
                 queue.put(makeMockDomainObject('b'), makeMockPersistence('b'));
                 queue.put(makeMockDomainObject('c'), makeMockPersistence('c'));
-                expect(mockTimeout.calls.length).toEqual(1);
+                expect(mockTimeout.calls.count()).toEqual(1);
             });
 
             it("returns a promise", function () {
@@ -99,14 +99,14 @@ define(
                 // Keep adding objects to the queue between timeouts.
                 // Should keep scheduling timeouts instead of resolving.
                 queue.put(makeMockDomainObject('a'), makeMockPersistence('a'));
-                expect(mockTimeout.calls.length).toEqual(1);
-                mockTimeout.mostRecentCall.args[0]();
+                expect(mockTimeout.calls.count()).toEqual(1);
+                mockTimeout.calls.mostRecent().args[0]();
                 queue.put(makeMockDomainObject('b'), makeMockPersistence('b'));
-                expect(mockTimeout.calls.length).toEqual(2);
-                mockTimeout.mostRecentCall.args[0]();
+                expect(mockTimeout.calls.count()).toEqual(2);
+                mockTimeout.calls.mostRecent().args[0]();
                 queue.put(makeMockDomainObject('c'), makeMockPersistence('c'));
-                expect(mockTimeout.calls.length).toEqual(3);
-                mockTimeout.mostRecentCall.args[0]();
+                expect(mockTimeout.calls.count()).toEqual(3);
+                mockTimeout.calls.mostRecent().args[0]();
                 expect(mockHandler.persist).not.toHaveBeenCalled();
             });
 
@@ -115,8 +115,8 @@ define(
                 queue.put(makeMockDomainObject('a'), makeMockPersistence('a'));
                 queue.put(makeMockDomainObject('b'), makeMockPersistence('b'));
                 queue.put(makeMockDomainObject('c'), makeMockPersistence('c'));
-                mockTimeout.mostRecentCall.args[0]();
-                mockTimeout.mostRecentCall.args[0]();
+                mockTimeout.calls.mostRecent().args[0]();
+                mockTimeout.calls.mostRecent().args[0]();
                 expect(mockHandler.persist).toHaveBeenCalled();
             });
 
@@ -124,28 +124,28 @@ define(
                 // Persist some objects
                 queue.put(makeMockDomainObject('a'), makeMockPersistence('a'));
                 queue.put(makeMockDomainObject('b'), makeMockPersistence('b'));
-                mockTimeout.mostRecentCall.args[0]();
-                mockTimeout.mostRecentCall.args[0]();
-                expect(mockTimeout.calls.length).toEqual(2);
+                mockTimeout.calls.mostRecent().args[0]();
+                mockTimeout.calls.mostRecent().args[0]();
+                expect(mockTimeout.calls.count()).toEqual(2);
                 // Adding a new object should not trigger a new timeout,
                 // because we haven't completed the previous flush
                 queue.put(makeMockDomainObject('c'), makeMockPersistence('c'));
-                expect(mockTimeout.calls.length).toEqual(2);
+                expect(mockTimeout.calls.count()).toEqual(2);
             });
 
             it("clears the active flush after it has completed", function () {
                 // Persist some objects
                 queue.put(makeMockDomainObject('a'), makeMockPersistence('a'));
                 queue.put(makeMockDomainObject('b'), makeMockPersistence('b'));
-                mockTimeout.mostRecentCall.args[0]();
-                mockTimeout.mostRecentCall.args[0]();
-                expect(mockTimeout.calls.length).toEqual(2);
+                mockTimeout.calls.mostRecent().args[0]();
+                mockTimeout.calls.mostRecent().args[0]();
+                expect(mockTimeout.calls.count()).toEqual(2);
                 // Resolve the promise from handler.persist
-                mockPromise.then.calls[0].args[0](true);
+                mockPromise.then.calls.all()[0].args[0](true);
                 // Adding a new object should now trigger a new timeout,
                 // because we have completed the previous flush
                 queue.put(makeMockDomainObject('c'), makeMockPersistence('c'));
-                expect(mockTimeout.calls.length).toEqual(3);
+                expect(mockTimeout.calls.count()).toEqual(3);
             });
         });
     }

@@ -24,7 +24,7 @@ define([
 ], function (
     RootObjectProvider
 ) {
-    fdescribe('RootObjectProvider', function () {
+    describe('RootObjectProvider', function () {
         var rootRegistry,
             rootObjectProvider;
 

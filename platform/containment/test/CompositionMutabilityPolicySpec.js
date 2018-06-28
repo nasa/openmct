@@ -41,7 +41,7 @@ define(
 
             it("only allows composition for types which can be created/modified", function () {
                 expect(policy.allow(mockObject)).toBeFalsy();
-                mockType.hasFeature.andReturn(true);
+                mockType.hasFeature.and.returnValue(true);
                 expect(policy.allow(mockObject)).toBeTruthy();
                 expect(mockType.hasFeature).toHaveBeenCalledWith('creation');
             });

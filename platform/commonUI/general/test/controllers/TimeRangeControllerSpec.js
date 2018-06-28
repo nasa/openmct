@@ -39,7 +39,7 @@ define(
                 controller;
 
             function fireWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$watch.calls.all().forEach(function (call) {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
@@ -47,7 +47,7 @@ define(
             }
 
             function fireWatchCollection(expr, value) {
-                mockScope.$watchCollection.calls.forEach(function (call) {
+                mockScope.$watchCollection.calls.all().forEach(function (call) {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
@@ -73,9 +73,9 @@ define(
                     ["validate", "format", "parse"]
                 );
 
-                mockFormatService.getFormat.andReturn(mockFormat);
+                mockFormatService.getFormat.and.returnValue(mockFormat);
 
-                mockFormat.format.andCallFake(function (value) {
+                mockFormat.format.and.callFake(function (value) {
                     return moment.utc(value).format("YYYY-MM-DD HH:mm:ss");
                 });
 
@@ -300,7 +300,7 @@ define(
             });
 
             it("throws an error for unknown formats", function () {
-                mockFormatService.getFormat.andReturn(undefined);
+                mockFormatService.getFormat.and.returnValue(undefined);
                 expect(function () {
                     fireWatch("parameters.format", "some-format");
                 }).toThrow();

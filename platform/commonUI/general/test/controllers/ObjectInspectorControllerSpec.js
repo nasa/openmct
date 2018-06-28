@@ -50,14 +50,14 @@ define(
                     "promise",
                     ["then"]
                 );
-                mockObjectService.getObjects.andReturn(mockPromise);
+                mockObjectService.getObjects.and.returnValue(mockPromise);
 
                 mockDomainObject = jasmine.createSpyObj(
                     "selectedObject",
                     ["hasCapability", "getCapability", "useCapability", "getModel"]
                 );
-                mockDomainObject.getModel.andReturn({location: 'somewhere'});
-                mockDomainObject.hasCapability.andReturn(true);
+                mockDomainObject.getModel.and.returnValue({location: 'somewhere'});
+                mockDomainObject.hasCapability.and.returnValue(true);
 
                 mockContextCapability = jasmine.createSpyObj(
                     "context capability",
@@ -68,7 +68,7 @@ define(
                     ["isLink"]
                 );
 
-                mockDomainObject.getCapability.andCallFake(function (param) {
+                mockDomainObject.getCapability.and.callFake(function (param) {
                     if (param === 'location') {
                         return mockLocationCapability;
                     } else if (param === 'context') {
@@ -91,21 +91,21 @@ define(
             });
 
             it("looks for contextual parent objects", function () {
-                mockScope.$watch.mostRecentCall.args[1]();
+                mockScope.$watch.calls.mostRecent().args[1]();
                 expect(mockContextCapability.getParent).toHaveBeenCalled();
             });
 
             it("if link, looks for primary parent objects", function () {
-                mockLocationCapability.isLink.andReturn(true);
+                mockLocationCapability.isLink.and.returnValue(true);
 
-                mockScope.$watch.mostRecentCall.args[1]();
+                mockScope.$watch.calls.mostRecent().args[1]();
                 expect(mockDomainObject.getModel).toHaveBeenCalled();
                 expect(mockObjectService.getObjects).toHaveBeenCalled();
-                mockPromise.then.mostRecentCall.args[0]({'somewhere': mockDomainObject});
+                mockPromise.then.calls.mostRecent().args[0]({'somewhere': mockDomainObject});
             });
 
             it("gets metadata", function () {
-                mockScope.$watch.mostRecentCall.args[1]();
+                mockScope.$watch.calls.mostRecent().args[1]();
                 expect(mockDomainObject.useCapability).toHaveBeenCalledWith('metadata');
             });
         });

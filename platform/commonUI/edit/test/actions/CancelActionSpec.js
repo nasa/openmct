@@ -49,7 +49,7 @@ define(
                         "getModel"
                     ]
                 );
-                mockDomainObject.getModel.andReturn({});
+                mockDomainObject.getModel.and.returnValue({});
 
                 mockParentObject = jasmine.createSpyObj(
                     "parentObject",
@@ -57,7 +57,7 @@ define(
                         "getCapability"
                     ]
                 );
-                mockParentObject.getCapability.andCallFake(function (name) {
+                mockParentObject.getCapability.and.callFake(function (name) {
                     return parentCapabilities[name];
                 });
 
@@ -77,14 +77,14 @@ define(
                         "getOriginal"
                     ]
                 );
-                capabilities.location.getOriginal.andReturn(mockPromise(mockDomainObject));
+                capabilities.location.getOriginal.and.returnValue(mockPromise(mockDomainObject));
                 capabilities.context = jasmine.createSpyObj(
                     "contextCapability",
                     [
                         "getParent"
                     ]
                 );
-                capabilities.context.getParent.andReturn(mockParentObject);
+                capabilities.context.getParent.and.returnValue(mockParentObject);
 
                 parentCapabilities.action = jasmine.createSpyObj(
                     "actionCapability",
@@ -97,37 +97,37 @@ define(
                     domainObject: mockDomainObject
                 };
 
-                mockDomainObject.getCapability.andCallFake(function (name) {
+                mockDomainObject.getCapability.and.callFake(function (name) {
                     return capabilities[name];
                 });
 
-                mockDomainObject.hasCapability.andCallFake(function (name) {
+                mockDomainObject.hasCapability.and.callFake(function (name) {
                     return !!capabilities[name];
                 });
 
-                capabilities.editor.finish.andReturn(mockPromise(true));
+                capabilities.editor.finish.and.returnValue(mockPromise(true));
 
                 action = new CancelAction(actionContext);
 
             });
 
             it("only applies to domain object that is being edited", function () {
-                capabilities.editor.isEditContextRoot.andReturn(true);
+                capabilities.editor.isEditContextRoot.and.returnValue(true);
                 expect(CancelAction.appliesTo(actionContext)).toBeTruthy();
                 expect(mockDomainObject.hasCapability).toHaveBeenCalledWith("editor");
 
-                capabilities.editor.isEditContextRoot.andReturn(false);
+                capabilities.editor.isEditContextRoot.and.returnValue(false);
                 expect(CancelAction.appliesTo(actionContext)).toBeFalsy();
 
-                mockDomainObject.hasCapability.andReturn(false);
+                mockDomainObject.hasCapability.and.returnValue(false);
                 expect(CancelAction.appliesTo(actionContext)).toBeFalsy();
             });
 
             it("invokes the editor capability's cancel functionality when" +
                 " performed", function () {
-                mockDomainObject.getModel.andReturn({persisted: 1});
+                mockDomainObject.getModel.and.returnValue({persisted: 1});
                 //Return true from navigate action
-                capabilities.action.perform.andReturn(mockPromise(true));
+                capabilities.action.perform.and.returnValue(mockPromise(true));
                 action.perform();
 
                 // Should have called finish
@@ -138,15 +138,15 @@ define(
             });
 
             it("navigates to object if existing using navigate action", function () {
-                mockDomainObject.getModel.andReturn({persisted: 1});
+                mockDomainObject.getModel.and.returnValue({persisted: 1});
                 //Return true from navigate action
-                capabilities.action.perform.andReturn(mockPromise(true));
+                capabilities.action.perform.and.returnValue(mockPromise(true));
                 action.perform();
                 expect(capabilities.action.perform).toHaveBeenCalledWith("navigate");
             });
 
             it("navigates to parent if new using navigate action", function () {
-                mockDomainObject.getModel.andReturn({persisted: undefined});
+                mockDomainObject.getModel.and.returnValue({persisted: undefined});
                 action.perform();
                 expect(parentCapabilities.action.perform).toHaveBeenCalledWith("navigate");
             });

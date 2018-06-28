@@ -37,7 +37,7 @@ define(
          * var moveService = new MockMoveService();
          *
          * // validate is a standard jasmine spy.
-         * moveService.validate.andReturn(true);
+         * moveService.validate.and.returnValue(true);
          * var isValid = moveService.validate(object, parentCandidate);
          * expect(isValid).toBe(true);
          *
@@ -45,7 +45,7 @@ define(
          * var whenCopied = jasmine.createSpy('whenCopied');
          * moveService.perform(object, parentObject).then(whenCopied);
          * expect(whenCopied).not.toHaveBeenCalled();
-         * moveService.perform.mostRecentCall.resolve('someArg');
+         * moveService.perform.calls.mostRecent().resolve('someArg');
          * expect(whenCopied).toHaveBeenCalledWith('someArg');
          * ```
          */
@@ -60,7 +60,7 @@ define(
                 ]
             );
 
-            mockMoveService.perform.andCallFake(function () {
+            mockMoveService.perform.and.callFake(function () {
                 var performPromise,
                     callExtensions,
                     spy;
@@ -73,7 +73,7 @@ define(
                 callExtensions = {
                     promise: performPromise,
                     resolve: function (resolveWith) {
-                        performPromise.then.calls.forEach(function (call) {
+                        performPromise.then.calls.all().forEach(function (call) {
                             call.args[0](resolveWith);
                         });
                     }
@@ -82,8 +82,8 @@ define(
                 spy = this.perform;
 
                 Object.keys(callExtensions).forEach(function (key) {
-                    spy.mostRecentCall[key] = callExtensions[key];
-                    spy.calls[spy.calls.length - 1][key] = callExtensions[key];
+                    spy.calls.mostRecent()[key] = callExtensions[key];
+                    spy.calls.all()[spy.calls.count() - 1][key] = callExtensions[key];
                 });
 
                 return performPromise;

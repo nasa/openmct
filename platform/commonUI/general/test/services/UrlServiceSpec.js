@@ -60,25 +60,25 @@ define(
 
                 // The mockContext is set a path
                 // for the mockDomainObject
-                mockContext.getPath.andReturn(
+                mockContext.getPath.and.returnValue(
                     [mockDomainObject]
                 );
 
                 // view capability used with the testviews made
-                mockDomainObject.useCapability.andCallFake(function (c) {
+                mockDomainObject.useCapability.and.callFake(function (c) {
                     return (c === 'view') && testViews;
                 });
 
                 // context capability used with the mockContext created
                 // so the variables including context in the urlFor are
                 // initialized and reached
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObject.getCapability.and.callFake(function (c) {
                     return c === 'context' && mockContext;
                 });
 
                 // Uses the mockLocation to get the current
                 // "mock" website's view
-                mockLocation.search.andReturn({ view: 'def' });
+                mockLocation.search.and.returnValue({ view: 'def' });
 
                 urlService = new UrlService(mockLocation);
             });

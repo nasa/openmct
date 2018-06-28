@@ -65,28 +65,28 @@ define(
                 mockElements = {};
                 mockContents = {};
 
-                mockTemplateRequest.andReturn(mockPromise);
-                mockCompile.andCallFake(function (toCompile) {
+                mockTemplateRequest.and.returnValue(mockPromise);
+                mockCompile.and.callFake(function (toCompile) {
                     var html = typeof toCompile === 'string' ?
                             toCompile : toCompile.testHtml;
                     mockTemplates[html] = jasmine.createSpy('template');
                     mockElements[html] =
                         jasmine.createSpyObj('templateEl', JQLITE_METHODS);
-                    mockTemplates[html].andReturn(mockElements[html]);
+                    mockTemplates[html].and.returnValue(mockElements[html]);
                     return mockTemplates[html];
                 });
-                mockSce.trustAsResourceUrl.andCallFake(function (url) {
+                mockSce.trustAsResourceUrl.and.callFake(function (url) {
                     return { trusted: url };
                 });
-                mockScope.$new.andReturn(mockNewScope);
-                mockElement.html.andCallFake(function (html) {
+                mockScope.$new.and.returnValue(mockNewScope);
+                mockElement.html.and.callFake(function (html) {
                     mockContents[html] =
                         jasmine.createSpyObj('contentsEl', JQLITE_METHODS);
                     mockContents[html].testHtml = html;
                 });
-                mockElement.contents.andCallFake(function () {
+                mockElement.contents.and.callFake(function () {
                     return mockContents[
-                        mockElement.html.mostRecentCall.args[0]
+                        mockElement.html.calls.mostRecent().args[0]
                     ];
                 });
 
@@ -108,7 +108,7 @@ define(
                     commentElement;
 
                 function findCommentElement() {
-                    mockCompile.calls.forEach(function (call) {
+                    mockCompile.calls.all().forEach(function (call) {
                         var html = call.args[0];
                         if (html.indexOf("<!--") > -1) {
                             commentElement = mockElements[html];
@@ -144,7 +144,7 @@ define(
                         testUrl = linker.getPath(testExt);
                         testTemplate = "<div>Some template!</div>";
                         changeTemplate(testExt);
-                        mockPromise.then.mostRecentCall
+                        mockPromise.then.calls.mostRecent()
                             .args[0](testTemplate);
                     });
 
@@ -172,12 +172,12 @@ define(
                     });
 
                     it("clears templates when called with undefined", function () {
-                        expect(mockElement.replaceWith.callCount)
+                        expect(mockElement.replaceWith.calls.count())
                             .toEqual(1);
                         changeTemplate(undefined);
-                        expect(mockElement.replaceWith.callCount)
+                        expect(mockElement.replaceWith.calls.count())
                             .toEqual(2);
-                        expect(mockElement.replaceWith.mostRecentCall.args[0])
+                        expect(mockElement.replaceWith.calls.mostRecent().args[0])
                             .toEqual(commentElement);
                     });
 
@@ -191,14 +191,14 @@ define(
                                 testExtension("some", "bad", "template.html")
                             );
                             // Reject the template promise
-                            mockPromise.then.mostRecentCall.args[1]();
+                            mockPromise.then.calls.mostRecent().args[1]();
                         });
 
                         it("removes the element from the DOM", function () {
-                            expect(mockElement.replaceWith.callCount)
+                            expect(mockElement.replaceWith.calls.count())
                                 .toEqual(2);
                             expect(
-                                mockElement.replaceWith.mostRecentCall.args[0]
+                                mockElement.replaceWith.calls.mostRecent().args[0]
                             ).toEqual(commentElement);
                         });
 

@@ -43,11 +43,11 @@ define(
                         "mockProvider" + i,
                         ["getModels"]
                     );
-                    mockProvider.getModels.andReturn(models);
+                    mockProvider.getModels.and.returnValue(models);
                     return mockProvider;
                 });
 
-                mockQ.all.andReturn({
+                mockQ.all.and.returnValue({
                     then: function (c) {
                         return c(modelList);
                     }

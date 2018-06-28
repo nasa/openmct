@@ -48,7 +48,7 @@ define(
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 mockLinker = jasmine.createSpyObj("templateLinker", ["link"]);
                 mockChangeTemplate = jasmine.createSpy('changeTemplate');
-                mockLinker.link.andReturn(mockChangeTemplate);
+                mockLinker.link.and.returnValue(mockChangeTemplate);
 
                 mctControl = new MCTControl(mockLinker, testControls);
             });
@@ -73,7 +73,7 @@ define(
                     .not.toHaveBeenCalledWith(testControls[1]);
 
                 mockScope.key = "xyz";
-                mockScope.$watch.mostRecentCall.args[1]("xyz");
+                mockScope.$watch.calls.mostRecent().args[1]("xyz");
 
                 // Should have communicated the template path to
                 // ng-include via the "inclusion" field in scope

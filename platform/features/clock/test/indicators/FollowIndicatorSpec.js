@@ -46,7 +46,7 @@ define(["../../src/indicators/FollowIndicator"], function (FollowIndicator) {
 
             beforeEach(function () {
                 testObject = { name: "some timer!" };
-                mockTimerService.getTimer.andReturn(testObject);
+                mockTimerService.getTimer.and.returnValue(testObject);
             });
 
             it("displays the timer's name", function () {

@@ -53,10 +53,10 @@ define(
                     ['getId']
                 );
 
-                mockCapabilityService.getCapabilities.andReturn({
+                mockCapabilityService.getCapabilities.and.returnValue({
                     persistence: mockPersistenceConstructor
                 });
-                mockPersistenceConstructor.andReturn(mockPersistence);
+                mockPersistenceConstructor.and.returnValue(mockPersistence);
 
                 decorator = new QueuingPersistenceCapabilityDecorator(
                     mockQueue,

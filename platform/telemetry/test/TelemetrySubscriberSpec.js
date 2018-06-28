@@ -45,8 +45,8 @@ define(
                 mockCallback = jasmine.createSpy("callback");
                 mockPromise = jasmine.createSpyObj("promise", ["then"]);
 
-                mockQ.when.andReturn(mockPromise);
-                mockPromise.then.andReturn(mockPromise);
+                mockQ.when.and.returnValue(mockPromise);
+                mockPromise.then.and.returnValue(mockPromise);
 
                 subscriber = new TelemetrySubscriber(mockQ, mockTimeout);
             });

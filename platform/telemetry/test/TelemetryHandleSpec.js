@@ -68,7 +68,7 @@ define(
                 mockCallback = jasmine.createSpy('callback');
 
                 // Simulate $q.all, at least for asPromise-provided promises
-                mockQ.all.andCallFake(function (values) {
+                mockQ.all.and.callFake(function (values) {
                     return values.map(function (v) {
                         var r;
                         asPromise(v).then(function (value) {
@@ -77,14 +77,14 @@ define(
                         return r;
                     });
                 });
-                mockQ.when.andCallFake(asPromise);
+                mockQ.when.and.callFake(asPromise);
                 mockSubscription.getTelemetryObjects
-                    .andReturn([mockDomainObject]);
+                    .and.returnValue([mockDomainObject]);
                 mockSubscription.promiseTelemetryObjects
-                    .andReturn(asPromise([mockDomainObject]));
-                mockDomainObject.getId.andReturn('testId');
-                mockDomainObject.getCapability.andReturn(mockTelemetry);
-                mockTelemetry.requestData.andReturn(asPromise(mockSeries));
+                    .and.returnValue(asPromise([mockDomainObject]));
+                mockDomainObject.getId.and.returnValue('testId');
+                mockDomainObject.getCapability.and.returnValue(mockTelemetry);
+                mockTelemetry.requestData.and.returnValue(asPromise(mockSeries));
 
                 handle = new TelemetryHandle(mockQ, mockSubscription);
             });
@@ -121,7 +121,7 @@ define(
 
             it("provides access to the datum objects by index", function () {
                 var testDatum = { a: 1, b: 2 }, testIndex = 42;
-                mockSubscription.makeDatum.andReturn(testDatum);
+                mockSubscription.makeDatum.and.returnValue(testDatum);
                 handle.request({});
                 expect(handle.getDatum(mockDomainObject, testIndex))
                     .toEqual(testDatum);

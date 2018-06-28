@@ -37,11 +37,11 @@ define(
                     ['getPointCount', 'getDomainValue', 'getRangeValue']
                 );
 
-                mockGraph.getPointCount.andReturn(points.length * 2);
-                mockGraph.getDomainValue.andCallFake(function (i) {
+                mockGraph.getPointCount.and.returnValue(points.length * 2);
+                mockGraph.getDomainValue.and.callFake(function (i) {
                     return Math.floor(i / 2) * 100 + 25;
                 });
-                mockGraph.getRangeValue.andCallFake(function (i) {
+                mockGraph.getRangeValue.and.callFake(function (i) {
                     return points[Math.floor(i / 2) + i % 2];
                 });
 

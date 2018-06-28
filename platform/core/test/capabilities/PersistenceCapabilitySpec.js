@@ -95,15 +95,15 @@ define(
                     useCapability: jasmine.createSpy()
                 };
                 // Simulate mutation capability
-                mockDomainObject.useCapability.andCallFake(function (capability, mutator) {
+                mockDomainObject.useCapability.and.callFake(function (capability, mutator) {
                     if (capability === 'mutation') {
                         model = mutator(model) || model;
                     }
                 });
-                mockIdentifierService.parse.andReturn(mockIdentifier);
-                mockIdentifier.getSpace.andReturn(SPACE);
-                mockIdentifier.getKey.andReturn(key);
-                mockQ.when.andCallFake(asPromise);
+                mockIdentifierService.parse.and.returnValue(mockIdentifier);
+                mockIdentifier.getSpace.and.returnValue(SPACE);
+                mockIdentifier.getKey.and.returnValue(key);
+                mockQ.when.and.callFake(asPromise);
                 persistence = new PersistenceCapability(
                     mockCacheService,
                     mockPersistenceService,
@@ -116,8 +116,8 @@ define(
 
             describe("successful persistence", function () {
                 beforeEach(function () {
-                    mockPersistenceService.updateObject.andReturn(happyPromise);
-                    mockPersistenceService.createObject.andReturn(happyPromise);
+                    mockPersistenceService.updateObject.and.returnValue(happyPromise);
+                    mockPersistenceService.createObject.and.returnValue(happyPromise);
                 });
                 it("creates unpersisted objects with the persistence service", function () {
                     // Verify precondition; no call made during constructor
@@ -158,7 +158,7 @@ define(
                 it("refreshes the domain object model from persistence", function () {
                     var refreshModel = {someOtherKey: "some other value"};
                     model.persisted = 1;
-                    mockPersistenceService.readObject.andReturn(asPromise(refreshModel));
+                    mockPersistenceService.readObject.and.returnValue(asPromise(refreshModel));
                     persistence.refresh();
                     expect(model).toEqual(refreshModel);
                 });
@@ -178,7 +178,7 @@ define(
                         }
                     };
                 beforeEach(function () {
-                    mockPersistenceService.createObject.andReturn(sadPromise);
+                    mockPersistenceService.createObject.and.returnValue(sadPromise);
                 });
                 it("rejects on falsey persistence result", function () {
                     persistence.persist();

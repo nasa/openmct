@@ -78,8 +78,8 @@ define(
 
                     beforeEach(function () {
                         testPosition = 12321;
-                        mockSplitPane.position.andReturn(testPosition);
-                        mockSplitPane.anchor.andReturn({
+                        mockSplitPane.position.and.returnValue(testPosition);
+                        mockSplitPane.anchor.and.returnValue({
                             orientation: 'vertical',
                             reversed: false
                         });

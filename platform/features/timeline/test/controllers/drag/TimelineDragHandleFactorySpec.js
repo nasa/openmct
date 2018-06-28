@@ -50,9 +50,9 @@ define(
                     ['instanceOf']
                 );
 
-                mockDomainObject.getId.andReturn('test-id');
-                mockDomainObject.getCapability.andReturn(mockType);
-                mockType.instanceOf.andCallFake(function (t) {
+                mockDomainObject.getId.and.returnValue('test-id');
+                mockDomainObject.getCapability.and.returnValue(mockType);
+                mockType.instanceOf.and.callFake(function (t) {
                     return t === testType;
                 });
 

@@ -46,7 +46,7 @@ define(
                 mockQ = jasmine.createSpyObj("$q", ["when", "reject"]);
                 mockCallback = jasmine.createSpy('callback');
 
-                mockQ.when.andCallFake(mockPromise);
+                mockQ.when.and.callFake(mockPromise);
 
                 provider = new LocalStoragePersistenceProvider(
                     { localStorage: testLocalStorage },
@@ -62,10 +62,10 @@ define(
 
             it("lists all available documents", function () {
                 provider.listObjects(testSpace).then(mockCallback);
-                expect(mockCallback.mostRecentCall.args[0]).toEqual([]);
+                expect(mockCallback.calls.mostRecent().args[0]).toEqual([]);
                 provider.createObject(testSpace, 'abc', { a: 42 });
                 provider.listObjects(testSpace).then(mockCallback);
-                expect(mockCallback.mostRecentCall.args[0]).toEqual(['abc']);
+                expect(mockCallback.calls.mostRecent().args[0]).toEqual(['abc']);
             });
 
             it("allows object creation", function () {
@@ -74,7 +74,7 @@ define(
                     .then(mockCallback);
                 expect(JSON.parse(testLocalStorage[testSpace]).abc)
                     .toEqual(model);
-                expect(mockCallback.mostRecentCall.args[0]).toBeTruthy();
+                expect(mockCallback.calls.mostRecent().args[0]).toBeTruthy();
             });
 
             it("allows object models to be read back", function () {

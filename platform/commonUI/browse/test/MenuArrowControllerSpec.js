@@ -60,8 +60,8 @@ define(
                 mockActionContext.domainObject = mockDomainObject;
                 mockActionContext.event = mockEvent;
                 mockScope.domainObject = mockDomainObject;
-                mockDomainObject.getCapability.andReturn(mockContextMenuAction);
-                mockContextMenuAction.perform.andReturn(jasmine.any(Function));
+                mockDomainObject.getCapability.and.returnValue(mockContextMenuAction);
+                mockContextMenuAction.perform.and.returnValue(jasmine.any(Function));
 
                 controller = new MenuArrowController(mockScope);
             });

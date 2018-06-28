@@ -36,13 +36,13 @@ define(
                     ['getUser']
                 );
 
-                mockIdentityService.getUser.andReturn(mockPromise);
+                mockIdentityService.getUser.and.returnValue(mockPromise);
 
                 indicator = new IdentityIndicator(mockIdentityService);
             });
 
             it("shows information about the current user", function () {
-                mockPromise.then.mostRecentCall.args[0]({
+                mockPromise.then.calls.mostRecent().args[0]({
                     key: "testuserid",
                     name: "A User"
                 });
@@ -59,7 +59,7 @@ define(
             });
 
             it("shows nothing when there is no identity information", function () {
-                mockPromise.then.mostRecentCall.args[0](undefined);
+                mockPromise.then.calls.mostRecent().args[0](undefined);
                 expect(indicator.getCssClass()).toBeUndefined();
                 expect(indicator.getText()).toBeUndefined();
                 expect(indicator.getDescription()).toBeUndefined();

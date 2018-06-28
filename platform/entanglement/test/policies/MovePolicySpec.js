@@ -59,17 +59,17 @@ define([
                 }
             });
 
-            mockContextCapability.getParent.andReturn(mockParent);
+            mockContextCapability.getParent.and.returnValue(mockParent);
 
-            mockType.hasFeature.andCallFake(function (feature) {
+            mockType.hasFeature.and.callFake(function (feature) {
                 return feature === 'creation';
             });
-            mockParentType.hasFeature.andCallFake(function (feature) {
+            mockParentType.hasFeature.and.callFake(function (feature) {
                 return feature === 'creation';
             });
 
             mockAction = jasmine.createSpyObj('action', ['getMetadata']);
-            mockAction.getMetadata.andReturn(testMetadata);
+            mockAction.getMetadata.and.returnValue(testMetadata);
 
             testContext = { domainObject: mockDomainObject };
 
@@ -83,7 +83,7 @@ define([
 
             describe("when an object is non-modifiable", function () {
                 beforeEach(function () {
-                    mockType.hasFeature.andReturn(false);
+                    mockType.hasFeature.and.returnValue(false);
                 });
 
                 it("disallows the action", function () {
@@ -93,7 +93,7 @@ define([
 
             describe("when a parent is non-modifiable", function () {
                 beforeEach(function () {
-                    mockParentType.hasFeature.andReturn(false);
+                    mockParentType.hasFeature.and.returnValue(false);
                 });
 
                 it("disallows the action", function () {
@@ -115,9 +115,9 @@ define([
 
             it("simply allows the action", function () {
                 expect(policy.allow(mockAction, testContext)).toBe(true);
-                mockType.hasFeature.andReturn(false);
+                mockType.hasFeature.and.returnValue(false);
                 expect(policy.allow(mockAction, testContext)).toBe(true);
-                mockParentType.hasFeature.andReturn(false);
+                mockParentType.hasFeature.and.returnValue(false);
                 expect(policy.allow(mockAction, testContext)).toBe(true);
             });
         });

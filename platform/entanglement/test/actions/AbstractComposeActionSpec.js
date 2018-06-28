@@ -71,7 +71,7 @@ define(
 
                 selectedObjectContextCapability
                     .getParent
-                    .andReturn(currentParent);
+                    .and.returnValue(currentParent);
 
                 newParent = domainObjectFactory({
                     name: 'newParent'
@@ -91,11 +91,11 @@ define(
                     ]
                 );
 
-                policyService.allow.andReturn(true);
+                policyService.allow.and.returnValue(true);
 
                 locationService
                     .getLocationFromUser
-                    .andReturn(locationServicePromise);
+                    .and.returnValue(locationServicePromise);
 
                 composeService = new MockCopyService();
             });
@@ -165,7 +165,7 @@ define(
                     it("copies object to selected location", function () {
                         locationServicePromise
                             .then
-                            .mostRecentCall
+                            .calls.mostRecent()
                             .args[0](newParent);
 
                         expect(composeService.perform)
@@ -177,20 +177,20 @@ define(
 
                         beforeEach(function () {
                             validator = locationService.getLocationFromUser
-                                .mostRecentCall.args[2];
-                            composeService.validate.andReturn(true);
-                            policyService.allow.andReturn(true);
+                                .calls.mostRecent().args[2];
+                            composeService.validate.and.returnValue(true);
+                            policyService.allow.and.returnValue(true);
                         });
 
                         it("is sensitive to policy", function () {
                             expect(validator()).toBe(true);
-                            policyService.allow.andReturn(false);
+                            policyService.allow.and.returnValue(false);
                             expect(validator()).toBe(false);
                         });
 
                         it("is sensitive to service-specific validation", function () {
                             expect(validator()).toBe(true);
-                            composeService.validate.andReturn(false);
+                            composeService.validate.and.returnValue(false);
                             expect(validator()).toBe(false);
                         });
 

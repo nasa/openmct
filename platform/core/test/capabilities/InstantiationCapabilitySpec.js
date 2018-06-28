@@ -49,16 +49,16 @@ define(
                     ['getId', 'getCapability', 'getModel']
                 );
 
-                mockInjector.get.andCallFake(function (key) {
+                mockInjector.get.and.callFake(function (key) {
                     return {
                         'instantiate': mockInstantiate
                     }[key];
                 });
-                mockIdentifierService.parse.andReturn(mockIdentifier);
-                mockIdentifierService.generate.andReturn("some-id");
+                mockIdentifierService.parse.and.returnValue(mockIdentifier);
+                mockIdentifierService.generate.and.returnValue("some-id");
 
                 mockNow = jasmine.createSpy();
-                mockNow.andReturn(1234321);
+                mockNow.and.returnValue(1234321);
 
                 instantiation = new InstantiationCapability(
                     mockInjector,
@@ -81,7 +81,7 @@ define(
                     'useCapability',
                     'hasCapability'
                 ]), testModel = { someKey: "some value" };
-                mockInstantiate.andReturn(mockDomainObj);
+                mockInstantiate.and.returnValue(mockDomainObj);
                 instantiation.instantiate(testModel);
                 expect(mockInstantiate)
                     .toHaveBeenCalledWith({

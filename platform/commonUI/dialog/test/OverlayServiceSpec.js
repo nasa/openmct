@@ -46,10 +46,10 @@ define(
                 mockElement = jasmine.createSpyObj("element", ["remove"]);
                 mockScope = jasmine.createSpyObj("scope", ["$destroy"]);
 
-                mockDocument.find.andReturn(mockBody);
-                mockCompile.andReturn(mockTemplate);
-                mockRootScope.$new.andReturn(mockScope);
-                mockTemplate.andReturn(mockElement);
+                mockDocument.find.and.returnValue(mockBody);
+                mockCompile.and.returnValue(mockTemplate);
+                mockRootScope.$new.and.returnValue(mockScope);
+                mockTemplate.and.returnValue(mockElement);
 
                 overlayService = new OverlayService(
                     mockDocument,
@@ -61,7 +61,7 @@ define(
             it("prepends an mct-include to create overlays", function () {
                 overlayService.createOverlay("test", {});
                 expect(mockCompile).toHaveBeenCalled();
-                expect(mockCompile.mostRecentCall.args[0].indexOf("mct-include"))
+                expect(mockCompile.calls.mostRecent().args[0].indexOf("mct-include"))
                     .not.toEqual(-1);
             });
 

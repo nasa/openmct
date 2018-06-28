@@ -37,7 +37,7 @@ define(
                 mctInclude;
 
             function fireWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$watch.calls.all().forEach(function (call) {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
@@ -68,8 +68,8 @@ define(
                 mockScope = jasmine.createSpyObj('$scope', ['$watch', '$on']);
                 mockElement = jasmine.createSpyObj('element', ['empty']);
                 mockChangeTemplate = jasmine.createSpy('changeTemplate');
-                mockLinker.link.andReturn(mockChangeTemplate);
-                mockLinker.getPath.andCallFake(function (template) {
+                mockLinker.link.and.returnValue(mockChangeTemplate);
+                mockLinker.getPath.and.callFake(function (template) {
                     return testUrls[template.key];
                 });
                 mctInclude = new MCTInclude(testTemplates, mockLinker);

@@ -34,13 +34,13 @@ define(['../src/Condition', 'zepto'], function (Condition, $) {
                 'getObjectName',
                 'getTelemetryPropertyName'
             ]);
-            mockConditionManager.loadCompleted.andReturn(false);
-            mockConditionManager.metadataLoadCompleted.andReturn(false);
-            mockConditionManager.getEvaluator.andReturn(mockEvaluator);
-            mockConditionManager.getComposition.andReturn({});
-            mockConditionManager.getTelemetryMetadata.andReturn({});
-            mockConditionManager.getObjectName.andReturn('Object Name');
-            mockConditionManager.getTelemetryPropertyName.andReturn('Property Name');
+            mockConditionManager.loadCompleted.and.returnValue(false);
+            mockConditionManager.metadataLoadCompleted.and.returnValue(false);
+            mockConditionManager.getEvaluator.and.returnValue(mockEvaluator);
+            mockConditionManager.getComposition.and.returnValue({});
+            mockConditionManager.getTelemetryMetadata.and.returnValue({});
+            mockConditionManager.getObjectName.and.returnValue('Object Name');
+            mockConditionManager.getTelemetryPropertyName.and.returnValue('Property Name');
 
             duplicateSpy = jasmine.createSpy('duplicate');
             removeSpy = jasmine.createSpy('remove');
@@ -90,16 +90,16 @@ define(['../src/Condition', 'zepto'], function (Condition, $) {
 
         it('generates value inputs of the appropriate type and quantity', function () {
             mockContainer.append(testCondition.getDOM());
-            mockEvaluator.getInputType.andReturn('number');
-            mockEvaluator.getInputCount.andReturn(3);
+            mockEvaluator.getInputType.and.returnValue('number');
+            mockEvaluator.getInputCount.and.returnValue(3);
             testCondition.generateValueInputs('');
             expect($('input', mockContainer).filter('[type=number]').get().length).toEqual(3);
             expect($('input', mockContainer).eq(0).prop('valueAsNumber')).toEqual(1);
             expect($('input', mockContainer).eq(1).prop('valueAsNumber')).toEqual(2);
             expect($('input', mockContainer).eq(2).prop('valueAsNumber')).toEqual(3);
 
-            mockEvaluator.getInputType.andReturn('text');
-            mockEvaluator.getInputCount.andReturn(2);
+            mockEvaluator.getInputType.and.returnValue('text');
+            mockEvaluator.getInputCount.and.returnValue(2);
             testCondition.config.values = ['Text I Am', 'Text It Is'];
             testCondition.generateValueInputs('');
             expect($('input', mockContainer).filter('[type=text]').get().length).toEqual(2);
@@ -109,8 +109,8 @@ define(['../src/Condition', 'zepto'], function (Condition, $) {
 
         it('ensures reasonable defaults on values if none are provided', function () {
             mockContainer.append(testCondition.getDOM());
-            mockEvaluator.getInputType.andReturn('number');
-            mockEvaluator.getInputCount.andReturn(3);
+            mockEvaluator.getInputType.and.returnValue('number');
+            mockEvaluator.getInputCount.and.returnValue(3);
             testCondition.config.values = [];
             testCondition.generateValueInputs('');
             expect($('input', mockContainer).eq(0).prop('valueAsNumber')).toEqual(0);
@@ -118,8 +118,8 @@ define(['../src/Condition', 'zepto'], function (Condition, $) {
             expect($('input', mockContainer).eq(2).prop('valueAsNumber')).toEqual(0);
             expect(testCondition.config.values).toEqual([0, 0, 0]);
 
-            mockEvaluator.getInputType.andReturn('text');
-            mockEvaluator.getInputCount.andReturn(2);
+            mockEvaluator.getInputType.and.returnValue('text');
+            mockEvaluator.getInputCount.and.returnValue(2);
             testCondition.config.values = [];
             testCondition.generateValueInputs('');
             expect($('input', mockContainer).eq(0).prop('value')).toEqual('');
@@ -129,8 +129,8 @@ define(['../src/Condition', 'zepto'], function (Condition, $) {
 
         it('responds to a change in its value inputs', function () {
             mockContainer.append(testCondition.getDOM());
-            mockEvaluator.getInputType.andReturn('number');
-            mockEvaluator.getInputCount.andReturn(3);
+            mockEvaluator.getInputType.and.returnValue('number');
+            mockEvaluator.getInputCount.and.returnValue(3);
             testCondition.generateValueInputs('');
             $('input', mockContainer).eq(1).prop('value', 9001);
             $('input', mockContainer).eq(1).trigger('input');

@@ -66,11 +66,11 @@ define(
                     editor: mockEditor
                 };
 
-                mockDomainObject.getCapability.andCallFake(function (name) {
+                mockDomainObject.getCapability.and.callFake(function (name) {
                     return capabilities[name];
                 });
-                mockDomainObject.hasCapability.andReturn(true);
-                mockType.hasFeature.andReturn(true);
+                mockDomainObject.hasCapability.and.returnValue(true);
+                mockType.hasFeature.and.returnValue(true);
 
                 actionContext = { domainObject: mockDomainObject };
 
@@ -92,9 +92,9 @@ define(
             });
 
             it("is only applicable to objects not already in edit mode", function () {
-                mockEditor.isEditContextRoot.andReturn(false);
+                mockEditor.isEditContextRoot.and.returnValue(false);
                 expect(EditAction.appliesTo(actionContext)).toBe(true);
-                mockEditor.isEditContextRoot.andReturn(true);
+                mockEditor.isEditContextRoot.and.returnValue(true);
                 expect(EditAction.appliesTo(actionContext)).toBe(false);
             });
 

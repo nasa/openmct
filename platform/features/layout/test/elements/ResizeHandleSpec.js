@@ -46,9 +46,9 @@ define(
                     'getMinWidth',
                     'getMinHeight'
                 ]);
-                mockElementProxy.getGridSize.andReturn(TEST_GRID_SIZE);
-                mockElementProxy.getMinWidth.andReturn(TEST_MIN_WIDTH);
-                mockElementProxy.getMinHeight.andReturn(TEST_MIN_HEIGHT);
+                mockElementProxy.getGridSize.and.returnValue(TEST_GRID_SIZE);
+                mockElementProxy.getMinWidth.and.returnValue(TEST_MIN_WIDTH);
+                mockElementProxy.getMinHeight.and.returnValue(TEST_MIN_HEIGHT);
 
                 handle = new ResizeHandle(
                     mockElementProxy,

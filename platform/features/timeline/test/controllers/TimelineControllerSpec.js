@@ -69,7 +69,7 @@ define(
             }
 
             function fireWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$watch.calls.all().forEach(function (call) {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
@@ -114,23 +114,23 @@ define(
 
                 mockScope.domainObject = mockDomainObject;
                 mockScope.configuration = testConfiguration;
-                mockQ.when.andCallFake(asPromise);
-                mockQ.all.andCallFake(allPromises);
-                mockA.getId.andReturn('a');
-                mockA.getModel.andReturn(testModels.a);
-                mockB.getId.andReturn('b');
-                mockB.getModel.andReturn(testModels.b);
-                mockA.useCapability.andCallFake(useCapability);
-                mockB.useCapability.andCallFake(useCapability);
-                mockA.hasCapability.andReturn(true);
-                mockB.hasCapability.andReturn(true);
-                mockA.getCapability.andCallFake(getCapability);
-                mockB.getCapability.andCallFake(getCapability);
-                mockSpan.getStart.andReturn(42);
-                mockSpan.getEnd.andReturn(12321);
-                mockUtilization.resources.andReturn(['abc', 'xyz']);
-                mockUtilization.utilization.andReturn(mockPromise);
-                mockLoader.load.andCallFake(function () {
+                mockQ.when.and.callFake(asPromise);
+                mockQ.all.and.callFake(allPromises);
+                mockA.getId.and.returnValue('a');
+                mockA.getModel.and.returnValue(testModels.a);
+                mockB.getId.and.returnValue('b');
+                mockB.getModel.and.returnValue(testModels.b);
+                mockA.useCapability.and.callFake(useCapability);
+                mockB.useCapability.and.callFake(useCapability);
+                mockA.hasCapability.and.returnValue(true);
+                mockB.hasCapability.and.returnValue(true);
+                mockA.getCapability.and.callFake(getCapability);
+                mockB.getCapability.and.callFake(getCapability);
+                mockSpan.getStart.and.returnValue(42);
+                mockSpan.getEnd.and.returnValue(12321);
+                mockUtilization.resources.and.returnValue(['abc', 'xyz']);
+                mockUtilization.utilization.and.returnValue(mockPromise);
+                mockLoader.load.and.callFake(function () {
                     return asPromise(subgraph(mockA, {
                         a: mockA,
                         b: mockB
@@ -160,7 +160,7 @@ define(
                 var fnWatchCall;
 
                 // Find the $watch that was given a function
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$watch.calls.all().forEach(function (call) {
                     if (typeof call.args[0] === 'function') {
                         // white-box: we know the first call is
                         // the one we're looking for
@@ -197,17 +197,17 @@ define(
                 expect(controller.graphs().length).toEqual(0);
 
                 // Execute the watch function for graph state
-                tmp = mockScope.$watch.calls[3].args[0]();
+                tmp = mockScope.$watch.calls.all()[3].args[0]();
 
                 // Change graph state
                 testConfiguration.graph = { a: true, b: true };
 
                 // Verify that this would have triggered a watch
-                expect(mockScope.$watch.calls[3].args[0]())
+                expect(mockScope.$watch.calls.all()[3].args[0]())
                     .not.toEqual(tmp);
 
                 // Run the function the watch would have triggered
-                mockScope.$watch.calls[3].args[1]();
+                mockScope.$watch.calls.all()[3].args[1]();
 
                 // Should have some graphs now
                 expect(controller.graphs().length).toEqual(2);

@@ -32,7 +32,7 @@ define([
     var conductorTOIController;
 
     function getNamedCallback(thing, name) {
-        return thing.calls.filter(function (call) {
+        return thing.calls.all().filter(function (call) {
             return call.args[0] === name;
         }).map(function (call) {
             return call.args;
@@ -72,35 +72,35 @@ define([
                     start: 0,
                     end: 200
                 };
-                mockConductor.bounds.andReturn(bounds);
+                mockConductor.bounds.and.returnValue(bounds);
                 toiCallback = getNamedCallback(mockConductor.on, "timeOfInterest");
             });
 
             it("calculates the correct horizontal offset based on bounds and current TOI", function () {
                 //Expect time of interest position to be 50% of element width
-                mockConductor.timeOfInterest.andReturn(100);
+                mockConductor.timeOfInterest.and.returnValue(100);
                 toiCallback();
                 expect(conductorTOIController.left).toBe(50);
 
                 //Expect time of interest position to be 25% of element width
-                mockConductor.timeOfInterest.andReturn(50);
+                mockConductor.timeOfInterest.and.returnValue(50);
                 toiCallback();
                 expect(conductorTOIController.left).toBe(25);
 
                 //Expect time of interest position to be 0% of element width
-                mockConductor.timeOfInterest.andReturn(0);
+                mockConductor.timeOfInterest.and.returnValue(0);
                 toiCallback();
                 expect(conductorTOIController.left).toBe(0);
 
                 //Expect time of interest position to be 100% of element width
-                mockConductor.timeOfInterest.andReturn(200);
+                mockConductor.timeOfInterest.and.returnValue(200);
                 toiCallback();
                 expect(conductorTOIController.left).toBe(100);
             });
 
             it("renders the TOI indicator visible", function () {
                 expect(conductorTOIController.pinned).toBeFalsy();
-                mockConductor.timeOfInterest.andReturn(100);
+                mockConductor.timeOfInterest.and.returnValue(100);
                 toiCallback();
                 expect(conductorTOIController.pinned).toBe(true);
             });
@@ -116,7 +116,7 @@ define([
             expect(mockConductorViewService.on).toHaveBeenCalledWith("zoom", jasmine.any(Function));
 
             // Should correspond to horizontal offset of 50%
-            mockConductor.timeOfInterest.andReturn(750);
+            mockConductor.timeOfInterest.and.returnValue(750);
             var zoomCallback = getNamedCallback(mockConductorViewService.on, "zoom");
             zoomCallback(mockZoom);
             expect(conductorTOIController.left).toBe(50);
@@ -131,7 +131,7 @@ define([
             expect(mockConductorViewService.on).toHaveBeenCalledWith("pan", jasmine.any(Function));
 
             // Should correspond to horizontal offset of 25%
-            mockConductor.timeOfInterest.andReturn(1500);
+            mockConductor.timeOfInterest.and.returnValue(1500);
             var panCallback = getNamedCallback(mockConductorViewService.on, "pan");
             panCallback(mockPanBounds);
             expect(conductorTOIController.left).toBe(25);

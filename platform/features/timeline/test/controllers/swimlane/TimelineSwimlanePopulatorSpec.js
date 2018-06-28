@@ -47,9 +47,9 @@ define(
                     ['getId', 'getModel', 'getCapability', 'useCapability']
                 );
 
-                mockDomainObj.getId.andReturn(id);
-                mockDomainObj.getModel.andReturn({ composition: composition });
-                mockDomainObj.useCapability.andReturn(asPromise(false));
+                mockDomainObj.getId.and.returnValue(id);
+                mockDomainObj.getModel.and.returnValue({ composition: composition });
+                mockDomainObj.useCapability.and.returnValue(asPromise(false));
 
                 return mockDomainObj;
             }
@@ -84,7 +84,7 @@ define(
 
                 testConfiguration = {};
 
-                mockLoader.load.andReturn(asPromise(subgraph(
+                mockLoader.load.and.returnValue(asPromise(subgraph(
                     mockDomainObject,
                     mockDomainObjects
                 )));
@@ -129,7 +129,7 @@ define(
                 populator.populate(mockDomainObject);
 
                 // Act as if something is already selected
-                mockSelection.get.andReturn(populator.get()[1]);
+                mockSelection.get.and.returnValue(populator.get()[1]);
 
                 // Verify precondition
                 expect(mockSelection.select).not.toHaveBeenCalled();
@@ -139,7 +139,7 @@ define(
 
                 // Selection should have been preserved
                 expect(mockSelection.select).toHaveBeenCalled();
-                expect(mockSelection.select.mostRecentCall.args[0].domainObject)
+                expect(mockSelection.select.calls.mostRecent().args[0].domainObject)
                     .toEqual(mockDomainObjects.b);
             });
 

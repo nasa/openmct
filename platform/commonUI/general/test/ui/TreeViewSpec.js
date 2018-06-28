@@ -26,7 +26,7 @@ define([
     'zepto'
 ], function (TreeView, $) {
 
-    fdescribe("TreeView", function () {
+    describe("TreeView", function () {
         var mockGestureService,
             mockGestureHandle,
             mockDomainObject,

@@ -61,7 +61,7 @@ define(
                 );
 
                 // Should have been warned exactly twice (for d & e)
-                expect(mockLog.warn.calls.length).toEqual(2);
+                expect(mockLog.warn.calls.count()).toEqual(2);
             });
 
         });

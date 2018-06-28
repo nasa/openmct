@@ -48,7 +48,7 @@ define(
                 testModel = { number: 6 };
                 topic = new Topic();
                 mockNow = jasmine.createSpy('now');
-                mockNow.andReturn(12321);
+                mockNow.and.returnValue(12321);
                 mutation = new MutationCapability(
                     topic,
                     mockNow,
@@ -105,7 +105,7 @@ define(
                     m.number = 8;
                 });
                 expect(mockCallback).toHaveBeenCalled();
-                expect(mockCallback.mostRecentCall.args[0].number)
+                expect(mockCallback.calls.mostRecent().args[0].number)
                     .toEqual(8);
             });
 
@@ -130,7 +130,7 @@ define(
                     m.number = 8;
                 });
                 expect(mockCallback).toHaveBeenCalled();
-                expect(mockCallback.mostRecentCall.args[0].number)
+                expect(mockCallback.calls.mostRecent().args[0].number)
                     .toEqual(8);
             });
         });

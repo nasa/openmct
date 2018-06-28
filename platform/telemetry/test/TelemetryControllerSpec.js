@@ -68,23 +68,23 @@ define(
                 );
                 mockUnsubscribe = jasmine.createSpy("unsubscribe");
 
-                mockQ.when.andCallFake(mockPromise);
-                mockQ.all.andReturn(mockPromise([mockDomainObject]));
+                mockQ.when.and.callFake(mockPromise);
+                mockQ.all.and.returnValue(mockPromise([mockDomainObject]));
 
-                mockDomainObject.getId.andReturn("testId");
-                mockDomainObject.getModel.andReturn({ name: "TEST" });
-                mockDomainObject.useCapability.andReturn([]);
-                mockDomainObject.hasCapability.andReturn(true);
-                mockDomainObject.getCapability.andReturn(mockTelemetry);
+                mockDomainObject.getId.and.returnValue("testId");
+                mockDomainObject.getModel.and.returnValue({ name: "TEST" });
+                mockDomainObject.useCapability.and.returnValue([]);
+                mockDomainObject.hasCapability.and.returnValue(true);
+                mockDomainObject.getCapability.and.returnValue(mockTelemetry);
 
-                mockTelemetry.getMetadata.andReturn({
+                mockTelemetry.getMetadata.and.returnValue({
                     source: "testSource",
                     key: "testKey"
                 });
-                mockTelemetry.requestData.andReturn(mockPromise({
+                mockTelemetry.requestData.and.returnValue(mockPromise({
                     telemetryKey: "some value"
                 }));
-                mockTelemetry.subscribe.andReturn(mockUnsubscribe);
+                mockTelemetry.subscribe.and.returnValue(mockUnsubscribe);
 
                 controller = new TelemetryController(
                     mockScope,
@@ -113,7 +113,7 @@ define(
 
                 // Tick the clock; should issue a new request, with
                 // the new interval
-                mockTimeout.mostRecentCall.args[0]();
+                mockTimeout.calls.mostRecent().args[0]();
 
                 expect(mockTimeout).toHaveBeenCalledWith(
                     jasmine.any(Function),
@@ -123,23 +123,23 @@ define(
 
             it("requests data from domain objects", function () {
                 // Push into the scope...
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
 
                 expect(mockTelemetry.requestData).toHaveBeenCalled();
             });
 
             it("logs a warning if no telemetry capability exists", function () {
-                mockDomainObject.getCapability.andReturn(undefined);
+                mockDomainObject.getCapability.and.returnValue(undefined);
 
                 // Push into the scope...
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
 
                 expect(mockLog.warn).toHaveBeenCalled();
             });
 
             it("provides telemetry metadata", function () {
                 // Push into the scope...
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
 
                 expect(controller.getMetadata()).toEqual([
                     { source: "testSource", key: "testKey" }
@@ -148,7 +148,7 @@ define(
 
             it("provides telemetry-possessing domain objects", function () {
                 // Push into the scope...
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
 
                 expect(controller.getTelemetryObjects())
                     .toEqual([mockDomainObject]);
@@ -156,7 +156,7 @@ define(
 
             it("provides telemetry data", function () {
                 // Push into the scope...
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
 
                 expect(controller.getResponse())
                     .toEqual([{telemetryKey: "some value"}]);
@@ -164,7 +164,7 @@ define(
 
             it("provides telemetry data per-id", function () {
                 // Push into the scope...
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
 
                 expect(controller.getResponse("testId"))
                     .toEqual({telemetryKey: "some value"});
@@ -176,7 +176,7 @@ define(
 
             it("allows a request to be specified", function () {
                 // Push into the scope...
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
 
                 controller.requestData({ someKey: "some request" });
 
@@ -187,7 +187,7 @@ define(
 
             it("allows an object to be removed from scope", function () {
                 // Push into the scope...
-                mockScope.$watch.mostRecentCall.args[1](undefined);
+                mockScope.$watch.calls.mostRecent().args[1](undefined);
 
                 expect(controller.getTelemetryObjects())
                     .toEqual([]);
@@ -195,14 +195,14 @@ define(
 
             it("broadcasts when telemetry is available", function () {
                 // Push into the scope...
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
                 controller.requestData({ someKey: "some request" });
 
                 // Verify precondition
                 expect(mockScope.$broadcast).not.toHaveBeenCalled();
 
                 // Call the broadcast timeout
-                mockTimeout.mostRecentCall.args[0]();
+                mockTimeout.calls.mostRecent().args[0]();
 
                 // Should have broadcast a telemetryUpdate
                 expect(mockScope.$broadcast)
@@ -211,12 +211,12 @@ define(
 
             it("subscribes for streaming telemetry updates", function () {
                 // Push into scope to create subscriptions
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
                 // Should have subscribed
                 expect(mockTelemetry.subscribe)
                     .toHaveBeenCalledWith(jasmine.any(Function));
                 // Invoke the subscriber function (for coverage)
-                mockTelemetry.subscribe.mostRecentCall.args[0]({});
+                mockTelemetry.subscribe.calls.mostRecent().args[0]({});
             });
 
             it("listens for scope destruction to clean up", function () {
@@ -224,15 +224,15 @@ define(
                     "$destroy",
                     jasmine.any(Function)
                 );
-                mockScope.$on.mostRecentCall.args[1]();
+                mockScope.$on.calls.mostRecent().args[1]();
             });
 
             it("unsubscribes when destroyed", function () {
                 // Push into scope to create subscriptions
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
 
                 // Invoke "$destroy" listener
-                mockScope.$on.mostRecentCall.args[1]();
+                mockScope.$on.calls.mostRecent().args[1]();
 
                 // Should have unsubscribed
                 expect(mockUnsubscribe).toHaveBeenCalled();

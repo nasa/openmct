@@ -95,13 +95,13 @@ define(
                         "removeListener"
                     ]
                 );
-                mockNavigationService.getNavigation.andReturn(mockDomainObject);
+                mockNavigationService.getNavigation.and.returnValue(mockDomainObject);
 
 
-                mockDomainObject.getId.andReturn("test");
-                mockDomainObject.getCapability.andReturn(mockContext);
-                mockContext.getParent.andReturn(mockParent);
-                mockType.hasFeature.andReturn(true);
+                mockDomainObject.getId.and.returnValue("test");
+                mockDomainObject.getCapability.and.returnValue(mockContext);
+                mockContext.getParent.and.returnValue(mockParent);
+                mockType.hasFeature.and.returnValue(true);
 
                 capabilities = {
                     mutation: mockMutation,
@@ -119,7 +119,7 @@ define(
             it("only applies to objects with parents", function () {
                 expect(RemoveAction.appliesTo(actionContext)).toBeTruthy();
 
-                mockContext.getParent.andReturn(undefined);
+                mockContext.getParent.and.returnValue(undefined);
 
                 expect(RemoveAction.appliesTo(actionContext)).toBeFalsy();
 
@@ -136,7 +136,7 @@ define(
             it("changes composition from its mutation function", function () {
                 var mutator, result;
                 action.perform();
-                mutator = mockMutation.invoke.mostRecentCall.args[0];
+                mutator = mockMutation.invoke.calls.mostRecent().args[0];
                 result = mutator(model);
 
                 // Should not have cancelled the mutation
@@ -153,22 +153,22 @@ define(
 
             it("removes parent of object currently navigated to", function () {
                 // Navigates to child object
-                mockNavigationService.getNavigation.andReturn(mockChildObject);
+                mockNavigationService.getNavigation.and.returnValue(mockChildObject);
 
                 // Test is id of object being removed
                 // Child object has different id
-                mockDomainObject.getId.andReturn("test");
-                mockChildObject.getId.andReturn("not test");
+                mockDomainObject.getId.and.returnValue("test");
+                mockChildObject.getId.and.returnValue("not test");
 
                 // Sets context for the child and domainObject
-                mockDomainObject.getCapability.andReturn(mockContext);
-                mockChildObject.getCapability.andReturn(mockChildContext);
+                mockDomainObject.getCapability.and.returnValue(mockContext);
+                mockChildObject.getCapability.and.returnValue(mockChildContext);
 
                 // Parents of child and domainObject are set
-                mockContext.getParent.andReturn(mockParent);
-                mockChildContext.getParent.andReturn(mockDomainObject);
+                mockContext.getParent.and.returnValue(mockParent);
+                mockChildContext.getParent.and.returnValue(mockDomainObject);
 
-                mockType.hasFeature.andReturn(true);
+                mockType.hasFeature.and.returnValue(true);
 
                 action.perform();
 
@@ -178,25 +178,25 @@ define(
 
             it("checks if removing object not in ascendent path (reaches ROOT)", function () {
                 // Navigates to grandchild of ROOT
-                mockNavigationService.getNavigation.andReturn(mockGrandchildObject);
+                mockNavigationService.getNavigation.and.returnValue(mockGrandchildObject);
 
                 // domainObject (grandparent) is set as ROOT, child and grandchild
                 // are set objects not being removed
-                mockDomainObject.getId.andReturn("test 1");
-                mockRootObject.getId.andReturn("ROOT");
-                mockChildObject.getId.andReturn("not test 2");
-                mockGrandchildObject.getId.andReturn("not test 3");
+                mockDomainObject.getId.and.returnValue("test 1");
+                mockRootObject.getId.and.returnValue("ROOT");
+                mockChildObject.getId.and.returnValue("not test 2");
+                mockGrandchildObject.getId.and.returnValue("not test 3");
 
                 // Sets context for the grandchild, child, and domainObject
-                mockRootObject.getCapability.andReturn(mockRootContext);
-                mockChildObject.getCapability.andReturn(mockChildContext);
-                mockGrandchildObject.getCapability.andReturn(mockGrandchildContext);
+                mockRootObject.getCapability.and.returnValue(mockRootContext);
+                mockChildObject.getCapability.and.returnValue(mockChildContext);
+                mockGrandchildObject.getCapability.and.returnValue(mockGrandchildContext);
 
                 // Parents of grandchild and child are set
-                mockChildContext.getParent.andReturn(mockRootObject);
-                mockGrandchildContext.getParent.andReturn(mockChildObject);
+                mockChildContext.getParent.and.returnValue(mockRootObject);
+                mockGrandchildContext.getParent.and.returnValue(mockChildObject);
 
-                mockType.hasFeature.andReturn(true);
+                mockType.hasFeature.and.returnValue(true);
 
                 action.perform();
 

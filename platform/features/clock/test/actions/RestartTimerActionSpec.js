@@ -58,13 +58,13 @@ define(
                     ['getCapability', 'useCapability', 'getModel']
                 );
 
-                mockDomainObject.useCapability.andCallFake(function (c, v) {
+                mockDomainObject.useCapability.and.callFake(function (c, v) {
                     if (c === 'mutation') {
                         testModel = v(testModel) || testModel;
                         return asPromise(true);
                     }
                 });
-                mockDomainObject.getModel.andCallFake(function () {
+                mockDomainObject.getModel.and.callFake(function () {
                     return testModel;
                 });
 
@@ -76,7 +76,7 @@ define(
 
             it("updates the model with a timestamp", function () {
                 testModel.pausedTime = 12000;
-                mockNow.andReturn(12000);
+                mockNow.and.returnValue(12000);
                 action.perform();
                 expect(testModel.timestamp).toEqual(12000);
             });

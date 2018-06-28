@@ -34,7 +34,7 @@ define(
                     ["trustAsResourceUrl"]
                 );
 
-                mockSCE.trustAsResourceUrl.andCallFake(function (v) {
+                mockSCE.trustAsResourceUrl.and.callFake(function (v) {
                     return v;
                 });
 

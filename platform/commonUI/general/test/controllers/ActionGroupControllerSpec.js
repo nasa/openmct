@@ -34,7 +34,7 @@ define(
                     "action" + index,
                     ["perform", "getMetadata"]
                 );
-                action.getMetadata.andReturn(metadata);
+                action.getMetadata.and.returnValue(metadata);
                 return action;
             }
 
@@ -61,7 +61,7 @@ define(
                 mockScope.action = mockActions;
                 mockScope.parameters = { category: "test" };
 
-                mockActions.getActions.andReturn([
+                mockActions.getActions.and.returnValue([
                     { group: "a", someKey: 0 },
                     { group: "a", someKey: 1 },
                     { group: "b", someKey: 2 },
@@ -74,7 +74,7 @@ define(
                 ].map(mockAction));
 
                 // Call the watch
-                mockScope.$watch.mostRecentCall.args[1]();
+                mockScope.$watch.calls.mostRecent().args[1]();
 
                 // Should have grouped and ungrouped actions in scope now
                 expect(mockScope.groups.length).toEqual(2);
@@ -85,7 +85,7 @@ define(
 
             it("provides empty arrays when no action capability is available", function () {
                 // Call the watch
-                mockScope.$watch.mostRecentCall.args[1]();
+                mockScope.$watch.calls.mostRecent().args[1]();
 
                 expect(mockScope.groups.length).toEqual(0);
                 expect(mockScope.ungrouped.length).toEqual(0);

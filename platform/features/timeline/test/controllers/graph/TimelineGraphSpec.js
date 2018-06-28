@@ -59,10 +59,10 @@ define(
                         'domainObject-' + k,
                         ['getCapability', 'useCapability']
                     );
-                    mockDomainObjects[k].useCapability.andReturn(asPromise({
+                    mockDomainObjects[k].useCapability.and.returnValue(asPromise({
                         testResource: mockGraph
                     }));
-                    mockGraph.getPointCount.andReturn(i + 2);
+                    mockGraph.getPointCount.and.returnValue(i + 2);
                     mockGraph.testField = k;
                     mockGraph.testIndex = i;
 
@@ -75,7 +75,7 @@ define(
                     ['render', 'decode']
                 );
 
-                mockRenderer.render.andCallFake(function (utilization) {
+                mockRenderer.render.and.callFake(function (utilization) {
                     var result = [];
                     while (result.length < (utilization.testIndex + 2) * 2) {
                         result.push(Math.floor(result.length / 2));
@@ -88,7 +88,7 @@ define(
                     return result;
                 });
 
-                mockRenderer.decode.andCallFake(function (color) {
+                mockRenderer.decode.and.callFake(function (color) {
                     return testColors[color];
                 });
 
@@ -114,7 +114,7 @@ define(
                 expect(graph.drawingObject.lines).toEqual([
                     {
                         color: testColors.a,
-                        buffer: [0, 0, 1, 0],
+                        buffer: [0, 0, 1, -0],
                         points: 2
                     },
                     {
@@ -138,7 +138,7 @@ define(
 
             it("provides a minimum/maximum even with no data", function () {
                 mockGraphs.forEach(function (mockGraph) {
-                    mockGraph.getPointCount.andReturn(0);
+                    mockGraph.getPointCount.and.returnValue(0);
                 });
 
                 // Create a graph of these utilizations

@@ -42,7 +42,7 @@ define(
                 );
 
                 mockSwimlane.domainObject = mockDomainObject;
-                mockObjectLoader.load.andReturn(mockPromise);
+                mockObjectLoader.load.and.returnValue(mockPromise);
 
                 populator = new TimelineDragPopulator(mockObjectLoader);
             });

@@ -47,7 +47,7 @@ define(
                 // not intended usage.)
                 mutatorModel = JSON.parse(JSON.stringify(testModel));
                 mockMutation = jasmine.createSpyObj("mutation", ["mutate"]);
-                mockMutation.mutate.andCallFake(function (mutator) {
+                mockMutation.mutate.and.callFake(function (mutator) {
                     mutator(mutatorModel);
                 });
                 timespan = new ActivityTimespan(testModel, mockMutation);

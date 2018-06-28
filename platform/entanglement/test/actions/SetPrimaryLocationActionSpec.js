@@ -43,7 +43,7 @@ define(
                     ['setPrimaryLocation', 'getContextualLocation']
                 );
 
-                mockLocationCapability.getContextualLocation.andReturn(testId);
+                mockLocationCapability.getContextualLocation.and.returnValue(testId);
 
                 testContext = {
                     domainObject: domainObjectFactory({
@@ -58,7 +58,7 @@ define(
             it("is applicable to objects with no location specified", function () {
                 expect(SetPrimaryLocation.appliesTo(testContext))
                     .toBe(true);
-                testContext.domainObject.getModel.andReturn({
+                testContext.domainObject.getModel.and.returnValue({
                     location: "something",
                     name: "some name"
                 });

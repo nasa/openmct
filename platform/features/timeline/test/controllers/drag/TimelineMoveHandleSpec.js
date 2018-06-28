@@ -44,21 +44,21 @@ define(
                     ['toMillis', 'toPixels']
                 );
 
-                mockDragHandler.start.andReturn(12321);
-                mockDragHandler.duration.andReturn(4200);
-                mockDragHandler.end.andReturn(12321 + 4200);
+                mockDragHandler.start.and.returnValue(12321);
+                mockDragHandler.duration.and.returnValue(4200);
+                mockDragHandler.end.and.returnValue(12321 + 4200);
 
                 // Echo back the value from snapper for most tests
-                mockSnapHandler.snap.andCallFake(function (ts) {
+                mockSnapHandler.snap.and.callFake(function (ts) {
                     return ts;
                 });
 
                 // Double pixels to get millis, for test purposes
-                mockZoomController.toMillis.andCallFake(function (px) {
+                mockZoomController.toMillis.and.callFake(function (px) {
                     return px * 2;
                 });
 
-                mockZoomController.toPixels.andCallFake(function (ms) {
+                mockZoomController.toPixels.and.callFake(function (ms) {
                     return ms / 2;
                 });
 
@@ -100,8 +100,8 @@ define(
                 );
 
                 // Reflect the change from the drag handler
-                mockDragHandler.start.andReturn(12521);
-                mockDragHandler.end.andReturn(12521 + 4200);
+                mockDragHandler.start.and.returnValue(12521);
+                mockDragHandler.end.and.returnValue(12521 + 4200);
 
                 // ....followed by a +100 ms change.
                 handle.drag(150, mockZoomController);
@@ -112,7 +112,7 @@ define(
             });
 
             it("snaps drags to other end points", function () {
-                mockSnapHandler.snap.andCallFake(function (ts) {
+                mockSnapHandler.snap.and.callFake(function (ts) {
                     return ts + 10;
                 });
                 handle.begin();
@@ -129,7 +129,7 @@ define(
                 handle.begin();
                 expect(mockSnapHandler.snap).not.toHaveBeenCalled();
                 handle.drag(100, mockZoomController);
-                expect(mockSnapHandler.snap.calls.length).toEqual(2);
+                expect(mockSnapHandler.snap.calls.count()).toEqual(2);
             });
 
             it("chooses the closest snap-to location", function () {
@@ -139,7 +139,7 @@ define(
                 // regardless of whether it is the start/end (which
                 // will vary based on the initial state of this toggle.)
                 var toggle = false;
-                mockSnapHandler.snap.andCallFake(function (ts) {
+                mockSnapHandler.snap.and.callFake(function (ts) {
                     toggle = !toggle;
                     return ts + (toggle ? -5 : 10);
                 });
@@ -151,8 +151,8 @@ define(
                 );
 
                 // Reflect the change from the drag handler
-                mockDragHandler.start.andReturn(12521 - 5);
-                mockDragHandler.end.andReturn(12521 + 4200 - 5);
+                mockDragHandler.start.and.returnValue(12521 - 5);
+                mockDragHandler.end.and.returnValue(12521 + 4200 - 5);
 
                 toggle = true; // Change going-in state
                 handle.drag(300, mockZoomController);

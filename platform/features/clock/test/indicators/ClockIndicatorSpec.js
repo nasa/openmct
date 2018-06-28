@@ -37,13 +37,13 @@ define(
                 mockTicker = jasmine.createSpyObj('ticker', ['listen']);
                 mockUnticker = jasmine.createSpy('unticker');
 
-                mockTicker.listen.andReturn(mockUnticker);
+                mockTicker.listen.and.returnValue(mockUnticker);
 
                 indicator = new ClockIndicator(mockTicker, TEST_FORMAT);
             });
 
             it("displays the current time", function () {
-                mockTicker.listen.mostRecentCall.args[0](TEST_TIMESTAMP);
+                mockTicker.listen.calls.mostRecent().args[0](TEST_TIMESTAMP);
                 expect(indicator.getText()).toEqual("2015-154 17:56:14 UTC");
             });
 

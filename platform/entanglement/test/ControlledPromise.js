@@ -31,7 +31,7 @@ define(
         function ControlledPromise() {
             this.resolveHandlers = [];
             this.rejectHandlers = [];
-            spyOn(this, 'then').andCallThrough();
+            spyOn(this, 'then').and.callThrough();
         }
 
 

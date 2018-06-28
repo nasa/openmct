@@ -72,7 +72,7 @@ define(
                     }
                 };
 
-                mockObjectService.getObjects.andReturn(mockPromise([]));
+                mockObjectService.getObjects.and.returnValue(mockPromise([]));
 
                 composition = new CompositionCapability(
                     mockInjector,
@@ -90,7 +90,7 @@ define(
             it("requests ids found in model's composition from the object service", function () {
                 var ids = ["a", "b", "c", "xyz"];
 
-                mockDomainObject.getModel.andReturn({ composition: ids });
+                mockDomainObject.getModel.and.returnValue({ composition: ids });
 
                 composition.invoke();
 
@@ -101,9 +101,9 @@ define(
                 var result,
                     mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
 
-                mockDomainObject.getModel.andReturn({ composition: ["x"] });
-                mockObjectService.getObjects.andReturn(mockPromise({x: mockChild}));
-                mockChild.getCapability.andReturn(undefined);
+                mockDomainObject.getModel.and.returnValue({ composition: ["x"] });
+                mockObjectService.getObjects.and.returnValue(mockPromise({x: mockChild}));
+                mockChild.getCapability.and.returnValue(undefined);
 
                 composition.invoke().then(function (c) {
                     result = c;
@@ -119,12 +119,12 @@ define(
                     testModel = { composition: [] },
                     mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
 
-                mockDomainObject.getModel.andReturn(testModel);
-                mockObjectService.getObjects.andReturn(mockPromise({a: mockChild}));
-                mockChild.getCapability.andReturn(undefined);
-                mockChild.getId.andReturn('a');
+                mockDomainObject.getModel.and.returnValue(testModel);
+                mockObjectService.getObjects.and.returnValue(mockPromise({a: mockChild}));
+                mockChild.getCapability.and.returnValue(undefined);
+                mockChild.getId.and.returnValue('a');
 
-                mockDomainObject.useCapability.andCallFake(function (key, mutator) {
+                mockDomainObject.useCapability.and.callFake(function (key, mutator) {
                     if (key === 'mutation') {
                         mutator(testModel);
                         return mockPromise(true);
@@ -149,12 +149,12 @@ define(
                     testModel = { composition: ['a'] },
                     mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
 
-                mockDomainObject.getModel.andReturn(testModel);
-                mockObjectService.getObjects.andReturn(mockPromise({a: mockChild}));
-                mockChild.getCapability.andReturn(undefined);
-                mockChild.getId.andReturn('a');
+                mockDomainObject.getModel.and.returnValue(testModel);
+                mockObjectService.getObjects.and.returnValue(mockPromise({a: mockChild}));
+                mockChild.getCapability.and.returnValue(undefined);
+                mockChild.getId.and.returnValue('a');
 
-                mockDomainObject.useCapability.andCallFake(function (key, mutator) {
+                mockDomainObject.useCapability.and.callFake(function (key, mutator) {
                     if (key === 'mutation') {
                         mutator(testModel);
                         return mockPromise(true);
@@ -180,12 +180,12 @@ define(
                     testModel = { composition: ['a', 'b', 'c'] },
                     mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
 
-                mockDomainObject.getModel.andReturn(testModel);
-                mockObjectService.getObjects.andReturn(mockPromise({a: mockChild}));
-                mockChild.getCapability.andReturn(undefined);
-                mockChild.getId.andReturn('a');
+                mockDomainObject.getModel.and.returnValue(testModel);
+                mockObjectService.getObjects.and.returnValue(mockPromise({a: mockChild}));
+                mockChild.getCapability.and.returnValue(undefined);
+                mockChild.getId.and.returnValue('a');
 
-                mockDomainObject.useCapability.andCallFake(function (key, mutator) {
+                mockDomainObject.useCapability.and.callFake(function (key, mutator) {
                     if (key === 'mutation') {
                         mutator(testModel);
                         return mockPromise(true);

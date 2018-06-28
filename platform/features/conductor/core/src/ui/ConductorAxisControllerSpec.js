@@ -45,7 +45,7 @@ define([
             mockFormat;
 
         function getCallback(target, name) {
-            return target.calls.filter(function (call) {
+            return target.calls.all().filter(function (call) {
                 return call.args[0] === name;
             })[0].args[1];
         }
@@ -74,7 +74,7 @@ define([
                 "off",
                 "clock"
             ]);
-            mockConductor.bounds.andReturn(mockBounds);
+            mockConductor.bounds.and.returnValue(mockBounds);
 
             mockFormatService = jasmine.createSpyObj("formatService", [
                 "getFormat"
@@ -86,8 +86,8 @@ define([
                 "emit"
             ]);
 
-            spyOn(d3Scale, 'scaleUtc').andCallThrough();
-            spyOn(d3Scale, 'scaleLinear').andCallThrough();
+            spyOn(d3Scale, 'scaleUtc').and.callThrough();
+            spyOn(d3Scale, 'scaleLinear').and.callThrough();
 
             element = $('<div style="width: 100px;"><div style="width: 100%;"></div></div>');
             $(document).find('body').append(element);
@@ -100,8 +100,8 @@ define([
             ]);
 
             mockTimeSystem.timeFormat = "mockFormat";
-            mockFormatService.getFormat.andReturn(mockFormat);
-            mockConductor.timeSystem.andReturn(mockTimeSystem);
+            mockFormatService.getFormat.and.returnValue(mockFormat);
+            mockConductor.timeSystem.and.returnValue(mockTimeSystem);
             mockTimeSystem.isUTCBased = false;
         });
 
@@ -148,19 +148,19 @@ define([
             it('responds to zoom events', function () {
                 expect(mockConductorViewService.on).toHaveBeenCalledWith("zoom", controller.onZoom);
                 var cb = getCallback(mockConductorViewService.on, "zoom");
-                spyOn(controller, 'setScale').andCallThrough();
+                spyOn(controller, 'setScale').and.callThrough();
                 cb({bounds: {start: 0, end: 100}});
                 expect(controller.setScale).toHaveBeenCalled();
             });
 
             it('adjusts scale on pan', function () {
-                spyOn(controller, 'setScale').andCallThrough();
+                spyOn(controller, 'setScale').and.callThrough();
                 controller.pan(100);
                 expect(controller.setScale).toHaveBeenCalled();
             });
 
             it('emits event on pan', function () {
-                spyOn(controller, 'setScale').andCallThrough();
+                spyOn(controller, 'setScale').and.callThrough();
                 controller.pan(100);
                 expect(mockConductorViewService.emit).toHaveBeenCalledWith("pan", jasmine.any(Object));
             });

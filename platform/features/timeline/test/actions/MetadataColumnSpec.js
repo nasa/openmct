@@ -54,7 +54,7 @@ define(
                     testIndex = 1;
                     testMetadata[testIndex].name = testName;
 
-                    mockDomainObject.useCapability.andCallFake(function (c) {
+                    mockDomainObject.useCapability.and.callFake(function (c) {
                         return (c === 'metadata') && testMetadata;
                     });
                 });

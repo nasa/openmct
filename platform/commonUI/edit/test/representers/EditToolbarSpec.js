@@ -41,13 +41,13 @@ define(
             beforeEach(function () {
                 mockOpenMCT = jasmine.createSpy('openmct', ['objects']);
                 mockObjects = jasmine.createSpyObj('objects', ['observe']);
-                mockObjects.observe.andReturn();
+                mockObjects.observe.and.returnValue();
                 mockOpenMCT.objects = mockObjects;
                 mockScope = jasmine.createSpyObj("$scope", [
                     "$watchCollection",
                     "$on"
                 ]);
-                mockScope.$watchCollection.andReturn();
+                mockScope.$watchCollection.and.returnValue();
                 mockDomainObject = jasmine.createSpyObj("domainObject", [
                     'identifier'
                 ]);
