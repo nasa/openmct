@@ -33,12 +33,6 @@ define(
         saveAs
     ) {
 
-        var exportObject = {
-            plots: {
-                class: 'export-plot'
-            }
-        };
-
         /**
          * The export image service will export any HTML node to
          * JPG, or PNG.
@@ -71,7 +65,7 @@ define(
          * @param {string} object getting captured (for adding and removing corresponding class in exportObject)
          * @returns {promise}
          */
-        ExportImageService.prototype.renderElement = function (element, type, object) {
+        ExportImageService.prototype.renderElement = function (element, type, className) {
 
             var defer = this.$q.defer(),
                 validTypes = ["png", "jpg", "jpeg"],
@@ -82,8 +76,8 @@ define(
                 return;
             }
 
-            if (object && exportObject[object]) {
-                addOrRemoveClass(element, exportObject[object].class, 'add');
+            if (className) {
+                addOrRemoveClass(element, className, 'add');
             }
 
             renderTimeout = this.$timeout(function () {
@@ -95,8 +89,8 @@ define(
                 html2canvas(element, {
                     onrendered: function (canvas) {
 
-                        if (object && exportObject[object]) {
-                            addOrRemoveClass(element, exportObject[object].class, 'remove');
+                        if (className) {
+                            addOrRemoveClass(element, className, 'remove');
                         }
 
                         switch (type.toLowerCase()) {
@@ -119,8 +113,8 @@ define(
 
             defer.promise.finally(function () {
                 renderTimeout.cancel();
-                if (object && exportObject[object]) {
-                    addOrRemoveClass(element, exportObject[object].class, 'remove');
+                if (className) {
+                    addOrRemoveClass(element, className, 'remove');
                 }
             });
 
@@ -131,10 +125,11 @@ define(
          * Takes a screenshot of a DOM node and exports to JPG.
          * @param {node} element to be exported
          * @param {string} filename the exported image
+         * @param {string} className to be added to element before capturing (optional)
          * @returns {promise}
          */
-        ExportImageService.prototype.exportJPG = function (element, filename, object) {
-            return this.renderElement(element, "jpeg", object).then(function (img) {
+        ExportImageService.prototype.exportJPG = function (element, filename, className) {
+            return this.renderElement(element, "jpeg", className).then(function (img) {
                 saveAs(img, filename);
             });
         };
@@ -143,10 +138,11 @@ define(
          * Takes a screenshot of a DOM node and exports to PNG.
          * @param {node} element to be exported
          * @param {string} filename the exported image
+         * @param {string} className to be added to element before capturing (optional)
          * @returns {promise}
          */
-        ExportImageService.prototype.exportPNG = function (element, filename, object) {
-            return this.renderElement(element, "png", object).then(function (img) {
+        ExportImageService.prototype.exportPNG = function (element, filename, className) {
+            return this.renderElement(element, "png", className).then(function (img) {
                 saveAs(img, filename);
             });
         };
