@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['zepto', 'dom-to-image'], function ($, domtoimage) {
+define(['zepto'], function ($) {
     function MCTSnapshot($rootScope, $document, exportImageService, dialogService, notificationService) {
         var document = $document[0];
 
