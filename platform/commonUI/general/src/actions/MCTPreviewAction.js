@@ -31,13 +31,12 @@ define(
 
         function MCTPreviewAction($compile, $rootScope, context) {
             context = context || {};
-            this.domainObject = context.domainObject;
+            this.domainObject = context.selectedObject || context.domainObject;
             this.$rootScope = $rootScope;
             this.$compile = $compile;
         }
 
         MCTPreviewAction.prototype.perform = function () {
-
             var newScope = this.$rootScope.$new();
             newScope.domainObject = this.domainObject;
 
