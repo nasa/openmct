@@ -94,9 +94,9 @@ define(
                 });
 
                 expect(models).toEqual({
-                    a: { space: SPACE, id: "a", persisted: 0 },
-                    x: { space: SPACE, id: "x", persisted: 0 },
-                    zz: { space: SPACE, id: "zz", persisted: 0 }
+                    a: { space: SPACE, id: "a", persisted: 0, modified: undefined },
+                    x: { space: SPACE, id: "x", persisted: 0, modified: undefined },
+                    zz: { space: SPACE, id: "zz", persisted: 0, modified: undefined }
                 });
             });
 

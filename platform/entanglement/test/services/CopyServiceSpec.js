@@ -176,7 +176,6 @@ define(
                     });
                     mockDeferred.promise = {
                         then: function (callback) {
-                            console.log('callback: ' + callback);
                             return synchronousPromise(callback(resolvedValue));
                         }
                     };
@@ -409,6 +408,10 @@ define(
                     });
 
                     describe("when provided a filtering function", function () {
+                        beforeEach(function () {
+                            copyFinished = jasmine.createSpy('copyFinished');
+                        });
+
                         function accept() {
                             return true;
                         }

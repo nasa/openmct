@@ -42,7 +42,11 @@ define(
                     "domainObject",
                     ["getId", "getModel", "getCapability"]
                 );
-                mockType = { someKey: "some value" };
+                mockType = { 
+                    someKey: "some value", 
+                    someOtherProperty: "some other property",
+                    aThirdProperty: "a third property"
+                };
 
                 mockTypeService.getType.and.returnValue(mockType);
                 mockDomainObject.getModel.and.returnValue({type: "mockType"});
@@ -51,7 +55,9 @@ define(
             });
 
             it("looks up an object's type from type service", function () {
-                expect(type).toEqual(mockType);
+                expect(type.someKey).toEqual(mockType.someKey);
+                expect(type.someOtherProperty).toEqual(mockType.someOtherProperty);
+                expect(type.aThirdProperty).toEqual(mockType.aThirdProperty);
                 expect(mockTypeService.getType).toHaveBeenCalledWith("mockType");
             });
 

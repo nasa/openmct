@@ -269,6 +269,7 @@ define([
         describe("the request function", function () {
 
             it("requests telemetry for the associated object", function () {
+                whenTelemetryRequestedReturn([]);
                 return meanTelemetryProvider.request(mockDomainObject).then(function () {
                     expect(mockApi.telemetry.request).toHaveBeenCalledWith(associatedObject, undefined);
                 });
@@ -281,7 +282,6 @@ define([
                     {'utc': 3, 'defaultRange': 111.4446},
                     {'utc': 4, 'defaultRange': 555.2313}
                 ];
-                var promiseForAverage;
 
                 setSampleSize(5);
                 whenTelemetryRequestedReturn(inputTelemetry);
@@ -299,7 +299,6 @@ define([
                     {'utc': 4, 'defaultRange': 555.2313},
                     {'utc': 5, 'defaultRange': 1.1231}
                 ];
-                var promiseForAverage;
 
                 setSampleSize(5);
                 whenTelemetryRequestedReturn(inputTelemetry);
@@ -347,7 +346,6 @@ define([
                     {'utc': 9, 'defaultRange': 89.2111},
                     {'utc': 10, 'defaultRange': 0.543}
                 ];
-                var promiseForAverage;
 
                 setSampleSize(5);
                 whenTelemetryRequestedReturn(inputTelemetry);

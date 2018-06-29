@@ -147,6 +147,8 @@ define(
                     "C": "ValueC"
                 },
                 compareModel = wizard.createModel(formValue);
+                //populateObjectFromInput adds a .location attribute that is not added by createModel.
+                compareModel.location = undefined;
                 wizard.populateObjectFromInput(formValue);
                 expect(mockDomainObject.useCapability).toHaveBeenCalledWith('mutation', jasmine.any(Function));
                 expect(mockDomainObject.useCapability.calls.mostRecent().args[1]()).toEqual(compareModel);
