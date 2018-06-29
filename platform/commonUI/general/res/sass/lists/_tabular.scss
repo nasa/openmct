@@ -26,6 +26,20 @@
 
 .tabular-holder {
     @include absPosDefault();
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    > * {
+        position: relative;
+        flex: 0 0 auto;
+    }
+
+    &.l-sticky-headers {
+        .l-tabular-body {
+            flex: 1 1 99%;
+			overflow-x: auto;
+        }
+    }
 }
 
 .tabular,
@@ -41,19 +55,20 @@ table {
 	tbody tr, .tbody .tr {
 		width: 100%;
 	}
-	thead, .thead {
-		border-bottom: 1px solid $colorTabHeaderBorder;
-	}
 
-	&:not(.fixed-header) tr th {
-		background-color: $colorTabHeaderBg;
-	}
+    thead tr th {
+        // Add some bg to the headers. Note that this is overwritten below
+        // by .mct-table-headers-w when headers are wrapped by that container.
+        background-color: $colorTabHeaderBg;
+    }
 
 	tbody, .tbody {
 		display: table-row-group;
+        tr, .tr {
+            border-top: 1px solid $colorTabBorder;
+        }
 	}
 	tr, .tr {
-        border-top: 1px solid $colorTabBorder;
 		display: table-row;
 		&:first-child .td {
 			border-top: none;
@@ -118,42 +133,40 @@ table {
 		tbody, .tbody {
 			top: $tabularHeaderH * 2;
 		}
-		input[type="text"],
-		input[type="search"] {
-			box-sizing: border-box;
-			width: 100%;
-		}
+        .l-filter {
+            input[type="text"],
+            input[type="search"] {
+                $p: 20px;
+                transition: padding 200ms ease-in-out;
+                box-sizing: border-box;
+                padding-right: $p; // Fend off from icon
+                padding-left: $p; // Fend off from icon
+                width: 100%;
+            }
+            &.active {
+                // When user has typed something, hide the icon and collapse left padding
+                &:before {
+                    opacity: 0;
+                }
+                input[type="text"],
+                input[type="search"] {
+                    padding-left: $interiorMargin;
+                }
+            }
+        }
 	}
 
-	&.fixed-header {
-		height: 100%;
-		thead, .thead,
-		tbody tr, .tbody .tr {
-			display: table;
-			table-layout: fixed;
-		}
-		thead, .thead {
-			width: calc(100% - 10px);
-			&:before {
-				content: "";
-				display: block;
-				z-index: 0;
-				position: absolute;
-				width: 100%;
-				height: $tabularHeaderH;
-				background-color: $colorTabHeaderBg;
-			}
-		}
-		tbody, .tbody {
-			@include absPosDefault(0);
-			top: $tabularHeaderH;
-			display: block;
-			overflow-y: scroll;
-		}
-	}
 	&.t-event-messages {
 		td, .td {
 			min-width: 150px;
 		}
 	}
+}
+
+.mct-table-headers-w {
+    background: $colorTabHeaderBg;
+    overflow: hidden;
+    thead tr th {
+        background: none;
+    }
 }

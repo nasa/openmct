@@ -199,10 +199,16 @@ a.disabled {
 }
 
 .vscroll {
+    overflow-x: hidden;
     overflow-y: auto;
     &.scroll-pad {
         padding-right: $interiorMargin;
     }
+}
+
+.vscroll--persist {
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 .slidable {

@@ -334,7 +334,7 @@
     color: $fg;
 }
 
-@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.6) 0 1px 3px) {
+@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.5) 0 0px 2px) {
     @include s-input($bg, $fg, $shdw);
     border: none;
     outline: none;
