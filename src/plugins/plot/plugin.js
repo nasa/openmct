@@ -178,9 +178,7 @@ define([
                             "key": "exportImageService",
                             "implementation": ExportImageService,
                             "depends": [
-                                "$q",
-                                "$timeout",
-                                "$log"
+                                "dialogService"
                             ]
                         }
                     ],

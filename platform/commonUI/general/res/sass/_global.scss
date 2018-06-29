@@ -141,7 +141,6 @@ a.disabled {
 
 .s-status-missing {
     // Labels. Expects .s-status-missing to be applied to mct-representation that contains
-    // .t-object-label
     .t-object-label .t-item-icon:before {
         content: $glyph-icon-object-unknown;
     }
@@ -200,7 +199,16 @@ a.disabled {
 }
 
 .vscroll {
+    overflow-x: hidden;
     overflow-y: auto;
+    &.scroll-pad {
+        padding-right: $interiorMargin;
+    }
+}
+
+.vscroll--persist {
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 .slidable {
@@ -224,8 +232,13 @@ a.disabled {
     box-shadow: rgba(#000, 0.7) 0 4px 10px 2px;
 }
 
+.capitalize {
+    text-transform: capitalize;
+}
+
 .hide,
-.hidden {
+.hidden,
+.t-main-view .hide-in-t-main-view {
     display: none !important;
 }
 
@@ -234,14 +247,16 @@ a.disabled {
     pointer-events: none;
 }
 
-.off {
+.invisible {
+    display: block;
     visibility: hidden;
-    opacity: 0;
     height: 0;
-    margin: 0;
     padding: 0;
     border: 0;
     margin: 0 !important;
+    transform: scale(0);
+    pointer-events: none;
+    position: absolute;
 }
 
 .sep {

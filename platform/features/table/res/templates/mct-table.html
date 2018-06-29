@@ -5,22 +5,11 @@
         Export
     </a>
 </div>
-<div class="l-view-section scrolling" mct-resize="resize()">
-    <table class="sizing-table">
-        <tbody>
-            <tr>
-                <td ng-repeat="header in displayHeaders">{{header}}</td>
-            </tr>
-            <tr><td ng-repeat="header in displayHeaders" >
-                {{sizingRow[header].text}}
-            </td></tr>
-        </tbody>
-    </table>
-    <table class="filterable mct-table"
-           ng-style="{
-            height: totalHeight + 'px',
-            'max-width': totalWidth
-            }">
+<div class="mct-table-headers-w" mct-scroll-x="scroll.x">
+    <table class="mct-table l-tabular-headers filterable"
+                ng-style="{
+                    'max-width': totalWidth
+                }">
         <thead>
             <tr>
                 <th ng-repeat="header in displayHeaders"
@@ -43,14 +32,38 @@
                         width: columnWidths[$index] + 'px',
                         'max-width': columnWidths[$index] + 'px',
                     }">
-                    <div class="holder l-filter flex-elem grows">
-                        <input type="search"
-                            ng-model="filters[header]"/>
-                        <a class="clear-icon clear-input icon-x-in-circle" ng-class="{show: filters[header]}" ng-click="filters[header] = undefined"></a>
+                    <div class="holder l-filter flex-elem grows"
+                        ng-class="{active: filters[header]}">
+                        <input type="text"
+                                ng-model="filters[header]"/>
+                        <a class="clear-icon clear-input icon-x-in-circle"
+                           ng-class="{show: filters[header]}"
+                           ng-click="filters[header] = undefined"></a>
                     </div>
                 </th>
             </tr>
         </thead>
+    </table>
+</div>
+<table class="mct-sizing-table t-sizing-table"
+    ng-style="{
+        width: calcTableWidthPx
+    }">
+    <tbody>
+        <tr>
+            <td ng-repeat="header in displayHeaders">{{header}}</td>
+        </tr>
+        <tr><td ng-repeat="header in displayHeaders" >
+            {{sizingRow[header].text}}
+        </td></tr>
+    </tbody>
+</table>
+<div class="l-tabular-body t-scrolling vscroll--persist" mct-resize="resize()" mct-scroll-x="scroll.x">
+    <table class="mct-table"
+           ng-style="{
+            height: totalHeight + 'px',
+            'max-width': totalWidth
+            }">
         <tbody>
             <tr ng-repeat-start="visibleRow in visibleRows track by $index"
                 ng-if="visibleRow.rowIndex === toiRowIndex"

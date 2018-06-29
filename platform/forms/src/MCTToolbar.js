@@ -24,8 +24,16 @@
  * Module defining MCTForm. Created by vwoeltje on 11/10/14.
  */
 define(
-    ["./MCTForm", "text!../res/templates/toolbar.html"],
-    function (MCTForm, toolbarTemplate) {
+    [
+        "./MCTForm",
+        "text!../res/templates/toolbar.html",
+        "./controllers/ToolbarController"
+    ],
+    function (
+        MCTForm,
+        toolbarTemplate,
+        ToolbarController
+    ) {
 
         /**
          * The mct-toolbar directive allows generation of displayable
@@ -35,7 +43,7 @@ define(
          * This directive accepts three attributes:
          *
          * * `ng-model`: The model for the form; where user input
-         *   where be stored.
+         *   will be stored.
          * * `structure`: The declarative structure of the toolbar.
          *   Describes what controls should be shown and where
          *   their values should be read/written in the model.
@@ -49,9 +57,10 @@ define(
          */
         function MCTToolbar() {
             // Use Directive Definition Object from mct-form,
-            // but use the toolbar's template instead.
+            // but use the toolbar's template and controller instead.
             var ddo = new MCTForm();
             ddo.template = toolbarTemplate;
+            ddo.controller = ['$scope', 'openmct', ToolbarController];
             return ddo;
         }
 

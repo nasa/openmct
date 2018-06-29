@@ -79,8 +79,8 @@ define(
                 // a recursive step for subsequent ids in the paths,
                 // until we exceed path length or hit a mismatch.
                 return (index >= nodePath.length) ||
-                        ((navPath[index] === nodePath[index]) &&
-                                checkPath(nodePath, navPath, index + 1));
+                    ((navPath[index] === nodePath[index]) &&
+                    checkPath(nodePath, navPath, index + 1));
             }
 
             // Consider the currently-navigated object and update
@@ -89,9 +89,9 @@ define(
                 var nodeObject = $scope.domainObject,
                     navObject = selectedObject,
                     nodeContext = nodeObject &&
-                            nodeObject.getCapability('context'),
+                        nodeObject.getCapability('context'),
                     navContext = navObject &&
-                            navObject.getCapability('context'),
+                        navObject.getCapability('context'),
                     nodePath,
                     navPath;
 
@@ -110,7 +110,7 @@ define(
                     // within the navigation path; otherwise, navigation
                     // has happened in some other subtree.
                     if (navPath.length >= nodePath.length &&
-                            checkPath(nodePath, navPath)) {
+                        checkPath(nodePath, navPath)) {
 
                         // nodePath is along the navPath; if it's
                         // at the end of the path, highlight;

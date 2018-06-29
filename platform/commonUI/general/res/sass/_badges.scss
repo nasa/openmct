@@ -37,25 +37,9 @@
     vertical-align: middle;
 }
 
-//.top-bar .btn-browse .badge {
-// Moved to _controls.scss .btn.browse-btn
-//    border-radius: $controlCr * 1.5;
-//    $d: 20px;
-//    display: block;
-//    font-size: 1em;
-//    line-height: $d;
-////    margin-top: -4px;
-//
-//    position: absolute;
-//    top: 5px; left: 5px; bottom: 5px; right: auto;
-//    width: $d; height: auto;
-//}
-
 .super-menu .badge {
     @include background-image(linear-gradient(lighten($colorCreateBtn, 10%), $colorCreateBtn));
     border-radius: $controlCr;
     @include boxShdwSubtle();
-//    display: inline-block;
-//    margin-right: 10px !important;
     padding: 2px 7px;
 }

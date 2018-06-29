@@ -41,6 +41,7 @@
     width: 100%;
 
     .l-form-section {
+        margin-bottom: $interiorMarginLg * 2;
         position: relative;
         &.grows {
             .l-section-body,
@@ -57,7 +58,6 @@
 		$m: $interiorMargin;
 		box-sizing: border-box;
 		border-top: 1px solid $colorFormLines;
-        margin-bottom: $interiorMarginLg * 2;
 		padding: $formTBPad 0;
 		position: relative;
 
@@ -132,6 +132,7 @@
         width: auto;
         order: 2;
     }
+    >.control,
     >.controls {
         flex: 0 0 auto;
         margin-right: $interiorMargin;
@@ -258,19 +259,19 @@
             }
         }
     }
+}
 
-    .form-error {
-        // Block element that visually flags an error and contains a message
-        background-color: $colorFormFieldErrorBg;
-        color: $colorFormFieldErrorFg;
-        border-radius: $basicCr;
-        display: block;
-        padding: 1px 6px;
-        &:before {
-            content: $glyph-icon-alert-triangle;
-            display: inline;
-            font-family: symbolsfont;
-            margin-right: $interiorMarginSm;
-        }
+.form-error {
+    // Block element that visually flags an error and contains a message
+    background-color: $colorFormFieldErrorBg;
+    color: $colorFormFieldErrorFg;
+    border-radius: $basicCr;
+    display: block;
+    padding: 1px 6px;
+    &:before {
+        content: $glyph-icon-alert-triangle;
+        display: inline-block;
+        font-family: symbolsfont;
+        margin-right: $interiorMarginSm;
     }
 }

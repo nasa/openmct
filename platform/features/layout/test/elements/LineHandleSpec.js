@@ -26,7 +26,9 @@ define(
 
         describe("A fixed position drag handle", function () {
             var testElement,
-                handle;
+                mockElementProxy,
+                handle,
+                TEST_GRID_SIZE = [45, 21];
 
             beforeEach(function () {
                 testElement = {
@@ -36,8 +38,10 @@ define(
                     y2: 11,
                     useGrid: true
                 };
+                mockElementProxy = jasmine.createSpyObj('elementProxy', ['getGridSize']);
+                mockElementProxy.getGridSize.andReturn(TEST_GRID_SIZE);
 
-                handle = new LineHandle(testElement, 'x', 'y', 'x2', 'y2', [45,21]);
+                handle = new LineHandle(testElement, mockElementProxy, 'x', 'y', 'x2', 'y2');
             });
 
             it("provides x/y grid coordinates for its corner", function () {
@@ -69,7 +73,7 @@ define(
             });
 
             it("returns the correct grid size", function () {
-                expect(handle.getGridSize()).toEqual([45,21]);
+                expect(handle.getGridSize()).toEqual(TEST_GRID_SIZE);
             });
 
         });

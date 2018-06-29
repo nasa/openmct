@@ -22,7 +22,6 @@
     "eventemitter3": "^1.2.0",
     "lodash": "3.10.1",
     "almond": "~0.3.2",
-    "html2canvas": "^0.4.1",
     "moment-timezone": "^0.5.13"
   }
 }

@@ -34,18 +34,7 @@ body.touch {
 		line-height: $mobileTreeItemH !important;
 		.view-control {
             font-size: 1em;
-            margin-right: $interiorMargin;
             width: ceil($mobileTreeItemH * 0.75);
-            &.has-children {
-                &:before {
-                    content: $glyph-icon-arrow-down;
-                    left: 50%;
-                    transform: translateX(-50%) rotate(-90deg);
-                }
-                &.expanded:before {
-                    transform: translateX(-50%) rotate(0deg);
-                }
-            }
 		}
 		.t-object-label {
 			line-height: inherit;

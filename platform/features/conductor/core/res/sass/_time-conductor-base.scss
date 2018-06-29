@@ -192,15 +192,19 @@
                 width: 100%;
                 height: 100%;
                 > g {
+                    // Tick holder
                     font-size: 0.9em;
+                    transform: translateY(23px);
                 }
-                path {
+                path,
+                line {
                     // Line beneath ticks
                     display: none;
                 }
                 line {
                     // Tick marks
-                    stroke: $c;
+                    //stroke: $c;
+                    //transform: translateY(-10px);
                 }
                 text {
                     // Tick labels
@@ -256,7 +260,7 @@
 
     .l-time-conductor-controls {
         align-items: center;
-        margin-top: $interiorMargin;
+        margin-top: $interiorMarginLg;
         .l-time-conductor-zoom-w {
             justify-content: flex-end;
             .time-conductor-zoom {
@@ -334,27 +338,25 @@
             content: $i;
         }
         .l-axis-holder {
+            $angle: 90deg;
             $c0: rgba($colorBodyFg, 0.1);
+            $c1: rgba($colorBodyFg, 0.1);
             $c2: transparent;
-            $grabTicksH: 3px;
-            $grabTicksXSpace: 4px;
-            $grabTicksYOffset: 0;
+            $grabTicksYOffset: 2px;
+            $grabTicksXSpace: 3px;
+            transition: background 150ms ease-in-out;
             @include cursorGrab();
             svg {
-                $c1: rgba($colorBodyFg, 0.2);
-                $angle: 90deg;
                 @include background-image(linear-gradient($angle,
                     $c1 1px, $c2 1px,
                     $c2 100%
                 ));
                 background-position: center $grabTicksYOffset;
                 background-repeat: repeat-x;
-                background-size: $grabTicksXSpace $grabTicksH;
+                background-size: $grabTicksXSpace $r1H - ($grabTicksYOffset * 2);
             }
             &:hover {
-                @include background-image(linear-gradient(
-                    $c0 70%, $c2 100%
-                ));
+                background: $c0;
             }
         }
     }

@@ -162,7 +162,6 @@ define(
          */
         NavigationService.prototype.shouldWarnBeforeNavigate = function () {
             var reasons = [];
-
             this.checks.forEach(function (checkFn) {
                 var reason = checkFn();
                 if (reason) {

@@ -23,10 +23,11 @@ define(
             this.$window = $window;
             this.maxDisplayRows = 100;
 
-            this.scrollable = this.element.find('.l-view-section.scrolling').first();
+            this.scrollable = this.element.find('.t-scrolling').first();
             this.resultsHeader = this.element.find('.mct-table>thead').first();
-            this.sizingTableBody = this.element.find('.sizing-table>tbody').first();
+            this.sizingTableBody = this.element.find('.t-sizing-table>tbody').first();
             this.$scope.sizingRow = {};
+            this.$scope.calcTableWidthPx = '100%';
             this.timeApi = openmct.time;
             this.toiFormatter = undefined;
             this.formatService = formatService;
@@ -286,14 +287,9 @@ define(
                 topScroll = target.scrollTop,
                 firstVisible;
 
-            if (topScroll < this.$scope.headerHeight) {
-                firstVisible = 0;
-            } else {
-                firstVisible = Math.floor(
-                    (topScroll - this.$scope.headerHeight) /
-                    this.$scope.rowHeight
-                );
-            }
+            firstVisible = Math.floor(
+                (topScroll) / this.$scope.rowHeight
+            );
 
             return firstVisible;
         };
@@ -309,7 +305,7 @@ define(
                 lastVisible;
 
             lastVisible = Math.ceil(
-                (bottomScroll - this.$scope.headerHeight) /
+                (bottomScroll) /
                 this.$scope.rowHeight
             );
             return lastVisible;
@@ -360,8 +356,7 @@ define(
                 .map(function (row, i) {
                     return {
                         rowIndex: start + i,
-                        offsetY: ((start + i) * self.$scope.rowHeight) +
-                        self.$scope.headerHeight,
+                        offsetY: ((start + i) * self.$scope.rowHeight),
                         contents: row
                     };
                 });
@@ -397,15 +392,13 @@ define(
          * for individual rows.
          */
         MCTTableController.prototype.setElementSizes = function () {
-            var thead = this.resultsHeader,
-                tbody = this.sizingTableBody,
+            var tbody = this.sizingTableBody,
                 firstRow = tbody.find('tr'),
                 column = firstRow.find('td'),
-                headerHeight = thead.prop('offsetHeight'),
                 rowHeight = firstRow.prop('offsetHeight'),
                 columnWidth,
                 tableWidth = 0,
-                overallHeight = headerHeight + (rowHeight *
+                overallHeight = (rowHeight *
                     (this.$scope.displayRows ? this.$scope.displayRows.length - 1  : 0));
 
             this.$scope.columnWidths = [];
@@ -416,9 +409,13 @@ define(
                 tableWidth += columnWidth;
                 column = column.next();
             }
-            this.$scope.headerHeight = headerHeight;
             this.$scope.rowHeight = rowHeight;
             this.$scope.totalHeight = overallHeight;
+
+            var scrollW = this.scrollable[0].offsetWidth - this.scrollable[0].clientWidth;
+            if (scrollW && scrollW > 0) {
+                this.$scope.calcTableWidthPx = 'calc(100% - ' + scrollW + 'px)';
+            }
 
             if (tableWidth > 0) {
                 this.$scope.totalWidth = tableWidth + 'px';
@@ -761,7 +758,6 @@ define(
 
             if (!visible) {
                 var scrollTop = displayRowIndex * this.$scope.rowHeight +
-                    this.$scope.headerHeight -
                     (this.scrollable[0].offsetHeight / 2);
                 this.scrollable[0].scrollTop = scrollTop;
                 this.setVisibleRows();

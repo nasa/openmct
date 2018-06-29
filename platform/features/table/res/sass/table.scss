@@ -20,43 +20,48 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-.sizing-table {
-    min-width: 100%;
-    z-index: -1;
-    visibility: hidden;
-    position: absolute;
+mct-table {
+    .mct-sizing-table {
+        z-index: -1;
+        visibility: hidden;
+        position: absolute !important;
 
-    //Add some padding to allow for decorations such as limits indicator
-    td {
-        padding-right: 15px;
-        padding-left: 10px;
-        white-space: nowrap;
-    }
-}
-.mct-table {
-    table-layout: fixed;
-    thead {
-        display: block;
-        tr {
-            display: block;
+        //Add some padding to allow for decorations such as limits indicator
+        td {
+            padding-right: 15px;
+            padding-left: 10px;
             white-space: nowrap;
-            th {
-                display: inline-block;
+        }
+    }
+
+    .mct-table {
+        thead {
+            display: block;
+            tr {
+                display: block;
+                white-space: nowrap;
+                th {
+                    display: inline-block;
+                    box-sizing: border-box;
+                }
+            }
+        }
+        tbody {
+            tr {
+                position: absolute;
+                white-space: nowrap;
+                display: block;
+            }
+            td {
+                white-space: nowrap;
+                overflow: hidden;
                 box-sizing: border-box;
+                display: inline-block;
             }
         }
     }
-    tbody {
-        tr {
-            position: absolute;
-            white-space: nowrap;
-            display: block;
-        }
-        td {
-            white-space: nowrap;
-            overflow: hidden;
-            box-sizing: border-box;
-            display: inline-block;
-        }
+
+    .l-control-bar {
+        margin-bottom: 3px;
     }
 }

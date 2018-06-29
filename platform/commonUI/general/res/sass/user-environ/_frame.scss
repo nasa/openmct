@@ -64,14 +64,16 @@
         left: $m;
     }
     &.frame-template {
-        .s-button,
-        .s-menu-button {
-            height: $ohH;
-            line-height: $ohH;
-            padding: 0 $interiorMargin;
-            > span,
-            &:before {
-                font-size: 0.65rem;
+        .h-local-controls {
+            .s-button,
+            .s-menu-button {
+                height: $btnFrameH;
+                line-height: $btnFrameH;
+                padding: 0 $interiorMargin;
+                > span,
+                &:before {
+                    font-size: 0.65rem;
+                }
             }
         }
 
@@ -96,8 +98,6 @@
         border-color: transparent;
         .object-browse-bar .right {
             $m: 0;
-            background: rgba(black, 0.3);
-            border-radius: $basicCr;
             padding: $interiorMarginSm;
             position: absolute;
             top: $m; right: $m;
@@ -111,10 +111,23 @@
                 bottom: $m;
                 left: $m;
             }
+
             > .t-frame-inner {
-                > .object-browse-bar .left {
-                    display: none;
+                &.t-object-type-layout {
+                    > .object-browse-bar {
+                        .t-btn-view-large {
+                            // When a nested layout has its frame hidden, don't display a view large button
+                            display: none;
+                        }
+                    }
                 }
+
+                > .object-browse-bar {
+                    .left {
+                        display: none;
+                    }
+                }
+
                 > .object-holder.abs {
                     overflow: hidden;
                     top: 0 !important;
@@ -123,8 +136,8 @@
         }
     }
 
-    &.t-frame-outer .s-input-inline {
-        // Prevent inline inputs from being edited when nested in a Layout
+    &.t-frame-outer .title-label.s-input-inline {
+        // Prevent frame titles from being edited when nested in a Layout
         pointer-events: none !important;
     }
 
@@ -161,6 +174,7 @@ body.desktop .frame {
     // Hide local controls initially and show it them on hover when they're in an element that's in a frame context
     // Frame template is used because we need to target the lowest nested frame
     .object-browse-bar .btn-bar {
+        @include trans-prop-nice($props: opacity, $dur: 250ms);
         opacity: 0;
         pointer-events: none;
     }
@@ -169,6 +183,7 @@ body.desktop .frame {
     // Handles the case where we have layouts in layouts.
     &:hover > .object-browse-bar {
         .btn-bar {
+            @include trans-prop-nice($props: opacity, $dur: 10ms);
             opacity: 1;
             pointer-events: inherit;
         }

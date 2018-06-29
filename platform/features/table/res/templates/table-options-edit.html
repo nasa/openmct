@@ -22,12 +22,11 @@
 
 <div ng-if="domainObject.getCapability('editor').inEditContext()"
      ng-controller="TableOptionsController"
-     class="l-controls-first flex-elem grows l-inspector-part">
-    <em class="t-inspector-part-header" title="Display properties for this object">Table Options</em>
+     class="flex-elem grows l-inspector-part">
     <mct-form
             ng-model="configuration.table.columns"
             structure="columnsForm"
             name="columnsFormState"
-            class="flex-elem l-flex-row no-margin">
+            class="flex-elem no-margin">
     </mct-form>
 </div>
