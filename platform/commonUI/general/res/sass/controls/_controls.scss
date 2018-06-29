@@ -390,6 +390,7 @@ input[type="text"].s-input-inline,
     @include btnSubtle($bg: $colorSelectBg);
     @extend .icon-arrow-down; // Context arrow
     display: inline-block;
+    flex: 0 0 auto; // When used in a flex context, controls need to hold their width
     padding: 0 $interiorMargin;
     overflow: hidden;
     position: relative;

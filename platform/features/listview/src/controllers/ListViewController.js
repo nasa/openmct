@@ -32,6 +32,11 @@ define(function () {
 
         this.utc = formatService.getFormat('utc');
 
+        //Trigger digestive cycle with $apply to update list view
+        setTimeout(function () {
+            $scope.$apply();
+        });
+
         $scope.$on('$destroy', function () {
             unlisten();
         });

@@ -33,6 +33,14 @@
     }
 }
 
+[class*="icon-"].labeled {
+    // Moved from .s-button and generalized
+    &:before {
+        // Fend off label from icon when it's included
+        margin-right: $interiorMarginSm;
+    }
+}
+
 /************************** CHAR UNICODES */
 
 $glyph-icon-alert-rect: '\e900';

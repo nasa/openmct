@@ -24,7 +24,8 @@
         <div class="items-select left flex-elem l-flex-row grows">
             <mct-representation key="'back-arrow'"
                                 mct-object="domainObject"
-                                class="flex-elem l-back"></mct-representation>
+                                class="flex-elem l-back">
+            </mct-representation>
             <mct-representation key="'object-header'"
                                 mct-object="domainObject"
                                 class="l-flex-row flex-elem grows object-header">
@@ -48,8 +49,8 @@
             <!-- Toolbar and Save/Cancel buttons -->
             <div class="l-edit-controls flex-elem l-flex-row flex-align-end">
                 <mct-toolbar name="mctToolbar"
-                             structure="toolbar.structure"
-                             ng-model="toolbar.state"
+                             structure="editToolbar.structure"
+                             ng-model="editToolbar.state"
                              class="flex-elem grows">
                 </mct-toolbar>
                 <mct-representation key="'edit-action-buttons'"
@@ -61,7 +62,6 @@
             <mct-representation key="representation.selected.key"
                                 mct-object="representation.selected.key && domainObject"
                                 class="abs flex-elem grows object-holder-main scroll"
-                                toolbar="toolbar"
                                 mct-selectable="{
                                     item: domainObject.useCapability('adapter'),
                                     oldItem: domainObject
