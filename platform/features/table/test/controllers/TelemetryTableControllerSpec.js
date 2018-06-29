@@ -221,7 +221,7 @@ define(
                     return controller.getData().then(function () {
                         var destroy = getCallback(mockScope.$on, "$destroy");
                         destroy();
-                        
+
                         expect(unsubscribe).toHaveBeenCalled();
                     });
                 });
@@ -372,7 +372,7 @@ define(
                     controller.getHistoricalData([mockDomainObject]);
 
                     return new Promise(function (resolve) {
-                        mockTimeout.and.callFake(function (){
+                        mockTimeout.and.callFake(function () {
                             resolve();
                         });
                     }).then(function () {
@@ -380,9 +380,8 @@ define(
                         expect(mockTimeout.calls.count()).toBe(2);
                         mockTimeout.calls.mostRecent().args[0]();
                         expect(mockScope.rows.length).toBe(3);
-    
-                    });
 
+                    });
                 });
             });
 

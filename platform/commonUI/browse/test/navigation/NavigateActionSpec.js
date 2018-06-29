@@ -57,7 +57,7 @@ define([
                 .then(function () {
                     expect(mockNavigationService.setNavigation)
                     .toHaveBeenCalledWith(mockDomainObject, true);
-            });
+                });
         });
 
         it("does not set navigation if it is not allowed", function () {
@@ -69,7 +69,6 @@ define([
                     expect(mockNavigationService.setNavigation)
                         .not
                         .toHaveBeenCalledWith(mockDomainObject);
-    
                 });
         });
 

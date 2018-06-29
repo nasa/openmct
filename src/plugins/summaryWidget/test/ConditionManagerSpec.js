@@ -347,7 +347,7 @@ define(['../src/ConditionManager'], function (ConditionManager) {
             telemetryCallbackSpy.and.callFake(function () {
                 callbackCount++;
 
-                if ( callbackCount == 2) {
+                if (callbackCount === 2) {
                     expect(conditionManager.subscriptionCache.mockCompObject1.property1).toEqual('Its a string');
                     expect(conditionManager.subscriptionCache.mockCompObject2.property4).toEqual(66);
                     done();

@@ -209,8 +209,7 @@ define([
                         mockNewChild =
                             makeMockDomainObject('d', {}, newCapabilities),
                         mockGrandchild =
-                            makeMockDomainObject('gc', {}, gcCapabilities),
-                        calledBackInner = false;
+                            makeMockDomainObject('gc', {}, gcCapabilities);
 
                     newCapabilities.composition =
                         jasmine.createSpyObj('composition', ['invoke']);
@@ -234,7 +233,7 @@ define([
                     return testCapabilities.composition.invoke().then(function () {
                         treeView.value(mockGrandchild);
                         return newCapabilities.composition.invoke();
-                    })
+                    });
                 });
 
                 it("creates inner trees", function () {

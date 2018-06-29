@@ -75,7 +75,7 @@ define(
             // this simply redirects to the action service,
             // but additionally adds a domainObject field.
             var baseContext;
-            if (typeof context === 'string'){
+            if (typeof context === 'string') {
                 baseContext =  { key: context };
             } else {
                 baseContext = context || {};

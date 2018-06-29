@@ -245,11 +245,11 @@ define([
         it('provides realtime telemetry', function () {
             var callback = jasmine.createSpy('callback');
             telemetryProvider.subscribe(summaryWidgetObject, callback);
-            
+
             return loader.promise.then(function () {
-                return new Promise(function (resolve){
+                return new Promise(function (resolve) {
                     setTimeout(resolve);
-                })
+                });
             }).then(function () {
                 expect(openmct.telemetry.subscribe.calls.count()).toBe(2);
                 expect(openmct.telemetry.subscribe)
@@ -352,12 +352,6 @@ define([
             var resultsShouldBe;
 
             beforeEach(function () {
-                isResolved = false;
-                resolver = jasmine.createSpy('resolved')
-                    .and.callFake(function () {
-                        isResolved = true;
-                    });
-
                 openmct.telemetry.request.and.callFake(function (rObj, options) {
                     expect(rObj).toEqual(jasmine.any(Object));
                     expect(options).toEqual({size: 1, strategy: 'latest', domain: 'timestamp'});

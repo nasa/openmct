@@ -83,10 +83,6 @@ define(
                     '$scope',
                     ["$on", "$watch", "$digest", "commit"]
                 );
-                mockHandler = jasmine.createSpyObj(
-                    'telemetryHandler',
-                    ['handle']
-                );
                 mockQ = jasmine.createSpyObj('$q', ['when']);
                 mockDialogService = jasmine.createSpyObj(
                     'dialogService',
@@ -100,17 +96,6 @@ define(
                     return "Formatted " + valueMetadata.value;
                 });
 
-                mockHandle = jasmine.createSpyObj(
-                    'subscription',
-                    [
-                        'unsubscribe',
-                        'getDomainValue',
-                        'getTelemetryObjects',
-                        'getRangeValue',
-                        'getDatum',
-                        'request'
-                    ]
-                );
                 mockConductor = jasmine.createSpyObj('conductor', [
                     'on',
                     'off',
@@ -149,7 +134,6 @@ define(
                     composition: ['a', 'b', 'c'],
                     layoutGrid: testGrid
                 };
-                testValues = { a: 10, b: 42, c: 31.42 };
                 testConfiguration = { elements: [
                     { type: "fixed.telemetry", id: 'a', x: 1, y: 1, useGrid: true},
                     { type: "fixed.telemetry", id: 'b', x: 1, y: 1, useGrid: true},
@@ -276,7 +260,6 @@ define(
             });
 
             it("releases subscription when a domain objects is removed", function () {
-                var done = false;
                 var unsubscribe = jasmine.createSpy('unsubscribe');
                 var unsubscribePromise = new Promise(function (resolve) {
                     unsubscribe.and.callFake(resolve);
@@ -434,7 +417,6 @@ define(
             });
 
             it("unsubscribes when destroyed", function () {
-                var done = false;
                 var unsubscribe = jasmine.createSpy('unsubscribe');
                 var object = makeMockDomainObject("mock");
 

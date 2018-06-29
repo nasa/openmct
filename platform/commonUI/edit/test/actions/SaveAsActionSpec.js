@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global describe,it,expect,beforeEach,jasmine,runs,waitsFor,spyOn*/
+/*global describe,it,expect,beforeEach,jasmine,spyOn*/
 
 define(
     ["../../src/actions/SaveAsAction"],
@@ -182,13 +182,13 @@ define(
 
                 return action.perform().then(function () {
                     expect(mockEditorCapability.save).toHaveBeenCalled();
-                })
+                });
             });
 
             it("uses the editor capability to finish editing the object", function () {
                 return action.perform().then(function () {
                     expect(mockEditorCapability.finish.calls.count()).toBeGreaterThan(0);
-                })
+                });
             });
 
             it("returns to browse after save", function () {
@@ -236,7 +236,6 @@ define(
 
                 it("notifies if saving failed", function () {
                     mockCopyService.perform.and.returnValue(Promise.reject("some failure reason"));
-                    var mockCallback = jasmine.createSpy();
                     action.perform().then(function () {
                         expect(mockNotificationService.error).toHaveBeenCalled();
                         expect(mockNotificationService.info).not.toHaveBeenCalled();

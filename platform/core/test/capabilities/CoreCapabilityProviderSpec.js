@@ -50,7 +50,7 @@ define(
 
             beforeEach(function () {
                 KeylessCapability.key = undefined;
-                
+
                 mockLog = jasmine.createSpyObj(
                     "$log",
                     ["error", "warn", "info", "debug"]

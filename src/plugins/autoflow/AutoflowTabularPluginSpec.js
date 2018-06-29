@@ -84,7 +84,7 @@ define([
                 function waitsForChange() {
                     return new Promise(function (resolve) {
                         window.requestAnimationFrame(resolve);
-                    })
+                    });
                 }
 
                 function emitEvent(mockEmitter, type, event) {
@@ -161,7 +161,7 @@ define([
 
                 afterEach(function () {
                     domObserver.destroy();
-                })
+                });
 
                 it("populates its container", function () {
                     expect(testContainer.children.length > 0).toBe(true);
@@ -214,7 +214,7 @@ define([
 
                     $(testContainer).find('.change-column-width').click();
 
-                    function widthHasChanged () {
+                    function widthHasChanged() {
                         var width = $(testContainer).find('.l-autoflow-col').css('width');
                         return width !== initialWidth + 'px';
                     }
@@ -242,7 +242,7 @@ define([
                             var $cell = $(testContainer).find(".l-autoflow-row").eq(index).find(".r");
                             expect($cell.text()).toEqual(String(datum.range));
                         });
-                    })
+                    });
                 });
 
                 it("displays incoming telemetry", function () {
@@ -259,7 +259,7 @@ define([
                             var $cell = $(testContainer).find(".l-autoflow-row").eq(index).find(".r");
                             expect($cell.text()).toEqual(String(datum.range));
                         });
-                    })
+                    });
                 });
 
                 it("updates classes for limit violations", function () {
@@ -274,7 +274,7 @@ define([
                             var $cell = $(testContainer).find(".l-autoflow-row").eq(index).find(".r");
                             expect($cell.hasClass(testClass)).toBe(true);
                         });
-                    })
+                    });
                 });
 
                 it("automatically flows to new columns", function () {
@@ -304,15 +304,17 @@ define([
 
                     $container.appendTo(document.body);
 
+                    function setHeight(height) {
+                        $container.css('height', height + 'px');
+                        return domObserver.when(columnsHaveAutoflowed);
+                    }
+
                     for (var height = 0; height < rowHeight * count * 2; height += rowHeight / 2) {
-                        promiseChain = promiseChain.then(function () {
-                            $container.css('height', height + 'px');
-                            return domObserver.when(columnsHaveAutoflowed)
-                        });
+                        promiseChain = promiseChain.then(setHeight.bind(this, height));
                     }
                     return promiseChain.then(function () {
                         $container.remove();
-                    })
+                    });
                 });
 
                 it("loads composition exactly once", function () {

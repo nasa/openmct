@@ -95,7 +95,7 @@ define(
                     return formatter;
                 });
 
-                requestPromise = new Promise(function (resolve, reject){
+                requestPromise = new Promise(function (resolve) {
                     setTimeout(function () {
                         resolve([{
                             timestamp: 1434600258123,

@@ -91,7 +91,7 @@ define(
                     testHeaders = ['a', 'b'];
                     exportService
                         .exportCSV(testRows, { headers: testHeaders });
-                    
+
                     return readCSVPromise;
                 });
 

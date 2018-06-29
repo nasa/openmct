@@ -32,7 +32,6 @@ define([
     describe("The Mean Telemetry Provider", function () {
         var mockApi;
         var meanTelemetryProvider;
-        var outstandingPromises = 0;
         var mockDomainObject;
         var associatedObject;
         var allPromises;
@@ -90,7 +89,7 @@ define([
                     .then(feedInputTelemetry.bind(this, inputTelemetry))
                     .then(function () {
                         expect(subscriptionCallback).not.toHaveBeenCalled();
-                    })
+                    });
             });
 
             it("correctly averages a sample of five values", function () {
@@ -107,7 +106,7 @@ define([
 
                 setSampleSize(5);
                 meanTelemetryProvider.subscribe(mockDomainObject, subscriptionCallback);
-                
+
                 return waitForPromises()
                     .then(feedInputTelemetry.bind(this, inputTelemetry))
                     .then(expectAveragesForTelemetry.bind(this, expectedAverages));
@@ -132,7 +131,7 @@ define([
 
                 setSampleSize(10);
                 meanTelemetryProvider.subscribe(mockDomainObject, subscriptionCallback);
-                
+
                 return waitForPromises()
                     .then(feedInputTelemetry.bind(this, inputTelemetry))
                     .then(expectAveragesForTelemetry.bind(this, expectedAverages));
@@ -162,7 +161,7 @@ define([
 
                 setSampleSize(5);
                 meanTelemetryProvider.subscribe(mockDomainObject, subscriptionCallback);
-                
+
                 return waitForPromises()
                     .then(feedInputTelemetry.bind(this, inputTelemetry))
                     .then(expectAveragesForTelemetry.bind(this, expectedAverages));
@@ -186,7 +185,7 @@ define([
 
                     meanTelemetryProvider.subscribe(mockDomainObject, subscriptionCallback);
                     mockApi.telemetry.setDefaultRangeTo('rangeKey');
-                    
+
                     return waitForPromises()
                         .then(feedInputTelemetry.bind(this, inputTelemetry))
                         .then(expectAveragesForTelemetry.bind(this, averageTelemetryForRangeKey));
@@ -254,7 +253,7 @@ define([
                 return waitForPromises().then(function () {
                     expectedAverages.forEach(function (averageDatum) {
                         expect(subscriptionCallback).toHaveBeenCalledWith(averageDatum);
-                    })
+                    });
                 });
             }
 
@@ -285,7 +284,7 @@ define([
 
                 setSampleSize(5);
                 whenTelemetryRequestedReturn(inputTelemetry);
-                
+
                 return meanTelemetryProvider.request(mockDomainObject).then(function (averageData) {
                     expect(averageData.length).toBe(0);
                 });
@@ -302,7 +301,7 @@ define([
 
                 setSampleSize(5);
                 whenTelemetryRequestedReturn(inputTelemetry);
-                
+
                 return meanTelemetryProvider.request(mockDomainObject)
                     .then(function (averageData) {
                         expectAverageToBe(222.44888, averageData);
@@ -322,11 +321,10 @@ define([
                     {'utc': 9, 'defaultRange': 89.2111},
                     {'utc': 10, 'defaultRange': 0.543}
                 ];
-                var promiseForAverage;
 
                 setSampleSize(10);
                 whenTelemetryRequestedReturn(inputTelemetry);
-                
+
                 return meanTelemetryProvider.request(mockDomainObject)
                     .then(function (averageData) {
                         expectAverageToBe(451.07815, averageData);
@@ -349,7 +347,7 @@ define([
 
                 setSampleSize(5);
                 whenTelemetryRequestedReturn(inputTelemetry);
-                
+
                 return meanTelemetryProvider.request(mockDomainObject)
                     .then(function (averageData) {
                         expectAverageToBe(679.70742, averageData);

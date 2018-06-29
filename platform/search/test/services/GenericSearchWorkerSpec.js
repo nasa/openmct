@@ -91,7 +91,7 @@ define([
                 expect(data.results[2].item.id).toBe('z');
                 expect(data.results[2].item.model).toEqual(objectZ.model);
                 expect(data.results[2].matchCount).toBe(1);
-                
+
                 done();
             });
 
@@ -109,7 +109,7 @@ define([
                 expect(message.data.results.length).toBe(3);
                 expect(message.data.results[0].item.id).toBe('x');
                 expect(message.data.results[0].matchCount).toBe(1.5);
-                
+
                 done();
             });
 
@@ -127,7 +127,7 @@ define([
                 expect(message.data.results.length).toBe(1);
                 expect(message.data.results[0].item.id).toBe('x');
                 expect(message.data.results[0].matchCount).toBe(1);
-                
+
                 done();
             });
 

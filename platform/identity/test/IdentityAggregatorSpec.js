@@ -64,8 +64,6 @@ define(
                     return Promise.all(promises);
                 });
 
-                mockCallback = jasmine.createSpy('callback');
-
                 aggregator = new IdentityAggregator(
                     mockQ,
                     mockProviders

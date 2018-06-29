@@ -41,7 +41,6 @@ define(
                     "bundle/b/bundle.json": {"someValue": 7}
                 };
 
-                mockCallback = jasmine.createSpy("callback");
                 mockHttp = jasmine.createSpyObj("$http", ["get"]);
                 mockLog = jasmine.createSpyObj("$log", ["error", "warn", "info", "debug"]);
                 mockRegistry = jasmine.createSpyObj(

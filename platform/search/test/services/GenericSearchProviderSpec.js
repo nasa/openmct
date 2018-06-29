@@ -228,7 +228,7 @@ define([
                 var id = 'anId',
                     model = {composition: ['abc', 'def']},
                     resolve,
-                    promise = new Promise(function (r){
+                    promise = new Promise(function (r) {
                         resolve = r;
                     });
 
@@ -252,7 +252,7 @@ define([
                     expect(provider.scheduleForIndexing)
                         .toHaveBeenCalledWith('def');
 
-                })
+                });
             });
 
             it('does not index ROOT, but checks composition', function () {
@@ -295,7 +295,7 @@ define([
 
             it('indexes objects', function () {
                 provider.beginIndexRequest();
-                
+
                 return waitsFor(function () {
                     return provider.pendingRequests === 0;
                 }).then(function () {
@@ -305,25 +305,25 @@ define([
             });
 
             function waitsFor(latchFunction) {
-                return new Promise(function (resolve, reject){
+                return new Promise(function (resolve, reject) {
                     var maxWait = 2000;
                     var start = Date.now();
-        
+
                     checkLatchFunction();
-        
-                    function checkLatchFunction(){
+
+                    function checkLatchFunction() {
                         var now = Date.now();
                         var elapsed = now - start;
 
                         if (latchFunction()) {
                             resolve();
-                        } else if (elapsed >= maxWait){
+                        } else if (elapsed >= maxWait) {
                             reject("Timeout waiting for latch function to be true");
                         } else {
                             setTimeout(checkLatchFunction);
                         }
                     }
-                })
+                });
             }
         });
 

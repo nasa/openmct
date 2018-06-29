@@ -35,7 +35,6 @@ define(
                 decorator;
 
             beforeEach(function () {
-                mockCallback = jasmine.createSpy('callback');
                 mockIdentityService = jasmine.createSpyObj(
                     'identityService',
                     ['getUser']
@@ -79,7 +78,7 @@ define(
                     .then(function (object) {
                         expect(object)
                         .toEqual(mockCreatedObject);
-                        
+
                         // Make sure arguments were delegated appropriately
                         expect(mockCreationService.createObject)
                         .toHaveBeenCalledWith(

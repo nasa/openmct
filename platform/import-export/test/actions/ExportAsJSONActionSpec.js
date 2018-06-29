@@ -160,7 +160,7 @@ define(
                 context.domainObject = parent;
 
                 action.perform();
-                
+
                 return new Promise(function (resolve, reject) {
                     setTimeout(resolve, 100);
                 }).then(function () {
@@ -194,9 +194,7 @@ define(
 
                 context.domainObject = parent;
 
-                var init = false;
-
-                return new Promise (function (resolve){
+                return new Promise (function (resolve) {
                     action.perform();
                     setTimeout(resolve, 100);
                 }).then(function () {
@@ -211,7 +209,7 @@ define(
 
             it("exports object tree in the correct format", function () {
                 action.perform();
-                
+
                 return new Promise(function (resolve, reject) {
                     setTimeout(resolve, 100);
                 }).then(function () {

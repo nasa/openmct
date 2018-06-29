@@ -82,7 +82,6 @@ define([
             });
 
             it('parses and returns when http succeeds', function () {
-                var promiseChainResolved = false;
                 $http.and.returnValue(Promise.resolve('successResponse'));
 
                 return provider

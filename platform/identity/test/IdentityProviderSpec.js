@@ -31,7 +31,6 @@ define(
             var mockQ, provider;
 
             beforeEach(function () {
-                mockCallback = jasmine.createSpy('callback');
                 mockQ = jasmine.createSpyObj('$q', ['when']);
                 mockQ.when.and.callFake(function (v) {
                     return Promise.resolve(v);

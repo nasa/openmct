@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global console*/
 
 /**
  * MCTRepresentationSpec. Created by vwoeltje on 11/6/14.
@@ -45,25 +46,23 @@ define(
                 mockOtherDomainObject,
                 mockNextObject,
                 testDefaultRoot,
-                mockSetNavigation,
-                setNavigationCount,
                 controller;
 
             function waitsForNavigation() {
-                return new Promise(function (resolve, reject){
+                return new Promise(function (resolve) {
                     mockNavigationService.setNavigation.and.callFake(function (obj) {
                         var returnValue;
                         try {
                             returnValue = NavigationService.prototype.setNavigation.call(mockNavigationService, obj);
-                        } catch(err) {
+                        } catch (err) {
                             console.error(err);
-                            //Not rejecting because 'setNavigation' has been called, which is what's being tested here. 
+                            //Not rejecting because 'setNavigation' has been called, which is what's being tested here.
                             //Rejecting will fail tests.
                         }
                         resolve();
                         return returnValue;
                     });
-                })
+                });
             }
 
             function instantiateController() {
@@ -169,15 +168,14 @@ define(
             it("navigates to a root-level object, even when default path is not found", function () {
                 mockDefaultRootObject.getId
                     .and.returnValue("something-other-than-the-" + testDefaultRoot);
-                debugger;
                 instantiateController();
 
                 return waitsForNavigation().then(function () {
                     expect(mockNavigationService.setNavigation)
                     .toHaveBeenCalledWith(mockDefaultRootObject);
-                })
+                });
             });
-            //
+
             it("does not try to override navigation", function () {
                 mockNavigationService.getNavigation.and.returnValue(mockDefaultRootObject);
                 instantiateController();
@@ -185,7 +183,7 @@ define(
                     expect(mockScope.navigatedObject).toBe(mockDefaultRootObject);
                 });
             });
-            //
+
             it("updates scope when navigated object changes", function () {
                 // Should have registered a listener - call it
                 mockNavigationService.addListener.calls.mostRecent().args[0](
@@ -241,7 +239,7 @@ define(
                     expect(mockScope.navigatedObject).toBe(mockNextObject);
                     expect(mockNavigationService.setNavigation)
                         .toHaveBeenCalledWith(mockNextObject);
-                })
+                });
             });
 
             it("updates the displayed route to reflect current navigation", function () {

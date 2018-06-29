@@ -32,7 +32,8 @@ define(
                 typeCapability,
                 mutationCapability,
                 formatService,
-                compositionPromise;
+                compositionPromise,
+                controller;
 
             beforeEach(function () {
                 unlistenFunc = jasmine.createSpy("unlisten");
@@ -104,9 +105,9 @@ define(
                 );
                 scope.domainObject = domainObject;
 
-                controller  = new ListViewController(scope, formatService);
+                controller = new ListViewController(scope, formatService);
 
-                return compositionPromise
+                return compositionPromise;
             });
 
             it("uses the UTC time format", function () {
@@ -133,7 +134,7 @@ define(
             it("updates the scope when mutation occurs", function () {
                 var applyPromise = new Promise(function (resolve) {
                     scope.$apply.and.callFake(resolve);
-                })
+                });
 
                 domainObject.useCapability.and.returnValue(Promise.resolve([]));
                 expect(mutationCapability.listen).toHaveBeenCalledWith(jasmine.any(Function));

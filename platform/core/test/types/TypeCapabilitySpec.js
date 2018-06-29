@@ -42,8 +42,8 @@ define(
                     "domainObject",
                     ["getId", "getModel", "getCapability"]
                 );
-                mockType = { 
-                    someKey: "some value", 
+                mockType = {
+                    someKey: "some value",
                     someOtherProperty: "some other property",
                     aThirdProperty: "a third property"
                 };

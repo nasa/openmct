@@ -210,11 +210,11 @@ define(
                 mockSwimlane.expanded = true;
                 mockSwimlane.children = [];
                 mockContext.getParent.and.returnValue(mockSwimlane.parent.domainObject);
-                
+
                 return new Promise(function (resolve, reject) {
                     mockSwimlane.parent.domainObject.useCapability.and.callFake(function (name, callback) {
                         resolve(callback);
-                    })
+                    });
                     handler.drop('d', mockOtherObject);
                 }).then(function (callback) {
                     callback(testModel);

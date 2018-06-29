@@ -207,7 +207,7 @@ define(
                         }
                     })
                 );
-                
+
                 action.perform();
 
                 return new Promise(function (resolve, reject) {

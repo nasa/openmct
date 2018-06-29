@@ -141,7 +141,7 @@ define(
                     beforeEach(function () {
                         testError = { someProperty: "some value" };
                         testPromise.reject(testError);
-                        
+
                         return actionPromise;
                     });
 

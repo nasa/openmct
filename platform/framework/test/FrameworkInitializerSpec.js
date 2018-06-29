@@ -48,8 +48,6 @@ define(
             // Really just delegates work, can only verify the
             // order of calls.
             it("calls injected stages in order", function () {
-                var result;
-
                 return initializer.runApplication([]).then(function (result) {
                     expect(result).toEqual(
                         ["loader", "resolver", "registrar", "bootstrapper"]

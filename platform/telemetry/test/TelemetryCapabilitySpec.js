@@ -248,7 +248,6 @@ define(
                     prop3: "val6"
                 }];
                 var mockProvider = {};
-                var dunzo = false;
 
                 mockMetadata.values.and.returnValue([
                     {

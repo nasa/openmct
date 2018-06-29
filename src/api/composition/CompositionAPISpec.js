@@ -66,7 +66,7 @@ define([
             it('loads composition from domain object', function () {
                 var listener = jasmine.createSpy('addListener');
                 composition.on('add', listener);
-                
+
                 return composition.load().then(function () {
                     expect(listener.calls.count()).toBe(1);
                     expect(listener).toHaveBeenCalledWith({
@@ -116,7 +116,7 @@ define([
                         otherComposition.add(object);
                         expect(addListener).toHaveBeenCalled();
                         expect(otherAddListener).toHaveBeenCalled();
-                });
+                    });
             });
         });
 
@@ -156,18 +156,18 @@ define([
                 var addListener = jasmine.createSpy('addListener');
                 composition.on('add', addListener);
 
-                return composition.load().then(function (composition) {
+                return composition.load().then(function (children) {
                     var listenObject;
-                    var loadedObject = composition[0];
-                    
+                    var loadedObject = children[0];
+
                     expect(addListener).toHaveBeenCalled();
-                    
+
                     listenObject = addListener.calls.mostRecent().args[0];
                     expect(listenObject).toEqual(loadedObject);
                     expect(loadedObject).toEqual({
                         identifier: {namespace: 'custom', key: 'thing'}
-                    });                
-                })
+                    });
+                });
             });
         });
 
@@ -208,11 +208,11 @@ define([
                 });
                 var removePromise = new Promise(function (resolve) {
                     removeListener.and.callFake(resolve);
-                });;
+                });
 
                 composition.on('add', addListener);
                 composition.on('remove', removeListener);
-                
+
                 expect(customProvider.on).toHaveBeenCalledWith(
                     domainObject,
                     'add',
@@ -227,7 +227,7 @@ define([
                 );
                 var add = customProvider.on.calls.all()[0].args[2];
                 var remove = customProvider.on.calls.all()[1].args[2];
-                
+
                 return composition.load()
                     .then(function () {
                         expect(addListener).not.toHaveBeenCalled();

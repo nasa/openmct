@@ -230,8 +230,7 @@ define(
                         //Mock setting the rows on scope
                         var rowsCallback = getCallback(mockScope.$watch, 'rows');
                         var setRowsPromise = rowsCallback(rowsAsc);
-                        var promiseResolved = false;
-                        
+
                         return setRowsPromise.then(function () {
                             expect(mockScope.toiRowIndex).toBe(2);
                         });
@@ -381,7 +380,7 @@ define(
                         var oldRows;
                         mockScope.rows = testRows;
                         var setRowsPromise = controller.setRows(testRows);
-                        var promiseResolved = false;
+
                         oldRows = mockScope.visibleRows;
                         mockScope.toggleSort('col2');
 
