@@ -50,8 +50,6 @@ define([
 
     /**
      * Perform this action.
-     *
-     * @returns {RemoveDialog}
      */
     RemoveAction.prototype.perform = function () {
         var dialog,
