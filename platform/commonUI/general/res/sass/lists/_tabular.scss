@@ -133,11 +133,27 @@ table {
 		tbody, .tbody {
 			top: $tabularHeaderH * 2;
 		}
-		input[type="text"],
-		input[type="search"] {
-			box-sizing: border-box;
-			width: 100%;
-		}
+        .l-filter {
+            input[type="text"],
+            input[type="search"] {
+                $p: 20px;
+                transition: padding 200ms ease-in-out;
+                box-sizing: border-box;
+                padding-right: $p; // Fend off from icon
+                padding-left: $p; // Fend off from icon
+                width: 100%;
+            }
+            &.active {
+                // When user has typed something, hide the icon and collapse left padding
+                &:before {
+                    opacity: 0;
+                }
+                input[type="text"],
+                input[type="search"] {
+                    padding-left: $interiorMargin;
+                }
+            }
+        }
 	}
 
 	&.t-event-messages {
