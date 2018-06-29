@@ -23,6 +23,9 @@ jobs:
         - run:
             name: test
             command: npm run test
+        - store_artifacts:
+            path: dist/reports
+            prefix: reports
         - run:
             name: lint
             command: npm run lint
