@@ -39,9 +39,23 @@ define(
         function LineProxy(element, index, elements, gridSize) {
             var proxy = new ElementProxy(element, index, elements, gridSize),
                 handles = [
-                    new LineHandle(element, 'x', 'y', 'x2', 'y2', proxy.getGridSize()),
-                    new LineHandle(element, 'x2', 'y2', 'x', 'y', proxy.getGridSize())
+                    new LineHandle(element, proxy, 'x', 'y', 'x2', 'y2'),
+                    new LineHandle(element, proxy, 'x2', 'y2', 'x', 'y')
                 ];
+
+            /**
+             * Gets style specific to line proxy.
+             */
+            proxy.getStyle = function () {
+                var layoutGridSize = proxy.getGridSize();
+
+                return {
+                    left: (layoutGridSize[0] * proxy.x()) + 'px',
+                    top: (layoutGridSize[1] * proxy.y()) + 'px',
+                    width: (layoutGridSize[0] * proxy.width()) + 'px',
+                    height: (layoutGridSize[1] * proxy.height()) + 'px'
+                };
+            };
 
             /**
              * Get the top-left x coordinate, in grid space, of
@@ -148,12 +162,6 @@ define(
             proxy.handles = function () {
                 return handles;
             };
-
-            // Expose endpoint coordinates for editing
-            proxy.editX1 = new AccessorMutator(element, 'x');
-            proxy.editY1 = new AccessorMutator(element, 'y');
-            proxy.editX2 = new AccessorMutator(element, 'x2');
-            proxy.editY2 = new AccessorMutator(element, 'y2');
 
             return proxy;
         }

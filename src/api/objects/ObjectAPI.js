@@ -208,6 +208,14 @@ define([
     };
 
     /**
+     * @param {module:openmct.ObjectAPI~Identifier} identifier
+     * @returns {string} A string representation of the given identifier, including namespace and key
+     */
+    ObjectAPI.prototype.makeKeyString = function (identifier) {
+        return utils.makeKeyString(identifier);
+    };
+
+    /**
      * Uniquely identifies a domain object.
      *
      * @typedef Identifier

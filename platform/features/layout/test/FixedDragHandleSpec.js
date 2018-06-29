@@ -28,8 +28,8 @@ define(
 
         describe("A fixed position drag handle", function () {
             var mockElementHandle,
-                mockUpdate,
-                mockCommit,
+                mockConfigPath,
+                mockFixedControl,
                 handle;
 
             beforeEach(function () {
@@ -37,18 +37,23 @@ define(
                     'elementHandle',
                     ['x', 'y','getGridSize']
                 );
-                mockUpdate = jasmine.createSpy('update');
-                mockCommit = jasmine.createSpy('commit');
-
                 mockElementHandle.x.andReturn(6);
                 mockElementHandle.y.andReturn(8);
                 mockElementHandle.getGridSize.andReturn(TEST_GRID_SIZE);
 
+                mockFixedControl = jasmine.createSpyObj(
+                    'fixedControl',
+                    ['updateSelectionStyle', 'mutate']
+                );
+                mockFixedControl.updateSelectionStyle.andReturn();
+                mockFixedControl.mutate.andReturn();
+
+                mockConfigPath = jasmine.createSpy('configPath');
+
                 handle = new FixedDragHandle(
                     mockElementHandle,
-                    TEST_GRID_SIZE,
-                    mockUpdate,
-                    mockCommit
+                    mockConfigPath,
+                    mockFixedControl
                 );
             });
 
@@ -74,13 +79,12 @@ define(
                 expect(mockElementHandle.x).toHaveBeenCalledWith(5);
                 expect(mockElementHandle.y).toHaveBeenCalledWith(7);
 
-                // Should have called update once per continueDrag
-                expect(mockUpdate.calls.length).toEqual(2);
+                // Should have called updateSelectionStyle once per continueDrag
+                expect(mockFixedControl.updateSelectionStyle.calls.length).toEqual(2);
 
-                // Finally, ending drag should commit
-                expect(mockCommit).not.toHaveBeenCalled();
+                // Finally, ending drag should mutate
                 handle.endDrag();
-                expect(mockCommit).toHaveBeenCalled();
+                expect(mockFixedControl.mutate).toHaveBeenCalled();
             });
 
         });

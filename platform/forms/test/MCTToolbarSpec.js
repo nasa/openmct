@@ -26,16 +26,28 @@ define(
 
         describe("The mct-toolbar directive", function () {
             var mockScope,
+                mockOpenMCT,
+                mockSelection,
                 mctToolbar;
 
             function installController() {
-                var Controller = mctToolbar.controller[1];
-                return new Controller(mockScope);
+                var Controller = mctToolbar.controller[2];
+                return new Controller(mockScope, mockOpenMCT);
             }
 
             beforeEach(function () {
-                mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
+                mockScope = jasmine.createSpyObj("$scope", [
+                    "$watch",
+                    "$on"
+                ]);
                 mockScope.$parent = {};
+                mockSelection = jasmine.createSpyObj("selection", [
+                    'on',
+                    'off'
+                ]);
+                mockOpenMCT = {
+                    selection: mockSelection
+                };
                 mctToolbar = new MCTToolbar();
             });
 
@@ -43,27 +55,13 @@ define(
                 expect(mctToolbar.restrict).toEqual("E");
             });
 
-            it("watches for changes in form by name", function () {
-                // mct-form needs to watch for the form by name
-                // in order to convey changes in $valid, $dirty, etc
-                // up to the parent scope.
+            it("listens for selection change event", function () {
                 installController();
 
-                expect(mockScope.$watch).toHaveBeenCalledWith(
-                    "mctForm",
+                expect(mockOpenMCT.selection.on).toHaveBeenCalledWith(
+                    "change",
                     jasmine.any(Function)
                 );
-            });
-
-            it("conveys form status to parent scope", function () {
-                var someState = { someKey: "some value" };
-                mockScope.name = "someName";
-
-                installController();
-
-                mockScope.$watch.mostRecentCall.args[1](someState);
-
-                expect(mockScope.$parent.someName).toBe(someState);
             });
 
             it("allows strings to be converted to RegExps", function () {
