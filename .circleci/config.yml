@@ -13,7 +13,7 @@ jobs:
         - restore_cache:
             key: dependency-cache-{{ checksum "package.json" }}-{{ checksum "bower.json" }}
         - run:
-            name: Install npm
+            name: Installing dependencies (npm install)
             command: npm install
         - save_cache:
             key: dependency-cache-{{ checksum "package.json" }}-{{ checksum "bower.json" }}
@@ -21,17 +21,17 @@ jobs:
               - node_modules
               - bower_components
         - run:
-            name: test
+            name: npm run test
             command: npm run test
-        - store_artifacts:
-            path: dist/reports
-            prefix: reports
         - run:
-            name: lint
+            name: npm run lint
             command: npm run lint
         - run:
-            name: checkstyle
+            name: npm run checkstyle
             command: npm run checkstyle
+        - store_artifacts:
+            path: dist
+            prefix: dist
 
 workflows:
   version: 2
