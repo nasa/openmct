@@ -73,6 +73,7 @@ define([
                 return Number(string);
             }.bind(this);
         }
+        // Check for formatString support once instead of per format call.
         if (valueMetadata.formatString) {
             var baseFormat = this.formatter.format;
             var formatString = valueMetadata.formatString;
