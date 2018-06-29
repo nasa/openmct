@@ -366,35 +366,24 @@ define(
                             "column3": 9
                         }
                     ];
+
                     controller.batchSize = 2;
                     mockTelemetryAPI.request.and.returnValue(Promise.resolve(mockHistoricalData));
-                    controller.getHistoricalData([mockDomainObject])
-                    
-                    return new Promise(function (resolve, reject){
-                        mockTimeout.and.callFake(function (callback){
-                            callback();
-                            resolve();
-
-                            return 1;
-                        })
-                        controller.getHistoricalData([mockDomainObject]);
-                    });
                     controller.getHistoricalData([mockDomainObject]);
-                    return waitForTimeout()
-                        .then();
 
-                    return controller.getHistoricalData([mockDomainObject]).then(function () {
-                        expect(mockTimeout).toHaveBeenCalled();
+                    return new Promise(function (resolve) {
+                        mockTimeout.and.callFake(function (){
+                            resolve();
+                        });
+                    }).then(function () {
                         mockTimeout.calls.mostRecent().args[0]();
                         expect(mockTimeout.calls.count()).toBe(2);
                         mockTimeout.calls.mostRecent().args[0]();
                         expect(mockScope.rows.length).toBe(3);
+    
                     });
+
                 });
-
-                function waitForTimeout(){
-
-                }
             });
 
             it('Removes telemetry rows from table when they fall out of bounds', function () {

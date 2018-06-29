@@ -63,7 +63,7 @@ define([
         it("does not set navigation if it is not allowed", function () {
             mockNavigationService.shouldNavigate.and.returnValue(false);
             var onSuccess = jasmine.createSpy('onSuccess');
-            action.perform()
+            return action.perform()
                 .then(onSuccess, function () {
                     expect(onSuccess).not.toHaveBeenCalled();
                     expect(mockNavigationService.setNavigation)

@@ -90,6 +90,7 @@ define([
             });
             testParentComposition = [];
             mockParentObject.useCapability.and.returnValue(Promise.resolve(testParentComposition));
+
             mockContext.getParent.and.returnValue(mockParentObject);
             mockNavigationService.getNavigation.and.returnValue(mockDomainObject);
             mockEditor.isEditContextRoot.and.returnValue(false);
@@ -134,18 +135,14 @@ define([
                     function itNavigatesAsExpected() {
                         if (isOrphan && !isEditRoot) {
                             it("navigates to the parent", function () {
-                                return new Promise(function (resolve, reject) {
-                                    setTimeout(resolve, 5);
-                                }).then(function () {
+                                return Promise.resolve().then(function () {
                                     expect(mockActionCapability.perform)
                                         .toHaveBeenCalledWith('navigate');
                                 });
                             });
                         } else {
                             it("does nothing", function () {
-                                return new Promise(function (resolve, reject) {
-                                    setTimeout(resolve, 5);
-                                }).then(function () {
+                                return Promise.resolve().then(function () {
                                     expect(mockActionCapability.perform)
                                         .not.toHaveBeenCalled();
                                 });

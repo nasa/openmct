@@ -25,7 +25,7 @@ define([
     './AutoflowTabularConstants',
     '../../MCT',
     'zepto',
-    'dom-observer'
+    './dom-observer'
 ], function (AutoflowTabularPlugin, AutoflowTabularConstants, MCT, $, DOMObserver) {
     describe("AutoflowTabularPlugin", function () {
         var testType;

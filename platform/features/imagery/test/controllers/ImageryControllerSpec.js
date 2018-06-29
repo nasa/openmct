@@ -73,6 +73,9 @@ define(
                     'value',
                     'valuesForHints'
                 ]);
+                metadata.value.and.returnValue("timestamp");
+                metadata.valuesForHints.and.returnValue(["value"]);
+
                 prefix = "formatted ";
                 unsubscribe = jasmine.createSpy('unsubscribe');
                 openmct.telemetry.subscribe.and.returnValue(unsubscribe);
@@ -102,9 +105,6 @@ define(
                 });
 
                 openmct.telemetry.request.and.returnValue(requestPromise);
-
-                metadata.value.and.returnValue("timestamp");
-                metadata.valuesForHints.and.returnValue(["value"]);
                 mockElement = $(MOCK_ELEMENT_TEMPLATE);
                 mockWindow = jasmine.createSpyObj('$window', ['requestAnimationFrame']);
                 mockWindow.requestAnimationFrame.and.callFake(function (f) {
@@ -219,9 +219,9 @@ define(
                 it("listens for bounds event and responds to tick and manual change", function () {
                     var mockBounds = {start: 1434600000000, end: 1434600500000};
                     expect(openmct.time.on).toHaveBeenCalled();
-                    var calls = openmct.telemetry.request.calls.count();
+                    openmct.telemetry.request.calls.reset();
                     boundsListener(mockBounds, true);
-                    expect(openmct.telemetry.request.calls.count()).toBe(calls);
+                    expect(openmct.telemetry.request).not.toHaveBeenCalled();
                     boundsListener(mockBounds, false);
                     expect(openmct.telemetry.request).toHaveBeenCalledWith(newDomainObject, mockBounds);
                 });

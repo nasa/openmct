@@ -336,24 +336,26 @@ define(['../src/ConditionManager'], function (ConditionManager) {
             });
         });
 
-        it('populates its LAD cache with historial data on load, if available', function () {
+        it('populates its LAD cache with historial data on load, if available', function (done) {
+            var callbackCount = 0;
             expect(telemetryRequests.length).toBe(2);
             expect(telemetryRequests[0].object).toBe(mockCompObject1);
             expect(telemetryRequests[1].object).toBe(mockCompObject2);
 
             expect(telemetryCallbackSpy).not.toHaveBeenCalled();
 
-            var callbackPromise = new Promise(function (resolve){
-                telemetryCallbackSpy.and.callFake(resolve);
+            telemetryCallbackSpy.and.callFake(function () {
+                callbackCount++;
+
+                if ( callbackCount == 2) {
+                    expect(conditionManager.subscriptionCache.mockCompObject1.property1).toEqual('Its a string');
+                    expect(conditionManager.subscriptionCache.mockCompObject2.property4).toEqual(66);
+                    done();
+                }
             });
 
             telemetryRequests[0].resolve([mockTelemetryValues.mockCompObject1]);
             telemetryRequests[1].resolve([mockTelemetryValues.mockCompObject2]);
-
-            return callbackPromise.then(function () {
-                expect(conditionManager.subscriptionCache.mockCompObject1.property1).toEqual('Its a string');
-                expect(conditionManager.subscriptionCache.mockCompObject2.property4).toEqual(66);
-            });
         });
 
         it('updates its LAD cache upon recieving telemetry and invokes the appropriate handlers', function () {

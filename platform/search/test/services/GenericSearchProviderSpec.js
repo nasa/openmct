@@ -304,6 +304,27 @@ define([
                 });
             });
 
+            function waitsFor(latchFunction) {
+                return new Promise(function (resolve, reject){
+                    var maxWait = 2000;
+                    var start = Date.now();
+        
+                    checkLatchFunction();
+        
+                    function checkLatchFunction(){
+                        var now = Date.now();
+                        var elapsed = now - start;
+
+                        if (latchFunction()) {
+                            resolve();
+                        } else if (elapsed >= maxWait){
+                            reject("Timeout waiting for latch function to be true");
+                        } else {
+                            setTimeout(checkLatchFunction);
+                        }
+                    }
+                })
+            }
         });
 
 
@@ -389,27 +410,4 @@ define([
         });
 
     });
-
-    function waitsFor(latchFunction) {
-        return new Promise(function (resolve, reject){
-            var wait = 100;
-            var maxWait = 2000;
-            var start = Date.now();
-
-            checkLatchFunction();
-
-            function checkLatchFunction(){
-                var now = Date.now();
-                var elapsed = now - start;
-
-                if (latchFunction()) {
-                    resolve();
-                } else if (elapsed >= maxWait){
-                    reject("Timeout waiting for latch function to be true");
-                } else {
-                    setTimeout(checkLatchFunction, wait *= 2);
-                }
-            }
-        })
-    }
 });

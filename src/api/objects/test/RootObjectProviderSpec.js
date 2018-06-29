@@ -34,8 +34,8 @@ define([
             rootObjectProvider = new RootObjectProvider(rootRegistry);
         });
 
-        it('supports fetching root', function (done) {
-            rootObjectProvider.get()
+        it('supports fetching root', function () {
+            return rootObjectProvider.get()
                 .then(function (root) {
                     expect(root).toEqual({
                         identifier: {
@@ -46,8 +46,7 @@ define([
                         type: 'root',
                         composition: ['some root']
                     });
-                })
-                .then(done);
+                });
         });
     });
 });

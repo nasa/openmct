@@ -37,8 +37,7 @@ define([
             objectX,
             objectY,
             objectZ,
-            itemsToIndex,
-            onMessagePromise;
+            itemsToIndex;
 
         beforeEach(function () {
             worker = new Worker(
@@ -70,31 +69,15 @@ define([
                     model: item.model
                 });
             });
-
-            onMessage = jasmine.createSpy('onMessage');
-
-            onMessagePromise = new Promise(function (resolve) {
-                worker.addEventListener('message', resolve);
-            });
-
         });
 
         afterEach(function () {
             worker.terminate();
         });
 
-        it('returns search results for partial term matches', function () {
-
-            worker.postMessage({
-                request: 'search',
-                input: 'obj',
-                maxResults: 100,
-                queryId: 123
-            });
-
-            return onMessagePromise.then(function (message) {
+        it('returns search results for partial term matches', function (done) {
+            worker.addEventListener('message', function (message) {
                 var data = message.data;
-
                 expect(data.request).toBe('search');
                 expect(data.total).toBe(3);
                 expect(data.queryId).toBe(123);
@@ -108,51 +91,56 @@ define([
                 expect(data.results[2].item.id).toBe('z');
                 expect(data.results[2].item.model).toEqual(objectZ.model);
                 expect(data.results[2].matchCount).toBe(1);
+                
+                done();
+            });
 
-            })
+            worker.postMessage({
+                request: 'search',
+                input: 'obj',
+                maxResults: 100,
+                queryId: 123
+            });
         });
 
-        it('scores exact term matches higher', function () {
+        it('scores exact term matches higher', function (done) {
+            worker.addEventListener('message', function (message) {
+                expect(message.data.queryId).toBe(234);
+                expect(message.data.results.length).toBe(3);
+                expect(message.data.results[0].item.id).toBe('x');
+                expect(message.data.results[0].matchCount).toBe(1.5);
+                
+                done();
+            });
+
             worker.postMessage({
                 request: 'search',
                 input: 'object',
                 maxResults: 100,
                 queryId: 234
             });
-
-            return onMessagePromise.then(function (message) {
-                expect(message.data.queryId).toBe(234);
-                expect(message.data.results.length).toBe(3);
-                expect(message.data.results[0].item.id).toBe('x');
-                expect(message.data.results[0].matchCount).toBe(1.5);                
-            });
         });
 
-        it('can find partial term matches', function () {
+        it('can find partial term matches', function (done) {
+            worker.addEventListener('message', function (message) {
+                expect(message.data.queryId).toBe(345);
+                expect(message.data.results.length).toBe(1);
+                expect(message.data.results[0].item.id).toBe('x');
+                expect(message.data.results[0].matchCount).toBe(1);
+                
+                done();
+            });
+
             worker.postMessage({
                 request: 'search',
                 input: 'x',
                 maxResults: 100,
                 queryId: 345
             });
-
-            return onMessagePromise.then(function (message) {
-                expect(message.data.queryId).toBe(345);
-                expect(message.data.results.length).toBe(1);
-                expect(message.data.results[0].item.id).toBe('x');
-                expect(message.data.results[0].matchCount).toBe(1);
-            });
         });
 
-        it('matches individual terms', function () {
-            worker.postMessage({
-                request: 'search',
-                input: 'x y z',
-                maxResults: 100,
-                queryId: 456
-            });
-
-            return onMessagePromise.then(function (message) {
+        it('matches individual terms', function (done) {
+            worker.addEventListener('message', function (message) {
                 var data = message.data;
 
                 expect(data.queryId).toBe(456);
@@ -163,18 +151,20 @@ define([
                 expect(data.results[1].matchCount).toBe(1);
                 expect(data.results[2].item.id).toBe('z');
                 expect(data.results[1].matchCount).toBe(1);
+
+                done();
+            });
+
+            worker.postMessage({
+                request: 'search',
+                input: 'x y z',
+                maxResults: 100,
+                queryId: 456
             });
         });
 
-        it('scores exact matches highest', function () {
-            worker.postMessage({
-                request: 'search',
-                input: 'object xx',
-                maxResults: 100,
-                queryId: 567
-            });
-
-            return onMessagePromise.then(function (message) {
+        it('scores exact matches highest', function (done) {
+            worker.addEventListener('message', function (message) {
                 var data = message.data;
 
                 expect(data.queryId).toBe(567);
@@ -183,18 +173,20 @@ define([
                 expect(data.results[0].matchCount).toBe(103);
                 expect(data.results[1].matchCount).toBe(1.5);
                 expect(data.results[2].matchCount).toBe(1.5);
+
+                done();
+            });
+
+            worker.postMessage({
+                request: 'search',
+                input: 'object xx',
+                maxResults: 100,
+                queryId: 567
             });
         });
 
         it('scores multiple term match above single match', function () {
-            worker.postMessage({
-                request: 'search',
-                input: 'obj x',
-                maxResults: 100,
-                queryId: 678
-            });
-
-            return onMessagePromise.then(function (message) {
+            worker.addEventListener('message', function (message) {
                 var data = message.data;
 
                 expect(data.queryId).toBe(678);
@@ -203,6 +195,13 @@ define([
                 expect(data.results[0].matchCount).toBe(2);
                 expect(data.results[1].matchCount).toBe(1);
                 expect(data.results[2].matchCount).toBe(1);
+            });
+
+            worker.postMessage({
+                request: 'search',
+                input: 'obj x',
+                maxResults: 100,
+                queryId: 678
             });
         });
     });
