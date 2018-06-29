@@ -51,10 +51,7 @@
             display: block;
         }
     }
-
 }
-
-
 
 .gl-plot {
 	color: $colorPlotFg;
@@ -192,13 +189,13 @@
 
 	.gl-plot-hash {
 		position: absolute;
-		border: 0 $colorPlotHash $stylePlotHash;
+        opacity: $opacityPlotHash;
 		&.hash-v {
-			border-right-width: 1px;
+			border-right: 1px $colorPlotHash $stylePlotHash;
 			height: 100%;
 		}
 		&.hash-h {
-			border-bottom-width: 1px;
+			border-bottom: 1px $colorPlotHash $stylePlotHash;
 			width: 100%;
 		}
 	}
@@ -320,4 +317,61 @@
 	&.tick-label-y {
 		right: 0; left: 0;
 	}
+}
+
+
+// .holder-plot { // Leave for now, WIP
+.export-plot {
+	$bg: white;
+	$fg: black;
+    $gry: #999;
+
+	background: $bg;
+
+    .l-view-section {
+        $m: $interiorMargin;
+        top: $m !important; right: $m; bottom: $m; left: $m;
+    }
+
+    .gl-plot-display-area {
+        background: none !important;
+        border-color: $gry !important;
+
+        .gl-plot-local-controls {
+            opacity: 0;
+        }
+    }
+
+	.gl-plot {
+		color: $fg;
+
+		.gl-plot-hash {
+            border-color: $fg;
+		}
+	}
+
+    table {
+        thead {
+            border-bottom: none;
+
+            th {
+                background: #eee;
+                border-left-color: $bg;
+                color: #666;
+            }
+
+            tr {
+                border: none;
+            }
+        }
+        tbody {
+            tr {
+                border-top: 1px solid #ccc;
+            }
+
+            td {
+                color: $fg;
+            }
+        }
+    }
 }

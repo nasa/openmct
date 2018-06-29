@@ -206,24 +206,3 @@
         }
     }
 }
-
-.export-plot {
-    $bg: white;
-    $fg: black;
-
-    background: $bg;
-    .gl-plot {
-        color: $fg;
-    }
-    table tr {
-        border: none;
-        td {
-            color: $fg;
-        }
-        th {
-            background: #eee;
-            border-left-color: $fg;
-            color: #666;
-        }
-    }
-}
