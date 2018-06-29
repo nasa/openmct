@@ -71,13 +71,6 @@ define(
              */
             this.gridSize = gridSize || [1,1]; //Ensure a reasonable default
 
-            this.resizeHandles = [new ResizeHandle(
-                                    this.element,
-                                    this.getMinWidth(),
-                                    this.getMinHeight(),
-                                    this.getGridSize()
-                                  )];
-
             /**
              * Get and/or set the x position of this element.
              * Units are in fixed position grid space.
@@ -123,15 +116,16 @@ define(
             this.height = new AccessorMutator(element, 'height');
 
             this.useGrid = new UnitAccessorMutator(this);
-
             this.index = index;
             this.elements = elements;
+            this.resizeHandles = [new ResizeHandle(this, this.element)];
         }
 
         /**
          * Change the display order of this element.
          * @param {string} o where to move this element;
          *        one of "top", "up", "down", or "bottom"
+         * @return {Array} the full array of elements
          */
         ElementProxy.prototype.order = function (o) {
             var index = this.index,
@@ -152,16 +146,8 @@ define(
                 // anyway, but be consistent)
                 this.index = desired;
             }
-        };
 
-        /**
-         * Remove this element from the fixed position view.
-         */
-        ElementProxy.prototype.remove = function () {
-            var index = this.index;
-            if (this.elements[index] === this.element) {
-                this.elements.splice(index, 1);
-            }
+            return elements;
         };
 
         /**
@@ -208,7 +194,6 @@ define(
          */
         ElementProxy.prototype.getMinWidth = function () {
             return Math.ceil(MIN_WIDTH / this.getGridSize()[0]);
-
         };
 
         /**

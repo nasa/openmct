@@ -78,29 +78,30 @@ define(
                 }
 
                 $scope.configuration = $scope.configuration || {};
-                $scope.configuration.panels =
-                    $scope.configuration.panels || {};
+                $scope.configuration.panels = $scope.configuration.panels || {};
 
-                $scope.configuration.panels[id] = {
-                    position: [
-                        Math.floor(position.x / self.gridSize[0]),
-                        Math.floor(position.y / self.gridSize[1])
-                    ],
-                    dimensions: self.defaultDimensions()
-                };
+                self.openmct.objects.get(id).then(function (object) {
+                    $scope.configuration.panels[id] = {
+                        position: [
+                            Math.floor(position.x / self.gridSize[0]),
+                            Math.floor(position.y / self.gridSize[1])
+                        ],
+                        dimensions: self.defaultDimensions(),
+                        hasFrame: self.getDefaultFrame(object.type)
+                    };
 
-                // Store the id so that the newly-dropped object
-                // gets selected during refresh composition
-                self.droppedIdToSelectAfterRefresh = id;
+                    // Store the id so that the newly-dropped object
+                    // gets selected during refresh composition
+                    self.droppedIdToSelectAfterRefresh = id;
 
-                // Mark change as persistable
-                if ($scope.commit) {
-                    $scope.commit("Dropped a frame.");
-                }
-                // Populate template-facing position for this id
-                self.rawPositions[id] =
-                    $scope.configuration.panels[id];
-                self.populatePosition(id);
+                    self.commit();
+
+                    // Populate template-facing position for this id
+                    self.rawPositions[id] = $scope.configuration.panels[id];
+                    self.populatePosition(id);
+                    refreshComposition();
+                });
+
                 // Layout may contain embedded views which will
                 // listen for drops, so call preventDefault() so
                 // that they can recognize that this event is handled.
@@ -157,10 +158,7 @@ define(
                 $scope.configuration.panels[self.activeDragId].dimensions =
                     self.rawPositions[self.activeDragId].dimensions;
 
-                // Mark this object as dirty to encourage persistence
-                if ($scope.commit) {
-                    $scope.commit("Moved frame.");
-                }
+                self.commit();
             };
 
             // Sets the selectable object in response to the selection change event.
@@ -194,9 +192,22 @@ define(
 
             $scope.$on("$destroy", function () {
                 openmct.selection.off("change", setSelection);
+                self.unlisten();
             });
 
             $scope.$on("mctDrop", handleDrop);
+
+            self.unlisten = self.$scope.domainObject.getCapability('mutation').listen(function (model) {
+                $scope.configuration = model.configuration.layout;
+                $scope.model = model;
+                var panels = $scope.configuration.panels;
+
+                Object.keys(panels).forEach(function (key) {
+                    if (self.frames && self.frames.hasOwnProperty(key)) {
+                        self.frames[key] = panels[key].hasFrame;
+                    }
+                });
+            });
         }
 
         // Utility function to copy raw positions from configuration,
@@ -220,7 +231,6 @@ define(
          */
         LayoutController.prototype.setFrames = function (ids) {
             var panels = shallowCopy(this.$scope.configuration.panels || {}, ids);
-
             this.frames = {};
 
             this.$scope.composition.forEach(function (object) {
@@ -230,9 +240,20 @@ define(
                 if (panels[id].hasOwnProperty('hasFrame')) {
                     this.frames[id] = panels[id].hasFrame;
                 } else {
-                    this.frames[id] = DEFAULT_HIDDEN_FRAME_TYPES.indexOf(object.getModel().type) === -1;
+                    this.frames[id] = this.getDefaultFrame(object.getModel().type);
                 }
             }, this);
+        };
+
+        /**
+         * Gets the default value for frame.
+         *
+         * @param type the domain object type
+         * @return {boolean} true if the object should have
+         *         frame by default, false, otherwise
+         */
+        LayoutController.prototype.getDefaultFrame = function (type) {
+            return DEFAULT_HIDDEN_FRAME_TYPES.indexOf(type) === -1;
         };
 
         // Convert from { positions: ..., dimensions: ... } to an
@@ -390,40 +411,6 @@ define(
         };
 
         /**
-         * Callback to show/hide the object frame.
-         *
-         * @param {string} id the object id
-         * @private
-         */
-        LayoutController.prototype.toggleFrame = function (id, domainObject) {
-            var configuration = this.$scope.configuration;
-
-            if (!configuration.panels[id]) {
-                configuration.panels[id] = {};
-            }
-
-            this.frames[id] = configuration.panels[id].hasFrame = !this.frames[id];
-
-            var selection = this.openmct.selection.get();
-            selection[0].context.toolbar = this.getToolbar(id, domainObject);
-            this.openmct.selection.select(selection);  // reselect so toolbar updates
-        };
-
-        /**
-         * Gets the toolbar object for the given domain object.
-         *
-         * @param id the domain object id
-         * @param domainObject the domain object
-         * @returns {object}
-         * @private
-         */
-        LayoutController.prototype.getToolbar = function (id, domainObject) {
-            var toolbarObj = {};
-            toolbarObj[this.frames[id] ? 'hideFrame' : 'showFrame'] = this.toggleFrame.bind(this, id, domainObject);
-            return toolbarObj;
-        };
-
-        /**
          * Bypasses selection if drag is in progress.
          *
          * @param event the angular event object
@@ -497,15 +484,23 @@ define(
          * Gets the selection context.
          *
          * @param domainObject the domain object
-         * @returns {object} the context object which includes
-         *                  item, oldItem and toolbar
+         * @returns {object} the context object which includes item and oldItem
          */
-        LayoutController.prototype.getContext = function (domainObject, toolbar) {
+        LayoutController.prototype.getContext = function (domainObject) {
             return {
                 item: domainObject.useCapability('adapter'),
-                oldItem: domainObject,
-                toolbar: toolbar ? this.getToolbar(domainObject.getId(), domainObject) : undefined
+                oldItem: domainObject
             };
+        };
+
+        LayoutController.prototype.commit = function () {
+            var model = this.$scope.model;
+            model.configuration = model.configuration || {};
+            model.configuration.layout = this.$scope.configuration;
+
+            this.$scope.domainObject.useCapability('mutation', function () {
+                return model;
+            });
         };
 
         /**

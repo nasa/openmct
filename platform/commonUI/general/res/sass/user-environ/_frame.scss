@@ -123,8 +123,8 @@
         }
     }
 
-    &.t-frame-outer .s-input-inline {
-        // Prevent inline inputs from being edited when nested in a Layout
+    &.t-frame-outer .title-label.s-input-inline {
+        // Prevent frame titles from being edited when nested in a Layout
         pointer-events: none !important;
     }
 
@@ -161,6 +161,7 @@ body.desktop .frame {
     // Hide local controls initially and show it them on hover when they're in an element that's in a frame context
     // Frame template is used because we need to target the lowest nested frame
     .object-browse-bar .btn-bar {
+        @include trans-prop-nice($props: opacity, $dur: 250ms);
         opacity: 0;
         pointer-events: none;
     }
@@ -169,6 +170,7 @@ body.desktop .frame {
     // Handles the case where we have layouts in layouts.
     &:hover > .object-browse-bar {
         .btn-bar {
+            @include trans-prop-nice($props: opacity, $dur: 10ms);
             opacity: 1;
             pointer-events: inherit;
         }

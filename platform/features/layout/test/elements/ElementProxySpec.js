@@ -53,11 +53,6 @@ define(
                 });
             });
 
-            it("allows elements to be removed", function () {
-                proxy.remove();
-                expect(testElements).toEqual([{}, {}, {}]);
-            });
-
             it("allows order to be changed", function () {
                 proxy.order("down");
                 expect(testElements).toEqual([{}, testElement, {}, {}]);
