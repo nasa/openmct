@@ -40,7 +40,6 @@ define(
          * @constructor
          */
         function ExportImageService(dialogService) {
-            this.exportCount = 0;
             this.dialogService = dialogService;
         }
 
@@ -52,7 +51,7 @@ define(
          * @returns {promise}
          */
         ExportImageService.prototype.renderElement = function (element, imageType, className) {
-            console.log(className);
+
             var dialogService = this.dialogService,
                 dialog = dialogService.showBlockingMessage({
                     title: "Capturing...",
@@ -67,21 +66,15 @@ define(
                 mimeType = "image/jpeg";
             }
 
-            var exportId = 'export-element-' + this.exportCount;
-            this.exportCount++;
-            var oldId = element.id;
-            element.id = exportId;
+            if (className) {
+                element.classList.add(className);
+            }
 
             return html2canvas(element, {
                 onclone: function (document) {
-                    // Make export style changes to cloned document so that
-                    // users don't see view flickering.
-                    var clonedElement = document.getElementById(exportId);
-                    if (clonedElement && className) {
-                        clonedElement.classList.add = className;
-                        console.log(clonedElement.classList);
+                    if (className) {
+                        element.classList.remove(className);
                     }
-                    element.id = oldId;
                 }
             }).then(function (canvas) {
                 dialog.dismiss();
