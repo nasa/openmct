@@ -28,7 +28,7 @@ jobs:
             command: npm run lint
         - run:
             name: checkstyle
-            command: gulp checkstyle
+            command: npm run checkstyle
 
 workflows:
   version: 2
