@@ -250,8 +250,10 @@ define([
         if (!options.hasOwnProperty('end')) {
             options.end = this.openmct.time.bounds().end;
         }
-        if (!options.hasOwnProperty('domain')) {
-            options.domain = this.openmct.time.timeSystem().key;
+        if (!options.hasOwnProperty('domain'))  {
+            if (this.openmct.time.timeSystem()) {
+                options.domain = this.openmct.time.timeSystem().key;
+            }
         }
     };
 
