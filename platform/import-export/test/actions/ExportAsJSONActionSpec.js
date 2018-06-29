@@ -67,7 +67,7 @@ define(
                     return feature === 'creation';
                 });
 
-                typeService.getType.andReturn(mockType);
+                typeService.getType.and.returnValue(mockType);
 
                 context = {};
                 context.domainObject = domainObjectFactory(
@@ -107,7 +107,7 @@ define(
                         }
                 };
 
-                typeService.getType.andReturn(nonCreatableType);
+                typeService.getType.and.returnValue(nonCreatableType);
 
                 var parent = domainObjectFactory({
                     name: 'parent',
@@ -195,18 +195,11 @@ define(
                 context.domainObject = parent;
 
                 var init = false;
-                runs(function () {
+
+                return new Promise (function (resolve){
                     action.perform();
-                    setTimeout(function () {
-                        init = true;
-                    }, 100);
-                });
-
-                waitsFor(function () {
-                    return init;
-                }, "Exported tree should have been built");
-
-                runs(function () {
+                    setTimeout(resolve, 100);
+                }).then(function () {
                     expect(Object.keys(action.tree).length).toBe(2);
                     expect(action.tree.hasOwnProperty('parentId'))
                         .toBeTruthy();
