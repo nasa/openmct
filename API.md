@@ -37,7 +37,7 @@
     - [Time Systems and Bounds](#time-systems-and-bounds)
       - [Defining and Registering Time Systems](#defining-and-registering-time-systems)
       - [Getting and Setting the Active Time System](#getting-and-setting-the-active-time-system)
-    - [Time Bounds](#time-bounds)
+      - [Time Bounds](#time-bounds)
     - [Clocks](#clocks)
       - [Defining and registering clocks](#defining-and-registering-clocks)
       - [Getting and setting active clock](#getting-and-setting-active-clock)
@@ -48,6 +48,10 @@
     - [The Time Conductor](#the-time-conductor)
       - [Time Conductor Configuration](#time-conductor-configuration)
       - [Example conductor configuration](#example-conductor-configuration)
+  - [Indicators](#indicators)
+    - [The URL Status Indicator](#the-url-status-indicator)
+    - [Creating a Simple Indicator](#creating-a-simple-indicator)
+    - [Custom Indicators](#custom-indicators)
   - [Included Plugins](#included-plugins)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
