@@ -142,7 +142,7 @@ define([
 
     StackedPlotController.prototype.exportJPG = function () {
         this.hideExportButtons = true;
-        this.exportImageService.exportJPG(this.$element[0], 'stacked-plot.jpg')
+        this.exportImageService.exportJPG(this.$element[0], 'stacked-plot.jpg', 'export-plot')
             .finally(function () {
                 this.hideExportButtons = false;
             }.bind(this));
@@ -150,7 +150,7 @@ define([
 
     StackedPlotController.prototype.exportPNG = function () {
         this.hideExportButtons = true;
-        this.exportImageService.exportPNG(this.$element[0], 'stacked-plot.png')
+        this.exportImageService.exportPNG(this.$element[0], 'stacked-plot.png', 'export-plot')
             .finally(function () {
                 this.hideExportButtons = false;
             }.bind(this));
