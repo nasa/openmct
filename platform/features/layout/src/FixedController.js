@@ -38,6 +38,24 @@ define(
 
         var DEFAULT_DIMENSIONS = [2, 1];
 
+        // Convert from element x/y/width/height to an
+        // appropriate ng-style argument, to position elements.
+        function convertPosition(elementProxy) {
+            if (elementProxy.getStyle) {
+                return elementProxy.getStyle();
+            }
+
+            var gridSize = elementProxy.getGridSize();
+
+            // Multiply position/dimensions by grid size
+            return {
+                left: (gridSize[0] * elementProxy.element.x) + 'px',
+                top: (gridSize[1] * elementProxy.element.y) + 'px',
+                width: (gridSize[0] * elementProxy.element.width) + 'px',
+                height: (gridSize[1] * elementProxy.element.height) + 'px'
+            };
+        }
+
         /**
          * The FixedController is responsible for supporting the
          * Fixed Position view. It arranges frames according to saved
@@ -51,14 +69,14 @@ define(
             this.names = {}; // Cache names by ID
             this.values = {}; // Cache values by ID
             this.elementProxiesById = {};
-
-            this.telemetryObjects = [];
-            this.subscriptions = [];
+            this.telemetryObjects = {};
+            this.subscriptions = {};
             this.openmct = openmct;
             this.$element = $element;
             this.$scope = $scope;
-
-            this.gridSize = $scope.domainObject && $scope.domainObject.getModel().layoutGrid;
+            this.dialogService = dialogService;
+            this.$q = $q;
+            this.newDomainObject = $scope.domainObject.useCapability('adapter');
             this.fixedViewSelectable = false;
 
             var self = this;
@@ -67,58 +85,12 @@ define(
                 'fetchHistoricalData',
                 'getTelemetry',
                 'setDisplayedValue',
-                'subscribeToObjects',
+                'subscribeToObject',
                 'unsubscribe',
                 'updateView'
             ].forEach(function (name) {
                 self[name] = self[name].bind(self);
             });
-
-            // Convert from element x/y/width/height to an
-            // appropriate ng-style argument, to position elements.
-            function convertPosition(elementProxy) {
-                var gridSize = elementProxy.getGridSize();
-                // Multiply position/dimensions by grid size
-                return {
-                    left: (gridSize[0] * elementProxy.x()) + 'px',
-                    top: (gridSize[1] * elementProxy.y()) + 'px',
-                    width: (gridSize[0] * elementProxy.width()) + 'px',
-                    height: (gridSize[1] * elementProxy.height()) + 'px'
-                };
-            }
-
-            // Update the style for a selected element
-            function updateSelectionStyle() {
-                if (self.selectedElementProxy) {
-                    self.selectedElementProxy.style = convertPosition(self.selectedElementProxy);
-                }
-            }
-
-            // Generate a specific drag handle
-            function generateDragHandle(elementHandle) {
-                return new FixedDragHandle(
-                    elementHandle,
-                    self.gridSize,
-                    updateSelectionStyle,
-                    $scope.commit
-                );
-            }
-
-            // Generate drag handles for an element
-            function generateDragHandles(element) {
-                return element.handles().map(generateDragHandle);
-            }
-
-            // Update element positions when grid size changes
-            function updateElementPositions(layoutGrid) {
-                // Update grid size from model
-                self.gridSize = layoutGrid;
-
-                self.elementProxies.forEach(function (elementProxy) {
-                    elementProxy.setGridSize(self.gridSize);
-                    elementProxy.style = convertPosition(elementProxy);
-                });
-            }
 
             // Decorate an element for display
             function makeProxyElement(element, index, elements) {
@@ -137,14 +109,14 @@ define(
 
             // Decorate elements in the current configuration
             function refreshElements() {
-                var elements = (($scope.configuration || {}).elements || []);
+                var elements = (((self.newDomainObject.configuration || {})['fixed-display'] || {}).elements || []);
 
                 // Create the new proxies...
                 self.elementProxies = elements.map(makeProxyElement);
 
-                // If selection is not in array, select parent.
-                // Otherwise, set the element to select after refresh.
                 if (self.selectedElementProxy) {
+                    // If selection is not in array, select parent.
+                    // Otherwise, set the element to select after refresh.
                     var index = elements.indexOf(self.selectedElementProxy.element);
                     if (index === -1) {
                         self.$element[0].click();
@@ -168,79 +140,53 @@ define(
                 });
             }
 
-            function removeObjects(ids) {
-                var configuration = self.$scope.configuration;
-
-                if (configuration &&
-                    configuration.elements) {
-                    configuration.elements = configuration.elements.filter(function (proxy) {
-                        return ids.indexOf(proxy.id) === -1;
-                    });
-                }
-                self.getTelemetry($scope.domainObject);
-                refreshElements();
-                // Mark change as persistable
-                if (self.$scope.commit) {
-                    self.$scope.commit("Objects removed.");
-                }
-            }
-
-            // Handle changes in the object's composition
-            function updateComposition(composition, previousComposition) {
-                var removedIds = [];
-                // Resubscribe - objects in view have changed
-                if (composition !== previousComposition) {
-                    //remove any elements no longer in the composition
-                    removedIds = _.difference(previousComposition, composition);
-                    if (removedIds.length > 0) {
-                        removeObjects(removedIds);
-                    }
-                }
-            }
-
             // Trigger a new query for telemetry data
             function updateDisplayBounds(bounds, isTick) {
                 if (!isTick) {
                     //Reset values
                     self.values = {};
                     refreshElements();
+
                     //Fetch new data
-                    self.fetchHistoricalData(self.telemetryObjects);
+                    Object.values(self.telemetryObjects).forEach(function (object) {
+                        self.fetchHistoricalData(object);
+                    });
                 }
             }
 
             // Add an element to this view
             function addElement(element) {
-                // Ensure that configuration field is populated
-                $scope.configuration = $scope.configuration || {};
-                // Make sure there is a "elements" field in the
-                // view configuration.
-                $scope.configuration.elements =
-                    $scope.configuration.elements || [];
-                // Store the position of this element.
-                $scope.configuration.elements.push(element);
+                var index;
+                var elements = (((self.newDomainObject.configuration || {})['fixed-display'] || {}).elements || []);
+                elements.push(element);
 
-                self.elementToSelectAfterRefresh = element;
-
-                // Refresh displayed elements
-                refreshElements();
-
-                // Mark change as persistable
-                if ($scope.commit) {
-                    $scope.commit("Dropped an element.");
+                if (self.selectedElementProxy) {
+                    index = elements.indexOf(self.selectedElementProxy.element);
                 }
+
+                self.mutate("configuration['fixed-display'].elements", elements);
+                elements = (self.newDomainObject.configuration)['fixed-display'].elements || [];
+                self.elementToSelectAfterRefresh = elements[elements.length - 1];
+
+                if (self.selectedElementProxy) {
+                    // Update the selected element with the new
+                    // value since newDomainOject is mutated.
+                    self.selectedElementProxy.element = elements[index];
+                }
+                refreshElements();
             }
 
             // Position a panel after a drop event
             function handleDrop(e, id, position) {
                 // Don't handle this event if it has already been handled
-                // color is set to "" to let the CSS theme determine the default color
                 if (e.defaultPrevented) {
                     return;
                 }
 
                 e.preventDefault();
+
                 // Store the position of this element.
+                // color is set to "" to let the CSS theme determine the default color
                 addElement({
                     type: "fixed.telemetry",
                     x: Math.floor(position.x / self.gridSize[0]),
@@ -254,70 +200,228 @@ define(
                     useGrid: true
                 });
 
-                //Re-initialize objects, and subscribe to new object
-                self.getTelemetry($scope.domainObject);
-            }
-
-            // Sets the selectable object in response to the selection change event.
-            function setSelection(selectable) {
-                var selection = selectable[0];
-
-                if (!selection) {
-                    return;
-                }
-
-                if (selection.context.elementProxy) {
-                    self.selectedElementProxy = selection.context.elementProxy;
-                    self.mvHandle = self.generateDragHandle(self.selectedElementProxy);
-                    self.resizeHandles = self.generateDragHandles(self.selectedElementProxy);
-                } else {
-                    // Make fixed view selectable if it's not already.
-                    if (!self.fixedViewSelectable && selectable.length === 1) {
-                        self.fixedViewSelectable = true;
-                        selection.context.viewProxy = new FixedProxy(addElement, $q, dialogService);
-                        self.openmct.selection.select(selection);
-                    }
-
-                    self.resizeHandles = [];
-                    self.mvHandle = undefined;
-                    self.selectedElementProxy = undefined;
-                }
+                // Subscribe to the new object to get telemetry
+                self.openmct.objects.get(id).then(function (object) {
+                    self.getTelemetry(object);
+                });
             }
 
             this.elementProxies = [];
-            this.generateDragHandle = generateDragHandle;
-            this.generateDragHandles = generateDragHandles;
-            this.updateSelectionStyle = updateSelectionStyle;
+            this.addElement = addElement;
+            this.refreshElements = refreshElements;
+            this.fixedProxy = new FixedProxy(this.addElement, this.$q, this.dialogService);
 
-            // Detect changes to grid size
-            $scope.$watch("model.layoutGrid", updateElementPositions);
+            this.composition = this.openmct.composition.get(this.newDomainObject);
+            this.composition.on('add', this.onCompositionAdd, this);
+            this.composition.on('remove', this.onCompositionRemove, this);
+            this.composition.load();
 
             // Position panes where they are dropped
             $scope.$on("mctDrop", handleDrop);
 
-            // Position panes when the model field changes
-            $scope.$watch("model.composition", updateComposition);
-
-            // Refresh list of elements whenever model changes
-            $scope.$watch("model.modified", refreshElements);
-
-            // Subscribe to telemetry when an object is available
-            $scope.$watch("domainObject", this.getTelemetry);
-
-            // Free up subscription on destroy
-            $scope.$on("$destroy", function () {
-                self.unsubscribe();
-                self.openmct.time.off("bounds", updateDisplayBounds);
-                self.openmct.selection.off("change", setSelection);
-            });
+            $scope.$on("$destroy", this.destroy.bind(this));
 
             // Respond to external bounds changes
             this.openmct.time.on("bounds", updateDisplayBounds);
-            this.openmct.selection.on('change', setSelection);
-            this.$element.on('click', this.bypassSelection.bind(this));
 
-            setSelection(this.openmct.selection.get());
+            this.openmct.selection.on('change', this.setSelection.bind(this));
+            this.$element.on('click', this.bypassSelection.bind(this));
+            this.unlisten = this.openmct.objects.observe(this.newDomainObject, '*', function (obj) {
+                this.newDomainObject = JSON.parse(JSON.stringify(obj));
+                this.updateElementPositions(this.newDomainObject.layoutGrid);
+            }.bind(this));
+
+            this.updateElementPositions(this.newDomainObject.layoutGrid);
+            refreshElements();
         }
+
+        FixedController.prototype.updateElementPositions = function (layoutGrid) {
+            this.gridSize = layoutGrid;
+
+            this.elementProxies.forEach(function (elementProxy) {
+                elementProxy.setGridSize(this.gridSize);
+                elementProxy.style = convertPosition(elementProxy);
+            }.bind(this));
+        };
+
+        FixedController.prototype.onCompositionAdd = function (object) {
+            this.getTelemetry(object);
+        };
+
+        FixedController.prototype.onCompositionRemove = function (identifier) {
+            // Defer mutation of newDomainObject to prevent mutating an
+            // outdated version since this is triggered by a composition change.
+            setTimeout(function () {
+                var id = objectUtils.makeKeyString(identifier);
+                var elements = this.newDomainObject.configuration['fixed-display'].elements || [];
+                var newElements = elements.filter(function (proxy) {
+                    return proxy.id !== id;
+                });
+                this.mutate("configuration['fixed-display'].elements", newElements);
+
+                if (this.subscriptions[id]) {
+                    this.subscriptions[id]();
+                    delete this.subscriptions[id];
+                }
+
+                delete this.telemetryObjects[id];
+                this.refreshElements();
+            }.bind(this));
+        };
+
+        /**
+         * Removes an element from the view.
+         *
+         * @param {Object} elementProxy the element proxy to remove.
+         */
+        FixedController.prototype.remove = function (elementProxy) {
+            var element = elementProxy.element;
+            var elements = this.newDomainObject.configuration['fixed-display'].elements || [];
+            elements.splice(elements.indexOf(element), 1);
+
+            if (element.type === 'fixed.telemetry') {
+                this.newDomainObject.composition = this.newDomainObject.composition.filter(function (identifier) {
+                    return objectUtils.makeKeyString(identifier) !== element.id;
+                });
+            }
+
+            this.mutate("configuration['fixed-display'].elements", elements);
+            this.refreshElements();
+
+        };
+
+        /**
+         * Adds a new element to the view.
+         *
+         * @param {string} type the type of element to add. Supported types are:
+         * `fixed.image`
+         * `fixed.box`
+         * `fixed.text`
+         * `fixed.line`
+         */
+        FixedController.prototype.add = function (type) {
+            this.fixedProxy.add(type);
+        };
+
+        /**
+         * Change the display order of the element proxy.
+         */
+        FixedController.prototype.order = function (elementProxy, position) {
+            var elements = elementProxy.order(position);
+
+            // Find the selected element index in the updated array.
+            var selectedElemenetIndex = elements.indexOf(this.selectedElementProxy.element);
+
+            this.mutate("configuration['fixed-display'].elements", elements);
+            elements = (this.newDomainObject.configuration)['fixed-display'].elements || [];
+
+            // Update the selected element with the new
+            // value since newDomainOject is mutated.
+            this.selectedElementProxy.element = elements[selectedElemenetIndex];
+            this.refreshElements();
+        };
+
+        FixedController.prototype.generateDragHandle = function (elementProxy, elementHandle) {
+            var index = this.elementProxies.indexOf(elementProxy);
+
+            if (elementHandle) {
+                elementHandle.element = elementProxy.element;
+                elementProxy = elementHandle;
+            }
+
+            return new FixedDragHandle(
+                elementProxy,
+                "configuration['fixed-display'].elements[" + index + "]",
+                this
+            );
+        };
+
+        FixedController.prototype.generateDragHandles = function (elementProxy) {
+            return elementProxy.handles().map(function (handle) {
+                return this.generateDragHandle(elementProxy, handle);
+            }, this);
+        };
+
+        FixedController.prototype.updateSelectionStyle = function () {
+            this.selectedElementProxy.style = convertPosition(this.selectedElementProxy);
+        };
+
+        FixedController.prototype.setSelection = function (selectable) {
+            var selection = selectable[0];
+
+            if (this.selectionListeners) {
+                this.selectionListeners.forEach(function (l) {
+                    l();
+                });
+            }
+
+            this.selectionListeners = [];
+
+            if (!selection) {
+                return;
+            }
+
+            if (selection.context.elementProxy) {
+                this.selectedElementProxy = selection.context.elementProxy;
+                this.attachSelectionListeners();
+                this.mvHandle = this.generateDragHandle(this.selectedElementProxy);
+                this.resizeHandles = this.generateDragHandles(this.selectedElementProxy);
+            } else {
+                // Make fixed view selectable if it's not already.
+                if (!this.fixedViewSelectable && selectable.length === 1) {
+                    this.fixedViewSelectable = true;
+                    selection.context.fixedController = this;
+                    this.openmct.selection.select(selection);
+                }
+
+                this.resizeHandles = [];
+                this.mvHandle = undefined;
+                this.selectedElementProxy = undefined;
+            }
+        };
+
+        FixedController.prototype.attachSelectionListeners = function () {
+            var index = this.elementProxies.indexOf(this.selectedElementProxy);
+            var path = "configuration['fixed-display'].elements[" + index + "]";
+
+            this.selectionListeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".useGrid", function (newValue) {
+                if (this.selectedElementProxy.useGrid() !== newValue) {
+                    this.selectedElementProxy.useGrid(newValue);
+                    this.updateSelectionStyle();
+                    this.openmct.objects.mutate(this.newDomainObject, path, this.selectedElementProxy.element);
+                }
+            }.bind(this)));
+            [
+                "width",
+                "height",
+                "stroke",
+                "fill",
+                "x",
+                "y",
+                "x1",
+                "y1",
+                "x2",
+                "y2",
+                "color",
+                "size",
+                "text",
+                "titled"
+            ].forEach(function (property) {
+                this.selectionListeners.push(this.openmct.objects.observe(this.newDomainObject, path + "." + property, function (newValue) {
+                    this.selectedElementProxy.element[property] = newValue;
+                    this.updateSelectionStyle();
+                }.bind(this)));
+            }.bind(this));
+        };
+
+        FixedController.prototype.destroy = function () {
+            this.unsubscribe();
+            this.unlisten();
+            this.openmct.time.off("bounds", this.updateDisplayBounds);
+            this.openmct.selection.off("change", this.setSelection);
+            this.composition.off('add', this.onCompositionAdd, this);
+            this.composition.off('remove', this.onCompositionRemove, this);
+        };
 
         /**
          * A rate-limited digest function. Caps digests at 60Hz
@@ -340,31 +444,30 @@ define(
          * @private
          */
         FixedController.prototype.unsubscribe = function () {
-            this.subscriptions.forEach(function (unsubscribeFunc) {
+            Object.values(this.subscriptions).forEach(function (unsubscribeFunc) {
                 unsubscribeFunc();
             });
-            this.subscriptions = [];
-            this.telemetryObjects = [];
+            this.subscriptions = {};
+            this.telemetryObjects = {};
         };
 
         /**
-         * Subscribe to all given domain objects
+         * Subscribe to the given domain object
          * @private
-         * @param {object[]} objects  Domain objects to subscribe to
-         * @returns {object[]} The provided objects, for chaining.
+         * @param {object} object  Domain object to subscribe to
+         * @returns {object} The provided object, for chaining.
          */
-        FixedController.prototype.subscribeToObjects = function (objects) {
+        FixedController.prototype.subscribeToObject = function (object) {
             var self = this;
             var timeAPI = this.openmct.time;
+            var id = objectUtils.makeKeyString(object.identifier);
+            this.subscriptions[id] = self.openmct.telemetry.subscribe(object, function (datum) {
+                if (timeAPI.clock() !== undefined) {
+                    self.updateView(object, datum);
+                }
+            }, {});
 
-            this.subscriptions = objects.map(function (object) {
-                return self.openmct.telemetry.subscribe(object, function (datum) {
-                    if (timeAPI.clock() !== undefined) {
-                        self.updateView(object, datum);
-                    }
-                }, {});
-            });
-            return objects;
+            return object;
         };
 
         /**
@@ -416,23 +519,22 @@ define(
         };
 
         /**
-         * Request the last historical data point for the given domain objects
-         * @param {object[]} objects
-         * @returns {object[]} the provided objects for chaining.
+         * Request the last historical data point for the given domain object
+         * @param {object} object
+         * @returns {object} the provided object for chaining.
          */
-        FixedController.prototype.fetchHistoricalData = function (objects) {
+        FixedController.prototype.fetchHistoricalData = function (object) {
             var bounds = this.openmct.time.bounds();
             var self = this;
 
-            objects.forEach(function (object) {
-                self.openmct.telemetry.request(object, {start: bounds.start, end: bounds.end, size: 1})
-                    .then(function (data) {
-                        if (data.length > 0) {
-                            self.updateView(object, data[data.length - 1]);
-                        }
-                    });
-            });
-            return objects;
+            self.openmct.telemetry.request(object, {start: bounds.start, end: bounds.end, size: 1})
+                .then(function (data) {
+                    if (data.length > 0) {
+                        self.updateView(object, data[data.length - 1]);
+                    }
+                });
+
+            return object;
         };
 
 
@@ -457,33 +559,25 @@ define(
         };
 
         FixedController.prototype.getTelemetry = function (domainObject) {
-            var newObject = domainObject.useCapability('adapter');
-            var self = this;
+            var id = objectUtils.makeKeyString(domainObject.identifier);
 
-            if (this.subscriptions.length > 0) {
-                this.unsubscribe();
+            if (this.subscriptions[id]) {
+                this.subscriptions[id]();
+                delete this.subscriptions[id];
+            }
+            delete this.telemetryObjects[id];
+
+            if (!this.openmct.telemetry.isTelemetryObject(domainObject)) {
+                return;
             }
 
-            function filterForTelemetryObjects(objects) {
-                return objects.filter(function (object) {
-                    return self.openmct.telemetry.isTelemetryObject(object);
-                });
-            }
+            // Initialize display
+            this.telemetryObjects[id] = domainObject;
+            this.setDisplayedValue(domainObject, "");
 
-            function initializeDisplay(objects) {
-                self.telemetryObjects = objects;
-                objects.forEach(function (object) {
-                    // Initialize values
-                    self.setDisplayedValue(object, "");
-                });
-                return objects;
-            }
-
-            return this.openmct.composition.get(newObject).load()
-                .then(filterForTelemetryObjects)
-                .then(initializeDisplay)
+            return Promise.resolve(domainObject)
                 .then(this.fetchHistoricalData)
-                .then(this.subscribeToObjects);
+                .then(this.subscribeToObject);
         };
 
         /**
@@ -580,12 +674,12 @@ define(
          * Gets the selection context.
          *
          * @param elementProxy the element proxy
-         * @returns {object} the context object which includes elementProxy and toolbar
+         * @returns {object} the context object which includes elementProxy
          */
         FixedController.prototype.getContext = function (elementProxy) {
             return {
                 elementProxy: elementProxy,
-                toolbar: elementProxy
+                fixedController: this
             };
         };
 
@@ -606,6 +700,10 @@ define(
             } else {
                 this.moveHandle().endDrag();
             }
+        };
+
+        FixedController.prototype.mutate = function (path, value) {
+            this.openmct.objects.mutate(this.newDomainObject, path, value);
         };
 
         return FixedController;

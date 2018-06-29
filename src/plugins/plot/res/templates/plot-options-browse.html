@@ -19,112 +19,132 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div ng-controller="PlotOptionsController"
-     class="flex-elem grows l-inspector-part">
-     <ul class="flex-elem grows l-inspector-part"><li>
-         <em class="t-inspector-part-header">Plot Series</em>
-         <ul class="first flex-elem grows vscroll">
-             <ul class="tree">
-                 <li ng-repeat="series in config.series.models">
-                         <span class="tree-item menus-to-left">
-                             <span
-                                 class='ui-symbol view-control flex-elem'
-                                 ng-class="{ expanded: series.expanded }"
-                                 ng-click="series.expanded = !series.expanded">
-                             </span>
-                             <mct-representation
-                                 class="rep-object-label"
-                                 key="'label'"
-                                 mct-object="series.oldObject">
-                             </mct-representation>
+<div ng-controller="PlotOptionsController">
+    <ul class="tree">
+        <h2 title="Plot series display properties in this object">Plot Series</h2>
+        <li ng-repeat="series in config.series.models">
+            <span class="tree-item menus-to-left">
+                <span class='ui-symbol view-control flex-elem'
+                      ng-class="{ expanded: series.expanded }"
+                      ng-click="series.expanded = !series.expanded">
+                </span>
+                <mct-representation
+                        class="rep-object-label"
+                        key="'label'"
+                        mct-object="series.oldObject">
+                </mct-representation>
+            </span>
+            <ul class="grid-properties" ng-show="series.expanded">
+                <li class="grid-row">
+                    <div class="grid-cell label"
+                         title="The field to be plotted as a value for this series.">Value</div>
+                    <div class="grid-cell value">
+                        {{series.get('yKey')}}
+                    </div>
+                </li>
+                <li class="grid-row">
+                    <div class="grid-cell label"
+                         title="The line rendering style for this series.">Line Style</div>
+                    <div class="grid-cell value">{{ {
+                        'none': 'None',
+                        'linear': 'Linear interpolation',
+                        'stepAfter': 'Step After'
+                        }[series.get('interpolate')] }}
+                    </div>
+                </li>
+                <li class="grid-row">
+                    <div class="grid-cell label"
+                         title="Whether markers are displayed, and their size.">Markers</div>
+                    <div class="grid-cell value">
+                        {{series.get('markers') ? "Enabled: " + series.get('markerSize') + "px" : "Disabled"}}
+                    </div>
+                </li>
+                <li class="grid-row">
+                    <div class="grid-cell label"
+                         title="Display markers visually denoting points in alarm.">Alarm Markers</div>
+                    <div class="grid-cell value">
+                        {{series.get('alarmMarkers') ? "Enabled" : "Disabled"}}
+                    </div>
+                </li>
+                <li class="grid-row">
+                    <div class="grid-cell label"
+                         title="The plot line and marker color for this series.">Color</div>
+                    <div class="grid-cell value">
+                        <!-- TODO: get this into a class -->
+                         <span class="color-swatch"
+                                  ng-style="{
+                                  'background': series.get('color').asHexString(),
+                                  'display': 'inline-block',
+                                  'border': '1px solid rgba(255, 255, 255, 0.2)',
+                                  'height': '10px',
+                                  'width': '10px',
+                                  'vertical-align': 'middle',
+                                  'margin-left': '3px',
+                                  'margin-top': -'2px'
+                               }">
                          </span>
-                         <div class="l-flex-col inspector-config" ng-show="series.expanded">
-                             <div class="inspector-properties">
-                                 <div class="label">Line Style</div>
-                                 <div class="value">{{ {
-                                     'none': 'None',
-                                     'linear': 'Linear interpolation',
-                                     'stepAfter': 'Step After'
-                                     }[series.get('interpolate')] }}</div>
-                             </div>
-                             <div class="inspector-properties">
-                                 <div class="label">Markers</div>
-                                 <div class="value">
-                                     {{series.get('markers') ? "On, " + series.get('markerSize') + "px" : "Off"}}
-                                 </div>
-                             </div>
-
-                             <div class="inspector-properties">
-                                 <div class="label">Color</div>
-                                 <div class="value">
-                                     <span class="color-swatch"
-                                           ng-style="{
-                                              'background': series.get('color').asHexString(),
-                                              'display': 'inline-block',
-                                              'border': '1px solid rgba(255, 255, 255, 0.2)',
-                                              'height': '10px',
-                                              'width': '10px',
-                                              'vertical-align': 'middle',
-                                              'margin-left': '3px',
-                                              'margin-top': -'2px'
-                                           }">
-                                     </span>
-                                 </div>
-                             </div>
-                         </div>
-                 </li>
-             </ul>
-         </ul>
-     </li>
-         <li>
-             <em class="t-inspector-part-header">Y Axis</em>
-             <div class="inspector-properties first">
-                 <div class="label">Label</div>
-                 <div class="value">{{ config.yAxis.get('label') }}</div>
-             </div>
-             <div class="inspector-properties">
-                 <div class="label">Autoscale</div>
-                 <div class="value">
-                    {{ config.yAxis.get('autoscale') ? "On" : "Off" }}
-                    {{ config.yAxis.get('autoscale') ? (config.yAxis.get('autoscalePadding') * 100) + "%" : ""}}
-                </div>
-             </div>
-             <div class="inspector-properties"
-                  ng-if="!form.yAxis.autoscale">
-                 <div class="label">Min</div>
-                 <div class="value">{{ config.yAxis.get('range').min }}</div>
-             </div>
-             <div class="inspector-properties"
-                  ng-if="!form.yAxis.autoscale">
-                 <div class="label">Max</div>
-                 <div class="value">{{ config.yAxis.get('range').max }}</div>
-             </div>
-         </li>
-         <li>
-             <em class="t-inspector-part-header">Legend</em>
-             <div class="inspector-properties first">
-                 <div class="label">Position</div>
-                 <div class="value">{{ config.legend.get('position') }}</div>
-             </div>
-             <div class="inspector-properties">
-                 <div class="label">Expand by Default</div>
-                 <div class="value">{{ config.legend.get('expandByDefault') ? "Yes" : "No" }}</div>
-             </div>
-             <div class="inspector-properties">
-                 <div class="label">Show when collapsed:</div>
-                 <div class="value">{{
-                   config.legend.get('valueToShowWhenCollapsed').replace('nearest', '')
-                 }}</div>
-             </div>
-             <div class="inspector-properties">
-                 <div class="label">Show when expanded:</div>
-                 <div class="value comma-list">
-                     <span ng-if="config.legend.get('showTimestampWhenExpanded')">Timestamp</span>
-                     <span ng-if="config.legend.get('showValueWhenExpanded')">Value</span>
-                     <span ng-if="config.legend.get('showMinimumWhenExpanded')">Min</span>
-                     <span ng-if="config.legend.get('showMaximumWhenExpanded')">Max</span>
-                 </div>
-             </div>
-         </li>
+                    </div>
+                </li>
+            </ul>
+        </li><!-- end repeat -->
     </ul>
+    <div class="grid-properties">
+        <ul class="l-inspector-part">
+            <h2 title="Y axis settings for this object">Y Axis</h2>
+            <li class="grid-row">
+                <div class="grid-cell label"
+                     title="Manually override how the Y axis is labeled.">Label</div>
+                <div class="grid-cell value">{{ config.yAxis.get('label') ? config.yAxis.get('label') : "Not defined" }}</div>
+            </li>
+            <li class="grid-row">
+                <div class="grid-cell label"
+                     title="Automatically scale the Y axis to keep all values in view.">Autoscale</div>
+                <div class="grid-cell value">
+                    {{ config.yAxis.get('autoscale') ? "Enabled: " : "Disabled" }}
+                    {{ config.yAxis.get('autoscale') ? (config.yAxis.get('autoscalePadding')) : ""}}
+                </div>
+            </li>
+            <li class="grid-row" ng-if="!form.yAxis.autoscale">
+                <div class="grid-cell label"
+                     title="Minimum Y axis value.">Minimum value</div>
+                <div class="grid-cell value">{{ config.yAxis.get('range').min }}</div>
+            </li>
+            <li class="grid-row" ng-if="!form.yAxis.autoscale">
+                <div class="grid-cell label"
+                     title="Maximum Y axis value.">Maximum value</div>
+                <div class="grid-cell value">{{ config.yAxis.get('range').max }}</div>
+            </li>
+        </ul>
+        <ul class="l-inspector-part">
+            <h2 title="Legend settings for this object">Legend</h2>
+            <li class="grid-row">
+                <div class="grid-cell label"
+                     title="The position of the legend relative to the plot display area.">Position</div>
+                <div class="grid-cell value capitalize">{{ config.legend.get('position') }}</div>
+            </li>
+            <li class="grid-row">
+                <div class="grid-cell label"
+                     title="Show the legend expanded by default">Expand by Default</div>
+                <div class="grid-cell value">{{ config.legend.get('expandByDefault') ? "Yes" : "No" }}</div>
+            </li>
+            <li class="grid-row">
+                <div class="grid-cell label"
+                     title="What to display in the legend when it's collapsed.">Show when collapsed:</div>
+                <div class="grid-cell value">{{
+                    config.legend.get('valueToShowWhenCollapsed').replace('nearest', '')
+                    }}
+                </div>
+            </li>
+            <li class="grid-row">
+                <div class="grid-cell label"
+                     title="What to display in the legend when it's expanded.">Show when expanded:</div>
+                <div class="grid-cell value comma-list">
+                    <span ng-if="config.legend.get('showTimestampWhenExpanded')">Timestamp</span>
+                    <span ng-if="config.legend.get('showValueWhenExpanded')">Value</span>
+                    <span ng-if="config.legend.get('showMinimumWhenExpanded')">Min</span>
+                    <span ng-if="config.legend.get('showMaximumWhenExpanded')">Max</span>
+                </div>
+            </li>
+        </ul>
+    </div>
 </div>

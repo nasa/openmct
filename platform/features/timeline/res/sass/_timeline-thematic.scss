@@ -148,14 +148,7 @@
         $bg: $timelineHeaderColorBg;
         $l: 5%;
         @include user-select(none);
-        @include background-image(linear-gradient(-90deg, rgba($bg, 1), rgba($bg, 1) 70%, rgba($bg, 0) 100%));
-        .s-button {
-            height: 16px;
-            line-height: 16px;
-            .icon {
-                font-size: 0.7rem !important;
-            }
-        }
+        @include background-image(linear-gradient(-90deg, rgba($bg, 1), rgba($bg, 1) 75%, rgba($bg, 0) 100%));
     }
 
     .l-timeline-resource-graph {

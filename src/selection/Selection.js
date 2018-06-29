@@ -26,8 +26,10 @@ define(['EventEmitter'], function (EventEmitter) {
      * Manages selection state for Open MCT
      * @private
      */
-    function Selection() {
+    function Selection(openmct) {
         EventEmitter.call(this);
+
+        this.openmct = openmct;
         this.selected = [];
     }
 
@@ -99,7 +101,12 @@ define(['EventEmitter'], function (EventEmitter) {
      * Attaches the click handlers to the element.
      *
      * @param element an html element
-     * @param context object with oldItem, item and toolbar properties
+     * @param context object which defines item or other arbitrary properties.
+     * e.g. {
+     *          item: domainObject,
+     *          elementProxy: element,
+     *          controller: fixedController
+     *       }
      * @param select a flag to select the element if true
      * @returns a function that removes the click handlers from the element
      * @public
@@ -114,6 +121,12 @@ define(['EventEmitter'], function (EventEmitter) {
         element.addEventListener('click', capture, true);
         element.addEventListener('click', selectCapture);
 
+        if (context.item) {
+            var unlisten = this.openmct.objects.observe(context.item, "*", function (newItem) {
+                context.item = newItem;
+            });
+        }
+
         if (select) {
             element.click();
         }
@@ -121,6 +134,10 @@ define(['EventEmitter'], function (EventEmitter) {
         return function () {
             element.removeEventListener('click', capture);
             element.removeEventListener('click', selectCapture);
+
+            if (unlisten) {
+                unlisten();
+            }
         };
     };
 

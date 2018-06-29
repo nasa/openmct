@@ -62,29 +62,7 @@ define([
                     "type": "layout",
                     "template": layoutTemplate,
                     "editable": true,
-                    "uses": [],
-                    "toolbar": {
-                        "sections": [
-                            {
-                                "items": [
-                                    {
-                                        "method": "showFrame",
-                                        "cssClass": "icon-frame-show",
-                                        "control": "button",
-                                        "title": "Show frame",
-                                        "description": "Show frame"
-                                    },
-                                    {
-                                        "method": "hideFrame",
-                                        "cssClass": "icon-frame-hide",
-                                        "control": "button",
-                                        "title": "Hide frame",
-                                        "description": "Hide frame"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+                    "uses": []
                 },
                 {
                     "key": "fixed",
@@ -305,6 +283,27 @@ define([
                     "implementation": LayoutCompositionPolicy
                 }
             ],
+            "toolbars": [
+                {
+                    name: "Display Layout Toolbar",
+                    key: "layout",
+                    description: "A toolbar for objects inside a display layout.",
+                    forSelection: function (selection) {
+                        // Apply the layout toolbar if the selected object is inside a layout.
+                        return (selection && selection[1] && selection[1].context.item.type === 'layout');
+                    },
+                    toolbar: function (selection) {
+                        return [
+                            {
+                                control: "checkbox",
+                                name: "Show frame",
+                                domainObject: selection[1].context.item,
+                                property: "configuration.layout.panels[" + selection[0].context.oldItem.id + "].hasFrame"
+                            }
+                        ];
+                    }
+                }
+            ],
             "types": [
                 {
                     "key": "layout",
@@ -314,7 +313,14 @@ define([
                     "priority": 900,
                     "features": "creation",
                     "model": {
-                        "composition": []
+                        "composition": [],
+                        configuration: {
+                            layout: {
+                                panels: {
+
+                                }
+                            }
+                        }
                     },
                     "properties": [
                         {

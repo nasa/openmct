@@ -230,10 +230,14 @@ define(
                 });
 
                 it ("doesnt append duplicate datum", function () {
-                    var mockDatum = {url: 'image/url', utc: 1434600000000};
+                    var mockDatum  = {value: 'image/url', timestamp: 1434700000000};
+                    var mockDatum2 = {value: 'image/url', timestamp: 1434700000000};
+                    var mockDatum3 = {value: 'image/url', url: 'someval', timestamp: 1434700000000};
                     expect(controller.updateHistory(mockDatum)).toBe(true);
                     expect(controller.updateHistory(mockDatum)).toBe(false);
                     expect(controller.updateHistory(mockDatum)).toBe(false);
+                    expect(controller.updateHistory(mockDatum2)).toBe(false);
+                    expect(controller.updateHistory(mockDatum3)).toBe(false);
                 });
 
                 describe("when user clicks on imagery thumbnail", function () {

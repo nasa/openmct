@@ -49,6 +49,8 @@ define([
     "./src/directives/MCTSplitter",
     "./src/directives/MCTTree",
     "./src/directives/MCTIndicators",
+    "./src/directives/MCTPreview",
+    "./src/actions/MCTPreviewAction",
     "./src/filters/ReverseFilter",
     "text!./res/templates/bottombar.html",
     "text!./res/templates/controls/action-button.html",
@@ -69,6 +71,7 @@ define([
     "text!./res/templates/controls/selector.html",
     "text!./res/templates/controls/datetime-picker.html",
     "text!./res/templates/controls/datetime-field.html",
+    "text!./res/templates/preview.html",
     'legacyRegistry'
 ], function (
     UrlService,
@@ -99,6 +102,8 @@ define([
     MCTSplitter,
     MCTTree,
     MCTIndicators,
+    MCTPreview,
+    MCTPreviewAction,
     ReverseFilter,
     bottombarTemplate,
     actionButtonTemplate,
@@ -119,6 +124,7 @@ define([
     selectorTemplate,
     datetimePickerTemplate,
     datetimeFieldTemplate,
+    previewTemplate,
     legacyRegistry
 ) {
 
@@ -388,12 +394,37 @@ define([
                 {
                     "key": "mctTree",
                     "implementation": MCTTree,
-                    "depends": ['gestureService']
+                    "depends": ['gestureService', 'openmct']
                 },
                 {
                     "key": "mctIndicators",
                     "implementation": MCTIndicators,
                     "depends": ['openmct']
+                },
+                {
+                    "key": "mctPreview",
+                    "implementation": MCTPreview,
+                    "depends": [
+                        "$document"
+                    ]
+                }
+            ],
+            "actions": [
+                {
+                    "key": "mct-preview-action",
+                    "implementation": MCTPreviewAction,
+                    "name": "Preview",
+                    "cssClass": "hide-in-t-main-view icon-eye-open",
+                    "description": "Preview in large dialog",
+                    "category": [
+                        "contextual",
+                         "view-control"
+                    ],
+                    "depends": [
+                      "$compile",
+                      "$rootScope"
+                    ],
+                    "priority": "preferred"
                 }
             ],
             "constants": [
@@ -509,6 +540,10 @@ define([
                 {
                     "key": "object-inspector",
                     "template": objectInspectorTemplate
+                },
+                {
+                    "key": "mct-preview",
+                    "template": previewTemplate
                 }
             ],
             "controls": [

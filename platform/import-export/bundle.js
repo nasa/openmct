@@ -49,9 +49,11 @@ define([
                             "category": "contextual",
                             "cssClass": "icon-export",
                             "depends": [
+                                "openmct",
                                 "exportService",
                                 "policyService",
-                                "identifierService"
+                                "identifierService",
+                                "typeService"
                             ]
                         },
                         {

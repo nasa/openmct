@@ -76,12 +76,20 @@ define([
      * @memberof module:openmct.MutableObject#
      */
     MutableObject.prototype.set = function (path, value) {
-
         _.set(this.object, path, value);
         _.set(this.object, 'modified', Date.now());
 
+        var handleRecursiveMutation = function (newObject) {
+            this.object = newObject;
+        }.bind(this);
+
+        this.eventEmitter.on(qualifiedEventName(this.object, '*'), handleRecursiveMutation);
+
         //Emit event specific to property
         this.eventEmitter.emit(qualifiedEventName(this.object, path), value);
+
+        this.eventEmitter.off(qualifiedEventName(this.object, '*'), handleRecursiveMutation);
+
         //Emit wildcare event
         this.eventEmitter.emit(qualifiedEventName(this.object, '*'), this.object);
 

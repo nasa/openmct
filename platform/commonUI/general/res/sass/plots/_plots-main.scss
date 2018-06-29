@@ -246,21 +246,6 @@
 	}
 }
 
-.gl-plot-display-area,
-.plot-display-area,
-.gl-plot-axis-area {
-    .gl-plot-local-controls,
-    .l-local-controls {
-        @include trans-prop-nice(opacity, 150ms);
-        opacity: 0;
-        pointer-events: none;
-    }
-    &:hover .gl-plot-local-controls,
-    &:hover .l-local-controls {
-        opacity: 1;
-        pointer-events: inherit;
-    }
-}
 
 .gl-plot-display-area,
 .plot-display-area {

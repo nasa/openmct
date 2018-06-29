@@ -20,192 +20,110 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 define(
-    [],
-    function () {
-
-        // Utility functions for reducing truth arrays
-        function and(a, b) {
-            return a && b;
-        }
-        function or(a, b) {
-            return a || b;
-        }
-
+    [
+        '../../../../../src/api/objects/object-utils',
+        'lodash'
+    ],
+    function (
+        objectUtils,
+        _
+    ) {
 
         /**
          * Provides initial structure and state (as suitable for provision
-         * to the `mct-toolbar` directive) for a view's tool bar, based on
-         * that view's declaration of what belongs in its tool bar and on
+         * to the `mct-toolbar` directive) for a view's toolbar, based on
+         * that view's declaration of what belongs in its toolbar and on
          * the current selection.
          *
-         * @param structure toolbar structure, as provided by view definition
-         * @param {Function} commit callback to invoke after changes
+         * @param $scope the Angular scope
+         * @param {Object} openmct the openmct object
+         * @param structure the toolbar structure
          * @memberof platform/commonUI/edit
          * @constructor
          */
-        function EditToolbar(structure, commit) {
+        function EditToolbar($scope, openmct, structure) {
+            this.toolbarStructure = [];
+            this.properties = [];
+            this.toolbarState = [];
+            this.openmct = openmct;
+            this.domainObjectsById = {};
+            this.unobserveObjects = [];
+            this.stateTracker = [];
+
+            $scope.$watchCollection(this.getState.bind(this), this.handleStateChanges.bind(this));
+            $scope.$on("$destroy", this.destroy.bind(this));
+
+            this.updateToolbar(structure);
+            this.registerListeners(structure);
+        }
+
+        /**
+         * Updates the toolbar with a new structure.
+         *
+         * @param {Array} structure the toolbar structure
+         */
+        EditToolbar.prototype.updateToolbar = function (structure) {
             var self = this;
 
-            // Generate a new key for an item's property
-            function addKey(property) {
-                self.properties.push(property);
+            function addKey(item) {
+                self.stateTracker.push({
+                    id: objectUtils.makeKeyString(item.domainObject.identifier),
+                    domainObject: item.domainObject,
+                    property: item.property
+                });
+                self.properties.push(item.property);
+
                 return self.properties.length - 1; // Return index of property
             }
 
-            // Invoke all functions in selections with the given name
-            function invoke(method, value) {
-                if (method) {
-                    // Make the change in the selection
-                    self.selection.forEach(function (selected) {
-                        if (typeof selected[method] === 'function') {
-                            selected[method](value);
-                        }
-                    });
-                    // ...and commit!
-                    commit();
-                }
-            }
-
-            // Prepare a toolbar item based on current selection
             function convertItem(item) {
                 var converted = Object.create(item || {});
+
                 if (item.property) {
-                    converted.key = addKey(item.property);
+                    converted.key = addKey(item);
                 }
+
                 if (item.method) {
-                    converted.click = function (v) {
-                        invoke(item.method, v);
+                    converted.click = function (value) {
+                        item.method(value);
                     };
                 }
+
                 return converted;
-            }
-
-            // Prepare a toolbar section
-            function convertSection(section) {
-                var converted = Object.create(section || {});
-                converted.items =
-                    ((section || {}).items || [])
-                            .map(convertItem);
-                return converted;
-            }
-
-            this.toolbarState = [];
-            this.selection = undefined;
-            this.properties = [];
-            this.toolbarStructure = Object.create(structure || {});
-            this.toolbarStructure.sections =
-                ((structure || {}).sections || []).map(convertSection);
-        }
-
-        // Check if all elements of the selection which have this
-        // property have the same value for this property.
-        EditToolbar.prototype.isConsistent = function (property) {
-            var self = this,
-                consistent = true,
-                observed = false,
-                state;
-
-            // Check if a given element of the selection is consistent
-            // with previously-observed elements for this property.
-            function checkConsistency(selected) {
-                var next;
-                // Ignore selections which don't have this property
-                if (selected[property] !== undefined) {
-                    // Look up state of this element in the selection
-                    next = self.lookupState(property, selected);
-                    // Detect inconsistency
-                    if (observed) {
-                        consistent = consistent && (next === state);
-                    }
-                    // Track state for next iteration
-                    state = next;
-                    observed = true;
-                }
-            }
-
-            // Iterate through selections
-            self.selection.forEach(checkConsistency);
-
-            return consistent;
-        };
-
-        // Used to filter out items which are applicable (or not)
-        // to the current selection.
-        EditToolbar.prototype.isApplicable = function (item) {
-            var property = (item || {}).property,
-                method = (item || {}).method,
-                exclusive = !!(item || {}).exclusive;
-
-            // Check if a selected item defines this property
-            function hasProperty(selected) {
-                return (property && (selected[property] !== undefined)) ||
-                    (method && (typeof selected[method] === 'function'));
-            }
-
-            return this.selection.map(hasProperty).reduce(
-                    exclusive ? and : or,
-                    exclusive
-                ) && this.isConsistent(property);
-        };
-
-
-        // Look up the current value associated with a property
-        EditToolbar.prototype.lookupState = function (property, selected) {
-            var value = selected[property];
-            return (typeof value === 'function') ? value() : value;
-        };
-
-        /**
-         * Set the current selection. Visibility of sections
-         * and items in the toolbar will be updated to match this.
-         * @param {Array} s the new selection
-         */
-        EditToolbar.prototype.setSelection = function (s) {
-            var self = this;
-
-            // Show/hide controls in this section per applicability
-            function refreshSectionApplicability(section) {
-                var count = 0;
-                // Show/hide each item
-                (section.items || []).forEach(function (item) {
-                    item.hidden = !self.isApplicable(item);
-                    count += item.hidden ? 0 : 1;
-                });
-                // Hide this section if there are no applicable items
-                section.hidden = !count;
             }
 
             // Get initial value for a given property
             function initializeState(property) {
                 var result;
-                // Look through all selections for this property;
-                // values should all match by the time we perform
-                // this lookup anyway.
-                self.selection.forEach(function (selected) {
-                    result = (selected[property] !== undefined) ?
-                        self.lookupState(property, selected) :
-                        result;
+                structure.forEach(function (item) {
+                    if (item.property === property) {
+                        result = _.get(item.domainObject, item.property);
+                    }
                 });
+
                 return result;
             }
 
-            this.selection = s;
-            this.toolbarStructure.sections.forEach(refreshSectionApplicability);
+            // Tracks the domain object and property for every element in the state array
+            this.stateTracker = [];
+            this.toolbarStructure = structure.map(convertItem);
             this.toolbarState = this.properties.map(initializeState);
         };
 
         /**
-         * Get the structure of the toolbar, as appropriate to
+         * Gets the structure of the toolbar, as appropriate to
          * pass to `mct-toolbar`.
-         * @returns the toolbar structure
+         *
+         * @returns {Array} the toolbar structure
          */
         EditToolbar.prototype.getStructure = function () {
             return this.toolbarStructure;
         };
 
         /**
-         * Get the current state of the toolbar, as appropriate
+         * Gets the current state of the toolbar, as appropriate
          * to two-way bind to the state handled by `mct-toolbar`.
+         *
          * @returns {Array} state of the toolbar
          */
         EditToolbar.prototype.getState = function () {
@@ -213,48 +131,124 @@ define(
         };
 
         /**
-         * Update state within the current selection.
+         * Mutates the domain object's property with a new value.
+         *
+         * @param {Object} dominObject the domain object
+         * @param {string} property the domain object's property to update
+         * @param value the property's new value
+         */
+        EditToolbar.prototype.updateDomainObject = function (domainObject, property, value) {
+            this.openmct.objects.mutate(domainObject, property, value);
+        };
+
+        /**
+         * Updates state with the new value.
+         *
          * @param {number} index the index of the corresponding
          *        element in the state array
-         * @param value the new value to convey to the selection
+         * @param value the new value to update the state array with
          */
         EditToolbar.prototype.updateState = function (index, value) {
+            this.toolbarState[index] = value;
+        };
+
+        /**
+         * Register listeners for domain objects to watch for updates.
+         *
+         * @param {Array} the toolbar structure
+         */
+        EditToolbar.prototype.registerListeners = function (structure) {
             var self = this;
 
-            // Update value for this property in all elements of the
-            // selection which have this property.
-            function updateProperties(property, val) {
-                var changed = false;
-
-                // Update property in a selected element
-                function updateProperty(selected) {
-                    // Ignore selected elements which don't have this property
-                    if (selected[property] !== undefined) {
-                        // Check if this is a setter, or just assignable
-                        if (typeof selected[property] === 'function') {
-                            changed =
-                                changed || (selected[property]() !== val);
-                            selected[property](val);
-                        } else {
-                            changed =
-                                changed || (selected[property] !== val);
-                            selected[property] = val;
-                        }
-                    }
-                }
-
-                // Update property in all selected elements
-                self.selection.forEach(updateProperty);
-
-                // Return whether or not anything changed
-                return changed;
+            function observeObject(domainObject, id) {
+                var unobserveObject = self.openmct.objects.observe(domainObject, '*', function (newObject) {
+                    self.domainObjectsById[id].newObject = JSON.parse(JSON.stringify(newObject));
+                    self.scheduleStateUpdate();
+                });
+                self.unobserveObjects.push(unobserveObject);
             }
 
-            return updateProperties(this.properties[index], value);
+            structure.forEach(function (item) {
+                var domainObject = item.domainObject;
+                var id = objectUtils.makeKeyString(domainObject.identifier);
+
+                if (!self.domainObjectsById[id]) {
+                    self.domainObjectsById[id] = {
+                        domainObject: domainObject,
+                        properties: []
+                    };
+                    observeObject(domainObject, id);
+                }
+
+                self.domainObjectsById[id].properties.push(item.property);
+            });
+        };
+
+        /**
+         * Delays updating the state.
+         */
+        EditToolbar.prototype.scheduleStateUpdate = function () {
+            if (this.stateUpdateScheduled) {
+                return;
+            }
+
+            this.stateUpdateScheduled = true;
+            setTimeout(this.updateStateAfterMutation.bind(this));
+        };
+
+        EditToolbar.prototype.updateStateAfterMutation = function () {
+            this.stateTracker.forEach(function (state, index) {
+                if (!this.domainObjectsById[state.id].newObject) {
+                    return;
+                }
+
+                var domainObject = this.domainObjectsById[state.id].domainObject;
+                var newObject = this.domainObjectsById[state.id].newObject;
+                var currentValue = _.get(domainObject, state.property);
+                var newValue = _.get(newObject, state.property);
+
+                state.domainObject = newObject;
+
+                if (currentValue !== newValue) {
+                    this.updateState(index, newValue);
+                }
+            }, this);
+
+            Object.values(this.domainObjectsById).forEach(function (tracker) {
+                if (tracker.newObject) {
+                    tracker.domainObject = tracker.newObject;
+                }
+                delete tracker.newObject;
+            });
+            this.stateUpdateScheduled = false;
+        };
+
+        /**
+         * Removes the listeners.
+         */
+        EditToolbar.prototype.deregisterListeners = function () {
+            this.unobserveObjects.forEach(function (unobserveObject) {
+                unobserveObject();
+            });
+            this.unobserveObjects = [];
+        };
+
+        EditToolbar.prototype.handleStateChanges = function (state) {
+            (state || []).map(function (newValue, index) {
+                var domainObject = this.stateTracker[index].domainObject;
+                var property = this.stateTracker[index].property;
+                var currentValue = _.get(domainObject, property);
+
+                if (currentValue !== newValue) {
+                    this.updateDomainObject(domainObject, property, newValue);
+                }
+            }, this);
+        };
+
+        EditToolbar.prototype.destroy = function () {
+            this.deregisterListeners();
         };
 
         return EditToolbar;
     }
 );
-
-

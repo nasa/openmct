@@ -24,7 +24,7 @@
                  class="flex-elem holder"
                  ng-model="filterBy">
     </mct-include>
-    <div class="flex-elem grows vscroll">
+    <div class="flex-elem grows vscroll scroll-pad">
         <ul class="tree" id="inspector-elements-tree"
             ng-if="composition.length > 0">
             <li ng-repeat="containedObject in composition | filter:searchElements">
