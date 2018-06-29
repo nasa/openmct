@@ -21,33 +21,31 @@
 -->
 <div class="angular-w l-flex-col flex-elem grows holder" ng-controller="SearchController as controller">
     <div class="l-flex-col flex-elem grows holder holder-search" ng-controller="SearchMenuController as menuController">
-        <div class="search-bar l-filter flex-elem l-flex-row"
+        <div class="c-search-btn-wrapper"
              ng-controller="ToggleController as toggle"
              ng-class="{ holder: !(ngModel.input === '' || ngModel.input === undefined) }">
-            <div class="holder flex-elem grows">
-                <input class="search-input"
+            <div class="c-search">
+                <input class="c-search__search-input"
                        type="text" tabindex="10000"
                        ng-model="ngModel.input"
                        ng-keyup="controller.search()"/>
-                <a class="clear-icon clear-input icon-x-in-circle"
+                <a class="c-search__clear-input clear-icon icon-x-in-circle"
                    ng-class="{show: !(ngModel.input === '' || ngModel.input === undefined)}"
                    ng-click="ngModel.input = ''; controller.search()"></a>
-
                 <!-- To prevent double triggering of clicks on click away, render
-                non-clickable version of the button when menu active-->
+                   non-clickable version of the button when menu active-->
                 <a ng-if="!toggle.isActive()" class="menu-icon context-available"
                    ng-click="toggle.toggle()"></a>
                 <a ng-if="toggle.isActive()" class="menu-icon context-available"></a>
-
                 <mct-include key="'search-menu'"
-                             class="menu-element search-menu-holder"
+                             class="menu-element c-search__search-menu-holder"
                              ng-class="{off: !toggle.isActive()}"
                              ng-model="ngModel"
                              parameters="{menuVisible: toggle.setState}">
                 </mct-include>
             </div>
 
-            <a class="holder s-button flex-elem btn-cancel"
+            <a class="s-button c-search__btn-cancel"
                ng-show="!(ngModel.input === '' || ngModel.input === undefined)"
                ng-click="ngModel.input = ''; ngModel.checkAll = true; menuController.checkAll(); controller.search()">
                 Cancel</a>

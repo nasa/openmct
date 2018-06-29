@@ -225,7 +225,8 @@ a.disabled {
 }
 
 .hide,
-.hidden {
+.hidden,
+.t-main-view .hide-in-t-main-view {
     display: none !important;
 }
 

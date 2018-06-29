@@ -26,86 +26,88 @@
     @include trans-prop-nice((opacity, color), 150ms);
 }
 
+.c-search-btn-wrapper,
+.c-search {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    position: relative;
+
+    > * {
+        &:not(:first-child) { margin-left: $interiorMargin; }
+    }
+}
+
+.c-search-btn-wrapper {
+    // Holds c-search and Cancel button
+    //@include test();
+    &.holder {
+        margin-bottom: $interiorMargin;
+    }
+
+}
+
+.c-search {
+    // New approach to search and filter inputs
+    // Block element
+    // Holds magnify glass icon, html input, cancel button, etc.
+    $m: $interiorMarginSm;
+    @include nice-input();
+    flex: 1 1 99%;
+    font-size: 0.8rem;
+    height: $btnStdH;
+    padding: 1px $interiorMargin;
+
+    > * {
+        display: inline-block;
+        flex: 0 0 auto;
+        position: relative;
+    }
+
+    &:before {
+        // Magnify glass icon
+        content: $glyph-icon-magnify;
+        font-family: symbolsfont;
+        opacity: 0.3;
+        pointer-events: none;
+        transition: opacity 500ms;
+    }
+
+    &:hover:before {
+        opacity: 0.6;
+    }
+}
+
+.c-search__clear-input {
+    // Icon is visible only when there is text input
+    visibility: hidden;
+    opacity: 0;
+    &.show {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
+input.c-search__search-input {
+    background: none  !important;
+    box-shadow: none !important; // !important needed to override default for [input]
+    flex: 1 1 99%;
+    min-width: 10px;
+}
+
+.c-search__search-menu-holder {
+    left: 100%;
+    position: absolute;
+    transform: translate(-30px, 10px);
+    z-index: 70;
+}
+
 .holder-search {
 	$iconWidth: 20px;
-
-	.search-bar {
-		$textInputHeight: 19px; // This is equal to the default value, 19px
-		$iconEdgeM: 4px;
-		$iconD: $treeSearchInputBarH - ($iconEdgeM*2);
-        @extend .icon-magnify;
-		font-size: 0.8em;
-		position: relative;
-
-		.search-input {
-			height: $treeSearchInputBarH;
-			line-height: $treeSearchInputBarH;
-		}
-		
-		&:before,
-		.clear-input,
-		.menu-icon {
-            // :before is magnify glass icon
-			height: $iconD;
-            width: $iconD;
-			line-height: $iconD;
-            text-align: center;
-		}
-
-		.search-input {
-			position: relative;
-			width: 100%;
-			padding-left: $iconD + $interiorMargin !important;
-			padding-right: ($iconD * 2) + ($interiorMargin * 2) !important;
-
-			// Make work for mct-control textfield
-			input {
-				width: inherit; // was 100%
-			}
-		}
-
-		&:before {
-            // Magnify glass icon
-            left: $interiorMarginSm;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-		.clear-input {
-            // Hiding for now with addition of Cancel button
-			right: $iconD + $interiorMargin;
-
-			// Icon is visible only when there is text input
-            visibility: hidden;
-			opacity: 0;
-			&.show {
-                visibility: visible;
-				opacity: 1;
-			}
-
-			&:hover {
-				color: pullForward($colorInputIcon, 10%);
-			}
-		}
-
-		.menu-icon {
-            // 'v' invoke menu icon
-			font-size: 0.8em;
-			padding-right: $iconEdgeM;
-			right: $iconEdgeM;
-			text-align: right;
-			&:hover {
-				color: pullForward($colorInputIcon, 10%);
-			}
-		}
-
-		.search-menu-holder {
-			float: right;
-			left: -20px;
-			z-index: 70;
-			transition: visibility .05s, opacity .05s;
-		}
-	}
 
     .results-msg {
         font-size: 0.8rem;

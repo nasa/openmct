@@ -139,7 +139,6 @@
 }
 
 .s-local-controls {
-    @include trans-prop-nice(opacity);
     font-size: 0.7rem;
     &.s-wrapper-transluc {
         // Semi-opaque wrapper to visually distinguish a control
@@ -147,6 +146,19 @@
         background: rgba($colorTransLucBg, 0.7);
         box-sizing: border-box;
         border-radius: $controlCr;
+    }
+}
+
+.has-local-controls {
+    .local-control {
+        @include trans-prop-nice($props: opacity, $dur: 250ms);
+        opacity: 0;
+    }
+    &:hover {
+        .local-control {
+            @include trans-prop-nice($props: opacity, $dur: 10ms);
+            opacity: 1;
+        }
     }
 }
 
@@ -338,6 +350,7 @@ input[type="text"].s-input-inline,
     @include btnSubtle($bg: $colorSelectBg);
     @extend .icon-arrow-down; // Context arrow
     display: inline-block;
+    flex: 0 0 auto; // When used in a flex context, controls need to hold their width
     padding: 0 $interiorMargin;
     overflow: hidden;
     position: relative;
