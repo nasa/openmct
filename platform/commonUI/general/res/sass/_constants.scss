@@ -43,10 +43,10 @@ $ueColMargin: 1.5%;
 $ueAppLogoW: 80px;
 $ueEditToolBarH: 25px;
 $ueCollapsedPaneEdgeM: 22px;
-$uePaneMiniTabH: 22px;
-$uePaneMiniTabW: 8px;
-$uePaneMiniTabFontSize: 8px;
-$uePaneMiniTabCollapsedW: 18px;
+$uePaneMiniTabH: 36px;
+$uePaneMiniTabW: 10px;
+$uePaneMiniTabFontSize: 9px;
+$uePaneMiniTabCollapsedW: 22px;
 $ueEditLeftPaneW: 75%;
 $treeSearchInputBarH: 25px;
 /*************** Panes */
@@ -70,7 +70,7 @@ $ueBrowseGridItemTopBarH: 20px;
 $ueBrowseGridItemBottomBarH: 30px;
 $itemPadLR: 5px;
 /*************** Tree */
-$treeVCW: 10px;
+$treeVCW: 16px;
 $treeTypeIconH: 1.4em; // was 16px
 $treeTypeIconHPx: 16px;
 $treeTypeIconW: 18px;
@@ -132,7 +132,7 @@ $menuLineHPx: 24px;
 $btnStdH: 25px;
 $btnToolbarH: $btnStdH;
 $controlBarH: $btnStdH;
-$btnFrameH: 16px;
+$btnFrameH: 18px;
 
 /************************** PATHS */
 // Paths need to be relative to /platform/commonUI/theme/<theme-name>/css/ directory

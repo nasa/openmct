@@ -76,9 +76,8 @@ define(
 
             this.xAxis = d3Axis.axisTop();
 
-            // draw x axis with labels and move to the bottom of the chart area
-            this.axisElement = vis.append("g")
-                .attr("transform", "translate(0," + (height - PADDING) + ")");
+            // draw x axis with labels. CSS is used to position them.
+            this.axisElement = vis.append("g");
 
             if (this.timeAPI.timeSystem() !== undefined) {
                 this.changeTimeSystem(this.timeAPI.timeSystem());

@@ -39,7 +39,7 @@
                 <a ng-if="toggle.isActive()" class="menu-icon context-available"></a>
                 <mct-include key="'search-menu'"
                              class="menu-element c-search__search-menu-holder"
-                             ng-class="{off: !toggle.isActive()}"
+                             ng-class="{invisible: !toggle.isActive()}"
                              ng-model="ngModel"
                              parameters="{menuVisible: toggle.setState}">
                 </mct-include>
@@ -52,7 +52,7 @@
         </div>
 
         <div class="active-filter-display flex-elem holder"
-             ng-class="{off: ngModel.filtersString === '' || ngModel.filtersString === undefined || !ngModel.search}">
+             ng-class="{invisible: ngModel.filtersString === '' || ngModel.filtersString === undefined || !ngModel.search}">
             <a class="clear-filters icon-x-in-circle s-icon-button"
                ng-click="ngModel.checkAll = true; menuController.checkAll()"></a>Filtered by: {{ ngModel.filtersString }}
         </div>
@@ -65,7 +65,7 @@
         </div>
 
         <div class="search-results flex-elem holder grows vscroll"
-             ng-class="{ off: !(loading || results.length > 0), loading: loading }">
+             ng-class="{invisible: !(loading || results.length > 0), loading: loading}">
             <mct-representation key="'search-item'"
                                 ng-repeat="result in results"
                                 mct-object="result.object"

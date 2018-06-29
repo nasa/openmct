@@ -111,14 +111,15 @@ input.c-search__search-input {
 
     .results-msg {
         font-size: 0.8rem;
+        opacity: 0.6;
     }
 
 	.active-filter-display {
-		$s: 0.7em;
+		$s: 0.7rem;
 		$p: $interiorMargin;
 		box-sizing: border-box;
 		line-height: 130%;
-		padding-left: $s * 2;
+		padding-left: $s * 1.5;
 		font-size: $s;
 
 		.clear-filters {

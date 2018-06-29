@@ -128,38 +128,78 @@
     }
 }
 
-.l-local-controls {
-    // Control shown when hovering over an object, like plots and imagery
-    // Default position is upper right
-    $p: $interiorMargin;
-    position: absolute;
-    top: $p; right: $p; bottom: auto;
-    text-align: right;
-    z-index: 5;
+
+
+/******************************************************** LOCAL CONTROLS */
+// Controls placed in proximity to or overlaid on components and views
+
+.local-controls-persist {
+
 }
 
-.s-local-controls {
-    font-size: 0.7rem;
-    &.s-wrapper-transluc {
-        // Semi-opaque wrapper to visually distinguish a control
-        // from the background
-        background: rgba($colorTransLucBg, 0.7);
-        box-sizing: border-box;
-        border-radius: $controlCr;
+.local-controls-hidden {
+    // Used within .has-local-controls, hidden by default
+
+}
+
+.local-controls-flyout {
+
+}
+
+body.desktop .has-local-controls {
+    // Helper class, provides hover ability to show local controls
+
+    &:hover .local-controls-hidden {
+        @include trans-prop-nice($props: opacity, $dur: 50ms);
+        opacity: 1;
+        pointer-events: inherit;
     }
-}
 
-.has-local-controls {
-    .local-control {
-        @include trans-prop-nice($props: opacity, $dur: 250ms);
+    .local-controls-hidden {
+        @include trans-prop-nice($props: opacity, $dur: 1000ms);
         opacity: 0;
+        pointer-events: none;
     }
-    &:hover {
-        .local-control {
-            @include trans-prop-nice($props: opacity, $dur: 10ms);
-            opacity: 1;
+}
+
+.h-local-controls {
+    // An explicit outer holder for controls. Typically placed in upper right.
+    align-items: center;
+    font-size: 0.7rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+
+
+    &.h-local-controls-overlay-content {
+        $p: $interiorMargin;
+        position: absolute;
+        top: $p; right: $p;
+        z-index: 2;
+    }
+
+    .l-btn-set,
+    .s-button {
+        &:not(:first-child) {
+            margin-left: $interiorMargin;
         }
     }
+}
+
+.h-local-controls-overlay-content {
+    background: $colorBodyBg;
+    border-radius: $controlCr + 1;
+    box-sizing: border-box;
+    border-radius: $controlCr;
+    padding: 1px;
+    .s-button {
+        background: $colorBtnBg;
+    }
+}
+
+.h-local-controls-trans {
+    background: rgba($colorTransLucBg, 0.5);
+    padding: $interiorMargin;
 }
 
 /******************************************************** VIEW CONTROLS */
@@ -174,7 +214,7 @@
     &:before {
         position: absolute;
         @include trans-prop-nice(transform, 100ms);
-        content: $glyph-icon-arrow-right;
+        content: $glyph-icon-arrow-right-equilateral;
         @include transform-origin(center);
     }
     &.expanded:before {
@@ -773,13 +813,17 @@ textarea {
     @extend .icon-arrow-right;
     cursor: pointer;
     font-size: 0.75em;
+    width: $treeVCW;
     &:before {
+        // Arrow glyph
+        left: 50%;
         position: absolute;
         @include trans-prop-nice(transform, 100ms);
+        transform: translateX(-50%);
         transform-origin: center;
     }
     &.expanded:before {
-        transform: rotate(90deg);
+        transform: translateX(-50%) rotate(90deg);
     }
 }
 

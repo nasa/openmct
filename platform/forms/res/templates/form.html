@@ -22,9 +22,9 @@
 <form name="mctForm" novalidate class="form l-flex-col">
     <span ng-repeat="section in structure.sections"
           class="l-form-section l-flex-col flex-elem {{ section.cssClass }}">
-        <div class="section-header flex-elem" ng-if="section.name">
+        <h2 class="section-header flex-elem" ng-if="section.name">
             {{section.name}}
-        </div>
+        </h2>
         <ng-form class="form-row validates l-flex-row flex-elem {{ section.cssClass }}"
                  ng-class="{
                  first:$index < 1,
