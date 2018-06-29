@@ -30,6 +30,7 @@ define([
                 {
                     key: "sin",
                     name: "Sine",
+                    formatString: '%0.2f',
                     hints: {
                         range: 1
                     }
@@ -37,6 +38,7 @@ define([
                 {
                     key: "cos",
                     name: "Cosine",
+                    formatString: '%0.2f',
                     hints: {
                         range: 2
                     }

@@ -37,6 +37,7 @@ module.exports = function(config) {
             {pattern: 'bower_components/**/*.js', included: false},
             {pattern: 'node_modules/d3-*/**/*.js', included: false},
             {pattern: 'node_modules/vue/**/*.js', included: false},
+            {pattern: 'node_modules/printj/dist/*.js', included: false},
             {pattern: 'src/**/*', included: false},
             {pattern: 'node_modules/painterro/build/*.js', included: false},
             {pattern: 'node_modules/html2canvas/dist/*', included: false},
