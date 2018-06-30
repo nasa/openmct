@@ -337,7 +337,6 @@ define(['../src/ConditionManager'], function (ConditionManager) {
         });
 
         it('populates its LAD cache with historial data on load, if available', function (done) {
-            var callbackCount = 0;
             expect(telemetryRequests.length).toBe(2);
             expect(telemetryRequests[0].object).toBe(mockCompObject1);
             expect(telemetryRequests[1].object).toBe(mockCompObject2);
@@ -345,9 +344,7 @@ define(['../src/ConditionManager'], function (ConditionManager) {
             expect(telemetryCallbackSpy).not.toHaveBeenCalled();
 
             telemetryCallbackSpy.and.callFake(function () {
-                callbackCount++;
-
-                if (callbackCount === 2) {
+                if (telemetryCallbackSpy.calls.count() === 2) {
                     expect(conditionManager.subscriptionCache.mockCompObject1.property1).toEqual('Its a string');
                     expect(conditionManager.subscriptionCache.mockCompObject2.property4).toEqual(66);
                     done();
