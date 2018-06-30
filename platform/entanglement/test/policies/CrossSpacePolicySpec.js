@@ -39,7 +39,7 @@ define(
                     'persistence',
                     ['getSpace']
                 );
-                mockPersistence.getSpace.andReturn(space);
+                mockPersistence.getSpace.and.returnValue(space);
                 return domainObjectFactory({
                     id: space + ":foo",
                     model: {},
@@ -56,7 +56,7 @@ define(
                     'action',
                     ['getMetadata']
                 );
-                mockAction.getMetadata.andReturn(testActionMetadata);
+                mockAction.getMetadata.and.returnValue(testActionMetadata);
 
                 sameSpaceContext = {
                     domainObject: makeObject('a'),

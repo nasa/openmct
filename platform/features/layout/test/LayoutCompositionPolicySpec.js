@@ -45,14 +45,14 @@ define(
                 mockCandidateObj = jasmine.createSpyObj('domainObj', [
                     'getCapability'
                 ]);
-                mockCandidateObj.getCapability.andReturn(mockCandidate);
+                mockCandidateObj.getCapability.and.returnValue(mockCandidate);
 
-                mockChild.getCapability.andReturn(mockContext);
+                mockChild.getCapability.and.returnValue(mockContext);
 
-                mockCandidate.instanceOf.andCallFake(function (t) {
+                mockCandidate.instanceOf.and.callFake(function (t) {
                     return t === candidateType;
                 });
-                mockContext.instanceOf.andCallFake(function (t) {
+                mockContext.instanceOf.and.callFake(function (t) {
                     return t === contextType;
                 });
 

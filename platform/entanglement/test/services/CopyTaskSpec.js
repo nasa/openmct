@@ -74,14 +74,14 @@ define(
                     });
 
                 mockCapabilities.persistence.persist
-                    .andReturn(synchronousPromise(true));
-                mockCapabilities.composition.add.andCallFake(function (obj) {
+                    .and.returnValue(synchronousPromise(true));
+                mockCapabilities.composition.add.and.callFake(function (obj) {
                     return synchronousPromise(obj);
                 });
                 mockCapabilities.composition.invoke
-                    .andReturn(synchronousPromise(mockChildren));
+                    .and.returnValue(synchronousPromise(mockChildren));
                 mockCapabilities.instantiation.invoke
-                    .andCallFake(function (model) {
+                    .and.callFake(function (model) {
                         var id = "some-id-" + counter;
                         cloneIds[model.originalId] = id;
                         counter += 1;
@@ -123,11 +123,11 @@ define(
                     ['notify', 'resolve', 'reject']
                 );
 
-                mockFilter.andReturn(true);
+                mockFilter.and.returnValue(true);
 
-                mockQ.when.andCallFake(synchronousPromise);
-                mockQ.defer.andReturn(mockDeferred);
-                mockQ.all.andCallFake(function (promises) {
+                mockQ.when.and.callFake(synchronousPromise);
+                mockQ.defer.and.returnValue(mockDeferred);
+                mockQ.all.and.callFake(function (promises) {
                     return synchronousPromise(promises.map(function (promise) {
                         var value;
                         promise.then(function (v) {
@@ -137,7 +137,7 @@ define(
                     }));
                 });
 
-                mockDeferred.resolve.andCallFake(function (value) {
+                mockDeferred.resolve.and.callFake(function (value) {
                     mockDeferred.promise = synchronousPromise(value);
                 });
 
@@ -209,7 +209,7 @@ define(
                         model: composingObjectModel
                     });
 
-                    mockComposingObject.capabilities.composition.invoke.andReturn([mockDomainObject, mockDomainObjectB]);
+                    mockComposingObject.capabilities.composition.invoke.and.returnValue([mockDomainObject, mockDomainObjectB]);
                     task = new CopyTask(
                         mockComposingObject,
                         mockParentObject,
@@ -235,13 +235,13 @@ define(
                         childC_ID = task.clones[3].getId(),
                         childD_ID = task.clones[4].getId();
 
-                    expect(domainObjectClone.model.someArr[0]).toNotBe(domainObjectBClone.model.someArr[0]);
+                    expect(domainObjectClone.model.someArr[0]).not.toBe(domainObjectBClone.model.someArr[0]);
                     expect(domainObjectClone.model.someArr[0]).toBe(childA_ID);
                     expect(domainObjectBClone.model.someArr[0]).toBe(childC_ID);
-                    expect(domainObjectClone.model.someArr[1]).toNotBe(domainObjectBClone.model.someArr[1]);
+                    expect(domainObjectClone.model.someArr[1]).not.toBe(domainObjectBClone.model.someArr[1]);
                     expect(domainObjectClone.model.someArr[1]).toBe(childB_ID);
                     expect(domainObjectBClone.model.someArr[1]).toBe(childD_ID);
-                    expect(domainObjectClone.model.someObj.someProperty).toNotBe(domainObjectBClone.model.someObj.someProperty);
+                    expect(domainObjectClone.model.someObj.someProperty).not.toBe(domainObjectBClone.model.someObj.someProperty);
                     expect(domainObjectClone.model.someObj.someProperty).toBe(childB_ID);
                     expect(domainObjectBClone.model.someObj.someProperty).toBe(childD_ID);
 

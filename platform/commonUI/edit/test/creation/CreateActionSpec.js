@@ -77,10 +77,10 @@ define(
                         "useCapability"
                     ]
                 );
-                mockDomainObject.hasCapability.andCallFake(function (name) {
+                mockDomainObject.hasCapability.and.callFake(function (name) {
                     return !!capabilities[name];
                 });
-                mockDomainObject.getCapability.andCallFake(function (name) {
+                mockDomainObject.getCapability.and.callFake(function (name) {
                     return capabilities[name];
                 });
                 mockSaveAction = jasmine.createSpyObj(
@@ -117,14 +117,14 @@ define(
                 mockContext = {
                     domainObject: mockParent
                 };
-                mockParent.useCapability.andReturn(mockDomainObject);
+                mockParent.useCapability.and.returnValue(mockDomainObject);
 
-                mockType.getKey.andReturn("test");
-                mockType.getCssClass.andReturn("icon-telemetry");
-                mockType.getDescription.andReturn("a test type");
-                mockType.getName.andReturn("Test");
-                mockType.getProperties.andReturn([]);
-                mockType.getInitialModel.andReturn({});
+                mockType.getKey.and.returnValue("test");
+                mockType.getCssClass.and.returnValue("icon-telemetry");
+                mockType.getDescription.and.returnValue("a test type");
+                mockType.getName.and.returnValue("Test");
+                mockType.getProperties.and.returnValue([]);
+                mockType.getInitialModel.and.returnValue({});
 
                 action = new CreateAction(
                     mockType,
@@ -144,7 +144,7 @@ define(
             describe("the perform function", function () {
                 var promise = jasmine.createSpyObj("promise", ["then"]);
                 beforeEach(function () {
-                    capabilities.action.getActions.andReturn([mockEditAction]);
+                    capabilities.action.getActions.and.returnValue([mockEditAction]);
                 });
 
                 it("uses the instantiation capability when performed", function () {
@@ -159,30 +159,30 @@ define(
 
                 it("uses the save-as action if object does not have an edit action" +
                     " available", function () {
-                    capabilities.action.getActions.andReturn([]);
-                    capabilities.action.perform.andReturn(mockPromise(undefined));
-                    capabilities.editor.save.andReturn(promise);
+                    capabilities.action.getActions.and.returnValue([]);
+                    capabilities.action.perform.and.returnValue(mockPromise(undefined));
+                    capabilities.editor.save.and.returnValue(promise);
                     action.perform();
                     expect(capabilities.action.perform).toHaveBeenCalledWith("save-as");
                 });
 
                 describe("uses to editor capability", function () {
                     beforeEach(function () {
-                        capabilities.action.getActions.andReturn([]);
-                        capabilities.action.perform.andReturn(promise);
-                        capabilities.editor.save.andReturn(promise);
+                        capabilities.action.getActions.and.returnValue([]);
+                        capabilities.action.perform.and.returnValue(promise);
+                        capabilities.editor.save.and.returnValue(promise);
                     });
 
                     it("to save the edit if user saves dialog", function () {
                         action.perform();
                         expect(promise.then).toHaveBeenCalled();
-                        promise.then.mostRecentCall.args[0]();
+                        promise.then.calls.mostRecent().args[0]();
                         expect(capabilities.editor.save).toHaveBeenCalled();
                     });
 
                     it("to finish the edit if user cancels dialog", function () {
                         action.perform();
-                        promise.then.mostRecentCall.args[1]();
+                        promise.then.calls.mostRecent().args[1]();
                         expect(capabilities.editor.finish).toHaveBeenCalled();
                     });
                 });

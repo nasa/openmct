@@ -62,8 +62,8 @@ define(
                 mockWorker = {};
                 mockSharedWorker = {};
 
-                mockWindow.Worker.andReturn(mockWorker);
-                mockWindow.SharedWorker.andReturn(mockSharedWorker);
+                mockWindow.Worker.and.returnValue(mockWorker);
+                mockWindow.SharedWorker.and.returnValue(mockSharedWorker);
 
                 service = new WorkerService(mockWindow, testWorkers);
             });

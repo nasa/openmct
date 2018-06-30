@@ -39,7 +39,7 @@ define(
                     ['getPath', 'load']
                 );
 
-                mockTemplateLinker.getPath.andCallFake(function (ext) {
+                mockTemplateLinker.getPath.and.callFake(function (ext) {
                     return testPathPrefix + ext.templateUrl;
                 });
 

@@ -37,13 +37,13 @@ define(
                     "parse",
                     "format"
                 ]);
-                mockFormatService.getFormat.andReturn(mockFormat);
+                mockFormatService.getFormat.and.returnValue(mockFormat);
                 formatter = new TelemetryFormatter(mockFormatService);
             });
 
             it("formats domains using the formatService", function () {
                 var testValue = 12321, testResult = "some result";
-                mockFormat.format.andReturn(testResult);
+                mockFormat.format.and.returnValue(testResult);
 
                 expect(formatter.formatDomainValue(testValue))
                     .toEqual(testResult);

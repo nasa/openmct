@@ -63,12 +63,12 @@ define(
                   ["find"]
                 );
                 mockBody = jasmine.createSpyObj('body', ['on', 'off']);
-                mockDocument.find.andReturn(mockBody);
+                mockDocument.find.and.returnValue(mockBody);
 
                 mockDeferred.promise = "mock promise";
 
-                mockQ.defer.andReturn(mockDeferred);
-                mockOverlayService.createOverlay.andReturn(mockOverlay);
+                mockQ.defer.and.returnValue(mockDeferred);
+                mockOverlayService.createOverlay.and.returnValue(mockOverlay);
 
                 dialogService = new DialogService(
                     mockOverlayService,
@@ -85,7 +85,7 @@ define(
 
             it("allows user input to be canceled", function () {
                 dialogService.getUserInput({}, { someKey: "some value" });
-                mockOverlayService.createOverlay.mostRecentCall.args[1].cancel();
+                mockOverlayService.createOverlay.calls.mostRecent().args[1].cancel();
                 expect(mockDeferred.reject).toHaveBeenCalled();
                 expect(mockDeferred.resolve).not.toHaveBeenCalled();
             });
@@ -93,7 +93,7 @@ define(
             it("passes back the result of user input when confirmed", function () {
                 var value = { someKey: 42 };
                 dialogService.getUserInput({}, value);
-                mockOverlayService.createOverlay.mostRecentCall.args[1].confirm();
+                mockOverlayService.createOverlay.calls.mostRecent().args[1].confirm();
                 expect(mockDeferred.reject).not.toHaveBeenCalled();
                 expect(mockDeferred.resolve).toHaveBeenCalledWith(value);
             });
@@ -109,7 +109,7 @@ define(
             it("can show multiple dialogs if prior ones are dismissed", function () {
                 dialogService.getUserInput({}, {});
                 expect(mockLog.warn).not.toHaveBeenCalled();
-                mockOverlayService.createOverlay.mostRecentCall.args[1].confirm();
+                mockOverlayService.createOverlay.calls.mostRecent().args[1].confirm();
                 dialogService.getUserInput({}, {});
                 expect(mockLog.warn).not.toHaveBeenCalled();
                 expect(mockDeferred.reject).not.toHaveBeenCalled();
@@ -148,13 +148,13 @@ define(
 
             it("destroys the event listener when the dialog is cancelled", function () {
                 dialogService.getUserInput({}, {});
-                mockOverlayService.createOverlay.mostRecentCall.args[1].cancel();
+                mockOverlayService.createOverlay.calls.mostRecent().args[1].cancel();
                 expect(mockBody.off).toHaveBeenCalledWith("keydown", jasmine.any(Function));
             });
 
             it("cancels the dialog when an escape keydown event is triggered", function () {
                 dialogService.getUserInput({}, {});
-                mockBody.on.mostRecentCall.args[1]({
+                mockBody.on.calls.mostRecent().args[1]({
                     keyCode: 27
                 });
                 expect(mockDeferred.reject).toHaveBeenCalled();
@@ -163,7 +163,7 @@ define(
 
             it("ignores non escape keydown events", function () {
                 dialogService.getUserInput({}, {});
-                mockBody.on.mostRecentCall.args[1]({
+                mockBody.on.calls.mostRecent().args[1]({
                     keyCode: 13
                 });
                 expect(mockDeferred.reject).not.toHaveBeenCalled();
@@ -197,7 +197,7 @@ define(
                         "overlay",
                         ["dismiss"]
                     );
-                    mockOverlayService.createOverlay.andReturn(secondMockOverlay);
+                    mockOverlayService.createOverlay.and.returnValue(secondMockOverlay);
                     secondDialogHandle = dialogService.showBlockingMessage(dialogModel);
 
                     //Dismiss the first dialog. It should only dismiss if it

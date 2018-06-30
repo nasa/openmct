@@ -53,8 +53,8 @@ define(
                     }
                 };
 
-                mockQ.when.andCallFake(asPromise);
-                mockDomainObject.getModel.andReturn(testModel);
+                mockQ.when.and.callFake(asPromise);
+                mockDomainObject.getModel.and.returnValue(testModel);
 
                 capability = new GraphCapability(
                     mockQ,
@@ -82,7 +82,7 @@ define(
             it("provides one graph per resource type", function () {
                 var mockCallback = jasmine.createSpy('callback');
 
-                mockDomainObject.useCapability.andReturn(asPromise([
+                mockDomainObject.useCapability.and.returnValue(asPromise([
                     { key: "abc", start: 0, end: 15 },
                     { key: "abc", start: 0, end: 15 },
                     { key: "def", start: 4, end: 15 },
@@ -103,7 +103,7 @@ define(
                 testModel.capacity = 1000;
                 testModel.startingSOC = 100;
                 testModel.type = "timeline";
-                mockDomainObject.useCapability.andReturn(asPromise([
+                mockDomainObject.useCapability.and.returnValue(asPromise([
                     { key: "power", start: 0, end: 15 }
                 ]));
                 capability.invoke().then(mockCallback);

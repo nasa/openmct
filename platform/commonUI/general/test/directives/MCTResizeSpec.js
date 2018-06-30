@@ -73,7 +73,7 @@ define(
                 );
 
                 // Fire the timeout
-                mockTimeout.mostRecentCall.args[0]();
+                mockTimeout.calls.mostRecent().args[0]();
 
                 // Should have triggered an evaluation of mctResize
                 // with the new width & height
@@ -91,56 +91,56 @@ define(
                     .toHaveBeenCalledWith("$destroy", jasmine.any(Function));
 
                 // Should have scheduled the first timeout
-                expect(mockTimeout.calls.length).toEqual(1);
+                expect(mockTimeout.calls.count()).toEqual(1);
 
                 // Fire the timeout
-                mockTimeout.mostRecentCall.args[0]();
+                mockTimeout.calls.mostRecent().args[0]();
 
                 // Should have scheduled another timeout
-                expect(mockTimeout.calls.length).toEqual(2);
+                expect(mockTimeout.calls.count()).toEqual(2);
 
                 // Broadcast a destroy event
-                mockScope.$on.mostRecentCall.args[1]();
+                mockScope.$on.calls.mostRecent().args[1]();
 
                 testElement.offsetWidth = 300;
                 testElement.offsetHeight = 350;
-                mockScope.$eval.reset();
+                mockScope.$eval.calls.reset();
 
                 // Fire the timeout
-                mockTimeout.mostRecentCall.args[0]();
+                mockTimeout.calls.mostRecent().args[0]();
 
                 // Should NOT have scheduled another timeout
-                expect(mockTimeout.calls.length).toEqual(2);
+                expect(mockTimeout.calls.count()).toEqual(2);
                 expect(mockScope.$eval).not.toHaveBeenCalled();
             });
 
             it("triggers a digest cycle when size changes", function () {
                 var applyCount;
                 mctResize.link(mockScope, [testElement], testAttrs);
-                applyCount = mockScope.$apply.calls.length;
+                applyCount = mockScope.$apply.calls.count();
 
                 // Change the element's apparent size
                 testElement.offsetWidth = 300;
                 testElement.offsetHeight = 350;
 
                 // Fire the timeout
-                mockTimeout.mostRecentCall.args[0]();
+                mockTimeout.calls.mostRecent().args[0]();
 
                 // No more apply calls
-                expect(mockScope.$apply.calls.length)
+                expect(mockScope.$apply.calls.count())
                     .toBeGreaterThan(applyCount);
             });
 
             it("does not trigger a digest cycle when size does not change", function () {
                 var applyCount;
                 mctResize.link(mockScope, [testElement], testAttrs);
-                applyCount = mockScope.$apply.calls.length;
+                applyCount = mockScope.$apply.calls.count();
 
                 // Fire the timeout
-                mockTimeout.mostRecentCall.args[0]();
+                mockTimeout.calls.mostRecent().args[0]();
 
                 // No more apply calls
-                expect(mockScope.$apply.calls.length).toEqual(applyCount);
+                expect(mockScope.$apply.calls.count()).toEqual(applyCount);
             });
 
         });

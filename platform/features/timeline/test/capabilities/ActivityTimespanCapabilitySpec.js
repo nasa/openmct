@@ -44,8 +44,8 @@ define(
                     ['getModel', 'getCapability']
                 );
 
-                mockQ.when.andCallFake(asPromise);
-                mockDomainObject.getModel.andReturn({
+                mockQ.when.and.callFake(asPromise);
+                mockDomainObject.getModel.and.returnValue({
                     start: {
                         timestamp: 42000,
                         epoch: "TEST"

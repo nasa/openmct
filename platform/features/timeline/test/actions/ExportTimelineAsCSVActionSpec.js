@@ -32,7 +32,8 @@ define(
                 mockType,
                 testContext,
                 testType,
-                action;
+                action,
+                actionPromise;
 
             beforeEach(function () {
                 mockDomainObject = jasmine.createSpyObj(
@@ -60,11 +61,11 @@ define(
                     ['dismiss']
                 );
 
-                mockNotificationService.notify.andReturn(mockNotification);
+                mockNotificationService.notify.and.returnValue(mockNotification);
 
-                mockDomainObject.hasCapability.andReturn(true);
-                mockDomainObject.getCapability.andReturn(mockType);
-                mockType.instanceOf.andCallFake(function (type) {
+                mockDomainObject.hasCapability.and.returnValue(true);
+                mockDomainObject.getCapability.and.returnValue(mockType);
+                mockType.instanceOf.and.callFake(function (type) {
                     return type === testType;
                 });
 
@@ -92,14 +93,12 @@ define(
             });
 
             describe("when performed", function () {
-                var testPromise,
-                    mockCallback;
+                var testPromise;
 
                 beforeEach(function () {
-                    mockCallback = jasmine.createSpy('callback');
                     // White-boxy; we know most work is delegated
                     // to the associated Task, so stub out that interaction.
-                    spyOn(action.task, "run").andCallFake(function () {
+                    spyOn(action.task, "run").and.callFake(function () {
                         return new Promise(function (resolve, reject) {
                             testPromise = {
                                 resolve: resolve,
@@ -107,7 +106,7 @@ define(
                             };
                         });
                     });
-                    action.perform().then(mockCallback);
+                    actionPromise = action.perform();
                 });
 
                 it("shows a notification", function () {
@@ -122,9 +121,7 @@ define(
                 describe("and completed", function () {
                     beforeEach(function () {
                         testPromise.resolve();
-                        waitsFor(function () {
-                            return mockCallback.calls.length > 0;
-                        });
+                        return actionPromise;
                     });
 
                     it("dismisses the displayed notification", function () {
@@ -144,9 +141,8 @@ define(
                     beforeEach(function () {
                         testError = { someProperty: "some value" };
                         testPromise.reject(testError);
-                        waitsFor(function () {
-                            return mockCallback.calls.length > 0;
-                        });
+
+                        return actionPromise;
                     });
 
                     it("dismisses the displayed notification", function () {

@@ -30,16 +30,6 @@ define([
             idC,
             registry;
 
-        function done() {
-            var isDone = false;
-            waitsFor(function () {
-                return isDone;
-            });
-            return function () {
-                isDone = true;
-            };
-        }
-
         beforeEach(function () {
             idA = {key: 'keyA', namespace: 'something'};
             idB = {key: 'keyB', namespace: 'something'};
@@ -49,42 +39,38 @@ define([
 
         it('can register a root by key', function () {
             registry.addRoot(idA);
-            registry.getRoots()
+            return registry.getRoots()
                 .then(function (roots) {
                     expect(roots).toEqual([idA]);
-                })
-                .then(done());
+                });
         });
 
         it('can register multiple roots by key', function () {
             registry.addRoot([idA, idB]);
-            registry.getRoots()
+            return registry.getRoots()
                 .then(function (roots) {
                     expect(roots).toEqual([idA, idB]);
-                })
-                .then(done());
+                });
         });
 
         it('can register an asynchronous root ', function () {
             registry.addRoot(function () {
                 return Promise.resolve(idA);
             });
-            registry.getRoots()
+            return registry.getRoots()
                 .then(function (roots) {
                     expect(roots).toEqual([idA]);
-                })
-                .then(done());
+                });
         });
 
         it('can register multiple asynchronous roots', function () {
             registry.addRoot(function () {
                 return Promise.resolve([idA, idB]);
             });
-            registry.getRoots()
+            return registry.getRoots()
                 .then(function (roots) {
                     expect(roots).toEqual([idA, idB]);
-                })
-                .then(done());
+                });
         });
 
         it('can combine different types of registration', function () {
@@ -92,11 +78,10 @@ define([
             registry.addRoot(function () {
                 return Promise.resolve([idC]);
             });
-            registry.getRoots()
+            return registry.getRoots()
                 .then(function (roots) {
                     expect(roots).toEqual([idA, idB, idC]);
-                })
-                .then(done());
+                });
         });
     });
 });

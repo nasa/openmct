@@ -56,13 +56,13 @@ define(
                 );
                 mockPromise = jasmine.createSpyObj('promise', ['then']);
 
-                mockSwimlane.domainObject.getCapability.andCallFake(function (c) {
+                mockSwimlane.domainObject.getCapability.and.callFake(function (c) {
                     return mockCapabilities[c];
                 });
-                mockSwimlane.domainObject.getModel.andReturn(testModel);
+                mockSwimlane.domainObject.getModel.and.returnValue(testModel);
 
-                mockCapabilities.type.instanceOf.andReturn(true);
-                mockCapabilities.mutation.mutate.andReturn(mockPromise);
+                mockCapabilities.type.instanceOf.and.returnValue(true);
+                mockCapabilities.mutation.mutate.and.returnValue(mockPromise);
 
                 decorator = new TimelineSwimlaneDecorator(
                     mockSwimlane,
@@ -109,7 +109,7 @@ define(
                 decorator.modes(['abc', 'xyz']);
                 expect(mockCapabilities.mutation.mutate)
                     .toHaveBeenCalledWith(jasmine.any(Function));
-                mockCapabilities.mutation.mutate.mostRecentCall.args[0](testModel);
+                mockCapabilities.mutation.mutate.calls.mostRecent().args[0](testModel);
                 expect(testModel.relationships.modes).toEqual(['abc', 'xyz']);
             });
 
@@ -117,7 +117,7 @@ define(
                 decorator.link("http://www.noaa.gov");
                 expect(mockCapabilities.mutation.mutate)
                     .toHaveBeenCalledWith(jasmine.any(Function));
-                mockCapabilities.mutation.mutate.mostRecentCall.args[0](testModel);
+                mockCapabilities.mutation.mutate.calls.mostRecent().args[0](testModel);
                 expect(testModel.link).toEqual("http://www.noaa.gov");
             });
 
@@ -133,7 +133,7 @@ define(
                 testModel.relationships = { modes: testModes };
                 decorator.modes(testModes2);
                 expect(mockCapabilities.mutation.mutate).toHaveBeenCalled();
-                mockCapabilities.mutation.mutate.mostRecentCall.args[0](testModel);
+                mockCapabilities.mutation.mutate.calls.mostRecent().args[0](testModel);
                 expect(testModel.relationships.modes).toBe(testModes2);
             });
 
@@ -151,7 +151,7 @@ define(
                         ['perform']
                     );
 
-                mockChild.getCapability.andCallFake(function (c) {
+                mockChild.getCapability.and.callFake(function (c) {
                     return c === 'action' ? mockAction : undefined;
                 });
 
@@ -173,7 +173,7 @@ define(
 
             it("allows checking for swimlane selection state", function () {
                 expect(decorator.selected()).toBeFalsy();
-                mockSelection.get.andReturn(decorator);
+                mockSelection.get.and.returnValue(decorator);
                 expect(decorator.selected()).toBeTruthy();
             });
 

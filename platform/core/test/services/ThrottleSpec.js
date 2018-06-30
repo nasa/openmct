@@ -34,7 +34,7 @@ define(
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockPromise = jasmine.createSpyObj("promise", ["then"]);
                 mockFn = jasmine.createSpy("fn");
-                mockTimeout.andReturn(mockPromise);
+                mockTimeout.and.returnValue(mockPromise);
                 throttle = new Throttle(mockTimeout);
             });
 
@@ -53,18 +53,18 @@ define(
                 throttled();
                 throttled();
                 throttled();
-                expect(mockTimeout.calls.length).toEqual(1);
+                expect(mockTimeout.calls.count()).toEqual(1);
             });
 
             it("schedules additional invocations after resolution", function () {
                 var throttled = throttle(mockFn);
                 throttled();
-                mockTimeout.mostRecentCall.args[0](); // Resolve timeout
+                mockTimeout.calls.mostRecent().args[0](); // Resolve timeout
                 throttled();
-                mockTimeout.mostRecentCall.args[0]();
+                mockTimeout.calls.mostRecent().args[0]();
                 throttled();
-                mockTimeout.mostRecentCall.args[0]();
-                expect(mockTimeout.calls.length).toEqual(3);
+                mockTimeout.calls.mostRecent().args[0]();
+                expect(mockTimeout.calls.count()).toEqual(3);
             });
         });
     }

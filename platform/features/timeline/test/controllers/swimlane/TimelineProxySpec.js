@@ -49,12 +49,12 @@ define(
                         'action-' + type,
                         ['perform', 'getMetadata']
                     );
-                    mockAction.getMetadata.andReturn({ type: type });
+                    mockAction.getMetadata.and.returnValue({ type: type });
                     return mockAction;
                 });
 
-                mockDomainObject.getCapability.andReturn(mockActionCapability);
-                mockActionCapability.getActions.andReturn(mockActions);
+                mockDomainObject.getCapability.and.returnValue(mockActionCapability);
+                mockActionCapability.getActions.and.returnValue(mockActions);
 
                 proxy = new TimelineProxy(mockDomainObject, mockSelection);
             });
@@ -90,10 +90,10 @@ define(
                     );
 
                 // Set up mocks
-                mockSelection.get.andReturn({ domainObject: mockOtherObject });
-                mockOtherObject.getCapability.andReturn(mockOtherAction);
-                mockOtherAction.getActions.andReturn([mockAction]);
-                mockAction.getMetadata.andReturn({ type: 'z' });
+                mockSelection.get.and.returnValue({ domainObject: mockOtherObject });
+                mockOtherObject.getCapability.and.returnValue(mockOtherAction);
+                mockOtherAction.getActions.and.returnValue([mockAction]);
+                mockAction.getMetadata.and.returnValue({ type: 'z' });
 
                 // Invoke add method; should create with selected object
                 proxy.add('z');

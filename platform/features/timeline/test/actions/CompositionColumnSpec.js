@@ -54,7 +54,7 @@ define(
                         ['getId', 'getModel', 'getCapability']
                     );
                     testModel = { composition: TEST_IDS };
-                    mockDomainObject.getModel.andReturn(testModel);
+                    mockDomainObject.getModel.and.returnValue(testModel);
                 });
 
                 it("returns a corresponding value from the map", function () {

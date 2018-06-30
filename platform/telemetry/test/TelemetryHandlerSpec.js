@@ -56,7 +56,7 @@ define(
                     ]
                 );
 
-                mockSubscriber.subscribe.andReturn(mockSubscription);
+                mockSubscriber.subscribe.and.returnValue(mockSubscription);
 
                 handler = new TelemetryHandler(mockQ, mockSubscriber);
             });

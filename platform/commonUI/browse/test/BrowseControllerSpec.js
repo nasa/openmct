@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global console*/
 
 /**
  * MCTRepresentationSpec. Created by vwoeltje on 11/6/14.
@@ -48,9 +49,19 @@ define(
                 controller;
 
             function waitsForNavigation() {
-                var calls = mockNavigationService.setNavigation.calls.length;
-                waitsFor(function () {
-                    return mockNavigationService.setNavigation.calls.length > calls;
+                return new Promise(function (resolve) {
+                    mockNavigationService.setNavigation.and.callFake(function (obj) {
+                        var returnValue;
+                        try {
+                            returnValue = NavigationService.prototype.setNavigation.call(mockNavigationService, obj);
+                        } catch (err) {
+                            console.error(err);
+                            //Not rejecting because 'setNavigation' has been called, which is what's being tested here.
+                            //Rejecting will fail tests.
+                        }
+                        resolve();
+                        return returnValue;
+                    });
                 });
             }
 
@@ -78,7 +89,7 @@ define(
                     "urlService",
                     ["urlForLocation"]
                 );
-                mockUrlService.urlForLocation.andCallFake(function (mode, object) {
+                mockUrlService.urlForLocation.and.callFake(function (mode, object) {
                     if (object === mockDefaultRootObject) {
                         return [mode, testDefaultRoot].join('/');
                     }
@@ -106,7 +117,7 @@ define(
                     "removeListener"
                 ].forEach(function (method) {
                     spyOn(mockNavigationService, method)
-                        .andCallThrough();
+                        .and.callThrough();
                 });
                 mockRootObject = jasmine.createSpyObj(
                     "rootObjectContainer",
@@ -124,60 +135,58 @@ define(
                     "nestedDomainObject",
                     ["getId", "getCapability", "getModel", "useCapability", "hasCapability"]
                 );
-                mockObjectService.getObjects.andReturn(Promise.resolve({
+                mockObjectService.getObjects.and.returnValue(Promise.resolve({
                     ROOT: mockRootObject
                 }));
-                mockRootObject.useCapability.andReturn(Promise.resolve([
+                mockRootObject.useCapability.and.returnValue(Promise.resolve([
                     mockOtherDomainObject,
                     mockDefaultRootObject
                 ]));
-                mockRootObject.hasCapability.andReturn(true);
-                mockDefaultRootObject.useCapability.andReturn(Promise.resolve([
+                mockRootObject.hasCapability.and.returnValue(true);
+                mockDefaultRootObject.useCapability.and.returnValue(Promise.resolve([
                     mockNextObject
                 ]));
-                mockDefaultRootObject.hasCapability.andReturn(true);
-                mockOtherDomainObject.hasCapability.andReturn(false);
-                mockNextObject.useCapability.andReturn(undefined);
-                mockNextObject.hasCapability.andReturn(false);
-                mockNextObject.getId.andReturn("next");
-                mockDefaultRootObject.getId.andReturn(testDefaultRoot);
+                mockDefaultRootObject.hasCapability.and.returnValue(true);
+                mockOtherDomainObject.hasCapability.and.returnValue(false);
+                mockNextObject.useCapability.and.returnValue(undefined);
+                mockNextObject.hasCapability.and.returnValue(false);
+                mockNextObject.getId.and.returnValue("next");
+                mockDefaultRootObject.getId.and.returnValue(testDefaultRoot);
 
                 instantiateController();
-                waitsForNavigation();
+                return waitsForNavigation();
             });
 
             it("uses composition to set the navigated object, if there is none", function () {
                 instantiateController();
-                waitsForNavigation();
-                runs(function () {
+                return waitsForNavigation().then(function () {
                     expect(mockNavigationService.setNavigation)
-                        .toHaveBeenCalledWith(mockDefaultRootObject);
+                    .toHaveBeenCalledWith(mockDefaultRootObject);
                 });
             });
 
             it("navigates to a root-level object, even when default path is not found", function () {
                 mockDefaultRootObject.getId
-                    .andReturn("something-other-than-the-" + testDefaultRoot);
+                    .and.returnValue("something-other-than-the-" + testDefaultRoot);
                 instantiateController();
 
-                waitsForNavigation();
-                runs(function () {
+                return waitsForNavigation().then(function () {
                     expect(mockNavigationService.setNavigation)
-                        .toHaveBeenCalledWith(mockDefaultRootObject);
+                    .toHaveBeenCalledWith(mockDefaultRootObject);
                 });
+            });
 
-            });
-            //
             it("does not try to override navigation", function () {
-                mockNavigationService.getNavigation.andReturn(mockDefaultRootObject);
+                mockNavigationService.getNavigation.and.returnValue(mockDefaultRootObject);
                 instantiateController();
-                waitsForNavigation();
-                expect(mockScope.navigatedObject).toBe(mockDefaultRootObject);
+                return waitsForNavigation().then(function () {
+                    expect(mockScope.navigatedObject).toBe(mockDefaultRootObject);
+                });
             });
-            //
+
             it("updates scope when navigated object changes", function () {
                 // Should have registered a listener - call it
-                mockNavigationService.addListener.mostRecentCall.args[0](
+                mockNavigationService.addListener.calls.mostRecent().args[0](
                     mockOtherDomainObject
                 );
                 expect(mockScope.navigatedObject).toEqual(mockOtherDomainObject);
@@ -189,19 +198,18 @@ define(
                     "$destroy",
                     jasmine.any(Function)
                 );
-                mockScope.$on.mostRecentCall.args[1]();
+                mockScope.$on.calls.mostRecent().args[1]();
 
                 // Should remove the listener it added earlier
                 expect(mockNavigationService.removeListener).toHaveBeenCalledWith(
-                    mockNavigationService.addListener.mostRecentCall.args[0]
+                    mockNavigationService.addListener.calls.mostRecent().args[0]
                 );
             });
 
             it("uses route parameters to choose initially-navigated object", function () {
                 mockRoute.current.params.ids = testDefaultRoot + "/next";
                 instantiateController();
-                waitsForNavigation();
-                runs(function () {
+                return waitsForNavigation().then(function () {
                     expect(mockScope.navigatedObject).toBe(mockNextObject);
                     expect(mockNavigationService.setNavigation)
                         .toHaveBeenCalledWith(mockNextObject);
@@ -214,12 +222,10 @@ define(
                 // it hits an invalid ID.
                 mockRoute.current.params.ids = testDefaultRoot + "/junk";
                 instantiateController();
-                waitsForNavigation();
-                runs(function () {
+                return waitsForNavigation().then(function () {
                     expect(mockScope.navigatedObject).toBe(mockDefaultRootObject);
                     expect(mockNavigationService.setNavigation)
                         .toHaveBeenCalledWith(mockDefaultRootObject);
-
                 });
             });
 
@@ -229,8 +235,7 @@ define(
                 // should stop at it since remaining IDs cannot be loaded.
                 mockRoute.current.params.ids = testDefaultRoot + "/next/junk";
                 instantiateController();
-                waitsForNavigation();
-                runs(function () {
+                return waitsForNavigation().then(function () {
                     expect(mockScope.navigatedObject).toBe(mockNextObject);
                     expect(mockNavigationService.setNavigation)
                         .toHaveBeenCalledWith(mockNextObject);
@@ -244,11 +249,11 @@ define(
                 expect(mockRoute.current.pathParams.ids)
                     .not
                     .toBe(testDefaultRoot + '/next');
-                mockLocation.path.andCallFake(function () {
+                mockLocation.path.and.callFake(function () {
                     expect(mockRoute.current.pathParams.ids)
                         .toBe(testDefaultRoot + '/next');
                 });
-                mockNavigationService.addListener.mostRecentCall.args[0](
+                mockNavigationService.addListener.calls.mostRecent().args[0](
                     mockNextObject
                 );
                 expect(mockLocation.path).toHaveBeenCalledWith(

@@ -44,10 +44,10 @@ define(
                 testId = 'test-id';
                 mockPromise = jasmine.createSpyObj('promise', ['then']);
 
-                mockOnCommit.andReturn(mockPromise);
-                mockOnCancel.andReturn(mockPromise);
+                mockOnCommit.and.returnValue(mockPromise);
+                mockOnCancel.and.returnValue(mockPromise);
 
-                mockTransactionService.addToTransaction.andCallFake(function () {
+                mockTransactionService.addToTransaction.and.callFake(function () {
                     var mockRemove =
                         jasmine.createSpy('remove-' + mockRemoves.length);
                     mockRemoves.push(mockRemove);
@@ -59,7 +59,7 @@ define(
 
             it("delegates isActive calls", function () {
                 [false, true].forEach(function (state) {
-                    mockTransactionService.isActive.andReturn(state);
+                    mockTransactionService.isActive.and.returnValue(state);
                     expect(manager.isActive()).toBe(state);
                 });
             });
@@ -84,12 +84,12 @@ define(
                 it("invokes passed-in callbacks from its own callbacks", function () {
                     expect(mockOnCommit).not.toHaveBeenCalled();
                     mockTransactionService.addToTransaction
-                        .mostRecentCall.args[0]();
+                        .calls.mostRecent().args[0]();
                     expect(mockOnCommit).toHaveBeenCalled();
 
                     expect(mockOnCancel).not.toHaveBeenCalled();
                     mockTransactionService.addToTransaction
-                        .mostRecentCall.args[1]();
+                        .calls.mostRecent().args[1]();
                     expect(mockOnCancel).toHaveBeenCalled();
                 });
 
@@ -99,7 +99,7 @@ define(
                         jasmine.createSpy(),
                         jasmine.createSpy()
                     );
-                    expect(mockTransactionService.addToTransaction.calls.length)
+                    expect(mockTransactionService.addToTransaction.calls.count())
                         .toEqual(1);
                 });
 
@@ -109,7 +109,7 @@ define(
                         jasmine.createSpy(),
                         jasmine.createSpy()
                     );
-                    expect(mockTransactionService.addToTransaction.calls.length)
+                    expect(mockTransactionService.addToTransaction.calls.count())
                         .toEqual(2);
                 });
 

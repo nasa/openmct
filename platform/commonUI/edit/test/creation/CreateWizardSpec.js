@@ -41,10 +41,10 @@ define(
                     "property" + name,
                     ["getDefinition", "getValue", "setValue"]
                 );
-                mockProperty.getDefinition.andReturn({
+                mockProperty.getDefinition.and.returnValue({
                     control: "textfield"
                 });
-                mockProperty.getValue.andReturn(name);
+                mockProperty.getValue.and.returnValue(name);
                 return mockProperty;
             }
 
@@ -74,12 +74,12 @@ define(
 
                 testModel = { someKey: "some value" };
 
-                mockType.getKey.andReturn("test");
-                mockType.getCssClass.andReturn("icon-telemetry");
-                mockType.getDescription.andReturn("a test type");
-                mockType.getName.andReturn("Test");
-                mockType.getInitialModel.andReturn(testModel);
-                mockType.getProperties.andReturn(mockProperties);
+                mockType.getKey.and.returnValue("test");
+                mockType.getCssClass.and.returnValue("icon-telemetry");
+                mockType.getDescription.and.returnValue("a test type");
+                mockType.getName.and.returnValue("Test");
+                mockType.getInitialModel.and.returnValue(testModel);
+                mockType.getProperties.and.returnValue(mockProperties);
 
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
@@ -87,9 +87,9 @@ define(
                 );
 
                 //Mocking the getCapability('type') call
-                mockDomainObject.getCapability.andReturn(mockType);
-                mockDomainObject.useCapability.andReturn();
-                mockDomainObject.getModel.andReturn(testModel);
+                mockDomainObject.getCapability.and.returnValue(mockType);
+                mockDomainObject.useCapability.and.returnValue();
+                mockDomainObject.getModel.and.returnValue(testModel);
 
                 wizard = new CreateWizard(
                     mockDomainObject,
@@ -147,9 +147,11 @@ define(
                     "C": "ValueC"
                 },
                 compareModel = wizard.createModel(formValue);
+                //populateObjectFromInput adds a .location attribute that is not added by createModel.
+                compareModel.location = undefined;
                 wizard.populateObjectFromInput(formValue);
                 expect(mockDomainObject.useCapability).toHaveBeenCalledWith('mutation', jasmine.any(Function));
-                expect(mockDomainObject.useCapability.mostRecentCall.args[1]()).toEqual(compareModel);
+                expect(mockDomainObject.useCapability.calls.mostRecent().args[1]()).toEqual(compareModel);
             });
 
             it("validates selection types using policy", function () {
@@ -168,7 +170,7 @@ define(
                     rows = structure.sections[sections.length - 1].rows,
                     locationRow = rows[rows.length - 1];
 
-                mockDomainObj.getCapability.andReturn(mockOtherType);
+                mockDomainObj.getCapability.and.returnValue(mockOtherType);
                 locationRow.validate(mockDomainObj);
 
                 // Should check policy to see if the user-selected location

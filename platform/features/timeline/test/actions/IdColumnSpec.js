@@ -46,7 +46,7 @@ define(
                         'domainObject',
                         ['getId', 'getModel', 'getCapability']
                     );
-                    mockDomainObject.getId.andReturn(testId);
+                    mockDomainObject.getId.and.returnValue(testId);
                 });
 
                 it("provides a value mapped from domain object's identifier", function () {

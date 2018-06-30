@@ -18,18 +18,18 @@ define([
                 'listen'
             ]);
             topicService = jasmine.createSpy('topicService');
-            topicService.andReturn(mutationTopic);
+            topicService.and.returnValue(mutationTopic);
             publicAPI = {};
             publicAPI.objects = jasmine.createSpyObj('ObjectAPI', [
                 'get'
             ]);
-            publicAPI.objects.get.andCallFake(function (identifier) {
+            publicAPI.objects.get.and.callFake(function (identifier) {
                 return Promise.resolve({identifier: identifier});
             });
             publicAPI.$injector = jasmine.createSpyObj('$injector', [
                 'get'
             ]);
-            publicAPI.$injector.get.andReturn(topicService);
+            publicAPI.$injector.get.and.returnValue(topicService);
             compositionAPI = new CompositionAPI(publicAPI);
         });
 
@@ -65,17 +65,10 @@ define([
 
             it('loads composition from domain object', function () {
                 var listener = jasmine.createSpy('addListener');
-                var loaded = false;
                 composition.on('add', listener);
-                composition.load()
-                    .then(function () {
-                        loaded = true;
-                    });
-                waitsFor(function () {
-                    return loaded;
-                });
-                runs(function () {
-                    expect(listener.calls.length).toBe(1);
+
+                return composition.load().then(function () {
+                    expect(listener.calls.count()).toBe(1);
                     expect(listener).toHaveBeenCalledWith({
                         identifier: {namespace: 'test', key: 'a'}
                     });
@@ -93,43 +86,37 @@ define([
                 composition.on('remove', removeListener);
                 otherComposition.on('add', otherAddListener);
                 otherComposition.on('remove', otherRemoveListener);
-                var loaded = false;
-                Promise.all([composition.load(), otherComposition.load()])
+
+                return Promise.all([composition.load(), otherComposition.load()])
                     .then(function () {
-                        loaded = true;
+                        expect(addListener).toHaveBeenCalled();
+                        expect(otherAddListener).toHaveBeenCalled();
+                        expect(removeListener).not.toHaveBeenCalled();
+                        expect(otherRemoveListener).not.toHaveBeenCalled();
+
+                        var object = addListener.calls.mostRecent().args[0];
+                        composition.remove(object);
+                        expect(removeListener).toHaveBeenCalled();
+                        expect(otherRemoveListener).toHaveBeenCalled();
+
+                        addListener.reset();
+                        otherAddListener.reset();
+                        composition.add(object);
+                        expect(addListener).toHaveBeenCalled();
+                        expect(otherAddListener).toHaveBeenCalled();
+
+                        removeListener.reset();
+                        otherRemoveListener.reset();
+                        otherComposition.remove(object);
+                        expect(removeListener).toHaveBeenCalled();
+                        expect(otherRemoveListener).toHaveBeenCalled();
+
+                        addListener.reset();
+                        otherAddListener.reset();
+                        otherComposition.add(object);
+                        expect(addListener).toHaveBeenCalled();
+                        expect(otherAddListener).toHaveBeenCalled();
                     });
-                waitsFor(function () {
-                    return loaded;
-                });
-                runs(function () {
-                    expect(addListener).toHaveBeenCalled();
-                    expect(otherAddListener).toHaveBeenCalled();
-                    expect(removeListener).not.toHaveBeenCalled();
-                    expect(otherRemoveListener).not.toHaveBeenCalled();
-
-                    var object = addListener.mostRecentCall.args[0];
-                    composition.remove(object);
-                    expect(removeListener).toHaveBeenCalled();
-                    expect(otherRemoveListener).toHaveBeenCalled();
-
-                    addListener.reset();
-                    otherAddListener.reset();
-                    composition.add(object);
-                    expect(addListener).toHaveBeenCalled();
-                    expect(otherAddListener).toHaveBeenCalled();
-
-                    removeListener.reset();
-                    otherRemoveListener.reset();
-                    otherComposition.remove(object);
-                    expect(removeListener).toHaveBeenCalled();
-                    expect(otherRemoveListener).toHaveBeenCalled();
-
-                    addListener.reset();
-                    otherAddListener.reset();
-                    otherComposition.add(object);
-                    expect(addListener).toHaveBeenCalled();
-                    expect(otherAddListener).toHaveBeenCalled();
-                });
             });
         });
 
@@ -166,19 +153,18 @@ define([
             });
 
             it('supports listening and loading', function () {
-                var listener = jasmine.createSpy('addListener');
-                var loaded = false;
-                composition.on('add', listener);
-                composition.load()
-                    .then(function () {
-                        loaded = true;
-                    });
-                waitsFor(function () {
-                    return loaded;
-                });
-                runs(function () {
-                    expect(listener.calls.length).toBe(1);
-                    expect(listener).toHaveBeenCalledWith({
+                var addListener = jasmine.createSpy('addListener');
+                composition.on('add', addListener);
+
+                return composition.load().then(function (children) {
+                    var listenObject;
+                    var loadedObject = children[0];
+
+                    expect(addListener).toHaveBeenCalled();
+
+                    listenObject = addListener.calls.mostRecent().args[0];
+                    expect(listenObject).toEqual(loadedObject);
+                    expect(loadedObject).toEqual({
                         identifier: {namespace: 'custom', key: 'thing'}
                     });
                 });
@@ -200,8 +186,8 @@ define([
                     'off'
                 ]);
 
-                customProvider.appliesTo.andReturn('true');
-                customProvider.load.andReturn(Promise.resolve([]));
+                customProvider.appliesTo.and.returnValue('true');
+                customProvider.load.and.returnValue(Promise.resolve([]));
 
                 domainObject = {
                     identifier: {
@@ -217,9 +203,16 @@ define([
             it('supports listening and loading', function () {
                 var addListener = jasmine.createSpy('addListener');
                 var removeListener = jasmine.createSpy('removeListener');
-                var loaded = false;
+                var addPromise = new Promise(function (resolve) {
+                    addListener.and.callFake(resolve);
+                });
+                var removePromise = new Promise(function (resolve) {
+                    removeListener.and.callFake(resolve);
+                });
+
                 composition.on('add', addListener);
                 composition.on('remove', removeListener);
+
                 expect(customProvider.on).toHaveBeenCalledWith(
                     domainObject,
                     'add',
@@ -232,37 +225,26 @@ define([
                     jasmine.any(Function),
                     jasmine.any(CompositionCollection)
                 );
-                var add = customProvider.on.calls[0].args[2];
-                var remove = customProvider.on.calls[1].args[2];
-                composition.load()
+                var add = customProvider.on.calls.all()[0].args[2];
+                var remove = customProvider.on.calls.all()[1].args[2];
+
+                return composition.load()
                     .then(function () {
-                        loaded = true;
+                        expect(addListener).not.toHaveBeenCalled();
+                        expect(removeListener).not.toHaveBeenCalled();
+                        add({namespace: 'custom', key: 'thing'});
+                        return addPromise;
+                    }).then(function () {
+                        expect(addListener).toHaveBeenCalledWith({
+                            identifier: {namespace: 'custom', key: 'thing'}
+                        });
+                        remove(addListener.calls.mostRecent().args[0]);
+                        return removePromise;
+                    }).then(function () {
+                        expect(removeListener).toHaveBeenCalledWith({
+                            identifier: {namespace: 'custom', key: 'thing'}
+                        });
                     });
-                waitsFor(function () {
-                    return loaded;
-                });
-                runs(function () {
-                    expect(addListener).not.toHaveBeenCalled();
-                    expect(removeListener).not.toHaveBeenCalled();
-                    add({namespace: 'custom', key: 'thing'});
-                });
-                waitsFor(function () {
-                    return addListener.calls.length > 0;
-                });
-                runs(function () {
-                    expect(addListener).toHaveBeenCalledWith({
-                        identifier: {namespace: 'custom', key: 'thing'}
-                    });
-                    remove(addListener.mostRecentCall.args[0]);
-                });
-                waitsFor(function () {
-                    return removeListener.calls.length > 0;
-                });
-                runs(function () {
-                    expect(removeListener).toHaveBeenCalledWith({
-                        identifier: {namespace: 'custom', key: 'thing'}
-                    });
-                });
             });
         });
     });

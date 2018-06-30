@@ -138,12 +138,12 @@ define([
             };
 
 
-            openmct.time.getAllTimeSystems.andReturn([{key: 'timestamp'}]);
-            openmct.time.timeSystem.andReturn({key: 'timestamp'});
+            openmct.time.getAllTimeSystems.and.returnValue([{key: 'timestamp'}]);
+            openmct.time.timeSystem.and.returnValue({key: 'timestamp'});
 
 
             unobserver = jasmine.createSpy('unobserver');
-            openmct.objects.observe.andReturn(unobserver);
+            openmct.objects.observe.and.returnValue(unobserver);
 
 
             composition = jasmine.createSpyObj('compositionCollection', [
@@ -153,7 +153,7 @@ define([
             ]);
 
             function notify(eventName, a, b) {
-                composition.on.calls.filter(function (c) {
+                composition.on.calls.all().filter(function (c) {
                     return c.args[0] === eventName;
                 }).forEach(function (c) {
                     if (c.args[2]) { // listener w/ context.
@@ -170,32 +170,28 @@ define([
                 loader.reject = reject;
             });
 
-            composition.load.andCallFake(function () {
+            composition.load.and.callFake(function () {
                 setTimeout(function () {
                     notify('add', telemObjectA);
                     setTimeout(function () {
                         notify('add', telemObjectB);
                         setTimeout(function () {
                             loader.resolve();
-                            setTimeout(function () {
-                                loader.loaded = true;
-                            });
                         });
                     });
                 });
                 return loader.promise;
             });
-            openmct.composition.get.andReturn(composition);
-
+            openmct.composition.get.and.returnValue(composition);
 
             telemUnsubscribes = [];
-            openmct.telemetry.subscribe.andCallFake(function () {
+            openmct.telemetry.subscribe.and.callFake(function () {
                 var unsubscriber = jasmine.createSpy('unsubscriber' + telemUnsubscribes.length);
                 telemUnsubscribes.push(unsubscriber);
                 return unsubscriber;
             });
 
-            openmct.telemetry.getMetadata.andCallFake(function (object) {
+            openmct.telemetry.getMetadata.and.callFake(function (object) {
                 return {
                     name: 'fake metadata manager',
                     object: object,
@@ -203,7 +199,7 @@ define([
                 };
             });
 
-            openmct.telemetry.getFormatMap.andCallFake(function (metadata) {
+            openmct.telemetry.getFormatMap.and.callFake(function (metadata) {
                 expect(metadata.name).toBe('fake metadata manager');
                 return {
                     metadata: metadata,
@@ -240,36 +236,29 @@ define([
         });
 
         it("Returns no results for basic requests", function () {
-            var result;
-            telemetryProvider.request(summaryWidgetObject, {})
-                .then(function (r) {
-                    result = r;
+            return telemetryProvider.request(summaryWidgetObject, {})
+                .then(function (result) {
+                    expect(result).toEqual([]);
                 });
-            waitsFor(function () {
-                return !!result;
-            });
-            runs(function () {
-                expect(result).toEqual([]);
-            });
         });
 
         it('provides realtime telemetry', function () {
             var callback = jasmine.createSpy('callback');
             telemetryProvider.subscribe(summaryWidgetObject, callback);
 
-            waitsFor(function () {
-                return loader.loaded;
-            });
-
-            runs(function () {
-                expect(openmct.telemetry.subscribe.calls.length).toBe(2);
+            return loader.promise.then(function () {
+                return new Promise(function (resolve) {
+                    setTimeout(resolve);
+                });
+            }).then(function () {
+                expect(openmct.telemetry.subscribe.calls.count()).toBe(2);
                 expect(openmct.telemetry.subscribe)
                     .toHaveBeenCalledWith(telemObjectA, jasmine.any(Function));
                 expect(openmct.telemetry.subscribe)
                     .toHaveBeenCalledWith(telemObjectB, jasmine.any(Function));
 
-                var aCallback = openmct.telemetry.subscribe.calls[0].args[1];
-                var bCallback = openmct.telemetry.subscribe.calls[1].args[1];
+                var aCallback = openmct.telemetry.subscribe.calls.all()[0].args[1];
+                var bCallback = openmct.telemetry.subscribe.calls.all()[1].args[1];
 
                 aCallback({
                     t: 123,
@@ -291,7 +280,7 @@ define([
                     borderColor: 'rgba(0,0,0,0)',
                     icon: 'a-ok'
                 });
-                callback.reset();
+
                 aCallback({
                     t: 140,
                     m: 55
@@ -307,7 +296,7 @@ define([
                     borderColor: 'rgba(1,1,0,0)',
                     icon: 'a-high'
                 });
-                callback.reset();
+
                 bCallback({
                     t: 140,
                     m: -10
@@ -323,7 +312,7 @@ define([
                     borderColor: 'rgba(1,0,0,0)',
                     icon: 'b-low'
                 });
-                callback.reset();
+
                 aCallback({
                     t: 160,
                     m: 25
@@ -339,7 +328,7 @@ define([
                     borderColor: 'rgba(1,0,0,0)',
                     icon: 'b-low'
                 });
-                callback.reset();
+
                 bCallback({
                     t: 160,
                     m: 25
@@ -359,19 +348,11 @@ define([
         });
 
         describe('providing lad telemetry', function () {
-            var isResolved;
-            var resolver;
             var responseDatums;
             var resultsShouldBe;
 
             beforeEach(function () {
-                isResolved = false;
-                resolver = jasmine.createSpy('resolved')
-                    .andCallFake(function () {
-                        isResolved = true;
-                    });
-
-                openmct.telemetry.request.andCallFake(function (rObj, options) {
+                openmct.telemetry.request.and.callFake(function (rObj, options) {
                     expect(rObj).toEqual(jasmine.any(Object));
                     expect(options).toEqual({size: 1, strategy: 'latest', domain: 'timestamp'});
                     expect(responseDatums[rObj.identifier.namespace]).toBeDefined();
@@ -380,17 +361,11 @@ define([
                 responseDatums = {};
 
                 resultsShouldBe = function (results) {
-                    telemetryProvider
+                    return telemetryProvider
                         .request(summaryWidgetObject, {size: 1, strategy: 'latest', domain: 'timestamp'})
-                        .then(resolver);
-
-                    waitsFor(function () {
-                        return isResolved;
-                    });
-
-                    runs(function () {
-                        expect(resolver).toHaveBeenCalledWith(results);
-                    });
+                        .then(function (r) {
+                            expect(r).toEqual(results);
+                        });
                 };
             });
 
@@ -406,7 +381,7 @@ define([
                     }
                 };
 
-                resultsShouldBe([{
+                return resultsShouldBe([{
                     timestamp: 122,
                     ruleLabel: "Don't Worry",
                     ruleName: "safe",
@@ -431,7 +406,7 @@ define([
                     }
                 };
 
-                resultsShouldBe([{
+                return resultsShouldBe([{
                     timestamp: 139,
                     ruleLabel: "WORRY!",
                     ruleName: "B Low",
@@ -456,7 +431,7 @@ define([
                     }
                 };
 
-                resultsShouldBe([{
+                return resultsShouldBe([{
                     timestamp: 144,
                     ruleLabel: "Start Worrying",
                     ruleName: "A High",

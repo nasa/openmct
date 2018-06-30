@@ -42,7 +42,7 @@ define(
                 mockElement = jasmine.createSpyObj('element', ['css']);
                 testImage = {};
 
-                mockDocument[0].createElement.andReturn(testImage);
+                mockDocument[0].createElement.and.returnValue(testImage);
 
                 directive = new MCTBackgroundImage(mockDocument);
             });
@@ -70,28 +70,28 @@ define(
                 it("updates images in-order, even when they load out-of-order", function () {
                     var firstOnload;
 
-                    mockScope.$watch.mostRecentCall.args[1]("some/url/0");
+                    mockScope.$watch.calls.mostRecent().args[1]("some/url/0");
                     firstOnload = testImage.onload;
 
-                    mockScope.$watch.mostRecentCall.args[1]("some/url/1");
+                    mockScope.$watch.calls.mostRecent().args[1]("some/url/1");
 
                     // Resolve in a different order
                     testImage.onload();
                     firstOnload();
 
                     // Should still have taken the more recent value
-                    expect(mockElement.css.mostRecentCall.args).toEqual([
+                    expect(mockElement.css.calls.mostRecent().args).toEqual([
                         "background-image",
                         "url('some/url/1')"
                     ]);
                 });
 
                 it("clears the background image when undefined is passed in", function () {
-                    mockScope.$watch.mostRecentCall.args[1]("some/url/0");
+                    mockScope.$watch.calls.mostRecent().args[1]("some/url/0");
                     testImage.onload();
-                    mockScope.$watch.mostRecentCall.args[1](undefined);
+                    mockScope.$watch.calls.mostRecent().args[1](undefined);
 
-                    expect(mockElement.css.mostRecentCall.args).toEqual([
+                    expect(mockElement.css.calls.mostRecent().args).toEqual([
                         "background-image",
                         "none"
                     ]);
@@ -99,7 +99,7 @@ define(
 
                 it("updates filters on change", function () {
                     var filters = { brightness: 123, contrast: 21 };
-                    mockScope.$watchCollection.calls.forEach(function (call) {
+                    mockScope.$watchCollection.calls.all().forEach(function (call) {
                         if (call.args[0] === 'filters') {
                             call.args[1](filters);
                         }
@@ -111,7 +111,7 @@ define(
                 });
 
                 it("clears filters when none are present", function () {
-                    mockScope.$watchCollection.calls.forEach(function (call) {
+                    mockScope.$watchCollection.calls.all().forEach(function (call) {
                         if (call.args[0] === 'filters') {
                             call.args[1](undefined);
                         }

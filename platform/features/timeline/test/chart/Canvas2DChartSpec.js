@@ -45,7 +45,7 @@ define(
                         "fillRect"
                     ]
                 );
-                mockCanvas.getContext.andReturn(mock2d);
+                mockCanvas.getContext.and.returnValue(mock2d);
 
                 chart = new Canvas2DChart(mockCanvas);
             });
@@ -60,7 +60,7 @@ define(
             });
 
             it("does not construct if 2D is unavailable", function () {
-                mockCanvas.getContext.andReturn(undefined);
+                mockCanvas.getContext.and.returnValue(undefined);
                 expect(function () {
                     return new Canvas2DChart(mockCanvas);
                 }).toThrow();
@@ -77,7 +77,7 @@ define(
                     testPoints = 2;
                 chart.drawLine(testBuffer, testColor, testPoints);
                 expect(mock2d.beginPath).toHaveBeenCalled();
-                expect(mock2d.lineTo.calls.length).toEqual(1);
+                expect(mock2d.lineTo.calls.count()).toEqual(1);
                 expect(mock2d.stroke).toHaveBeenCalled();
             });
 

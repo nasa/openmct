@@ -19,9 +19,9 @@ define(
             });
 
             it("only allows composition for types which will have a composition property", function () {
-                mockType.getInitialModel.andReturn({});
+                mockType.getInitialModel.and.returnValue({});
                 expect(policy.allow(mockObject)).toBeFalsy();
-                mockType.getInitialModel.andReturn({ composition: [] });
+                mockType.getInitialModel.and.returnValue({ composition: [] });
                 expect(policy.allow(mockObject)).toBeTruthy();
             });
         });

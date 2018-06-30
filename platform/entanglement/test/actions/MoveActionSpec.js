@@ -47,7 +47,7 @@ define(
                     'policyService',
                     ['allow']
                 );
-                policyService.allow.andReturn(true);
+                policyService.allow.and.returnValue(true);
 
                 selectedObjectContextCapability = jasmine.createSpyObj(
                     'selectedObjectContextCapability',
@@ -72,7 +72,7 @@ define(
 
                 selectedObjectContextCapability
                     .getParent
-                    .andReturn(currentParent);
+                    .and.returnValue(currentParent);
 
                 newParent = domainObjectFactory({
                     name: 'newParent'
@@ -94,7 +94,7 @@ define(
 
                 locationService
                     .getLocationFromUser
-                    .andReturn(locationServicePromise);
+                    .and.returnValue(locationServicePromise);
 
                 moveService = new MockMoveService();
             });
@@ -141,7 +141,7 @@ define(
                     it("moves object to selected location", function () {
                         locationServicePromise
                             .then
-                            .mostRecentCall
+                            .calls.mostRecent()
                             .args[0](newParent);
 
                         expect(moveService.perform)

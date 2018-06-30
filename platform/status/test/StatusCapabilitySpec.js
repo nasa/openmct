@@ -46,9 +46,9 @@ define(
                 );
                 mockUnlisten = jasmine.createSpy('unlisten');
 
-                mockStatusService.listen.andReturn(mockUnlisten);
-                mockStatusService.listStatuses.andReturn(testStatusFlags);
-                mockDomainObject.getId.andReturn(testId);
+                mockStatusService.listen.and.returnValue(mockUnlisten);
+                mockStatusService.listStatuses.and.returnValue(testStatusFlags);
+                mockDomainObject.getId.and.returnValue(testId);
 
                 capability = new StatusCapability(
                     mockStatusService,

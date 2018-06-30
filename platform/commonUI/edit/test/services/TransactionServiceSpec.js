@@ -40,7 +40,7 @@ define(
 
             beforeEach(function () {
                 mockQ = jasmine.createSpyObj("$q", ["all"]);
-                mockQ.all.andReturn(fastPromise());
+                mockQ.all.and.returnValue(fastPromise());
                 mockLog = jasmine.createSpyObj("$log", ["error"]);
                 transactionService = new TransactionService(mockQ, mockLog);
             });

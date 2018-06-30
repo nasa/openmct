@@ -38,7 +38,7 @@ define([
                 '$q',
                 ['all']
             );
-            $q.all.andReturn(Promise.resolve([]));
+            $q.all.and.returnValue(Promise.resolve([]));
             objectService = jasmine.createSpyObj(
                 'objectService',
                 ['getObjects']
@@ -141,12 +141,11 @@ define([
                 objects = {
                     123: '123-object-hey',
                     234: '234-object-hello'
-                },
-                promiseChainComplete = false;
+                };
 
-            objectService.getObjects.andReturn(Promise.resolve(objects));
+            objectService.getObjects.and.returnValue(Promise.resolve(objects));
 
-            aggregator
+            return aggregator
                 .asObjectResults(modelResults)
                 .then(function (objectResults) {
                     expect(objectResults).toEqual({
@@ -156,14 +155,7 @@ define([
                         ],
                         total: 2
                     });
-                })
-                .then(function () {
-                    promiseChainComplete = true;
                 });
-
-            waitsFor(function () {
-                return promiseChainComplete;
-            });
         });
 
         it('can send queries to providers', function () {
@@ -171,7 +163,7 @@ define([
                     'provider',
                     ['query']
                 );
-            provider.query.andReturn('i prooomise!');
+            provider.query.and.returnValue('i prooomise!');
             providers.push(provider);
 
             aggregator.query('find me', 123, 'filter');
@@ -214,17 +206,16 @@ define([
                         ],
                         total: 4
                     }
-                ],
-                promiseChainResolved = false;
+                ];
 
-            $q.all.andReturn(Promise.resolve(providerResponses));
-            spyOn(aggregator, 'orderByScore').andReturn('orderedByScore!');
-            spyOn(aggregator, 'applyFilter').andReturn('filterApplied!');
+            $q.all.and.returnValue(Promise.resolve(providerResponses));
+            spyOn(aggregator, 'orderByScore').and.returnValue('orderedByScore!');
+            spyOn(aggregator, 'applyFilter').and.returnValue('filterApplied!');
             spyOn(aggregator, 'removeDuplicates')
-                .andReturn('duplicatesRemoved!');
-            spyOn(aggregator, 'asObjectResults').andReturn('objectResults');
+                .and.returnValue('duplicatesRemoved!');
+            spyOn(aggregator, 'asObjectResults').and.returnValue('objectResults');
 
-            aggregator
+            return aggregator
                 .query('something', 10, 'filter')
                 .then(function (objectResults) {
                     expect(aggregator.orderByScore).toHaveBeenCalledWith({
@@ -246,14 +237,7 @@ define([
                         .toHaveBeenCalledWith('duplicatesRemoved!');
 
                     expect(objectResults).toBe('objectResults');
-                })
-                .then(function () {
-                    promiseChainResolved = true;
                 });
-
-            waitsFor(function () {
-                return promiseChainResolved;
-            });
         });
 
     });

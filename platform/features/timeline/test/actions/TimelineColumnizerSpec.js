@@ -39,9 +39,9 @@ define(
                         'getModel'
                     ]
                 );
-                mockDomainObject.getId.andReturn('id-' + index);
-                mockDomainObject.getModel.andReturn(model);
-                mockDomainObject.useCapability.andCallFake(function (c) {
+                mockDomainObject.getId.and.returnValue('id-' + index);
+                mockDomainObject.getModel.and.returnValue(model);
+                mockDomainObject.useCapability.and.callFake(function (c) {
                     return c === 'metadata' && [];
                 });
                 return mockDomainObject;
@@ -64,14 +64,14 @@ define(
                     { }
                 ].map(makeMockDomainObject);
 
-                mockDomainObjects[1].hasCapability.andCallFake(function (c) {
+                mockDomainObjects[1].hasCapability.and.callFake(function (c) {
                     return c === 'timespan';
                 });
-                mockDomainObjects[1].useCapability.andCallFake(function (c) {
+                mockDomainObjects[1].useCapability.and.callFake(function (c) {
                     return c === 'timespan' ? Promise.resolve(mockTimespan) :
                         c === 'metadata' ? [] : undefined;
                 });
-                mockDomainObjects[2].useCapability.andCallFake(function (c) {
+                mockDomainObjects[2].useCapability.and.callFake(function (c) {
                     return c === 'metadata' && testMetadata;
                 });
 
@@ -82,11 +82,8 @@ define(
                 var rows;
 
                 beforeEach(function () {
-                    exporter.rows().then(function (r) {
+                    return exporter.rows().then(function (r) {
                         rows = r;
-                    });
-                    waitsFor(function () {
-                        return rows !== undefined;
                     });
                 });
 

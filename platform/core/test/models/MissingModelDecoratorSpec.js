@@ -47,7 +47,7 @@ define(
                     testId: { someKey: "some value" }
                 };
 
-                mockModelService.getModels.andReturn(asPromise(testModels));
+                mockModelService.getModels.and.returnValue(asPromise(testModels));
 
                 decorator = new MissingModelDecorator(mockModelService);
             });

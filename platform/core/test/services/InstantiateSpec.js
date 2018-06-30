@@ -49,12 +49,12 @@ define(
                 );
                 mockCapabilityConstructor = jasmine.createSpy('capability');
                 mockCapabilityInstance = {};
-                mockCapabilityService.getCapabilities.andReturn({
+                mockCapabilityService.getCapabilities.and.returnValue({
                     something: mockCapabilityConstructor
                 });
-                mockCapabilityConstructor.andReturn(mockCapabilityInstance);
+                mockCapabilityConstructor.and.returnValue(mockCapabilityInstance);
 
-                mockIdentifierService.generate.andCallFake(function (space) {
+                mockIdentifierService.generate.and.callFake(function (space) {
                     return (space ? (space + ":") : "") +
                             "some-id-" + (idCounter += 1);
                 });

@@ -37,11 +37,11 @@ define(
                     ['start', 'end', 'ids']
                 );
 
-                mockDragHandler.ids.andReturn(['a', 'b', 'c', 'd']);
-                mockDragHandler.start.andCallFake(function (id) {
+                mockDragHandler.ids.and.returnValue(['a', 'b', 'c', 'd']);
+                mockDragHandler.start.and.callFake(function (id) {
                     return starts[id];
                 });
-                mockDragHandler.end.andCallFake(function (id) {
+                mockDragHandler.end.and.callFake(function (id) {
                     return ends[id];
                 });
 

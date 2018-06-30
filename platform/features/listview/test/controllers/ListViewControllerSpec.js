@@ -28,11 +28,12 @@ define(
                 unlistenFunc,
                 domainObject,
                 childObject,
-                controller,
                 childModel,
                 typeCapability,
                 mutationCapability,
-                formatService;
+                formatService,
+                compositionPromise,
+                controller;
 
             beforeEach(function () {
                 unlistenFunc = jasmine.createSpy("unlisten");
@@ -41,17 +42,17 @@ define(
                     "mutationCapability",
                     ["listen"]
                 );
-                mutationCapability.listen.andReturn(unlistenFunc);
+                mutationCapability.listen.and.returnValue(unlistenFunc);
 
                 formatService = jasmine.createSpyObj(
                     "formatService",
                     ["getFormat"]
                 );
-                formatService.getFormat.andReturn(jasmine.createSpyObj(
+                formatService.getFormat.and.returnValue(jasmine.createSpyObj(
                     'utc',
                     ["format"]
                 ));
-                formatService.getFormat().format.andCallFake(function (v) {
+                formatService.getFormat().format.and.callFake(function (v) {
                     return "formatted " + v;
                 });
 
@@ -59,8 +60,8 @@ define(
                     "typeCapability",
                     ["getCssClass", "getName"]
                 );
-                typeCapability.getCssClass.andReturn("icon-folder");
-                typeCapability.getName.andReturn("Folder");
+                typeCapability.getCssClass.and.returnValue("icon-folder");
+                typeCapability.getName.and.returnValue("Folder");
 
 
                 childModel = jasmine.createSpyObj(
@@ -75,13 +76,11 @@ define(
                     "childObject",
                     ["getModel", "getCapability"]
                 );
-                childObject.getModel.andReturn(
+                childObject.getModel.and.returnValue(
                     childModel
                 );
-                // childObject.getCapability.andReturn(
-                //     typeCapability
-                // );
-                childObject.getCapability.andCallFake(function (arg) {
+
+                childObject.getCapability.and.callFake(function (arg) {
                     if (arg === 'location') {
                         return '';
                     } else if (arg === 'type') {
@@ -94,13 +93,11 @@ define(
                     "domainObject",
                     ["getCapability", "useCapability"]
                 );
-                domainObject.useCapability.andReturn(
-                    Promise.resolve([childObject])
-                );
-                domainObject.getCapability.andReturn(
+                compositionPromise = Promise.resolve([childObject]);
+                domainObject.useCapability.and.returnValue(compositionPromise);
+                domainObject.getCapability.and.returnValue(
                     mutationCapability
                 );
-
 
                 scope = jasmine.createSpyObj(
                     "$scope",
@@ -108,11 +105,9 @@ define(
                 );
                 scope.domainObject = domainObject;
 
-                controller  = new ListViewController(scope, formatService);
+                controller = new ListViewController(scope, formatService);
 
-                waitsFor(function () {
-                    return scope.children;
-                });
+                return compositionPromise;
             });
 
             it("uses the UTC time format", function () {
@@ -120,37 +115,39 @@ define(
             });
 
             it("updates the view", function () {
-                expect(scope.children[0]).toEqual(
-                    {
-                        icon: "icon-folder",
-                        title: "Battery Charge Status",
-                        type: "Folder",
-                        persisted: formatService.getFormat('utc')
-                            .format(childModel.persisted),
-                        modified: formatService.getFormat('utc')
-                            .format(childModel.modified),
-                        asDomainObject: childObject,
-                        location: ''
-                    }
-                );
+                var child = scope.children[0];
+                var testChild = {
+                    icon: "icon-folder",
+                    title: "Battery Charge Status",
+                    type: "Folder",
+                    persisted: formatService.getFormat('utc')
+                        .format(childModel.persisted),
+                    modified: formatService.getFormat('utc')
+                        .format(childModel.modified),
+                    asDomainObject: childObject,
+                    location: '',
+                    action: childObject.getCapability('action')
+                };
+
+                expect(child).toEqual(testChild);
             });
             it("updates the scope when mutation occurs", function () {
-                domainObject.useCapability.andReturn(
-                    Promise.resolve([])
-                );
+                var applyPromise = new Promise(function (resolve) {
+                    scope.$apply.and.callFake(resolve);
+                });
+
+                domainObject.useCapability.and.returnValue(Promise.resolve([]));
                 expect(mutationCapability.listen).toHaveBeenCalledWith(jasmine.any(Function));
-                mutationCapability.listen.mostRecentCall.args[0]();
-                waitsFor(function () {
-                    return scope.children.length !== 1;
-                });
-                runs(function () {
+                mutationCapability.listen.calls.mostRecent().args[0]();
+
+                return applyPromise.then(function () {
                     expect(scope.children.length).toEqual(0);
+                    expect(scope.$apply).toHaveBeenCalled();
                 });
-                expect(scope.$apply).toHaveBeenCalled();
             });
             it("releases listeners on $destroy", function () {
                 expect(scope.$on).toHaveBeenCalledWith('$destroy', jasmine.any(Function));
-                scope.$on.mostRecentCall.args[1]();
+                scope.$on.calls.mostRecent().args[1]();
                 expect(unlistenFunc).toHaveBeenCalled();
             });
 

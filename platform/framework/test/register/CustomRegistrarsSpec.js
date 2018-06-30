@@ -64,70 +64,70 @@ define(
 
             it("invokes built-in functions on the app", function () {
                 // Verify preconditions, invoke, expect to have been called
-                expect(mockApp.directive.calls.length).toEqual(0);
+                expect(mockApp.directive.calls.count()).toEqual(0);
                 customRegistrars.directives([{ key: "a" }, { key: "b" }, { key: "c" }]);
-                expect(mockApp.directive.calls.length).toEqual(3);
+                expect(mockApp.directive.calls.count()).toEqual(3);
 
-                expect(mockApp.controller.calls.length).toEqual(0);
+                expect(mockApp.controller.calls.count()).toEqual(0);
                 customRegistrars.controllers([{ key: "a" }, { key: "b" }, { key: "c" }]);
-                expect(mockApp.controller.calls.length).toEqual(3);
+                expect(mockApp.controller.calls.count()).toEqual(3);
 
-                expect(mockApp.service.calls.length).toEqual(0);
+                expect(mockApp.service.calls.count()).toEqual(0);
                 customRegistrars.services([{ key: "a" }, { key: "b" }, { key: "c" }]);
-                expect(mockApp.service.calls.length).toEqual(3);
+                expect(mockApp.service.calls.count()).toEqual(3);
 
-                expect(mockApp.constant.calls.length).toEqual(0);
+                expect(mockApp.constant.calls.count()).toEqual(0);
                 customRegistrars.constants([{ key: "a", value: "b" }, { key: "b", value: "c" }, { key: "c", value: "d" }]);
-                expect(mockApp.constant.calls.length).toEqual(3);
+                expect(mockApp.constant.calls.count()).toEqual(3);
 
-                expect(mockApp.run.calls.length).toEqual(0);
+                expect(mockApp.run.calls.count()).toEqual(0);
                 customRegistrars.runs([jasmine.createSpy("a"), jasmine.createSpy("a"), jasmine.createSpy("a")]);
-                expect(mockApp.run.calls.length).toEqual(3);
+                expect(mockApp.run.calls.count()).toEqual(3);
 
             });
 
             it("warns when keys are not defined, then skips", function () {
                 // Verify preconditions, invoke, expect to have been called
-                expect(mockApp.directive.calls.length).toEqual(0);
+                expect(mockApp.directive.calls.count()).toEqual(0);
                 customRegistrars.directives([{ key: "a" }, { }, { key: "c" }]);
-                expect(mockApp.directive.calls.length).toEqual(2);
-                expect(mockLog.warn.calls.length).toEqual(1);
+                expect(mockApp.directive.calls.count()).toEqual(2);
+                expect(mockLog.warn.calls.count()).toEqual(1);
 
-                expect(mockApp.controller.calls.length).toEqual(0);
+                expect(mockApp.controller.calls.count()).toEqual(0);
                 customRegistrars.controllers([{ }, { }, { key: "c" }]);
-                expect(mockApp.controller.calls.length).toEqual(1);
-                expect(mockLog.warn.calls.length).toEqual(3);
+                expect(mockApp.controller.calls.count()).toEqual(1);
+                expect(mockLog.warn.calls.count()).toEqual(3);
 
-                expect(mockApp.service.calls.length).toEqual(0);
+                expect(mockApp.service.calls.count()).toEqual(0);
                 customRegistrars.services([{ }, { }, { }]);
-                expect(mockApp.service.calls.length).toEqual(0);
-                expect(mockLog.warn.calls.length).toEqual(6);
+                expect(mockApp.service.calls.count()).toEqual(0);
+                expect(mockLog.warn.calls.count()).toEqual(6);
 
-                expect(mockApp.constant.calls.length).toEqual(0);
+                expect(mockApp.constant.calls.count()).toEqual(0);
                 customRegistrars.constants([{ }, { }, { }]);
-                expect(mockApp.constant.calls.length).toEqual(0);
-                expect(mockLog.warn.calls.length).toEqual(9);
+                expect(mockApp.constant.calls.count()).toEqual(0);
+                expect(mockLog.warn.calls.count()).toEqual(9);
 
                 // Notably, keys are not needed for run calls
             });
 
             it("does not re-register duplicate keys", function () {
                 // Verify preconditions, invoke, expect to have been called
-                expect(mockApp.directive.calls.length).toEqual(0);
+                expect(mockApp.directive.calls.count()).toEqual(0);
                 customRegistrars.directives([{ key: "a" }, { key: "a" }]);
-                expect(mockApp.directive.calls.length).toEqual(1);
+                expect(mockApp.directive.calls.count()).toEqual(1);
 
-                expect(mockApp.controller.calls.length).toEqual(0);
+                expect(mockApp.controller.calls.count()).toEqual(0);
                 customRegistrars.controllers([{ key: "c" }, { key: "c" }, { key: "c" }]);
-                expect(mockApp.controller.calls.length).toEqual(1);
+                expect(mockApp.controller.calls.count()).toEqual(1);
 
-                expect(mockApp.service.calls.length).toEqual(0);
+                expect(mockApp.service.calls.count()).toEqual(0);
                 customRegistrars.services([{ key: "b" }, { key: "b" }]);
-                expect(mockApp.service.calls.length).toEqual(1);
+                expect(mockApp.service.calls.count()).toEqual(1);
 
                 // None of this should have warned, this is all
                 // nominal behavior
-                expect(mockLog.warn.calls.length).toEqual(0);
+                expect(mockLog.warn.calls.count()).toEqual(0);
             });
 
             it("allows routes to be registered", function () {
@@ -151,20 +151,20 @@ define(
                 customRegistrars.routes(routes);
 
                 // Give it the route provider based on its config call
-                mockApp.config.calls.forEach(function (call) {
+                mockApp.config.calls.all().forEach(function (call) {
                     // Invoke the provided callback
                     call.args[0][1](mockRouteProvider);
                 });
 
                 // The "when" clause should have been mapped to the when method...
                 expect(mockRouteProvider.when).toHaveBeenCalled();
-                expect(mockRouteProvider.when.mostRecentCall.args[0]).toEqual("foo");
-                expect(mockRouteProvider.when.mostRecentCall.args[1].templateUrl)
+                expect(mockRouteProvider.when.calls.mostRecent().args[0]).toEqual("foo");
+                expect(mockRouteProvider.when.calls.mostRecent().args[1].templateUrl)
                     .toEqual("test/bundle/res/templates/test.html");
 
                 // ...while the other should have been treated as a default route
                 expect(mockRouteProvider.otherwise).toHaveBeenCalled();
-                expect(mockRouteProvider.otherwise.mostRecentCall.args[0].templateUrl)
+                expect(mockRouteProvider.otherwise.calls.mostRecent().args[0].templateUrl)
                     .toEqual("test/bundle/res/templates/default.html");
             });
 

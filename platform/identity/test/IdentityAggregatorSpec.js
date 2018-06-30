@@ -28,13 +28,8 @@ define(
             var mockProviders,
                 mockQ,
                 resolves,
-                mockCallback,
                 testUsers,
                 aggregator;
-
-            function callbackCalled() {
-                return mockCallback.calls.length > 0;
-            }
 
             function resolveProviderPromises() {
                 ['a', 'b', 'c'].forEach(function (id, i) {
@@ -57,7 +52,7 @@ define(
                         ['getUser']
                     );
 
-                    mockProvider.getUser.andReturn(new Promise(function (r) {
+                    mockProvider.getUser.and.returnValue(new Promise(function (r) {
                         resolves[id] = r;
                     }));
 
@@ -65,11 +60,9 @@ define(
                 });
 
                 mockQ = jasmine.createSpyObj('$q', ['all']);
-                mockQ.all.andCallFake(function (promises) {
+                mockQ.all.and.callFake(function (promises) {
                     return Promise.all(promises);
                 });
-
-                mockCallback = jasmine.createSpy('callback');
 
                 aggregator = new IdentityAggregator(
                     mockQ,
@@ -91,47 +84,44 @@ define(
             });
 
             it("returns the first result when it is defined", function () {
-                aggregator.getUser().then(mockCallback);
+                var promise = aggregator.getUser();
 
                 resolveProviderPromises();
 
-                waitsFor(callbackCalled);
-                runs(function () {
-                    expect(mockCallback).toHaveBeenCalledWith(testUsers[0]);
+                return promise.then(function (user) {
+                    expect(user).toEqual(testUsers[0]);
                 });
             });
 
             it("returns a later result when earlier results are undefined", function () {
                 testUsers[0] = undefined;
 
-                aggregator.getUser().then(mockCallback);
+                var promise = aggregator.getUser();
 
                 resolveProviderPromises();
 
-                waitsFor(callbackCalled);
-                runs(function () {
-                    expect(mockCallback).toHaveBeenCalledWith(testUsers[1]);
+                return promise.then(function (user) {
+                    expect(user).toEqual(testUsers[1]);
                 });
             });
 
             it("returns undefined when no providers expose users", function () {
                 testUsers = [undefined, undefined, undefined];
 
-                aggregator.getUser().then(mockCallback);
+                var promise = aggregator.getUser();
 
                 resolveProviderPromises();
 
-                waitsFor(callbackCalled);
-                runs(function () {
-                    expect(mockCallback).toHaveBeenCalledWith(undefined);
+                return promise.then(function (user) {
+                    expect(user).toBe(undefined);
                 });
             });
 
             it("returns undefined when there are no providers", function () {
-                new IdentityAggregator(mockQ, []).getUser().then(mockCallback);
-                waitsFor(callbackCalled);
-                runs(function () {
-                    expect(mockCallback).toHaveBeenCalledWith(undefined);
+                var promise = new IdentityAggregator(mockQ, []).getUser();
+
+                return promise.then(function (user) {
+                    expect(user).toBe(undefined);
                 });
             });
 

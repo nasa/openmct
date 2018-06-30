@@ -69,7 +69,7 @@ define(
                 navigationService.addListener(callback);
                 navigationService.setNavigation(testObject);
                 navigationService.setNavigation(testObject);
-                expect(callback.calls.length).toEqual(1);
+                expect(callback.calls.count()).toEqual(1);
             });
 
             it("stops notifying listeners after removal", function () {

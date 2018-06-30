@@ -37,16 +37,16 @@ define(
                     'elementHandle',
                     ['x', 'y','getGridSize']
                 );
-                mockElementHandle.x.andReturn(6);
-                mockElementHandle.y.andReturn(8);
-                mockElementHandle.getGridSize.andReturn(TEST_GRID_SIZE);
+                mockElementHandle.x.and.returnValue(6);
+                mockElementHandle.y.and.returnValue(8);
+                mockElementHandle.getGridSize.and.returnValue(TEST_GRID_SIZE);
 
                 mockFixedControl = jasmine.createSpyObj(
                     'fixedControl',
                     ['updateSelectionStyle', 'mutate']
                 );
-                mockFixedControl.updateSelectionStyle.andReturn();
-                mockFixedControl.mutate.andReturn();
+                mockFixedControl.updateSelectionStyle.and.returnValue();
+                mockFixedControl.mutate.and.returnValue();
 
                 mockConfigPath = jasmine.createSpy('configPath');
 
@@ -80,7 +80,7 @@ define(
                 expect(mockElementHandle.y).toHaveBeenCalledWith(7);
 
                 // Should have called updateSelectionStyle once per continueDrag
-                expect(mockFixedControl.updateSelectionStyle.calls.length).toEqual(2);
+                expect(mockFixedControl.updateSelectionStyle.calls.count()).toEqual(2);
 
                 // Finally, ending drag should mutate
                 handle.endDrag();

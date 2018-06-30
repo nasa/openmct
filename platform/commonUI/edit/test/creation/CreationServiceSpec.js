@@ -103,33 +103,33 @@ define(
                     ["persist", "getSpace"]
                 );
 
-                mockParentObject.getCapability.andCallFake(function (key) {
+                mockParentObject.getCapability.and.callFake(function (key) {
                     return mockCapabilities[key];
                 });
-                mockParentObject.useCapability.andCallFake(function (key, value) {
+                mockParentObject.useCapability.and.callFake(function (key, value) {
                     return mockCapabilities[key].invoke(value);
                 });
-                mockParentObject.getId.andReturn('parentId');
+                mockParentObject.getId.and.returnValue('parentId');
 
-                mockNewObject.getId.andReturn('newId');
-                mockNewObject.getCapability.andCallFake(function (c) {
+                mockNewObject.getId.and.returnValue('newId');
+                mockNewObject.getCapability.and.callFake(function (c) {
                     return c === 'persistence' ?
                             mockNewPersistenceCapability : undefined;
                 });
 
                 mockPersistenceCapability.persist
-                    .andReturn(mockPromise(true));
+                    .and.returnValue(mockPromise(true));
                 mockNewPersistenceCapability.persist
-                    .andReturn(mockPromise(true));
+                    .and.returnValue(mockPromise(true));
 
-                mockMutationCapability.invoke.andReturn(mockPromise(true));
-                mockPersistenceCapability.getSpace.andReturn("testSpace");
-                mockCompositionCapability.invoke.andReturn(
+                mockMutationCapability.invoke.and.returnValue(mockPromise(true));
+                mockPersistenceCapability.getSpace.and.returnValue("testSpace");
+                mockCompositionCapability.invoke.and.returnValue(
                     mockPromise([mockNewObject])
                 );
-                mockCompositionCapability.add.andReturn(mockPromise(true));
-                mockCreationCapability.instantiate.andReturn(mockNewObject);
-                mockCreationCapability.invoke.andCallFake(function (model) {
+                mockCompositionCapability.add.and.returnValue(mockPromise(true));
+                mockCreationCapability.instantiate.and.returnValue(mockNewObject);
+                mockCreationCapability.invoke.and.callFake(function (model) {
                     return mockCreationCapability.instantiate(model);
                 });
 
@@ -163,10 +163,10 @@ define(
                     mockCallback = jasmine.createSpy('callback');
 
                 // Act as if the object had been created
-                mockCompositionCapability.add.andCallFake(function (id) {
-                    mockDomainObject.getId.andReturn(id);
+                mockCompositionCapability.add.and.callFake(function (id) {
+                    mockDomainObject.getId.and.returnValue(id);
                     mockCompositionCapability.invoke
-                        .andReturn(mockPromise([mockDomainObject]));
+                        .and.returnValue(mockPromise([mockDomainObject]));
                     return mockPromise(mockDomainObject);
                 });
 
@@ -200,7 +200,7 @@ define(
                 // created object - this is an error.
                 var model = { someKey: "some value" };
 
-                mockCompositionCapability.add.andReturn(mockPromise(false));
+                mockCompositionCapability.add.and.returnValue(mockPromise(false));
 
                 creationService.createObject(model, mockParentObject);
 

@@ -32,15 +32,9 @@ define(
                 mockCreationService,
                 mockParent,
                 mockCreatedObject,
-                mockCallback,
                 decorator;
 
-            function calledBack() {
-                return mockCallback.calls.length > 0;
-            }
-
             beforeEach(function () {
-                mockCallback = jasmine.createSpy('callback');
                 mockIdentityService = jasmine.createSpyObj(
                     'identityService',
                     ['getUser']
@@ -58,10 +52,10 @@ define(
                     ['getCapability', 'getId', 'getModel', 'hasCapability', 'useCapability']
                 );
                 mockCreationService.createObject
-                    .andReturn(Promise.resolve(mockCreatedObject));
+                    .and.returnValue(Promise.resolve(mockCreatedObject));
                 mockIdentityService.getUser
-                    .andReturn(Promise.resolve({ key: "test-user-id" }));
-                mockParent.getId.andReturn('test-id');
+                    .and.returnValue(Promise.resolve({ key: "test-user-id" }));
+                mockParent.getId.and.returnValue('test-id');
                 decorator = new IdentityCreationDecorator(
                     mockIdentityService,
                     mockCreationService
@@ -71,33 +65,27 @@ define(
             it("delegates to its decorated service when identity is available", function () {
                 var testModel = { someKey: "some value" };
 
-                decorator.createObject(testModel, mockParent)
-                    .then(mockCallback);
-
-                waitsFor(calledBack);
-                runs(function () {
-                    expect(mockCallback)
-                        .toHaveBeenCalledWith(mockCreatedObject);
-                });
+                return decorator.createObject(testModel, mockParent)
+                    .then(function (object) {
+                        expect(object).toEqual(mockCreatedObject);
+                    });
             });
 
             it("adds a creator property", function () {
                 var testModel = { someKey: "some value" };
 
-                decorator.createObject(testModel, mockParent)
-                    .then(mockCallback);
+                return decorator.createObject(testModel, mockParent)
+                    .then(function (object) {
+                        expect(object)
+                        .toEqual(mockCreatedObject);
 
-                waitsFor(calledBack);
-                runs(function () {
-                    expect(mockCallback)
-                        .toHaveBeenCalledWith(mockCreatedObject);
-                    // Make sure arguments were delegated appropriately
-                    expect(mockCreationService.createObject)
+                        // Make sure arguments were delegated appropriately
+                        expect(mockCreationService.createObject)
                         .toHaveBeenCalledWith(
                             { someKey: "some value", creator: "test-user-id" },
                             mockParent
                         );
-                });
+                    });
             });
 
         });

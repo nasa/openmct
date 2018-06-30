@@ -40,9 +40,9 @@ define(
             // Verify two-way binding support
             it("updates model on changes to entry fields", function () {
                 // Make sure we're looking at the right watch
-                expect(mockScope.$watchCollection.calls[0].args[0])
+                expect(mockScope.$watchCollection.calls.all()[0].args[0])
                     .toEqual("datetime");
-                mockScope.$watchCollection.calls[0].args[1]({
+                mockScope.$watchCollection.calls.all()[0].args[1]({
                     days: 4,
                     hours: 12,
                     minutes: 30,
@@ -55,12 +55,12 @@ define(
 
             it("updates form when model changes", function () {
                 // Make sure we're looking at the right watch
-                expect(mockScope.$watchCollection.calls[1].args[0])
+                expect(mockScope.$watchCollection.calls.all()[1].args[0])
                     .toEqual(jasmine.any(Function));
                 // ...and that it's really looking at the field in ngModel
-                expect(mockScope.$watchCollection.calls[1].args[0]())
+                expect(mockScope.$watchCollection.calls.all()[1].args[0]())
                     .toBe(mockScope.ngModel.testField);
-                mockScope.$watchCollection.calls[1].args[1]({
+                mockScope.$watchCollection.calls.all()[1].args[1]({
                     timestamp: ((((((4 * 24) + 12) * 60) + 30) * 60) + 11) * 1000
                 });
                 expect(mockScope.datetime).toEqual({

@@ -85,7 +85,7 @@ define(
              *
              * @returns {string} id
              */
-            domainObject.getId.andCallFake(function () {
+            domainObject.getId.and.callFake(function () {
                 return domainObject.id;
             });
 
@@ -94,7 +94,7 @@ define(
              *
              * @returns {object} model
              */
-            domainObject.getModel.andCallFake(function () {
+            domainObject.getModel.and.callFake(function () {
                 return domainObject.model;
             });
 
@@ -106,7 +106,7 @@ define(
              * @param {string} capability name of the capability to return.
              * @returns {*} capability object
              */
-            domainObject.getCapability.andCallFake(function (capability) {
+            domainObject.getCapability.and.callFake(function (capability) {
                 if (config.capabilities.hasOwnProperty(capability)) {
                     return config.capabilities[capability];
                 }
@@ -120,7 +120,7 @@ define(
              *     existence of.
              * @returns {boolean}
              */
-            domainObject.hasCapability.andCallFake(function (capability) {
+            domainObject.hasCapability.and.callFake(function (capability) {
                 return config.capabilities.hasOwnProperty(capability);
             });
 
@@ -133,7 +133,7 @@ define(
              * @param {...*} params to pass to the capability's `invoke` method.
              * @returns {*} result whatever was returned by `invoke`.
              */
-            domainObject.useCapability.andCallFake(function (capability) {
+            domainObject.useCapability.and.callFake(function (capability) {
                 if (config.capabilities.hasOwnProperty(capability)) {
                     if (!config.capabilities[capability].invoke) {
                         throw new Error(

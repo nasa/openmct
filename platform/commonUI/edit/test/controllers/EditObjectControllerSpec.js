@@ -61,17 +61,17 @@ define(
                 mockLocation = jasmine.createSpyObj('$location',
                     ["search"]
                 );
-                mockLocation.search.andReturn({"view": "fixed"});
+                mockLocation.search.and.returnValue({"view": "fixed"});
                 mockNavigationService = jasmine.createSpyObj('navigationService',
                     ["checkBeforeNavigation"]
                 );
 
                 removeCheck = jasmine.createSpy('removeCheck');
-                mockNavigationService.checkBeforeNavigation.andReturn(removeCheck);
+                mockNavigationService.checkBeforeNavigation.and.returnValue(removeCheck);
 
-                mockObject.getId.andReturn("test");
-                mockObject.getModel.andReturn({ name: "Test object" });
-                mockObject.getCapability.andCallFake(function (key) {
+                mockObject.getId.and.returnValue("test");
+                mockObject.getModel.and.returnValue({ name: "Test object" });
+                mockObject.getCapability.and.callFake(function (key) {
                     return mockCapabilities[key];
                 });
 
@@ -81,10 +81,10 @@ define(
                     { key: 'xyz' }
                 ];
 
-                mockObject.useCapability.andCallFake(function (c) {
+                mockObject.useCapability.and.callFake(function (c) {
                     return (c === 'view') && testViews;
                 });
-                mockLocation.search.andReturn({ view: 'def' });
+                mockLocation.search.and.returnValue({ view: 'def' });
 
                 mockScope.domainObject = mockObject;
 
@@ -99,17 +99,17 @@ define(
                 expect(mockNavigationService.checkBeforeNavigation)
                     .toHaveBeenCalledWith(jasmine.any(Function));
 
-                var checkFn = mockNavigationService.checkBeforeNavigation.mostRecentCall.args[0];
+                var checkFn = mockNavigationService.checkBeforeNavigation.calls.mostRecent().args[0];
 
-                mockEditorCapability.isEditContextRoot.andReturn(false);
-                mockEditorCapability.dirty.andReturn(false);
+                mockEditorCapability.isEditContextRoot.and.returnValue(false);
+                mockEditorCapability.dirty.and.returnValue(false);
 
                 expect(checkFn()).toBe("Continuing will cause the loss of any unsaved changes.");
 
-                mockEditorCapability.isEditContextRoot.andReturn(true);
+                mockEditorCapability.isEditContextRoot.and.returnValue(true);
                 expect(checkFn()).toBe("Continuing will cause the loss of any unsaved changes.");
 
-                mockEditorCapability.dirty.andReturn(true);
+                mockEditorCapability.dirty.and.returnValue(true);
                 expect(checkFn())
                     .toBe("Continuing will cause the loss of any unsaved changes.");
 
@@ -119,7 +119,7 @@ define(
                 expect(mockScope.$on)
                     .toHaveBeenCalledWith("$destroy", jasmine.any(Function));
 
-                mockScope.$on.mostRecentCall.args[1]();
+                mockScope.$on.calls.mostRecent().args[1]();
 
                 expect(mockEditorCapability.finish).toHaveBeenCalled();
                 expect(removeCheck).toHaveBeenCalled();

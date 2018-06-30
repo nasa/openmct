@@ -39,7 +39,7 @@ define(
                 metadata,
                 prefix,
                 controller,
-                hasLoaded,
+                requestPromise,
                 mockWindow,
                 mockElement;
 
@@ -50,7 +50,7 @@ define(
                     ['getId']
                 );
                 newDomainObject = { name: 'foo' };
-                oldDomainObject.getId.andReturn('testID');
+                oldDomainObject.getId.and.returnValue('testID');
                 openmct = {
                     objects: jasmine.createSpyObj('objectAPI', [
                         'get'
@@ -73,39 +73,41 @@ define(
                     'value',
                     'valuesForHints'
                 ]);
+                metadata.value.and.returnValue("timestamp");
+                metadata.valuesForHints.and.returnValue(["value"]);
+
                 prefix = "formatted ";
                 unsubscribe = jasmine.createSpy('unsubscribe');
-                openmct.telemetry.subscribe.andReturn(unsubscribe);
-                openmct.time.timeSystem.andReturn({
+                openmct.telemetry.subscribe.and.returnValue(unsubscribe);
+                openmct.time.timeSystem.and.returnValue({
                     key: 'testKey'
                 });
                 $scope.domainObject = oldDomainObject;
-                openmct.objects.get.andReturn(Promise.resolve(newDomainObject));
-                openmct.telemetry.getMetadata.andReturn(metadata);
-                openmct.telemetry.getValueFormatter.andCallFake(function (property) {
+                openmct.objects.get.and.returnValue(Promise.resolve(newDomainObject));
+                openmct.telemetry.getMetadata.and.returnValue(metadata);
+                openmct.telemetry.getValueFormatter.and.callFake(function (property) {
                     var formatter =
                         jasmine.createSpyObj("formatter-" + property, ['format']);
                     var isTime = (property === "timestamp");
-                    formatter.format.andCallFake(function (datum) {
+                    formatter.format.and.callFake(function (datum) {
                         return (isTime ? prefix : "") + datum[property];
                     });
                     return formatter;
                 });
-                hasLoaded = false;
-                openmct.telemetry.request.andCallFake(function () {
+
+                requestPromise = new Promise(function (resolve) {
                     setTimeout(function () {
-                        hasLoaded = true;
-                    }, 10);
-                    return Promise.resolve([{
+                        resolve([{
                             timestamp: 1434600258123,
                             value: 'some/url'
                         }]);
+                    }, 10);
                 });
-                metadata.value.andReturn("timestamp");
-                metadata.valuesForHints.andReturn(["value"]);
+
+                openmct.telemetry.request.and.returnValue(requestPromise);
                 mockElement = $(MOCK_ELEMENT_TEMPLATE);
                 mockWindow = jasmine.createSpyObj('$window', ['requestAnimationFrame']);
-                mockWindow.requestAnimationFrame.andCallFake(function (f) {
+                mockWindow.requestAnimationFrame.and.callFake(function (f) {
                     return f();
                 });
 
@@ -123,19 +125,14 @@ define(
                     bounds;
 
                 beforeEach(function () {
-                    waitsFor(function () {
-                        return hasLoaded;
-                    }, 500);
-
-
-                    runs(function () {
-                        openmct.time.on.calls.forEach(function (call) {
+                    return requestPromise.then(function () {
+                        openmct.time.on.calls.all().forEach(function (call) {
                             if (call.args[0] === "bounds") {
                                 boundsListener = call.args[1];
                             }
                         });
                         callback =
-                            openmct.telemetry.subscribe.mostRecentCall.args[1];
+                            openmct.telemetry.subscribe.calls.mostRecent().args[1];
                     });
                 });
 
@@ -209,7 +206,7 @@ define(
                 it("unsubscribes and unlistens when scope is destroyed", function () {
                     expect(unsubscribe).not.toHaveBeenCalled();
 
-                    $scope.$on.calls.forEach(function (call) {
+                    $scope.$on.calls.all().forEach(function (call) {
                         if (call.args[0] === '$destroy') {
                             call.args[1]();
                         }
@@ -222,7 +219,7 @@ define(
                 it("listens for bounds event and responds to tick and manual change", function () {
                     var mockBounds = {start: 1434600000000, end: 1434600500000};
                     expect(openmct.time.on).toHaveBeenCalled();
-                    openmct.telemetry.request.reset();
+                    openmct.telemetry.request.calls.reset();
                     boundsListener(mockBounds, true);
                     expect(openmct.telemetry.request).not.toHaveBeenCalled();
                     boundsListener(mockBounds, false);

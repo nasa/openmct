@@ -49,7 +49,7 @@ define(
                     'persistence-' + id,
                     ['persist', 'refresh']
                 );
-                mockPersistence.persist.andReturn(asPromise(true));
+                mockPersistence.persist.and.returnValue(asPromise(true));
                 return mockPersistence;
             }
 
@@ -58,7 +58,7 @@ define(
                     'domainObject-' + id,
                     ['getId']
                 );
-                mockDomainObject.getId.andReturn(id);
+                mockDomainObject.getId.and.returnValue(id);
                 return mockDomainObject;
             }
 
@@ -73,8 +73,8 @@ define(
                     mockDomainObjects[id] = makeMockDomainObject(id);
                 });
                 mockRejection = jasmine.createSpyObj('rejection', ['then']);
-                mockQ.all.andReturn(asPromise([]));
-                mockRejection.then.andCallFake(function (callback, fallback) {
+                mockQ.all.and.returnValue(asPromise([]));
+                mockRejection.then.and.callFake(function (callback, fallback) {
                     return asPromise(fallback({ someKey: "some value" }));
                 });
                 handler = new PersistenceQueueHandler(mockQ, mockFailureHandler);
@@ -90,8 +90,8 @@ define(
             });
 
             it("handles failures that occur", function () {
-                mockPersistences.b.persist.andReturn(mockRejection);
-                mockPersistences.c.persist.andReturn(mockRejection);
+                mockPersistences.b.persist.and.returnValue(mockRejection);
+                mockPersistences.c.persist.and.returnValue(mockRejection);
                 handler.persist(mockPersistences, mockDomainObjects, mockQueue);
                 expect(mockFailureHandler.handle).toHaveBeenCalledWith([
                     {
@@ -115,14 +115,14 @@ define(
                 // This method is needed by PersistenceFailureHandler
                 // to allow requeuing of objects for persistence when
                 // Overwrite is chosen.
-                mockPersistences.b.persist.andReturn(mockRejection);
+                mockPersistences.b.persist.and.returnValue(mockRejection);
                 handler.persist(mockPersistences, mockDomainObjects, mockQueue);
 
                 // Verify precondition
                 expect(mockQueue.put).not.toHaveBeenCalled();
 
                 // Invoke requeue
-                mockFailureHandler.handle.mostRecentCall.args[0][0].requeue();
+                mockFailureHandler.handle.calls.mostRecent().args[0][0].requeue();
 
                 // Should have returned the object to the queue
                 expect(mockQueue.put).toHaveBeenCalledWith(

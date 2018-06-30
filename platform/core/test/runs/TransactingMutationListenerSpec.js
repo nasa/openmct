@@ -51,15 +51,15 @@ define(
                     ['persist', 'refresh', 'persisted']
                 );
 
-                mockTopic.andCallFake(function (t) {
+                mockTopic.and.callFake(function (t) {
                     return (t === 'mutation') && mockMutationTopic;
                 });
 
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObject.getCapability.and.callFake(function (c) {
                     return (c === 'persistence') && mockPersistence;
                 });
 
-                mockPersistence.persisted.andReturn(true);
+                mockPersistence.persisted.and.returnValue(true);
 
                 return new TransactingMutationListener(
                     mockTopic,
@@ -83,12 +83,12 @@ define(
                     var innerVerb = isActive ? "does" : "doesn't";
 
                     beforeEach(function () {
-                        mockTransactionService.isActive.andReturn(isActive);
+                        mockTransactionService.isActive.and.returnValue(isActive);
                     });
 
                     describe("and mutation occurs", function () {
                         beforeEach(function () {
-                            mockMutationTopic.listen.mostRecentCall
+                            mockMutationTopic.listen.calls.mostRecent()
                                 .args[0](mockDomainObject);
                         });
 

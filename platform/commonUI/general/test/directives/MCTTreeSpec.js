@@ -38,8 +38,8 @@ define([
                 'getCapability',
                 'hasCapability'
             ]);
-            mockDomainObject.getId.andReturn(id);
-            mockDomainObject.getModel.andReturn({});
+            mockDomainObject.getId.and.returnValue(id);
+            mockDomainObject.getModel.and.returnValue({});
             return mockDomainObject;
         }
 
@@ -51,8 +51,8 @@ define([
             mockParse = jasmine.createSpy('$parse');
             mockExpr = jasmine.createSpy('expr');
             mockExpr.assign = jasmine.createSpy('assign');
-            mockParse.andReturn(mockExpr);
-            spyOn(TreeView.prototype, 'observe').andCallThrough();
+            mockParse.and.returnValue(mockExpr);
+            spyOn(TreeView.prototype, 'observe').and.callThrough();
 
             mctTree = new MCTTree(mockParse, mockGestureService);
         });
@@ -118,7 +118,7 @@ define([
             it("does not trigger $apply during $watches", function () {
                 mockScope.mctObject = makeMockDomainObject('root');
                 mockScope.mctMode = makeMockDomainObject('selection');
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$watch.calls.all().forEach(function (call) {
                     call.args[1](mockScope[call.args[0]]);
                 });
                 expect(mockScope.$apply).not.toHaveBeenCalled();
@@ -129,7 +129,7 @@ define([
                     return;
                 }
                 // White-boxy; we know this is the setter for the tree's value
-                var treeValueFn = TreeView.prototype.observe.calls[0].args[0];
+                var treeValueFn = TreeView.prototype.observe.calls.all()[0].args[0];
 
                 mockScope.mctObject = makeMockDomainObject('root');
                 mockScope.mctMode = makeMockDomainObject('selection');

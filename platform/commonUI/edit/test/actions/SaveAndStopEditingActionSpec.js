@@ -86,13 +86,13 @@ define(
                     ["info", "error"]
                 );
 
-                mockDomainObject.hasCapability.andReturn(true);
-                mockDomainObject.getCapability.andCallFake(function (capability) {
+                mockDomainObject.hasCapability.and.returnValue(true);
+                mockDomainObject.getCapability.and.callFake(function (capability) {
                     return capabilities[capability];
                 });
-                mockDomainObject.getModel.andReturn({ persisted: 0 });
-                mockEditorCapability.save.andReturn(mockPromise(true));
-                mockEditorCapability.isEditContextRoot.andReturn(true);
+                mockDomainObject.getModel.and.returnValue({ persisted: 0 });
+                mockEditorCapability.save.and.returnValue(mockPromise(true));
+                mockEditorCapability.isEditContextRoot.and.returnValue(true);
 
                 action = new SaveAndStopEditingAction(dialogService, notificationService, actionContext);
             });
@@ -102,18 +102,18 @@ define(
                 expect(SaveAndStopEditingAction.appliesTo(actionContext)).toBe(true);
                 expect(mockDomainObject.hasCapability).toHaveBeenCalledWith("editor");
 
-                mockDomainObject.hasCapability.andReturn(false);
-                mockDomainObject.getCapability.andReturn(undefined);
+                mockDomainObject.hasCapability.and.returnValue(false);
+                mockDomainObject.getCapability.and.returnValue(undefined);
                 expect(SaveAndStopEditingAction.appliesTo(actionContext)).toBe(false);
             });
 
             it("only applies to domain object that has already been persisted", function () {
-                mockDomainObject.getModel.andReturn({ persisted: undefined });
+                mockDomainObject.getModel.and.returnValue({ persisted: undefined });
                 expect(SaveAndStopEditingAction.appliesTo(actionContext)).toBe(false);
             });
 
             it("does not close the editor before completing the save", function () {
-                mockEditorCapability.save.andReturn(new Promise(function () {
+                mockEditorCapability.save.and.returnValue(new Promise(function () {
                 }));
                 action.perform();
                 expect(mockEditorCapability.save).toHaveBeenCalled();

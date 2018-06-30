@@ -72,7 +72,7 @@ define(
                 var mockBadCallback = jasmine.createSpy("bad-callback"),
                     t = topic();
 
-                mockBadCallback.andCallFake(function () {
+                mockBadCallback.and.callFake(function () {
                     throw new Error("I'm afraid I can't do that.");
                 });
 

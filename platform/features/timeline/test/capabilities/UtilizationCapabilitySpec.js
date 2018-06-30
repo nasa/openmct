@@ -108,13 +108,13 @@ define(
                     relationship: mockRelationship
                 };
 
-                mockQ.when.andCallFake(asPromise);
-                mockQ.all.andCallFake(allPromises);
-                mockDomainObject.getModel.andReturn(testModel);
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockQ.when.and.callFake(asPromise);
+                mockQ.all.and.callFake(allPromises);
+                mockDomainObject.getModel.and.returnValue(testModel);
+                mockDomainObject.getCapability.and.callFake(function (c) {
                     return testCapabilities[c];
                 });
-                mockDomainObject.useCapability.andCallFake(function (c) {
+                mockDomainObject.useCapability.and.callFake(function (c) {
                     return testCapabilities[c] && testCapabilities[c].invoke();
                 });
 
@@ -142,7 +142,7 @@ define(
             });
 
             it("accumulates resources from composition", function () {
-                mockComposition.invoke.andReturn(asPromise([
+                mockComposition.invoke.and.returnValue(asPromise([
                     fakeDomainObject(['abc', 'def']),
                     fakeDomainObject(['def', 'xyz']),
                     fakeDomainObject(['abc', 'xyz'])
@@ -155,7 +155,7 @@ define(
             });
 
             it("accumulates utilizations from composition", function () {
-                mockComposition.invoke.andReturn(asPromise([
+                mockComposition.invoke.and.returnValue(asPromise([
                     fakeDomainObject(['abc', 'def'], 10, 100),
                     fakeDomainObject(['def', 'xyz'], 50, 90)
                 ]));
@@ -179,16 +179,16 @@ define(
                         'timespanCapability',
                         ['invoke']
                     );
-                mockComposition.invoke.andReturn(asPromise([]));
-                mockRelationship.getRelatedObjects.andReturn(asPromise([
+                mockComposition.invoke.and.returnValue(asPromise([]));
+                mockRelationship.getRelatedObjects.and.returnValue(asPromise([
                     fakeDomainObject([], 0, 0, { abc: 5, xyz: 15 })
                 ]));
 
                 testCapabilities.timespan = mockTimespanCapability;
-                mockTimespanCapability.invoke.andReturn(asPromise(mockTimespan));
-                mockTimespan.getStart.andReturn(42);
-                mockTimespan.getEnd.andReturn(12321);
-                mockTimespan.getEpoch.andReturn("TEST");
+                mockTimespanCapability.invoke.and.returnValue(asPromise(mockTimespan));
+                mockTimespan.getStart.and.returnValue(42);
+                mockTimespan.getEnd.and.returnValue(12321);
+                mockTimespan.getEpoch.and.returnValue("TEST");
 
                 capability.invoke().then(mockCallback);
 
@@ -199,8 +199,8 @@ define(
             });
 
             it("provides resource keys from related objects", function () {
-                mockComposition.invoke.andReturn(asPromise([]));
-                mockRelationship.getRelatedObjects.andReturn(asPromise([
+                mockComposition.invoke.and.returnValue(asPromise([]));
+                mockRelationship.getRelatedObjects.and.returnValue(asPromise([
                     fakeDomainObject([], 0, 0, { abc: 5, xyz: 15 })
                 ]));
 

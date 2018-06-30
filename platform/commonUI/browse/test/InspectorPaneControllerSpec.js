@@ -50,14 +50,14 @@ define(
                     "navigationService",
                     ["getNavigation", "addListener"]
                 );
-                mockNavigationService.addListener.andReturn(mockNavigationUnlistener);
+                mockNavigationService.addListener.and.returnValue(mockNavigationUnlistener);
 
                 mockStatusUnlistener = jasmine.createSpy("statusUnlistener");
                 mockStatusCapability = jasmine.createSpyObj(
                     "statusCapability",
                     ["listen"]
                 );
-                mockStatusCapability.listen.andReturn(mockStatusUnlistener);
+                mockStatusCapability.listen.and.returnValue(mockStatusUnlistener);
 
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
@@ -68,13 +68,13 @@ define(
                         'hasCapability'
                     ]
                 );
-                mockDomainObject.getId.andReturn("domainObject");
-                mockDomainObject.getModel.andReturn({});
-                mockDomainObject.hasCapability.andReturn(true);
-                mockDomainObject.getCapability.andReturn(mockStatusCapability);
+                mockDomainObject.getId.and.returnValue("domainObject");
+                mockDomainObject.getModel.and.returnValue({});
+                mockDomainObject.hasCapability.and.returnValue(true);
+                mockDomainObject.getCapability.and.returnValue(mockStatusCapability);
 
                 mockLocation = jasmine.createSpyObj('location', ['search']);
-                mockLocation.search.andReturn({});
+                mockLocation.search.and.returnValue({});
 
                 mockAttrs = {};
 
@@ -84,7 +84,7 @@ define(
             it("listens for changes to navigation and attaches a status" +
                 " listener", function () {
                 expect(mockNavigationService.addListener).toHaveBeenCalledWith(jasmine.any(Function));
-                mockNavigationService.addListener.mostRecentCall.args[0](mockDomainObject);
+                mockNavigationService.addListener.calls.mostRecent().args[0](mockDomainObject);
                 expect(mockStatusCapability.listen).toHaveBeenCalledWith(jasmine.any(Function));
             });
 
@@ -93,8 +93,8 @@ define(
                 controller.toggle();
                 // test pre-condition that inspector is hidden
                 expect(controller.visible()).toBe(false);
-                mockNavigationService.addListener.mostRecentCall.args[0](mockDomainObject);
-                mockStatusCapability.listen.mostRecentCall.args[0](["editing"]);
+                mockNavigationService.addListener.calls.mostRecent().args[0](mockDomainObject);
+                mockStatusCapability.listen.calls.mostRecent().args[0](["editing"]);
                 expect(controller.visible()).toBe(true);
             });
 

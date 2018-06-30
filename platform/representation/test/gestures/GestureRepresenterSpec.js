@@ -42,7 +42,7 @@ define(
 
                 mockElement = { someKey: "some value" };
 
-                mockGestureService.attachGestures.andReturn(mockGestureHandle);
+                mockGestureService.attachGestures.and.returnValue(mockGestureHandle);
 
                 representer = new GestureRepresenter(
                     mockGestureService,

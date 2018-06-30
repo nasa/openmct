@@ -52,7 +52,7 @@ define(
                     ["getId", "getModel", "getCapability", "hasCapability", "useCapability"]
                 );
 
-                mockActionService.getActions.andReturn([mockAction, {}]);
+                mockActionService.getActions.and.returnValue([mockAction, {}]);
 
                 capability = new ActionCapability(
                     mockQ,
@@ -77,8 +77,8 @@ define(
 
             it("promises the result of performed actions", function () {
                 var mockPromise = jasmine.createSpyObj("promise", ["then"]);
-                mockQ.when.andReturn(mockPromise);
-                mockAction.perform.andReturn("the action's result");
+                mockQ.when.and.returnValue(mockPromise);
+                mockAction.perform.and.returnValue("the action's result");
 
                 // Verify precondition
                 expect(mockAction.perform).not.toHaveBeenCalled();

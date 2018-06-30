@@ -61,7 +61,7 @@ define(
                         jasmine.createSpyObj("objectService", ["getObjects"]);
 
                     mutationPromise = new ControlledPromise();
-                    domainObject.capabilities.mutation.invoke.andCallFake(
+                    domainObject.capabilities.mutation.invoke.and.callFake(
                         function (mutator) {
                             return mutationPromise.then(function () {
                                 mutator(domainObject.model);
@@ -114,10 +114,10 @@ define(
                         mockCallback;
 
                     function resolvePromises() {
-                        if (mockQ.when.calls.length > 0) {
-                            qPromise.resolve(mockQ.when.mostRecentCall.args[0]);
+                        if (mockQ.when.calls.count() > 0) {
+                            qPromise.resolve(mockQ.when.calls.mostRecent().args[0]);
                         }
-                        if (mockObjectService.getObjects.calls.length > 0) {
+                        if (mockObjectService.getObjects.calls.count() > 0) {
                             objectPromise.resolve(originalObjects);
                         }
                     }
@@ -129,11 +129,11 @@ define(
                             testObject: domainObjectFactory()
                         };
 
-                        mockInjector.get.andCallFake(function (key) {
+                        mockInjector.get.and.callFake(function (key) {
                             return key === 'objectService' && mockObjectService;
                         });
-                        mockObjectService.getObjects.andReturn(objectPromise);
-                        mockQ.when.andReturn(qPromise);
+                        mockObjectService.getObjects.and.returnValue(objectPromise);
+                        mockQ.when.and.returnValue(qPromise);
 
                         mockCallback = jasmine.createSpy('callback');
                     });

@@ -49,8 +49,8 @@ define(
                 );
                 mockDocument = [{}];
 
-                mockDomainObject.getModel.andReturn({ name: 'Test name' });
-                mockNavigationService.getNavigation.andReturn(mockDomainObject);
+                mockDomainObject.getModel.and.returnValue({ name: 'Test name' });
+                mockNavigationService.getNavigation.and.returnValue(mockDomainObject);
 
                 titler = new WindowTitler(
                     mockNavigationService,
@@ -64,12 +64,12 @@ define(
                     jasmine.any(Function),
                     jasmine.any(Function)
                 );
-                expect(mockRootScope.$watch.mostRecentCall.args[0]())
+                expect(mockRootScope.$watch.calls.mostRecent().args[0]())
                     .toEqual('Test name');
             });
 
             it("sets the title to the name of the navigated object", function () {
-                mockRootScope.$watch.mostRecentCall.args[1]("Some name");
+                mockRootScope.$watch.calls.mostRecent().args[1]("Some name");
                 expect(mockDocument[0].title).toEqual("Some name");
             });
 

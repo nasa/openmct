@@ -38,7 +38,7 @@ define(
                         jasmine.createSpyObj("mockSaveAction", ["getMetadata", "perform"])
                     ];
                     mockedSaveActions.forEach(function (action) {
-                        action.getMetadata.andReturn(mockSaveActionMetadata);
+                        action.getMetadata.and.returnValue(mockSaveActionMetadata);
                     });
                     return mockedSaveActions;
                 } else if (actionContext.category === "conclude-editing") {
@@ -54,14 +54,14 @@ define(
 
             beforeEach(function () {
                 mockActions = jasmine.createSpyObj("action", ["getActions"]);
-                mockActions.getActions.andCallFake(fakeGetActions);
+                mockActions.getActions.and.callFake(fakeGetActions);
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 mockScope.action = mockActions;
                 controller = new EditActionController(mockScope);
             });
 
             function makeControllerUpdateActions() {
-                mockScope.$watch.mostRecentCall.args[1]();
+                mockScope.$watch.calls.mostRecent().args[1]();
             }
 
             it("watches scope that may change applicable actions", function () {

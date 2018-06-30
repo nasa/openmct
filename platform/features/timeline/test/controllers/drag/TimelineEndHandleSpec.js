@@ -44,19 +44,19 @@ define(
                     ['toMillis', 'toPixels']
                 );
 
-                mockDragHandler.end.andReturn(12321);
+                mockDragHandler.end.and.returnValue(12321);
 
                 // Echo back the value from snapper for most tests
-                mockSnapHandler.snap.andCallFake(function (ts) {
+                mockSnapHandler.snap.and.callFake(function (ts) {
                     return ts;
                 });
 
                 // Double pixels to get millis, for test purposes
-                mockZoomController.toMillis.andCallFake(function (px) {
+                mockZoomController.toMillis.and.callFake(function (px) {
                     return px * 2;
                 });
 
-                mockZoomController.toPixels.andCallFake(function (ms) {
+                mockZoomController.toPixels.and.callFake(function (ms) {
                     return ms / 2;
                 });
 
@@ -88,7 +88,7 @@ define(
             });
 
             it("snaps drags to other end points", function () {
-                mockSnapHandler.snap.andReturn(42);
+                mockSnapHandler.snap.and.returnValue(42);
                 handle.begin();
                 handle.drag(-10, mockZoomController);
                 // Should have used snap-to timestamp

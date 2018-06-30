@@ -40,7 +40,7 @@ define(
                 mockSorter = jasmine.createSpyObj("sorter", ["sort"]);
                 customRegistrars = {};
 
-                mockSorter.sort.andCallFake(function (v) {
+                mockSorter.sort.and.callFake(function (v) {
                     return v;
                 });
 
@@ -59,7 +59,7 @@ define(
 
             it("registers extensions with square brackets, as arrays", function () {
                 var callbacks = {};
-                mockApp.factory.andCallFake(function (name, value) {
+                mockApp.factory.and.callFake(function (name, value) {
                     callbacks[name] = value[value.length - 1];
                 });
                 registrar.registerExtensions({ things: [{}] });
@@ -78,7 +78,7 @@ define(
 
             it("registers empty extension categories when they are needed", function () {
                 var lengths = {};
-                mockApp.factory.andCallFake(function (name, value) {
+                mockApp.factory.and.callFake(function (name, value) {
                     lengths[name] = value.length;
                 });
                 // Nobody has registered tests[], but it looks like an extension dependency,
@@ -100,7 +100,7 @@ define(
                 var a = { a: 'a' }, b = { b: 'b' }, c = { c: 'c' };
 
                 // Fake sorting; just reverse the array
-                mockSorter.sort.andCallFake(function (v) {
+                mockSorter.sort.and.callFake(function (v) {
                     return v.reverse();
                 });
 
@@ -109,7 +109,7 @@ define(
 
                 // Verify registration interactions occurred in reverse-order
                 [c, b, a].forEach(function (extension, index) {
-                    expect(mockApp.factory.calls[index].args[1][0]())
+                    expect(mockApp.factory.calls.all()[index].args[1][0]())
                         .toEqual(extension);
                 });
             });

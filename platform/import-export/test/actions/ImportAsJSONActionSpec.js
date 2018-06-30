@@ -49,7 +49,7 @@ define(
                 openmct = {
                     $injector: jasmine.createSpyObj('$injector', ['get'])
                 };
-                mockInstantiate = jasmine.createSpy('instantiate').andCallFake(
+                mockInstantiate = jasmine.createSpy('instantiate').and.callFake(
                     function (model, id) {
                         var config = {
                             "model": model,
@@ -58,7 +58,7 @@ define(
                         };
                         var locationCapability = {
                             setPrimaryLocation: jasmine.createSpy
-                                ('setPrimaryLocation').andCallFake(
+                                ('setPrimaryLocation').and.callFake(
                                     function (newLocation) {
                                         config.model.location = newLocation;
                                     }
@@ -68,9 +68,9 @@ define(
                         if (model.composition) {
                             var compCapability =
                                 jasmine.createSpy('compCapability')
-                                .andReturn(model.composition);
+                                .and.returnValue(model.composition);
                             compCapability.add = jasmine.createSpy('add')
-                                .andCallFake(function (newObj) {
+                                .and.callFake(function (newObj) {
                                     config.model.composition.push(newObj.getId());
                                 });
                             config.capabilities.composition = compCapability;
@@ -78,7 +78,7 @@ define(
                         newObjects.push(domainObjectFactory(config));
                         return domainObjectFactory(config);
                     });
-                openmct.$injector.get.andReturn(mockInstantiate);
+                openmct.$injector.get.and.returnValue(mockInstantiate);
                 dialogService = jasmine.createSpyObj('dialogService',
                     [
                         'getUserInput',
@@ -90,13 +90,13 @@ define(
                         'generate'
                     ]
                 );
-                identifierService.generate.andCallFake(function () {
+                identifierService.generate.and.callFake(function () {
                     uniqueId++;
                     return uniqueId;
                 });
                 compositionCapability = jasmine.createSpy('compositionCapability');
                 mockDialog = jasmine.createSpyObj("dialog", ["dismiss"]);
-                dialogService.showBlockingMessage.andReturn(mockDialog);
+                dialogService.showBlockingMessage.and.returnValue(mockDialog);
 
                 action = new ImportAsJSONAction(exportService, identifierService,
                     dialogService, openmct, context);
@@ -121,7 +121,7 @@ define(
             });
 
             it("displays error dialog on invalid file choice", function () {
-                dialogService.getUserInput.andReturn(Promise.resolve(
+                dialogService.getUserInput.and.returnValue(Promise.resolve(
                     {
                         selectFile: {
                             body: JSON.stringify({badKey: "INVALID"}),
@@ -130,26 +130,25 @@ define(
                     })
                 );
 
-                var init = false;
-                runs(function () {
-                    action.perform();
-                    setTimeout(function () {
-                        init = true;
-                    }, 100);
-                });
+                action.perform();
 
-                waitsFor(function () {
-                    return init;
-                }, "Promise containing file data should have resolved");
-
-                runs(function () {
+                return new Promise(function (resolve, reject) {
+                    setTimeout(resolve, 100);
+                }).then(function () {
                     expect(dialogService.getUserInput).toHaveBeenCalled();
                     expect(dialogService.showBlockingMessage).toHaveBeenCalled();
                 });
             });
 
             it("can import self-containing objects", function () {
-                dialogService.getUserInput.andReturn(Promise.resolve(
+                var compDomainObject = domainObjectFactory({
+                    name: 'compObject',
+                    model: { name: 'compObject'},
+                    capabilities: {"composition": compositionCapability}
+                });
+                context.domainObject = compDomainObject;
+
+                dialogService.getUserInput.and.returnValue(Promise.resolve(
                     {
                         selectFile: {
                             body: JSON.stringify({
@@ -178,25 +177,17 @@ define(
                     })
                 );
 
-                var init = false;
-                runs(function () {
-                    action.perform();
-                    setTimeout(function () {
-                        init = true;
-                    }, 100);
-                });
+                action.perform();
 
-                waitsFor(function () {
-                    return init;
-                }, "Promise containing file data should have resolved");
-
-                runs(function () {
-                    expect(mockInstantiate.calls.length).toEqual(2);
+                return new Promise(function (resolve, reject) {
+                    setTimeout(resolve, 100);
+                }).then(function () {
+                    expect(mockInstantiate.calls.count()).toEqual(2);
                 });
             });
 
             it("assigns new ids to each imported object", function () {
-                dialogService.getUserInput.andReturn(Promise.resolve(
+                dialogService.getUserInput.and.returnValue(Promise.resolve(
                     {
                         selectFile: {
                             body: JSON.stringify({
@@ -217,20 +208,12 @@ define(
                     })
                 );
 
-                var init = false;
-                runs(function () {
-                    action.perform();
-                    setTimeout(function () {
-                        init = true;
-                    }, 100);
-                });
+                action.perform();
 
-                waitsFor(function () {
-                    return init;
-                }, "Promise containing file data should have resolved");
-
-                runs(function () {
-                    expect(mockInstantiate.calls.length).toEqual(1);
+                return new Promise(function (resolve, reject) {
+                    setTimeout(resolve, 100);
+                }).then(function () {
+                    expect(mockInstantiate.calls.count()).toEqual(1);
                     expect(newObjects[0].getId()).toBe('1');
                 });
             });

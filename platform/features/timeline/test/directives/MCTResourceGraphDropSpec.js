@@ -55,18 +55,18 @@ define(
                     stopPropagation: jasmine.createSpy()
                 };
 
-                testEvent.dataTransfer.getData.andReturn('abc');
-                mockDndService.getData.andCallFake(function (key) {
+                testEvent.dataTransfer.getData.and.returnValue('abc');
+                mockDndService.getData.and.callFake(function (key) {
                     return key === SwimlaneDragConstants.TIMELINE_SWIMLANE_DRAG_TYPE ?
                         mockSwimlane : undefined;
                 });
 
-                mockSwimlane.graph.andReturn(false);
+                mockSwimlane.graph.and.returnValue(false);
 
                 directive = new MCTResourceGraphDrop(mockDndService);
                 directive.link(mockScope, mockElement, testAttrs);
 
-                mockElement.on.calls.forEach(function (call) {
+                mockElement.on.calls.all().forEach(function (call) {
                     handlers[call.args[0]] = call.args[1];
                 });
             });
@@ -78,7 +78,7 @@ define(
             [false, true].forEach(function (graphing) {
                 describe("when swimlane graph is " + (graphing ? "" : "not ") + "enabled", function () {
                     beforeEach(function () {
-                        mockSwimlane.graph.andReturn(graphing);
+                        mockSwimlane.graph.and.returnValue(graphing);
                     });
 
 

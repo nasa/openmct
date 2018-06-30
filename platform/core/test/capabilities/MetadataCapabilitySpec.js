@@ -58,18 +58,18 @@ define(
                             'property-' + k,
                             ['getValue', 'getDefinition']
                         );
-                    mockProperty.getValue.andReturn("Value " + k);
-                    mockProperty.getDefinition.andReturn({ name: "Property " + k});
+                    mockProperty.getValue.and.returnValue("Value " + k);
+                    mockProperty.getDefinition.and.returnValue({ name: "Property " + k});
                     return mockProperty;
                 });
                 testModel = { name: "" };
 
-                mockDomainObject.getId.andReturn("Test id");
-                mockDomainObject.getModel.andReturn(testModel);
-                mockDomainObject.getCapability.andCallFake(getCapability);
-                mockDomainObject.useCapability.andCallFake(getCapability);
-                mockType.getProperties.andReturn(mockProperties);
-                mockType.getName.andReturn("Test type");
+                mockDomainObject.getId.and.returnValue("Test id");
+                mockDomainObject.getModel.and.returnValue(testModel);
+                mockDomainObject.getCapability.and.callFake(getCapability);
+                mockDomainObject.useCapability.and.callFake(getCapability);
+                mockType.getProperties.and.returnValue(mockProperties);
+                mockType.getName.and.returnValue("Test type");
 
                 metadata = new MetadataCapability(mockDomainObject);
             });

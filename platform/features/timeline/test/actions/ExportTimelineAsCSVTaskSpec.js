@@ -47,8 +47,8 @@ define(
                     ]
                 );
 
-                mockDomainObject.getId.andReturn('mock');
-                mockDomainObject.getModel.andReturn({});
+                mockDomainObject.getId.and.returnValue('mock');
+                mockDomainObject.getModel.and.returnValue({});
 
                 task = new ExportTimelineAsCSVTask(
                     mockExportService,
@@ -58,14 +58,9 @@ define(
             });
 
             describe("when run", function () {
-                var mockCallback;
 
                 beforeEach(function () {
-                    mockCallback = jasmine.createSpy('callback');
-                    task.run().then(mockCallback);
-                    waitsFor(function () {
-                        return mockCallback.calls.length > 0;
-                    });
+                    return task.run();
                 });
 
                 it("exports to CSV", function () {

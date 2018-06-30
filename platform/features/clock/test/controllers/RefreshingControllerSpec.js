@@ -37,7 +37,7 @@ define(
                 mockTicker = jasmine.createSpyObj('ticker', ['listen']);
                 mockUnticker = jasmine.createSpy('unticker');
 
-                mockTicker.listen.andReturn(mockUnticker);
+                mockTicker.listen.and.returnValue(mockUnticker);
 
                 controller = new RefreshingController(mockScope, mockTicker);
             });
@@ -52,13 +52,13 @@ define(
                         ['persist', 'refresh']
                     );
 
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObject.getCapability.and.callFake(function (c) {
                     return (c === 'persistence') && mockPersistence;
                 });
 
                 mockScope.domainObject = mockDomainObject;
 
-                mockTicker.listen.mostRecentCall.args[0](12321);
+                mockTicker.listen.calls.mostRecent().args[0](12321);
                 expect(mockPersistence.refresh).toHaveBeenCalled();
                 expect(mockPersistence.persist).not.toHaveBeenCalled();
             });
@@ -70,11 +70,11 @@ define(
 
             it("unsubscribes to ticks when destroyed", function () {
                 // Make sure $destroy is being listened for...
-                expect(mockScope.$on.mostRecentCall.args[0]).toEqual('$destroy');
+                expect(mockScope.$on.calls.mostRecent().args[0]).toEqual('$destroy');
                 expect(mockUnticker).not.toHaveBeenCalled();
 
                 // ...and makes sure that its listener unsubscribes from ticker
-                mockScope.$on.mostRecentCall.args[1]();
+                mockScope.$on.calls.mostRecent().args[1]();
                 expect(mockUnticker).toHaveBeenCalled();
             });
         });

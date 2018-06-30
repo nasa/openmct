@@ -85,7 +85,7 @@ define([
                 'clock',
                 'stopClock'
             ].forEach(function (method) {
-                spyOn(time, method).andCallThrough();
+                spyOn(time, method).and.callThrough();
             });
             time.addTimeSystem(timeSystemA);
             time.addTimeSystem(timeSystemB);
@@ -100,7 +100,7 @@ define([
             ]);
 
             search = {};
-            $location.search.andCallFake(function (key, value) {
+            $location.search.and.callFake(function (key, value) {
                 if (arguments.length === 0) {
                     return search;
                 }
@@ -127,7 +127,7 @@ define([
                     '$locationChangeSuccess',
                     jasmine.any(Function)
                 );
-                triggerLocationChange = $rootScope.$on.mostRecentCall.args[1];
+                triggerLocationChange = $rootScope.$on.calls.mostRecent().args[1];
 
             };
         });
@@ -223,10 +223,10 @@ define([
             beforeEach(function () {
                 time.timeSystem(timeSystemA.key, boundsA);
                 initialize();
-                time.timeSystem.reset();
-                time.bounds.reset();
-                time.clock.reset();
-                time.stopClock.reset();
+                time.timeSystem.calls.reset();
+                time.bounds.calls.reset();
+                time.clock.calls.reset();
+                time.stopClock.calls.reset();
             });
 
             it("does not change on spurious location change", function () {
@@ -258,7 +258,7 @@ define([
                 search['tc.endBound'] = '200';
                 triggerLocationChange();
                 expect(time.timeSystem).not.toHaveBeenCalledWith(
-                    jasmine.any(), jasmine.any()
+                    jasmine.anything(), jasmine.anything()
                 );
                 expect(time.bounds).toHaveBeenCalledWith({
                     start: 100,
@@ -267,7 +267,7 @@ define([
                 search['tc.endBound'] = '300';
                 triggerLocationChange();
                 expect(time.timeSystem).not.toHaveBeenCalledWith(
-                    jasmine.any(), jasmine.any()
+                    jasmine.anything(), jasmine.anything()
                 );
                 expect(time.bounds).toHaveBeenCalledWith({
                     start: 100,
@@ -290,7 +290,7 @@ define([
                     }
                 );
                 expect(time.timeSystem).not.toHaveBeenCalledWith(
-                    jasmine.any(), jasmine.any()
+                    jasmine.anything(), jasmine.anything()
                 );
             });
 
@@ -319,11 +319,11 @@ define([
                 time.clock(clockA.key, offsetsA);
                 time.timeSystem(timeSystemA.key);
                 initialize();
-                time.timeSystem.reset();
-                time.bounds.reset();
-                time.clock.reset();
-                time.clockOffsets.reset();
-                time.stopClock.reset();
+                time.timeSystem.calls.reset();
+                time.bounds.calls.reset();
+                time.clock.calls.reset();
+                time.clockOffsets.calls.reset();
+                time.stopClock.calls.reset();
             });
 
             it("does not change on spurious location change", function () {
@@ -394,7 +394,7 @@ define([
                     end: 567
                 });
                 expect(time.timeSystem).not.toHaveBeenCalledWith(
-                    jasmine.any(), jasmine.any()
+                    jasmine.anything(), jasmine.anything()
                 );
             });
 
@@ -427,7 +427,7 @@ define([
                         end: 0
                     }
                 );
-                expect(time.timeSystem).not.toHaveBeenCalledWith(jasmine.any());
+                expect(time.timeSystem).not.toHaveBeenCalledWith(jasmine.anything());
             });
 
             it("updates clock and timeSystem", function () {

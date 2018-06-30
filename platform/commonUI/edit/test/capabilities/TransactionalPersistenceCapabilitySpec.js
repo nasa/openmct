@@ -47,7 +47,7 @@ define(
                 testId = "test-id";
 
                 mockQ = jasmine.createSpyObj("$q", ["when"]);
-                mockQ.when.andCallFake(function (val) {
+                mockQ.when.and.callFake(function (val) {
                     return fastPromise(val);
                 });
                 mockTransactionManager = jasmine.createSpyObj(
@@ -58,15 +58,15 @@ define(
                     "persistenceCapability",
                     ["persist", "refresh", "getSpace"]
                 );
-                mockPersistence.persist.andReturn(fastPromise());
-                mockPersistence.refresh.andReturn(fastPromise());
+                mockPersistence.persist.and.returnValue(fastPromise());
+                mockPersistence.refresh.and.returnValue(fastPromise());
 
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     ["getModel", "getId"]
                 );
-                mockDomainObject.getModel.andReturn({persisted: 1});
-                mockDomainObject.getId.andReturn(testId);
+                mockDomainObject.getModel.and.returnValue({persisted: 1});
+                mockDomainObject.getId.and.returnValue(testId);
 
                 capability = new TransactionalPersistenceCapability(
                     mockQ,
@@ -78,24 +78,24 @@ define(
 
             it("if no transaction is active, passes through to persistence" +
                 " provider", function () {
-                mockTransactionManager.isActive.andReturn(false);
+                mockTransactionManager.isActive.and.returnValue(false);
                 capability.persist();
                 expect(mockPersistence.persist).toHaveBeenCalled();
             });
 
             it("if transaction is active, persist and cancel calls are" +
                 " queued", function () {
-                mockTransactionManager.isActive.andReturn(true);
+                mockTransactionManager.isActive.and.returnValue(true);
                 capability.persist();
                 expect(mockTransactionManager.addToTransaction).toHaveBeenCalled();
-                mockTransactionManager.addToTransaction.mostRecentCall.args[1]();
+                mockTransactionManager.addToTransaction.calls.mostRecent().args[1]();
                 expect(mockPersistence.persist).toHaveBeenCalled();
-                mockTransactionManager.addToTransaction.mostRecentCall.args[2]();
+                mockTransactionManager.addToTransaction.calls.mostRecent().args[2]();
                 expect(mockPersistence.refresh).toHaveBeenCalled();
             });
 
             it("wraps getSpace", function () {
-                mockPersistence.getSpace.andReturn('foo');
+                mockPersistence.getSpace.and.returnValue('foo');
                 expect(capability.getSpace()).toEqual('foo');
             });
 

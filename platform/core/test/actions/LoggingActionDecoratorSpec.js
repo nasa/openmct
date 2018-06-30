@@ -47,7 +47,7 @@ define(
                     ["error", "warn", "info", "debug"]
                 );
 
-                mockActionService.getActions.andReturn([mockAction]);
+                mockActionService.getActions.and.returnValue([mockAction]);
 
                 decorator = new LoggingActionDecorator(
                     mockLog,

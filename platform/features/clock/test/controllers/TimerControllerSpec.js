@@ -40,7 +40,7 @@ define(
                 controller;
 
             function invokeWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$watch.calls.all().forEach(function (call) {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
@@ -78,13 +78,13 @@ define(
                 );
                 mockNow = jasmine.createSpy('now');
 
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObject.getCapability.and.callFake(function (c) {
                     return (c === 'action') && mockActionCapability;
                 });
-                mockDomainObject.getModel.andCallFake(function () {
+                mockDomainObject.getModel.and.callFake(function () {
                     return testModel;
                 });
-                mockActionCapability.getActions.andCallFake(function (k) {
+                mockActionCapability.getActions.and.callFake(function (k) {
                     return [{
                         'timer.start': mockStart,
                         'timer.pause': mockPause,
@@ -92,9 +92,9 @@ define(
                     }[k]];
                 });
 
-                mockStart.getMetadata.andReturn({cssClass: "icon-play", name: "Start"});
-                mockPause.getMetadata.andReturn({cssClass: "icon-pause", name: "Pause"});
-                mockStop.getMetadata.andReturn({cssClass: "icon-box", name: "Stop"});
+                mockStart.getMetadata.and.returnValue({cssClass: "icon-play", name: "Start"});
+                mockPause.getMetadata.and.returnValue({cssClass: "icon-pause", name: "Pause"});
+                mockStop.getMetadata.and.returnValue({cssClass: "icon-box", name: "Stop"});
                 mockScope.domainObject = mockDomainObject;
 
                 testModel = {};
@@ -124,8 +124,8 @@ define(
             it("displays nothing when there is no target", function () {
                 // Notify that domain object is available via scope
                 invokeWatch('domainObject', mockDomainObject);
-                mockNow.andReturn(TEST_TIMESTAMP);
-                mockWindow.requestAnimationFrame.mostRecentCall.args[0]();
+                mockNow.and.returnValue(TEST_TIMESTAMP);
+                mockWindow.requestAnimationFrame.calls.mostRecent().args[0]();
                 expect(controller.sign()).toEqual("");
                 expect(controller.signClass()).toEqual("");
                 expect(controller.text()).toEqual("");
@@ -137,20 +137,20 @@ define(
                 // Notify that domain object is available via scope
                 invokeWatch('domainObject', mockDomainObject);
 
-                mockNow.andReturn(TEST_TIMESTAMP + 121000);
-                mockWindow.requestAnimationFrame.mostRecentCall.args[0]();
+                mockNow.and.returnValue(TEST_TIMESTAMP + 121000);
+                mockWindow.requestAnimationFrame.calls.mostRecent().args[0]();
                 expect(controller.sign()).toEqual("+");
                 expect(controller.signClass()).toEqual("icon-plus");
                 expect(controller.text()).toEqual("0D 00:02:01");
 
-                mockNow.andReturn(TEST_TIMESTAMP - 121000);
-                mockWindow.requestAnimationFrame.mostRecentCall.args[0]();
+                mockNow.and.returnValue(TEST_TIMESTAMP - 121000);
+                mockWindow.requestAnimationFrame.calls.mostRecent().args[0]();
                 expect(controller.sign()).toEqual("-");
                 expect(controller.signClass()).toEqual("icon-minus");
                 expect(controller.text()).toEqual("0D 00:02:01");
 
-                mockNow.andReturn(TEST_TIMESTAMP);
-                mockWindow.requestAnimationFrame.mostRecentCall.args[0]();
+                mockNow.and.returnValue(TEST_TIMESTAMP);
+                mockWindow.requestAnimationFrame.calls.mostRecent().args[0]();
                 expect(controller.sign()).toEqual("");
                 expect(controller.signClass()).toEqual("");
                 expect(controller.text()).toEqual("0D 00:00:00");
@@ -190,27 +190,27 @@ define(
             });
 
             it("stops requesting animation frames when destroyed", function () {
-                var initialCount = mockWindow.requestAnimationFrame.calls.length;
+                var initialCount = mockWindow.requestAnimationFrame.calls.count();
 
                 // First, check that normally new frames keep getting requested
-                mockWindow.requestAnimationFrame.mostRecentCall.args[0]();
-                expect(mockWindow.requestAnimationFrame.calls.length)
+                mockWindow.requestAnimationFrame.calls.mostRecent().args[0]();
+                expect(mockWindow.requestAnimationFrame.calls.count())
                     .toEqual(initialCount + 1);
-                mockWindow.requestAnimationFrame.mostRecentCall.args[0]();
-                expect(mockWindow.requestAnimationFrame.calls.length)
+                mockWindow.requestAnimationFrame.calls.mostRecent().args[0]();
+                expect(mockWindow.requestAnimationFrame.calls.count())
                     .toEqual(initialCount + 2);
 
                 // Now, verify that it stops after $destroy
-                expect(mockScope.$on.mostRecentCall.args[0])
+                expect(mockScope.$on.calls.mostRecent().args[0])
                     .toEqual('$destroy');
-                mockScope.$on.mostRecentCall.args[1]();
+                mockScope.$on.calls.mostRecent().args[1]();
 
                 // Frames should no longer get requested
-                mockWindow.requestAnimationFrame.mostRecentCall.args[0]();
-                expect(mockWindow.requestAnimationFrame.calls.length)
+                mockWindow.requestAnimationFrame.calls.mostRecent().args[0]();
+                expect(mockWindow.requestAnimationFrame.calls.count())
                     .toEqual(initialCount + 2);
-                mockWindow.requestAnimationFrame.mostRecentCall.args[0]();
-                expect(mockWindow.requestAnimationFrame.calls.length)
+                mockWindow.requestAnimationFrame.calls.mostRecent().args[0]();
+                expect(mockWindow.requestAnimationFrame.calls.count())
                     .toEqual(initialCount + 2);
             });
         });

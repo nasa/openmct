@@ -58,17 +58,17 @@ define(
                 var mockPromise = { then: function () {
                     return;
                 } };
-                mockQ.when.andReturn(mockPromise);
+                mockQ.when.and.returnValue(mockPromise);
 
                 // Verify that we got the promise as the return value
                 expect(provider.getModels(["a", "b"])).toEqual(mockPromise);
 
                 // Verify that the promise has the desired models
-                expect(mockQ.when.callCount).toEqual(1);
-                expect(mockQ.when.mostRecentCall.args[0].a.name).toEqual("Thing A");
-                expect(mockQ.when.mostRecentCall.args[0].a.someProperty).toEqual("Some Value A");
-                expect(mockQ.when.mostRecentCall.args[0].b.name).toEqual("Thing B");
-                expect(mockQ.when.mostRecentCall.args[0].b.someProperty).toEqual("Some Value B");
+                expect(mockQ.when.calls.count()).toEqual(1);
+                expect(mockQ.when.calls.mostRecent().args[0].a.name).toEqual("Thing A");
+                expect(mockQ.when.calls.mostRecent().args[0].a.someProperty).toEqual("Some Value A");
+                expect(mockQ.when.calls.mostRecent().args[0].b.name).toEqual("Thing B");
+                expect(mockQ.when.calls.mostRecent().args[0].b.someProperty).toEqual("Some Value B");
             });
 
 
@@ -76,8 +76,8 @@ define(
                 provider.getModels(["c"]);
 
                 // Verify that the promise has the desired models
-                expect(mockQ.when.callCount).toEqual(1);
-                expect(mockQ.when.mostRecentCall.args[0].c).toBeUndefined();
+                expect(mockQ.when.calls.count()).toEqual(1);
+                expect(mockQ.when.calls.mostRecent().args[0].c).toBeUndefined();
             });
 
             it("logs a warning when model definitions are malformed", function () {
@@ -94,7 +94,7 @@ define(
                 ], mockQ, mockLog)).toBeDefined();
 
                 // Should show warnings
-                expect(mockLog.warn.callCount).toEqual(5);
+                expect(mockLog.warn.calls.count()).toEqual(5);
             });
 
         });

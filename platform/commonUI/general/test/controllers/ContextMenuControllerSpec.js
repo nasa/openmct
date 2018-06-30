@@ -47,10 +47,10 @@ define(
                 mockScope.action = mockActions;
                 mockScope.parameters = { category: "test" };
 
-                mockActions.getActions.andReturn(["a", "b", "c"]);
+                mockActions.getActions.and.returnValue(["a", "b", "c"]);
 
                 // Call the watch
-                mockScope.$watch.mostRecentCall.args[1]();
+                mockScope.$watch.calls.mostRecent().args[1]();
 
                 // Should have grouped and ungrouped actions in scope now
                 expect(mockScope.menuActions.length).toEqual(3);

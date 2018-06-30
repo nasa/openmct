@@ -40,7 +40,7 @@ define(
                 );
                 mockTypes = ['a', 'b'].map(function (type) {
                     var mockType = jasmine.createSpyObj('type-' + type, ['getKey']);
-                    mockType.getKey.andReturn(type);
+                    mockType.getKey.and.returnValue(type);
                     return mockType;
                 });
                 mockDomainObjects = ['a', 'b'].map(function (id, index) {
@@ -48,8 +48,8 @@ define(
                         'domainObject-' + id,
                         ['getId', 'getCapability']
                     );
-                    mockDomainObject.getId.andReturn(id);
-                    mockDomainObject.getCapability.andCallFake(function (c) {
+                    mockDomainObject.getId.and.returnValue(id);
+                    mockDomainObject.getCapability.and.callFake(function (c) {
                         return c === 'type' && mockTypes[index];
                     });
                     return mockDomainObject;
@@ -62,8 +62,8 @@ define(
                     selectedObject: mockDomainObjects[1]
                 };
 
-                mockAction.getMetadata.andReturn(testContext);
-                mockInjector.get.andCallFake(function (service) {
+                mockAction.getMetadata.and.returnValue(testContext);
+                mockInjector.get.and.callFake(function (service) {
                     return service === 'policyService' && mockPolicyService;
                 });
 
@@ -71,9 +71,9 @@ define(
             });
 
             it("defers to composition policy", function () {
-                mockPolicyService.allow.andReturn(false);
+                mockPolicyService.allow.and.returnValue(false);
                 expect(policy.allow(mockAction, testContext)).toBeFalsy();
-                mockPolicyService.allow.andReturn(true);
+                mockPolicyService.allow.and.returnValue(true);
                 expect(policy.allow(mockAction, testContext)).toBeTruthy();
 
                 expect(mockPolicyService.allow).toHaveBeenCalledWith(
@@ -85,7 +85,7 @@ define(
 
             it("allows actions other than compose", function () {
                 testContext.key = 'somethingElse';
-                mockPolicyService.allow.andReturn(false);
+                mockPolicyService.allow.and.returnValue(false);
                 expect(policy.allow(mockAction, testContext)).toBeTruthy();
             });
         });

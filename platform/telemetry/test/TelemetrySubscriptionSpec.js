@@ -70,25 +70,25 @@ define(
                     ["getPointCount", "getDomainValue", "getRangeValue"]
                 );
 
-                mockQ.when.andCallFake(mockPromise);
+                mockQ.when.and.callFake(mockPromise);
 
-                mockDomainObject.hasCapability.andReturn(true);
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObject.hasCapability.and.returnValue(true);
+                mockDomainObject.getCapability.and.callFake(function (c) {
                     return {
                         telemetry: mockTelemetry,
                         mutation: mockMutation
                     }[c];
                 });
-                mockDomainObject.getId.andReturn('test-id');
+                mockDomainObject.getId.and.returnValue('test-id');
 
-                mockTelemetry.subscribe.andReturn(mockUnsubscribe);
-                mockTelemetry.getMetadata.andReturn(testMetadata);
+                mockTelemetry.subscribe.and.returnValue(mockUnsubscribe);
+                mockTelemetry.getMetadata.and.returnValue(testMetadata);
 
-                mockMutation.listen.andReturn(mockUnlisten);
+                mockMutation.listen.and.returnValue(mockUnlisten);
 
-                mockSeries.getPointCount.andReturn(42);
-                mockSeries.getDomainValue.andReturn(123456);
-                mockSeries.getRangeValue.andReturn(789);
+                mockSeries.getPointCount.and.returnValue(42);
+                mockSeries.getDomainValue.and.returnValue(123456);
+                mockSeries.getRangeValue.and.returnValue(789);
 
                 subscription = new TelemetrySubscription(
                     mockQ,
@@ -112,40 +112,40 @@ define(
                 // Callback fires when telemetry objects become available,
                 // so track initial call count instead of verifying that
                 // it hasn't been called at all.
-                var initialCalls = mockCallback.calls.length;
-                mockTelemetry.subscribe.mostRecentCall.args[0](mockSeries);
+                var initialCalls = mockCallback.calls.count();
+                mockTelemetry.subscribe.calls.mostRecent().args[0](mockSeries);
                 // This gets fired via a timeout, so trigger that
                 expect(mockTimeout).toHaveBeenCalledWith(
                     jasmine.any(Function),
                     0
                 );
-                mockTimeout.mostRecentCall.args[0]();
+                mockTimeout.calls.mostRecent().args[0]();
                 // Should have triggered the callback to alert that
                 // new data was available
-                expect(mockCallback.calls.length).toEqual(initialCalls + 1);
+                expect(mockCallback.calls.count()).toEqual(initialCalls + 1);
             });
 
             it("fires subscription callbacks once per cycle", function () {
                 var i;
 
                 // Verify precondition - one call for telemetryObjects
-                expect(mockCallback.calls.length).toEqual(1);
+                expect(mockCallback.calls.count()).toEqual(1);
 
                 for (i = 0; i < 100; i += 1) {
-                    mockTelemetry.subscribe.mostRecentCall.args[0](mockSeries);
+                    mockTelemetry.subscribe.calls.mostRecent().args[0](mockSeries);
                 }
                 // This gets fired via a timeout, so trigger any of those
-                mockTimeout.calls.forEach(function (call) {
+                mockTimeout.calls.all().forEach(function (call) {
                     call.args[0]();
                 });
                 // Should have only triggered the
-                expect(mockCallback.calls.length).toEqual(2);
+                expect(mockCallback.calls.count()).toEqual(2);
             });
 
             it("reports its latest observed data values", function () {
-                mockTelemetry.subscribe.mostRecentCall.args[0](mockSeries);
+                mockTelemetry.subscribe.calls.mostRecent().args[0](mockSeries);
                 // This gets fired via a timeout, so trigger that
-                mockTimeout.mostRecentCall.args[0]();
+                mockTimeout.calls.mostRecent().args[0]();
                 // Verify that the last sample was looked at
                 expect(mockSeries.getDomainValue).toHaveBeenCalledWith(41);
                 expect(mockSeries.getRangeValue).toHaveBeenCalledWith(41);
@@ -183,10 +183,10 @@ define(
                 );
 
                 // Track calls at this point
-                initialCalls = mockCallback.calls.length;
+                initialCalls = mockCallback.calls.count();
 
                 // Snapshot getDomainValue, getRangeValue at time of callback
-                mockCallback.andCallFake(function () {
+                mockCallback.and.callFake(function () {
                     domains.push(subscription.getDomainValue(mockDomainObject));
                     ranges.push(subscription.getRangeValue(mockDomainObject));
                 });
@@ -194,19 +194,19 @@ define(
                 // Send 100 updates
                 for (i = 0; i < 100; i += 1) {
                     // Return different values to verify later
-                    mockSeries.getDomainValue.andReturn(i);
-                    mockSeries.getRangeValue.andReturn(i * 2);
-                    mockTelemetry.subscribe.mostRecentCall.args[0](mockSeries);
+                    mockSeries.getDomainValue.and.returnValue(i);
+                    mockSeries.getRangeValue.and.returnValue(i * 2);
+                    mockTelemetry.subscribe.calls.mostRecent().args[0](mockSeries);
                 }
 
                 // Fire all timeouts that get scheduled
-                while (mockTimeout.mostRecentCall !== lastCall) {
-                    lastCall = mockTimeout.mostRecentCall;
+                while (mockTimeout.calls.mostRecent() !== lastCall) {
+                    lastCall = mockTimeout.calls.mostRecent();
                     lastCall.args[0]();
                 }
 
                 // Should have only triggered the
-                expect(mockCallback.calls.length).toEqual(100 + initialCalls);
+                expect(mockCallback.calls.count()).toEqual(100 + initialCalls);
             });
 
             it("provides domain object metadata", function () {
@@ -215,7 +215,7 @@ define(
             });
 
             it("fires callback when telemetry objects are available", function () {
-                expect(mockCallback.calls.length).toEqual(1);
+                expect(mockCallback.calls.count()).toEqual(1);
             });
 
             it("exposes a promise for telemetry objects", function () {
@@ -227,13 +227,13 @@ define(
             });
 
             it("reinitializes on mutation", function () {
-                expect(mockTelemetry.subscribe.calls.length).toEqual(1);
+                expect(mockTelemetry.subscribe.calls.count()).toEqual(1);
                 // Notify of a mutation which appears to change composition
-                mockMutation.listen.mostRecentCall.args[0]({
+                mockMutation.listen.calls.mostRecent().args[0]({
                     composition: ['Z']
                 });
                 // Use subscribe call as an indication of reinitialization
-                expect(mockTelemetry.subscribe.calls.length).toEqual(2);
+                expect(mockTelemetry.subscribe.calls.count()).toEqual(2);
             });
 
             it("stops listening for mutation on unsubscribe", function () {
@@ -249,14 +249,14 @@ define(
                     return testDatum[key];
                 }
 
-                mockSeries.getDomainValue.andCallFake(lookup);
-                mockSeries.getRangeValue.andCallFake(lookup);
+                mockSeries.getDomainValue.and.callFake(lookup);
+                mockSeries.getRangeValue.and.callFake(lookup);
 
                 testMetadata.domains = [{ key: 'a' }, { key: 'b'}];
                 testMetadata.ranges = [{ key: 'c' }, { key: 'd'}];
 
-                mockTelemetry.subscribe.mostRecentCall.args[0](mockSeries);
-                mockTimeout.mostRecentCall.args[0]();
+                mockTelemetry.subscribe.calls.mostRecent().args[0](mockSeries);
+                mockTimeout.calls.mostRecent().args[0]();
 
                 expect(subscription.getDatum(mockDomainObject))
                     .toEqual(testDatum);

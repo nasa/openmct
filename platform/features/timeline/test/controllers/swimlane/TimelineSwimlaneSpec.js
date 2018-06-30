@@ -64,12 +64,12 @@ define(
                 );
                 mockActionCapability = jasmine.createSpyObj('action', ['perform']);
 
-                mockParentObject.getId.andReturn('test-parent');
-                mockParentObject.getCapability.andReturn(mockActionCapability);
-                mockParentObject.useCapability.andReturn(asPromise(mockParentTimespan));
-                mockParentObject.getModel.andReturn({ name: "Test Parent" });
-                mockChildObject.getModel.andReturn({ name: "Test Child" });
-                mockChildObject.useCapability.andReturn(asPromise(mockChildTimespan));
+                mockParentObject.getId.and.returnValue('test-parent');
+                mockParentObject.getCapability.and.returnValue(mockActionCapability);
+                mockParentObject.useCapability.and.returnValue(asPromise(mockParentTimespan));
+                mockParentObject.getModel.and.returnValue({ name: "Test Parent" });
+                mockChildObject.getModel.and.returnValue({ name: "Test Child" });
+                mockChildObject.useCapability.and.returnValue(asPromise(mockChildTimespan));
 
                 testConfiguration = { graph: {} };
 
@@ -149,7 +149,7 @@ define(
             });
 
             it("gets colors from the provided assigner", function () {
-                mockAssigner.get.andReturn("#ABCABC");
+                mockAssigner.get.and.returnValue("#ABCABC");
                 expect(parent.color()).toEqual("#ABCABC");
                 // Verify that id was passed, and no other interactions
                 expect(mockAssigner.get).toHaveBeenCalledWith('test-parent');
@@ -194,28 +194,28 @@ define(
             });
 
             it("detects start/end violations", function () {
-                mockParentTimespan.getStart.andReturn(42);
-                mockParentTimespan.getEnd.andReturn(12321);
+                mockParentTimespan.getStart.and.returnValue(42);
+                mockParentTimespan.getEnd.and.returnValue(12321);
 
                 // First, start with a valid timespan
-                mockChildTimespan.getStart.andReturn(84);
-                mockChildTimespan.getEnd.andReturn(100);
+                mockChildTimespan.getStart.and.returnValue(84);
+                mockChildTimespan.getEnd.and.returnValue(100);
                 expect(child.exceeded()).toBeFalsy();
 
                 // Start time violation
-                mockChildTimespan.getStart.andReturn(21);
+                mockChildTimespan.getStart.and.returnValue(21);
                 expect(child.exceeded()).toBeTruthy();
 
                 // Now both in violation
-                mockChildTimespan.getEnd.andReturn(20000);
+                mockChildTimespan.getEnd.and.returnValue(20000);
                 expect(child.exceeded()).toBeTruthy();
 
                 // And just the end
-                mockChildTimespan.getStart.andReturn(100);
+                mockChildTimespan.getStart.and.returnValue(100);
                 expect(child.exceeded()).toBeTruthy();
 
                 // Now back to everything's-just-fine
-                mockChildTimespan.getEnd.andReturn(10000);
+                mockChildTimespan.getEnd.and.returnValue(10000);
                 expect(child.exceeded()).toBeFalsy();
             });
         });
