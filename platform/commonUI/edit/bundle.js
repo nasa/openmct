@@ -32,6 +32,7 @@ define([
     "./src/actions/SaveAction",
     "./src/actions/SaveAndStopEditingAction",
     "./src/actions/SaveAsAction",
+    "./src/actions/SaveAsAndKeepEditingAction",
     "./src/actions/CancelAction",
     "./src/policies/EditActionPolicy",
     "./src/policies/EditPersistableObjectsPolicy",
@@ -70,6 +71,7 @@ define([
     SaveAction,
     SaveAndStopEditingAction,
     SaveAsAction,
+    SaveAsAndKeepEditingAction,
     CancelAction,
     EditActionPolicy,
     EditPersistableObjectsPolicy,
@@ -230,6 +232,21 @@ define([
                         "notificationService"
                     ],
                     "priority": "mandatory"
+                },
+                {
+                    "key": "save-as-edit",
+                    "category": "save",
+                    "implementation": SaveAsAndKeepEditingAction,
+                    "name": "Save As And Continue Editing...",
+                    "cssClass": "icon-save labeled",
+                    "description": "Save changes made to these objects, without leaving edit mode.",
+                    "depends": [
+                        "$injector",
+                        "policyService",
+                        "dialogService",
+                        "copyService",
+                        "notificationService"
+                    ]
                 },
                 {
                     "key": "cancel",
