@@ -34,10 +34,12 @@
 }
 
 .s-notebook-entry {
+    transition: background-color 500ms ease-out;
     background-color: rgba($colorBodyFg, 0.1);
     border-radius: $basicCr;
 
     &:hover {
+        transition: background-color 50ms ease-in;
         background-color: rgba($colorBodyFg, 0.2);
     }
 
