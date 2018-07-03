@@ -211,6 +211,7 @@ body.desktop .has-local-controls {
     cursor: pointer;
     height: 1em; width: 1em;
     line-height: inherit;
+    position: relative;
     &:before {
         position: absolute;
         @include trans-prop-nice(transform, 100ms);
