@@ -34,6 +34,7 @@ define(
             this.domainObject = domainObject;
             this.columns = [];
             this.openmct = openmct;
+            this.timeSystemColumn = undefined;
         }
 
         /**
@@ -58,6 +59,9 @@ define(
                         },
                         getTitle: function () {
                             return metadatum.name;
+                        },
+                        hasValue: function (telemetryDatum) {
+                            return telemetryDatum.hasOwnProperty(metadatum.source);
                         },
                         getValue: function (telemetryDatum, limitEvaluator) {
                             var isValueColumn = !!(metadatum.hints.y || metadatum.hints.range);
@@ -100,21 +104,25 @@ define(
          */
         TableConfiguration.prototype.getRowValues = function (limitEvaluator, datum) {
             return this.columns.reduce(function (rowObject, column, i) {
-                var columnTitle = column.getTitle() || 'Column ' + (i + 1),
-                    columnValue = column.getValue(datum, limitEvaluator);
+                if (column.hasValue(datum)) {
+                    var columnTitle = column.getTitle() || 'Column ' + (i + 1),
+                        columnValue = column.getValue(datum, limitEvaluator);
 
-                if (columnValue !== undefined && columnValue.text === undefined) {
-                    columnValue.text = '';
+                    if (columnValue !== undefined && columnValue.text === undefined) {
+                        columnValue.text = '';
+                    }
+                    // Don't replace something with nothing.
+                    // This occurs when there are multiple columns with the same
+                    // column title
+                    if (rowObject[columnTitle] === undefined ||
+                        rowObject[columnTitle].text === undefined ||
+                        rowObject[columnTitle].text.length === 0) {
+                        rowObject[columnTitle] = columnValue;
+                    }
+                    return rowObject;
+                } else {
+                    return rowObject;
                 }
-                // Don't replace something with nothing.
-                // This occurs when there are multiple columns with the same
-                // column title
-                if (rowObject[columnTitle] === undefined ||
-                    rowObject[columnTitle].text === undefined ||
-                    rowObject[columnTitle].text.length === 0) {
-                    rowObject[columnTitle] = columnValue;
-                }
-                return rowObject;
             }, {});
         };
 
