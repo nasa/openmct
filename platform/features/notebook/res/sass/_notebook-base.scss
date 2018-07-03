@@ -144,6 +144,13 @@
     }
 }
 
+.s-status-taking-snapshot,
+.overlay.snapshot {
+    // Handle overflow-y issues with tables and html2canvas
+    .l-sticky-headers .l-tabular-body { overflow: auto; }
+}
+
+
 /********************************************* MOBILE */
 body.mobile {
     // Hide the start entry area, and disable ability to edit or delete an entry in mobile context
@@ -285,24 +292,3 @@ body.phone.portrait {
 .overlay.l-dialog .abs.editor {
     padding-right: 0;
 }
-
-/*
-.overlay.l-dialog .outer-holder.annotation-dialog{
-    width: 90%;
-    height: 90%;
-}
-*/
-
-/*
-.snap-annotation-wrapper{
-    padding-top: 40px;
-}
-
-
-.t-console {
-    // Temp console-like reporting element
-    max-height: 200px;
-    box-sizing: border-box;
-    padding: 5px;
-}
-*/
