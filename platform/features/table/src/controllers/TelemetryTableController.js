@@ -118,23 +118,18 @@ define(
          * to sort by. By default will just match on key.
          *
          * @private
-         * @param {TimeSystem} timeSystem
          */
-        TelemetryTableController.prototype.sortByTimeSystem = function (timeSystem) {
+        TelemetryTableController.prototype.sortByTimeSystem = function () {
             var scope = this.$scope;
             var sortColumn;
             scope.defaultSort = undefined;
 
-            if (timeSystem !== undefined) {
-                this.table.columns.forEach(function (column) {
-                    if (column.getKey() === timeSystem.key) {
-                        sortColumn = column;
-                    }
-                });
-                if (sortColumn) {
-                    scope.defaultSort = sortColumn.getTitle();
-                    this.telemetry.sort(sortColumn.getTitle() + '.value');
-                }
+            sortColumn = this.table.columns.filter(function (column) {
+                return column.isCurrentTimeSystem();
+            })[0];
+            if (sortColumn) {
+                scope.defaultSort = sortColumn.title();
+                this.telemetry.sort(sortColumn.title() + '.value');
             }
         };
 
@@ -255,17 +250,7 @@ define(
                 });
 
                 this.filterColumns();
-
-                // Default to no sort on underlying telemetry collection. Sorting
-                // is necessary to do bounds filtering, but this is only possible
-                // if data matches selected time system
-                this.telemetry.sort(undefined);
-
-                var timeSystem = this.openmct.time.timeSystem();
-                if (timeSystem !== undefined) {
-                    this.sortByTimeSystem(timeSystem);
-                }
-
+                this.sortByTimeSystem();
             }
 
             return objects;

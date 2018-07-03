@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    [],
-    function () {
+    ['./TableColumn'],
+    function (TableColumn) {
 
         /**
          * Class that manages table metadata, state, and contents.
@@ -44,41 +44,21 @@ define(
          */
         TableConfiguration.prototype.populateColumns = function (metadata) {
             var self = this;
-            var telemetryApi = this.openmct.telemetry;
+            var openmct = this.openmct;
 
             this.columns = [];
 
             if (metadata) {
-
+                var timeSystemTitle;
                 metadata.forEach(function (metadatum) {
-                    var formatter = telemetryApi.getValueFormatter(metadatum);
-
-                    self.columns.push({
-                        getKey: function () {
-                            return metadatum.key;
-                        },
-                        getTitle: function () {
-                            return metadatum.name;
-                        },
-                        hasValue: function (telemetryDatum) {
-                            return telemetryDatum.hasOwnProperty(metadatum.source);
-                        },
-                        getValue: function (telemetryDatum, limitEvaluator) {
-                            var isValueColumn = !!(metadatum.hints.y || metadatum.hints.range);
-                            var alarm = isValueColumn &&
-                                        limitEvaluator &&
-                                        limitEvaluator.evaluate(telemetryDatum, metadatum);
-                            var value = {
-                                text: formatter.format(telemetryDatum),
-                                value: formatter.parse(telemetryDatum)
-                            };
-
-                            if (alarm) {
-                                value.cssClass = alarm.cssClass;
-                            }
-                            return value;
+                    var column = new TableColumn(openmct, metadatum);
+                    if (column.isCurrentTimeSystem()){
+                        if (!timeSystemTitle) {
+                            timeSystemTitle = column.title();
                         }
-                    });
+                        column.title = timeSystemTitle;
+                    }
+                    self.columns.push(new TableColumn(openmct, metadatum));
                 });
             }
             return this;
@@ -89,8 +69,18 @@ define(
          * @returns {Array} The titles of the columns
          */
         TableConfiguration.prototype.getHeaders = function () {
-            return this.columns.map(function (column, i) {
-                return column.getTitle() || 'Column ' + (i + 1);
+            var collapse = false;
+            return this.columns.filter(function (column) {
+                if (column.isCurrentTimeSystem()){
+                    if (collapse) {
+                        return false
+                    } else {
+                        collapse = true;
+                    }
+                }
+                return true;
+            }).map(function (column, i) {
+                return column.title();
             });
         };
 
@@ -104,25 +94,21 @@ define(
          */
         TableConfiguration.prototype.getRowValues = function (limitEvaluator, datum) {
             return this.columns.reduce(function (rowObject, column, i) {
-                if (column.hasValue(datum)) {
-                    var columnTitle = column.getTitle() || 'Column ' + (i + 1),
-                        columnValue = column.getValue(datum, limitEvaluator);
+                var columnTitle = column.title(),
+                    columnValue = column.getValue(datum, limitEvaluator);
 
-                    if (columnValue !== undefined && columnValue.text === undefined) {
-                        columnValue.text = '';
-                    }
-                    // Don't replace something with nothing.
-                    // This occurs when there are multiple columns with the same
-                    // column title
-                    if (rowObject[columnTitle] === undefined ||
-                        rowObject[columnTitle].text === undefined ||
-                        rowObject[columnTitle].text.length === 0) {
-                        rowObject[columnTitle] = columnValue;
-                    }
-                    return rowObject;
-                } else {
-                    return rowObject;
+                if (columnValue !== undefined && columnValue.text === undefined) {
+                    columnValue.text = '';
                 }
+                // Don't replace something with nothing.
+                // This occurs when there are multiple columns with the same
+                // column title
+                if (rowObject[columnTitle] === undefined ||
+                    rowObject[columnTitle].text === undefined ||
+                    rowObject[columnTitle].text.length === 0) {
+                    rowObject[columnTitle] = columnValue;
+                }
+                return rowObject;
             }, {});
         };
 
