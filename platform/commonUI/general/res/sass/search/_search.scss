@@ -97,6 +97,7 @@ input.c-search__search-input {
     box-shadow: none !important; // !important needed to override default for [input]
     flex: 1 1 99%;
     min-width: 10px;
+    width: 100%;
 }
 
 .c-search__search-menu-holder {
@@ -108,6 +109,10 @@ input.c-search__search-input {
 
 .holder-search {
 	$iconWidth: 20px;
+
+    .c-search-btn-wrapper {
+        margin-right: $interiorMarginLg; // Fend off rights side from pane splitter control
+    }
 
     .results-msg {
         font-size: 0.8rem;
