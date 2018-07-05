@@ -32,13 +32,13 @@ define(
         var CONNECTED = {
                 text: "Connected",
                 glyphClass: "ok",
-                statusClass: "status-ok",
+                statusClass: "s-status-ok",
                 description: "Connected to the domain object database."
             },
             DISCONNECTED = {
                 text: "Disconnected",
                 glyphClass: "err",
-                statusClass: "status-caution",
+                statusClass: "s-status-caution",
                 description: "Unable to connect to the domain object database."
             },
             PENDING = {

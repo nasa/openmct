@@ -39,18 +39,18 @@ define(
             DISCONNECTED = {
                 text: "Disconnected",
                 glyphClass: "err",
-                statusClass: "status-caution",
+                statusClass: "s-status-caution",
                 description: "Unable to connect to the domain object database."
             },
             SEMICONNECTED = {
                 text: "Unavailable",
                 glyphClass: "caution",
-                statusClass: "status-caution",
+                statusClass: "s-status-caution",
                 description: "Database does not exist or is unavailable."
             },
             PENDING = {
                 text: "Checking connection...",
-                statusClass: "status-caution"
+                statusClass: "s-status-caution"
             };
 
         /**

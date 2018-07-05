@@ -58,8 +58,8 @@
                     </ul>
                     <li>Color and icon</li>
                     <ul>
-                        <li><code>s-limit-yellow-icon</code>: A yellow limit with icon.</li>
-                        <li><code>s-limit-red-icon</code>: A red limit with icon.</li>
+                        <li><code>s-limit-icon-yellow</code>: A yellow limit with icon.</li>
+                        <li><code>s-limit-icon-red</code>: A red limit with icon.</li>
                     </ul>
                     <li>Upper and lower limit indicators. Must be used with a color limit class to be visible.</li>
                     <ul>
@@ -72,12 +72,12 @@
             </div>
 <mct-example><div class="s-limit-yellow">Yellow limit</div>
 <div class="s-limit-red">Red limit</div>
-<div class="s-limit-yellow-icon">Yellow limit with icon</div>
-<div class="s-limit-red-icon">Red limit with icon</div>
+<div class="s-limit-icon-yellow">Yellow limit with icon</div>
+<div class="s-limit-icon-red">Red limit with icon</div>
 <div class="s-limit-yellow s-limit-lwr">Lower yellow limit</div>
 <div class="s-limit-red s-limit-upr">Upper red limit</div>
 <div class="s-limit-red icon-bell">Red Limit with a custom icon</div>
-<div>Some text with an <span class="s-limit-yellow-icon">inline element</span> showing a yellow limit.</div>
+<div>Some text with an <span class="s-limit-icon-yellow">inline element</span> showing a yellow limit.</div>
 
 <!-- Limits applied in a table -->
 <table>
@@ -103,18 +103,14 @@
                         <li><code>s-status-diagnostic</code></li>
                         <li><code>s-status-info</code></li>
                         <li><code>s-status-ok</code></li>
-                        <li><code>s-status-available</code> When something is available.</li>
-                        <li><code>s-status-on</code> When something that has on/off states is on.</li>
-                        <li><code>s-status-off</code> When something that has on/off states is off.</li>
-                        <li><code>s-status-disabled</code> When something that might be available has been disabled.</li>
                     </ul>
                     <li>Color and icon</li>
                     <ul>
-                        <li><code>s-status-warning-hi-icon</code></li>
-                        <li><code>s-status-warning-lo-icon</code></li>
-                        <li><code>s-status-diagnostic-icon</code></li>
-                        <li><code>s-status-info-icon</code></li>
-                        <li><code>s-status-ok-icon</code></li>
+                        <li><code>s-status-icon-warning-hi</code></li>
+                        <li><code>s-status-icon-warning-lo</code></li>
+                        <li><code>s-status-icon-diagnostic</code></li>
+                        <li><code>s-status-icon-info</code></li>
+                        <li><code>s-status-icon-ok</code></li>
                     </ul>
                 </ul>
             </div>
@@ -123,11 +119,11 @@
 <div class="s-status-diagnostic">DIAGNOSTIC</div>
 <div class="s-status-info">INFO</div>
 <div class="s-status-ok">OK</div>
-<div class="s-status-warning-hi-icon">WARNING HI with icon</div>
-<div class="s-status-warning-lo-icon">WARNING LOW with icon</div>
-<div class="s-status-diagnostic-icon">DIAGNOSTIC with icon</div>
-<div class="s-status-info-icon">INFO with icon</div>
-<div class="s-status-ok-icon">OK with icon</div>
+<div class="s-status-icon-warning-hi">WARNING HI with icon</div>
+<div class="s-status-icon-warning-lo">WARNING LOW with icon</div>
+<div class="s-status-icon-diagnostic">DIAGNOSTIC with icon</div>
+<div class="s-status-icon-info">INFO with icon</div>
+<div class="s-status-icon-ok">OK with icon</div>
 <div class="s-status-warning-hi icon-gear">WARNING HI with custom icon</div>
 </mct-example>
         </div>
@@ -148,7 +144,13 @@
                 <p>Icon classes are as defined on the
                     <a href="#/browse/styleguide:home/glyphs?tc.mode=local&tc.timeSystem=utc&tc.startDelta=1800000&tc.endDelta=0&view=styleguide.glyphs">
                         Glyphs page</a>.
-                    Status classes are as noted above in the &quot;Color only&quot; part of the Status section above.</p>
+                    Status classes are as noted above in the &quot;Color only&quot; part of the Status section above in addition to these:</p>
+                <ul>
+                    <li>When something is available: <code>s-status-available</code></li>
+                    <li>When something that can be available has been disabled: <code>s-status-disabled</code></li>
+                    <li>When something that has on/off states is on: <code>s-status-on</code></li>
+                    <li>When something that has on/off states is off: <code>s-status-off</code></li>
+                </ul>
             </div>
 <mct-example><div class="s-ue-bottom-bar status-holder s-status-bar">
 <span class="ls-indicator icon-database s-status-alert" title="The system is currently lorem ipsum.">
@@ -167,7 +169,13 @@
         <a class="icon-gear">Configure</a>
     </span>
 </span>
-<span class="ls-indicator icon-bell s-status-on" title="System connection status.">
+<span class="ls-indicator icon-bell s-status-on" title="System connection status ON">
+    <span class="label">
+        Connected to http://lorem-ipsum
+        <a class="icon-gear">Disconnect</a>
+    </span>
+</span>
+<span class="ls-indicator icon-bell s-status-off" title="System connection status OFF">
     <span class="label">
         Connected to http://lorem-ipsum
         <a class="icon-gear">Disconnect</a>
