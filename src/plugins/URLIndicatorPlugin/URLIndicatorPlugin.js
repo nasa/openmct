@@ -24,7 +24,7 @@ define(['./URLIndicator'],
         return function (opts) {
             return function install(openmct) {
                 var simpleIndicator = openmct.indicators.simpleIndicator();
-                var urlIndicator = new URLIndicator(opts, openmct, simpleIndicator);
+                var urlIndicator = new URLIndicator(opts, simpleIndicator);
 
                 openmct.indicators.add(simpleIndicator);
 

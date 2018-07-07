@@ -38,7 +38,7 @@ define(
             DISCONNECTED = {
                 statusClass: "s-status-warning-hi"
             };
-        function URLIndicator(options, openmct, simpleIndicator) {
+        function URLIndicator(options, simpleIndicator) {
             this.bindMethods();
             this.count = 0;
 
@@ -73,19 +73,11 @@ define(
         };
 
         URLIndicator.prototype.fetchUrl = function () {
-            this.get(this.URLpath)
-                .then(this.handleSuccess)
-                .catch(this.handleError);
-        };
-
-        URLIndicator.prototype.get = function (url) {
-            return new Promise(function (resolve, reject) {
-                $.ajax({
-                    type: 'GET',
-                    url: url,
-                    success: resolve,
-                    error: reject
-                });
+            $.ajax({
+                type: 'GET',
+                url: this.URLpath,
+                success: this.handleSuccess,
+                error: this.handleError
             });
         };
 
