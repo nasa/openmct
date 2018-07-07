@@ -20,51 +20,49 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 define(function () {
-    function TableColumn(openmct, metadatum) {
+    function TableColumn(openmct, telemetryObject, metadatum) {
         this.openmct = openmct;
+        this.telemetryObject = telemetryObject;
         this.metadatum = metadatum;
         this.formatter = openmct.telemetry.getValueFormatter(metadatum);
-        
-        this._title = this.metadatum.name;
+
+        this.titleValue = this.metadatum.name;
     }
 
     TableColumn.prototype.title = function (title) {
         if (arguments.length > 0) {
-            this._title = title;
+            this.titleValue = title;
         }
-        return this._title;
+        return this.titleValue;
     };
 
     TableColumn.prototype.isCurrentTimeSystem = function () {
-        return this.metadatum.hints.hasOwnProperty('domain') && 
-            this.metadatum.key === this.openmct.time.timeSystem().key;
+        var isCurrentTimeSystem = this.metadatum.hints.hasOwnProperty('domain') &&
+        this.metadatum.key === this.openmct.time.timeSystem().key;
+
+        return isCurrentTimeSystem;
     };
 
-    TableColumn.prototype.hasValue = function (telemetryDatum) {
-        return telemetryDatum.hasOwnProperty(this.metadatum.source);
+    TableColumn.prototype.hasValue = function (telemetryObject, telemetryDatum) {
+        var keyStringForDatum = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+        var keyStringForColumn = this.openmct.objects.makeKeyString(this.telemetryObject.identifier);
+        return keyStringForDatum === keyStringForColumn && telemetryDatum.hasOwnProperty(this.metadatum.source);
     };
 
     TableColumn.prototype.getValue = function (telemetryDatum, limitEvaluator) {
-        if (this.hasValue(telemetryDatum)) {
-            var isValueColumn = !!(this.metadatum.hints.y || this.metadatum.hints.range);
-            var alarm = isValueColumn &&
-                        limitEvaluator &&
-                        limitEvaluator.evaluate(telemetryDatum, this.metadatum);
-            var value = {
-                text: this.formatter.format(telemetryDatum),
-                value: this.formatter.parse(telemetryDatum)
-            };
+        var isValueColumn = !!(this.metadatum.hints.y || this.metadatum.hints.range);
+        var alarm = isValueColumn &&
+                    limitEvaluator &&
+                    limitEvaluator.evaluate(telemetryDatum, this.metadatum);
+        var value = {
+            text: this.formatter.format(telemetryDatum),
+            value: this.formatter.parse(telemetryDatum)
+        };
 
-            if (alarm) {
-                value.cssClass = alarm.cssClass;
-            }
-            return value;
-        } else {
-            return {
-                text: '',
-                value: undefined
-            };
+        if (alarm) {
+            value.cssClass = alarm.cssClass;
         }
+        return value;
     };
 
     return TableColumn;

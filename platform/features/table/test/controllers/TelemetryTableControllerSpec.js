@@ -78,7 +78,8 @@ define(
                 ]);
 
                 mockObjectAPI = jasmine.createSpyObj("objectAPI", [
-                    "observe"
+                    "observe",
+                    "makeKeyString"
                 ]);
                 unobserve = jasmine.createSpy("unobserve");
                 mockObjectAPI.observe.and.returnValue(unobserve);
@@ -184,8 +185,7 @@ define(
                 var mockComposition,
                     mockTelemetryObject,
                     mockChildren,
-                    unsubscribe,
-                    done;
+                    unsubscribe;
 
                 beforeEach(function () {
                     mockComposition = jasmine.createSpyObj("composition", [
@@ -207,8 +207,6 @@ define(
                     mockTelemetryAPI.isTelemetryObject.and.callFake(function (obj) {
                         return obj.identifier.key === mockTelemetryObject.identifier.key;
                     });
-
-                    done = false;
                 });
 
                 it('fetches historical data for the time period specified by the conductor bounds', function () {
@@ -292,40 +290,37 @@ define(
             });
 
             describe('populates table columns', function () {
-                var domainMetadata;
                 var allMetadata;
-                var mockTimeSystem;
+                var mockTimeSystem1;
+                var mockTimeSystem2;
 
                 beforeEach(function () {
-                    domainMetadata = [{
-                        key: "column1",
-                        name: "Column 1",
-                        hints: {}
-                    }];
-
                     allMetadata = [{
                         key: "column1",
                         name: "Column 1",
-                        hints: {}
+                        hints: {
+                            domain: 1
+                        }
                     }, {
                         key: "column2",
                         name: "Column 2",
-                        hints: {}
+                        hints: {
+                            domain: 2
+                        }
                     }, {
                         key: "column3",
                         name: "Column 3",
                         hints: {}
                     }];
 
-                    mockTimeSystem = {
+                    mockTimeSystem1 = {
                         key: "column1"
                     };
+                    mockTimeSystem2 = {
+                        key: "column2"
+                    };
 
-                    mockTelemetryAPI.commonValuesForHints.and.callFake(function (metadata, hints) {
-                        if (_.eq(hints, ["domain"])) {
-                            return domainMetadata;
-                        }
-                    });
+                    mockConductor.timeSystem.and.returnValue(mockTimeSystem1);
 
                     mockTelemetryAPI.getMetadata.and.returnValue({
                         values: function () {
@@ -345,9 +340,12 @@ define(
                 });
 
                 it('and sorts by column matching time system', function () {
-                    expect(mockScope.defaultSort).not.toEqual("Column 1");
-                    controller.sortByTimeSystem(mockTimeSystem);
                     expect(mockScope.defaultSort).toEqual("Column 1");
+
+                    mockConductor.timeSystem.and.returnValue(mockTimeSystem2);
+                    controller.sortByTimeSystem();
+
+                    expect(mockScope.defaultSort).toEqual("Column 2");
                 });
 
                 it('batches processing of rows for performance when receiving historical telemetry', function () {
@@ -403,25 +401,16 @@ define(
 
             describe('when telemetry is added', function () {
                 var testRows;
-                var expectedRows;
 
                 beforeEach(function () {
                     testRows = [{ a: 0 }, { a: 1 }, { a: 2 }];
-                    mockScope.rows = [{ a: -1 }];
-                    expectedRows = mockScope.rows.concat(testRows);
 
-                    spyOn(controller.telemetry, "on").and.callThrough();
                     controller.registerChangeListeners();
-
-                    controller.telemetry.on.calls.all().forEach(function (call) {
-                        if (call.args[0] === 'added') {
-                            call.args[1](testRows);
-                        }
-                    });
+                    controller.telemetry.add(testRows);
                 });
 
-                it("adds it to rows in scope", function () {
-                    expect(mockScope.rows).toEqual(expectedRows);
+                it("Adds the rows to the MCTTable directive", function () {
+                    expect(mockScope.$broadcast).toHaveBeenCalledWith("add:rows", testRows);
                 });
             });
         });

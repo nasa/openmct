@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/* global Set */
 define(
     ['./TableColumn'],
     function (TableColumn) {
@@ -32,56 +32,31 @@ define(
          */
         function TableConfiguration(domainObject, openmct) {
             this.domainObject = domainObject;
-            this.columns = [];
             this.openmct = openmct;
             this.timeSystemColumn = undefined;
+            this.columns = [];
+            this.headers = new Set();
+            this.timeSystemColumnTitle = undefined;
         }
 
         /**
-         * Build column definitions based on supplied telemetry metadata
+         * Build column definition based on supplied telemetry metadata
+         * @param telemetryObject the telemetry producing object associated with this column
          * @param metadata Metadata describing the domains and ranges available
          * @returns {TableConfiguration} This object
          */
-        TableConfiguration.prototype.populateColumns = function (metadata) {
-            var self = this;
-            var openmct = this.openmct;
+        TableConfiguration.prototype.addColumn = function (telemetryObject, metadatum) {
+            var column = new TableColumn(this.openmct, telemetryObject, metadatum);
 
-            this.columns = [];
-
-            if (metadata) {
-                var timeSystemTitle;
-                metadata.forEach(function (metadatum) {
-                    var column = new TableColumn(openmct, metadatum);
-                    if (column.isCurrentTimeSystem()){
-                        if (!timeSystemTitle) {
-                            timeSystemTitle = column.title();
-                        }
-                        column.title = timeSystemTitle;
-                    }
-                    self.columns.push(new TableColumn(openmct, metadatum));
-                });
-            }
-            return this;
-        };
-
-        /**
-         * Get a simple list of column titles
-         * @returns {Array} The titles of the columns
-         */
-        TableConfiguration.prototype.getHeaders = function () {
-            var collapse = false;
-            return this.columns.filter(function (column) {
-                if (column.isCurrentTimeSystem()){
-                    if (collapse) {
-                        return false
-                    } else {
-                        collapse = true;
-                    }
+            if (column.isCurrentTimeSystem()) {
+                if (!this.timeSystemColumnTitle) {
+                    this.timeSystemColumnTitle = column.title();
                 }
-                return true;
-            }).map(function (column, i) {
-                return column.title();
-            });
+                column.title(this.timeSystemColumnTitle);
+            }
+
+            this.columns.push(column);
+            this.headers.add(column.title());
         };
 
         /**
@@ -92,22 +67,32 @@ define(
          * @returns {Object} Key value pairs where the key is the column
          * title, and the value is the formatted value from the provided datum.
          */
-        TableConfiguration.prototype.getRowValues = function (limitEvaluator, datum) {
-            return this.columns.reduce(function (rowObject, column, i) {
-                var columnTitle = column.title(),
-                    columnValue = column.getValue(datum, limitEvaluator);
-
-                if (columnValue !== undefined && columnValue.text === undefined) {
-                    columnValue.text = '';
-                }
-                // Don't replace something with nothing.
-                // This occurs when there are multiple columns with the same
-                // column title
-                if (rowObject[columnTitle] === undefined ||
-                    rowObject[columnTitle].text === undefined ||
-                    rowObject[columnTitle].text.length === 0) {
+        TableConfiguration.prototype.getRowValues = function (telemetryObject, limitEvaluator, datum) {
+            return this.columns.reduce(function (rowObject, column) {
+                var columnTitle = column.title();
+                var columnValue = {
+                    text: '',
+                    value: undefined
+                };
+                if (rowObject[columnTitle] === undefined) {
                     rowObject[columnTitle] = columnValue;
                 }
+
+                if (column.hasValue(telemetryObject, datum)) {
+                    columnValue = column.getValue(datum, limitEvaluator);
+
+                    if (columnValue.text === undefined) {
+                        columnValue.text = '';
+                    }
+                    // Don't replace something with nothing.
+                    // This occurs when there are multiple columns with the same
+                    // column title
+                    if (rowObject[columnTitle].text === undefined ||
+                        rowObject[columnTitle].text.length === 0) {
+                        rowObject[columnTitle] = columnValue;
+                    }
+                }
+
                 return rowObject;
             }, {});
         };
@@ -158,7 +143,7 @@ define(
              * specifying whether the column is visible or not. Default to
              * existing (persisted) configuration if available
              */
-            this.getHeaders().forEach(function (columnTitle) {
+            this.headers.forEach(function (columnTitle) {
                 configuration[columnTitle] =
                     typeof defaultConfig[columnTitle] === 'undefined' ? true :
                         defaultConfig[columnTitle];

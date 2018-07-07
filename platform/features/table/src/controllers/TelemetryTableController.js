@@ -167,9 +167,6 @@ define(
          * @param rows
          */
         TelemetryTableController.prototype.addRowsToTable = function (rows) {
-            rows.forEach(function (row) {
-                this.$scope.rows.push(row);
-            }, this);
             this.$scope.$broadcast('add:rows', rows);
         };
 
@@ -232,22 +229,18 @@ define(
         TelemetryTableController.prototype.loadColumns = function (objects) {
             var telemetryApi = this.openmct.telemetry;
 
+            this.table = new TableConfiguration(this.$scope.domainObject,
+                this.openmct);
+
             this.$scope.headers = [];
 
             if (objects.length > 0) {
-                var allMetadata = objects.map(telemetryApi.getMetadata.bind(telemetryApi));
-                var allValueMetadata = _.flatten(allMetadata.map(
-                    function getMetadataValues(metadata) {
-                        return metadata.values();
-                    }
-                ));
-
-                this.table.populateColumns(allValueMetadata);
-
-                var domainColumns = telemetryApi.commonValuesForHints(allMetadata, ['domain']);
-                this.timeColumns = domainColumns.map(function (metadatum) {
-                    return metadatum.name;
-                });
+                objects.forEach(function (object) {
+                    var metadataValues = telemetryApi.getMetadata(object).values();
+                    metadataValues.forEach(function (metadatum) {
+                        this.table.addColumn(object, metadatum);
+                    }.bind(this));
+                }.bind(this));
 
                 this.filterColumns();
                 this.sortByTimeSystem();
@@ -287,7 +280,7 @@ define(
                 /*
                  * Process a batch of historical data
                  */
-                function processData(historicalData, index, limitEvaluator) {
+                function processData(object, historicalData, index, limitEvaluator) {
                     if (index >= historicalData.length) {
                         processedObjects++;
 
@@ -296,14 +289,13 @@ define(
                         }
                     } else {
                         rowData = rowData.concat(historicalData.slice(index, index + self.batchSize)
-                            .map(self.table.getRowValues.bind(self.table, limitEvaluator)));
-
+                            .map(self.table.getRowValues.bind(self.table, object, limitEvaluator)));
                         /*
                          Use timeout to yield process to other UI activities. On
                          return, process next batch
                          */
                         self.timeoutHandle = self.$timeout(function () {
-                            processData(historicalData, index + self.batchSize, limitEvaluator);
+                            processData(object, historicalData, index + self.batchSize, limitEvaluator);
                         });
                     }
                 }
@@ -312,7 +304,7 @@ define(
                     // Only process the most recent request
                     if (requestTime === self.lastRequestTime) {
                         var limitEvaluator = openmct.telemetry.limitEvaluator(object);
-                        processData(historicalData, 0, limitEvaluator);
+                        processData(object, historicalData, 0, limitEvaluator);
                     } else {
                         resolve(rowData);
                     }
@@ -352,7 +344,6 @@ define(
             var telemetryCollection = this.telemetry;
             //Set table max length to avoid unbounded growth.
             var limitEvaluator;
-            var added = false;
             var table = this.table;
 
             this.subscriptions.forEach(function (subscription) {
@@ -362,7 +353,7 @@ define(
 
             function newData(domainObject, datum) {
                 limitEvaluator = telemetryApi.limitEvaluator(domainObject);
-                added = telemetryCollection.add([table.getRowValues(limitEvaluator, datum)]);
+                telemetryCollection.add([table.getRowValues(domainObject, limitEvaluator, datum)]);
             }
 
             objects.forEach(function (object) {

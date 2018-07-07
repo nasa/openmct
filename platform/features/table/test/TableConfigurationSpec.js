@@ -27,31 +27,52 @@ define(
     function (Table) {
 
         describe("A table", function () {
-            var mockDomainObject,
+            var mockTableObject,
+                mockTelemetryObject,
                 mockAPI,
                 mockTelemetryAPI,
                 table,
+                mockTimeAPI,
+                mockObjectsAPI,
                 mockModel;
 
             beforeEach(function () {
-                mockDomainObject = jasmine.createSpyObj('domainObject',
+                mockTableObject = jasmine.createSpyObj('domainObject',
                     ['getModel', 'useCapability', 'getCapability', 'hasCapability']
                 );
                 mockModel = {};
-                mockDomainObject.getModel.and.returnValue(mockModel);
-                mockDomainObject.getCapability.and.callFake(function (name) {
+                mockTableObject.getModel.and.returnValue(mockModel);
+                mockTableObject.getCapability.and.callFake(function (name) {
                     return name === 'editor' && {
                         isEditContextRoot: function () {
                             return true;
                         }
                     };
                 });
+                mockTelemetryObject = {
+                    identifier: {
+                        namespace: 'mock',
+                        key: 'domainObject'
+                    }
+                };
 
                 mockTelemetryAPI = jasmine.createSpyObj('telemetryAPI', [
                     'getValueFormatter'
                 ]);
+                mockTimeAPI = jasmine.createSpyObj('timeAPI', [
+                    'timeSystem'
+                ]);
+                mockObjectsAPI = jasmine.createSpyObj('objectsAPI', [
+                    'makeKeyString'
+                ]);
+                mockObjectsAPI.makeKeyString.and.callFake(function (identifier) {
+                    return [identifier.namespace, identifier.key].join(':');
+                });
+
                 mockAPI = {
-                    telemetry: mockTelemetryAPI
+                    telemetry: mockTelemetryAPI,
+                    time: mockTimeAPI,
+                    objects: mockObjectsAPI
                 };
                 mockTelemetryAPI.getValueFormatter.and.callFake(function (metadata) {
                     var formatter = jasmine.createSpyObj(
@@ -69,7 +90,7 @@ define(
                     return formatter;
                 });
 
-                table = new Table(mockDomainObject, mockAPI);
+                table = new Table(mockTableObject, mockAPI);
             });
 
             describe("Building columns from telemetry metadata", function () {
@@ -77,51 +98,57 @@ define(
                     {
                         name: 'Range 1',
                         key: 'range1',
+                        source: 'range1',
                         hints: {
-                            y: 1
+                            range: 1
                         }
                     },
                     {
                         name: 'Range 2',
                         key: 'range2',
+                        source: 'range2',
                         hints: {
-                            y: 2
+                            range: 2
                         }
                     },
                     {
                         name: 'Domain 1',
                         key: 'domain1',
+                        source: 'domain1',
                         format: 'utc',
                         hints: {
-                            x: 1
+                            domain: 1
                         }
                     },
                     {
                         name: 'Domain 2',
                         key: 'domain2',
+                        source: 'domain2',
                         format: 'utc',
                         hints: {
-                            x: 2
+                            domain: 2
                         }
                     }
                 ];
 
                 beforeEach(function () {
-                    table.populateColumns(metadata);
+                    mockTimeAPI.timeSystem.and.returnValue({
+                        key: 'domain1'
+                    });
+                    metadata.forEach(function (metadatum) {
+                        table.addColumn(mockTelemetryObject, metadatum);
+                    });
                 });
 
                 it("populates columns", function () {
                     expect(table.columns.length).toBe(4);
                 });
 
-                it("Produces headers for each column based on title", function () {
-                    var headers,
-                        firstColumn = table.columns[0];
-
-                    spyOn(firstColumn, 'getTitle');
-                    headers = table.getHeaders();
-                    expect(headers.length).toBe(4);
-                    expect(firstColumn.getTitle).toHaveBeenCalled();
+                it("Produces headers for each column based on metadata name", function () {
+                    expect(table.headers.size).toBe(4);
+                    Array.from(table.headers.values).forEach(function (header, i) {
+                        expect(header).toEqual(metadata[i].name);
+                    });
                 });
 
                 it("Provides a default configuration with all columns" +
@@ -169,11 +196,10 @@ define(
                                 };
                             }
                         };
-                        rowValues = table.getRowValues(limitEvaluator, datum);
+                        rowValues = table.getRowValues(mockTelemetryObject, limitEvaluator, datum);
                     });
 
                     it("Returns a value for every column", function () {
-                        expect(rowValues['Range 1'].text).toBeDefined();
                         expect(rowValues['Range 1'].text).toEqual(10);
                     });
 
