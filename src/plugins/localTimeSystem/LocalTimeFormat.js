@@ -113,6 +113,9 @@ define([
     };
 
     LocalTimeFormat.prototype.parse = function (text) {
+        if (typeof text === 'number') {
+            return text;
+        }
         return moment(text, DATE_FORMATS).valueOf();
     };
 
