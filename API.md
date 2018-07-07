@@ -985,14 +985,13 @@ openmct.install(openmct.plugins.Conductor({
 
 Indicators are small widgets that reside at the bottom of the screen and are visible from 
 every screen in Open MCT. They can be used to convey system state using an icon and text.
-Indicators tend to be collapsed to an icon by default (though this behavior can be customized 
-by defining a [custom indicator](#custom-indicators)). Hovering over a collapsed indicator will reveal 
-text providing more information.
+Typically an indicator will display an icon (customizable with a CSS class) that will 
+reveal additional information when the mouse cursor is hovered over it.
 
 ### The URL Status Indicator
 
 A common use case for indicators is to convey the state of some external system such as a 
-persistence backend or HTTP server. So long as this system is accessible via http request, 
+persistence backend or HTTP server. So long as this system is accessible via HTTP request, 
 Open MCT provides a general purpose indicator to show whether the server is available and 
 returing a 2xx status code. The URL Status Indicator is made available as a default plugin. See
 [Included Plugins](#included-plugins) below for details on how to install and configure the 
@@ -1034,8 +1033,7 @@ different colors to indicate status.
 
 ### Custom Indicators
 
-A completely custom indicator can be added by simple providing a DOM element to place alongside the other indicators
-at the bottom of the application.
+A completely custom indicator can be added by simple providing a DOM element to place alongside other indicators.
 
 ``` javascript
     var domNode = document.createElement('div');
@@ -1044,7 +1042,9 @@ at the bottom of the application.
         domNode.innerText = new Date().toString();
     }, 1000);
 
-    openmct.indicators.add(domNode);
+    openmct.indicators.add({
+        element: domNode
+    });
 ```
 
 ## Included Plugins
