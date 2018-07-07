@@ -23,13 +23,11 @@
 define(
     [
         "../../MCT",
-        "../../../platform/commonUI/general/src/directives/MCTIndicators",
-        "zepto"
+        "../../../platform/commonUI/general/src/directives/MCTIndicators"
     ],
     function (
         MCT,
-        MCTIndicators,
-        $
+        MCTIndicators
     ) {
         describe("The Indicator API", function () {
             var openmct;
@@ -97,11 +95,11 @@ define(
 
                     waitsFor(legacyIndicatorsToResolve);
                     runs(function () {
-                        expect(getIconElement().hasClass('testIconClass')).toBe(true);
+                        expect(getIconElement().classList.contains('testIconClass')).toBe(true);
 
                         simpleIndicator.iconClass('anotherIconClass');
-                        expect(getIconElement().hasClass('testIconClass')).toBe(false);
-                        expect(getIconElement().hasClass('anotherIconClass')).toBe(true);
+                        expect(getIconElement().classList.contains('testIconClass')).toBe(false);
+                        expect(getIconElement().classList.contains('anotherIconClass')).toBe(true);
                     });
                 });
                 it("applies the set status class", function () {
@@ -109,10 +107,10 @@ define(
 
                     waitsFor(legacyIndicatorsToResolve);
                     runs(function () {
-                        expect(getIconElement().hasClass('testStatusClass')).toBe(true);
+                        expect(getIconElement().classList.contains('testStatusClass')).toBe(true);
                         simpleIndicator.statusClass('anotherStatusClass');
-                        expect(getIconElement().hasClass('testStatusClass')).toBe(false);
-                        expect(getIconElement().hasClass('anotherStatusClass')).toBe(true);
+                        expect(getIconElement().classList.contains('testStatusClass')).toBe(false);
+                        expect(getIconElement().classList.contains('anotherStatusClass')).toBe(true);
                     });
                 });
                 it("displays the set text", function () {
@@ -120,7 +118,7 @@ define(
 
                     waitsFor(legacyIndicatorsToResolve);
                     runs(function () {
-                        expect(getTextElement().text().trim()).toEqual('some test text');
+                        expect(getTextElement().textContent.trim()).toEqual('some test text');
                     });
                 });
                 it("sets the indicator's title", function () {
@@ -128,7 +126,7 @@ define(
 
                     waitsFor(legacyIndicatorsToResolve);
                     runs(function () {
-                        expect(getIndicatorElement().attr('title')).toEqual('a test description');
+                        expect(getIndicatorElement().getAttribute('title')).toEqual('a test description');
                     });
                 });
 
@@ -137,20 +135,23 @@ define(
 
                     waitsFor(legacyIndicatorsToResolve);
                     runs(function () {
-                        expect(getIndicatorElement().hasClass('hidden')).toBe(true);
+                        expect(getIndicatorElement().classList.contains('hidden')).toBe(true);
                     });
                 });
             });
 
             it("Supports registration of a completely custom indicator", function () {
-                var customIndicator = $('<div class="customIndicator">A custom indicator</div>')[0];
+                var customIndicator = document.createElement('div');
+                customIndicator.classList.add('customIndicator');
+                customIndicator.textContent = 'A custom indicator';
+
                 mockLegacyIndicatorsWith([]);
                 openmct.indicators.add({element: customIndicator});
                 renderIndicators();
 
                 waitsFor(legacyIndicatorsToResolve);
                 runs(function () {
-                    expect($('.customIndicator', holderElement).text().trim()).toEqual('A custom indicator');
+                    expect(holderElement.querySelector('.customIndicator').textContent.trim()).toEqual('A custom indicator');
                 });
             });
 
@@ -179,7 +180,7 @@ define(
                 openmct.$injector = mockInjector;
                 mockCompile.andCallFake(function () {
                     return function () {
-                        return $('<div></div>');
+                        return [document.createElement('div')];
                     };
                 });
             }
@@ -207,15 +208,15 @@ define(
             }
 
             function getIconElement() {
-                return $('.ls-indicator', holderElement);
+                return holderElement.querySelector('.ls-indicator');
             }
 
             function getIndicatorElement() {
-                return $('.ls-indicator', holderElement);
+                return holderElement.querySelector('.ls-indicator');
             }
 
             function getTextElement() {
-                return $('.indicator-text', holderElement);
+                return holderElement.querySelector('.indicator-text');
             }
         });
     });
