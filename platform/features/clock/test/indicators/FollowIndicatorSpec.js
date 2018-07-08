@@ -48,7 +48,7 @@ define([
 
         it("indicates that no timer is being followed", function () {
             FollowIndicator(openmct, timerService);
-            var simpleIndicator = openmct.indicators.add.mostRecentCall.args[0];
+            var simpleIndicator = openmct.indicators.add.calls.mostRecent().args[0];
             var element = simpleIndicator.element;
             var text = $('.indicator-text', element).text().trim();
             expect(text).toEqual('No timer being followed');
@@ -68,7 +68,7 @@ define([
                 };
                 timerService.setTimer(testObject);
                 FollowIndicator(openmct, timerService);
-                simpleIndicator = openmct.indicators.add.mostRecentCall.args[0];
+                simpleIndicator = openmct.indicators.add.calls.mostRecent().args[0];
             });
 
             it("displays the timer's name", function () {

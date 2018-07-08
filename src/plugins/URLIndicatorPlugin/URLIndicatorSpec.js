@@ -43,18 +43,18 @@ define(
             var urlIndicator;
 
             beforeEach(function () {
-                jasmine.Clock.useMock();
+                jasmine.clock().install();
                 openmct = new MCT();
                 spyOn(openmct.indicators, 'add');
                 spyOn($, 'ajax');
-                $.ajax.andCallFake(function (options) {
+                $.ajax.and.callFake(function (options) {
                     ajaxOptions = options;
                 });
             });
 
             afterEach(function () {
                 $.ajax = defaultAjaxFunction;
-                jasmine.Clock.reset();
+                jasmine.clock().uninstall();
             });
 
             describe("on initialization", function () {
@@ -64,7 +64,7 @@ define(
                             url: "someURL"
                         };
                         urlIndicator = URLIndicatorPlugin(pluginOptions)(openmct);
-                        indicatorElement = openmct.indicators.add.mostRecentCall.args[0].element;
+                        indicatorElement = openmct.indicators.add.calls.mostRecent().args[0].element;
                     });
 
                     it("has a default icon class if none supplied", function () {
@@ -85,18 +85,18 @@ define(
                             label: "custom label"
                         };
                         urlIndicator = URLIndicatorPlugin(pluginOptions)(openmct);
-                        indicatorElement = openmct.indicators.add.mostRecentCall.args[0].element;
+                        indicatorElement = openmct.indicators.add.calls.mostRecent().args[0].element;
                     });
 
                     it("uses the custom iconClass", function () {
                         expect(indicatorElement.classList.contains('iconClass-checked')).toBe(true);
                     });
                     it("uses custom interval", function () {
-                        expect($.ajax.calls.length).toEqual(1);
-                        jasmine.Clock.tick(1);
-                        expect($.ajax.calls.length).toEqual(1);
-                        jasmine.Clock.tick(pluginOptions.interval + 1);
-                        expect($.ajax.calls.length).toEqual(2);
+                        expect($.ajax.calls.count()).toEqual(1);
+                        jasmine.clock().tick(1);
+                        expect($.ajax.calls.count()).toEqual(1);
+                        jasmine.clock().tick(pluginOptions.interval + 1);
+                        expect($.ajax.calls.count()).toEqual(2);
                     });
                     it("uses custom label if supplied in initialization", function () {
                         expect(indicatorElement.textContent.indexOf(pluginOptions.label) >= 0).toBe(true);
@@ -111,22 +111,22 @@ define(
                         interval: 100
                     };
                     urlIndicator = URLIndicatorPlugin(pluginOptions)(openmct);
-                    indicatorElement = openmct.indicators.add.mostRecentCall.args[0].element;
+                    indicatorElement = openmct.indicators.add.calls.mostRecent().args[0].element;
                 });
 
                 it("requests the provided URL", function () {
-                    jasmine.Clock.tick(pluginOptions.interval + 1);
+                    jasmine.clock().tick(pluginOptions.interval + 1);
                     expect(ajaxOptions.url).toEqual(pluginOptions.url);
                 });
 
                 it("indicates success if connection is nominal", function () {
-                    jasmine.Clock.tick(pluginOptions.interval + 1);
+                    jasmine.clock().tick(pluginOptions.interval + 1);
                     ajaxOptions.success();
                     expect(indicatorElement.classList.contains('s-status-ok')).toBe(true);
                 });
 
                 it("indicates an error when the server cannot be reached", function () {
-                    jasmine.Clock.tick(pluginOptions.interval + 1);
+                    jasmine.clock().tick(pluginOptions.interval + 1);
                     ajaxOptions.error();
                     expect(indicatorElement.classList.contains('s-status-warning-hi')).toBe(true);
                 });

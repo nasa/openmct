@@ -51,7 +51,7 @@ define(
 
             function mockLegacyExtensionFunction() {
                 spyOn(MCT.prototype, "legacyExtension");
-                MCT.prototype.legacyExtension.andCallFake(function (extensionName, definition) {
+                MCT.prototype.legacyExtension.and.callFake(function (extensionName, definition) {
                     if (extensionName === 'runs') {
                         legacyIndicatorsRunsFunction = definition.implementation;
                     }
@@ -64,15 +64,15 @@ define(
                 var mockRootScope = jasmine.createSpyObj('rootScope', ['$new']);
                 var mockScope = {};
         
-                mockRootScope.$new.andReturn(mockScope);
-                mockInjector.get.andCallFake(function (service) {
+                mockRootScope.$new.and.returnValue(mockScope);
+                mockInjector.get.and.callFake(function (service) {
                     return {
                         '$compile': mockCompile,
                         '$rootScope': mockRootScope
                     }[service];
                 });
                 openmct.$injector = mockInjector;
-                mockCompile.andCallFake(function () {
+                mockCompile.and.callFake(function () {
                     return function () {
                         return [document.createElement('div')];
                     };
@@ -97,7 +97,7 @@ define(
                 var mockConstructorFunction = jasmine.createSpy('mockIndicatorConstructor');
                 var legacyIndicators = [{}, mockConstructorFunction];
         
-                mockConstructorFunction.andReturn({});
+                mockConstructorFunction.and.returnValue({});
                 legacyIndicatorsRunsFunction(legacyIndicators);
                 renderIndicators();
     
