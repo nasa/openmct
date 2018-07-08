@@ -41,13 +41,13 @@ define(
                     ['getTrueRoot']
                 );
 
-                mockDomainObject.getId.andReturn('test-id');
-                mockDomainObject.getCapability.andReturn(mockContext);
+                mockDomainObject.getId.and.returnValue('test-id');
+                mockDomainObject.getCapability.and.returnValue(mockContext);
 
                 // Return a new instance of the root object each time
-                mockContext.getTrueRoot.andCallFake(function () {
+                mockContext.getTrueRoot.and.callFake(function () {
                     var mockRoot = jasmine.createSpyObj('root', ['getId']);
-                    mockRoot.getId.andReturn('root-id');
+                    mockRoot.getId.and.returnValue('root-id');
                     return mockRoot;
                 });
 
@@ -63,7 +63,7 @@ define(
             });
 
             it("exposes the root object found via the object's context capability", function () {
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
 
                 // Verify that the correct capability was used
                 expect(mockDomainObject.getCapability)
@@ -76,10 +76,10 @@ define(
             it("preserves the same root instance to avoid excessive refreshing", function () {
                 var firstRoot;
                 // Expose the domain object
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
                 firstRoot = controller.getRoot();
                 // Update!
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
                 // Should still have the same object instance, to avoid
                 // triggering the watch used by the template we're supporting
                 expect(controller.getRoot()).toBe(firstRoot);
@@ -90,18 +90,18 @@ define(
             it("updates the root when it changes", function () {
                 var firstRoot;
                 // Expose the domain object
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
                 firstRoot = controller.getRoot();
 
                 // Change the exposed root
-                mockContext.getTrueRoot.andCallFake(function () {
+                mockContext.getTrueRoot.and.callFake(function () {
                     var mockRoot = jasmine.createSpyObj('root', ['getId']);
-                    mockRoot.getId.andReturn('other-root-id');
+                    mockRoot.getId.and.returnValue('other-root-id');
                     return mockRoot;
                 });
 
                 // Update!
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
 
                 // Should still have the same object instance, to avoid
                 // triggering the watch used by the template we're supporting

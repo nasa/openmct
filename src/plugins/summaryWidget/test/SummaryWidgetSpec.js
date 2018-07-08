@@ -33,22 +33,22 @@ define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
             ]);
 
             listenCallbackSpy = jasmine.createSpy('listenCallbackSpy', function () {});
-            mockStatusCapability.get.andReturn([]);
-            mockStatusCapability.listen.andCallFake(function (callback) {
+            mockStatusCapability.get.and.returnValue([]);
+            mockStatusCapability.listen.and.callFake(function (callback) {
                 listenCallback = callback;
                 return listenCallbackSpy;
             });
-            mockStatusCapability.triggerCallback.andCallFake(function () {
+            mockStatusCapability.triggerCallback.and.callFake(function () {
                 listenCallback(['editing']);
             });
 
             mockOldDomainObject = {};
             mockOldDomainObject.getCapability = jasmine.createSpy('capability');
-            mockOldDomainObject.getCapability.andReturn(mockStatusCapability);
+            mockOldDomainObject.getCapability.and.returnValue(mockStatusCapability);
 
             mockObjectService = {};
             mockObjectService.getObjects = jasmine.createSpy('objectService');
-            mockObjectService.getObjects.andReturn(new Promise(function (resolve, reject) {
+            mockObjectService.getObjects.and.returnValue(new Promise(function (resolve, reject) {
                 resolve({
                     'testNamespace:testKey': mockOldDomainObject
                 });
@@ -59,15 +59,15 @@ define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
                 'objects'
             ]);
             mockOpenMCT.$injector.get = jasmine.createSpy('get');
-            mockOpenMCT.$injector.get.andReturn(mockObjectService);
+            mockOpenMCT.$injector.get.and.returnValue(mockObjectService);
             mockOpenMCT.composition = jasmine.createSpyObj('composition', [
                 'get',
                 'on'
             ]);
-            mockOpenMCT.composition.get.andReturn(mockComposition);
+            mockOpenMCT.composition.get.and.returnValue(mockComposition);
             mockOpenMCT.objects.mutate = jasmine.createSpy('mutate');
             mockOpenMCT.objects.observe = jasmine.createSpy('observe');
-            mockOpenMCT.objects.observe.andReturn(function () {});
+            mockOpenMCT.objects.observe.and.returnValue(function () {});
 
             summaryWidget = new SummaryWidget(mockDomainObject, mockOpenMCT);
             mockContainer = document.createElement('div');

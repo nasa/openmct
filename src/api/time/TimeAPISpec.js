@@ -41,7 +41,7 @@ define(['./TimeAPI'], function (TimeAPI) {
                 "off",
                 "currentValue"
             ]);
-            clock.currentValue.andReturn(100);
+            clock.currentValue.and.returnValue(100);
             clock.key = clockKey;
             bounds = {start: 0, end: 1};
             eventListener = jasmine.createSpy("eventListener");
@@ -167,7 +167,7 @@ define(['./TimeAPI'], function (TimeAPI) {
                     "off",
                     "currentValue"
                 ]);
-                mockTickSource.currentValue.andReturn(10);
+                mockTickSource.currentValue.and.returnValue(10);
                 mockTickSource.key = "mts";
 
                 anotherMockTickSource = jasmine.createSpyObj("clock", [
@@ -176,7 +176,7 @@ define(['./TimeAPI'], function (TimeAPI) {
                     "currentValue"
                 ]);
                 anotherMockTickSource.key = "amts";
-                anotherMockTickSource.currentValue.andReturn(10);
+                anotherMockTickSource.currentValue.and.returnValue(10);
 
                 api.addClock(mockTickSource);
                 api.addClock(anotherMockTickSource);
@@ -214,7 +214,7 @@ define(['./TimeAPI'], function (TimeAPI) {
                 "off",
                 "currentValue"
             ]);
-            mockTickSource.currentValue.andReturn(100);
+            mockTickSource.currentValue.and.returnValue(100);
             var tickCallback;
             var boundsCallback = jasmine.createSpy("boundsCallback");
             var clockOffsets = {
@@ -228,7 +228,7 @@ define(['./TimeAPI'], function (TimeAPI) {
 
             api.on("bounds", boundsCallback);
 
-            tickCallback = mockTickSource.on.mostRecentCall.args[1];
+            tickCallback = mockTickSource.on.calls.mostRecent().args[1];
             tickCallback(1000);
             expect(boundsCallback).toHaveBeenCalledWith({
                 start: 900,

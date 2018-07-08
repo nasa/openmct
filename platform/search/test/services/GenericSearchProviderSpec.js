@@ -57,7 +57,7 @@ define([
                 'modelService',
                 ['getModels']
             );
-            modelService.getModels.andReturn(Promise.resolve(models));
+            modelService.getModels.and.returnValue(Promise.resolve(models));
             workerService = jasmine.createSpyObj(
                 'workerService',
                 ['run']
@@ -69,13 +69,13 @@ define([
                     'addEventListener'
                 ]
             );
-            workerService.run.andReturn(worker);
+            workerService.run.and.returnValue(worker);
             topic = jasmine.createSpy('topic');
             mutationTopic = jasmine.createSpyObj(
                 'mutationTopic',
                 ['listen']
             );
-            topic.andReturn(mutationTopic);
+            topic.and.returnValue(mutationTopic);
             ROOTS = [
                 'mine'
             ];
@@ -83,10 +83,10 @@ define([
                 'compositionProvider',
                 ['load', 'appliesTo']
             );
-            compositionProvider.load.andCallFake(function (domainObject) {
+            compositionProvider.load.and.callFake(function (domainObject) {
                 return Promise.resolve(domainObject.composition);
             });
-            compositionProvider.appliesTo.andCallFake(function (domainObject) {
+            compositionProvider.appliesTo.and.callFake(function (domainObject) {
                 return !!domainObject.composition;
             });
             openmct = {
@@ -122,10 +122,10 @@ define([
                         'getCapability'
                     ]),
                 testModel = { some: 'model' };
-            mockDomainObject.getId.andReturn("some-id");
-            mockDomainObject.getModel.andReturn(testModel);
-            spyOn(provider, 'index').andCallThrough();
-            mutationTopic.listen.mostRecentCall.args[0](mockDomainObject);
+            mockDomainObject.getId.and.returnValue("some-id");
+            mockDomainObject.getModel.and.returnValue(testModel);
+            spyOn(provider, 'index').and.callThrough();
+            mutationTopic.listen.calls.mostRecent().args[0](mockDomainObject);
             expect(provider.index).toHaveBeenCalledWith('some-id', testModel);
         });
 
@@ -142,7 +142,7 @@ define([
             expect(worker.addEventListener)
                 .toHaveBeenCalledWith('message', jasmine.any(Function));
             spyOn(provider, 'onWorkerMessage');
-            worker.addEventListener.mostRecentCall.args[1]('mymessage');
+            worker.addEventListener.calls.mostRecent().args[1]('mymessage');
             expect(provider.onWorkerMessage).toHaveBeenCalledWith('mymessage');
         });
 
@@ -152,7 +152,7 @@ define([
 
         describe('scheduleForIndexing', function () {
             beforeEach(function () {
-                provider.scheduleForIndexing.andCallThrough();
+                provider.scheduleForIndexing.and.callThrough();
                 spyOn(provider, 'keepIndexing');
             });
 
@@ -174,23 +174,23 @@ define([
 
         describe('keepIndexing', function () {
             it('calls beginIndexRequest until at maximum', function () {
-                spyOn(provider, 'beginIndexRequest').andCallThrough();
+                spyOn(provider, 'beginIndexRequest').and.callThrough();
                 provider.pendingRequests = 9;
                 provider.idsToIndex = ['a', 'b', 'c'];
                 provider.MAX_CONCURRENT_REQUESTS = 10;
                 provider.keepIndexing();
                 expect(provider.beginIndexRequest).toHaveBeenCalled();
-                expect(provider.beginIndexRequest.calls.length).toBe(1);
+                expect(provider.beginIndexRequest.calls.count()).toBe(1);
             });
 
             it('calls beginIndexRequest for all ids to index', function () {
-                spyOn(provider, 'beginIndexRequest').andCallThrough();
+                spyOn(provider, 'beginIndexRequest').and.callThrough();
                 provider.pendingRequests = 0;
                 provider.idsToIndex = ['a', 'b', 'c'];
                 provider.MAX_CONCURRENT_REQUESTS = 10;
                 provider.keepIndexing();
                 expect(provider.beginIndexRequest).toHaveBeenCalled();
-                expect(provider.beginIndexRequest.calls.length).toBe(3);
+                expect(provider.beginIndexRequest.calls.count()).toBe(3);
             });
 
             it('does not index when at capacity', function () {
@@ -227,7 +227,12 @@ define([
             it('schedules composed ids for indexing', function () {
                 var id = 'anId',
                     model = {composition: ['abc', 'def']},
-                    calls = provider.scheduleForIndexing.calls.length;
+                    resolve,
+                    promise = new Promise(function (r) {
+                        resolve = r;
+                    });
+
+                provider.scheduleForIndexing.and.callFake(resolve);
 
                 provider.index(id, model);
 
@@ -241,15 +246,12 @@ define([
                     composition: [jasmine.any(Object), jasmine.any(Object)]
                 });
 
-                waitsFor(function () {
-                    return provider.scheduleForIndexing.calls.length > calls;
-                });
-
-                runs(function () {
+                return promise.then(function () {
                     expect(provider.scheduleForIndexing)
                         .toHaveBeenCalledWith('abc');
                     expect(provider.scheduleForIndexing)
                         .toHaveBeenCalledWith('def');
+
                 });
             });
 
@@ -283,30 +285,51 @@ define([
             it('tracks number of pending requests', function () {
                 provider.beginIndexRequest();
                 expect(provider.pendingRequests).toBe(1);
-                waitsFor(function () {
+
+                return waitsFor(function () {
                     return provider.pendingRequests === 0;
-                });
-                runs(function () {
+                }).then(function () {
                     expect(provider.pendingRequests).toBe(0);
                 });
             });
 
             it('indexes objects', function () {
                 provider.beginIndexRequest();
-                waitsFor(function () {
+
+                return waitsFor(function () {
                     return provider.pendingRequests === 0;
-                });
-                runs(function () {
+                }).then(function () {
                     expect(provider.index)
                         .toHaveBeenCalledWith('abc', models.abc);
                 });
             });
 
+            function waitsFor(latchFunction) {
+                return new Promise(function (resolve, reject) {
+                    var maxWait = 2000;
+                    var start = Date.now();
+
+                    checkLatchFunction();
+
+                    function checkLatchFunction() {
+                        var now = Date.now();
+                        var elapsed = now - start;
+
+                        if (latchFunction()) {
+                            resolve();
+                        } else if (elapsed >= maxWait) {
+                            reject("Timeout waiting for latch function to be true");
+                        } else {
+                            setTimeout(checkLatchFunction);
+                        }
+                    }
+                });
+            }
         });
 
 
         it('can dispatch searches to worker', function () {
-            spyOn(provider, 'makeQueryId').andReturn(428);
+            spyOn(provider, 'makeQueryId').and.returnValue(428);
             expect(provider.dispatchSearch('searchTerm', 100))
                 .toBe(428);
 
@@ -324,8 +347,8 @@ define([
 
         it('can query for terms', function () {
             var deferred = {promise: {}};
-            spyOn(provider, 'dispatchSearch').andReturn(303);
-            $q.defer.andReturn(deferred);
+            spyOn(provider, 'dispatchSearch').and.returnValue(303);
+            $q.defer.and.returnValue(deferred);
 
             expect(provider.query('someTerm', 100)).toBe(deferred.promise);
             expect(provider.pendingQueries[303]).toBe(deferred);

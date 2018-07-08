@@ -71,11 +71,11 @@ define(
                 mockEvent.pageX = 123;
                 mockEvent.pageY = 321;
 
-                mockCompile.andReturn(mockCompiledTemplate);
-                mockCompiledTemplate.andReturn(mockMenu);
-                mockDocument.find.andReturn(mockBody);
-                mockRootScope.$new.andReturn(mockScope);
-                mockPopupService.display.andReturn(mockPopup);
+                mockCompile.and.returnValue(mockCompiledTemplate);
+                mockCompiledTemplate.and.returnValue(mockMenu);
+                mockDocument.find.and.returnValue(mockBody);
+                mockRootScope.$new.and.returnValue(mockScope);
+                mockPopupService.display.and.returnValue(mockPopup);
 
                 mockActionContext = {key: 'menu', domainObject: mockDomainObject, event: mockEvent};
 
@@ -108,8 +108,8 @@ define(
 
                 booleans.forEach(function (goLeft) {
                     booleans.forEach(function (goUp) {
-                        mockPopup.goesLeft.andReturn(goLeft);
-                        mockPopup.goesUp.andReturn(goUp);
+                        mockPopup.goesLeft.and.returnValue(goLeft);
+                        mockPopup.goesUp.and.returnValue(goUp);
                         action.perform();
                         expect(!!mockScope.menuClass['go-up'])
                             .toEqual(goUp);
@@ -128,7 +128,7 @@ define(
                 expect(mockBody.remove).not.toHaveBeenCalled();
 
                 // Find and fire body's mousedown listener
-                mockBody.on.calls.forEach(function (call) {
+                mockBody.on.calls.all().forEach(function (call) {
                     if (call.args[0] === 'mousedown') {
                         call.args[1]();
                     }
@@ -152,7 +152,7 @@ define(
                 expect(mockMenu.remove).not.toHaveBeenCalled();
 
                 // Find and fire menu's click listener
-                mockMenu.on.calls.forEach(function (call) {
+                mockMenu.on.calls.all().forEach(function (call) {
                     if (call.args[0] === 'click') {
                         call.args[1]();
                     }
@@ -166,7 +166,7 @@ define(
                 // Show the menu
                 action.perform();
                 // Find and fire body's mousedown listener
-                mockMenu.on.calls.forEach(function (call) {
+                mockMenu.on.calls.all().forEach(function (call) {
                     if (call.args[0] === 'mousedown') {
                         call.args[1](mockEvent);
                     }
@@ -180,7 +180,7 @@ define(
             });
 
             it("keeps a menu when menu is clicked on mobile", function () {
-                mockAgentService.isMobile.andReturn(true);
+                mockAgentService.isMobile.and.returnValue(true);
                 action = new ContextMenuAction(
                     mockCompile,
                     mockDocument,
@@ -191,7 +191,7 @@ define(
                 );
                 action.perform();
 
-                mockMenu.on.calls.forEach(function (call) {
+                mockMenu.on.calls.all().forEach(function (call) {
                     if (call.args[0] === 'touchstart') {
                         call.args[1](mockEvent);
                     }

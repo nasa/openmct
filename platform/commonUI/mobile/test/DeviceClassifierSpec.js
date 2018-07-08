@@ -60,11 +60,11 @@ define(
                     'body',
                     ['addClass']
                 );
-                mockDocument.find.andCallFake(function (sel) {
+                mockDocument.find.and.callFake(function (sel) {
                     return sel === 'body' && mockBody;
                 });
                 AGENT_SERVICE_METHODS.forEach(function (m) {
-                    mockAgentService[m].andReturn(false);
+                    mockAgentService[m].and.returnValue(false);
                 });
             });
 
@@ -78,7 +78,7 @@ define(
 
                     beforeEach(function () {
                         trueMethods.forEach(function (m) {
-                            mockAgentService[m].andReturn(true);
+                            mockAgentService[m].and.returnValue(true);
                         });
                         classifier = new DeviceClassifier(
                             mockAgentService,

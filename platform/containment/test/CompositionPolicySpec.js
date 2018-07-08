@@ -40,8 +40,8 @@ define(
                     'type A-- the particular kind',
                     ['getKey', 'getDefinition']
                 );
-                typeA.getKey.andReturn('a');
-                typeA.getDefinition.andReturn({
+                typeA.getKey.and.returnValue('a');
+                typeA.getDefinition.and.returnValue({
                     contains: ['a']
                 });
 
@@ -50,8 +50,8 @@ define(
                     'type B-- anything goes',
                     ['getKey', 'getDefinition']
                 );
-                typeB.getKey.andReturn('b');
-                typeB.getDefinition.andReturn({
+                typeB.getKey.and.returnValue('b');
+                typeB.getDefinition.and.returnValue({
                     contains: ['a', 'b']
                 });
 
@@ -59,8 +59,8 @@ define(
                     'type C-- distinguishing and interested in telemetry',
                     ['getKey', 'getDefinition']
                 );
-                typeC.getKey.andReturn('c');
-                typeC.getDefinition.andReturn({
+                typeC.getKey.and.returnValue('c');
+                typeC.getDefinition.and.returnValue({
                     contains: [{has: 'telemetry'}]
                 });
 
@@ -75,17 +75,17 @@ define(
             describe('enforces simple containment rules', function () {
 
                 it('allows when type matches', function () {
-                    mockParentObject.getCapability.andReturn(typeA);
+                    mockParentObject.getCapability.and.returnValue(typeA);
 
-                    mockChildObject.getCapability.andReturn(typeA);
+                    mockChildObject.getCapability.and.returnValue(typeA);
                     expect(policy.allow(mockParentObject, mockChildObject))
                         .toBeTruthy();
 
-                    mockParentObject.getCapability.andReturn(typeB);
+                    mockParentObject.getCapability.and.returnValue(typeB);
                     expect(policy.allow(mockParentObject, mockChildObject))
                         .toBeTruthy();
 
-                    mockChildObject.getCapability.andReturn(typeB);
+                    mockChildObject.getCapability.and.returnValue(typeB);
                     expect(policy.allow(mockParentObject, mockChildObject))
                         .toBeTruthy();
                 });
@@ -93,12 +93,12 @@ define(
 
                 it('disallows when type doesn\'t match', function () {
 
-                    mockParentObject.getCapability.andReturn(typeA);
-                    mockChildObject.getCapability.andReturn(typeB);
+                    mockParentObject.getCapability.and.returnValue(typeA);
+                    mockChildObject.getCapability.and.returnValue(typeB);
                     expect(policy.allow(mockParentObject, mockChildObject))
                         .toBeFalsy();
 
-                    mockChildObject.getCapability.andReturn(typeC);
+                    mockChildObject.getCapability.and.returnValue(typeC);
                     expect(policy.allow(mockParentObject, mockChildObject))
                         .toBeFalsy();
                 });
@@ -107,9 +107,9 @@ define(
 
             describe('enforces capability-based containment rules', function () {
                 it('allows when object has capability', function () {
-                    mockParentObject.getCapability.andReturn(typeC);
+                    mockParentObject.getCapability.and.returnValue(typeC);
 
-                    mockChildObject.hasCapability.andReturn(true);
+                    mockChildObject.hasCapability.and.returnValue(true);
                     expect(policy.allow(mockParentObject, mockChildObject))
                         .toBeTruthy();
                     expect(mockChildObject.hasCapability)
@@ -117,9 +117,9 @@ define(
                 });
 
                 it('skips when object doesn\'t have capability', function () {
-                    mockChildObject.hasCapability.andReturn(false);
+                    mockChildObject.hasCapability.and.returnValue(false);
 
-                    mockParentObject.getCapability.andReturn(typeC);
+                    mockParentObject.getCapability.and.returnValue(typeC);
 
                     expect(policy.allow(mockParentObject, mockChildObject))
                         .toBeFalsy();

@@ -49,7 +49,7 @@ define(
                 mockInterval.cancel = jasmine.createSpy('mockCancel');
                 mockParsed = jasmine.createSpy('parsed');
                 mockParsed.assign = jasmine.createSpy('assign');
-                mockParse.andReturn(mockParsed);
+                mockParse.and.returnValue(mockParsed);
 
                 mockWindow.localStorage =  {
                     store: {},
@@ -84,7 +84,7 @@ define(
                     controller;
 
                 function fireOn(eventType) {
-                    mockScope.$on.calls.forEach(function (call) {
+                    mockScope.$on.calls.all().forEach(function (call) {
                         if (call.args[0] === eventType) {
                             call.args[1]();
                         }
@@ -106,12 +106,12 @@ define(
                     mockSecondPane =
                         jasmine.createSpyObj('secondPane', JQLITE_METHODS);
 
-                    mockElement.children.andReturn(mockChildren);
+                    mockElement.children.and.returnValue(mockChildren);
                     mockElement[0] = {
                         offsetWidth: 12321,
                         offsetHeight: 45654
                     };
-                    mockChildren.eq.andCallFake(function (i) {
+                    mockChildren.eq.and.callFake(function (i) {
                         return [mockFirstPane, mockSplitter, mockSecondPane][i];
                     });
                     mockFirstPane[0] = { offsetWidth: 123, offsetHeight: 456 };
@@ -135,7 +135,7 @@ define(
                 });
 
                 it("sets an interval which does not trigger digests", function () {
-                    expect(mockInterval.mostRecentCall.args[3]).toBe(false);
+                    expect(mockInterval.calls.mostRecent().args[3]).toBe(false);
                 });
 
                 it("exposes its splitter's initial position", function () {
@@ -202,7 +202,7 @@ define(
                     expect(controller.position()).not.toEqual(
                         mockFirstPane[0].offsetWidth
                     );
-                    mockInterval.mostRecentCall.args[0]();
+                    mockInterval.calls.mostRecent().args[0]();
                     expect(controller.position()).toEqual(
                         mockFirstPane[0].offsetWidth
                     );

@@ -42,12 +42,12 @@ define(
                     'domainObject',
                     ['useCapability', 'hasCapability']
                 );
-                mockTimespan.getStart.andReturn(testTimes.start);
-                mockTimespan.getEnd.andReturn(testTimes.end);
-                mockDomainObject.useCapability.andCallFake(function (c) {
+                mockTimespan.getStart.and.returnValue(testTimes.start);
+                mockTimespan.getEnd.and.returnValue(testTimes.end);
+                mockDomainObject.useCapability.and.callFake(function (c) {
                     return c === 'timespan' && Promise.resolve(mockTimespan);
                 });
-                mockDomainObject.hasCapability.andCallFake(function (c) {
+                mockDomainObject.hasCapability.and.callFake(function (c) {
                     return c === 'timespan';
                 });
             });
@@ -71,11 +71,8 @@ define(
                         beforeEach(function () {
                             value = undefined;
                             testFormatter = new TimelineFormatter();
-                            column.value(mockDomainObject).then(function (v) {
+                            return column.value(mockDomainObject).then(function (v) {
                                 value = v;
-                            });
-                            waitsFor(function () {
-                                return value !== undefined;
                             });
                         });
 

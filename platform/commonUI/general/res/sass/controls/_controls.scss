@@ -133,16 +133,8 @@
 /******************************************************** LOCAL CONTROLS */
 // Controls placed in proximity to or overlaid on components and views
 
-.local-controls-persist {
-
-}
-
 .local-controls-hidden {
     // Used within .has-local-controls, hidden by default
-
-}
-
-.local-controls-flyout {
 
 }
 
@@ -156,7 +148,7 @@ body.desktop .has-local-controls {
     }
 
     .local-controls-hidden {
-        @include trans-prop-nice($props: opacity, $dur: 1000ms);
+        @include trans-prop-nice($props: opacity, $dur: 500ms);
         opacity: 0;
         pointer-events: none;
     }
@@ -211,6 +203,7 @@ body.desktop .has-local-controls {
     cursor: pointer;
     height: 1em; width: 1em;
     line-height: inherit;
+    position: relative;
     &:before {
         position: absolute;
         @include trans-prop-nice(transform, 100ms);

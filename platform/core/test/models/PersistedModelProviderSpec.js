@@ -67,7 +67,7 @@ define(
                 mockNow = jasmine.createSpy("now");
 
                 mockPersistenceService.readObject
-                    .andCallFake(function (space, id) {
+                    .and.callFake(function (space, id) {
                         return mockPromise({
                             space: space,
                             id: id,
@@ -76,7 +76,7 @@ define(
                         });
                     });
                 mockPersistenceService.listSpaces
-                    .andReturn(mockPromise([SPACE]));
+                    .and.returnValue(mockPromise([SPACE]));
 
                 provider = new PersistedModelProvider(
                     mockPersistenceService,
@@ -94,9 +94,9 @@ define(
                 });
 
                 expect(models).toEqual({
-                    a: { space: SPACE, id: "a", persisted: 0 },
-                    x: { space: SPACE, id: "x", persisted: 0 },
-                    zz: { space: SPACE, id: "zz", persisted: 0 }
+                    a: { space: SPACE, id: "a", persisted: 0, modified: undefined },
+                    x: { space: SPACE, id: "x", persisted: 0, modified: undefined },
+                    zz: { space: SPACE, id: "zz", persisted: 0, modified: undefined }
                 });
             });
 
@@ -110,12 +110,12 @@ define(
                         d: { name: "D" }
                     };
 
-                mockPersistenceService.readObject.andCallFake(
+                mockPersistenceService.readObject.and.callFake(
                     function (space, id) {
                         return mockPromise(testModels[id]);
                     }
                 );
-                mockNow.andReturn(12321);
+                mockNow.and.returnValue(12321);
 
                 provider.getModels(Object.keys(testModels)).then(mockCallback);
 

@@ -92,7 +92,7 @@ define(
 
                 describe("and an exception is encountered during commit", function () {
                     beforeEach(function () {
-                        mockCommit.andCallFake(function () {
+                        mockCommit.and.callFake(function () {
                             throw new Error("test error");
                         });
                         transaction.commit();

@@ -43,17 +43,17 @@ define([
                 mockRelationships,
                 model = testModels[id];
 
-            mockDomainObject.getId.andReturn(id);
-            mockDomainObject.getModel.andReturn(model);
+            mockDomainObject.getId.and.returnValue(id);
+            mockDomainObject.getModel.and.returnValue(model);
 
-            mockDomainObject.hasCapability.andCallFake(function (c) {
+            mockDomainObject.hasCapability.and.callFake(function (c) {
                 return c === 'composition' ? !!model.composition :
                     c === 'relationship' ? !!model.relationships :
                         false;
             });
 
             if (!!model.composition) {
-                mockDomainObject.useCapability.andCallFake(function (c) {
+                mockDomainObject.useCapability.and.callFake(function (c) {
                     return c === 'composition' &&
                         Promise.resolve(model.composition.map(function (cid) {
                             return mockDomainObjects[cid];
@@ -66,13 +66,13 @@ define([
                     'relationship',
                     ['getRelatedObjects']
                 );
-                mockRelationships.getRelatedObjects.andCallFake(function (k) {
+                mockRelationships.getRelatedObjects.and.callFake(function (k) {
                     var ids = model.relationships[k] || [];
                     return Promise.resolve(ids.map(function (objId) {
                         return mockDomainObjects[objId];
                     }));
                 });
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObject.getCapability.and.callFake(function (c) {
                     return c === 'relationship' && mockRelationships;
                 });
             }
@@ -105,11 +105,8 @@ define([
             }
 
             beforeEach(function () {
-                traverser.buildObjectList().then(function (objectList) {
+                return traverser.buildObjectList().then(function (objectList) {
                     objects = objectList;
-                });
-                waitsFor(function () {
-                    return objects !== undefined;
                 });
             });
 

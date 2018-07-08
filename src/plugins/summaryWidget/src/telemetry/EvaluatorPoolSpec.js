@@ -38,7 +38,7 @@ define([
                 composition: jasmine.createSpyObj('compositionAPI', ['get']),
                 objects: jasmine.createSpyObj('objectAPI', ['observe'])
             };
-            openmct.composition.get.andCallFake(function () {
+            openmct.composition.get.and.callFake(function () {
                 var compositionCollection = jasmine.createSpyObj(
                     'compositionCollection',
                     [
@@ -47,10 +47,10 @@ define([
                         'off'
                     ]
                 );
-                compositionCollection.load.andReturn(Promise.resolve());
+                compositionCollection.load.and.returnValue(Promise.resolve());
                 return compositionCollection;
             });
-            openmct.objects.observe.andCallFake(function () {
+            openmct.objects.observe.and.callFake(function () {
                 return function () {};
             });
             pool = new EvaluatorPool(openmct);

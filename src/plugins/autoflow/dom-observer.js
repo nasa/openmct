@@ -20,32 +20,36 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    ["../src/CompositionMutabilityPolicy"],
-    function (CompositionMutabilityPolicy) {
-
-        describe("The composition mutability policy", function () {
-            var mockObject,
-                mockType,
-                policy;
-
-            beforeEach(function () {
-                mockType = jasmine.createSpyObj('type', ['hasFeature']);
-                mockObject = {
-                    getCapability: function () {
-                        return mockType;
-                    }
-                };
-                policy = new CompositionMutabilityPolicy();
-            });
-
-            it("only allows composition for types which can be created/modified", function () {
-                expect(policy.allow(mockObject)).toBeFalsy();
-                mockType.hasFeature.and.returnValue(true);
-                expect(policy.allow(mockObject)).toBeTruthy();
-                expect(mockType.hasFeature).toHaveBeenCalledWith('creation');
-            });
-        });
-
+define([], function () {
+    function DOMObserver(element) {
+        this.element = element;
+        this.observers = [];
     }
-);
+
+    DOMObserver.prototype.when = function (latchFunction) {
+        return new Promise(function (resolve, reject) {
+            //Test latch function at least once
+            if (latchFunction()) {
+                resolve();
+            } else {
+                //Latch condition not true yet, create observer on DOM and test again on change.
+                var config = { attributes: true, childList: true, subtree: true };
+                var observer = new MutationObserver(function () {
+                    if (latchFunction()) {
+                        resolve();
+                    }
+                });
+                observer.observe(this.element, config);
+                this.observers.push(observer);
+            }
+        }.bind(this));
+    };
+
+    DOMObserver.prototype.destroy = function () {
+        this.observers.forEach(function (observer) {
+            observer.disconnect();
+        }.bind(this));
+    };
+
+    return DOMObserver;
+});

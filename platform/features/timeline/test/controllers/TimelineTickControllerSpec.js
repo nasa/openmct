@@ -40,7 +40,7 @@ define(
 
             beforeEach(function () {
                 mockToMillis = jasmine.createSpy('toMillis');
-                mockToMillis.andCallFake(function (v) {
+                mockToMillis.and.callFake(function (v) {
                     return v * 2 + BILLION;
                 });
                 controller = new TimelineTickController();
@@ -69,7 +69,7 @@ define(
             it("does rebuild arrays when zoom changes", function () {
                 var firstValue = controller.labels(800, 300, 100, mockToMillis);
 
-                mockToMillis.andCallFake(function (v) {
+                mockToMillis.and.callFake(function (v) {
                     return BILLION * 2 + v;
                 });
 

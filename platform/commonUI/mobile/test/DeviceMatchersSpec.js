@@ -43,10 +43,10 @@ define(
             });
 
             it("detects when a device is a desktop device", function () {
-                mockAgentService.isMobile.andReturn(false);
+                mockAgentService.isMobile.and.returnValue(false);
                 expect(DeviceMatchers.desktop(mockAgentService))
                     .toBe(true);
-                mockAgentService.isMobile.andReturn(true);
+                mockAgentService.isMobile.and.returnValue(true);
                 expect(DeviceMatchers.desktop(mockAgentService))
                     .toBe(false);
             });
@@ -65,10 +65,10 @@ define(
                 "touch"
             ].forEach(function (deviceType) {
                 it("detects when a device is a " + deviceType + " device", function () {
-                    mockAgentService[method(deviceType)].andReturn(true);
+                    mockAgentService[method(deviceType)].and.returnValue(true);
                     expect(DeviceMatchers[deviceType](mockAgentService))
                         .toBe(true);
-                    mockAgentService[method(deviceType)].andReturn(false);
+                    mockAgentService[method(deviceType)].and.returnValue(false);
                     expect(DeviceMatchers[deviceType](mockAgentService))
                         .toBe(false);
                 });

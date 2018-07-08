@@ -72,7 +72,7 @@ define([
         var data = [];
         while (start <= end && data.length < 5000) {
             data.push(pointForTimestamp(start, duration, domainObject.name));
-            start += 5000;
+            start += duration;
         }
         return Promise.resolve(data);
     };

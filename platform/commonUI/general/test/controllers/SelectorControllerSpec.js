@@ -45,7 +45,7 @@ define(
                     'object-' + id,
                     ['getId']
                 );
-                mockObject.getId.andReturn(id);
+                mockObject.getId.and.returnValue(id);
                 return mockObject;
             }
 
@@ -72,8 +72,8 @@ define(
                     mockDomainObjects[id] = makeMockObject(id);
                 });
 
-                mockDomainObject.getCapability.andReturn(mockType);
-                mockObjectService.getObjects.andReturn(promiseOf(mockDomainObjects));
+                mockDomainObject.getCapability.and.returnValue(mockType);
+                mockObjectService.getObjects.and.returnValue(promiseOf(mockDomainObjects));
                 mockScope.field = "testField";
                 mockScope.ngModel = {};
 
@@ -91,27 +91,27 @@ define(
             it("watches for changes in selection in left-hand tree", function () {
                 var testObject = { a: 123, b: 456 };
                 // This test is sensitive to ordering of watch calls
-                expect(mockScope.$watch.calls.length).toEqual(1);
+                expect(mockScope.$watch.calls.count()).toEqual(1);
                 // Make sure we're watching the correct object
                 controller.treeModel.selectedObject = testObject;
-                expect(mockScope.$watch.calls[0].args[0]()).toBe(testObject);
+                expect(mockScope.$watch.calls.all()[0].args[0]()).toBe(testObject);
             });
 
             it("watches for changes in controlled property", function () {
                 var testValue = ["a", "b", 1, 2];
                 // This test is sensitive to ordering of watch calls
-                expect(mockScope.$watchCollection.calls.length).toEqual(1);
+                expect(mockScope.$watchCollection.calls.count()).toEqual(1);
                 // Make sure we're watching the correct object
                 mockScope.ngModel = { testField: testValue };
-                expect(mockScope.$watchCollection.calls[0].args[0]()).toBe(testValue);
+                expect(mockScope.$watchCollection.calls.all()[0].args[0]()).toBe(testValue);
             });
 
             it("rejects selection of incorrect types", function () {
                 mockScope.structure = { type: "someType" };
-                mockType.instanceOf.andReturn(false);
+                mockType.instanceOf.and.returnValue(false);
                 controller.treeModel.selectedObject = mockDomainObject;
                 // Fire the watch
-                mockScope.$watch.calls[0].args[1](mockDomainObject);
+                mockScope.$watch.calls.all()[0].args[1](mockDomainObject);
                 // Should have cleared the selection
                 expect(controller.treeModel.selectedObject).toBeUndefined();
                 // Verify interaction (that instanceOf got a useful argument)
@@ -120,10 +120,10 @@ define(
 
             it("permits selection of matching types", function () {
                 mockScope.structure = { type: "someType" };
-                mockType.instanceOf.andReturn(true);
+                mockType.instanceOf.and.returnValue(true);
                 controller.treeModel.selectedObject = mockDomainObject;
                 // Fire the watch
-                mockScope.$watch.calls[0].args[1](mockDomainObject);
+                mockScope.$watch.calls.all()[0].args[1](mockDomainObject);
                 // Should have preserved the selection
                 expect(controller.treeModel.selectedObject).toEqual(mockDomainObject);
                 // Verify interaction (that instanceOf got a useful argument)
@@ -133,11 +133,11 @@ define(
             it("loads objects when the underlying list changes", function () {
                 var testIds = ["abc", "def", "xyz"];
                 // This test is sensitive to ordering of watch calls
-                expect(mockScope.$watchCollection.calls.length).toEqual(1);
+                expect(mockScope.$watchCollection.calls.count()).toEqual(1);
                 // Make sure we're watching the correct object
                 mockScope.ngModel = { testField: testIds };
                 // Fire the watch
-                mockScope.$watchCollection.calls[0].args[1](testIds);
+                mockScope.$watchCollection.calls.all()[0].args[1](testIds);
                 // Should have loaded the corresponding objects
                 expect(mockObjectService.getObjects).toHaveBeenCalledWith(testIds);
             });
@@ -169,8 +169,8 @@ define(
                 controller.select(mockDomainObjects.def);
                 controller.select(mockDomainObjects.abc);
                 // Fire the watch for the id changes...
-                mockScope.$watchCollection.calls[0].args[1](
-                    mockScope.$watchCollection.calls[0].args[0]()
+                mockScope.$watchCollection.calls.all()[0].args[1](
+                    mockScope.$watchCollection.calls.all()[0].args[0]()
                 );
                 // Should have loaded and exposed those objects
                 expect(controller.selected()).toEqual(

@@ -63,8 +63,8 @@ define(
                 mockObjectService =
                     jasmine.createSpyObj("objectService", ["getObjects"]);
 
-                mockQ.when.andCallFake(testPromise);
-                mockQ.all.andCallFake(function (promises) {
+                mockQ.when.and.callFake(testPromise);
+                mockQ.all.and.callFake(function (promises) {
                     var result = {};
                     Object.keys(promises).forEach(function (k) {
                         promises[k].then(function (v) {
@@ -74,7 +74,7 @@ define(
                     return testPromise(result);
                 });
 
-                mockObjectService.getObjects.andReturn(testPromise(testObjects));
+                mockObjectService.getObjects.and.returnValue(testPromise(testObjects));
 
                 mockCallback = jasmine.createSpy("callback");
 
@@ -83,8 +83,8 @@ define(
                         "domainObject-" + id,
                         ["getId", "getModel", "getCapability"]
                     );
-                    testObjects[id].getId.andReturn(id);
-                    testObjects[id].getModel.andReturn(testModels[id]);
+                    testObjects[id].getId.and.returnValue(id);
+                    testObjects[id].getModel.and.returnValue(testModels[id]);
                 });
 
                 decorator = new LocatingObjectDecorator(
@@ -98,7 +98,7 @@ define(
                 decorator.getObjects(['b', 'c']).then(mockCallback);
                 expect(mockCallback).toHaveBeenCalled();
 
-                var callbackObj = mockCallback.mostRecentCall.args[0];
+                var callbackObj = mockCallback.calls.mostRecent().args[0];
                 expect(testObjects.b.getCapability('context')).not.toBeDefined();
                 expect(testObjects.c.getCapability('context')).not.toBeDefined();
                 expect(callbackObj.b.getCapability('context')).toBeDefined();

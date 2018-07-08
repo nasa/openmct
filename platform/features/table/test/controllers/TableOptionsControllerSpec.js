@@ -40,8 +40,8 @@ define(
                    'getCapability',
                    'getModel'
                 ]);
-                mockDomainObject.getCapability.andReturn(mockCapability);
-                mockDomainObject.getModel.andReturn({});
+                mockDomainObject.getCapability.and.returnValue(mockCapability);
+                mockDomainObject.getModel.and.returnValue({});
 
                 mockScope = jasmine.createSpyObj('scope', [
                     '$watchCollection',
@@ -61,12 +61,12 @@ define(
                 var unlistenFunc = jasmine.createSpy("unlisten");
                 controller.listeners.push(unlistenFunc);
                 expect(mockScope.$on).toHaveBeenCalledWith('$destroy', jasmine.any(Function));
-                mockScope.$on.mostRecentCall.args[1]();
+                mockScope.$on.calls.mostRecent().args[1]();
                 expect(unlistenFunc).toHaveBeenCalled();
             });
 
             it('Registers a listener for mutation events on the object', function () {
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
                 expect(mockCapability.listen).toHaveBeenCalled();
             });
 

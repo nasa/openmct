@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global describe,it,expect,beforeEach,jasmine,waitsFor,runs*/
+/*global describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/actions/SaveAction"],
@@ -81,13 +81,13 @@ define(
                     ["info", "error"]
                 );
 
-                mockDomainObject.hasCapability.andReturn(true);
-                mockDomainObject.getCapability.andCallFake(function (capability) {
+                mockDomainObject.hasCapability.and.returnValue(true);
+                mockDomainObject.getCapability.and.callFake(function (capability) {
                     return capabilities[capability];
                 });
-                mockDomainObject.getModel.andReturn({persisted: 0});
-                mockEditorCapability.save.andReturn(mockPromise(true));
-                mockEditorCapability.isEditContextRoot.andReturn(true);
+                mockDomainObject.getModel.and.returnValue({persisted: 0});
+                mockEditorCapability.save.and.returnValue(mockPromise(true));
+                mockEditorCapability.isEditContextRoot.and.returnValue(true);
 
                 action = new SaveAction(mockDialogService, mockNotificationService, actionContext);
             });
@@ -96,14 +96,14 @@ define(
                 expect(SaveAction.appliesTo(actionContext)).toBe(true);
                 expect(mockDomainObject.hasCapability).toHaveBeenCalledWith("editor");
 
-                mockDomainObject.hasCapability.andReturn(false);
-                mockDomainObject.getCapability.andReturn(undefined);
+                mockDomainObject.hasCapability.and.returnValue(false);
+                mockDomainObject.getCapability.and.returnValue(undefined);
                 expect(SaveAction.appliesTo(actionContext)).toBe(false);
             });
 
             it("only applies to domain object that has already been persisted",
                 function () {
-                    mockDomainObject.getModel.andReturn({persisted: undefined});
+                    mockDomainObject.getModel.and.returnValue({persisted: undefined});
                     expect(SaveAction.appliesTo(actionContext)).toBe(false);
                 });
 
@@ -118,11 +118,11 @@ define(
 
                 beforeEach(function () {
                     mockDialogHandle = jasmine.createSpyObj("dialogHandle", ["dismiss"]);
-                    mockDialogService.showBlockingMessage.andReturn(mockDialogHandle);
+                    mockDialogService.showBlockingMessage.and.returnValue(mockDialogHandle);
                 });
 
                 it("shows a dialog while saving", function () {
-                    mockEditorCapability.save.andReturn(new Promise(function () {
+                    mockEditorCapability.save.and.returnValue(new Promise(function () {
                     }));
                     action.perform();
                     expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
@@ -137,12 +137,8 @@ define(
 
                 it("notifies if saving succeeded", function () {
                     var mockCallback = jasmine.createSpy("callback");
-                    mockEditorCapability.save.andReturn(Promise.resolve("success"));
-                    action.perform().then(mockCallback);
-                    waitsFor(function () {
-                        return mockCallback.calls.length > 0;
-                    });
-                    runs(function () {
+                    mockEditorCapability.save.and.returnValue(Promise.resolve());
+                    return action.perform().then(mockCallback).then(function () {
                         expect(mockNotificationService.info).toHaveBeenCalled();
                         expect(mockNotificationService.error).not.toHaveBeenCalled();
                     });
@@ -150,12 +146,8 @@ define(
 
                 it("notifies if saving failed", function () {
                     var mockCallback = jasmine.createSpy("callback");
-                    mockEditorCapability.save.andReturn(Promise.reject("some failure reason"));
-                    action.perform().then(mockCallback);
-                    waitsFor(function () {
-                        return mockCallback.calls.length > 0;
-                    });
-                    runs(function () {
+                    mockEditorCapability.save.and.returnValue(Promise.reject("some failure reason"));
+                    return action.perform().then(mockCallback).then(function () {
                         expect(mockNotificationService.error).toHaveBeenCalled();
                         expect(mockNotificationService.info).not.toHaveBeenCalled();
                     });

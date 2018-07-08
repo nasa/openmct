@@ -40,7 +40,7 @@ define(
          * var linkService = new MockLinkService();
          *
          * // validate is a standard jasmine spy.
-         * linkService.validate.andReturn(true);
+         * linkService.validate.and.returnValue(true);
          * var isValid = linkService.validate(object, parentObject);
          * expect(isValid).toBe(true);
          *
@@ -48,7 +48,7 @@ define(
          * var whenLinked = jasmine.createSpy('whenLinked');
          * linkService.perform(object, parentObject).then(whenLinked);
          * expect(whenLinked).not.toHaveBeenCalled();
-         * linkService.perform.mostRecentCall.promise.resolve('someArg');
+         * linkService.perform.calls.mostRecent().promise.resolve('someArg');
          * expect(whenLinked).toHaveBeenCalledWith('someArg');
          * ```
          */
@@ -63,11 +63,11 @@ define(
                 ]
             );
 
-            mockLinkService.perform.andCallFake(function (object) {
+            mockLinkService.perform.and.callFake(function (object) {
                 var performPromise = new ControlledPromise();
 
-                this.perform.mostRecentCall.promise = performPromise;
-                this.perform.calls[this.perform.calls.length - 1].promise =
+                this.perform.calls.mostRecent().promise = performPromise;
+                this.perform.calls.all()[this.perform.calls.count() - 1].promise =
                     performPromise;
 
                 return performPromise.then(function (overrideObject) {

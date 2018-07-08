@@ -36,7 +36,7 @@ define(
                     'timespan-' + end,
                     ['getEnd']
                 );
-                mockTimespan.getEnd.andReturn(end);
+                mockTimespan.getEnd.and.returnValue(end);
                 return mockTimespan;
             }
 
@@ -53,7 +53,7 @@ define(
                 mockMutation = jasmine.createSpyObj("mutation", ["mutate"]);
                 mockTimespans = [44000, 65000, 1100].map(makeMockTimespan);
 
-                mockMutation.mutate.andCallFake(function (mutator) {
+                mockMutation.mutate.and.callFake(function (mutator) {
                     mutator(mutationModel);
                 });
 

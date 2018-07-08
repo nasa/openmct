@@ -37,10 +37,10 @@ define(
                         'remove'
                     ]
                 );
-                mockInput.on.andCallFake(function (event, changeHandler) {
+                mockInput.on.and.callFake(function (event, changeHandler) {
                     changeHandler.apply(mockInput);
                 });
-                spyOn(fileInputService, "newInput").andReturn(
+                spyOn(fileInputService, "newInput").and.returnValue(
                     mockInput
                 );
 

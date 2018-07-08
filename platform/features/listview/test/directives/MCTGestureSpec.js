@@ -39,7 +39,7 @@ define(
                     "gestureService",
                     ["attachGestures"]
                 );
-                gestureService.attachGestures.andReturn(
+                gestureService.attachGestures.and.returnValue(
                     attachedGesture
                 );
                 mctGesture = MCTGesture(gestureService);
@@ -77,7 +77,7 @@ define(
                     '$destroy',
                      jasmine.any(Function)
                 );
-                scope.$on.mostRecentCall.args[1]();
+                scope.$on.calls.mostRecent().args[1]();
                 expect(attachedGesture.destroy).toHaveBeenCalled();
             });
 

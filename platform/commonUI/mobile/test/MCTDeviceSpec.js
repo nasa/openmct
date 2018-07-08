@@ -47,12 +47,12 @@ define(
                 mockElement = jasmine.createSpyObj(name, JQLITE_METHODS);
                 mockClone = jasmine.createSpyObj(name, JQLITE_METHODS);
 
-                mockTransclude.andCallFake(function (fn) {
+                mockTransclude.and.callFake(function (fn) {
                     fn(mockClone);
                 });
 
                 // Look desktop-like by default
-                mockAgentService.isLandscape.andReturn(true);
+                mockAgentService.isLandscape.and.returnValue(true);
 
                 testAttrs = {};
 
@@ -85,40 +85,40 @@ define(
                 link();
                 expectExclusion();
 
-                mockAgentService.isMobile.andReturn(true);
+                mockAgentService.isMobile.and.returnValue(true);
                 link();
                 expectInclusion();
             });
 
             it("restricts element inclusion for tablet devices", function () {
                 testAttrs.mctDevice = "tablet";
-                mockAgentService.isMobile.andReturn(true);
+                mockAgentService.isMobile.and.returnValue(true);
                 link();
                 expectExclusion();
 
-                mockAgentService.isTablet.andReturn(true);
+                mockAgentService.isTablet.and.returnValue(true);
                 link();
                 expectInclusion();
             });
 
             it("restricts element inclusion for phone devices", function () {
                 testAttrs.mctDevice = "phone";
-                mockAgentService.isMobile.andReturn(true);
+                mockAgentService.isMobile.and.returnValue(true);
                 link();
                 expectExclusion();
 
-                mockAgentService.isPhone.andReturn(true);
+                mockAgentService.isPhone.and.returnValue(true);
                 link();
                 expectInclusion();
             });
 
             it("restricts element inclusion for desktop devices", function () {
                 testAttrs.mctDevice = "desktop";
-                mockAgentService.isMobile.andReturn(true);
+                mockAgentService.isMobile.and.returnValue(true);
                 link();
                 expectExclusion();
 
-                mockAgentService.isMobile.andReturn(false);
+                mockAgentService.isMobile.and.returnValue(false);
                 link();
                 expectInclusion();
             });
@@ -128,19 +128,19 @@ define(
                 link();
                 expectExclusion();
 
-                mockAgentService.isPortrait.andReturn(true);
+                mockAgentService.isPortrait.and.returnValue(true);
                 link();
                 expectInclusion();
             });
 
             it("restricts element inclusion for landscape orientation", function () {
                 testAttrs.mctDevice = "landscape";
-                mockAgentService.isLandscape.andReturn(false);
-                mockAgentService.isPortrait.andReturn(true);
+                mockAgentService.isLandscape.and.returnValue(false);
+                mockAgentService.isPortrait.and.returnValue(true);
                 link();
                 expectExclusion();
 
-                mockAgentService.isLandscape.andReturn(true);
+                mockAgentService.isLandscape.and.returnValue(true);
                 link();
                 expectInclusion();
             });
@@ -153,13 +153,13 @@ define(
                 // Neither portrait nor mobile, not called
                 expectExclusion();
 
-                mockAgentService.isPortrait.andReturn(true);
+                mockAgentService.isPortrait.and.returnValue(true);
                 link();
 
                 // Was portrait, but not mobile, so no
                 expectExclusion();
 
-                mockAgentService.isMobile.andReturn(true);
+                mockAgentService.isMobile.and.returnValue(true);
                 link();
                 expectInclusion();
             });

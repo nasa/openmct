@@ -50,7 +50,7 @@ define(
                 mockScope.datetime.min = 55;
                 mockScope.datetime.sec = 13;
 
-                mockScope.$watch.mostRecentCall.args[1]();
+                mockScope.$watch.calls.mostRecent().args[1]();
 
                 expect(mockScope.ngModel.test).toEqual(1417215313000);
             });
@@ -66,7 +66,7 @@ define(
                 mockScope.datetime.min = 55;
                 // mockScope.datetime.sec = 13;
 
-                mockScope.$watch.mostRecentCall.args[1]();
+                mockScope.$watch.calls.mostRecent().args[1]();
 
                 expect(mockScope.partiallyComplete).toBeTruthy();
             });
@@ -74,10 +74,10 @@ define(
             it("reports 'undefined' for empty input", function () {
                 mockScope.ngModel = { test: 12345 };
                 mockScope.field = "test";
-                mockScope.$watch.mostRecentCall.args[1]();
+                mockScope.$watch.calls.mostRecent().args[1]();
                 // Clear all inputs
                 mockScope.datetime = {};
-                mockScope.$watch.mostRecentCall.args[1]();
+                mockScope.$watch.calls.mostRecent().args[1]();
 
                 // Should have cleared out the time stamp
                 expect(mockScope.ngModel.test).toBeUndefined();
@@ -91,7 +91,7 @@ define(
             it("initializes form fields with values from ng-model", function () {
                 mockScope.ngModel = { test: 1417215313000 };
                 mockScope.field = "test";
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$watch.calls.all().forEach(function (call) {
                     if (call.args[0] === 'ngModel[field]') {
                         call.args[1](mockScope.ngModel.test);
                     }

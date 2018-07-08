@@ -53,10 +53,10 @@ define(
                     'domainObject',
                     ['getCapability', 'useCapability', 'getModel']
                 );
-                mockFailure.domainObject.getCapability.andCallFake(function (c) {
+                mockFailure.domainObject.getCapability.and.callFake(function (c) {
                     return (c === 'persistence') && mockPersistence;
                 });
-                mockFailure.domainObject.getModel.andReturn({ id: id, modified: index });
+                mockFailure.domainObject.getModel.and.returnValue({ id: id, modified: index });
                 mockFailure.persistence = mockPersistence;
                 mockFailure.id = id;
                 mockFailure.error = { key: Constants.REVISION_ERROR_KEY };
@@ -68,9 +68,9 @@ define(
                 mockDialogService = jasmine.createSpyObj('dialogService', ['getUserChoice']);
                 mockFailures = ['a', 'b', 'c'].map(makeMockFailure);
                 mockPromise = jasmine.createSpyObj('promise', ['then']);
-                mockDialogService.getUserChoice.andReturn(mockPromise);
-                mockQ.all.andReturn(mockPromise);
-                mockPromise.then.andReturn(mockPromise);
+                mockDialogService.getUserChoice.and.returnValue(mockPromise);
+                mockQ.all.and.returnValue(mockPromise);
+                mockPromise.then.and.returnValue(mockPromise);
                 handler = new PersistenceFailureHandler(mockQ, mockDialogService);
             });
 
@@ -80,10 +80,10 @@ define(
             });
 
             it("overwrites on request", function () {
-                mockQ.all.andReturn(asPromise([]));
+                mockQ.all.and.returnValue(asPromise([]));
                 handler.handle(mockFailures);
                 // User chooses overwrite
-                mockPromise.then.mostRecentCall.args[0](Constants.OVERWRITE_KEY);
+                mockPromise.then.calls.mostRecent().args[0](Constants.OVERWRITE_KEY);
                 // Should refresh, remutate, and requeue all objects
                 mockFailures.forEach(function (mockFailure, i) {
                     expect(mockFailure.persistence.refresh).toHaveBeenCalled();
@@ -93,16 +93,16 @@ define(
                         jasmine.any(Function),
                         i // timestamp
                     );
-                    expect(mockFailure.domainObject.useCapability.mostRecentCall.args[1]())
+                    expect(mockFailure.domainObject.useCapability.calls.mostRecent().args[1]())
                         .toEqual({ id: mockFailure.id, modified: i });
                 });
             });
 
             it("discards on request", function () {
-                mockQ.all.andReturn(asPromise([]));
+                mockQ.all.and.returnValue(asPromise([]));
                 handler.handle(mockFailures);
                 // User chooses overwrite
-                mockPromise.then.mostRecentCall.args[0](false);
+                mockPromise.then.calls.mostRecent().args[0](false);
                 // Should refresh, but not remutate, and requeue all objects
                 mockFailures.forEach(function (mockFailure) {
                     expect(mockFailure.persistence.refresh).toHaveBeenCalled();

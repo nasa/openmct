@@ -41,7 +41,7 @@ define(
                     'remove'
                 ]);
 
-                mockDocument.find.andCallFake(function (query) {
+                mockDocument.find.and.callFake(function (query) {
                     return query === 'body' && mockBody;
                 });
 

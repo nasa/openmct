@@ -67,7 +67,7 @@ define(
                     a: { someKey: "some value" },
                     b: { someOtherKey: "some other value" }
                 };
-                mockModelService.getModels.andReturn(asPromise(testModels));
+                mockModelService.getModels.and.returnValue(asPromise(testModels));
                 decorator = new CachingModelDecorator(
                     new ModelCacheService(),
                     mockModelService
@@ -80,19 +80,19 @@ define(
             });
 
             it("does not try to reload cached models", function () {
-                mockModelService.getModels.andReturn(asPromise({ a: testModels.a }));
+                mockModelService.getModels.and.returnValue(asPromise({ a: testModels.a }));
                 decorator.getModels(['a']);
-                mockModelService.getModels.andReturn(asPromise(testModels));
+                mockModelService.getModels.and.returnValue(asPromise(testModels));
                 decorator.getModels(['a', 'b']);
                 expect(mockModelService.getModels).not.toHaveBeenCalledWith(['a', 'b']);
-                expect(mockModelService.getModels.mostRecentCall.args[0]).toEqual(['b']);
+                expect(mockModelService.getModels.calls.mostRecent().args[0]).toEqual(['b']);
             });
 
             it("does not call its wrapped model service if not needed", function () {
                 decorator.getModels(['a', 'b']);
-                expect(mockModelService.getModels.calls.length).toEqual(1);
+                expect(mockModelService.getModels.calls.count()).toEqual(1);
                 decorator.getModels(['a', 'b']).then(mockCallback);
-                expect(mockModelService.getModels.calls.length).toEqual(1);
+                expect(mockModelService.getModels.calls.count()).toEqual(1);
                 // Verify that we still got back our models, even though
                 // no new call to the wrapped service was made
                 expect(mockCallback).toHaveBeenCalledWith(testModels);
@@ -105,9 +105,9 @@ define(
                 promiseB = fakePromise();
 
                 // Issue two calls before those promises resolve
-                mockModelService.getModels.andReturn(promiseA);
+                mockModelService.getModels.and.returnValue(promiseA);
                 decorator.getModels(['a']);
-                mockModelService.getModels.andReturn(promiseB);
+                mockModelService.getModels.and.returnValue(promiseB);
                 decorator.getModels(['a']).then(mockCallback);
 
                 // Then resolve those promises. Note that we're whiteboxing here
@@ -119,9 +119,9 @@ define(
                 });
 
                 // Ensure that we have a pointer-identical instance
-                expect(mockCallback.mostRecentCall.args[0].a)
+                expect(mockCallback.calls.mostRecent().args[0].a)
                     .toEqual({ someNewKey: "some other value" });
-                expect(mockCallback.mostRecentCall.args[0].a)
+                expect(mockCallback.calls.mostRecent().args[0].a)
                     .toBe(testModels.a);
             });
 
@@ -132,9 +132,9 @@ define(
                 promiseB = fakePromise();
 
                 // Issue two calls before those promises resolve
-                mockModelService.getModels.andReturn(promiseA);
+                mockModelService.getModels.and.returnValue(promiseA);
                 decorator.getModels(['a']);
-                mockModelService.getModels.andReturn(promiseB);
+                mockModelService.getModels.and.returnValue(promiseB);
                 decorator.getModels(['a']).then(mockCallback);
 
                 // Some model providers might erroneously add undefined values
@@ -147,7 +147,7 @@ define(
                 });
 
                 // Should still have gotten the model
-                expect(mockCallback.mostRecentCall.args[0].a)
+                expect(mockCallback.calls.mostRecent().args[0].a)
                     .toEqual({ someNewKey: "some other value" });
             });
 

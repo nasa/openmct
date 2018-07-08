@@ -35,7 +35,7 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 mockTimeout = jasmine.createSpy("$timeout");
-                mockTimeout.andCallFake(function (cb) {
+                mockTimeout.and.callFake(function (cb) {
                     cb();
                 });
                 mockScope.ngModel = {};
@@ -60,11 +60,11 @@ define(
                     { key: "c", name: "View C" },
                     { key: "d", name: "View D" }
                 ];
-                mockScope.$watch.mostRecentCall.args[1](views);
+                mockScope.$watch.calls.mostRecent().args[1](views);
                 mockScope.ngModel.selected = views[1];
 
                 // Change the set of applicable views
-                mockScope.$watch.mostRecentCall.args[1]([
+                mockScope.$watch.calls.mostRecent().args[1]([
                     { key: "a", name: "View A" },
                     { key: "b", name: "View B" },
                     { key: "x", name: "View X" }
@@ -81,11 +81,11 @@ define(
                     { key: "c", name: "View C" },
                     { key: "d", name: "View D" }
                 ];
-                mockScope.$watch.mostRecentCall.args[1](views);
+                mockScope.$watch.calls.mostRecent().args[1](views);
                 mockScope.ngModel.selected = views[1];
 
                 // Change the set of applicable views
-                mockScope.$watch.mostRecentCall.args[1]([
+                mockScope.$watch.calls.mostRecent().args[1]([
                     { key: "a", name: "View A" },
                     { key: "c", name: "View C" },
                     { key: "x", name: "View X" }
@@ -102,7 +102,7 @@ define(
                 expect(mockTimeout).not.toHaveBeenCalled();
 
                 // Invoke the watch for set of views
-                mockScope.$watch.mostRecentCall.args[1]([]);
+                mockScope.$watch.calls.mostRecent().args[1]([]);
 
                 // Should have run on a timeout
                 expect(mockTimeout).toHaveBeenCalled();

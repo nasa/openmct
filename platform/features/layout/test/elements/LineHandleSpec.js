@@ -39,7 +39,7 @@ define(
                     useGrid: true
                 };
                 mockElementProxy = jasmine.createSpyObj('elementProxy', ['getGridSize']);
-                mockElementProxy.getGridSize.andReturn(TEST_GRID_SIZE);
+                mockElementProxy.getGridSize.and.returnValue(TEST_GRID_SIZE);
 
                 handle = new LineHandle(testElement, mockElementProxy, 'x', 'y', 'x2', 'y2');
             });

@@ -44,8 +44,8 @@ define(
 
             function updateStatus(newFlags) {
                 testStatusFlags = newFlags;
-                mockStatusCapability.get.andReturn(newFlags);
-                mockStatusCapability.listen.mostRecentCall
+                mockStatusCapability.get.and.returnValue(newFlags);
+                mockStatusCapability.listen.calls.mostRecent()
                     .args[0](newFlags);
             }
 
@@ -70,17 +70,17 @@ define(
 
                 elementClasses = {};
 
-                mockElement.addClass.andCallFake(function (c) {
+                mockElement.addClass.and.callFake(function (c) {
                     elementClasses[c] = true;
                 });
-                mockElement.removeClass.andCallFake(function (c) {
+                mockElement.removeClass.and.callFake(function (c) {
                     delete elementClasses[c];
                 });
 
-                mockStatusCapability.list.andReturn(testStatusFlags);
-                mockStatusCapability.listen.andReturn(mockUnlisten);
+                mockStatusCapability.list.and.returnValue(testStatusFlags);
+                mockStatusCapability.listen.and.returnValue(mockUnlisten);
 
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObject.getCapability.and.callFake(function (c) {
                     return c === 'status' && mockStatusCapability;
                 });
 

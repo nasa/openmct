@@ -46,8 +46,8 @@ define(
                     'chainedPromise',
                     ['then']
                 );
-                dialogServicePromise.then.andReturn(chainedPromise);
-                dialogService.getUserInput.andReturn(dialogServicePromise);
+                dialogServicePromise.then.and.returnValue(chainedPromise);
+                dialogService.getUserInput.and.returnValue(dialogServicePromise);
                 locationService = new LocationService(dialogService);
             });
 
@@ -75,11 +75,11 @@ define(
                     );
                     formStructure = dialogService
                         .getUserInput
-                        .mostRecentCall
+                        .calls.mostRecent()
                         .args[0];
                     formState = dialogService
                         .getUserInput
-                        .mostRecentCall
+                        .calls.mostRecent()
                         .args[1];
                 });
 
@@ -131,7 +131,7 @@ define(
 
                     beforeEach(function () {
                         resolver =
-                            dialogServicePromise.then.mostRecentCall.args[0];
+                            dialogServicePromise.then.calls.mostRecent().args[0];
 
                         selectedLocation = { key: "i'm a location key" };
                         dialogResult = {

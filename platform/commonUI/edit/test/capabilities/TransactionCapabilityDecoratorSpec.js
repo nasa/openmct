@@ -37,7 +37,7 @@ define(
                 mockQ = {};
                 mockTransactionService = {};
                 mockCapabilityService = jasmine.createSpyObj("capabilityService", ["getCapabilities"]);
-                mockCapabilityService.getCapabilities.andReturn({
+                mockCapabilityService.getCapabilities.and.returnValue({
                     persistence: function () {}
                 });
 

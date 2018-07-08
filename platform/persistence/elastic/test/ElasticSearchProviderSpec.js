@@ -43,10 +43,10 @@ define([
 
         describe('query', function () {
             beforeEach(function () {
-                spyOn(provider, 'cleanTerm').andReturn('cleanedTerm');
-                spyOn(provider, 'fuzzyMatchUnquotedTerms').andReturn('fuzzy');
-                spyOn(provider, 'parseResponse').andReturn('parsedResponse');
-                $http.andReturn(Promise.resolve({}));
+                spyOn(provider, 'cleanTerm').and.returnValue('cleanedTerm');
+                spyOn(provider, 'fuzzyMatchUnquotedTerms').and.returnValue('fuzzy');
+                spyOn(provider, 'parseResponse').and.returnValue('parsedResponse');
+                $http.and.returnValue(Promise.resolve({}));
             });
 
             it('cleans terms and adds fuzzyness', function () {
@@ -69,40 +69,28 @@ define([
             });
 
             it('gracefully fails when http fails', function () {
-                var promiseChainResolved = false;
-                $http.andReturn(Promise.reject());
+                $http.and.returnValue(Promise.reject());
 
-                provider
+                return provider
                     .query('hello', 10)
                     .then(function (results) {
                         expect(results).toEqual({
                             hits: [],
                             total: 0
                         });
-                        promiseChainResolved = true;
                     });
-
-                waitsFor(function () {
-                    return promiseChainResolved;
-                });
             });
 
             it('parses and returns when http succeeds', function () {
-                var promiseChainResolved = false;
-                $http.andReturn(Promise.resolve('successResponse'));
+                $http.and.returnValue(Promise.resolve('successResponse'));
 
-                provider
+                return provider
                     .query('hello', 10)
                     .then(function (results) {
                         expect(provider.parseResponse)
                             .toHaveBeenCalledWith('successResponse');
                         expect(results).toBe('parsedResponse');
-                        promiseChainResolved = true;
                     });
-
-                waitsFor(function () {
-                    return promiseChainResolved;
-                });
             });
         });
 

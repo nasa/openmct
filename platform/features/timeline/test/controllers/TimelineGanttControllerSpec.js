@@ -57,11 +57,11 @@ define(
                 testScroll = { x: 0, width: 2000 };
                 mockToPixels = jasmine.createSpy('toPixels');
 
-                mockTimespan.getStart.andReturn(100);
-                mockTimespan.getDuration.andReturn(50);
-                mockTimespan.getEnd.andReturn(150);
+                mockTimespan.getStart.and.returnValue(100);
+                mockTimespan.getDuration.and.returnValue(50);
+                mockTimespan.getEnd.and.returnValue(150);
 
-                mockToPixels.andCallFake(function (t) {
+                mockToPixels.and.callFake(function (t) {
                     return t * 10;
                 });
 

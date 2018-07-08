@@ -49,8 +49,8 @@ define(
 
                 model = { someKey: "some value" };
 
-                mockDomainObject.getCapability.andReturn("some capability");
-                mockDomainObject.getModel.andReturn(model);
+                mockDomainObject.getCapability.and.returnValue("some capability");
+                mockDomainObject.getModel.and.returnValue(model);
 
                 contextualDomainObject = new ContextualDomainObject(
                     mockDomainObject,

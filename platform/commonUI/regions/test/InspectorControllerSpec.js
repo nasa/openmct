@@ -46,7 +46,7 @@ define(
                 mockDomainObject = jasmine.createSpyObj('domainObject', [
                     'getCapability'
                 ]);
-                mockDomainObject.getCapability.andReturn(mockTypeDef);
+                mockDomainObject.getCapability.and.returnValue(mockTypeDef);
 
                 mockScope = jasmine.createSpyObj('$scope',
                     ['$on', 'selection']
@@ -63,7 +63,7 @@ define(
                     'off',
                     'get'
                 ]);
-                mockSelection.get.andReturn(selectable);
+                mockSelection.get.and.returnValue(selectable);
 
                 mockInspectorViews = jasmine.createSpyObj('inspectorViews', ['get']);
                 mockOpenMCT = {
@@ -73,7 +73,7 @@ define(
 
                 container = jasmine.createSpy('container', ['innerHTML']);
                 $document[0] = jasmine.createSpyObj("$document", ['querySelectorAll']);
-                $document[0].querySelectorAll.andReturn([container]);
+                $document[0].querySelectorAll.and.returnValue([container]);
 
                 controller = new InspectorController(mockScope, mockOpenMCT, $document);
             });
@@ -89,10 +89,10 @@ define(
                 var mockItem = jasmine.createSpyObj('domainObject', [
                     'getCapability'
                 ]);
-                mockItem.getCapability.andReturn(mockTypeDef);
+                mockItem.getCapability.and.returnValue(mockTypeDef);
                 selectable[0].context.oldItem = mockItem;
 
-                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+                mockOpenMCT.selection.on.calls.mostRecent().args[1](selectable);
 
                 expect(controller.selectedItem()).toEqual(mockItem);
             });
@@ -103,7 +103,7 @@ define(
                     jasmine.any(Function)
                 );
 
-                mockScope.$on.calls[0].args[1]();
+                mockScope.$on.calls.all()[0].args[1]();
 
                 expect(mockOpenMCT.selection.off).toHaveBeenCalledWith(
                     'change',

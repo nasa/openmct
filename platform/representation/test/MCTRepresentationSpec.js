@@ -56,7 +56,7 @@ define(
             }
 
             function fireWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$watch.calls.all().forEach(function (call) {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
@@ -107,7 +107,7 @@ define(
                             "representer" + name,
                             ["represent", "destroy"]
                         );
-                    constructor.andReturn(representer);
+                    constructor.and.returnValue(representer);
                     return constructor;
                 });
 
@@ -126,13 +126,13 @@ define(
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
 
-                mockDomainObject.getModel.andReturn(testModel);
-                mockLinker.link.andReturn(mockChangeTemplate);
-                mockLinker.getPath.andCallFake(function (ext) {
+                mockDomainObject.getModel.and.returnValue(testModel);
+                mockLinker.link.and.returnValue(mockChangeTemplate);
+                mockLinker.getPath.and.callFake(function (ext) {
                     return testUrls[ext.key];
                 });
 
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObject.getCapability.and.callFake(function (c) {
                     return c === 'mutation' && mockMutationCapability;
                 });
 
@@ -212,7 +212,7 @@ define(
                 mockScope.domainObject = mockDomainObject;
 
                 // Trigger the watch
-                mockScope.$watch.calls[0].args[1]();
+                mockScope.$watch.calls.all()[0].args[1]();
 
                 expect(mockDomainObject.useCapability)
                     .toHaveBeenCalledWith("testCapability");
@@ -227,7 +227,7 @@ define(
                 expect(mockLog.warn).not.toHaveBeenCalled();
 
                 // Trigger the watch
-                mockScope.$watch.calls[0].args[1]();
+                mockScope.$watch.calls.all()[0].args[1]();
 
                 // Should have gotten a warning - that's an unknown key
                 expect(mockLog.warn).toHaveBeenCalled();
@@ -236,17 +236,17 @@ define(
             it("clears out obsolete properties from scope", function () {
                 mockScope.key = "def";
                 mockScope.domainObject = mockDomainObject;
-                mockDomainObject.useCapability.andReturn("some value");
+                mockDomainObject.useCapability.and.returnValue("some value");
 
                 // Trigger the watch
-                mockScope.$watch.calls[0].args[1]();
+                mockScope.$watch.calls.all()[0].args[1]();
                 expect(mockScope.testCapability).toBeDefined();
 
                 // Change the view
                 mockScope.key = "xyz";
 
                 // Trigger the watch again; should clear capability from scope
-                mockScope.$watch.calls[0].args[1]();
+                mockScope.$watch.calls.all()[0].args[1]();
                 expect(mockScope.testCapability).toBeUndefined();
             });
 
@@ -268,38 +268,38 @@ define(
                         DOMAIN_OBJECT_METHODS
                     );
 
-                    mockDomainObject.getCapability.andCallFake(function (c) {
+                    mockDomainObject.getCapability.and.callFake(function (c) {
                         return {
                             context: mockContext,
                             mutation: mockMutationCapability
                         }[c];
                     });
-                    mockLink.getCapability.andCallFake(function (c) {
+                    mockLink.getCapability.and.callFake(function (c) {
                         return {
                             context: mockContext2,
                             mutation: mockMutationCapability
                         }[c];
                     });
-                    mockDomainObject.hasCapability.andCallFake(function (c) {
+                    mockDomainObject.hasCapability.and.callFake(function (c) {
                         return c === 'context';
                     });
-                    mockLink.hasCapability.andCallFake(function (c) {
+                    mockLink.hasCapability.and.callFake(function (c) {
                         return c === 'context';
                     });
-                    mockLink.getModel.andReturn({});
+                    mockLink.getModel.and.returnValue({});
 
-                    mockContext.getPath.andReturn([mockDomainObject]);
-                    mockContext2.getPath.andReturn([mockParent, mockLink]);
+                    mockContext.getPath.and.returnValue([mockDomainObject]);
+                    mockContext2.getPath.and.returnValue([mockParent, mockLink]);
 
-                    mockLink.getId.andReturn('test-id');
-                    mockDomainObject.getId.andReturn('test-id');
+                    mockLink.getId.and.returnValue('test-id');
+                    mockDomainObject.getId.and.returnValue('test-id');
 
-                    mockParent.getId.andReturn('parent-id');
+                    mockParent.getId.and.returnValue('parent-id');
 
                     mockScope.key = "abc";
                     mockScope.domainObject = mockDomainObject;
 
-                    mockScope.$watch.calls[0].args[1]();
+                    mockScope.$watch.calls.all()[0].args[1]();
                 });
 
                 it("listens for mutation of that object", function () {
@@ -308,19 +308,19 @@ define(
                 });
 
                 it("detects subsequent changes among linked instances", function () {
-                    var callCount = mockChangeTemplate.calls.length;
+                    var callCount = mockChangeTemplate.calls.count();
 
                     mockScope.domainObject = mockLink;
-                    mockScope.$watch.calls[0].args[1]();
+                    mockScope.$watch.calls.all()[0].args[1]();
 
-                    expect(mockChangeTemplate.calls.length)
+                    expect(mockChangeTemplate.calls.count())
                         .toEqual(callCount + 1);
                 });
 
                 it("does not trigger excess template changes for same instances", function () {
-                    var callCount = mockChangeTemplate.calls.length;
-                    mockScope.$watch.calls[0].args[1]();
-                    expect(mockChangeTemplate.calls.length).toEqual(callCount);
+                    var callCount = mockChangeTemplate.calls.count();
+                    mockScope.$watch.calls.all()[0].args[1]();
+                    expect(mockChangeTemplate.calls.count()).toEqual(callCount);
                 });
 
             });

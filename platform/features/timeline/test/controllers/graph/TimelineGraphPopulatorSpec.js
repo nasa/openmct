@@ -64,15 +64,15 @@ define(
                             'graph-' + k,
                             ['getPointCount', 'getDomainValue', 'getRangeValue']
                         );
-                    mockSwimlane.graph.andReturn(true);
+                    mockSwimlane.graph.and.returnValue(true);
                     mockSwimlane.domainObject = jasmine.createSpyObj(
                         'domainObject-' + k,
                         ['getCapability', 'hasCapability', 'useCapability', 'getId']
                     );
-                    mockSwimlane.color.andReturn('#' + k);
+                    mockSwimlane.color.and.returnValue('#' + k);
                     // Provide just enough information about graphs to support
                     // determination of which graphs to show
-                    mockSwimlane.domainObject.useCapability.andCallFake(function () {
+                    mockSwimlane.domainObject.useCapability.and.callFake(function () {
                         var obj = {};
                         testResources[k].forEach(function (r) {
                             obj[r] = mockGraph;
@@ -80,16 +80,16 @@ define(
                         return asPromise(obj);
                     });
                     mockSwimlane.domainObject.hasCapability
-                        .andReturn(true);
+                        .and.returnValue(true);
                     mockSwimlane.domainObject.getId
-                        .andReturn(k);
-                    mockGraph.getPointCount.andReturn(0);
+                        .and.returnValue(k);
+                    mockGraph.getPointCount.and.returnValue(0);
 
                     return mockSwimlane;
                 });
 
-                mockQ.when.andCallFake(asPromise);
-                mockQ.all.andCallFake(allPromises);
+                mockQ.when.and.callFake(asPromise);
+                mockQ.all.and.callFake(allPromises);
 
                 populator = new TimelineGraphPopulator(mockQ);
             });
@@ -105,7 +105,7 @@ define(
             });
 
             it("does not include graphs based on swimlane configuration", function () {
-                mockSwimlanes[2].graph.andReturn(false);
+                mockSwimlanes[2].graph.and.returnValue(false);
                 populator.populate(mockSwimlanes);
                 // Only two unique swimlanes in the other two
                 expect(populator.get().length).toEqual(2);
@@ -140,7 +140,7 @@ define(
                 populator.populate(mockSwimlanes);
                 initialValue = populator.get();
                 // Change resource graph inclusion...
-                mockSwimlanes[1].graph.andReturn(false);
+                mockSwimlanes[1].graph.and.returnValue(false);
                 populator.populate(mockSwimlanes);
                 // Now we should get different graphs
                 expect(populator.get()).not.toBe(initialValue);

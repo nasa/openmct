@@ -30,7 +30,7 @@ define(
                 controller;
 
             function fireWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$watch.calls.all().forEach(function (call) {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
@@ -38,7 +38,7 @@ define(
             }
 
             function fireWatchCollection(expr, value) {
-                mockScope.$watchCollection.calls.forEach(function (call) {
+                mockScope.$watchCollection.calls.all().forEach(function (call) {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }

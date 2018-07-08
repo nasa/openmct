@@ -46,10 +46,10 @@ define([
             ]);
             mockScope.scroll = { x: 10, width: 1000 };
 
-            spyOn(mockmct.time, "on").andCallThrough();
-            spyOn(mockmct.time, "off").andCallThrough();
-            spyOn(mockTimerService, "on").andCallThrough();
-            spyOn(mockTimerService, "off").andCallThrough();
+            spyOn(mockmct.time, "on").and.callThrough();
+            spyOn(mockmct.time, "off").and.callThrough();
+            spyOn(mockTimerService, "on").and.callThrough();
+            spyOn(mockTimerService, "off").and.callThrough();
 
             controller = new TimelineTOIController(
                 mockmct,
@@ -96,11 +96,11 @@ define([
             beforeEach(function () {
                 testNow = 333221;
                 mockScope.zoomController.toPixels
-                    .andCallFake(function (millis) {
+                    .and.callFake(function (millis) {
                         return millis * 2;
                     });
                 mockTimerService.emit('change', mockTimer);
-                mockTimerService.now.andReturn(testNow);
+                mockTimerService.now.and.returnValue(testNow);
             });
 
             it("reports an x value from the zoomController", function () {
@@ -125,7 +125,7 @@ define([
         describe("when follow mode is enabled", function () {
             beforeEach(function () {
                 mockScope.scroll.follow = true;
-                mockTimerService.now.andReturn(500);
+                mockTimerService.now.and.returnValue(500);
             });
 
             it("zooms on bounds events", function () {

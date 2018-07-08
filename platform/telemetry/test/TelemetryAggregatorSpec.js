@@ -44,8 +44,8 @@ define(
                         ["requestTelemetry", "subscribe"]
                     ),
                     unsubscribe = jasmine.createSpy("unsubscribe" + index);
-                provider.requestTelemetry.andReturn({ someKey: key });
-                provider.subscribe.andReturn(unsubscribe);
+                provider.requestTelemetry.and.returnValue({ someKey: key });
+                provider.subscribe.and.returnValue(unsubscribe);
 
                 // Store to verify interactions later
                 mockUnsubscribes[index] = unsubscribe;
@@ -54,7 +54,7 @@ define(
 
             beforeEach(function () {
                 mockQ = jasmine.createSpyObj("$q", ["all"]);
-                mockQ.all.andReturn(mockPromise([]));
+                mockQ.all.and.returnValue(mockPromise([]));
 
                 mockUnsubscribes = [];
                 mockProviders = ["a", "b", "c"].map(makeMockProvider);
@@ -79,7 +79,7 @@ define(
             it("merges results from all providers", function () {
                 var capture = jasmine.createSpy("capture");
 
-                mockQ.all.andReturn(mockPromise([
+                mockQ.all.and.returnValue(mockPromise([
                     { someKey: "some value" },
                     { someOtherKey: "some other value" }
                 ]));

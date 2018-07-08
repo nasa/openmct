@@ -38,8 +38,8 @@ define([
                 'useCapability'
             ]) };
             testAdaptedObject = { foo: 'bar' };
-            testContext.domainObject.getModel.andReturn(testModel);
-            testContext.domainObject.useCapability.andCallFake(function (c) {
+            testContext.domainObject.getModel.and.returnValue(testModel);
+            testContext.domainObject.useCapability.and.callFake(function (c) {
                 return c === 'adapter' && testAdaptedObject;
             });
         });

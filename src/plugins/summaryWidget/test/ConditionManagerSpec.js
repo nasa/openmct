@@ -144,17 +144,17 @@ define(['../src/ConditionManager'], function (ConditionManager) {
             };
             mockMetadataManagers = {
                 mockCompObject1: {
-                    values: jasmine.createSpy('metadataManager').andReturn(
+                    values: jasmine.createSpy('metadataManager').and.returnValue(
                         Object.values(mockMetadata.mockCompObject1)
                     )
                 },
                 mockCompObject2: {
-                    values: jasmine.createSpy('metadataManager').andReturn(
+                    values: jasmine.createSpy('metadataManager').and.returnValue(
                         Object.values(mockMetadata.mockCompObject2)
                     )
                 },
                 mockCompObject3: {
-                    values: jasmine.createSpy('metadataManager').andReturn(
+                    values: jasmine.createSpy('metadataManager').and.returnValue(
                         Object.values(mockMetadata.mockCompObject2)
                     )
                 }
@@ -166,18 +166,18 @@ define(['../src/ConditionManager'], function (ConditionManager) {
                 'load',
                 'triggerCallback'
             ]);
-            mockComposition.on.andCallFake(function (event, callback, context) {
+            mockComposition.on.and.callFake(function (event, callback, context) {
                 mockEventCallbacks[event] = callback.bind(context);
             });
-            mockComposition.off.andCallFake(function (event) {
+            mockComposition.off.and.callFake(function (event) {
                 unregisterSpies[event]();
             });
-            mockComposition.load.andCallFake(function () {
+            mockComposition.load.and.callFake(function () {
                 mockComposition.triggerCallback('add', mockCompObject1);
                 mockComposition.triggerCallback('add', mockCompObject2);
                 mockComposition.triggerCallback('load');
             });
-            mockComposition.triggerCallback.andCallFake(function (event, obj) {
+            mockComposition.triggerCallback.and.callFake(function (event, obj) {
                 if (event === 'add') {
                     mockEventCallbacks.add(obj);
                 } else if (event === 'remove') {
@@ -194,7 +194,7 @@ define(['../src/ConditionManager'], function (ConditionManager) {
                 'subscribe',
                 'triggerTelemetryCallback'
             ]);
-            mockTelemetryAPI.request.andCallFake(function (obj) {
+            mockTelemetryAPI.request.and.callFake(function (obj) {
                 var req = {
                     object: obj
                 };
@@ -205,15 +205,15 @@ define(['../src/ConditionManager'], function (ConditionManager) {
                 telemetryRequests.push(req);
                 return req.promise;
             });
-            mockTelemetryAPI.isTelemetryObject.andReturn(true);
-            mockTelemetryAPI.getMetadata.andCallFake(function (obj) {
+            mockTelemetryAPI.isTelemetryObject.and.returnValue(true);
+            mockTelemetryAPI.getMetadata.and.callFake(function (obj) {
                 return mockMetadataManagers[obj.identifier.key];
             });
-            mockTelemetryAPI.subscribe.andCallFake(function (obj, callback) {
+            mockTelemetryAPI.subscribe.and.callFake(function (obj, callback) {
                 mockTelemetryCallbacks[obj.identifier.key] = callback;
                 return unsubscribeSpies[obj.identifier.key];
             });
-            mockTelemetryAPI.triggerTelemetryCallback.andCallFake(function (key) {
+            mockTelemetryAPI.triggerTelemetryCallback.and.callFake(function (key) {
                 mockTelemetryCallbacks[key](mockTelemetryValues2[key]);
             });
 
@@ -221,7 +221,7 @@ define(['../src/ConditionManager'], function (ConditionManager) {
                 telemetry: mockTelemetryAPI,
                 composition: {}
             };
-            mockOpenMCT.composition.get = jasmine.createSpy('get').andReturn(mockComposition);
+            mockOpenMCT.composition.get = jasmine.createSpy('get').and.returnValue(mockComposition);
 
             loadCallbackSpy = jasmine.createSpy('loadCallbackSpy');
             addCallbackSpy = jasmine.createSpy('addCallbackSpy');
@@ -336,23 +336,23 @@ define(['../src/ConditionManager'], function (ConditionManager) {
             });
         });
 
-        it('populates its LAD cache with historial data on load, if available', function () {
+        it('populates its LAD cache with historial data on load, if available', function (done) {
             expect(telemetryRequests.length).toBe(2);
             expect(telemetryRequests[0].object).toBe(mockCompObject1);
             expect(telemetryRequests[1].object).toBe(mockCompObject2);
 
             expect(telemetryCallbackSpy).not.toHaveBeenCalled();
 
+            telemetryCallbackSpy.and.callFake(function () {
+                if (telemetryCallbackSpy.calls.count() === 2) {
+                    expect(conditionManager.subscriptionCache.mockCompObject1.property1).toEqual('Its a string');
+                    expect(conditionManager.subscriptionCache.mockCompObject2.property4).toEqual(66);
+                    done();
+                }
+            });
+
             telemetryRequests[0].resolve([mockTelemetryValues.mockCompObject1]);
             telemetryRequests[1].resolve([mockTelemetryValues.mockCompObject2]);
-
-            waitsFor(function () {
-                return telemetryCallbackSpy.calls.length === 2;
-            });
-            runs(function () {
-                expect(conditionManager.subscriptionCache.mockCompObject1.property1).toEqual('Its a string');
-                expect(conditionManager.subscriptionCache.mockCompObject2.property4).toEqual(66);
-            });
         });
 
         it('updates its LAD cache upon recieving telemetry and invokes the appropriate handlers', function () {
@@ -378,9 +378,9 @@ define(['../src/ConditionManager'], function (ConditionManager) {
                     }
                 };
 
-            mockConditionEvaluator.execute.andReturn(false);
+            mockConditionEvaluator.execute.and.returnValue(false);
             expect(conditionManager.executeRules(mockRuleOrder, mockRules)).toEqual('default');
-            mockConditionEvaluator.execute.andReturn(true);
+            mockConditionEvaluator.execute.and.returnValue(true);
             expect(conditionManager.executeRules(mockRuleOrder, mockRules)).toEqual('rule1');
         });
 

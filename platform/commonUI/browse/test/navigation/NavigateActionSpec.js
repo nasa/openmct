@@ -34,17 +34,6 @@ define([
             mockDomainObject,
             action;
 
-
-        function waitForCall() {
-            var called = false;
-            waitsFor(function () {
-                return called;
-            });
-            return function () {
-                called = true;
-            };
-        }
-
         beforeEach(function () {
             mockNavigationService = jasmine.createSpyObj(
                 "navigationService",
@@ -63,26 +52,24 @@ define([
         });
 
         it("sets navigation if it is allowed", function () {
-            mockNavigationService.shouldNavigate.andReturn(true);
-            action.perform()
-                .then(waitForCall());
-            runs(function () {
-                expect(mockNavigationService.setNavigation)
+            mockNavigationService.shouldNavigate.and.returnValue(true);
+            return action.perform()
+                .then(function () {
+                    expect(mockNavigationService.setNavigation)
                     .toHaveBeenCalledWith(mockDomainObject, true);
-            });
+                });
         });
 
         it("does not set navigation if it is not allowed", function () {
-            mockNavigationService.shouldNavigate.andReturn(false);
+            mockNavigationService.shouldNavigate.and.returnValue(false);
             var onSuccess = jasmine.createSpy('onSuccess');
-            action.perform()
-                .then(onSuccess, waitForCall());
-            runs(function () {
-                expect(onSuccess).not.toHaveBeenCalled();
-                expect(mockNavigationService.setNavigation)
-                    .not
-                    .toHaveBeenCalledWith(mockDomainObject);
-            });
+            return action.perform()
+                .then(onSuccess, function () {
+                    expect(onSuccess).not.toHaveBeenCalled();
+                    expect(mockNavigationService.setNavigation)
+                        .not
+                        .toHaveBeenCalledWith(mockDomainObject);
+                });
         });
 
         it("is only applicable when a domain object is in context", function () {

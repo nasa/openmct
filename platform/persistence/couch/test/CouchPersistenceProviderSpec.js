@@ -47,7 +47,7 @@ define(
                 mockHttp = jasmine.createSpy("$http");
                 mockQ = jasmine.createSpyObj("$q", ["when"]);
 
-                mockQ.when.andCallFake(mockPromise);
+                mockQ.when.and.callFake(mockPromise);
 
                 // Capture promise results
                 capture = jasmine.createSpy("capture");
@@ -70,20 +70,21 @@ define(
             // would expect, and finally verify that CouchPersistenceProvider's
             // return values match what is expected.
             it("lists all available documents", function () {
-                mockHttp.andReturn(mockPromise({
+                mockHttp.and.returnValue(mockPromise({
                     data: { rows: [{ id: "a" }, { id: "b" }, { id: "c" }] }
                 }));
                 provider.listObjects().then(capture);
                 expect(mockHttp).toHaveBeenCalledWith({
                     url: "/test/db/_all_docs", // couch document listing
-                    method: "GET"
+                    method: "GET",
+                    data: undefined
                 });
                 expect(capture).toHaveBeenCalledWith(["a", "b", "c"]);
             });
 
             it("allows object creation", function () {
                 var model = { someKey: "some value" };
-                mockHttp.andReturn(mockPromise({
+                mockHttp.and.returnValue(mockPromise({
                     data: { "_id": "abc", "_rev": "xyz", "ok": true }
                 }));
                 provider.createObject("testSpace", "abc", model).then(capture);
@@ -92,6 +93,8 @@ define(
                     method: "PUT",
                     data: {
                         "_id": "abc",
+                        "_rev": undefined,
+                        "_deleted": undefined,
                         metadata: jasmine.any(Object),
                         model: model
                     }
@@ -101,13 +104,14 @@ define(
 
             it("allows object models to be read back", function () {
                 var model = { someKey: "some value" };
-                mockHttp.andReturn(mockPromise({
+                mockHttp.and.returnValue(mockPromise({
                     data: { "_id": "abc", "_rev": "xyz", "model": model }
                 }));
                 provider.readObject("testSpace", "abc").then(capture);
                 expect(mockHttp).toHaveBeenCalledWith({
                     url: "/test/db/abc",
-                    method: "GET"
+                    method: "GET",
+                    data: undefined
                 });
                 expect(capture).toHaveBeenCalledWith(model);
             });
@@ -116,13 +120,13 @@ define(
                 var model = { someKey: "some value" };
 
                 // First do a read to populate rev tags...
-                mockHttp.andReturn(mockPromise({
+                mockHttp.and.returnValue(mockPromise({
                     data: { "_id": "abc", "_rev": "xyz", "model": {} }
                 }));
                 provider.readObject("testSpace", "abc");
 
                 // Now perform an update
-                mockHttp.andReturn(mockPromise({
+                mockHttp.and.returnValue(mockPromise({
                     data: { "_id": "abc", "_rev": "uvw", "ok": true }
                 }));
                 provider.updateObject("testSpace", "abc", model).then(capture);
@@ -132,6 +136,7 @@ define(
                     data: {
                         "_id": "abc",
                         "_rev": "xyz",
+                        "_deleted": undefined,
                         metadata: jasmine.any(Object),
                         model: model
                     }
@@ -141,13 +146,13 @@ define(
 
             it("allows object deletion", function () {
                 // First do a read to populate rev tags...
-                mockHttp.andReturn(mockPromise({
+                mockHttp.and.returnValue(mockPromise({
                     data: { "_id": "abc", "_rev": "xyz", "model": {} }
                 }));
                 provider.readObject("testSpace", "abc");
 
                 // Now perform an update
-                mockHttp.andReturn(mockPromise({
+                mockHttp.and.returnValue(mockPromise({
                     data: { "_id": "abc", "_rev": "uvw", "ok": true }
                 }));
                 provider.deleteObject("testSpace", "abc", {}).then(capture);
@@ -167,7 +172,7 @@ define(
 
             it("reports failure to create objects", function () {
                 var model = { someKey: "some value" };
-                mockHttp.andReturn(mockPromise({
+                mockHttp.and.returnValue(mockPromise({
                     data: { "_id": "abc", "_rev": "xyz", "ok": false }
                 }));
                 provider.createObject("testSpace", "abc", model).then(capture);
@@ -176,7 +181,7 @@ define(
 
             it("returns undefined when objects are not found", function () {
                 // Act like a 404
-                mockHttp.andReturn({
+                mockHttp.and.returnValue({
                     then: function (success, fail) {
                         return mockPromise(fail());
                     }

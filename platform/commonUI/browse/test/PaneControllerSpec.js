@@ -53,8 +53,8 @@ define(
                         ['getId', 'getModel', 'getCapability']
                     );
 
-                    mockDomainObject.getId.andReturn(id);
-                    mockDomainObject.getModel.andReturn({});
+                    mockDomainObject.getId.and.returnValue(id);
+                    mockDomainObject.getModel.and.returnValue({});
 
                     return mockDomainObject;
                 });
@@ -65,7 +65,7 @@ define(
                 mockWindow = jasmine.createSpyObj("$window", ["open"]);
 
                 mockLocation = jasmine.createSpyObj('location', ['search']);
-                mockLocation.search.andReturn({});
+                mockLocation.search.and.returnValue({});
 
                 mockAttrs = {};
             });
@@ -83,9 +83,9 @@ define(
             });
 
             it("collapses on navigation changes on portrait-oriented phones", function () {
-                mockAgentService.isMobile.andReturn(true);
-                mockAgentService.isPhone.andReturn(true);
-                mockAgentService.isPortrait.andReturn(true);
+                mockAgentService.isMobile.and.returnValue(true);
+                mockAgentService.isPhone.and.returnValue(true);
+                mockAgentService.isPortrait.and.returnValue(true);
                 controller = instantiateController();
                 expect(controller.visible()).toBeTruthy();
 
@@ -102,13 +102,13 @@ define(
                 });
 
                 it("sets pane state to false when in location.search", function () {
-                    mockLocation.search.andReturn({'hideTree': true});
+                    mockLocation.search.and.returnValue({'hideTree': true});
                     expect(instantiateController().visible()).toBe(false);
                     expect(mockLocation.search).toHaveBeenCalledWith('hideTree', undefined);
                 });
 
                 it("sets state to true when not found in location.search", function () {
-                    mockLocation.search.andReturn({});
+                    mockLocation.search.and.returnValue({});
                     expect(instantiateController().visible()).toBe(true);
                     expect(mockLocation.search).not.toHaveBeenCalledWith('hideTree', undefined);
                 });

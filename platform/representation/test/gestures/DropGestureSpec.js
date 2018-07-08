@@ -76,21 +76,21 @@ define(
                 mockAction = jasmine.createSpyObj('action', ['getActions']);
                 mockCompose = jasmine.createSpyObj('compose', ['perform']);
 
-                mockDomainObject.getId.andReturn(TEST_ID);
-                mockDomainObject.getModel.andReturn(testModel);
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObject.getId.and.returnValue(TEST_ID);
+                mockDomainObject.getModel.and.returnValue(testModel);
+                mockDomainObject.getCapability.and.callFake(function (c) {
                     return {
                         persistence: mockPersistence,
                         action: mockAction
                     }[c];
                 });
-                mockDomainObject.useCapability.andReturn(true);
-                mockEvent.dataTransfer.getData.andReturn(DROP_ID);
+                mockDomainObject.useCapability.and.returnValue(true);
+                mockEvent.dataTransfer.getData.and.returnValue(DROP_ID);
                 mockElement[0] = mockUnwrappedElement;
-                mockElement.scope.andReturn(mockScope);
-                mockUnwrappedElement.getBoundingClientRect.andReturn(testRect);
-                mockDndService.getData.andReturn(mockDraggedObject);
-                mockAction.getActions.andReturn([mockCompose]);
+                mockElement.scope.and.returnValue(mockScope);
+                mockUnwrappedElement.getBoundingClientRect.and.returnValue(testRect);
+                mockDndService.getData.and.returnValue(mockDraggedObject);
+                mockAction.getActions.and.returnValue([mockCompose]);
 
                 gesture = new DropGesture(
                     mockDndService,
@@ -101,7 +101,7 @@ define(
 
                 // Get a reference to all callbacks registered during constructor
                 callbacks = {};
-                mockElement.on.calls.forEach(function (call) {
+                mockElement.on.calls.all().forEach(function (call) {
                     callbacks[call.args[0]] = call.args[1];
                 });
             });
@@ -132,7 +132,7 @@ define(
 
             it("invokes compose on drop in edit mode", function () {
                 // Set the mockDomainObject to have the editor capability
-                mockDomainObject.hasCapability.andReturn(true);
+                mockDomainObject.hasCapability.and.returnValue(true);
 
                 callbacks.dragover(mockEvent);
                 expect(mockAction.getActions).toHaveBeenCalledWith({
@@ -145,9 +145,9 @@ define(
 
             it("invokes compose on drop in browse mode for folders", function () {
                 // Set the mockDomainObject to not have the editor capability
-                mockDomainObject.hasCapability.andReturn(false);
+                mockDomainObject.hasCapability.and.returnValue(false);
                 // Set the mockDomainObject to have a type of folder
-                mockDomainObject.getModel.andReturn({type: 'folder'});
+                mockDomainObject.getModel.and.returnValue({type: 'folder'});
 
                 callbacks.dragover(mockEvent);
                 expect(mockAction.getActions).toHaveBeenCalledWith({
@@ -160,7 +160,7 @@ define(
 
             it("broadcasts drop position (in edit mode)", function () {
                 // Set the mockDomainObject to have the editor capability
-                mockDomainObject.hasCapability.andReturn(true);
+                mockDomainObject.hasCapability.and.returnValue(true);
 
                 testRect.left = 42;
                 testRect.top = 36;

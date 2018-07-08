@@ -48,7 +48,7 @@ define(
                 testAttrs = { mctSwimlaneDrag: "someTestExpr" };
 
                 // Simulate evaluation of expressions in scope
-                mockScope.$eval.andCallFake(function (expr) {
+                mockScope.$eval.and.callFake(function (expr) {
                     return scopeExprs[expr];
                 });
 
@@ -58,7 +58,7 @@ define(
                 // for testing.
                 directive.link(mockScope, mockElement, testAttrs);
 
-                mockElement.on.calls.forEach(function (call) {
+                mockElement.on.calls.all().forEach(function (call) {
                     handlers[call.args[0]] = call.args[1];
                 });
 

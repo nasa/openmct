@@ -46,8 +46,8 @@ define(
                     'domainObject',
                     ['getCapability', 'getId', 'getModel', 'hasCapability', 'useCapability']
                 );
-                mockCreationService.createObject.andReturn(mockPromise);
-                mockParent.getId.andReturn('test-id');
+                mockCreationService.createObject.and.returnValue(mockPromise);
+                mockParent.getId.and.returnValue('test-id');
                 decorator = new LocatingCreationDecorator(mockCreationService);
             });
 

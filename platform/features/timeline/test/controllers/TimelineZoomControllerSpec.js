@@ -95,24 +95,24 @@ define(
                         'getDuration'
                     ]);
 
-                    mockDomainObject.useCapability.andCallFake(function (c) {
+                    mockDomainObject.useCapability.and.callFake(function (c) {
                         return c === 'timespan' && mockPromise;
                     });
-                    mockPromise.then.andCallFake(function (callback) {
+                    mockPromise.then.and.callFake(function (callback) {
                         callback(mockTimespan);
                     });
-                    mockTimespan.getStart.andReturn(testStart);
-                    mockTimespan.getEnd.andReturn(testEnd);
-                    mockTimespan.getDuration.andReturn(testEnd - testStart);
+                    mockTimespan.getStart.and.returnValue(testStart);
+                    mockTimespan.getEnd.and.returnValue(testEnd);
+                    mockTimespan.getDuration.and.returnValue(testEnd - testStart);
 
                     mockScope.scroll = { x: 0, width: 20000 };
                     mockScope.domainObject = mockDomainObject;
 
-                    mockScope.$watch.calls.forEach(function (call) {
+                    mockScope.$watch.calls.all().forEach(function (call) {
                         call.args[1](mockScope[call.args[0]]);
                     });
 
-                    mockWindow.requestAnimationFrame.calls.forEach(function (call) {
+                    mockWindow.requestAnimationFrame.calls.all().forEach(function (call) {
                         call.args[0]();
                     });
                 });

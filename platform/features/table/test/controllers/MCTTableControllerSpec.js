@@ -47,7 +47,7 @@ define(
                 mockFormat;
 
             function getCallback(target, event) {
-                return target.calls.filter(function (call) {
+                return target.calls.all().filter(function (call) {
                     return call.args[0] === event;
                 })[0].args[1];
             }
@@ -61,7 +61,7 @@ define(
                    '$watchCollection',
                    '$digest'
                 ]);
-                mockScope.$watchCollection.andCallFake(function (event, callback) {
+                mockScope.$watchCollection.and.callFake(function (event, callback) {
                     watches[event] = callback;
                 });
 
@@ -80,7 +80,7 @@ define(
 
                 mockScope.displayHeaders = true;
                 mockWindow = jasmine.createSpyObj('$window', ['requestAnimationFrame']);
-                mockWindow.requestAnimationFrame.andCallFake(function (f) {
+                mockWindow.requestAnimationFrame.and.callFake(function (f) {
                     return f();
                 });
 
@@ -91,7 +91,7 @@ define(
                 mockFormatService = jasmine.createSpyObj('formatService', [
                     'getFormat'
                 ]);
-                mockFormatService.getFormat.andReturn(mockFormat);
+                mockFormatService.getFormat.and.returnValue(mockFormat);
 
                 controller = new MCTTableController(
                     mockScope,
@@ -101,7 +101,7 @@ define(
                     mockFormatService,
                     {time: mockConductor}
                 );
-                spyOn(controller, 'setVisibleRows').andCallThrough();
+                spyOn(controller, 'setVisibleRows').and.callThrough();
             });
 
             it('Reacts to changes to filters, headers, and rows', function () {
@@ -186,8 +186,8 @@ define(
                         mockScope.sortDirection = 'asc';
 
                         var toi = moment.utc(testDate).valueOf();
-                        mockFormat.parse.andReturn(toi);
-                        mockFormat.format.andReturn(testDate);
+                        mockFormat.parse.and.returnValue(toi);
+                        mockFormat.format.and.returnValue(testDate);
 
                         //mock setting the timeColumns parameter
                         getCallback(mockScope.$watch, 'timeColumns')(['col2']);
@@ -204,8 +204,8 @@ define(
                         mockScope.sortDirection = 'desc';
 
                         var toi = moment.utc(testDate).valueOf();
-                        mockFormat.parse.andReturn(toi);
-                        mockFormat.format.andReturn(testDate);
+                        mockFormat.parse.and.returnValue(toi);
+                        mockFormat.format.and.returnValue(testDate);
 
                         //mock setting the timeColumns parameter
                         getCallback(mockScope.$watch, 'timeColumns')(['col2']);
@@ -220,9 +220,9 @@ define(
                         mockScope.sortDirection = 'asc';
 
                         var toi = moment.utc(testDate).valueOf();
-                        mockFormat.parse.andReturn(toi);
-                        mockFormat.format.andReturn(testDate);
-                        mockConductor.timeOfInterest.andReturn(toi);
+                        mockFormat.parse.and.returnValue(toi);
+                        mockFormat.format.and.returnValue(testDate);
+                        mockConductor.timeOfInterest.and.returnValue(toi);
 
                         //mock setting the timeColumns parameter
                         getCallback(mockScope.$watch, 'timeColumns')(['col2']);
@@ -230,19 +230,10 @@ define(
                         //Mock setting the rows on scope
                         var rowsCallback = getCallback(mockScope.$watch, 'rows');
                         var setRowsPromise = rowsCallback(rowsAsc);
-                        var promiseResolved = false;
-                        setRowsPromise.then(function () {
-                            promiseResolved = true;
-                        });
 
-                        waitsFor(function () {
-                            return promiseResolved;
-                        }, "promise to resolve", 100);
-
-                        runs(function () {
+                        return setRowsPromise.then(function () {
                             expect(mockScope.toiRowIndex).toBe(2);
                         });
-
                     });
 
                 });
@@ -322,7 +313,7 @@ define(
                     mockScope.exportAsCSV();
                     expect(mockExportService.exportCSV)
                         .toHaveBeenCalled();
-                    mockExportService.exportCSV.mostRecentCall.args[0]
+                    mockExportService.exportCSV.calls.mostRecent().args[0]
                         .forEach(function (row, i) {
                             Object.keys(row).forEach(function (k) {
                                 expect(row[k]).toEqual(
@@ -389,18 +380,11 @@ define(
                         var oldRows;
                         mockScope.rows = testRows;
                         var setRowsPromise = controller.setRows(testRows);
-                        var promiseResolved = false;
-                        setRowsPromise.then(function () {
-                            promiseResolved = true;
-                        });
+
                         oldRows = mockScope.visibleRows;
                         mockScope.toggleSort('col2');
 
-                        waitsFor(function () {
-                            return promiseResolved;
-                        }, "promise to resolve", 100);
-
-                        runs(function () {
+                        return setRowsPromise.then(function () {
                             expect(mockScope.visibleRows).not.toEqual(oldRows);
                         });
                     });

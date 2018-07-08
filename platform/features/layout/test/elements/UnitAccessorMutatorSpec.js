@@ -72,11 +72,11 @@ define(
                 uAM = new UnitAccessorMutator(mockElementProxy);
                 uAMLine = new UnitAccessorMutator(mockLineProxy);
 
-                mockElementProxy.getMinWidth.andReturn(1);
-                mockElementProxy.getMinHeight.andReturn(1);
+                mockElementProxy.getMinWidth.and.returnValue(1);
+                mockElementProxy.getMinHeight.and.returnValue(1);
 
-                mockLineProxy.getMinWidth.andReturn(1);
-                mockLineProxy.getMinHeight.andReturn(1);
+                mockLineProxy.getMinWidth.and.returnValue(1);
+                mockLineProxy.getMinHeight.and.returnValue(1);
             });
 
             it("allows access to useGrid", function () {

@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 define(
     ["../src/BrowseObjectController"],
     function (BrowseObjectController) {
@@ -33,7 +32,7 @@ define(
 
             // Utility function; look for a $watch on scope and fire it
             function fireWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$watch.calls.all().forEach(function (call) {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
@@ -50,7 +49,7 @@ define(
                     "$location",
                     ["path", "search"]
                 );
-                mockLocation.search.andReturn({});
+                mockLocation.search.and.returnValue({});
 
                 controller = new BrowseObjectController(
                     mockScope,
@@ -65,7 +64,7 @@ define(
 
                 // Allows the path index to be checked
                 // prior to setting $route.current
-                mockLocation.path.andReturn("/browse/");
+                mockLocation.path.and.returnValue("/browse/");
             });
 
             it("sets the active view from query parameters", function () {
@@ -79,10 +78,10 @@ define(
                         { key: 'xyz' }
                     ];
 
-                mockDomainObject.useCapability.andCallFake(function (c) {
+                mockDomainObject.useCapability.and.callFake(function (c) {
                     return (c === 'view') && testViews;
                 });
-                mockLocation.search.andReturn({ view: 'def' });
+                mockLocation.search.and.returnValue({ view: 'def' });
 
                 fireWatch('domainObject', mockDomainObject);
                 expect(mockScope.representation.selected)

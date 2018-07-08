@@ -50,28 +50,14 @@ define(
             });
 
             it("wraps require results in a Promise that can resolve", function () {
-                var result;
-
                 // Load and get the result
-                loader.load("xyz.js").then(function (v) {
-                    result = v;
+                var promise = loader.load("xyz.js").then(function (result) {
+                    expect(result).toEqual("test result");
                 });
-
-                expect(result).toBeUndefined();
 
                 required.fulfill("test result");
 
-                waitsFor(
-                    function () {
-                        return result !== undefined;
-                    },
-                                       "promise resolution",
-                                       250
-                                   );
-
-                runs(function () {
-                    expect(result).toEqual("test result");
-                });
+                return promise;
             });
 
             it("wraps require results in a Promise that can reject", function () {
@@ -79,28 +65,19 @@ define(
                     rejection;
 
                 // Load and get the result
-                loader.load("xyz.js").then(
+                var promise = loader.load("xyz.js").then(
                     function (v) {
                         result = v;
                     },
                     function (v) {
                         rejection = v;
-                    }
-                                   );
+                    });
 
                 expect(result).toBeUndefined();
 
                 required.reject("test result");
 
-                waitsFor(
-                    function () {
-                        return rejection !== undefined;
-                    },
-                                       "promise resolution",
-                                       250
-                                   );
-
-                runs(function () {
+                return promise.then(function () {
                     expect(result).toBeUndefined();
                     expect(rejection).toEqual("test result");
                 });

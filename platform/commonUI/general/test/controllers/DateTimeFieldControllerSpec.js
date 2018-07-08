@@ -33,7 +33,7 @@ define(
                 controller;
 
             function fireWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$watch.calls.all().forEach(function (call) {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
@@ -50,15 +50,15 @@ define(
                     'format'
                 ]);
 
-                mockFormatService.getFormat.andReturn(mockFormat);
+                mockFormatService.getFormat.and.returnValue(mockFormat);
 
-                mockFormat.validate.andCallFake(function (text) {
+                mockFormat.validate.and.callFake(function (text) {
                     return moment.utc(text, TEST_FORMAT).isValid();
                 });
-                mockFormat.parse.andCallFake(function (text) {
+                mockFormat.parse.and.callFake(function (text) {
                     return moment.utc(text, TEST_FORMAT).valueOf();
                 });
-                mockFormat.format.andCallFake(function (value) {
+                mockFormat.format.and.callFake(function (value) {
                     return moment.utc(value).format(TEST_FORMAT);
                 });
 
@@ -159,8 +159,8 @@ define(
                 var newText = "2015-3-3 01:02:04",
                     oldValue = mockScope.ngModel.testField;
 
-                mockFormat.validate.andReturn(true);
-                mockFormat.parse.andReturn(42);
+                mockFormat.validate.and.returnValue(true);
+                mockFormat.parse.and.returnValue(42);
                 mockScope.textValue = newText;
                 fireWatch("textValue", newText);
 
@@ -176,7 +176,7 @@ define(
             });
 
             it("throws an error for unknown formats", function () {
-                mockFormatService.getFormat.andReturn(undefined);
+                mockFormatService.getFormat.and.returnValue(undefined);
                 expect(function () {
                     fireWatch("structure.format", "some-format");
                 }).toThrow();
@@ -187,9 +187,9 @@ define(
                     testText = "some text";
 
                 beforeEach(function () {
-                    mockFormat.validate.andReturn(true);
-                    mockFormat.parse.andReturn(testValue);
-                    mockFormat.format.andReturn(testText);
+                    mockFormat.validate.and.returnValue(true);
+                    mockFormat.parse.and.returnValue(testValue);
+                    mockFormat.format.and.returnValue(testText);
                 });
 
                 it("parses user input", function () {

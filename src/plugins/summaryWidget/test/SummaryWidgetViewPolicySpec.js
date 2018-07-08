@@ -35,19 +35,19 @@ define([
             domainObject = jasmine.createSpyObj('domainObject', [
                 'getModel'
             ]);
-            domainObject.getModel.andReturn({});
+            domainObject.getModel.and.returnValue({});
             view = {};
         });
 
         it('returns true for other object types', function () {
-            domainObject.getModel.andReturn({
+            domainObject.getModel.and.returnValue({
                 type: 'random'
             });
             expect(policy.allow(view, domainObject)).toBe(true);
         });
 
         it('allows summary widget view for summary widgets', function () {
-            domainObject.getModel.andReturn({
+            domainObject.getModel.and.returnValue({
                 type: 'summary-widget'
             });
             view.key = 'summary-widget-viewer';
@@ -55,7 +55,7 @@ define([
         });
 
         it('disallows other views for summary widgets', function () {
-            domainObject.getModel.andReturn({
+            domainObject.getModel.and.returnValue({
                 type: 'summary-widget'
             });
             view.key = 'other view';

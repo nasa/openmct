@@ -44,7 +44,7 @@ define(
             it("conveys form status to parent scope", function () {
                 var someState = { someKey: "some value" };
                 mockScope.name = "someName";
-                mockScope.$watch.mostRecentCall.args[1](someState);
+                mockScope.$watch.calls.mostRecent().args[1](someState);
                 expect(mockScope.$parent.someName).toBe(someState);
             });
 

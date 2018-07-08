@@ -78,14 +78,14 @@ define(
                     height: 75
                 };
 
-                mockCompile.andCallFake(function () {
+                mockCompile.and.callFake(function () {
                     var mockFn = jasmine.createSpy();
-                    mockFn.andReturn(mockNewElement);
+                    mockFn.and.returnValue(mockNewElement);
                     return mockFn;
                 });
-                mockElement.parent.andReturn([mockParentEl]);
-                mockParentEl.getBoundingClientRect.andReturn(testRect);
-                mockPopupService.display.andReturn(mockPopup);
+                mockElement.parent.and.returnValue([mockParentEl]);
+                mockParentEl.getBoundingClientRect.and.returnValue(testRect);
+                mockPopupService.display.and.returnValue(mockPopup);
 
                 mctPopup = new MCTPopup(mockCompile, mockPopupService);
 
@@ -113,14 +113,14 @@ define(
                 it("displays transcluded content", function () {
                     var mockClone =
                         jasmine.createSpyObj('clone', JQLITE_METHODS);
-                    mockTransclude.mostRecentCall.args[0](mockClone);
+                    mockTransclude.calls.mostRecent().args[0](mockClone);
                     expect(mockNewElement.append)
                         .toHaveBeenCalledWith(mockClone);
                 });
 
                 it("is removed when its containing scope is destroyed", function () {
                     expect(mockPopup.dismiss).not.toHaveBeenCalled();
-                    mockScope.$on.calls.forEach(function (call) {
+                    mockScope.$on.calls.all().forEach(function (call) {
                         if (call.args[0] === '$destroy') {
                             call.args[1]();
                         }

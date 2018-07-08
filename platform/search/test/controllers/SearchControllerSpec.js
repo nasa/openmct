@@ -67,7 +67,7 @@ define([
                 'promise',
                 ['then']
             );
-            mockSearchService.query.andReturn(mockPromise);
+            mockSearchService.query.and.returnValue(mockPromise);
 
             mockTypes = [{key: 'mock.type', name: 'Mock Type', cssClass: 'icon-object-unknown'}];
 
@@ -80,7 +80,7 @@ define([
                 ['getModel']
             );
             mockSearchResult.object = mockDomainObject;
-            mockDomainObject.getModel.andReturn({name: 'Mock Object', type: 'mock.type'});
+            mockDomainObject.getModel.and.returnValue({name: 'Mock Object', type: 'mock.type'});
 
             controller = new SearchController(mockScope, mockSearchService, mockTypes);
             controller.search();
@@ -102,14 +102,14 @@ define([
             it('returns true when all types allowed', function () {
                 mockScope.ngModel.checkAll = true;
                 controller.onFilterChange();
-                var filterFn = mockSearchService.query.mostRecentCall.args[2];
+                var filterFn = mockSearchService.query.calls.mostRecent().args[2];
                 expect(filterFn('askbfa')).toBe(true);
             });
 
             it('returns true only for matching checked types', function () {
                 mockScope.ngModel.checkAll = false;
                 controller.onFilterChange();
-                var filterFn = mockSearchService.query.mostRecentCall.args[2];
+                var filterFn = mockSearchService.query.calls.mostRecent().args[2];
                 expect(filterFn({type: 'mock.type'})).toBe(true);
                 expect(filterFn({type: 'other.type'})).toBe(false);
             });
@@ -117,7 +117,7 @@ define([
 
         it('populates the results with results from the search service', function () {
             expect(mockPromise.then).toHaveBeenCalledWith(jasmine.any(Function));
-            mockPromise.then.mostRecentCall.args[0]({hits: ['a']});
+            mockPromise.then.calls.mostRecent().args[0]({hits: ['a']});
 
             expect(mockScope.results.length).toBe(1);
             expect(mockScope.results).toContain('a');
@@ -127,12 +127,12 @@ define([
             expect(mockScope.loading).toBeTruthy();
 
             // Then resolve the promises
-            mockPromise.then.mostRecentCall.args[0]({hits: []});
+            mockPromise.then.calls.mostRecent().args[0]({hits: []});
             expect(mockScope.loading).toBeFalsy();
         });
 
         it('detects when there are more results', function () {
-            mockPromise.then.mostRecentCall.args[0]({
+            mockPromise.then.calls.mostRecent().args[0]({
                 hits: bigArray(controller.RESULTS_PER_PAGE),
                 total: controller.RESULTS_PER_PAGE + 5
             });
@@ -148,7 +148,7 @@ define([
                 jasmine.any(Function)
             );
 
-            mockPromise.then.mostRecentCall.args[0]({
+            mockPromise.then.calls.mostRecent().args[0]({
                 hits: bigArray(controller.RESULTS_PER_PAGE + 5),
                 total: controller.RESULTS_PER_PAGE + 5
             });
@@ -166,13 +166,13 @@ define([
             // Flag should be false with empty input
             mockScope.ngModel.input = '';
             controller.search();
-            mockPromise.then.mostRecentCall.args[0]({hits: [], total: 0});
+            mockPromise.then.calls.mostRecent().args[0]({hits: [], total: 0});
             expect(mockScope.ngModel.search).toEqual(false);
 
             // Both the empty string and undefined should be 'empty input'
             mockScope.ngModel.input = undefined;
             controller.search();
-            mockPromise.then.mostRecentCall.args[0]({hits: [], total: 0});
+            mockPromise.then.calls.mostRecent().args[0]({hits: [], total: 0});
             expect(mockScope.ngModel.search).toEqual(false);
         });
 

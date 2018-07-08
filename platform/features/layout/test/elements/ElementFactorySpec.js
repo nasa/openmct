@@ -42,8 +42,8 @@ define(
                     ['then']
                 );
 
-                mockDialogService.getUserInput.andReturn(mockPromise);
-                mockPromise.then.andReturn(mockPromise);
+                mockDialogService.getUserInput.and.returnValue(mockPromise);
+                mockPromise.then.and.returnValue(mockPromise);
 
                 factory = new ElementFactory(mockDialogService);
             });

@@ -52,8 +52,8 @@ define([
                     'useCapability'
                 ]);
 
-                domainObject.getId.andReturn('anId');
-                domainObject.getModel.andReturn({name: 'anObject'});
+                domainObject.getId.and.returnValue('anId');
+                domainObject.getModel.and.returnValue({name: 'anObject'});
 
                 representation = {
                     key: 'someRepresentation'
@@ -75,7 +75,7 @@ define([
                 expect(domainObject.useCapability)
                     .toHaveBeenCalledWith('mutation', jasmine.any(Function));
 
-                var mutateValue = domainObject.useCapability.calls[0].args[1]();
+                var mutateValue = domainObject.useCapability.calls.all()[0].args[1]();
 
                 expect(mutateValue.configuration.someRepresentation)
                     .toEqual({some: 'config'});

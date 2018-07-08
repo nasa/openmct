@@ -69,7 +69,7 @@ define(
                     }
                 };
 
-                mockObjectService.getObjects.andReturn(mockPromise([]));
+                mockObjectService.getObjects.and.returnValue(mockPromise([]));
 
                 relationship = new RelationshipCapability(
                     mockInjector,
@@ -87,7 +87,7 @@ define(
             it("requests ids found in model's composition from the object service", function () {
                 var ids = ["a", "b", "c", "xyz"];
 
-                mockDomainObject.getModel.andReturn({ relationships: { xyz: ids } });
+                mockDomainObject.getModel.and.returnValue({ relationships: { xyz: ids } });
 
                 relationship.getRelatedObjects('xyz');
 
@@ -95,7 +95,7 @@ define(
             });
 
             it("provides a list of relationship types", function () {
-                mockDomainObject.getModel.andReturn({ relationships: {
+                mockDomainObject.getModel.and.returnValue({ relationships: {
                     abc: ['a', 'b'],
                     def: "not an array, should be ignored",
                     xyz: []
@@ -107,14 +107,14 @@ define(
                 // Lookups can be expensive, so this capability
                 // should have some self-caching
                 mockDomainObject.getModel
-                    .andReturn({ relationships: { xyz: ['a'] } });
+                    .and.returnValue({ relationships: { xyz: ['a'] } });
 
                 // Call twice; response should be the same object instance
                 expect(relationship.getRelatedObjects('xyz'))
                     .toBe(relationship.getRelatedObjects('xyz'));
 
                 // Should have only made one call
-                expect(mockObjectService.getObjects.calls.length)
+                expect(mockObjectService.getObjects.calls.count())
                     .toEqual(1);
             });
 
@@ -125,7 +125,7 @@ define(
 
                 testModel = { relationships: { xyz: ['a'] } };
 
-                mockDomainObject.getModel.andReturn(testModel);
+                mockDomainObject.getModel.and.returnValue(testModel);
 
                 // Call twice, but as if modification had occurred in between
                 relationship.getRelatedObjects('xyz');
@@ -133,7 +133,7 @@ define(
                 relationship.getRelatedObjects('xyz');
 
                 // Should have only made one call
-                expect(mockObjectService.getObjects.calls.length)
+                expect(mockObjectService.getObjects.calls.count())
                     .toEqual(2);
             });
 

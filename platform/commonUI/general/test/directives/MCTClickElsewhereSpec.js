@@ -66,9 +66,9 @@ define(
                     height: 75
                 };
                 mockElement[0] = mockPlainEl;
-                mockPlainEl.getBoundingClientRect.andReturn(testRect);
+                mockPlainEl.getBoundingClientRect.and.returnValue(testRect);
 
-                mockDocument.find.andReturn(mockBody);
+                mockDocument.find.and.returnValue(mockBody);
 
                 mctClickElsewhere = new MCTClickElsewhere(mockDocument);
                 mctClickElsewhere.link(mockScope, mockElement, testAttrs);
@@ -80,14 +80,14 @@ define(
 
             it("detaches listeners when destroyed", function () {
                 expect(mockBody.off).not.toHaveBeenCalled();
-                mockScope.$on.calls.forEach(function (call) {
+                mockScope.$on.calls.all().forEach(function (call) {
                     if (call.args[0] === '$destroy') {
                         call.args[1]();
                     }
                 });
                 expect(mockBody.off).toHaveBeenCalled();
-                expect(mockBody.off.mostRecentCall.args)
-                    .toEqual(mockBody.on.mostRecentCall.args);
+                expect(mockBody.off.calls.mostRecent().args)
+                    .toEqual(mockBody.on.calls.mostRecent().args);
             });
 
             it("listens for mousedown on the document's body", function () {
@@ -97,7 +97,7 @@ define(
 
             describe("when a click occurs outside the element's bounds", function () {
                 beforeEach(function () {
-                    mockBody.on.mostRecentCall.args[1](testEvent(
+                    mockBody.on.calls.mostRecent().args[1](testEvent(
                         testRect.left + testRect.width + 10,
                         testRect.top + testRect.height + 10
                     ));
@@ -105,7 +105,7 @@ define(
 
                 it("triggers an evaluation of its related Angular expression", function () {
                     expect(mockScope.$apply).toHaveBeenCalled();
-                    mockScope.$apply.mostRecentCall.args[0]();
+                    mockScope.$apply.calls.mostRecent().args[0]();
                     expect(mockScope.$eval)
                         .toHaveBeenCalledWith(testAttrs.mctClickElsewhere);
                 });
@@ -113,7 +113,7 @@ define(
 
             describe("when a click occurs within the element's bounds", function () {
                 beforeEach(function () {
-                    mockBody.on.mostRecentCall.args[1](testEvent(
+                    mockBody.on.calls.mostRecent().args[1](testEvent(
                         testRect.left + testRect.width / 2,
                         testRect.top + testRect.height / 2
                     ));

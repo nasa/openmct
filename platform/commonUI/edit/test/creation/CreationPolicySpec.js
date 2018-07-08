@@ -38,12 +38,12 @@ define(
             });
 
             it("allows creation of types with the creation feature", function () {
-                mockType.hasFeature.andReturn(true);
+                mockType.hasFeature.and.returnValue(true);
                 expect(policy.allow(mockType)).toBeTruthy();
             });
 
             it("disallows creation of types without the creation feature", function () {
-                mockType.hasFeature.andReturn(false);
+                mockType.hasFeature.and.returnValue(false);
                 expect(policy.allow(mockType)).toBeFalsy();
             });
         });

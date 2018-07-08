@@ -65,34 +65,35 @@ define([
             mockActionCapability = jasmine.createSpyObj('action', ['perform']);
             mockEditor = jasmine.createSpyObj('editor', ['isEditContextRoot']);
 
-            mockThrottle.andCallFake(function (fn) {
+            mockThrottle.and.callFake(function (fn) {
                 var mockThrottledFn =
                     jasmine.createSpy('throttled-' + mockThrottledFns.length);
-                mockThrottledFn.andCallFake(fn);
+                mockThrottledFn.and.callFake(fn);
                 mockThrottledFns.push(mockThrottledFn);
                 return mockThrottledFn;
             });
-            mockTopic.andReturn(mockMutationTopic);
-            mockDomainObject.getId.andReturn(testId);
-            mockDomainObject.getCapability.andCallFake(function (c) {
+            mockTopic.and.returnValue(mockMutationTopic);
+            mockDomainObject.getId.and.returnValue(testId);
+            mockDomainObject.getCapability.and.callFake(function (c) {
                 return {
                     context: mockContext,
                     editor: mockEditor
                 }[c];
             });
-            mockDomainObject.hasCapability.andCallFake(function (c) {
+            mockDomainObject.hasCapability.and.callFake(function (c) {
                 return !!mockDomainObject.getCapability(c);
             });
-            mockParentObject.getCapability.andCallFake(function (c) {
+            mockParentObject.getCapability.and.callFake(function (c) {
                 return {
                     action: mockActionCapability
                 }[c];
             });
             testParentComposition = [];
-            mockParentObject.useCapability.andReturn(Promise.resolve(testParentComposition));
-            mockContext.getParent.andReturn(mockParentObject);
-            mockNavigationService.getNavigation.andReturn(mockDomainObject);
-            mockEditor.isEditContextRoot.andReturn(false);
+            mockParentObject.useCapability.and.returnValue(Promise.resolve(testParentComposition));
+
+            mockContext.getParent.and.returnValue(mockParentObject);
+            mockNavigationService.getNavigation.and.returnValue(mockDomainObject);
+            mockEditor.isEditContextRoot.and.returnValue(false);
 
             return new OrphanNavigationHandler(
                 mockThrottle,
@@ -106,7 +107,7 @@ define([
             expect(mockMutationTopic.listen)
                 .toHaveBeenCalledWith(jasmine.any(Function));
             expect(mockThrottledFns.indexOf(
-                mockMutationTopic.listen.mostRecentCall.args[0]
+                mockMutationTopic.listen.calls.mostRecent().args[0]
             )).not.toEqual(-1);
         });
 
@@ -114,7 +115,7 @@ define([
             expect(mockNavigationService.addListener)
                 .toHaveBeenCalledWith(jasmine.any(Function));
             expect(mockThrottledFns.indexOf(
-                mockNavigationService.addListener.mostRecentCall.args[0]
+                mockNavigationService.addListener.calls.mostRecent().args[0]
             )).not.toEqual(-1);
         });
 
@@ -134,28 +135,14 @@ define([
                     function itNavigatesAsExpected() {
                         if (isOrphan && !isEditRoot) {
                             it("navigates to the parent", function () {
-                                var done = false;
-                                waitsFor(function () {
-                                    return done;
-                                });
-                                setTimeout(function () {
-                                    done = true;
-                                }, 5);
-                                runs(function () {
+                                return Promise.resolve().then(function () {
                                     expect(mockActionCapability.perform)
                                         .toHaveBeenCalledWith('navigate');
                                 });
                             });
                         } else {
                             it("does nothing", function () {
-                                var done = false;
-                                waitsFor(function () {
-                                    return done;
-                                });
-                                setTimeout(function () {
-                                    done = true;
-                                }, 5);
-                                runs(function () {
+                                return Promise.resolve().then(function () {
                                     expect(mockActionCapability.perform)
                                         .not.toHaveBeenCalled();
                                 });
@@ -165,12 +152,12 @@ define([
 
                     describe(caseName, function () {
                         beforeEach(function () {
-                            mockEditor.isEditContextRoot.andReturn(isEditRoot);
+                            mockEditor.isEditContextRoot.and.returnValue(isEditRoot);
                         });
 
                         describe("when navigation changes", function () {
                             beforeEach(function () {
-                                mockNavigationService.addListener.mostRecentCall
+                                mockNavigationService.addListener.calls.mostRecent()
                                     .args[0](mockDomainObject);
                             });
                             itNavigatesAsExpected();
@@ -178,7 +165,7 @@ define([
 
                         describe("when mutation occurs", function () {
                             beforeEach(function () {
-                                mockMutationTopic.listen.mostRecentCall
+                                mockMutationTopic.listen.calls.mostRecent()
                                     .args[0](mockParentObject);
                             });
 

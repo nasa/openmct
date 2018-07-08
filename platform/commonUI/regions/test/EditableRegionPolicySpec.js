@@ -46,26 +46,26 @@ define(
                 mockDomainObject = jasmine.createSpyObj("domainObject", [
                     "hasCapability", "getCapability"
                 ]);
-                mockDomainObject.hasCapability.andReturn(true);
-                mockDomainObject.getCapability.andReturn(mockEditorCapability);
+                mockDomainObject.hasCapability.and.returnValue(true);
+                mockDomainObject.getCapability.and.returnValue(mockEditorCapability);
             });
 
             it("includes only browse region parts for object not in edit mode", function () {
-                mockEditorCapability.inEditContext.andReturn(false);
+                mockEditorCapability.inEditContext.and.returnValue(false);
                 expect(editableRegionPolicy.allow(mockBrowseRegionPart, mockDomainObject)).toBe(true);
                 expect(editableRegionPolicy.allow(mockEditRegionPart, mockDomainObject)).toBe(false);
             });
 
             it("includes only edit region parts for object in edit mode", function () {
-                mockEditorCapability.inEditContext.andReturn(true);
+                mockEditorCapability.inEditContext.and.returnValue(true);
                 expect(editableRegionPolicy.allow(mockBrowseRegionPart, mockDomainObject)).toBe(false);
                 expect(editableRegionPolicy.allow(mockEditRegionPart, mockDomainObject)).toBe(true);
             });
 
             it("includes region parts with no mode specification", function () {
-                mockEditorCapability.inEditContext.andReturn(false);
+                mockEditorCapability.inEditContext.and.returnValue(false);
                 expect(editableRegionPolicy.allow(mockAllModesRegionPart, mockDomainObject)).toBe(true);
-                mockEditorCapability.inEditContext.andReturn(true);
+                mockEditorCapability.inEditContext.and.returnValue(true);
                 expect(editableRegionPolicy.allow(mockAllModesRegionPart, mockDomainObject)).toBe(true);
             });
 

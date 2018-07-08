@@ -58,10 +58,10 @@ define(
                 mockEditAction = jasmine.createSpyObj('edit', ['getMetadata']);
                 mockPropertiesAction = jasmine.createSpyObj('edit', ['getMetadata']);
 
-                mockDomainObject.getCapability.andCallFake(function (capability) {
+                mockDomainObject.getCapability.and.callFake(function (capability) {
                     return capabilities[capability];
                 });
-                mockDomainObject.hasCapability.andCallFake(function (capability) {
+                mockDomainObject.hasCapability.and.callFake(function (capability) {
                     return !!capabilities[capability];
                 });
 
@@ -71,13 +71,13 @@ define(
                 plotView = { key: "plot", editable: false };
                 testViews = [];
 
-                mockDomainObject.useCapability.andCallFake(function (c) {
+                mockDomainObject.useCapability.and.callFake(function (c) {
                     // Provide test views, only for the view capability
                     return c === 'view' && testViews;
                 });
 
-                mockEditAction.getMetadata.andReturn({ key: 'edit' });
-                mockPropertiesAction.getMetadata.andReturn({ key: 'properties' });
+                mockEditAction.getMetadata.and.returnValue({ key: 'edit' });
+                mockPropertiesAction.getMetadata.and.returnValue({ key: 'properties' });
 
                 testContext = {
                     domainObject: mockDomainObject,
@@ -111,20 +111,20 @@ define(
             it("disallows the edit action when object is already being" +
                 " edited", function () {
                 testViews = [editableView];
-                mockEditorCapability.isEditContextRoot.andReturn(true);
+                mockEditorCapability.isEditContextRoot.and.returnValue(true);
                 expect(policy.allow(mockEditAction, testContext)).toBe(false);
             });
 
             it("allows editing of panels in plot view", function () {
                 testViews = [plotView];
-                mockTypeCapability.getKey.andReturn('telemetry.panel');
+                mockTypeCapability.getKey.and.returnValue('telemetry.panel');
 
                 expect(policy.allow(mockEditAction, testContext)).toBe(true);
             });
 
             it("disallows editing of plot view when object not a panel type", function () {
                 testViews = [plotView];
-                mockTypeCapability.getKey.andReturn('something.else');
+                mockTypeCapability.getKey.and.returnValue('something.else');
 
                 expect(policy.allow(mockEditAction, testContext)).toBe(false);
             });

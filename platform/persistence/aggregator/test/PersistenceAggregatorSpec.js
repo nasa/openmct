@@ -60,14 +60,14 @@ define(
                         PERSISTENCE_SERVICE_METHODS
                     );
                     PERSISTENCE_SERVICE_METHODS.forEach(function (m) {
-                        mockProvider[m].andReturn(fakePromise(true));
+                        mockProvider[m].and.returnValue(fakePromise(true));
                     });
-                    mockProvider.listSpaces.andReturn(fakePromise([space]));
+                    mockProvider.listSpaces.and.returnValue(fakePromise([space]));
                     return mockProvider;
                 });
                 mockCallback = jasmine.createSpy();
 
-                mockQ.all.andCallFake(function (fakePromises) {
+                mockQ.all.and.callFake(function (fakePromises) {
                     var result = [];
                     fakePromises.forEach(function (p) {
                         p.then(function (v) {

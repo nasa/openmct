@@ -24,8 +24,8 @@
  * Module defining ActionCapability. Created by vwoeltje on 11/10/14.
  */
 define(
-    [],
-    function () {
+    ['lodash'],
+    function (_) {
 
         /**
          * The ActionCapability allows applicable Actions to be retrieved and
@@ -74,10 +74,14 @@ define(
             // Get all actions which are valid in this context;
             // this simply redirects to the action service,
             // but additionally adds a domainObject field.
-            var baseContext = typeof context === 'string' ?
-                        { key: context } : (context || {}),
-                actionContext = Object.create(baseContext);
+            var baseContext;
+            if (typeof context === 'string') {
+                baseContext =  { key: context };
+            } else {
+                baseContext = context || {};
+            }
 
+            var actionContext = _.extend({}, baseContext);
             actionContext.domainObject = this.domainObject;
 
             return this.actionService.getActions(actionContext);

@@ -62,7 +62,7 @@ define(
                 // Expansion is tracked on a timeout, because too
                 // much expansion can result in an unstable digest.
                 expect(mockTimeout).toHaveBeenCalled();
-                mockTimeout.mostRecentCall.args[0]();
+                mockTimeout.calls.mostRecent().args[0]();
 
                 expect(controller.hasBeenExpanded()).toBeTruthy();
                 controller.trackExpansion();
@@ -77,7 +77,7 @@ define(
                     ),
                     obj = new TestObject("test-object", mockContext);
 
-                mockContext.getPath.andReturn([obj]);
+                mockContext.getPath.and.returnValue([obj]);
 
                 // Verify precondition
                 expect(controller.isSelected()).toBeFalsy();
@@ -86,7 +86,7 @@ define(
                 mockScope.domainObject = obj;
 
                 // Invoke the watch with the new selection
-                mockScope.$watch.calls[0].args[1](obj);
+                mockScope.$watch.calls.all()[0].args[1](obj);
 
                 expect(controller.isSelected()).toBeTruthy();
             });
@@ -103,9 +103,9 @@ define(
                     parent = new TestObject("parent", mockParentContext),
                     child = new TestObject("child", mockChildContext);
 
-                mockChildContext.getParent.andReturn(parent);
-                mockChildContext.getPath.andReturn([parent, child]);
-                mockParentContext.getPath.andReturn([parent]);
+                mockChildContext.getParent.and.returnValue(parent);
+                mockChildContext.getPath.and.returnValue([parent, child]);
+                mockParentContext.getPath.and.returnValue([parent]);
 
                 // Set up such that we are on, but not at the end of, a path
                 mockScope.ngModel = { selectedObject: child };
@@ -113,13 +113,13 @@ define(
                 mockScope.toggle = jasmine.createSpyObj("toggle", ["setState"]);
 
                 // Invoke the watch with the new selection
-                mockScope.$watch.calls[0].args[1](child);
+                mockScope.$watch.calls.all()[0].args[1](child);
 
                 // Expansion is tracked on a timeout, because too
                 // much expansion can result in an unstable digest.
                 // Trigger that timeout.
                 expect(mockTimeout).toHaveBeenCalled();
-                mockTimeout.mostRecentCall.args[0]();
+                mockTimeout.calls.mostRecent().args[0]();
 
                 expect(mockScope.toggle.setState).toHaveBeenCalledWith(true);
                 expect(controller.hasBeenExpanded()).toBeTruthy();
@@ -139,9 +139,9 @@ define(
                     parent = new TestObject("parent", mockParentContext),
                     child = new TestObject("child", mockChildContext);
 
-                mockChildContext.getParent.andReturn(parent);
-                mockChildContext.getPath.andReturn([child, child]);
-                mockParentContext.getPath.andReturn([parent]);
+                mockChildContext.getParent.and.returnValue(parent);
+                mockChildContext.getPath.and.returnValue([child, child]);
+                mockParentContext.getPath.and.returnValue([parent]);
 
                 // Set up such that we are on, but not at the end of, a path
                 mockScope.ngModel = { selectedObject: child };
@@ -149,7 +149,7 @@ define(
                 mockScope.toggle = jasmine.createSpyObj("toggle", ["setState"]);
 
                 // Invoke the watch with the new selection
-                mockScope.$watch.calls[0].args[1](child);
+                mockScope.$watch.calls.all()[0].args[1](child);
 
                 // Expansion is tracked on a timeout, because too
                 // much expansion can result in an unstable digest.
@@ -172,9 +172,9 @@ define(
                     parent = new TestObject("parent", mockParentContext),
                     child = new TestObject("child", undefined);
 
-                mockChildContext.getParent.andReturn(parent);
-                mockChildContext.getPath.andReturn([parent, child]);
-                mockParentContext.getPath.andReturn([parent]);
+                mockChildContext.getParent.and.returnValue(parent);
+                mockChildContext.getPath.and.returnValue([parent, child]);
+                mockParentContext.getPath.and.returnValue([parent]);
 
                 // Set up such that we are on, but not at the end of, a path
                 mockScope.ngModel = { selectedObject: child };
@@ -182,7 +182,7 @@ define(
                 mockScope.toggle = jasmine.createSpyObj("toggle", ["setState"]);
 
                 // Invoke the watch with the new selection
-                mockScope.$watch.calls[0].args[1](child);
+                mockScope.$watch.calls.all()[0].args[1](child);
 
                 expect(mockScope.toggle.setState).not.toHaveBeenCalled();
                 expect(controller.hasBeenExpanded()).toBeFalsy();

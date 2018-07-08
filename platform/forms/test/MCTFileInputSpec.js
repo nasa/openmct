@@ -49,27 +49,19 @@ define(
                 mockScope.field = "file-input";
                 mockScope.ngModel = {"file-input" : undefined};
 
-                element.on.andCallFake(function (event, clickHandler) {
+                element.on.and.callFake(function (event, clickHandler) {
                     clickHandler();
                 });
-                mockFileInputService.getInput.andReturn(
+                mockFileInputService.getInput.and.returnValue(
                     Promise.resolve({name: "file-name", body: "file-body"})
                 );
 
                 mctFileInput = new MCTFileInput(mockFileInputService);
 
-                // Need to wait for mock promise
-                var init = false;
-                runs(function () {
+                return new Promise(function (resolve) {
                     mctFileInput.link(mockScope, element, attrs, control);
-                    setTimeout(function () {
-                        init = true;
-                    }, 100);
+                    setTimeout(resolve, 100);
                 });
-
-                waitsFor(function () {
-                    return init;
-                }, "File selection should have beeen simulated");
             });
 
             it("is restricted to attributes", function () {
@@ -85,11 +77,13 @@ define(
             });
 
             it("validates control on file selection", function () {
-                expect(control.$setValidity.callCount).toBe(2);
-                expect(control.$setValidity.argsForCall[0]).toEqual(
+                var calls = control.$setValidity.calls;
+
+                expect(calls.count()).toBe(2);
+                expect(calls.all()[0].args).toEqual(
                     ['file-input', false]
                 );
-                expect(control.$setValidity.argsForCall[1]).toEqual(
+                expect(calls.all()[1].args).toEqual(
                     ['file-input', true]
                 );
             });

@@ -37,14 +37,14 @@ define(
                 errorModel;
 
             function elapseTimeout() {
-                mockTimeout.mostRecentCall.args[0]();
+                mockTimeout.calls.mostRecent().args[0]();
             }
 
             beforeEach(function () {
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockTopicFunction = jasmine.createSpy("topic");
                 mockTopicObject = jasmine.createSpyObj("topicObject", ["listen", "notify"]);
-                mockTopicFunction.andReturn(mockTopicObject);
+                mockTopicFunction.and.returnValue(mockTopicObject);
 
                 mockAutoDismiss = mockMinimizeTimeout = 1000;
                 notificationService = new NotificationService(mockTimeout, mockTopicFunction, mockAutoDismiss, mockMinimizeTimeout);
@@ -72,7 +72,7 @@ define(
                 expect(mockTopicObject.listen).toHaveBeenCalled();
                 notification.dismiss();
                 expect(mockTopicObject.notify).toHaveBeenCalled();
-                mockTopicObject.listen.mostRecentCall.args[0]();
+                mockTopicObject.listen.calls.mostRecent().args[0]();
                 expect(dismissListener).toHaveBeenCalled();
             });
 
@@ -132,7 +132,7 @@ define(
                 });
 
                 it("keeps alert notifications active if the caller disables auto-dismiss", function () {
-                    mockTimeout.andCallFake(function (callback, time) {
+                    mockTimeout.and.callFake(function (callback, time) {
                         callback();
                     });
                     alertModel.autoDismiss = false;
@@ -143,7 +143,7 @@ define(
                 });
 
                 it("keeps alert notifications active if the caller ignores auto-dismiss", function () {
-                    mockTimeout.andCallFake(function (callback, time) {
+                    mockTimeout.and.callFake(function (callback, time) {
                         callback();
                     });
                     var notification = notificationService.alert(alertModel);
@@ -165,7 +165,7 @@ define(
                 });
 
                 it("keeps error notifications active if the caller disables auto-dismiss", function () {
-                    mockTimeout.andCallFake(function (callback, time) {
+                    mockTimeout.and.callFake(function (callback, time) {
                         callback();
                     });
                     errorModel.autoDismiss = false;
@@ -176,7 +176,7 @@ define(
                 });
 
                 it("keeps error notifications active if the caller ignores auto-dismiss", function () {
-                    mockTimeout.andCallFake(function (callback, time) {
+                    mockTimeout.and.callFake(function (callback, time) {
                         callback();
                     });
                     var notification = notificationService.error(errorModel);

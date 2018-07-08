@@ -63,11 +63,11 @@ define(
                     'getType'
                 ]);
 
-                mockType.hasFeature.andCallFake(function (feature) {
+                mockType.hasFeature.and.callFake(function (feature) {
                     return feature === 'creation';
                 });
 
-                typeService.getType.andReturn(mockType);
+                typeService.getType.and.returnValue(mockType);
 
                 context = {};
                 context.domainObject = domainObjectFactory(
@@ -78,11 +78,11 @@ define(
                             invoke: invokeAdapter
                         }}
                     });
-                identifierService.generate.andReturn('brandNewId');
-                exportService.exportJSON.andCallFake(function (tree, options) {
+                identifierService.generate.and.returnValue('brandNewId');
+                exportService.exportJSON.and.callFake(function (tree, options) {
                     exportedTree = tree;
                 });
-                policyService.allow.andCallFake(function (capability, type) {
+                policyService.allow.and.callFake(function (capability, type) {
                     return type.hasFeature(capability);
                 });
 
@@ -107,7 +107,7 @@ define(
                         }
                 };
 
-                typeService.getType.andReturn(nonCreatableType);
+                typeService.getType.and.returnValue(nonCreatableType);
 
                 var parent = domainObjectFactory({
                     name: 'parent',
@@ -126,19 +126,11 @@ define(
                 context.domainObject = parent;
                 addChild(child);
 
-                var init = false;
-                runs(function () {
-                    action.perform();
-                    setTimeout(function () {
-                        init = true;
-                    }, 100);
-                });
+                action.perform();
 
-                waitsFor(function () {
-                    return init;
-                }, "Exported tree sohuld have been built");
-
-                runs(function () {
+                return new Promise(function (resolve, reject) {
+                    setTimeout(resolve, 100);
+                }).then(function () {
                     expect(Object.keys(action.tree).length).toBe(1);
                     expect(action.tree.hasOwnProperty("parentId"))
                         .toBeTruthy();
@@ -167,19 +159,11 @@ define(
 
                 context.domainObject = parent;
 
-                var init = false;
-                runs(function () {
-                    action.perform();
-                    setTimeout(function () {
-                        init = true;
-                    }, 100);
-                });
+                action.perform();
 
-                waitsFor(function () {
-                    return init;
-                }, "Exported tree sohuld have been built");
-
-                runs(function () {
+                return new Promise(function (resolve, reject) {
+                    setTimeout(resolve, 100);
+                }).then(function () {
                     expect(Object.keys(action.tree).length).toBe(2);
                     expect(action.tree.hasOwnProperty("infiniteParentId"))
                         .toBeTruthy();
@@ -210,19 +194,10 @@ define(
 
                 context.domainObject = parent;
 
-                var init = false;
-                runs(function () {
+                return new Promise (function (resolve) {
                     action.perform();
-                    setTimeout(function () {
-                        init = true;
-                    }, 100);
-                });
-
-                waitsFor(function () {
-                    return init;
-                }, "Exported tree should have been built");
-
-                runs(function () {
+                    setTimeout(resolve, 100);
+                }).then(function () {
                     expect(Object.keys(action.tree).length).toBe(2);
                     expect(action.tree.hasOwnProperty('parentId'))
                         .toBeTruthy();
@@ -233,19 +208,11 @@ define(
             });
 
             it("exports object tree in the correct format", function () {
-                var init = false;
-                runs(function () {
-                    action.perform();
-                    setTimeout(function () {
-                        init = true;
-                    }, 100);
-                });
+                action.perform();
 
-                waitsFor(function () {
-                    return init;
-                }, "Exported tree sohuld have been built");
-
-                runs(function () {
+                return new Promise(function (resolve, reject) {
+                    setTimeout(resolve, 100);
+                }).then(function () {
                     expect(Object.keys(exportedTree).length).toBe(2);
                     expect(exportedTree.hasOwnProperty('openmct')).toBeTruthy();
                     expect(exportedTree.hasOwnProperty('rootId')).toBeTruthy();

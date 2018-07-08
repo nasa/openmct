@@ -39,7 +39,7 @@ define(
                 mockMutationCapability = jasmine.createSpyObj("mutation", ["mutate"]);
                 mockTypeCapability = jasmine.createSpyObj("type", ["typeDef", "hasFeature"]);
                 mockTypeCapability.typeDef = { name: ""};
-                mockTypeCapability.hasFeature.andCallFake(function (feature) {
+                mockTypeCapability.hasFeature.and.callFake(function (feature) {
                     return feature === 'creation';
                 });
 
@@ -52,8 +52,8 @@ define(
                     name: "Test name"
                 };
                 mockDomainObject = jasmine.createSpyObj("domainObject", ["getCapability", "getModel"]);
-                mockDomainObject.getModel.andReturn(model);
-                mockDomainObject.getCapability.andCallFake(function (key) {
+                mockDomainObject.getModel.and.returnValue(model);
+                mockDomainObject.getCapability.and.callFake(function (key) {
                     return mockCapabilities[key];
                 });
 
@@ -62,7 +62,7 @@ define(
                 };
 
                 mockCurrentTarget = jasmine.createSpyObj("currentTarget", ["blur", "textContent"]);
-                mockCurrentTarget.blur.andReturn(mockCurrentTarget);
+                mockCurrentTarget.blur.and.returnValue(mockCurrentTarget);
 
                 mockEvent = {
                     which: {},
@@ -109,7 +109,7 @@ define(
 
                 expect(mockMutationCapability.mutate).toHaveBeenCalledWith(jasmine.any(Function));
 
-                mockMutationCapability.mutate.mostRecentCall.args[0](model);
+                mockMutationCapability.mutate.calls.mostRecent().args[0](model);
 
                 expect(mockDomainObject.getModel().name).toBe("New name");
             });
@@ -127,7 +127,7 @@ define(
             });
 
             it("disallows editting name when object is non-creatable", function () {
-                mockTypeCapability.hasFeature.andReturn(false);
+                mockTypeCapability.hasFeature.and.returnValue(false);
 
                 expect(controller.allowEdit()).toBe(false);
 

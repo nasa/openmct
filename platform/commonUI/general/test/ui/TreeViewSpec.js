@@ -46,15 +46,15 @@ define([
                     'useCapability'
                 ]
             );
-            mockDomainObj.getId.andReturn(id);
-            mockDomainObj.getModel.andReturn(model);
-            mockDomainObj.hasCapability.andCallFake(function (c) {
+            mockDomainObj.getId.and.returnValue(id);
+            mockDomainObj.getModel.and.returnValue(model);
+            mockDomainObj.hasCapability.and.callFake(function (c) {
                 return !!(capabilities[c]);
             });
-            mockDomainObj.getCapability.andCallFake(function (c) {
+            mockDomainObj.getCapability.and.callFake(function (c) {
                 return capabilities[c];
             });
-            mockDomainObj.useCapability.andCallFake(function (c) {
+            mockDomainObj.useCapability.and.callFake(function (c) {
                 return capabilities[c] && capabilities[c].invoke();
             });
             return mockDomainObj;
@@ -68,11 +68,11 @@ define([
 
             mockGestureHandle = jasmine.createSpyObj('gestures', ['destroy']);
 
-            mockGestureService.attachGestures.andReturn(mockGestureHandle);
+            mockGestureService.attachGestures.and.returnValue(mockGestureHandle);
 
             mockMutation = jasmine.createSpyObj('mutation', ['listen']);
             mockUnlisten = jasmine.createSpy('unlisten');
-            mockMutation.listen.andReturn(mockUnlisten);
+            mockMutation.listen.and.returnValue(mockUnlisten);
 
             testCapabilities = { mutation: mockMutation };
 
@@ -102,7 +102,7 @@ define([
                 var mockStatus =
                         jasmine.createSpyObj('status', ['listen', 'list']);
 
-                mockStatus.list.andReturn([]);
+                mockStatus.list.and.returnValue([]);
 
                 return {
                     context: jasmine.createSpyObj('context', ['getPath']),
@@ -113,16 +113,6 @@ define([
                 };
             }
 
-            function waitForCompositionCallback() {
-                var calledBack = false;
-                testCapabilities.composition.invoke().then(function () {
-                    calledBack = true;
-                });
-                waitsFor(function () {
-                    return calledBack;
-                });
-            }
-
             beforeEach(function () {
                 mockComposition = ['a', 'b', 'c'].map(function (id) {
                     var testCaps = makeGenericCapabilities(),
@@ -130,7 +120,7 @@ define([
                             makeMockDomainObject(id, {}, testCaps);
 
                     testCaps.context.getPath
-                        .andReturn([mockDomainObject, mockChild]);
+                        .and.returnValue([mockDomainObject, mockChild]);
 
                     return mockChild;
                 });
@@ -138,10 +128,10 @@ define([
                 testCapabilities.composition =
                     jasmine.createSpyObj('composition', ['invoke']);
                 testCapabilities.composition.invoke
-                    .andReturn(Promise.resolve(mockComposition));
+                    .and.returnValue(Promise.resolve(mockComposition));
 
                 treeView.model(mockDomainObject);
-                waitForCompositionCallback();
+                return testCapabilities.composition.invoke();
             });
 
             it("adds one node per composition element", function () {
@@ -158,8 +148,8 @@ define([
                 beforeEach(function () {
                     mockComposition.pop();
                     testCapabilities.mutation.listen
-                        .mostRecentCall.args[0](mockDomainObject.getModel());
-                    waitForCompositionCallback();
+                        .calls.mostRecent().args[0](mockDomainObject.getModel());
+                    return testCapabilities.composition.invoke();
                 });
 
                 it("continues to show one node per composition element", function () {
@@ -219,38 +209,30 @@ define([
                         mockNewChild =
                             makeMockDomainObject('d', {}, newCapabilities),
                         mockGrandchild =
-                            makeMockDomainObject('gc', {}, gcCapabilities),
-                        calledBackInner = false;
+                            makeMockDomainObject('gc', {}, gcCapabilities);
 
                     newCapabilities.composition =
                         jasmine.createSpyObj('composition', ['invoke']);
                     newCapabilities.composition.invoke
-                        .andReturn(Promise.resolve([mockGrandchild]));
+                        .and.returnValue(Promise.resolve([mockGrandchild]));
                     mockComposition.push(mockNewChild);
 
-                    newCapabilities.context.getPath.andReturn([
+                    newCapabilities.context.getPath.and.returnValue([
                         mockDomainObject,
                         mockNewChild
                     ]);
-                    gcCapabilities.context.getPath.andReturn([
+                    gcCapabilities.context.getPath.and.returnValue([
                         mockDomainObject,
                         mockNewChild,
                         mockGrandchild
                     ]);
 
                     testCapabilities.mutation.listen
-                        .mostRecentCall.args[0](mockDomainObject);
-                    waitForCompositionCallback();
-                    runs(function () {
-                        // Select the innermost object to force expansion,
-                        // such that we can verify the subtree is present.
+                        .calls.mostRecent().args[0](mockDomainObject);
+
+                    return testCapabilities.composition.invoke().then(function () {
                         treeView.value(mockGrandchild);
-                        newCapabilities.composition.invoke().then(function () {
-                            calledBackInner = true;
-                        });
-                    });
-                    waitsFor(function () {
-                        return calledBackInner;
+                        return newCapabilities.composition.invoke();
                     });
                 });
 
@@ -268,8 +250,8 @@ define([
 
                     testStatuses = ['foo'];
 
-                    mockStatus.list.andReturn(testStatuses);
-                    mockStatus.listen.mostRecentCall.args[0](testStatuses);
+                    mockStatus.list.and.returnValue(testStatuses);
+                    mockStatus.listen.calls.mostRecent().args[0](testStatuses);
                 });
 
                 it("reflects the status change in the tree", function () {

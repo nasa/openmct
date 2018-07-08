@@ -60,10 +60,10 @@ define(
                     ['getId', 'getModel', 'getCapability', 'useCapability']
                 );
 
-                mockDomainObj.getId.andReturn(id);
-                mockDomainObj.getModel.andReturn({ composition: composition });
-                mockDomainObj.useCapability.andReturn(asPromise(mockTimespans[id]));
-                mockDomainObj.getCapability.andCallFake(function (c) {
+                mockDomainObj.getId.and.returnValue(id);
+                mockDomainObj.getModel.and.returnValue({ composition: composition });
+                mockDomainObj.useCapability.and.returnValue(asPromise(mockTimespans[id]));
+                mockDomainObj.getCapability.and.callFake(function (c) {
                     return {
                         mutation: mockMutations[id]
                     }[c];
@@ -84,9 +84,9 @@ define(
                         'mutation-' + id,
                         ['mutate']
                     );
-                    mockTimespans[id].getStart.andReturn(index * 1000);
-                    mockTimespans[id].getDuration.andReturn(4000 + index);
-                    mockTimespans[id].getEnd.andReturn(4000 + index + index * 1000);
+                    mockTimespans[id].getStart.and.returnValue(index * 1000);
+                    mockTimespans[id].getDuration.and.returnValue(4000 + index);
+                    mockTimespans[id].getEnd.and.returnValue(4000 + index + index * 1000);
                 });
 
                 mockLoader = jasmine.createSpyObj('objectLoader', ['load']);
@@ -104,7 +104,7 @@ define(
 
                 testConfiguration = {};
 
-                mockLoader.load.andReturn(asPromise(
+                mockLoader.load.and.returnValue(asPromise(
                     subgraph(mockDomainObject, mockDomainObjects)
                 ));
 
@@ -193,7 +193,7 @@ define(
 
             it("prevents bulk moves past 0", function () {
                 // Have a start later; new lowest start is b, at 1000
-                mockTimespans.a.getStart.andReturn(10000);
+                mockTimespans.a.getStart.and.returnValue(10000);
                 handler.move('a', -10000);
                 // Verify that move was stopped at 0, for b, even though
                 // move was initiated at a

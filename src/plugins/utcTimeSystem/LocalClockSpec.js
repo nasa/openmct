@@ -28,7 +28,7 @@ define(["./LocalClock"], function (LocalClock) {
 
         beforeEach(function () {
             mockTimeout = jasmine.createSpy("timeout");
-            mockTimeout.andReturn(timeoutHandle);
+            mockTimeout.and.returnValue(timeoutHandle);
 
             clock = new LocalClock(0);
             clock.start();

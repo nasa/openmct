@@ -60,7 +60,7 @@ define(
                 mockScope.ngModel = { testKey: "initial test value" };
                 mockScope.structure = testStructure;
 
-                mockDialogService.getUserInput.andReturn(mockPromise);
+                mockDialogService.getUserInput.and.returnValue(mockPromise);
 
                 controller = new DialogButtonController(
                     mockScope,
@@ -80,7 +80,7 @@ define(
                     jasmine.any(Function)
                 );
 
-                mockScope.$watch.mostRecentCall.args[1](testStructure);
+                mockScope.$watch.calls.mostRecent().args[1](testStructure);
 
                 buttonStructure = controller.getButtonStructure();
                 expect(buttonStructure.cssClass).toEqual(testStructure.cssClass);
@@ -90,7 +90,7 @@ define(
             });
 
             it("shows a dialog when clicked", function () {
-                mockScope.$watch.mostRecentCall.args[1](testStructure);
+                mockScope.$watch.calls.mostRecent().args[1](testStructure);
                 // Verify precondition - no dialog shown
                 expect(mockDialogService.getUserInput).not.toHaveBeenCalled();
                 // Click!
@@ -102,31 +102,31 @@ define(
             it("stores user input to the model", function () {
                 var key, input = {};
                 // Show dialog, click...
-                mockScope.$watch.mostRecentCall.args[1](testStructure);
+                mockScope.$watch.calls.mostRecent().args[1](testStructure);
                 controller.getButtonStructure().click();
                 // Should be listening to 'then'
                 expect(mockPromise.then)
                     .toHaveBeenCalledWith(jasmine.any(Function));
                 // Find the key that the dialog should return
-                key = mockDialogService.getUserInput.mostRecentCall
+                key = mockDialogService.getUserInput.calls.mostRecent()
                     .args[0].sections[0].rows[0].key;
                 // Provide 'user input'
                 input[key] = "test user input";
                 // Resolve the promise with it
-                mockPromise.then.mostRecentCall.args[0](input);
+                mockPromise.then.calls.mostRecent().args[0](input);
                 // ... should have been placed into the model
                 expect(mockScope.ngModel.testKey).toEqual("test user input");
             });
 
             it("supplies initial model state to the dialog", function () {
                 var key, state;
-                mockScope.$watch.mostRecentCall.args[1](testStructure);
+                mockScope.$watch.calls.mostRecent().args[1](testStructure);
                 controller.getButtonStructure().click();
                 // Find the key that the dialog should return
-                key = mockDialogService.getUserInput.mostRecentCall
+                key = mockDialogService.getUserInput.calls.mostRecent()
                     .args[0].sections[0].rows[0].key;
                 // Get the initial state provided to the dialog
-                state = mockDialogService.getUserInput.mostRecentCall.args[1];
+                state = mockDialogService.getUserInput.calls.mostRecent().args[1];
                 // Should have had value from ngModel stored to that key
                 expect(state[key]).toEqual("initial test value");
             });

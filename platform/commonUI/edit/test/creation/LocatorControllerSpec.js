@@ -64,9 +64,9 @@ define(
                     ["then"]
                 );
 
-                mockDomainObject.getCapability.andReturn(mockContext);
-                mockContext.getRoot.andReturn(mockRootObject);
-                mockObjectService.getObjects.andReturn(getObjectsPromise);
+                mockDomainObject.getCapability.and.returnValue(mockContext);
+                mockContext.getRoot.and.returnValue(mockRootObject);
+                mockObjectService.getObjects.and.returnValue(getObjectsPromise);
 
                 mockScope.ngModel = {};
                 mockScope.field = "someField";
@@ -76,7 +76,7 @@ define(
             describe("when context is available", function () {
 
                 beforeEach(function () {
-                        mockContext.getRoot.andReturn(mockRootObject);
+                        mockContext.getRoot.and.returnValue(mockRootObject);
                         controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
                     });
 
@@ -96,8 +96,8 @@ define(
                 it("changes its own model on embedded model updates", function () {
                         // Need to pass on selection changes as updates to
                         // the control's value
-                        mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
-                        mockTimeout.mostRecentCall.args[0]();
+                        mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
+                        mockTimeout.calls.mostRecent().args[0]();
                         expect(mockScope.ngModel.someField).toEqual(mockDomainObject);
                         expect(mockScope.rootObject).toEqual(mockRootObject);
 
@@ -109,11 +109,11 @@ define(
 
                 it("rejects changes which fail validation", function () {
                         mockScope.structure = { validate: jasmine.createSpy('validate') };
-                        mockScope.structure.validate.andReturn(false);
+                        mockScope.structure.validate.and.returnValue(false);
 
                         // Pass selection change
-                        mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
-                        mockTimeout.mostRecentCall.args[0]();
+                        mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
+                        mockTimeout.calls.mostRecent().args[0]();
 
                         expect(mockScope.structure.validate).toHaveBeenCalled();
                         // Change should have been rejected
@@ -126,13 +126,13 @@ define(
                             ['$setValidity']
                         );
 
-                        mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
-                        mockTimeout.mostRecentCall.args[0]();
+                        mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
+                        mockTimeout.calls.mostRecent().args[0]();
                         expect(mockScope.ngModelController.$setValidity)
                             .toHaveBeenCalledWith(jasmine.any(String), true);
 
-                        mockScope.$watch.mostRecentCall.args[1](undefined);
-                        mockTimeout.mostRecentCall.args[0]();
+                        mockScope.$watch.calls.mostRecent().args[1](undefined);
+                        mockTimeout.calls.mostRecent().args[0]();
                         expect(mockScope.ngModelController.$setValidity)
                             .toHaveBeenCalledWith(jasmine.any(String), false);
                     });
@@ -141,27 +141,27 @@ define(
                 var defaultRoot = "DEFAULT_ROOT";
 
                 beforeEach(function () {
-                    mockContext.getRoot.andReturn(undefined);
-                    getObjectsPromise.then.andCallFake(function (callback) {
+                    mockContext.getRoot.and.returnValue(undefined);
+                    getObjectsPromise.then.and.callFake(function (callback) {
                         callback({'ROOT': defaultRoot});
                     });
                     controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
                 });
 
                 it("provides a default context where none is available", function () {
-                    mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
-                    mockTimeout.mostRecentCall.args[0]();
+                    mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
+                    mockTimeout.calls.mostRecent().args[0]();
                     expect(mockScope.rootObject).toBe(defaultRoot);
                 });
 
                 it("does not issue redundant requests for the root object", function () {
-                    mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
-                    mockTimeout.mostRecentCall.args[0]();
-                    mockScope.$watch.mostRecentCall.args[1](undefined);
-                    mockTimeout.mostRecentCall.args[0]();
-                    mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
-                    mockTimeout.mostRecentCall.args[0]();
-                    expect(mockObjectService.getObjects.calls.length)
+                    mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
+                    mockTimeout.calls.mostRecent().args[0]();
+                    mockScope.$watch.calls.mostRecent().args[1](undefined);
+                    mockTimeout.calls.mostRecent().args[0]();
+                    mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
+                    mockTimeout.calls.mostRecent().args[0]();
+                    expect(mockObjectService.getObjects.calls.count())
                         .toEqual(1);
                 });
 

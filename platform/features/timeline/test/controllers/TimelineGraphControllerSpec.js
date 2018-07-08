@@ -57,7 +57,7 @@ define(
                     mockGraphB = jasmine.createSpyObj('graph-b', ['setBounds']);
 
                 // Supply new parameters
-                mockScope.$watchCollection.mostRecentCall.args[1]({
+                mockScope.$watchCollection.calls.mostRecent().args[1]({
                     graphs: [mockGraphA, mockGraphB],
                     origin: 9,
                     duration: 144
@@ -71,8 +71,8 @@ define(
             it("provides labels for graphs", function () {
                 var mockGraph = jasmine.createSpyObj('graph', ['minimum', 'maximum']);
 
-                mockGraph.minimum.andReturn(12.3412121);
-                mockGraph.maximum.andReturn(88.7555555);
+                mockGraph.minimum.and.returnValue(12.3412121);
+                mockGraph.maximum.and.returnValue(88.7555555);
                 mockGraph.key = "def";
 
                 expect(controller.label(mockGraph)).toEqual({

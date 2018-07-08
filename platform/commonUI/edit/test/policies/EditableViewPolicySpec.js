@@ -35,12 +35,12 @@ define(
                     'domainObject',
                     ['hasCapability', 'getCapability']
                 );
-                mockDomainObject.getCapability.andReturn({
+                mockDomainObject.getCapability.and.returnValue({
                     inEditContext: function () {
                        return true;
                    }
                 });
-                mockDomainObject.hasCapability.andCallFake(function (c) {
+                mockDomainObject.hasCapability.and.callFake(function (c) {
                     return (c === 'editor') && testMode;
                 });
 

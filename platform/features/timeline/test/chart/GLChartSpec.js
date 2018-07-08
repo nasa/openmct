@@ -68,11 +68,11 @@ define(
 
                 // Echo back names for uniform locations, so we can
                 // test which of these are set for certain operations.
-                mockGL.getUniformLocation.andCallFake(function (a, name) {
+                mockGL.getUniformLocation.and.callFake(function (a, name) {
                     return name;
                 });
 
-                mockCanvas.getContext.andReturn(mockGL);
+                mockCanvas.getContext.and.returnValue(mockGL);
 
                 glChart = new GLChart(mockCanvas);
             });
@@ -83,7 +83,7 @@ define(
             });
 
             it("does not construct if WebGL is unavailable", function () {
-                mockCanvas.getContext.andReturn(undefined);
+                mockCanvas.getContext.and.returnValue(undefined);
                 expect(function () {
                     return new GLChart(mockCanvas);
                 }).toThrow();

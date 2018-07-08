@@ -53,7 +53,7 @@ define(
                 expect(mockScope.ngModel)
                     .not.toHaveBeenCalledWith("some new value");
                 // Fire the matching watcher
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$watch.calls.all().forEach(function (call) {
                     if (call.args[0] === "getterSetter.value") {
                         call.args[1](mockScope.getterSetter.value);
                     }
@@ -64,11 +64,11 @@ define(
             });
 
             it("updates internal state when external changes are detected", function () {
-                mockScope.ngModel.andReturn("some other new value");
+                mockScope.ngModel.and.returnValue("some other new value");
                 // Verify precondition
                 expect(mockScope.getterSetter.value).toBeUndefined();
                 // Fire the matching watcher
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$watch.calls.all().forEach(function (call) {
                     if (call.args[0] === "ngModel()") {
                         call.args[1]("some other new value");
                     }

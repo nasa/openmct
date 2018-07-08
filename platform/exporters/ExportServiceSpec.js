@@ -28,13 +28,11 @@ define(
             var mockSaveAs,
                 testRows,
                 csvContents,
+                readCSVPromise,
                 exportService;
 
-            function finishedReadingCSV() {
-                return !!csvContents;
-            }
-
             beforeEach(function () {
+                var resolveFunction;
                 csvContents = undefined;
                 testRows = [
                     { a: 1, b: 2, c: 3 },
@@ -42,10 +40,14 @@ define(
                     { a: 7, b: 8, c: 9 }
                 ];
                 mockSaveAs = jasmine.createSpy('saveAs');
-                mockSaveAs.andCallFake(function (blob) {
+                readCSVPromise = new Promise(function (resolve) {
+                    resolveFunction = resolve;
+                });
+                mockSaveAs.and.callFake(function (blob) {
                     var reader = new FileReader();
                     reader.onloadend = function () {
                         csvContents = new CSV(reader.result).parse();
+                        resolveFunction();
                     };
                     reader.readAsText(blob);
                 });
@@ -55,7 +57,7 @@ define(
             describe("#exportCSV(rows)", function () {
                 beforeEach(function () {
                     exportService.exportCSV(testRows);
-                    waitsFor(finishedReadingCSV);
+                    return readCSVPromise;
                 });
 
                 it("triggers saving of a file", function () {
@@ -89,7 +91,8 @@ define(
                     testHeaders = ['a', 'b'];
                     exportService
                         .exportCSV(testRows, { headers: testHeaders });
-                    waitsFor(finishedReadingCSV);
+
+                    return readCSVPromise;
                 });
 
                 it("triggers saving of a file", function () {
@@ -124,7 +127,7 @@ define(
                     testFilename = "some-test-filename.csv";
                     exportService
                         .exportCSV(testRows, { filename: testFilename });
-                    waitsFor(finishedReadingCSV);
+                    return readCSVPromise;
                 });
 
                 it("saves a file with the specified name", function () {
