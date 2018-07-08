@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 define([], function () {
-    /* jshint validthis: true */
     var LEGACY_INDICATOR_TEMPLATE =
         '<mct-include ' +
         '   ng-model="indicator" ' +
@@ -42,9 +41,9 @@ define([], function () {
                     openmct.indicators.add({
                         element: legacyIndicatorElement
                     });
-                }.bind(this));
+                });
             }
-        
+
             function initializeIfNeeded(LegacyIndicatorDef) {
                 var legacyIndicator;
                 if (typeof LegacyIndicatorDef === 'function') {
@@ -54,17 +53,16 @@ define([], function () {
                 }
                 return legacyIndicator;
             }
-        
+
             function buildLegacyIndicator(legacyIndicator, template) {
                 var $compile = openmct.$injector.get('$compile');
                 var $rootScope = openmct.$injector.get('$rootScope');
                 var scope = $rootScope.$new(true);
                 scope.indicator = legacyIndicator;
                 scope.template = template || 'indicator';
-        
+
                 return $compile(LEGACY_INDICATOR_TEMPLATE)(scope)[0];
             }
-        
-        }
-    }
+        };
+    };
 });

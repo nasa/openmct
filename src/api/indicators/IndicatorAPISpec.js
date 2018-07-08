@@ -48,6 +48,7 @@ define(
                     openmct.indicators.add(simpleIndicator);
                     renderIndicators();
                 });
+
                 it("applies the set icon class", function () {
                     simpleIndicator.iconClass('testIconClass');
 
@@ -57,6 +58,7 @@ define(
                     expect(getIconElement().classList.contains('testIconClass')).toBe(false);
                     expect(getIconElement().classList.contains('anotherIconClass')).toBe(true);
                 });
+
                 it("applies the set status class", function () {
                     simpleIndicator.statusClass('testStatusClass');
 
@@ -65,10 +67,12 @@ define(
                     expect(getIconElement().classList.contains('testStatusClass')).toBe(false);
                     expect(getIconElement().classList.contains('anotherStatusClass')).toBe(true);
                 });
+
                 it("displays the set text", function () {
                     simpleIndicator.text('some test text');
                     expect(getTextElement().textContent.trim()).toEqual('some test text');
                 });
+
                 it("sets the indicator's title", function () {
                     simpleIndicator.description('a test description');
                     expect(getIndicatorElement().getAttribute('title')).toEqual('a test description');
@@ -78,15 +82,15 @@ define(
                     simpleIndicator.text('');
                     expect(getIndicatorElement().classList.contains('hidden')).toBe(true);
                 });
-                
+
                 function getIconElement() {
                     return holderElement.querySelector('.ls-indicator');
                 }
-                
+
                 function getIndicatorElement() {
                     return holderElement.querySelector('.ls-indicator');
                 }
-                
+
                 function getTextElement() {
                     return holderElement.querySelector('.indicator-text');
                 }
@@ -99,7 +103,7 @@ define(
 
                 openmct.indicators.add({element: customIndicator});
                 renderIndicators();
-                
+
                 expect(holderElement.querySelector('.customIndicator').textContent.trim()).toEqual('A custom indicator');
             });
 

@@ -40,13 +40,17 @@ define(
         describe('The legacy indicators plugin', function () {
             beforeEach(function () {
                 mockLegacyExtensionFunction();
-                
+
                 openmct = new MCT();
                 directive = new MCTIndicators(openmct);
                 holderElement = document.createElement('div');
-                
+
                 mockAngularComponents();
                 LegacyIndicatorsPlugin()(openmct);
+            });
+
+            afterEach(function () {
+                MCT.prototype.legacyExtension = legacyExtensionFunction;
             });
 
             function mockLegacyExtensionFunction() {
@@ -63,7 +67,7 @@ define(
                 var mockCompile = jasmine.createSpy('$compile');
                 var mockRootScope = jasmine.createSpyObj('rootScope', ['$new']);
                 var mockScope = {};
-        
+
                 mockRootScope.$new.and.returnValue(mockScope);
                 mockInjector.get.and.callFake(function (service) {
                     return {
@@ -71,6 +75,7 @@ define(
                         '$rootScope': mockRootScope
                     }[service];
                 });
+
                 openmct.$injector = mockInjector;
                 mockCompile.and.callFake(function () {
                     return function () {
@@ -79,28 +84,24 @@ define(
                 });
             }
 
-            afterEach(function () {
-                MCT.prototype.legacyExtension = legacyExtensionFunction;
-            });
-
             it("Displays any legacy indicators ", function () {
                 var legacyIndicators = [{},{},{},{}];
 
                 legacyIndicatorsRunsFunction(legacyIndicators);
                 renderIndicators();
-        
+
                 expect(holderElement.children.length).toBe(legacyIndicators.length);
-        
+
             });
-        
+
             it("If legacy indicator is defined as a constructor function, executes function ", function () {
                 var mockConstructorFunction = jasmine.createSpy('mockIndicatorConstructor');
                 var legacyIndicators = [{}, mockConstructorFunction];
-        
+
                 mockConstructorFunction.and.returnValue({});
                 legacyIndicatorsRunsFunction(legacyIndicators);
                 renderIndicators();
-    
+
                 expect(holderElement.children.length).toBe(legacyIndicators.length);
                 expect(mockConstructorFunction).toHaveBeenCalled();
             });
@@ -109,4 +110,5 @@ define(
                 directive.link({}, holderElement);
             }
         });
-});
+    }
+);
