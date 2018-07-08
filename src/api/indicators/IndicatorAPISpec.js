@@ -33,52 +33,11 @@ define(
             var openmct;
             var directive;
             var holderElement;
-            var legacyExtensionFunction = MCT.prototype.legacyExtension;
-            var legacyIndicatorsResolved = false;
-            var legacyIndicatorsCallback;
 
             beforeEach(function () {
-                mockLegacyExtensionFunction();
-
                 openmct = new MCT();
                 directive = new MCTIndicators(openmct);
                 holderElement = document.createElement('div');
-
-                mockAngularComponents();
-            });
-
-            afterEach(function () {
-                MCT.prototype.legacyExtension = legacyExtensionFunction;
-            });
-
-            it("Displays any legacy indicators ", function () {
-                var legacyIndicators = [{},{},{},{}];
-
-                mockLegacyIndicatorsWith(legacyIndicators);
-
-                renderIndicators();
-
-                waitsFor(legacyIndicatorsToResolve, 1000);
-                runs(function () {
-                    expectIndicatorsShownToBe(legacyIndicators.length);
-                });
-
-            });
-
-            it("If legacy indicator is defined as a constructor function, executes function ", function () {
-                var mockConstructorFunction = jasmine.createSpy('mockIndicatorConstructor');
-                var legacyIndicators = [{}, mockConstructorFunction];
-
-                mockConstructorFunction.andReturn({});
-                mockLegacyIndicatorsWith(legacyIndicators);
-                renderIndicators();
-
-                waitsFor(legacyIndicatorsToResolve, 1000);
-                runs(function () {
-                    expectIndicatorsShownToBe(legacyIndicators.length);
-                    expect(mockConstructorFunction).toHaveBeenCalled();
-                });
-
             });
 
             describe("The simple indicator", function () {
@@ -86,58 +45,51 @@ define(
 
                 beforeEach(function () {
                     simpleIndicator = openmct.indicators.simpleIndicator();
-                    mockLegacyIndicatorsWith([]);
                     openmct.indicators.add(simpleIndicator);
                     renderIndicators();
                 });
                 it("applies the set icon class", function () {
                     simpleIndicator.iconClass('testIconClass');
 
-                    waitsFor(legacyIndicatorsToResolve);
-                    runs(function () {
-                        expect(getIconElement().classList.contains('testIconClass')).toBe(true);
+                    expect(getIconElement().classList.contains('testIconClass')).toBe(true);
 
-                        simpleIndicator.iconClass('anotherIconClass');
-                        expect(getIconElement().classList.contains('testIconClass')).toBe(false);
-                        expect(getIconElement().classList.contains('anotherIconClass')).toBe(true);
-                    });
+                    simpleIndicator.iconClass('anotherIconClass');
+                    expect(getIconElement().classList.contains('testIconClass')).toBe(false);
+                    expect(getIconElement().classList.contains('anotherIconClass')).toBe(true);
                 });
                 it("applies the set status class", function () {
                     simpleIndicator.statusClass('testStatusClass');
 
-                    waitsFor(legacyIndicatorsToResolve);
-                    runs(function () {
-                        expect(getIconElement().classList.contains('testStatusClass')).toBe(true);
-                        simpleIndicator.statusClass('anotherStatusClass');
-                        expect(getIconElement().classList.contains('testStatusClass')).toBe(false);
-                        expect(getIconElement().classList.contains('anotherStatusClass')).toBe(true);
-                    });
+                    expect(getIconElement().classList.contains('testStatusClass')).toBe(true);
+                    simpleIndicator.statusClass('anotherStatusClass');
+                    expect(getIconElement().classList.contains('testStatusClass')).toBe(false);
+                    expect(getIconElement().classList.contains('anotherStatusClass')).toBe(true);
                 });
                 it("displays the set text", function () {
                     simpleIndicator.text('some test text');
-
-                    waitsFor(legacyIndicatorsToResolve);
-                    runs(function () {
-                        expect(getTextElement().textContent.trim()).toEqual('some test text');
-                    });
+                    expect(getTextElement().textContent.trim()).toEqual('some test text');
                 });
                 it("sets the indicator's title", function () {
                     simpleIndicator.description('a test description');
-
-                    waitsFor(legacyIndicatorsToResolve);
-                    runs(function () {
-                        expect(getIndicatorElement().getAttribute('title')).toEqual('a test description');
-                    });
+                    expect(getIndicatorElement().getAttribute('title')).toEqual('a test description');
                 });
 
                 it("Hides indicator icon if no text is set", function () {
                     simpleIndicator.text('');
-
-                    waitsFor(legacyIndicatorsToResolve);
-                    runs(function () {
-                        expect(getIndicatorElement().classList.contains('hidden')).toBe(true);
-                    });
+                    expect(getIndicatorElement().classList.contains('hidden')).toBe(true);
                 });
+                
+                function getIconElement() {
+                    return holderElement.querySelector('.ls-indicator');
+                }
+                
+                function getIndicatorElement() {
+                    return holderElement.querySelector('.ls-indicator');
+                }
+                
+                function getTextElement() {
+                    return holderElement.querySelector('.indicator-text');
+                }
             });
 
             it("Supports registration of a completely custom indicator", function () {
@@ -145,78 +97,15 @@ define(
                 customIndicator.classList.add('customIndicator');
                 customIndicator.textContent = 'A custom indicator';
 
-                mockLegacyIndicatorsWith([]);
                 openmct.indicators.add({element: customIndicator});
                 renderIndicators();
-
-                waitsFor(legacyIndicatorsToResolve);
-                runs(function () {
-                    expect(holderElement.querySelector('.customIndicator').textContent.trim()).toEqual('A custom indicator');
-                });
+                
+                expect(holderElement.querySelector('.customIndicator').textContent.trim()).toEqual('A custom indicator');
             });
-
-            function mockLegacyExtensionFunction() {
-                spyOn(MCT.prototype, "legacyExtension");
-                MCT.prototype.legacyExtension.andCallFake(function (extensionName, definition) {
-                    if (extensionName === 'runs') {
-                        legacyIndicatorsCallback = definition.implementation;
-                    }
-                });
-            }
-
-            function mockAngularComponents() {
-                var mockInjector = jasmine.createSpyObj('$injector', ['get']);
-                var mockCompile = jasmine.createSpy('$compile');
-                var mockRootScope = jasmine.createSpyObj('rootScope', ['$new']);
-                var mockScope = {};
-
-                mockRootScope.$new.andReturn(mockScope);
-                mockInjector.get.andCallFake(function (service) {
-                    return {
-                        '$compile': mockCompile,
-                        '$rootScope': mockRootScope
-                    }[service];
-                });
-                openmct.$injector = mockInjector;
-                mockCompile.andCallFake(function () {
-                    return function () {
-                        return [document.createElement('div')];
-                    };
-                });
-            }
 
             function renderIndicators() {
                 directive.link({}, holderElement);
             }
 
-            function mockLegacyIndicatorsWith(legacyIndicators) {
-                legacyIndicatorsResolved = false;
-
-                openmct.indicators.allIndicatorElements().then(function () {
-                    legacyIndicatorsResolved = true;
-                });
-
-                legacyIndicatorsCallback(legacyIndicators);
-            }
-
-            function legacyIndicatorsToResolve() {
-                return legacyIndicatorsResolved;
-            }
-
-            function expectIndicatorsShownToBe(number) {
-                expect(holderElement.children.length).toBe(number);
-            }
-
-            function getIconElement() {
-                return holderElement.querySelector('.ls-indicator');
-            }
-
-            function getIndicatorElement() {
-                return holderElement.querySelector('.ls-indicator');
-            }
-
-            function getTextElement() {
-                return holderElement.querySelector('.indicator-text');
-            }
         });
     });

@@ -27,16 +27,14 @@ define(
             return {
                 restrict: "E",
                 link: function link(scope, element) {
-                    openmct.indicators.allIndicatorElements().then(function (elements) {
-                        elements.forEach(function (indicatorElement) {
+                    openmct.indicators.indicatorElements
+                        .forEach(function (indicatorElement) {
                             element.append(indicatorElement);
                         });
-                    });
                 }
             };
         }
 
         return MCTIndicators;
-
     }
 );

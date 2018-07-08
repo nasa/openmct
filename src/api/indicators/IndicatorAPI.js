@@ -21,28 +21,14 @@
  *****************************************************************************/
 define([
     './SimpleIndicator',
-    '../../../platform/framework/src/Constants',
     'lodash'
 ], function (
     SimpleIndicator,
-    Constants,
     _
 ) {
-    /* jshint validthis: true */
-    var LEGACY_INDICATOR_TEMPLATE =
-        '<mct-include ' +
-        '   ng-model="indicator" ' +
-        '   class="h-indicator" ' +
-        '   key="template">' +
-        ' </mct-include>';
-
     function IndicatorAPI(openmct) {
         this.openmct = openmct;
         this.indicatorElements = [];
-        this.promiseForAllElements =
-            fetchLegacyIndicators.call(this)
-            .then(addLegacyIndicators.bind(this))
-            .then(resolveWithAllIndicatorElements.bind(this));
     }
 
     IndicatorAPI.prototype.simpleIndicator = function () {
@@ -76,54 +62,6 @@ define([
         wrapperNode.appendChild(indicator.element);
         this.indicatorElements.push(wrapperNode);
     };
-
-    /**
-     * @private
-     */
-    IndicatorAPI.prototype.allIndicatorElements = function () {
-        return this.promiseForAllElements;
-    };
-
-    function fetchLegacyIndicators() {
-        return new Promise(function (resolve) {
-            this.openmct.legacyExtension('runs', {
-                depends: ['indicators[]'],
-                implementation: resolve
-            });
-        }.bind(this));
-    }
-
-    function addLegacyIndicators(legacyIndicators) {
-        legacyIndicators.forEach(function (legacyIndicatorDef) {
-            var legacyIndicator = initializeIfNeeded(legacyIndicatorDef);
-            var legacyIndicatorElement = buildLegacyIndicator(this.openmct, legacyIndicator, legacyIndicatorDef.template);
-            this.indicatorElements.push(legacyIndicatorElement);
-        }.bind(this));
-    }
-
-    function initializeIfNeeded(LegacyIndicatorDef) {
-        var legacyIndicator;
-        if (typeof LegacyIndicatorDef === 'function') {
-            legacyIndicator = new LegacyIndicatorDef();
-        } else {
-            legacyIndicator = LegacyIndicatorDef;
-        }
-        return legacyIndicator;
-    }
-
-    function buildLegacyIndicator(openmct, legacyIndicator, template) {
-        var $compile = openmct.$injector.get('$compile');
-        var $rootScope = openmct.$injector.get('$rootScope');
-        var scope = $rootScope.$new(true);
-        scope.indicator = legacyIndicator;
-        scope.template = template || 'indicator';
-
-        return $compile(LEGACY_INDICATOR_TEMPLATE)(scope)[0];
-    }
-
-    function resolveWithAllIndicatorElements() {
-        return this.indicatorElements;
-    }
 
     return IndicatorAPI;
 
