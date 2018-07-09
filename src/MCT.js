@@ -31,7 +31,7 @@ define([
     './ui/ViewRegistry',
     './ui/InspectorViewRegistry',
     './ui/ToolbarRegistry',
-    './plugins/legacy-support/legacy-indicators-plugin'
+    './adapter/indicators/legacy-indicators-plugin'
 ], function (
     EventEmitter,
     legacyRegistry,
