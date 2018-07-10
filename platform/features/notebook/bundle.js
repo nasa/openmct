@@ -58,7 +58,8 @@ define([
                 "model": {
                       "entries": [],
                       "composition": [],
-                      "entryTypes": []
+                      "entryTypes": [],
+                      "defaultSort": "-createdOn"
                   },
                 "properties": [
                     {

@@ -42,7 +42,7 @@ define(
         ) {
 
             $scope.entriesEl = $(document.body).find('.t-entries-list');
-            $scope.sortEntries = $scope.domainObject.getModel().defaultSort || "-createdOn";
+            $scope.sortEntries = $scope.domainObject.getModel().defaultSort;
             $scope.showTime = "0";
             $scope.editEntry = false;
             $scope.entrySearch = '';
@@ -354,6 +354,11 @@ define(
 
             $scope.$watchCollection("composition", refreshComp);
 
+            $scope.$watch('domainObject.getModel().defaultSort', function (newDefaultSort, oldDefaultSort) {
+                if (newDefaultSort !== oldDefaultSort) {
+                    $scope.sortEntries = newDefaultSort;
+                }
+            });
 
             $scope.$on('$destroy', function () {});
 
