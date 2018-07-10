@@ -31,7 +31,6 @@
 @mixin indicatorStatusColors($c) {
     &:before, .count {
         color: $c;
-        //margin-right: $interiorMarginSm !important;
     }
 }
 
@@ -45,7 +44,6 @@
         display: inline-block;
         font-family: symbolsfont;
         font-size: 0.8em;
-        //margin-right: $interiorMargin;
     }
 }
 
@@ -94,6 +92,7 @@
         }
     }
 }
+
 .s-status-warning-hi, .s-status-icon-warning-hi {  @include elementStatusColors($colorWarningHi); }
 .s-status-warning-lo, .s-status-icon-warning-lo {  @include elementStatusColors($colorWarningLo); }
 .s-status-diagnostic, .s-status-icon-diagnostic {  @include elementStatusColors($colorDiagnostic); }
@@ -112,17 +111,26 @@
     &:before {
         margin-right: 0 !important;
     }
+
     &.s-status-info {
         @include indicatorStatusColors($colorInfo);
     }
 
-    &.s-status-enabled {
-        @include indicatorStatusColors($colorOk);
+    &.s-status-disabled {
+        @include indicatorStatusColors($colorIndicatorDisabled);
     }
 
-    &.s-status-off,
-    &.s-status-disabled {
-        @include indicatorStatusColors($colorStatusDisabled);
+    &.s-status-available {
+        @include indicatorStatusColors($colorIndicatorAvailable);
+    }
+
+    &.s-status-on,
+    &.s-status-enabled {
+        @include indicatorStatusColors($colorIndicatorOn);
+    }
+
+    &.s-status-off {
+        @include indicatorStatusColors($colorIndicatorOff);
     }
 
     &.s-status-caution,
@@ -133,10 +141,6 @@
 
     &.s-status-error {
         @include indicatorStatusColors($colorStatusError);
-    }
-
-    &.s-status-available {
-        @include indicatorStatusColors($colorStatusAvailable);
     }
 }
 

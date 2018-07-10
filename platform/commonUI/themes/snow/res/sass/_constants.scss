@@ -119,9 +119,7 @@ $colorStatusFg: #999;
 $colorStatusDefault: #ccc;
 $colorStatusInfo: #60ba7b;
 $colorStatusAlert: #ffb66c;
-$colorStatusError: #c96b68;
-$colorStatusAvailable: $colorKey;
-$colorStatusDisabled: #666;
+$colorStatusError: #da0004;
 $colorStatusBtnBg: #666;
 $colorProgressBarOuter: rgba(#000, 0.1);
 $colorProgressBarAmt: #0a0;
@@ -129,6 +127,12 @@ $progressBarHOverlay: 15px;
 $progressBarStripeW: 20px;
 $shdwStatusIc: rgba(white, 0.8) 0 0px 5px;
 $animPausedPulseDur: 1s;
+
+// Indicator colors
+$colorIndicatorAvailable: $colorKey;
+$colorIndicatorDisabled: #444;
+$colorIndicatorOn: $colorOk;
+$colorIndicatorOff: #666;
 
 // Selects
 $colorSelectBg: $colorBtnBg;
