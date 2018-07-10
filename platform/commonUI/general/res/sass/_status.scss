@@ -64,7 +64,6 @@
     @include elementStatusColors($colorWarningHi);
 }
 
-
 .s-limit {
     &-upr,
     &-lwr {
@@ -105,13 +104,8 @@
 .s-status-icon-info:before { content: $glyph-icon-info; }
 .s-status-icon-ok:before { content: $glyph-icon-check; }
 
-/*************************************************** INDICATORS */
-
+/*************************************************** INDICATOR COLORING */
 .ls-indicator {
-    &:before {
-        margin-right: 0 !important;
-    }
-
     &.s-status-info {
         @include indicatorStatusColors($colorInfo);
     }
@@ -143,6 +137,3 @@
         @include indicatorStatusColors($colorStatusError);
     }
 }
-
-
-

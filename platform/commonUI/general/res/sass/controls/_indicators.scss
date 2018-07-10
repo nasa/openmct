@@ -80,6 +80,7 @@ mct-indicators mct-include {
         display: flex;
         flex-flow: row nowrap;
         align-items: center;
+
         > *,
         &:before {
             flex: 1 1 auto;
@@ -92,6 +93,11 @@ mct-indicators mct-include {
 
     &:not(.no-collapse) {
         z-index: 0;
+
+        &:before {
+            margin-right: 0 !important;
+        }
+
         .label {
             transition: all 250ms ease-in 100ms;
             background: $hbg;
