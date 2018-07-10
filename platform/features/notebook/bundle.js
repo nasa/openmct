@@ -236,7 +236,6 @@ define([
                     "cssClass": "icon-notebook labeled",
                     "description": "Add a new Notebook entry",
                     "category": [
-                        "contextual",
                          "view-control"
                     ],
                     "depends": [
