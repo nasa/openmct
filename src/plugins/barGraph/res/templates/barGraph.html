@@ -1,27 +1,3 @@
-<div class="example-bargraph">
-    <div class="example-tick-labels">
-        <div class="example-tick-label" style="bottom: 0%">High</div>
-        <div class="example-tick-label" style="bottom: 50%">Middle</div>
-        <div class="example-tick-label" style="bottom: 100%">Low</div>
-    </div>
-
-    <div class="example-graph-area">
-        <div v-for="(object, index) in telemetryObjects"
-           v-bind:style="{left: (barWidth * index) + '%', width: barWidth + '%'}"
-           class="example-bar-holder">
-            <div class="example-bar"
-                style="top: 25%; bottom: 50%;">
-            </div>
-        </div>
-
-        <div style="bottom: 50%" class="example-graph-tick">
-        </div>
-    </div>
-
-    <div class="example-bar-labels" v-for="(object, index) in telemetryObjects">
-        <div    v-bind:style="{left: (barWidth * index) + '%', width: barWidth + '%'}"
-                class="example-bar-holder example-label">
-            {{ object.name }}
-        </div>
-    </div>
+<div class="example-plugin">
+    <canvas id="canvasOne" style="width:100%; height:100%;"></canvas>
 </div>

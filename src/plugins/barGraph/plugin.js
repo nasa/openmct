@@ -17,15 +17,15 @@ define([
 
             installed = true;
 
-           openmct.legacyRegistry.register('example/bargraph', {
-            name: 'Example Telemetry view using Vue',
+           openmct.legacyRegistry.register('example/worldwind', {
+            name: 'Example WorldWind View for OpenMCT',
             extensions: {
                 types: [
                     {
-                        key: "example/bargraph",
-                        name: "Example Bargraph",
-                        cssClass: "icon-autoflow-tabular",
-                        description: "combine multiple telemetry producing objects in bargraph form",
+                        key: "example/worldwind",
+                        name: "Example WorldWind",
+                        cssClass: "icon-session",
+                        description: "example plugin",
                         features: "creation",
                         contains: [
                             {
@@ -40,7 +40,7 @@ define([
             }
            });
 
-           openmct.legacyRegistry.enable('example/bargraph');
+           openmct.legacyRegistry.enable('example/worldwind');
 
             openmct.objectViews.addProvider({
                 key: 'bargraph-view',
@@ -49,7 +49,7 @@ define([
                 needs: ['telemetry'],
                 editable: true,
                 canView: function (domainObject) {
-                    return domainObject.type === "example/bargraph";
+                    return domainObject.type === "example/worldwind";
                 },
                 view: function (domainObject) {
                     var controller = new BarGraphController(openmct, domainObject);

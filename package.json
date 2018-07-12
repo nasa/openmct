@@ -3,6 +3,7 @@
   "version": "0.14.0-SNAPSHOT",
   "description": "The Open MCT core platform",
   "dependencies": {
+    "@nasaworldwind/worldwind": "^0.9.0",
     "d3-array": "1.2.x",
     "d3-axis": "1.0.x",
     "d3-collection": "1.0.x",
@@ -14,7 +15,9 @@
     "d3-time": "1.0.x",
     "d3-time-format": "2.1.x",
     "express": "^4.13.1",
+    "install": "^0.12.1",
     "minimist": "^1.1.1",
+    "npm": "^6.1.0",
     "request": "^2.69.0",
     "vue": "^2.5.6"
   },
