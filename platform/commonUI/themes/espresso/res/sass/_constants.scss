@@ -3,6 +3,8 @@ $colorBodyBg: #333;
 $colorBodyFg: #999;
 $colorGenBg: #222;
 $colorStatusBarBg: #000;
+$colorStatusBarFg: #999;
+$colorStatusBarFgHov: #aaa;
 $colorKey: #0099cc;
 $colorKeySelectedBg: #005177;
 $colorKeyFg: #fff;
@@ -55,7 +57,7 @@ $colorTransLucBg: #666; // Used as a visual blocking element over variable backg
 
 // Foundation Colors
 $colorAlt1: #ffc700;
-$colorAlert: #ff3c00;
+$colorAlert: #ff9900;
 $colorWarningHi: #cc0000;
 $colorWarningLo: #ff9900;
 $colorDiagnostic: #a4b442;
@@ -72,7 +74,6 @@ $colorObjHdrTxt: $colorBodyFg;
 $colorObjHdrIc: lighten($colorObjHdrTxt, 20%);
 $colorTick: rgba(white, 0.2);
 $colorSelectableSelectedPrimary: $colorKey;
-//$colorSelectableSelectedSecondary: pushBack($colorSelectableSelectedPrimary, 20%);
 $colorSelectableHov: rgba($colorBodyFg, 0.3);
 
 // Menu colors
@@ -114,11 +115,10 @@ $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #ccc;
-$colorStatusDefault: #ccc;
+$colorStatusDefault: #999;
 $colorStatusInfo: $colorInfo;
 $colorStatusAlert: $colorAlert;
-$colorStatusError: #d4585c;
-$colorStatusAvailable: $colorKey;
+$colorStatusError: #da0004;
 $colorStatusBtnBg: $colorBtnBg;
 $colorProgressBarOuter: rgba(#000, 0.1);
 $colorProgressBarAmt: $colorKey;
@@ -126,6 +126,12 @@ $progressBarHOverlay: 15px;
 $progressBarStripeW: 20px;
 $shdwStatusIc: rgba(black, 0.4) 0 1px 2px;
 $animPausedPulseDur: 500ms;
+
+// Indicator colors
+$colorIndicatorAvailable: $colorKey;
+$colorIndicatorDisabled: #444;
+$colorIndicatorOn: $colorOk;
+$colorIndicatorOff: #666;
 
 // Selects
 $colorSelectBg: $colorBtnBg;

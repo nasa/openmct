@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    [],
-    function () {
+    ['zepto'],
+    function ($) {
 
         // Set of connection states; changing among these states will be
         // reflected in the indicator's appearance.
@@ -30,68 +30,78 @@ define(
         // DISCONNECTED: HTTP failed; maybe misconfigured, disconnected.
         // PENDING: Still trying to connect, and haven't failed yet.
         var CONNECTED = {
-                glyphClass: "ok"
+                statusClass: "s-status-ok"
             },
             PENDING = {
-                glyphClass: 'caution'
+                statusClass: "s-status-warning-lo"
             },
             DISCONNECTED = {
-                glyphClass: "err"
+                statusClass: "s-status-warning-hi"
             };
-        function URLIndicator($http, $interval) {
-            var self = this;
-            this.cssClass = this.options.cssClass ? this.options.cssClass : "icon-database";
-            this.URLpath = this.options.url;
-            this.label = this.options.label ? this.options.label : this.options.url;
-            this.interval = this.options.interval || 10000;
-            this.state = PENDING;
+        function URLIndicator(options, simpleIndicator) {
+            this.bindMethods();
+            this.count = 0;
 
-            function handleError(e) {
-                self.state = DISCONNECTED;
-            }
-            function handleResponse() {
-                self.state = CONNECTED;
-            }
-            function updateIndicator() {
-                $http.get(self.URLpath).then(handleResponse, handleError);
-            }
-            updateIndicator();
-            $interval(updateIndicator, self.interval, 0, false);
+            this.indicator = simpleIndicator;
+            this.setDefaultsFromOptions(options);
+            this.setIndicatorToState(PENDING);
+
+            this.fetchUrl();
+            setInterval(this.fetchUrl, this.interval);
         }
 
-        URLIndicator.prototype.getCssClass = function () {
-            return this.cssClass;
-        };
-        URLIndicator.prototype.getGlyphClass = function () {
-            return this.state.glyphClass;
-        };
-        URLIndicator.prototype.getText = function () {
-            switch (this.state) {
+        URLIndicator.prototype.setIndicatorToState = function (state) {
+            switch (state) {
                 case CONNECTED: {
-                    return this.label + " is connected";
+                    this.indicator.text(this.label + " is connected");
+                    this.indicator.description(this.label + " is online, checking status every " + this.interval + " milliseconds.");
+                    break;
                 }
                 case PENDING: {
-                    return "Checking status of " + this.label + " please stand by...";
+                    this.indicator.text("Checking status of " + this.label + " please stand by...");
+                    this.indicator.description("Checking status of " + this.label + " please stand by...");
+                    break;
                 }
                 case DISCONNECTED: {
-                    return this.label + " is offline";
+                    this.indicator.text(this.label + " is offline");
+                    this.indicator.description(this.label + " is offline, checking status every " + this.interval + " milliseconds");
+                    break;
                 }
             }
+
+            this.indicator.statusClass(state.statusClass);
         };
-        URLIndicator.prototype.getDescription = function () {
-            switch (this.state) {
-                case CONNECTED: {
-                    return this.label + " is online, checking status every " +
-                    this.interval + " milliseconds.";
-                }
-                case PENDING: {
-                    return "Checking status of " + this.label + " please stand by...";
-                }
-                case DISCONNECTED: {
-                    return this.label + " is offline, checking status every " +
-                    this.interval + " milliseconds";
-                }
-            }
+
+        URLIndicator.prototype.fetchUrl = function () {
+            $.ajax({
+                type: 'GET',
+                url: this.URLpath,
+                success: this.handleSuccess,
+                error: this.handleError
+            });
         };
+
+        URLIndicator.prototype.handleError = function (e) {
+            this.setIndicatorToState(DISCONNECTED);
+        };
+
+        URLIndicator.prototype.handleSuccess = function () {
+            this.setIndicatorToState(CONNECTED);
+        };
+
+        URLIndicator.prototype.setDefaultsFromOptions = function (options) {
+            this.URLpath = options.url;
+            this.label = options.label || options.url;
+            this.interval = options.interval || 10000;
+            this.indicator.iconClass(options.iconClass || 'icon-chain-links');
+        };
+
+        URLIndicator.prototype.bindMethods = function () {
+            this.fetchUrl = this.fetchUrl.bind(this);
+            this.handleSuccess = this.handleSuccess.bind(this);
+            this.handleError = this.handleError.bind(this);
+            this.setIndicatorToState = this.setIndicatorToState.bind(this);
+        };
+
         return URLIndicator;
     });

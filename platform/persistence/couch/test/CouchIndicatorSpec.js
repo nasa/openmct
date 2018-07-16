@@ -57,7 +57,7 @@ define(
             });
 
             it("has a database icon", function () {
-                expect(indicator.getCssClass()).toEqual("icon-database");
+                expect(indicator.getCssClass()).toEqual("icon-database s-status-caution");
             });
 
             it("consults the database at the configured path", function () {

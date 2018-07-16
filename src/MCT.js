@@ -30,7 +30,8 @@ define([
     './plugins/plugins',
     './ui/ViewRegistry',
     './ui/InspectorViewRegistry',
-    './ui/ToolbarRegistry'
+    './ui/ToolbarRegistry',
+    './adapter/indicators/legacy-indicators-plugin'
 ], function (
     EventEmitter,
     legacyRegistry,
@@ -41,7 +42,8 @@ define([
     plugins,
     ViewRegistry,
     InspectorViewRegistry,
-    ToolbarRegistry
+    ToolbarRegistry,
+    LegacyIndicatorsPlugin
 ) {
     /**
      * Open MCT is an extensible web application for building mission
@@ -192,6 +194,15 @@ define([
          */
         this.telemetry = new api.TelemetryAPI(this);
 
+        /**
+         * An interface for creating new indicators and changing them dynamically.
+         *
+         * @type {module:openmct.IndicatorAPI}
+         * @memberof module:openmct.MCT#
+         * @name indicators
+         */
+        this.indicators = new api.IndicatorAPI(this);
+
         this.Dialog = api.Dialog;
 
     }
@@ -266,6 +277,9 @@ define([
 
         legacyRegistry.register('adapter', this.legacyBundle);
         legacyRegistry.enable('adapter');
+
+        this.install(LegacyIndicatorsPlugin());
+
         /**
          * Fired by [MCT]{@link module:openmct.MCT} when the application
          * is started.

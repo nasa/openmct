@@ -37,7 +37,7 @@
     - [Time Systems and Bounds](#time-systems-and-bounds)
       - [Defining and Registering Time Systems](#defining-and-registering-time-systems)
       - [Getting and Setting the Active Time System](#getting-and-setting-the-active-time-system)
-    - [Time Bounds](#time-bounds)
+      - [Time Bounds](#time-bounds)
     - [Clocks](#clocks)
       - [Defining and registering clocks](#defining-and-registering-clocks)
       - [Getting and setting active clock](#getting-and-setting-active-clock)
@@ -48,6 +48,10 @@
     - [The Time Conductor](#the-time-conductor)
       - [Time Conductor Configuration](#time-conductor-configuration)
       - [Example conductor configuration](#example-conductor-configuration)
+  - [Indicators](#indicators)
+    - [The URL Status Indicator](#the-url-status-indicator)
+    - [Creating a Simple Indicator](#creating-a-simple-indicator)
+    - [Custom Indicators](#custom-indicators)
   - [Included Plugins](#included-plugins)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -688,7 +692,7 @@ openmct.time.timeSystem(utcTimeSystem, bounds);
 Setting the active time system will trigger a [`'timeSystem'`](#time-events) 
 event.  If you supplied bounds, a [`'bounds'`](#time-events) event will be triggered afterwards with your newly supplied bounds.
 
-### Time Bounds
+#### Time Bounds
 
 The TimeAPI provides a getter/setter for querying and setting time bounds. Time 
 bounds are simply an object with a `start` and an end `end` attribute.
@@ -977,6 +981,72 @@ openmct.install(openmct.plugins.Conductor({
 }));
 ```
 
+## Indicators
+
+Indicators are small widgets that reside at the bottom of the screen and are visible from 
+every screen in Open MCT. They can be used to convey system state using an icon and text.
+Typically an indicator will display an icon (customizable with a CSS class) that will 
+reveal additional information when the mouse cursor is hovered over it.
+
+### The URL Status Indicator
+
+A common use case for indicators is to convey the state of some external system such as a 
+persistence backend or HTTP server. So long as this system is accessible via HTTP request, 
+Open MCT provides a general purpose indicator to show whether the server is available and 
+returing a 2xx status code. The URL Status Indicator is made available as a default plugin. See
+[Included Plugins](#included-plugins) below for details on how to install and configure the 
+URL Status Indicator.
+
+### Creating a Simple Indicator
+
+A simple indicator with an icon and some text can be created and added with minimal code. An indicator 
+of this type exposes functions for customizing the text, icon, and style of the indicator.
+
+eg.
+``` javascript
+var myIndicator = openmct.indicators.simpleIndicator();
+myIndicator.text("Hello World!");
+openmct.indicators.add(myIndicator);
+```
+
+This will create a new indicator and add it to the bottom of the screen in Open MCT.
+By default, the indicator will appear as an information icon. Hovering over the icon will
+reveal the text set via the call to `.text()`. The Indicator object returned by the API 
+call exposes a number of functions for customizing the content and appearance of the indicator:
+
+* `.text([text])`: Gets or sets the text shown when the user hovers over the indicator.
+Accepts an __optional__ `string` argument that, if provided, will be used to set the text. 
+Hovering over the indicator will expand it to its full size, revealing this text alongside 
+the icon. Returns the currently set text as a `string`.
+* `.description([description])`: Gets or sets the indicator's description. Accepts an 
+__optional__ `string` argument that, if provided, will be used to set the text. The description 
+allows for more detail to be provided in a tooltip when the user hovers over the indicator. 
+Returns the currently set text as a `string`.
+* `.iconClass([className])`: Gets or sets the CSS class used to define the icon. Accepts an __optional__ 
+`string` parameter to be used to set the class applied to the indicator. Any of 
+[the built-in glyphs](https://nasa.github.io/openmct/style-guide/#/browse/styleguide:home/glyphs?view=styleguide.glyphs) 
+may be used here, or a custom CSS class can be provided. Returns the currently defined CSS 
+class as a `string`.
+* `.statusClass([className])`: Gets or sets the CSS class used to determine status. Accepts an __optional __
+`string` parameter to be used to set a status class applied to the indicator. May be used to apply 
+different colors to indicate status.
+
+### Custom Indicators
+
+A completely custom indicator can be added by simple providing a DOM element to place alongside other indicators.
+
+``` javascript
+    var domNode = document.createElement('div');
+    domNode.innerText = new Date().toString();
+    setInterval(function () {
+        domNode.innerText = new Date().toString();
+    }, 1000);
+
+    openmct.indicators.add({
+        element: domNode
+    });
+```
+
 ## Included Plugins
 
 Open MCT is packaged along with a few general-purpose plugins:
@@ -1000,18 +1070,18 @@ openmct.install(openmct.plugins.CouchDB('http://localhost:9200'))
 * `openmct.plugins.Espresso` and `openmct.plugins.Snow` are two different
   themes (dark and light) available for Open MCT. Note that at least one
   of these themes must be installed for Open MCT to appear correctly.
-* `openmct.plugins.URLIndicatorPlugin` adds an indicator which shows the
+* `openmct.plugins.URLIndicator` adds an indicator which shows the
 availability of a URL with the following options: 
   - `url` : URL to indicate the status of
-  - `cssClass`: Icon to show in the status bar, defaults to `icon-database`, [list of all icons](https://nasa.github.io/openmct/style-guide/#/browse/styleguide:home?view=items)
+  - `iconClass`: Icon to show in the status bar, defaults to `icon-database`, [list of all icons](https://nasa.github.io/openmct/style-guide/#/browse/styleguide:home?view=items)
   - `interval`: Interval between checking the connection, defaults to `10000`
   - `label` Name showing up as text in the status bar, defaults to url
 ```javascript
-openmct.install(openmct.plugins.URLIndicatorPlugin({
-  url: 'http://google.com',
-  cssClass: 'check',
-  interval: 10000,
-  label: 'Google'
+openmct.install(openmct.plugins.URLIndicator({
+  url: 'http://localhost:8080',
+    iconClass: 'check',
+    interval: 10000,
+    label: 'Localhost'
  })
 );
 ```

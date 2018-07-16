@@ -19,9 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/******************************************************************* STATUS BLOCK ELEMS */
+
 @mixin statusBannerColors($bg, $fg: $colorStatusFg) {
-	$bgPb: 30%;
+	$bgPb: 10%;
 	$bgPbD: 10%;
 	background-color: darken($bg, $bgPb);
 	color: $fg;
@@ -34,110 +34,6 @@
 			background-color: darken($bg, $bgPb);
 		}
 	}
-}
-
-// Status coloring
-.ok, .info {
-    .status-indicator {
-        color: $colorInfo;
-    }
-}
-
-.alert, .caution, .warning {
-    .status-indicator, .count {
-        color: $colorStatusAlert;
-    }
-
-}
-
-.error, .err {
-    .status-indicator, .count {
-        color: $colorStatusError;
-    }
-}
-
-.available {
-    .status-indicator, .count {
-        color: $colorStatusAvailable;
-    }
-}
-
-.subdued {
-    .status-indicator {
-        color: pullForward($colorStatusBarBg, 40%);
-    }
-}
-
-.status-block-holder {
-    // Applied to mct-include element
-    // Contains status.block elements
-    $transDelay: 1.5s;
-    $transSpeed: .25s;
-    display: inline-block;
-    &.clickable { cursor: pointer; }
-    &:not(.clickable) { cursor: default; }
-    &.no-icon .status.block {
-        .status-indicator {
-            display: none;
-        }
-    }
-    &.float-right {
-        float: right;
-    }
-    &:not(.no-collapse) .status.block {
-        .label {
-            // Max-width silliness is necessary for width transition
-            @include trans-prop-nice(max-width, $transSpeed, $transDelay);
-            overflow: hidden;
-            max-width: 0px;
-        }
-        &:hover {
-            .label {
-                @include trans-prop-nice(max-width, $transSpeed, 0s);
-                max-width: 600px;
-                width: auto;
-            }
-            .count {
-                @include trans-prop-nice(max-width, $transSpeed, 0s);
-                opacity: 0;
-            }
-        }
-    }
-
-}
-
-.status.block {
-    $transDelay: 1.5s;
-    $transSpeed: .25s;
-	color: $colorStatusDefault;
-	display: inline-block;
-	margin-right: $interiorMargin;
-	.status-indicator,
-	.label,
-	.count {
-		display: inline-block;
-		vertical-align: top;
-	}
-
-	.status-indicator {
-        background: none !important;
-		margin-right: $interiorMarginSm;
-        &[class*='s-status']:before {
-            font-size: 1em;
-        }
-	}
-
-	.count {
-		@include trans-prop-nice(opacity, $transSpeed, $transDelay);
-		font-weight: bold;
-		opacity: 1;
-	}
-    .s-button {
-        background: $colorStatusBtnBg;
-        padding: 0 $interiorMargin;
-        height: auto;
-        line-height: inherit;
-    }
 }
 
 /******************************************************************* MESSAGE BANNERS */
@@ -289,7 +185,6 @@
 
     > div,
     > span {
-        //@include test(red);
         margin-bottom: $interiorMargin;
     }
 

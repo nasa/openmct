@@ -58,7 +58,10 @@
         position: relative;
     }
 
-    .w-mct-example > div { margin-bottom: $interiorMarginLg; }
+    .w-mct-example {
+        color: #ccc;
+        > div { margin-bottom: $interiorMarginLg; }
+    }
 
     code,
     pre {

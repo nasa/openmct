@@ -47,6 +47,18 @@
     }
 }
 
+
+.status-holder {
+    text-transform: uppercase;
+}
+
+.s-ue-bottom-bar {
+    background: $colorStatusBarBg;
+    color: $colorStatusBarFg;
+    cursor: default;
+    font-size: .7rem;
+}
+
 .user-environ {
     height: 100%;
     width: 100%;
@@ -81,21 +93,17 @@
         }
     }
 
-    .ue-bottom-bar {
-        @include absPosDefault(0);// New status bar design
+    .l-ue-bottom-bar {
+        $m: $interiorMarginSm;
+        @include absPosDefault(0, $overflow: visible);// New status bar design
         top: auto;
         height: $ueFooterH;
-        line-height: $ueFooterH - ($interiorMargin * 2);
-        background: $colorStatusBarBg;
-        color: lighten($colorBodyBg, 30%);
-        font-size: .7rem;
+        line-height: $ueFooterH - ($m * 2);
         .status-holder {
             box-sizing: border-box;
-            @include absPosDefault($interiorMargin);
-            @include ellipsize();
+            @include absPosDefault($m, $overflow: visible);
             right: 120px;
-            text-transform: uppercase;
-            z-index: 1;
+            z-index: 10;
         }
         .app-logo {
             background-position: right center;

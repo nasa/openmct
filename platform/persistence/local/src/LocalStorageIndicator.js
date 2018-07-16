@@ -26,7 +26,7 @@ define(
 
         var LOCAL_STORAGE_WARNING = [
             "Using browser local storage for persistence.",
-            "Anything you create or change will be visible only",
+            "Anything you create or change will only be saved",
             "in this browser on this machine."
         ].join(' ');
 
@@ -41,7 +41,7 @@ define(
         }
 
         LocalStorageIndicator.prototype.getCssClass = function () {
-            return "icon-database";
+            return "icon-database s-status-caution";
         };
         LocalStorageIndicator.prototype.getGlyphClass = function () {
             return 'caution';

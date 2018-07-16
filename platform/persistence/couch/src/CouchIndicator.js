@@ -33,20 +33,24 @@ define(
         var CONNECTED = {
                 text: "Connected",
                 glyphClass: "ok",
+                statusClass: "s-status-ok",
                 description: "Connected to the domain object database."
             },
             DISCONNECTED = {
                 text: "Disconnected",
                 glyphClass: "err",
+                statusClass: "s-status-caution",
                 description: "Unable to connect to the domain object database."
             },
             SEMICONNECTED = {
                 text: "Unavailable",
                 glyphClass: "caution",
+                statusClass: "s-status-caution",
                 description: "Database does not exist or is unavailable."
             },
             PENDING = {
-                text: "Checking connection..."
+                text: "Checking connection...",
+                statusClass: "s-status-caution"
             };
 
         /**
@@ -96,7 +100,7 @@ define(
         }
 
         CouchIndicator.prototype.getCssClass = function () {
-            return "icon-database";
+            return "icon-database " + this.state.statusClass;
         };
 
         CouchIndicator.prototype.getGlyphClass = function () {

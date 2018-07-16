@@ -20,14 +20,8 @@
  at runtime from the About dialog for additional information.
 -->
 <!-- DO NOT ADD SPACES BETWEEN THE SPANS - IT ADDS WHITE SPACE!! -->
-<div class='status block'
+<div class="ls-indicator {{ngModel.getCssClass()}}"
 	 title="{{ngModel.getDescription()}}"
-	 ng-click='ngModel.configure()'
 	 ng-show="ngModel.getText().length > 0">
-	<span class="status-indicator {{ngModel.getCssClass()}}"></span><span class="label"
-		  ng-class='ngModel.getTextClass()'>
-		{{ngModel.getText()}}
-        <a class="s-button icon-gear" ng-if="ngModel.configure"></a>
-	</span><span class="count">
-	</span>
+	<span class="label">{{ngModel.getText()}}</span>
 </div>

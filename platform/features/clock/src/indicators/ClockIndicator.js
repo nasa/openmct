@@ -45,11 +45,11 @@ define(
         }
 
         ClockIndicator.prototype.getGlyphClass = function () {
-            return "no-collapse float-right subdued";
+            return "";
         };
 
         ClockIndicator.prototype.getCssClass = function () {
-            return "icon-clock";
+            return "t-indicator-clock icon-clock no-collapse float-right";
         };
 
         ClockIndicator.prototype.getText = function () {

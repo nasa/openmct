@@ -23,37 +23,18 @@
 define(
     [],
     function () {
-
-        /**
-         * Controller for the bottombar template. Exposes
-         * available indicators (of extension category "indicators")
-         * @memberof platform/commonUI/general
-         * @constructor
-         */
-        function BottomBarController(indicators) {
-            // Utility function used to make indicators presentable
-            // for display.
-            function present(Indicator) {
-                return {
-                    template: Indicator.template || "indicator",
-                    ngModel: typeof Indicator === 'function' ?
-                            new Indicator() : Indicator
-                };
-            }
-
-            this.indicators = indicators.map(present);
+        function MCTIndicators(openmct) {
+            return {
+                restrict: "E",
+                link: function link(scope, element) {
+                    openmct.indicators.indicatorElements
+                        .forEach(function (indicatorElement) {
+                            element.append(indicatorElement);
+                        });
+                }
+            };
         }
 
-        /**
-         * Get all indicators to display.
-         * @returns {Indicator[]} all indicators
-         *          to display in the bottom bar.
-         * @memberof platform/commonUI/general.BottomBarController#
-         */
-        BottomBarController.prototype.getIndicators = function () {
-            return this.indicators;
-        };
-
-        return BottomBarController;
+        return MCTIndicators;
     }
 );
