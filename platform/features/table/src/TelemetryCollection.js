@@ -93,7 +93,9 @@ define(
                 // Calculate the new index of the last item in bounds
                 endIndex = _.sortedLastIndex(this.highBuffer, testValue, this.sortField);
                 added = this.highBuffer.splice(0, endIndex);
-                this.telemetry = this.telemetry.concat(added);
+                added.forEach(function (datum) {
+                    this.telemetry.push(datum);
+                }.bind(this));
             }
 
             if (discarded && discarded.length > 0) {
@@ -132,6 +134,7 @@ define(
             // bounds events, so no bounds checking necessary
             if (this.sortField === undefined) {
                 this.telemetry.push(item);
+
                 return true;
             }
 
@@ -153,7 +156,6 @@ define(
 
             // If out of bounds low, disregard data
             if (!boundsLow) {
-
                 // Going to check for duplicates. Bound the search problem to
                 // items around the given time. Use sortedIndex because it
                 // employs a binary search which is O(log n). Can use binary search
