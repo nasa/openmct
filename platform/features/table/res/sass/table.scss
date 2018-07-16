@@ -65,3 +65,10 @@ mct-table {
         margin-bottom: 3px;
     }
 }
+
+.mct-table-scroll-forcer {
+    // Force horz scroll when needed; width set via JS
+    font-size: 0;
+    height: 1px; // Height 0 won't force scroll properly
+    position: relative;
+}
