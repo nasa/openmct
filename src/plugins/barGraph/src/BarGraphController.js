@@ -43,8 +43,6 @@ define([
             {layer: new WorldWind.BingAerialWithLabelsLayer(null), enabled: true},
             {layer: new WorldWind.BingRoadsLayer(null), enabled: false},
             {layer: new WorldWind.OpenStreetMapImageLayer(null), enabled: false},
-            // Add atmosphere layer on top of all base layers.
-            {layer: new WorldWind.AtmosphereLayer(), enabled: true},
             // WorldWindow UI layers.
             {layer: new WorldWind.CoordinatesDisplayLayer(wwd), enabled: true},
             {layer: new WorldWind.ViewControlsLayer(wwd), enabled: true}
@@ -85,37 +83,12 @@ define([
         var pathPositions = [];
         pathPositions.push(new WorldWind.Position(0, 0, 1000e3));
 
-
-        // // Create the path.
-        // var path = new WorldWind.Path(pathPositions, null);
-        // path.altitudeMode = WorldWind.ABSOLUTE; // The path's altitude stays relative to the terrain's altitude.
-        // path.followTerrain = true;
-        // path.extrude = true; // Make it a curtain.
-        // path.useSurfaceShapeFor2D = true; // Use a surface shape in 2D mode.
-
-        // // Create and assign the path's attributes.
-        // var pathAttributes = new WorldWind.ShapeAttributes(null);
-        // pathAttributes.outlineColor = WorldWind.Color.YELLOW;
-        // pathAttributes.interiorColor = new WorldWind.Color(0, 1, 1, 0.5);
-        // pathAttributes.drawVerticals = path.extrude; //Draw verticals only when extruding.
-        // path.attributes = pathAttributes;
-
-        // // Create and assign the path's highlight attributes.
-        // var highlightAttributes = new WorldWind.ShapeAttributes(pathAttributes);
-        // highlightAttributes.outlineColor = WorldWind.Color.RED;
-        // highlightAttributes.interiorColor = new WorldWind.Color(1, 1, 1, 0.5);
-        // path.highlightAttributes = highlightAttributes;
-
-        // // Add the path to a layer and the layer to the WorldWindow's layer list.
-        // var pathsLayer = new WorldWind.RenderableLayer();
-        // pathsLayer.displayName = "Paths";
-        // pathsLayer.addRenderable(path);
-        // wwd.addLayer(pathsLayer);
+        wwd.goTo(new WorldWind.Position(0,0, 20000e3));
 
         window.setInterval(function () {
             var pos = generateLongLat();
 
-            pathPositions.push(new WorldWind.Position(pos.long, (-1 * pos.lat), 1000e3));
+            pathPositions.push(new WorldWind.Position(pos.long, pos.lat, 1000e3));
 
             // Create the path.
             var path = new WorldWind.Path(pathPositions, null);
@@ -142,12 +115,9 @@ define([
             pathsLayer.displayName = "Paths";
             pathsLayer.addRenderable(path);
             wwd.addLayer(pathsLayer);
-            
-            wwd.redraw();
-        }, 1000);
 
-        // Now set up to handle highlighting.
-        // var highlightController = new WorldWind.HighlightController(wwd);
+            wwd.redraw();   
+        }, 1000);
     };
 
     BarGraphController.prototype.destroy = function (container) {
