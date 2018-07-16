@@ -34,7 +34,7 @@ define([
     './runs/TimeSettingsURLHandler',
     './runs/TypeDeprecationChecker',
     './runs/LegacyTelemetryProvider',
-    './services/LegacyObjectAPIInterceptor',
+    './services/LegacyObjectAPIInterceptor'
 ], function (
     legacyRegistry,
     ActionDialogDecorator,
