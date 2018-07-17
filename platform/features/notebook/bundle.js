@@ -58,7 +58,8 @@ define([
                 "model": {
                       "entries": [],
                       "composition": [],
-                      "entryTypes": []
+                      "entryTypes": [],
+                      "defaultSort": "-createdOn"
                   },
                 "properties": [
                     {
@@ -236,7 +237,6 @@ define([
                     "cssClass": "icon-notebook labeled",
                     "description": "Add a new Notebook entry",
                     "category": [
-                        "contextual",
                          "view-control"
                     ],
                     "depends": [
@@ -252,13 +252,13 @@ define([
             "licenses": [
                 {
                     "name": "painterro",
-                    "version": "4.1.0",
-                    "author": "Mike Bostock",
-                    "description": "D3 (or D3.js) is a JavaScript library for visualizing data using web standards. D3 helps you bring data to life using SVG, Canvas and HTML. D3 combines powerful visualization and interaction techniques with a data-driven approach to DOM manipulation, giving you the full capabilities of modern browsers and the freedom to design the right visual interface for your data.",
-                    "website": "https://d3js.org/",
-                    "copyright": "Copyright 2010-2016 Mike Bostock",
-                    "license": "BSD-3-Clause",
-                    "link": "https://github.com/d3/d3/blob/master/LICENSE"
+                    "version": "0.2.65",
+                    "author": "Ivan Borshchov",
+                    "description": "Painterro is JavaScript paint widget which allows editing images directly in a browser.",
+                    "website": "https://github.com/ivictbor/painterro",
+                    "copyright": "Copyright 2017 Ivan Borshchov",
+                    "license": "MIT",
+                    "link": "https://github.com/ivictbor/painterro/blob/master/LICENSE"
                 }
             ],
             "capabilities": [

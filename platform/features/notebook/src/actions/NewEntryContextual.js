@@ -185,7 +185,18 @@ define(
 
         NewEntryContextual.appliesTo = function (context) {
             var domainObject = context.domainObject;
-            return !!(domainObject && domainObject.getModel().type !== 'notebook');
+
+            if (domainObject) {
+                if (domainObject.getModel().type === 'Notebook') {
+                    // do not allow in context of a notebook
+                    return false;
+                } else if (domainObject.getModel().type.includes('imagery')) {
+                    // do not allow in the context of an object with imagery
+                    // (because of cross domain issue with snapshot)
+                    return false;
+                }
+            }
+            return true;
         };
 
         return NewEntryContextual;
