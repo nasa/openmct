@@ -1,0 +1,15 @@
+<div class="tabular-holder l-sticky-headers has-control-bar">
+    <table><tr><th v-for="(title, key) in headers" v-on:click="sortBy(key)">{{title}}</th></tr></table>
+    <div v-on:scroll="scroll()" class="l-tabular-body t-scrolling vscroll--persist">
+        <table class="mct-table"
+                v-bind:style="{ height: totalHeight + 'px'}">
+            <tbody>
+                <tr v-for="row in visibleRows"
+                    v-bind:style="{ top: row.top}">
+                    <td v-for="(title, key, headerIndex) in headers"
+                        v-bind:style="{ width: columnWidths[headerIndex], 'max-width': columnWidths[headerIndex]}">{{row[key]}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

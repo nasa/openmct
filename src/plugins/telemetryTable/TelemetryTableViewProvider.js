@@ -20,49 +20,28 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+define(['./TelemetryTableComponent'], function (TelemetryTableComponent) {
+    function TelemetryTableViewProvider(openmct) {
+        return {
+            key: 'vue-table',
+            name: 'Telemetry Table',
+            editable: true,
+            canView: function (domainObject) {
+                return domainObject.type === 'vue-table';
+            },
+            view: function (domainObject) {
+                return {
+                    show: function (element) {
+                        let component = TelemetryTableComponent(domainObject, element, openmct);
 
-    .mct-sizing-table {
-        z-index: -1;
-        visibility: hidden;
-        position: absolute !important;
-
-        //Add some padding to allow for decorations such as limits indicator
-        td {
-            padding-right: 15px;
-            padding-left: 10px;
-            white-space: nowrap;
-        }
-    }
-
-    .mct-table {
-        thead {
-            display: block;
-            tr {
-                display: block;
-                white-space: nowrap;
-                th {
-                    display: inline-block;
-                    box-sizing: border-box;
+                    }, 
+                    destroy: function () {}
                 }
-            }
-        }
-        tbody {
-            tr {
-                position: absolute;
-                white-space: nowrap;
-                display: block;
-            }
-            td {
-                white-space: nowrap;
-                overflow: hidden;
-                box-sizing: border-box;
-                display: inline-block;
+            },
+            priority: function () {
+                return 1;
             }
         }
     }
-
-mct-table {
-    .l-control-bar {
-        margin-bottom: 3px;
-    }
-}
+    return TelemetryTableViewProvider;
+});

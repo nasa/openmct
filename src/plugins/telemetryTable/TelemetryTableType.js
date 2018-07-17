@@ -20,49 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
-    .mct-sizing-table {
-        z-index: -1;
-        visibility: hidden;
-        position: absolute !important;
-
-        //Add some padding to allow for decorations such as limits indicator
-        td {
-            padding-right: 15px;
-            padding-left: 10px;
-            white-space: nowrap;
-        }
-    }
-
-    .mct-table {
-        thead {
-            display: block;
-            tr {
-                display: block;
-                white-space: nowrap;
-                th {
-                    display: inline-block;
-                    box-sizing: border-box;
-                }
-            }
-        }
-        tbody {
-            tr {
-                position: absolute;
-                white-space: nowrap;
-                display: block;
-            }
-            td {
-                white-space: nowrap;
-                overflow: hidden;
-                box-sizing: border-box;
-                display: inline-block;
+define(function () {
+    function TelemetryTableType() {
+        return {
+            name: 'Vue Telemetry Table',
+            description: 'Display telemetry values for the current time bounds in tabular form. Supports filtering and sorting.',
+            creatable: true,
+            cssClass: 'icon-tabular-realtime',
+            initialize: function (domainObject) {
+                domainObject.composition = [];
+                domainObject.configuration = {};
             }
         }
     }
-
-mct-table {
-    .l-control-bar {
-        margin-bottom: 3px;
-    }
-}
+    return TelemetryTableType;
+});
