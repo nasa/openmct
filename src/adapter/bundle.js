@@ -32,7 +32,9 @@ define([
     './policies/AdaptedViewPolicy',
     './runs/AlternateCompositionInitializer',
     './runs/TimeSettingsURLHandler',
-    './runs/TypeDeprecationChecker'
+    './runs/TypeDeprecationChecker',
+    './runs/LegacyTelemetryProvider',
+    './services/LegacyObjectAPIInterceptor'
 ], function (
     legacyRegistry,
     ActionDialogDecorator,
@@ -45,7 +47,9 @@ define([
     AdaptedViewPolicy,
     AlternateCompositionInitializer,
     TimeSettingsURLHandler,
-    TypeDeprecationChecker
+    TypeDeprecationChecker,
+    LegacyTelemetryProvider,
+    LegacyObjectAPIInterceptor
 ) {
     legacyRegistry.register('src/adapter', {
         "extensions": {
@@ -94,6 +98,18 @@ define([
                     provides: "modelService",
                     implementation: MissingModelCompatibilityDecorator,
                     depends: ["openmct"]
+                },
+                {
+                    provides: "objectService",
+                    type: "decorator",
+                    priority: "mandatory",
+                    implementation: LegacyObjectAPIInterceptor,
+                    depends: [
+                        "openmct",
+                        "roots[]",
+                        "instantiate",
+                        "topic"
+                    ]
                 }
             ],
             policies: [
@@ -126,6 +142,13 @@ define([
                         );
                     },
                     depends: ["openmct", "$location", "$rootScope"]
+                },
+                {
+                    implementation: LegacyTelemetryProvider,
+                    depends: [
+                        "openmct",
+                        "instantiate"
+                    ]
                 }
             ],
             licenses: [

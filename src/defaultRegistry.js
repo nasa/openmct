@@ -24,8 +24,6 @@ define([
     'legacyRegistry',
 
     '../src/adapter/bundle',
-    '../src/api/objects/bundle',
-    '../src/api/telemetry/bundle',
 
     '../example/builtins/bundle',
     '../example/composite/bundle',
@@ -93,8 +91,6 @@ define([
 
     var DEFAULTS = [
         'src/adapter',
-        'src/api/objects',
-        'src/api/telemetry',
         'platform/framework',
         'platform/core',
         'platform/representation',

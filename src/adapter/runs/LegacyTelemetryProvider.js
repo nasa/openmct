@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    '../objects/object-utils'
+    '../../api/objects/object-utils'
 ], function (
     utils
 ) {

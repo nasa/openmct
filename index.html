@@ -73,6 +73,7 @@
                 openmct.time.clock('local', {start: -THIRTY_MINUTES, end: 0});
                 openmct.time.timeSystem('utc');
                 openmct.start();
+                window.openmct = openmct;
             });
         </script>
         <link rel="stylesheet" href="platform/commonUI/general/res/css/startup-base.css">
