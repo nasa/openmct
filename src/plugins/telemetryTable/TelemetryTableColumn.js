@@ -19,61 +19,39 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-.mct-sizing-table {
-    z-index: -1;
-    visibility: hidden;
-    position: absolute !important;
-
-    //Add some padding to allow for decorations such as limits indicator
-    td {
-        padding-right: 15px;
-        padding-left: 10px;
-        white-space: nowrap;
-    }
-}
-
-.mct-table {
-    tr {
-        display: flex; // flex-flow defaults to row nowrap (which is what we want) so no need to define
-        align-items: stretch;
-    }
-
-    td, th {
-        box-sizing: border-box;
-        display: block;
-        flex: 1 0 auto;
-        white-space: nowrap;
-    }
-
-    thead {
-        display: block;
-    }
-
-    tbody {
-        tr {
-            position: absolute;
-            height: 18px; // Needed when a row has empty values in its cells
+define(function () {
+    class TelemetryTableColumn {
+        constructor (openmct, metadatum) {
+            this.metadatum = metadatum;
+            this.formatter = openmct.telemetry.getValueFormatter(metadatum);
+            this.titleValue = this.metadatum.name;
         }
 
-        td {
-            overflow: hidden;
-            box-sizing: border-box;
-            display: inline-block;
-            text-overflow: ellipsis;
+        getKey() {
+            return this.metadatum.key;
         }
-    }
-}
 
-.l-telemetry-table {
-    .l-control-bar {
-        margin-bottom: 3px;
-    }
-}
+        getTitle() {
+            return this.metadatum.name;
+        }
 
-.mct-table-scroll-forcer {
-    // Force horz scroll when needed; width set via JS
-    font-size: 0;
-    height: 1px; // Height 0 won't force scroll properly
-    position: relative;
-}
+        getMetadatum() {
+            return this.metadatum;
+        }
+
+        hasValueForDatum(telemetryDatum) {
+            return telemetryDatum.hasOwnProperty(this.metadatum.source);
+        }
+
+        getRawValue(telemetryDatum) {
+            return telemetryDatum[this.metadatum.source];
+        }
+
+        getFormattedValue(telemetryDatum) {
+            return this.formatter.format(telemetryDatum);
+        }
+
+    };
+
+    return TelemetryTableColumn;
+});

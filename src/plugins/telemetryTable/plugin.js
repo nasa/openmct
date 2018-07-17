@@ -20,60 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-.mct-sizing-table {
-    z-index: -1;
-    visibility: hidden;
-    position: absolute !important;
-
-    //Add some padding to allow for decorations such as limits indicator
-    td {
-        padding-right: 15px;
-        padding-left: 10px;
-        white-space: nowrap;
-    }
-}
-
-.mct-table {
-    tr {
-        display: flex; // flex-flow defaults to row nowrap (which is what we want) so no need to define
-        align-items: stretch;
-    }
-
-    td, th {
-        box-sizing: border-box;
-        display: block;
-        flex: 1 0 auto;
-        white-space: nowrap;
-    }
-
-    thead {
-        display: block;
-    }
-
-    tbody {
-        tr {
-            position: absolute;
-            height: 18px; // Needed when a row has empty values in its cells
-        }
-
-        td {
-            overflow: hidden;
-            box-sizing: border-box;
-            display: inline-block;
-            text-overflow: ellipsis;
-        }
-    }
-}
-
-.l-telemetry-table {
-    .l-control-bar {
-        margin-bottom: 3px;
-    }
-}
-
-.mct-table-scroll-forcer {
-    // Force horz scroll when needed; width set via JS
-    font-size: 0;
-    height: 1px; // Height 0 won't force scroll properly
-    position: relative;
-}
+ define([
+     './TelemetryTableViewProvider',
+     './TableConfigurationViewProvider',
+     './TelemetryTableType'
+    ], function (
+        TelemetryTableViewProvider,
+        TableConfigurationViewProvider,
+        TelemetryTableType
+    ) {
+    return function plugin() {
+        return function install(openmct) {
+            openmct.objectViews.addProvider(new TelemetryTableViewProvider(openmct));
+            openmct.inspectorViews.addProvider(new TableConfigurationViewProvider(openmct));
+            openmct.types.addType('table', TelemetryTableType());
+        };
+    };
+ });
