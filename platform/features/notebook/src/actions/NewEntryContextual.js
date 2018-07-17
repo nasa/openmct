@@ -187,7 +187,7 @@ define(
             var domainObject = context.domainObject;
 
             if (domainObject) {
-                if(domainObject.getModel().type === 'Notebook') {
+                if (domainObject.getModel().type === 'Notebook') {
                     // do not allow in context of a notebook
                     return false;
                 } else if (domainObject.getModel().type.includes('imagery')) {
