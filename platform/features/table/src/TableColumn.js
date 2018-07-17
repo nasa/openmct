@@ -50,9 +50,7 @@ define(function () {
     };
 
     TableColumn.prototype.getValue = function (telemetryDatum, limitEvaluator) {
-        var isValueColumn = !!(this.metadatum.hints.y || this.metadatum.hints.range);
-        var alarm = isValueColumn &&
-                    limitEvaluator &&
+        var alarm = limitEvaluator &&
                     limitEvaluator.evaluate(telemetryDatum, this.metadatum);
         var value = {
             text: this.formatter.format(telemetryDatum),
