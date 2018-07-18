@@ -21,9 +21,11 @@
  *****************************************************************************/
 
 define([
-    './PlotModelFormController'
+    './PlotModelFormController',
+    'lodash'
 ], function (
-    PlotModelFormController
+    PlotModelFormController,
+    _
 ) {
 
     function dynamicPathForKey(key) {

@@ -136,7 +136,7 @@ define([
             var staticObjectPath = objectPath;
             objectPath = function () {
                 return staticObjectPath;
-            }
+            };
         }
         this.listenTo(this.model, 'change:' + prop, function (newVal, oldVal) {
             if (!_.isEqual(coerce(_.get(this.$scope, formPath)), coerce(newVal))) {
