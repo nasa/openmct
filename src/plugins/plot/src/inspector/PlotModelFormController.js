@@ -37,9 +37,36 @@ define([
     function PlotModelFormController($scope, openmct, attrs) {
         this.$scope = $scope;
         this.openmct = openmct;
+        this.attrs = attrs;
 
-        this.domainObject = $scope.formDomainObject;
-        this.model = $scope.$eval(attrs.formModel);
+
+        if (this.isReady()) {
+            this.initializeScope();
+        } else {
+            this.$scope.$watch(this.isReady.bind(this), function (isReady) {
+                if (isReady) {
+                    this.initializeScope();
+                }
+            }.bind(this));
+        }
+    }
+
+    PlotModelFormController.extend = extend;
+    eventHelpers.extend(PlotModelFormController.prototype);
+
+    PlotModelFormController.prototype.isReady = function () {
+        return !!this.$scope.formDomainObject &&
+            !!this.$scope.$eval(this.attrs.formModel);
+    };
+
+    /**
+     * Initialize scope is called when the formDomainObject has been set.
+     * This may be deferred until after the controller construction in cases
+     * where the object has not yet loaded.
+     */
+    PlotModelFormController.prototype.initializeScope = function () {
+        this.domainObject = this.$scope.formDomainObject;
+        this.model = this.$scope.$eval(this.attrs.formModel);
 
         this.unlisten = this.openmct.objects.observe(
             this.domainObject,
@@ -53,10 +80,7 @@ define([
         this.listenTo(this.$scope, '$destroy', this.destroy, this);
         this.initialize();
         this.initForm();
-    }
-
-    PlotModelFormController.extend = extend;
-    eventHelpers.extend(PlotModelFormController.prototype);
+    };
 
     PlotModelFormController.prototype.updateDomainObject = function (domainObject) {
         this.domainObject = domainObject;
