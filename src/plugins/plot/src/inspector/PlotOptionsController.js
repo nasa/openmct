@@ -119,10 +119,10 @@ define([
                 };
             }
             var newRange = {};
-            if (typeof range.min !== undefined) {
+            if (typeof range.min !== 'undefined' && range.min !== null) {
                 newRange.min = Number(range.min);
             }
-            if (typeof range.max !== undefined) {
+            if (typeof range.max !== 'undefined' && range.max !== null) {
                 newRange.max = Number(range.max);
             }
             return newRange;
@@ -130,10 +130,10 @@ define([
             if (!range) {
                 return 'Need range';
             }
-            if (!range.min) {
+            if (range.min === '' || range.min === null || typeof range.min === 'undefined') {
                 return 'Must specify Minimum';
             }
-            if (!range.max) {
+            if (range.max === '' || range.max === null || typeof range.max === 'undefined') {
                 return 'Must specify Maximum';
             }
             if (_.isNaN(Number(range.min))) {
@@ -233,15 +233,15 @@ define([
             }
         }, this);
         model.listenTo(this.$scope, 'change:' + scopePath, function (newVal, oldVal) {
-            if (_.isEqual(coerce(newVal), coerce(model.get(prop)))) {
-                return; // Don't trigger excessive mutations.
-            }
             var validationResult = validate(newVal);
             if (validationResult === true) {
                 delete this.$scope.validation[scopePath];
             } else {
                 this.$scope.validation[scopePath] = validationResult;
                 return;
+            }
+            if (_.isEqual(coerce(newVal), coerce(model.get(prop)))) {
+                return; // Don't trigger excessive mutations.
             }
             if (!_.isEqual(coerce(newVal), coerce(oldVal))) {
                 model.set(prop, coerce(newVal));
