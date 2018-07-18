@@ -64,7 +64,7 @@ define([
             this.listenTo(composition, 'remove', this.removeTelemetryObject, this);
             composition.load();
         },
-        addTelemetryObject: function (domainObject) {
+        addTelemetryObject: function (domainObject, index) {
             var seriesConfig = this.plot.getPersistedSeriesConfig(domainObject.identifier);
             var plotObject = this.plot.get('domainObject');
 

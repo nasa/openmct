@@ -116,8 +116,19 @@ define([
         initialize: function (options) {
             this.openmct = options.openmct;
             this.domainObject = options.domainObject;
+            this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(options.domainObject);
             this.on('destroy', this.onDestroy, this);
+        },
+
+        locateOldObject: function (oldStyleParent) {
+            return oldStyleParent.useCapability('composition')
+                .then(function (children) {
+                    this.oldObject = children
+                        .filter(function (child) {
+                            return child.getId() === this.keyString;
+                        }, this)[0];
+                }.bind(this));
         },
         /**
          * Fetch historical data and establish a realtime subscription.  Returns
