@@ -22,13 +22,13 @@
 
 define(
     [
-        './SortedTelemetryCollection'
+        './SortedTableRowCollection'
     ],
     function (
-        SortedTelemetryCollection
+        SortedTableRowCollection
     ) {
-        class FilteredTelemetryCollection extends SortedTelemetryCollection {
+        class FilteredTableRowCollection extends SortedTableRowCollection {
         }
 
-        return FilteredTelemetryCollection;
+        return FilteredTableRowCollection;
     });

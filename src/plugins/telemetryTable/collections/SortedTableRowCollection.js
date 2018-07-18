@@ -33,12 +33,12 @@ define(
         /**
          * @constructor
          */
-        class SortedTelemetryCollection extends EventEmitter {
+        class SortedTableRowCollection extends EventEmitter {
             constructor () {
                 super();
 
                 this.dupeCheck = false;
-                this.telemetry = [];
+                this.rows = [];
             }
 
             addOne(item) {
@@ -53,21 +53,21 @@ define(
                 // employs a binary search which is O(log n). Can use binary search
                 // based on time stamp because the array is guaranteed ordered due
                 // to sorted insertion.
-                let startIx = _.sortedIndex(this.telemetry, item, this.sortOptions.key);
+                let startIx = _.sortedIndex(this.rows, item, 'datum.' + this.sortOptions.key);
                 let endIx = undefined;
 
                 if (this.dupeCheck && startIx !== array.length) {
-                    endIx = _.sortedLastIndex(this.telemetry, item, this.sortOptions.key);
+                    endIx = _.sortedLastIndex(this.rows, item, 'datum.' + this.sortOptions.key);
 
                     // Create an array of potential dupes, based on having the
                     // same time stamp
-                    let potentialDupes = this.telemetry.slice(startIx, endIx + 1);
+                    let potentialDupes = this.rows.slice(startIx, endIx + 1);
                     // Search potential dupes for exact dupe
                     isDuplicate = _.findIndex(potentialDupes, _.isEqual.bind(undefined, item)) > -1;
                 }
 
                 if (!isDuplicate) {
-                    this.telemetry.splice(endIx || startIx, 0, item);
+                    this.rows.splice(endIx || startIx, 0, item);
                     return true;
                 }
                 return false;
@@ -126,16 +126,16 @@ define(
             sortBy(sortOptions) {
                 if (arguments.length > 0) {
                     this.sortOptions = sortOptions;
-                    this.telemetry = _.sortByOrder(this.telemetry, sortOptions.key, sortOptions.direction);
+                    this.rows = _.sortByOrder(this.rows, 'datum.' + sortOptions.key, sortOptions.direction);
                     this.emit('sorted');
                 }
 
-                return this.sortOptions;
+                return this.sortOptions; 
             }
 
-            data () {
-                return this.telemetry;
+            getRows () {
+                return this.rows;
             }
         }
-    return SortedTelemetryCollection;
+    return SortedTableRowCollection;
 });

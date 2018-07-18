@@ -4,11 +4,15 @@
         <table class="mct-table"
                 v-bind:style="{ height: totalHeight + 'px'}">
             <tbody>
-                <tr v-for="row in visibleRows"
-                    v-bind:style="{ top: row.top}">
-                    <td v-for="(title, key, headerIndex) in headers"
-                        v-bind:style="{ width: columnWidths[headerIndex], 'max-width': columnWidths[headerIndex]}">{{row[key]}}</td>
-                </tr>
+                <telemetry-table-row v-for="(row, rowIndex) in visibleRows" 
+                    :headers="headers"
+                    :columnWidths="columnWidths"
+                    :rowIndex="rowIndex"
+                    :rowOffset="rowOffset"
+                    :rowHeight="rowHeight"
+                    :row="row"
+                    >
+                </telemetry-table-row>
             </tbody>
         </table>
     </div>

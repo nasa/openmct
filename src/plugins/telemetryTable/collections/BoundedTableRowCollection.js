@@ -23,18 +23,18 @@
 define(
     [
         'lodash',
-        './SortedTelemetryCollection'
+        './SortedTableRowCollection'
     ],
     function (
         _,
-        SortedTelemetryCollection
+        SortedTableRowCollection
     ) {
 
-        class BoundedTelemetryCollection extends SortedTelemetryCollection {
+        class BoundedTableRowCollection extends SortedTableRowCollection {
             constructor (openmct) {
                 super();
                 
-                this.futureBuffer = new SortedTelemetryCollection();
+                this.futureBuffer = new SortedTableRowCollection();
 
                 this.sortByTimeSystem(openmct.time.timeSystem());
                 openmct.time.on('timeSystem', this.sortByTimeSystem, this);
@@ -47,8 +47,8 @@ define(
                 // Insert into either in-bounds array, or the future buffer.
                 // Data in the future buffer will be re-evaluated for possible 
                 // insertion on next bounds change
-                let beforeStartOfBounds = _.get(item, this.sortOptions.key) < this.lastBounds.start;
-                let afterEndOfBounds = _.get(item, this.sortOptions.key) > this.lastBounds.end;
+                let beforeStartOfBounds = item.datum[this.sortOptions.key] < this.lastBounds.start;
+                let afterEndOfBounds = item.datum[this.sortOptions.key] > this.lastBounds.end;
 
                 if (!afterEndOfBounds && !beforeStartOfBounds) {
                     return super.addOne(item);
@@ -87,22 +87,24 @@ define(
                 
                 let discarded = [];
                 let added = [];
-                let testValue = {};
+                let testValue = {
+                    datum: {}
+                };
 
                 this.lastBounds = bounds;
 
                 if (startChanged) {
-                    testValue[this.sortOptions.key] = bounds.start;
+                    testValue.datum[this.sortOptions.key] = bounds.start;
                     // Calculate the new index of the first item within the bounds
-                    startIndex = _.sortedIndex(this.telemetry, testValue, this.sortOptions.key);
-                    discarded = this.telemetry.splice(0, startIndex);
+                    startIndex = _.sortedIndex(this.telemetry, testValue, 'datum.' + this.sortOptions.key);
+                    discarded = this.rows.splice(0, startIndex);
                 }
 
                 if (endChanged) {
-                    testValue[this.sortOptions.key] = bounds.end;
+                    testValue.datum[this.sortOptions.key] = bounds.end;
                     // Calculate the new index of the last item in bounds
-                    endIndex = _.sortedLastIndex(this.futureBuffer.telemetry, testValue, this.sortOptions.key);
-                    added = this.futureBuffer.telemetry.splice(0, endIndex);
+                    endIndex = _.sortedLastIndex(this.futureBuffer.telemetry, testValue, 'datum.' + this.sortOptions.key);
+                    added = this.futureBuffer.rows.splice(0, endIndex);
                     added.forEach((datum) => this.telemetry.push(datum));
                 }
 
@@ -130,5 +132,5 @@ define(
                 openmct.time.off('bounds', this.bounds, this);
             }
         }
-    return BoundedTelemetryCollection;
+    return BoundedTableRowCollection;
 });

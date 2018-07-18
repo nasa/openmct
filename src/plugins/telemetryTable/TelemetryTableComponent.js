@@ -23,11 +23,13 @@
  define([
     'vue',
     'text!./telemetry-table.html',
-    './TelemetryTable'
+    './TelemetryTable',
+    './TelemetryTableRowComponent'
 ],function (
     Vue, 
     TelemetryTableTemplate,
-    TelemetryTable
+    TelemetryTable,
+    TelemetryTableRowComponent
 ) {
     const VISIBLE_ROW_COUNT = 100;
     const ROW_HEIGHT = 17;
@@ -39,6 +41,9 @@
         return new Vue({
             el: element,
             template: TelemetryTableTemplate,
+            components: {
+                'telemetry-table-row': TelemetryTableRowComponent
+            },
             data: function () {
                 return {
                     headers: {},
@@ -46,9 +51,9 @@
                     visibleRows: [],
                     columnWidths: {},
                     rowHeight: ROW_HEIGHT,
-                    visibleRowsStart: 0,
-                    visibleRowsEnd: 0,
+                    scrollOffset: 0,
                     totalHeight: 0,
+                    rowOffset: 0,
                     visibleRowCount: VISIBLE_ROW_COUNT,
                     scrollable: undefined
                 }
@@ -57,13 +62,13 @@
                 updateVisibleRows: function () {
                     let start = 0;
                     let end = this.visibleRowCount;
-                    let filteredRows = table.filteredTelemetry.data();
-                    let filteredTelemetryLength = filteredRows.length;
+                    let filteredRows = table.filteredRows.getRows();
+                    let filteredRowsLength = filteredRows.length;
                     
-                    this.totalHeight = this.rowHeight * filteredTelemetryLength - 1;
+                    this.totalHeight = this.rowHeight * filteredRowsLength - 1;
         
-                    if (filteredTelemetryLength < this.visibleRowCount) {
-                        end = filteredTelemetryLength;
+                    if (filteredRowsLength < this.visibleRowCount) {
+                        end = filteredRowsLength;
                     } else {
                         let firstVisible = this.calculateFirstVisibleRow();
                         let lastVisible = this.calculateLastVisibleRow();
@@ -75,19 +80,14 @@
         
                         if (start < 0) {
                             start = 0;
-                            end = Math.min(VISIBLE_ROW_COUNT, filteredTelemetryLength);
-                        } else if (end >= filteredTelemetryLength) {
-                            end = filteredTelemetryLength;
+                            end = Math.min(VISIBLE_ROW_COUNT, filteredRowsLength);
+                        } else if (end >= filteredRowsLength) {
+                            end = filteredRowsLength;
                             start = end - VISIBLE_ROW_COUNT + 1;
                         }
                     }
+                    this.rowOffset = start;
                     this.visibleRows = filteredRows.slice(start, end);
-                    this.visibleRows.forEach((row, rowIndex) => {
-                        row.top = (rowIndex + start) * this.rowHeight + 'px';
-                        row.width = 100 / this.headersCount + '%';
-                    });
-                    this.visibleRowsStart = start;
-                    this.visibleRowsEnd = end;
                 },
                 calculateFirstVisibleRow: function () {
                     return Math.floor(this.scrollable.scrollTop / this.rowHeight);
@@ -119,25 +119,24 @@
                         });
                     }
                 }
-
             },
             mounted: function () {
                 table.on('updateHeaders', this.updateHeaders);
 
-                table.filteredTelemetry.on('added', this.updateSizingRow, this);
-                table.filteredTelemetry.on('added', this.updateVisibleRows, this);
-                table.filteredTelemetry.on('removed', this.updateVisibleRows, this);
-                table.filteredTelemetry.on('sorted', this.updateVisibleRows, this);
+                table.filteredRows.on('added', this.updateSizingRow, this);
+                table.filteredRows.on('added', this.updateVisibleRows, this);
+                table.filteredRows.on('removed', this.updateVisibleRows, this);
+                table.filteredRows.on('sorted', this.updateVisibleRows, this);
 
                 this.scrollable = this.$el.querySelector('.t-scrolling');
             },
             destroyed: function () {
                 table.off('updateHeaders', this.updateHeaders);
 
-                table.filteredTelemetry.off('added', this.updateSizingRow, this);
-                table.filteredTelemetry.off('added', this.updateVisibleRows, this);
-                table.filteredTelemetry.off('removed', this.updateVisibleRows, this);
-                table.filteredTelemetry.off('sorted', this.updateVisibleRows, this);
+                table.filteredRows.off('added', this.updateSizingRow, this);
+                table.filteredRows.off('added', this.updateVisibleRows, this);
+                table.filteredRows.off('removed', this.updateVisibleRows, this);
+                table.filteredRows.off('sorted', this.updateVisibleRows, this);
             }
         });
     }

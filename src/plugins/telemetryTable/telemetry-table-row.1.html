@@ -1,0 +1,4 @@
+<tr v-bind:style="{ top: top}">
+    <td v-for="(title, key, headerIndex) in headers"
+        v-bind:style="{ width: columnWidths[headerIndex], 'max-width': columnWidths[headerIndex]}">{{formattedRow[key]}}</td>
+</tr>

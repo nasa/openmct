@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 define(function () {
-    class TableColumn {
+    class TelemetryTableColumn {
         constructor (openmct, telemetryObject, metadatum) {
             this.openmct = openmct;
             this.telemetryObject = telemetryObject;
@@ -65,5 +65,5 @@ define(function () {
 
     };
 
-    return TableColumn;
+    return TelemetryTableColumn;
 });

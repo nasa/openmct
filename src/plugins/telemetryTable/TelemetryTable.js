@@ -23,15 +23,17 @@
 define([
     'EventEmitter',
     'lodash',
-    './TableColumn',
-    './collections/BoundedTelemetryCollection',
-    './collections/FilteredTelemetryCollection'
+    './TelemetryTableColumn',
+    './collections/BoundedTableRowCollection',
+    './collections/FilteredTableRowCollection',
+    './TelemetryTableRow'
 ], function (
     EventEmitter,
     _,
-    TableColumn,
-    BoundedTelemetryCollection,
-    FilteredTelemetryCollection
+    TelemetryTableColumn,
+    BoundedTableRowCollection,
+    FilteredTableRowCollection,
+    TelemetryTableRow
 ) {
     class TelemetryTable extends EventEmitter {
         constructor(domainObject, rowCount, openmct) {
@@ -42,22 +44,22 @@ define([
             this.columns = {};
             this.rowCount = rowCount;
 
-            this.createTelemetryCollections();
+            this.createTableRows();
             this.loadComposition();
         }
 
-        createTelemetryCollections() {
-            this.boundedTelemetry = new BoundedTelemetryCollection(this.openmct);
+        createTableRows() {
+            this.boundedRows = new BoundedTableRowCollection(this.openmct);
 
             //By default, sort by current time system, ascending.
-            this.filteredTelemetry = new FilteredTelemetryCollection();
-            this.filteredTelemetry.sortBy({
+            this.filteredRows = new FilteredTableRowCollection();
+            this.filteredRows.sortBy({
                 key: this.openmct.time.timeSystem().key,
                 direction: 'asc'
             });
 
-            this.boundedTelemetry.on('added', this.filteredTelemetry.add, this.filteredTelemetry);
-            this.boundedTelemetry.on('removed', this.filteredTelemetry.remove, this.filteredTelemetry);
+            this.boundedRows.on('added', this.filteredRows.add, this.filteredRows);
+            this.boundedRows.on('removed', this.filteredRows.remove, this.filteredRows);
         }
 
         loadComposition() {
@@ -74,7 +76,7 @@ define([
             metadataValues.forEach(metadatum => {
                 let objectKeyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
                 this.columns[objectKeyString] = this.columns[objectKeyString] || [];
-                this.columns[objectKeyString].push(new TableColumn(this.openmct, telemetryObject, metadatum));
+                this.columns[objectKeyString].push(new TelemetryTableColumn(this.openmct, telemetryObject, metadatum));
             });
             this.emit('updateHeaders', Object.assign({}, this.getHeaders()));
             
@@ -89,23 +91,10 @@ define([
                     console.time('processing');
                     let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
                     let columns = this.columns[keyString];
-                    let normalizedTelemetryData = telemetryData.map(telemetryDatum => this.sourcesToKeys(telemetryDatum, columns));
-                    this.boundedTelemetry.add(normalizedTelemetryData);
-                    //this.boundedTelemetry.add(telemetryData);
+                    let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columns));
+                    this.boundedRows.add(telemetryRows);
                     console.timeEnd('processing');
                 });
-        }
-
-        /**
-         * Normalize the structure of datums to assist sorting and merging of columns.
-         * @param {*} telemetryDatum 
-         * @param {*} metadataValues 
-         */
-        sourcesToKeys(telemetryDatum, columns) {
-            return columns.reduce((normalizedDatum, column) => {
-                normalizedDatum[column.getKey()] = column.getRawValue(telemetryDatum);
-                return normalizedDatum;
-            }, {});
         }
 
         subscribeTo(telemetryObject) {
@@ -134,7 +123,7 @@ define([
         }
 
         sortByColumnKey(columnKey) {
-            let sortOptions = this.filteredTelemetry.sortBy();
+            let sortOptions = this.filteredRows.sortBy();
             let sortDirection = sortOptions.direction;
 
             // If sorting by the same colum, flip the sort direction.
@@ -146,7 +135,7 @@ define([
                 }
             }
 
-            this.filteredTelemetry.sortBy({
+            this.filteredRows.sortBy({
                 key: columnKey,
                 direction: sortDirection
             });
@@ -173,7 +162,7 @@ define([
         subscribe() {}
 
         destroy() {
-            this.boundedTelemetry.destroy();
+            this.boundedRows.destroy();
         }
     }
 
