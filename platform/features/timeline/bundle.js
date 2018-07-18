@@ -619,7 +619,7 @@ define([
         }
     });
 */
-    // Timeline is deprecated, and will  no longer be supported in any future versions. If you still need to use Timelines, uncomment the code above and comment out the code below.
+    // Timeline, Activity and Activity Mode objects have been deprecated and will no longer be supported, to use timelines, uncomment the code above and comment out the code below.
 
     legacyRegistry.register('platform/features/timeline', {
         extensions: {
@@ -627,7 +627,6 @@ define([
                 {
                     key: "timeline",
                     name: "Timeline",
-                    cssClass: "icon-info",
                     description: "A time-oriented container that lets you enclose and organize other Timelines and Activities. The Timeline view provides both tabular and Gantt views as well as resource utilization graphing of Activities.",
                     priority: 502
                 }
@@ -636,11 +635,9 @@ define([
                 {
                     key: "timeline",
                     name: "Timeline",
-                    cssClass: "icon-info",
                     type: "timeline",
                     description: "A time-oriented container that lets you enclose and organize other Timelines and Activities. The Timeline view provides both tabular and Gantt views as well as resource utilization graphing of Activities.",
-                    template: deprecatedTimelineMessage,
-                    editable: true 
+                    template: deprecatedTimelineMessage
                 }
             ]
         }
