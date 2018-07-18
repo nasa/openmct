@@ -51,6 +51,7 @@ define([
     "text!./res/templates/legend-item.html",
     "text!./res/templates/ticks.html",
     "text!./res/templates/controls/datetime.html",
+    "text!./res/templates/deprecated-timeline-message.html",
     'legacyRegistry'
 ], function (
     ExportTimelineAsCSVAction,
@@ -83,9 +84,10 @@ define([
     legendItemTemplate,
     ticksTemplate,
     datetimeTemplate,
+    deprecatedTimelineMessage,
     legacyRegistry
 ) {
-
+    /*
     legacyRegistry.register("platform/features/timeline", {
         "name": "Timelines",
         "description": "Resources, templates, CSS, and code for Timelines.",
@@ -612,6 +614,33 @@ define([
                     "key": "battery",
                     "name": "Battery State-of-Charge",
                     "units": "%"
+                }
+            ]
+        }
+    });
+*/
+    // Timeline is deprecated, and will  no longer be supported in any future versions. If you still need to use Timelines, uncomment the code above and comment out the code below.
+
+    legacyRegistry.register('platform/features/timeline', {
+        extensions: {
+            types: [
+                {
+                    key: "timeline",
+                    name: "Timeline",
+                    cssClass: "icon-info",
+                    description: "A time-oriented container that lets you enclose and organize other Timelines and Activities. The Timeline view provides both tabular and Gantt views as well as resource utilization graphing of Activities.",
+                    priority: 502
+                }
+            ],
+            views: [
+                {
+                    key: "timeline",
+                    name: "Timeline",
+                    cssClass: "icon-info",
+                    type: "timeline",
+                    description: "A time-oriented container that lets you enclose and organize other Timelines and Activities. The Timeline view provides both tabular and Gantt views as well as resource utilization graphing of Activities.",
+                    template: deprecatedTimelineMessage,
+                    editable: true 
                 }
             ]
         }
