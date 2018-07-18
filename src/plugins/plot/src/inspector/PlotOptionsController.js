@@ -60,18 +60,24 @@ define([
         series.set('color', color);
 
         var seriesIndex = this.config.series.indexOf(series);
+        var configIndex = _.findIndex(this.domainObject.configuration.series, function (s) {
+            return _.isEqual(series.domainObject.identifier, s.identifier);
+        });
         this.openmct.objects.mutate(
             this.domainObject,
-            'configuration.series[' + seriesIndex + '].color',
+            'configuration.series[' + configIndex + '].color',
             color.asHexString()
         );
 
         if (seriesWithColor) {
             seriesWithColor.set('color', oldColor);
             var oldSeriesIndex = this.config.series.indexOf(seriesWithColor);
+            var oldConfigIndex = _.findIndex(this.domainObject.configuration.series, function (s) {
+                return _.isEqual(seriesWithColor.domainObject.identifier, s.identifier);
+            });
             this.openmct.objects.mutate(
                 this.domainObject,
-                'configuration.series[' + oldSeriesIndex + '].color',
+                'configuration.series[' + oldConfigIndex + '].color',
                 oldColor.asHexString()
             );
         }
@@ -161,10 +167,16 @@ define([
     };
 
     PlotOptionsController.prototype.addSeries = function (series, index) {
+        var configIndex = _.findIndex(this.domainObject.configuration.series, function (s) {
+            return _.isEqual(series.domainObject.identifier, s.identifier);
+        });
+        if (configIndex === -1) {
+            configIndex = index;
+        }
         if (this.$scope.form.series[index]) {
-            // the way listeners work, this will blow up.  At this point, it
-            // can't technically occur, but if we added some sort of reordering
-            // at a later date, it would not be clear why this doesn't work.
+            // Because composition reordering does not trigger events, this
+            // does not blow up.  It could blow up in the future if composition
+            // reordering triggers events.
             // So here's to hoping this helps debugging.
             throw new Error('Plot options does not support insert at index.');
         }
@@ -179,7 +191,7 @@ define([
         };
         var seriesObject = series.domainObject;
         var seriesId = objectUtils.makeKeyString(seriesObject.identifier);
-        var configPath = 'configuration.series[' + index + '].';
+        var configPath = 'configuration.series[' + configIndex + '].';
         var path = 'form.series[' + index + '].';
         this.$scope.domainObject.useCapability('composition')
             .then(function (children) {
