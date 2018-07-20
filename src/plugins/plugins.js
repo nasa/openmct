@@ -33,7 +33,8 @@ define([
     './URLIndicatorPlugin/URLIndicatorPlugin',
     './telemetryMean/plugin',
     './plot/plugin',
-    './staticRootPlugin/plugin'
+    './staticRootPlugin/plugin',
+    './NotebookV2/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -47,7 +48,8 @@ define([
     URLIndicatorPlugin,
     TelemetryMean,
     PlotPlugin,
-    StaticRootPlugin
+    StaticRootPlugin,
+    NotebookV2
 ) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
@@ -140,6 +142,7 @@ define([
     plugins.SummaryWidget = SummaryWidget;
     plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicator = URLIndicatorPlugin;
+    plugins.NotebookV2 = NotebookV2;
 
     return plugins;
 });

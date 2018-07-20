@@ -147,7 +147,7 @@ define(
                 });
             };
 
-            $scope.textFocus = function ($event, entryId) {
+            $scope.textFocus = function ($event) {
                 if ($event.srcElement) {
                     $scope.currentEntryValue = $event.srcElement.innerText;
                 } else {
