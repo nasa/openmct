@@ -31,6 +31,9 @@ define([
     "./src/telemetry/StackedPlotController",
     "./src/inspector/PlotInspector",
     "./src/inspector/PlotOptionsController",
+    "./src/inspector/PlotLegendFormController",
+    "./src/inspector/PlotYAxisFormController",
+    "./src/inspector/PlotSeriesFormController",
     "./src/inspector/HideElementPoolDirective",
     "./src/services/ExportImageService",
     './src/PlotViewPolicy',
@@ -48,6 +51,9 @@ define([
     StackedPlotController,
     PlotInspector,
     PlotOptionsController,
+    PlotLegendFormController,
+    PlotYAxisFormController,
+    PlotSeriesFormController,
     HideElementPool,
     ExportImageService,
     PlotViewPolicy,
@@ -170,6 +176,33 @@ define([
                                 "$scope",
                                 "openmct",
                                 "$timeout"
+                            ]
+                        },
+                        {
+                            key: "PlotLegendFormController",
+                            implementation: PlotLegendFormController,
+                            depends: [
+                                "$scope",
+                                "openmct",
+                                "$attrs"
+                            ]
+                        },
+                        {
+                            key: "PlotYAxisFormController",
+                            implementation: PlotYAxisFormController,
+                            depends: [
+                                "$scope",
+                                "openmct",
+                                "$attrs"
+                            ]
+                        },
+                        {
+                            key: "PlotSeriesFormController",
+                            implementation: PlotSeriesFormController,
+                            depends: [
+                                "$scope",
+                                "openmct",
+                                "$attrs"
                             ]
                         }
                     ],

@@ -64,28 +64,27 @@ define([
             this.listenTo(composition, 'remove', this.removeTelemetryObject, this);
             composition.load();
         },
-        addTelemetryObject: function (domainObject) {
-            var seriesConfig = {
-                identifier: domainObject.identifier
-            };
-
+        addTelemetryObject: function (domainObject, index) {
+            var seriesConfig = this.plot.getPersistedSeriesConfig(domainObject.identifier);
             var plotObject = this.plot.get('domainObject');
-            if (plotObject.type === 'telemetry.plot.overlay') {
-                var index = this.size();
-                if (!plotObject.configuration.series[index]) {
+
+            if (!seriesConfig) {
+                seriesConfig = {
+                    identifier: domainObject.identifier
+                };
+
+                if (plotObject.type === 'telemetry.plot.overlay') {
                     this.openmct.objects.mutate(
                         plotObject,
-                        'configuration.series[' + index + ']',
+                        'configuration.series[' + this.size() + ']',
                         seriesConfig
                     );
+                    seriesConfig = this.plot
+                        .getPersistedSeriesConfig(domainObject.identifier);
                 }
-                seriesConfig = this.plot.get('domainObject').configuration.series[index];
-                // Clone to prevent accidental mutation by ref.
-                seriesConfig = JSON.parse(JSON.stringify(seriesConfig));
             }
-
-            seriesConfig.persistedConfiguration =
-                this.plot.getPersistedSeriesConfig(domainObject.identifier);
+            // Clone to prevent accidental mutation by ref.
+            seriesConfig = JSON.parse(JSON.stringify(seriesConfig));
 
             this.add(new PlotSeries({
                 model: seriesConfig,
@@ -95,11 +94,6 @@ define([
             }));
         },
         removeTelemetryObject: function (identifier) {
-            // TODO: properly locate in self (and parent configuration)
-            // Instead of binding via index, which is not guaranteed because
-            // edits could occur when plotcontroller is not instantiated.
-            // This bug also extends to the plotOptions form which currently
-            // relies on indexes that match.
             var plotObject = this.plot.get('domainObject');
             if (plotObject.type === 'telemetry.plot.overlay') {
                 var index = _.findIndex(plotObject.configuration.series, function (s) {
