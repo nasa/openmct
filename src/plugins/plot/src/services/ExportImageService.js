@@ -41,6 +41,7 @@ define(
          */
         function ExportImageService(dialogService) {
             this.dialogService = dialogService;
+            this.exportCount = 0;
         }
 
         /**
@@ -67,14 +68,19 @@ define(
             }
 
             if (className) {
-                element.classList.add(className);
+                var exportId = 'export-element-' + this.exportCount;
+                this.exportCount++;
+                var oldId = element.id;
+                element.id = exportId;
             }
 
             return html2canvas(element, {
                 onclone: function (document) {
                     if (className) {
-                        element.classList.remove(className);
+                        var clonedElement = document.getElementById(exportId);
+                        clonedElement.classList.add(className);
                     }
+                    element.id = oldId;
                 }
             }).then(function (canvas) {
                 dialog.dismiss();
