@@ -172,7 +172,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name gestures
          */
-        this.gestures = new api.GestureAPI();
+        this.gestures = new api.GestureAPI(this, objectUtils);
 
         /**
          * An interface for interacting with domain objects and the domain
