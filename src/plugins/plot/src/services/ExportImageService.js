@@ -40,8 +40,8 @@ define(
          * @constructor
          */
         function ExportImageService(dialogService) {
-            this.exportCount = 0;
             this.dialogService = dialogService;
+            this.exportCount = 0;
         }
 
         /**
@@ -51,7 +51,8 @@ define(
          * @param {string} type of image to convert the element to.
          * @returns {promise}
          */
-        ExportImageService.prototype.renderElement = function (element, imageType, color) {
+        ExportImageService.prototype.renderElement = function (element, imageType, className) {
+
             var dialogService = this.dialogService,
                 dialog = dialogService.showBlockingMessage({
                     title: "Capturing...",
@@ -66,18 +67,18 @@ define(
                 mimeType = "image/jpeg";
             }
 
-            var exportId = 'export-element-' + this.exportCount;
-            this.exportCount++;
-            var oldId = element.id;
-            element.id = exportId;
+            if (className) {
+                var exportId = 'export-element-' + this.exportCount;
+                this.exportCount++;
+                var oldId = element.id;
+                element.id = exportId;
+            }
 
             return html2canvas(element, {
                 onclone: function (document) {
-                    // Make export style changes to cloned document so that
-                    // users don't see view flickering.
-                    var clonedElement = document.getElementById(exportId);
-                    if (clonedElement && color) {
-                        clonedElement.style.backgroundColor = color;
+                    if (className) {
+                        var clonedElement = document.getElementById(exportId);
+                        clonedElement.classList.add(className);
                     }
                     element.id = oldId;
                 }
@@ -107,10 +108,11 @@ define(
          * Takes a screenshot of a DOM node and exports to JPG.
          * @param {node} element to be exported
          * @param {string} filename the exported image
+         * @param {string} className to be added to element before capturing (optional)
          * @returns {promise}
          */
-        ExportImageService.prototype.exportJPG = function (element, filename, color) {
-            return this.renderElement(element, "jpg", color).then(function (img) {
+        ExportImageService.prototype.exportJPG = function (element, filename, className) {
+            return this.renderElement(element, "jpg", className).then(function (img) {
                 saveAs(img, filename);
             });
         };
@@ -119,10 +121,11 @@ define(
          * Takes a screenshot of a DOM node and exports to PNG.
          * @param {node} element to be exported
          * @param {string} filename the exported image
+         * @param {string} className to be added to element before capturing (optional)
          * @returns {promise}
          */
-        ExportImageService.prototype.exportPNG = function (element, filename, color) {
-            return this.renderElement(element, "png", color).then(function (img) {
+        ExportImageService.prototype.exportPNG = function (element, filename, className) {
+            return this.renderElement(element, "png", className).then(function (img) {
                 saveAs(img, filename);
             });
         };

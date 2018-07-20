@@ -33,8 +33,8 @@
         display: flex;
         flex-flow: column nowrap;
         .gl-plot.child-frame {
-            mct-plot { 
-                display: flex; 
+            mct-plot {
+                display: flex;
                 flex: 1 1 auto;
                 height: 100%;
                 position: relative;
@@ -51,18 +51,15 @@
             display: block;
         }
     }
-
 }
 
-
-
 .gl-plot {
-	color: $colorPlotFg;
+    color: $colorPlotFg;
     display: flex;
-	font-size: 0.7rem;
-	position: relative;
-	width: 100%;
-	height: 100%;
+    font-size: 0.7rem;
+    position: relative;
+    width: 100%;
+    height: 100%;
     min-height: $plotMinH;
 
     /********************************************* AXIS AND DISPLAY AREA */
@@ -74,7 +71,8 @@
             position: absolute;
             display: block;
             font-size: 1.5em;
-            top: $interiorMarginSm; left: $interiorMarginSm;
+            top: $interiorMarginSm;
+            left: $interiorMarginSm;
         }
     }
 
@@ -105,71 +103,71 @@
         }
     }
 
-	.gl-plot-axis-area {
-		position: absolute;
-		&.gl-plot-y {
-			top: nth($plotDisplayArea, 1);
-			right: auto;
-			bottom: nth($plotDisplayArea, 3);
-			left: 0;
-			width: $plotYBarW;
-		}
-	}
+    .gl-plot-axis-area {
+        position: absolute;
+        &.gl-plot-y {
+            top: nth($plotDisplayArea, 1);
+            right: auto;
+            bottom: nth($plotDisplayArea, 3);
+            left: 0;
+            width: $plotYBarW;
+        }
+    }
 
-	.gl-plot-coords {
-		box-sizing: border-box;
-		border-radius: $controlCr;
-		background: black;
-		color: lighten($colorBodyFg, 30%);
-		padding: 2px 5px;
-		position: absolute;
-		top: nth($plotDisplayArea,1) + $interiorMarginLg;
-		right: auto;
-		bottom: auto;
-		left: nth($plotDisplayArea,4) + $interiorMarginLg;
-		z-index: 10;
-		&:empty {
-			display: none;
-		}
-	}
+    .gl-plot-coords {
+        box-sizing: border-box;
+        border-radius: $controlCr;
+        background: black;
+        color: lighten($colorBodyFg, 30%);
+        padding: 2px 5px;
+        position: absolute;
+        top: nth($plotDisplayArea,1) + $interiorMarginLg;
+        right: auto;
+        bottom: auto;
+        left: nth($plotDisplayArea,4) + $interiorMarginLg;
+        z-index: 10;
+        &:empty {
+            display: none;
+        }
+    }
 
-	.gl-plot-label,
-	.l-plot-label {
-		color: $colorPlotLabelFg;
-		position: absolute;
-		text-align: center;
+    .gl-plot-label,
+    .l-plot-label {
+        color: $colorPlotLabelFg;
+        position: absolute;
+        text-align: center;
 
-		&.gl-plot-x-label,
-		&.l-plot-x-label {
-			top: auto;
-			right: 0;
-			bottom: 0;
-			left: 0;
-			height: auto;
-		}
+        &.gl-plot-x-label,
+        &.l-plot-x-label {
+            top: auto;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            height: auto;
+        }
 
-		&.gl-plot-y-label,
-		&.l-plot-y-label {
-			$x: -50%;
-			$r: -90deg;
-			transform-origin: 50% 0;
-			transform: translateX($x) rotate($r);
-			display: inline-block;
-			margin-left: $interiorMargin; // Kick off the left edge
-			left: 0;
-			top: 50%;
-			white-space: nowrap;
-		}
-	}
+        &.gl-plot-y-label,
+        &.l-plot-y-label {
+            $x: -50%;
+            $r: -90deg;
+            transform-origin: 50% 0;
+            transform: translateX($x) rotate($r);
+            display: inline-block;
+            margin-left: $interiorMargin; // Kick off the left edge
+            left: 0;
+            top: 50%;
+            white-space: nowrap;
+        }
+    }
 
-	.gl-plot-x-options,
+    .gl-plot-x-options,
     .gl-plot-y-options {
-		$h: 24px;
-		position: absolute;
-		height: $h;
-		min-height: $h;
+        $h: 24px;
+        position: absolute;
+        height: $h;
+        min-height: $h;
         z-index: 2;
-	}
+    }
 
     .gl-plot-x-options {
         transform: translateX(-50%);
@@ -190,119 +188,192 @@
         right: $interiorMargin;
     }
 
-	.gl-plot-hash {
-		position: absolute;
-		border: 0 $colorPlotHash $stylePlotHash;
-		&.hash-v {
-			border-right-width: 1px;
-			height: 100%;
-		}
-		&.hash-h {
-			border-bottom-width: 1px;
-			width: 100%;
-		}
-	}
+    .gl-plot-hash {
+        position: absolute;
+        opacity: $opacityPlotHash;
+        &.hash-v {
+            border-right: 1px $colorPlotHash $stylePlotHash;
+            height: 100%;
+        }
+        &.hash-h {
+            border-bottom: 1px $colorPlotHash $stylePlotHash;
+            width: 100%;
+        }
+    }
 
-	/****************************** Limits and Out-of-Bounds data */
+    /****************************** Limits and Out-of-Bounds data */
 
-	.l-limit-bar,
-	.l-oob-data {
-		position: absolute;
-		left: 0;
-		right: 0;
-		width: auto;
-	}
+    .l-limit-bar,
+    .l-oob-data {
+        position: absolute;
+        left: 0;
+        right: 0;
+        width: auto;
+    }
 
-	.l-limit-bar {
-		// Limits in plot display area
-		@mixin limitBg($c) {
-			background: rgba($c, 0.2);
-		}
+    .l-limit-bar {
+        // Limits in plot display area
+        @mixin limitBg($c) {
+            background: rgba($c, 0.2);
+        }
 
-		height: auto;
-		z-index: 0;
-		&.s-limit-yellow { @include limitBg($colorLimitYellowBg); }
-		&.s-limit-red { @include limitBg($colorLimitRedBg); }
-	}
+        height: auto;
+        z-index: 0;
+        &.s-limit-yellow {
+            @include limitBg($colorLimitYellowBg);
+        }
+        &.s-limit-red {
+            @include limitBg($colorLimitRedBg);
+        }
+    }
 
-	.l-oob-data {
-		$c: #7748d6;
-		$a: 0.5;
-		$h: 10px;
-		@include absPosDefault();
-		pointer-events: none;
-		height: $h;
-		z-index: 1;
-		&.l-oob-data-up {
-			top: 0;
-			bottom: auto;
-			@include linearGlow(0deg, $c, $a);
-		}
-		&.l-oob-data-dwn {
-			bottom: 0;
-			top: auto;
-			@include linearGlow(180deg, $c, $a);
-		}
-	}
+    .l-oob-data {
+        $c: #7748d6;
+        $a: 0.5;
+        $h: 10px;
+        @include absPosDefault();
+        pointer-events: none;
+        height: $h;
+        z-index: 1;
+        &.l-oob-data-up {
+            top: 0;
+            bottom: auto;
+            @include linearGlow(0deg, $c, $a);
+        }
+        &.l-oob-data-dwn {
+            bottom: 0;
+            top: auto;
+            @include linearGlow(180deg, $c, $a);
+        }
+    }
 }
-
 
 .gl-plot-display-area,
 .plot-display-area {
-    @if $colorPlotBg != none { background-color: $colorPlotBg; }
+    @if $colorPlotBg != none {
+        background-color: $colorPlotBg;
+    }
     cursor: crosshair;
     border: 1px solid $colorPlotAreaBorder;
 }
 
 .tick {
-	position: absolute;
-	border: 0 $colorPlotHash solid;
-	&.tick-x {
-		border-right-width: 1px;
-		height: 100%; // Assumption is that the tick will be in a holder that will set it's height;
-	}
+    position: absolute;
+    border: 0 $colorPlotHash solid;
+    &.tick-x {
+        border-right-width: 1px;
+        height: 100%; // Assumption is that the tick will be in a holder that will set it's height;
+    }
 }
 
 .gl-plot-tick,
 .tick-label {
     @include reverseEllipsis();
-	font-size: 0.7rem;
-	position: absolute;
-	&.gl-plot-x-tick-label,
-	&.tick-label-x {
-		right: auto;
-		bottom: auto;
-		left: auto;
-		height: auto;
-		width: 20%;
-		margin-left: -10%;
-		text-align: center;
-	}
-	&.gl-plot-y-tick-label,
-	&.tick-label-y {
-		top: auto;
-		height: 1em;
-		width: auto;
-		margin-bottom: -0.5em;
-		text-align: right;
-	}
+    font-size: 0.7rem;
+    position: absolute;
+    &.gl-plot-x-tick-label,
+    &.tick-label-x {
+        right: auto;
+        bottom: auto;
+        left: auto;
+        height: auto;
+        width: 20%;
+        margin-left: -10%;
+        text-align: center;
+    }
+    &.gl-plot-y-tick-label,
+    &.tick-label-y {
+        top: auto;
+        height: 1em;
+        width: auto;
+        margin-bottom: -0.5em;
+        text-align: right;
+    }
 }
 
 .gl-plot-tick {
-	&.gl-plot-x-tick-label {
-		top: $interiorMargin;
-	}
-	&.gl-plot-y-tick-label {
-		right: $interiorMargin;
-		left: $interiorMargin;
-	}
+    &.gl-plot-x-tick-label {
+        top: $interiorMargin;
+    }
+    &.gl-plot-y-tick-label {
+        right: $interiorMargin;
+        left: $interiorMargin;
+    }
 }
 
 .tick-label {
-	&.tick-label-x {
-		top: 0;
-	}
-	&.tick-label-y {
-		right: 0; left: 0;
-	}
+    &.tick-label-x {
+        top: 0;
+    }
+    &.tick-label-y {
+        right: 0;
+        left: 0;
+    }
+}
+
+.export-plot {
+    $bg: white;
+    $fg: black;
+    $gry: #999;
+
+    background: $bg !important;
+    z-index: -10;
+
+    .l-view-section {
+        $m: $interiorMargin;
+        top: $m !important;
+        right: $m;
+        bottom: $m;
+        left: $m;
+
+        .s-status-timeconductor-unsynced .holder-plot {
+            .t-object-alert.t-alert-unsynced {
+                display: none;
+            }
+        }
+    }
+
+    .gl-plot-display-area {
+        background: none !important;
+        border-color: $gry !important;
+
+        .gl-plot-local-controls,
+        .h-local-controls {
+            opacity: 0;
+        }
+    }
+
+    .gl-plot {
+        color: $fg;
+
+        .gl-plot-hash {
+            opacity: 0.1;
+            border-color: $fg;
+        }
+    }
+
+    table {
+        thead {
+            border-bottom: none;
+
+            th {
+                background: #eee;
+                border-left-color: $bg;
+                color: #666;
+            }
+
+            tr {
+                border: none;
+            }
+        }
+        tbody {
+            tr {
+                border-top: 1px solid #ccc;
+            }
+
+            td {
+                color: $fg;
+            }
+        }
+    }
 }

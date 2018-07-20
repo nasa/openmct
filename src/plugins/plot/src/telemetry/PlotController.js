@@ -245,7 +245,7 @@ define([
      */
     PlotController.prototype.exportJPG = function () {
         this.hideExportButtons = true;
-        this.exportImageService.exportJPG(this.$element[0], 'plot.jpg', 'white')
+        this.exportImageService.exportJPG(this.$element[0], 'plot.jpg', 'export-plot')
             .finally(function () {
                 this.hideExportButtons = false;
             }.bind(this));
@@ -256,7 +256,7 @@ define([
      */
     PlotController.prototype.exportPNG = function () {
         this.hideExportButtons = true;
-        this.exportImageService.exportPNG(this.$element[0], 'plot.png', 'white')
+        this.exportImageService.exportPNG(this.$element[0], 'plot.png', 'export-plot')
             .finally(function () {
                 this.hideExportButtons = false;
             }.bind(this));

@@ -183,7 +183,8 @@ $colorTabHeaderBorder: $colorBodyBg;
 // Plot
 $colorPlotBg: rgba(black, 0.1);
 $colorPlotFg: $colorBodyFg;
-$colorPlotHash: $colorTick;
+$colorPlotHash: white;
+$opacityPlotHash: 0.2;
 $stylePlotHash: dashed;
 $colorPlotAreaBorder: $colorInteriorBorder;
 $colorPlotLabelFg: pushBack($colorPlotFg, 20%);
