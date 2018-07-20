@@ -221,7 +221,8 @@ define([
             "representations": [
                 {
                     "key": "frame",
-                    "template": frameTemplate
+                    "template": frameTemplate,
+                    "gestures": ["drop"]
                 }
             ],
             "directives": [

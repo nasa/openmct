@@ -96,11 +96,12 @@ define(
                 // destination domain object's composition, and persist
                 // the change.
                 if (id) {
+                    e.stopPropagation();
                     e.preventDefault();
                     $q.when(action && action.perform()).then(function () {
                         broadcastDrop(id, event);
                     });
-
+                    return false;
                 }
             }
 

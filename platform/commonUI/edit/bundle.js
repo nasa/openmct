@@ -152,7 +152,10 @@ define([
             "actions": [
                 {
                     "key": "compose",
-                    "implementation": EditAndComposeAction
+                    "implementation": EditAndComposeAction,
+                    "depends": [
+                        "navigationService"
+                    ]
                 },
                 {
                     "key": "edit",
