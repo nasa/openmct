@@ -262,19 +262,26 @@ define(
          * @private
          */
         MCTTableController.prototype.onScroll = function (event) {
+            this.scrollWindow = {
+                top: this.scrollable[0].scrollTop,
+                bottom: this.scrollable[0].scrollTop + this.scrollable[0].offsetHeight,
+                offsetHeight: this.scrollable[0].offsetHeight,
+                height: this.scrollable[0].scrollHeight
+            };
             this.$window.requestAnimationFrame(function () {
                 this.setVisibleRows();
                 this.digest();
 
                 // If user scrolls away from bottom, disable auto-scroll.
                 // Auto-scroll will be re-enabled if user scrolls to bottom again.
-                if (this.scrollable[0].scrollTop <
-                    (this.scrollable[0].scrollHeight - this.scrollable[0].offsetHeight) - 20) {
+                if (this.scrollWindow.top <
+                    (this.scrollWindow.height - this.scrollWindow.offsetHeight) - 20) {
                     this.$scope.autoScroll = false;
                 } else {
                     this.$scope.autoScroll = true;
                 }
                 this.scrolling = false;
+                delete this.scrollWindow;
             }.bind(this));
         };
 
@@ -283,15 +290,14 @@ define(
          * @private
          */
         MCTTableController.prototype.firstVisible = function () {
-            var target = this.scrollable[0],
-                topScroll = target.scrollTop,
-                firstVisible;
+            var topScroll = this.scrollWindow ?
+                this.scrollWindow.top :
+                this.scrollable[0].scrollTop;
 
-            firstVisible = Math.floor(
+            return Math.floor(
                 (topScroll) / this.$scope.rowHeight
             );
 
-            return firstVisible;
         };
 
         /**
@@ -299,16 +305,14 @@ define(
          * @private
          */
         MCTTableController.prototype.lastVisible = function () {
-            var target = this.scrollable[0],
-                topScroll = target.scrollTop,
-                bottomScroll = topScroll + target.offsetHeight,
-                lastVisible;
+            var bottomScroll = this.scrollWindow ?
+                this.scrollWindow.bottom :
+                this.scrollable[0].scrollTop + this.scrollable[0].offsetHeight;
 
-            lastVisible = Math.ceil(
+            return Math.ceil(
                 (bottomScroll) /
                 this.$scope.rowHeight
             );
-            return lastVisible;
         };
 
         /**
