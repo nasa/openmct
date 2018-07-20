@@ -59,6 +59,8 @@
     "start": "node app.js",
     "test": "karma start --single-run",
     "jshint": "jshint platform example",
+    "lint": "./node_modules/gulp/bin/gulp.js lint",
+    "checkstyle": "./node_modules/gulp/bin/gulp.js checkstyle",
     "watch": "karma start",
     "jsdoc": "jsdoc -c jsdoc.json -R API.md -r -d dist/docs/api",
     "otherdoc": "node docs/gendocs.js --in docs/src --out dist/docs --suppress-toc 'docs/src/index.md|docs/src/process/index.md'",
