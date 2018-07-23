@@ -23,11 +23,13 @@
  define([
      'vue',
      'moment',
-     'text!../../res/templates/notebook.html'
+     'text!../../res/templates/notebook.html',
+     'text!../../res/templates/entry.html'
  ], function (
      Vue,
      moment,
-     NotebookView
+     NotebookView,
+     NotebookEntry
     ) {
 
     function NotebookController(openmct, domainObject) {
@@ -40,10 +42,23 @@
         this.textFocus = this.textFocus.bind(this);
         this.textBlur = this.textBlur.bind(this);
         this.entryPosById = this.entryPosById.bind(this);
+        this.deleteEntry = this.deleteEntry.bind(this);
     }
 
     NotebookController.prototype.initializeVue = function (container){
         var self = this;
+        
+        Vue.component('notebook-entry', {
+            props:['entry'],
+            template: NotebookEntry,
+            methods: {
+                textFocus: self.textFocus,
+                textBlur: self.textBlur,
+                formatTime: self.formatTime,
+                triggerDelete: self.triggerDelete
+            },
+            mounted: self.focusOnEntry
+        });
 
         var notebookVue = Vue.extend({
             template: NotebookView,
@@ -62,8 +77,7 @@
                 },
                 newEntry: self.newEntry,
                 formatTime: self.formatTime,
-                textFocus: self.textFocus,
-                textBlur: self.textBlur
+                deleteEntry: self.deleteEntry
             }
         });
 
@@ -83,8 +97,8 @@
             entries.push(createdEntry);
             this.openmct.objects.mutate(this.domainObject, 'entries', entries);
         } else {
-            var lastElement = this.NotebookVue.$refs[lastEntry.id][0];
-            lastElement.focus();
+            // var lastElement = this.NotebookVue.$refs[lastEntry.id][0];
+            // lastElement.focus();
 
             lastEntry.createdOn = date;
 
@@ -128,6 +142,26 @@
 
     NotebookController.prototype.formatTime = function (unixTime, timeFormat) {
         return moment(unixTime).format(timeFormat);
+    };
+
+    NotebookController.prototype.focusOnEntry = function () {
+        if (!this.entry.text) {
+            this.$el.querySelector("[contenteditable='true']").focus();
+        }
+    };
+
+    NotebookController.prototype.triggerDelete = function () {
+        this.$emit('delete-entry', this.entry.id);
+    };
+
+    NotebookController.prototype.deleteEntry = function (entryId) {
+        var entryPos = this.entryPosById(entryId);
+
+        if (entryPos !== -1) {
+            this.domainObject.entries.splice(entryPos, 1);
+            this.openmct.objects.mutate(this.domainObject, 'entries', this.domainObject.entries);
+            console.log(this.domainObject);
+        }
     };
 
     NotebookController.prototype.show = function (container) {
