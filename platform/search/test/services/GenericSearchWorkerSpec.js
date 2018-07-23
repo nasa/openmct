@@ -26,10 +26,19 @@
  *  SearchSpec. Created by shale on 07/31/2015.
  */
 define([
-
+    "text!../../src/services/GenericSearchWorker.js"
 ], function (
-
+    GenericSearchWorkerText
 ) {
+
+    // TODO: FIXME: I'm broke, causing build error.
+    console.log('this thing is broken, fixme');
+
+    var WORKER_FILE = URL.createObjectURL(new Blob(
+        [GenericSearchWorkerText],
+        {type: 'application/javascript'}
+    ));
+
 
     describe('GenericSearchWorker', function () {
         // If this test fails, make sure this path is correct
@@ -40,9 +49,7 @@ define([
             itemsToIndex;
 
         beforeEach(function () {
-            worker = new Worker(
-                require.toUrl('platform/search/src/services/GenericSearchWorker.js')
-            );
+            worker = new Worker(WORKER_FILE);
 
             objectX = {
                 id: 'x',

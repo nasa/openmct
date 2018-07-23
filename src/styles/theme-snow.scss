@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,19 +19,28 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+$output-bourbon-deprecation-warnings: false;
 @import "bourbon";
-@import "../../../../platform/commonUI/general/res/sass/constants";
-@import "../../../../platform/commonUI/general/res/sass/mixins";
-@import "../../../../platform/commonUI/themes/espresso/res/sass/constants";
-@import "../../../../platform/commonUI/themes/espresso/res/sass/mixins";
-@import "../../../../platform/commonUI/general/res/sass/glyphs";
-@import "../../../../platform/commonUI/general/res/sass/icons";
 
-// Thematic constants
-$colorCode: rgba(black, 0.2);
-$colorGlyphExample: #fff;
+@import "mixins";
+@import "mobile/mixins";
+@import "themes/snow/mixins";
 
-@import "style-guide-base";
+@import "constants";
+@import "mobile/constants";
+@import "themes/snow/constants";
 
-div.themed.espresso { display: block; }
-span.themed.espresso { display: inline; }
+@import "main";
+@import "themes/snow/controls";
+
+@import "conductor/time-conductor-snow";
+@import "notebook/notebook-snow";
+@import "style-guide/style-guide-snow";
+
+
+
+
+
+
+
+

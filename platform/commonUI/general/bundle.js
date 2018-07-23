@@ -173,12 +173,6 @@ define([
                     "key": "reverse"
                 }
             ],
-            "stylesheets": [
-                {
-                    "stylesheetUrl": "css/normalize.min.css",
-                    "priority": "mandatory"
-                }
-            ],
             "templates": [
                 {
                     "key": "bottombar",

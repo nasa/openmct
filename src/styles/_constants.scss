@@ -136,7 +136,8 @@ $btnFrameH: 18px;
 
 /************************** PATHS */
 // Paths need to be relative to /platform/commonUI/theme/<theme-name>/css/ directory
-$dirCommonRes: '../../../../general/res/';
+$dirCommonRes: '../';
+$dirFonts: $dirCommonRes + 'fonts/';
 $dirImgs: $dirCommonRes + 'images/';
 
 /************************** TIMINGS */

@@ -11,15 +11,14 @@ jobs:
             name: Update npm
             command: 'sudo npm install -g npm@latest'
         - restore_cache:
-            key: dependency-cache-{{ checksum "package.json" }}-{{ checksum "bower.json" }}
+            key: dependency-cache-{{ checksum "package.json" }}
         - run:
             name: Installing dependencies (npm install)
             command: npm install
         - save_cache:
-            key: dependency-cache-{{ checksum "package.json" }}-{{ checksum "bower.json" }}
+            key: dependency-cache-{{ checksum "package.json" }}
             paths:
               - node_modules
-              - bower_components
         - run:
             name: npm run test
             command: npm run test

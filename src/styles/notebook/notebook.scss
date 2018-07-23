@@ -21,31 +21,4 @@
  *****************************************************************************/
 $output-bourbon-deprecation-warnings: false;
 @import "bourbon";
-@import "../../../../../commonUI/general/res/sass/constants";
-@import "../../../../../commonUI/general/res/sass/mixins";
-@import "../../../../../commonUI/general/res/sass/mobile/constants";
-@import "../../../../../commonUI/general/res/sass/mobile/mixins";
-@import "../../../../../commonUI/themes/snow/res/sass/constants";
-@import "../../../../../commonUI/themes/snow/res/sass/mixins";
-@import "../../../../../commonUI/general/res/sass/glyphs";
-@import "../../../../../commonUI/general/res/sass/icons";
-@import "constants";
-
-// Thematic constants
-$colorTimeCondTicks: pullForward($colorBodyBg, 30%);
-$colorTimeCondKeyBg: #6178dc;
-$colorTimeCondKeyFg: #fff;
-$colorTimeCondDataVisBg: pullForward($colorBodyBg, 10%);
-$colorTimeCondDataVisRtBg: pushBack($colorTimeCondKeyBg, 30%);
-
-// Time of Interest
-$toiColorBg: #6b93c6;
-$toiColorBlocker: $colorBodyBg; // Color of blocker element beneath the TOI icons
-$toiColorFg: #fff; // Used by value display
-$toiColorCtrlFg: #fff;
-$toiColorBgAlert: #ff9540; // Used by unpin button on hover
-$colorTimeCondTOIBg: darken($toiColorBg, 20%);
-$colorTimeCondTOIBgHov: $toiColorBg;
-
-@import "time-conductor-base";
-@import "time-of-interest";
+@import "notebook-base";

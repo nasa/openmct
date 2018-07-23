@@ -97,16 +97,6 @@ define([
                     "implementation": ConductorTOIDirective
                 }
             ],
-            "stylesheets": [
-                {
-                    "stylesheetUrl": "css/time-conductor-espresso.css",
-                    "theme": "espresso"
-                },
-                {
-                    "stylesheetUrl": "css/time-conductor-snow.css",
-                    "theme": "snow"
-                }
-            ],
             "templates": [
                 {
                     "key": "conductor",

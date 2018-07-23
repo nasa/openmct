@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,9 +22,15 @@
 $output-bourbon-deprecation-warnings: false;
 @import "bourbon";
 
-@import "../../../../commonUI/general/res/sass/constants";
-@import "../../../../commonUI/general/res/sass/mixins";
-@import "../../../../commonUI/general/res/sass/glyphs";
-@import "../../../../commonUI/themes/snow/res/sass/constants";
-@import "../../../../commonUI/themes/snow/res/sass/mixins";
-@import "notebook-thematic";
+@import "mixins";
+@import "mobile/mixins";
+@import "themes/espresso/mixins";
+
+@import "constants";
+@import "mobile/constants";
+@import "themes/espresso/constants";
+
+@import "main";
+@import "conductor/time-conductor-espresso";
+@import "notebook/notebook-espresso";
+@import "style-guide/style-guide-espresso";

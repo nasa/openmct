@@ -288,20 +288,7 @@ define([
                   "key": "snapshot-select",
                   "template":  snapSelectTemplate
               }
-            ],
-            "stylesheets": [
-                {
-                    "stylesheetUrl": "css/notebook.css"
-                },
-                {
-                    "stylesheetUrl": "css/notebook-espresso.css",
-                    "theme": "espresso"
-                },
-                {
-                    "stylesheetUrl": "css/notebook-snow.css",
-                    "theme": "snow"
-                }
-          ]
+            ]
         }
     });
 });

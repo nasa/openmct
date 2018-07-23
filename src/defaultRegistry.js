@@ -53,8 +53,6 @@ define([
     '../platform/commonUI/mobile/bundle',
     '../platform/commonUI/notification/bundle',
     '../platform/commonUI/regions/bundle',
-    '../platform/commonUI/themes/espresso/bundle',
-    '../platform/commonUI/themes/snow/bundle',
     '../platform/containment/bundle',
     '../platform/core/bundle',
     '../platform/entanglement/bundle',

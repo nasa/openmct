@@ -26,11 +26,11 @@
     * to generate font files
     */
     font-family: 'symbolsfont';
-    src: url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.eot');
-    src: url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.eot?#iefix') format('embedded-opentype'),
-    url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.woff') format('woff'),
-    url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.ttf') format('truetype'),
-    url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.svg') format('svg');
+    src: url($dirFonts + 'symbols/openmct-symbols-16px.eot');
+    src: url($dirFonts + 'symbols/openmct-symbols-16px.eot?#iefix') format('embedded-opentype'),
+    url($dirFonts + 'symbols/openmct-symbols-16px.woff') format('woff'),
+    url($dirFonts + 'symbols/openmct-symbols-16px.ttf') format('truetype'),
+    url($dirFonts + 'symbols/openmct-symbols-16px.svg') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -41,11 +41,11 @@
     * to generate font files
     */
     font-family: 'symbolsfont-12px';
-    src: url($dirCommonRes + 'fonts/symbols/openmct-symbols-12px.eot');
-    src: url($dirCommonRes + 'fonts/symbols/openmct-symbols-12px.eot?#iefix') format('embedded-opentype'),
-    url($dirCommonRes + 'fonts/symbols/openmct-symbols-12px.woff') format('woff'),
-    url($dirCommonRes + 'fonts/symbols/openmct-symbols-12px.ttf') format('truetype'),
-    url($dirCommonRes + 'fonts/symbols/openmct-symbols-12px.svg') format('svg');
+    src: url($dirFonts + 'symbols/openmct-symbols-12px.eot');
+    src: url($dirFonts + 'symbols/openmct-symbols-12px.eot?#iefix') format('embedded-opentype'),
+    url($dirFonts + 'symbols/openmct-symbols-12px.woff') format('woff'),
+    url($dirFonts + 'symbols/openmct-symbols-12px.ttf') format('truetype'),
+    url($dirFonts + 'symbols/openmct-symbols-12px.svg') format('svg');
     font-weight: normal;
     font-style: normal;
 }

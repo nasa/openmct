@@ -19,19 +19,25 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+$output-bourbon-deprecation-warnings: false;
 @import "bourbon";
-@import "../../../../platform/commonUI/general/res/sass/constants";
-@import "../../../../platform/commonUI/general/res/sass/mixins";
-@import "../../../../platform/commonUI/themes/snow/res/sass/constants";
-@import "../../../../platform/commonUI/themes/snow/res/sass/mixins";
-@import "../../../../platform/commonUI/general/res/sass/glyphs";
-@import "../../../../platform/commonUI/general/res/sass/icons";
+@import "constants";
 
 // Thematic constants
-$colorCode: rgba(black, 0.1);
-$colorGlyphExample: darken($colorBodyBg, 30%);
+$colorTimeCondTicks: pullForward($colorBodyBg, 30%);
+$colorTimeCondKeyBg: #4e70dc;
+$colorTimeCondKeyFg: #fff;
+$colorTimeCondDataVisBg: pullForward($colorBodyBg, 5%);
+$colorTimeCondDataVisRtBg: pushBack($colorTimeCondKeyBg, 10%);
 
-@import "style-guide-base";
+// Time of Interest
+$toiColorBg: #6b93c6;
+$toiColorBlocker: $colorBodyBg; // Color of blocker element beneath the TOI icons
+$toiColorFg: #000; // Used by value display
+$toiColorCtrlFg: #fff;
+$toiColorBgAlert: #cf2a12; // Used by unpin button on hover
+$colorTimeCondTOIBg: darken($toiColorBg, 20%);
+$colorTimeCondTOIBgHov: $toiColorBg;
 
-div.themed.snow { display: block; }
-span.themed.snow { display: inline; }
+@import "time-conductor-base";
+@import "time-of-interest";

@@ -121,12 +121,6 @@ define([
                     "key": "table-options-edit",
                     "template": tableOptionsEditTemplate
                 }
-            ],
-            "stylesheets": [
-                {
-                    "stylesheetUrl": "css/table.css",
-                    "priority": "mandatory"
-                }
             ]
         }
     });
