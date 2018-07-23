@@ -24,44 +24,69 @@
      'vue',
      'moment',
      'text!../../res/templates/notebook.html',
-     'text!../../res/templates/entry.html'
+     'text!../../res/templates/entry.html',
+     'text!../../res/templates/embed.html'
  ], function (
      Vue,
      moment,
-     NotebookView,
-     NotebookEntry
+     NotebookTemplate,
+     EntryTemplate,
+     EmbedTemplate
     ) {
 
     function NotebookController(openmct, domainObject) {
         this.openmct = openmct;
         this.domainObject = domainObject;
         this.entrySearch = '';
+        this.dialogService = this.openmct.$injector.get('dialogService');
+        this.dndService = this.openmct.$injector.get('dndService');
+        this.objectService = this.openmct.$injector.get('objectService');
+        this.navigationService = this.openmct.$injector.get('navigationService');
 
         this.show = this.show.bind(this);
+        this.destroy = this.destroy.bind(this);
         this.newEntry = this.newEntry.bind(this);
         this.textFocus = this.textFocus.bind(this);
         this.textBlur = this.textBlur.bind(this);
         this.entryPosById = this.entryPosById.bind(this);
         this.deleteEntry = this.deleteEntry.bind(this);
+        this.dropOnEntry = this.dropOnEntry.bind(this);
+        this.navigate = this.navigate.bind(this);
     }
 
     NotebookController.prototype.initializeVue = function (container){
         var self = this;
         
-        Vue.component('notebook-entry', {
+        var notebookEmbed = {
+            props:['embed'],
+            template: EmbedTemplate,
+            methods: {
+                navigate: self.navigate
+            }
+        };
+
+        var entryComponent = {
             props:['entry'],
-            template: NotebookEntry,
+            template: EntryTemplate,
+            components: {
+                'notebook-embed': notebookEmbed
+            },
             methods: {
                 textFocus: self.textFocus,
                 textBlur: self.textBlur,
                 formatTime: self.formatTime,
-                triggerDelete: self.triggerDelete
+                triggerDelete: self.triggerDelete,
+                dropOnEntry: self.dropOnEntry,
+                dragoverOnEntry: self.dragoverOnEntry
             },
             mounted: self.focusOnEntry
-        });
+        };
 
         var notebookVue = Vue.extend({
-            template: NotebookView,
+            template: NotebookTemplate,
+            components: {
+                'notebook-entry': entryComponent
+            },
             data: function () {
                 return {
                     entrySearch: self.entrySearch,
@@ -88,21 +113,20 @@
     NotebookController.prototype.newEntry = function (event) {
         
         var entries = this.domainObject.entries,
-            lastEntry = entries[entries.length - 1],
+            lastEntryIndex = entries.length - 1,
+            lastEntry = entries[lastEntryIndex],
             date = Date.now();
-        
-        if (lastEntry === undefined || lastEntry.text || lastEntry.embeds) {
-            var createdEntry = {'id': 'entry-' + date, 'createdOn': date};
+
+        if (lastEntry === undefined || lastEntry.text || lastEntry.embeds.length) {
+            var createdEntry = {'id': 'entry-' + date, 'createdOn': date, 'embeds':[]};
             
             entries.push(createdEntry);
             this.openmct.objects.mutate(this.domainObject, 'entries', entries);
         } else {
-            // var lastElement = this.NotebookVue.$refs[lastEntry.id][0];
-            // lastElement.focus();
-
             lastEntry.createdOn = date;
 
             this.openmct.objects.mutate(this.domainObject, 'entries[entries.length-1]', lastEntry);
+            this.focusOnEntry.bind(this.NotebookVue.$children[lastEntryIndex])();
         }
 
         this.entrySearch = '';
@@ -122,7 +146,6 @@
             
             if (this.NotebookVue.currentEntryValue !== $event.target.innerText) {
                 this.openmct.objects.mutate(this.domainObject, 'entries[' + entryPos + '].text', $event.target.innerText);
-                console.log(this.domainObject.entries[entryPos]);
             }
         }
     };
@@ -146,7 +169,7 @@
 
     NotebookController.prototype.focusOnEntry = function () {
         if (!this.entry.text) {
-            this.$el.querySelector("[contenteditable='true']").focus();
+            this.$refs.contenteditable.focus();
         }
     };
 
@@ -155,13 +178,62 @@
     };
 
     NotebookController.prototype.deleteEntry = function (entryId) {
-        var entryPos = this.entryPosById(entryId);
+        var entryPos = this.entryPosById(entryId),
+            domainObject = this.domainObject,
+            openmct = this.openmct;
 
         if (entryPos !== -1) {
-            this.domainObject.entries.splice(entryPos, 1);
-            this.openmct.objects.mutate(this.domainObject, 'entries', this.domainObject.entries);
-            console.log(this.domainObject);
+
+            var errorDialog = this.dialogService.showBlockingMessage({
+                severity: "error",
+                title: "This action will permanently delete this Notebook entry. Do you wish to continue?",
+                options: [{
+                    label: "OK",
+                    callback: function () {
+                        domainObject.entries.splice(entryPos, 1);
+                        openmct.objects.mutate(domainObject, 'entries', domainObject.entries);
+
+                        errorDialog.dismiss();
+                    }
+                },{
+                    label: "Cancel",
+                    callback: function () {
+                        errorDialog.dismiss();
+                    }
+                }]
+            });
         }
+    };
+
+    NotebookController.prototype.dropOnEntry = function (entryId) {
+        var selectedObject = this.dndService.getData('mct-domain-object'),
+            selectedObjectId = selectedObject.getId(),
+            selectedModel = selectedObject.getModel(),
+            cssClass = selectedObject.getCapability('type').typeDef.cssClass,
+            entryPos = this.entryPosById(entryId),
+            currentEntryEmbeds = this.domainObject.entries[entryPos].embeds,
+            newEmbed = {
+                type: selectedObjectId,
+                id: '' + Date.now(),
+                cssClass: cssClass,
+                name: selectedModel.name,
+                snapshot: ''
+            };
+        
+        currentEntryEmbeds.push(newEmbed);
+        this.openmct.objects.mutate(this.domainObject, 'entries[' + entryPos + '].embeds', currentEntryEmbeds);
+
+        console.log(currentEntryEmbeds);
+    };
+
+    NotebookController.prototype.dragoverOnEntry = function (dragoverEvent) {
+      
+    };
+
+    NotebookController.prototype.navigate = function (embedType) {
+        this.objectService.getObjects([embedType]).then(function (objects) {
+            this.navigationService.setNavigation(objects[embedType]);   
+        }.bind(this));
     };
 
     NotebookController.prototype.show = function (container) {

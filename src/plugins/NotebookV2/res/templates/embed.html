@@ -1,0 +1,18 @@
+<div
+    class="l-flex-row l-entry-embed"
+    v-bind:class="[embed.cssClass, embed.snapshot ? has-snapshot : '']">
+
+    <div
+        class="snap-thumb"
+        v-if="embed.snapshot">
+        <img v-bind:src="embed.snapshot">
+    </div>
+
+    <div class="embed-info l-flex-col">
+        <div class="embed-title object-header">
+            <a v-on:click="navigate(embed.type)">{{embed.name}}</a>
+            <a class='context-available'></a>
+        </div>
+    </div>
+
+</div>
