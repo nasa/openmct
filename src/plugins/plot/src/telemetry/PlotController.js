@@ -181,7 +181,9 @@ define([
         };
         this.config.xAxis.set('range', newRange);
         if (!isTick) {
+            this.skipReloadOnInteraction = true;
             this.$scope.$broadcast('plot:clearHistory');
+            this.skipReloadOnInteraction = false;
             this.loadMoreData(newRange, true);
         } else {
             // Drop any data that is more than 1x (max-min) before min.
@@ -234,7 +236,9 @@ define([
         var xDisplayRange = this.config.xAxis.get('displayRange');
         var xRange = this.config.xAxis.get('range');
 
-        this.loadMoreData(xDisplayRange);
+        if (!this.skipReloadOnInteraction) {
+            this.loadMoreData(xDisplayRange);
+        }
 
         this.synchronized(xRange.min === xDisplayRange.min &&
                           xRange.max === xDisplayRange.max);
