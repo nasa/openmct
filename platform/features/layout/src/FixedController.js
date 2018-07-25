@@ -233,6 +233,9 @@ define(
 
             this.updateElementPositions(this.newDomainObject.layoutGrid);
             refreshElements();
+
+            //force a click, to initialize Fixed Position Controller on SelectionAPI
+            $element[0].click();
         }
 
         FixedController.prototype.updateElementPositions = function (layoutGrid) {
