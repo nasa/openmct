@@ -188,7 +188,8 @@ define([
                     "name": "Remove",
                     "description": "Remove this object from its containing object.",
                     "depends": [
-                        "navigationService"
+                        "navigationService",
+                        "dialogService"
                     ]
                 },
                 {

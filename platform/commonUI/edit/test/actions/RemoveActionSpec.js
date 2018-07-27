@@ -128,14 +128,14 @@ define(
             });
 
             it("mutates the parent when performed", function () {
-                action.perform();
+                action.delete();
                 expect(mockMutation.invoke)
                     .toHaveBeenCalledWith(jasmine.any(Function));
             });
 
             it("changes composition from its mutation function", function () {
                 var mutator, result;
-                action.perform();
+                action.delete();
                 mutator = mockMutation.invoke.calls.mostRecent().args[0];
                 result = mutator(model);
 
@@ -170,7 +170,7 @@ define(
 
                 mockType.hasFeature.and.returnValue(true);
 
-                action.perform();
+                action.delete();
 
                 // Expects navigation to parent of domainObject (removed object)
                 expect(mockNavigationService.setNavigation).toHaveBeenCalledWith(mockParent);
@@ -198,7 +198,7 @@ define(
 
                 mockType.hasFeature.and.returnValue(true);
 
-                action.perform();
+                action.delete();
 
                 // Expects no navigation to occur
                 expect(mockNavigationService.setNavigation).not.toHaveBeenCalled();

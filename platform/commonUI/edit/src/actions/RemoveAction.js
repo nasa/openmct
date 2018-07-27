@@ -39,9 +39,12 @@ define(
          * @constructor
          * @implements {Action}
          */
-        function RemoveAction(navigationService, context) {
+        function RemoveAction(navigationService, dialogService, context) {
             this.domainObject = (context || {}).domainObject;
             this.navigationService = navigationService;
+            this.dialogService = dialogService;
+
+            this.delete = this.delete.bind(this);
         }
 
         /**
@@ -49,7 +52,7 @@ define(
          * @return {Promise} a promise which will be
          *         fulfilled when the action has completed.
          */
-        RemoveAction.prototype.perform = function () {
+        RemoveAction.prototype.delete = function () {
             var navigationService = this.navigationService,
                 domainObject = this.domainObject;
             /*
@@ -112,6 +115,28 @@ define(
             }
 
             return removeFromContext(domainObject);
+        };
+
+        RemoveAction.prototype.perform = function () {
+            var self = this;
+            var confirmationDialog = this.dialogService.showBlockingMessage({
+                severity: "error",
+                title: "Warning! This action will permanently remove this object. Are you sure you want to continue?",
+                minimized: true, // want the notification to be minimized initially (don't show banner)
+                options: [{
+                    label: "OK",
+                    callback: function () {
+                        self.delete().then(function () {
+                            confirmationDialog.dismiss();
+                        });
+                    }
+                },{
+                    label: "Cancel",
+                    callback: function () {
+                        confirmationDialog.dismiss();
+                    }
+                }]
+            });
         };
 
         // Object needs to have a parent for Remove to be applicable
