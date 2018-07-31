@@ -45,6 +45,7 @@ define([
 
     PlotOptionsController.prototype.updateDomainObject = function (domainObject) {
         this.domainObject = domainObject;
+        this.$scope.formDomainObject = domainObject;
     };
 
     PlotOptionsController.prototype.destroy = function () {
@@ -63,8 +64,7 @@ define([
         this.config = this.$scope.config = config;
         this.$scope.plotSeries = [];
 
-        this.domainObject = this.config.get('domainObject');
-        this.$scope.formDomainObject = this.domainObject;
+        this.updateDomainObject(this.config.get('domainObject'));
         this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject.bind(this));
 
         this.listenTo(this.$scope, '$destroy', this.destroy, this);
