@@ -83,6 +83,7 @@ define([
 
             this.listenTo(this, 'change:xKey', this.onXKeyChange, this);
             this.listenTo(this, 'change:yKey', this.onYKeyChange, this);
+            this.persistedConfig = options.persistedConfig;
 
             Model.apply(this, arguments);
             this.onXKeyChange(this.get('xKey'));
@@ -176,8 +177,7 @@ define([
                 return;
             }
             var valueMetadata = this.metadata.value(newKey);
-            var persistedConfig = this.get('persistedConfiguration');
-            if (!persistedConfig || !persistedConfig.interpolate) {
+            if (!this.persistedConfig || !this.persistedConfig.interpolate) {
                 if (valueMetadata.format === 'enum') {
                     this.set('interpolate', 'stepAfter');
                 } else {

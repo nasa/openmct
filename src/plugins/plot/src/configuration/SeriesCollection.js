@@ -54,7 +54,7 @@ define([
             domainObject.configuration.series.forEach(function (seriesConfig) {
                 var series = this.byIdentifier(seriesConfig.identifier);
                 if (series) {
-                    series.set('persistedConfiguration', seriesConfig);
+                    series.persistedConfig = seriesConfig;
                 }
             }, this);
         },
@@ -90,7 +90,9 @@ define([
                 model: seriesConfig,
                 domainObject: domainObject,
                 collection: this,
-                openmct: this.openmct
+                openmct: this.openmct,
+                persistedConfig: this.plot
+                    .getPersistedSeriesConfig(domainObject.identifier)
             }));
         },
         removeTelemetryObject: function (identifier) {
