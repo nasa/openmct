@@ -80,7 +80,7 @@ define(
              */
             add(items) {
                 var added = items.filter(this.addOne, this);
-                this.emit('added', added);
+                this.emit('add', added);
                 this.dupeCheck = true;
             }
 
@@ -127,7 +127,7 @@ define(
                 if (arguments.length > 0) {
                     this.sortOptions = sortOptions;
                     this.rows = _.sortByOrder(this.rows, 'datum.' + sortOptions.key, sortOptions.direction);
-                    this.emit('sorted');
+                    this.emit('sort');
                 }
 
                 return this.sortOptions; 

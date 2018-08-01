@@ -49,32 +49,35 @@
                     headers: {},
                     headersCount: 0,
                     visibleRows: [],
-                    columnWidths: {},
+                    columnWidths: [],
                     rowHeight: ROW_HEIGHT,
                     scrollOffset: 0,
                     totalHeight: 0,
+                    totalWidth: 0,
                     rowOffset: 0,
-                    visibleRowCount: VISIBLE_ROW_COUNT,
-                    scrollable: undefined
+                    sizingRowData: undefined,
+                    scrollable: undefined,
+                    tableEl: undefined,
+                    headersHolderEl: undefined
                 }
             },
             methods: {
                 updateVisibleRows: function () {
                     let start = 0;
-                    let end = this.visibleRowCount;
+                    let end = VISIBLE_ROW_COUNT;
                     let filteredRows = table.filteredRows.getRows();
                     let filteredRowsLength = filteredRows.length;
                     
                     this.totalHeight = this.rowHeight * filteredRowsLength - 1;
         
-                    if (filteredRowsLength < this.visibleRowCount) {
+                    if (filteredRowsLength < VISIBLE_ROW_COUNT) {
                         end = filteredRowsLength;
                     } else {
                         let firstVisible = this.calculateFirstVisibleRow();
                         let lastVisible = this.calculateLastVisibleRow();
                         let totalVisible = lastVisible - firstVisible;
 
-                        let numberOffscreen = this.visibleRowCount - totalVisible;
+                        let numberOffscreen = VISIBLE_ROW_COUNT - totalVisible;
                         start = firstVisible - Math.floor(numberOffscreen / 2);
                         end = lastVisible + Math.ceil(numberOffscreen / 2);
         
@@ -100,12 +103,31 @@
                     this.headers = headers;
                     this.headersCount = Object.values(headers).length;
                 },
-                updateSizingRow: function (sizingRow) {
-                    let headerKeys = Object.keys(this.headers);
-                    let columnWidth = 100 / headerKeys.length + '%';
-                    this.columnWidths = headerKeys.map(header => columnWidth);
-                    //Do I need to wait for re-render (RAF?) or 
-                    //was that just the Angular digest?
+                dataLoaded: function () {
+                    this.updateSizingRow();
+                },
+                updateSizingRow: function () {
+                    this.sizingRowData = this.visibleRows[0];
+
+                    Vue.nextTick().then(() => {
+                        let sizingRowEl = this.sizingTable.children[0];
+                        let sizingCells = Array.from(sizingRowEl.children);
+                        let paddingFactor = 1.2;
+                        let columnWidths = [];
+                        let totalWidth = 0;
+
+                        this.columnWidths = [];
+                        this.totalWidth = 0;
+    
+                        sizingCells.forEach((cell) => {
+                            let columnWidth = cell.offsetWidth * paddingFactor;
+                            columnWidths.push(columnWidth);
+                            totalWidth += columnWidth;
+                        });
+
+                        this.columnWidths = columnWidths;
+                        this.totalWidth = totalWidth;
+                    });
                 },
                 sortBy: function (columnKey) {
                     table.sortByColumnKey(columnKey);
@@ -115,27 +137,32 @@
                         processingScroll = true;
                         requestAnimationFrame(() => {
                             this.updateVisibleRows();
+                            this.synchronizeScrollX();
                             processingScroll = false;
                         });
                     }
-                }
+                },
+                synchronizeScrollX: function () {
+                    this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
+                },
             },
             mounted: function () {
                 table.on('updateHeaders', this.updateHeaders);
+                table.on('data-loaded', this.dataLoaded);
 
-                table.filteredRows.on('added', this.updateSizingRow, this);
-                table.filteredRows.on('added', this.updateVisibleRows, this);
-                table.filteredRows.on('removed', this.updateVisibleRows, this);
+                table.filteredRows.on('add', this.updateVisibleRows, this);
+                table.filteredRows.on('remove', this.updateVisibleRows, this);
                 table.filteredRows.on('sorted', this.updateVisibleRows, this);
 
                 this.scrollable = this.$el.querySelector('.t-scrolling');
+                this.sizingTable = this.$el.querySelector('.js-sizing-table');
+                this.headersHolderEl = this.$el.querySelector('.mct-table-headers-w');
             },
             destroyed: function () {
                 table.off('updateHeaders', this.updateHeaders);
 
-                table.filteredRows.off('added', this.updateSizingRow, this);
-                table.filteredRows.off('added', this.updateVisibleRows, this);
-                table.filteredRows.off('removed', this.updateVisibleRows, this);
+                table.filteredRows.off('add', this.updateVisibleRows, this);
+                table.filteredRows.off('remove', this.updateVisibleRows, this);
                 table.filteredRows.off('sorted', this.updateVisibleRows, this);
             }
         });

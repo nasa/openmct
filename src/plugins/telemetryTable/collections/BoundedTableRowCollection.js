@@ -60,8 +60,8 @@ define(
             }
 
             sortByTimeSystem(timeSystem) {
-                this.sortBy(timeSystem.key);
-                this.futureBuffer.sortBy(timeSystem.key);
+                this.sortBy({key: timeSystem.key, direction: 'asc'});
+                this.futureBuffer.sortBy({key: timeSystem.key, direction: 'asc'});
             }
 
             /**
@@ -115,7 +115,7 @@ define(
                      * @type {object[]} discarded the telemetry data
                      * discarded as a result of the bounds change
                      */
-                    this.emit('removed', discarded);
+                    this.emit('remove', discarded);
                 }
                 if (added && added.length > 0) {
                     /**
@@ -123,7 +123,7 @@ define(
                      * received telemetry falling within the new bounds.
                      * @type {object[]} added the telemetry data that is now within bounds
                      */
-                    this.emit('added', added);
+                    this.emit('add', added);
                 }
             }
 

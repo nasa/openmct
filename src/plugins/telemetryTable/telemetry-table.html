@@ -1,8 +1,30 @@
 <div class="tabular-holder l-sticky-headers has-control-bar">
-    <table><tr><th v-for="(title, key) in headers" v-on:click="sortBy(key)">{{title}}</th></tr></table>
+    <!-- Headers table -->
+    <div class="mct-table-headers-w">
+        <table class="mct-table l-tabular-headers filterable" :style="{ 'max-width': totalWidth + 'px'}">
+            <thead>
+                <tr>
+                    <th v-for="(title, key, headerIndex) in headers"
+                        :style="{ width: columnWidths[headerIndex] + 'px', 'max-width': columnWidths[headerIndex] + 'px' }">{{title}}</th>
+                </tr>
+                <tr class="s-filters">
+                    <th v-for="(title, key, headerIndex) in headers"
+                        :style="{
+                            width: columnWidths[headerIndex] + 'px',
+                            'max-width': columnWidths[headerIndex] + 'px',
+                        }">
+                        <div class="holder l-filter flex-elem grows">
+                            <input type="text" />
+                            <a class="clear-icon clear-input icon-x-in-circle"></a>
+                        </div>
+                    </th>
+                    </tr>
+            </thead>
+        </table>
+    </div>
+    <!-- Content table -->
     <div v-on:scroll="scroll()" class="l-tabular-body t-scrolling vscroll--persist">
-        <table class="mct-table"
-                v-bind:style="{ height: totalHeight + 'px'}">
+        <table class="mct-table js-telemetry-table" :style="{ height: totalHeight + 'px'}">
             <tbody>
                 <telemetry-table-row v-for="(row, rowIndex) in visibleRows" 
                     :headers="headers"
@@ -10,10 +32,17 @@
                     :rowIndex="rowIndex"
                     :rowOffset="rowOffset"
                     :rowHeight="rowHeight"
-                    :row="row"
-                    >
+                    :row="row">
                 </telemetry-table-row>
             </tbody>
         </table>
     </div>
+    <!-- Sizing table -->
+    <table class="mct-sizing-table t-sizing-table js-sizing-table">
+        <telemetry-table-row
+            v-if="sizingRowData"
+            :headers="headers"
+            :row="sizingRowData">
+        </telemetry-table-row>
+    </table>
 </div>

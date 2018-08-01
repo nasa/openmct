@@ -58,8 +58,8 @@ define([
                 direction: 'asc'
             });
 
-            this.boundedRows.on('added', this.filteredRows.add, this.filteredRows);
-            this.boundedRows.on('removed', this.filteredRows.remove, this.filteredRows);
+            this.boundedRows.on('add', this.filteredRows.add, this.filteredRows);
+            this.boundedRows.on('remove', this.filteredRows.remove, this.filteredRows);
         }
 
         loadComposition() {
@@ -94,6 +94,7 @@ define([
                     let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columns));
                     this.boundedRows.add(telemetryRows);
                     console.timeEnd('processing');
+                    this.emit('data-loaded');
                 });
         }
 

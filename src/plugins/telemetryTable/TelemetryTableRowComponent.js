@@ -40,25 +40,29 @@
                 type: Object,
                 required: true
             },
-            columnWidths: {
-                type: Array,
-                required: true
-            },
-            rowIndex: {
-                type: Number,
-                required: true
-            },
-            rowOffset: {
-                type: Number,
-                required: true
-            },
-            rowHeight: {
-                type: Number,
-                required: true
-            },
             row: {
                 type: Object,
                 required: true
+            },
+            columnWidths: {
+                type: Array,
+                required: false,
+                default: [],
+            },
+            rowIndex: {
+                type: Number,
+                required: false,
+                default: 0
+            },
+            rowOffset: {
+                type: Number,
+                required: false,
+                default: 0
+            },
+            rowHeight: {
+                type: Number,
+                required: false,
+                default: 0
             }
         },
         methods: {
