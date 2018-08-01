@@ -101,10 +101,6 @@ define([
         subscribeTo(telemetryObject) {
         }
 
-        calculateVisibleRows() {
-            this.emit('updateVisibleRows');
-        }
-
         removeTelemetryObject(objectIdentifier) {
             this.columns = this.columns.filter(column => column.isForObject(objectIdentifier));
             this.emit('updateHeaders', Object.assign({}, this.getHeaders()));
@@ -121,27 +117,6 @@ define([
             }
 
             return headers;
-        }
-
-        sortByColumnKey(columnKey) {
-            let sortOptions = this.filteredRows.sortBy();
-            let sortDirection = sortOptions.direction;
-
-            // If sorting by the same colum, flip the sort direction.
-            if (sortOptions.key === columnKey) {
-                if (sortDirection === 'asc') {
-                    sortDirection = 'desc';
-                } else {
-                    sortDirection = 'asc';
-                }
-            }
-
-            this.filteredRows.sortBy({
-                key: columnKey,
-                direction: sortDirection
-            });
-
-            this.calculateVisibleRows();
         }
         
         buildColumns() {

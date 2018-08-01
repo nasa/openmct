@@ -5,6 +5,8 @@
             <thead>
                 <tr>
                     <th v-for="(title, key, headerIndex) in headers"
+                        v-on:click="sortBy(key)"
+                        :class="['sortable', sortOptions.key === key ? 'sort' : '', sortOptions.direction].join(' ')"
                         :style="{ width: columnWidths[headerIndex] + 'px', 'max-width': columnWidths[headerIndex] + 'px' }">{{title}}</th>
                 </tr>
                 <tr class="s-filters">

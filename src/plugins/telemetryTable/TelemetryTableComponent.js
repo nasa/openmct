@@ -55,6 +55,7 @@
                     totalHeight: 0,
                     totalWidth: 0,
                     rowOffset: 0,
+                    sortOptions: undefined,
                     sizingRowData: undefined,
                     scrollable: undefined,
                     tableEl: undefined,
@@ -105,6 +106,7 @@
                 },
                 dataLoaded: function () {
                     this.updateSizingRow();
+                    this.sortOptions = table.filteredRows.sortBy();
                 },
                 updateSizingRow: function () {
                     this.sizingRowData = this.visibleRows[0];
@@ -130,7 +132,20 @@
                     });
                 },
                 sortBy: function (columnKey) {
-                    table.sortByColumnKey(columnKey);
+                    // If sorting by the same column, flip the sort direction.
+                    if (this.sortOptions.key === columnKey) {
+                        if (this.sortOptions.direction === 'asc') {
+                            this.sortOptions.direction = 'desc';
+                        } else {
+                            this.sortOptions.direction = 'asc';
+                        }
+                    } else {
+                        this.sortOptions = {
+                            key: columnKey,
+                            direction: 'asc'
+                        }
+                    }
+                    table.filteredRows.sortBy(this.sortOptions);
                 },
                 scroll: function() {
                     if (!processingScroll) {
@@ -152,7 +167,7 @@
 
                 table.filteredRows.on('add', this.updateVisibleRows, this);
                 table.filteredRows.on('remove', this.updateVisibleRows, this);
-                table.filteredRows.on('sorted', this.updateVisibleRows, this);
+                table.filteredRows.on('sort', this.updateVisibleRows, this);
 
                 this.scrollable = this.$el.querySelector('.t-scrolling');
                 this.sizingTable = this.$el.querySelector('.js-sizing-table');
@@ -163,7 +178,7 @@
 
                 table.filteredRows.off('add', this.updateVisibleRows, this);
                 table.filteredRows.off('remove', this.updateVisibleRows, this);
-                table.filteredRows.off('sorted', this.updateVisibleRows, this);
+                table.filteredRows.off('sort', this.updateVisibleRows, this);
             }
         });
     }
