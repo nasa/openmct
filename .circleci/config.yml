@@ -25,9 +25,6 @@ jobs:
         - run:
             name: npm run lint
             command: npm run lint
-        - run:
-            name: npm run checkstyle
-            command: npm run checkstyle
         - store_artifacts:
             path: dist
             prefix: dist
