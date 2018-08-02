@@ -129,8 +129,8 @@ define(
                     this.rows = _.sortByOrder(this.rows, 'datum.' + sortOptions.key, sortOptions.direction);
                     this.emit('sort');
                 }
-
-                return this.sortOptions; 
+                // Return duplicate to avoid direct modification of underlying object
+                return Object.assign({}, this.sortOptions); 
             }
 
             getRows () {

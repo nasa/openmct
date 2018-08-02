@@ -32,7 +32,7 @@
         data: function () {
             return {
                 rowTop: (this.rowOffset + this.rowIndex) * this.rowHeight + 'px',
-                formattedRow: this.row.getFormattedValues()
+                formattedRow: this.row.getFormattedDatum()
             }
         },
         props: {
@@ -70,7 +70,7 @@
                 this.rowTop = (rowOffset + this.rowIndex) * this.rowHeight + 'px';
             },
             formatRow: function (row) {
-                this.formattedRow = row.getFormattedValues();
+                this.formattedRow = row.getFormattedDatum();
             }
         },
         watch: {

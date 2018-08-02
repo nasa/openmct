@@ -21,11 +21,13 @@
  *****************************************************************************/
 
  define([
+    'lodash',
     'vue',
     'text!./telemetry-table.html',
     './TelemetryTable',
     './TelemetryTableRowComponent'
 ],function (
+    _,
     Vue, 
     TelemetryTableTemplate,
     TelemetryTable,
@@ -33,6 +35,7 @@
 ) {
     const VISIBLE_ROW_COUNT = 100;
     const ROW_HEIGHT = 17;
+    const CELL_PADDING_FACTOR = 1.2;
 
     return function TelemetryTableComponent(domainObject, element, openmct) {
         let table = new TelemetryTable(domainObject, VISIBLE_ROW_COUNT, openmct);
@@ -55,7 +58,8 @@
                     totalHeight: 0,
                     totalWidth: 0,
                     rowOffset: 0,
-                    sortOptions: undefined,
+                    sortOptions: {},
+                    filters: {},
                     sizingRowData: undefined,
                     scrollable: undefined,
                     tableEl: undefined,
@@ -114,7 +118,6 @@
                     Vue.nextTick().then(() => {
                         let sizingRowEl = this.sizingTable.children[0];
                         let sizingCells = Array.from(sizingRowEl.children);
-                        let paddingFactor = 1.2;
                         let columnWidths = [];
                         let totalWidth = 0;
 
@@ -122,7 +125,7 @@
                         this.totalWidth = 0;
     
                         sizingCells.forEach((cell) => {
-                            let columnWidth = cell.offsetWidth * paddingFactor;
+                            let columnWidth = cell.offsetWidth * CELL_PADDING_FACTOR;
                             columnWidths.push(columnWidth);
                             totalWidth += columnWidth;
                         });
@@ -160,6 +163,16 @@
                 synchronizeScrollX: function () {
                     this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
                 },
+                filterChanged: function (columnKey) {
+                    table.filteredRows.setColumnFilter(columnKey, this.filters[columnKey]);
+                },
+                clearFilter: function (columnKey) {
+                    this.filters[columnKey] = '';
+                    table.filteredRows.setColumnFilter(columnKey, '');
+                }
+            },
+            created: function () {
+                this.filterChanged = _.debounce(this.filterChanged, 500);
             },
             mounted: function () {
                 table.on('updateHeaders', this.updateHeaders);
@@ -168,6 +181,7 @@
                 table.filteredRows.on('add', this.updateVisibleRows, this);
                 table.filteredRows.on('remove', this.updateVisibleRows, this);
                 table.filteredRows.on('sort', this.updateVisibleRows, this);
+                table.filteredRows.on('filter', this.updateVisibleRows, this);
 
                 this.scrollable = this.$el.querySelector('.t-scrolling');
                 this.sizingTable = this.$el.querySelector('.js-sizing-table');
@@ -179,6 +193,7 @@
                 table.filteredRows.off('add', this.updateVisibleRows, this);
                 table.filteredRows.off('remove', this.updateVisibleRows, this);
                 table.filteredRows.off('sort', this.updateVisibleRows, this);
+                table.filteredRows.off('filter', this.updateVisibleRows, this);
             }
         });
     }

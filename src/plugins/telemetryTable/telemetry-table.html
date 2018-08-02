@@ -16,8 +16,8 @@
                             'max-width': columnWidths[headerIndex] + 'px',
                         }">
                         <div class="holder l-filter flex-elem grows">
-                            <input type="text" />
-                            <a class="clear-icon clear-input icon-x-in-circle"></a>
+                            <input type="text" v-model="filters[key]" v-on:input="filterChanged(key)" />
+                            <a class="clear-icon clear-input icon-x-in-circle" :class="{show: filters[key]}" @click="clearFilter(key)"></a>
                         </div>
                     </th>
                     </tr>

@@ -28,6 +28,73 @@ define(
         SortedTableRowCollection
     ) {
         class FilteredTableRowCollection extends SortedTableRowCollection {
+            constructor(masterCollection) {
+                super();
+
+                this.masterCollection = masterCollection;
+                this.columnFilters = {};
+
+                this.masterCollection.on('add', this.add, this);
+                this.masterCollection.on('remove', this.remove, this);
+                
+                //Default to master collection's sort options
+                this.sortOptions = masterCollection.sortBy();
+            }
+
+            setColumnFilter(columnKey, filter) {
+                filter = filter.trim().toLowerCase();
+
+                let rowsToFilter = this.getRowsToFilter(columnKey, filter);
+                if (filter.length === 0) {
+                    delete this.columnFilters[columnKey];
+                } else {
+                    this.columnFilters[columnKey] = filter;
+                }
+                this.rows = rowsToFilter.filter(this.applyFilters, this);
+                this.emit('filter');
+            }
+
+            /**
+             * @private
+             */
+            getRowsToFilter(columnKey, filter) {
+                if (this.isSubsetOfCurrentFilter(columnKey, filter)) {
+                    return this.getRows();
+                } else {
+                    return this.masterCollection.getRows();
+                }
+            }
+
+            /**
+             * @private
+             */
+            isSubsetOfCurrentFilter(columnKey, filter) {
+                return this.columnFilters[columnKey] && 
+                    filter.startsWith(this.columnFilters[columnKey]) &&
+                    // startsWith check will otherwise fail when filter cleared 
+                    // because anyString.startsWith('') === true
+                    filter !== '';
+            }
+
+            /**
+             * @private
+             */
+            applyFilters(row) {
+                let matchesFilter = true;
+                Object.entries(this.columnFilters).forEach(([key, filter]) => {
+                    let formattedValue = row.getFormattedValue(key);
+                    matchesFilter = matchesFilter && 
+                        formattedValue.toLowerCase().indexOf(filter) !== -1;
+                });
+                return matchesFilter;
+            }
+
+            destroy() {
+                super.destroy();
+
+                this.masterCollection.off('add', this.add, this);
+                this.masterCollection.off('remove', this.remove, this);
+            }
         }
 
         return FilteredTableRowCollection;

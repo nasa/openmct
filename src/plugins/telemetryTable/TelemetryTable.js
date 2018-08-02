@@ -52,14 +52,11 @@ define([
             this.boundedRows = new BoundedTableRowCollection(this.openmct);
 
             //By default, sort by current time system, ascending.
-            this.filteredRows = new FilteredTableRowCollection();
+            this.filteredRows = new FilteredTableRowCollection(this.boundedRows);
             this.filteredRows.sortBy({
                 key: this.openmct.time.timeSystem().key,
                 direction: 'asc'
             });
-
-            this.boundedRows.on('add', this.filteredRows.add, this.filteredRows);
-            this.boundedRows.on('remove', this.filteredRows.remove, this.filteredRows);
         }
 
         loadComposition() {
@@ -90,8 +87,11 @@ define([
                     console.log('Processing ' + telemetryData.length + ' values');
                     console.time('processing');
                     let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-                    let columns = this.columns[keyString];
-                    let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columns));
+                    let columnMap = this.columns[keyString].reduce((map, column) => {
+                        map[column.getKey()] = column;
+                        return map;
+                    }, {});
+                    let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap));
                     this.boundedRows.add(telemetryRows);
                     console.timeEnd('processing');
                     this.emit('data-loaded');

@@ -24,26 +24,52 @@ define([], function () {
     class TelemetryTableRow {
         constructor(datum, columns) {
             this.columns = columns;
-            this.datum = normalize();
+            this.columnCount = Object.keys(columns).length;
 
-            /**
-             * Normalize the structure of datums to assist sorting and merging of columns.
-             * Maps all sources to keys.
-             * @param {*} telemetryDatum
-             * @param {*} metadataValues 
-             */
-            function normalize() {
-                return columns.reduce((normalizedDatum, column) => {
-                    normalizedDatum[column.getKey()] = column.getRawValue(datum);
-                    return normalizedDatum;
-                }, {});
-            }
+            this.datum = this.createNormalizedDatum(datum);
+
+            this.formatCache = {};
+            this.cacheSize = 0;
         }
 
-        getFormattedValues() {
-            return this.columns.reduce((formattedDatum, column) => {
-                formattedDatum[column.getKey()] = column.getFormattedValue(this.datum);
-                return formattedDatum;
+        getFormattedValue(key) {
+            if (!this.formatCache[key]) {
+                let column = this.columns[key];
+                this.formatCache[key] = column.getFormattedValue(this.datum[key]);
+                this.cacheSize++;
+                
+                if (this.cacheSize === this.columnCount) {
+                    this.completeFormatCache = true;
+                }
+            }
+            return this.formatCache[key];
+        }
+
+        getFormattedDatum() {
+            if (!this.completeFormatCache) {
+                this.buildFormatCache();
+            }
+            return this.formatCache;
+        }
+
+        /**
+         * @private
+         */
+        buildFormatCache() {
+            Object.values(this.columns).forEach(column => this.getFormattedValue(column.getKey()));
+        }
+
+        /**
+         * Normalize the structure of datums to assist sorting and merging of columns.
+         * Maps all sources to keys.
+         * @private
+         * @param {*} telemetryDatum
+         * @param {*} metadataValues 
+         */
+        createNormalizedDatum(datum) {
+            return Object.values(this.columns).reduce((normalizedDatum, column) => {
+                normalizedDatum[column.getKey()] = column.getRawValue(datum);
+                return normalizedDatum;
             }, {});
         }
     }
