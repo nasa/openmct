@@ -1,5 +1,5 @@
 define([
-    'text!../res/templates/mct-example.html'
+    '../res/templates/mct-example.html'
 ], function (
     MCTExampleTemplate
 ) {

@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    "text!../layout/res/templates/fixed.html",
+    "../layout/res/templates/fixed.html",
     'legacyRegistry'
 ], function (
     fixedTemplate,

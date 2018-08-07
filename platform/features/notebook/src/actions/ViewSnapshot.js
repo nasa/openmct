@@ -38,7 +38,7 @@ var OVERLAY_TEMPLATE = '' +
 
 define([
     'zepto',
-    "text!../../res/templates/snapshotHeader.html"
+    "../../res/templates/snapshotHeader.html"
 ],
 function ($, headerTemplate) {
 

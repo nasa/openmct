@@ -13,13 +13,13 @@ define([
     "./src/actions/NewEntryContextual",
     "./src/capabilities/NotebookCapability",
     "./src/policies/CompositionPolicy",
-    "text!./res/templates/notebook.html",
-    "text!./res/templates/entry.html",
-    "text!./res/templates/annotation.html",
-    "text!./res/templates/notifications.html",
-    "text!../layout/res/templates/frame.html",
-    "text!./res/templates/controls/embedControl.html",
-    "text!./res/templates/controls/snapSelect.html"
+    "./res/templates/notebook.html",
+    "./res/templates/entry.html",
+    "./res/templates/annotation.html",
+    "./res/templates/notifications.html",
+    "../layout/res/templates/frame.html",
+    "./res/templates/controls/embedControl.html",
+    "./res/templates/controls/snapSelect.html"
 ], function (
     legacyRegistry,
     NotebookController,

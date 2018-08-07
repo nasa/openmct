@@ -26,8 +26,8 @@ define([
     "./src/controllers/TableOptionsController",
     '../../commonUI/regions/src/Region',
     '../../commonUI/browse/src/InspectorRegion',
-    "text!./res/templates/table-options-edit.html",
-    "text!./res/templates/telemetry-table.html",
+    "./res/templates/table-options-edit.html",
+    "./res/templates/telemetry-table.html",
     "legacyRegistry"
 ], function (
     MCTTable,

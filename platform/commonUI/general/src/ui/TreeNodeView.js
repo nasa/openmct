@@ -22,7 +22,7 @@
 
 define([
     'zepto',
-    'text!../../res/templates/tree/node.html',
+    '../../res/templates/tree/node.html',
     './ToggleView',
     './TreeLabelView'
 ], function ($, nodeTemplate, ToggleView, TreeLabelView) {

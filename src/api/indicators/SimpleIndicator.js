@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['zepto', 'text!./res/indicator-template.html'],
+define(['zepto', './res/indicator-template.html'],
     function ($, indicatorTemplate) {
         var DEFAULT_ICON_CLASS = 'icon-info';
 

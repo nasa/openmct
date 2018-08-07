@@ -26,7 +26,7 @@
  *  SearchSpec. Created by shale on 07/31/2015.
  */
 define([
-    "text!../../src/services/GenericSearchWorker.js"
+    "raw-loader!../../src/services/GenericSearchWorker.js"
 ], function (
     GenericSearchWorkerText
 ) {

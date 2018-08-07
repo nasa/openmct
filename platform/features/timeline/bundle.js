@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    "text!./res/templates/deprecated-timeline-message.html",
+    "./res/templates/deprecated-timeline-message.html",
     'legacyRegistry'
 ], function (
     deprecatedTimelineMessage,

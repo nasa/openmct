@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['text!./dialog.html', 'zepto'], function (dialogTemplate, $) {
+define(['./dialog.html', 'zepto'], function (dialogTemplate, $) {
 
     /**
      * A dialog may be displayed to show blocking content to users.

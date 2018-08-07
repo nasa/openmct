@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    'text!./generatorWorker.js',
+    'raw-loader!./generatorWorker.js',
     'uuid'
 ], function (
     workerText,

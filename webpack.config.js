@@ -32,9 +32,6 @@ const webpackConfig = {
         }
     },
     devtool: devMode ? 'eval-source-map' : 'source-map',
-    resolveLoader: {
-        alias: {"text": "raw-loader"}
-    },
     plugins: [
         new VueLoaderPlugin(),
         new MiniCssExtractPlugin({
@@ -68,6 +65,10 @@ const webpackConfig = {
                         }
                     }
                 ]
+            },
+            {
+                test: /\.html$/,
+                use: 'html-loader'
             },
             {
                 test: /zepto/,

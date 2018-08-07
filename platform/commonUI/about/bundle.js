@@ -21,17 +21,17 @@
  *****************************************************************************/
 
 define([
-    "text!./res/templates/about-dialog.html",
+    "./res/templates/about-dialog.html",
     "./src/LogoController",
     "./src/AboutController",
     "./src/LicenseController",
-    "text!./res/templates/app-logo.html",
-    "text!./res/templates/about-logo.html",
-    "text!./res/templates/overlay-about.html",
-    "text!./res/templates/license-apache.html",
-    "text!./res/templates/license-mit.html",
-    "text!./res/templates/licenses.html",
-    "text!./res/templates/licenses-export-md.html",
+    "./res/templates/app-logo.html",
+    "./res/templates/about-logo.html",
+    "./res/templates/overlay-about.html",
+    "./res/templates/license-apache.html",
+    "./res/templates/license-mit.html",
+    "./res/templates/licenses.html",
+    "./res/templates/licenses-export-md.html",
     'legacyRegistry'
 ], function (
     aboutDialogTemplate,

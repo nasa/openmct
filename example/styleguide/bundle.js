@@ -1,14 +1,14 @@
 define([
     "./src/ExampleStyleGuideModelProvider",
     "./src/MCTExample",
-    "text!./res/templates/intro.html",
-    "text!./res/templates/standards.html",
-    "text!./res/templates/colors.html",
-    "text!./res/templates/status.html",
-    "text!./res/templates/glyphs.html",
-    "text!./res/templates/controls.html",
-    "text!./res/templates/input.html",
-    "text!./res/templates/menus.html",
+    "./res/templates/intro.html",
+    "./res/templates/standards.html",
+    "./res/templates/colors.html",
+    "./res/templates/status.html",
+    "./res/templates/glyphs.html",
+    "./res/templates/controls.html",
+    "./res/templates/input.html",
+    "./res/templates/menus.html",
     'legacyRegistry'
 ], function (
     ExampleStyleGuideModelProvider,

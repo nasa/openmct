@@ -23,7 +23,7 @@
 define(
     [
         "../controllers/MCTTableController",
-        "text!../../res/templates/mct-table.html"
+        "../../res/templates/mct-table.html"
     ],
     function (MCTTableController, TableTemplate) {
         /**

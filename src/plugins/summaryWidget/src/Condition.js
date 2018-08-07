@@ -1,5 +1,5 @@
 define([
-    'text!../res/conditionTemplate.html',
+    '../res/conditionTemplate.html',
     './input/ObjectSelect',
     './input/KeySelect',
     './input/OperationSelect',

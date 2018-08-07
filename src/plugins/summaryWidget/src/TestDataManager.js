@@ -1,6 +1,6 @@
 define([
     './eventHelpers',
-    'text!../res/testDataTemplate.html',
+    '../res/testDataTemplate.html',
     './TestDataItem',
     'zepto',
     'lodash'

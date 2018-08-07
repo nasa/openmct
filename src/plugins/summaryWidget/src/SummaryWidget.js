@@ -1,5 +1,5 @@
 define([
-    'text!../res/widgetTemplate.html',
+    '../res/widgetTemplate.html',
     './Rule',
     './ConditionManager',
     './TestDataManager',

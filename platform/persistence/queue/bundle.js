@@ -24,7 +24,7 @@ define([
     "./src/QueuingPersistenceCapabilityDecorator",
     "./src/PersistenceQueue",
     "./src/PersistenceFailureController",
-    "text!./res/templates/persistence-failure-dialog.html",
+    "./res/templates/persistence-failure-dialog.html",
     'legacyRegistry'
 ], function (
     QueuingPersistenceCapabilityDecorator,

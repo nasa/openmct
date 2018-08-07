@@ -23,7 +23,7 @@
 define([
     './src/HyperlinkController',
     'legacyRegistry',
-    'text!./res/templates/hyperlink.html'
+    './res/templates/hyperlink.html'
 ], function (
     HyperlinkController,
     legacyRegistry,

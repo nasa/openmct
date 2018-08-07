@@ -22,7 +22,7 @@
 
 define([
     './MCTPlotController',
-    'text!../../res/templates/mct-plot.html'
+    '../../res/templates/mct-plot.html'
 ], function (
     MCTPlotController,
     PlotTemplate

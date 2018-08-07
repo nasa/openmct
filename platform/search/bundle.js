@@ -25,10 +25,10 @@ define([
     "./src/controllers/SearchMenuController",
     "./src/services/GenericSearchProvider",
     "./src/services/SearchAggregator",
-    "text!./res/templates/search-item.html",
-    "text!./res/templates/search.html",
-    "text!./res/templates/search-menu.html",
-    "text!./src/services/GenericSearchWorker.js",
+    "./res/templates/search-item.html",
+    "./res/templates/search.html",
+    "./res/templates/search-menu.html",
+    "raw-loader!./src/services/GenericSearchWorker.js",
     'legacyRegistry'
 ], function (
     SearchController,
