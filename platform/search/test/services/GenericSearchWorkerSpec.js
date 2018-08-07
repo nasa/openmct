@@ -31,9 +31,6 @@ define([
     GenericSearchWorkerText
 ) {
 
-    // TODO: FIXME: I'm broke, causing build error.
-    console.log('this thing is broken, fixme');
-
     var WORKER_FILE = URL.createObjectURL(new Blob(
         [GenericSearchWorkerText],
         {type: 'application/javascript'}
