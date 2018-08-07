@@ -22,12 +22,20 @@
 
 /*global module,process*/
 
+const devMode = process.env.NODE_ENV !== 'production';
+
 module.exports = (config) => {
 
     const webpackConfig = require('./webpack.config.js');
     delete webpackConfig.output;
-    // delete webpackConfig.entry;
-    // delete webpackConfig.stats;
+
+    if (!devMode) {
+        webpackConfig.module.rules.push({
+            test: /\.js$/,
+            exclude: /node_modules|example/,
+            use: 'istanbul-instrumenter-loader'
+        });
+    }
 
     config.set({
         basePath: '',
@@ -36,39 +44,35 @@ module.exports = (config) => {
             'platform/**/*Spec.js',
             'src/**/*Spec.js'
         ],
-        // exclude: [
-        //     '**/*.json'
-        // ],
         port: 9876,
         reporters: [
             'progress',
-            // 'coverage',
-            // 'html'
+            'coverage',
+            'html'
         ],
         browsers: ['ChromeHeadless'],
         colors: true,
         logLevel: config.LOG_INFO,
         autoWatch: true,
 
-        // coverageReporter: {
-        //     dir: process.env.CIRCLE_ARTIFACTS ?
-        //         process.env.CIRCLE_ARTIFACTS + '/coverage' :
-        //         "dist/reports/coverage",
-        //     check: {
-        //         global: {
-        //             lines: 80,
-        //             excludes: ['src/plugins/plot/**/*.js']
-        //         }
-        //     }
-        // },
+        coverageReporter: {
+            dir: process.env.CIRCLE_ARTIFACTS ?
+                process.env.CIRCLE_ARTIFACTS + '/coverage' :
+                "dist/reports/coverage",
+            check: {
+                global: {
+                    lines: 80,
+                    excludes: ['src/plugins/plot/**/*.js']
+                }
+            }
+        },
 
         // HTML test reporting.
-        // htmlReporter: {
-        //     outputDir: "dist/reports/tests",
-        //     preserveDescribeNesting: true,
-        //     foldAll: false
-        // },
-
+        htmlReporter: {
+            outputDir: "dist/reports/tests",
+            preserveDescribeNesting: true,
+            foldAll: false
+        },
 
         preprocessors: {
             // add webpack as preprocessor
@@ -86,44 +90,3 @@ module.exports = (config) => {
     });
 }
 
-        // // List of files to exclude.
-        // exclude: [
-        //     'platform/framework/src/Main.js'
-        // ],
-//
-//         // Preprocess matching files before serving them to the browser.
-//         // https://npmjs.org/browse/keyword/karma-preprocessor
-//         preprocessors: {
-//             'src/**/!(*Spec).js': [ 'coverage' ],
-//             'platform/**/src/**/!(*Spec).js': [ 'coverage' ]
-//         },
-//
-//         // Test results reporter to use
-//         // Possible values: 'dots', 'progress'
-//         // Available reporters: https://npmjs.org/browse/keyword/karma-reporter
-//         reporters: ['progress', 'coverage', 'html'],
-//
-//         // Web server port.
-//         port: 9876,
-//
-//         // Wnable / disable colors in the output (reporters and logs).
-//         colors: true,
-//
-//         logLevel: config.LOG_INFO,
-//
-//         // Rerun tests when any file changes.
-//         autoWatch: true,
-//
-//         // Specify browsers to run tests in.
-//         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-//         browsers: [
-//             'ChromeHeadless'
-//         ],
-//
-//         // Code coverage reporting.
-//
-//         // Continuous Integration mode.
-//         // If true, Karma captures browsers, runs the tests and exits.
-//         singleRun: true
-//     });
-// };

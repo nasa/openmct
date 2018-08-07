@@ -32,6 +32,7 @@
     "glob": ">= 3.0.0",
     "html2canvas": "^1.0.0-alpha.12",
     "imports-loader": "^0.8.0",
+    "istanbul-instrumenter-loader": "^3.0.1",
     "jasmine-core": "^3.1.0",
     "jsdoc": "^3.3.2",
     "karma": "^2.0.3",
