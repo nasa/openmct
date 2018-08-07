@@ -164,12 +164,12 @@ define(
                 it("Column configuration exposes persisted configuration", function () {
                     var tableConfig,
                         modelConfig = {
-                        table: {
-                            columns : {
-                                'Range 1': false
+                            table: {
+                                columns : {
+                                    'Range 1': false
+                                }
                             }
-                        }
-                    };
+                        };
                     mockModel.configuration = modelConfig;
 
                     tableConfig = table.buildColumnConfiguration();

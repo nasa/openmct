@@ -31,34 +31,32 @@ define(['zepto'], function ($) {
                 var selectedModel = selectedObject.getModel();
                 var cssClass = selectedObject.getCapability('type').typeDef.cssClass;
                 var entryId = -1;
-                var embedId = -1;
                 $scope.clearSearch();
                 if ($element[0].id === 'newEntry') {
                     entryId = $scope.domainObject.model.entries.length;
-                    embedId = 0;
                     var lastEntry = $scope.domainObject.model.entries[entryId - 1];
                     if (lastEntry === undefined || lastEntry.text || lastEntry.embeds) {
                         $scope.domainObject.useCapability('mutation', function (model) {
                             model.entries.push({'createdOn': +Date.now(),
-                                                'id': +Date.now(),
-                                                'embeds': [{'type': selectedObject.getId(),
-                                                       'id': '' + Date.now(),
-                                                       'cssClass': cssClass,
-                                                       'name': selectedModel.name,
-                                                       'snapshot': ''
-                                                     }]
-                                            });
+                                'id': +Date.now(),
+                                'embeds': [{'type': selectedObject.getId(),
+                                    'id': '' + Date.now(),
+                                    'cssClass': cssClass,
+                                    'name': selectedModel.name,
+                                    'snapshot': ''
+                                }]
+                            });
                         });
                     }else {
                         $scope.domainObject.useCapability('mutation', function (model) {
                             model.entries[entryId - 1] =
                                                     {'createdOn': +Date.now(),
-                                                     'embeds': [{'type': selectedObject.getId(),
-                                                                'id': '' + Date.now(),
-                                                                'cssClass': cssClass,
-                                                                'name': selectedModel.name,
-                                                                'snapshot': ''
-                                                               }]
+                                                        'embeds': [{'type': selectedObject.getId(),
+                                                            'id': '' + Date.now(),
+                                                            'cssClass': cssClass,
+                                                            'name': selectedModel.name,
+                                                            'snapshot': ''
+                                                        }]
                                                     };
                         });
                     }
@@ -77,14 +75,12 @@ define(['zepto'], function ($) {
 
                     $scope.domainObject.useCapability('mutation', function (model) {
                         model.entries[entryId].embeds.push({'type': selectedObject.getId(),
-                                                                          'id': '' + Date.now(),
-                                                                          'cssClass': cssClass,
-                                                                          'name': selectedModel.name,
-                                                                          'snapshot': ''
-                                                                        });
+                            'id': '' + Date.now(),
+                            'cssClass': cssClass,
+                            'name': selectedModel.name,
+                            'snapshot': ''
+                        });
                     });
-
-                    embedId = $scope.domainObject.model.entries[entryId].embeds.length - 1;
 
                     if (selectedObject) {
                         e.preventDefault();

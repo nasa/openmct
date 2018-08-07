@@ -156,11 +156,11 @@ define(
                             'createdOn': date,
                             'text': options.entry,
                             'embeds': [{'type': options.embedObject.getId(),
-                                       'id': '' + date,
-                                       'cssClass': options.cssClass,
-                                       'name': options.selectedModel.name,
-                                       'snapshot': options.snapshot
-                                     }]
+                                'id': '' + date,
+                                'cssClass': options.cssClass,
+                                'name': options.selectedModel.name,
+                                'snapshot': options.snapshot
+                            }]
                         });
                     }else {
                         model.entries[entries.length - 1] = {
@@ -168,11 +168,11 @@ define(
                             'createdOn': date,
                             'text': options.entry,
                             'embeds': [{'type': options.embedObject.getId(),
-                                       'id': '' + date,
-                                       'cssClass': options.cssClass,
-                                       'name': options.selectedModel.name,
-                                       'snapshot': options.snapshot
-                                     }]
+                                'id': '' + date,
+                                'cssClass': options.cssClass,
+                                'name': options.selectedModel.name,
+                                'snapshot': options.snapshot
+                            }]
                         };
                     }
                 });

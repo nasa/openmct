@@ -38,8 +38,8 @@ define(
             // Refresh variable "menuActions" in the scope
             function updateActions() {
                 $scope.menuActions = $scope.action ?
-                        $scope.action.getActions({ category: 'contextual' }) :
-                        [];
+                    $scope.action.getActions({ category: 'contextual' }) :
+                    [];
             }
 
             // Update using the action capability

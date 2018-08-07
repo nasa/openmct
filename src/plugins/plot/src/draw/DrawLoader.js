@@ -29,17 +29,17 @@ define(
     function (DrawWebGL, Draw2D) {
 
         var CHARTS = [
-                {
-                    MAX_INSTANCES: 16,
-                    API: DrawWebGL,
-                    ALLOCATIONS: []
-                },
-                {
-                    MAX_INSTANCES: Number.POSITIVE_INFINITY,
-                    API: Draw2D,
-                    ALLOCATIONS: []
-                }
-            ];
+            {
+                MAX_INSTANCES: 16,
+                API: DrawWebGL,
+                ALLOCATIONS: []
+            },
+            {
+                MAX_INSTANCES: Number.POSITIVE_INFINITY,
+                API: Draw2D,
+                ALLOCATIONS: []
+            }
+        ];
 
         /**
          * Draw loader attaches a draw API to a canvas element and returns the

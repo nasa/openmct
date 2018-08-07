@@ -60,8 +60,8 @@ define(
 
             function loadImplementation(ext) {
                 var implPromise = ext.hasImplementationValue() ?
-                            Promise.resolve(ext.getImplementationValue()) :
-                            loader.load(ext.getImplementationPath()),
+                        Promise.resolve(ext.getImplementationValue()) :
+                        loader.load(ext.getImplementationPath()),
                     definition = ext.getDefinition();
 
                 // Wrap a constructor function (to avoid modifying the original)

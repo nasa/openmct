@@ -19,12 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global requirejs,BUILD_CONSTANTS*/
+/*global module,BUILD_CONSTANTS*/
 
 const matcher = /\/openmct.js$/;
 if (document.currentScript) {
     let src = document.currentScript.src;
     if (src && matcher.test(src)) {
+        // eslint-disable-next-line no-undef
         __webpack_public_path__ = src.replace(matcher, '') + '/';
     }
 }

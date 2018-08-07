@@ -41,7 +41,7 @@ define(
                 editableRegionPolicy = new EditableRegionPolicy();
 
                 mockEditorCapability = jasmine.createSpyObj("editorCapability", [
-                   "inEditContext"
+                    "inEditContext"
                 ]);
                 mockDomainObject = jasmine.createSpyObj("domainObject", [
                     "hasCapability", "getCapability"

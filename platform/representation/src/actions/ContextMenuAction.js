@@ -80,7 +80,7 @@ define(
                 body = $document.find('body'),
                 scope = $rootScope.$new(),
                 initiatingEvent = this.agentService.isMobile() ?
-                        'touchstart' : 'mousedown',
+                    'touchstart' : 'mousedown',
                 menu,
                 popup;
 

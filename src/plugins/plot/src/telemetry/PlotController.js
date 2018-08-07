@@ -160,10 +160,10 @@ define([
         this.config.series.map(function (plotSeries) {
             this.startLoading();
             plotSeries.load({
-                    size: this.$element[0].offsetWidth,
-                    start: range.min,
-                    end: range.max
-                })
+                size: this.$element[0].offsetWidth,
+                start: range.min,
+                end: range.max
+            })
                 .then(this.stopLoading.bind(this));
             if (purge) {
                 plotSeries.purgeRecordsOutsideRange(range);

@@ -27,7 +27,6 @@ define(
         describe("The Edit action policy", function () {
             var editableView,
                 nonEditableView,
-                undefinedView,
                 testViews,
                 testContext,
                 mockDomainObject,
@@ -67,7 +66,6 @@ define(
 
                 editableView = { editable: true };
                 nonEditableView = { editable: false };
-                undefinedView = { someKey: "some value" };
                 plotView = { key: "plot", editable: false };
                 testViews = [];
 

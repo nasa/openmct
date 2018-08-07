@@ -467,7 +467,7 @@ define(
             //It's possible that the insertion point is a duplicate of the element to be inserted
             var isDupe = function () {
                 return this.sortComparator(searchElement,
-                        searchArray[testIndex][this.$scope.sortColumn].text) === 0;
+                    searchArray[testIndex][this.$scope.sortColumn].text) === 0;
             }.bind(this);
 
             // In the event of a duplicate, scan left or right (depending on
@@ -493,14 +493,14 @@ define(
             }
             switch (this.sortComparator(searchElement,
                 searchArray[sampleAt][this.$scope.sortColumn].text)) {
-                case -1:
-                    return this.binarySearch(searchArray, searchElement, min,
-                        sampleAt - 1);
-                case 0:
-                    return sampleAt;
-                case 1:
-                    return this.binarySearch(searchArray, searchElement,
-                        sampleAt + 1, max);
+            case -1:
+                return this.binarySearch(searchArray, searchElement, min,
+                    sampleAt - 1);
+            case 0:
+                return sampleAt;
+            case 1:
+                return this.binarySearch(searchArray, searchElement,
+                    sampleAt + 1, max);
             }
         };
 

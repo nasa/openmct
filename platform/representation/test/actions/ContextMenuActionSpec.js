@@ -42,7 +42,6 @@ define(
                 mockRootScope,
                 mockAgentService,
                 mockScope,
-                mockElement,
                 mockDomainObject,
                 mockEvent,
                 mockPopup,
@@ -65,7 +64,6 @@ define(
                 mockRootScope = jasmine.createSpyObj("$rootScope", ["$new"]);
                 mockAgentService = jasmine.createSpyObj("agentService", ["isMobile"]);
                 mockScope = jasmine.createSpyObj("scope", ["$destroy"]);
-                mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
                 mockEvent = jasmine.createSpyObj("event", ["preventDefault", "stopPropagation"]);
                 mockEvent.pageX = 123;

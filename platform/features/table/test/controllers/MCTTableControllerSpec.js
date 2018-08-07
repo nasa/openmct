@@ -56,10 +56,10 @@ define(
                 watches = {};
 
                 mockScope = jasmine.createSpyObj('scope', [
-                   '$watch',
-                   '$on',
-                   '$watchCollection',
-                   '$digest'
+                    '$watch',
+                    '$on',
+                    '$watchCollection',
+                    '$digest'
                 ]);
                 mockScope.$watchCollection.and.callFake(function (event, callback) {
                     watches[event] = callback;

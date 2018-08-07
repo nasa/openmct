@@ -31,7 +31,6 @@ define(
          * @constructor
          */
         function BrowseObjectController($scope, $location, $route) {
-            var navigatedObject;
             function setViewForDomainObject(domainObject) {
 
                 var locationViewKey = $location.search().view;
@@ -47,7 +46,6 @@ define(
                     ((domainObject && domainObject.useCapability('view')) || [])
                         .forEach(selectViewIfMatching);
                 }
-                navigatedObject = domainObject;
             }
 
             function updateQueryParam(viewKey) {

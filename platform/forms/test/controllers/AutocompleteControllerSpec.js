@@ -49,7 +49,7 @@ define([
         it("filters options by returning array containing optionId and name", function () {
             mockScope.filterOptions('Asia');
             var filteredOptions = [{ optionId : 0, name : 'Asia/Dhaka' },
-                                    { optionId : 1, name : 'Asia/Shanghai' }];
+                { optionId : 1, name : 'Asia/Shanghai' }];
             expect(mockScope.filteredOptions).toEqual(filteredOptions);
         });
 

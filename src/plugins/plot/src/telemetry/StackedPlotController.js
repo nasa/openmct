@@ -28,7 +28,6 @@ define([
 
     function StackedPlotController($scope, openmct, objectService, $element, exportImageService) {
         var tickWidth = 0,
-            newFormatObject,
             composition,
             currentRequest,
             unlisten,
@@ -38,15 +37,6 @@ define([
         this.exportImageService = exportImageService;
 
         $scope.telemetryObjects = [];
-
-        function oldId(newIdentifier) {
-            var idParts = [];
-            if (newIdentifier.namespace) {
-                idParts.push(newIdentifier.namespace.replace(/\:/g, '\\:'));
-            }
-            idParts.push(newIdentifier.key);
-            return idParts.join(':');
-        }
 
         function onDomainObjectChange(domainObject) {
             var thisRequest = {
@@ -64,7 +54,7 @@ define([
             }
 
             function addChild(child) {
-                var id = oldId(child.identifier);
+                var id = openmct.objects.makeKeyString(child.identifier);
                 thisTickWidthMap[id] = 0;
                 thisRequest.pending += 1;
                 objectService.getObjects([id])
@@ -76,7 +66,7 @@ define([
             }
 
             function removeChild(childIdentifier) {
-                var id = oldId(childIdentifier);
+                var id = openmct.objects.makeKeyString(childIdentifier);
                 delete thisTickWidthMap[id];
                 var childObj = telemetryObjects.filter(function (c) {
                     return c.getId() === id;
@@ -89,21 +79,20 @@ define([
             }
             thisRequest.pending += 1;
             openmct.objects.get(domainObject.getId())
-                    .then(function (obj) {
-                        thisRequest.pending -= 1;
-                        if (thisRequest !== currentRequest) {
-                            return;
-                        }
-                        newFormatObject = obj;
-                        composition = openmct.composition.get(obj);
-                        composition.on('add', addChild);
-                        composition.on('remove', removeChild);
-                        composition.load();
-                        unlisten = function () {
-                            composition.off('add', addChild);
-                            composition.off('remove', removeChild);
-                        };
-                    });
+                .then(function (obj) {
+                    thisRequest.pending -= 1;
+                    if (thisRequest !== currentRequest) {
+                        return;
+                    }
+                    composition = openmct.composition.get(obj);
+                    composition.on('add', addChild);
+                    composition.on('remove', removeChild);
+                    composition.load();
+                    unlisten = function () {
+                        composition.off('add', addChild);
+                        composition.off('remove', removeChild);
+                    };
+                });
         }
 
         function onCompositionChange(newComp, oldComp) {

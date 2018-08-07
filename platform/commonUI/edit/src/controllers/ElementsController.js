@@ -49,7 +49,7 @@ define(
             function searchElements(value) {
                 if ($scope.searchText) {
                     return value.getModel().name.toLowerCase().search(
-                            $scope.searchText.toLowerCase()) !== -1;
+                        $scope.searchText.toLowerCase()) !== -1;
                 } else {
                     return true;
                 }

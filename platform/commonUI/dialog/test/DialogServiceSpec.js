@@ -59,8 +59,8 @@ define(
                     ["resolve", "reject"]
                 );
                 mockDocument = jasmine.createSpyObj(
-                  "$document",
-                  ["find"]
+                    "$document",
+                    ["find"]
                 );
                 mockBody = jasmine.createSpyObj('body', ['on', 'off']);
                 mockDocument.find.and.returnValue(mockBody);

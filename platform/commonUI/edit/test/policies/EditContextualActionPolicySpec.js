@@ -75,25 +75,25 @@ define(
 
             it('Allows "remove" action when navigated object in edit mode,' +
                 ' and selected object not editable, but its parent is.',
-                function () {
-                    var mockParent = jasmine.createSpyObj("parentObject", ["hasCapability"]),
-                        mockContextCapability = jasmine.createSpyObj("contextCapability", ["getParent"]);
+            function () {
+                var mockParent = jasmine.createSpyObj("parentObject", ["hasCapability"]),
+                    mockContextCapability = jasmine.createSpyObj("contextCapability", ["getParent"]);
 
-                    mockParent.hasCapability.and.returnValue(true);
-                    mockContextCapability.getParent.and.returnValue(mockParent);
-                    navigatedObject.hasCapability.and.returnValue(true);
+                mockParent.hasCapability.and.returnValue(true);
+                mockContextCapability.getParent.and.returnValue(mockParent);
+                navigatedObject.hasCapability.and.returnValue(true);
 
-                    mockDomainObject.getCapability.and.returnValue(mockContextCapability);
-                    mockDomainObject.hasCapability.and.callFake(function (capability) {
-                        switch (capability) {
-                            case "editor": return false;
-                            case "context": return true;
-                        }
-                    });
-                    metadata.key = "remove";
-
-                    expect(policy.allow(mockAction, context)).toBe(true);
+                mockDomainObject.getCapability.and.returnValue(mockContextCapability);
+                mockDomainObject.hasCapability.and.callFake(function (capability) {
+                    switch (capability) {
+                    case "editor": return false;
+                    case "context": return true;
+                    }
                 });
+                metadata.key = "remove";
+
+                expect(policy.allow(mockAction, context)).toBe(true);
+            });
 
             it('Disallows "move" action when navigated object in edit mode,' +
                 ' but selected object not in edit mode ', function () {

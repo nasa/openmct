@@ -110,12 +110,12 @@ define(
                 it("emits an event",
                     function () {
                         var addedObject = {
-                                timestamp: 10000,
-                                value: {
-                                    integer: 10,
-                                    text: integerTextMap[10]
-                                }
-                            };
+                            timestamp: 10000,
+                            value: {
+                                integer: 10,
+                                text: integerTextMap[10]
+                            }
+                        };
                         collection.add([addedObject]);
                         expect(addedCallback).toHaveBeenCalledWith([addedObject]);
                     }

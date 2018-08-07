@@ -40,7 +40,7 @@ define(
             var indicatorElement;
             var pluginOptions;
             var ajaxOptions;
-            var urlIndicator;
+            var urlIndicator; // eslint-disable-line
 
             beforeEach(function () {
                 jasmine.clock().install();

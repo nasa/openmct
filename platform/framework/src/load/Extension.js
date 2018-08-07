@@ -132,8 +132,8 @@ define(
          */
         Extension.prototype.getImplementationPath = function () {
             return (this.hasImplementation() && !this.hasImplementationValue()) ?
-                    this.bundle.getSourcePath(this.definition.implementation) :
-                    undefined;
+                this.bundle.getSourcePath(this.definition.implementation) :
+                undefined;
         };
 
         /**
@@ -143,8 +143,8 @@ define(
          */
         Extension.prototype.getImplementationValue = function () {
             return typeof this.definition.implementation === 'function' ?
-                    this.definition.implementation :
-                    undefined;
+                this.definition.implementation :
+                undefined;
         };
 
         /**

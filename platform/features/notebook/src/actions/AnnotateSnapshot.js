@@ -101,7 +101,7 @@ define(
                                     saveSnap(image.asBlob(), embedPos, elementPos, DOMAIN_OBJECT);
                                 }else {
                                     ROOTSCOPE.snapshot = {'src': image.asDataURL('image/png'),
-                                                        'modified': Date.now()};
+                                        'modified': Date.now()};
                                 }
                             }
                             done(true);
@@ -155,7 +155,7 @@ define(
             }
 
             this.dialogService.getUserChoice(annotationStruct)
-            .then(saveNotes, rejectNotes);
+                .then(saveNotes, rejectNotes);
 
         };
 

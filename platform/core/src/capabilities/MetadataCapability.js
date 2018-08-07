@@ -48,8 +48,8 @@ define(
 
             function formatTimestamp(timestamp) {
                 return typeof timestamp === 'number' ?
-                        (moment.utc(timestamp).format(TIME_FORMAT) + " UTC") :
-                        undefined;
+                    (moment.utc(timestamp).format(TIME_FORMAT) + " UTC") :
+                    undefined;
             }
 
             function getProperties() {

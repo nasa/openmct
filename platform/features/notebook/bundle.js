@@ -49,24 +49,24 @@ define([
         "extensions":
         {
             "types": [
-            {
-                "key": "notebook",
-                "name": "Notebook",
-                "cssClass": "icon-notebook",
-                "description": "Create and save timestamped notes with embedded object snapshots.",
-                "features": ["creation"],
-                "model": {
-                      "entries": [],
-                      "composition": [],
-                      "entryTypes": [],
-                      "defaultSort": "-createdOn"
-                  },
-                "properties": [
-                    {
-                        "key": "defaultSort",
-                        "name": "Default Sort",
-                        "control": "select",
-                        "options": [
+                {
+                    "key": "notebook",
+                    "name": "Notebook",
+                    "cssClass": "icon-notebook",
+                    "description": "Create and save timestamped notes with embedded object snapshots.",
+                    "features": ["creation"],
+                    "model": {
+                        "entries": [],
+                        "composition": [],
+                        "entryTypes": [],
+                        "defaultSort": "-createdOn"
+                    },
+                    "properties": [
+                        {
+                            "key": "defaultSort",
+                            "name": "Default Sort",
+                            "control": "select",
+                            "options": [
                                 {
                                     "name": "Newest First",
                                     "value": "-createdOn"
@@ -76,66 +76,66 @@ define([
                                     "value": "createdOn"
                                 }
                             ],
-                        "cssClass": "l-inline"
-                    }
-                ]
-            }
-          ],
+                            "cssClass": "l-inline"
+                        }
+                    ]
+                }
+            ],
             "views": [
-            {
-                "key": "notebook.view",
-                "type": "notebook",
-                "cssClass": "icon-notebook",
-                "name": "notebook",
-                "template": notebookTemplate,
-                "editable": false,
-                "uses": [
-                      "composition",
-                      "action"
-                  ],
-                "gestures": [
-                    "drop"
-                ]
-            }
-          ],
+                {
+                    "key": "notebook.view",
+                    "type": "notebook",
+                    "cssClass": "icon-notebook",
+                    "name": "notebook",
+                    "template": notebookTemplate,
+                    "editable": false,
+                    "uses": [
+                        "composition",
+                        "action"
+                    ],
+                    "gestures": [
+                        "drop"
+                    ]
+                }
+            ],
             "controllers": [
-             {
-                 "key": "NotebookController",
-                 "implementation": NotebookController,
-                 "depends": [
-                                "$scope",
-                                "dialogService",
-                                "popupService",
-                                "agentService",
-                                "objectService",
-                                "navigationService",
-                                "now",
-                                "actionService",
-                                "$timeout",
-                                "$element",
-                                "$sce"
-                            ]
-             },
-             {
-                 "key": "NewEntryController",
-                 "implementation": NewEntryController,
-                 "depends": ["$scope",
-                              "$rootScope"
-                             ]
-             },
-             {
-                 "key": "selectSnapshotController",
-                 "implementation": SelectSnapshotController,
-                 "depends": ["$scope",
-                              "$rootScope"
-                             ]
-             },
-             {
-                 "key": "LayoutNotebookController",
-                 "implementation": LayoutNotebookController,
-                 "depends": ["$scope"]
-             }
-           ],
+                {
+                    "key": "NotebookController",
+                    "implementation": NotebookController,
+                    "depends": [
+                        "$scope",
+                        "dialogService",
+                        "popupService",
+                        "agentService",
+                        "objectService",
+                        "navigationService",
+                        "now",
+                        "actionService",
+                        "$timeout",
+                        "$element",
+                        "$sce"
+                    ]
+                },
+                {
+                    "key": "NewEntryController",
+                    "implementation": NewEntryController,
+                    "depends": ["$scope",
+                        "$rootScope"
+                    ]
+                },
+                {
+                    "key": "selectSnapshotController",
+                    "implementation": SelectSnapshotController,
+                    "depends": ["$scope",
+                        "$rootScope"
+                    ]
+                },
+                {
+                    "key": "LayoutNotebookController",
+                    "implementation": LayoutNotebookController,
+                    "depends": ["$scope"]
+                }
+            ],
             "representations": [
                 {
                     "key": "draggedEntry",
@@ -188,7 +188,7 @@ define([
                     "description": "View the large image in a modal",
                     "category": "embed",
                     "depends": [
-                      "$compile"
+                        "$compile"
                     ]
                 },
                 {
@@ -199,9 +199,9 @@ define([
                     "description": "Annotate embed's snapshot",
                     "category": "embed",
                     "depends": [
-                      "dialogService",
-                      "dndService",
-                      "$rootScope"
+                        "dialogService",
+                        "dndService",
+                        "$rootScope"
                     ]
                 },
 
@@ -216,7 +216,7 @@ define([
                         "embed-no-snap"
                     ],
                     "depends": [
-                      "dialogService"
+                        "dialogService"
                     ]
                 },
                 {
@@ -227,7 +227,7 @@ define([
                     "description": "Remove Snapshot of the embed",
                     "category": "embed",
                     "depends": [
-                      "dialogService"
+                        "dialogService"
                     ]
                 },
                 {
@@ -237,14 +237,14 @@ define([
                     "cssClass": "icon-notebook labeled",
                     "description": "Add a new Notebook entry",
                     "category": [
-                         "view-control"
+                        "view-control"
                     ],
                     "depends": [
-                      "$compile",
-                      "$rootScope",
-                      "dialogService",
-                      "notificationService",
-                      "linkService"
+                        "$compile",
+                        "$rootScope",
+                        "dialogService",
+                        "notificationService",
+                        "linkService"
                     ],
                     "priority": "preferred"
                 }
@@ -280,14 +280,14 @@ define([
                 }
             ],
             "controls": [
-              {
-                  "key": "embed-control",
-                  "template": embedControlTemplate
-              },
-               {
-                  "key": "snapshot-select",
-                  "template":  snapSelectTemplate
-              }
+                {
+                    "key": "embed-control",
+                    "template": embedControlTemplate
+                },
+                {
+                    "key": "snapshot-select",
+                    "template":  snapSelectTemplate
+                }
             ]
         }
     });

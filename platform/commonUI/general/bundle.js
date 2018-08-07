@@ -412,11 +412,11 @@ define([
                     "description": "Preview in large dialog",
                     "category": [
                         "contextual",
-                         "view-control"
+                        "view-control"
                     ],
                     "depends": [
-                      "$compile",
-                      "$rootScope"
+                        "$compile",
+                        "$rootScope"
                     ],
                     "priority": "preferred"
                 }

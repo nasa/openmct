@@ -59,7 +59,7 @@ define(
                     (view.key === 'plot' && type.getKey() === 'telemetry.panel') ||
                     (view.key === 'table' && type.getKey() === 'table') ||
                     (view.key === 'rt-table' && type.getKey() === 'rttable')
-                    ) {
+                ) {
                     count++;
                 }
             });

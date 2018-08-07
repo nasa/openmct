@@ -283,10 +283,10 @@ define(
          */
         NotificationService.prototype.setHighestSeverity = function () {
             var severity = {
-                    "info": 1,
-                    "alert": 2,
-                    "error": 3
-                };
+                "info": 1,
+                "alert": 2,
+                "error": 3
+            };
             this.highest.severity = this.notifications.reduce(function (previous, notification) {
                 if (severity[notification.model.severity] > severity[previous]) {
                     return notification.model.severity;
