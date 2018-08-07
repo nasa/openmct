@@ -32,7 +32,6 @@ define(
         "use strict";
 
         var firstObservedTime = Date.now();
-            // messages = JSON.parse(transcript);
 
         function EventTelemetry(request, interval) {
 
