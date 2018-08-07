@@ -26,9 +26,9 @@ define(
 
         describe("A Layout drag handler", function () {
             var testPosition = {
-                    position: [8, 11],
-                    dimensions: [3, 2]
-                };
+                position: [8, 11],
+                dimensions: [3, 2]
+            };
 
             it("changes position by a supplied factor, rounding by grid size", function () {
                 var handler = new LayoutDrag(

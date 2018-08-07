@@ -47,7 +47,7 @@ define(
 
             it("toggles fullscreen mode when performed", function () {
                 action.perform();
-                expect(window.screenfull.toggle).toHaveBeenCalled();
+                expect(screenfull.toggle).toHaveBeenCalled();
             });
 
             it("provides displayable metadata", function () {

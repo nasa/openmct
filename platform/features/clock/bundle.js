@@ -34,8 +34,8 @@ define([
     "./src/actions/RestartTimerAction",
     "./src/actions/StopTimerAction",
     "./src/actions/PauseTimerAction",
-    "text!./res/templates/clock.html",
-    "text!./res/templates/timer.html",
+    "./res/templates/clock.html",
+    "./res/templates/timer.html",
     'legacyRegistry'
 ], function (
     MomentTimezone,

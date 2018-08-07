@@ -37,8 +37,8 @@ define(
                 );
                 mockDomainObject.getCapability.and.returnValue({
                     inEditContext: function () {
-                       return true;
-                   }
+                        return true;
+                    }
                 });
                 mockDomainObject.hasCapability.and.callFake(function (c) {
                     return (c === 'editor') && testMode;

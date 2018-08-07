@@ -73,10 +73,10 @@ define([
         var key = object.key;
 
         return object.getCapability('persistence')
-                .persist()
-                .then(function () {
-                    return utils.toNewFormat(object, key);
-                });
+            .persist()
+            .then(function () {
+                return utils.toNewFormat(object, key);
+            });
     };
 
     ObjectServiceProvider.prototype.delete = function (object) {

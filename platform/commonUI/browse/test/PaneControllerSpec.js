@@ -27,7 +27,6 @@ define(
         describe("The PaneController", function () {
             var mockScope,
                 mockAgentService,
-                mockDomainObjects,
                 mockWindow,
                 controller,
                 mockLocation,
@@ -47,17 +46,6 @@ define(
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj("$scope", ["$on"]);
-                mockDomainObjects = ['a', 'b'].map(function (id) {
-                    var mockDomainObject = jasmine.createSpyObj(
-                        'domainObject-' + id,
-                        ['getId', 'getModel', 'getCapability']
-                    );
-
-                    mockDomainObject.getId.and.returnValue(id);
-                    mockDomainObject.getModel.and.returnValue({});
-
-                    return mockDomainObject;
-                });
                 mockAgentService = jasmine.createSpyObj(
                     "agentService",
                     ["isMobile", "isPhone", "isTablet", "isPortrait", "isLandscape"]

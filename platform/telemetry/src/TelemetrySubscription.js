@@ -190,8 +190,8 @@ define(
                 // telemetry-capable objects may be an asynchronous operation.)
                 self.telemetryObjectPromise = promiseRelevantObjects(domainObject);
                 self.unsubscribePromise = self.telemetryObjectPromise
-                        .then(cacheObjectReferences)
-                        .then(subscribeAll);
+                    .then(cacheObjectReferences)
+                    .then(subscribeAll);
             }
 
             function idsMatch(ids) {
@@ -292,8 +292,8 @@ define(
             var id = domainObject.getId(),
                 latestValue = this.latestValues[id];
             return latestValue && (key ?
-                                   latestValue.datum[key] :
-                                   latestValue.domain);
+                latestValue.datum[key] :
+                latestValue.domain);
         };
 
         /**
@@ -315,8 +315,8 @@ define(
             var id = domainObject.getId(),
                 latestValue = this.latestValues[id];
             return latestValue && (key ?
-                                   latestValue.datum[key] :
-                                   latestValue.range);
+                latestValue.datum[key] :
+                latestValue.range);
         };
 
         /**

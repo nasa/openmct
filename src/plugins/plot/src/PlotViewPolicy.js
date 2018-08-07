@@ -40,7 +40,7 @@ define(
             if (!adaptedObject.telemetry) {
                 return domainObject.hasCapability('delegation') &&
                     domainObject.getCapability('delegation')
-                            .doesDelegateCapability('telemetry');
+                        .doesDelegateCapability('telemetry');
             }
 
             var metadata = this.openmct.telemetry.getMetadata(adaptedObject);

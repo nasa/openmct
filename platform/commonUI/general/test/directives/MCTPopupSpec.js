@@ -41,7 +41,6 @@ define(
                 mockScope,
                 mockElement,
                 testAttrs,
-                mockBody,
                 mockTransclude,
                 mockParentEl,
                 mockNewElement,
@@ -59,8 +58,6 @@ define(
                     jasmine.createSpyObj("$scope", ["$eval", "$apply", "$on"]);
                 mockElement =
                     jasmine.createSpyObj("element", JQLITE_METHODS);
-                mockBody =
-                    jasmine.createSpyObj("body", JQLITE_METHODS);
                 mockTransclude =
                     jasmine.createSpy("transclude");
                 mockParentEl =

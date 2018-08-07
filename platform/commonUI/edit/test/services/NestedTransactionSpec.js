@@ -43,13 +43,12 @@ define(["../../src/services/NestedTransaction"], function (NestedTransaction) {
 
         describe("when callbacks are added", function () {
             var mockCommit,
-                mockCancel,
-                remove;
+                mockCancel;
 
             beforeEach(function () {
                 mockCommit = jasmine.createSpy('commit');
                 mockCancel = jasmine.createSpy('cancel');
-                remove = nestedTransaction.add(mockCommit, mockCancel);
+                nestedTransaction.add(mockCommit, mockCancel);
             });
 
             it("does not interact with its parent transaction", function () {

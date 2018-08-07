@@ -25,11 +25,8 @@ define([
 
     '../src/adapter/bundle',
 
-    '../example/builtins/bundle',
-    '../example/composite/bundle',
     '../example/eventGenerator/bundle',
     '../example/export/bundle',
-    '../example/extensions/bundle',
     '../example/forms/bundle',
     '../example/identity/bundle',
     '../example/mobile/bundle',
@@ -40,8 +37,6 @@ define([
     '../example/profiling/bundle',
     '../example/scratchpad/bundle',
     '../example/styleguide/bundle',
-    '../example/taxonomy/bundle',
-    '../example/worker/bundle',
 
     '../platform/commonUI/about/bundle',
     '../platform/commonUI/browse/bundle',
@@ -53,8 +48,6 @@ define([
     '../platform/commonUI/mobile/bundle',
     '../platform/commonUI/notification/bundle',
     '../platform/commonUI/regions/bundle',
-    '../platform/commonUI/themes/espresso/bundle',
-    '../platform/commonUI/themes/snow/bundle',
     '../platform/containment/bundle',
     '../platform/core/bundle',
     '../platform/entanglement/bundle',

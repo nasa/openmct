@@ -24,7 +24,7 @@ define([
     "./src/policies/ImageryViewPolicy",
     "./src/controllers/ImageryController",
     "./src/directives/MCTBackgroundImage",
-    "text!./res/templates/imagery.html",
+    "./res/templates/imagery.html",
     'legacyRegistry'
 ], function (
     ImageryViewPolicy,

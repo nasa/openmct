@@ -52,26 +52,26 @@ define([
     "./src/directives/MCTPreview",
     "./src/actions/MCTPreviewAction",
     "./src/filters/ReverseFilter",
-    "text!./res/templates/bottombar.html",
-    "text!./res/templates/controls/action-button.html",
-    "text!./res/templates/controls/input-filter.html",
-    "text!./res/templates/angular-indicator.html",
-    "text!./res/templates/message-banner.html",
-    "text!./res/templates/progress-bar.html",
-    "text!./res/templates/controls/time-controller.html",
-    "text!./res/templates/containers/accordion.html",
-    "text!./res/templates/subtree.html",
-    "text!./res/templates/tree.html",
-    "text!./res/templates/tree-node.html",
-    "text!./res/templates/label.html",
-    "text!./res/templates/controls/action-group.html",
-    "text!./res/templates/menu/context-menu.html",
-    "text!./res/templates/controls/switcher.html",
-    "text!./res/templates/object-inspector.html",
-    "text!./res/templates/controls/selector.html",
-    "text!./res/templates/controls/datetime-picker.html",
-    "text!./res/templates/controls/datetime-field.html",
-    "text!./res/templates/preview.html",
+    "./res/templates/bottombar.html",
+    "./res/templates/controls/action-button.html",
+    "./res/templates/controls/input-filter.html",
+    "./res/templates/angular-indicator.html",
+    "./res/templates/message-banner.html",
+    "./res/templates/progress-bar.html",
+    "./res/templates/controls/time-controller.html",
+    "./res/templates/containers/accordion.html",
+    "./res/templates/subtree.html",
+    "./res/templates/tree.html",
+    "./res/templates/tree-node.html",
+    "./res/templates/label.html",
+    "./res/templates/controls/action-group.html",
+    "./res/templates/menu/context-menu.html",
+    "./res/templates/controls/switcher.html",
+    "./res/templates/object-inspector.html",
+    "./res/templates/controls/selector.html",
+    "./res/templates/controls/datetime-picker.html",
+    "./res/templates/controls/datetime-field.html",
+    "./res/templates/preview.html",
     'legacyRegistry'
 ], function (
     UrlService,
@@ -171,12 +171,6 @@ define([
                 {
                     "implementation": ReverseFilter,
                     "key": "reverse"
-                }
-            ],
-            "stylesheets": [
-                {
-                    "stylesheetUrl": "css/normalize.min.css",
-                    "priority": "mandatory"
                 }
             ],
             "templates": [
@@ -418,11 +412,11 @@ define([
                     "description": "Preview in large dialog",
                     "category": [
                         "contextual",
-                         "view-control"
+                        "view-control"
                     ],
                     "depends": [
-                      "$compile",
-                      "$rootScope"
+                        "$compile",
+                        "$rootScope"
                     ],
                     "priority": "preferred"
                 }

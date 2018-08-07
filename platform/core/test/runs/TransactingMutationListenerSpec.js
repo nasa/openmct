@@ -102,9 +102,9 @@ define(
                         it("adds to the active transaction", function () {
                             expect(mockTransactionService.addToTransaction)
                                 .toHaveBeenCalledWith(
-                                jasmine.any(Function),
-                                jasmine.any(Function)
-                            );
+                                    jasmine.any(Function),
+                                    jasmine.any(Function)
+                                );
                         });
 
                         it(innerVerb + " immediately commit", function () {

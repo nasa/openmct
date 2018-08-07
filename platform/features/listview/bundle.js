@@ -20,10 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
- define([
+define([
     './src/controllers/ListViewController',
     './src/directives/MCTGesture',
-    'text!./res/templates/listview.html',
+    './res/templates/listview.html',
     'legacyRegistry'
 ], function (
     ListViewController,

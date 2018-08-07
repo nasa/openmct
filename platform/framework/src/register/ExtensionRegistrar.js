@@ -180,8 +180,8 @@ define(
                     (extension.depends || []).filter(
                         isExtensionDependency
                     ).forEach(function (dependency) {
-                            needed[dependency] = true;
-                        });
+                        needed[dependency] = true;
+                    });
                 });
 
                 // Remove categories which have been provided

@@ -1,5 +1,5 @@
 define([
-    'text!../res/ruleImageTemplate.html',
+    '../res/ruleImageTemplate.html',
     'EventEmitter',
     'zepto'
 ], function (

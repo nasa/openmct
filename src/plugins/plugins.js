@@ -50,13 +50,9 @@ define([
     StaticRootPlugin
 ) {
     var bundleMap = {
-        CouchDB: 'platform/persistence/couch',
-        Elasticsearch: 'platform/persistence/elastic',
-        Espresso: 'platform/commonUI/themes/espresso',
         LocalStorage: 'platform/persistence/local',
         MyItems: 'platform/features/my-items',
-        Notebook: 'platform/features/notebook',
-        Snow: 'platform/commonUI/themes/snow'
+        Notebook: 'platform/features/notebook'
     };
 
     var plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
@@ -66,6 +62,26 @@ define([
             };
         };
     });
+
+    plugins.Snow = function () {
+        return function install(openmct) {
+            openmct.legacyExtension('constants', {
+                key: "THEME",
+                value: "snow"
+            });
+            import('snow' /* webpackChunkName: "theme-snow" */);
+        };
+    };
+
+    plugins.Espresso = function () {
+        return function install(openmct) {
+            openmct.legacyExtension('constants', {
+                key: "THEME",
+                value: "espresso"
+            });
+            import('espresso' /* webpackChunkName: "theme-espresso" */);
+        };
+    };
 
     plugins.UTCTimeSystem = UTCTimeSystem;
 

@@ -63,8 +63,8 @@ define(
                 }
 
                 return set[element] ?
-                        false :
-                        (set[element] = true);
+                    false :
+                    (set[element] = true);
             }) : array;
         }
 

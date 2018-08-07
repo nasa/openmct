@@ -24,7 +24,7 @@ define([
     "./src/NotificationIndicatorController",
     "./src/NotificationIndicator",
     "./src/NotificationService",
-    "text!./res/notification-indicator.html",
+    "./res/notification-indicator.html",
     'legacyRegistry'
 ], function (
     NotificationIndicatorController,

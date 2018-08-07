@@ -29,10 +29,10 @@ define([
     "./src/ui/ConductorAxisDirective",
     "./src/ui/NumberFormat",
     "./src/ui/StringFormat",
-    "text!./res/templates/time-conductor.html",
-    "text!./res/templates/mode-selector/mode-selector.html",
-    "text!./res/templates/mode-selector/mode-menu.html",
-    "text!./res/templates/time-of-interest.html",
+    "./res/templates/time-conductor.html",
+    "./res/templates/mode-selector/mode-selector.html",
+    "./res/templates/mode-selector/mode-menu.html",
+    "./res/templates/time-of-interest.html",
     "legacyRegistry"
 ], function (
     TimeConductorController,
@@ -95,16 +95,6 @@ define([
                 {
                     "key": "conductorToi",
                     "implementation": ConductorTOIDirective
-                }
-            ],
-            "stylesheets": [
-                {
-                    "stylesheetUrl": "css/time-conductor-espresso.css",
-                    "theme": "espresso"
-                },
-                {
-                    "stylesheetUrl": "css/time-conductor-snow.css",
-                    "theme": "snow"
                 }
             ],
             "templates": [

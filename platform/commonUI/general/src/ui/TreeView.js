@@ -23,7 +23,7 @@
 define([
     'zepto',
     './TreeNodeView',
-    'text!../../res/templates/tree/wait-node.html'
+    '../../res/templates/tree/wait-node.html'
 ], function ($, TreeNodeView, spinnerTemplate) {
 
     function TreeView(gestureService, openmct, selectFn) {

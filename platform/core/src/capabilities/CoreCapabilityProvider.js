@@ -56,8 +56,8 @@ define(
             function filterCapabilities(model, id) {
                 return capabilities.filter(function (capability) {
                     return capability.appliesTo ?
-                            capability.appliesTo(model, id) :
-                            true;
+                        capability.appliesTo(model, id) :
+                        true;
                 });
             }
 

@@ -68,7 +68,7 @@ define(
                 mockTemplateRequest.and.returnValue(mockPromise);
                 mockCompile.and.callFake(function (toCompile) {
                     var html = typeof toCompile === 'string' ?
-                            toCompile : toCompile.testHtml;
+                        toCompile : toCompile.testHtml;
                     mockTemplates[html] = jasmine.createSpy('template');
                     mockElements[html] =
                         jasmine.createSpyObj('templateEl', JQLITE_METHODS);

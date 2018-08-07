@@ -20,10 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global window,requirejs*/
+/*global window*/
 
 define([
-    'require',
     './Constants',
     './FrameworkInitializer',
     './LogLevel',
@@ -31,13 +30,11 @@ define([
     './resolve/ImplementationLoader',
     './resolve/ExtensionResolver',
     './resolve/BundleResolver',
-    './resolve/RequireConfigurator',
     './register/CustomRegistrars',
     './register/ExtensionRegistrar',
     './register/ExtensionSorter',
     './bootstrap/ApplicationBootstrapper'
 ], function (
-    require,
     Constants,
     FrameworkInitializer,
     LogLevel,
@@ -45,7 +42,6 @@ define([
     ImplementationLoader,
     ExtensionResolver,
     BundleResolver,
-    RequireConfigurator,
     CustomRegistrars,
     ExtensionRegistrar,
     ExtensionSorter,
@@ -68,10 +64,9 @@ define([
             loader = new BundleLoader($http, $log, legacyRegistry),
             resolver = new BundleResolver(
                 new ExtensionResolver(
-                    new ImplementationLoader(require),
+                    new ImplementationLoader({}),
                     $log
                 ),
-                new RequireConfigurator(requirejs),
                 $log
             ),
             registrar = new ExtensionRegistrar(
