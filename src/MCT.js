@@ -28,11 +28,13 @@ define([
     './selection/Selection',
     './api/objects/object-utils',
     './plugins/plugins',
-    './ui/ViewRegistry',
-    './ui/InspectorViewRegistry',
-    './ui/ToolbarRegistry',
+    './ui/registries/ViewRegistry',
+    './ui/registries/InspectorViewRegistry',
+    './ui/registries/ToolbarRegistry',
     './adapter/indicators/legacy-indicators-plugin',
-    './styles/core.scss'
+    './styles/core.scss',
+    './ui/components/layout/Layout.vue',
+    'vue'
 ], function (
     EventEmitter,
     legacyRegistry,
@@ -45,7 +47,9 @@ define([
     InspectorViewRegistry,
     ToolbarRegistry,
     LegacyIndicatorsPlugin,
-    coreStyles
+    coreStyles,
+    Layout,
+    Vue
 ) {
     /**
      * Open MCT is an extensible web application for building mission
@@ -245,10 +249,15 @@ define([
             domElement = document.body;
         }
 
-        var appDiv = document.createElement('div');
-        appDiv.setAttribute('ng-view', '');
-        appDiv.className = 'user-environ';
-        domElement.appendChild(appDiv);
+        var appLayout = new Vue(Layout.default);
+        domElement.appendChild(appLayout.$mount().$el);
+
+        // var appDiv = document.createElement('div');
+        // domElement.appendChild(appDiv);
+        // var appLayout = new Vue(Layout)
+        // appDiv.setAttribute('ng-view', '');
+        // appDiv.className = 'user-environ';
+
 
         this.legacyExtension('runs', {
             depends: ['navigationService'],
@@ -288,7 +297,7 @@ define([
          * @event start
          * @memberof module:openmct.MCT~
          */
-        this.emit('start');
+        // this.emit('start');
     };
 
 
