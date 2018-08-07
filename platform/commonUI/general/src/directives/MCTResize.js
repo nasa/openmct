@@ -62,8 +62,8 @@ define(
                 // Determine how long to wait before the next update
                 function currentInterval() {
                     return attrs.mctResizeInterval ?
-                            scope.$eval(attrs.mctResizeInterval) :
-                            DEFAULT_INTERVAL;
+                        scope.$eval(attrs.mctResizeInterval) :
+                        DEFAULT_INTERVAL;
                 }
 
                 // Evaluate mct-resize with the current bounds

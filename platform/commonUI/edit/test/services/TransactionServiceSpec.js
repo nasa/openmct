@@ -76,8 +76,8 @@ define(
 
                 beforeEach(function () {
                     onCommits = [0, 1, 2].map(function (val) {
-                            return jasmine.createSpy("onCommit" + val);
-                        });
+                        return jasmine.createSpy("onCommit" + val);
+                    });
 
                     transactionService.startTransaction();
                     onCommits.forEach(transactionService.addToTransaction.bind(transactionService));

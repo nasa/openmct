@@ -41,8 +41,8 @@ define(
                     ['getInput']
                 );
                 mockScope = jasmine.createSpyObj(
-                        '$scope',
-                        ['$watch']
+                    '$scope',
+                    ['$watch']
                 );
 
                 mockScope.structure = {text: 'Select File'};

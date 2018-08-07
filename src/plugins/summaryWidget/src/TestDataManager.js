@@ -74,12 +74,12 @@ define([
      */
     TestDataManager.prototype.initItem = function (config) {
         var sourceIndex = config && config.index,
-        defaultItem = {
-            object: '',
-            key: '',
-            value: ''
-        },
-        newItem;
+            defaultItem = {
+                object: '',
+                key: '',
+                value: ''
+            },
+            newItem;
 
         newItem = (config !== undefined ? config.sourceItem : defaultItem);
         if (sourceIndex !== undefined) {

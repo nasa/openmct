@@ -52,21 +52,21 @@ define(
 
         URLIndicator.prototype.setIndicatorToState = function (state) {
             switch (state) {
-                case CONNECTED: {
-                    this.indicator.text(this.label + " is connected");
-                    this.indicator.description(this.label + " is online, checking status every " + this.interval + " milliseconds.");
-                    break;
-                }
-                case PENDING: {
-                    this.indicator.text("Checking status of " + this.label + " please stand by...");
-                    this.indicator.description("Checking status of " + this.label + " please stand by...");
-                    break;
-                }
-                case DISCONNECTED: {
-                    this.indicator.text(this.label + " is offline");
-                    this.indicator.description(this.label + " is offline, checking status every " + this.interval + " milliseconds");
-                    break;
-                }
+            case CONNECTED: {
+                this.indicator.text(this.label + " is connected");
+                this.indicator.description(this.label + " is online, checking status every " + this.interval + " milliseconds.");
+                break;
+            }
+            case PENDING: {
+                this.indicator.text("Checking status of " + this.label + " please stand by...");
+                this.indicator.description("Checking status of " + this.label + " please stand by...");
+                break;
+            }
+            case DISCONNECTED: {
+                this.indicator.text(this.label + " is offline");
+                this.indicator.description(this.label + " is offline, checking status every " + this.interval + " milliseconds");
+                break;
+            }
             }
 
             this.indicator.statusClass(state.statusClass);

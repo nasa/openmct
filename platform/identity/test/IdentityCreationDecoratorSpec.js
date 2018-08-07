@@ -77,14 +77,14 @@ define(
                 return decorator.createObject(testModel, mockParent)
                     .then(function (object) {
                         expect(object)
-                        .toEqual(mockCreatedObject);
+                            .toEqual(mockCreatedObject);
 
                         // Make sure arguments were delegated appropriately
                         expect(mockCreationService.createObject)
-                        .toHaveBeenCalledWith(
-                            { someKey: "some value", creator: "test-user-id" },
-                            mockParent
-                        );
+                            .toHaveBeenCalledWith(
+                                { someKey: "some value", creator: "test-user-id" },
+                                mockParent
+                            );
                     });
             });
 

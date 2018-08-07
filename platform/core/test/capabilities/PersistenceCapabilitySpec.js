@@ -173,10 +173,10 @@ define(
 
             describe("unsuccessful persistence", function () {
                 var sadPromise = {
-                        then: function (callback) {
-                            return asPromise(callback(0), true);
-                        }
-                    };
+                    then: function (callback) {
+                        return asPromise(callback(0), true);
+                    }
+                };
                 beforeEach(function () {
                     mockPersistenceService.createObject.and.returnValue(sadPromise);
                 });

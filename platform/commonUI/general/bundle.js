@@ -173,12 +173,6 @@ define([
                     "key": "reverse"
                 }
             ],
-            "stylesheets": [
-                {
-                    "stylesheetUrl": "css/normalize.min.css",
-                    "priority": "mandatory"
-                }
-            ],
             "templates": [
                 {
                     "key": "bottombar",
@@ -418,11 +412,11 @@ define([
                     "description": "Preview in large dialog",
                     "category": [
                         "contextual",
-                         "view-control"
+                        "view-control"
                     ],
                     "depends": [
-                      "$compile",
-                      "$rootScope"
+                        "$compile",
+                        "$rootScope"
                     ],
                     "priority": "preferred"
                 }

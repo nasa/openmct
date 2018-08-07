@@ -27,81 +27,81 @@ define([
     '../../api/objects/object-utils',
     '../../../platform/core/src/capabilities/ContextualDomainObject'
 ], function (objectUtils, ContextualDomainObject) {
-        function AlternateCompositionCapability($injector, domainObject) {
-            this.domainObject = domainObject;
-            this.getDependencies = function () {
-                this.instantiate = $injector.get("instantiate");
-                this.getDependencies = undefined;
-                this.openmct = $injector.get("openmct");
-            }.bind(this);
+    function AlternateCompositionCapability($injector, domainObject) {
+        this.domainObject = domainObject;
+        this.getDependencies = function () {
+            this.instantiate = $injector.get("instantiate");
+            this.getDependencies = undefined;
+            this.openmct = $injector.get("openmct");
+        }.bind(this);
+    }
+
+    AlternateCompositionCapability.prototype.add = function (child, index) {
+        if (typeof index !== 'undefined') {
+            // At first glance I don't see a location in the existing
+            // codebase where add is called with an index.  Won't support.
+            throw new Error(
+                'Composition Capability does not support adding at index'
+            );
         }
 
-        AlternateCompositionCapability.prototype.add = function (child, index) {
-            if (typeof index !== 'undefined') {
-                // At first glance I don't see a location in the existing
-                // codebase where add is called with an index.  Won't support.
-                throw new Error(
-                    'Composition Capability does not support adding at index'
-                );
+        function addChildToComposition(model) {
+            var existingIndex = model.composition.indexOf(child.getId());
+            if (existingIndex === -1) {
+                model.composition.push(child.getId());
             }
+        }
 
-            function addChildToComposition(model) {
-                var existingIndex = model.composition.indexOf(child.getId());
-                if (existingIndex === -1) {
-                    model.composition.push(child.getId());
-                }
-            }
+        return this.domainObject.useCapability(
+            'mutation',
+            addChildToComposition
+        )
+            .then(this.invoke.bind(this))
+            .then(function (children) {
+                return children.filter(function (c) {
+                    return c.getId() === child.getId();
+                })[0];
+            });
+    };
 
-            return this.domainObject.useCapability(
-                    'mutation',
-                    addChildToComposition
-                )
-                .then(this.invoke.bind(this))
-                .then(function (children) {
-                    return children.filter(function (c) {
-                        return c.getId() === child.getId();
-                    })[0];
-                });
-        };
+    AlternateCompositionCapability.prototype.contextualizeChild = function (
+        child
+    ) {
+        if (this.getDependencies) {
+            this.getDependencies();
+        }
 
-        AlternateCompositionCapability.prototype.contextualizeChild = function (
-            child
-        ) {
-            if (this.getDependencies) {
-                this.getDependencies();
-            }
+        var keyString = objectUtils.makeKeyString(child.identifier);
+        var oldModel = objectUtils.toOldFormat(child);
+        var newDO = this.instantiate(oldModel, keyString);
+        return new ContextualDomainObject(newDO, this.domainObject);
 
-            var keyString = objectUtils.makeKeyString(child.identifier);
-            var oldModel = objectUtils.toOldFormat(child);
-            var newDO = this.instantiate(oldModel, keyString);
-            return new ContextualDomainObject(newDO, this.domainObject);
+    };
 
-        };
+    AlternateCompositionCapability.prototype.invoke = function () {
+        var newFormatDO = objectUtils.toNewFormat(
+            this.domainObject.getModel(),
+            this.domainObject.getId()
+        );
 
-        AlternateCompositionCapability.prototype.invoke = function () {
-            var newFormatDO = objectUtils.toNewFormat(
-                this.domainObject.getModel(),
-                this.domainObject.getId()
-            );
+        if (this.getDependencies) {
+            this.getDependencies();
+        }
 
-            if (this.getDependencies) {
-                this.getDependencies();
-            }
+        var collection = this.openmct.composition.get(newFormatDO);
 
-            var collection = this.openmct.composition.get(newFormatDO);
+        return collection.load()
+            .then(function (children) {
+                return children.map(this.contextualizeChild, this);
+            }.bind(this));
+    };
 
-            return collection.load()
-                .then(function (children) {
-                    return children.map(this.contextualizeChild, this);
-                }.bind(this));
-        };
+    AlternateCompositionCapability.appliesTo = function () {
+        // Will get replaced by a runs exception to properly
+        // bind to running openmct instance
+        return false;
+    };
 
-        AlternateCompositionCapability.appliesTo = function () {
-            // Will get replaced by a runs exception to properly
-            // bind to running openmct instance
-            return false;
-        };
-
-        return AlternateCompositionCapability;
-    }
+    return AlternateCompositionCapability;
+}
 );

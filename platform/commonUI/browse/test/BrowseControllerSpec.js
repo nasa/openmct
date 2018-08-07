@@ -161,7 +161,7 @@ define(
                 instantiateController();
                 return waitsForNavigation().then(function () {
                     expect(mockNavigationService.setNavigation)
-                    .toHaveBeenCalledWith(mockDefaultRootObject);
+                        .toHaveBeenCalledWith(mockDefaultRootObject);
                 });
             });
 
@@ -172,7 +172,7 @@ define(
 
                 return waitsForNavigation().then(function () {
                     expect(mockNavigationService.setNavigation)
-                    .toHaveBeenCalledWith(mockDefaultRootObject);
+                        .toHaveBeenCalledWith(mockDefaultRootObject);
                 });
             });
 

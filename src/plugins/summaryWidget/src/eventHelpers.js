@@ -1,4 +1,3 @@
-var listenersCount = 0;
 /*global define*/
 // jscs:disable disallowDanglingUnderscores
 define([], function () {
@@ -12,7 +11,7 @@ define([], function () {
                 event: event,
                 callback: callback,
                 context: context,
-                _cb: !!context ? callback.bind(context) : callback
+                _cb: context ? callback.bind(context) : callback
             };
             if (object.$watch && event.indexOf('change:') === 0) {
                 var scopePath = event.replace('change:', '');
@@ -25,7 +24,6 @@ define([], function () {
                 object.on(event, listener._cb);
             }
             this._listeningTo.push(listener);
-            listenersCount++;
         },
 
         stopListening: function (object, event, callback, context) {
@@ -34,20 +32,20 @@ define([], function () {
             }
 
             this._listeningTo.filter(function (listener) {
-                    if (object && object !== listener.object) {
-                        return false;
-                    }
-                    if (event && event !== listener.event) {
-                        return false;
-                    }
-                    if (callback && callback !== listener.callback) {
-                        return false;
-                    }
-                    if (context && context !== listener.context) {
-                        return false;
-                    }
-                    return true;
-                })
+                if (object && object !== listener.object) {
+                    return false;
+                }
+                if (event && event !== listener.event) {
+                    return false;
+                }
+                if (callback && callback !== listener.callback) {
+                    return false;
+                }
+                if (context && context !== listener.context) {
+                    return false;
+                }
+                return true;
+            })
                 .map(function (listener) {
                     if (listener.unlisten) {
                         listener.unlisten();
@@ -56,7 +54,6 @@ define([], function () {
                     } else {
                         listener.object.off(listener.event, listener._cb);
                     }
-                    listenersCount--;
                     return listener;
                 })
                 .forEach(function (listener) {

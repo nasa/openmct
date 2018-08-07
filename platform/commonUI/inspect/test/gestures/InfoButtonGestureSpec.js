@@ -25,8 +25,7 @@ define(
     function (InfoButtonGesture) {
 
         describe("The info button gesture", function () {
-            var mockTimeout,
-                mockDocument,
+            var mockDocument,
                 mockBody,
                 mockAgentService,
                 mockInfoService,
@@ -42,7 +41,6 @@ define(
                 fireDismissGesture;
 
             beforeEach(function () {
-                mockTimeout = jasmine.createSpy('$timeout');
                 mockDocument = jasmine.createSpyObj('$document', ['find']);
                 mockBody = jasmine.createSpyObj('body', ['on', 'off', 'scope', 'css', 'unbind']);
                 mockDocument.find.and.returnValue(mockBody);

@@ -31,7 +31,8 @@ define([
     './ui/ViewRegistry',
     './ui/InspectorViewRegistry',
     './ui/ToolbarRegistry',
-    './adapter/indicators/legacy-indicators-plugin'
+    './adapter/indicators/legacy-indicators-plugin',
+    './styles/core.scss'
 ], function (
     EventEmitter,
     legacyRegistry,
@@ -43,7 +44,8 @@ define([
     ViewRegistry,
     InspectorViewRegistry,
     ToolbarRegistry,
-    LegacyIndicatorsPlugin
+    LegacyIndicatorsPlugin,
+    coreStyles
 ) {
     /**
      * Open MCT is an extensible web application for building mission

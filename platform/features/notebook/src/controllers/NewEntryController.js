@@ -32,7 +32,7 @@ define(
             $scope.snapToggle = true;
             $scope.entryText = '';
             var annotateAction = $rootScope.selObj.getCapability('action').getActions(
-                                                                            {category: 'embed'})[1];
+                {category: 'embed'})[1];
 
             $scope.$parent.$parent.ngModel[$scope.$parent.$parent.field] = $rootScope.selObj;
             $scope.objectName = $rootScope.selObj.getModel().name;

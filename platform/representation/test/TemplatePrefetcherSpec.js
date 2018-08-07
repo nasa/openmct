@@ -29,7 +29,7 @@ define(
             var mockTemplateLinker,
                 testExtensions,
                 testPathPrefix,
-                prefetcher;
+                prefetcher; // eslint-disable-line
 
             beforeEach(function () {
                 testPathPrefix = "some/path/";

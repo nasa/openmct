@@ -46,8 +46,8 @@ define(
             return function (value) {
                 if (arguments.length > 0) {
                     object[key] = updater ?
-                            updater(value, object[key]) :
-                            value;
+                        updater(value, object[key]) :
+                        value;
                 }
                 return object[key];
             };

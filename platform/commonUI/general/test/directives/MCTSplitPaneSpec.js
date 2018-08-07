@@ -25,13 +25,13 @@ define(
     function (MCTSplitPane) {
 
         var JQLITE_METHODS = [
-                'on',
-                'addClass',
-                'children',
-                'eq',
-                'toggleClass',
-                'css'
-            ];
+            'on',
+            'addClass',
+            'children',
+            'eq',
+            'toggleClass',
+            'css'
+        ];
 
         describe("The mct-split-pane directive", function () {
             var mockParse,

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
- /*-- main controller file, here is the core functionality of the notebook plugin --*/
+/*-- main controller file, here is the core functionality of the notebook plugin --*/
 
 define(
     ['zepto'],
@@ -28,17 +28,17 @@ define(
 
 
         function NotebookController(
-                $scope,
-                dialogService,
-                popupService,
-                agentService,
-                objectService,
-                navigationService,
-                now,
-                actionService,
-                $timeout,
-                $element,
-                $sce
+            $scope,
+            dialogService,
+            popupService,
+            agentService,
+            objectService,
+            navigationService,
+            now,
+            actionService,
+            $timeout,
+            $element,
+            $sce
         ) {
 
             $scope.entriesEl = $(document.body).find('.t-entries-list');
@@ -224,16 +224,16 @@ define(
             // present context.
             function updateActions() {
                 $scope.menuEmbed = $scope.action ?
-                        $scope.action.getActions({category: 'embed'}) :
-                        [];
+                    $scope.action.getActions({category: 'embed'}) :
+                    [];
 
                 $scope.menuEmbedNoSnap = $scope.action ?
-                        $scope.action.getActions({category: 'embed-no-snap'}) :
-                        [];
+                    $scope.action.getActions({category: 'embed-no-snap'}) :
+                    [];
 
                 $scope.menuActions = $scope.action ?
-                        $scope.action.getActions({key: 'window'}) :
-                        [];
+                    $scope.action.getActions({key: 'window'}) :
+                    [];
             }
 
             // Update set of actions whenever the action capability
@@ -284,19 +284,19 @@ define(
                     $scope.getDomainObj(embedType).then(function (resp) {
                         $scope.embedActions = [];
                         $scope.embedActions.push($scope.actionToMenuOption(
-                                                    $scope.action.getActions({key: 'mct-preview-action', selectedObject: resp[embedType]})[0]
-                                              ));
+                            $scope.action.getActions({key: 'mct-preview-action', selectedObject: resp[embedType]})[0]
+                        ));
                         $scope.embedActions.push($scope.actionToMenuOption(
-                                                    $scope.action.getActions({key: 'window', selectedObject: resp[embedType]})[0]
-                                              ));
+                            $scope.action.getActions({key: 'window', selectedObject: resp[embedType]})[0]
+                        ));
                         $scope.embedActions.push({
-                                                key: 'navigate',
-                                                name: 'Go to Original',
-                                                cssClass: '',
-                                                perform: function () {
-                                                    $scope.navigate('', embedType);
-                                                }
-                                            });
+                            key: 'navigate',
+                            name: 'Go to Original',
+                            cssClass: '',
+                            perform: function () {
+                                $scope.navigate('', embedType);
+                            }
+                        });
                     });
                 }
             }
@@ -308,10 +308,9 @@ define(
 
                 var body = $(document).find('body'),
                     initiatingEvent = agentService.isMobile() ?
-                            'touchstart' : 'mousedown',
+                        'touchstart' : 'mousedown',
                     dismissExistingMenu,
-                    menu,
-                    popup;
+                    menu;
 
                 var container = $($event.currentTarget).parent().parent();
 
@@ -333,7 +332,7 @@ define(
                 // ...and record the presence of this menu.
                 dismissExistingMenu = dismiss;
 
-                popup = popupService.display(menu, [$event.pageX,$event.pageY], {
+                popupService.display(menu, [$event.pageX,$event.pageY], {
                     marginX: 0,
                     marginY: -50
                 });

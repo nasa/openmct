@@ -92,8 +92,8 @@ define([
                 return true;
             }]
         ].filter(function (row) {
-                return row[1](momentified);
-            })[0][0];
+            return row[1](momentified);
+        })[0][0];
 
         if (format !== undefined) {
             return moment.utc(d).format(format);

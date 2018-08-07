@@ -25,8 +25,7 @@ define(
     function (EditAndComposeAction) {
 
         describe("The Link action", function () {
-            var mockQ,
-                mockDomainObject,
+            var mockDomainObject,
                 mockParent,
                 mockContext,
                 mockComposition,
@@ -47,13 +46,10 @@ define(
             }
 
             beforeEach(function () {
-
-
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     ["getId", "getCapability"]
                 );
-                mockQ = { when: mockPromise };
                 mockParent = {
                     getModel: function () {
                         return model;

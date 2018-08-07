@@ -188,7 +188,7 @@ define(
             // Ensure some useful default
             $scope.ngModel[$scope.field] =
                 $scope.ngModel[$scope.field] === undefined ?
-                        now() : $scope.ngModel[$scope.field];
+                    now() : $scope.ngModel[$scope.field];
 
             $scope.$watch('ngModel[field]', updateFromModel);
             $scope.$watchCollection('date', updateFromView);

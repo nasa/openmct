@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global window,requirejs*/
+/*global window*/
 
 /**
  * Implements the framework layer, which handles the loading of bundles
@@ -29,15 +29,11 @@
  */
 define(
     [
-        'require',
-        'es6-promise',
         './FrameworkLayer',
         'angular',
         'angular-route'
     ],
     function (
-        require,
-        es6promise,
         FrameworkLayer,
         angular
     ) {
@@ -56,12 +52,9 @@ define(
                 return match ? match[1] : "";
             }
 
-            // Polyfill Promise, in case browser does not natively provide Promise
-            window.Promise = window.Promise || es6promise.Promise;
 
             // Reconfigure base url, since bundle paths will all be relative
             // to the root now.
-            requirejs.config({"baseUrl": ""});
             injector.instantiate(['$http', '$log', FrameworkLayer])
                 .initializeApplication(angular, legacyRegistry, logLevel());
         };

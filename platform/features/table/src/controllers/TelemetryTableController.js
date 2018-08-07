@@ -145,11 +145,11 @@ define(
             }
 
             this.unobserveObject = this.openmct.objects.observe(this.domainObject, "*",
-                    function (domainObject) {
-                        this.domainObject = domainObject;
-                        this.getData();
-                    }.bind(this)
-                );
+                function (domainObject) {
+                    this.domainObject = domainObject;
+                    this.getData();
+                }.bind(this)
+            );
 
             this.openmct.time.on('timeSystem', this.sortByTimeSystem);
             this.openmct.time.on('bounds', this.changeBounds);

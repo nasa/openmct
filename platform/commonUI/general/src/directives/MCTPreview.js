@@ -28,16 +28,16 @@ define(['zepto', '../services/Overlay'], function ($, Overlay) {
                 notebookAction = actions.getActions({key: 'notebook-new-entry'})[0];
 
             var notebookButton = notebookAction ?
-            [
-                {
-                    class: 'icon-notebook new-notebook-entry',
-                    title: 'New Notebook Entry',
-                    clickHandler: function (event) {
-                        event.stopPropagation();
-                        notebookAction.perform();
+                [
+                    {
+                        class: 'icon-notebook new-notebook-entry',
+                        title: 'New Notebook Entry',
+                        clickHandler: function (event) {
+                            event.stopPropagation();
+                            notebookAction.perform();
+                        }
                     }
-                }
-            ] : [];
+                ] : [];
 
             var overlayService = new Overlay({
                 $document: $document,

@@ -37,8 +37,8 @@ define(
                     'listen'
                 ]);
                 mockDomainObject = jasmine.createSpyObj('domainObject', [
-                   'getCapability',
-                   'getModel'
+                    'getCapability',
+                    'getModel'
                 ]);
                 mockDomainObject.getCapability.and.returnValue(mockCapability);
                 mockDomainObject.getModel.and.returnValue({});
