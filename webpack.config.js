@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const devMode = process.env.NODE_ENV !== 'production';
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 // TODO: Build Constants w/ git-rev-sync
 
 const webpackConfig = {
@@ -35,6 +36,7 @@ const webpackConfig = {
         alias: {"text": "raw-loader"}
     },
     plugins: [
+        new VueLoaderPlugin(),
         new MiniCssExtractPlugin({
             path: 'assets/styles/',
             filename: '[name].css'
@@ -82,6 +84,10 @@ const webpackConfig = {
                     useRelativePath: true,
                     outputPath: 'assets/'
                 }
+            },
+            {
+                test: /\.vue$/,
+                use: 'vue-loader'
             }
         ]
     },

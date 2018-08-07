@@ -60,6 +60,8 @@
     "style-loader": "^0.21.0",
     "v8-compile-cache": "^1.1.0",
     "vue": "2.5.6",
+    "vue-loader": "^15.2.6",
+    "vue-template-compiler": "2.5.6",
     "webpack": "^4.16.2",
     "webpack-cli": "^3.1.0",
     "webpack-dev-middleware": "^3.1.3",
