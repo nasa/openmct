@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global console*/
 
 define(
     [],
@@ -31,7 +32,7 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function LocatorController($scope, $timeout, objectService) {
+        function LocatorController($scope, $timeout, objectService, typeService, policyService, instantiate) {
             // Populate values needed by the locator control. These are:
             // * rootObject: The top-level object, since we want to show
             //               the full tree
@@ -66,8 +67,8 @@ define(
 
                 // Restrict which locations can be selected
                 if (domainObject &&
-                        $scope.structure &&
-                            $scope.structure.validate) {
+                    $scope.structure &&
+                    $scope.structure.validate) {
                     if (!$scope.structure.validate(domainObject)) {
                         setLocatingObject(priorObject, undefined);
                         return;
@@ -81,11 +82,85 @@ define(
                         !!$scope.treeModel.selectedObject
                     );
                 }
+
+                $scope.canCreateNewFolder = policyService.allow(
+                        "composition",
+                        $scope.treeModel.selectedObject,
+                        instantiate(typeService.getType('folder').getInitialModel()));
+            }
+
+            function getRawFolderNamePattern() {
+                return typeService.getType('folder').getProperties().filter(
+                    function (prop) {
+                        return prop.propertyDefinition.key === "name";
+                    }
+                )[0].propertyDefinition.pattern;
+            }
+
+            $scope.folderNamePattern = new RegExp(getRawFolderNamePattern());
+
+            $scope.newFolderFormData = {};
+            $scope.newFolderCreationTriggered = false;
+
+            $scope.newFolderButtonClickHandler = function () {
+                $scope.newFolderCreationTriggered = true;
+            };
+
+            $scope.newFolderCancelButtonClickHandler = function () {
+                $scope.newFolderCreationTriggered = false;
+            };
+
+            $scope.newFolderNameIsValid = function () {
+                return $scope.newFolderFormData &&
+                    $scope.newFolderFormData.name &&
+                    $scope.folderNamePattern.test($scope.newFolderFormData.name);
+            };
+
+            function createNewFolder(name, parent) {
+                var folderType = typeService.getType('folder'),
+                    newModel = folderType.getInitialModel(),
+                    editorCapability;
+
+                newModel.type = folderType.getKey();
+                newModel.location = parent.getId();
+                newModel.name = name;
+
+                return instantiateAndPersistNewFolder(newModel, parent);
+            }
+
+            function instantiateAndPersistNewFolder(newModel, parent) {
+                var newObject = parent.useCapability('instantiation', newModel);
+                return newObject.getCapability('persistence').persist()
+                    .then(function () {
+                        parent.getCapability('composition').add(newObject);
+                    })
+                    .then(function () {
+                        parent.getCapability('persistence').persist();
+                        return newObject;
+                    });
+            }
+
+            $scope.newFolderCreateButtonClickHandler = function () {
+                if ($scope.canCreateNewFolder) {
+                    createNewFolder($scope.newFolderFormData.name, $scope.treeModel.selectedObject)
+                    .then(selectAndScrollToNewFolder)
+                    .then(clearNewFolderForm);
+                } else {
+                    console.error("Attempted to create a new folder without being able to.");
+                }
+            };
+
+            function selectAndScrollToNewFolder(newFolder) {
+                $scope.treeModel.selectedObject = newFolder;
+            }
+
+            function clearNewFolderForm() {
+                $scope.newFolderFormData = {};
+                $scope.newFolderCreationTriggered = false;
             }
 
             // Initial state for the tree's model
-            $scope.treeModel =
-                { selectedObject: $scope.ngModel[$scope.field] };
+            $scope.treeModel = { selectedObject: $scope.ngModel[$scope.field] };
 
             // Watch for changes from the tree
             $scope.$watch("treeModel.selectedObject", setLocatingObject);
@@ -94,4 +169,3 @@ define(
         return LocatorController;
     }
 );
-

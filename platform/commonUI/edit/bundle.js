@@ -52,6 +52,7 @@ define([
     "text!./res/templates/create/locator.html",
     "text!./res/templates/create/create-button.html",
     "text!./res/templates/create/create-menu.html",
+    "text!./res/templates/create/create-new-folder.html",
     "text!./res/templates/library.html",
     "text!./res/templates/edit-object.html",
     "text!./res/templates/edit-action-buttons.html",
@@ -90,6 +91,7 @@ define([
     locatorTemplate,
     createButtonTemplate,
     createMenuTemplate,
+    createNewFolderTemplate,
     libraryTemplate,
     editObjectTemplate,
     editActionButtonsTemplate,
@@ -145,7 +147,10 @@ define([
                     "depends": [
                         "$scope",
                         "$timeout",
-                        "objectService"
+                        "objectService",
+                        "typeService",
+                        "policyService",
+                        "instantiate"
                     ]
                 }
             ],
@@ -407,6 +412,10 @@ define([
                 {
                     "key": "locator",
                     "template": locatorTemplate
+                },
+                {
+                    "key": "create-new-folder",
+                    "template": createNewFolderTemplate
                 }
             ],
             "services": [

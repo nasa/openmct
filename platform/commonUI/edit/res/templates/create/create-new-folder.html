@@ -1,0 +1,45 @@
+<div ng-controller="LocatorController as locator" class="selector-list">
+    <div id="locatorNewFolderControls">
+      <!-- The button that triggers new folder creation. -->
+      <div ng-show="!newFolderCreationTriggered">
+          <mct-control key="'button'"
+                      ng-class="{ disabled: !canCreateNewFolder }"
+                      structure="{
+                          text: 'New Folder',
+                          click: newFolderButtonClickHandler,
+                          cssClass: 'icon-folder-new'
+                      }">
+          </mct-control>
+      </div>
+
+      <div ng-show="newFolderCreationTriggered">
+          <span class='form-control shell'>
+              <span class='field control'>
+                  <input type="text"
+                      ng-model="newFolderFormData.name"
+                      name="newFolderTextField">
+              </span>
+          </span>
+
+          <!--
+          Extra check to see if we must disable the button
+          to cover the case where the user starts a new folder
+          creation but then navigates to a non-folder in the tree.
+          -->
+          <mct-control key="'button'"
+                      ng-class="{ disabled: !canCreateNewFolder || !newFolderNameIsValid() }"
+                      structure="{
+                          text: 'Create',
+                          click: newFolderCreateButtonClickHandler
+                      }">
+          </mct-control>
+
+          <mct-control key="'button'"
+                      structure="{
+                          cssClass: 'icon-x',
+                          click: newFolderCancelButtonClickHandler
+                      }">
+          </mct-control>
+      </div>
+    </div>
+</div>
