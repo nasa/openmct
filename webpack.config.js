@@ -57,7 +57,7 @@ const webpackConfig = {
             {
                 test: /\.(sc|sa|c)ss$/,
                 use: [
-                    MiniCssExtractPlugin.loader,
+                    devMode ? 'style-loader': MiniCssExtractPlugin.loader,
                     'css-loader',
                     {
                         loader: 'fast-sass-loader',
