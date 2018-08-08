@@ -22,14 +22,37 @@
 
 define([], function () {
     class TelemetryTableRow {
-        constructor(datum, columns) {
+        constructor(datum, columns, objectKeyString) {
             this.columns = columns;
             this.columnCount = Object.keys(columns).length;
 
             this.datum = this.createNormalizedDatum(datum);
+            this.objectKeyString = objectKeyString;
 
             this.formatCache = {};
             this.cacheSize = 0;
+        }
+
+        /**
+         * Normalize the structure of datums to assist sorting and merging of columns.
+         * Maps all sources to keys.
+         * @private
+         * @param {*} telemetryDatum
+         * @param {*} metadataValues 
+         */
+        createNormalizedDatum(datum) {
+            return Object.values(this.columns).reduce((normalizedDatum, column) => {
+                normalizedDatum[column.getKey()] = column.getRawValue(datum);
+                return normalizedDatum;
+            }, {});
+        }
+
+        hasColumn(key) {
+            return this.columns.hasOwnProperty(key);
+        }
+
+        isFromObject(objectKeyString) {
+            return objectKeyString === this.objectKeyString;
         }
 
         getFormattedValue(key) {
@@ -57,20 +80,6 @@ define([], function () {
          */
         buildFormatCache() {
             Object.values(this.columns).forEach(column => this.getFormattedValue(column.getKey()));
-        }
-
-        /**
-         * Normalize the structure of datums to assist sorting and merging of columns.
-         * Maps all sources to keys.
-         * @private
-         * @param {*} telemetryDatum
-         * @param {*} metadataValues 
-         */
-        createNormalizedDatum(datum) {
-            return Object.values(this.columns).reduce((normalizedDatum, column) => {
-                normalizedDatum[column.getKey()] = column.getRawValue(datum);
-                return normalizedDatum;
-            }, {});
         }
     }
 

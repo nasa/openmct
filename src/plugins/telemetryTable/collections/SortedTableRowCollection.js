@@ -79,6 +79,7 @@ define(
              * @param {object[]} items
              */
             add(items) {
+                this.dupeCheck = false;
                 var added = items.filter(this.addOne, this);
                 this.emit('add', added);
                 this.dupeCheck = true;
@@ -131,6 +132,25 @@ define(
                 }
                 // Return duplicate to avoid direct modification of underlying object
                 return Object.assign({}, this.sortOptions); 
+            }
+
+            removeAllRowsForObject(objectKeyString) {
+                let removed = [];
+                this.rows = this.rows.filter(row => {
+                    if (row.isFromObject(objectKeyString)){
+                        removed.push(row);
+                        return false;
+                    }
+                    return true;
+                });
+                this.emit('remove', removed);
+            }
+
+            remove(removedRows) {
+                this.rows = this.rows.filter(row => {
+                    return removedRows.indexOf(row) === -1;
+                });
+                this.emit('remove', removedRows);
             }
 
             getRows () {

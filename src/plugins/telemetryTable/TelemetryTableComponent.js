@@ -53,6 +53,7 @@
                     headersCount: 0,
                     visibleRows: [],
                     columnWidths: [],
+                    sizingRows: [],
                     rowHeight: ROW_HEIGHT,
                     scrollOffset: 0,
                     totalHeight: 0,
@@ -60,7 +61,6 @@
                     rowOffset: 0,
                     sortOptions: {},
                     filters: {},
-                    sizingRowData: undefined,
                     scrollable: undefined,
                     tableEl: undefined,
                     headersHolderEl: undefined
@@ -104,35 +104,36 @@
                     let bottomScroll = this.scrollable.scrollTop + this.scrollable.offsetHeight;
                     return Math.floor(bottomScroll / this.rowHeight);
                 },
-                updateHeaders: function (headers) {
+                updateHeaders: function () {
+                    let headers = table.headers();
                     this.headers = headers;
                     this.headersCount = Object.values(headers).length;
                 },
-                dataLoaded: function () {
+                resizeColumns: function () {
                     this.updateSizingRow();
-                    this.sortOptions = table.filteredRows.sortBy();
                 },
-                updateSizingRow: function () {
-                    this.sizingRowData = this.visibleRows[0];
+                addSizingRow: function (telemetryRowsAdded) {
+                    this.sizingRows.push(telemetryRowsAdded[0]);
 
-                    Vue.nextTick().then(() => {
-                        let sizingRowEl = this.sizingTable.children[0];
-                        let sizingCells = Array.from(sizingRowEl.children);
-                        let columnWidths = [];
-                        let totalWidth = 0;
+                    Vue.nextTick().then(this.calculateColumnWidths);
+                },
+                calculateColumnWidths: function () {
+                    let columnWidths = [];
+                    let totalWidth = 0;
+                    let sizingRowEl = this.sizingTable.children[0];
+                    let sizingCells = Array.from(sizingRowEl.children);
 
-                        this.columnWidths = [];
-                        this.totalWidth = 0;
-    
-                        sizingCells.forEach((cell) => {
-                            let columnWidth = cell.offsetWidth * CELL_PADDING_FACTOR;
-                            columnWidths.push(columnWidth);
-                            totalWidth += columnWidth;
-                        });
+                    this.columnWidths = [];
+                    this.totalWidth = 0;
 
-                        this.columnWidths = columnWidths;
-                        this.totalWidth = totalWidth;
+                    sizingCells.forEach((cell) => {
+                        let columnWidth = cell.offsetWidth * CELL_PADDING_FACTOR;
+                        columnWidths.push(columnWidth);
+                        totalWidth += columnWidth;
                     });
+
+                    this.columnWidths = columnWidths;
+                    this.totalWidth = totalWidth;
                 },
                 sortBy: function (columnKey) {
                     // If sorting by the same column, flip the sort direction.
@@ -169,26 +170,34 @@
                 clearFilter: function (columnKey) {
                     this.filters[columnKey] = '';
                     table.filteredRows.setColumnFilter(columnKey, '');
+                },
+                objectRemoved: function () {
+                    this.updateHeaders();
+                    Vue.nextTick().then(this.calculateColumnWidths);
                 }
             },
             created: function () {
                 this.filterChanged = _.debounce(this.filterChanged, 500);
             },
             mounted: function () {
-                table.on('updateHeaders', this.updateHeaders);
-                table.on('data-loaded', this.dataLoaded);
+                table.on('object-added', this.updateHeaders, this);
+                table.on('object-removed', this.objectRemoved, this);
+                table.on('historical-data-loaded', this.addSizingRow, this);
 
                 table.filteredRows.on('add', this.updateVisibleRows, this);
                 table.filteredRows.on('remove', this.updateVisibleRows, this);
                 table.filteredRows.on('sort', this.updateVisibleRows, this);
                 table.filteredRows.on('filter', this.updateVisibleRows, this);
-
+                
+                //Default sort
+                this.sortOptions = table.filteredRows.sortBy();
                 this.scrollable = this.$el.querySelector('.t-scrolling');
                 this.sizingTable = this.$el.querySelector('.js-sizing-table');
                 this.headersHolderEl = this.$el.querySelector('.mct-table-headers-w');
             },
             destroyed: function () {
                 table.off('updateHeaders', this.updateHeaders);
+                table.off('historical-data-loaded', this.addSizingRow, this);
 
                 table.filteredRows.off('add', this.updateVisibleRows, this);
                 table.filteredRows.off('remove', this.updateVisibleRows, this);

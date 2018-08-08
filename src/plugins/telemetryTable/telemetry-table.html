@@ -41,7 +41,7 @@
     </div>
     <!-- Sizing table -->
     <table class="mct-sizing-table t-sizing-table js-sizing-table">
-        <telemetry-table-row
+        <telemetry-table-row v-for="sizingRowData in sizingRows"
             v-if="sizingRowData"
             :headers="headers"
             :row="sizingRowData">

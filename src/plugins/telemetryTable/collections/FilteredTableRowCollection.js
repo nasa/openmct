@@ -81,11 +81,15 @@ define(
              */
             applyFilters(row) {
                 let matchesFilter = true;
-                Object.entries(this.columnFilters).forEach(([key, filter]) => {
-                    let formattedValue = row.getFormattedValue(key);
-                    matchesFilter = matchesFilter && 
-                        formattedValue.toLowerCase().indexOf(filter) !== -1;
-                });
+                for (const key in this.columnFilters) {
+                    if (!row.hasColumn(key)) {
+                        return false;
+                    } else {
+                        let formattedValue = row.getFormattedValue(key).toLowerCase();
+                        matchesFilter = matchesFilter && 
+                            formattedValue.indexOf(this.columnFilters[key]) !== -1;    
+                    }
+                }
                 return matchesFilter;
             }
 

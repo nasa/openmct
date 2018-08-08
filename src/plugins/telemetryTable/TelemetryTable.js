@@ -70,12 +70,13 @@ define([
         
         addTelemetryObject(telemetryObject) {
             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
+            let objectKeyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            this.columns[objectKeyString] = [];
+
             metadataValues.forEach(metadatum => {
-                let objectKeyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-                this.columns[objectKeyString] = this.columns[objectKeyString] || [];
                 this.columns[objectKeyString].push(new TelemetryTableColumn(this.openmct, telemetryObject, metadatum));
             });
-            this.emit('updateHeaders', Object.assign({}, this.getHeaders()));
+            this.emit('object-added');
             
             this.requestDataFor(telemetryObject);
             this.subscribeTo(telemetryObject);
@@ -91,10 +92,11 @@ define([
                         map[column.getKey()] = column;
                         return map;
                     }, {});
-                    let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap));
+                    let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString));
                     this.boundedRows.add(telemetryRows);
                     console.timeEnd('processing');
-                    this.emit('data-loaded');
+
+                    this.emit('historical-data-loaded', telemetryRows);
                 });
         }
 
@@ -102,11 +104,13 @@ define([
         }
 
         removeTelemetryObject(objectIdentifier) {
-            this.columns = this.columns.filter(column => column.isForObject(objectIdentifier));
-            this.emit('updateHeaders', Object.assign({}, this.getHeaders()));
+            let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
+            delete this.columns[keyString];
+            this.boundedRows.removeAllRowsForObject(keyString);
+            this.emit('object-removed');
         }
 
-        getHeaders() {
+        headers() {
             let flattenedColumns = _.flatten(Object.values(this.columns));
             let headers = _.uniq(flattenedColumns, false, column => column.getKey())
                 .reduce(fromColumnsToHeadersMap, {});
@@ -139,6 +143,7 @@ define([
 
         destroy() {
             this.boundedRows.destroy();
+            this.filteredRows.destroy();
         }
     }
 
