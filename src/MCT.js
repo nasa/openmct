@@ -32,7 +32,7 @@ define([
     './ui/registries/InspectorViewRegistry',
     './ui/registries/ToolbarRegistry',
     './adapter/indicators/legacy-indicators-plugin',
-    './styles/core.scss',
+    './styles-new/core.scss',
     './ui/components/layout/Layout.vue',
     'vue'
 ], function (
