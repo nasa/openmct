@@ -1,0 +1,13 @@
+/************************** PATHS */
+// Paths need to be relative to /platform/commonUI/theme/<theme-name>/css/ directory
+$dirFonts: 'fonts/';
+$dirImgs: 'images/';
+
+/************************** TIMINGS */
+$controlFadeMs: 100ms;
+$browseToEditAnimMs: 400ms;
+$editBorderPulseMs: 500ms;
+
+$interiorMarginSm: 3px;
+$interiorMargin: 5px;
+$interiorMarginLg: 10px;
