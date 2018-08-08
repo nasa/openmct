@@ -41,7 +41,32 @@ define(
                 this.rows = [];
             }
 
-            addOne(item) {
+            /**
+             * Add a datum or array of data to this telemetry collection
+             * @fires TelemetryCollection#added
+             * @param {object | object[]} rows
+             */
+            add(rows) {
+                if (Array.isArray(rows)) {
+                    this.dupeCheck = false;
+
+                    let rowsAdded = rows.filter(this.addOne, this);
+                    if (rowsAdded.length > 0) {
+                        this.emit('add', rowsAdded);
+                    }
+                    this.dupeCheck = true;    
+                } else {
+                    let wasAdded = this.addOne(rows);
+                    if (wasAdded) {
+                        this.emit('add', rows);
+                    }
+                }
+            }
+
+            /**
+             * @private
+             */
+            addOne(row) {
                 if (this.sortOptions === undefined) {
                     throw 'Please specify sort options';
                 }
@@ -53,36 +78,24 @@ define(
                 // employs a binary search which is O(log n). Can use binary search
                 // based on time stamp because the array is guaranteed ordered due
                 // to sorted insertion.
-                let startIx = _.sortedIndex(this.rows, item, 'datum.' + this.sortOptions.key);
+                let startIx = _.sortedIndex(this.rows, row, 'datum.' + this.sortOptions.key);
                 let endIx = undefined;
 
-                if (this.dupeCheck && startIx !== array.length) {
-                    endIx = _.sortedLastIndex(this.rows, item, 'datum.' + this.sortOptions.key);
+                if (this.dupeCheck && startIx !== this.rows.length) {
+                    endIx = _.sortedLastIndex(this.rows, row, 'datum.' + this.sortOptions.key);
 
                     // Create an array of potential dupes, based on having the
                     // same time stamp
                     let potentialDupes = this.rows.slice(startIx, endIx + 1);
                     // Search potential dupes for exact dupe
-                    isDuplicate = _.findIndex(potentialDupes, _.isEqual.bind(undefined, item)) > -1;
+                    isDuplicate = _.findIndex(potentialDupes, _.isEqual.bind(undefined, row)) > -1;
                 }
 
                 if (!isDuplicate) {
-                    this.rows.splice(endIx || startIx, 0, item);
+                    this.rows.splice(endIx || startIx, 0, row);
                     return true;
                 }
                 return false;
-            }
-
-            /**
-             * Add an array of objects to this telemetry collection
-             * @fires TelemetryCollection#added
-             * @param {object[]} items
-             */
-            add(items) {
-                this.dupeCheck = false;
-                var added = items.filter(this.addOne, this);
-                this.emit('add', added);
-                this.dupeCheck = true;
             }
 
             /**

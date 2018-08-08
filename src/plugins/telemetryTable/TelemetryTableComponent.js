@@ -53,7 +53,7 @@
                     headersCount: 0,
                     visibleRows: [],
                     columnWidths: [],
-                    sizingRows: [],
+                    sizingRows: {},
                     rowHeight: ROW_HEIGHT,
                     scrollOffset: 0,
                     totalHeight: 0,
@@ -112,11 +112,6 @@
                 resizeColumns: function () {
                     this.updateSizingRow();
                 },
-                addSizingRow: function (telemetryRowsAdded) {
-                    this.sizingRows.push(telemetryRowsAdded[0]);
-
-                    Vue.nextTick().then(this.calculateColumnWidths);
-                },
                 calculateColumnWidths: function () {
                     let columnWidths = [];
                     let totalWidth = 0;
@@ -174,7 +169,20 @@
                 objectRemoved: function () {
                     this.updateHeaders();
                     Vue.nextTick().then(this.calculateColumnWidths);
-                }
+                },
+                rowsAdded: function (rows) {
+                    let sizingRow;
+                    if (Array.isArray(rows)) {
+                        sizingRow = rows[0];
+                    } else {
+                        sizingRow = rows;
+                    }
+                    if (!this.sizingRows[sizingRow.objectKeyString]) {
+                        this.sizingRows[sizingRow.objectKeyString] = sizingRow;
+                        Vue.nextTick().then(this.calculateColumnWidths);
+                    }
+                    this.updateVisibleRows();
+                },
             },
             created: function () {
                 this.filterChanged = _.debounce(this.filterChanged, 500);
@@ -182,9 +190,8 @@
             mounted: function () {
                 table.on('object-added', this.updateHeaders, this);
                 table.on('object-removed', this.objectRemoved, this);
-                table.on('historical-data-loaded', this.addSizingRow, this);
 
-                table.filteredRows.on('add', this.updateVisibleRows, this);
+                table.filteredRows.on('add', this.rowsAdded, this);
                 table.filteredRows.on('remove', this.updateVisibleRows, this);
                 table.filteredRows.on('sort', this.updateVisibleRows, this);
                 table.filteredRows.on('filter', this.updateVisibleRows, this);
@@ -197,7 +204,6 @@
             },
             destroyed: function () {
                 table.off('updateHeaders', this.updateHeaders);
-                table.off('historical-data-loaded', this.addSizingRow, this);
 
                 table.filteredRows.off('add', this.updateVisibleRows, this);
                 table.filteredRows.off('remove', this.updateVisibleRows, this);

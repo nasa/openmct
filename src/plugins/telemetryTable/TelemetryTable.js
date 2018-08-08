@@ -43,12 +43,13 @@ define([
             this.openmct = openmct;
             this.columns = {};
             this.rowCount = rowCount;
+            this.subscriptions = {};
 
-            this.createTableRows();
+            this.createTableRowCollections();
             this.loadComposition();
         }
 
-        createTableRows() {
+        createTableRowCollections() {
             this.boundedRows = new BoundedTableRowCollection(this.openmct);
 
             //By default, sort by current time system, ascending.
@@ -85,29 +86,41 @@ define([
         requestDataFor(telemetryObject) {
             this.openmct.telemetry.request(telemetryObject)
                 .then(telemetryData => {
-                    console.log('Processing ' + telemetryData.length + ' values');
-                    console.time('processing');
                     let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-                    let columnMap = this.columns[keyString].reduce((map, column) => {
-                        map[column.getKey()] = column;
-                        return map;
-                    }, {});
+                    let columnMap = this.getColumnMapForObject(keyString);
+
                     let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString));
                     this.boundedRows.add(telemetryRows);
-                    console.timeEnd('processing');
-
-                    this.emit('historical-data-loaded', telemetryRows);
                 });
         }
 
+        getColumnMapForObject(objectKeyString) {
+            return this.columns[objectKeyString].reduce((map, column) => {
+                map[column.getKey()] = column;
+                return map;
+            }, {});
+        }
+
         subscribeTo(telemetryObject) {
+            let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            let columnMap = this.getColumnMapForObject(keyString);
+
+            this.subscriptions[keyString] = this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
+                this.boundedRows.add(new TelemetryTableRow(datum, columnMap, keyString));
+            });
         }
 
         removeTelemetryObject(objectIdentifier) {
             let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
             delete this.columns[keyString];
             this.boundedRows.removeAllRowsForObject(keyString);
+            this.unsubscribe(keyString);
             this.emit('object-removed');
+        }
+
+        unsubscribe(keyString) {
+            this.subscriptions[keyString]();
+            delete this.subscriptions[keyString];
         }
 
         headers() {
@@ -139,11 +152,10 @@ define([
             this.emit('updateHeaders', headers);
         }
 
-        subscribe() {}
-
         destroy() {
             this.boundedRows.destroy();
             this.filteredRows.destroy();
+            Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
         }
     }
 

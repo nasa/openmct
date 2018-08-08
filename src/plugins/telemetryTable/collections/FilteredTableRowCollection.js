@@ -34,6 +34,7 @@ define(
                 this.masterCollection = masterCollection;
                 this.columnFilters = {};
 
+                //Synchronize with master collection
                 this.masterCollection.on('add', this.add, this);
                 this.masterCollection.on('remove', this.remove, this);
                 
@@ -50,7 +51,7 @@ define(
                 } else {
                     this.columnFilters[columnKey] = filter;
                 }
-                this.rows = rowsToFilter.filter(this.applyFilters, this);
+                this.rows = rowsToFilter.filter(this.matchesFilters, this);
                 this.emit('filter');
             }
 
@@ -79,18 +80,18 @@ define(
             /**
              * @private
              */
-            applyFilters(row) {
-                let matchesFilter = true;
+            matchesFilters(row) {
+                let doesMatchFilters = true;
                 for (const key in this.columnFilters) {
                     if (!row.hasColumn(key)) {
                         return false;
                     } else {
                         let formattedValue = row.getFormattedValue(key).toLowerCase();
-                        matchesFilter = matchesFilter && 
+                        doesMatchFilters = doesMatchFilters && 
                             formattedValue.indexOf(this.columnFilters[key]) !== -1;    
                     }
                 }
-                return matchesFilter;
+                return doesMatchFilters;
             }
 
             destroy() {
