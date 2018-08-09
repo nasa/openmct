@@ -1,11 +1,11 @@
 <div
     class="l-flex-row l-entry-embed"
-    v-bind:class="[embed.cssClass, embed.snapshot ? has-snapshot : '']">
+    v-bind:class="[embed.cssClass]">
 
     <div
         class="snap-thumb"
         v-if="embed.snapshot">
-        <img v-bind:src="embed.snapshot">
+        <img v-bind:src="embed.snapshot.src">
     </div>
 
     <div class="embed-info l-flex-col">

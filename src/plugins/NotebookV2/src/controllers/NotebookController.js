@@ -222,8 +222,6 @@
         
         currentEntryEmbeds.push(newEmbed);
         this.openmct.objects.mutate(this.domainObject, 'entries[' + entryPos + '].embeds', currentEntryEmbeds);
-
-        console.log(currentEntryEmbeds);
     };
 
     NotebookController.prototype.dragoverOnEntry = function (dragoverEvent) {

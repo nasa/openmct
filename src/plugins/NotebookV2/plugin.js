@@ -21,11 +21,11 @@
  *****************************************************************************/
 
  define([
-    "vue",
-    "./src/controllers/NotebookController"
+    "./src/controllers/NotebookController",
+    "./src/actions/snapshotAction"
  ], function (
-    Vue,
-    NotebookController
+    NotebookController,
+    snapshotAction
  ) {
     var installed  = false;
 
@@ -70,6 +70,19 @@
                                     ],
                                     cssClass: 'l-inline'
                                 }
+                            ]
+                        }
+                    ],
+                    actions: [
+                        {
+                            key: "snapShotAction",
+                            implementation: snapshotAction,
+                            name: "Snapshot",
+                            description: "Take a snapshot and save as a notebook entry",
+                            category: "contextual",
+                            depends: [
+                                "exportImageService",
+                                "dialogService"
                             ]
                         }
                     ]
