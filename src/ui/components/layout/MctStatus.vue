@@ -1,5 +1,7 @@
 <template>
-    <div class="l-shell-head">I'm the status bar</div>
+    <span class="c-status">
+        <span &nbsp;="" Status="" element&nbsp;=""></span>
+    </span>
 </template>
 
 <style lang="scss">
@@ -7,6 +9,6 @@
 </style>
 
 <script>
-export default {
-}
+    export default {
+    }
 </script>

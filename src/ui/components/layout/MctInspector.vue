@@ -1,19 +1,36 @@
 <template>
-    <div class="MCT_Inspector">I'm an inspector</div>
+    <div class="c-inspector">
+        <div class="c-inspector__properties">
+            l-inspector__properties XXX
+        </div>
+        <splitter cssClass="c-splitter--vert js-p-split-e"></splitter>
+        <div class="c-inspector__elements">
+            l-inspector__elements
+        </div>
+    </div>
 </template>
 
 <style lang="scss">
-.MCT_Inspector {
-    position: absolute;
-    right: 0px;
-    top: 0px;
-    bottom: 20px;
-    width: 100px;
-    background: orange;
-}
+    @import "~styles/constants";
+
+    /******************************* INSPECTOR */
+    .c-inspector {
+        > [class*="__"] {
+            padding: $interiorMarginLg;
+        }
+        .c-splitter {
+            &:hover {
+                background: red;
+            }
+        }
+    }
 </style>
 
 <script>
-export default {
-}
+    import splitter from '../controls/splitter.vue'
+    export default {
+        components: {
+            splitter
+        }
+    }
 </script>
