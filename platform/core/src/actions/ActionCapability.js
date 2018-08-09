@@ -102,14 +102,14 @@ define(
          * @returns {Action[]} an array of matching actions
          * @memberof platform/core.ActionCapability#
          */
-        ActionCapability.prototype.perform = function (context) {
+        ActionCapability.prototype.perform = function (context, flag) {
             // Alias to getActions(context)[0].perform, with a
             // check for empty arrays.
             var actions = this.getActions(context);
 
             return this.$q.when(
                 (actions && actions.length > 0) ?
-                    actions[0].perform() :
+                    actions[0].perform(flag) :
                     undefined
             );
         };
