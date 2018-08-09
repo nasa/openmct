@@ -124,6 +124,17 @@ define(
                 expect(mockParent.useCapability).not.toHaveBeenCalledWith("mutation", jasmine.any(Function));
             });
 
+            it("does not show a blocking message dialog when true is passed to perform", function () {
+                mockParent = jasmine.createSpyObj(
+                    "parent",
+                    ["getModel", "getCapability", "useCapability"]
+                );
+
+                action.perform(true);
+
+                expect(mockDialogService.showBlockingMessage).not.toHaveBeenCalled();
+            });
+
             describe("after the remove callback is triggered", function () {
                 var mockChildContext,
                     mockChildObject,
