@@ -33,6 +33,7 @@ define([
     "./src/actions/SaveAndStopEditingAction",
     "./src/actions/SaveAsAction",
     "./src/actions/CancelAction",
+    "./src/actions/CreateNewFolderAction",
     "./src/policies/EditActionPolicy",
     "./src/policies/EditPersistableObjectsPolicy",
     "./src/policies/EditableLinkPolicy",
@@ -52,7 +53,6 @@ define([
     "text!./res/templates/create/locator.html",
     "text!./res/templates/create/create-button.html",
     "text!./res/templates/create/create-menu.html",
-    "text!./res/templates/create/create-new-folder.html",
     "text!./res/templates/library.html",
     "text!./res/templates/edit-object.html",
     "text!./res/templates/edit-action-buttons.html",
@@ -72,6 +72,7 @@ define([
     SaveAndStopEditingAction,
     SaveAsAction,
     CancelAction,
+    CreateNewFolderAction,
     EditActionPolicy,
     EditPersistableObjectsPolicy,
     EditableLinkPolicy,
@@ -91,7 +92,6 @@ define([
     locatorTemplate,
     createButtonTemplate,
     createMenuTemplate,
-    createNewFolderTemplate,
     libraryTemplate,
     editObjectTemplate,
     editActionButtonsTemplate,
@@ -247,6 +247,14 @@ define([
                     "cssClass": "icon-x no-label",
                     "description": "Discard changes made to these objects.",
                     "depends": []
+                },
+                {
+                    "key": "create-new-folder",
+                    "implementation": CreateNewFolderAction,
+                    "description": "Creates a new folder.",
+                    "depends": [
+                        "typeService"
+                    ]
                 }
             ],
             "policies": [
@@ -412,10 +420,6 @@ define([
                 {
                     "key": "locator",
                     "template": locatorTemplate
-                },
-                {
-                    "key": "create-new-folder",
-                    "template": createNewFolderTemplate
                 }
             ],
             "services": [

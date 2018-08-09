@@ -83,24 +83,19 @@ define(
                     );
                 }
 
-                $scope.canCreateNewFolder = policyService.allow(
-                        "composition",
-                        $scope.treeModel.selectedObject,
-                        instantiate(typeService.getType('folder').getInitialModel()));
-            }
-
-            function getRawFolderNamePattern() {
-                return typeService.getType('folder').getProperties().filter(
-                    function (prop) {
-                        return prop.propertyDefinition.key === "name";
+                // Check if create new folder is a valid action for selected object
+                $scope.validParent = function () {
+                    if ($scope.treeModel.selectedObject) {
+                        return policyService.allow(
+                                "composition",
+                                $scope.treeModel.selectedObject,
+                                instantiate(typeService.getType('folder').getInitialModel())
+                        );
+                    } else {
+                        return false;
                     }
-                )[0].propertyDefinition.pattern;
+                }
             }
-
-            $scope.folderNamePattern = new RegExp(getRawFolderNamePattern());
-
-            $scope.newFolderFormData = {};
-            $scope.newFolderCreationTriggered = false;
 
             $scope.newFolderButtonClickHandler = function () {
                 $scope.newFolderCreationTriggered = true;
@@ -108,59 +103,43 @@ define(
 
             $scope.newFolderCancelButtonClickHandler = function () {
                 $scope.newFolderCreationTriggered = false;
+                resetNewFolderNameInput();
             };
 
-            $scope.newFolderNameIsValid = function () {
-                return $scope.newFolderFormData &&
-                    $scope.newFolderFormData.name &&
-                    $scope.folderNamePattern.test($scope.newFolderFormData.name);
-            };
+            // Get expected input pattern for folder name
+            var folderNamePattern = new RegExp(
+                typeService.getType('folder').getProperties()[0].propertyDefinition.pattern
+            );
 
-            function createNewFolder(name, parent) {
-                var folderType = typeService.getType('folder'),
-                    newModel = folderType.getInitialModel(),
-                    editorCapability;
-
-                newModel.type = folderType.getKey();
-                newModel.location = parent.getId();
-                newModel.name = name;
-
-                return instantiateAndPersistNewFolder(newModel, parent);
-            }
-
-            function instantiateAndPersistNewFolder(newModel, parent) {
-                var newObject = parent.useCapability('instantiation', newModel);
-                return newObject.getCapability('persistence').persist()
-                    .then(function () {
-                        parent.getCapability('composition').add(newObject);
-                    })
-                    .then(function () {
-                        parent.getCapability('persistence').persist();
-                        return newObject;
-                    });
-            }
-
-            $scope.newFolderCreateButtonClickHandler = function () {
-                if ($scope.canCreateNewFolder) {
-                    createNewFolder($scope.newFolderFormData.name, $scope.treeModel.selectedObject)
-                    .then(selectAndScrollToNewFolder)
-                    .then(clearNewFolderForm);
-                } else {
-                    console.error("Attempted to create a new folder without being able to.");
-                }
+            // Validate folder name externally to avoid affecting overall form validation
+            $scope.validFolderName = function () {
+                return $scope.newFolderNameInput && folderNamePattern.test($scope.newFolderNameInput);
             };
 
             function selectAndScrollToNewFolder(newFolder) {
                 $scope.treeModel.selectedObject = newFolder;
             }
 
-            function clearNewFolderForm() {
-                $scope.newFolderFormData = {};
+            function resetNewFolderNameInput() {
+                $scope.newFolderNameInput = "Unnamed Folder";
                 $scope.newFolderCreationTriggered = false;
             }
 
+
+            // Create new folder, update selection to new folder and reset new folder button
+            $scope.newFolderCreateButtonClickHandler = function () {
+                createNewFolderAction = $scope.treeModel.selectedObject.getCapability('action').getActions('create-new-folder')[0];
+                createNewFolderAction.perform($scope.newFolderNameInput)
+                                     .then(selectAndScrollToNewFolder)
+                                     .then(resetNewFolderNameInput);
+            };
+
             // Initial state for the tree's model
             $scope.treeModel = { selectedObject: $scope.ngModel[$scope.field] };
+
+            //Initial values for new folder action
+            $scope.newFolderNameInput = "Unnamed Folder";
+            $scope.newFolderCreationTriggered = false;
 
             // Watch for changes from the tree
             $scope.$watch("treeModel.selectedObject", setLocatingObject);

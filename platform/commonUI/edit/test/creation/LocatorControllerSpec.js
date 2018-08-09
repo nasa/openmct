@@ -31,25 +31,63 @@ define(
             var mockScope,
                 mockTimeout,
                 mockDomainObject,
+                mockFolderObject,
                 mockRootObject,
                 mockContext,
+                mockActions,
                 mockObjectService,
+                mockTypeService,
+                mockType,
+                mockInstantiate,
+                mockPolicyService,
                 getObjectsPromise,
+                testModel,
+                capabilities,
+                mockCreateNewFolderAction,
+                mockActionCapability,
+                mockProperties,
                 controller;
 
             beforeEach(function () {
+                
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     ["$watch"]
                 );
                 mockTimeout = jasmine.createSpy("$timeout");
+                mockInstantiate = jasmine.createSpy("instantiate");
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    ["getCapability"]
+                    [
+                        "useCapability",
+                        "getModel",
+                        "getCapability"
+                    ]
+                );
+                mockFolderObject = jasmine.createSpyObj(
+                    "folderObject",
+                    [
+                        "useCapability",
+                        "getModel",
+                        "getCapability"
+                    ]
+                );
+                mockCreateNewFolderAction = jasmine.createSpyObj(
+                    "createNewFolderAction",
+                    [
+                        "perform"
+                    ]
                 );
                 mockRootObject = jasmine.createSpyObj(
                     "rootObject",
                     ["getCapability"]
+                );
+                mockActionCapability = jasmine.createSpyObj(
+                    "actionCapability",
+                    [
+                        "getActions",
+                        "perform"
+                    ]
                 );
                 mockContext = jasmine.createSpyObj(
                     "context",
@@ -59,25 +97,74 @@ define(
                     "objectService",
                     ["getObjects"]
                 );
+                mockTypeService = jasmine.createSpyObj(
+                    "typeService",
+                    ["getType"]
+                );
+                mockPolicyService = jasmine.createSpyObj(
+                    "policyService",
+                    ["allow"]
+                );
                 getObjectsPromise = jasmine.createSpyObj(
                     "promise",
                     ["then"]
                 );
-
-                mockDomainObject.getCapability.and.returnValue(mockContext);
+                mockType = jasmine.createSpyObj(
+                    "type",
+                    [
+                        "getKey",
+                        "getProperties",
+                        "getInitialModel"
+                    ]
+                );
+                testModel = { someKey: "some value" };
+                
+                mockProperties = ['a', 'b', 'c'].map(function (k) {
+                    var mockProperty = jasmine.createSpyObj(
+                            'property-' + k,
+                            ['propertyDefinition']
+                        );
+                    mockProperty.propertyDefinition = {
+                            key: "name",
+                            pattern: "test"
+                        }
+                    return mockProperty;
+                });
+                
+                capabilities = {
+                    "action" : mockActionCapability,
+                    "context": mockContext
+                };
+                
+                mockActions = [mockCreateNewFolderAction];
+                
                 mockContext.getRoot.and.returnValue(mockRootObject);
                 mockObjectService.getObjects.and.returnValue(getObjectsPromise);
-
+                mockTypeService.getType.and.callFake(function (typename) {
+                    return mockType;
+                });
+                mockInstantiate.and.returnValue(mockFolderObject)
+                mockType.getKey.and.returnValue("test");
+                mockType.getInitialModel.and.returnValue(testModel);
+                mockType.getProperties.and.returnValue(mockProperties);
+                mockDomainObject.getCapability.and.callFake(function (capability) {
+                    return capabilities[capability];
+                });
+                mockDomainObject.useCapability.and.returnValue();
+                mockDomainObject.getModel.and.returnValue(testModel);
+                mockFolderObject.getCapability.and.returnValue(capabilities);
+                mockFolderObject.useCapability.and.returnValue();
+                mockFolderObject.getModel.and.returnValue(testModel);
                 mockScope.ngModel = {};
                 mockScope.field = "someField";
 
-                controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
+                controller = new LocatorController(mockScope, mockTimeout, mockObjectService, mockTypeService, mockPolicyService, mockInstantiate);
             });
             describe("when context is available", function () {
 
                 beforeEach(function () {
                         mockContext.getRoot.and.returnValue(mockRootObject);
-                        controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
+                        controller = new LocatorController(mockScope, mockTimeout, mockObjectService, mockTypeService, mockPolicyService, mockInstantiate);
                     });
 
                 it("adds a treeModel to scope", function () {
@@ -136,6 +223,11 @@ define(
                         expect(mockScope.ngModelController.$setValidity)
                             .toHaveBeenCalledWith(jasmine.any(String), false);
                     });
+                
+                it("performs create new folder action when policy allows", function () {
+                    expect(mockTypeService.getType).toHaveBeenCalledWith('folder');
+                });
+                    
             });
             describe("when no context is available", function () {
                 var defaultRoot = "DEFAULT_ROOT";
@@ -145,7 +237,7 @@ define(
                     getObjectsPromise.then.and.callFake(function (callback) {
                         callback({'ROOT': defaultRoot});
                     });
-                    controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
+                    controller = new LocatorController(mockScope, mockTimeout, mockObjectService, mockTypeService, mockPolicyService, mockInstantiate);
                 });
 
                 it("provides a default context where none is available", function () {
@@ -166,6 +258,31 @@ define(
                 });
 
             });
-        });
+            describe("when new folder can be created", function () {
+                beforeEach( function() {
+                    mockContext.getRoot.and.returnValue(mockRootObject);
+                    mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
+                    mockScope.validParent = true;
+                    controller = new LocatorController(mockScope, mockTimeout, mockObjectService, mockTypeService, mockPolicyService, mockInstantiate);
+                });
+                
+                it("performs create new folder action when policy allows", function () {
+                    expect(mockDomainObject.getCapability.getActions).toHaveBeenCalledWith("create-new-folder");
+                });
+            });
+            describe("when new folder cannot be created", function() {
+                beforeEach( function() {
+                    mockPolicyService.allow.and.returnValue(false);
+                    controller = new LocatorController(mockScope, mockTimeout, mockObjectService, mockTypeService, mockPolicyService, mockInstantiate);
+                });
+                
+                it("Does not perform create new folder action", function () {
+                    expect(mockScope.validParent).toBeFalsy;
+                    expect(mockDomainObject.getCapability.getActions).not.toHaveBeenCalled();
+                    expect(mockCreateNewFolderAction.perform).not.toHaveBeenCalled();
+                });
+                
+            });
+            });
     }
 );

@@ -16,11 +16,25 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div ng-controller="LocatorController as locator" class="selector-list">
+<div ng-controller="LocatorController" class="selector-list">
     <div class="wrapper">
         <mct-representation key="'tree'"
                             mct-object="rootObject"
                             ng-model="treeModel">
         </mct-representation>
+    </div>
+    <div class="newFolderCreation" style="margin-top:10px; position:absolute; left:0px;">
+        <!-- The button that triggers new folder creation. -->
+        <div ng-show="!newFolderCreationTriggered">
+            <a class="s-button icon-folder-new" ng-class="{disabled: !validParent()}" ng-click="newFolderButtonClickHandler()">
+                <span class="text-label">New Folder</span>
+            </a>
+        </div>
+
+        <div ng-show="newFolderCreationTriggered">
+            <input type="text" ng-model="newFolderNameInput">
+            <a class="s-button" ng-class="{ disabled: !validParent() || !validFolderName() }" ng-click="newFolderCreateButtonClickHandler()">Create</a>
+            <a class="s-button icon-x" ng-click="newFolderCancelButtonClickHandler()"></a>
+        </div>
     </div>
 </div>
