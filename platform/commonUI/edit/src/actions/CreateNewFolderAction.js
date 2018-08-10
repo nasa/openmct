@@ -29,9 +29,8 @@ define([
     ) {
 
         /**
-         * The "Save" action; the action triggered by clicking Save from
-         * Edit Mode. Exits the editing user interface and invokes object
-         * capabilities to persist the changes that have been made.
+         * The CreateNewFolderAction; action is triggered by the new folder button in the locator. 
+         * 
          * @constructor
          * @implements {Action}
          * @memberof platform/commonUI/edit
@@ -61,7 +60,6 @@ define([
                 });
                 return addToParentAndReturn(newObject);
             }
-
 
             function addToParentAndReturn(newObject) {
                 return parent.getCapability('composition').add(newObject)

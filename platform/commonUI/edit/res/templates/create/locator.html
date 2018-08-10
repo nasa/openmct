@@ -23,14 +23,18 @@
                             ng-model="treeModel">
         </mct-representation>
     </div>
+    
+    <!-- Create New Folder Action -->
     <div class="newFolderCreation" style="margin-top:10px; position:absolute; left:0px;">
-        <!-- The button that triggers new folder creation. -->
+        
+        <!-- New folder button, triggers create new folder action. -->
         <div ng-show="!newFolderCreationTriggered">
             <a class="s-button icon-folder-new" ng-class="{disabled: !validParent()}" ng-click="newFolderButtonClickHandler()">
                 <span class="text-label">New Folder</span>
             </a>
         </div>
-
+        
+        <!-- Folder name input -->
         <div ng-show="newFolderCreationTriggered">
             <input type="text" ng-model="newFolderNameInput">
             <a class="s-button" ng-class="{ disabled: !validParent() || !validFolderName() }" ng-click="newFolderCreateButtonClickHandler()">Create</a>

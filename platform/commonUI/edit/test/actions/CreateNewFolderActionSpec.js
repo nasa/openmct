@@ -54,6 +54,7 @@ define(
                         "getId"
                     ]
                 );
+                
                 mockNewObject = jasmine.createSpyObj(
                     "newObject",
                     [
@@ -94,18 +95,14 @@ define(
                 
                 mockType.getKey.and.returnValue("test");
                 mockType.getInitialModel.and.returnValue(testModel);
-                
                 mockDomainObject.getCapability.and.callFake(function (capability) {
                     return (capability === 'composition') && mockCompositionCapability;
                 });
-                
                 mockDomainObject.hasCapability.and.returnValue(true);
                 mockCompositionCapability.add.and.returnValue(mockPromise(true));
-                
                 mockDomainObject.useCapability.and.callFake(function (capability) {
                     return (capability === 'instantiation') && mockNewObject;
                 });
-                
                 mockTypeService.getType.and.returnValue(mockType);
                 mockDomainObject.getId.and.returnValue("id");
                 
@@ -114,19 +111,19 @@ define(
 
             it("uses the instantiation capability when performed", function () {
                 action.perform(mockFolderName);
-                expect(mockDomainObject.useCapability).toHaveBeenCalledWith("instantiation", jasmine.any(Object));
+                expect(mockDomainObject.useCapability)
+                    .toHaveBeenCalledWith("instantiation", jasmine.any(Object));
             });
-            
 
             it("adds new objects to the parent's composition", function () {
                 action.perform(mockFolderName);
                 expect(mockDomainObject.getCapability).toHaveBeenCalledWith("composition");
+                expect(mockCompositionCapability.add).toHaveBeenCalled();
             });
 
             it("is only applicable when a domain object is in context", function () {
                 expect(CreateNewFolderAction.appliesTo(mockActionContext)).toBeTruthy();
                 expect(CreateNewFolderAction.appliesTo({})).toBeFalsy();
-                // Make sure it checked for creatability
                 expect(mockDomainObject.hasCapability).toHaveBeenCalledWith('editor');
             });
             

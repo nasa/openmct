@@ -225,20 +225,24 @@ define(
                     });
                 
                 it("Checks if new folder could be created with policies", function () {
+                    // validParent set to true if policy allows creation of new folders 
                     mockPolicyService.allow.and.returnValue(true);
                     expect(mockPolicyService.allow).toHaveBeenCalled;
                     expect(mockScope.validParent).toBeTruthy;
                     
+                    // validParent set to false if policy allows creation of new folders 
                     mockPolicyService.allow.and.returnValue(false);
                     expect(mockPolicyService.allow).toHaveBeenCalled;
                     expect(mockScope.validParent).toBeFalsy;
                 });
                     
                 it("Validates folder name input with folder properties", function () {
+                    // Get foldername pattern from folder type properties 
                     expect(mockTypeService.getType).toHaveBeenCalledWith('folder');
                     expect(mockType.getProperties).toHaveBeenCalled();
                     expect(mockScope.folderNamePattern).toBeDefined;
                     
+                    // Validate folder name input
                     mockScope.newFolderNameInput = "test";
                     expect(mockScope.validFolderName).toBeTruthy;
                     
