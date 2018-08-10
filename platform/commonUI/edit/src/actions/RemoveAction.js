@@ -51,7 +51,7 @@ define([
     /**
      * Perform this action.
      */
-    RemoveAction.prototype.perform = function () {
+    RemoveAction.prototype.perform = function (skipWarning) {
         var dialog,
             dialogService = this.dialogService,
             domainObject = this.domainObject,
@@ -115,12 +115,18 @@ define([
             return parent.useCapability('mutation', doMutate);
         }
 
-        /*
-         * Pass in the function to remove the domain object so it can be
-         * associated with an 'OK' button press
-         */
-        dialog = new RemoveDialog(dialogService, domainObject, removeFromContext);
-        dialog.show();
+        if (skipWarning) {
+
+            removeFromContext(domainObject);
+
+        } else {
+            /*
+            * Pass in the function to remove the domain object so it can be
+            * associated with an 'OK' button press
+            */
+            dialog = new RemoveDialog(dialogService, domainObject, removeFromContext);
+            dialog.show();
+        }
     };
 
     // Object needs to have a parent for Remove to be applicable
