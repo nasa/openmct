@@ -2,9 +2,10 @@
     <ul class="c-tree">
         <li class="c-tree__item-h">
             <div class="c-tree__item" onclick="alert('tree item click');">
-                <span class="c-view-control"></span><span class="c-object-name icon-folder">
-              Tree item x with a long name that forces ellipsis to occur
-              </span>
+                <span class="c-view-control"></span>
+                <span class="c-object-name icon-folder">
+                  Tree item x with a long name that forces ellipsis to occur
+                </span>
             </div>
             <ul class="c-tree">
                 <li class="c-tree__item-h">
@@ -22,6 +23,7 @@
 
     .c-tree {
         .c-tree {
+            display: none;
             margin-left: 20px;
         }
 
@@ -38,6 +40,7 @@
             }
 
             .c-view-control {
+                // TODO: move this into a future view-control component or the _controls.scss file
                 $d: 11px;
                 background: rgba(red, 0.4);
                 display: inline-block;

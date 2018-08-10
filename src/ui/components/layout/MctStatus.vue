@@ -1,6 +1,6 @@
 <template>
     <span class="c-status">
-        <span &nbsp;="" Status="" element&nbsp;=""></span>
+        [ Status ]
     </span>
 </template>
 

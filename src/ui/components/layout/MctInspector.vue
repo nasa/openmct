@@ -1,11 +1,11 @@
 <template>
     <div class="c-inspector">
         <div class="c-inspector__properties">
-            l-inspector__properties XXX
+            c-inspector__properties
         </div>
-        <splitter cssClass="c-splitter--vert js-p-split-e"></splitter>
-        <div class="c-inspector__elements">
-            l-inspector__elements
+        <splitter align="horizontal"></splitter>
+        <div class="l-pane c-inspector__elements">
+            c-inspector__elements
         </div>
     </div>
 </template>
@@ -15,13 +15,23 @@
 
     /******************************* INSPECTOR */
     .c-inspector {
+        display: flex;
+        flex-flow: column nowrap;
+        height: 100%;
+
         > [class*="__"] {
+            background: #f9c;
+            min-height: 50px;
             padding: $interiorMarginLg;
         }
-        .c-splitter {
-            &:hover {
-                background: red;
-            }
+
+        &__properties {
+            flex: 1 1 auto;
+        }
+
+        &__elements {
+            height: 25%;
+            flex: 0 1 auto;
         }
     }
 </style>

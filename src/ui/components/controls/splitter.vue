@@ -1,5 +1,8 @@
 <template>
-    <div class="c-splitter" :class="cssClass"></div>
+    <div class="c-splitter" :class="{
+    'c-splitter-vertical' : align === 'vertical',
+    'c-splitter-horizontal' : align === 'horizontal'
+    }"></div>
 </template>
 
 <style lang="scss">
@@ -21,7 +24,7 @@
             }
         }
 
-        &--horz {
+        &-vertical {
             cursor: col-resize;
             width: $s;
             &:before {
@@ -33,7 +36,7 @@
             }
         }
 
-        &--vert {
+        &-horizontal {
             cursor: row-resize;
             height: $s;
             &:before {
@@ -50,7 +53,7 @@
 <script>
     export default {
         props: {
-            cssClass: String
+            align: String
         }
     }
 </script>
