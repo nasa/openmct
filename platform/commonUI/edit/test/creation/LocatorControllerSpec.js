@@ -52,7 +52,7 @@ define(
                 
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    ["$watch"]
+                    ["$watch", "validParent"]
                 );
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockInstantiate = jasmine.createSpy("instantiate");
@@ -224,10 +224,27 @@ define(
                             .toHaveBeenCalledWith(jasmine.any(String), false);
                     });
                 
-                it("performs create new folder action when policy allows", function () {
-                    expect(mockTypeService.getType).toHaveBeenCalledWith('folder');
+                it("Checks if new folder could be created with policies", function () {
+                    mockPolicyService.allow.and.returnValue(true);
+                    expect(mockPolicyService.allow).toHaveBeenCalled;
+                    expect(mockScope.validParent).toBeTruthy;
+                    
+                    mockPolicyService.allow.and.returnValue(false);
+                    expect(mockPolicyService.allow).toHaveBeenCalled;
+                    expect(mockScope.validParent).toBeFalsy;
                 });
                     
+                it("Validates folder name input with folder properties", function () {
+                    expect(mockTypeService.getType).toHaveBeenCalledWith('folder');
+                    expect(mockType.getProperties).toHaveBeenCalled();
+                    expect(mockScope.folderNamePattern).toBeDefined;
+                    
+                    mockScope.newFolderNameInput = "test";
+                    expect(mockScope.validFolderName).toBeTruthy;
+                    
+                    mockScope.newFolderNameInput = " ";
+                    expect(mockScope.validFolderName).toBeFalsy;
+                });
             });
             describe("when no context is available", function () {
                 var defaultRoot = "DEFAULT_ROOT";
@@ -257,31 +274,6 @@ define(
                         .toEqual(1);
                 });
 
-            });
-            describe("when new folder can be created", function () {
-                beforeEach( function() {
-                    mockContext.getRoot.and.returnValue(mockRootObject);
-                    mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
-                    mockScope.validParent = true;
-                    controller = new LocatorController(mockScope, mockTimeout, mockObjectService, mockTypeService, mockPolicyService, mockInstantiate);
-                });
-                
-                it("performs create new folder action when policy allows", function () {
-                    expect(mockDomainObject.getCapability.getActions).toHaveBeenCalledWith("create-new-folder");
-                });
-            });
-            describe("when new folder cannot be created", function() {
-                beforeEach( function() {
-                    mockPolicyService.allow.and.returnValue(false);
-                    controller = new LocatorController(mockScope, mockTimeout, mockObjectService, mockTypeService, mockPolicyService, mockInstantiate);
-                });
-                
-                it("Does not perform create new folder action", function () {
-                    expect(mockScope.validParent).toBeFalsy;
-                    expect(mockDomainObject.getCapability.getActions).not.toHaveBeenCalled();
-                    expect(mockCreateNewFolderAction.perform).not.toHaveBeenCalled();
-                });
-                
             });
             });
     }
