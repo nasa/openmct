@@ -171,7 +171,7 @@ define(
 
                 if (self.selectedElementProxy) {
                     // Update the selected element with the new
-                    // value since newDomainOject is mutated.fde
+                    // value since newDomainOject is mutated.
                     self.selectedElementProxy.element = elements[index];
                 }
                 refreshElements();
