@@ -148,3 +148,4 @@ define(
         return LocatorController;
     }
 );
+

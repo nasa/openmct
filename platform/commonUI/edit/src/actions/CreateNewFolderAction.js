@@ -86,3 +86,4 @@ define([
         return CreateNewFolderAction;
     }
 );
+
