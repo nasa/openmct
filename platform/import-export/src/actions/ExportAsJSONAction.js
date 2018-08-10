@@ -133,7 +133,7 @@ define(['lodash'], function (_) {
         copyOfChild.location = parentId;
         parent.composition[index] = copyOfChild.identifier;
         this.tree[newIdString] = copyOfChild;
-        this.tree[parentId].composition[index] = newIdString;
+        this.tree[parentId].composition[index] = copyOfChild.identifier;
 
         return copyOfChild;
     };

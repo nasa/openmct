@@ -47,7 +47,12 @@ define(
                 uniqueId = 0;
                 newObjects = [];
                 openmct = {
-                    $injector: jasmine.createSpyObj('$injector', ['get'])
+                    $injector: jasmine.createSpyObj('$injector', ['get']),
+                    objects: {
+                        makeKeyString: function (identifier) {
+                            return identifier.key;
+                        }
+                    }
                 };
                 mockInstantiate = jasmine.createSpy('instantiate').and.callFake(
                     function (model, id) {
@@ -154,7 +159,7 @@ define(
                             body: JSON.stringify({
                                 "openmct": {
                                     "infiniteParent": {
-                                        "composition": ["infinteChild"],
+                                        "composition": [{key: "infinteChild", namespace: ""}],
                                         "name": "1",
                                         "type": "folder",
                                         "modified": 1503598129176,
@@ -162,7 +167,7 @@ define(
                                         "persisted": 1503598129176
                                     },
                                     "infinteChild": {
-                                        "composition": ["infiniteParent"],
+                                        "composition": [{key: "infinteParent", namespace: ""}],
                                         "name": "2",
                                         "type": "folder",
                                         "modified": 1503598132428,
