@@ -96,16 +96,16 @@ define(
                 if (startChanged) {
                     testValue.datum[this.sortOptions.key] = bounds.start;
                     // Calculate the new index of the first item within the bounds
-                    startIndex = _.sortedIndex(this.telemetry, testValue, 'datum.' + this.sortOptions.key);
+                    startIndex = this.sortedIndex(this.rows, testValue);
                     discarded = this.rows.splice(0, startIndex);
                 }
 
                 if (endChanged) {
                     testValue.datum[this.sortOptions.key] = bounds.end;
                     // Calculate the new index of the last item in bounds
-                    endIndex = _.sortedLastIndex(this.futureBuffer.telemetry, testValue, 'datum.' + this.sortOptions.key);
+                    endIndex = this.sortedLastIndex(this.futureBuffer.rows, testValue);
                     added = this.futureBuffer.rows.splice(0, endIndex);
-                    added.forEach((datum) => this.telemetry.push(datum));
+                    added.forEach((datum) => this.rows.push(datum));
                 }
 
                 if (discarded && discarded.length > 0) {

@@ -29,6 +29,9 @@ define(
         _,
         EventEmitter
     ) {
+        const LESS_THAN = -1;
+        const EQUAL = 0;
+        const GREATER_THAN = 1;
 
         /**
          * @constructor
@@ -78,11 +81,11 @@ define(
                 // employs a binary search which is O(log n). Can use binary search
                 // based on time stamp because the array is guaranteed ordered due
                 // to sorted insertion.
-                let startIx = _.sortedIndex(this.rows, row, 'datum.' + this.sortOptions.key);
+                let startIx = this.sortedIndex(this.rows, row);
                 let endIx = undefined;
 
                 if (this.dupeCheck && startIx !== this.rows.length) {
-                    endIx = _.sortedLastIndex(this.rows, row, 'datum.' + this.sortOptions.key);
+                    endIx = _.sortedLastIndex(this.rows, row);
 
                     // Create an array of potential dupes, based on having the
                     // same time stamp
@@ -96,6 +99,38 @@ define(
                     return true;
                 }
                 return false;
+            }
+
+            sortedLastIndex(rows, testRow) {
+                return this.sortedIndex(rows, testRow, _.sortedLastIndex);
+            }
+            /**
+             * Finds the correct insertion point for the given row.
+             * Leverages lodash's `sortedIndex` function which implements a binary search.
+             * @private
+             */
+            sortedIndex(rows, testRow, lodashFunction) {
+                const sortOptionsKey = this.sortOptions.key;
+                lodashFunction = lodashFunction || _.sortedIndex;
+
+                if (this.sortOptions.direction === 'asc') {
+                    return lodashFunction(rows, testRow, (thisRow) => {
+                        return thisRow.datum[sortOptionsKey];
+                    });
+                } else {
+                    const testRowValue = testRow.datum[this.sortOptions.key];
+                    // Use a custom comparison function to support descending sort.
+                    return lodashFunction(rows, testRow, (thisRow) => {
+                        const thisRowValue = thisRow.datum[sortOptionsKey];
+                        if (testRowValue === thisRowValue) {
+                            return EQUAL;
+                        } else if (testRowValue < thisRowValue) {
+                            return LESS_THAN;
+                        } else {
+                            return GREATER_THAN;
+                        }
+                    });
+                }
             }
 
             /**

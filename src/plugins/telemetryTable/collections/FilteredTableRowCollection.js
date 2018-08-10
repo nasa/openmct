@@ -77,6 +77,10 @@ define(
                     filter !== '';
             }
 
+            addOne(row) {
+                return this.matchesFilters(row) && super.addOne(row);
+            }
+
             /**
              * @private
              */

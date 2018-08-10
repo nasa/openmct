@@ -80,7 +80,7 @@ define([
             this.emit('object-added');
             
             this.requestDataFor(telemetryObject);
-            this.subscribeTo(telemetryObject);
+            //this.subscribeTo(telemetryObject);
         }
 
         requestDataFor(telemetryObject) {
