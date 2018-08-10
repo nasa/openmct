@@ -32,7 +32,6 @@ define(
                 mockFolderName,
                 mockTypeService,
                 mockActionContext,
-                capabilities,
                 mockCompositionCapability,
                 action;
             
@@ -86,7 +85,7 @@ define(
                     ["getType"]
                 );    
                 
-                mockActionContext = { domainObject: mockDomainObject }
+                mockActionContext = { domainObject: mockDomainObject };
                 
                 mockCompositionCapability = jasmine.createSpyObj(
                     "composition",

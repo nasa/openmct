@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global console*/
 
 define(
     [],
@@ -94,7 +93,7 @@ define(
                     } else {
                         return false;
                     }
-                }
+                };
             }
 
             $scope.newFolderButtonClickHandler = function () {
@@ -128,7 +127,7 @@ define(
 
             // Create new folder, update selection to new folder and reset new folder button
             $scope.newFolderCreateButtonClickHandler = function () {
-                createNewFolderAction = $scope.treeModel.selectedObject.getCapability('action').getActions('create-new-folder')[0];
+                var createNewFolderAction = $scope.treeModel.selectedObject.getCapability('action').getActions('create-new-folder')[0];
                 createNewFolderAction.perform($scope.newFolderNameInput)
                                      .then(selectAndScrollToNewFolder)
                                      .then(resetNewFolderNameInput);

@@ -53,9 +53,9 @@ define([
             newModel.type = folderType.getKey();
             newModel.name = folderName;
 
-            function instantiateObject(newModel, parent) {
+            function instantiateObject() {
                 var newObject = parent.useCapability('instantiation', newModel);
-                newObject.useCapability('mutation', function (newModel) {
+                newObject.useCapability('mutation', function () {
                     newModel.location = parent.getId();
                 });
                 return addToParentAndReturn(newObject);
@@ -69,7 +69,7 @@ define([
             }
 
             return instantiateObject(newModel, parent);
-        }
+        };
 
         /**
          * Check if this action is applicable in a given context.

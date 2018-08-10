@@ -127,7 +127,7 @@ define(
                     mockProperty.propertyDefinition = {
                             key: "name",
                             pattern: "test"
-                        }
+                        };
                     return mockProperty;
                 });
                 
@@ -143,7 +143,7 @@ define(
                 mockTypeService.getType.and.callFake(function (typename) {
                     return mockType;
                 });
-                mockInstantiate.and.returnValue(mockFolderObject)
+                mockInstantiate.and.returnValue(mockFolderObject);
                 mockType.getKey.and.returnValue("test");
                 mockType.getInitialModel.and.returnValue(testModel);
                 mockType.getProperties.and.returnValue(mockProperties);
@@ -223,32 +223,6 @@ define(
                         expect(mockScope.ngModelController.$setValidity)
                             .toHaveBeenCalledWith(jasmine.any(String), false);
                     });
-                
-                it("Checks if new folder could be created with policies", function () {
-                    // validParent set to true if policy allows creation of new folders 
-                    mockPolicyService.allow.and.returnValue(true);
-                    expect(mockPolicyService.allow).toHaveBeenCalled;
-                    expect(mockScope.validParent).toBeTruthy;
-                    
-                    // validParent set to false if policy allows creation of new folders 
-                    mockPolicyService.allow.and.returnValue(false);
-                    expect(mockPolicyService.allow).toHaveBeenCalled;
-                    expect(mockScope.validParent).toBeFalsy;
-                });
-                    
-                it("Validates folder name input with folder properties", function () {
-                    // Get foldername pattern from folder type properties 
-                    expect(mockTypeService.getType).toHaveBeenCalledWith('folder');
-                    expect(mockType.getProperties).toHaveBeenCalled();
-                    expect(mockScope.folderNamePattern).toBeDefined;
-                    
-                    // Validate folder name input
-                    mockScope.newFolderNameInput = "test";
-                    expect(mockScope.validFolderName).toBeTruthy;
-                    
-                    mockScope.newFolderNameInput = " ";
-                    expect(mockScope.validFolderName).toBeFalsy;
-                });
             });
             describe("when no context is available", function () {
                 var defaultRoot = "DEFAULT_ROOT";
