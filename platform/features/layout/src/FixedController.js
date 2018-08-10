@@ -87,7 +87,8 @@ define(
                 'setDisplayedValue',
                 'subscribeToObject',
                 'unsubscribe',
-                'updateView'
+                'updateView',
+                'setSelection'
             ].forEach(function (name) {
                 self[name] = self[name].bind(self);
             });
@@ -224,7 +225,7 @@ define(
             // Respond to external bounds changes
             this.openmct.time.on("bounds", updateDisplayBounds);
 
-            this.openmct.selection.on('change', this.setSelection.bind(this));
+            this.openmct.selection.on('change', this.setSelection);
             this.$element.on('click', this.bypassSelection.bind(this));
             this.unlisten = this.openmct.objects.observe(this.newDomainObject, '*', function (obj) {
                 this.newDomainObject = JSON.parse(JSON.stringify(obj));
@@ -233,6 +234,9 @@ define(
 
             this.updateElementPositions(this.newDomainObject.layoutGrid);
             refreshElements();
+
+            //force a click, to initialize Fixed Position Controller on SelectionAPI
+            $element[0].click();
         }
 
         FixedController.prototype.updateElementPositions = function (layoutGrid) {
