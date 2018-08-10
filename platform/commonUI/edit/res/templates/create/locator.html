@@ -34,7 +34,7 @@
             </a>
         </div>
         
-        <!-- Folder name input -->
+        <!-- Get folder name -->
         <div ng-show="newFolderCreationTriggered">
             <input type="text" ng-model="newFolderNameInput">
             <a class="s-button" ng-class="{ disabled: !validParent() || !validFolderName() }" ng-click="newFolderCreateButtonClickHandler()">Create</a>
