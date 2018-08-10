@@ -35,28 +35,30 @@ mct-table {
     }
 
     .mct-table {
+        tr {
+            display: flex; // flex-flow defaults to row nowrap (which is what we want) so no need to define
+            height: 18px; // Needed when a row has empty values in its cells
+            align-items: stretch;
+        }
+
+        td, th {
+            box-sizing: border-box;
+            display: block;
+            flex: 1 0 auto;
+            white-space: nowrap;
+        }
+
         thead {
             display: block;
-            tr {
-                display: block;
-                white-space: nowrap;
-                th {
-                    display: inline-block;
-                    box-sizing: border-box;
-                }
-            }
         }
+
         tbody {
             tr {
                 position: absolute;
-                white-space: nowrap;
-                display: block;
             }
+
             td {
-                white-space: nowrap;
                 overflow: hidden;
-                box-sizing: border-box;
-                display: inline-block;
             }
         }
     }
