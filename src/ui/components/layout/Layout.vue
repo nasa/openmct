@@ -30,6 +30,7 @@
 
 <style lang="scss">
 @import "~styles/constants";
+@import "~styles/constants-snow";
 
 /******************************* SHELL */
 .l-shell {
@@ -40,8 +41,7 @@
 
     /********** STATUS AREA */
     &__status {
-        background: #666;
-        color: #ccc;
+        border-bottom: 1px solid $colorInteriorBorder;
         flex: 0 1 auto;
         height: 40px;
         order: 1;
@@ -57,13 +57,12 @@
     }
 
     &__object-view {
-        background: #cc0;
         flex: 1 1 auto;
         padding: $interiorMarginLg;
     }
 
     &__time-conductor {
-        background: #cac;
+        border-top: 1px solid $colorInteriorBorder;
         min-height: 50px;
         padding: $interiorMarginLg;
     }
@@ -83,7 +82,7 @@
     }
 
     &__pane-tree {
-        background: #f90;
+        background: $colorTreeBg;
         padding: $interiorMarginLg;
         width: 300px
     }

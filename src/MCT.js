@@ -33,7 +33,6 @@ define([
     './ui/registries/ToolbarRegistry',
     './adapter/indicators/legacy-indicators-plugin',
     './styles-new/core.scss',
-    './styles-new/theme-snow.scss',
     './ui/components/layout/Layout.vue',
     'vue'
 ], function (
@@ -49,7 +48,6 @@ define([
     ToolbarRegistry,
     LegacyIndicatorsPlugin,
     coreStyles,
-    themeSnow,
     Layout,
     Vue
 ) {

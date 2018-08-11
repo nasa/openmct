@@ -20,7 +20,6 @@
         height: 100%;
 
         > [class*="__"] {
-            background: #f9c;
             min-height: 50px;
             padding: $interiorMarginLg;
         }

@@ -6,45 +6,44 @@
 </template>
 
 <style lang="scss">
+    @import "~styles/constants";
+    @import "~styles/constants-snow";
+
     .c-splitter {
         $c: #06f;
-        $s: 10px;
+        $size: $splitterHandleD;
+        $margin: 0px;
+        $hitMargin: 7px;
+
+        background: $colorSplitterBg;
 
         &:before {
+            // Bigger hit area
             content: '';
             display: block;
-            background: #ccc;
             position: absolute;
+            z-index: 2;
         }
 
         &:hover {
-            background: rgba($c, 0.3);
-            &:before {
-                background: $c;
-            }
+            background: $colorSplitterHover;
         }
 
         &-vertical {
             cursor: col-resize;
-            width: $s;
+            width: $size;
+            margin: 0 $margin;
             &:before {
-                // Divider line
-                width: 1px;
-                height: 100%;
-                left: 50%;
-                transform: translateX(-50%);
+                top: 0; right: $hitMargin * -1; bottom: 0; left: $hitMargin * -1;
             }
         }
 
         &-horizontal {
             cursor: row-resize;
-            height: $s;
+            height: $size;
+            margin: $margin 0;
             &:before {
-                // Divider line
-                width: 100%;
-                height: 1px;
-                top: 50%;
-                transform: translateY(-50%);
+                top: $hitMargin * -1; right: 0; bottom: $hitMargin * -1; left: 0;
             }
         }
     }
