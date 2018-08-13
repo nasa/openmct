@@ -3,8 +3,7 @@
         <div class="l-shell__main">
             <div class="l-pane l-shell__pane-tree" ref="shell-pane-tree">
                 <div class="l-shell__search">
-                    <!-- Change to search component -->
-                    <input placeholder="Search"/>
+                    <MctSearch ref="shell-search"></MctSearch>
                 </div>
                 <div class="l-shell__tree">
                     <MctTree ref="shell-tree"></MctTree>
@@ -82,8 +81,9 @@
     }
 
     &__pane-tree {
+        $m: $interiorMargin;
         background: $colorTreeBg;
-        padding: $interiorMarginLg;
+        padding: $m $m + ($splitterD - $splitterHandleD) $m $m;
         width: 300px
     }
 
@@ -100,6 +100,7 @@
 <script>
     import MctInspector from './MctInspector.vue';
     import MctMain from './MctMain.vue';
+    import MctSearch from './MctSearch.vue';
     import MctStatus from './MctStatus.vue';
     import MctTree from './MctTree.vue';
     import splitter from '../controls/splitter.vue';
@@ -113,6 +114,7 @@ export default {
     components: {
         MctInspector,
         MctMain,
+        MctSearch,
         MctStatus,
         MctTree,
         splitter

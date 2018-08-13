@@ -70,6 +70,16 @@ input, textarea {
     letter-spacing: inherit;
 }
 
+input[type=text],
+input[type=search],
+input[type=number] {
+    @include nice-input();
+    padding: $inputTextP;
+    &.numeric {
+        text-align: right;
+    }
+}
+
 h1, h2, h3 {
     letter-spacing: 0.04em;
     margin: 0;

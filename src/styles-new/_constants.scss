@@ -8,6 +8,10 @@ $controlFadeMs: 100ms;
 $browseToEditAnimMs: 400ms;
 $editBorderPulseMs: 500ms;
 
+/************************** SPATIAL */
 $interiorMarginSm: 3px;
 $interiorMargin: 5px;
 $interiorMarginLg: 10px;
+$inputTextPTopBtm: 2px;
+$inputTextPLeftRight: 5px;
+$inputTextP: $inputTextPTopBtm $inputTextPLeftRight;

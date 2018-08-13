@@ -75,7 +75,7 @@
         // Collapse button
         background: $colorSplitterBg;
         display: none; // Only display if splitter is collapsible, see below
-        width: $size * 3;
+        width: $splitterD;
         height: 40px;
         transition: $transOut;
 
@@ -120,8 +120,6 @@
                 content: $glyph-icon-arrow-right;
             }
         }
-
-
     }
 </style>
 
