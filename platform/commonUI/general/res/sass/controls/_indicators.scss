@@ -120,6 +120,16 @@ mct-indicators mct-include {
                 top: 100%;
                 @include triangle('down', $size: 4px, $ratio: 1, $color: $hbg);
             }
+            
+            &:after {
+                // Hit area
+                $p: -7px;
+                content: '';
+                display: block;
+                position: absolute;
+                top: $p; right: $p; bottom: $p; left: $p;
+                z-index: -1;
+            }
         }
 
         &:hover {
