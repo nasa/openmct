@@ -239,6 +239,7 @@ $splitterDSm: 10px; // Smaller splitter, used inside elements like a Timeline vi
 $splitterHandleD: 4px;
 $colorSplitterBaseBg: $colorBodyBg;
 $colorSplitterBg: pullForward($colorSplitterBaseBg, 15%);
+$colorSplitterFg: $colorBodyBg;
 $splitterShdw: none;
 $splitterEndCr: none;
 $colorSplitterHover: pullForward($colorSplitterBg, $hoverRatioPercent * 2);
@@ -274,3 +275,7 @@ $colorAboutLink: #84b3ff;
 // Loading
 $colorLoadingFg: $colorAlt1;
 $colorLoadingBg: rgba($colorLoadingFg, 0.1);
+
+// Transitions
+$transIn: all 50ms ease-in;
+$transOut: all 250ms ease-out;

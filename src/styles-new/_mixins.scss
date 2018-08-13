@@ -81,3 +81,7 @@
     direction: rtl;
     unicode-bidi:bidi-override;
 }
+
+@mixin test($c: #ffcc00, $a: 0.2) {
+    background-color: rgba($c, $a) !important;
+}

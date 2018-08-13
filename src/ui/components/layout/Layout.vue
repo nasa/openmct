@@ -10,12 +10,12 @@
                     <MctTree ref="shell-tree"></MctTree>
                 </div>
             </div>
-            <splitter align="vertical" target="shell-pane-tree"></splitter>
+            <splitter align="vertical" target="shell-pane-tree" collapse="to-left"></splitter>
             <div class="l-pane l-shell__pane-main" ref="shell-pane-main">
                 <div class="l-shell__object-view">c-object-view</div>
                 <div class="l-shell__time-conductor">c-time-conductor</div>
             </div>
-            <splitter align="vertical" target="shell-pane-main"></splitter>
+            <splitter align="vertical" target="shell-pane-main" collapse="to-right"></splitter>
             <div class="l-pane l-shell__pane-inspector">
                 <MctInspector ref="shell-inspector"></MctInspector>
             </div>
