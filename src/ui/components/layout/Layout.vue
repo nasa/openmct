@@ -3,7 +3,7 @@
         <div class="l-shell__main">
             <div class="l-pane l-shell__pane-tree" ref="shell-pane-tree">
                 <div class="l-shell__search">
-                    <MctSearch ref="shell-search"></MctSearch>
+                    <search ref="shell-search"></search>
                 </div>
                 <div class="l-shell__tree">
                     <MctTree ref="shell-tree"></MctTree>
@@ -100,9 +100,9 @@
 <script>
     import MctInspector from './MctInspector.vue';
     import MctMain from './MctMain.vue';
-    import MctSearch from './MctSearch.vue';
     import MctStatus from './MctStatus.vue';
     import MctTree from './MctTree.vue';
+    import search from '../controls/search.vue';
     import splitter from '../controls/splitter.vue';
 
 export default {
@@ -114,9 +114,9 @@ export default {
     components: {
         MctInspector,
         MctMain,
-        MctSearch,
         MctStatus,
         MctTree,
+        search,
         splitter
     }
 }

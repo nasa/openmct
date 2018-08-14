@@ -9,13 +9,12 @@
 
     /******************************* SEARCH */
     .c-search {
+        input[type=search] {
+            width: 100%;
+        }
 
         &-major {
             display: flex;
-
-            input[type=search] {
-                width: 100%;
-            }
         }
     }
 </style>
