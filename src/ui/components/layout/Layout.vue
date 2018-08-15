@@ -28,73 +28,72 @@
 </template>
 
 <style lang="scss">
-@import "~styles/constants";
-@import "~styles/constants-snow";
+    @import "~styles/sass-base";
 
-/******************************* SHELL */
-.l-shell {
-    position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
-    display: flex;
-    flex-flow: column nowrap;
-
-    /********** STATUS AREA */
-    &__status {
-        border-bottom: 1px solid $colorInteriorBorder;
-        flex: 0 1 auto;
-        height: 40px;
-        order: 1;
-        padding: $interiorMarginLg;
-    }
-
-    /********** MAIN AREA */
-    &__main {
-        flex: 1 1 auto;
-        display: flex;
-        flex-flow: row nowrap;
-        order: 2;
-    }
-
-    &__object-view {
-        flex: 1 1 auto;
-        padding: $interiorMarginLg;
-    }
-
-    &__time-conductor {
-        border-top: 1px solid $colorInteriorBorder;
-        min-height: 50px;
-        padding: $interiorMarginLg;
-    }
-
-    /********** MAIN AREA PANES */
-    &__pane-tree,
-    &__pane-main,
-    &__pane-inspector {
+    /******************************* SHELL */
+    .l-shell {
+        position: absolute;
+        top: 0; right: 0; bottom: 0; left: 0;
         display: flex;
         flex-flow: column nowrap;
-    }
 
-    &__pane-tree,
-    &__pane-inspector {
-        max-width: 30%;
-        min-width: 5%;
-    }
+        /********** STATUS AREA */
+        &__status {
+            border-bottom: 1px solid $colorInteriorBorder;
+            flex: 0 1 auto;
+            height: 40px;
+            order: 1;
+            padding: $interiorMarginLg;
+        }
 
-    &__pane-tree {
-        $m: $interiorMargin;
-        background: $colorTreeBg;
-        padding: $m $m + ($splitterD - $splitterHandleD) $m $m;
-        width: 300px
-    }
+        /********** MAIN AREA */
+        &__main {
+            flex: 1 1 auto;
+            display: flex;
+            flex-flow: row nowrap;
+            order: 2;
+        }
 
-    &__pane-main {
-        flex: 1 1 auto;
-    }
+        &__object-view {
+            flex: 1 1 auto;
+            padding: $interiorMarginLg;
+        }
 
-    &__pane-inspector {
-        width: 200px
+        &__time-conductor {
+            border-top: 1px solid $colorInteriorBorder;
+            min-height: 50px;
+            padding: $interiorMarginLg;
+        }
+
+        /********** MAIN AREA PANES */
+        &__pane-tree,
+        &__pane-main,
+        &__pane-inspector {
+            display: flex;
+            flex-flow: column nowrap;
+        }
+
+        &__pane-tree,
+        &__pane-inspector {
+            max-width: 30%;
+            min-width: 5%;
+        }
+
+        &__pane-tree {
+            $m: $interiorMargin;
+            background: $colorTreeBg;
+            padding: $m $m + ($splitterD - $splitterHandleD) $m $m;
+            width: 300px
+        }
+
+        &__pane-main {
+            flex: 1 1 auto;
+        }
+
+        &__pane-inspector {
+            width: 200px
+        }
     }
-}
 </style>
 
 <script>
@@ -105,19 +104,19 @@
     import search from '../controls/search.vue';
     import splitter from '../controls/splitter.vue';
 
-export default {
-    data () {
-        return {
-            msg: 'Hello world!'
+    export default {
+        data () {
+            return {
+                msg: 'Hello world!'
+            }
+        },
+        components: {
+            MctInspector,
+            MctMain,
+            MctStatus,
+            MctTree,
+            search,
+            splitter
         }
-    },
-    components: {
-        MctInspector,
-        MctMain,
-        MctStatus,
-        MctTree,
-        search,
-        splitter
     }
-}
 </script>

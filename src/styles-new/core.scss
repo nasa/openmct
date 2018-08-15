@@ -1,6 +1,6 @@
 @import "vendor/normalize.min.css";
-@import "constants";
-@import "constants-snow";
-@import "glyphs";
-@import "mixins";
+@import "sass-base.scss";
+
+/******************** RENDERS CSS */
 @import "global";
+@import "controls";

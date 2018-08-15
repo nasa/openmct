@@ -10,10 +10,7 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/constants";
-    @import "~styles/constants-snow";
-    @import "~styles/glyphs";
-    @import "~styles/mixins";
+    @import "~styles/sass-base";;
 
     /******************************* SEARCH */
     .c-search {
