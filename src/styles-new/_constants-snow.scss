@@ -205,11 +205,11 @@ $legendCollapsedNameMaxW: 50%;
 $legendHoverValueBg: rgba($colorBodyFg, 0.2);
 
 // Tree
-$colorTreeBg: #f5f5f5;
+$colorTreeBg: #f5f5f5; // Used
 $colorItemTreeHoverBg: pullForward($colorBodyBg, $hoverRatioPercent);
 $colorItemTreeHoverFg: pullForward($colorBodyFg, $hoverRatioPercent);
-$colorItemTreeIcon: $colorKey;
-$colorItemTreeIconHover: $colorItemTreeIcon;
+$colorItemTreeIcon: $colorKey; // Used
+$colorItemTreeIconHover: $colorItemTreeIcon; // Used
 $colorItemTreeFg: $colorBodyFg;
 $colorItemTreeSelectedBg: pushBack($colorKey, 15%);
 $colorItemTreeSelectedFg: $colorBodyBg;

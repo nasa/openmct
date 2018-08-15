@@ -1,29 +1,29 @@
 <template>
     <span class="c-view-control"
-    :class="{ 'c-view-control-expanded' : expanded }"></span>
+    :class="{ 'c-view-control-expanded' : expanded }"
+    @click="toggle"></span>
 </template>
 
 <style lang="scss">
     @import "~styles/sass-base";;
 
     .c-view-control {
-        $d: 14px;
+        $d: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
         flex: 0 0 auto;
-        height: $d;
         width: $d;
-        margin-right: $interiorMargin;
         position: relative;
 
         &:before {
+            $s: .75;
             content: $glyph-icon-arrow-right-equilateral;
             display: block;
             font-family: symbolsfont;
-            font-size: 0.75rem;
+            font-size: 1rem * $s;
             position: absolute;
-            transform-origin: center;
+            transform-origin: floor(($d / 2) * $s);
             transition: transform 100ms ease-in-out;
         }
 
@@ -39,6 +39,11 @@
     export default {
         props: {
             expanded: Boolean
+        },
+        methods: {
+            toggle() {
+                this.expanded = !this.expanded;
+            }
         }
     }
 </script>
