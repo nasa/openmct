@@ -25,7 +25,7 @@
             direction: rtl; // Aligns glyph to right-hand side of container, for transition
             display: block;
             font-family: symbolsfont;
-            flex: 0 1 auto;
+            flex: 0 0 auto;
             opacity: 0.7;
             overflow: hidden;
             padding: 2px; // Prevents clipping

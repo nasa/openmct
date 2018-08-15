@@ -1,6 +1,6 @@
 <template>
     <span class="c-view-control"
-    :class="{ 'c-view-control-expanded' : expanded }"
+    :class="{ 'c-view-control--expanded' : expanded }"
     @click="toggle"></span>
 </template>
 
@@ -23,11 +23,11 @@
             font-family: symbolsfont;
             font-size: 1rem * $s;
             position: absolute;
-            transform-origin: floor(($d / 2) * $s);
+            transform-origin: floor(($d / 2) * $s); // This is slightly better than 'center'
             transition: transform 100ms ease-in-out;
         }
 
-        &-expanded {
+        &--expanded {
             &:before {
                 transform: rotate(90deg);
             }

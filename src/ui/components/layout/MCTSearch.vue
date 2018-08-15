@@ -1,5 +1,5 @@
 <template>
-    <div class="c-search c-search-major">
+    <div class="c-search c-search--major">
         <input type="search" placeholder="Search"/>
     </div>
 </template>
@@ -13,7 +13,7 @@
             width: 100%;
         }
 
-        &-major {
+        &--major {
             display: flex;
         }
     }
