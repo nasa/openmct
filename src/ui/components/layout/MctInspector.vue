@@ -5,7 +5,7 @@
             c-inspector__properties
         </pane>
         <pane class="l-pane c-inspector__elements"
-              splitter="before">
+              handle="before">
             c-inspector__elements
         </pane>
     </multipane>

@@ -1,17 +1,24 @@
 <template>
-    <div class="multipane__pane"
+    <div class="pane"
          :class="{
-             'multipane__pane--collapsed': collapsed
+             'pane--horizontal': type === 'horizontal',
+             'pane--vertical': type === 'vertical',
+             'pane--collapsed': collapsed
          }">
-         <div v-if="splitter"
-              class="multipane__splitter"
+
+         <div v-if="handle"
+              class="pane__resize-handle"
               :class="{
-                  'multipane__splitter--before': splitter === 'before',
-                  'multipane__splitter--after': splitter === 'after'
+                  'pane__resize-handle--before': handle === 'before',
+                  'pane__resize-handle--after': handle === 'after'
               }"
               @mousedown="start"
               >
-              <a class="multipane__splitter__button"
+              <a class="pane__collapse-button"
+                 :class="{
+                     'pane__collapse-button--before': handle === 'before',
+                     'pane__collapse-button--after': handle === 'after'
+                 }"
                  @click="toggleCollapse"
                  v-if="collapsable"></a>
          </div>
@@ -19,10 +26,154 @@
     </div>
 </template>
 
+<style lang="scss">
+    @import "~styles/constants";
+    @import "~styles/constants-snow";
+    @import "~styles/mixins";
+    @import "~styles/glyphs";
+
+    $hitMargin: 4px;
+
+    .pane {
+        & > .pane__resize-handle {
+            z-index: 1;
+            display: block;
+            background: $colorSplitterBg;
+            position: absolute;
+
+            transition: $transOut;
+
+            &:before {
+                content: '';
+            }
+
+            &:active, &:hover {
+                transition: $transIn;
+            }
+
+            &:active {
+                background: $colorSplitterActive;
+            }
+
+            &:hover {
+                background: $colorSplitterHover;
+            }
+        }
+
+        &--horizontal {
+            & > .pane__resize-handle {
+                cursor: col-resize;
+                width: $splitterHandleD;
+                top: 0;
+                bottom: 0;
+                &--before {
+                    left: 0;
+                }
+                &--after {
+                    right: 0;
+                }
+                &:before {
+                    top: 0;
+                    right: $hitMargin * -1;
+                    bottom: 0;
+                    left: $hitMargin * -1;
+                }
+            }
+        }
+
+        &--vertical {
+            > .pane__resize-handle {
+                cursor: row-resize;
+                height: $splitterHandleD;
+                left: 0;
+                right: 0;
+                &--before {
+                    top: 0
+                }
+                &--after {
+                    bottom: 0;
+                }
+                &:before {
+                    top: $hitMargin * -1;
+                    right: 0;
+                    bottom: $hitMargin * -1;
+                    left: 0;
+                }
+            }
+        }
+
+
+        & > .pane__resize-handle > .pane__collapse-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            z-index: 3;
+
+            background: $colorSplitterBg;
+            transition: $transOut;
+
+            &:active, &:hover {
+                transition: $transIn;
+            }
+
+            &:hover {
+                background: $colorSplitterHover;
+            }
+
+            &:active {
+                background: $colorSplitterActive;
+            }
+
+            &:before {
+                color: $colorSplitterFg;
+                display: block;
+                font-size: 0.8em;
+                font-family: symbolsfont;
+            }
+        }
+
+        &--horizontal > .pane__resize-handle  > .pane__collapse-button {
+            width: $splitterD;
+            height: 40px;
+
+            &--before {
+                border-bottom-right-radius: $controlCr;
+                left: 0;
+                &:before {
+                    content: $glyph-icon-arrow-right;
+                }
+            }
+            &--after {
+                border-bottom-left-radius: $controlCr;
+                right: 0;
+                &:before {
+                    content: $glyph-icon-arrow-left;
+                }
+            }
+        }
+
+        &--vertical > .pane__resize-handle > .pane__collapse-button {
+            /* TODO: style buttons for vertical collapse. */
+        }
+    }
+
+    .pane--horizontal.pane--collapsed {
+        width: 0px;
+        min-width: 0px;
+    }
+    .pane--vertical.pane--collapsed {
+        height: 0px;
+        min-height: 0px;
+    }
+
+</style>
+
+
 <script>
 export default {
     props: {
-        splitter: {
+        handle: {
             type: String,
             validator: function (value) {
                 return ['before', 'after'].indexOf(value) !== -1;
@@ -34,6 +185,10 @@ export default {
         return {
             collapsed: false
         }
+    },
+    beforeMount() {
+        console.log('this.$parent', this.$parent, this.$parent.type);
+        this.type = this.$parent.type;
     },
     mounted() {
         this.type = this.$parent.type;
@@ -69,10 +224,10 @@ export default {
         },
         getNewSize: function (event) {
             let delta = this.startPosition - this.getPosition(event);
-            if (this.splitter === "before") {
+            if (this.handle === "before") {
                 return `${this.initial + delta}px`;
             }
-            if (this.splitter === "after") {
+            if (this.handle === "after") {
                 return `${this.initial - delta}px`;
             }
         },
