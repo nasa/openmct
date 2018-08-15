@@ -187,17 +187,12 @@ export default {
         }
     },
     beforeMount() {
-        console.log('this.$parent', this.$parent, this.$parent.type);
-        this.type = this.$parent.type;
-    },
-    mounted() {
         this.type = this.$parent.type;
         if (this.type === 'horizontal') {
             this.styleProp = 'width';
         } else {
             this.styleProp = 'height';
         }
-        this.trackSize();
     },
     methods: {
         toggleCollapse: function () {
