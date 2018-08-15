@@ -1,9 +1,11 @@
 <template>
     <div class="c-search"
-        :class="{ 'is-active': active === true }">
-        <!-- before will be the mag glass icon, set via CSS -->
-        <input class="c-search__input" type="search"/>
-        <a class="c-search__clear-input icon-x-in-circle"></a>
+         :class="{ 'is-active': active === true }">
+        <input class="c-search__input" type="search"
+               v-bind:value="searchInput"
+               @input="handleInput($event)"/>
+        <a class="c-search__clear-input icon-x-in-circle"
+           v-on:click="clearInput"></a>
     </div>
 </template>
 
@@ -30,16 +32,16 @@
             opacity: 0.7;
             overflow: hidden;
             padding: 2px; // Prevents clipping
-            transition: width, padding, opacity 250ms ease;
+            transition: width 1000ms ease; // TODO: Figure out why this no longer works...
         }
 
         &__input {
             background: none  !important;
             box-shadow: none !important; // !important needed to override default for [input]
-            flex: 1 1 100%;
+            flex: 0 1 100%;
             padding-left: 0 !important;
             padding-right: 0 !important;
-            width: 100%; // Width must be set to allow input to collapse below browser min
+            min-width: 10px; // Must be set to allow input to collapse below browser min
         }
 
         &__clear-input {
@@ -69,7 +71,23 @@
 <script>
     export default {
         props: {
-            active: String
+            value: String
+        },
+        data: function() {
+            return {
+                searchInput: '',
+                active: false
+            }
+        },
+        methods: {
+            handleInput(e) {
+                this.searchInput = e.target.value;
+                this.active = (this.searchInput.length > 0);
+            },
+            clearInput() {
+                this.searchInput = '';
+                this.active = false;
+            }
         }
     }
 </script>
