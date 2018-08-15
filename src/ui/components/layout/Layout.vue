@@ -1,27 +1,31 @@
 <template>
     <div class="l-shell">
-        <div class="l-shell__main">
-            <div class="l-pane l-shell__pane-tree" ref="shell-pane-tree">
+        <multipane class="l-shell__main"
+                   type="horizontal">
+            <pane class="l-pane l-shell__pane-tree"
+                  splitter="after"
+                  collapsable>
                 <div class="l-shell__search">
                     <search ref="shell-search"></search>
                 </div>
                 <div class="l-shell__tree">
                     <MctTree ref="shell-tree"></MctTree>
                 </div>
-            </div>
-            <splitter align="vertical" target="shell-pane-tree" collapse="to-left"></splitter>
-            <div class="l-pane l-shell__pane-main" ref="shell-pane-main">
+            </pane>
+            <pane class="l-pane l-shell__pane-main" >
                 <div class="l-shell__object-view">c-object-view</div>
                 <div class="l-shell__time-conductor">c-time-conductor</div>
-            </div>
+            </pane>
             <splitter align="vertical" target="shell-pane-main" collapse="to-right"></splitter>
-            <div class="l-pane l-shell__pane-inspector">
-                <MctInspector ref="shell-inspector"></MctInspector>
-            </div>
-        </div>
+            <pane class="l-pane l-shell__pane-inspector"
+                  splitter="before"
+                  collapsable>
+                <MctInspector></MctInspector>
+            </pane>
+        </multipane>
         <div class="l-shell__status">
             [ Create Button ]
-            <MctStatus ref="shell-status"></MctStatus>
+            <MctStatus></MctStatus>
             [ App Logo ]
         </div>
     </div>
@@ -102,7 +106,8 @@
     import MctStatus from './MctStatus.vue';
     import MctTree from './MctTree.vue';
     import search from '../controls/search.vue';
-    import splitter from '../controls/splitter.vue';
+    import multipane from '../controls/multipane.vue';
+    import pane from '../controls/pane.vue';
 
     export default {
         data () {
@@ -116,7 +121,8 @@
             MctStatus,
             MctTree,
             search,
-            splitter
+            multipane,
+            pane
         }
     }
 </script>

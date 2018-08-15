@@ -1,13 +1,14 @@
 <template>
-    <div class="c-inspector">
-        <div class="c-inspector__properties">
+    <multipane class="c-inspector"
+               type="vertical">
+        <pane class="c-inspector__properties">
             c-inspector__properties
-        </div>
-        <splitter align="horizontal"></splitter>
-        <div class="l-pane c-inspector__elements">
+        </pane>
+        <pane class="l-pane c-inspector__elements"
+              splitter="before">
             c-inspector__elements
-        </div>
-    </div>
+        </pane>
+    </multipane>
 </template>
 
 <style lang="scss">
@@ -36,10 +37,12 @@
 </style>
 
 <script>
-    import splitter from '../controls/splitter.vue'
+    import multipane from '../controls/multipane.vue';
+    import pane from '../controls/pane.vue';
     export default {
         components: {
-            splitter
+            multipane,
+            pane
         }
     }
 </script>
