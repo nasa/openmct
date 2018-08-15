@@ -32,15 +32,16 @@
             opacity: 0.7;
             overflow: hidden;
             padding: 2px; // Prevents clipping
-            transition: width 1000ms ease; // TODO: Figure out why this no longer works...
+            transition: width 250ms ease;
+            width: 1em;
         }
 
         &__input {
             background: none  !important;
             box-shadow: none !important; // !important needed to override default for [input]
             flex: 0 1 100%;
-            padding-left: 0 !important;
-            padding-right: 0 !important;
+            padding-left: 2px !important;
+            padding-right: 2px !important;
             min-width: 10px; // Must be set to allow input to collapse below browser min
         }
 
