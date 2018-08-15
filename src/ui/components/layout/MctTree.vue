@@ -1,8 +1,8 @@
 <template>
     <ul class="c-tree">
         <li class="c-tree__item-h">
-            <div class="c-tree__item" onclick="alert('tree item click');">
-                <span class="c-view-control"></span>
+            <div class="c-tree__item">
+                <viewControl></viewControl>
                 <span class="c-object-name icon-folder">
                   Tree item x with a long name that forces ellipsis to occur
                 </span>
@@ -19,7 +19,7 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/constants";
+    @import "~styles/sass-base";
 
     .c-tree {
         .c-tree {
@@ -38,22 +38,15 @@
             &:hover {
                 background: rgba(white, 0.2);
             }
-
-            .c-view-control {
-                // TODO: move this into a future view-control component or the _controls.scss file
-                $d: 11px;
-                background: rgba(red, 0.4);
-                display: inline-block;
-                flex: 0 0 auto;
-                height: $d;
-                width: $d;
-                margin-right: 5px;
-            }
         }
     }
 </style>
 
 <script>
+    import viewControl from '../controls/viewControl.vue'
     export default {
+        components: {
+            viewControl
+        }
     }
 </script>
