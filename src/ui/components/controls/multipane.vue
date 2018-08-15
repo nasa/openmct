@@ -10,66 +10,142 @@
 
 <style lang="scss">
 .multipane {
-    $backgroundColor: #06f;
-    $size: 10px;
+    @import "~styles/constants";
+    @import "~styles/constants-snow";
+    @import "~styles/mixins";
+    @import "~styles/glyphs";
+
+    $hitMargin: 4px;
 
     & > .multipane__pane > .multipane__splitter {
         z-index: 1;
         display: block;
-        background: #ccc;
+        background: $colorSplitterBg;
         position: absolute;
+
+        transition: $transOut;
 
         &:before {
             content: '';
         }
 
+        &:active, &:hover {
+            transition: $transIn;
+        }
+
+        &:active {
+            background: $colorSplitterActive;
+        }
+
         &:hover {
-            background: rgba($backgroundColor, 0.3);
-            &:before {
-                background: $backgroundColor;
-            }
+            background: $colorSplitterHover;
         }
     }
 
     &--horizontal > .multipane__pane > .multipane__splitter {
         cursor: col-resize;
-        width: $size;
-        top: 0px;
-        bottom: 0px;
+        width: $splitterHandleD;
+        top: 0;
+        bottom: 0;
         &--before {
-            left: (- $size / 2);
+            left: 0;
         }
         &--after {
-            right: (- $size / 2);
+            right: 0;
         }
         &:before {
-            // Divider line
-            width: 1px;
-            height: 100%;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 0;
+            right: $hitMargin * -1;
+            bottom: 0;
+            left: $hitMargin * -1;
         }
     }
 
     &--vertical > .multipane__pane > .multipane__splitter {
         cursor: row-resize;
-        height: $size;
-        left: 0px;
-        right: 0px;
+        height: $splitterHandleD;
+        left: 0;
+        right: 0;
         &--before {
-            top: (- $size / 2);
+            top: 0
         }
         &--after {
-            left: (- $size / 2);
+            bottom: 0;
+        }
+        &:before {
+            top: $hitMargin * -1;
+            right: 0;
+            bottom: $hitMargin * -1;
+            left: 0;
+        }
+    }
+
+    /* collapsed panes */
+    &--horizontal > .multipane__pane--collapsed {
+        // TODO: make it fully collapse
+        width: 0px;
+    }
+
+    &--vertical > .multipane__pane--collapsed {
+        // TODO: make it fully collapse
+        height: 0px;
+    }
+
+    /* Collapse button styling */
+
+    & > .multipane__pane > .multipane__splitter .multipane__splitter__button {
+        background: $colorSplitterBg;
+        transition: $transOut;
+
+        &:active, &:hover {
+            transition: $transIn;
         }
 
-        &:before {
-            // Divider line
-            width: 100%;
-            height: 1px;
-            top: 50%;
-            transform: translateY(-50%);
+        &:hover {
+            background: $colorSplitterHover;
         }
+
+        &:active {
+            background: $colorSplitterActive;
+        }
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        z-index: 3;
+        &:before {
+            color: $colorSplitterFg;
+            display: block;
+            font-size: 0.8em;
+            font-family: symbolsfont;
+        }
+    }
+
+    &--horizontal > .multipane__pane > .multipane__splitter {
+        & > .multipane__splitter__button {
+            width: $splitterD;
+            height: 40px;
+        }
+
+        &--before .multipane__splitter__button {
+            border-bottom-right-radius: $controlCr;
+            left: 0;
+            &:before {
+                content: $glyph-icon-arrow-right;
+            }
+        }
+        &--after .multipane__splitter__button {
+            border-bottom-left-radius: $controlCr;
+            right: 0;
+            &:before {
+                content: $glyph-icon-arrow-left;
+            }
+        }
+    }
+
+    &--vertical > .multipane__pane > .multipane__splitter__button {
+        /* TODO: style buttons for vertical collapse. */
     }
 }
 </style>

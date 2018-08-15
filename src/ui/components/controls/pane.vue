@@ -1,13 +1,20 @@
 <template>
-    <div class="multipane__pane">
+    <div class="multipane__pane"
+         :class="{
+             'multipane__pane--collapsed': collapsed
+         }">
          <div v-if="splitter"
               class="multipane__splitter"
               :class="{
                   'multipane__splitter--before': splitter === 'before',
-                  'multipane__splitter--after': splitter === 'after',
+                  'multipane__splitter--after': splitter === 'after'
               }"
               @mousedown="start"
-              ></div>
+              >
+              <a class="multipane__splitter__button"
+                 @click="toggleCollapse"
+                 v-if="collapsable"></a>
+         </div>
          <slot></slot>
     </div>
 </template>
@@ -20,13 +27,34 @@ export default {
             validator: function (value) {
                 return ['before', 'after'].indexOf(value) !== -1;
             }
+        },
+        collapsable: Boolean
+    },
+    data() {
+        return {
+            collapsed: false
         }
     },
     mounted() {
         this.type = this.$parent.type;
+        if (this.type === 'horizontal') {
+            this.styleProp = 'width';
+        } else {
+            this.styleProp = 'height';
+        }
         this.trackSize();
     },
     methods: {
+        toggleCollapse: function () {
+            this.collapsed = !this.collapsed;
+            if (this.collapsed) {
+                this.currentSize = this.$el.style[this.styleProp];
+                this.$el.style[this.styleProp] = '';
+            } else {
+                this.$el.style[this.styleProp] = this.currentSize;
+                delete this.currentSize;
+            }
+        },
         trackSize: function() {
             if (this.type === 'vertical') {
                 this.initial = this.$el.offsetHeight;
@@ -50,14 +78,11 @@ export default {
         },
         updatePosition: function (event) {
             let size = this.getNewSize(event);
-            if (this.type === 'horizontal') {
-                this.$el.style.width = size;
-            } else {
-                this.$el.style.height = size;
-            }
+            this.$el.style[this.styleProp] = size;
         },
         start: function (event) {
             this.startPosition = this.getPosition(event);
+            this.trackSize();
             document.body.addEventListener('mousemove', this.updatePosition);
             document.body.addEventListener('mouseup', this.end);
         },
