@@ -6,9 +6,9 @@
                   splitter="after"
                   collapsable>
                 <div class="l-shell__search">
-                    <search ref="shell-search"></search>
+                    <search class="c-search--major" ref="shell-search"></search>
                 </div>
-                <div class="l-shell__tree">
+                <div class="l-shell__tree u-last">
                     <MctTree ref="shell-tree"></MctTree>
                 </div>
             </pane>
@@ -16,7 +16,6 @@
                 <div class="l-shell__object-view">c-object-view</div>
                 <div class="l-shell__time-conductor">c-time-conductor</div>
             </pane>
-            <splitter align="vertical" target="shell-pane-main" collapse="to-right"></splitter>
             <pane class="l-pane l-shell__pane-inspector"
                   splitter="before"
                   collapsable>
@@ -75,6 +74,11 @@
         &__pane-inspector {
             display: flex;
             flex-flow: column nowrap;
+
+            // Create margin between shell elements in a pane
+            > [class*="l-shell__"] + [class*="l-shell__"] {
+                margin-top: $interiorMargin;
+            }
         }
 
         &__pane-tree,
@@ -86,7 +90,7 @@
         &__pane-tree {
             $m: $interiorMargin;
             background: $colorTreeBg;
-            padding: $m $m + ($splitterD - $splitterHandleD) $m $m;
+            padding: $m $m + ($splitterD) $m $m; // TODO: move this into pane.vue
             width: 300px
         }
 

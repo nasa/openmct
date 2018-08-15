@@ -26,11 +26,22 @@
             display: block;
             font-family: symbolsfont;
             flex: 0 0 auto;
-            opacity: 0.7;
+            opacity: 0.5;
             overflow: hidden;
             padding: 2px; // Prevents clipping
             transition: width 250ms ease;
             width: 1em;
+        }
+
+        &:hover {
+            box-shadow: inset rgba(black, 0.8) 0 0px 2px;
+            &:before {
+                opacity: 0.9;
+            }
+        }
+
+        &--major {
+            padding: 4px;
         }
 
         &__input {
@@ -44,13 +55,6 @@
 
         &__clear-input {
             display: none;
-        }
-
-        &:hover {
-            box-shadow: inset rgba(black, 0.7) 0 0px 2px;
-            &:before {
-                opacity: 0.9;
-            }
         }
 
         &.is-active {

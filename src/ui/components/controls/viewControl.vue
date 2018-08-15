@@ -1,6 +1,9 @@
 <template>
     <span class="c-view-control"
-    :class="{ 'c-view-control--expanded' : expanded }"
+    :class="{
+        'c-view-control--expanded' : expanded,
+        'is-disabled' : disabled === true
+    }"
     @click="toggle"></span>
 </template>
 
@@ -16,7 +19,7 @@
         width: $d;
         position: relative;
 
-        &:before {
+        &:not(.is-disabled):before {
             $s: .75;
             content: $glyph-icon-arrow-right-equilateral;
             display: block;
@@ -38,7 +41,16 @@
 <script>
     export default {
         props: {
-            expanded: Boolean
+            expanded:  {
+                type: Boolean,
+                value: false
+            },
+            disabled: {
+                // Provided to allow the view-control to still occupy space without displaying a control icon.
+                // Used as such in the tree - when a node doesn't have children, set disabled to true.
+                type: Boolean,
+                value: false
+            }
         },
         methods: {
             toggle() {
