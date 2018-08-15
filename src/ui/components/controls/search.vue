@@ -81,10 +81,13 @@
         },
         methods: {
             handleInput(e) {
+                // Grab input as the user types it
+                // and set 'active' based on input length > 0
                 this.searchInput = e.target.value;
                 this.active = (this.searchInput.length > 0);
             },
             clearInput() {
+                // Clear the user's input and set 'active' to false
                 this.searchInput = '';
                 this.active = false;
             }
