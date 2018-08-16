@@ -1,41 +1,46 @@
 <template>
-    <div class="pane"
+    <div class="l-pane"
          :class="{
-             'pane--horizontal': type === 'horizontal',
-             'pane--vertical': type === 'vertical',
-             'pane--collapsed': collapsed
+             'l-pane--horizontal': type === 'horizontal',
+             'l-pane--vertical': type === 'vertical',
+             'l-pane--collapsed': collapsed
          }">
 
-         <div v-if="handle"
-              class="pane__resize-handle"
-              :class="{
-                  'pane__resize-handle--before': handle === 'before',
-                  'pane__resize-handle--after': handle === 'after'
+        <div v-if="handle"
+             class="l-pane__resize-handle"
+             :class="{
+                  'l-pane__resize-handle--before': handle === 'before',
+                  'l-pane__resize-handle--after': handle === 'after'
               }"
-              @mousedown="start"
-              >
-              <a class="pane__collapse-button"
-                 :class="{
-                     'pane__collapse-button--before': handle === 'before',
-                     'pane__collapse-button--after': handle === 'after'
+             @mousedown="start"
+        >
+            <a class="l-pane__collapse-button"
+               :class="{
+                     'l-pane__collapse-button--before': handle === 'before',
+                     'l-pane__collapse-button--after': handle === 'after'
                  }"
-                 @click="toggleCollapse"
-                 v-if="collapsable"></a>
-         </div>
-         <slot></slot>
+               @click="toggleCollapse"
+               v-if="collapsable"></a>
+        </div>
+        <div class="l-pane__contents">
+            <slot></slot>
+        </div>
     </div>
 </template>
 
 <style lang="scss">
-    @import "~styles/constants";
-    @import "~styles/constants-snow";
-    @import "~styles/mixins";
-    @import "~styles/glyphs";
+    @import "~styles/sass-base";
 
     $hitMargin: 4px;
 
-    .pane {
-        & > .pane__resize-handle {
+    // TODO: get handles visible when pane is collapsed
+
+    .l-pane {
+        &__contents {
+            display: contents;
+        }
+
+        & > .l-pane__resize-handle {
             z-index: 1;
             display: block;
             background: $colorSplitterBg;
@@ -44,7 +49,11 @@
             transition: $transOut;
 
             &:before {
+                // Extended hit area
                 content: '';
+                display: block;
+                position: absolute;
+                z-index: -1;
             }
 
             &:active, &:hover {
@@ -61,17 +70,20 @@
         }
 
         &--horizontal {
-            & > .pane__resize-handle {
+            & > .l-pane__resize-handle {
                 cursor: col-resize;
                 width: $splitterHandleD;
                 top: 0;
                 bottom: 0;
+
                 &--before {
                     left: 0;
                 }
+
                 &--after {
                     right: 0;
                 }
+
                 &:before {
                     top: 0;
                     right: $hitMargin * -1;
@@ -82,17 +94,20 @@
         }
 
         &--vertical {
-            > .pane__resize-handle {
+            > .l-pane__resize-handle {
                 cursor: row-resize;
                 height: $splitterHandleD;
                 left: 0;
                 right: 0;
+
                 &--before {
                     top: 0
                 }
+
                 &--after {
                     bottom: 0;
                 }
+
                 &:before {
                     top: $hitMargin * -1;
                     right: 0;
@@ -103,13 +118,12 @@
         }
 
 
-        & > .pane__resize-handle > .pane__collapse-button {
+        & > .l-pane__resize-handle > .l-pane__collapse-button {
             display: flex;
             align-items: center;
             justify-content: center;
             position: absolute;
             z-index: 3;
-
             background: $colorSplitterBg;
             transition: $transOut;
 
@@ -133,7 +147,7 @@
             }
         }
 
-        &--horizontal > .pane__resize-handle  > .pane__collapse-button {
+        &--horizontal > .l-pane__resize-handle  > .l-pane__collapse-button {
             width: $splitterD;
             height: 40px;
 
@@ -153,16 +167,23 @@
             }
         }
 
-        &--vertical > .pane__resize-handle > .pane__collapse-button {
+        &--vertical > .l-pane__resize-handle > .l-pane__collapse-button {
             /* TODO: style buttons for vertical collapse. */
+        }
+
+        &--collapsed {
+            padding: 0 !important;
+            .l-pane__contents {
+                display: none;
+            }
         }
     }
 
-    .pane--horizontal.pane--collapsed {
+    .l-pane--horizontal.l-pane--collapsed {
         width: 0px;
         min-width: 0px;
     }
-    .pane--vertical.pane--collapsed {
+    .l-pane--vertical.l-pane--collapsed {
         height: 0px;
         min-height: 0px;
     }

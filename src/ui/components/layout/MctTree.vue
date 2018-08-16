@@ -22,8 +22,12 @@
     @import "~styles/sass-base";
 
     .c-tree {
+        overflow-x: hidden;
+        overflow-y: auto;
+        height: 100%;
+
         .c-tree {
-            display: none;
+            display: none; // Will be overridden when in an expanded tree node.
             margin-left: 20px;
         }
 

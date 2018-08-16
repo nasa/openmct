@@ -8,7 +8,7 @@
                 <div class="l-shell__search">
                     <search class="c-search--major" ref="shell-search"></search>
                 </div>
-                <div class="l-shell__tree u-last">
+                <div class="l-shell__tree">
                     <MctTree ref="shell-tree"></MctTree>
                 </div>
             </pane>
@@ -55,6 +55,10 @@
             display: flex;
             flex-flow: row nowrap;
             order: 2;
+        }
+
+        &__tree {
+            flex: 1 1 100%;
         }
 
         &__object-view {
