@@ -12,14 +12,14 @@
                     <MctTree ref="shell-tree"></MctTree>
                 </div>
             </pane>
-            <pane class="l-pane l-shell__pane-main" >
-                <div class="l-shell__object-view">c-object-view</div>
-                <div class="l-shell__time-conductor">c-time-conductor</div>
+            <pane class="l-pane l-shell__pane-main">
+                <div style="position: absolute; top: 0; bottom: 0; width: 100%" ref="mainContainer">
+                </div>
             </pane>
             <pane class="l-pane l-shell__pane-inspector"
                   handle="before"
                   collapsable>
-                <MctInspector></MctInspector>
+                <MctInspector ref="inspector"></MctInspector>
             </pane>
         </multipane>
         <div class="l-shell__status">
@@ -121,6 +121,10 @@
         data () {
             return {
                 msg: 'Hello world!'
+            }
+        },
+        methods: {
+            navigateTo(path, openmct) {
             }
         },
         components: {
