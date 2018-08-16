@@ -41,24 +41,24 @@
                     </li>
                 </ul>
             </div>
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             <!-- ngIf: !controller.hasProviderView() --><div ng-if="!controller.hasProviderView()" class="ng-scope">
             <mct-representation key="inspectorKey" mct-object="controller.selectedItem()" ng-model="ngModel" class="ng-pristine ng-untouched ng-valid ng-isolate-scope">
@@ -278,8 +278,8 @@
 
         </pane>
         <pane class="l-pane c-inspector__elements"
-              splitter="before">
-            c-inspector-elements
+              handle="before">
+            c-inspector__elements
         </pane>
     </multipane>
 </template>

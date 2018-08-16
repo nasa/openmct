@@ -3,7 +3,7 @@
         <multipane class="l-shell__main"
                    type="horizontal">
             <pane class="l-pane l-shell__pane-tree"
-                  splitter="after"
+                  handle="after"
                   collapsable>
                 <div class="l-shell__search">
                     <search class="c-search--major" ref="shell-search"></search>
@@ -17,7 +17,7 @@
                 <div class="l-shell__time-conductor">c-time-conductor</div>
             </pane>
             <pane class="l-pane l-shell__pane-inspector"
-                  splitter="before"
+                  handle="before"
                   collapsable>
                 <MctInspector></MctInspector>
             </pane>
