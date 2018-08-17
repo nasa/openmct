@@ -235,14 +235,16 @@ $scrollbarThumbColorMenu: pullForward($colorMenuBg, 10%);
 $scrollbarThumbColorMenuHov: pullForward($scrollbarThumbColorMenu, 2%);
 
 // Splitter
-$splitterD: 10px;
+$splitterD: 7px;
 $splitterCollapseBtnD: ($splitterD, 30px);
 $splitterDSm: 8px; // Smaller splitter, used inside elements like a Timeline view
-$splitterHandleD: 3px;
+$splitterHandleD: 7px;
+$splitterGrippyD: ($splitterHandleD - 4, 75px, 50px); // thickness, length, min-length
 $colorSplitterBaseBg: $colorBodyBg;
-$colorSplitterBg: pullForward($colorSplitterBaseBg, 15%);
+$colorSplitterBg: pullForward($colorSplitterBaseBg, 10%);
 $colorSplitterFg: $colorBodyBg;
 $colorSplitterButtonBg: pullForward($colorSplitterBaseBg, 20%);
+$colorSplitterGrippy: pullForward($colorSplitterBaseBg, 30%);
 $splitterShdw: none;
 $splitterEndCr: none;
 $colorSplitterHover: pullForward($colorSplitterBg, $hoverRatioPercent * 2);

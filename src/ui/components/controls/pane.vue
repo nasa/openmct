@@ -53,6 +53,15 @@
                     left: $hitMargin * -1;
                 }
 
+                &:after {
+                    // Grippy
+                    min-height: nth($splitterGrippyD, 3);
+                    height: nth($splitterGrippyD, 2);
+                    width: nth($splitterGrippyD, 1);
+                    top: 50%; left: ($splitterHandleD - nth($splitterGrippyD, 1)) / 2;
+                    transform: translateY(-50%);
+                }
+
                 &--before {
                     // Handle at left edge of containing pane
                     left: 0;
@@ -74,7 +83,6 @@
             }
 
             [class*="collapse-button"] {
-                border-bottom-left-radius: $controlCr;
                 height: nth($splitterCollapseBtnD, 2);
                 width: nth($splitterCollapseBtnD, 1);
 
@@ -119,6 +127,15 @@
                     left: 0;
                 }
 
+                &:after {
+                    // Grippy
+                    min-width: nth($splitterGrippyD, 3);
+                    width: nth($splitterGrippyD, 2);
+                    height: nth($splitterGrippyD, 1);
+                    left: 50%; top: ($splitterHandleD - nth($splitterGrippyD, 1)) / 2;
+                    transform: translateX(-50%);
+                }
+
                 &--before {
                     // Handle at top edge of containing pane
                     top: 0;
@@ -160,6 +177,16 @@
                 z-index: -1;
             }
 
+            &:after {
+                // Grippy affordance
+                content: '';
+                background: $colorSplitterGrippy;
+                border-radius: 5px;
+                display: block;
+                position: absolute;
+                z-index: 1;
+            }
+
             &:active, &:hover {
                 transition: $transIn;
             }
@@ -180,7 +207,7 @@
             justify-content: center;
             position: absolute;
             z-index: 3;
-            background: $colorSplitterButtonBg;
+            background: $colorSplitterGrippy;
             transition: $transOut;
 
             &:active, &:hover {
@@ -198,7 +225,7 @@
             &:before {
                 color: $colorSplitterFg;
                 display: block;
-                font-size: 0.7em;
+                font-size: 0.6em;
                 font-family: symbolsfont;
             }
         }

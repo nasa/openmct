@@ -1,8 +1,8 @@
 <template>
-    <div class="multipane"
+    <div class="l-multipane"
          :class="{
-             'multipane--vertical': type === 'vertical',
-             'multipane--horizontal': type === 'horizontal'
+             'l-multipane--vertical': type === 'vertical',
+             'l-multipane--horizontal': type === 'horizontal'
          }">
         <slot></slot>
     </div>
