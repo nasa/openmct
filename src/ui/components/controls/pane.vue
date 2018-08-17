@@ -12,13 +12,8 @@
                   'l-pane__resize-handle--before': handle === 'before',
                   'l-pane__resize-handle--after': handle === 'after'
               }"
-             @mousedown="start"
-        >
+             @mousedown="start">
             <a class="l-pane__collapse-button"
-               :class="{
-                     'l-pane__collapse-button--before': handle === 'before',
-                     'l-pane__collapse-button--after': handle === 'after'
-                 }"
                @click="toggleCollapse"
                v-if="collapsable"></a>
         </div>
@@ -35,17 +30,126 @@
 
     // TODO: get handles visible when pane is collapsed
 
+
+    /**************************** BASE STYLES */
     .l-pane {
-        &__contents {
-            display: contents;
+        /************************ PANES */
+        &--horizontal {
+            // Pane adjusts size horizontally, handles run vertically
+            // Selectors here
+
+            > .l-pane__resize-handle {
+                //background: red;
+                cursor: col-resize;
+                width: $splitterHandleD;
+                top: 0;
+                bottom: 0;
+
+                &:before {
+                    // Extended hit area
+                    top: 0;
+                    right: $hitMargin * -1;
+                    bottom: 0;
+                    left: $hitMargin * -1;
+                }
+
+                &--before {
+                    // Handle at left edge of containing pane
+                    left: 0;
+
+                    [class*="collapse-button"] {
+                        left: 0;
+                        transform: scaleX(-1);
+                    }
+                }
+
+                &--after {
+                    // Handle at right edge of containing pane
+                    right: 0;
+
+                    [class*="collapse-button"] {
+                        right: 0;
+                    }
+                }
+            }
+
+            [class*="collapse-button"] {
+                border-bottom-left-radius: $controlCr;
+                height: nth($splitterCollapseBtnD, 2);
+                width: nth($splitterCollapseBtnD, 1);
+
+                &:before {
+                    content: $glyph-icon-arrow-left;
+                }
+            }
+
+            &.l-pane--collapsed {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                width: 0px;
+                min-width: 0px;
+
+                > .l-pane__resize-handle {
+                    &--before {
+                        transform: translateX($splitterHandleD * -1) scaleX(-1);
+                    }
+
+                    &--after {
+                        transform: translateX($splitterHandleD) scaleX(-1);
+                    }
+                }
+            }
         }
 
-        & > .l-pane__resize-handle {
+        &--vertical {
+            // Pane adjusts size vertically, handles run horizontally
+            // Selectors here
+
+            > .l-pane__resize-handle {
+                //background: green;
+                cursor: row-resize;
+                height: $splitterHandleD;
+                left: 0;
+                right: 0;
+
+                &:before {
+                    top: $hitMargin * -1;
+                    right: 0;
+                    bottom: $hitMargin * -1;
+                    left: 0;
+                }
+
+                &--before {
+                    // Handle at top edge of containing pane
+                    top: 0;
+                }
+
+                &--after {
+                    // Handle at bottom edge of containing pane
+                    bottom: 0;
+                }
+            }
+
+            [class*="collapse-button"] {
+                height: nth($splitterCollapseBtnD, 1);
+                width: nth($splitterCollapseBtnD, 2);
+            }
+
+            &.l-pane--collapsed {
+                padding-top: 0 !important;
+                padding-bottom: 0 !important;
+                height: 0px;
+                min-height: 0px;
+            }
+        }
+
+        /************************ HANDLES */
+        &__resize-handle {
+            // Selectors for handle in any context
             z-index: 1;
             display: block;
             background: $colorSplitterBg;
             position: absolute;
-
             transition: $transOut;
 
             &:before {
@@ -61,7 +165,7 @@
             }
 
             &:active {
-                background: $colorSplitterActive;
+                background: $colorSplitterActive; // Not really working with drag
             }
 
             &:hover {
@@ -69,62 +173,14 @@
             }
         }
 
-        &--horizontal {
-            & > .l-pane__resize-handle {
-                cursor: col-resize;
-                width: $splitterHandleD;
-                top: 0;
-                bottom: 0;
-
-                &--before {
-                    left: 0;
-                }
-
-                &--after {
-                    right: 0;
-                }
-
-                &:before {
-                    top: 0;
-                    right: $hitMargin * -1;
-                    bottom: 0;
-                    left: $hitMargin * -1;
-                }
-            }
-        }
-
-        &--vertical {
-            > .l-pane__resize-handle {
-                cursor: row-resize;
-                height: $splitterHandleD;
-                left: 0;
-                right: 0;
-
-                &--before {
-                    top: 0
-                }
-
-                &--after {
-                    bottom: 0;
-                }
-
-                &:before {
-                    top: $hitMargin * -1;
-                    right: 0;
-                    bottom: $hitMargin * -1;
-                    left: 0;
-                }
-            }
-        }
-
-
-        & > .l-pane__resize-handle > .l-pane__collapse-button {
+        /************************ COLLAPSE BUTTONS */
+        &__collapse-button {
             display: flex;
             align-items: center;
             justify-content: center;
             position: absolute;
             z-index: 3;
-            background: $colorSplitterBg;
+            background: $colorSplitterButtonBg;
             transition: $transOut;
 
             &:active, &:hover {
@@ -142,52 +198,23 @@
             &:before {
                 color: $colorSplitterFg;
                 display: block;
-                font-size: 0.8em;
+                font-size: 0.7em;
                 font-family: symbolsfont;
             }
         }
 
-        &--horizontal > .l-pane__resize-handle  > .l-pane__collapse-button {
-            width: $splitterD;
-            height: 40px;
-
-            &--before {
-                border-bottom-right-radius: $controlCr;
-                left: 0;
-                &:before {
-                    content: $glyph-icon-arrow-right;
-                }
-            }
-            &--after {
-                border-bottom-left-radius: $controlCr;
-                right: 0;
-                &:before {
-                    content: $glyph-icon-arrow-left;
-                }
-            }
+        /************************ CONTENTS */
+        &__contents {
+            display: contents;
         }
 
-        &--vertical > .l-pane__resize-handle > .l-pane__collapse-button {
-            /* TODO: style buttons for vertical collapse. */
-        }
-
+        /************************ COLLAPSED STATE */
         &--collapsed {
-            padding: 0 !important;
             .l-pane__contents {
                 display: none;
             }
         }
     }
-
-    .l-pane--horizontal.l-pane--collapsed {
-        width: 0px;
-        min-width: 0px;
-    }
-    .l-pane--vertical.l-pane--collapsed {
-        height: 0px;
-        min-height: 0px;
-    }
-
 </style>
 
 
