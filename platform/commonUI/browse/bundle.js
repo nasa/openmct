@@ -73,15 +73,6 @@ define([
     legacyRegistry.register("platform/commonUI/browse", {
         "extensions": {
             "routes": [
-                {
-                    "when": "/browse/:ids*?",
-                    "template": browseTemplate,
-                    "reloadOnSearch": false
-                },
-                {
-                    "when": "",
-                    "redirectTo": "/browse/"
-                }
             ],
             "constants": [
                 {

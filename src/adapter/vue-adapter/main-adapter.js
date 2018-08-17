@@ -14,6 +14,27 @@ define([
         }
     }
 
+    // recursively locate and return an object inside of a container
+    // via a path.  If at any point in the recursion it fails to find
+    // the next object, it will return the parent.
+    function findViaComposition(containerObject, path) {
+        var nextId = path.shift();
+        if (!nextId) {
+            return containerObject;
+        }
+        return containerObject.useCapability('composition')
+            .then(function (composees) {
+                var nextObject = findObject(composees, nextId);
+                if (!nextObject) {
+                    return containerObject;
+                }
+                if (!nextObject.hasCapability('composition')) {
+                    return nextObject;
+                }
+                return findViaComposition(nextObject, path);
+            });
+    }
+
     function getLastChildIfRoot(object) {
         if (object.getId() !== 'ROOT') {
             return object;
@@ -22,6 +43,15 @@ define([
             .then(function (composees) {
                 return composees[composees.length - 1];
             });
+    }
+
+    function pathForObject(domainObject) {
+        var context = domainObject.getCapability('context'),
+            objectPath = context ? context.getPath() : [],
+            ids = objectPath.map(function (domainObj) {
+                return domainObj.getId();
+            });
+        return  "/browse/" + ids.slice(1).join("/");
     }
 
     class MainAdapter {
@@ -36,12 +66,6 @@ define([
             this.navigationService = this.$injector.get('navigationService');
             this.$timeout = this.$injector.get('$timeout');
 
-            // this.urlService = this.$injector.get('urlService');
-            // this.$route = this.$injector.get('$route');
-            // this.defaultPath = this.$injector.get('DEFAULT_PATH');
-            // this.initialPath = (this.$route.current.params.ids || defaultPath).split("/"),
-            // console.log('Initial path!', initialPath);
-
             this.templateMap = {};
             this.$injector.get('templates[]').forEach((t) => {
                 this.templateMap[t.key] = this.templateMap[t.key] || t;
@@ -49,50 +73,34 @@ define([
 
             var $rootScope = this.$injector.get('$rootScope');
             this.scope = $rootScope.$new();
+            this.scope.representation = {};
 
-
-            this.run();
-
-            this.templateLinker.link(
-                this.scope,
-                angular.element(layout.$refs.mainContainer),
-                this.templateMap["browseObject"]
-            );
+            openmct.router.route(/^\/browse\/(.*)$/, (path, results) => {
+                let navigatePath = results[1];
+                if (!navigatePath) {
+                    navigatePath = 'mine';
+                }
+                this.navigateToPath(navigatePath);
+            });
 
             this.navigationService.addListener(o => this.navigateToObject(o));
-            this.getObject('ROOT')
-                .then(rootObject => {
-                    this.rootObject = rootObject;
-                    return getLastChildIfRoot(rootObject);
+        }
+
+        navigateToPath(path) {
+            if (!Array.isArray(path)) {
+                path = path.split('/');
+            }
+            return this.getObject('ROOT')
+                .then(root => {
+                    return findViaComposition(root, path);
                 })
-                .then(o => {
-                    this.navigationService.setNavigation(o, true);
+                .then(getLastChildIfRoot)
+                .then(object => {
+                    this.setMainViewObject(object);
                 });
-            // this.navigateToRoot();
         }
 
-        run() {
-            // TODO: navigate to default path.
-            // TODO: listen to route service and navigate on route changes?
-            // TODO: handle change to/from ?
-
-
-
-        }
-
-        // idsForObject(domainObject) {
-        //     return this.urlService
-        //         .urlForLocation("", domainObject)
-        //         .replace('/', '');
-        // }
-
-        navigateToObject(object) {
-            this.scope.representation = {
-                selected: {
-                    key: 'items'
-                }
-            };
-            // this.scope.domainObject = this.rootObject
+        setMainViewObject(object) {
             this.scope.domainObject = object;
             this.scope.navigatedObject = object;
             this.templateLinker.link(
@@ -100,84 +108,39 @@ define([
                 angular.element(this.layout.$refs.mainContainer),
                 this.templateMap["browseObject"]
             );
-            // this.scope.navigatedObject = object;
             this.scheduleDigest();
+
         }
 
+        idsForObject(domainObject) {
+            return this.urlService
+                .urlForLocation("", domainObject)
+                .replace('/', '');
+        }
 
+        navigateToObject(object) {
+            let path = pathForObject(object);
+            let views = object.useCapability('view');
+            let params = this.openmct.router.getParams();
+            let currentViewIsValid = views.some(v => v.key === params['view']);
+            if (!currentViewIsValid) {
+                this.scope.representation = {
+                    selected: views[0]
+                }
+                this.openmct.router.update(path, {
+                    view: views[0].key
+                });
+            } else {
+                this.openmct.router.setPath(path);
+            }
+        }
 
         scheduleDigest() {
             this.$timeout(function () {
                 // digest done!
             });
         }
-        //
-        // navigateToObject(desiredObject) {
-        //     this.ngEl = angular.element(this.layout.$refs.mainContainer);
-        //     this.scope.navigatedObject = desiredObject;
-        //     this.templateLinker.link(
-        //         this.scope,
-        //         this.ngEl,
-        //         this.templateMap["browse-object"]
-        //     );
-        //
-        //     // $scope.navigatedObject = desiredObject;
-        //     // $scope.treeModel.selectedObject = desiredObject;
-        //     // currentIds = idsForObject(desiredObject);
-        //     // $route.current.pathParams.ids = currentIds;
-        //     // $location.path('/browse/' + currentIds);
-        // }
-        //
-        // navigateDirectlyToModel(domainObject) {
-        //     var newIds = idsForObject(domainObject);
-        //     if (currentIds !== newIds) {
-        //         currentIds = newIds;
-        //         navigateToObject(domainObject);
-        //     }
-        // }
-        //
-        //
-        //
-        //
-        //
-        //
-        // // recursively locate and return an object inside of a container
-        // // via a path.  If at any point in the recursion it fails to find
-        // // the next object, it will return the parent.
-        // findViaComposition(containerObject, path) {
-        //     var nextId = path.shift();
-        //     if (!nextId) {
-        //         return containerObject;
-        //     }
-        //     return containerObject.useCapability('composition')
-        //         .then(function (composees) {
-        //             var nextObject = findObject(composees, nextId);
-        //             if (!nextObject) {
-        //                 return containerObject;
-        //             }
-        //             if (!nextObject.hasCapability('composition')) {
-        //                 return nextObject;
-        //             }
-        //             return findViaComposition(nextObject, path);
-        //         });
-        // }
-        //
-        // navigateToRoot() {
-        //     this.getObject('ROOT')
-        //         .then(o => this.scope.domainObject = 0);
-        // }
-        //
-        // navigateToPath(path) {
-        //     return this.getObject('ROOT')
-        //         .then(root => {
-        //             return this.findViaComposition(root, path);
-        //         })
-        //         .then(getLastChildIfRoot)
-        //         .then(object => {
-        //             this.navigationService.setNavigation(object);
-        //         });
-        // }
-        //
+
         getObject(id) {
             return this.objectService.getObjects([id])
                 .then(function (results) {
