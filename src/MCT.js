@@ -24,14 +24,18 @@ define([
     'EventEmitter',
     'legacyRegistry',
     'uuid',
+    './defaultRegistry',
     './api/api',
     './selection/Selection',
     './api/objects/object-utils',
     './plugins/plugins',
+    './adapter/indicators/legacy-indicators-plugin',
+    './plugins/buildInfo/plugin',
+    './adapter/vue-adapter/install',
     './ui/registries/ViewRegistry',
     './ui/registries/InspectorViewRegistry',
     './ui/registries/ToolbarRegistry',
-    './adapter/indicators/legacy-indicators-plugin',
+    '../platform/framework/src/Main',
     './styles-new/core.scss',
     './ui/components/layout/Layout.vue',
     'vue'
@@ -39,14 +43,18 @@ define([
     EventEmitter,
     legacyRegistry,
     uuid,
+    defaultRegistry,
     api,
     Selection,
     objectUtils,
     plugins,
+    LegacyIndicatorsPlugin,
+    buildInfoPlugin,
+    installVueAdapter,
     ViewRegistry,
     InspectorViewRegistry,
     ToolbarRegistry,
-    LegacyIndicatorsPlugin,
+    Main,
     coreStyles,
     Layout,
     Vue
@@ -211,6 +219,13 @@ define([
 
         this.Dialog = api.Dialog;
 
+        this.legacyRegistry = defaultRegistry;
+        this.install(this.plugins.Plot());
+
+        if (typeof BUILD_CONSTANTS !== 'undefined') {
+            this.install(buildInfoPlugin(BUILD_CONSTANTS));
+        }
+
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -248,16 +263,6 @@ define([
         if (!domElement) {
             domElement = document.body;
         }
-
-        var appLayout = new Vue(Layout.default);
-        domElement.appendChild(appLayout.$mount().$el);
-
-        // var appDiv = document.createElement('div');
-        // domElement.appendChild(appDiv);
-        // var appLayout = new Vue(Layout)
-        // appDiv.setAttribute('ng-view', '');
-        // appDiv.className = 'user-environ';
-
 
         this.legacyExtension('runs', {
             depends: ['navigationService'],
@@ -297,7 +302,18 @@ define([
          * @event start
          * @memberof module:openmct.MCT~
          */
-        // this.emit('start');
+        var startPromise = new Main().run(this.legacyRegistry)
+            .then(function (angular) {
+                this.$angular = angular;
+                console.log('Rendering app layout.');
+                var appLayout = new Vue(Layout.default);
+                domElement.appendChild(appLayout.$mount().$el);
+
+                console.log('Attaching adapter');
+                installVueAdapter(appLayout, this);
+
+                this.emit('start');
+            }.bind(this));
     };
 
 

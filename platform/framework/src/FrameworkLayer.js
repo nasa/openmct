@@ -93,7 +93,7 @@ define([
 
         // Initialize the application
         $log.info("Initializing application.");
-        initializer.runApplication();
+        return initializer.runApplication();
     };
 
     return FrameworkLayer;

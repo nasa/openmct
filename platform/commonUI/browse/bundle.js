@@ -295,6 +295,20 @@ define([
                     ]
                 }
             ],
+            "templates": [
+                {
+                    key: "browseRoot",
+                    template: browseTemplate
+                },
+                {
+                    key: "browseObject",
+                    template: browseObjectTemplate
+                },
+                {
+                    key: "inspectorRegion",
+                    template: inspectorRegionTemplate
+                }
+            ],
             "licenses": [
                 {
                     "name": "screenfull.js",

@@ -47,6 +47,7 @@ define(
             urlService,
             defaultPath
         ) {
+            window.browseScope = $scope;
             var initialPath = ($route.current.params.ids || defaultPath).split("/"),
                 currentIds;
 

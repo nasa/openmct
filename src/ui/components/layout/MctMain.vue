@@ -1,5 +1,5 @@
 <template>
-    <div class="MCT_Main">I'm the main region</div>
+    <mct-representation key='browse-object'></mct-representation>
 </template>
 
 <style lang="scss">
