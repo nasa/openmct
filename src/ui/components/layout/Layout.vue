@@ -1,5 +1,9 @@
 <template>
     <div class="l-shell">
+        <div class="l-shell__head">
+            [ Create Button ]
+            [ App Logo ]
+        </div>
         <multipane class="l-shell__main"
                    type="horizontal">
             <pane class="l-pane l-shell__pane-tree"
@@ -23,9 +27,7 @@
             </pane>
         </multipane>
         <div class="l-shell__status">
-            [ Create Button ]
             <MctStatus></MctStatus>
-            [ App Logo ]
         </div>
     </div>
 </template>
@@ -40,13 +42,25 @@
         display: flex;
         flex-flow: column nowrap;
 
-        /********** STATUS AREA */
+        /********** HEAD AND STATUS */
+        &__head,
         &__status {
-            border-bottom: 1px solid $colorInteriorBorder;
             flex: 0 1 auto;
+        }
+
+        &__head {
+            border-bottom: 1px solid $colorInteriorBorder;
             height: 40px;
-            order: 1;
             padding: $interiorMarginLg;
+        }
+
+        &__status {
+            background: $colorBodyFg;
+            color: $colorBodyBg;
+            border-top: 1px solid $colorInteriorBorder;
+            height: 24px;
+            padding: $interiorMarginSm;
+
         }
 
         /********** MAIN AREA */
@@ -54,7 +68,6 @@
             flex: 1 1 auto;
             display: flex;
             flex-flow: row nowrap;
-            order: 2;
         }
 
         &__tree {
