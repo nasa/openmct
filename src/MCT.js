@@ -35,6 +35,7 @@ define([
     './ui/registries/ViewRegistry',
     './ui/registries/InspectorViewRegistry',
     './ui/registries/ToolbarRegistry',
+    './ui/router/ApplicationRouter',
     '../platform/framework/src/Main',
     './styles-new/core.scss',
     './ui/components/layout/Layout.vue',
@@ -54,6 +55,7 @@ define([
     ViewRegistry,
     InspectorViewRegistry,
     ToolbarRegistry,
+    ApplicationRouter,
     Main,
     coreStyles,
     Layout,
@@ -296,6 +298,12 @@ define([
 
         this.install(LegacyIndicatorsPlugin());
 
+        this.router = new ApplicationRouter();
+
+        this.router.route(/^\/$/, () => {
+            this.router.setPath('/browse/mine');
+        });
+
         /**
          * Fired by [MCT]{@link module:openmct.MCT} when the application
          * is started.
@@ -312,10 +320,10 @@ define([
                 console.log('Attaching adapter');
                 installVueAdapter(appLayout, this);
 
+                this.router.start();
                 this.emit('start');
             }.bind(this));
     };
-
 
     /**
      * Install a plugin in MCT.

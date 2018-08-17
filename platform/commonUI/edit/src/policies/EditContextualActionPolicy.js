@@ -55,16 +55,16 @@ define(
                 navigatedObject = this.navigationService.getNavigation(),
                 actionMetadata = action.getMetadata ? action.getMetadata() : {};
 
-            if (navigatedObject.hasCapability("editor") && navigatedObject.getCapability("editor").isEditContextRoot()) {
+            // if (navigatedObject.hasCapability("editor") && navigatedObject.getCapability("editor").isEditContextRoot()) {
                 if (selectedObject.hasCapability("editor") && selectedObject.getCapability("editor").inEditContext()) {
                     return this.editModeBlacklist.indexOf(actionMetadata.key) === -1;
                 } else {
                     //Target is in the context menu
                     return this.nonEditContextBlacklist.indexOf(actionMetadata.key) === -1;
                 }
-            } else {
-                return true;
-            }
+            // } else {
+            //     return true;
+            // }
         };
 
         return EditContextualActionPolicy;
