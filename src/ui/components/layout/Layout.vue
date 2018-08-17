@@ -72,6 +72,7 @@
         &__main-container {
             // Wrapper for main views
             $m: $interiorMargin;
+            font-size: 16px; // TEMP FOR LEGACY STYLING
             overflow: auto;
             position: absolute;
             top: $m; right: $m; bottom: $m; left: $m;

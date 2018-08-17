@@ -4,3 +4,9 @@
 /******************** RENDERS CSS */
 @import "global";
 @import "controls";
+
+/******************** LEGACY CSS */
+$output-bourbon-deprecation-warnings: false;
+@import "bourbon";
+@import "legacy-styles";
+
