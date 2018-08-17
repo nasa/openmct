@@ -17,8 +17,7 @@
                 </div>
             </pane>
             <pane class="l-pane l-shell__pane-main">
-                <div style="position: absolute; top: 0; bottom: 0; width: 100%" ref="mainContainer">
-                </div>
+                <div class="l-shell__main-container" ref="mainContainer"></div>
             </pane>
             <pane class="l-pane l-shell__pane-inspector"
                   handle="before"
@@ -68,6 +67,14 @@
             flex: 1 1 auto;
             display: flex;
             flex-flow: row nowrap;
+        }
+
+        &__main-container {
+            // Wrapper for main views
+            $m: $interiorMargin;
+            overflow: auto;
+            position: absolute;
+            top: $m; right: $m; bottom: $m; left: $m;
         }
 
         &__tree {

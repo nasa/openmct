@@ -36,6 +36,37 @@ div {
     position: relative;
 }
 
+/******************************* BROWSER ELEMENTS */
+body {
+    ::-webkit-scrollbar {
+        box-sizing: border-box;
+        box-shadow: inset $scrollbarTrackShdw;
+        background-color: $scrollbarTrackColorBg;
+        height: $scrollbarTrackSize;
+        width: $scrollbarTrackSize;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        box-sizing: border-box;
+        background: $scrollbarThumbColor;
+        &:hover { background: $scrollbarThumbColorHov; }
+    }
+
+    .overlay ::-webkit-scrollbar-thumb {
+        background: $scrollbarThumbColorOverlay;
+        &:hover { background: $scrollbarThumbColorOverlayHov; }
+    }
+
+    .menu ::-webkit-scrollbar-thumb {
+        background: $scrollbarThumbColorMenu;
+        &:hover { background: $scrollbarThumbColorMenuHov; }
+    }
+
+    ::-webkit-scrollbar-corner {
+        background: $scrollbarTrackColorBg;
+    }
+}
+
 /************************** HTML ENTITIES */
 a {
     //color: $colorA;
