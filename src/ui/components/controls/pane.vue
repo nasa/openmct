@@ -3,9 +3,11 @@
          :class="{
              'l-pane--horizontal': type === 'horizontal',
              'l-pane--vertical': type === 'vertical',
-             'l-pane--collapsed': collapsed
+             'l-pane--collapsed': collapsed,
+             'l-pane--resize-handle-before' : handle === 'before',
+             'l-pane--resize-handle-after' : handle === 'after'
          }">
-
+        <!-- TODO: move resize-handle styling from handle into pane, so that padding can be handled -->
         <div v-if="handle"
              class="l-pane__resize-handle"
              :class="{
