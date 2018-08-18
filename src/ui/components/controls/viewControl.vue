@@ -53,8 +53,9 @@
             }
         },
         methods: {
-            toggle() {
+            toggle(event) {
                 this.expanded = !this.expanded;
+                this.$emit('click', event);
             }
         }
     }
