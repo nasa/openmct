@@ -13,7 +13,7 @@
                     <search class="c-search--major" ref="shell-search"></search>
                 </div>
                 <div class="l-shell__tree">
-                    <MctTree ref="shell-tree"></MctTree>
+                    <mct-tree :nodes="treeRoots"></mct-tree>
                 </div>
             </pane>
             <pane class="l-pane l-shell__pane-main">
@@ -133,7 +133,7 @@
     import MctInspector from './MctInspector.vue';
     import MctMain from './MctMain.vue';
     import MctStatus from './MctStatus.vue';
-    import MctTree from './MctTree.vue';
+    import MctTree from './mct-tree.vue';
     import search from '../controls/search.vue';
     import multipane from '../controls/multipane.vue';
     import pane from '../controls/pane.vue';
@@ -141,7 +141,44 @@
     export default {
         data () {
             return {
-                msg: 'Hello world!'
+                treeRoots: [
+                    {
+                        id: 'r1',
+                        name: 'Root 1',
+                        children: [
+                            {
+                                id: 'r1c1',
+                                name: 'r1c1'
+                            },
+                            {
+                                id: 'r1c2',
+                                name: 'r1c2'
+                            },
+                            {
+                                id: 'r1c3',
+                                name: 'r1c3'
+                            },
+                        ]
+                    },{
+                        id: 'r2',
+                        name: 'Root 2',
+                        children: [
+                            {
+                                id: 'r2c1',
+                                name: 'r2c1',
+                                children: [
+                                    {
+                                        id: 'r2c1c1',
+                                        name: 'r2c1c1'
+                                    }
+                                ]
+                            }
+                        ]
+                    },{
+                        id: 'r3',
+                        name: 'Root 3'
+                    }
+                ]
             }
         },
         methods: {
