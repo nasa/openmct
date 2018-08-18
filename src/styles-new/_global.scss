@@ -49,17 +49,23 @@ body.desktop {
     ::-webkit-scrollbar-thumb {
         box-sizing: border-box;
         background: $scrollbarThumbColor;
-        &:hover { background: $scrollbarThumbColorHov; }
+        &:hover {
+            background: $scrollbarThumbColorHov;
+        }
     }
 
     .overlay ::-webkit-scrollbar-thumb {
         background: $scrollbarThumbColorOverlay;
-        &:hover { background: $scrollbarThumbColorOverlayHov; }
+        &:hover {
+            background: $scrollbarThumbColorOverlayHov;
+        }
     }
 
     .menu ::-webkit-scrollbar-thumb {
         background: $scrollbarThumbColorMenu;
-        &:hover { background: $scrollbarThumbColorMenuHov; }
+        &:hover {
+            background: $scrollbarThumbColorMenuHov;
+        }
     }
 
     ::-webkit-scrollbar-corner {
@@ -135,7 +141,7 @@ ol, ul {
     padding-left: 0;
 }
 
-/************************** LEGACY? */
+/************************** LEGACY */
 
 mct-container {
     display: block;
@@ -209,17 +215,18 @@ a.disabled {
 
 .no-selection {
     // aka selection = "None". Used in palettes and their menu buttons.
-    $c: red; $s: 48%; $e: 52%;
+    $c: red;
+    $s: 48%;
+    $e: 52%;
     background-image: linear-gradient(-45deg,
-        transparent $s - 5%,
-        $c $s,
-        $c $e,
-        transparent $e + 5%
+            transparent $s - 5%,
+            $c $s,
+            $c $e,
+            transparent $e + 5%
     );
     background-repeat: no-repeat;
     background-size: contain;
 }
-
 
 .scrolling,
 .scroll {
@@ -293,6 +300,13 @@ a.disabled {
 
 .comma-list span {
     &:not(:first-child) {
-        &:before { content: ', '; }
+        &:before {
+            content: ', ';
+        }
     }
+}
+
+/************************** TEMP LEGACY FIXES */
+.t-imagery {
+    display: contents;
 }
