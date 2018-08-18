@@ -26,7 +26,6 @@
         grid-column: 1 / 3;
     }
 
-    /******************************* INSPECTOR */
     .c-inspector {
         display: flex;
         flex-flow: column nowrap;
@@ -48,6 +47,22 @@
 
         .l-inspector-part {
             display: contents;
+        }
+
+        h2 {
+            @include grid-two-column-span-cols;
+            border-radius: $controlCr;
+            background-color: $colorInspectorSectionHeaderBg;
+            color: $colorInspectorSectionHeaderFg;
+            font-size: 100%;
+            font-weight: normal;
+            margin: $interiorMarginLg 0 $interiorMarginSm 0;
+            padding: $interiorMarginSm $interiorMargin;
+            text-transform: uppercase;
+
+            &.first {
+                margin-top: 0;
+            }
         }
 
         .grid-properties {
@@ -80,26 +95,9 @@
     }
 
     // Properties grids
+    .grid-properties, // LEGACY
     .l-grid-properties {
         @include grid-two-column;
-
-
-        h2 {
-            // Headers for .l-inspector-part elements
-            @include grid-two-column-span-cols;
-            border-radius: $controlCr;
-            background-color: $colorInspectorSectionHeaderBg;
-            color: $colorInspectorSectionHeaderFg;
-            font-size: 0.9rem;
-            font-weight: normal;
-            margin: $interiorMarginLg 0 $interiorMarginSm 0;
-            padding: $interiorMarginSm $interiorMargin;
-            text-transform: uppercase;
-
-            &.first {
-                margin-top: 0;
-            }
-        }
     }
 
     .grid-row {
@@ -123,6 +121,67 @@
             // Row borders, effected via border-top on child elements of the row
             .grid-cell {
                 border-top: 1px solid $colorInspectorSectionHeaderBg;
+            }
+        }
+
+
+        /************************************************************** LEGACY STYLES */
+        .tree {
+            .grid-properties {
+                margin-left: $treeItemIndent + $interiorMarginLg;
+            }
+        }
+
+
+        .inspector-location {
+            display: inline-block;
+
+            .location-item {
+                $h: 1.2em;
+                box-sizing: border-box;
+                cursor: pointer;
+                display: inline-block;
+                line-height: $h;
+                position: relative;
+                padding: 2px 4px;
+                .t-object-label {
+                    .t-item-icon {
+                        height: $h;
+                        margin-right: $interiorMarginSm;
+                    }
+                }
+                &:hover {
+                    background: $colorItemTreeHoverBg;
+                    color: $colorItemTreeHoverFg;
+                    .icon {
+                        color: $colorItemTreeIconHover;
+                    }
+                }
+            }
+            &:not(.last) .t-object-label .t-title-label:after {
+                color: pushBack($colorInspectorFg, 15%);
+                content: '\e904';
+                display: inline-block;
+                font-family: symbolsfont;
+                font-size: 8px;
+                font-style: normal !important;
+                line-height: inherit;
+                margin-left: $interiorMarginSm;
+                width: 4px;
+            }
+        }
+
+        // Elements pool
+        .holder-elements {
+            .current-elements {
+                position: relative;
+                .tree-item {
+                    .t-object-label {
+                        // Elements pool is a flat list, so don't indent items.
+                        /*font-size: 0.75rem;*/
+                        left: 0;
+                    }
+                }
             }
         }
     }
