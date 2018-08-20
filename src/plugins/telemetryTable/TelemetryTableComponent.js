@@ -112,6 +112,7 @@
                     let headers = table.headers();
                     this.headers = headers;
                     this.headersCount = Object.values(headers).length;
+                    Vue.nextTick().then(this.calculateColumnWidths);
                 },
                 setSizingTableWidth: function () {
                     let scrollW = this.scrollable.offsetWidth - this.scrollable.clientWidth;

@@ -95,6 +95,7 @@ define([
 
                     let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString));
                     this.boundedRows.add(telemetryRows);
+                    console.log('loaded ' + telemetryRows.length + ' rows');
                     this.emit('loading-historical-data', false);
                 });
         }

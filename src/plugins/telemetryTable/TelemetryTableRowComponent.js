@@ -52,7 +52,7 @@
             rowIndex: {
                 type: Number,
                 required: false,
-                default: 0
+                default: undefined
             },
             rowOffset: {
                 type: Number,

@@ -1,6 +1,10 @@
+* Benchmark - loading 1 million rows
+    - Old tables: ~90s
+    - New tables: ~11s
+* 1 million rows in 11 secs vs 90s
+
 * Prevent decoration of telemetry table rows. 
 * Once decoration of telemetry table row objects is fixed, revert to non-bound function parameters to .on() calls.
-* Need minimum width on tables. Provided by calcTableWidthPx in MCTTableController
 * On focus, filter boxes need to remove magnifying glass.
 * Add elipses for overflow on table cells
 * Fix memory leaks
@@ -23,6 +27,7 @@
 * [X] Add loading spinner
 * [X] in 'mounted', should not be necessary to bind to 'this'.
 * [X] Stop Vue from decorating EVERYTHING (but especially the telemetry collection)
+* [X] Need minimum width on tables. Provided by calcTableWidthPx in MCTTableController
 
 To Test
 * Multiple instances of tables?

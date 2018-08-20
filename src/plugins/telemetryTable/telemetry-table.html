@@ -48,6 +48,9 @@
     </div>
     <!-- Sizing table -->
     <table class="mct-sizing-table t-sizing-table js-sizing-table" :style="{width: calcTableWidth}">
+        <tr>
+            <th v-for="(title, key, headerIndex) in headers">{{title}}</th>
+        </tr>
         <telemetry-table-row v-for="(sizingRowData, objectKeyString) in sizingRows"
             :headers="headers"
             :row="sizingRowData">
