@@ -139,52 +139,6 @@
     import pane from '../controls/pane.vue';
 
     export default {
-        data () {
-            return {
-                treeRoots: [
-                    {
-                        id: 'r1',
-                        name: 'Root 1',
-                        children: [
-                            {
-                                id: 'r1c1',
-                                name: 'r1c1'
-                            },
-                            {
-                                id: 'r1c2',
-                                name: 'r1c2'
-                            },
-                            {
-                                id: 'r1c3',
-                                name: 'r1c3'
-                            },
-                        ]
-                    },{
-                        id: 'r2',
-                        name: 'Root 2',
-                        children: [
-                            {
-                                id: 'r2c1',
-                                name: 'r2c1',
-                                children: [
-                                    {
-                                        id: 'r2c1c1',
-                                        name: 'r2c1c1'
-                                    }
-                                ]
-                            }
-                        ]
-                    },{
-                        id: 'r3',
-                        name: 'Root 3'
-                    }
-                ]
-            }
-        },
-        methods: {
-            navigateTo(path, openmct) {
-            }
-        },
         components: {
             MctInspector,
             MctMain,

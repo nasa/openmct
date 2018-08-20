@@ -281,6 +281,14 @@ define([
             this.legacyExtension('types', legacyDefinition);
         }.bind(this));
 
+        // TODO: move this to adapter bundle.
+        this.legacyExtension('runs', {
+            depends: ['types[]'],
+            implementation: (types) => {
+                this.types.importLegacyTypes(types);
+            }
+        });
+
         this.objectViews.getAllProviders().forEach(function (p) {
             this.legacyExtension('views', {
                 key: p.key,
@@ -313,8 +321,18 @@ define([
         var startPromise = new Main().run(this.legacyRegistry)
             .then(function (angular) {
                 this.$angular = angular;
+                // OpenMCT Object provider doesn't operate properly unless
+                // something has depended upon objectService.  Cool, right?
+                this.$injector.get('objectService');
+
                 console.log('Rendering app layout.');
-                var appLayout = new Vue(Layout.default);
+
+                var appLayout = new Vue({
+                    mixins: [Layout.default],
+                    provide: {
+                        openmct: this
+                    }
+                });
                 domElement.appendChild(appLayout.$mount().$el);
 
                 console.log('Attaching adapter');

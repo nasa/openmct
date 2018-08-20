@@ -108,8 +108,8 @@ define([
                 angular.element(this.layout.$refs.mainContainer),
                 this.templateMap["browseObject"]
             );
+            document.title = object.getModel().name;
             this.scheduleDigest();
-
         }
 
         idsForObject(domainObject) {
