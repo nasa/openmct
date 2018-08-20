@@ -25,20 +25,22 @@
     'vue',
     'text!./telemetry-table.html',
     './TelemetryTable',
-    './TelemetryTableRowComponent'
+    './TelemetryTableRowComponent',
+    '../../exporters/CSVExporter'
 ],function (
     _,
     Vue, 
     TelemetryTableTemplate,
     TelemetryTable,
-    TelemetryTableRowComponent
+    TelemetryTableRowComponent,
+    CSVExporter
 ) {
     const VISIBLE_ROW_COUNT = 100;
     const ROW_HEIGHT = 17;
-    const CELL_PADDING_FACTOR = 1.2;
 
     return function TelemetryTableComponent(domainObject, element, openmct) {
-        let table = new TelemetryTable(domainObject, VISIBLE_ROW_COUNT, openmct);
+        const csvExporter = new CSVExporter();
+        const table = new TelemetryTable(domainObject, VISIBLE_ROW_COUNT, openmct);
         let processingScroll = false;
 
         return new Vue({
@@ -61,9 +63,11 @@
                     rowOffset: 0,
                     sortOptions: {},
                     filters: {},
+                    loading: false,
                     scrollable: undefined,
                     tableEl: undefined,
-                    headersHolderEl: undefined
+                    headersHolderEl: undefined,
+                    calcTableWidth: '100%'
                 }
             },
             methods: {
@@ -109,8 +113,12 @@
                     this.headers = headers;
                     this.headersCount = Object.values(headers).length;
                 },
-                resizeColumns: function () {
-                    this.updateSizingRow();
+                setSizingTableWidth: function () {
+                    let scrollW = this.scrollable.offsetWidth - this.scrollable.clientWidth;
+                    
+                    if (scrollW && scrollW > 0) {
+                        this.calcTableWidth = 'calc(100% - ' + scrollW + 'px)';
+                    }
                 },
                 calculateColumnWidths: function () {
                     let columnWidths = [];
@@ -118,12 +126,9 @@
                     let sizingRowEl = this.sizingTable.children[0];
                     let sizingCells = Array.from(sizingRowEl.children);
 
-                    this.columnWidths = [];
-                    this.totalWidth = 0;
-
                     sizingCells.forEach((cell) => {
-                        let columnWidth = cell.offsetWidth * CELL_PADDING_FACTOR;
-                        columnWidths.push(columnWidth);
+                        let columnWidth = cell.offsetWidth;
+                        columnWidths.push(columnWidth + 'px');
                         totalWidth += columnWidth;
                     });
 
@@ -183,32 +188,47 @@
                     }
                     this.updateVisibleRows();
                 },
+                exportAsCSV: function () {
+                    const justTheData = table.filteredRows.getRows()
+                        .map(row => row.getFormattedDatum());
+                    const headers = Object.keys(this.headers);
+                    csvExporter.export(justTheData, {
+                        filename: table.domainObject.name + '.csv',
+                        headers: headers
+                    });
+                },
+                loadingHistoricalData: function (loading) {
+                    this.loading = loading;
+                }
             },
             created: function () {
                 this.filterChanged = _.debounce(this.filterChanged, 500);
             },
             mounted: function () {
-                table.on('object-added', this.updateHeaders, this);
-                table.on('object-removed', this.objectRemoved, this);
+                table.on('object-added', this.updateHeaders);
+                table.on('object-removed', this.objectRemoved);
+                table.on('loading-historical-data', this.loadingHistoricalData);
 
-                table.filteredRows.on('add', this.rowsAdded, this);
-                table.filteredRows.on('remove', this.updateVisibleRows, this);
-                table.filteredRows.on('sort', this.updateVisibleRows, this);
-                table.filteredRows.on('filter', this.updateVisibleRows, this);
+                table.filteredRows.on('add', this.rowsAdded);
+                table.filteredRows.on('remove', this.updateVisibleRows);
+                table.filteredRows.on('sort', this.updateVisibleRows);
+                table.filteredRows.on('filter', this.updateVisibleRows);
                 
                 //Default sort
                 this.sortOptions = table.filteredRows.sortBy();
                 this.scrollable = this.$el.querySelector('.t-scrolling');
                 this.sizingTable = this.$el.querySelector('.js-sizing-table');
                 this.headersHolderEl = this.$el.querySelector('.mct-table-headers-w');
+
+                this.setSizingTableWidth();
             },
             destroyed: function () {
                 table.off('updateHeaders', this.updateHeaders);
 
-                table.filteredRows.off('add', this.updateVisibleRows, this);
-                table.filteredRows.off('remove', this.updateVisibleRows, this);
-                table.filteredRows.off('sort', this.updateVisibleRows, this);
-                table.filteredRows.off('filter', this.updateVisibleRows, this);
+                table.filteredRows.off('add', this.updateVisibleRows);
+                table.filteredRows.off('remove', this.updateVisibleRows);
+                table.filteredRows.off('sort', this.updateVisibleRows);
+                table.filteredRows.off('filter', this.updateVisibleRows);
             }
         });
     }

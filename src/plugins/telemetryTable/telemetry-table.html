@@ -1,4 +1,11 @@
-<div class="tabular-holder l-sticky-headers has-control-bar">
+<div class="tabular-holder l-sticky-headers has-control-bar" :class="{'loading': loading}">
+    <div class="l-control-bar">
+        <a class="s-button t-export icon-download labeled"
+           v-on:click="exportAsCSV()"
+           title="Export This View's Data">
+            Export As CSV
+        </a>
+    </div>
     <!-- Headers table -->
     <div class="mct-table-headers-w">
         <table class="mct-table l-tabular-headers filterable" :style="{ 'max-width': totalWidth + 'px'}">
@@ -7,13 +14,13 @@
                     <th v-for="(title, key, headerIndex) in headers"
                         v-on:click="sortBy(key)"
                         :class="['sortable', sortOptions.key === key ? 'sort' : '', sortOptions.direction].join(' ')"
-                        :style="{ width: columnWidths[headerIndex] + 'px', 'max-width': columnWidths[headerIndex] + 'px' }">{{title}}</th>
+                        :style="{ width: columnWidths[headerIndex], 'max-width': columnWidths[headerIndex]}">{{title}}</th>
                 </tr>
                 <tr class="s-filters">
                     <th v-for="(title, key, headerIndex) in headers"
                         :style="{
-                            width: columnWidths[headerIndex] + 'px',
-                            'max-width': columnWidths[headerIndex] + 'px',
+                            width: columnWidths[headerIndex],
+                            'max-width': columnWidths[headerIndex],
                         }">
                         <div class="holder l-filter flex-elem grows">
                             <input type="text" v-model="filters[key]" v-on:input="filterChanged(key)" />
@@ -26,7 +33,7 @@
     </div>
     <!-- Content table -->
     <div v-on:scroll="scroll()" class="l-tabular-body t-scrolling vscroll--persist">
-        <table class="mct-table js-telemetry-table" :style="{ height: totalHeight + 'px'}">
+        <table class="mct-table js-telemetry-table" :style="{ height: totalHeight + 'px', 'max-width': totalWidth + 'px'}">
             <tbody>
                 <telemetry-table-row v-for="(row, rowIndex) in visibleRows" 
                     :headers="headers"
@@ -40,7 +47,7 @@
         </table>
     </div>
     <!-- Sizing table -->
-    <table class="mct-sizing-table t-sizing-table js-sizing-table">
+    <table class="mct-sizing-table t-sizing-table js-sizing-table" :style="{width: calcTableWidth}">
         <telemetry-table-row v-for="(sizingRowData, objectKeyString) in sizingRows"
             :headers="headers"
             :row="sizingRowData">

@@ -35,8 +35,8 @@ define(
                 this.columnFilters = {};
 
                 //Synchronize with master collection
-                this.masterCollection.on('add', this.add, this);
-                this.masterCollection.on('remove', this.remove, this);
+                this.masterCollection.on('add', this.add);
+                this.masterCollection.on('remove', this.remove);
                 
                 //Default to master collection's sort options
                 this.sortOptions = masterCollection.sortBy();

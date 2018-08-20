@@ -36,11 +36,14 @@ define(
                 
                 this.futureBuffer = new SortedTableRowCollection();
 
+                this.sortByTimeSystem = this.sortByTimeSystem.bind(this)
+                this.bounds = this.bounds.bind(this)
+
                 this.sortByTimeSystem(openmct.time.timeSystem());
-                openmct.time.on('timeSystem', this.sortByTimeSystem, this);
+                openmct.time.on('timeSystem', this.sortByTimeSystem);
 
                 this.lastBounds = openmct.time.bounds();
-                openmct.time.on('bounds', this.bounds, this);
+                openmct.time.on('bounds', this.bounds);
             }
 
             addOne (item) {

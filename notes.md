@@ -1,9 +1,9 @@
-* Stop Vue from decorating EVERYTHING (but especially the telemetry collection)
-* Fix memory leaks
-* Export
-* Add loading spinner
+* Prevent decoration of telemetry table rows. 
+* Once decoration of telemetry table row objects is fixed, revert to non-bound function parameters to .on() calls.
 * Need minimum width on tables. Provided by calcTableWidthPx in MCTTableController
+* On focus, filter boxes need to remove magnifying glass.
 * Add elipses for overflow on table cells
+* Fix memory leaks
 * Make sure time columns are being correctly merged
 * Look at optimizing styles in telemetry-table-row
 * Handle window resizing
@@ -19,12 +19,18 @@
 * [X] Subscribe to realtime data
 * [X] Column widths should be done on receipt of FIRST DATA, not on receipt of historical data.
 * [X] Filter subscription data
+* [X] Export
+* [X] Add loading spinner
+* [X] in 'mounted', should not be necessary to bind to 'this'.
+* [X] Stop Vue from decorating EVERYTHING (but especially the telemetry collection)
 
 To Test
 * Multiple instances of tables?
 * Behavior at different widths.
+* Short tables
 
 Post WIP PR
+* Split TelemetryTableComponent into more components. It's too large now.
 * Performance
     * Don't wrap row on load, do it on scroll.
     * On batch insert, check bounds once, rather than on each insert.

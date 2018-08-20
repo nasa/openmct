@@ -45,6 +45,9 @@ define([
             this.rowCount = rowCount;
             this.subscriptions = {};
 
+            this.addTelemetryObject = this.addTelemetryObject.bind(this);
+            this.removeTelemetryObject = this.removeTelemetryObject.bind(this);
+
             this.createTableRowCollections();
             this.loadComposition();
         }
@@ -65,8 +68,8 @@ define([
             composition.load().then((composition) => {
                 composition.forEach(this.addTelemetryObject, this);
             });
-            composition.on('add', this.addTelemetryObject, this);
-            composition.on('remove', this.removeTelemetryObject, this);
+            composition.on('add', this.addTelemetryObject);
+            composition.on('remove', this.removeTelemetryObject);
         }
         
         addTelemetryObject(telemetryObject) {
@@ -84,6 +87,7 @@ define([
         }
 
         requestDataFor(telemetryObject) {
+            this.emit('loading-historical-data', true);
             this.openmct.telemetry.request(telemetryObject)
                 .then(telemetryData => {
                     let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
@@ -91,6 +95,7 @@ define([
 
                     let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString));
                     this.boundedRows.add(telemetryRows);
+                    this.emit('loading-historical-data', false);
                 });
         }
 

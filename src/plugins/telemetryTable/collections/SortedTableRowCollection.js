@@ -42,6 +42,9 @@ define(
 
                 this.dupeCheck = false;
                 this.rows = [];
+
+                this.add = this.add.bind(this);
+                this.remove = this.remove.bind(this);
             }
 
             /**
