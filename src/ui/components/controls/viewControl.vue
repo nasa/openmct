@@ -2,7 +2,7 @@
     <span class="c-view-control"
     :class="{
         'c-view-control--expanded' : expanded,
-        'is-disabled' : disabled === true
+        'is-enabled' : enabled
     }"
     @click="toggle"></span>
 </template>
@@ -19,8 +19,8 @@
         width: $d;
         position: relative;
 
-        &:not(.is-disabled):before {
-            $s: .75;
+        &.is-enabled:before {
+            $s: .65;
             content: $glyph-icon-arrow-right-equilateral;
             display: block;
             font-family: symbolsfont;
@@ -45,7 +45,7 @@
                 type: Boolean,
                 value: false
             },
-            disabled: {
+            enabled: {
                 // Provided to allow the view-control to still occupy space without displaying a control icon.
                 // Used as such in the tree - when a node doesn't have children, set disabled to true.
                 type: Boolean,

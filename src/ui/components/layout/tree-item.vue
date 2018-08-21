@@ -2,7 +2,7 @@
     <li class="c-tree__item-h">
         <div class="c-tree__item">
             <view-control class="c-tree__item__view-control"
-                          v-if="hasChildren"
+                          :enabled="hasChildren"
                           :expanded="expanded"
                           @click="toggleChildren">
             </view-control>

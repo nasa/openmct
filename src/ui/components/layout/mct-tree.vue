@@ -16,7 +16,7 @@
         height: 100%;
 
         .c-tree {
-            margin-left: 20px;
+            margin-left: 15px;
         }
 
         &__item {
