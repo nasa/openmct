@@ -2,6 +2,6 @@
 // Meant for use as a single line import in Vue SFC's.
 // Do not include anything that renders to CSS!
 @import "constants";
+@import "constants-mobile";
 @import "constants-snow"; // TEMP
-@import "glyphs";
 @import "mixins";
