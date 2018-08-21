@@ -59,7 +59,6 @@
             border-top: 1px solid $colorInteriorBorder;
             height: 24px;
             padding: $interiorMarginSm;
-
         }
 
         /********** MAIN AREA */
@@ -116,7 +115,24 @@
             $m: $interiorMargin;
             background: $colorTreeBg;
             padding: $m $m + ($splitterD) $m $m; // TODO: move this into pane.vue
-            width: 300px
+            width: 300px;
+
+            body.mobile & {
+                [class*="collapse-button"] {
+                    // For mobile, collapse button becomes menu icon
+                    $d: 32px;
+                    height: $d;
+                    width: $d;
+                    transform: translateX(100%);
+
+                    &:before {
+                        content: $glyph-icon-menu-hamburger;
+                        font-size: 1.4em;
+                    }
+                }
+
+
+            }
         }
 
         &__pane-main {
@@ -124,7 +140,14 @@
         }
 
         &__pane-inspector {
-            width: 200px
+            // Mobile-first
+            display: none;
+        }
+
+        body.desktop & {
+            &__pane-inspector {
+                display: flex;
+            }
         }
     }
 </style>

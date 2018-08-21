@@ -41,73 +41,97 @@
             // Selectors here
 
             > .l-pane__resize-handle {
-                //background: red;
-                cursor: col-resize;
-                width: $splitterHandleD;
                 top: 0;
                 bottom: 0;
 
-                &:before {
-                    // Extended hit area
-                    top: 0;
-                    right: $hitMargin * -1;
-                    bottom: 0;
-                    left: $hitMargin * -1;
-                }
-
-                &:after {
-                    // Grippy
-                    min-height: nth($splitterGrippyD, 3);
-                    height: nth($splitterGrippyD, 2);
-                    width: nth($splitterGrippyD, 1);
-                    top: 50%; left: ($splitterHandleD - nth($splitterGrippyD, 1)) / 2;
-                    transform: translateY(-50%);
-                }
-
                 &--before {
-                    // Handle at left edge of containing pane
                     left: 0;
-
                     [class*="collapse-button"] {
                         left: 0;
-                        transform: scaleX(-1);
                     }
                 }
 
                 &--after {
-                    // Handle at right edge of containing pane
                     right: 0;
-
                     [class*="collapse-button"] {
                         right: 0;
                     }
                 }
-            }
 
-            [class*="collapse-button"] {
-                height: nth($splitterCollapseBtnD, 2);
-                width: nth($splitterCollapseBtnD, 1);
 
-                &:before {
-                    content: $glyph-icon-arrow-left;
+                body.desktop & {
+                    cursor: col-resize;
+                    width: $splitterHandleD;
+
+                    &:before {
+                        // Extended hit area
+                        top: 0;
+                        right: $hitMargin * -1;
+                        bottom: 0;
+                        left: $hitMargin * -1;
+                    }
+
+                    &:after {
+                        // Grippy
+                        min-height: nth($splitterGrippyD, 3);
+                        height: nth($splitterGrippyD, 2);
+                        width: nth($splitterGrippyD, 1);
+                        top: 50%; left: ($splitterHandleD - nth($splitterGrippyD, 1)) / 2;
+                        transform: translateY(-50%);
+                    }
+
+                    &--before {
+                        // Handle at left edge of containing pane
+                        // left: 0;
+
+                        [class*="collapse-button"] {
+                            // left: 0;
+                            transform: scaleX(-1);
+                        }
+                    }
+
+                    &--after {
+                        // Handle at right edge of containing pane
+                        // right: 0;
+
+                        /*[class*="collapse-button"] {
+                            right: 0;
+                        }*/
+                    }
+
+                    [class*="collapse-button"] {
+                        background: $colorSplitterGrippy;
+                        color: $colorSplitterFg;
+                        font-size: 0.6em;
+                        height: nth($splitterCollapseBtnD, 2);
+                        width: nth($splitterCollapseBtnD, 1);
+
+                        &:before {
+                            content: $glyph-icon-arrow-left;
+                        }
+                    }
+
+                    &.l-pane--collapsed {
+                        > .l-pane__resize-handle {
+                            &--before {
+                                transform: translateX($splitterHandleD * -1) scaleX(-1);
+                            }
+
+                            &--after {
+                                transform: translateX($splitterHandleD) scaleX(-1);
+                            }
+                        }
+                    }
                 }
             }
+
+
 
             &.l-pane--collapsed {
                 padding-left: 0 !important;
                 padding-right: 0 !important;
                 width: 0px;
                 min-width: 0px;
-
-                > .l-pane__resize-handle {
-                    &--before {
-                        transform: translateX($splitterHandleD * -1) scaleX(-1);
-                    }
-
-                    &--after {
-                        transform: translateX($splitterHandleD) scaleX(-1);
-                    }
-                }
             }
         }
 
@@ -167,38 +191,41 @@
             // Selectors for handle in any context
             z-index: 1;
             display: block;
-            background: $colorSplitterBg;
             position: absolute;
-            transition: $transOut;
 
-            &:before {
-                // Extended hit area
-                content: '';
-                display: block;
-                position: absolute;
-                z-index: -1;
-            }
 
-            &:after {
-                // Grippy affordance
-                content: '';
-                background: $colorSplitterGrippy;
-                border-radius: 5px;
-                display: block;
-                position: absolute;
-                z-index: 1;
-            }
+            body.desktop & {
+                background: $colorSplitterBg;
+                transition: $transOut;
+                &:before {
+                    // Extended hit area
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    z-index: -1;
+                }
 
-            &:active, &:hover {
-                transition: $transIn;
-            }
+                &:after {
+                    // Grippy affordance
+                    content: '';
+                    background: $colorSplitterGrippy;
+                    border-radius: 5px;
+                    display: block;
+                    position: absolute;
+                    z-index: 1;
+                }
 
-            &:active {
-                background: $colorSplitterActive; // Not really working with drag
-            }
+                &:active, &:hover {
+                    transition: $transIn;
+                }
 
-            &:hover {
-                background: $colorSplitterHover;
+                &:active {
+                    background: $colorSplitterActive; // Not really working with drag
+                }
+
+                &:hover {
+                    background: $colorSplitterHover;
+                }
             }
         }
 
@@ -209,25 +236,25 @@
             justify-content: center;
             position: absolute;
             z-index: 3;
-            background: $colorSplitterGrippy;
-            transition: $transOut;
 
-            &:active, &:hover {
-                transition: $transIn;
-            }
+            body.desktop & {
+                transition: $transOut;
 
-            &:hover {
-                background: $colorSplitterHover;
-            }
+                &:active, &:hover {
+                    transition: $transIn;
+                }
 
-            &:active {
-                background: $colorSplitterActive;
+                &:hover {
+                    background: $colorSplitterHover;
+                }
+
+                &:active {
+                    background: $colorSplitterActive;
+                }
             }
 
             &:before {
-                color: $colorSplitterFg;
                 display: block;
-                font-size: 0.6em;
                 font-family: symbolsfont;
             }
         }
