@@ -1,24 +1,20 @@
 <template>
     <div class="l-pane"
          :class="{
-             'l-pane--horizontal': type === 'horizontal',
-             'l-pane--vertical': type === 'vertical',
-             'l-pane--collapsed': collapsed,
-             'l-pane--resize-handle-before' : handle === 'before',
-             'l-pane--resize-handle-after' : handle === 'after'
+            'l-pane--horizontal-handle-before': type === 'horizontal' && handle === 'before',
+            'l-pane--horizontal-handle-after': type === 'horizontal' && handle === 'after',
+            'l-pane--vertical-handle-before': type === 'vertical' && handle === 'before',
+            'l-pane--vertical-handle-after': type === 'vertical' && handle === 'after',
+             'l-pane--collapsed': collapsed
          }">
         <!-- TODO: move resize-handle styling from handle into pane, so that padding can be handled -->
         <div v-if="handle"
-             class="l-pane__resize-handle"
-             :class="{
-                  'l-pane__resize-handle--before': handle === 'before',
-                  'l-pane__resize-handle--after': handle === 'after'
-              }"
+             class="l-pane__handle"
              @mousedown="start">
-            <a class="l-pane__collapse-button"
-               @click="toggleCollapse"
-               v-if="collapsable"></a>
         </div>
+        <a class="l-pane__collapse-button"
+           @click="toggleCollapse"
+           v-if="collapsable"></a>
         <div class="l-pane__contents">
             <slot></slot>
         </div>
@@ -29,18 +25,120 @@
     @import "~styles/sass-base";
 
     $hitMargin: 4px;
+    /**************************** BASE - MOBILE AND DESKTOP */
+    .l-pane {
+        opacity: 1;
+        pointer-events: inherit;
 
-    // TODO: get handles visible when pane is collapsed
+        &__handle {
+            // __handle doesn't appear in mobile
+            display: none;
+        }
+
+        &__collapse-button {
+            @include test();
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            top: 0; right: 0; // Default
+            z-index: 3;
+        }
+
+        &[class*="--horizontal"] {
+            > .l-pane__collapse-button {
+
+            }
+
+            &.l-pane--collapsed {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                width: 0px;
+                min-width: 0px;
+            }
+        }
+
+        &[class*="--vertical"] {
+            > .l-pane__collapse-button {
+
+            }
+
+            &.l-pane--collapsed {
+                padding-top: 0 !important;
+                padding-top: 0 !important;
+                height: 0px;
+                min-height: 0px;
+            }
+        }
+
+        /************************ MOBILE-FIRST STYLES */
+        @include test(green, 0.1);
 
 
-    /**************************** BASE STYLES */
+        /************************ DESKTOP STYLES */
+        body.desktop & {
+            @include test(blue, 0.1);
+
+            &__handle {
+                z-index: 1;
+                display: block;
+                position: absolute;
+            }
+
+            &--horizontal {
+                &--before {
+                    > .l-pane__handle {
+
+                    }
+
+                    > .l-pane__collapse-button {
+
+                    }
+
+                }
+
+                &--after {
+                    > .l-pane__handle {
+
+                    }
+
+                    > .l-pane__collapse-button {
+
+                    }
+                }
+
+
+
+
+
+
+            }
+
+            &--vertical {
+
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     .l-pane {
         /************************ PANES */
         &--horizontal {
             // Pane adjusts size horizontally, handles run vertically
             // Selectors here
 
-            > .l-pane__resize-handle {
+            > .l-pane__handle {
                 top: 0;
                 bottom: 0;
 
@@ -112,7 +210,7 @@
                     }
 
                     &.l-pane--collapsed {
-                        > .l-pane__resize-handle {
+                        > .l-pane__handle {
                             &--before {
                                 transform: translateX($splitterHandleD * -1) scaleX(-1);
                             }
@@ -127,19 +225,19 @@
 
 
 
-            &.l-pane--collapsed {
+/*            &.l-pane--collapsed {
                 padding-left: 0 !important;
                 padding-right: 0 !important;
                 width: 0px;
                 min-width: 0px;
-            }
+            }*/
         }
 
         &--vertical {
             // Pane adjusts size vertically, handles run horizontally
             // Selectors here
 
-            > .l-pane__resize-handle {
+            > .l-pane__handle {
                 //background: green;
                 cursor: row-resize;
                 height: $splitterHandleD;
@@ -187,11 +285,11 @@
         }
 
         /************************ HANDLES */
-        &__resize-handle {
+        &__handle {
             // Selectors for handle in any context
-            z-index: 1;
+/*            z-index: 1;
             display: block;
-            position: absolute;
+            position: absolute;*/
 
 
             body.desktop & {

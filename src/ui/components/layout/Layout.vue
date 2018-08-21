@@ -6,7 +6,7 @@
         </div>
         <multipane class="l-shell__main"
                    type="horizontal">
-            <pane class="l-pane l-shell__pane-tree"
+            <pane class="l-shell__pane-tree"
                   handle="after"
                   collapsable>
                 <div class="l-shell__search">
@@ -16,10 +16,10 @@
                     <mct-tree :nodes="treeRoots"></mct-tree>
                 </div>
             </pane>
-            <pane class="l-pane l-shell__pane-main">
+            <pane class="l-shell__pane-main">
                 <div class="l-shell__main-container" ref="mainContainer"></div>
             </pane>
-            <pane class="l-pane l-shell__pane-inspector"
+            <pane class="l-shell__pane-inspector"
                   handle="before"
                   collapsable>
                 <MctInspector ref="inspector"></MctInspector>
@@ -36,21 +36,15 @@
 
     /******************************* SHELL */
     .l-shell {
+        $m: $interiorMargin;
         position: absolute;
         top: 0; right: 0; bottom: 0; left: 0;
         display: flex;
         flex-flow: column nowrap;
 
-        /********** HEAD AND STATUS */
-        &__head,
-        &__status {
-            flex: 0 1 auto;
-        }
-
+        /*************************** MOBILE-FIRST */
         &__head {
-            border-bottom: 1px solid $colorInteriorBorder;
-            height: 40px;
-            padding: $interiorMarginLg;
+            display: none;
         }
 
         &__status {
@@ -59,6 +53,58 @@
             border-top: 1px solid $colorInteriorBorder;
             height: 24px;
             padding: $interiorMarginSm;
+        }
+
+        &__pane-tree {
+            width: 30%;
+
+            [class*="collapse-button"] {
+                // For mobile, collapse button becomes menu icon
+                height: $mobileMenuIconD;
+                width: $mobileMenuIconD;
+                transform: translateX(100%);
+
+                &:before {
+                    content: $glyph-icon-menu-hamburger;
+                    font-size: 1.4em;
+                }
+            }
+        }
+
+        &__pane-main {
+            transform: translateX(0);
+            // width: 100%;
+        }
+
+        @include phonePortrait() {
+            border: 1px solid red;
+
+            &__pane-tree {
+               // @include test(orange);
+                width: calc(100% - #{$mobileMenuIconD});
+                [class*="collapse-button"] {
+                   // transform: translateX(0);
+                }
+
+                + .l-pane {
+                    // Hide the next pane over when this pane is expanded
+                    opacity: 0;
+                    pointer-events: none;
+                }
+
+                &[class*="--collapsed"] + .l-pane {
+                    opacity: 1;
+                    pointer-events: inherit;
+                }
+            }
+
+            &__pane-main {
+                //transform: translateX(calc(100% - #{$mobileMenuIconD}));
+                /*width: 100%;*/
+            }
+
+            > .l-pane__contents {
+            }
         }
 
         /********** MAIN AREA */
@@ -78,6 +124,7 @@
         }
 
         &__tree {
+            // Tree component within __pane-tree
             flex: 1 1 100%;
         }
 
@@ -105,34 +152,9 @@
             }
         }
 
-        &__pane-tree,
-        &__pane-inspector {
-            max-width: 30%;
-            min-width: 5%;
-        }
-
         &__pane-tree {
-            $m: $interiorMargin;
             background: $colorTreeBg;
-            padding: $m $m + ($splitterD) $m $m; // TODO: move this into pane.vue
-            width: 300px;
-
-            body.mobile & {
-                [class*="collapse-button"] {
-                    // For mobile, collapse button becomes menu icon
-                    $d: 32px;
-                    height: $d;
-                    width: $d;
-                    transform: translateX(100%);
-
-                    &:before {
-                        content: $glyph-icon-menu-hamburger;
-                        font-size: 1.4em;
-                    }
-                }
-
-
-            }
+            padding: $m;
         }
 
         &__pane-main {
@@ -145,6 +167,30 @@
         }
 
         body.desktop & {
+            /********** HEAD AND STATUS */
+            &__head,
+            &__status {
+                display: block;
+                flex: 0 1 auto;
+            }
+
+            &__head {
+                border-bottom: 1px solid $colorInteriorBorder;
+                height: 40px;
+                padding: $interiorMarginLg;
+            }
+
+            &__pane-tree,
+            &__pane-inspector {
+                max-width: 30%;
+                min-width: 5%;
+            }
+
+            &__pane-tree {
+                width: 300px;
+            }
+
+
             &__pane-inspector {
                 display: flex;
             }
