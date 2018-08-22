@@ -37,14 +37,14 @@
 ) {
     const VISIBLE_ROW_COUNT = 100;
     const ROW_HEIGHT = 17;
+    const RESIZE_POLL_INTERVAL = 200;
 
-    return function TelemetryTableComponent(domainObject, element, openmct) {
+    return function TelemetryTableComponent(domainObject, openmct) {
         const csvExporter = new CSVExporter();
         const table = new TelemetryTable(domainObject, VISIBLE_ROW_COUNT, openmct);
         let processingScroll = false;
 
         return new Vue({
-            el: element,
             template: TelemetryTableTemplate,
             components: {
                 'telemetry-table-row': TelemetryTableRowComponent
@@ -174,7 +174,6 @@
                 },
                 objectRemoved: function () {
                     this.updateHeaders();
-                    Vue.nextTick().then(this.calculateColumnWidths);
                 },
                 rowsAdded: function (rows) {
                     let sizingRow;
@@ -200,7 +199,25 @@
                 },
                 loadingHistoricalData: function (loading) {
                     this.loading = loading;
+                },
+                calculateTableSize: function () {
+                    this.setSizingTableWidth();
+                    Vue.nextTick().then(this.calculateColumnWidths);
+                },
+                pollForResize: function () {
+                    let el = this.$el;
+                    let width = el.clientWidth;
+                    let height = el.clientHeight;
+
+                    this.resizePollHandle = setInterval(() => {
+                        if (el.clientWidth !== width || el.clientHeight !== height) {
+                            this.calculateTableSize();
+                            width = el.clientWidth;
+                            height = el.clientHeight;
+                        }
+                    }, RESIZE_POLL_INTERVAL);
                 }
+
             },
             created: function () {
                 this.filterChanged = _.debounce(this.filterChanged, 500);
@@ -220,8 +237,9 @@
                 this.scrollable = this.$el.querySelector('.t-scrolling');
                 this.sizingTable = this.$el.querySelector('.js-sizing-table');
                 this.headersHolderEl = this.$el.querySelector('.mct-table-headers-w');
-
-                this.setSizingTableWidth();
+                
+                this.calculateTableSize();
+                this.pollForResize();
             },
             destroyed: function () {
                 table.off('updateHeaders', this.updateHeaders);
@@ -230,6 +248,9 @@
                 table.filteredRows.off('remove', this.updateVisibleRows);
                 table.filteredRows.off('sort', this.updateVisibleRows);
                 table.filteredRows.off('filter', this.updateVisibleRows);
+                clearInterval(this.resizePollHandle);
+                
+                table.destroy();
             }
         });
     }

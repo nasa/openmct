@@ -44,6 +44,7 @@ define([
             this.columns = {};
             this.rowCount = rowCount;
             this.subscriptions = {};
+            this.tableComposition = undefined;
 
             this.addTelemetryObject = this.addTelemetryObject.bind(this);
             this.removeTelemetryObject = this.removeTelemetryObject.bind(this);
@@ -64,12 +65,13 @@ define([
         }
 
         loadComposition() {
-            let composition = this.openmct.composition.get(this.domainObject);
-            composition.load().then((composition) => {
+            this.tableComposition = this.openmct.composition.get(this.domainObject);
+            this.tableComposition.load().then((composition) => {
                 composition.forEach(this.addTelemetryObject, this);
+
+                this.tableComposition.on('add', this.addTelemetryObject);
+                this.tableComposition.on('remove', this.removeTelemetryObject);
             });
-            composition.on('add', this.addTelemetryObject);
-            composition.on('remove', this.removeTelemetryObject);
         }
         
         addTelemetryObject(telemetryObject) {
@@ -78,12 +80,12 @@ define([
             this.columns[objectKeyString] = [];
 
             metadataValues.forEach(metadatum => {
-                this.columns[objectKeyString].push(new TelemetryTableColumn(this.openmct, telemetryObject, metadatum));
+                this.columns[objectKeyString].push(new TelemetryTableColumn(this.openmct, metadatum));
             });
             this.emit('object-added');
             
             this.requestDataFor(telemetryObject);
-            //this.subscribeTo(telemetryObject);
+            this.subscribeTo(telemetryObject);
         }
 
         requestDataFor(telemetryObject) {
@@ -111,9 +113,10 @@ define([
         subscribeTo(telemetryObject) {
             let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             let columnMap = this.getColumnMapForObject(keyString);
+            let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
 
             this.subscriptions[keyString] = this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
-                this.boundedRows.add(new TelemetryTableRow(datum, columnMap, keyString));
+                this.boundedRows.add(new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
             });
         }
 
@@ -163,6 +166,9 @@ define([
             this.boundedRows.destroy();
             this.filteredRows.destroy();
             Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
+            
+            this.tableComposition.off('add', this.addTelemetryObject);
+            this.tableComposition.off('remove', this.removeTelemetryObject);
         }
     }
 

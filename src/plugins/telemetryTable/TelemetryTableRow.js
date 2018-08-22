@@ -24,56 +24,23 @@ define([], function () {
     class TelemetryTableRow {
         constructor(datum, columns, objectKeyString, limitEvaluator) {
             this.columns = columns;
-            this.columnCount = Object.keys(columns).length;
 
-            this.datum = this.createNormalizedDatum(datum);
+            this.datum = createNormalizedDatum(datum, columns);
             this.limitEvaluator = limitEvaluator;
             this.objectKeyString = objectKeyString;
-
-            this.formatCache = {};
-            this.cacheSize = 0;
         }
-
-        /**
-         * Normalize the structure of datums to assist sorting and merging of columns.
-         * Maps all sources to keys.
-         * @private
-         * @param {*} telemetryDatum
-         * @param {*} metadataValues 
-         */
-        createNormalizedDatum(datum) {
-            return Object.values(this.columns).reduce((normalizedDatum, column) => {
-                normalizedDatum[column.getKey()] = column.getRawValue(datum);
-                return normalizedDatum;
-            }, {});
-        }
-
-        hasColumn(key) {
-            return this.columns.hasOwnProperty(key);
-        }
-
-        isFromObject(objectKeyString) {
-            return objectKeyString === this.objectKeyString;
+        
+        getFormattedDatum() {
+            return Object.values(this.columns)
+                .reduce((formattedDatum, column) => {
+                    formattedDatum[column.getKey()] = this.getFormattedValue(column.getKey());
+                    return formattedDatum;
+                }, {});
         }
 
         getFormattedValue(key) {
-            if (!this.formatCache[key]) {
-                let column = this.columns[key];
-                this.formatCache[key] = column.getFormattedValue(this.datum[key]);
-                this.cacheSize++;
-                
-                if (this.cacheSize === this.columnCount) {
-                    this.completeFormatCache = true;
-                }
-            }
-            return this.formatCache[key];
-        }
-
-        getFormattedDatum() {
-            if (!this.completeFormatCache) {
-                this.buildFormatCache();
-            }
-            return this.formatCache;
+            let column = this.columns[key];
+            return column.getFormattedValue(this.datum[key]);
         }
 
         getRowLimitClass() {
@@ -95,13 +62,20 @@ define([], function () {
             }
             return this.cellLimitClasses;
         }
+    }
 
-        /**
-         * @private
-         */
-        buildFormatCache() {
-            Object.values(this.columns).forEach(column => this.getFormattedValue(column.getKey()));
-        }
+    /**
+     * Normalize the structure of datums to assist sorting and merging of columns.
+     * Maps all sources to keys.
+     * @private
+     * @param {*} telemetryDatum
+     * @param {*} metadataValues 
+     */
+    function createNormalizedDatum(datum, columns) {
+        return Object.values(columns).reduce((normalizedDatum, column) => {
+            normalizedDatum[column.getKey()] = column.getRawValue(datum);
+            return normalizedDatum;
+        }, {});
     }
 
     return TelemetryTableRow;

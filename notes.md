@@ -1,17 +1,17 @@
-* Limits
+* Why aren't limits being applied until I scroll or do something?
 * Show / hide columns (ie. table configuration)
-* Remove format caching
-* Prevent decoration of telemetry table rows.
-* Once decoration of telemetry table row objects is fixed, revert to non-bound function parameters to .on() calls.
+* auto-scroll
 * On focus, filter boxes need to remove magnifying glass.
 * Add elipses for overflow on table cells
-* Fix memory leaks
 * Make sure time columns are being correctly merged
 * Look at optimizing styles in telemetry-table-row
-* Handle window resizing
-* Look at scroll-x again. Sounded like there might be some subtlety missing there (something to do with small columns?).
+* Test with bounds / clock / time system changes.
 * Push WIP PR
 
+* [X] Handle window resizing
+* [X] Fix memory leaks
+* [X] Remove isFromObject and hasColumn from TelemetryTableRow
+* [X] Remove format caching
 * [X] Add filtering
     * If the new filter string starts with the old filter string, filter based on the list of previously filtered results, not the base list.
     * Add the clear filter button
@@ -26,6 +26,7 @@
 * [X] in 'mounted', should not be necessary to bind to 'this'.
 * [X] Stop Vue from decorating EVERYTHING (but especially the telemetry collection)
 * [X] Need minimum width on tables. Provided by calcTableWidthPx in MCTTableController
+* [X] Limits
 
 * Benchmark - loading 1 million rows
     - Old tables: ~90s
@@ -38,6 +39,7 @@ To Test
 * Short tables
 
 Post WIP PR
+* Look at scroll-x again. Sounded like there might be some subtlety missing there (something to do with small columns?).
 * Split TelemetryTableComponent into more components. It's too large now.
 * Performance
     * Don't wrap row on load, do it on scroll.

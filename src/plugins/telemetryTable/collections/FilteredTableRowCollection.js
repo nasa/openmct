@@ -87,7 +87,7 @@ define(
             matchesFilters(row) {
                 let doesMatchFilters = true;
                 for (const key in this.columnFilters) {
-                    if (!row.hasColumn(key)) {
+                    if (!this.rowHasColumn(row, key)) {
                         return false;
                     } else {
                         let formattedValue = row.getFormattedValue(key).toLowerCase();
@@ -98,11 +98,13 @@ define(
                 return doesMatchFilters;
             }
 
-            destroy() {
-                super.destroy();
+            rowHasColumn(row, key) {
+                return row.columns.hasOwnProperty(key);
+            }
 
-                this.masterCollection.off('add', this.add, this);
-                this.masterCollection.off('remove', this.remove, this);
+            destroy() {
+                this.masterCollection.off('add', this.add);
+                this.masterCollection.off('remove', this.remove);
             }
         }
 

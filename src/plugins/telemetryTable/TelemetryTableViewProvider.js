@@ -30,12 +30,17 @@ define(['./TelemetryTableComponent'], function (TelemetryTableComponent) {
                 return domainObject.type === 'vue-table';
             },
             view: function (domainObject) {
+                let component;
                 return {
                     show: function (element) {
-                        let component = TelemetryTableComponent(domainObject, element, openmct);
-
+                        component = TelemetryTableComponent(domainObject, openmct);
+                        element.appendChild(component.$mount().$el);
                     }, 
-                    destroy: function () {}
+                    destroy: function (element) {
+                        component.$destroy();
+                        element.removeChild(component.$el);
+                        component = undefined;
+                    }
                 }
             },
             priority: function () {

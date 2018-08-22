@@ -35,6 +35,7 @@ define(
                 super();
                 
                 this.futureBuffer = new SortedTableRowCollection();
+                this.openmct = openmct;
 
                 this.sortByTimeSystem = this.sortByTimeSystem.bind(this)
                 this.bounds = this.bounds.bind(this)
@@ -131,8 +132,8 @@ define(
             }
 
             destroy() {
-                openmct.time.off('timeSystem', this.sortByTimeSystem, this);
-                openmct.time.off('bounds', this.bounds, this);
+                this.openmct.time.off('timeSystem', this.sortByTimeSystem);
+                this.openmct.time.off('bounds', this.bounds);
             }
         }
     return BoundedTableRowCollection;

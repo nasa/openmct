@@ -79,7 +79,10 @@
         },
         watch: {
             rowOffset: 'calculateRowTop',
-            row: 'formatRow'
+            row: {
+                handler: 'formatRow', 
+                deep: false
+            }
         }
     };
  });

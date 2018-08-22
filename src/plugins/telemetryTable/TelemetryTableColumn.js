@@ -21,9 +21,7 @@
  *****************************************************************************/
 define(function () {
     class TelemetryTableColumn {
-        constructor (openmct, telemetryObject, metadatum) {
-            this.openmct = openmct;
-            this.telemetryObject = telemetryObject;
+        constructor (openmct, metadatum) {
             this.metadatum = metadatum;
             this.formatter = openmct.telemetry.getValueFormatter(metadatum);
             this.titleValue = this.metadatum.name;
@@ -41,22 +39,8 @@ define(function () {
             return this.metadatum;
         }
 
-        isCurrentTimeSystem() {
-            var isCurrentTimeSystem = this.metadatum.hints.hasOwnProperty('domain') &&
-            this.metadatum.key === this.openmct.time.timeSystem().key;
-
-            return isCurrentTimeSystem;
-        }
-
         hasValueForDatum(telemetryDatum) {
             return telemetryDatum.hasOwnProperty(this.metadatum.source);
-        }
-
-        isForObject(objectIdentifier) {
-            let columnObjectKeyString = this.openmct.objects.makeKeyString(this.telemetryObject.identifier);
-            let objectKeyString = this.openmct.objects.makeKeyString(objectIdentifier);
-
-            return columnObjectKeyString === objectKeyString;
         }
 
         getRawValue(telemetryDatum) {

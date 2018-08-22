@@ -188,7 +188,7 @@ define(
             removeAllRowsForObject(objectKeyString) {
                 let removed = [];
                 this.rows = this.rows.filter(row => {
-                    if (row.isFromObject(objectKeyString)){
+                    if (row.objectKeyString === objectKeyString) {
                         removed.push(row);
                         return false;
                     }
