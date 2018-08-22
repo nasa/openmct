@@ -27,8 +27,14 @@ define([
 
 ) {
 
-    var RED = 0.9,
-        YELLOW = 0.5,
+    var RED = {
+            sin: 0.9, 
+            cos: 0.9
+        },
+        YELLOW = {
+            sin: 0.5,
+            cos: 0.5
+        },
         LIMITS = {
             rh: {
                 cssClass: "s-limit-upr s-limit-red",
@@ -68,16 +74,16 @@ define([
         return {
             evaluate: function (datum, valueMetadata) {
                 var range = valueMetadata ? valueMetadata.key : 'sin'
-                if (datum[range] > RED) {
+                if (datum[range] > RED[range]) {
                     return LIMITS.rh;
                 }
-                if (datum[range] < -RED) {
+                if (datum[range] < -RED[range]) {
                     return LIMITS.rl;
                 }
-                if (datum[range] > YELLOW) {
+                if (datum[range] > YELLOW[range]) {
                     return LIMITS.yh;
                 }
-                if (datum[range] < -YELLOW) {
+                if (datum[range] < -YELLOW[range]) {
                     return LIMITS.yl;
                 }
             }
