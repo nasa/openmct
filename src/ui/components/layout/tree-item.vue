@@ -23,6 +23,8 @@
 </template>
 
 <script>
+    // TODO: make sure hit area encompasses all of the tree item; currently is just the text
+
     import viewControl from '../controls/viewControl.vue'
     export default {
         name: 'tree-item',

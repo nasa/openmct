@@ -205,7 +205,7 @@ $legendCollapsedNameMaxW: 50%;
 $legendHoverValueBg: rgba($colorBodyFg, 0.2);
 
 // Tree
-$colorTreeBg: #f5f5f5; // Used
+$colorTreeBg: #f0f0f0; // Used
 $colorItemTreeHoverBg: pullForward($colorBodyBg, $hoverRatioPercent);
 $colorItemTreeHoverFg: pullForward($colorBodyFg, $hoverRatioPercent);
 $colorItemTreeIcon: $colorKey; // Used

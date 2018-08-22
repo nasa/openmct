@@ -56,7 +56,14 @@
         }
 
         &__pane-tree {
+            background: $colorTreeBg;
+            padding: $m;
+            backface-visibility: hidden;
+            transition: all 350ms ease-in-out;
             width: 30%;
+
+            // Add drop shadow
+            //background-image: linear-gradient(90deg, rgba(black, 0) calc(100% - 10px), rgba(black, 0.1) calc(100% - 2px), rgba(black, 0.2) 100%);
 
             [class*="collapse-button"] {
                 // For mobile, collapse button becomes menu icon
@@ -65,6 +72,7 @@
                 transform: translateX(100%);
 
                 &:before {
+                    color: $colorKey;
                     content: $glyph-icon-menu-hamburger;
                     font-size: 1.4em;
                 }
@@ -77,17 +85,11 @@
         }
 
         @include phonePortrait() {
-            border: 1px solid red;
-
             &__pane-tree {
-               // @include test(orange);
                 width: calc(100% - #{$mobileMenuIconD});
-                [class*="collapse-button"] {
-                   // transform: translateX(0);
-                }
 
                 + .l-pane {
-                    // Hide the next pane over when this pane is expanded
+                    // Hide pane-main over when this pane is expanded
                     opacity: 0;
                     pointer-events: none;
                 }
@@ -95,15 +97,8 @@
                 &[class*="--collapsed"] + .l-pane {
                     opacity: 1;
                     pointer-events: inherit;
+                    transition: opacity 500ms ease 250ms;
                 }
-            }
-
-            &__pane-main {
-                //transform: translateX(calc(100% - #{$mobileMenuIconD}));
-                /*width: 100%;*/
-            }
-
-            > .l-pane__contents {
             }
         }
 
@@ -150,11 +145,6 @@
             > [class*="l-shell__"] + [class*="l-shell__"] {
                 margin-top: $interiorMargin;
             }
-        }
-
-        &__pane-tree {
-            background: $colorTreeBg;
-            padding: $m;
         }
 
         &__pane-main {
