@@ -37,6 +37,10 @@ define(function () {
             return this.metadatum.name;
         }
 
+        getMetadatum() {
+            return this.metadatum;
+        }
+
         isCurrentTimeSystem() {
             var isCurrentTimeSystem = this.metadatum.hints.hasOwnProperty('domain') &&
             this.metadatum.key === this.openmct.time.timeSystem().key;

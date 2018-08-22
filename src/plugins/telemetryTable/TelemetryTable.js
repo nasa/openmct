@@ -92,8 +92,9 @@ define([
                 .then(telemetryData => {
                     let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
                     let columnMap = this.getColumnMapForObject(keyString);
+                    let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
 
-                    let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString));
+                    let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
                     this.boundedRows.add(telemetryRows);
                     console.log('loaded ' + telemetryRows.length + ' rows');
                     this.emit('loading-historical-data', false);

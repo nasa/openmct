@@ -32,7 +32,9 @@
         data: function () {
             return {
                 rowTop: (this.rowOffset + this.rowIndex) * this.rowHeight + 'px',
-                formattedRow: this.row.getFormattedDatum()
+                formattedRow: this.row.getFormattedDatum(),
+                rowLimitClass: '',
+                cellLimitClasses: {}
             }
         },
         props: {
@@ -71,6 +73,8 @@
             },
             formatRow: function (row) {
                 this.formattedRow = row.getFormattedDatum();
+                this.rowLimitClass = row.getRowLimitClass();
+                this.cellLimitClasses = row.getCellLimitClasses();
             }
         },
         watch: {

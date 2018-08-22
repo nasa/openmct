@@ -22,11 +22,12 @@
 
 define([], function () {
     class TelemetryTableRow {
-        constructor(datum, columns, objectKeyString) {
+        constructor(datum, columns, objectKeyString, limitEvaluator) {
             this.columns = columns;
             this.columnCount = Object.keys(columns).length;
 
             this.datum = this.createNormalizedDatum(datum);
+            this.limitEvaluator = limitEvaluator;
             this.objectKeyString = objectKeyString;
 
             this.formatCache = {};
@@ -73,6 +74,26 @@ define([], function () {
                 this.buildFormatCache();
             }
             return this.formatCache;
+        }
+
+        getRowLimitClass() {
+            if (!this.rowLimitClass) {
+                let limitEvaluation = this.limitEvaluator.evaluate(this.datum); 
+                this.rowLimitClass = limitEvaluation && limitEvaluation.cssClass;
+            }
+            return this.rowLimitClass;
+        }
+
+        getCellLimitClasses() {
+            if (!this.cellLimitClasses) {
+                this.cellLimitClasses = Object.values(this.columns).reduce((alarmStateMap, column) => {
+                    let limitEvaluation = this.limitEvaluator.evaluate(this.datum, column.getMetadatum());
+                    alarmStateMap[column.getKey()] = limitEvaluation && limitEvaluation.cssClass;
+                    
+                    return alarmStateMap;
+                }, {});
+            }
+            return this.cellLimitClasses;
         }
 
         /**
