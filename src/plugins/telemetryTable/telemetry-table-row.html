@@ -1,3 +1,3 @@
-<tr :style="{ top: rowTop }">
+<tr :style="{ top: rowTop }" :class="rowLimitClass">
     <td v-for="(title, key, headerIndex) in headers" :style="{ width: columnWidths[headerIndex], 'max-width': columnWidths[headerIndex]}" :class="cellLimitClasses[key]">{{formattedRow[key]}}</td>
 </tr>

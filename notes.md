@@ -1,9 +1,7 @@
-* Benchmark - loading 1 million rows
-    - Old tables: ~90s
-    - New tables: ~11s
-* 1 million rows in 11 secs vs 90s
-
-* Prevent decoration of telemetry table rows. 
+* Limits
+* Show / hide columns (ie. table configuration)
+* Remove format caching
+* Prevent decoration of telemetry table rows.
 * Once decoration of telemetry table row objects is fixed, revert to non-bound function parameters to .on() calls.
 * On focus, filter boxes need to remove magnifying glass.
 * Add elipses for overflow on table cells
@@ -29,6 +27,11 @@
 * [X] Stop Vue from decorating EVERYTHING (but especially the telemetry collection)
 * [X] Need minimum width on tables. Provided by calcTableWidthPx in MCTTableController
 
+* Benchmark - loading 1 million rows
+    - Old tables: ~90s
+    - New tables: ~11s
+* 1 million rows in 11 secs vs 90s
+
 To Test
 * Multiple instances of tables?
 * Behavior at different widths.
@@ -39,7 +42,6 @@ Post WIP PR
 * Performance
     * Don't wrap row on load, do it on scroll.
     * On batch insert, check bounds once, rather than on each insert.
-* Show / hide columns (ie. table configuration)
 * See if sticky headers can be simplified (eg. can we combine headers table with content table?)
 * Default sort behavior, and sticking to the bottom for realtime numerical
 * Look at setting top on tbody, instead of each tr
