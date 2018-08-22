@@ -73,7 +73,8 @@ define([
     SinewaveLimitProvider.prototype.getLimitEvaluator = function (domainObject) {
         return {
             evaluate: function (datum, valueMetadata) {
-                var range = valueMetadata ? valueMetadata.key : 'sin'
+                var range = valueMetadata && valueMetadata.key;
+                
                 if (datum[range] > RED[range]) {
                     return LIMITS.rh;
                 }
