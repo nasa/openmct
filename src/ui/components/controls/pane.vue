@@ -474,11 +474,12 @@ export default {
     },
     beforeMount() {
         this.type = this.$parent.type;
-        if (this.type === 'horizontal') {
+        this.styleProp = 'flex-basis';
+/*        if (this.type === 'horizontal') {
             this.styleProp = 'width';
         } else {
             this.styleProp = 'height';
-        }
+        }*/
     },
     methods: {
         toggleCollapse: function () {
