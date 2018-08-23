@@ -36,7 +36,6 @@
         }
 
         &__collapse-button {
-            // @include test();
             position: absolute;
             display: flex;
             align-items: center;
@@ -46,10 +45,6 @@
         }
 
         &[class*="--horizontal"] {
-            > .l-pane__collapse-button {
-
-            }
-
             &.l-pane--collapsed {
                 padding-left: 0 !important;
                 padding-right: 0 !important;
@@ -59,10 +54,6 @@
         }
 
         &[class*="--vertical"] {
-            > .l-pane__collapse-button {
-
-            }
-
             &.l-pane--collapsed {
                 padding-top: 0 !important;
                 padding-top: 0 !important;
@@ -71,8 +62,28 @@
             }
         }
 
-        /************************ MOBILE-FIRST STYLES */
-        // @include test(green, 0.1);
+        /************************ CONTENTS */
+        &__contents {
+            //display: none;
+            opacity: 1;
+            overflow: hidden;
+            pointer-events: inherit;
+            transition: opacity 250ms ease 250ms;
+            height: 100%;
+        }
+
+        /************************ COLLAPSED STATE */
+        &--collapsed {
+            transition: all 350ms ease;
+
+            .l-pane__contents {
+                transition: opacity 150ms ease;
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+
+        /************************ MOBILE-ONLY STYLES */
 
 
         /************************ DESKTOP STYLES */
@@ -83,42 +94,126 @@
                 z-index: 1;
                 display: block;
                 position: absolute;
+
+                &:before {
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    z-index: -1;
+                }
             }
 
-            &--horizontal {
-                &--before {
-                    > .l-pane__handle {
+            &__collapse-button {
+                background: $colorSplitterButtonBg;
+                color: $colorSplitterFg;
 
+                &:before {
+                    font-size: .5rem;
+                }
+            }
+
+            &[class*="--collapsed"] {
+                > .l-pane__handle {
+                    display: none;
+                }
+            }
+
+            &[class*="--horizontal"] {
+                > .l-pane__handle {
+                    cursor: col-resize;
+                    top: 0;
+                    bottom: 0;
+                    width: $splitterHandleD;
+
+                    &:before {
+                        // Extended hit area
+                        top: 0;
+                        right: $hitMargin * -1;
+                        bottom: 0;
+                        left: $hitMargin * -1;
+                    }
+                }
+
+                > .l-pane__collapse-button {
+                    border-bottom-right-radius: $controlCr;
+                    height: nth($splitterCollapseBtnD, 2);
+                    width: nth($splitterCollapseBtnD, 1);
+
+                    &:before {
+                        content: $glyph-icon-arrow-right;
+                    }
+                }
+
+                /************************** Splitter Before */
+                &[class*="-before"] {
+                    padding-left: nth($splitterCollapseBtnD, 1) + $interiorMargin;
+
+                    > .l-pane__handle,
+                    > .l-pane__collapse-button {
+                        left: 0;
+                        transform: translateX(floor($splitterHandleD / -2)); // Center over the pane edge
                     }
 
                     > .l-pane__collapse-button {
-
                     }
 
+                    &[class*="--collapsed"] {
+                        > .l-pane__collapse-button {
+                            transform: translateX(-100%) scaleX(-1);
+                        }
+                    }
                 }
 
-                &--after {
-                    > .l-pane__handle {
+                /************************** Splitter After */
+                &[class*="-after"] {
+                    padding-right: nth($splitterCollapseBtnD, 1) + $interiorMargin;
 
+                    > .l-pane__handle,
+                    > .l-pane__collapse-button {
+                        right: 0;
+                        transform: translateX(floor($splitterHandleD / 2));
                     }
 
                     > .l-pane__collapse-button {
+                        transform: scaleX(-1);
+                    }
 
+                    &[class*="--collapsed"] {
+                        > .l-pane__collapse-button {
+                            transform: translateX(100%) scaleX(1);
+                        }
+                    }
+                }
+            }
+
+            &[class*="--vertical"] {
+                > .l-pane__handle {
+                    cursor: row-resize;
+                    left: 0;
+                    right: 0;
+                    height: $splitterHandleD;
+
+                    &:before {
+                        // Extended hit area
+                        left: 0;
+                        top: $hitMargin * -1;
+                        right: 0;
+                        bottom: $hitMargin * -1;
                     }
                 }
 
-
-
-
-
-
-            }
-
-            &--vertical {
+                > .l-pane__collapse-button {
+                    width: nth($splitterCollapseBtnD, 2);
+                    height: nth($splitterCollapseBtnD, 1);
+                }
 
             }
-        }
-    }
+
+
+
+
+        } // Ends .body.desktop
+    } // Ends .l-pane
 
 
 
@@ -139,7 +234,7 @@
             // Selectors here
 
             > .l-pane__handle {
-                top: 0;
+               /* top: 0;
                 bottom: 0;
 
                 &--before {
@@ -155,7 +250,7 @@
                         right: 0;
                     }
                 }
-
+*/
 
                 body.desktop & {
                     cursor: col-resize;
@@ -352,20 +447,9 @@
             }
 
             &:before {
+                // Glyph holder
                 display: block;
                 font-family: symbolsfont;
-            }
-        }
-
-        /************************ CONTENTS */
-        &__contents {
-            display: contents;
-        }
-
-        /************************ COLLAPSED STATE */
-        &--collapsed {
-            .l-pane__contents {
-                display: none;
             }
         }
     }

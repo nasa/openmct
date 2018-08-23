@@ -55,33 +55,52 @@
             padding: $interiorMarginSm;
         }
 
+        /********** MAIN AREA PANES */
+        &__pane-tree,
+        &__pane-main,
+        &__pane-inspector {
+            display: flex;
+            flex-flow: column nowrap;
+
+            // Create margin between shell elements in a pane
+            > [class*="l-shell__"] + [class*="l-shell__"] {
+                margin-top: $interiorMargin;
+            }
+        }
+
         &__pane-tree {
             background: $colorTreeBg;
             padding: $m;
             backface-visibility: hidden;
-            transition: all 350ms ease-in-out;
-            width: 30%;
-
-            // Add drop shadow
-            //background-image: linear-gradient(90deg, rgba(black, 0) calc(100% - 10px), rgba(black, 0.1) calc(100% - 2px), rgba(black, 0.2) 100%);
+            width: 40%;
 
             [class*="collapse-button"] {
                 // For mobile, collapse button becomes menu icon
-                height: $mobileMenuIconD;
-                width: $mobileMenuIconD;
-                transform: translateX(100%);
 
-                &:before {
-                    color: $colorKey;
-                    content: $glyph-icon-menu-hamburger;
-                    font-size: 1.4em;
+                body.mobile & {
+                    height: $mobileMenuIconD;
+                    width: $mobileMenuIconD;
+                    transform: translateX(100%);
+
+                    &:before {
+                        color: $colorKey;
+                        content: $glyph-icon-menu-hamburger;
+                        font-size: 1.4em;
+                    }
                 }
             }
         }
 
         &__pane-main {
-            transform: translateX(0);
-            // width: 100%;
+            flex: 1 1 auto;
+        }
+
+        &__pane-inspector {
+            display: flex;
+
+            body.mobile & {
+                display: none;
+            }
         }
 
         @include phonePortrait() {
@@ -97,7 +116,7 @@
                 &[class*="--collapsed"] + .l-pane {
                     opacity: 1;
                     pointer-events: inherit;
-                    transition: opacity 500ms ease 250ms;
+                    transition: opacity 250ms ease 250ms;
                 }
             }
         }
@@ -106,7 +125,6 @@
         &__main {
             flex: 1 1 auto;
             display: flex;
-            flex-flow: row nowrap;
         }
 
         &__main-container {
@@ -134,28 +152,6 @@
             padding: $interiorMarginLg;
         }
 
-        /********** MAIN AREA PANES */
-        &__pane-tree,
-        &__pane-main,
-        &__pane-inspector {
-            display: flex;
-            flex-flow: column nowrap;
-
-            // Create margin between shell elements in a pane
-            > [class*="l-shell__"] + [class*="l-shell__"] {
-                margin-top: $interiorMargin;
-            }
-        }
-
-        &__pane-main {
-            flex: 1 1 auto;
-        }
-
-        &__pane-inspector {
-            // Mobile-first
-            display: none;
-        }
-
         body.desktop & {
             /********** HEAD AND STATUS */
             &__head,
@@ -178,11 +174,6 @@
 
             &__pane-tree {
                 width: 300px;
-            }
-
-
-            &__pane-inspector {
-                display: flex;
             }
         }
     }
