@@ -19,7 +19,7 @@
             <pane class="l-shell__pane-main">
                 <div class="l-shell__main-container" ref="mainContainer"></div>
             </pane>
-            <pane class="l-shell__pane-inspector"
+            <pane class="l-shell__pane-inspector l-pane--holds-multipane"
                   handle="before"
                   collapsable>
                 <MctInspector ref="inspector"></MctInspector>
@@ -97,6 +97,7 @@
 
         &__pane-inspector {
             display: flex;
+            padding: $m;
 
             body.mobile & {
                 display: none;
@@ -169,11 +170,15 @@
             &__pane-tree,
             &__pane-inspector {
                 max-width: 30%;
-                min-width: 5%;
+                min-width: 0;
             }
 
             &__pane-tree {
                 width: 300px;
+            }
+
+            &__pane-inspector {
+                width: 200px;
             }
         }
     }

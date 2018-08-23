@@ -240,9 +240,10 @@ $splitterCollapseBtnD: (10px, 35px);
 $splitterHandleD: 2px;
 $splitterGrippyD: ($splitterHandleD - 4, 75px, 50px); // thickness, length, min-length
 $colorSplitterBaseBg: $colorBodyBg;
-$colorSplitterBg: pullForward($colorSplitterBaseBg, 10%);
+$colorSplitterBg: pullForward($colorSplitterBaseBg, 20%);
 $colorSplitterFg: $colorBodyBg;
-$colorSplitterButtonBg: pullForward($colorSplitterBaseBg, 20%);
+$colorSplitterButtonBg: rgba($colorBodyFg, 0.1); //pullForward($colorSplitterBaseBg, 20%);
+$colorSplitterButtonFg: $colorBodyFg;
 $colorSplitterGrippy: pullForward($colorSplitterBaseBg, 30%);
 $splitterShdw: none;
 $splitterEndCr: none;
