@@ -24,6 +24,8 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
+    // TODO: integrate approach at https://codepen.io/charlesh88/pen/KxpvOP
+
     $hitMargin: 4px;
     /**************************** BASE - MOBILE AND DESKTOP */
     .l-pane {
