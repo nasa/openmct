@@ -1,0 +1,11 @@
+<div class="grid-properties">
+    <!--form class="form" -->
+        <ul class="l-inspector-part">
+            <h2>Table Columns</h2>
+            <li class="grid-row" v-for="column in columns">
+                <div class="grid-cell label" title="Show or Hide Column"><label for="NameColumn"><!--{{ column.getTitle() }} --></label></div>
+                <div class="grid-cell value"><input type="checkbox" name="NameColumn"></div>
+            </li>
+        </ul>
+    <!--/form -->
+</div>

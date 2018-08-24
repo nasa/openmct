@@ -20,20 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
- define([
-     './TelemetryTableViewProvider',
-     './TableConfigurationViewProvider',
-     './TelemetryTableType'
-    ], function (
-        TelemetryTableViewProvider,
-        TableConfigurationViewProvider,
-        TelemetryTableType
-    ) {
-    return function plugin() {
-        return function install(openmct) {
-            openmct.objectViews.addProvider(new TelemetryTableViewProvider(openmct));
-            openmct.inspectorViews.addProvider(new TableConfigurationViewProvider(openmct));
-            openmct.types.addType('vue-table', TelemetryTableType());
-        };
-    };
- });
+define([], function () {
+    class TelemetryTableConfiguration{
+        constructor(domainObject, openmct) {
+            this.domainObject = domainObject;
+            this.updateDomainObject = this.updateDomainObject.bind();
+            
+            this.generalMutationListener = openmct.objects.observe(domainObject, "*", domainObject);
+        }
+
+        updateDomainObject(domainObject) {
+            this.domainObject = domainObject;
+        }
+
+        destroy() {
+
+        }
+    }
+
+    return TelemetryTableConfiguration;
+});

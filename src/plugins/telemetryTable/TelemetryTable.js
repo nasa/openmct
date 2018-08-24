@@ -73,7 +73,7 @@ define([
                 this.tableComposition.on('remove', this.removeTelemetryObject);
             });
         }
-        
+
         addTelemetryObject(telemetryObject) {
             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
             let objectKeyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);

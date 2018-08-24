@@ -21,10 +21,8 @@
  *****************************************************************************/
 
  define([
-    'vue',
     'text!./telemetry-table-row.html',
 ],function (
-    Vue,
     TelemetryTableRowTemplate
 ) {
     return {
@@ -33,8 +31,8 @@
             return {
                 rowTop: (this.rowOffset + this.rowIndex) * this.rowHeight + 'px',
                 formattedRow: this.row.getFormattedDatum(),
-                rowLimitClass: '',
-                cellLimitClasses: {}
+                rowLimitClass: this.row.getRowLimitClass(),
+                cellLimitClasses: this.row.getCellLimitClasses()
             }
         },
         props: {

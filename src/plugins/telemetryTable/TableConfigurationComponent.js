@@ -21,19 +21,32 @@
  *****************************************************************************/
 
  define([
-     './TelemetryTableViewProvider',
-     './TableConfigurationViewProvider',
-     './TelemetryTableType'
-    ], function (
-        TelemetryTableViewProvider,
-        TableConfigurationViewProvider,
-        TelemetryTableType
-    ) {
-    return function plugin() {
-        return function install(openmct) {
-            openmct.objectViews.addProvider(new TelemetryTableViewProvider(openmct));
-            openmct.inspectorViews.addProvider(new TableConfigurationViewProvider(openmct));
-            openmct.types.addType('vue-table', TelemetryTableType());
-        };
-    };
+    'lodash',
+    'vue',
+    'text!./table-configuration.html'
+],function (
+    _,
+    Vue, 
+    TableConfigurationTemplate
+) {
+    return function TableConfigurationComponent(domainObject, openmct) {
+        let tableConfiguration;
+
+        return new Vue({
+            template: TableConfigurationTemplate,
+            data: function () {
+                return {
+                     columns: []
+                };
+            },
+            methods: {
+            },
+            mounted: function () {
+                tableConfiguration = new TableConfiguration(domainObject);
+            },
+            destroyed: function () {
+                tableConfiguration.destroy();
+            }
+        });
+    }
  });

@@ -57,10 +57,9 @@ define(
                 if (!afterEndOfBounds && !beforeStartOfBounds) {
                     return super.addOne(item);
                 } else if (afterEndOfBounds) {
-                    return this.futureBuffer.addOne(item);
-                } else {
-                    return false;
+                    this.futureBuffer.addOne(item);
                 }
+                return false;
             }
 
             sortByTimeSystem(timeSystem) {
