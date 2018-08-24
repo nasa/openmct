@@ -260,25 +260,28 @@ export default {
         }*/
     },
     methods: {
-        toggleCollapse: function (restoreSize) {
+        toggleCollapse: function () {
             this.collapsed = !this.collapsed;
             // console.log("rs " + restoreSize);
-            if (!restoreSize) { restoreSize = this.$el.style[this.styleProp]; }
+            // if (!restoreSize) { restoreSize = this.$el.style[this.styleProp]; }
             if (this.collapsed) {
                 // Pane is expanded and is being collapsed
-                this.currentSize = this.$el.style[this.styleProp];
+                this.currentSize = (this.dragCollapse === true)? this.initial : this.$el.style[this.styleProp];
                 this.$el.style[this.styleProp] = '';
             } else {
                 // Pane is collapsed and is being expanded
                 this.$el.style[this.styleProp] = this.currentSize;
                 delete this.currentSize;
+                delete this.dragCollapse;
             }
         },
         trackSize: function() {
-            if (this.type === 'vertical') {
-                this.initial = this.$el.offsetHeight;
-            } else if (this.type === 'horizontal') {
-                this.initial = this.$el.offsetWidth;
+            if (!this.dragCollapse === true) {
+                if (this.type === 'vertical') {
+                    this.initial = this.$el.offsetHeight;
+                } else if (this.type === 'horizontal') {
+                    this.initial = this.$el.offsetWidth;
+                }
             }
         },
         getPosition: function (event) {
@@ -298,24 +301,22 @@ export default {
         updatePosition: function (event) {
             let size = this.getNewSize(event);
             this.$el.style[this.styleProp] = size;
-            /*
             let intSize = parseInt(size.substr(0, size.length - 2));
             // console.log(this.initial);
             if (intSize < 50) {
-                // this.currentSize = this.initial;
                 console.log("initial: " + this.initial);
-                // this.toggleCollapse("initial: " + this.initial);
-                document.body.removeEventListener('mousemove', this.updatePosition);
-                document.body.removeEventListener('mouseup', this.end);
+                this.dragCollapse = true;
+                this.end();
+                this.toggleCollapse();
             } else {
                 this.$el.style[this.styleProp] = size;
-            }*/
+            }
         },
         start: function (event) {
             this.startPosition = this.getPosition(event);
-            this.trackSize();
             document.body.addEventListener('mousemove', this.updatePosition);
             document.body.addEventListener('mouseup', this.end);
+            this.trackSize();
         },
         end: function (event) {
             document.body.removeEventListener('mousemove', this.updatePosition);
