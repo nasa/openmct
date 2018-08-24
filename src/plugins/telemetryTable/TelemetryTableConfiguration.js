@@ -20,17 +20,89 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([
+    './TelemetryTableColumn',
+], function (TelemetryTableColumn) {
+    const DEFAULT_CONFIGURATION = {
+        columns: {}
+    };
+
     class TelemetryTableConfiguration{
         constructor(domainObject, openmct) {
             this.domainObject = domainObject;
-            this.updateDomainObject = this.updateDomainObject.bind();
-            
-            this.generalMutationListener = openmct.objects.observe(domainObject, "*", domainObject);
+            this.openmct = openmct;
+            this.columns = {};
+            this.configuration = domainObject.configuration || DEFAULT_CONFIGURATION;
+
+            this.addTelemetryObject = this.addTelemetryObject.bind();
+            this.removeTelemetryObject = this.removeTelemetryObject.bind();
+
+            this.loadComposition()
+                .then(() => this.emit('headers-changed', this.headers()));
         }
 
-        updateDomainObject(domainObject) {
-            this.domainObject = domainObject;
+        loadConfiguration(composition) {
+            composition.forEach(composee => this.addTelemetryObject(composee, false));
+        }
+
+        addTelemetryObject(telemetryObject, emitChangeEvent) {
+            let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
+            let objectKeyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            this.columns[objectKeyString] = [];
+
+            metadataValues.forEach(metadatum => {
+                let column = new TelemetryTableColumn(this.openmct, metadatum)
+                this.columns[objectKeyString].push(column);
+            });
+
+            if (emitChangeEvent) {
+                this.emit('headers-changed', this.headers());
+            }
+        }
+
+        setConfiguration(configuration) {
+            this.configuration = configuration;
+            this.emit('headers-changed', this.headers());
+        }
+
+        removeTelemetryObject(objectIdentifier) {
+            let objectKeyString = this.openmct.objects.makeKeyString(objectIdentifier);
+            let columnsToRemove = this.columns[objectKeyString];
+            let headersChanged = false;
+
+            delete this.columns[objectKeyString];
+            columnsToRemove.forEach((column) => {
+                if (!this.hasColumnWithKey(column.key)) {
+                    delete this.configuration.columns[column.key];
+                    headersChanged = true;
+                }
+            });
+
+            if (headersChanged) {
+                this.emit('headers-changed', this.headers());
+            }
+        }
+
+        hasColumnWithKey(columnKey) {
+            return _.flatten(Object.values(this.columns))
+                .findIndex(column => column.getKey() === columnKey) !== -1;
+        }
+
+        columns() {
+            return this.columns;
+        }
+
+        headers() {
+            let flattenedColumns = _.flatten(Object.values(this.columns));
+            let headers = _.uniq(flattenedColumns, false, column => column.getKey())
+                .reduce(fromColumnsToHeadersMap, {});
+
+            function fromColumnsToHeadersMap(headersMap, column){
+                headersMap[column.getKey()] = column.getTitle();
+                return headersMap;
+            }
+
+            return headers;
         }
 
         destroy() {

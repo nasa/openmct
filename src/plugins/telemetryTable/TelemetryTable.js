@@ -23,17 +23,17 @@
 define([
     'EventEmitter',
     'lodash',
-    './TelemetryTableColumn',
     './collections/BoundedTableRowCollection',
     './collections/FilteredTableRowCollection',
-    './TelemetryTableRow'
+    './TelemetryTableRow',
+    './TelemetryTableConfiguration'
 ], function (
     EventEmitter,
     _,
-    TelemetryTableColumn,
     BoundedTableRowCollection,
     FilteredTableRowCollection,
-    TelemetryTableRow
+    TelemetryTableRow,
+    TelemetryTableConfiguration
 ) {
     class TelemetryTable extends EventEmitter {
         constructor(domainObject, rowCount, openmct) {
@@ -45,6 +45,7 @@ define([
             this.rowCount = rowCount;
             this.subscriptions = {};
             this.tableComposition = undefined;
+            this.tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
 
             this.addTelemetryObject = this.addTelemetryObject.bind(this);
             this.removeTelemetryObject = this.removeTelemetryObject.bind(this);
@@ -66,26 +67,26 @@ define([
 
         loadComposition() {
             this.tableComposition = this.openmct.composition.get(this.domainObject);
-            this.tableComposition.load().then((composition) => {
-                composition.forEach(this.addTelemetryObject, this);
-
-                this.tableComposition.on('add', this.addTelemetryObject);
-                this.tableComposition.on('remove', this.removeTelemetryObject);
-            });
+            this.tableComposition.on('add', this.addTelemetryObject);
+            this.tableComposition.on('remove', this.removeTelemetryObject);
+            this.tableComposition.load();
         }
 
         addTelemetryObject(telemetryObject) {
-            let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
-            let objectKeyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-            this.columns[objectKeyString] = [];
-
-            metadataValues.forEach(metadatum => {
-                this.columns[objectKeyString].push(new TelemetryTableColumn(this.openmct, metadatum));
-            });
-            this.emit('object-added');
-            
             this.requestDataFor(telemetryObject);
             this.subscribeTo(telemetryObject);
+            
+            //TODO: Reconsider this event. It should probably be triggered by configuration object now.
+            this.emit('object-added');
+        }
+
+        removeTelemetryObject(objectIdentifier) {
+            let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
+            this.boundedRows.removeAllRowsForObject(keyString);
+            this.unsubscribe(keyString);
+
+            //TODO: Reconsider this event. It should probably be triggered by configuration object now.
+            this.emit('object-removed');
         }
 
         requestDataFor(telemetryObject) {
@@ -104,7 +105,9 @@ define([
         }
 
         getColumnMapForObject(objectKeyString) {
-            return this.columns[objectKeyString].reduce((map, column) => {
+            let columns = this.tableConfiguration.columns();
+            
+            return columns[objectKeyString].reduce((map, column) => {
                 map[column.getKey()] = column;
                 return map;
             }, {});
@@ -120,46 +123,9 @@ define([
             });
         }
 
-        removeTelemetryObject(objectIdentifier) {
-            let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
-            delete this.columns[keyString];
-            this.boundedRows.removeAllRowsForObject(keyString);
-            this.unsubscribe(keyString);
-            this.emit('object-removed');
-        }
-
         unsubscribe(keyString) {
             this.subscriptions[keyString]();
             delete this.subscriptions[keyString];
-        }
-
-        headers() {
-            let flattenedColumns = _.flatten(Object.values(this.columns));
-            let headers = _.uniq(flattenedColumns, false, column => column.getKey())
-                .reduce(fromColumnsToHeadersMap, {});
-
-            function fromColumnsToHeadersMap(headersMap, column){
-                headersMap[column.getKey()] = column.getTitle();
-                return headersMap;
-            }
-
-            return headers;
-        }
-        
-        buildColumns() {
-            let allMetadata = this.composition.map(object => telemetryApi.getMetadata());
-            let allValueMetadata = _.flatten(allMetadata.map(
-                function getMetadataValues(metadata) {
-                    return metadata.values();
-                }
-            ));
-            let headers = allValueMetadata.map(metadatum => {
-                return {
-                    key: metadatum.key,
-                    title: metadatum.name
-                };
-            });
-            this.emit('updateHeaders', headers);
         }
 
         destroy() {

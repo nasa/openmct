@@ -30,19 +30,30 @@
     TableConfigurationTemplate
 ) {
     return function TableConfigurationComponent(domainObject, openmct) {
-        let tableConfiguration;
-
         return new Vue({
             template: TableConfigurationTemplate,
             data: function () {
                 return {
-                     columns: []
+                     headers: {}
                 };
             },
             methods: {
+                updateHeaders: function (headers) {
+                    this.headers = headers;
+                }
             },
             mounted: function () {
-                tableConfiguration = new TableConfiguration(domainObject);
+                let tableConfiguration = new TableConfiguration(domainObject);
+                let compositionCollection = openmct.composition.get(domainObject);
+
+                tableConfiguration.on('headers-changed', this.updateHeaders);
+
+                compositionCollection.load()
+                    .then((composition) => {
+                        tableConfiguration.loadConfiguration(domainObject, composition);
+                        compositionCollection.on('added', tableConfiguration.addObject);
+                        compositionCollection.on('removed', tableConfiguration.removeObject);
+                    });
             },
             destroyed: function () {
                 tableConfiguration.destroy();
