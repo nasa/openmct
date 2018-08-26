@@ -41,11 +41,10 @@ define([
 
             this.domainObject = domainObject;
             this.openmct = openmct;
-            this.columns = {};
             this.rowCount = rowCount;
             this.subscriptions = {};
             this.tableComposition = undefined;
-            this.tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
+            this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
 
             this.addTelemetryObject = this.addTelemetryObject.bind(this);
             this.removeTelemetryObject = this.removeTelemetryObject.bind(this);
@@ -67,26 +66,26 @@ define([
 
         loadComposition() {
             this.tableComposition = this.openmct.composition.get(this.domainObject);
-            this.tableComposition.on('add', this.addTelemetryObject);
-            this.tableComposition.on('remove', this.removeTelemetryObject);
-            this.tableComposition.load();
+            this.tableComposition.load().then((composition)=>{
+                this.configuration.addColumnsForAllObjects(composition);
+                composition.forEach(this.addTelemetryObject);
+
+                this.tableComposition.on('add', this.addTelemetryObject);
+                this.tableComposition.on('remove', this.removeTelemetryObject);
+            });
         }
 
         addTelemetryObject(telemetryObject) {
+            this.configuration.addColumnsForObject(telemetryObject, true);
             this.requestDataFor(telemetryObject);
             this.subscribeTo(telemetryObject);
-            
-            //TODO: Reconsider this event. It should probably be triggered by configuration object now.
-            this.emit('object-added');
         }
 
         removeTelemetryObject(objectIdentifier) {
+            this.configuration.removeColumnsForObject(objectIdentifier, true);
             let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
             this.boundedRows.removeAllRowsForObject(keyString);
             this.unsubscribe(keyString);
-
-            //TODO: Reconsider this event. It should probably be triggered by configuration object now.
-            this.emit('object-removed');
         }
 
         requestDataFor(telemetryObject) {
@@ -105,7 +104,7 @@ define([
         }
 
         getColumnMapForObject(objectKeyString) {
-            let columns = this.tableConfiguration.columns();
+            let columns = this.configuration.getColumns();
             
             return columns[objectKeyString].reduce((map, column) => {
                 map[column.getKey()] = column;

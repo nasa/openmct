@@ -63,6 +63,10 @@
                 type: Number,
                 required: false,
                 default: 0
+            },
+            configuration: {
+                type: Object,
+                required: true
             }
         },
         methods: {

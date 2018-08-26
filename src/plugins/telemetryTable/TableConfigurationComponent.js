@@ -23,40 +23,78 @@
  define([
     'lodash',
     'vue',
-    'text!./table-configuration.html'
+    'text!./table-configuration.html',
+    './TelemetryTableConfiguration'
 ],function (
     _,
     Vue, 
-    TableConfigurationTemplate
+    TableConfigurationTemplate,
+    TelemetryTableConfiguration
 ) {
     return function TableConfigurationComponent(domainObject, openmct) {
+        const tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
+        let unlisteners = [];
+        unlisteners.push(openmct.objects.observe(domainObject, '*', (newDomainObject) => {
+            domainObject = newDomainObject;
+        }));
+
+        function defaultConfiguration(domainObject) {
+            let configuration = domainObject.configuration;
+            configuration.table = configuration.table || {
+                columns: {}
+            };
+            return configuration;
+        }
+
         return new Vue({
             template: TableConfigurationTemplate,
             data: function () {
                 return {
-                     headers: {}
-                };
+                    headers: {},
+                    configuration: defaultConfiguration(domainObject)
+                }
             },
             methods: {
                 updateHeaders: function (headers) {
                     this.headers = headers;
+                },
+                toggleColumn: function (key) {
+                    let isVisible = this.configuration.table.columns[key];
+                    
+                    if (isVisible === undefined) {
+                        isVisible = true;
+                    }
+
+                    this.configuration.table.columns[key] = !isVisible;
+                    openmct.objects.mutate(domainObject, "configuration", this.configuration);
                 }
             },
             mounted: function () {
-                let tableConfiguration = new TableConfiguration(domainObject);
                 let compositionCollection = openmct.composition.get(domainObject);
 
                 tableConfiguration.on('headers-changed', this.updateHeaders);
 
                 compositionCollection.load()
                     .then((composition) => {
-                        tableConfiguration.loadConfiguration(domainObject, composition);
-                        compositionCollection.on('added', tableConfiguration.addObject);
-                        compositionCollection.on('removed', tableConfiguration.removeObject);
+                        tableConfiguration.addColumnsForAllObjects(composition);
+                        compositionCollection.on('add', addObject);
+                        unlisteners.push(compositionCollection.off.bind(compositionCollection, 'add', addObject));
+
+                        compositionCollection.on('remove', removeObject);
+                        unlisteners.push(compositionCollection.off.bind(compositionCollection, 'remove', removeObject));
                     });
+                
+                function addObject(domainObject) {
+                    tableConfiguration.addColumnsForObject(domainObject, true);
+                }
+
+                function removeObject(domainObject) {
+                    tableConfiguration.removeColumnsForObject(domainObject, true);
+                }
             },
             destroyed: function () {
                 tableConfiguration.destroy();
+                unlisteners.forEach((unlisten) => unlisten());
             }
         });
     }

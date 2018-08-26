@@ -21,51 +21,43 @@
  *****************************************************************************/
 
 define([
+    'EventEmitter',
     './TelemetryTableColumn',
-], function (TelemetryTableColumn) {
-    const DEFAULT_CONFIGURATION = {
-        columns: {}
-    };
+], function (EventEmitter, TelemetryTableColumn) {
 
-    class TelemetryTableConfiguration{
+    class TelemetryTableConfiguration extends EventEmitter{
         constructor(domainObject, openmct) {
+            super();
+
             this.domainObject = domainObject;
             this.openmct = openmct;
             this.columns = {};
-            this.configuration = domainObject.configuration || DEFAULT_CONFIGURATION;
 
-            this.addTelemetryObject = this.addTelemetryObject.bind();
-            this.removeTelemetryObject = this.removeTelemetryObject.bind();
-
-            this.loadComposition()
-                .then(() => this.emit('headers-changed', this.headers()));
+            this.addColumnsForObject = this.addColumnsForObject.bind(this);
+            this.removeColumnsForObject = this.removeColumnsForObject.bind(this);
         }
 
-        loadConfiguration(composition) {
-            composition.forEach(composee => this.addTelemetryObject(composee, false));
+        addColumnsForAllObjects(objects) {
+            objects.forEach(composee => this.addColumnsForObject(composee, false));
+            this.emit('headers-changed', this.getHeaders());
         }
 
-        addTelemetryObject(telemetryObject, emitChangeEvent) {
+        addColumnsForObject(telemetryObject, emitChangeEvent) {
             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
             let objectKeyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             this.columns[objectKeyString] = [];
 
             metadataValues.forEach(metadatum => {
-                let column = new TelemetryTableColumn(this.openmct, metadatum)
+                let column = new TelemetryTableColumn(this.openmct, metadatum);
                 this.columns[objectKeyString].push(column);
             });
 
             if (emitChangeEvent) {
-                this.emit('headers-changed', this.headers());
+                this.emit('headers-changed', this.getHeaders());
             }
         }
 
-        setConfiguration(configuration) {
-            this.configuration = configuration;
-            this.emit('headers-changed', this.headers());
-        }
-
-        removeTelemetryObject(objectIdentifier) {
+        removeColumnsForObject(objectIdentifier) {
             let objectKeyString = this.openmct.objects.makeKeyString(objectIdentifier);
             let columnsToRemove = this.columns[objectKeyString];
             let headersChanged = false;
@@ -73,13 +65,13 @@ define([
             delete this.columns[objectKeyString];
             columnsToRemove.forEach((column) => {
                 if (!this.hasColumnWithKey(column.key)) {
-                    delete this.configuration.columns[column.key];
+                    //delete this.configuration.columns[column.key];
                     headersChanged = true;
                 }
             });
 
             if (headersChanged) {
-                this.emit('headers-changed', this.headers());
+                this.emit('headers-changed', this.getHeaders());
             }
         }
 
@@ -88,11 +80,11 @@ define([
                 .findIndex(column => column.getKey() === columnKey) !== -1;
         }
 
-        columns() {
+        getColumns() {
             return this.columns;
         }
 
-        headers() {
+        getHeaders() {
             let flattenedColumns = _.flatten(Object.values(this.columns));
             let headers = _.uniq(flattenedColumns, false, column => column.getKey())
                 .reduce(fromColumnsToHeadersMap, {});
@@ -103,10 +95,6 @@ define([
             }
 
             return headers;
-        }
-
-        destroy() {
-
         }
     }
 

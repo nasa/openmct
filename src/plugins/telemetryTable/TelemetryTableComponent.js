@@ -44,6 +44,14 @@
         const table = new TelemetryTable(domainObject, VISIBLE_ROW_COUNT, openmct);
         let processingScroll = false;
 
+        function defaultConfiguration(domainObject) {
+            let configuration = domainObject.configuration;
+            configuration.table = configuration.table || {
+                columns: {}
+            };
+            return configuration;
+        }
+
         return new Vue({
             template: TelemetryTableTemplate,
             components: {
@@ -52,6 +60,7 @@
             data: function () {
                 return {
                     headers: {},
+                    configuration: defaultConfiguration(domainObject),
                     headersCount: 0,
                     visibleRows: [],
                     columnWidths: [],
@@ -109,7 +118,14 @@
                     return Math.floor(bottomScroll / this.rowHeight);
                 },
                 updateHeaders: function () {
-                    let headers = table.headers();
+                    let headers = table.configuration.getHeaders();
+                    
+                    Object.keys(headers).forEach((headerKey) => {
+                        if (this.configuration.table.columns[headerKey] === false) {
+                            delete headers[headerKey];
+                        }
+                    });
+
                     this.headers = headers;
                     this.headersCount = Object.values(headers).length;
                     Vue.nextTick().then(this.calculateColumnWidths);
@@ -172,9 +188,6 @@
                     this.filters[columnKey] = '';
                     table.filteredRows.setColumnFilter(columnKey, '');
                 },
-                objectRemoved: function () {
-                    this.updateHeaders();
-                },
                 rowsAdded: function (rows) {
                     let sizingRow;
                     if (Array.isArray(rows)) {
@@ -216,15 +229,17 @@
                             height = el.clientHeight;
                         }
                     }, RESIZE_POLL_INTERVAL);
+                },
+                updateConfiguration: function (configuration) {
+                    this.configuration = configuration;
+                    this.updateHeaders();
                 }
-
             },
             created: function () {
                 this.filterChanged = _.debounce(this.filterChanged, 500);
             },
             mounted: function () {
-                table.on('object-added', this.updateHeaders);
-                table.on('object-removed', this.objectRemoved);
+                table.configuration.on('headers-changed', this.updateHeaders);
                 table.on('loading-historical-data', this.loadingHistoricalData);
 
                 table.filteredRows.on('add', this.rowsAdded);
@@ -237,6 +252,8 @@
                 this.scrollable = this.$el.querySelector('.t-scrolling');
                 this.sizingTable = this.$el.querySelector('.js-sizing-table');
                 this.headersHolderEl = this.$el.querySelector('.mct-table-headers-w');
+
+                openmct.objects.observe(domainObject, 'configuration', this.updateConfiguration);
                 
                 this.calculateTableSize();
                 this.pollForResize();

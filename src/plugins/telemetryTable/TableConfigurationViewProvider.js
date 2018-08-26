@@ -61,8 +61,9 @@ define([
                     object.type === 'vue-table' && 
                     isBeingEdited(object);
             },
-            view: function (domainObject) {
+            view: function (selection) {
                 let component;
+                let domainObject = selection[0].context.item;
                 return {
                     show: function (element) {
                         component = TableConfigurationComponent(domainObject, openmct);

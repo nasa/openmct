@@ -6,6 +6,9 @@
             Export As CSV
         </a>
     </div>
+    <div>
+        {{configuration}}
+    </div>
     <!-- Headers table -->
     <div class="mct-table-headers-w">
         <table class="mct-table l-tabular-headers filterable" :style="{ 'max-width': totalWidth + 'px'}">
@@ -41,7 +44,8 @@
                     :rowIndex="rowIndex"
                     :rowOffset="rowOffset"
                     :rowHeight="rowHeight"
-                    :row="row">
+                    :row="row"
+                    >
                 </telemetry-table-row>
             </tbody>
         </table>
