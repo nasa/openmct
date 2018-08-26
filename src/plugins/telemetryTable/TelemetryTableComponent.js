@@ -38,6 +38,7 @@
     const VISIBLE_ROW_COUNT = 100;
     const ROW_HEIGHT = 17;
     const RESIZE_POLL_INTERVAL = 200;
+    const AUTO_SCROLL_TRIGGER_HEIGHT = 20;
 
     return function TelemetryTableComponent(domainObject, openmct) {
         const csvExporter = new CSVExporter();
@@ -70,6 +71,7 @@
                     totalHeight: 0,
                     totalWidth: 0,
                     rowOffset: 0,
+                    autoScroll: true,
                     sortOptions: {},
                     filters: {},
                     loading: false,
@@ -119,7 +121,7 @@
                 },
                 updateHeaders: function () {
                     let headers = table.configuration.getHeaders();
-                    
+
                     Object.keys(headers).forEach((headerKey) => {
                         if (this.configuration.table.columns[headerKey] === false) {
                             delete headers[headerKey];
@@ -174,9 +176,24 @@
                         requestAnimationFrame(() => {
                             this.updateVisibleRows();
                             this.synchronizeScrollX();
+
+                            if (this.shouldSnapToBottom()) {
+                                // If user scrolls away from bottom, disable auto-scroll.
+                                // Auto-scroll will be re-enabled if user scrolls to bottom again.
+                                this.autoScroll = true;
+                            } else {
+                                this.autoScroll = false;
+                            }
+
                             processingScroll = false;
                         });
                     }
+                },
+                shouldSnapToBottom: function () {
+                    return this.scrollable.scrollTop >= (this.scrollable.scrollHeight - this.scrollable.offsetHeight - AUTO_SCROLL_TRIGGER_HEIGHT);
+                },
+                scrollToBottom: function () {
+                    this.scrollable.scrollTop = this.scrollable.scrollHeight;
                 },
                 synchronizeScrollX: function () {
                     this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
@@ -198,6 +215,9 @@
                     if (!this.sizingRows[sizingRow.objectKeyString]) {
                         this.sizingRows[sizingRow.objectKeyString] = sizingRow;
                         Vue.nextTick().then(this.calculateColumnWidths);
+                    }
+                    if (this.autoScroll) {
+                        this.scrollToBottom();
                     }
                     this.updateVisibleRows();
                 },

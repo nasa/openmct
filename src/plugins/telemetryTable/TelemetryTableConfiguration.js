@@ -64,8 +64,11 @@ define([
 
             delete this.columns[objectKeyString];
             columnsToRemove.forEach((column) => {
+                //There may be more than one column with the same key (eg. time system columns)
                 if (!this.hasColumnWithKey(column.key)) {
-                    //delete this.configuration.columns[column.key];
+                    // If there are no more columns with this key, delete any configuration, and trigger
+                    // a column refresh.
+                    delete this.domainObject.configuration.table.columns[column.getKey()];
                     headersChanged = true;
                 }
             });
