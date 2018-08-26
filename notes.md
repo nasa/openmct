@@ -1,13 +1,20 @@
-* Why aren't limits being applied until I scroll or do something?
-* Show / hide columns (ie. table configuration)
-* auto-scroll
-* On focus, filter boxes need to remove magnifying glass.
-* Add elipses for overflow on table cells
-* Make sure time columns are being correctly merged
-* Look at optimizing styles in telemetry-table-row
-* Test with bounds / clock / time system changes.
+* Delete old table
+* Update new table type and test backward compatibility.
+* re-evaluate TableConfiguration object. Name doesn't make sense right now, and some duplicated code for configuration handling in components.
+* Rebase over refactor branch
+* Move css to new table location
+* Test (see list of issues below)
 * Push WIP PR
 
+* [X] Remove column sizing rows on object removal (should be trivial since tracking by object ID already).
+* [X] Look at optimizing styles in telemetry-table-row
+   - Right now profiling does not highlight this as a bottleneck?
+* [X] Add title to table cells
+* [X] Add elipses for overflow on table cells
+* [X] On entry, filter boxes need to remove magnifying glass.
+* [X] auto-scroll
+* [X] Show / hide columns (ie. table configuration)
+* [X] Why aren't limits being applied until I scroll or do something?
 * [X] Handle window resizing
 * [X] Fix memory leaks
 * [X] Remove isFromObject and hasColumn from TelemetryTableRow
@@ -34,11 +41,17 @@
 * 1 million rows in 11 secs vs 90s
 
 To Test
-* Multiple instances of tables?
+* Multiple instances of tables
+* Make sure time columns are being correctly merged
+* Test with MSL data sources
+* Test with tutorial data sources
 * Behavior at different widths.
 * Short tables
+* Test with bounds / clock / time system changes.
+* Memory leaks
 
 Post WIP PR
+* Fix jitter on auto-scroll
 * Look at scroll-x again. Sounded like there might be some subtlety missing there (something to do with small columns?).
 * Split TelemetryTableComponent into more components. It's too large now.
 * Performance

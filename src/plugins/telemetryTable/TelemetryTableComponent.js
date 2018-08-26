@@ -44,6 +44,7 @@
         const csvExporter = new CSVExporter();
         const table = new TelemetryTable(domainObject, VISIBLE_ROW_COUNT, openmct);
         let processingScroll = false;
+        let observationUnlistener;
 
         function defaultConfiguration(domainObject) {
             let configuration = domainObject.configuration;
@@ -193,7 +194,7 @@
                     return this.scrollable.scrollTop >= (this.scrollable.scrollHeight - this.scrollable.offsetHeight - AUTO_SCROLL_TRIGGER_HEIGHT);
                 },
                 scrollToBottom: function () {
-                    this.scrollable.scrollTop = this.scrollable.scrollHeight;
+                    this.scrollable.scrollTop = this.totalHeight;
                 },
                 synchronizeScrollX: function () {
                     this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
@@ -216,10 +217,11 @@
                         this.sizingRows[sizingRow.objectKeyString] = sizingRow;
                         Vue.nextTick().then(this.calculateColumnWidths);
                     }
+                    this.updateVisibleRows();
+                    
                     if (this.autoScroll) {
                         this.scrollToBottom();
                     }
-                    this.updateVisibleRows();
                 },
                 exportAsCSV: function () {
                     const justTheData = table.filteredRows.getRows()
@@ -253,13 +255,22 @@
                 updateConfiguration: function (configuration) {
                     this.configuration = configuration;
                     this.updateHeaders();
+                },
+                addObject: function () {
+                    this.updateHeaders();
+                },
+                removeObject: function (objectIdentifier) {
+                    let objectKeyString = openmct.objects.makeKeyString(objectIdentifier);
+                    delete this.sizingRows[objectKeyString];
+                    this.updateHeaders();
                 }
             },
             created: function () {
                 this.filterChanged = _.debounce(this.filterChanged, 500);
             },
             mounted: function () {
-                table.configuration.on('headers-changed', this.updateHeaders);
+                table.on('object-added', this.addObject);
+                table.on('object-removed', this.removeObject);
                 table.on('loading-historical-data', this.loadingHistoricalData);
 
                 table.filteredRows.on('add', this.rowsAdded);
@@ -273,19 +284,23 @@
                 this.sizingTable = this.$el.querySelector('.js-sizing-table');
                 this.headersHolderEl = this.$el.querySelector('.mct-table-headers-w');
 
-                openmct.objects.observe(domainObject, 'configuration', this.updateConfiguration);
+                observationUnlistener = openmct.objects.observe(domainObject, 'configuration', this.updateConfiguration);
                 
                 this.calculateTableSize();
                 this.pollForResize();
             },
             destroyed: function () {
-                table.off('updateHeaders', this.updateHeaders);
+                table.off('object-added', this.addObject);
+                table.off('object-removed', this.removeObject);
+                table.off('loading-historical-data', this.loadingHistoricalData);
 
                 table.filteredRows.off('add', this.updateVisibleRows);
                 table.filteredRows.off('remove', this.updateVisibleRows);
                 table.filteredRows.off('sort', this.updateVisibleRows);
                 table.filteredRows.off('filter', this.updateVisibleRows);
                 clearInterval(this.resizePollHandle);
+
+                observationUnlistener();
                 
                 table.destroy();
             }

@@ -39,10 +39,9 @@ define([
 
         addColumnsForAllObjects(objects) {
             objects.forEach(composee => this.addColumnsForObject(composee, false));
-            this.emit('headers-changed', this.getHeaders());
         }
 
-        addColumnsForObject(telemetryObject, emitChangeEvent) {
+        addColumnsForObject(telemetryObject) {
             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
             let objectKeyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             this.columns[objectKeyString] = [];
@@ -51,16 +50,11 @@ define([
                 let column = new TelemetryTableColumn(this.openmct, metadatum);
                 this.columns[objectKeyString].push(column);
             });
-
-            if (emitChangeEvent) {
-                this.emit('headers-changed', this.getHeaders());
-            }
         }
 
         removeColumnsForObject(objectIdentifier) {
             let objectKeyString = this.openmct.objects.makeKeyString(objectIdentifier);
             let columnsToRemove = this.columns[objectKeyString];
-            let headersChanged = false;
 
             delete this.columns[objectKeyString];
             columnsToRemove.forEach((column) => {
@@ -69,13 +63,8 @@ define([
                     // If there are no more columns with this key, delete any configuration, and trigger
                     // a column refresh.
                     delete this.domainObject.configuration.table.columns[column.getKey()];
-                    headersChanged = true;
                 }
             });
-
-            if (headersChanged) {
-                this.emit('headers-changed', this.getHeaders());
-            }
         }
 
         hasColumnWithKey(columnKey) {

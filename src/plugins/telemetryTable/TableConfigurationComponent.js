@@ -67,30 +67,31 @@
 
                     this.configuration.table.columns[key] = !isVisible;
                     openmct.objects.mutate(domainObject, "configuration", this.configuration);
+                },
+                addObject: function (domainObject) {
+                    tableConfiguration.addColumnsForObject(domainObject, true);
+                    this.updateHeaders(tableConfiguration.getHeaders());
+                },
+                removeObject: function (objectIdentifier) {
+                    tableConfiguration.removeColumnsForObject(objectIdentifier, true);
+                    this.updateHeaders(tableConfiguration.getHeaders());
                 }
+
             },
             mounted: function () {
                 let compositionCollection = openmct.composition.get(domainObject);
 
-                tableConfiguration.on('headers-changed', this.updateHeaders);
-
                 compositionCollection.load()
                     .then((composition) => {
                         tableConfiguration.addColumnsForAllObjects(composition);
-                        compositionCollection.on('add', addObject);
-                        unlisteners.push(compositionCollection.off.bind(compositionCollection, 'add', addObject));
+                        this.updateHeaders(tableConfiguration.getHeaders());
+                        
+                        compositionCollection.on('add', this.addObject);
+                        unlisteners.push(compositionCollection.off.bind(compositionCollection, 'add', this.addObject));
 
-                        compositionCollection.on('remove', removeObject);
-                        unlisteners.push(compositionCollection.off.bind(compositionCollection, 'remove', removeObject));
+                        compositionCollection.on('remove', this.removeObject);
+                        unlisteners.push(compositionCollection.off.bind(compositionCollection, 'remove', this.removeObject));
                     });
-                
-                function addObject(domainObject) {
-                    tableConfiguration.addColumnsForObject(domainObject, true);
-                }
-
-                function removeObject(domainObject) {
-                    tableConfiguration.removeColumnsForObject(domainObject, true);
-                }
             },
             destroyed: function () {
                 tableConfiguration.destroy();

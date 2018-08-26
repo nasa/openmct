@@ -79,6 +79,8 @@ define([
             this.configuration.addColumnsForObject(telemetryObject, true);
             this.requestDataFor(telemetryObject);
             this.subscribeTo(telemetryObject);
+
+            this.emit('object-added', telemetryObject);
         }
 
         removeTelemetryObject(objectIdentifier) {
@@ -86,6 +88,8 @@ define([
             let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
             this.boundedRows.removeAllRowsForObject(keyString);
             this.unsubscribe(keyString);
+
+            this.emit('object-removed', objectIdentifier);
         }
 
         requestDataFor(telemetryObject) {
