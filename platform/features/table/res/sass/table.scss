@@ -37,7 +37,6 @@ mct-table {
     .mct-table {
         tr {
             display: flex; // flex-flow defaults to row nowrap (which is what we want) so no need to define
-            height: 18px; // Needed when a row has empty values in its cells
             align-items: stretch;
         }
 
@@ -55,6 +54,7 @@ mct-table {
         tbody {
             tr {
                 position: absolute;
+                height: 18px; // Needed when a row has empty values in its cells
             }
 
             td {
