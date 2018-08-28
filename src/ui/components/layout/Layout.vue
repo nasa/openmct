@@ -74,6 +74,17 @@
             backface-visibility: hidden;
             width: 40%;
 
+            .l-pane__contents {
+                display: flex;
+                flex-flow: column nowrap;
+
+                > [class*="__"] {
+                    // Margin between elements
+                    &:not(:last-child) { margin-bottom: $interiorMargin };
+                }
+            }
+
+
             [class*="collapse-button"] {
                 // For mobile, collapse button becomes menu icon
 
@@ -85,6 +96,7 @@
                     &:before {
                         color: $colorKey;
                         content: $glyph-icon-menu-hamburger;
+                        font-family: symbolsfont;
                         font-size: 1.4em;
                     }
                 }
@@ -140,6 +152,7 @@
         &__tree {
             // Tree component within __pane-tree
             flex: 1 1 100%;
+            overflow-y: auto;
         }
 
         &__object-view {

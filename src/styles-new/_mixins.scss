@@ -79,7 +79,7 @@
     background-color: rgba($c, $a) !important;
 }
 
-/************************** CONTROLS */
+/************************** CONTROLS, BUTTONS */
 @mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.5) 0 0px 2px) {
     appearance: none;
     background: $bg;
@@ -97,6 +97,13 @@
         background-color: $colorFormFieldErrorBg;
         color: $colorFormFieldErrorFg;
     }
+}
+
+@mixin button($bg: $colorBtnBg, $fg: $colorBtnFg, $radius: $controlCr, $shdw: none) {
+    background: $bg;
+    color: $fg;
+    border-radius: $radius;
+    box-shadow: $shdw;
 }
 
 /************************** MATH */

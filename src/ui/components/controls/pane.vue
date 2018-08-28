@@ -24,8 +24,6 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
-    // TODO: integrate approach at https://codepen.io/charlesh88/pen/KxpvOP
-
     $hitMargin: 2px;
     /**************************** BASE - MOBILE AND DESKTOP */
     .l-pane {
@@ -64,7 +62,6 @@
         &__contents {
             //display: none;
             opacity: 1;
-            overflow: hidden;
             pointer-events: inherit;
             transition: opacity 250ms ease 250ms;
             height: 100%;
