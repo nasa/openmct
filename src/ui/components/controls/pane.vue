@@ -81,18 +81,14 @@
             }
         }
 
-        /************************ MOBILE-ONLY STYLES */
-
-
         /************************ DESKTOP STYLES */
         body.desktop & {
-            //@include test(blue, 0.1);
-
             &__handle {
                 background: $colorSplitterBg;
                 display: block;
                 position: absolute;
                 z-index: 20;
+                transition: $transOut;
 
                 &:before {
                     content: '';
@@ -100,16 +96,28 @@
                     position: absolute;
                     z-index: -1;
                 }
+
+                &:hover {
+                    background: $colorSplitterHover;
+                    transition: $transIn;
+                }
             }
 
             &__collapse-button {
                 background: $colorSplitterButtonBg;
                 color: $colorSplitterButtonFg;
+                transition: $transOut;
 
                 &:before {
                     content: $glyph-icon-arrow-right;
                     font-family: symbolsfont;
                     font-size: .5rem;
+                }
+
+                &:hover {
+                    background: $colorSplitterButtonHoverBg;
+                    color: $colorSplitterButtonHoverFg;
+                    transition: $transIn;
                 }
             }
 

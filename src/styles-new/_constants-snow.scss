@@ -242,13 +242,15 @@ $splitterGrippyD: ($splitterHandleD - 4, 75px, 50px); // thickness, length, min-
 $colorSplitterBaseBg: $colorBodyBg;
 $colorSplitterBg: pullForward($colorSplitterBaseBg, 20%);
 $colorSplitterFg: $colorBodyBg;
+$colorSplitterHover: $colorKey; // pullForward($colorSplitterBg, $hoverRatioPercent * 2);
+$colorSplitterActive: $colorKey;
 $colorSplitterButtonBg: rgba($colorBodyFg, 0.1); //pullForward($colorSplitterBaseBg, 20%);
 $colorSplitterButtonFg: $colorBodyFg;
+$colorSplitterButtonHoverBg: rgba($colorKey, 0.5);
+$colorSplitterButtonHoverFg: $colorBodyBg;
 $colorSplitterGrippy: pullForward($colorSplitterBaseBg, 30%);
 $splitterShdw: none;
 $splitterEndCr: none;
-$colorSplitterHover: pullForward($colorSplitterBg, $hoverRatioPercent * 2);
-$colorSplitterActive: $colorKey;
 
 // Minitabs
 $colorMiniTabBg: $colorSplitterBg;
