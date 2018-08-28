@@ -168,13 +168,17 @@
                 > .l-pane__collapse-button {
                     //border-bottom-right-radius: $controlCr;
                     bottom: 0;
-                    height: auto; //nth($splitterCollapseBtnD, 2);
+                    height: auto;
                     width: nth($splitterCollapseBtnD, 1);
                 }
 
-                /************************** Splitter Before */
+                /************************** Horizontal Splitter Before */
                 &[class*="-before"] {
                     padding-left: $splitterHorzPad;
+
+                    &.l-pane--holds-multipane {
+                        padding-left: nth($splitterCollapseBtnD, 1);
+                    }
 
                     > .l-pane__handle,
                     > .l-pane__collapse-button {
@@ -189,9 +193,13 @@
                     }
                 }
 
-                /************************** Splitter After */
+                /************************** Horizontal Splitter After */
                 &[class*="-after"] {
                     padding-right: $splitterHorzPad;
+
+                    &.l-pane--holds-multipane {
+                        padding-right: nth($splitterCollapseBtnD, 1);
+                    }
 
                     > .l-pane__handle,
                     > .l-pane__collapse-button {

@@ -30,10 +30,11 @@
         display: flex;
         flex-flow: column nowrap;
         height: 100%;
+        min-width: 150px;
 
         > [class*="__"] {
             min-height: 50px;
-            padding: $interiorMarginLg;
+            padding: $interiorMargin;
         }
 
         &__properties {
@@ -41,6 +42,7 @@
         }
 
         &__elements {
+            //@include test(blue);
             height: 25%;
             flex: 0 1 auto;
         }
