@@ -72,7 +72,7 @@
             background: $colorTreeBg;
             padding: $m;
             backface-visibility: hidden;
-            width: 40%;
+            flex-basis: 40%;
 
             .l-pane__contents {
                 display: flex;
@@ -84,10 +84,8 @@
                 }
             }
 
-
             [class*="collapse-button"] {
                 // For mobile, collapse button becomes menu icon
-
                 body.mobile & {
                     height: $mobileMenuIconD;
                     width: $mobileMenuIconD;
@@ -118,15 +116,16 @@
 
         @include phonePortrait() {
             &__pane-tree {
-                width: calc(100% - #{$mobileMenuIconD});
+                flex-basis: calc(100% - #{$mobileMenuIconD});
 
                 + .l-pane {
-                    // Hide pane-main over when this pane is expanded
+                    // Hide pane-main when this pane is expanded
                     opacity: 0;
                     pointer-events: none;
                 }
 
                 &[class*="--collapsed"] + .l-pane {
+                    // Show pane-main when tree is collapsed
                     opacity: 1;
                     pointer-events: inherit;
                     transition: opacity 250ms ease 250ms;
@@ -187,11 +186,11 @@
             }
 
             &__pane-tree {
-                width: 300px;
+                flex-basis: 300px;
             }
 
             &__pane-inspector {
-                width: 200px;
+                flex-basis: 200px;
             }
         }
     }

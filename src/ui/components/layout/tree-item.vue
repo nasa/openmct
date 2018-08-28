@@ -22,28 +22,6 @@
     </li>
 </template>
 
-<style lang="scss">
-    @import "~styles/sass-base";
-
-    .c-tree__item,
-    .c-search-result__item {
-        &__name {
-            width: 100%; // Make hit area as large as possible
-        }
-
-        body.mobile & {
-            @include button($bg: $colorMobilePaneLeftTreeItemBg, $fg: $colorMobilePaneLeftTreeItemFg);
-            height: $mobileTreeItemH;
-            margin-bottom: $interiorMarginSm;
-            .c-view-control {
-                font-size: 1em;
-                width: ceil($mobileTreeItemH * 0.75);
-            }
-        }
-    }
-
-</style>
-
 <script>
     import viewControl from '../controls/viewControl.vue'
     export default {

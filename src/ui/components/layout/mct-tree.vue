@@ -23,7 +23,6 @@
 
         &__item {
             border-radius: $controlCr;
-            color: $colorItemTreeFg;
             display: flex;
             align-items: stretch;
             cursor: pointer;
@@ -38,15 +37,26 @@
                 }
             }
 
-            .c-tree__item__view-control {
+            &__view-control {
                 color: $colorItemTreeVC;
                 margin-right: $interiorMarginSm;
             }
 
             &__name {
+                color: $colorItemTreeFg;
+                width: 100%;
                 &:before {
                     color: $colorItemTreeIcon;
                     width: $treeTypeIconW;
+                }
+            }
+
+            body.mobile & {
+                @include button($bg: $colorMobilePaneLeftTreeItemBg, $fg: $colorMobilePaneLeftTreeItemFg);
+                height: $mobileTreeItemH;
+                margin-bottom: $interiorMarginSm;
+                [class*="view-control"] {
+                    width: ceil($mobileTreeItemH * 0.5);
                 }
             }
         }

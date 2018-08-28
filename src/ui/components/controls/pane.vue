@@ -29,6 +29,7 @@
     .l-pane {
         opacity: 1;
         pointer-events: inherit;
+        transition: transOut;
 
         &__handle {
             // __handle doesn't appear in mobile
@@ -60,7 +61,6 @@
 
         /************************ CONTENTS */
         &__contents {
-            //display: none;
             opacity: 1;
             pointer-events: inherit;
             transition: opacity 250ms ease 250ms;
@@ -69,7 +69,7 @@
 
         /************************ COLLAPSED STATE */
         &--collapsed {
-            flex-basis: 0px;
+            flex-basis: 0px !important;
             min-width: 0px !important;
             min-height: 0px !important;
             transition: all 350ms ease;
@@ -135,11 +135,9 @@
             &[class*="--horizontal"] {
                 $splitterHorzPad: nth($splitterCollapseBtnD, 1) + $interiorMargin;
 
-
                 &[class*="--collapsed"] {
                     > .l-pane__handle {
-                        //background: $colorSplitterButtonBg;
-                        //width: nth($splitterCollapseBtnD, 1) + 1;
+
                     }
 
                     > .l-pane__collapse-button {
