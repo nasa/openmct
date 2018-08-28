@@ -8,6 +8,7 @@
                    type="horizontal">
             <pane class="l-shell__pane-tree"
                   handle="after"
+                  label="Browse"
                   collapsable>
                 <div class="l-shell__search">
                     <search class="c-search--major" ref="shell-search"></search>
@@ -21,6 +22,7 @@
             </pane>
             <pane class="l-shell__pane-inspector l-pane--holds-multipane"
                   handle="before"
+                  label="Inspect"
                   collapsable>
                 <MctInspector ref="inspector"></MctInspector>
             </pane>
@@ -70,7 +72,7 @@
 
         &__pane-tree {
             background: $colorTreeBg;
-            padding: $m;
+            //padding: $m;
             backface-visibility: hidden;
             flex-basis: 40%;
 
@@ -107,7 +109,7 @@
 
         &__pane-inspector {
             display: flex;
-            padding: $m;
+            //padding: $m;
 
             body.mobile & {
                 display: none;
@@ -156,7 +158,7 @@
 
         &__object-view {
             flex: 1 1 auto;
-            padding: $interiorMarginLg;
+            //padding: $interiorMarginLg;
         }
 
         &__time-conductor {

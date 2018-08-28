@@ -14,7 +14,9 @@
         </div>
         <a class="l-pane__collapse-button"
            @click="toggleCollapse"
-           v-if="collapsable"></a>
+           v-if="collapsable">
+            <span class="l-pane__label">{{ label }}</span>
+        </a>
         <div class="l-pane__contents">
             <slot></slot>
         </div>
@@ -31,12 +33,14 @@
         pointer-events: inherit;
         transition: transOut;
 
-        &__handle {
-            // __handle doesn't appear in mobile
+        &__handle,
+        &__label {
+            // __handle and __label don't appear in mobile
             display: none;
         }
 
         &__collapse-button {
+            // Mobile-first
             position: absolute;
             display: flex;
             align-items: center;
@@ -62,6 +66,7 @@
         /************************ CONTENTS */
         &__contents {
             opacity: 1;
+            padding: $interiorMargin;
             pointer-events: inherit;
             transition: opacity 250ms ease 250ms;
             height: 100%;
@@ -91,6 +96,7 @@
                 transition: $transOut;
 
                 &:before {
+                    // Extended hit area
                     content: '';
                     display: block;
                     position: absolute;
@@ -106,12 +112,16 @@
             &__collapse-button {
                 background: $colorSplitterButtonBg;
                 color: $colorSplitterButtonFg;
+                font-size: nth($splitterCollapseBtnD, 1) * .7;
+                position: relative;
+                justify-content: start;
                 transition: $transOut;
 
-                &:before {
-                    content: $glyph-icon-arrow-right;
+                &:after {
+                    // Close icon
+                    content: $glyph-icon-x;
                     font-family: symbolsfont;
-                    font-size: .5rem;
+                    font-size: .8em;
                 }
 
                 &:hover {
@@ -119,6 +129,14 @@
                     color: $colorSplitterButtonHoverFg;
                     transition: $transIn;
                 }
+            }
+
+            &__label {
+                // Name of the pane
+                display: block;
+                text-transform: uppercase;
+                transform-origin: top left;
+                flex: 1 0 90%;
             }
 
             &[class*="--collapsed"] {
@@ -134,21 +152,6 @@
 
             &[class*="--horizontal"] {
                 $splitterHorzPad: nth($splitterCollapseBtnD, 1) + $interiorMargin;
-
-                &[class*="--collapsed"] {
-                    > .l-pane__handle {
-
-                    }
-
-                    > .l-pane__collapse-button {
-                        bottom: 0; height: auto;
-                        border-radius: unset;
-
-                        &:before {
-                            transform: scaleX(-1);
-                        }
-                    }
-                }
 
                 > .l-pane__handle {
                     cursor: col-resize;
@@ -166,55 +169,44 @@
                 }
 
                 > .l-pane__collapse-button {
-                    //border-bottom-right-radius: $controlCr;
-                    bottom: 0;
-                    height: auto;
-                    width: nth($splitterCollapseBtnD, 1);
+                    height: nth($splitterCollapseBtnD, 1);
+                    padding: $interiorMarginSm $interiorMarginSm;
+                }
+
+                &[class*="--collapsed"] {
+                    > .l-pane__collapse-button {
+                        position: absolute;
+                        bottom: 0; left: 0;
+                        height: auto;
+
+                        [class*="label"] {
+                            position: absolute;
+                            transform: translate($interiorMarginLg, 15px) rotate(90deg);
+                            top: 0;
+                        }
+
+                        &:after {
+                            content: $glyph-icon-plus;
+                            position: absolute;
+                            top: $interiorMarginSm;
+
+                        }
+                    }
                 }
 
                 /************************** Horizontal Splitter Before */
                 &[class*="-before"] {
-                    padding-left: $splitterHorzPad;
-
-                    &.l-pane--holds-multipane {
-                        padding-left: nth($splitterCollapseBtnD, 1);
-                    }
-
-                    > .l-pane__handle,
-                    > .l-pane__collapse-button {
+                    > .l-pane__handle {
                         left: 0;
                         transform: translateX(floor($splitterHandleD / -2)); // Center over the pane edge
-                    }
-
-                    &[class*="--collapsed"] {
-                        > .l-pane__collapse-button {
-                           // transform: scaleX(-1);
-                        }
                     }
                 }
 
                 /************************** Horizontal Splitter After */
                 &[class*="-after"] {
-                    padding-right: $splitterHorzPad;
-
-                    &.l-pane--holds-multipane {
-                        padding-right: nth($splitterCollapseBtnD, 1);
-                    }
-
-                    > .l-pane__handle,
-                    > .l-pane__collapse-button {
+                    > .l-pane__handle {
                         right: 0;
                         transform: translateX(floor($splitterHandleD / 2));
-                    }
-
-                    > .l-pane__collapse-button {
-                        transform: scaleX(-1);
-                    }
-
-                    &[class*="--collapsed"] {
-                        > .l-pane__collapse-button {
-                           // transform: scaleX(1);
-                        }
                     }
                 }
             }
@@ -235,11 +227,6 @@
                     }
                 }
 
-                > .l-pane__collapse-button {
-                    width: nth($splitterCollapseBtnD, 2);
-                    height: nth($splitterCollapseBtnD, 1);
-                }
-
             }
         } // Ends .body.desktop
     } // Ends .l-pane
@@ -254,7 +241,8 @@ export default {
                 return ['before', 'after'].indexOf(value) !== -1;
             }
         },
-        collapsable: Boolean
+        collapsable: Boolean,
+        label: String
     },
     data() {
         return {
@@ -264,11 +252,6 @@ export default {
     beforeMount() {
         this.type = this.$parent.type;
         this.styleProp = 'flex-basis';
-/*        if (this.type === 'horizontal') {
-            this.styleProp = 'width';
-        } else {
-            this.styleProp = 'height';
-        }*/
     },
     methods: {
         toggleCollapse: function () {
