@@ -1,13 +1,14 @@
 <template>
     <multipane class="c-inspector"
                type="vertical">
-        <pane class="c-inspector__properties"
-              ref="properties">
+        <pane class="c-inspector__properties">
+            <div ref="properties">
+
+            </div>
         </pane>
         <pane class="l-pane c-inspector__elements"
-              handle="before"
-              ref="elements">
-            c-inspector__elements
+              handle="before">
+            <div ref="elements">c-inspector__elements</div>
         </pane>
     </multipane>
 </template>
@@ -29,22 +30,29 @@
     .c-inspector {
         display: flex;
         flex-flow: column nowrap;
+        align-items: stretch;
         height: 100%;
         min-width: 150px;
 
         > [class*="__"] {
             min-height: 50px;
-            padding: $interiorMargin;
+            /*overflow: auto;*/
+            &:not(:last-child) {
+                margin-bottom: $interiorMargin;
+            }
         }
 
         &__properties {
+            @include userSelectNone();
+            //@include test(red);
+            height: auto;
             flex: 1 1 auto;
         }
 
         &__elements {
-            //@include test(blue);
-            height: 25%;
-            flex: 0 1 auto;
+            @include test(green);
+            height: 200px;
+            flex: 1 1 auto;
         }
 
         .l-inspector-part {
@@ -53,10 +61,10 @@
 
         h2 {
             @include grid-two-column-span-cols;
-            border-radius: $controlCr;
+            border-radius: $smallCr;
             background-color: $colorInspectorSectionHeaderBg;
             color: $colorInspectorSectionHeaderFg;
-            font-size: 100%;
+            font-size: .85em;
             font-weight: normal;
             margin: $interiorMarginLg 0 $interiorMarginSm 0;
             padding: $interiorMarginSm $interiorMargin;

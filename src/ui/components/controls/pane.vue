@@ -5,16 +5,17 @@
             'l-pane--horizontal-handle-after': type === 'horizontal' && handle === 'after',
             'l-pane--vertical-handle-before': type === 'vertical' && handle === 'before',
             'l-pane--vertical-handle-after': type === 'vertical' && handle === 'after',
-             'l-pane--collapsed': collapsed
+             'l-pane--collapsed': collapsed,
+             'l-pane--resizing': resizing === true
          }">
         <!-- TODO: move resize-handle styling from handle into pane, so that padding can be handled -->
         <div v-if="handle"
              class="l-pane__handle"
              @mousedown="start">
         </div>
-        <a class="l-pane__collapse-button"
-           @click="toggleCollapse"
-           v-if="collapsable">
+        <a v-if="collapsable"
+           class="l-pane__collapse-button"
+           @click="toggleCollapse">
             <span class="l-pane__label">{{ label }}</span>
         </a>
         <div class="l-pane__contents">
@@ -26,7 +27,7 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
-    $hitMargin: 2px;
+    $hitMargin: 4px;
     /**************************** BASE - MOBILE AND DESKTOP */
     .l-pane {
         opacity: 1;
@@ -92,7 +93,7 @@
                 background: $colorSplitterBg;
                 display: block;
                 position: absolute;
-                z-index: 20;
+                z-index: 100;
                 transition: $transOut;
 
                 &:before {
@@ -112,9 +113,11 @@
             &__collapse-button {
                 background: $colorSplitterButtonBg;
                 color: $colorSplitterButtonFg;
+                flex: 1 0 auto;
                 font-size: nth($splitterCollapseBtnD, 1) * .7;
                 position: relative;
                 justify-content: start;
+                text-shadow: $shdwTextSubtle;
                 transition: $transOut;
 
                 &:after {
@@ -133,10 +136,16 @@
 
             &__label {
                 // Name of the pane
+                @include ellipsize();
                 display: block;
                 text-transform: uppercase;
                 transform-origin: top left;
                 flex: 1 0 90%;
+            }
+
+            &--resizing {
+                // User is dragging the handle and resizing a pane
+                @include userSelectNone();
             }
 
             &[class*="--collapsed"] {
@@ -151,8 +160,6 @@
             }
 
             &[class*="--horizontal"] {
-                $splitterHorzPad: nth($splitterCollapseBtnD, 1) + $interiorMargin;
-
                 > .l-pane__handle {
                     cursor: col-resize;
                     top: 0;
@@ -227,12 +234,29 @@
                     }
                 }
 
+                /************************** Vertical Splitter Before */
+                &[class*="-before"] {
+                    > .l-pane__handle {
+                        top: 0;
+                        //transform: translateY(floor($splitterHandleD / -2)); // Center over the pane edge
+                    }
+                }
+
+                /************************** Vertical Splitter After */
+                &[class*="-after"] {
+                    > .l-pane__handle {
+                        bottom: 0;
+                        //transform: translateY(floor($splitterHandleD / 2)); // Center over the pane edge
+                    }
+                }
             }
         } // Ends .body.desktop
     } // Ends .l-pane
 </style>
 
 <script>
+const COLLAPSE_THRESHOLD_PX = 30;
+
 export default {
     props: {
         handle: {
@@ -241,23 +265,27 @@ export default {
                 return ['before', 'after'].indexOf(value) !== -1;
             }
         },
-        collapsable: Boolean,
-        label: String
+        collapsable: {
+            type: Boolean,
+            default: false
+        },
+        label: String,
+        resizing: Boolean
     },
     data() {
         return {
             collapsed: false
+            // styleProp: 'flexBasis'
+            //styleProp: (type === 'horizontal')? 'width' : 'height'
         }
     },
     beforeMount() {
         this.type = this.$parent.type;
-        this.styleProp = 'flex-basis';
+        this.styleProp = (this.type === 'horizontal') ? 'width' : 'height'
     },
     methods: {
         toggleCollapse: function () {
             this.collapsed = !this.collapsed;
-            // console.log("rs " + restoreSize);
-            // if (!restoreSize) { restoreSize = this.$el.style[this.styleProp]; }
             if (this.collapsed) {
                 // Pane is expanded and is being collapsed
                 this.currentSize = (this.dragCollapse === true)? this.initial : this.$el.style[this.styleProp];
@@ -277,6 +305,7 @@ export default {
                     this.initial = this.$el.offsetWidth;
                 }
             }
+            console.log('size', this.initial)
         },
         getPosition: function (event) {
             return this.type === 'horizontal' ?
@@ -295,26 +324,29 @@ export default {
         updatePosition: function (event) {
             let size = this.getNewSize(event);
             this.$el.style[this.styleProp] = size;
-            let intSize = parseInt(size.substr(0, size.length - 2));
-            // console.log(this.initial);
-            if (intSize < 50) {
-                console.log("initial: " + this.initial);
-                this.dragCollapse = true;
-                this.end();
-                this.toggleCollapse();
-            } else {
-                this.$el.style[this.styleProp] = size;
-            }
+
+            // let intSize = parseInt(size.substr(0, size.length - 2));
+            // if (intSize < COLLAPSE_THRESHOLD_PX && this.collapsable === true) {
+            //     // console.log("initial: " + this.initial);
+            //     this.dragCollapse = true;
+            //     this.end();
+            //     // this.toggleCollapse();
+            // } else {
+            //     this.$el.style[this.styleProp] = size;
+            // }
         },
         start: function (event) {
             this.startPosition = this.getPosition(event);
+            // console.log(this.startPosition);
             document.body.addEventListener('mousemove', this.updatePosition);
             document.body.addEventListener('mouseup', this.end);
+            //this.resizing = true;
             this.trackSize();
         },
         end: function (event) {
             document.body.removeEventListener('mousemove', this.updatePosition);
             document.body.removeEventListener('mouseup', this.end);
+            this.resizing = false;
             this.trackSize();
         }
     }

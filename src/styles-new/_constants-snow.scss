@@ -30,9 +30,10 @@ $colorAHov: $colorKey;
 $contrastRatioPercent: 40%;
 $hoverRatioPercent: 10%;
 $basicCr: 4px;
-$controlCr: $basicCr;
-$smallCr: 3px;
+$controlCr: 3px;
+$smallCr: 2px;
 $overlayCr: 11px;
+$shdwTextSubtle: rgba(black, 0.2) 0 1px 2px;
 
 // Buttons and Controls
 $colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent);

@@ -114,3 +114,15 @@
 @function decimalToPercent($d) {
     @return percentage($d);
 }
+
+/************************** UTILITIES */
+@mixin browserPrefix($prop, $val) {
+    #{$prop}: $val;
+    -ms-#{$prop}: $val;
+    -moz-#{$prop}: $val;
+    -webkit-#{$prop}: $val;
+}
+
+@mixin userSelectNone() {
+    @include browserPrefix(user-select, none);
+}

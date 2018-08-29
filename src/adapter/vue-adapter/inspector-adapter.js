@@ -27,7 +27,7 @@ define([
 
             this.templateLinker.link(
                 this.scope,
-                angular.element(layout.$refs.inspector.$refs.properties.$el),
+                angular.element(layout.$refs.inspector.$refs.properties),
                 this.templateMap["inspectorRegion"]
             );
             this.$timeout(function () {

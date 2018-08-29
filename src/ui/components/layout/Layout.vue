@@ -74,7 +74,7 @@
             background: $colorTreeBg;
             //padding: $m;
             backface-visibility: hidden;
-            flex-basis: 40%;
+            width: 40%;
 
             .l-pane__contents {
                 display: flex;
@@ -118,7 +118,7 @@
 
         @include phonePortrait() {
             &__pane-tree {
-                flex-basis: calc(100% - #{$mobileMenuIconD});
+                width: calc(100% - #{$mobileMenuIconD});
 
                 + .l-pane {
                     // Hide pane-main when this pane is expanded
@@ -188,11 +188,11 @@
             }
 
             &__pane-tree {
-                flex-basis: 300px;
+                width: 300px;
             }
 
             &__pane-inspector {
-                flex-basis: 200px;
+                width: 200px;
             }
         }
     }
