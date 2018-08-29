@@ -2,13 +2,16 @@
     <multipane class="c-inspector"
                type="vertical">
         <pane class="c-inspector__properties">
-            <div ref="properties">
-
-            </div>
+            <div class="u-contents" ref="properties"></div>
         </pane>
         <pane class="l-pane c-inspector__elements"
               handle="before">
-            <div ref="elements">c-inspector__elements</div>
+            <div ref="elements">c-inspector__elements 1</div>
+        </pane>
+        <pane class="l-pane c-inspector__elements"
+              handle="before"
+              label="foobar">
+            <div ref="elements">c-inspector__elements 2</div>
         </pane>
     </multipane>
 </template>
@@ -36,23 +39,22 @@
 
         > [class*="__"] {
             min-height: 50px;
-            /*overflow: auto;*/
+
             &:not(:last-child) {
                 margin-bottom: $interiorMargin;
+            }
+
+            > .l-pane__contents > * {
+                margin-right: $interiorMarginSm; // Provide margin against scrollbar
             }
         }
 
         &__properties {
-            @include userSelectNone();
-            //@include test(red);
-            height: auto;
-            flex: 1 1 auto;
+
         }
 
         &__elements {
-            @include test(green);
             height: 200px;
-            flex: 1 1 auto;
         }
 
         .l-inspector-part {

@@ -5,8 +5,9 @@
             'l-pane--horizontal-handle-after': type === 'horizontal' && handle === 'after',
             'l-pane--vertical-handle-before': type === 'vertical' && handle === 'before',
             'l-pane--vertical-handle-after': type === 'vertical' && handle === 'after',
-             'l-pane--collapsed': collapsed,
-             'l-pane--resizing': resizing === true
+            'l-pane--collapsed': collapsed,
+            'l-pane--reacts': !handle,
+            'l-pane--resizing': resizing === true
          }">
         <!-- TODO: move resize-handle styling from handle into pane, so that padding can be handled -->
         <div v-if="handle"
@@ -71,6 +72,11 @@
             pointer-events: inherit;
             transition: opacity 250ms ease 250ms;
             height: 100%;
+            overflow: auto;
+
+            .l-pane__contents {
+                padding: 0;
+            }
         }
 
         /************************ COLLAPSED STATE */
@@ -93,7 +99,7 @@
                 background: $colorSplitterBg;
                 display: block;
                 position: absolute;
-                z-index: 100;
+                z-index: 10;
                 transition: $transOut;
 
                 &:before {
@@ -111,13 +117,13 @@
             }
 
             &__collapse-button {
-                background: $colorSplitterButtonBg;
-                color: $colorSplitterButtonFg;
-                flex: 1 0 auto;
-                font-size: nth($splitterCollapseBtnD, 1) * .7;
+                background: $splitterBtnColorBg;
+                color: $splitterBtnColorFg;
+                flex: 0 0 nth($splitterBtnD, 1);
+                font-size: nth($splitterBtnD, 1) * .7;
                 position: relative;
                 justify-content: start;
-                text-shadow: $shdwTextSubtle;
+                // text-shadow: $shdwTextSubtle;
                 transition: $transOut;
 
                 &:after {
@@ -128,8 +134,8 @@
                 }
 
                 &:hover {
-                    background: $colorSplitterButtonHoverBg;
-                    color: $colorSplitterButtonHoverFg;
+                    background: $splitterBtnColorHoverBg;
+                    color: $splitterBtnColorHoverFg;
                     transition: $transIn;
                 }
             }
@@ -143,13 +149,19 @@
                 flex: 1 0 90%;
             }
 
+            &--reacts {
+                // This is the pane that doesn't hold the handle
+                // It reacts to other panes that are able to resize
+                flex: 1 1 0;
+            }
+
             &--resizing {
                 // User is dragging the handle and resizing a pane
                 @include userSelectNone();
             }
 
             &[class*="--collapsed"] {
-                $d: nth($splitterCollapseBtnD, 1);
+                $d: nth($splitterBtnD, 1);
                 flex-basis: $d;
                 min-width: $d !important;
                 min-height: $d !important;
@@ -157,6 +169,11 @@
                 > .l-pane__handle {
                     display: none;
                 }
+            }
+
+            > .l-pane__collapse-button {
+                height: nth($splitterBtnD, 1);
+                padding: $interiorMarginSm $interiorMarginSm;
             }
 
             &[class*="--horizontal"] {
@@ -173,11 +190,6 @@
                         bottom: 0;
                         left: $hitMargin * -1;
                     }
-                }
-
-                > .l-pane__collapse-button {
-                    height: nth($splitterCollapseBtnD, 1);
-                    padding: $interiorMarginSm $interiorMarginSm;
                 }
 
                 &[class*="--collapsed"] {
@@ -275,8 +287,6 @@ export default {
     data() {
         return {
             collapsed: false
-            // styleProp: 'flexBasis'
-            //styleProp: (type === 'horizontal')? 'width' : 'height'
         }
     },
     beforeMount() {
@@ -323,17 +333,17 @@ export default {
         },
         updatePosition: function (event) {
             let size = this.getNewSize(event);
-            this.$el.style[this.styleProp] = size;
+            // this.$el.style[this.styleProp] = size;
 
-            // let intSize = parseInt(size.substr(0, size.length - 2));
-            // if (intSize < COLLAPSE_THRESHOLD_PX && this.collapsable === true) {
-            //     // console.log("initial: " + this.initial);
-            //     this.dragCollapse = true;
-            //     this.end();
-            //     // this.toggleCollapse();
-            // } else {
-            //     this.$el.style[this.styleProp] = size;
-            // }
+            let intSize = parseInt(size.substr(0, size.length - 2));
+            if (intSize < COLLAPSE_THRESHOLD_PX && this.collapsable === true) {
+                // console.log("initial: " + this.initial);
+                this.dragCollapse = true;
+                this.end();
+                this.toggleCollapse();
+            } else {
+                this.$el.style[this.styleProp] = size;
+            }
         },
         start: function (event) {
             this.startPosition = this.getPosition(event);
