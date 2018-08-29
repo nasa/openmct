@@ -30,7 +30,20 @@
 
     $hitMargin: 4px;
     /**************************** BASE - MOBILE AND DESKTOP */
+    .l-multipane {
+        display: flex;
+
+        &--horizontal {
+            flex-flow: row nowrap;
+        }
+
+        &--vertical {
+            flex-flow: column nowrap;
+        }
+    }
+
     .l-pane {
+        display: flex;
         opacity: 1;
         pointer-events: inherit;
         transition: transOut;
@@ -59,6 +72,8 @@
         }
 
         &[class*="--vertical"] {
+            flex-flow: column nowrap;
+
             &.l-pane--collapsed {
                 padding-top: 0 !important;
                 padding-top: 0 !important;
@@ -67,11 +82,11 @@
 
         /************************ CONTENTS */
         &__contents {
+            flex: 1 1 100%;
             opacity: 1;
             padding: $interiorMargin;
             pointer-events: inherit;
             transition: opacity 250ms ease 250ms;
-            height: 100%;
             overflow: auto;
 
             .l-pane__contents {
@@ -250,7 +265,7 @@
                 &[class*="-before"] {
                     > .l-pane__handle {
                         top: 0;
-                        //transform: translateY(floor($splitterHandleD / -2)); // Center over the pane edge
+                        transform: translateY(floor($splitterHandleD / -2)); // Center over the pane edge
                     }
                 }
 
@@ -258,7 +273,7 @@
                 &[class*="-after"] {
                     > .l-pane__handle {
                         bottom: 0;
-                        //transform: translateY(floor($splitterHandleD / 2)); // Center over the pane edge
+                        transform: translateY(floor($splitterHandleD / 2)); // Center over the pane edge
                     }
                 }
             }

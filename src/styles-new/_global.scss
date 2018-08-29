@@ -36,6 +36,11 @@ div {
     position: relative;
 }
 
+/******************************* UTILITIES */
+.u-contents {
+    display: contents;
+}
+
 /******************************* BROWSER ELEMENTS */
 body.desktop {
     ::-webkit-scrollbar {
