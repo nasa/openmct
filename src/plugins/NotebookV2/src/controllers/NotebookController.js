@@ -26,7 +26,8 @@
      'text!../../res/templates/notebook.html',
      'text!../../res/templates/entry.html',
      'text!../../res/templates/embed.html'
- ], function (
+    ], 
+    function (
      Vue,
      moment,
      NotebookTemplate,
@@ -98,11 +99,14 @@
             },
             methods: {
                 search: function (event) {
-                    console.log(this.entrySearch);
+                    if (event.target.value) {
+                        this.entrySearch = event.target.value;
+                    }
                 },
                 newEntry: self.newEntry,
                 formatTime: self.formatTime,
-                deleteEntry: self.deleteEntry
+                deleteEntry: self.deleteEntry,
+                filterBySearch: self.filterBySearch
             }
         });
 
@@ -226,6 +230,20 @@
 
     NotebookController.prototype.dragoverOnEntry = function (dragoverEvent) {
       
+    };
+
+    NotebookController.prototype.filterBySearch = function (entryArray, filterString) {
+        if (filterString) {
+            return entryArray.filter(function (entry) {
+                if (entry.text) {
+                    return entry.text.includes(filterString);
+                } else {
+                    return false;
+                }
+            });
+        } else {
+            return entryArray;
+        }
     };
 
     NotebookController.prototype.navigate = function (embedType) {

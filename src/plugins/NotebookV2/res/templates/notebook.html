@@ -38,7 +38,7 @@
     <div class="holder flex-elem grows w-notebook-entries t-entries-list" ng-mouseover="handleActive()">
         <ul>
            <notebook-entry
-                v-for="entry in entries"
+                v-for="entry in filterBySearch(entries, entrySearch)"
                 v-bind:entry="entry"
                 v-on:delete-entry="deleteEntry"
            ></notebook-entry>
