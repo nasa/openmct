@@ -43,7 +43,7 @@ define([
 
         getConfiguration() {
             let configuration = this.domainObject.configuration || {};
-            configuration.columns = configuration.columns || {};
+            configuration.hiddenColumns = configuration.hiddenColumns || {};
             return configuration;
         }
 
@@ -87,10 +87,12 @@ define([
             delete this.columns[objectKeyString];
             columnsToRemove.forEach((column) => {
                 //There may be more than one column with the same key (eg. time system columns)
-                if (!this.hasColumnWithKey(column.key)) {
+                if (!this.hasColumnWithKey(column.getKey())) {
+                    let configuration = this.domainObject.configuration;
+                    delete configuration.hiddenColumns[column.getKey()];
                     // If there are no more columns with this key, delete any configuration, and trigger
                     // a column refresh.
-                    delete this.domainObject.configuration.columns[column.getKey()];
+                    this.openmct.objects.mutate(this.domainObject, 'configuration', configuration);
                 }
             });
         }
@@ -122,8 +124,7 @@ define([
             let configuration = this.getConfiguration();
 
             Object.keys(headers).forEach((headerKey) => {
-                let columnConfig = configuration.columns[headerKey];
-                if (columnConfig && columnConfig.isHidden === true) {
+                if (configuration.hiddenColumns[headerKey] === true) {
                     delete headers[headerKey];
                 }
             });

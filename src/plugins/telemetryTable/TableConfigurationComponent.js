@@ -47,12 +47,10 @@
                 updateHeaders: function (headers) {
                     this.headers = headers;
                 },
-                toggleColumn: function (key) {
-                    this.configuration.columns[key] = this.configuration.columns[key] || {};
-                    
-                    let isHidden = this.configuration.columns[key].isHidden === true;
+                toggleColumn: function (key) {                    
+                    let isHidden = this.configuration.hiddenColumns[key] === true;
 
-                    this.configuration.columns[key].isHidden = !isHidden;
+                    this.configuration.hiddenColumns[key] = !isHidden;
                     tableConfiguration.updateConfiguration(this.configuration);
                 },
                 addObject: function (domainObject) {

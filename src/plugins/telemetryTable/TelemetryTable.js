@@ -59,10 +59,10 @@ define([
         }
 
         initialize() {
-            if (this.isTelemetryObject(this.domainObject)) {
-                this.addTelemetryObject(this.domainObject);
-            } else {
+            if (this.domainObject.type === 'table') {
                 this.loadComposition();
+            } else {
+                this.addTelemetryObject(this.domainObject);
             }
         }
 

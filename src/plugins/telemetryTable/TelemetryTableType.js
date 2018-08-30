@@ -23,7 +23,7 @@
 define(function () {
     function TelemetryTableType() {
         return {
-            name: 'Vue Telemetry Table',
+            name: 'Telemetry Table',
             description: 'Display telemetry values for the current time bounds in tabular form. Supports filtering and sorting.',
             creatable: true,
             cssClass: 'icon-tabular-realtime',
