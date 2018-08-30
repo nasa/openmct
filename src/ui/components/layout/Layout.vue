@@ -38,16 +38,10 @@
 
     /******************************* SHELL */
     .l-shell {
-        $m: $interiorMargin;
         position: absolute;
         top: 0; right: 0; bottom: 0; left: 0;
         display: flex;
         flex-flow: column nowrap;
-
-        /*************************** MOBILE-FIRST */
-        &__head {
-            display: none;
-        }
 
         &__status {
             background: $colorBodyFg;
@@ -57,34 +51,9 @@
             padding: $interiorMarginSm;
         }
 
-        /********** MAIN AREA PANES */
-        &__pane-tree,
-        &__pane-main,
-        &__pane-inspector {
-            display: flex;
-            flex-flow: column nowrap;
-
-            // Create margin between shell elements in a pane
-            > [class*="l-shell__"] + [class*="l-shell__"] {
-                margin-top: $interiorMargin;
-            }
-        }
-
         &__pane-tree {
             background: $colorTreeBg;
-            //padding: $m;
-            backface-visibility: hidden;
             width: 40%;
-
-            .l-pane__contents {
-                display: flex;
-                flex-flow: column nowrap;
-
-                > [class*="__"] {
-                    // Margin between elements
-                    &:not(:last-child) { margin-bottom: $interiorMargin };
-                }
-            }
 
             [class*="collapse-button"] {
                 // For mobile, collapse button becomes menu icon
@@ -103,14 +72,8 @@
             }
         }
 
-        &__pane-main {
-            flex: 1 1 auto;
-        }
-
+        &__head,
         &__pane-inspector {
-            display: flex;
-            //padding: $m;
-
             body.mobile & {
                 display: none;
             }
@@ -136,29 +99,18 @@
         }
 
         /********** MAIN AREA */
-        &__main {
-            flex: 1 1 auto;
-            display: flex;
-        }
-
         &__main-container {
             // Wrapper for main views
-            $m: $interiorMargin;
             font-size: 16px; // TEMP FOR LEGACY STYLING
             overflow: auto;
             position: absolute;
-            top: $m; right: $m; bottom: $m; left: $m;
+            top: $interiorMargin; right: $interiorMarginLg; bottom: $interiorMargin; left: $interiorMarginLg;
         }
 
         &__tree {
             // Tree component within __pane-tree
             flex: 1 1 100%;
             overflow-y: auto;
-        }
-
-        &__object-view {
-            flex: 1 1 auto;
-            //padding: $interiorMarginLg;
         }
 
         &__time-conductor {
@@ -184,7 +136,6 @@
             &__pane-tree,
             &__pane-inspector {
                 max-width: 30%;
-                min-width: 0;
             }
 
             &__pane-tree {

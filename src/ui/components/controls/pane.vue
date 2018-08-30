@@ -31,17 +31,21 @@
     /**************************** BASE - MOBILE AND DESKTOP */
     .l-multipane {
         display: flex;
+        flex: 1 1 auto;
 
-        &--horizontal {
+        &--horizontal,
+        > .l-pane {
             flex-flow: row nowrap;
         }
 
-        &--vertical {
+        &--vertical,
+        > .l-pane  {
             flex-flow: column nowrap;
         }
     }
 
     .l-pane {
+        backface-visibility: hidden;
         display: flex;
         opacity: 1;
         pointer-events: inherit;
@@ -61,6 +65,12 @@
             justify-content: center;
             top: 0; right: 0; // Default
             z-index: 1;
+        }
+
+        &--reacts {
+            // This is the pane that doesn't hold the handle
+            // It reacts to other panes that are able to resize
+            flex: 1 1 0;
         }
 
         &[class*="--horizontal"] {
@@ -90,6 +100,12 @@
 
             .l-pane__contents {
                 padding: 0;
+            }
+
+            // Create margin between elements in a pane
+            > [class*="__"] + [class*="__"] {
+                // Doesn't match first elem, but will match all subsequent
+                margin-top: $interiorMargin;
             }
         }
 
@@ -180,12 +196,6 @@
                 flex: 1 0 90%;
             }
 
-            &--reacts {
-                // This is the pane that doesn't hold the handle
-                // It reacts to other panes that are able to resize
-                flex: 1 1 0;
-            }
-
             &--resizing {
                 // User is dragging the handle and resizing a pane
                 @include userSelectNone();
@@ -207,9 +217,6 @@
 
                     &:after {
                         content: $glyph-icon-plus;
-                        left: 50%;
-                        right: auto;
-                        transform: translateX(-50%);
                     }
 
                     &:hover {
@@ -255,6 +262,9 @@
                             background: none;
                             padding: 0;
                             top: $interiorMarginSm;
+                            left: 50%;
+                            right: auto;
+                            transform: translateX(-50%);
                             width: auto;
 
                         }
@@ -363,7 +373,6 @@ export default {
                     this.initial = this.$el.offsetWidth;
                 }
             }
-            console.log('size', this.initial)
         },
         getPosition: function (event) {
             return this.type === 'horizontal' ?
