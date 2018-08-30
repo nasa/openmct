@@ -47,9 +47,10 @@
     .l-pane {
         backface-visibility: hidden;
         display: flex;
+        min-width: 0px;
+        min-height: 0px;
         opacity: 1;
         pointer-events: inherit;
-        transition: transOut;
 
         &__handle,
         &__label {
@@ -73,6 +74,17 @@
             flex: 1 1 0;
         }
 
+        &--collapsed {
+            flex-basis: 0px !important;
+            transition: all 350ms ease;
+
+            .l-pane__contents {
+                transition: opacity 150ms ease;
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+
         &[class*="--horizontal"] {
             &.l-pane--collapsed {
                 padding-left: 0 !important;
@@ -81,8 +93,6 @@
         }
 
         &[class*="--vertical"] {
-            flex-flow: column nowrap;
-
             &.l-pane--collapsed {
                 padding-top: 0 !important;
                 padding-top: 0 !important;
@@ -99,27 +109,14 @@
             overflow: auto;
 
             .l-pane__contents {
+                // Don't pad all nested __contents
                 padding: 0;
             }
 
-            // Create margin between elements in a pane
             > [class*="__"] + [class*="__"] {
+                // Create margin between elements in a pane
                 // Doesn't match first elem, but will match all subsequent
                 margin-top: $interiorMargin;
-            }
-        }
-
-        /************************ COLLAPSED STATE */
-        &--collapsed {
-            flex-basis: 0px !important;
-            min-width: 0px !important;
-            min-height: 0px !important;
-            transition: all 350ms ease;
-
-            .l-pane__contents {
-                transition: opacity 150ms ease;
-                opacity: 0;
-                pointer-events: none;
             }
         }
 
@@ -325,7 +322,7 @@
 </style>
 
 <script>
-const COLLAPSE_THRESHOLD_PX = 30;
+const COLLAPSE_THRESHOLD_PX = 40;
 
 export default {
     props: {
