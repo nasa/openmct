@@ -9,7 +9,6 @@
             'l-pane--reacts': !handle,
             'l-pane--resizing': resizing === true
          }">
-        <!-- TODO: move resize-handle styling from handle into pane, so that padding can be handled -->
         <div v-if="handle"
              class="l-pane__handle"
              @mousedown="start">
@@ -132,26 +131,43 @@
             }
 
             &__collapse-button {
-                background: $splitterBtnColorBg;
+                $m: 2px;
+                $h: nth($splitterBtnD, 1) - ($m * 2);
                 color: $splitterBtnColorFg;
                 flex: 0 0 nth($splitterBtnD, 1);
-                font-size: nth($splitterBtnD, 1) * .7;
+                font-size: $h * .9;
                 position: relative;
                 justify-content: start;
-                // text-shadow: $shdwTextSubtle;
                 transition: $transOut;
 
                 &:after {
                     // Close icon
-                    content: $glyph-icon-x;
+                    background: $splitterBtnColorFg;
+                    border-radius: 2px;
+                    color: $splitterBtnColorBg;
+                    content: $glyph-icon-minus;
+                    display: block;
                     font-family: symbolsfont;
                     font-size: .8em;
+                    height: $h;
+                    line-height: $h;
+                    padding: 0 7px;
+                    position: absolute;
+                    right: $m;
+                    top: $m;
+                    text-align: right;
+                    transition: $transOut;
+                    z-index: -1;
                 }
 
                 &:hover {
-                    background: $splitterBtnColorHoverBg;
-                    color: $splitterBtnColorHoverFg;
-                    transition: $transIn;
+                    background: rgba(black, 0.1);
+                    //color: $splitterBtnColorHoverFg;
+                    &:after {
+                        background: $splitterBtnColorHoverBg;
+                        color: $splitterBtnColorHoverFg;
+                        transition: $transIn;
+                    }
                 }
             }
 
@@ -184,6 +200,22 @@
                 > .l-pane__handle {
                     display: none;
                 }
+
+                > .l-pane__collapse-button {
+                    background: $splitterBtnColorFg;
+                    color: $splitterBtnColorBg;
+
+                    &:after {
+                        content: $glyph-icon-plus;
+                        left: 50%;
+                        right: auto;
+                        transform: translateX(-50%);
+                    }
+
+                    &:hover {
+                        background: $splitterBtnColorHoverBg !important;
+                    }
+                }
             }
 
             > .l-pane__collapse-button {
@@ -215,14 +247,15 @@
 
                         [class*="label"] {
                             position: absolute;
-                            transform: translate($interiorMarginLg, 15px) rotate(90deg);
+                            transform: translate($interiorMarginLg + 1, 18px) rotate(90deg);
                             top: 0;
                         }
 
                         &:after {
-                            content: $glyph-icon-plus;
-                            position: absolute;
+                            background: none;
+                            padding: 0;
                             top: $interiorMarginSm;
+                            width: auto;
 
                         }
                     }
@@ -348,11 +381,8 @@ export default {
         },
         updatePosition: function (event) {
             let size = this.getNewSize(event);
-            // this.$el.style[this.styleProp] = size;
-
             let intSize = parseInt(size.substr(0, size.length - 2));
             if (intSize < COLLAPSE_THRESHOLD_PX && this.collapsable === true) {
-                // console.log("initial: " + this.initial);
                 this.dragCollapse = true;
                 this.end();
                 this.toggleCollapse();
@@ -362,10 +392,9 @@ export default {
         },
         start: function (event) {
             this.startPosition = this.getPosition(event);
-            // console.log(this.startPosition);
             document.body.addEventListener('mousemove', this.updatePosition);
             document.body.addEventListener('mouseup', this.end);
-            //this.resizing = true;
+            this.resizing = true;
             this.trackSize();
         },
         end: function (event) {
