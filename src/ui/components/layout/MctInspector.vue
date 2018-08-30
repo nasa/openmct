@@ -2,15 +2,18 @@
     <multipane class="c-inspector"
                type="vertical">
         <pane class="c-inspector__properties">
-            <div class="u-contents" ref="properties"></div>
+            <div ref="properties"></div>
         </pane>
         <pane class="l-pane c-inspector__elements"
-              handle="before">
+              handle="before"
+              label="foo"
+              collapsable>
             <div ref="elements">c-inspector__elements 1</div>
         </pane>
         <pane class="l-pane c-inspector__elements"
               handle="before"
-              label="foobar">
+              label="bar"
+              collapsable>
             <div ref="elements">c-inspector__elements 2</div>
         </pane>
     </multipane>
