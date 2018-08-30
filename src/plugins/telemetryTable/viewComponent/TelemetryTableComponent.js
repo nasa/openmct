@@ -24,9 +24,9 @@
     'lodash',
     'vue',
     './telemetry-table.html',
-    './TelemetryTable',
-    './TelemetryTableRowComponent',
-    '../../exporters/CSVExporter'
+    '../TelemetryTable',
+    '../TelemetryTableRowComponent',
+    '../../../exporters/CSVExporter'
 ],function (
     _,
     Vue, 

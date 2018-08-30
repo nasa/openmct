@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./TelemetryTableComponent'], function (TelemetryTableComponent) {
+define(['./viewComponent/TelemetryTableComponent'], function (TelemetryTableComponent) {
     function TelemetryTableViewProvider(openmct) {
         return {
             key: 'table',

@@ -22,7 +22,7 @@
 
 define([
     '../../api/objects/object-utils',
-    './TableConfigurationComponent'
+    './configurationComponent/TableConfigurationComponent'
 ], function (
     objectUtils,
     TableConfigurationComponent

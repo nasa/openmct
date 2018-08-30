@@ -24,7 +24,7 @@
     'lodash',
     'vue',
     './table-configuration.html',
-    './TelemetryTableConfiguration'
+    '../TelemetryTableConfiguration'
 ],function (
     _,
     Vue, 
