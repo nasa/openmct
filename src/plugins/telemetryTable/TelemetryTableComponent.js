@@ -51,7 +51,7 @@
             components: {
                 'telemetry-table-row': TelemetryTableRowComponent
             },
-            data: function () {
+            data() {
                 return {
                     headers: {},
                     configuration: table.configuration.getConfiguration(),
@@ -75,7 +75,7 @@
                 }
             },
             methods: {
-                updateVisibleRows: function () {
+                updateVisibleRows() {
 
                     let start = 0;
                     let end = VISIBLE_ROW_COUNT;
@@ -106,28 +106,28 @@
                     this.rowOffset = start;
                     this.visibleRows = filteredRows.slice(start, end);
                 },
-                calculateFirstVisibleRow: function () {
+                calculateFirstVisibleRow() {
                     return Math.floor(this.scrollable.scrollTop / this.rowHeight);
                 },
-                calculateLastVisibleRow: function () {
+                calculateLastVisibleRow() {
                     let bottomScroll = this.scrollable.scrollTop + this.scrollable.offsetHeight;
                     return Math.floor(bottomScroll / this.rowHeight);
                 },
-                updateHeaders: function () {
+                updateHeaders() {
                     let headers = table.configuration.getVisibleHeaders();
 
                     this.headers = headers;
                     this.headersCount = Object.values(headers).length;
                     Vue.nextTick().then(this.calculateColumnWidths);
                 },
-                setSizingTableWidth: function () {
+                setSizingTableWidth() {
                     let scrollW = this.scrollable.offsetWidth - this.scrollable.clientWidth;
                     
                     if (scrollW && scrollW > 0) {
                         this.calcTableWidth = 'calc(100% - ' + scrollW + 'px)';
                     }
                 },
-                calculateColumnWidths: function () {
+                calculateColumnWidths() {
                     let columnWidths = [];
                     let totalWidth = 0;
                     let sizingRowEl = this.sizingTable.children[0];
@@ -142,7 +142,7 @@
                     this.columnWidths = columnWidths;
                     this.totalWidth = totalWidth;
                 },
-                sortBy: function (columnKey) {
+                sortBy(columnKey) {
                     // If sorting by the same column, flip the sort direction.
                     if (this.sortOptions.key === columnKey) {
                         if (this.sortOptions.direction === 'asc') {
@@ -158,7 +158,7 @@
                     }
                     table.filteredRows.sortBy(this.sortOptions);
                 },
-                scroll: function() {
+                scroll() {
                     if (!processingScroll) {
                         processingScroll = true;
                         requestAnimationFrame(()=> {
@@ -176,23 +176,23 @@
                         });
                     }
                 },
-                shouldSnapToBottom: function () {
+                shouldSnapToBottom() {
                     return this.scrollable.scrollTop >= (this.scrollable.scrollHeight - this.scrollable.offsetHeight - AUTO_SCROLL_TRIGGER_HEIGHT);
                 },
-                scrollToBottom: function () {
+                scrollToBottom() {
                     this.scrollable.scrollTop = this.scrollable.scrollHeight;
                 },
-                synchronizeScrollX: function () {
+                synchronizeScrollX() {
                     this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
                 },
-                filterChanged: function (columnKey) {
+                filterChanged(columnKey) {
                     table.filteredRows.setColumnFilter(columnKey, this.filters[columnKey]);
                 },
-                clearFilter: function (columnKey) {
+                clearFilter(columnKey) {
                     this.filters[columnKey] = '';
                     table.filteredRows.setColumnFilter(columnKey, '');
                 },
-                rowsAdded: function (rows) {
+                rowsAdded(rows) {
                     let sizingRow;
                     if (Array.isArray(rows)) {
                         sizingRow = rows[0];
@@ -215,7 +215,7 @@
                         });
                     }
                 },
-                rowsRemoved: function (rows) {
+                rowsRemoved(rows) {
                     if (!updatingView) {
                         updatingView = true;
                         requestAnimationFrame(()=> {
@@ -224,7 +224,7 @@
                         });
                     }
                 },
-                exportAsCSV: function () {
+                exportAsCSV() {
                     const justTheData = table.filteredRows.getRows()
                         .map(row => row.getFormattedDatum());
                     const headers = Object.keys(this.headers);
@@ -233,14 +233,14 @@
                         headers: headers
                     });
                 },
-                outstandingRequests: function (loading) {
+                outstandingRequests(loading) {
                     this.loading = loading;
                 },
-                calculateTableSize: function () {
+                calculateTableSize() {
                     this.setSizingTableWidth();
                     Vue.nextTick().then(this.calculateColumnWidths);
                 },
-                pollForResize: function () {
+                pollForResize() {
                     let el = this.$el;
                     let width = el.clientWidth;
                     let height = el.clientHeight;
@@ -253,23 +253,23 @@
                         }
                     }, RESIZE_POLL_INTERVAL);
                 },
-                updateConfiguration: function (configuration) {
+                updateConfiguration(configuration) {
                     this.configuration = configuration;
                     this.updateHeaders();
                 },
-                addObject: function () {
+                addObject() {
                     this.updateHeaders();
                 },
-                removeObject: function (objectIdentifier) {
+                removeObject(objectIdentifier) {
                     let objectKeyString = openmct.objects.makeKeyString(objectIdentifier);
                     delete this.sizingRows[objectKeyString];
                     this.updateHeaders();
                 }
             },
-            created: function () {
+            created() {
                 this.filterChanged = _.debounce(this.filterChanged, 500);
             },
-            mounted: function () {
+            mounted() {
                 table.on('object-added', this.addObject);
                 table.on('object-removed', this.removeObject);
                 table.on('outstanding-requests', this.outstandingRequests);
@@ -292,7 +292,7 @@
 
                 table.initialize();
             },
-            destroyed: function () {
+            destroyed() {
                 table.off('object-added', this.addObject);
                 table.off('object-removed', this.removeObject);
                 table.off('outstanding-requests', this.outstandingRequests);

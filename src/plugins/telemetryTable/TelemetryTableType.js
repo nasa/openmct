@@ -27,7 +27,7 @@ define(function () {
             description: 'Display telemetry values for the current time bounds in tabular form. Supports filtering and sorting.',
             creatable: true,
             cssClass: 'icon-tabular-realtime',
-            initialize: function (domainObject) {
+            initialize(domainObject) {
                 domainObject.composition = [];
                 domainObject.configuration = {
                     columns: {}

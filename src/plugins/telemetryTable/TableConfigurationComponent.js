@@ -37,33 +37,33 @@
 
         return new Vue({
             template: TableConfigurationTemplate,
-            data: function () {
+            data() {
                 return {
                     headers: {},
                     configuration: tableConfiguration.getConfiguration()
                 }
             },
             methods: {
-                updateHeaders: function (headers) {
+                updateHeaders(headers) {
                     this.headers = headers;
                 },
-                toggleColumn: function (key) {                    
+                toggleColumn(key) {                    
                     let isHidden = this.configuration.hiddenColumns[key] === true;
 
                     this.configuration.hiddenColumns[key] = !isHidden;
                     tableConfiguration.updateConfiguration(this.configuration);
                 },
-                addObject: function (domainObject) {
+                addObject(domainObject) {
                     tableConfiguration.addColumnsForObject(domainObject, true);
                     this.updateHeaders(tableConfiguration.getAllHeaders());
                 },
-                removeObject: function (objectIdentifier) {
+                removeObject(objectIdentifier) {
                     tableConfiguration.removeColumnsForObject(objectIdentifier, true);
                     this.updateHeaders(tableConfiguration.getAllHeaders());
                 }
 
             },
-            mounted: function () {
+            mounted() {
                 let compositionCollection = openmct.composition.get(domainObject);
 
                 compositionCollection.load()
@@ -78,7 +78,7 @@
                         unlisteners.push(compositionCollection.off.bind(compositionCollection, 'remove', this.removeObject));
                     });
             },
-            destroyed: function () {
+            destroyed() {
                 tableConfiguration.destroy();
                 unlisteners.forEach((unlisten) => unlisten());
             }
