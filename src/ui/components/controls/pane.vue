@@ -5,6 +5,7 @@
             'l-pane--horizontal-handle-after': type === 'horizontal' && handle === 'after',
             'l-pane--vertical-handle-before': type === 'vertical' && handle === 'before',
             'l-pane--vertical-handle-after': type === 'vertical' && handle === 'after',
+            'l-pane--collapsable' : collapsable,
             'l-pane--collapsed': collapsed,
             'l-pane--reacts': !handle,
             'l-pane--resizing': resizing === true
@@ -13,7 +14,7 @@
              class="l-pane__handle"
              @mousedown="start">
         </div>
-        <a v-if="collapsable"
+        <a v-if="label"
            class="l-pane__collapse-button"
            @click="toggleCollapse">
             <span class="l-pane__label">{{ label }}</span>
@@ -42,6 +43,10 @@
         > .l-pane  {
             flex-flow: column nowrap;
         }
+
+        &--vertical {
+            height: 100%;
+        }
     }
 
     .l-pane {
@@ -59,7 +64,6 @@
         }
 
         &__collapse-button {
-            // Mobile-first
             position: absolute;
             display: flex;
             align-items: center;

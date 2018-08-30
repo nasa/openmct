@@ -6,15 +6,8 @@
         </pane>
         <pane class="l-pane c-inspector__elements"
               handle="before"
-              label="foo"
-              collapsable>
+              label="Elements">
             <div ref="elements">c-inspector__elements 1</div>
-        </pane>
-        <pane class="l-pane c-inspector__elements"
-              handle="before"
-              label="bar"
-              collapsable>
-            <div ref="elements">c-inspector__elements 2</div>
         </pane>
     </multipane>
 </template>
@@ -34,10 +27,6 @@
     }
 
     .c-inspector {
-        display: flex;
-        flex-flow: column nowrap;
-        align-items: stretch;
-        height: 100%;
         min-width: 150px;
 
         > [class*="__"] {
@@ -48,12 +37,10 @@
             }
 
             > .l-pane__contents > * {
-                margin-right: $interiorMarginSm; // Provide margin against scrollbar
+                // Provide margin against scrollbar
+                // TODO: move this into pane.vue
+                margin-right: $interiorMarginSm;
             }
-        }
-
-        &__properties {
-
         }
 
         &__elements {
@@ -61,10 +48,11 @@
         }
 
         .l-inspector-part {
-            display: contents;
+            display: contents; // Legacy
         }
 
         h2 {
+            // Legacy, somewhat
             @include grid-two-column-span-cols;
             border-radius: $smallCr;
             background-color: $colorInspectorSectionHeaderBg;
@@ -200,8 +188,6 @@
             }
         }
     }
-
-
 </style>
 
 <script>
