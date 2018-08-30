@@ -30,9 +30,7 @@ define(function () {
             initialize: function (domainObject) {
                 domainObject.composition = [];
                 domainObject.configuration = {
-                    table: {
-                        columns: {}
-                    }
+                    columns: {}
                 };
             }
         }

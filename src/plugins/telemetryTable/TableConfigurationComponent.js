@@ -48,13 +48,11 @@
                     this.headers = headers;
                 },
                 toggleColumn: function (key) {
-                    let isVisible = this.configuration.table.columns[key];
+                    this.configuration.columns[key] = this.configuration.columns[key] || {};
                     
-                    if (isVisible === undefined) {
-                        isVisible = true;
-                    }
+                    let isHidden = this.configuration.columns[key].isHidden === true;
 
-                    this.configuration.table.columns[key] = !isVisible;
+                    this.configuration.columns[key].isHidden = !isHidden;
                     tableConfiguration.updateConfiguration(this.configuration);
                 },
                 addObject: function (domainObject) {

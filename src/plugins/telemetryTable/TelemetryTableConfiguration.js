@@ -43,9 +43,7 @@ define([
 
         getConfiguration() {
             let configuration = this.domainObject.configuration || {};
-            configuration.table = configuration.table || {
-                columns: {}
-            };
+            configuration.columns = configuration.columns || {};
             return configuration;
         }
 
@@ -92,7 +90,7 @@ define([
                 if (!this.hasColumnWithKey(column.key)) {
                     // If there are no more columns with this key, delete any configuration, and trigger
                     // a column refresh.
-                    delete this.domainObject.configuration.table.columns[column.getKey()];
+                    delete this.domainObject.configuration.columns[column.getKey()];
                 }
             });
         }
@@ -124,7 +122,8 @@ define([
             let configuration = this.getConfiguration();
 
             Object.keys(headers).forEach((headerKey) => {
-                if (configuration.table.columns[headerKey] === false) {
+                let columnConfig = configuration.columns[headerKey];
+                if (columnConfig && columnConfig.isHidden === true) {
                     delete headers[headerKey];
                 }
             });
