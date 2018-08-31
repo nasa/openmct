@@ -20,60 +20,33 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-.mct-sizing-table {
-    z-index: -1;
-    visibility: hidden;
-    position: absolute !important;
-
-    //Add some padding to allow for decorations such as limits indicator
-    td {
-        padding-right: 15px;
-        padding-left: 10px;
-        white-space: nowrap;
-    }
-}
-
-.mct-table {
-    tr {
-        display: flex; // flex-flow defaults to row nowrap (which is what we want) so no need to define
-        align-items: stretch;
-    }
-
-    td, th {
-        box-sizing: border-box;
-        display: block;
-        flex: 1 0 auto;
-        white-space: nowrap;
-    }
-
-    thead {
-        display: block;
-    }
-
-    tbody {
-        tr {
-            position: absolute;
-            height: 18px; // Needed when a row has empty values in its cells
-        }
-
-        td {
-            overflow: hidden;
-            box-sizing: border-box;
-            display: inline-block;
-            text-overflow: ellipsis;
+define(['./TelemetryTableComponent'], function (TelemetryTableComponent) {
+    function TelemetryTableViewProvider(openmct) {
+        return {
+            key: 'table',
+            name: 'Telemetry Table',
+            editable: true,
+            canView: function (domainObject) {
+                return domainObject.type === 'table' || domainObject.hasOwnProperty('telemetry');
+            },
+            view: function (domainObject) {
+                let component;
+                return {
+                    show: function (element) {
+                        component = new TelemetryTableComponent(domainObject, openmct);
+                        element.appendChild(component.$mount().$el);
+                    }, 
+                    destroy: function (element) {
+                        component.$destroy();
+                        element.removeChild(component.$el);
+                        component = undefined;
+                    }
+                }
+            },
+            priority: function () {
+                return 1;
+            }
         }
     }
-}
-
-.l-telemetry-table {
-    .l-control-bar {
-        margin-bottom: 3px;
-    }
-}
-
-.mct-table-scroll-forcer {
-    // Force horz scroll when needed; width set via JS
-    font-size: 0;
-    height: 1px; // Height 0 won't force scroll properly
-    position: relative;
-}
+    return TelemetryTableViewProvider;
+});

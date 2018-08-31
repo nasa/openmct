@@ -33,6 +33,7 @@ define([
     './URLIndicatorPlugin/URLIndicatorPlugin',
     './telemetryMean/plugin',
     './plot/plugin',
+    './telemetryTable/plugin',
     './staticRootPlugin/plugin'
 ], function (
     _,
@@ -47,6 +48,7 @@ define([
     URLIndicatorPlugin,
     TelemetryMean,
     PlotPlugin,
+    TelemetryTablePlugin,
     StaticRootPlugin
 ) {
     var bundleMap = {
@@ -152,7 +154,8 @@ define([
 
     plugins.ExampleImagery = ExampleImagery;
     plugins.Plot = PlotPlugin;
-
+    plugins.TelemetryTable = TelemetryTablePlugin;
+    
     plugins.SummaryWidget = SummaryWidget;
     plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicator = URLIndicatorPlugin;

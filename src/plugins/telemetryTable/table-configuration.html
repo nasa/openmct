@@ -1,0 +1,11 @@
+<div class="grid-properties">
+    <!--form class="form" -->
+        <ul class="l-inspector-part">
+            <h2>Table Columns</h2>
+            <li class="grid-row" v-for="(title, key) in headers">
+                <div class="grid-cell label" title="Show or Hide Column"><label :for="key + 'ColumnControl'">{{title}}</label></div>
+                <div class="grid-cell value"><input type="checkbox" :id="key + 'ColumnControl'" :checked="configuration.hiddenColumns[key] !== true" @change="toggleColumn(key)"></div>
+            </li>
+        </ul>
+    <!--/form -->
+</div>
