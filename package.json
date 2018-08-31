@@ -43,7 +43,6 @@
     "karma-html-reporter": "^0.2.7",
     "karma-jasmine": "^1.1.2",
     "karma-requirejs": "^1.1.0",
-    "lodash": "^3.10.1",
     "markdown-toc": "^0.11.7",
     "marked": "^0.3.5",
     "merge-stream": "^1.0.0",
