@@ -24,7 +24,7 @@
                   handle="before"
                   label="Inspect"
                   collapsable>
-                <MctInspector ref="inspector"></MctInspector>
+                <Inspector ref="inspector"></Inspector>
             </pane>
         </multipane>
         <div class="l-shell__status">
@@ -150,7 +150,7 @@
 </style>
 
 <script>
-    import MctInspector from './MctInspector.vue';
+    import Inspector from '../inspector/Inspector.vue';
     import MctMain from './MctMain.vue';
     import MctStatus from './MctStatus.vue';
     import MctTree from './mct-tree.vue';
@@ -160,7 +160,7 @@
 
     export default {
         components: {
-            MctInspector,
+            Inspector,
             MctMain,
             MctStatus,
             MctTree,

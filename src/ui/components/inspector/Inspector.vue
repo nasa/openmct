@@ -2,12 +2,14 @@
     <multipane class="c-inspector"
                type="vertical">
         <pane class="c-inspector__properties">
-            <div ref="properties"></div>
+            <properties></properties>
+            <location></location>
+            <inspector-view></inspector-view>
         </pane>
         <pane class="l-pane c-inspector__elements"
               handle="before"
               label="Elements">
-            <div ref="elements">c-inspector__elements 1</div>
+            <elements></elements>
         </pane>
     </multipane>
 </template>
@@ -193,10 +195,20 @@
 <script>
     import multipane from '../controls/multipane.vue';
     import pane from '../controls/pane.vue';
+    import Elements from './Elements.vue';
+    import Location from './Location.vue';
+    import Properties from './Properties.vue';
+    import InspectorView from './InspectorView.vue';
+
     export default {
+        inject: ['openmct'],
         components: {
             multipane,
-            pane
+            pane,
+            Elements,
+            Properties,
+            Location,
+            InspectorView
         }
     }
 </script>

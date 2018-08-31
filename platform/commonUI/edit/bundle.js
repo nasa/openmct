@@ -319,6 +319,12 @@ define([
                     ]
                 }
             ],
+            "templates": [
+                {
+                    key: "elementsPool",
+                    template: elementsTemplate
+                }
+            ],
             "components": [
                 {
                     "type": "decorator",
