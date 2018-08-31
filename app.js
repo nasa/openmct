@@ -42,15 +42,30 @@ app.use('/proxyUrl', function proxyRequest(req, res, next) {
 
 const webpack = require('webpack');
 const webpackConfig = require('./webpack.config.js');
+webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
+webpackConfig.plugins.push(function() { this.plugin('watch-run', function(watching, callback) { console.log('Begin compile at ' + new Date()); callback(); }) });
+
+webpackConfig.entry.openmct = [
+    'webpack-hot-middleware/client',
+    webpackConfig.entry.openmct
+];
+
 const compiler = webpack(webpackConfig);
-const webpackDevRoute = require('webpack-dev-middleware')(
-    compiler, {
+
+app.use(require('webpack-dev-middleware')(
+    compiler,
+    {
         publicPath: '/dist',
         logLevel: 'warn'
     }
-);
+));
 
-app.use(webpackDevRoute);
+app.use(require('webpack-hot-middleware')(
+    compiler,
+    {
+
+    }
+));
 
 // Expose index.html for development users.
 app.get('/', function (req, res) {

@@ -29,23 +29,9 @@ if (document.currentScript) {
         __webpack_public_path__ = src.replace(matcher, '') + '/';
     }
 }
-const Main = require('./platform/framework/src/Main');
-const defaultRegistry = require('./src/defaultRegistry');
+
 const MCT = require('./src/MCT');
-const buildInfo = require('./src/plugins/buildInfo/plugin');
 
 var openmct = new MCT();
-
-openmct.legacyRegistry = defaultRegistry;
-openmct.install(openmct.plugins.Plot());
-openmct.install(openmct.plugins.TelemetryTable());
-
-if (typeof BUILD_CONSTANTS !== 'undefined') {
-    openmct.install(buildInfo(BUILD_CONSTANTS));
-}
-
-openmct.on('start', function () {
-    return new Main().run(defaultRegistry);
-});
 
 module.exports = openmct;

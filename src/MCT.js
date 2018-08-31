@@ -24,28 +24,42 @@ define([
     'EventEmitter',
     'legacyRegistry',
     'uuid',
+    './defaultRegistry',
     './api/api',
     './selection/Selection',
     './api/objects/object-utils',
     './plugins/plugins',
-    './ui/ViewRegistry',
-    './ui/InspectorViewRegistry',
-    './ui/ToolbarRegistry',
     './adapter/indicators/legacy-indicators-plugin',
-    './styles/core.scss'
+    './plugins/buildInfo/plugin',
+    './adapter/vue-adapter/install',
+    './ui/registries/ViewRegistry',
+    './ui/registries/InspectorViewRegistry',
+    './ui/registries/ToolbarRegistry',
+    './ui/router/ApplicationRouter',
+    '../platform/framework/src/Main',
+    './styles-new/core.scss',
+    './ui/components/layout/Layout.vue',
+    'vue'
 ], function (
     EventEmitter,
     legacyRegistry,
     uuid,
+    defaultRegistry,
     api,
     Selection,
     objectUtils,
     plugins,
+    LegacyIndicatorsPlugin,
+    buildInfoPlugin,
+    installVueAdapter,
     ViewRegistry,
     InspectorViewRegistry,
     ToolbarRegistry,
-    LegacyIndicatorsPlugin,
-    coreStyles
+    ApplicationRouter,
+    Main,
+    coreStyles,
+    Layout,
+    Vue
 ) {
     /**
      * Open MCT is an extensible web application for building mission
@@ -207,6 +221,14 @@ define([
 
         this.Dialog = api.Dialog;
 
+        this.legacyRegistry = defaultRegistry;
+        this.install(this.plugins.Plot());
+        this.install(this.plugins.TelemetryTable());
+
+        if (typeof BUILD_CONSTANTS !== 'undefined') {
+            this.install(buildInfoPlugin(BUILD_CONSTANTS));
+        }
+
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -245,11 +267,6 @@ define([
             domElement = document.body;
         }
 
-        var appDiv = document.createElement('div');
-        appDiv.setAttribute('ng-view', '');
-        appDiv.className = 'user-environ';
-        domElement.appendChild(appDiv);
-
         this.legacyExtension('runs', {
             depends: ['navigationService'],
             implementation: function (navigationService) {
@@ -264,6 +281,14 @@ define([
             legacyDefinition.key = typeKey;
             this.legacyExtension('types', legacyDefinition);
         }.bind(this));
+
+        // TODO: move this to adapter bundle.
+        this.legacyExtension('runs', {
+            depends: ['types[]'],
+            implementation: (types) => {
+                this.types.importLegacyTypes(types);
+            }
+        });
 
         this.objectViews.getAllProviders().forEach(function (p) {
             this.legacyExtension('views', {
@@ -282,15 +307,42 @@ define([
 
         this.install(LegacyIndicatorsPlugin());
 
+        this.router = new ApplicationRouter();
+
+        this.router.route(/^\/$/, () => {
+            this.router.setPath('/browse/mine');
+        });
+
         /**
          * Fired by [MCT]{@link module:openmct.MCT} when the application
          * is started.
          * @event start
          * @memberof module:openmct.MCT~
          */
-        this.emit('start');
-    };
+        var startPromise = new Main().run(this.legacyRegistry)
+            .then(function (angular) {
+                this.$angular = angular;
+                // OpenMCT Object provider doesn't operate properly unless
+                // something has depended upon objectService.  Cool, right?
+                this.$injector.get('objectService');
 
+                console.log('Rendering app layout.');
+
+                var appLayout = new Vue({
+                    mixins: [Layout.default],
+                    provide: {
+                        openmct: this
+                    }
+                });
+                domElement.appendChild(appLayout.$mount().$el);
+
+                console.log('Attaching adapter');
+                installVueAdapter(appLayout, this);
+
+                this.router.start();
+                this.emit('start');
+            }.bind(this));
+    };
 
     /**
      * Install a plugin in MCT.

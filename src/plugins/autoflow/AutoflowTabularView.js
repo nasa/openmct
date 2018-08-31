@@ -23,7 +23,7 @@
 define([
     './AutoflowTabularController',
     './AutoflowTabularConstants',
-    '../../ui/VueView',
+    './VueView',
     './autoflow-tabular.html'
 ], function (
     AutoflowTabularController,
