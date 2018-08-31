@@ -1,6 +1,9 @@
 <template>
-<div class="tabular-holder l-sticky-headers has-control-bar l-telemetry-table" :class="{'loading': loading}">
-    <div class="l-control-bar">
+<div class="tabular-holder l-sticky-headers has-control-bar l-telemetry-table
+    c-table c-telemetry-table c-table--filterable"
+     :class="{'loading': loading}">
+    <div class="l-control-bar
+        c-table__control-bar">
         <a class="s-button t-export icon-download labeled"
            v-on:click="exportAsCSV()"
            title="Export This View's Data">
@@ -8,8 +11,9 @@
         </a>
     </div>
     <!-- Headers table -->
-    <div class="mct-table-headers-w">
-        <table class="mct-table l-tabular-headers filterable" :style="{ 'max-width': totalWidth + 'px'}">
+    <div class="c-table__headers-w">
+        <table class="c-table__headers c-telemetry-table__headers"
+               :style="{ 'max-width': totalWidth + 'px'}">
             <thead>
                 <tr>
                     <th v-for="(title, key, headerIndex) in headers"
@@ -33,12 +37,15 @@
         </table>
     </div>
     <!-- Content table -->
-    <div @scroll="scroll" class="l-tabular-body t-scrolling vscroll--persist">
-        <div class="mct-table-scroll-forcer"
-            :style="{
+    <div class="l-tabular-body t-scrolling vscroll--persist
+        c-table__body-w" @scroll="scroll" >
+        <div class="c-telemetry-table__scroll-forcer"
+             :style="{
                 width: totalWidth
             }"></div>
-        <table class="mct-table js-telemetry-table" :style="{ height: totalHeight + 'px', 'max-width': totalWidth + 'px'}">
+        <table class="mct-table
+            c-table__body c-telemetry-table__body"
+               :style="{ height: totalHeight + 'px', 'max-width': totalWidth + 'px'}">
             <tbody>
                 <telemetry-table-row v-for="(row, rowIndex) in visibleRows"
                     :headers="headers"
@@ -53,7 +60,8 @@
         </table>
     </div>
     <!-- Sizing table -->
-    <table class="mct-sizing-table t-sizing-table js-sizing-table" :style="{width: calcTableWidth}">
+    <table class="mct-sizing-table t-sizing-table js-sizing-table
+        c-telemetry-table__sizing" :style="{width: calcTableWidth}">
         <tr>
             <th v-for="(title, key, headerIndex) in headers">{{title}}</th>
         </tr>
@@ -65,7 +73,176 @@
 </div>
 </template>
 
-<style>
+<style lang="scss">
+    @import "~styles/sass-base";
+
+    $tc1: orange;
+
+    .c-table {
+        // Can be used by any type of table, scrolling, LAD, etc.
+        $min-w: 50px;
+
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: flex-start;
+        width: 100%;
+
+        th, td {
+            display: block;
+            flex: 1 0 auto;
+            white-space: nowrap;
+            min-width: $min-w;
+            padding: $tabularTdPadTB $tabularTdPadLR;
+            vertical-align: middle; // This is crucial to hiding f**king 4px height injected by browser by default
+        }
+
+        td {
+            color: $colorTelemFresh;
+            //display: block; // Make sure this is Ok
+            vertical-align: top;
+        }
+
+        &__headers-w {
+            // Wraps __headers table
+            background: $colorTabHeaderBg;
+            overflow: hidden; // Is this needed?
+        }
+
+        &__headers,
+        &__body {
+            tr {
+                display: flex;
+                align-items: stretch;
+            }
+        }
+
+        &__headers {
+            // A table
+            thead {
+                display: block;
+            }
+
+            th {
+                &:not(:first-child) {
+                    border-left: 1px solid $colorTabHeaderBorder;
+                }
+
+                // TODO: apply BEM naming style to these
+                &.sort {
+                    &:after {
+                        color: $colorIconLink;
+                        content: "\e906";
+                        font-family: symbolsfont;
+                        /*font-size: 8px;*/
+                        display: inline-block;
+                        margin-left: $interiorMarginSm;
+                    }
+                    &.desc:after {
+                        content: "\e907";
+                    }
+                }
+                &.sortable {
+                    cursor: pointer;
+                }
+            }
+        }
+
+        &__body-w {
+            // Wraps __body table
+            @include test($tc1);
+        }
+
+        &__body {
+            // A table
+            tr {
+                &:not(:first-child) {
+                    border-top: 1px solid $colorTabBorder;
+                }
+            }
+        }
+
+        &--filterable {
+            // TODO: discuss using the search.vue custom control here
+
+            .l-filter {
+                input[type="text"],
+                input[type="search"] {
+                    $p: 20px;
+                    transition: padding 200ms ease-in-out;
+                    box-sizing: border-box;
+                    padding-right: $p; // Fend off from icon
+                    padding-left: $p; // Fend off from icon
+                    width: 100%;
+                }
+                &.active {
+                    // When user has typed something, hide the icon and collapse left padding
+                    &:before {
+                        opacity: 0;
+                    }
+                    input[type="text"],
+                    input[type="search"] {
+                        padding-left: $interiorMargin;
+                    }
+                }
+            }
+        }
+    }
+
+    .c-telemetry-table {
+        // Table that displays telemetry in a scrolling body area
+        &__body {
+            flex: 1 1 100%;
+            overflow-x: auto;
+
+            tr {
+                display: flex; // flex-flow defaults to row nowrap (which is what we want) so no need to define
+                align-items: stretch;
+                position: absolute;
+                height: 18px; // Needed when a row has empty values in its cells
+            }
+
+            td {
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+        }
+
+        &__sizing {
+            // A table
+            display: table;
+            z-index: -1;
+            visibility: hidden;
+            pointer-events: none;
+            position: absolute !important; // TODO: fix tabular-holder > * { which sets this to pos: relative
+
+            //Add some padding to allow for decorations such as limits indicator
+            tr {
+                display: table-row;
+            }
+
+            th, td {
+                display: table-cell;
+                padding-right: 15px;
+                padding-left: 10px;
+                white-space: nowrap;
+            }
+        }
+
+        &__scroll-forcer {
+            // Force horz scroll when needed; width set via JS
+            font-size: 0;
+            height: 1px; // Height 0 won't force scroll properly
+            position: relative;
+        }
+    }
+
+
+
+
+
+
+
 </style>
 
 <script>
