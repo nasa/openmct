@@ -1,0 +1,128 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2018, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+/************************** VISUALS */
+@mixin ancillaryIcon($d, $c) {
+    // Used for small icons used in combination with larger icons,
+    // like the link and alert icons in tree items.
+    color: $c;
+    font-size: $d;
+    line-height: $d;
+    height: $d;
+    width: $d;
+}
+
+@mixin bgDiagonalStripes($c: yellow, $a: 0.1, $d: 40px) {
+    background-image: linear-gradient(-45deg,
+        rgba($c, $a) 25%, transparent 25%,
+        transparent 50%, rgba($c, $a) 50%,
+        rgba($c, $a) 75%, transparent 75%,
+        transparent 100%
+    );
+    background-repeat: repeat;
+    background-size: $d $d;
+}
+
+@mixin bgStripes($c: yellow, $a: 0.1, $bgsize: 5px, $angle: 90deg) {
+    background-image: linear-gradient($angle,
+        rgba($c, $a) 25%, transparent 25%,
+        transparent 50%, rgba($c, $a) 50%,
+        rgba($c, $a) 75%, transparent 75%,
+        transparent 100%
+    );
+    background-repeat: repeat;
+    background-size: $bgsize $bgsize;
+}
+
+@mixin bgVertStripes($c: yellow, $a: 0.1, $d: 40px) {
+    @include background-image(linear-gradient(-90deg,
+        rgba($c, $a) 0%, rgba($c, $a) 50%,
+        transparent 50%, transparent 100%
+    ));
+    background-repeat: repeat;
+    background-size: $d $d;
+}
+
+/************************** TEXT */
+@mixin ellipsize() {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@mixin reverseEllipsis() {
+    @include ellipsize();
+    direction: rtl;
+    unicode-bidi:bidi-override;
+}
+
+@mixin test($c: #ffcc00, $a: 0.2) {
+    background-color: rgba($c, $a) !important;
+}
+
+/************************** CONTROLS, BUTTONS */
+@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.5) 0 0px 2px) {
+    appearance: none;
+    background: $bg;
+    border: none;
+    color: $fg;
+    border-radius: $controlCr;
+    box-shadow: inset $shdw;
+    outline: none;
+
+    &:focus {
+        outline: 0;
+    }
+
+    &.error {
+        background-color: $colorFormFieldErrorBg;
+        color: $colorFormFieldErrorFg;
+    }
+}
+
+@mixin button($bg: $colorBtnBg, $fg: $colorBtnFg, $radius: $controlCr, $shdw: none) {
+    background: $bg;
+    color: $fg;
+    border-radius: $radius;
+    box-shadow: $shdw;
+}
+
+/************************** MATH */
+@function percentToDecimal($p) {
+    @return $p / 100%;
+}
+
+@function decimalToPercent($d) {
+    @return percentage($d);
+}
+
+/************************** UTILITIES */
+@mixin browserPrefix($prop, $val) {
+    #{$prop}: $val;
+    -ms-#{$prop}: $val;
+    -moz-#{$prop}: $val;
+    -webkit-#{$prop}: $val;
+}
+
+@mixin userSelectNone() {
+    @include browserPrefix(user-select, none);
+}

@@ -28,7 +28,8 @@ const webpackConfig = {
             "espresso": path.join(__dirname, "src/styles/theme-espresso.scss"),
             "snow": path.join(__dirname, "src/styles/theme-snow.scss"),
             "vue": path.join(__dirname, "node_modules/vue/dist/vue.min.js"),
-            "d3-scale": path.join(__dirname, "node_modules/d3-scale/build/d3-scale.min.js")
+            "d3-scale": path.join(__dirname, "node_modules/d3-scale/build/d3-scale.min.js"),
+            "styles": path.join(__dirname, "src/styles-new")
         }
     },
     devtool: devMode ? 'eval-source-map' : 'source-map',

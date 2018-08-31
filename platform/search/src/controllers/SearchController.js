@@ -44,6 +44,7 @@ define(function () {
     function SearchController($scope, searchService) {
         var controller = this;
         this.$scope = $scope;
+        this.$scope.ngModel = this.$scope.ngModel || {};
         this.searchService = searchService;
         this.numberToDisplay = this.RESULTS_PER_PAGE;
         this.availabileResults = 0;

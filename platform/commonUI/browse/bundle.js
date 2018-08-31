@@ -73,15 +73,6 @@ define([
     legacyRegistry.register("platform/commonUI/browse", {
         "extensions": {
             "routes": [
-                {
-                    "when": "/browse/:ids*?",
-                    "template": browseTemplate,
-                    "reloadOnSearch": false
-                },
-                {
-                    "when": "",
-                    "redirectTo": "/browse/"
-                }
             ],
             "constants": [
                 {
@@ -293,6 +284,20 @@ define([
                         "topic",
                         "navigationService"
                     ]
+                }
+            ],
+            "templates": [
+                {
+                    key: "browseRoot",
+                    template: browseTemplate
+                },
+                {
+                    key: "browseObject",
+                    template: browseObjectTemplate
+                },
+                {
+                    key: "inspectorRegion",
+                    template: inspectorRegionTemplate
                 }
             ],
             "licenses": [

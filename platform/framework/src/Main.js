@@ -52,10 +52,7 @@ define(
                 return match ? match[1] : "";
             }
 
-
-            // Reconfigure base url, since bundle paths will all be relative
-            // to the root now.
-            injector.instantiate(['$http', '$log', FrameworkLayer])
+            return injector.instantiate(['$http', '$log', FrameworkLayer])
                 .initializeApplication(angular, legacyRegistry, logLevel());
         };
 
