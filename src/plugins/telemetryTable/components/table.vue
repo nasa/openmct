@@ -11,7 +11,7 @@
         </a>
     </div>
     <!-- Headers table -->
-    <div class="c-table__headers-w">
+    <div class="c-table__headers-w js-table__headers-w">
         <table class="c-table__headers c-telemetry-table__headers"
                :style="{ 'max-width': totalWidth + 'px'}">
             <thead>
@@ -60,8 +60,8 @@
         </table>
     </div>
     <!-- Sizing table -->
-    <table class="mct-sizing-table t-sizing-table js-sizing-table
-        c-telemetry-table__sizing" :style="{width: calcTableWidth}">
+    <table class="c-telemetry-table__sizing js-telemetry-table__sizing"
+           :style="{width: calcTableWidth}">
         <tr>
             <th v-for="(title, key, headerIndex) in headers">{{title}}</th>
         </tr>
@@ -492,8 +492,8 @@ export default {
         //Default sort
         this.sortOptions = this.table.filteredRows.sortBy();
         this.scrollable = this.$el.querySelector('.t-scrolling');
-        this.sizingTable = this.$el.querySelector('.js-sizing-table');
-        this.headersHolderEl = this.$el.querySelector('.mct-table-headers-w');
+        this.sizingTable = this.$el.querySelector('.js-telemetry-table__sizing');
+        this.headersHolderEl = this.$el.querySelector('.js-table__headers-w');
 
         this.table.configuration.on('change', this.updateConfiguration);
 
