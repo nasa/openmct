@@ -25,7 +25,9 @@ define(['./TelemetryTableComponent'], function (TelemetryTableComponent) {
         return {
             key: 'table',
             name: 'Telemetry Table',
-            editable: true,
+            editable: function(domainObject) {
+                return domainObject.type === 'table';
+            },
             canView: function (domainObject) {
                 return domainObject.type === 'table' || domainObject.hasOwnProperty('telemetry');
             },
