@@ -14,11 +14,15 @@
                     <search class="c-search--major" ref="shell-search"></search>
                 </div>
                 <div class="l-shell__tree">
-                    <mct-tree :nodes="treeRoots"></mct-tree>
+                    <mct-tree></mct-tree>
                 </div>
             </pane>
             <pane class="l-shell__pane-main">
-                <div class="l-shell__main-container" ref="mainContainer"></div>
+                <browse-object class="l-shell__main-container">
+                </browse-object>
+                <mct-template template-key="conductor"
+                              class="l-shell__time-conductor">
+                </mct-template>
             </pane>
             <pane class="l-shell__pane-inspector l-pane--holds-multipane"
                   handle="before"
@@ -104,7 +108,8 @@
             font-size: 16px; // TEMP FOR LEGACY STYLING
             overflow: auto;
             position: absolute;
-            top: $interiorMargin; right: $interiorMarginLg; bottom: $interiorMargin; left: $interiorMarginLg;
+            top: $interiorMargin; right: $interiorMarginLg; left: $interiorMarginLg;
+            bottom: 76px; // pete temp fix for time conductor.
         }
 
         &__tree {
@@ -117,6 +122,8 @@
             border-top: 1px solid $colorInteriorBorder;
             min-height: 50px;
             padding: $interiorMarginLg;
+            position: absolute;
+            right: $interiorMarginLg; bottom: $interiorMargin; left: $interiorMarginLg;
         }
 
         body.desktop & {
@@ -151,9 +158,11 @@
 
 <script>
     import Inspector from '../inspector/Inspector.vue';
-    import MctMain from './MctMain.vue';
     import MctStatus from './MctStatus.vue';
     import MctTree from './mct-tree.vue';
+    import BrowseObject from './BrowseObject.vue';
+    import MctTemplate from '../legacy/mct-template.vue';
+
     import search from '../controls/search.vue';
     import multipane from '../controls/multipane.vue';
     import pane from '../controls/pane.vue';
@@ -161,9 +170,10 @@
     export default {
         components: {
             Inspector,
-            MctMain,
             MctStatus,
             MctTree,
+            BrowseObject,
+            'mct-template': MctTemplate,
             search,
             multipane,
             pane
