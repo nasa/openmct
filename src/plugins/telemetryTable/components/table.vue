@@ -1,5 +1,5 @@
 <template>
-<div class="c-table c-telemetry-table c-table--filterable has-control-bar"
+<div class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
      :class="{'loading': loading}">
     <div class="c-table__control-bar c-control-bar">
         <a class="s-button t-export icon-download labeled"
@@ -16,7 +16,7 @@
                 <tr>
                     <th v-for="(title, key, headerIndex) in headers"
                         v-on:click="sortBy(key)"
-                        :class="['sortable', sortOptions.key === key ? 'sort' : '', sortOptions.direction].join(' ')"
+                        :class="['is-sortable', sortOptions.key === key ? 'is-sorting' : '', sortOptions.direction].join(' ')"
                         :style="{ width: columnWidths[headerIndex], 'max-width': columnWidths[headerIndex]}">{{title}}</th>
                 </tr>
                 <tr class="s-filters">
@@ -81,9 +81,11 @@
         top: 0; right: 0; bottom: 0; left: 0;
 
         > [class*="__"] + [class*="__"] {
+            // Don't allow top level elements to grow or shrink
             flex: 0 0 auto;
         }
 
+        /******************************* ELEMENTS */
         th, td {
             display: block;
             flex: 1 0 auto;
@@ -95,7 +97,6 @@
 
         td {
             color: $colorTelemFresh;
-            //display: block; // Make sure this is Ok
             vertical-align: top;
         }
 
@@ -103,12 +104,14 @@
             margin-bottom: $interiorMarginSm;
         }
 
+        /******************************* WRAPPERS */
         &__headers-w {
             // Wraps __headers table
             background: $colorTabHeaderBg;
-            overflow: hidden; // Is this needed?
+            overflow: hidden;
         }
 
+        /******************************* TABLES */
         &__headers,
         &__body {
             tr {
@@ -127,24 +130,6 @@
                 &:not(:first-child) {
                     border-left: 1px solid $colorTabHeaderBorder;
                 }
-
-                // TODO: apply BEM naming style to these
-                &.sort {
-                    &:after {
-                        color: $colorIconLink;
-                        content: "\e906";
-                        font-family: symbolsfont;
-                        /*font-size: 8px;*/
-                        display: inline-block;
-                        margin-left: $interiorMarginSm;
-                    }
-                    &.desc:after {
-                        content: "\e907";
-                    }
-                }
-                &.sortable {
-                    cursor: pointer;
-                }
             }
         }
 
@@ -157,6 +142,7 @@
             }
         }
 
+        /******************************* MODIFIERS */
         &--filterable {
             // TODO: discuss using the search.vue custom control here
 
@@ -182,10 +168,39 @@
                 }
             }
         }
+
+        &--sortable {
+            .is-sorting {
+                &:after {
+                    color: $colorIconLink;
+                    content: $glyph-icon-arrow-tall-up;
+                    font-family: symbolsfont;
+                    font-size: 8px;
+                    display: inline-block;
+                    margin-left: $interiorMarginSm;
+                }
+                &.desc:after {
+                    content: $glyph-icon-arrow-tall-down;
+                }
+            }
+            .is-sortable {
+                cursor: pointer;
+            }
+        }
     }
 
     .c-telemetry-table {
         // Table that displays telemetry in a scrolling body area
+
+        /******************************* ELEMENTS */
+        &__scroll-forcer {
+            // Force horz scroll when needed; width set via JS
+            font-size: 0;
+            height: 1px; // Height 0 won't force scroll properly
+            position: relative;
+        }
+
+        /******************************* WRAPPERS */
         &__body-w {
             // Wraps __body table provides scrolling
             flex: 1 1 100% !important; // TODO: temp override on tabular-holder > * { style which sets this to 0 0 auto
@@ -193,6 +208,7 @@
             overflow-y: scroll;
         }
 
+        /******************************* TABLES */
         &__body {
             // A table
             flex: 1 1 100%;
@@ -209,7 +225,6 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
-
         }
 
         &__sizing {
@@ -232,29 +247,19 @@
                 white-space: nowrap;
             }
         }
-
-        &__scroll-forcer {
-            // Force horz scroll when needed; width set via JS
-            font-size: 0;
-            height: 1px; // Height 0 won't force scroll properly
-            position: relative;
-        }
     }
 
     .c-table__control-bar {
         margin-bottom: $interiorMarginSm;
     }
 
-    // Legacy
+    /******************************* LEGACY */
     .s-status-taking-snapshot,
     .overlay.snapshot {
         // Handle overflow-y issues with tables and html2canvas
         // Replaces .l-sticky-headers .l-tabular-body { overflow: auto; }
         .c-table__body-w { overflow: auto; }
     }
-
-    // has-control-bar is used by Layouts to hide the button in a frame context
-
 </style>
 
 <script>
