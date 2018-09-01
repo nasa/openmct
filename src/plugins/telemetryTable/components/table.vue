@@ -32,19 +32,14 @@
                             <a class="clear-icon clear-input icon-x-in-circle" :class="{show: filters[key]}" @click="clearFilter(key)"></a>
                         </div>
                     </th>
-                    </tr>
+                </tr>
             </thead>
         </table>
     </div>
     <!-- Content table -->
-    <div class="l-tabular-body t-scrolling vscroll--persist
-        c-table__body-w" @scroll="scroll" >
-        <div class="c-telemetry-table__scroll-forcer"
-             :style="{
-                width: totalWidth
-            }"></div>
-        <table class="mct-table
-            c-table__body c-telemetry-table__body"
+    <div class="c-table__body-w c-telemetry-table__body-w js-telemetry-table__body-w" @scroll="scroll">
+        <div class="c-telemetry-table__scroll-forcer" :style="{ width: totalWidth }"></div>
+        <table class="c-table__body c-telemetry-table__body"
                :style="{ height: totalHeight + 'px', 'max-width': totalWidth + 'px'}">
             <tbody>
                 <telemetry-table-row v-for="(row, rowIndex) in visibleRows"
@@ -102,6 +97,10 @@
             vertical-align: top;
         }
 
+        &__control-bar {
+            margin-bottom: $interiorMarginSm;
+        }
+
         &__headers-w {
             // Wraps __headers table
             background: $colorTabHeaderBg;
@@ -149,7 +148,7 @@
 
         &__body-w {
             // Wraps __body table
-            @include test($tc1);
+            // @include test($tc1);
         }
 
         &__body {
@@ -190,7 +189,15 @@
 
     .c-telemetry-table {
         // Table that displays telemetry in a scrolling body area
+        &__body-w {
+            // Wraps __body table provides scrolling
+            flex: 1 1 100% !important; // TODO: temp override on tabular-holder > * { style which sets this to 0 0 auto
+            overflow-x: auto;
+            overflow-y: scroll;
+        }
+
         &__body {
+            // A table
             flex: 1 1 100%;
             overflow-x: auto;
 
@@ -491,7 +498,7 @@ export default {
 
         //Default sort
         this.sortOptions = this.table.filteredRows.sortBy();
-        this.scrollable = this.$el.querySelector('.t-scrolling');
+        this.scrollable = this.$el.querySelector('.js-telemetry-table__body-w');
         this.sizingTable = this.$el.querySelector('.js-telemetry-table__sizing');
         this.headersHolderEl = this.$el.querySelector('.js-table__headers-w');
 
