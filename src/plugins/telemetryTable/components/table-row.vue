@@ -15,7 +15,7 @@ export default {
     data: function () {
         return {
             rowTop: (this.rowOffset + this.rowIndex) * this.rowHeight + 'px',
-            formattedRow: this.row.getFormattedDatum(),
+            formattedRow: this.row.getFormattedDatum(this.headers),
             rowLimitClass: this.row.getRowLimitClass(),
             cellLimitClasses: this.row.getCellLimitClasses()
         }
@@ -59,7 +59,7 @@ export default {
             this.rowTop = (rowOffset + this.rowIndex) * this.rowHeight + 'px';
         },
         formatRow: function (row) {
-            this.formattedRow = row.getFormattedDatum();
+            this.formattedRow = row.getFormattedDatum(this.headers);
             this.rowLimitClass = row.getRowLimitClass();
             this.cellLimitClasses = row.getCellLimitClasses();
         }

@@ -282,7 +282,6 @@ export default {
     data() {
         return {
             headers: {},
-            headersCount: 0,
             visibleRows: [],
             columnWidths: [],
             sizingRows: {},
@@ -346,7 +345,6 @@ export default {
             let headers = this.table.configuration.getVisibleHeaders();
 
             this.headers = headers;
-            this.headersCount = Object.values(headers).length;
             this.$nextTick().then(this.calculateColumnWidths);
         },
         setSizingTableWidth() {
@@ -454,12 +452,12 @@ export default {
             }
         },
         exportAsCSV() {
+            const headerKeys = Object.keys(this.headers);
             const justTheData = this.table.filteredRows.getRows()
-                .map(row => row.getFormattedDatum());
-            const headers = Object.keys(this.headers);
+                .map(row => row.getFormattedDatum(this.headers));
             this.csvExporter.export(justTheData, {
                 filename: this.table.domainObject.name + '.csv',
-                headers: headers
+                headers: headerKeys
             });
         },
         outstandingRequests(loading) {
