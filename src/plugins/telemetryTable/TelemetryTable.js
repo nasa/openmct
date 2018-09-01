@@ -122,7 +122,6 @@ define([
 
                     let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
                     this.boundedRows.add(telemetryRows);
-                    console.log('Loaded %i rows', telemetryRows.length);
                     this.decrementOutstandingRequests();
                 });
         }

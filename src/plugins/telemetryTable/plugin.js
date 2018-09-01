@@ -21,8 +21,8 @@
  *****************************************************************************/
 
  define([
-     './TelemetryTableViewProvider',
-     './TableConfigurationViewProvider',
+     './objectView/TelemetryTableViewProvider',
+     './inspectorView/TableConfigurationViewProvider',
      './TelemetryTableType'
     ], function (
         TelemetryTableViewProvider,

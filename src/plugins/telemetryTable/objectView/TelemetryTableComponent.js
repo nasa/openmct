@@ -25,7 +25,7 @@
     'vue',
     './telemetry-table.html',
     '../TelemetryTable',
-    '../TelemetryTableRowComponent',
+    './TelemetryTableRowComponent',
     '../../../exporters/CSVExporter'
 ],function (
     _,

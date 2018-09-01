@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define([
-    '../../api/objects/object-utils',
-    './configurationComponent/TableConfigurationComponent'
+    '../../../api/objects/object-utils',
+    './TableConfigurationComponent'
 ], function (
     objectUtils,
     TableConfigurationComponent
@@ -77,7 +77,7 @@ define([
                 }
             },
             priority: function () {
-                return 1;
+                return 0;
             }
         }
     }

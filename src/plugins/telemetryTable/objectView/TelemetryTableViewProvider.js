@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./viewComponent/TelemetryTableComponent'], function (TelemetryTableComponent) {
+define(['./TelemetryTableComponent'], function (TelemetryTableComponent) {
     function TelemetryTableViewProvider(openmct) {
         return {
             key: 'table',
@@ -44,7 +44,7 @@ define(['./viewComponent/TelemetryTableComponent'], function (TelemetryTableComp
                 }
             },
             priority: function () {
-                return 1;
+                return Number.MAX_SAFE_INTEGER;
             }
         }
     }
