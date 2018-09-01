@@ -1,9 +1,7 @@
 <template>
-<div class="tabular-holder l-sticky-headers has-control-bar l-telemetry-table
-    c-table c-telemetry-table c-table--filterable"
+<div class="c-table c-telemetry-table c-table--filterable has-control-bar"
      :class="{'loading': loading}">
-    <div class="l-control-bar
-        c-table__control-bar">
+    <div class="c-table__control-bar c-control-bar">
         <a class="s-button t-export icon-download labeled"
            v-on:click="exportAsCSV()"
            title="Export This View's Data">
@@ -71,8 +69,6 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
-    $tc1: orange;
-
     .c-table {
         // Can be used by any type of table, scrolling, LAD, etc.
         $min-w: 50px;
@@ -80,7 +76,13 @@
         display: flex;
         flex-flow: column nowrap;
         justify-content: flex-start;
-        width: 100%;
+        overflow: hidden;
+        position: absolute;
+        top: 0; right: 0; bottom: 0; left: 0;
+
+        > [class*="__"] + [class*="__"] {
+            flex: 0 0 auto;
+        }
 
         th, td {
             display: block;
@@ -144,11 +146,6 @@
                     cursor: pointer;
                 }
             }
-        }
-
-        &__body-w {
-            // Wraps __body table
-            // @include test($tc1);
         }
 
         &__body {
@@ -230,7 +227,7 @@
 
             th, td {
                 display: table-cell;
-                padding-right: 15px;
+                padding-right: 10px;
                 padding-left: 10px;
                 white-space: nowrap;
             }
@@ -244,11 +241,19 @@
         }
     }
 
+    .c-table__control-bar {
+        margin-bottom: $interiorMarginSm;
+    }
 
+    // Legacy
+    .s-status-taking-snapshot,
+    .overlay.snapshot {
+        // Handle overflow-y issues with tables and html2canvas
+        // Replaces .l-sticky-headers .l-tabular-body { overflow: auto; }
+        .c-table__body-w { overflow: auto; }
+    }
 
-
-
-
+    // has-control-bar is used by Layouts to hide the button in a frame context
 
 </style>
 
