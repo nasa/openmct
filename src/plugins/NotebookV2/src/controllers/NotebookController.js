@@ -22,14 +22,14 @@
 
  define([
      'vue',
-     'moment',
+     './EntryController',
      'text!../../res/templates/notebook.html',
      'text!../../res/templates/entry.html',
      'text!../../res/templates/embed.html'
     ], 
     function (
      Vue,
-     moment,
+     EntryController,
      NotebookTemplate,
      EntryTemplate,
      EmbedTemplate
@@ -47,22 +47,24 @@
         this.show = this.show.bind(this);
         this.destroy = this.destroy.bind(this);
         this.newEntry = this.newEntry.bind(this);
-        this.textFocus = this.textFocus.bind(this);
-        this.textBlur = this.textBlur.bind(this);
         this.entryPosById = this.entryPosById.bind(this);
         this.deleteEntry = this.deleteEntry.bind(this);
-        this.dropOnEntry = this.dropOnEntry.bind(this);
         this.navigate = this.navigate.bind(this);
+        this.embedImageClick = this.embedImageClick.bind(this);
     }
 
     NotebookController.prototype.initializeVue = function (container){
-        var self = this;
-        
+        var self = this,
+            entryController = new EntryController(this.openmct, this.domainObject);
+
+        this.container = container;
+
         var notebookEmbed = {
             props:['embed'],
             template: EmbedTemplate,
             methods: {
-                navigate: self.navigate
+                navigate: self.navigate,
+                embedImageClick: self.embedImageClick
             }
         };
 
@@ -72,15 +74,8 @@
             components: {
                 'notebook-embed': notebookEmbed
             },
-            methods: {
-                textFocus: self.textFocus,
-                textBlur: self.textBlur,
-                formatTime: self.formatTime,
-                triggerDelete: self.triggerDelete,
-                dropOnEntry: self.dropOnEntry,
-                dragoverOnEntry: self.dragoverOnEntry
-            },
-            mounted: self.focusOnEntry
+            data: entryController.exposedData,
+            methods: entryController.exposedMethods()
         };
 
         var notebookVue = Vue.extend({
@@ -136,24 +131,6 @@
         this.entrySearch = '';
     };
 
-    NotebookController.prototype.textFocus = function ($event) {
-        if ($event.target) {
-            this.NotebookVue.currentEntryValue = $event.target.innerText;
-        } else {
-            $event.target.innerText = '';
-        }
-    };
-
-    NotebookController.prototype.textBlur = function ($event, entryId) {
-        if ($event.target) {
-            var entryPos = this.entryPosById(entryId);
-            
-            if (this.NotebookVue.currentEntryValue !== $event.target.innerText) {
-                this.openmct.objects.mutate(this.domainObject, 'entries[' + entryPos + '].text', $event.target.innerText);
-            }
-        }
-    };
-
     NotebookController.prototype.entryPosById = function (entryId) {
         var foundId = -1;
 
@@ -167,18 +144,10 @@
         return foundId;
     };
 
-    NotebookController.prototype.formatTime = function (unixTime, timeFormat) {
-        return moment(unixTime).format(timeFormat);
-    };
-
     NotebookController.prototype.focusOnEntry = function () {
         if (!this.entry.text) {
             this.$refs.contenteditable.focus();
         }
-    };
-
-    NotebookController.prototype.triggerDelete = function () {
-        this.$emit('delete-entry', this.entry.id);
     };
 
     NotebookController.prototype.deleteEntry = function (entryId) {
@@ -209,34 +178,13 @@
         }
     };
 
-    NotebookController.prototype.dropOnEntry = function (entryId) {
-        var selectedObject = this.dndService.getData('mct-domain-object'),
-            selectedObjectId = selectedObject.getId(),
-            selectedModel = selectedObject.getModel(),
-            cssClass = selectedObject.getCapability('type').typeDef.cssClass,
-            entryPos = this.entryPosById(entryId),
-            currentEntryEmbeds = this.domainObject.entries[entryPos].embeds,
-            newEmbed = {
-                type: selectedObjectId,
-                id: '' + Date.now(),
-                cssClass: cssClass,
-                name: selectedModel.name,
-                snapshot: ''
-            };
-        
-        currentEntryEmbeds.push(newEmbed);
-        this.openmct.objects.mutate(this.domainObject, 'entries[' + entryPos + '].embeds', currentEntryEmbeds);
-    };
-
-    NotebookController.prototype.dragoverOnEntry = function (dragoverEvent) {
-      
-    };
-
     NotebookController.prototype.filterBySearch = function (entryArray, filterString) {
         if (filterString) {
+            var lowerCaseFilterString = filterString.toLowerCase();
+
             return entryArray.filter(function (entry) {
                 if (entry.text) {
-                    return entry.text.includes(filterString);
+                    return entry.text.toLowerCase().includes(lowerCaseFilterString);
                 } else {
                     return false;
                 }
@@ -250,6 +198,10 @@
         this.objectService.getObjects([embedType]).then(function (objects) {
             this.navigationService.setNavigation(objects[embedType]);   
         }.bind(this));
+    };
+
+    NotebookController.prototype.embedImageClick = function (imageUrl) {
+       
     };
 
     NotebookController.prototype.show = function (container) {

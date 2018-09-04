@@ -4,7 +4,8 @@
 
     <div
         class="snap-thumb"
-        v-if="embed.snapshot">
+        v-if="embed.snapshot"
+        v-on:click="embedImageClick(embed.snapshot.src)">
         <img v-bind:src="embed.snapshot.src">
     </div>
 
