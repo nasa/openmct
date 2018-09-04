@@ -34,7 +34,6 @@ define(
                 mockActionContext,
                 mockCompositionCapability,
                 action;
-            
             function mockPromise(value) {
                 return (value && value.then) ? value : {
                     then: function (callback) {
@@ -42,7 +41,6 @@ define(
                     }
                 };
             }
-
             beforeEach(function () {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
@@ -53,7 +51,6 @@ define(
                         "getId"
                     ]
                 );
-                
                 mockNewObject = jasmine.createSpyObj(
                     "newObject",
                     [
@@ -63,7 +60,6 @@ define(
                         "getId"
                     ]
                 );
-                
                 mockType = jasmine.createSpyObj(
                     "type",
                     [
@@ -71,27 +67,21 @@ define(
                         "getInitialModel"
                     ]
                 );
-                
-                testModel = { 
+                testModel = {
                                 type: mockType,
                                 name: "Name",
                                 location: "someLocation"
                             };
-                
                 mockFolderName = "Name";
-                
                 mockTypeService = jasmine.createSpyObj(
                     "typeService",
                     ["getType"]
-                );    
-                
+                );
                 mockActionContext = { domainObject: mockDomainObject };
-                
                 mockCompositionCapability = jasmine.createSpyObj(
                     "composition",
                     ["add"]
                 );
-                
                 mockType.getKey.and.returnValue("test");
                 mockType.getInitialModel.and.returnValue(testModel);
                 mockDomainObject.getCapability.and.callFake(function (capability) {
@@ -104,28 +94,23 @@ define(
                 });
                 mockTypeService.getType.and.returnValue(mockType);
                 mockDomainObject.getId.and.returnValue("id");
-                
                 action = new CreateNewFolderAction(mockTypeService, mockActionContext);
             });
-
             it("uses the instantiation capability when performed", function () {
                 action.perform(mockFolderName);
                 expect(mockDomainObject.useCapability)
                     .toHaveBeenCalledWith("instantiation", jasmine.any(Object));
             });
-
             it("adds new objects to the parent's composition", function () {
                 action.perform(mockFolderName);
                 expect(mockDomainObject.getCapability).toHaveBeenCalledWith("composition");
                 expect(mockCompositionCapability.add).toHaveBeenCalled();
             });
-
             it("is only applicable when a domain object is in context", function () {
                 expect(CreateNewFolderAction.appliesTo(mockActionContext)).toBeTruthy();
                 expect(CreateNewFolderAction.appliesTo({})).toBeFalsy();
                 expect(mockDomainObject.hasCapability).toHaveBeenCalledWith('editor');
             });
-            
         });
     }
 );

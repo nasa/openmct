@@ -29,13 +29,13 @@ define([
     ) {
 
         /**
-         * The CreateNewFolderAction; action is triggered by the new folder button in the locator. 
-         * 
+         * The CreateNewFolderAction; action is triggered by the new folder button in the locator.
+         *
          * @constructor
          * @implements {Action}
          * @memberof platform/commonUI/edit
          */
-        function  CreateNewFolderAction(
+        function CreateNewFolderAction(
             typeService,
             context
         ) {

@@ -49,7 +49,6 @@ define(
                 controller;
 
             beforeEach(function () {
-                
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     ["$watch", "validParent"]
@@ -118,7 +117,6 @@ define(
                     ]
                 );
                 testModel = { someKey: "some value" };
-                
                 mockProperties = ['a', 'b', 'c'].map(function (k) {
                     var mockProperty = jasmine.createSpyObj(
                             'property-' + k,
@@ -130,14 +128,11 @@ define(
                         };
                     return mockProperty;
                 });
-                
                 capabilities = {
                     "action" : mockActionCapability,
                     "context": mockContext
                 };
-                
                 mockActions = [mockCreateNewFolderAction];
-                
                 mockContext.getRoot.and.returnValue(mockRootObject);
                 mockObjectService.getObjects.and.returnValue(getObjectsPromise);
                 mockTypeService.getType.and.callFake(function (typename) {
