@@ -76,6 +76,13 @@
             }
         }
 
+        &__pane-main {
+            > .l-pane__contents {
+                display: flex;
+                flex-flow: column nowrap;
+            }
+        }
+
         &__head,
         &__pane-inspector {
             body.mobile & {
@@ -105,11 +112,8 @@
         /********** MAIN AREA */
         &__main-container {
             // Wrapper for main views
+            flex: 1 1 100%;
             font-size: 16px; // TEMP FOR LEGACY STYLING
-            overflow: auto;
-            position: absolute;
-            top: $interiorMargin; right: $interiorMarginLg; left: $interiorMarginLg;
-            bottom: 76px; // pete temp fix for time conductor.
         }
 
         &__tree {
@@ -120,10 +124,8 @@
 
         &__time-conductor {
             border-top: 1px solid $colorInteriorBorder;
-            min-height: 50px;
-            padding: $interiorMarginLg;
-            position: absolute;
-            right: $interiorMarginLg; bottom: $interiorMargin; left: $interiorMarginLg;
+            flex: 0 0 auto;
+            padding: $interiorMargin;
         }
 
         body.desktop & {

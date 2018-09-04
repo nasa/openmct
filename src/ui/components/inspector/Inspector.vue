@@ -33,6 +33,7 @@
 
         > [class*="__"] {
             min-height: 50px;
+            > .l-pane__contents { overflow: auto; }
 
             &:not(:last-child) {
                 margin-bottom: $interiorMargin;

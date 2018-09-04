@@ -109,7 +109,6 @@
             padding: $interiorMargin;
             pointer-events: inherit;
             transition: opacity 250ms ease 250ms;
-            overflow: auto;
 
             .l-pane__contents {
                 // Don't pad all nested __contents
