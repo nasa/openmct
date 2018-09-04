@@ -80,7 +80,8 @@
         position: absolute;
         top: 0; right: 0; bottom: 0; left: 0;
 
-        > [class*="__"] + [class*="__"] {
+        &__control-bar,
+        &__headers-w {
             // Don't allow top level elements to grow or shrink
             flex: 0 0 auto;
         }
@@ -203,7 +204,7 @@
         /******************************* WRAPPERS */
         &__body-w {
             // Wraps __body table provides scrolling
-            flex: 1 1 100% !important; // TODO: temp override on tabular-holder > * { style which sets this to 0 0 auto
+            flex: 1 1 100%;
             overflow-x: auto;
             overflow-y: scroll;
         }
@@ -233,7 +234,7 @@
             z-index: -1;
             visibility: hidden;
             pointer-events: none;
-            position: absolute !important; // TODO: fix tabular-holder > * { which sets this to pos: relative
+            position: absolute;
 
             //Add some padding to allow for decorations such as limits indicator
             tr {
