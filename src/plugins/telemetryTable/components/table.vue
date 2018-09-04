@@ -90,6 +90,7 @@
         th, td {
             display: block;
             flex: 1 0 auto;
+            font-size: 0.7rem; // TEMP LEGACY TODO: refactor this when __main-container font-size is dealt with
             white-space: nowrap;
             min-width: $min-w;
             padding: $tabularTdPadTB $tabularTdPadLR;
