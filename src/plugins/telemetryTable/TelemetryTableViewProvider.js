@@ -42,7 +42,7 @@ define([
                 return domainObject.type === 'table' || domainObject.hasOwnProperty('telemetry');
             },
             view: function (domainObject) {
-                let csvExporter = new CSVExporter();
+                let csvExporter = new CSVExporter.default();
                 let table = new TelemetryTable(domainObject, openmct);
                 let component;
                 return {
