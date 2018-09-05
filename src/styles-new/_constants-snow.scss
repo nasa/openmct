@@ -238,6 +238,7 @@ $scrollbarThumbColorMenuHov: pullForward($scrollbarThumbColorMenu, 2%);
 // Splitter
 $splitterD: 7px;
 $splitterHandleD: 2px;
+$splitterHandleHitMargin: 4px;
 $splitterGrippyD: ($splitterHandleD - 4, 75px, 50px); // thickness, length, min-length
 $colorSplitterBaseBg: $colorBodyBg;
 $colorSplitterBg: pullForward($colorSplitterBaseBg, 20%);

@@ -17,6 +17,7 @@ $inputTextPLeftRight: 5px;
 $inputTextP: $inputTextPTopBtm $inputTextPLeftRight;
 $treeItemIndent: 16px;
 $treeTypeIconW: 18px;
+
 /*************** Items */
 $ueBrowseGridItemLg: 200px;
 
@@ -106,6 +107,7 @@ $glyph-icon-frame-show: '\e1045';
 $glyph-icon-frame-hide: '\e1046';
 $glyph-icon-import: '\e1047';
 $glyph-icon-export: '\e1048';
+$glyph-icon-minimize: '\e1049'; // 12px only
 $glyph-icon-activity: '\e1100';
 $glyph-icon-activity-mode: '\e1101';
 $glyph-icon-autoflow-tabular: '\e1102';

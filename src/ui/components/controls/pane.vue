@@ -28,7 +28,6 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
-    $hitMargin: 4px;
     /**************************** BASE - MOBILE AND DESKTOP */
     .l-multipane {
         display: flex;
@@ -149,7 +148,7 @@
 
             &__collapse-button {
                 $m: 2px;
-                $h: nth($splitterBtnD, 1) - ($m * 2);
+                $h: 12px; //nth($splitterBtnD, 1) - ($m * 2);
                 color: $splitterBtnColorFg;
                 flex: 0 0 nth($splitterBtnD, 1);
                 font-size: $h * .9;
@@ -160,26 +159,23 @@
                 &:after {
                     // Close icon
                     background: $splitterBtnColorFg;
-                    border-radius: 2px;
+                    border-radius: $smallCr;
                     color: $splitterBtnColorBg;
-                    content: $glyph-icon-minus;
+                    content: $glyph-icon-arrow-right-equilateral;
                     display: block;
                     font-family: symbolsfont;
-                    font-size: .8em;
-                    height: $h;
-                    line-height: $h;
-                    padding: 0 7px;
+                    font-size: 6px;
+                    height: 6.5px;
+                    padding: 2px 7px;
                     position: absolute;
                     right: $m;
                     top: $m;
-                    text-align: right;
                     transition: $transOut;
                     z-index: -1;
                 }
 
                 &:hover {
                     background: rgba(black, 0.1);
-                    //color: $splitterBtnColorHoverFg;
                     &:after {
                         background: $splitterBtnColorHoverBg;
                         color: $splitterBtnColorHoverFg;
@@ -216,10 +212,6 @@
                     background: $splitterBtnColorFg;
                     color: $splitterBtnColorBg;
 
-                    &:after {
-                        content: $glyph-icon-plus;
-                    }
-
                     &:hover {
                         background: $splitterBtnColorHoverBg !important;
                     }
@@ -241,9 +233,9 @@
                     &:before {
                         // Extended hit area
                         top: 0;
-                        right: $hitMargin * -1;
+                        right: $splitterHandleHitMargin * -1;
                         bottom: 0;
-                        left: $hitMargin * -1;
+                        left: $splitterHandleHitMargin * -1;
                     }
                 }
 
@@ -267,7 +259,6 @@
                             right: auto;
                             transform: translateX(-50%);
                             width: auto;
-
                         }
                     }
                 }
@@ -278,6 +269,14 @@
                         left: 0;
                         transform: translateX(floor($splitterHandleD / -2)); // Center over the pane edge
                     }
+
+                    &[class*="--collapsed"] {
+                        > .l-pane__collapse-button {
+                            &:after {
+                                transform: translateX(-50%) scaleX(-1);
+                            }
+                        }
+                    }
                 }
 
                 /************************** Horizontal Splitter After */
@@ -285,6 +284,12 @@
                     > .l-pane__handle {
                         right: 0;
                         transform: translateX(floor($splitterHandleD / 2));
+                    }
+
+                    &:not([class*="--collapsed"]) {
+                        > .l-pane__collapse-button:after {
+                            transform: scaleX(-1);
+                        }
                     }
                 }
             }
@@ -299,25 +304,43 @@
                     &:before {
                         // Extended hit area
                         left: 0;
-                        top: $hitMargin * -1;
+                        top: $splitterHandleHitMargin * -1;
                         right: 0;
-                        bottom: $hitMargin * -1;
+                        bottom: $splitterHandleHitMargin * -1;
                     }
                 }
 
                 /************************** Vertical Splitter Before */
+                // Pane collapses downward
                 &[class*="-before"] {
                     > .l-pane__handle {
                         top: 0;
-                        transform: translateY(floor($splitterHandleD / -2)); // Center over the pane edge
+                        transform: translateY(floor($splitterHandleD / -1));
+                    }
+
+                    > .l-pane__collapse-button:after {
+                        content: $glyph-icon-arrow-down;
+                    }
+
+                    &.l-pane--collapsed {
+                        > .l-pane__collapse-button:after {
+                            transform: scaleY(-1);
+                        }
                     }
                 }
 
                 /************************** Vertical Splitter After */
+                // Pane collapses upward. Not sure we'll ever use this...
                 &[class*="-after"] {
                     > .l-pane__handle {
                         bottom: 0;
-                        transform: translateY(floor($splitterHandleD / 2)); // Center over the pane edge
+                        transform: translateY(floor($splitterHandleD / 1));
+                    }
+
+                    &:not(.l-pane--collapsed) > .l-pane__collapse-button {
+                        &:after {
+                            transform: scaleY(-1);
+                        }
                     }
                 }
             }
