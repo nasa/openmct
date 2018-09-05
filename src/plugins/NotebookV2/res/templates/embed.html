@@ -14,5 +14,8 @@
             <a v-on:click="navigate(embed.type)">{{embed.name}}</a>
             <a class='context-available'></a>
         </div>
+        <div class="embed-date" v-if="embed.snapshot">
+                {{formatTime(embed.createdOn, 'YYYY-MM-DD HH:mm:ss')}}
+        </div>
     </div>
 </div>

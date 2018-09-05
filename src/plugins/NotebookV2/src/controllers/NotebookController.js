@@ -22,6 +22,7 @@
 
  define([
      'vue',
+     'moment',
      './EntryController',
      '../utils/SnapshotOverlay',
      'text!../../res/templates/notebook.html',
@@ -30,6 +31,7 @@
     ], 
     function (
      Vue,
+     Moment,
      EntryController,
      SnapshotOverlay,
      NotebookTemplate,
@@ -64,7 +66,8 @@
             template: EmbedTemplate,
             methods: {
                 navigate: self.navigate,
-                openSnapshot: self.openSnapshot
+                openSnapshot: self.openSnapshot,
+                formatTime: self.formatTime
             }
         };
 
@@ -146,6 +149,10 @@
         if (!this.entry.text) {
             this.$refs.contenteditable.focus();
         }
+    };
+
+    NotebookController.prototype.formatTime = function (unixTime, timeFormat) {
+        return Moment(unixTime).format(timeFormat);
     };
 
     NotebookController.prototype.filterBySearch = function (entryArray, filterString) {
