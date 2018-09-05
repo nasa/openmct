@@ -22,11 +22,16 @@
 
 define([
     '../../api/objects/object-utils',
-    './TableConfigurationComponent'
+    './components/table-configuration.vue',
+    './TelemetryTableConfiguration',
+    'vue'
 ], function (
     objectUtils,
-    TableConfigurationComponent
+    TableConfigurationComponent,
+    TelemetryTableConfiguration,
+    Vue
 ) {
+
     function TableConfigurationViewProvider(openmct) {
         let instantiateService;
 
@@ -51,27 +56,38 @@ define([
             return instantiateService(model, id);
         }
 
+
         return {
             key: 'table-configuration',
             name: 'Telemetry Table Configuration',
             canView: function (selection) {
+                if (selection.length === 0) {
+                    return false;
+                }
                 let object = selection[0].context.item;
-                
-                return selection.length > 0 &&
-                    object.type === 'table' && 
+                return object.type === 'table' &&
                     isBeingEdited(object);
             },
             view: function (selection) {
                 let component;
                 let domainObject = selection[0].context.item;
+                const tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
                 return {
                     show: function (element) {
-                        component = TableConfigurationComponent(domainObject, openmct);
-                        element.appendChild(component.$mount().$el);
-                    }, 
+                        component = new Vue({
+                            provide: {
+                                openmct,
+                                tableConfiguration
+                            },
+                            components: {
+                                TableConfiguration: TableConfigurationComponent.default
+                            },
+                            template: '<table-configuration></table-configuration>',
+                            el: element
+                        });
+                    },
                     destroy: function (element) {
                         component.$destroy();
-                        element.removeChild(component.$el);
                         component = undefined;
                     }
                 }

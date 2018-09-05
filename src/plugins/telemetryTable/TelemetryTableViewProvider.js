@@ -20,7 +20,17 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./TelemetryTableComponent'], function (TelemetryTableComponent) {
+define([
+    './components/table.vue',
+    '../../exporters/CSVExporter',
+    './TelemetryTable',
+    'vue'
+], function (
+    TableComponent,
+    CSVExporter,
+    TelemetryTable,
+    Vue
+) {
     function TelemetryTableViewProvider(openmct) {
         return {
             key: 'table',
@@ -30,15 +40,26 @@ define(['./TelemetryTableComponent'], function (TelemetryTableComponent) {
                 return domainObject.type === 'table' || domainObject.hasOwnProperty('telemetry');
             },
             view: function (domainObject) {
+                let csvExporter = new CSVExporter();
+                let table = new TelemetryTable(domainObject, openmct);
                 let component;
                 return {
                     show: function (element) {
-                        component = new TelemetryTableComponent(domainObject, openmct);
-                        element.appendChild(component.$mount().$el);
-                    }, 
+                        component = new Vue({
+                            components: {
+                                TableComponent: TableComponent.default,
+                            },
+                            provide: {
+                                openmct,
+                                csvExporter,
+                                table
+                            },
+                            el: element,
+                            template: '<table-component></table-component>'
+                        });
+                    },
                     destroy: function (element) {
                         component.$destroy();
-                        element.removeChild(component.$el);
                         component = undefined;
                     }
                 }

@@ -30,7 +30,8 @@
 .child-frame {
     .has-control-bar {
         $btnExportH: $btnFrameH;
-        .l-control-bar {
+        .l-control-bar,
+        .c-control-bar {
             display: none;
         }
         .l-view-section {

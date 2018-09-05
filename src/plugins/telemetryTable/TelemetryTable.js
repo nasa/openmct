@@ -36,12 +36,12 @@ define([
     TelemetryTableConfiguration
 ) {
     class TelemetryTable extends EventEmitter {
-        constructor(domainObject, rowCount, openmct) {
+        constructor(domainObject, openmct) {
             super();
 
             this.domainObject = domainObject;
             this.openmct = openmct;
-            this.rowCount = rowCount;
+            this.rowCount = 100;
             this.subscriptions = {};
             this.tableComposition = undefined;
             this.telemetryObjects = [];
@@ -85,10 +85,10 @@ define([
 
                     this.configuration.addColumnsForAllObjects(composition);
                     composition.forEach(this.addTelemetryObject);
-    
+
                     this.tableComposition.on('add', this.addTelemetryObject);
                     this.tableComposition.on('remove', this.removeTelemetryObject);
-                });    
+                });
             }
         }
 
@@ -158,7 +158,7 @@ define([
 
         getColumnMapForObject(objectKeyString) {
             let columns = this.configuration.getColumns();
-            
+
             return columns[objectKeyString].reduce((map, column) => {
                 map[column.getKey()] = column;
                 return map;
@@ -189,7 +189,7 @@ define([
             this.filteredRows.destroy();
             Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
             this.openmct.time.off('bounds', this.refreshData);
-            
+
             if (this.tableComposition !== undefined) {
                 this.tableComposition.off('add', this.addTelemetryObject);
                 this.tableComposition.off('remove', this.removeTelemetryObject);
