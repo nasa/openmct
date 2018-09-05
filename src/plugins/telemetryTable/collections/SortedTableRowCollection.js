@@ -82,8 +82,7 @@ define(
                 // Going to check for duplicates. Bound the search problem to
                 // items around the given time. Use sortedIndex because it
                 // employs a binary search which is O(log n). Can use binary search
-                // based on time stamp because the array is guaranteed ordered due
-                // to sorted insertion.
+                // because the array is guaranteed ordered due to sorted insertion.
                 let startIx = this.sortedIndex(this.rows, row);
                 let endIx = undefined;
 
@@ -113,26 +112,49 @@ define(
              * @private
              */
             sortedIndex(rows, testRow, lodashFunction) {
+                if (this.rows.length === 0) {
+                    return 0;
+                }
+                
                 const sortOptionsKey = this.sortOptions.key;
+                const testRowValue = testRow.datum[sortOptionsKey];
+                const firstValue = this.rows[0].datum[sortOptionsKey];
+                const lastValue = this.rows[this.rows.length - 1].datum[sortOptionsKey];
+
                 lodashFunction = lodashFunction || _.sortedIndex;
 
                 if (this.sortOptions.direction === 'asc') {
-                    return lodashFunction(rows, testRow, (thisRow) => {
-                        return thisRow.datum[sortOptionsKey];
-                    });
+                    if (testRowValue > lastValue) {
+                        return this.rows.length;
+                    } else if (testRowValue === lastValue) {
+                        return this.rows.length - 1;
+                    } else if (testRowValue <= firstValue) {
+                        return 0;
+                    } else {
+                        return lodashFunction(rows, testRow, (thisRow) => {
+                            return thisRow.datum[sortOptionsKey];
+                        });
+                    }
                 } else {
-                    const testRowValue = testRow.datum[this.sortOptions.key];
-                    // Use a custom comparison function to support descending sort.
-                    return lodashFunction(rows, testRow, (thisRow) => {
-                        const thisRowValue = thisRow.datum[sortOptionsKey];
-                        if (testRowValue === thisRowValue) {
-                            return EQUAL;
-                        } else if (testRowValue < thisRowValue) {
-                            return LESS_THAN;
-                        } else {
-                            return GREATER_THAN;
-                        }
-                    });
+                    if (testRowValue >= firstValue) {
+                        return 0;
+                    } else if (testRowValue < lastValue) {
+                        return this.rows.length;
+                    } else if (testRowValue === lastValue) {
+                        return this.rows.length - 1;
+                    } else {
+                        // Use a custom comparison function to support descending sort.
+                        return lodashFunction(rows, testRow, (thisRow) => {
+                            const thisRowValue = thisRow.datum[sortOptionsKey];
+                            if (testRowValue === thisRowValue) {
+                                return EQUAL;
+                            } else if (testRowValue < thisRowValue) {
+                                return LESS_THAN;
+                            } else {
+                                return GREATER_THAN;
+                            }
+                        });
+                    }
                 }
             }
 
