@@ -1,14 +1,14 @@
 <template>
-<div class="grid-properties">
-    <h2 title="The location of this linked object.">Location</h2>
-    <ul class="l-inspector-part">
-        <li class="grid-row">
-            <div class="grid-cell label">This Link</div>
-            <div class="grid-cell value">TODO</div>
+<div class="c-properties c-properties--location">
+    <div class="c-properties__header" title="The location of this linked object.">Location</div>
+    <ul class="c-properties__section">
+        <li class="c-properties__row">
+            <div class="c-properties__label">This Link</div>
+            <div class="c-properties__value">TODO</div>
         </li>
-        <li class="grid-row">
-            <div class="grid-cell label">Original</div>
-            <div class="grid-cell value">TODO</div>
+        <li class="c-properties__row">
+            <div class="c-properties__label">Original</div>
+            <div class="c-properties__value">TODO</div>
         </li>
     </ul>
 </div>

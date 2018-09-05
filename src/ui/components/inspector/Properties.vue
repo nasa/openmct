@@ -1,29 +1,28 @@
 <template>
-<div class="grid-properties">
-    <h2>Properties</h2>
-    <ul class="l-inspector-part">
-        <li class="t-repeat grid-row">
-            <div class="grid-cell label">Title</div>
-            <div class="grid-cell value">{{ domainObject.name }}</div>
+<div class="c-properties c-properties--properties">
+    <div class="c-properties__header">Properties</div>
+    <ul class="c-properties__section">
+        <li class="c-properties__row">
+            <div class="c-properties__label">Title</div>
+            <div class="c-properties__value">{{ domainObject.name }}</div>
         </li>
-        <li class="t-repeat grid-row">
-            <div class="grid-cell label">Type</div>
-            <div class="grid-cell value">{{ typeName }}</div>
+        <li class="c-properties__row">
+            <div class="c-properties__label">Type</div>
+            <div class="c-properties__value">{{ typeName }}</div>
         </li>
-        <li class="t-repeat grid-row" v-if="domainObject.created">
-            <div class="grid-cell label">Created</div>
-            <div class="grid-cell value">{{ domainObject.created }}</div>
+        <li class="c-properties__row" v-if="domainObject.created">
+            <div class="c-properties__label">Created</div>
+            <div class="c-properties__value">{{ domainObject.created }}</div>
         </li>
-        <li class="t-repeat grid-row" v-if="domainObject.modified">
-            <div class="grid-cell label">Modified</div>
-            <div class="grid-cell value">{{ domainObject.modified }}</div>
+        <li class="c-properties__row" v-if="domainObject.modified">
+            <div class="c-properties__label">Modified</div>
+            <div class="c-properties__value">{{ domainObject.modified }}</div>
         </li>
-
-        <li class="t-repeat grid-row"
+        <li class="c-properties__row"
             v-for="prop in typeProperties"
             :key="prop.name">
-            <div class="grid-cell label">{{ prop.name }}</div>
-            <div class="grid-cell value">{{ prop.value }}</div>
+            <div class="c-properties__label">{{ prop.name }}</div>
+            <div class="c-properties__value">{{ prop.value }}</div>
         </li>
     </ul>
 </div>
