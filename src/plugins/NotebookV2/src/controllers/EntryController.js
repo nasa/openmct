@@ -31,6 +31,7 @@
         this.openmct = openmct;
         this.domainObject = domainObject;
         this.dndService = this.openmct.$injector.get('dndService');
+        this.dialogService = this.openmct.$injector.get('dialogService');
 
         this.currentEntryValue = '';
 
@@ -73,8 +74,32 @@
         return Moment(unixTime).format(timeFormat);
     };
 
-    EntryController.prototype.triggerDelete = function () {
-        this.$emit('delete-entry', this.entry.id);
+    EntryController.prototype.deleteEntry = function () {
+        var entryPos = this.entryPosById(this.entry.id),
+            domainObject = this.domainObject,
+            openmct = this.openmct;
+
+        if (entryPos !== -1) {
+
+            var errorDialog = this.dialogService.showBlockingMessage({
+                severity: "error",
+                title: "This action will permanently delete this Notebook entry. Do you wish to continue?",
+                options: [{
+                    label: "OK",
+                    callback: function () {
+                        domainObject.entries.splice(entryPos, 1);
+                        openmct.objects.mutate(domainObject, 'entries', domainObject.entries);
+
+                        errorDialog.dismiss();
+                    }
+                },{
+                    label: "Cancel",
+                    callback: function () {
+                        errorDialog.dismiss();
+                    }
+                }]
+            });
+        }
     };
 
     EntryController.prototype.dropOnEntry = function (entryId) {
@@ -105,6 +130,7 @@
             openmct: this.openmct,
             domainObject: this.domainObject,
             dndService: this.dndService,
+            dialogService: this.dialogService,
             currentEntryValue: this.currentEntryValue
         };
     };
@@ -115,7 +141,7 @@
             textFocus: this.textFocus,
             textBlur: this.textBlur,
             formatTime: this.formatTime,
-            triggerDelete: this.triggerDelete,
+            deleteEntry: this.deleteEntry,
             dropOnEntry: this.dropOnEntry,
             dragoverOnEntry: this.dragoverOnEntry
         };

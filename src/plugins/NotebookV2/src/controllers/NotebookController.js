@@ -48,7 +48,6 @@
         this.destroy = this.destroy.bind(this);
         this.newEntry = this.newEntry.bind(this);
         this.entryPosById = this.entryPosById.bind(this);
-        this.deleteEntry = this.deleteEntry.bind(this);
         this.navigate = this.navigate.bind(this);
         this.embedImageClick = this.embedImageClick.bind(this);
     }
@@ -99,8 +98,6 @@
                     }
                 },
                 newEntry: self.newEntry,
-                formatTime: self.formatTime,
-                deleteEntry: self.deleteEntry,
                 filterBySearch: self.filterBySearch
             }
         });
@@ -147,34 +144,6 @@
     NotebookController.prototype.focusOnEntry = function () {
         if (!this.entry.text) {
             this.$refs.contenteditable.focus();
-        }
-    };
-
-    NotebookController.prototype.deleteEntry = function (entryId) {
-        var entryPos = this.entryPosById(entryId),
-            domainObject = this.domainObject,
-            openmct = this.openmct;
-
-        if (entryPos !== -1) {
-
-            var errorDialog = this.dialogService.showBlockingMessage({
-                severity: "error",
-                title: "This action will permanently delete this Notebook entry. Do you wish to continue?",
-                options: [{
-                    label: "OK",
-                    callback: function () {
-                        domainObject.entries.splice(entryPos, 1);
-                        openmct.objects.mutate(domainObject, 'entries', domainObject.entries);
-
-                        errorDialog.dismiss();
-                    }
-                },{
-                    label: "Cancel",
-                    callback: function () {
-                        errorDialog.dismiss();
-                    }
-                }]
-            });
         }
     };
 
