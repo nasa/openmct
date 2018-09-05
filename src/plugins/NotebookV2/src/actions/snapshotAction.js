@@ -23,9 +23,10 @@ define(
     ['zepto'],
     function ($) {
 
-        function SnapshotAction (exportImageService, dialogService) {
+        function SnapshotAction (exportImageService, dialogService, context) {
             this.exportImageService = exportImageService;
             this.dialogService = dialogService;
+            this.domainObject = context.domainObject;
         }
 
         SnapshotAction.prototype.perform = function () {
@@ -50,7 +51,10 @@ define(
         };
 
         SnapshotAction.prototype.saveSnapshot = function (imageURL, imageType, imageSize) {
-            var taskForm = this.generateTaskForm();
+            var taskForm = this.generateTaskForm(),
+                domainObjectId = this.domainObject.getId(),
+                cssClass = this.domainObject.getCapability('type').typeDef.cssClass,
+                name = this.domainObject.model.name;
 
             this.dialogService.getDialogResponse(
                 'overlay-dialog',
@@ -73,6 +77,9 @@ define(
                         createdOn: date,
                         text: options.entry,
                         embeds: [{
+                            name: name,
+                            cssClass: cssClass,
+                            type: domainObjectId,
                             id: 'embed-' + date,
                             createdOn: date,
                             snapshot: snapshotObject

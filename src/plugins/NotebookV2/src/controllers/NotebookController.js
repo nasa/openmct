@@ -23,6 +23,7 @@
  define([
      'vue',
      './EntryController',
+     '../utils/SnapshotOverlay',
      'text!../../res/templates/notebook.html',
      'text!../../res/templates/entry.html',
      'text!../../res/templates/embed.html'
@@ -30,6 +31,7 @@
     function (
      Vue,
      EntryController,
+     SnapshotOverlay,
      NotebookTemplate,
      EntryTemplate,
      EmbedTemplate
@@ -49,7 +51,6 @@
         this.newEntry = this.newEntry.bind(this);
         this.entryPosById = this.entryPosById.bind(this);
         this.navigate = this.navigate.bind(this);
-        this.embedImageClick = this.embedImageClick.bind(this);
     }
 
     NotebookController.prototype.initializeVue = function (container){
@@ -63,7 +64,7 @@
             template: EmbedTemplate,
             methods: {
                 navigate: self.navigate,
-                embedImageClick: self.embedImageClick
+                openSnapshot: self.openSnapshot
             }
         };
 
@@ -169,8 +170,12 @@
         }.bind(this));
     };
 
-    NotebookController.prototype.embedImageClick = function (imageUrl) {
-       
+    NotebookController.prototype.openSnapshot = function () {
+        if (!this.snapshotOverlay) {
+            this.snapShotOverlay = new SnapshotOverlay(this.embed);
+        } else {
+            this.snapShotOverlay = undefined;
+        }
     };
 
     NotebookController.prototype.show = function (container) {

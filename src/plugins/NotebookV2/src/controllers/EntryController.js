@@ -116,7 +116,7 @@
                 name: selectedModel.name,
                 snapshot: ''
             };
-        
+
         currentEntryEmbeds.push(newEmbed);
         this.openmct.objects.mutate(this.domainObject, 'entries[' + entryPos + '].embeds', currentEntryEmbeds);
     };

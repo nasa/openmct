@@ -5,7 +5,7 @@
     <div
         class="snap-thumb"
         v-if="embed.snapshot"
-        v-on:click="embedImageClick(embed.snapshot.src)">
+        v-on:click="openSnapshot">
         <img v-bind:src="embed.snapshot.src">
     </div>
 
@@ -15,5 +15,4 @@
             <a class='context-available'></a>
         </div>
     </div>
-
 </div>
