@@ -1,8 +1,8 @@
 <template>
     <div class="l-shell">
         <div class="l-shell__head">
-            [ Create Button ]
-            [ App Logo ]
+            <CreateButton class="l-shell__create-button"></CreateButton>
+            <div class="l-shell__app-logo">[ App Logo ]</div>
         </div>
         <multipane class="l-shell__main"
                    type="horizontal">
@@ -90,6 +90,25 @@
             }
         }
 
+        &__head,
+        &__status {
+            flex: 0 1 auto;
+            display: flex;
+        }
+
+        &__head {
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid $colorInteriorBorder;
+            padding: $interiorMargin;
+        }
+
+        &__head {
+            [class*="__"] {
+                flex: 0 0 auto;
+            }
+        }
+
         @include phonePortrait() {
             &__pane-tree {
                 width: calc(100% - #{$mobileMenuIconD});
@@ -130,18 +149,6 @@
 
         body.desktop & {
             /********** HEAD AND STATUS */
-            &__head,
-            &__status {
-                display: block;
-                flex: 0 1 auto;
-            }
-
-            &__head {
-                border-bottom: 1px solid $colorInteriorBorder;
-                height: 40px;
-                padding: $interiorMarginLg;
-            }
-
             &__pane-tree,
             &__pane-inspector {
                 max-width: 30%;
@@ -164,7 +171,7 @@
     import MctTree from './mct-tree.vue';
     import BrowseObject from './BrowseObject.vue';
     import MctTemplate from '../legacy/mct-template.vue';
-
+    import CreateButton from '../controls/CreateButton.vue';
     import search from '../controls/search.vue';
     import multipane from '../controls/multipane.vue';
     import pane from '../controls/pane.vue';
@@ -176,6 +183,7 @@
             MctTree,
             BrowseObject,
             'mct-template': MctTemplate,
+            CreateButton,
             search,
             multipane,
             pane

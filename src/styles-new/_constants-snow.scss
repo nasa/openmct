@@ -36,13 +36,14 @@ $overlayCr: 11px;
 $shdwTextSubtle: rgba(black, 0.2) 0 1px 2px;
 
 // Buttons and Controls
-$colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent);
+$btnPad: $interiorMarginSm, $interiorMargin * 1.25;
+$colorBtnBg: #aaaaaa;
 $colorBtnBgHov: pullForward($colorBtnBg, $hoverRatioPercent);
 $colorBtnFg: #fff;
 $colorBtnFgHov: $colorBtnFg;
 $colorBtnIcon: #eee;
 $colorBtnIconHov: $colorBtnFgHov;
-$colorBtnMajorBg: $colorKey;
+$colorBtnMajorBg: linear-gradient(lighten($colorKey, 10%), $colorKey);
 $colorBtnMajorBgHov: $colorKeyHov;
 $colorBtnMajorFg: $colorKeyFg;
 $colorBtnMajorFgHov: pushBack($colorBtnMajorFg, $hoverRatioPercent);
@@ -245,7 +246,7 @@ $colorSplitterBg: pullForward($colorSplitterBaseBg, 20%);
 $colorSplitterFg: $colorBodyBg;
 $colorSplitterHover: $colorKey; // pullForward($colorSplitterBg, $hoverRatioPercent * 2);
 $colorSplitterActive: $colorKey;
-$splitterBtnD: (16px, 35px);
+$splitterBtnD: (16px, 35px); // height, width
 $splitterBtnColorBg: #eee;
 $splitterBtnColorFg: #999;
 $splitterBtnColorHoverBg: rgba($colorKey, 1);

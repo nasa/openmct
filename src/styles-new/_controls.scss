@@ -1,0 +1,112 @@
+/**************************** BUTTONS */
+%c-control {
+    $m: $interiorMarginSm;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: nth($btnPad, 1) nth($btnPad, 2);
+
+    &:before,
+    &:after {
+        font-family: symbolsfont;
+        display: block;
+        flex: 0 0 auto;
+    }
+
+    &:before {
+        font-size: 0.8em;
+        margin-right: $m;
+    }
+
+    &:after {
+        font-size: 0.6em;
+        margin-left: $m;
+    }
+
+}
+
+%c-button {
+    @extend %c-control;
+    @include userSelectNone();
+    background: $colorBtnBg;
+    border-radius: $controlCr;
+    color: $colorBtnFg;
+    &:hover {
+        background: $colorBtnBgHov;
+        color: $colorBtnFgHov;
+    }
+
+    &[class*="--major"] {
+        background: $colorBtnMajorBg;
+        color: $colorBtnMajorFg;
+
+        &:hover {
+            background: $colorBtnMajorBgHov;
+            color: $colorBtnMajorFgHov;
+        }
+    }
+}
+
+/********* Buttons */
+// Optionally can include icon in :before
+.c-button {
+    @extend %c-button;
+}
+
+/********* Menu Buttons */
+// Always includes :after dropdown arrow
+// Optionally can include icon in :before
+.c-menu-button {
+    @extend %c-button;
+
+    &:after {
+        content: $glyph-icon-arrow-down;
+        font-family: symbolsfont;
+        opacity: 0.5;
+    }
+}
+
+/**************************** MENUS */
+%c-menu {
+    border-radius: $basicCr;
+    background: $colorMenuBg;
+    color: $colorMenuFg;
+    box-shadow: $shdwMenu;
+    text-shadow: $shdwMenuText;
+    padding: $interiorMarginSm 0;
+    display: block;
+    position: absolute;
+    z-index: 70;
+    ul {
+        li {
+            @extend %c-control;
+            &:not(:first-child) { border-top: 1px solid pullForward($colorMenuBg, 10%); }
+            color: $colorMenuFg;
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            line-height: $menuLineH;
+            padding: nth($btnPad, 1) nth($btnPad, 2);
+            position: relative;
+            white-space: nowrap;
+
+            &:hover {
+                background: $colorMenuHovBg;
+                color: $colorMenuHovFg;
+                &:before {
+                    color: $colorMenuHovIc;
+                }
+            }
+            &:before {
+                color: $colorMenuIc;
+                font-size: 0.9em;
+                margin-right: $interiorMargin;
+            }
+        }
+    }
+}
+
+.c-menu {
+    @extend %c-menu;
+}
+
