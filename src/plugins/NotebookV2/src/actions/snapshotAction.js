@@ -52,9 +52,10 @@ define(
 
         SnapshotAction.prototype.saveSnapshot = function (imageURL, imageType, imageSize) {
             var taskForm = this.generateTaskForm(),
-                domainObjectId = this.domainObject.getId(),
-                cssClass = this.domainObject.getCapability('type').typeDef.cssClass,
-                name = this.domainObject.model.name;
+                domainObject = this.domainObject,
+                domainObjectId = domainObject.getId(),
+                cssClass = domainObject.getCapability('type').typeDef.cssClass,
+                name = domainObject.model.name;
 
             this.dialogService.getDialogResponse(
                 'overlay-dialog',
@@ -82,7 +83,8 @@ define(
                             type: domainObjectId,
                             id: 'embed-' + date,
                             createdOn: date,
-                            snapshot: snapshotObject
+                            snapshot: snapshotObject,
+                            domainObject: domainObject
                         }]
                     });
                 });

@@ -23,6 +23,7 @@
                 <notebook-embed
                     v-for="(embed, index) in entry.embeds"
                     v-bind:embed="embed"
+                    v-bind:entry="entry"
                 ></notebook-embed>
             </div>
         </div>

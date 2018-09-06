@@ -22,18 +22,16 @@
 
  define([
      'vue',
-     'moment',
      './EntryController',
-     '../utils/SnapshotOverlay',
+     './EmbedController',
      'text!../../res/templates/notebook.html',
      'text!../../res/templates/entry.html',
      'text!../../res/templates/embed.html'
     ], 
     function (
      Vue,
-     Moment,
      EntryController,
-     SnapshotOverlay,
+     EmbedController,
      NotebookTemplate,
      EntryTemplate,
      EmbedTemplate
@@ -43,32 +41,25 @@
         this.openmct = openmct;
         this.domainObject = domainObject;
         this.entrySearch = '';
-        this.dialogService = this.openmct.$injector.get('dialogService');
-        this.dndService = this.openmct.$injector.get('dndService');
-        this.objectService = this.openmct.$injector.get('objectService');
-        this.navigationService = this.openmct.$injector.get('navigationService');
 
         this.show = this.show.bind(this);
         this.destroy = this.destroy.bind(this);
         this.newEntry = this.newEntry.bind(this);
         this.entryPosById = this.entryPosById.bind(this);
-        this.navigate = this.navigate.bind(this);
     }
 
     NotebookController.prototype.initializeVue = function (container){
         var self = this,
-            entryController = new EntryController(this.openmct, this.domainObject);
+            entryController = new EntryController(this.openmct, this.domainObject),
+            embedController = new EmbedController(this.openmct, this.domainObject);
 
         this.container = container;
 
         var notebookEmbed = {
-            props:['embed'],
+            props:['embed', 'entry'],
             template: EmbedTemplate,
-            methods: {
-                navigate: self.navigate,
-                openSnapshot: self.openSnapshot,
-                formatTime: self.formatTime
-            }
+            data: embedController.exposedData,
+            methods: embedController.exposedMethods()
         };
 
         var entryComponent = {
@@ -107,7 +98,7 @@
         });
 
         this.NotebookVue =  new notebookVue();
-        this.NotebookVue.$mount(container);
+        container.appendChild(this.NotebookVue.$mount().$el);
     };
 
     NotebookController.prototype.newEntry = function (event) {
@@ -151,10 +142,6 @@
         }
     };
 
-    NotebookController.prototype.formatTime = function (unixTime, timeFormat) {
-        return Moment(unixTime).format(timeFormat);
-    };
-
     NotebookController.prototype.filterBySearch = function (entryArray, filterString) {
         if (filterString) {
             var lowerCaseFilterString = filterString.toLowerCase();
@@ -168,20 +155,6 @@
             });
         } else {
             return entryArray;
-        }
-    };
-
-    NotebookController.prototype.navigate = function (embedType) {
-        this.objectService.getObjects([embedType]).then(function (objects) {
-            this.navigationService.setNavigation(objects[embedType]);   
-        }.bind(this));
-    };
-
-    NotebookController.prototype.openSnapshot = function () {
-        if (!this.snapshotOverlay) {
-            this.snapShotOverlay = new SnapshotOverlay(this.embed);
-        } else {
-            this.snapShotOverlay = undefined;
         }
     };
 
