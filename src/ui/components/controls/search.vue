@@ -28,7 +28,7 @@
             flex: 0 0 auto;
             opacity: 0.5;
             overflow: hidden;
-            padding: 2px; // Prevents clipping
+            padding: 2px 0; // Prevents clipping
             transition: width 250ms ease;
             width: 1em;
         }

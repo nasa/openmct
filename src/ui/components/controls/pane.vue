@@ -85,6 +85,11 @@
                 transition: opacity 150ms ease;
                 opacity: 0;
                 pointer-events: none;
+
+                > * {
+                    min-width: 0 !important;
+                    min-height: 0 !important;
+                }
             }
         }
 
@@ -157,15 +162,15 @@
 
                 &:after {
                     // Close icon
-                    background: $splitterBtnColorFg;
+                    background: $colorBtnBg;
                     border-radius: $smallCr;
-                    color: $splitterBtnColorBg;
+                    color: $colorBtnFg;
                     content: $glyph-icon-arrow-right-equilateral;
                     display: block;
                     font-family: symbolsfont;
                     font-size: 6px;
-                    height: 6.5px;
-                    padding: 2px 7px;
+                    line-height: 90%;
+                    padding: 3px 15px;
                     position: absolute;
                     right: $m;
                     top: $m;
@@ -195,6 +200,10 @@
             &--resizing {
                 // User is dragging the handle and resizing a pane
                 @include userSelectNone();
+
+                + .l-pane {
+                    @include userSelectNone();
+                }
             }
 
             &[class*="--collapsed"] {
