@@ -41,6 +41,8 @@
         this.openmct = openmct;
         this.domainObject = domainObject;
         this.entrySearch = '';
+        this.objectService = openmct.$injector.get('objectService');
+        this.actionService = openmct.$injector.get('actionService');
 
         this.show = this.show.bind(this);
         this.destroy = this.destroy.bind(this);
@@ -59,7 +61,8 @@
             props:['embed', 'entry'],
             template: EmbedTemplate,
             data: embedController.exposedData,
-            methods: embedController.exposedMethods()
+            methods: embedController.exposedMethods(),
+            beforeMount: embedController.populateActionMenu(self.objectService, self.actionService)
         };
 
         var entryComponent = {

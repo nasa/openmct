@@ -83,8 +83,7 @@ define(
                             type: domainObjectId,
                             id: 'embed-' + date,
                             createdOn: date,
-                            snapshot: snapshotObject,
-                            domainObject: domainObject
+                            snapshot: snapshotObject
                         }]
                     });
                 });

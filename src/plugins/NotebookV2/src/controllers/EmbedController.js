@@ -77,6 +77,27 @@ function (
         return foundId;
     };
 
+    EmbedController.prototype.actionToMenuDecorator = function (action) {
+        return {
+            name: action.getMetadata().name,
+            cssClass: action.getMetadata().cssClass,
+            perform: action.perform
+        };
+    };
+
+    EmbedController.prototype.populateActionMenu = function (objectService, actionService) {
+        return function () {
+            var self = this;
+
+            objectService.getObjects([self.embed.type]).then(function (resp) {
+                var domainObject = resp[self.embed.type],
+                    previewAction = actionService.getActions({key: 'mct-preview-action', domainObject: domainObject})[0];
+                
+                self.actions.push(self.actionToMenuDecorator(previewAction));
+            });
+        };
+    };
+
     EmbedController.prototype.removeEmbedAction = function () {
         var self = this;
 
@@ -168,7 +189,8 @@ function (
             navigate: self.navigate,
             openSnapshot: self.openSnapshot,
             formatTime: self.formatTime,
-            toggleActionMenu: self.toggleActionMenu
+            toggleActionMenu: self.toggleActionMenu,
+            actionToMenuDecorator: self.actionToMenuDecorator
         };
     };
 
