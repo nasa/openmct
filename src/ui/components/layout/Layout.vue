@@ -104,7 +104,7 @@
         }
 
         &__head {
-            [class*="__"] {
+            > [class*="__"] {
                 flex: 0 0 auto;
             }
         }
@@ -171,6 +171,7 @@
     import MctTree from './mct-tree.vue';
     import BrowseObject from './BrowseObject.vue';
     import MctTemplate from '../legacy/mct-template.vue';
+    import ContextMenu from '../controls/ContextMenu.vue';
     import CreateButton from '../controls/CreateButton.vue';
     import search from '../controls/search.vue';
     import multipane from '../controls/multipane.vue';
@@ -183,6 +184,7 @@
             MctTree,
             BrowseObject,
             'mct-template': MctTemplate,
+            ContextMenu,
             CreateButton,
             search,
             multipane,

@@ -12,6 +12,7 @@
 }
 
 // Global
+$fontBaseSize: 13px;
 $colorBodyBg: #fcfcfc;
 $colorBodyFg: #666;
 $colorGenBg: #fff;
@@ -43,7 +44,7 @@ $colorBtnFg: #fff;
 $colorBtnFgHov: $colorBtnFg;
 $colorBtnIcon: #eee;
 $colorBtnIconHov: $colorBtnFgHov;
-$colorBtnMajorBg: linear-gradient(lighten($colorKey, 10%), $colorKey);
+$colorBtnMajorBg: $colorKey;
 $colorBtnMajorBgHov: $colorKeyHov;
 $colorBtnMajorFg: $colorKeyFg;
 $colorBtnMajorFgHov: pushBack($colorBtnMajorFg, $hoverRatioPercent);
@@ -91,17 +92,18 @@ $colorTick: rgba(black, 0.2);
 $colorSelectableSelectedPrimary: $colorKey;
 $colorSelectableHov: rgba($colorBodyFg, 0.4);
 
-// Menu colors
+// Menus
 $colorMenuBg: pushBack($colorBodyBg, 10%);
 $colorMenuFg: pullForward($colorMenuBg, 70%);
 $colorMenuIc: $colorKey;
-$colorMenuHovBg: pullForward($colorMenuBg, $hoverRatioPercent);
-$colorMenuHovFg: $colorMenuFg;
-$colorMenuHovIc: $colorMenuIc;
+$colorMenuHovBg: $colorMenuIc; //pullForward($colorMenuBg, $hoverRatioPercent);
+$colorMenuHovFg: $colorMenuBg;
+$colorMenuHovIc: $colorMenuBg;
 $shdwMenu: rgba(black, 0.5) 0 1px 5px;
 $shdwMenuText: none;
 $colorCreateMenuLgIcon: $colorKey;
 $colorCreateMenuText: $colorBodyFg;
+$menuItemPad: ($interiorMargin, nth($btnPad, 2));
 
 // Form colors
 $colorCheck: $colorKey;

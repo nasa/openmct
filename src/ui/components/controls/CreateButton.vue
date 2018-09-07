@@ -4,43 +4,27 @@
              @click="toggleCreateMenu">
             Create
         </div>
-        <div class="c-menu"
+        <div class="c-create-menu c-super-menu"
              v-if="showCreateMenu">
-            <ul>
-                <li v-for="item in menuItems"
-                    :class="item.class">
-                    {{ item.name }}
-                </li>
-            </ul>
-        </div>
-
-
-
-        <div class="c-create-menu menu super-menu l-create-menu"
-             v-if="XshowCreateMenu">
-            <div class="w-menu" ng-controller="CreateMenuController">
-                <div class="col menu-items">
-                    <ul>
-                        <li ng-repeat="createAction in createActions" ng-click="createAction.perform()">
-                            <a ng-mouseover="representation.activeMetadata = createAction.getMetadata()"
-                               ng-mouseleave="representation.activeMetadata = undefined"
-                               class="menu-item-a (( createAction.getMetadata().cssClass ))">
-                                ((createAction.getMetadata().name))
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col menu-item-description">
-                    <div class="desc-area icon (( representation.activeMetadata.cssClass ))"></div>
-                    <div class="w-title-desc">
-                        <div class="desc-area title">
-                            ((representation.activeMetadata.name))
-                        </div>
-                        <div class="desc-area description">
-                            ((representation.activeMetadata.description))
-                        </div>
-                    </div>
-                </div>
+            <div class="c-super-menu__menu">
+                <ul>
+                    <li v-for="item in createMenuItems"
+                        :class="item.class"
+                        :title="item.title"
+                        @mouseover="showItemDescription">
+                        {{ item.name }}
+                    </li>
+                </ul>
+            </div>
+            <div class="c-super-menu__item-description">
+                <div class="l-item-description__icon icon-folder"></div>
+                <div class="l-item-description__name">Name</div>
+                <div class="l-item-description__description">
+                    A timer that counts up or down to a datetime.
+                    Timers can be started, stopped and reset whenever needed,
+                    and support a variety of display formats.
+                    Each Timer displays the same value to all users.
+                    Timers can be added to Display Layouts.</div>
             </div>
         </div>
     </div>
@@ -48,9 +32,9 @@
 
 <style lang="scss">
     @import "~styles/sass-base";
-    @import "~styles/controls";
 
-    .c-create-button {
+    .c-create-button,
+    .c-create-menu {
         &--w {
             // Wrapper for Create button and menu
             overflow: visible;
@@ -60,7 +44,13 @@
     }
 
     .c-create-menu {
+        // min-height: 400px; // TEMP to work on overflow;
+        max-height: 25vh;
         z-index: 70;
+
+        [class*="__item-description"] {
+            min-width: 200px;
+        }
     }
 
 </style>
@@ -71,7 +61,7 @@
             showCreateMenu: {
                 type: Boolean,
                 default: false
-            },
+            }
         },
         methods: {
             toggleCreateMenu: function () {
@@ -80,14 +70,23 @@
         },
         data: function() {
             return {
-                menuItems: [
-                    { name: 'Open In New Tab', class: 'icon-new-window', title: 'Open in a new browser tab' },
-                    { name: 'Preview', class: 'hide-in-t-main-view icon-eye-open', title: 'Preview in large dialog' },
-                    { name: 'Edit Properties...', class: 'major icon-pencil', title: 'Edit properties of this object.' },
-                    { name: 'Duplicate', class: 'icon-duplicate', title: 'Duplicate object to another location.' },
-                    { name: 'Create Link', class: 'icon-link', title: 'Create Link to object in another location.' },
-                    { name: 'Export as JSON', class: 'icon-export', title: 'Export as JSON' },
-                    { name: 'Import from JSON', class: 'icon-import', title: 'Import from JSON' }
+                createMenuItems: [
+                    { name: 'Folder', class: 'icon-folder', title: 'Details will go here' },
+                    { name: 'Display Layout', class: 'icon-layout', title: 'Details will go here' },
+                    { name: 'Fixed Position Display', class: 'icon-box-with-dashed-lines', title: 'Details will go here' },
+                    { name: 'Overlay Plot', class: 'icon-plot-overlay', title: 'Details will go here' },
+                    { name: 'Stacked Plot', class: 'icon-plot-stacked', title: 'Details will go here' },
+                    { name: 'Telemetry Table', class: 'icon-tabular-realtime', title: 'Details will go here' },
+                    { name: 'Clock', class: 'icon-clock', title: 'Details will go here' },
+                    { name: 'Timer', class: 'icon-timer', title: 'Details will go here' },
+                    { name: 'Web Page', class: 'icon-page', title: 'Details will go here' },
+                    { name: 'Event Message Generator', class: 'icon-folder-new', title: 'Details will go here' },
+                    { name: 'Hyperlink', class: 'icon-chain-links', title: 'Details will go here' },
+                    { name: 'Notebook', class: 'icon-notebook', title: 'Details will go here' },
+                    { name: 'State Generator', class: 'icon-telemetry', title: 'Details will go here' },
+                    { name: 'Sine Wave Generator', class: 'icon-telemetry', title: 'Details will go here' },
+                    { name: 'Example Imagery', class: 'icon-image', title: 'Details will go here' },
+                    { name: 'Summary Widget', class: 'icon-summary-widget', title: 'Details will go here' }
                 ]
             }
         }
