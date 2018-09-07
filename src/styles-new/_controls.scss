@@ -155,16 +155,16 @@
                 flex: 1 1 50%;
             }
 
+            &__name,
+            &__description {
+                margin-top: $interiorMarginLg;
+            }
+
             &__icon {
-                //
+                background-position: center;
                 background-size: contain;
                 background-repeat: no-repeat;
-                color: $colorKey;
-                font-size: 9em;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
+                margin: 0 15%;
             }
 
             &__name {
@@ -174,7 +174,6 @@
 
             &__description {
                 font-size: $fontBaseSize;
-                margin-top: $interiorMarginLg;
             }
         }
     }

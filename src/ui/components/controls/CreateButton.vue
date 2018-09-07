@@ -17,7 +17,7 @@
                 </ul>
             </div>
             <div class="c-super-menu__item-description">
-                <div class="l-item-description__icon icon-folder"></div>
+                <div class="l-item-description__icon bg-icon-plot-stacked"></div>
                 <div class="l-item-description__name">Name</div>
                 <div class="l-item-description__description">
                     A timer that counts up or down to a datetime.
@@ -44,15 +44,17 @@
     }
 
     .c-create-menu {
-        // min-height: 400px; // TEMP to work on overflow;
-        max-height: 25vh;
+        min-height: 400px;
         z-index: 70;
+
+        [class*="__icon"] {
+            filter: $colorKeyFilter;
+        }
 
         [class*="__item-description"] {
             min-width: 200px;
         }
     }
-
 </style>
 
 <script>

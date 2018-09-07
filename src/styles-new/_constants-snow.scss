@@ -20,6 +20,7 @@ $colorStatusBarBg: #000;
 $colorStatusBarFg: #999;
 $colorStatusBarFgHov: #aaa;
 $colorKey: #0099cc;
+$colorKeyFilter: brightness(0.9) sepia(1) hue-rotate(145deg) saturate(6);
 $colorKeySelectedBg: $colorKey;
 $colorKeyFg: #fff;
 $colorKeyHov: #00c0f6;
