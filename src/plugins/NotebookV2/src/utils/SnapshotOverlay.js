@@ -28,7 +28,7 @@
      Vue,
      snapshotOverlayTemplate
  ) {
-    function SnapshotOverlay (embedObject) {
+    function SnapshotOverlay (embedObject, formatTime) {
         this.embedObject = embedObject;
 
         this.snapshotOverlayVue = new Vue({
@@ -39,7 +39,8 @@
                 };
             },
             methods: {
-                close: this.close.bind(this)
+                close: this.close.bind(this),
+                formatTime: formatTime
             }
         });
         

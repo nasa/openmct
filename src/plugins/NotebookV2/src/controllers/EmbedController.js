@@ -54,7 +54,7 @@ function (
 
     EmbedController.prototype.openSnapshot = function () {
         if (!this.snapshotOverlay) {
-            this.snapShotOverlay = new SnapshotOverlay(this.embed);
+            this.snapShotOverlay = new SnapshotOverlay(this.embed, this.formatTime);
         } else {
             this.snapShotOverlay = undefined;
         }

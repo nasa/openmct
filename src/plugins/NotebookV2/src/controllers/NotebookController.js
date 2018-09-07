@@ -72,7 +72,8 @@
                 'notebook-embed': notebookEmbed
             },
             data: entryController.exposedData,
-            methods: entryController.exposedMethods()
+            methods: entryController.exposedMethods(),
+            mounted: self.focusOnEntry
         };
 
         var notebookVue = Vue.extend({
@@ -97,7 +98,7 @@
                 },
                 newEntry: self.newEntry,
                 filterBySearch: self.filterBySearch
-            }
+            } 
         });
 
         this.NotebookVue =  new notebookVue();
