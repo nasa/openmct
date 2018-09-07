@@ -44,7 +44,9 @@
     }
 
     .c-create-menu {
-        min-height: 400px;
+        max-height: 80vh;
+        max-width: 500px;
+        min-height: 250px;
         z-index: 70;
 
         [class*="__icon"] {

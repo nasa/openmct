@@ -138,9 +138,13 @@
     &__menu {
         @include menuInner();
         overflow: auto;
+
+        ul {
+            margin-right: $interiorMarginSm; // Fend off scrollbar
+        }
+
         li {
             border-radius: $controlCr;
-            margin-right: $interiorMarginSm; // Fend off scrollbar, TODO: get working!
         }
     }
 
@@ -152,7 +156,7 @@
         .l-item-description {
             &__icon,
             &__description {
-                flex: 1 1 50%;
+                //flex: 1 1 50%;
             }
 
             &__name,
@@ -164,7 +168,8 @@
                 background-position: center;
                 background-size: contain;
                 background-repeat: no-repeat;
-                margin: 0 15%;
+                min-height: 20%;
+                margin: 10% 25%;
             }
 
             &__name {
