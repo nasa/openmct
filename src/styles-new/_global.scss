@@ -97,6 +97,7 @@ body, html {
 
 body {
     -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: grayscale;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: $fontBaseSize;
     font-weight: normal;

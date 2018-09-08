@@ -2,6 +2,12 @@
     <div class="l-shell">
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
+            <div class="l-shell__controls">
+                <div class="l-controls__elem c-button-set">
+                    <a class="c-icon-button icon-new-window" title="Open in a new browser tab"></a>
+                    <a class="c-icon-button icon-fullscreen-collapse" title="Enable full screen mode"></a>
+                </div>
+            </div>
             <div class="l-shell__app-logo">[ App Logo ]</div>
         </div>
         <multipane class="l-shell__main"
@@ -83,32 +89,6 @@
             }
         }
 
-        &__head,
-        &__pane-inspector {
-            body.mobile & {
-                display: none;
-            }
-        }
-
-        &__head,
-        &__status {
-            flex: 0 1 auto;
-            display: flex;
-        }
-
-        &__head {
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid $colorInteriorBorder;
-            padding: $interiorMargin;
-        }
-
-        &__head {
-            > [class*="__"] {
-                flex: 0 0 auto;
-            }
-        }
-
         @include phonePortrait() {
             &__pane-tree {
                 width: calc(100% - #{$mobileMenuIconD});
@@ -126,6 +106,43 @@
                     transition: opacity 250ms ease 250ms;
                 }
             }
+        }
+
+        &__head,
+        &__pane-inspector {
+            body.mobile & {
+                display: none;
+            }
+        }
+
+        &__head,
+        &__status {
+            flex: 0 1 auto;
+            display: flex;
+        }
+
+        /******************************* HEAD */
+        &__head {
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid $colorInteriorBorder;
+            padding: $interiorMargin;
+
+            > [class*="__"] + [class*="__"] {
+                margin-left: $interiorMargin;
+            }
+        }
+
+        &__create-button,
+        &__app-logo {
+            flex: 0 0 auto;
+        }
+
+        &__controls {
+            flex: 1 1 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-right: 2.5%;
         }
 
         /********** MAIN AREA */

@@ -1,11 +1,10 @@
 /**************************** BUTTONS */
 %c-control {
-    $m: $interiorMarginSm;
-    display: flex;
+    @include userSelectNone();
+    display: inline-flex;
     align-items: center;
     justify-content: start;
     cursor: pointer;
-    padding: nth($btnPad, 1) nth($btnPad, 2);
 
     &:before,
     &:after {
@@ -16,22 +15,21 @@
 
     &:before {
         font-size: 0.8em;
-        margin-right: $m;
     }
 
     &:after {
         font-size: 0.6em;
-        margin-left: $m;
     }
 
 }
 
 %c-button {
     @extend %c-control;
-    @include userSelectNone();
     background: $colorBtnBg;
     border-radius: $controlCr;
     color: $colorBtnFg;
+    padding: nth($btnPad, 1) nth($btnPad, 2);
+
     &:hover {
         background: $colorBtnBgHov;
         color: $colorBtnFgHov;
@@ -54,15 +52,84 @@
     @extend %c-button;
 }
 
+/********* Icon Buttons */
+.c-icon-button {
+    // A clickable element that just includes the icon, no background
+    // Padding is included to facilitate a bigger hit area
+    @extend %c-control;
+    border-radius: $controlCr;
+    color: $colorKey;
+    padding: nth($btnPad, 1) floor(nth($btnPad, 2) * 0.8);
+
+    &:hover {
+        background: rgba($colorKey, 0.2);
+    }
+
+    &:before {
+        font-size: 1.1em;
+    }
+}
+
+/********* Button Sets */
+.c-button-set {
+    // Buttons are smashed together with minimal margin
+    // c-buttons don't have border-radius between buttons, creates a tool-button-strip look
+    // c-icon-buttons get grouped more closely together
+    // When one set is adjacent to another, provides a divider between
+
+    display: flex;
+
+    > * {
+        // Assume buttons are immediate descendants
+        flex: 0 0 auto;
+
+        &[class^="c-button"] {
+            // Only apply the following to buttons that have background, eg. c-button
+            border-radius: 0;
+
+            + * {
+                margin-left: 1px;
+            }
+
+            &:first-child {
+                border-top-left-radius: $controlCr;
+                border-bottom-left-radius: $controlCr;
+            }
+
+            &:last-child {
+                border-top-right-radius: $controlCr;
+                border-bottom-right-radius: $controlCr;
+            }
+        }
+    }
+
+    + .c-button-set {
+        $m: $interiorMarginSm;
+        &:before {
+            content: '';
+            display: block;
+            width: $m;
+            border-right: 1px solid $colorInteriorBorder;
+            margin-right: $m;
+        }
+    }
+}
+
 /********* Menu Buttons */
 // Always includes :after dropdown arrow
 // Optionally can include icon in :before
 .c-menu-button {
+    $m: $interiorMarginSm;
     @extend %c-button;
+
+    &:before {
+        margin-right: $m;
+    }
 
     &:after {
         content: $glyph-icon-arrow-down;
         font-family: symbolsfont;
+        margin-left: $m;
         opacity: 0.5;
     }
 }
@@ -84,6 +151,7 @@
     li {
         @extend %c-control;
         color: $colorMenuFg;
+        display: flex;
         padding: nth($menuItemPad, 1) nth($menuItemPad, 2);
         transition: $transIn;
         white-space: nowrap;
@@ -97,7 +165,7 @@
         }
         &:before {
             color: $colorMenuIc;
-            font-size: 0.9em;
+            font-size: 1em;
             margin-right: $interiorMargin;
         }
     }
@@ -165,9 +233,6 @@
             }
 
             &__icon {
-                background-position: center;
-                background-size: contain;
-                background-repeat: no-repeat;
                 min-height: 20%;
                 margin: 10% 25%;
             }
