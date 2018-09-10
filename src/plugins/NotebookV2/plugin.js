@@ -22,10 +22,28 @@
 
  define([
     "./src/controllers/NotebookController",
-    "./src/actions/snapshotAction"
+    "./src/controllers/NewEntryController",
+    "./src/controllers/SelectSnapshotController",
+    "./src/actions/NewEntryContextual",
+    "./src/actions/AnnotateSnapshot",
+    "./src/directives/MCTSnapshot",
+    "./src/directives/EntryDnd",
+    "text!./res/templates/controls/snapSelect.html",
+    "text!./res/templates/controls/embedControl.html",
+    "text!./res/templates/annotation.html",
+    "text!./res/templates/draggedEntry.html"
  ], function (
     NotebookController,
-    snapshotAction
+    NewEntryController,
+    SelectSnapshotController,
+    newEntryAction,
+    AnnotateSnapshotAction,
+    MCTSnapshotDirective,
+    EntryDndDirective,
+    snapSelectTemplate,
+    embedControlTemplate,
+    annotationTemplate,
+    draggedEntryTemplate
  ) {
     var installed  = false;
 
@@ -75,15 +93,97 @@
                     ],
                     actions: [
                         {
-                            key: "snapShotAction",
-                            implementation: snapshotAction,
-                            name: "Snapshot",
-                            description: "Take a snapshot and save as a notebook entry",
-                            category: "contextual",
-                            depends: [
-                                "exportImageService",
-                                "dialogService"
+                            "key": "notebook-new-entry",
+                            "implementation": newEntryAction,
+                            "name": "New Notebook Entry",
+                            "cssClass": "icon-notebook labeled",
+                            "description": "Add a new Notebook entry",
+                            "category": [
+                                "view-control"
+                            ],
+                            "depends": [
+                            "$compile",
+                            "$rootScope",
+                            "dialogService",
+                            "notificationService",
+                            "linkService"
+                            ],
+                            "priority": "preferred"
+                        },
+                        {
+                            "key": "annotate-snapshot",
+                            "implementation": AnnotateSnapshotAction,
+                            "name": "Annotate Snapshot",
+                            "cssClass": "icon-pencil labeled",
+                            "description": "Annotate embed's snapshot",
+                            "category": "embed",
+                            "depends": [
+                              "dialogService",
+                              "dndService",
+                              "$rootScope"
                             ]
+                        }
+                    ],
+                    controllers: [
+                        {
+                            "key": "NewEntryController",
+                            "implementation": NewEntryController,
+                            "depends": ["$scope",
+                                         "$rootScope"
+                                        ]
+                        },
+                        {
+                            "key": "selectSnapshotController",
+                            "implementation": SelectSnapshotController,
+                            "depends": ["$scope",
+                                         "$rootScope"
+                                        ]
+                        }
+                    ],
+                    controls: [
+                        {
+                            "key": "snapshot-select",
+                            "template":  snapSelectTemplate
+                        },
+                        {
+                            "key": "embed-control",
+                            "template": embedControlTemplate
+                        }
+                    ],
+                    templates: [
+                        {
+                            "key": "annotate-snapshot",
+                            "template": annotationTemplate
+                        }
+                    ],
+                    directives: [
+                        {
+                            "key": "mctSnapshot",
+                            "implementation": MCTSnapshotDirective,
+                            "depends": [
+                                "$rootScope",
+                                "$document",
+                                "exportImageService",
+                                "dialogService",
+                                "notificationService"
+                            ]
+                        },
+                        {
+                            "key": "mctEntryDnd",
+                            "implementation": EntryDndDirective,
+                            "depends": [
+                                "$rootScope",
+                                "$compile",
+                                "dndService",
+                                "typeService",
+                                "notificationService"
+                            ]
+                        }
+                    ],
+                    representations: [
+                        {
+                            "key": "draggedEntry",
+                            "template": draggedEntryTemplate
                         }
                     ]
                 }
