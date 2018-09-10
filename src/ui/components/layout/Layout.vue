@@ -24,6 +24,7 @@
                 </div>
             </pane>
             <pane class="l-shell__pane-main">
+                <MainViewBrowseBar class="l-shell__main-view-browse-bar"></MainViewBrowseBar>
                 <browse-object class="l-shell__main-container">
                 </browse-object>
                 <mct-template template-key="conductor"
@@ -193,6 +194,7 @@
     import search from '../controls/search.vue';
     import multipane from '../controls/multipane.vue';
     import pane from '../controls/pane.vue';
+    import MainViewBrowseBar from '../controls/MainViewBrowseBar.vue';
 
     export default {
         components: {
@@ -205,7 +207,8 @@
             CreateButton,
             search,
             multipane,
-            pane
+            pane,
+            MainViewBrowseBar
         }
     }
 </script>
