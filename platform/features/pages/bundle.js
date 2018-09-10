@@ -22,7 +22,7 @@
 
 define([
     "./src/EmbeddedPageController",
-    "text!./res/iframe.html",
+    "./res/iframe.html",
     'legacyRegistry'
 ], function (
     EmbeddedPageController,

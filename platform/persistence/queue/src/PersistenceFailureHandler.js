@@ -87,8 +87,8 @@ define(
                         function () {
                             return model;
                         },
-                                               model.modified
-                                           );
+                        model.modified
+                    );
                 }
 
                 // Cache the object models we might want to save

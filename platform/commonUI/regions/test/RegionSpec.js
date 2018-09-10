@@ -41,11 +41,11 @@ define(
             it("adding a region at a specified index adds it in that" +
                 " position", function () {
 
-                    region.addRegion(part2, 1);
+                region.addRegion(part2, 1);
 
-                    expect(region.regions.length).toBe(4);
-                    expect(region.regions[1]).toBe(part2);
-                });
+                expect(region.regions.length).toBe(4);
+                expect(region.regions[1]).toBe(part2);
+            });
 
             it("adding a region without an index adds it at the end", function () {
                 var partN = new Region({'name': 'partN'});

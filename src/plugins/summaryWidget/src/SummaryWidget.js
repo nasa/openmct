@@ -1,5 +1,5 @@
 define([
-    'text!../res/widgetTemplate.html',
+    '../res/widgetTemplate.html',
     './Rule',
     './ConditionManager',
     './TestDataManager',
@@ -363,7 +363,7 @@ define([
         }
         ruleConfig = this.domainObject.configuration.ruleConfigById[ruleId];
         this.rulesById[ruleId] = new Rule(ruleConfig, this.domainObject, this.openmct,
-                                          this.conditionManager, this.widgetDnD, this.container);
+            this.conditionManager, this.widgetDnD, this.container);
         this.rulesById[ruleId].on('remove', this.refreshRules, this);
         this.rulesById[ruleId].on('duplicate', this.duplicateRule, this);
         this.rulesById[ruleId].on('change', this.updateWidget, this);

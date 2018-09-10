@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    'text!../../res/templates/plot.html'
+    '../../res/templates/plot.html'
 ], function (
     PlotTemplate
 ) {

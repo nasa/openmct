@@ -34,8 +34,8 @@ define(
     ) {
 
         var ZERO = function () {
-            return 0;
-        },
+                return 0;
+            },
             EMPTY_SERIES = {
                 getPointCount: ZERO,
                 getDomainValue: ZERO,

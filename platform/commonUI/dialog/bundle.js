@@ -23,13 +23,13 @@
 define([
     "./src/DialogService",
     "./src/OverlayService",
-    "text!./res/templates/overlay-dialog.html",
-    "text!./res/templates/overlay-options.html",
-    "text!./res/templates/dialog.html",
-    "text!./res/templates/overlay-blocking-message.html",
-    "text!./res/templates/message.html",
-    "text!./res/templates/overlay-message-list.html",
-    "text!./res/templates/overlay.html",
+    "./res/templates/overlay-dialog.html",
+    "./res/templates/overlay-options.html",
+    "./res/templates/dialog.html",
+    "./res/templates/overlay-blocking-message.html",
+    "./res/templates/message.html",
+    "./res/templates/overlay-message-list.html",
+    "./res/templates/overlay.html",
     'legacyRegistry'
 ], function (
     DialogService,

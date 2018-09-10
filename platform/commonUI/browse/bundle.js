@@ -33,16 +33,16 @@ define([
     "./src/windowing/NewTabAction",
     "./src/windowing/FullscreenAction",
     "./src/windowing/WindowTitler",
-    "text!./res/templates/browse.html",
-    "text!./res/templates/browse-object.html",
-    "text!./res/templates/items/grid-item.html",
-    "text!./res/templates/browse/object-header.html",
-    "text!./res/templates/browse/object-header-frame.html",
-    "text!./res/templates/menu-arrow.html",
-    "text!./res/templates/back-arrow.html",
-    "text!./res/templates/items/items.html",
-    "text!./res/templates/browse/object-properties.html",
-    "text!./res/templates/browse/inspector-region.html",
+    "./res/templates/browse.html",
+    "./res/templates/browse-object.html",
+    "./res/templates/items/grid-item.html",
+    "./res/templates/browse/object-header.html",
+    "./res/templates/browse/object-header-frame.html",
+    "./res/templates/menu-arrow.html",
+    "./res/templates/back-arrow.html",
+    "./res/templates/items/items.html",
+    "./res/templates/browse/object-properties.html",
+    "./res/templates/browse/inspector-region.html",
     'legacyRegistry'
 ], function (
     BrowseController,
@@ -73,15 +73,6 @@ define([
     legacyRegistry.register("platform/commonUI/browse", {
         "extensions": {
             "routes": [
-                {
-                    "when": "/browse/:ids*?",
-                    "template": browseTemplate,
-                    "reloadOnSearch": false
-                },
-                {
-                    "when": "",
-                    "redirectTo": "/browse/"
-                }
             ],
             "constants": [
                 {
@@ -293,6 +284,20 @@ define([
                         "topic",
                         "navigationService"
                     ]
+                }
+            ],
+            "templates": [
+                {
+                    key: "browseRoot",
+                    template: browseTemplate
+                },
+                {
+                    key: "browseObject",
+                    template: browseObjectTemplate
+                },
+                {
+                    key: "inspectorRegion",
+                    template: inspectorRegionTemplate
                 }
             ],
             "licenses": [

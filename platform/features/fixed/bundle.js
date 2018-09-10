@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    "text!../layout/res/templates/fixed.html",
+    "../layout/res/templates/fixed.html",
     'legacyRegistry'
 ], function (
     fixedTemplate,
@@ -78,10 +78,10 @@ define([
                             path = "configuration['fixed-display'].elements[" + elementProxy.index + "]";
                             properties =
                                 type === 'fixed.image' ? imageProperties :
-                                type === 'fixed.text' ? textProperties :
-                                type === 'fixed.box' ? boxProperties :
-                                type === 'fixed.line' ? lineProperties :
-                                type === 'fixed.telemetry' ? telemetryProperties : [];
+                                    type === 'fixed.text' ? textProperties :
+                                        type === 'fixed.box' ? boxProperties :
+                                            type === 'fixed.line' ? lineProperties :
+                                                type === 'fixed.telemetry' ? telemetryProperties : [];
                         } else if (fixedItem) {
                             properties = domainObject && domainObject.type === 'layout' ? [] : fixedPageProperties;
                         }

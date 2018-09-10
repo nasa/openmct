@@ -25,50 +25,37 @@ define(
     function (RemoveAction) {
 
         describe("The Remove action", function () {
-            var mockQ,
-                mockNavigationService,
-                mockDomainObject,
-                mockParent,
-                mockChildObject,
-                mockGrandchildObject,
-                mockRootObject,
-                mockContext,
-                mockChildContext,
-                mockGrandchildContext,
-                mockRootContext,
-                mockMutation,
-                mockType,
+            var action,
                 actionContext,
-                model,
                 capabilities,
-                action;
-
-            function mockPromise(value) {
-                return {
-                    then: function (callback) {
-                        return mockPromise(callback(value));
-                    }
-                };
-            }
+                mockContext,
+                mockDialogService,
+                mockDomainObject,
+                mockMutation,
+                mockNavigationService,
+                mockParent,
+                mockType,
+                model;
 
             beforeEach(function () {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    ["getId", "getCapability"]
+                    ["getId", "getCapability", "getModel"]
                 );
-                mockChildObject = jasmine.createSpyObj(
-                    "domainObject",
-                    ["getId", "getCapability"]
-                );
-                mockGrandchildObject = jasmine.createSpyObj(
-                    "domainObject",
-                    ["getId", "getCapability"]
-                );
-                mockRootObject = jasmine.createSpyObj(
-                    "domainObject",
-                    ["getId", "getCapability"]
-                );
-                mockQ = { when: mockPromise };
+
+                mockMutation = jasmine.createSpyObj("mutation", ["invoke"]);
+                mockType = jasmine.createSpyObj("type", ["hasFeature"]);
+                mockType.hasFeature.and.returnValue(true);
+
+                capabilities = {
+                    mutation: mockMutation,
+                    type: mockType
+                };
+
+                model = {
+                    composition: ["a", "test", "b"]
+                };
+
                 mockParent = {
                     getModel: function () {
                         return model;
@@ -80,12 +67,12 @@ define(
                         return capabilities[k].invoke(v);
                     }
                 };
-                mockContext = jasmine.createSpyObj("context", ["getParent"]);
-                mockChildContext = jasmine.createSpyObj("context", ["getParent"]);
-                mockGrandchildContext = jasmine.createSpyObj("context", ["getParent"]);
-                mockRootContext = jasmine.createSpyObj("context", ["getParent"]);
-                mockMutation = jasmine.createSpyObj("mutation", ["invoke"]);
-                mockType = jasmine.createSpyObj("type", ["hasFeature"]);
+
+                mockDialogService = jasmine.createSpyObj(
+                    "dialogService",
+                    ["showBlockingMessage"]
+                );
+
                 mockNavigationService = jasmine.createSpyObj(
                     "navigationService",
                     [
@@ -97,23 +84,19 @@ define(
                 );
                 mockNavigationService.getNavigation.and.returnValue(mockDomainObject);
 
+                mockContext = jasmine.createSpyObj("context", ["getParent"]);
+                mockContext.getParent.and.returnValue(mockParent);
 
                 mockDomainObject.getId.and.returnValue("test");
                 mockDomainObject.getCapability.and.returnValue(mockContext);
+                mockDomainObject.getModel.and.returnValue({name: 'test object'});
+
                 mockContext.getParent.and.returnValue(mockParent);
                 mockType.hasFeature.and.returnValue(true);
 
-                capabilities = {
-                    mutation: mockMutation,
-                    type: mockType
-                };
-                model = {
-                    composition: ["a", "test", "b"]
-                };
-
                 actionContext = { domainObject: mockDomainObject };
 
-                action = new RemoveAction(mockNavigationService, actionContext);
+                action = new RemoveAction(mockDialogService, mockNavigationService, actionContext);
             });
 
             it("only applies to objects with parents", function () {
@@ -127,83 +110,146 @@ define(
                 expect(mockType.hasFeature).toHaveBeenCalledWith('creation');
             });
 
-            it("mutates the parent when performed", function () {
-                action.perform();
-                expect(mockMutation.invoke)
-                    .toHaveBeenCalledWith(jasmine.any(Function));
-            });
-
-            it("changes composition from its mutation function", function () {
-                var mutator, result;
-                action.perform();
-                mutator = mockMutation.invoke.calls.mostRecent().args[0];
-                result = mutator(model);
-
-                // Should not have cancelled the mutation
-                expect(result).not.toBe(false);
-
-                // Simulate mutate's behavior (remove can either return a
-                // new model or modify this one in-place)
-                result = result || model;
-
-                // Should have removed "test" - that was our
-                // mock domain object's id.
-                expect(result.composition).toEqual(["a", "b"]);
-            });
-
-            it("removes parent of object currently navigated to", function () {
-                // Navigates to child object
-                mockNavigationService.getNavigation.and.returnValue(mockChildObject);
-
-                // Test is id of object being removed
-                // Child object has different id
-                mockDomainObject.getId.and.returnValue("test");
-                mockChildObject.getId.and.returnValue("not test");
-
-                // Sets context for the child and domainObject
-                mockDomainObject.getCapability.and.returnValue(mockContext);
-                mockChildObject.getCapability.and.returnValue(mockChildContext);
-
-                // Parents of child and domainObject are set
-                mockContext.getParent.and.returnValue(mockParent);
-                mockChildContext.getParent.and.returnValue(mockDomainObject);
-
-                mockType.hasFeature.and.returnValue(true);
+            it("shows a blocking message dialog", function () {
+                mockParent = jasmine.createSpyObj(
+                    "parent",
+                    ["getModel", "getCapability", "useCapability"]
+                );
 
                 action.perform();
 
-                // Expects navigation to parent of domainObject (removed object)
-                expect(mockNavigationService.setNavigation).toHaveBeenCalledWith(mockParent);
+                expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
+
+                // Also check that no mutation happens at this point
+                expect(mockParent.useCapability).not.toHaveBeenCalledWith("mutation", jasmine.any(Function));
             });
 
-            it("checks if removing object not in ascendent path (reaches ROOT)", function () {
-                // Navigates to grandchild of ROOT
-                mockNavigationService.getNavigation.and.returnValue(mockGrandchildObject);
+            describe("after the remove callback is triggered", function () {
+                var mockChildContext,
+                    mockChildObject,
+                    mockDialogHandle,
+                    mockGrandchildContext,
+                    mockGrandchildObject,
+                    mockRootContext,
+                    mockRootObject;
 
-                // domainObject (grandparent) is set as ROOT, child and grandchild
-                // are set objects not being removed
-                mockDomainObject.getId.and.returnValue("test 1");
-                mockRootObject.getId.and.returnValue("ROOT");
-                mockChildObject.getId.and.returnValue("not test 2");
-                mockGrandchildObject.getId.and.returnValue("not test 3");
+                beforeEach(function () {
+                    mockChildObject = jasmine.createSpyObj(
+                        "domainObject",
+                        ["getId", "getCapability"]
+                    );
 
-                // Sets context for the grandchild, child, and domainObject
-                mockRootObject.getCapability.and.returnValue(mockRootContext);
-                mockChildObject.getCapability.and.returnValue(mockChildContext);
-                mockGrandchildObject.getCapability.and.returnValue(mockGrandchildContext);
+                    mockDialogHandle = jasmine.createSpyObj(
+                        "dialogHandle",
+                        ["dismiss"]
+                    );
 
-                // Parents of grandchild and child are set
-                mockChildContext.getParent.and.returnValue(mockRootObject);
-                mockGrandchildContext.getParent.and.returnValue(mockChildObject);
+                    mockGrandchildObject = jasmine.createSpyObj(
+                        "domainObject",
+                        ["getId", "getCapability"]
+                    );
 
-                mockType.hasFeature.and.returnValue(true);
+                    mockRootObject = jasmine.createSpyObj(
+                        "domainObject",
+                        ["getId", "getCapability"]
+                    );
 
-                action.perform();
+                    mockChildContext = jasmine.createSpyObj("context", ["getParent"]);
+                    mockGrandchildContext = jasmine.createSpyObj("context", ["getParent"]);
+                    mockRootContext = jasmine.createSpyObj("context", ["getParent"]);
 
-                // Expects no navigation to occur
-                expect(mockNavigationService.setNavigation).not.toHaveBeenCalled();
+                    mockDialogService.showBlockingMessage.and.returnValue(mockDialogHandle);
+                });
+
+                it("mutates the parent when performed", function () {
+                    action.perform();
+                    mockDialogService.showBlockingMessage.calls.mostRecent().args[0]
+                        .primaryOption.callback();
+
+                    expect(mockMutation.invoke)
+                        .toHaveBeenCalledWith(jasmine.any(Function));
+                });
+
+                it("changes composition from its mutation function", function () {
+                    var mutator, result;
+
+                    action.perform();
+                    mockDialogService.showBlockingMessage.calls.mostRecent().args[0]
+                        .primaryOption.callback();
+
+                    mutator = mockMutation.invoke.calls.mostRecent().args[0];
+                    result = mutator(model);
+
+                    // Should not have cancelled the mutation
+                    expect(result).not.toBe(false);
+
+                    // Simulate mutate's behavior (remove can either return a
+                    // new model or modify this one in-place)
+                    result = result || model;
+
+                    // Should have removed "test" - that was our
+                    // mock domain object's id.
+                    expect(result.composition).toEqual(["a", "b"]);
+                });
+
+                it("removes parent of object currently navigated to", function () {
+                    // Navigates to child object
+                    mockNavigationService.getNavigation.and.returnValue(mockChildObject);
+
+                    // Test is id of object being removed
+                    // Child object has different id
+                    mockDomainObject.getId.and.returnValue("test");
+                    mockChildObject.getId.and.returnValue("not test");
+
+                    // Sets context for the child and domainObject
+                    mockDomainObject.getCapability.and.returnValue(mockContext);
+                    mockChildObject.getCapability.and.returnValue(mockChildContext);
+
+                    // Parents of child and domainObject are set
+                    mockContext.getParent.and.returnValue(mockParent);
+                    mockChildContext.getParent.and.returnValue(mockDomainObject);
+
+                    mockType.hasFeature.and.returnValue(true);
+
+                    action.perform();
+                    mockDialogService.showBlockingMessage.calls.mostRecent().args[0]
+                        .primaryOption.callback();
+
+                    // Expects navigation to parent of domainObject (removed object)
+                    expect(mockNavigationService.setNavigation).toHaveBeenCalledWith(mockParent);
+                });
+
+                it("checks if removing object not in ascendent path (reaches ROOT)", function () {
+                    // Navigates to grandchild of ROOT
+                    mockNavigationService.getNavigation.and.returnValue(mockGrandchildObject);
+
+                    // domainObject (grandparent) is set as ROOT, child and grandchild
+                    // are set objects not being removed
+                    mockDomainObject.getId.and.returnValue("test 1");
+                    mockRootObject.getId.and.returnValue("ROOT");
+                    mockChildObject.getId.and.returnValue("not test 2");
+                    mockGrandchildObject.getId.and.returnValue("not test 3");
+
+                    // Sets context for the grandchild, child, and domainObject
+                    mockRootObject.getCapability.and.returnValue(mockRootContext);
+                    mockChildObject.getCapability.and.returnValue(mockChildContext);
+                    mockGrandchildObject.getCapability.and.returnValue(mockGrandchildContext);
+
+                    // Parents of grandchild and child are set
+                    mockChildContext.getParent.and.returnValue(mockRootObject);
+                    mockGrandchildContext.getParent.and.returnValue(mockChildObject);
+
+                    mockType.hasFeature.and.returnValue(true);
+
+                    action.perform();
+                    mockDialogService.showBlockingMessage.calls.mostRecent().args[0]
+                        .primaryOption.callback();
+
+                    // Expects no navigation to occur
+                    expect(mockNavigationService.setNavigation).not.toHaveBeenCalled();
+                });
+
             });
-
         });
     }
 );

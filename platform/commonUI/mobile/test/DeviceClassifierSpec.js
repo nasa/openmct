@@ -70,11 +70,11 @@ define(
 
             TEST_PERMUTATIONS.forEach(function (trueMethods) {
                 var summary = trueMethods.length === 0 ?
-                        "device has no detected characteristics" :
-                        "device " + (trueMethods.join(", "));
+                    "device has no detected characteristics" :
+                    "device " + (trueMethods.join(", "));
 
                 describe("when " + summary, function () {
-                    var classifier;
+                    var classifier; // eslint-disable-line
 
                     beforeEach(function () {
                         trueMethods.forEach(function (m) {

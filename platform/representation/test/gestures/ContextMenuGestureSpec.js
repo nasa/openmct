@@ -37,10 +37,8 @@ define(
                 mockElement,
                 mockAgentService,
                 mockDomainObject,
-                mockEvent,
                 mockTouchEvent,
                 mockContextMenuAction,
-                mockActionContext,
                 mockTouch,
                 gesture,
                 fireGesture,
@@ -52,13 +50,11 @@ define(
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockAgentService = jasmine.createSpyObj("agentService", ["isMobile"]);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
-                mockEvent = jasmine.createSpyObj("event", ["preventDefault"]);
                 mockContextMenuAction = jasmine.createSpyObj(
                     "action",
                     ["perform", "getActions"]
                 );
 
-                mockActionContext = {domainObject: mockDomainObject, event: mockEvent};
                 mockDomainObject.getCapability.and.returnValue(mockContextMenuAction);
                 mockContextMenuAction.perform.and.returnValue(jasmine.any(Function));
                 mockAgentService.isMobile.and.returnValue(false);

@@ -21,13 +21,13 @@
  *****************************************************************************/
 
 
- define([
-     'vue',
-     'text!../../res/templates/viewSnapshot.html'
- ], function (
-     Vue,
-     snapshotOverlayTemplate
- ) {
+define([
+    'vue',
+    '../../res/templates/viewSnapshot.html'
+], function (
+    Vue,
+    snapshotOverlayTemplate
+) {
     function SnapshotOverlay (embedObject, formatTime) {
         this.embedObject = embedObject;
 
@@ -43,12 +43,12 @@
                 formatTime: formatTime
             }
         });
-        
+
         this.open();
     }
 
     SnapshotOverlay.prototype.open = function () {
-        
+
         this.overlay = document.createElement('div');
         this.overlay.id = 'snapshot';
 
@@ -64,4 +64,4 @@
     };
 
     return SnapshotOverlay;
- });
+});

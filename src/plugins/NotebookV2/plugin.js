@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
- define([
+define([
     "./src/controllers/NotebookController",
     "./src/controllers/NewEntryController",
     "./src/controllers/SelectSnapshotController",
@@ -28,11 +28,11 @@
     "./src/actions/AnnotateSnapshot",
     "./src/directives/MCTSnapshot",
     "./src/directives/EntryDnd",
-    "text!./res/templates/controls/snapSelect.html",
-    "text!./res/templates/controls/embedControl.html",
-    "text!./res/templates/annotation.html",
-    "text!./res/templates/draggedEntry.html"
- ], function (
+    "./res/templates/controls/snapSelect.html",
+    "./res/templates/controls/embedControl.html",
+    "./res/templates/annotation.html",
+    "./res/templates/draggedEntry.html"
+], function (
     NotebookController,
     NewEntryController,
     SelectSnapshotController,
@@ -44,7 +44,7 @@
     embedControlTemplate,
     annotationTemplate,
     draggedEntryTemplate
- ) {
+) {
     var installed  = false;
 
     function NotebookV2Plugin() {
@@ -102,11 +102,11 @@
                                 "view-control"
                             ],
                             "depends": [
-                            "$compile",
-                            "$rootScope",
-                            "dialogService",
-                            "notificationService",
-                            "linkService"
+                                "$compile",
+                                "$rootScope",
+                                "dialogService",
+                                "notificationService",
+                                "linkService"
                             ],
                             "priority": "preferred"
                         },
@@ -118,9 +118,9 @@
                             "description": "Annotate embed's snapshot",
                             "category": "embed",
                             "depends": [
-                              "dialogService",
-                              "dndService",
-                              "$rootScope"
+                                "dialogService",
+                                "dndService",
+                                "$rootScope"
                             ]
                         }
                     ],
@@ -129,15 +129,15 @@
                             "key": "NewEntryController",
                             "implementation": NewEntryController,
                             "depends": ["$scope",
-                                         "$rootScope"
-                                        ]
+                                "$rootScope"
+                            ]
                         },
                         {
                             "key": "selectSnapshotController",
                             "implementation": SelectSnapshotController,
                             "depends": ["$scope",
-                                         "$rootScope"
-                                        ]
+                                "$rootScope"
+                            ]
                         }
                     ],
                     controls: [
@@ -212,4 +212,4 @@
     }
 
     return NotebookV2Plugin;
- });
+});

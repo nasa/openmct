@@ -30,12 +30,6 @@ define(
                 mockObjects,
                 mockDomainObject,
                 testStructure,
-                testAB,
-                testABC,
-                testABC2,
-                testABCXYZ,
-                testABCYZ,
-                testM,
                 toolbar;
 
             beforeEach(function () {
@@ -53,21 +47,14 @@ define(
                 ]);
 
                 testStructure = [
-                        { name: "A", property: "a", domainObject: mockDomainObject },
-                        { name: "B", property: "b", domainObject: mockDomainObject },
-                        { name: "C", property: "c", domainObject: mockDomainObject },
-                        { name: "X", property: "x", domainObject: mockDomainObject },
-                        { name: "Y", property: "y", domainObject: mockDomainObject },
-                        { name: "Z", property: "z", domainObject: mockDomainObject },
-                        { name: "M", method: "m", domainObject: mockDomainObject }
+                    { name: "A", property: "a", domainObject: mockDomainObject },
+                    { name: "B", property: "b", domainObject: mockDomainObject },
+                    { name: "C", property: "c", domainObject: mockDomainObject },
+                    { name: "X", property: "x", domainObject: mockDomainObject },
+                    { name: "Y", property: "y", domainObject: mockDomainObject },
+                    { name: "Z", property: "z", domainObject: mockDomainObject },
+                    { name: "M", method: "m", domainObject: mockDomainObject }
                 ];
-
-                testAB = { a: 0, b: 1 };
-                testABC = { a: 0, b: 1, c: 2 };
-                testABC2 = { a: 4, b: 1, c: 2 }; // For inconsistent-state checking
-                testABCXYZ = { a: 0, b: 1, c: 2, x: 'X!', y: 'Y!', z: 'Z!' };
-                testABCYZ = { a: 0, b: 1, c: 2, y: 'Y!', z: 'Z!' };
-                testM = { m: jasmine.createSpy("method") };
 
                 toolbar = new EditToolbar(mockScope, mockOpenMCT, testStructure);
             });

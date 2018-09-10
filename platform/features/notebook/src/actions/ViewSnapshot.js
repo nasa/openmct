@@ -38,95 +38,95 @@ var OVERLAY_TEMPLATE = '' +
 
 define([
     'zepto',
-    "text!../../res/templates/snapshotHeader.html"
-    ],
-    function ($, headerTemplate) {
+    "../../res/templates/snapshotHeader.html"
+],
+function ($, headerTemplate) {
 
-        var toggleOverlay,
-            overlay,
-            closeButton,
-            doneButton,
-            blocker,
-            overlayContainer,
-            img,
-            annotateButton,
-            annotateImg;
+    var toggleOverlay,
+        overlay,
+        closeButton,
+        doneButton,
+        blocker,
+        overlayContainer,
+        img,
+        annotateButton,
+        annotateImg;
 
-        function ViewSnapshot($compile) {
-            this.$compile = $compile;
-        }
+    function ViewSnapshot($compile) {
+        this.$compile = $compile;
+    }
 
-        function openOverlay(url, header) {
-            overlay = document.createElement('div');
-            $(overlay).addClass('abs overlay l-large-view');
-            overlay.innerHTML = OVERLAY_TEMPLATE;
-            overlayContainer = overlay.querySelector('.t-contents');
-            closeButton = overlay.querySelector('a.close');
-            closeButton.addEventListener('click', toggleOverlay);
-            doneButton = overlay.querySelector('a.t-done');
-            doneButton.addEventListener('click', toggleOverlay);
-            blocker = overlay.querySelector('.abs.blocker');
-            blocker.addEventListener('click', toggleOverlay);
-            annotateButton = header.querySelector('a.icon-pencil');
-            annotateButton.addEventListener('click', annotateImg);
-            document.body.appendChild(overlay);
-            img = document.createElement('div');
-            $(img).addClass('abs object-holder t-image-holder s-image-holder');
-            img.innerHTML = '<div class="image-main s-image-main" style="background-image: url(' + url + ');"></div>';
-            overlayContainer.appendChild(header);
-            overlayContainer.appendChild(img);
-        }
+    function openOverlay(url, header) {
+        overlay = document.createElement('div');
+        $(overlay).addClass('abs overlay l-large-view');
+        overlay.innerHTML = OVERLAY_TEMPLATE;
+        overlayContainer = overlay.querySelector('.t-contents');
+        closeButton = overlay.querySelector('a.close');
+        closeButton.addEventListener('click', toggleOverlay);
+        doneButton = overlay.querySelector('a.t-done');
+        doneButton.addEventListener('click', toggleOverlay);
+        blocker = overlay.querySelector('.abs.blocker');
+        blocker.addEventListener('click', toggleOverlay);
+        annotateButton = header.querySelector('a.icon-pencil');
+        annotateButton.addEventListener('click', annotateImg);
+        document.body.appendChild(overlay);
+        img = document.createElement('div');
+        $(img).addClass('abs object-holder t-image-holder s-image-holder');
+        img.innerHTML = '<div class="image-main s-image-main" style="background-image: url(' + url + ');"></div>';
+        overlayContainer.appendChild(header);
+        overlayContainer.appendChild(img);
+    }
 
-        function closeOverlay() {
-            overlayContainer.removeChild(img);
-            document.body.removeChild(overlay);
-            closeButton.removeEventListener('click', toggleOverlay);
-            closeButton = undefined;
-            doneButton.removeEventListener('click', toggleOverlay);
-            doneButton = undefined;
-            blocker.removeEventListener('click', toggleOverlay);
-            blocker = undefined;
-            overlayContainer = undefined;
-            overlay = undefined;
-            img = undefined;
-        }
+    function closeOverlay() {
+        overlayContainer.removeChild(img);
+        document.body.removeChild(overlay);
+        closeButton.removeEventListener('click', toggleOverlay);
+        closeButton = undefined;
+        doneButton.removeEventListener('click', toggleOverlay);
+        doneButton = undefined;
+        blocker.removeEventListener('click', toggleOverlay);
+        blocker = undefined;
+        overlayContainer = undefined;
+        overlay = undefined;
+        img = undefined;
+    }
 
-        ViewSnapshot.prototype.perform = function ($event, snapshot, embedId, entryId, $scope, embed) {
-            var isOpen = false;
+    ViewSnapshot.prototype.perform = function ($event, snapshot, embedId, entryId, $scope, embed) {
+        var isOpen = false;
 
-            // onclick for menu items in overlay header context menu
-            $scope.menuPerform = function (menu) {
-                menu.perform();
-                closeOverlay();
-            };
-
-            // Create the overlay element and add it to the document's body
-            $scope.cssClass = embed.cssClass;
-            $scope.embedType = embed.type;
-            $scope.entryName = embed.name;
-            $scope.snapDate = +embedId;
-            var element = this.$compile(headerTemplate)($scope);
-
-            var annotateAction = $scope.action.getActions({category: 'embed'})[1];
-
-            toggleOverlay = function () {
-                if (!isOpen) {
-                    openOverlay(snapshot, element[0]);
-                    isOpen = true;
-                } else {
-                    closeOverlay();
-                    isOpen = false;
-                }
-            };
-
-            annotateImg = function () {
-                closeOverlay();
-                annotateAction.perform($event, snapshot, embedId, entryId, $scope);
-            };
-
-            toggleOverlay();
+        // onclick for menu items in overlay header context menu
+        $scope.menuPerform = function (menu) {
+            menu.perform();
+            closeOverlay();
         };
 
-        return ViewSnapshot;
-    }
+        // Create the overlay element and add it to the document's body
+        $scope.cssClass = embed.cssClass;
+        $scope.embedType = embed.type;
+        $scope.entryName = embed.name;
+        $scope.snapDate = +embedId;
+        var element = this.$compile(headerTemplate)($scope);
+
+        var annotateAction = $scope.action.getActions({category: 'embed'})[1];
+
+        toggleOverlay = function () {
+            if (!isOpen) {
+                openOverlay(snapshot, element[0]);
+                isOpen = true;
+            } else {
+                closeOverlay();
+                isOpen = false;
+            }
+        };
+
+        annotateImg = function () {
+            closeOverlay();
+            annotateAction.perform($event, snapshot, embedId, entryId, $scope);
+        };
+
+        toggleOverlay();
+    };
+
+    return ViewSnapshot;
+}
 );

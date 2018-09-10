@@ -83,6 +83,7 @@ define([
 
             this.listenTo(this, 'change:xKey', this.onXKeyChange, this);
             this.listenTo(this, 'change:yKey', this.onYKeyChange, this);
+            this.persistedConfig = options.persistedConfig;
 
             Model.apply(this, arguments);
             this.onXKeyChange(this.get('xKey'));
@@ -116,8 +117,19 @@ define([
         initialize: function (options) {
             this.openmct = options.openmct;
             this.domainObject = options.domainObject;
+            this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(options.domainObject);
             this.on('destroy', this.onDestroy, this);
+        },
+
+        locateOldObject: function (oldStyleParent) {
+            return oldStyleParent.useCapability('composition')
+                .then(function (children) {
+                    this.oldObject = children
+                        .filter(function (child) {
+                            return child.getId() === this.keyString;
+                        }, this)[0];
+                }.bind(this));
         },
         /**
          * Fetch historical data and establish a realtime subscription.  Returns
@@ -165,8 +177,7 @@ define([
                 return;
             }
             var valueMetadata = this.metadata.value(newKey);
-            var persistedConfig = this.get('persistedConfiguration');
-            if (!persistedConfig || !persistedConfig.interpolate) {
+            if (!this.persistedConfig || !this.persistedConfig.interpolate) {
                 if (valueMetadata.format === 'enum') {
                     this.set('interpolate', 'stepAfter');
                 } else {

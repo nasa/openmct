@@ -24,10 +24,10 @@ define([
     "./src/gestures/InfoGesture",
     "./src/gestures/InfoButtonGesture",
     "./src/services/InfoService",
-    "text!./res/info-table.html",
-    "text!./res/info-bubble.html",
-    "text!./res/bubble.html",
-    "text!./res/templates/info-button.html",
+    "./res/info-table.html",
+    "./res/info-bubble.html",
+    "./res/bubble.html",
+    "./res/templates/info-button.html",
     'legacyRegistry'
 ], function (
     InfoGesture,

@@ -68,15 +68,15 @@ define([], function () {
             }, {});
 
         return config.menuOptions.map(function (menuOption, index) {
-                if (menuOption.timeSystem && !systems[menuOption.timeSystem]) {
-                    return "menuOption at index " + index + " specifies a " +
+            if (menuOption.timeSystem && !systems[menuOption.timeSystem]) {
+                return "menuOption at index " + index + " specifies a " +
                         "timeSystem that does not exist: " + menuOption.timeSystem;
-                }
-                if (menuOption.clock && !clocks[menuOption.clock]) {
-                    return "menuOption at index " + index + " specifies a " +
+            }
+            if (menuOption.clock && !clocks[menuOption.clock]) {
+                return "menuOption at index " + index + " specifies a " +
                         "clock that does not exist: " + menuOption.clock;
-                }
-            })
+            }
+        })
             .filter(isTruthy)
             .join('\n');
     }

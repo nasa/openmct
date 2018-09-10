@@ -75,7 +75,7 @@ define(
                 mctGesture.link(scope, element, attrs);
                 expect(scope.$on).toHaveBeenCalledWith(
                     '$destroy',
-                     jasmine.any(Function)
+                    jasmine.any(Function)
                 );
                 scope.$on.calls.mostRecent().args[1]();
                 expect(attachedGesture.destroy).toHaveBeenCalled();

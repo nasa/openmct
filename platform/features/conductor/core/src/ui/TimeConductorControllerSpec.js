@@ -376,7 +376,6 @@ define(['./TimeConductorController'], function (TimeConductorController) {
         describe("when the URL defines conductor state", function () {
             var urlBounds;
             var urlTimeSystem;
-            var urlMode;
             var urlDeltas;
 
             var mockDeltaFormat;
@@ -439,7 +438,6 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                     end: 200
                 };
                 urlTimeSystem = "otherTimeSystem";
-                urlMode = "realtime";
                 urlDeltas = {
                     start: 300,
                     end: 400

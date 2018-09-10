@@ -43,8 +43,8 @@ define(
                     var reader = new window.FileReader();
                     reader.readAsDataURL(blob);
                     reader.onloadend = function () {
-                      this.saveSnapshot(reader.result, blob.type, blob.size);  
-                    }.bind(this);    
+                        this.saveSnapshot(reader.result, blob.type, blob.size);
+                    }.bind(this);
                 }
 
             }.bind(this));
@@ -60,7 +60,7 @@ define(
             this.dialogService.getDialogResponse(
                 'overlay-dialog',
                 taskForm,
-                function() {
+                function () {
                     return taskForm.value;
                 }
             ).then(function (options) {
@@ -117,8 +117,8 @@ define(
                 structure: taskForm,
                 value: {'entry': ""}
             };
-    
-            function validateLocation (newParentObj) {
+
+            function validateLocation(newParentObj) {
                 return newParentObj.model.type === 'notebookV2';
             }
 

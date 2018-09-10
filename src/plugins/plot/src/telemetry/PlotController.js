@@ -160,10 +160,10 @@ define([
         this.config.series.map(function (plotSeries) {
             this.startLoading();
             plotSeries.load({
-                    size: this.$element[0].offsetWidth,
-                    start: range.min,
-                    end: range.max
-                })
+                size: this.$element[0].offsetWidth,
+                start: range.min,
+                end: range.max
+            })
                 .then(this.stopLoading.bind(this));
             if (purge) {
                 plotSeries.purgeRecordsOutsideRange(range);
@@ -181,7 +181,9 @@ define([
         };
         this.config.xAxis.set('range', newRange);
         if (!isTick) {
+            this.skipReloadOnInteraction = true;
             this.$scope.$broadcast('plot:clearHistory');
+            this.skipReloadOnInteraction = false;
             this.loadMoreData(newRange, true);
         } else {
             // Drop any data that is more than 1x (max-min) before min.
@@ -234,7 +236,9 @@ define([
         var xDisplayRange = this.config.xAxis.get('displayRange');
         var xRange = this.config.xAxis.get('range');
 
-        this.loadMoreData(xDisplayRange);
+        if (!this.skipReloadOnInteraction) {
+            this.loadMoreData(xDisplayRange);
+        }
 
         this.synchronized(xRange.min === xDisplayRange.min &&
                           xRange.max === xDisplayRange.max);
@@ -245,7 +249,7 @@ define([
      */
     PlotController.prototype.exportJPG = function () {
         this.hideExportButtons = true;
-        this.exportImageService.exportJPG(this.$element[0], 'plot.jpg', 'white')
+        this.exportImageService.exportJPG(this.$element[0], 'plot.jpg', 'export-plot')
             .finally(function () {
                 this.hideExportButtons = false;
             }.bind(this));
@@ -256,7 +260,7 @@ define([
      */
     PlotController.prototype.exportPNG = function () {
         this.hideExportButtons = true;
-        this.exportImageService.exportPNG(this.$element[0], 'plot.png', 'white')
+        this.exportImageService.exportPNG(this.$element[0], 'plot.png', 'export-plot')
             .finally(function () {
                 this.hideExportButtons = false;
             }.bind(this));

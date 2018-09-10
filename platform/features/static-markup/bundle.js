@@ -22,7 +22,7 @@
 
 define([
 
-    "text!./res/markup.html",
+    "./res/markup.html",
     'legacyRegistry'
 ], function (
 

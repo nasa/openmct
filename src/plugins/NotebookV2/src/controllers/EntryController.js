@@ -20,12 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
- define([
-     'moment'
- ],
- function (
-     Moment
- ) {
+define([
+    'moment'
+],
+function (
+    Moment
+) {
 
     function EntryController (openmct, domainObject) {
         this.openmct = openmct;
@@ -48,7 +48,7 @@
                 return;
             }
         });
-        
+
         return foundId;
     };
 
@@ -63,7 +63,7 @@
     EntryController.prototype.textBlur = function ($event, entryId) {
         if ($event.target) {
             var entryPos = this.entryPosById(entryId);
-            
+
             if (this.currentEntryValue !== $event.target.innerText) {
                 this.openmct.objects.mutate(this.domainObject, 'entries[' + entryPos + '].text', $event.target.innerText);
             }
@@ -122,7 +122,7 @@
     };
 
     EntryController.prototype.dragoverOnEntry = function () {
-        
+
     };
 
     EntryController.prototype.exposedData = function () {
@@ -147,4 +147,4 @@
         };
     };
     return EntryController;
- });
+});

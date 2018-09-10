@@ -29,7 +29,6 @@ define(
 
         describe("The bundle resolver", function () {
             var mockExtensionResolver,
-                mockRequireConfigurator,
                 mockLog,
                 resolver;
 
@@ -37,10 +36,6 @@ define(
                 mockExtensionResolver = jasmine.createSpyObj(
                     "extensionResolver",
                     ["resolve"]
-                );
-                mockRequireConfigurator = jasmine.createSpyObj(
-                    "requireConfigurator",
-                    ["configure"]
                 );
                 mockLog = jasmine.createSpyObj(
                     "$log",
@@ -51,7 +46,6 @@ define(
 
                 resolver = new BundleResolver(
                     mockExtensionResolver,
-                    mockRequireConfigurator,
                     mockLog
                 );
             });
@@ -65,18 +59,6 @@ define(
                     expect(result.tests).toEqual(["a", "a", "a", "a", "a"]);
                     expect(result.others).toEqual(["a", "a", "a"]);
                 });
-            });
-
-            it("configures require before loading implementations", function () {
-                var bundles = [
-                    new Bundle("x", { extensions: { tests: [{}, {}, {}] } }),
-                    new Bundle("y", { extensions: { tests: [{}, {}], others: [{}, {}] } }),
-                    new Bundle("z", { extensions: { others: [{}] } })
-                ];
-
-                resolver.resolveBundles(bundles);
-                expect(mockRequireConfigurator.configure)
-                    .toHaveBeenCalledWith(bundles);
             });
 
         });

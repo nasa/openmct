@@ -22,7 +22,7 @@
 
 define([
     'zepto',
-    'text!../../res/templates/tree/toggle.html'
+    '../../res/templates/tree/toggle.html'
 ], function ($, toggleTemplate) {
     function ToggleView(state) {
         this.expanded = !!state;

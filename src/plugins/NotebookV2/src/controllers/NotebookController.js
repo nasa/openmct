@@ -20,22 +20,22 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
- define([
-     'vue',
-     './EntryController',
-     './EmbedController',
-     'text!../../res/templates/notebook.html',
-     'text!../../res/templates/entry.html',
-     'text!../../res/templates/embed.html'
-    ], 
-    function (
-     Vue,
-     EntryController,
-     EmbedController,
-     NotebookTemplate,
-     EntryTemplate,
-     EmbedTemplate
-    ) {
+define([
+    'vue',
+    './EntryController',
+    './EmbedController',
+    '../../res/templates/notebook.html',
+    '../../res/templates/entry.html',
+    '../../res/templates/embed.html'
+],
+function (
+    Vue,
+    EntryController,
+    EmbedController,
+    NotebookTemplate,
+    EntryTemplate,
+    EmbedTemplate
+) {
 
     function NotebookController(openmct, domainObject) {
         this.openmct = openmct;
@@ -50,7 +50,7 @@
         this.entryPosById = this.entryPosById.bind(this);
     }
 
-    NotebookController.prototype.initializeVue = function (container){
+    NotebookController.prototype.initializeVue = function (container) {
         var self = this,
             entryController = new EntryController(this.openmct, this.domainObject),
             embedController = new EmbedController(this.openmct, this.domainObject);
@@ -106,7 +106,7 @@
     };
 
     NotebookController.prototype.newEntry = function (event) {
-        
+
         var entries = this.domainObject.entries,
             lastEntryIndex = entries.length - 1,
             lastEntry = entries[lastEntryIndex],
@@ -114,7 +114,7 @@
 
         if (lastEntry === undefined || lastEntry.text || lastEntry.embeds.length) {
             var createdEntry = {'id': 'entry-' + date, 'createdOn': date, 'embeds':[]};
-            
+
             entries.push(createdEntry);
             this.openmct.objects.mutate(this.domainObject, 'entries', entries);
         } else {
@@ -136,7 +136,7 @@
                 return;
             }
         });
-        
+
         return foundId;
     };
 
@@ -171,4 +171,4 @@
     };
 
     return NotebookController;
- });
+});

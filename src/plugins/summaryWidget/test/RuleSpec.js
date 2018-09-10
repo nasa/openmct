@@ -52,7 +52,7 @@ define(['../src/Rule', 'zepto'], function (Rule, $) {
 
             mockEvaluator = {};
             mockEvaluator.getOperationDescription = jasmine.createSpy('evaluator')
-                                                        .and.returnValue('Operation Description');
+                .and.returnValue('Operation Description');
 
             mockConditionManager = jasmine.createSpyObj('mockConditionManager', [
                 'on',
@@ -86,7 +86,7 @@ define(['../src/Rule', 'zepto'], function (Rule, $) {
             conditionChangeSpy = jasmine.createSpy('conditionChangeCallback');
 
             testRule = new Rule(mockRuleConfig, mockDomainObject, mockOpenMCT, mockConditionManager,
-                                mockWidgetDnD);
+                mockWidgetDnD);
             testRule.on('remove', removeSpy);
             testRule.on('duplicate', duplicateSpy);
             testRule.on('change', changeSpy);

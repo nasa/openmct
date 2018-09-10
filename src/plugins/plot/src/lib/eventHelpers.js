@@ -37,7 +37,7 @@ define([
                 event: event,
                 callback: callback,
                 context: context,
-                _cb: !!context ? callback.bind(context) : callback
+                _cb: context ? callback.bind(context) : callback
             };
             if (object.$watch && event.indexOf('change:') === 0) {
                 var scopePath = event.replace('change:', '');
@@ -58,20 +58,20 @@ define([
             }
 
             this._listeningTo.filter(function (listener) {
-                    if (object && object !== listener.object) {
-                        return false;
-                    }
-                    if (event && event !== listener.event) {
-                        return false;
-                    }
-                    if (callback && callback !== listener.callback) {
-                        return false;
-                    }
-                    if (context && context !== listener.context) {
-                        return false;
-                    }
-                    return true;
-                })
+                if (object && object !== listener.object) {
+                    return false;
+                }
+                if (event && event !== listener.event) {
+                    return false;
+                }
+                if (callback && callback !== listener.callback) {
+                    return false;
+                }
+                if (context && context !== listener.context) {
+                    return false;
+                }
+                return true;
+            })
                 .map(function (listener) {
                     if (listener.unlisten) {
                         listener.unlisten();

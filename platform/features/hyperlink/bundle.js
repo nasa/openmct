@@ -23,7 +23,7 @@
 define([
     './src/HyperlinkController',
     'legacyRegistry',
-    'text!./res/templates/hyperlink.html'
+    './res/templates/hyperlink.html'
 ], function (
     HyperlinkController,
     legacyRegistry,
@@ -33,88 +33,88 @@ define([
         "name": "Hyperlink",
         "description": "Insert a hyperlink to reference a link",
         "extensions": {
-        "types": [
-            {
-                "key": "hyperlink",
-                "name": "Hyperlink",
-                "cssClass": "icon-chain-links",
-                "description": "A hyperlink to redirect to a different link",
-                "features": ["creation"],
-                "properties": [
-                  {
-                      "key": "url",
-                      "name": "URL",
-                      "control": "textfield",
-                      "pattern": "^(ftp|https?)\\:\\/\\/",
-                      "required": true,
-                      "cssClass": "l-input-lg"
-                  },
-
-                  {
-                      "key": "displayText",
-                      "name": "Text to Display",
-                      "control": "textfield",
-                      "required": true,
-                      "cssClass": "l-input-lg"
-                  },
+            "types": [
                 {
-                      "key": "displayFormat",
-                      "name": "Display Format",
-                      "control": "select",
-                      "options": [
-                              {
-                                  "name": "Link",
-                                  "value": "link"
-                              },
-                              {
-                                  "value": "button",
-                                  "name": "Button"
-                              }
-                          ],
-                      "cssClass": "l-inline"
-                  },
-                  {
-                      "key": "openNewTab",
-                      "name": "Tab to Open Hyperlink",
-                      "control": "select",
-                      "options": [
-                              {
-                                  "name": "Open in this tab",
-                                  "value": "thisTab"
-                              },
-                              {
-                                  "value": "newTab",
-                                  "name": "Open in a new tab"
-                              }
-                          ],
-                      "cssClass": "l-inline"
+                    "key": "hyperlink",
+                    "name": "Hyperlink",
+                    "cssClass": "icon-chain-links",
+                    "description": "A hyperlink to redirect to a different link",
+                    "features": ["creation"],
+                    "properties": [
+                        {
+                            "key": "url",
+                            "name": "URL",
+                            "control": "textfield",
+                            "pattern": "^(ftp|https?)\\:\\/\\/",
+                            "required": true,
+                            "cssClass": "l-input-lg"
+                        },
 
-                  }
-                ],
-                "model": {
-                    "displayFormat": "link",
-                    "openNewTab": "thisTab",
-                    "removeTitle": true
+                        {
+                            "key": "displayText",
+                            "name": "Text to Display",
+                            "control": "textfield",
+                            "required": true,
+                            "cssClass": "l-input-lg"
+                        },
+                        {
+                            "key": "displayFormat",
+                            "name": "Display Format",
+                            "control": "select",
+                            "options": [
+                                {
+                                    "name": "Link",
+                                    "value": "link"
+                                },
+                                {
+                                    "value": "button",
+                                    "name": "Button"
+                                }
+                            ],
+                            "cssClass": "l-inline"
+                        },
+                        {
+                            "key": "openNewTab",
+                            "name": "Tab to Open Hyperlink",
+                            "control": "select",
+                            "options": [
+                                {
+                                    "name": "Open in this tab",
+                                    "value": "thisTab"
+                                },
+                                {
+                                    "value": "newTab",
+                                    "name": "Open in a new tab"
+                                }
+                            ],
+                            "cssClass": "l-inline"
+
+                        }
+                    ],
+                    "model": {
+                        "displayFormat": "link",
+                        "openNewTab": "thisTab",
+                        "removeTitle": true
+                    }
+
                 }
-
-            }
-      ],
-        "views": [
-            {
-                "key": "hyperlink",
-                "type": "hyperlink",
-                "name": "Hyperlink Display",
-                "template": hyperlinkTemplate,
-                "editable": false
-            }
-        ],
-        "controllers": [
-            {
-                "key": "HyperlinkController",
-                "implementation": HyperlinkController,
-                "depends": ["$scope"]
-            }
-        ]
-    }
+            ],
+            "views": [
+                {
+                    "key": "hyperlink",
+                    "type": "hyperlink",
+                    "name": "Hyperlink Display",
+                    "template": hyperlinkTemplate,
+                    "editable": false
+                }
+            ],
+            "controllers": [
+                {
+                    "key": "HyperlinkController",
+                    "implementation": HyperlinkController,
+                    "depends": ["$scope"]
+                }
+            ]
+        }
     });
 });

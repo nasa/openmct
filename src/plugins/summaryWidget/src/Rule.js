@@ -1,5 +1,5 @@
 define([
-    'text!../res/ruleTemplate.html',
+    '../res/ruleTemplate.html',
     './Condition',
     './input/ColorPalette',
     './input/IconPalette',

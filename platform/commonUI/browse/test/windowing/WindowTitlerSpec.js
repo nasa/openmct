@@ -32,7 +32,7 @@ define(
                 mockRootScope,
                 mockDocument,
                 mockDomainObject,
-                titler;
+                titler; // eslint-disable-line
 
             beforeEach(function () {
                 mockNavigationService = jasmine.createSpyObj(

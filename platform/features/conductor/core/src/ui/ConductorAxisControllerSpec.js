@@ -37,8 +37,6 @@ define([
             mockConductorViewService,
             mockFormatService,
             mockScope,
-            mockElement,
-            mockTarget,
             mockBounds,
             element,
             mockTimeSystem,
@@ -56,13 +54,6 @@ define([
             ]);
 
             //Add some HTML elements
-            mockTarget = {
-                offsetWidth: 0,
-                offsetHeight: 0
-            };
-            mockElement = {
-                firstChild: mockTarget
-            };
             mockBounds = {
                 start: 100,
                 end: 200

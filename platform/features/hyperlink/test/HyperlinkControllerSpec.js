@@ -30,22 +30,22 @@ define(
                 scope;
             beforeEach(function () {
                 scope = jasmine.createSpyObj(
-                  "$scope",
-                  ["domainObject"]
-              );
+                    "$scope",
+                    ["domainObject"]
+                );
                 domainObject = jasmine.createSpyObj(
-                        "domainObject",
-                        ["getModel"]
-                  );
+                    "domainObject",
+                    ["getModel"]
+                );
                 scope.domainObject = domainObject;
                 controller = new HyperlinkController(scope);
             });
             it("knows when it should open a new tab", function () {
                 scope.domainObject.getModel.and.returnValue({
-                  "displayFormat": "link",
-                  "openNewTab": "newTab",
-                  "showTitle": false
-              }
+                    "displayFormat": "link",
+                    "openNewTab": "newTab",
+                    "showTitle": false
+                }
                 );
                 controller = new HyperlinkController(scope);
                 expect(controller.openNewTab())
@@ -53,10 +53,10 @@ define(
             });
             it("knows when it is a button", function () {
                 scope.domainObject.getModel.and.returnValue({
-                  "displayFormat": "button",
-                  "openNewTab": "thisTab",
-                  "showTitle": false
-              }
+                    "displayFormat": "button",
+                    "openNewTab": "thisTab",
+                    "showTitle": false
+                }
                 );
                 controller = new HyperlinkController(scope);
                 expect(controller.isButton())
@@ -64,10 +64,10 @@ define(
             });
             it("knows when it should open in the same tab", function () {
                 scope.domainObject.getModel.and.returnValue({
-                  "displayFormat": "link",
-                  "openNewTab": "thisTab",
-                  "showTitle": false
-              }
+                    "displayFormat": "link",
+                    "openNewTab": "thisTab",
+                    "showTitle": false
+                }
                 );
                 controller = new HyperlinkController(scope);
                 expect(controller.openNewTab())
@@ -75,10 +75,10 @@ define(
             });
             it("knows when it is a link", function () {
                 scope.domainObject.getModel.and.returnValue({
-                  "displayFormat": "link",
-                  "openNewTab": "thisTab",
-                  "showTitle": false
-              }
+                    "displayFormat": "link",
+                    "openNewTab": "thisTab",
+                    "showTitle": false
+                }
                 );
                 controller = new HyperlinkController(scope);
                 expect(controller.openNewTab())

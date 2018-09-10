@@ -49,7 +49,7 @@ define(function () {
                 this.$scope.children = formattedChildren;
                 this.$scope.data = {children: formattedChildren};
             }.bind(this)
-        );
+            );
     };
     ListViewController.prototype.formatChildren = function (children) {
         return children.map(function (child) {

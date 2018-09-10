@@ -103,16 +103,16 @@ define(
                     splitterSize,
 
                     alias = $attrs.alias !== undefined ?
-                      "mctSplitPane-" + $attrs.alias : undefined,
+                        "mctSplitPane-" + $attrs.alias : undefined,
 
                     //convert string to number from localStorage
                     userWidthPreference = $window.localStorage.getItem(alias) === null ?
-                      undefined : Number($window.localStorage.getItem(alias));
+                        undefined : Number($window.localStorage.getItem(alias));
 
                 // Get relevant size (height or width) of DOM element
                 function getSize(domElement) {
                     return (anchor.orientation === 'vertical' ?
-                            domElement.offsetWidth : domElement.offsetHeight);
+                        domElement.offsetWidth : domElement.offsetHeight);
                 }
 
                 // Apply styles to child elements

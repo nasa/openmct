@@ -38,7 +38,7 @@ function (
         this.popupService = openmct.$injector.get('popupService');
         this.agentService = openmct.$injector.get('agentService');
         this.dialogService = openmct.$injector.get('dialogService');
-        
+
 
         this.navigate = this.navigate.bind(this);
         this.exposedData = this.exposedData.bind(this);
@@ -73,7 +73,7 @@ function (
                 return;
             }
         });
-        
+
         return foundId;
     };
 
@@ -92,7 +92,7 @@ function (
             objectService.getObjects([self.embed.type]).then(function (resp) {
                 var domainObject = resp[self.embed.type],
                     previewAction = actionService.getActions({key: 'mct-preview-action', domainObject: domainObject})[0];
-                
+
                 self.actions.push(self.actionToMenuDecorator(previewAction));
             });
         };
@@ -107,7 +107,7 @@ function (
             perform: function (embed, entry) {
                 var entryPosition = self.findInArray(self.domainObject.entries, entry.id),
                     embedPosition = self.findInArray(entry.embeds, embed.id);
-                
+s
                 var warningDialog = self.dialogService.showBlockingMessage({
                     severity: "error",
                     title: "This action will permanently delete this embed. Do you wish to continue?",
@@ -138,10 +138,10 @@ function (
         var body = $(document.body),
             container = $(event.target.parentElement.parentElement),
             initiatingEvent = this.agentService.isMobile() ?
-                    'touchstart' : 'mousedown',
+                'touchstart' : 'mousedown',
             menu = container.find('.menu-element'),
             dismissExistingMenu;
-        
+
         // Remove the context menu
         function dismiss() {
             container.find('.hide-menu').append(menu);
@@ -149,7 +149,7 @@ function (
             menu.off(initiatingEvent, menuClickHandler);
             dismissExistingMenu = undefined;
         }
-        
+
         function menuClickHandler(e) {
             e.stopPropagation();
             window.setTimeout(dismiss, 300);

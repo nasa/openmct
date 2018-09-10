@@ -106,32 +106,32 @@ define([
                 .toBe('pwr~ dvc~ 43~');
 
             expect(provider.fuzzyMatchUnquotedTerms(
-                    'hello welcome "to quoted village" have fun'
-                )).toBe(
-                    'hello~ welcome~ "to quoted village" have~ fun~'
-                );
+                'hello welcome "to quoted village" have fun'
+            )).toBe(
+                'hello~ welcome~ "to quoted village" have~ fun~'
+            );
         });
 
         it('can parse responses', function () {
             var elasticSearchResponse = {
-                    data: {
-                        hits: {
-                            total: 2,
-                            hits: [
-                                {
-                                    '_id': 'hit1Id',
-                                    '_source': 'hit1Model',
-                                    '_score': 0.56
-                                },
-                                {
-                                    '_id': 'hit2Id',
-                                    '_source': 'hit2Model',
-                                    '_score': 0.34
-                                }
-                            ]
-                        }
+                data: {
+                    hits: {
+                        total: 2,
+                        hits: [
+                            {
+                                '_id': 'hit1Id',
+                                '_source': 'hit1Model',
+                                '_score': 0.56
+                            },
+                            {
+                                '_id': 'hit2Id',
+                                '_source': 'hit2Model',
+                                '_score': 0.34
+                            }
+                        ]
                     }
-                };
+                }
+            };
 
             expect(provider.parseResponse(elasticSearchResponse))
                 .toEqual({

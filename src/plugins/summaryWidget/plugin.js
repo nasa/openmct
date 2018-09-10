@@ -70,15 +70,15 @@ define([
                     "name": "Tab to Open Hyperlink",
                     "control": "select",
                     "options": [
-                            {
-                                "value": "thisTab",
-                                "name": "Open in this tab"
-                            },
-                            {
-                                "value": "newTab",
-                                "name": "Open in a new tab"
-                            }
-                        ],
+                        {
+                            "value": "thisTab",
+                            "name": "Open in this tab"
+                        },
+                        {
+                            "value": "newTab",
+                            "name": "Open in a new tab"
+                        }
+                    ],
                     "cssClass": "l-inline"
                 }
             ]

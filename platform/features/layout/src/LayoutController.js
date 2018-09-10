@@ -121,8 +121,8 @@ define(
                     // request? If not, discard it. Prevents race condition
                     if (thisCount === callbackCount) {
                         ids = composition.map(function (object) {
-                                return object.getId();
-                            }) || [];
+                            return object.getId();
+                        }) || [];
 
                         $scope.composition = composition;
                         self.layoutPanels(ids);

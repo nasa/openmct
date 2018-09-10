@@ -62,7 +62,7 @@ define(
                 return {
                     then: function (callback) {
                         return value.then ?
-                                value : mockPromise(callback(value));
+                            value : mockPromise(callback(value));
                     }
                 };
             }

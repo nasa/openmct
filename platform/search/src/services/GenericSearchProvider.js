@@ -158,7 +158,7 @@ define([
     GenericSearchProvider.prototype.keepIndexing = function () {
         while (this.pendingRequests < this.MAX_CONCURRENT_REQUESTS &&
             this.idsToIndex.length
-            ) {
+        ) {
             this.beginIndexRequest();
         }
     };

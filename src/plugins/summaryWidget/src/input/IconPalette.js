@@ -1,6 +1,6 @@
 define([
-      './Palette',
-      'zepto'
+    './Palette',
+    'zepto'
 ], function (
     Palette,
     $

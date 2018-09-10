@@ -26,7 +26,7 @@
 define(
     [
         "./MCTForm",
-        "text!../res/templates/toolbar.html",
+        "../res/templates/toolbar.html",
         "./controllers/ToolbarController"
     ],
     function (

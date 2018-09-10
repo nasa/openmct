@@ -1,5 +1,5 @@
 define([
-    'text!./summary-widget.html'
+    './summary-widget.html'
 ], function (
     summaryWidgetTemplate
 ) {

@@ -62,7 +62,7 @@ define(
         CompositionCapability.prototype.add = function (domainObject, index) {
             var self = this,
                 id = typeof domainObject === 'string' ?
-                        domainObject : domainObject.getId(),
+                    domainObject : domainObject.getId(),
                 model = self.domainObject.getModel(),
                 composition = model.composition,
                 oldIndex = composition.indexOf(id);
@@ -104,7 +104,7 @@ define(
             }
 
             return this.domainObject.useCapability('mutation', addIdToModel)
-                    .then(contextualize);
+                .then(contextualize);
         };
 
         /**

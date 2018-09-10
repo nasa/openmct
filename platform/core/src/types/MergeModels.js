@@ -76,8 +76,8 @@ define(
                 var result = {};
                 Object.keys(a).forEach(function (k) {
                     result[k] = b.hasOwnProperty(k) ?
-                            mergeModels(a[k], b[k], (merger || {})[k]) :
-                            a[k];
+                        mergeModels(a[k], b[k], (merger || {})[k]) :
+                        a[k];
                 });
                 Object.keys(b).forEach(function (k) {
                     // Copy any properties not already merged
@@ -93,9 +93,9 @@ define(
             }
 
             mergeFunction = (merger && Function.isFunction(merger)) ? merger :
-                    (Array.isArray(modelA) && Array.isArray(modelB)) ? mergeArrays :
-                            (modelA instanceof Object && modelB instanceof Object) ? mergeObjects :
-                                    mergeOther;
+                (Array.isArray(modelA) && Array.isArray(modelB)) ? mergeArrays :
+                    (modelA instanceof Object && modelB instanceof Object) ? mergeObjects :
+                        mergeOther;
 
             return mergeFunction(modelA, modelB);
         }
