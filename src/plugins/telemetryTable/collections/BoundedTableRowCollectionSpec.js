@@ -21,9 +21,9 @@
  *****************************************************************************/
 import _ from 'lodash';
 import MCT from '../../../MCT.js';
-import BoundedTableRowCollection from './BoundedTableRowCollection.js';
+import SortedTableRowCollection from './SortedTableRowCollection.js';
 
-describe('The BoundedTableRowCollection', function() {
+describe('The SortedTableRowCollection', function() {
     let mockTimeSystem;
     let openmct;
     let rows;
@@ -82,7 +82,28 @@ describe('The BoundedTableRowCollection', function() {
             });
         });
         describe('when sorted descending', function () {
-            //...
+            it('Uses lodash sortedIndex to find insertion point when test value is between first and last values', function () {
+                rows.add({
+                    datum: {utc: 250}
+                });
+                expect(mockSortedIndex).toHaveBeenCalled();
+            });    
+            it('shortcuts insertion point search when test value is greater than last value', function() {
+                rows.add({
+                    datum: {utc: 500}
+                });
+                expect(mockSortedIndex).not.toHaveBeenCalled();
+            });
+            it('shortcuts insertion point search when test value is less than or equal to first value', function () {
+                rows.add({
+                    datum: {utc: 100}
+                });
+
+                rows.add({
+                    datum: {utc: 50}
+                });
+                expect(mockSortedIndex).not.toHaveBeenCalled();
+            });
         });
         it('Evicts old telemetry on bounds change');
         it('Does not drop data that falls ahead of end bounds');
