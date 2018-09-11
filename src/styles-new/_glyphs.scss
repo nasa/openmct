@@ -1,24 +1,3 @@
-/*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
- * as represented by the Administrator of the National Aeronautics and Space
- * Administration. All rights reserved.
- *
- * Open MCT is licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- *
- * Open MCT includes source code licensed under additional open source
- * licenses. See the Open Source Licenses file (LICENSES.md) included with
- * this source code distribution or the Licensing information page available
- * at runtime from the About dialog for additional information.
- *****************************************************************************/
 @mixin glyphBefore($unicode, $family: 'symbolsfont') {
     &:before {
         content: $unicode;
@@ -33,16 +12,21 @@
     }
 }
 
-[class*="icon-"].labeled {
-    // Moved from .s-button and generalized
-    &:before {
-        // Fend off label from icon when it's included
-        margin-right: $interiorMarginSm;
+@mixin glyphBg($glyphUrl) {
+    background-image: $glyphUrl;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+[class*="icon-"] {
+    &:before, &:after
+    {
+        -webkit-font-smoothing: antialiased;
     }
 }
 
 /************************** 16 PX CLASSES */
-
 .icon-alert-rect {  @include glyphBefore($glyph-icon-alert-rect); }
 .icon-alert-triangle {  @include glyphBefore($glyph-icon-alert-triangle); }
 .icon-arrow-down {  @include glyphBefore($glyph-icon-arrow-down); }
@@ -162,3 +146,36 @@
 .icon-folder-12px {  @include glyphBefore($glyph-icon-folder,'symbolsfont-12px'); }
 .icon-list-view-12px {  @include glyphBefore($glyph-icon-list-view,'symbolsfont-12px'); }
 .icon-grippy-12px {  @include glyphBefore($glyph-icon-grippy,'symbolsfont-12px'); }
+
+/************************** GLYPH BG CLASSES */
+.bg-icon-activity { @include glyphBg($bg-icon-activity); }
+.bg-icon-activity-mode { @include glyphBg($bg-icon-activity-mode); }
+.bg-icon-autoflow-tabular { @include glyphBg($bg-icon-autoflow-tabular); }
+.bg-icon-clock { @include glyphBg($bg-icon-clock); }
+.bg-icon-database { @include glyphBg($bg-icon-database); }
+.bg-icon-database-query { @include glyphBg($bg-icon-database-query); }
+.bg-icon-dataset { @include glyphBg($bg-icon-dataset); }
+.bg-icon-datatable { @include glyphBg($bg-icon-datatable); }
+.bg-icon-dictionary { @include glyphBg($bg-icon-dictionary); }
+.bg-icon-folder { @include glyphBg($bg-icon-folder); }
+.bg-icon-image { @include glyphBg($bg-icon-image); }
+.bg-icon-layout { @include glyphBg($bg-icon-layout); }
+.bg-icon-object { @include glyphBg($bg-icon-object); }
+.bg-icon-object-unknown { @include glyphBg($bg-icon-object-unknown); }
+.bg-icon-packet { @include glyphBg($bg-icon-packet); }
+.bg-icon-page { @include glyphBg($bg-icon-page); }
+.bg-icon-plot-overlay { @include glyphBg($bg-icon-plot-overlay); }
+.bg-icon-plot-stacked { @include glyphBg($bg-icon-plot-stacked); }
+.bg-icon-session { @include glyphBg($bg-icon-session); }
+.bg-icon-tabular { @include glyphBg($bg-icon-tabular); }
+.bg-icon-tabular-lad { @include glyphBg($bg-icon-tabular-lad); }
+.bg-icon-tabular-lad-set { @include glyphBg($bg-icon-tabular-lad-set); }
+.bg-icon-tabular-realtime { @include glyphBg($bg-icon-tabular-realtime); }
+.bg-icon-tabular-scrolling { @include glyphBg($bg-icon-tabular-scrolling); }
+.bg-icon-telemetry { @include glyphBg($bg-icon-telemetry); }
+.bg-icon-timeline { @include glyphBg($bg-icon-timeline); }
+.bg-icon-timer { @include glyphBg($bg-icon-timer); }
+.bg-icon-topic { @include glyphBg($bg-icon-topic); }
+.bg-icon-box-with-dashed-lines { @include glyphBg($bg-icon-box-with-dashed-lines); }
+.bg-icon-summary-widget { @include glyphBg($bg-icon-summary-widget); }
+.bg-icon-notebook { @include glyphBg($bg-icon-notebook); }

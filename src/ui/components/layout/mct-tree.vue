@@ -10,9 +10,8 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
-    // TODO: make sure hit area encompasses all of the tree item; currently is just the text
-
     .c-tree {
+        @include userSelectNone();
         overflow-x: hidden;
         overflow-y: auto;
         height: 100%;

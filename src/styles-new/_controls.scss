@@ -1,0 +1,251 @@
+/**************************** BUTTONS */
+%c-control {
+    @include userSelectNone();
+    display: inline-flex;
+    align-items: center;
+    justify-content: start;
+    cursor: pointer;
+
+    &:before,
+    &:after {
+        font-family: symbolsfont;
+        display: block;
+        flex: 0 0 auto;
+    }
+
+    &:before {
+        font-size: 0.8em;
+    }
+
+    &:after {
+        font-size: 0.6em;
+    }
+
+}
+
+%c-button {
+    @extend %c-control;
+    background: $colorBtnBg;
+    border-radius: $controlCr;
+    color: $colorBtnFg;
+    padding: nth($btnPad, 1) nth($btnPad, 2);
+
+    &:hover {
+        background: $colorBtnBgHov;
+        color: $colorBtnFgHov;
+    }
+
+    &[class*="--major"] {
+        background: $colorBtnMajorBg;
+        color: $colorBtnMajorFg;
+
+        &:hover {
+            background: $colorBtnMajorBgHov;
+            color: $colorBtnMajorFgHov;
+        }
+    }
+}
+
+/********* Buttons */
+// Optionally can include icon in :before
+.c-button {
+    @extend %c-button;
+}
+
+/********* Icon Buttons */
+.c-icon-button {
+    // A clickable element that just includes the icon, no background
+    // Padding is included to facilitate a bigger hit area
+    @extend %c-control;
+    border-radius: $controlCr;
+    color: $colorKey;
+    padding: nth($btnPad, 1) floor(nth($btnPad, 2) * 0.8);
+
+    &:hover {
+        background: rgba($colorKey, 0.2);
+    }
+
+    &:before {
+        font-size: 1.1em;
+    }
+}
+
+/********* Button Sets */
+.c-button-set {
+    // Buttons are smashed together with minimal margin
+    // c-buttons don't have border-radius between buttons, creates a tool-button-strip look
+    // c-icon-buttons get grouped more closely together
+    // When one set is adjacent to another, provides a divider between
+
+    display: flex;
+
+    > * {
+        // Assume buttons are immediate descendants
+        flex: 0 0 auto;
+
+        &[class^="c-button"] {
+            // Only apply the following to buttons that have background, eg. c-button
+            border-radius: 0;
+
+            + * {
+                margin-left: 1px;
+            }
+
+            &:first-child {
+                border-top-left-radius: $controlCr;
+                border-bottom-left-radius: $controlCr;
+            }
+
+            &:last-child {
+                border-top-right-radius: $controlCr;
+                border-bottom-right-radius: $controlCr;
+            }
+        }
+    }
+
+    + .c-button-set {
+        $m: $interiorMarginSm;
+        &:before {
+            content: '';
+            display: block;
+            width: $m;
+            border-right: 1px solid $colorInteriorBorder;
+            margin-right: $m;
+        }
+    }
+}
+
+/********* Menu Buttons */
+// Always includes :after dropdown arrow
+// Optionally can include icon in :before
+.c-menu-button {
+    $m: $interiorMarginSm;
+    @extend %c-button;
+
+    &:before {
+        margin-right: $m;
+    }
+
+    &:after {
+        content: $glyph-icon-arrow-down;
+        font-family: symbolsfont;
+        margin-left: $m;
+        opacity: 0.5;
+    }
+}
+
+/**************************** MENUS */
+@mixin menuOuter() {
+    border-radius: $basicCr;
+    background: $colorMenuBg;
+    text-shadow: $shdwMenuText;
+    padding: $interiorMarginSm;
+    box-shadow: $shdwMenu;
+    display: block;
+    position: absolute;
+    z-index: 70;
+}
+
+@mixin menuInner() {
+    color: $colorMenuFg;
+    li {
+        @extend %c-control;
+        color: $colorMenuFg;
+        display: flex;
+        padding: nth($menuItemPad, 1) nth($menuItemPad, 2);
+        transition: $transIn;
+        white-space: nowrap;
+
+        &:hover {
+            background: $colorMenuHovBg;
+            color: $colorMenuHovFg;
+            &:before {
+                color: $colorMenuHovIc;
+            }
+        }
+        &:before {
+            color: $colorMenuIc;
+            font-size: 1em;
+            margin-right: $interiorMargin;
+        }
+    }
+}
+
+
+
+.c-menu {
+    @include menuOuter();
+    @include menuInner();
+     li {
+         &:not(:first-child) {
+             border-top: 1px solid pullForward($colorMenuBg, 10%);
+         }
+     }
+}
+
+.c-super-menu {
+    // Two column layout, menu items on left with detail of hover element on right
+    @include menuOuter();
+    display: flex;
+    padding: $interiorMarginLg;
+    flex-direction: row;
+
+    > [class*="__"] {
+        $m: $interiorMarginLg;
+        flex: 1 1 50%;
+        &:first-child {
+            margin-right: $m;
+        }
+
+        &:last-child {
+            border-left: 1px solid $colorInteriorBorder;
+            padding-left: $m;
+        }
+    }
+
+    &__menu {
+        @include menuInner();
+        overflow: auto;
+
+        ul {
+            margin-right: $interiorMarginSm; // Fend off scrollbar
+        }
+
+        li {
+            border-radius: $controlCr;
+        }
+    }
+
+    &__item-description {
+        display: flex;
+        flex-direction: column;
+        justify-content: stretch;
+
+        .l-item-description {
+            &__icon,
+            &__description {
+                //flex: 1 1 50%;
+            }
+
+            &__name,
+            &__description {
+                margin-top: $interiorMarginLg;
+            }
+
+            &__icon {
+                min-height: 20%;
+                margin: 10% 25%;
+            }
+
+            &__name {
+                flex: 0 0 auto;
+                font-size: 1.25em;
+            }
+
+            &__description {
+                font-size: $fontBaseSize;
+            }
+        }
+    }
+}
+

@@ -31,7 +31,6 @@ define([
     './plugins/plugins',
     './adapter/indicators/legacy-indicators-plugin',
     './plugins/buildInfo/plugin',
-    './adapter/vue-adapter/install',
     './ui/registries/ViewRegistry',
     './ui/registries/InspectorViewRegistry',
     './ui/registries/ToolbarRegistry',
@@ -51,7 +50,6 @@ define([
     plugins,
     LegacyIndicatorsPlugin,
     buildInfoPlugin,
-    installVueAdapter,
     ViewRegistry,
     InspectorViewRegistry,
     ToolbarRegistry,
@@ -336,8 +334,6 @@ define([
                 });
                 domElement.appendChild(appLayout.$mount().$el);
 
-                console.log('Attaching adapter');
-                installVueAdapter(appLayout, this);
 
                 this.router.start();
                 this.emit('start');

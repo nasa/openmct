@@ -1,8 +1,14 @@
 <template>
     <div class="l-shell">
         <div class="l-shell__head">
-            [ Create Button ]
-            [ App Logo ]
+            <CreateButton class="l-shell__create-button"></CreateButton>
+            <div class="l-shell__controls">
+                <div class="l-controls__elem c-button-set">
+                    <a class="c-icon-button icon-new-window" title="Open in a new browser tab"></a>
+                    <a class="c-icon-button icon-fullscreen-collapse" title="Enable full screen mode"></a>
+                </div>
+            </div>
+            <div class="l-shell__app-logo">[ App Logo ]</div>
         </div>
         <multipane class="l-shell__main"
                    type="horizontal">
@@ -14,11 +20,15 @@
                     <search class="c-search--major" ref="shell-search"></search>
                 </div>
                 <div class="l-shell__tree">
-                    <mct-tree :nodes="treeRoots"></mct-tree>
+                    <mct-tree></mct-tree>
                 </div>
             </pane>
             <pane class="l-shell__pane-main">
-                <div class="l-shell__main-container" ref="mainContainer"></div>
+                <browse-object class="l-shell__main-container">
+                </browse-object>
+                <mct-template template-key="conductor"
+                              class="l-shell__time-conductor">
+                </mct-template>
             </pane>
             <pane class="l-shell__pane-inspector l-pane--holds-multipane"
                   handle="before"
@@ -72,10 +82,10 @@
             }
         }
 
-        &__head,
-        &__pane-inspector {
-            body.mobile & {
-                display: none;
+        &__pane-main {
+            > .l-pane__contents {
+                display: flex;
+                flex-flow: column nowrap;
             }
         }
 
@@ -98,13 +108,48 @@
             }
         }
 
+        &__head,
+        &__pane-inspector {
+            body.mobile & {
+                display: none;
+            }
+        }
+
+        &__head,
+        &__status {
+            flex: 0 1 auto;
+            display: flex;
+        }
+
+        /******************************* HEAD */
+        &__head {
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid $colorInteriorBorder;
+            padding: $interiorMargin;
+
+            > [class*="__"] + [class*="__"] {
+                margin-left: $interiorMargin;
+            }
+        }
+
+        &__create-button,
+        &__app-logo {
+            flex: 0 0 auto;
+        }
+
+        &__controls {
+            flex: 1 1 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-right: 2.5%;
+        }
+
         /********** MAIN AREA */
         &__main-container {
             // Wrapper for main views
+            flex: 1 1 100%;
             font-size: 16px; // TEMP FOR LEGACY STYLING
-            overflow: auto;
-            position: absolute;
-            top: $interiorMargin; right: $interiorMarginLg; bottom: $interiorMargin; left: $interiorMarginLg;
         }
 
         &__tree {
@@ -115,24 +160,12 @@
 
         &__time-conductor {
             border-top: 1px solid $colorInteriorBorder;
-            min-height: 50px;
-            padding: $interiorMarginLg;
+            flex: 0 0 auto;
+            padding: $interiorMargin;
         }
 
         body.desktop & {
             /********** HEAD AND STATUS */
-            &__head,
-            &__status {
-                display: block;
-                flex: 0 1 auto;
-            }
-
-            &__head {
-                border-bottom: 1px solid $colorInteriorBorder;
-                height: 40px;
-                padding: $interiorMarginLg;
-            }
-
             &__pane-tree,
             &__pane-inspector {
                 max-width: 30%;
@@ -151,9 +184,12 @@
 
 <script>
     import Inspector from '../inspector/Inspector.vue';
-    import MctMain from './MctMain.vue';
     import MctStatus from './MctStatus.vue';
     import MctTree from './mct-tree.vue';
+    import BrowseObject from './BrowseObject.vue';
+    import MctTemplate from '../legacy/mct-template.vue';
+    import ContextMenu from '../controls/ContextMenu.vue';
+    import CreateButton from '../controls/CreateButton.vue';
     import search from '../controls/search.vue';
     import multipane from '../controls/multipane.vue';
     import pane from '../controls/pane.vue';
@@ -161,9 +197,12 @@
     export default {
         components: {
             Inspector,
-            MctMain,
             MctStatus,
             MctTree,
+            BrowseObject,
+            'mct-template': MctTemplate,
+            ContextMenu,
+            CreateButton,
             search,
             multipane,
             pane
