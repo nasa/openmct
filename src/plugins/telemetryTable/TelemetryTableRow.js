@@ -30,12 +30,11 @@ define([], function () {
             this.objectKeyString = objectKeyString;
         }
         
-        getFormattedDatum() {
-            return Object.values(this.columns)
-                .reduce((formattedDatum, column) => {
-                    formattedDatum[column.getKey()] = this.getFormattedValue(column.getKey());
-                    return formattedDatum;
-                }, {});
+        getFormattedDatum(headers) {
+            return Object.keys(headers).reduce((formattedDatum, columnKey) => {
+                formattedDatum[columnKey] = this.getFormattedValue(columnKey);
+                return formattedDatum;
+            }, {});
         }
 
         getFormattedValue(key) {

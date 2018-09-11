@@ -20,20 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'csv',
-    'saveAs'
-], function (CSV, saveAs) {
-    class CSVExporter {
-        export(rows, options) {
-            let headers = (options && options.headers) ||
-                (Object.keys((rows[0] || {})).sort());
-            let filename = (options && options.filename) || "export.csv";
-            let csvText = new CSV(rows, { header: headers }).encode();
-            let blob = new Blob([csvText], { type: "text/csv" });
-            saveAs(blob, filename);
-        }
-    }
+import CSV from 'comma-separated-values';
+import {saveAs} from 'file-saver/FileSaver';
 
-    return CSVExporter;
-});
+class CSVExporter {
+    export(rows, options) {
+        let headers = (options && options.headers) ||
+            (Object.keys((rows[0] || {})).sort());
+        let filename = (options && options.filename) || "export.csv";
+        let csvText = new CSV(rows, { header: headers }).encode();
+        let blob = new Blob([csvText], { type: "text/csv" });
+        saveAs(blob, filename);
+    }
+};
+
+export default CSVExporter;

@@ -55,7 +55,7 @@ define(
 
             // A view is editable unless explicitly flagged as not
             (views || []).forEach(function (view) {
-                if (view.editable === true ||
+                if (isEditable(view) ||
                     (view.key === 'plot' && type.getKey() === 'telemetry.panel') ||
                     (view.key === 'table' && type.getKey() === 'table') ||
                     (view.key === 'rt-table' && type.getKey() === 'rttable')
@@ -63,6 +63,14 @@ define(
                     count++;
                 }
             });
+
+            function isEditable(view) {
+                if (typeof view.editable === Function) {
+                    return view.editable(domainObject.useCapability('adapter'));
+                } else {
+                    return view.editable === true;
+                }
+            }
 
             return count;
         };
