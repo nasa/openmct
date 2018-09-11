@@ -19,7 +19,7 @@
             <div class="menu-element context-menu-wrapper mobile-disable-select">
                 <div class="menu context-menu">
                     <ul>
-                        <li v-for="(action) in actions" 
+                        <li v-for="action in actions" 
                             v-bind:class="[action.cssClass]"
                             v-on:click="action.perform(embed, entry)">
                             {{ action.name }}

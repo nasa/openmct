@@ -107,7 +107,7 @@ function (
             perform: function (embed, entry) {
                 var entryPosition = self.findInArray(self.domainObject.entries, entry.id),
                     embedPosition = self.findInArray(entry.embeds, embed.id);
-s
+
                 var warningDialog = self.dialogService.showBlockingMessage({
                     severity: "error",
                     title: "This action will permanently delete this embed. Do you wish to continue?",

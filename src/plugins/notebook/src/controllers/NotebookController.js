@@ -98,7 +98,7 @@ function (
                 },
                 newEntry: self.newEntry,
                 filterBySearch: self.filterBySearch
-            } 
+            }
         });
 
         this.NotebookVue =  new notebookVue();
