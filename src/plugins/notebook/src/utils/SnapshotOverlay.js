@@ -48,9 +48,8 @@ define([
     }
 
     SnapshotOverlay.prototype.open = function () {
-
         this.overlay = document.createElement('div');
-        this.overlay.id = 'snapshot';
+        this.overlay.classList.add('abs');
 
         document.body.appendChild(this.overlay);
 
