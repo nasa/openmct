@@ -1,4 +1,4 @@
-/**************************** BUTTONS */
+/******************************************************** BUTTONS */
 %c-control {
     @include userSelectNone();
     display: inline-flex;
@@ -118,6 +118,8 @@
 /********* Menu Buttons */
 // Always includes :after dropdown arrow
 // Optionally can include icon in :before
+// Default menu position is down and to the right
+// Apply c-menu-button--menus-up and c-menu-button--menus-left to --w wrapper element to modify menu position
 .c-menu-button {
     $m: $interiorMarginSm;
     @extend %c-button;
@@ -132,9 +134,98 @@
         margin-left: $m;
         opacity: 0.5;
     }
+
+    &--w {
+        // Wraps c-menu-button, contains button and menu
+        .c-menu {
+            // Default position
+            top: 100%; left: 0;
+        }
+
+        &.c-menu-button--menus-up {
+            .c-menu {
+                top: auto; bottom: 100%;
+            }
+        }
+
+        &.c-menu-button--menus-left {
+            .c-menu {
+                left: auto; right: 0;
+            }
+        }
+    }
 }
 
-/**************************** MENUS */
+/******************************************************** DISCLOSURE CONTROLS */
+/********* Disclosure Button */
+// Provides a downward arrow icon that when clicked displays a context menu
+// Always placed AFTER an element
+.c-disclosure-button {
+    @extend .c-icon-button;
+    margin-left: $interiorMarginSm;
+
+    &:before {
+        content: $glyph-icon-arrow-down;
+        font-family: symbolsfont;
+        font-size: 0.7em;
+    }
+}
+    /********* Disclosure Triangle */
+// Provides an arrow icon that when clicked expands an element to reveal its contents.
+// Used in tree items. Always placed BEFORE an element.
+.c-disclosure-triangle {
+    $d: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: $d;
+    position: relative;
+
+    &.is-enabled:before {
+        $s: .65;
+        content: $glyph-icon-arrow-right-equilateral;
+        display: block;
+        font-family: symbolsfont;
+        font-size: 1rem * $s;
+        position: absolute;
+        transform-origin: floor(($d / 2) * $s); // This is slightly better than 'center'
+        transition: transform 100ms ease-in-out;
+    }
+
+    &--expanded {
+        &:before {
+            transform: rotate(90deg);
+        }
+    }
+}
+
+
+/******************************************************** FORM ELEMENTS */
+/********* Inline inputs */
+// A text input or contenteditable element that indicates edit affordance on hover and looks like an input on focus
+.c-input-inline {
+    @include input-base();
+    transition: all 250ms ease;
+    border: 1px solid transparent;
+    min-width: 20px;
+    padding-left: 0;
+    padding-right: 0;
+    &:hover,
+    &:focus {
+        padding-left: $inputTextPLeftRight;
+        padding-right: $inputTextPLeftRight;
+    }
+    &:hover {
+        border-color: rgba($colorBodyFg, 0.2);
+    }
+    &:focus {
+        @include nice-input();
+        border-color: transparent;
+    }
+}
+
+/******************************************************** MENUS */
 @mixin menuOuter() {
     border-radius: $basicCr;
     background: $colorMenuBg;
@@ -170,8 +261,6 @@
         }
     }
 }
-
-
 
 .c-menu {
     @include menuOuter();
