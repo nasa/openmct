@@ -47,7 +47,7 @@ define([
 ) {
     var installed  = false;
 
-    function NotebookV2Plugin() {
+    function NotebookPlugin() {
         return function install(openmct) {
             if (installed) {
                 return;
@@ -55,13 +55,13 @@ define([
 
             installed = true;
 
-            openmct.legacyRegistry.register('notebookV2', {
+            openmct.legacyRegistry.register('notebook', {
                 name: 'Notebook Plugin',
                 extensions: {
                     types: [
                         {
-                            key: 'notebookV2',
-                            name: 'NotebookV2',
+                            key: 'notebook',
+                            name: 'Notebook',
                             cssClass: 'icon-notebook',
                             description: 'Create and save timestamped notes with embedded object snapshots.',
                             features: 'creation',
@@ -189,14 +189,14 @@ define([
                 }
             });
 
-            openmct.legacyRegistry.enable('notebookV2');
+            openmct.legacyRegistry.enable('notebook');
 
             openmct.objectViews.addProvider({
                 key: 'notebook-vue',
                 name: 'Notebook View',
                 cssClass: 'icon-notebook',
                 canView: function (domainObject) {
-                    return domainObject.type === 'notebookV2';
+                    return domainObject.type === 'notebook';
                 },
                 view: function (domainObject) {
                     var controller = new NotebookController (openmct, domainObject);
@@ -211,5 +211,5 @@ define([
 
     }
 
-    return NotebookV2Plugin;
+    return NotebookPlugin;
 });

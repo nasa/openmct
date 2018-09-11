@@ -30,8 +30,8 @@ define(
         }
 
         SnapshotAction.prototype.perform = function () {
-            var elementToSnapshot =  
-                $(document.body).find(".overlay .object-holder")[0] || 
+            var elementToSnapshot =
+                $(document.body).find(".overlay .object-holder")[0] ||
                 $(document.body).find("[key='representation.selected.key']")[0];
 
             $(elementToSnapshot).addClass("s-status-taking-snapshot");
@@ -119,7 +119,7 @@ define(
             };
 
             function validateLocation(newParentObj) {
-                return newParentObj.model.type === 'notebookV2';
+                return newParentObj.model.type === 'notebook';
             }
 
             return overlayModel;

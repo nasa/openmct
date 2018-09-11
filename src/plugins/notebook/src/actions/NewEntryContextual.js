@@ -79,7 +79,7 @@ define(
         }
 
         function validateLocation(newParentObj) {
-            return newParentObj.model.type === 'notebookV2';
+            return newParentObj.model.type === 'notebook';
         }
 
 
@@ -187,7 +187,7 @@ define(
             var domainObject = context.domainObject;
 
             if (domainObject) {
-                if (domainObject.getModel().type === 'notebookV2') {
+                if (domainObject.getModel().type === 'notebook') {
                     // do not allow in context of a notebook
                     return false;
                 } else if (domainObject.getModel().type.includes('imagery')) {
