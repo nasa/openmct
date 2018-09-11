@@ -56,19 +56,8 @@
 </style>
 
 <script>
-    function populateCreateMenu() {
-        openmct.types.listKeys().forEach(key => {
-            var menuItem = openmct.types.types[key].definition,
-                menuItemTemplate = {
-                    name: menuItem.name,
-                    class: menuItem.cssClass,
-                    title: menuItem.description
-                };
-
-            this.createMenuItems.push(menuItemTemplate);
-        });
-    }
     export default {
+        inject: ['openmct'],
         props: {
             showCreateMenu: {
                 type: Boolean,
@@ -84,11 +73,26 @@
             }
         },
         data: function() {
+            let createMenuItems = [];
+
+            this.openmct.types.listKeys().forEach(key => {
+                let menuItem = openmct.types.get(key).definition;
+
+                if (menuItem.creatable) {
+                    let menuItemTemplate = {
+                        name: menuItem.name,
+                        class: menuItem.cssClass,
+                        title: menuItem.description
+                    };
+
+                    createMenuItems.push(menuItemTemplate);
+                }
+            });
+
             return {
-                createMenuItems: [],
+                createMenuItems: createMenuItems,
                 selectedMenuItem: {}
             }
-        },
-        beforeMount: populateCreateMenu
+        }
     }
 </script>
