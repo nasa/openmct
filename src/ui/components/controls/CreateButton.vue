@@ -8,8 +8,8 @@
              v-if="showCreateMenu">
             <div class="c-super-menu__menu">
                 <ul>
-                    <li v-for="(item, index) in createMenuItems"
-                        :key="'create-menu-item-' + index"
+                    <li v-for="(item, index) in items"
+                        :key="index"
                         :class="item.class"
                         :title="item.title"
                         @mouseover="showItemDescription(item)">
@@ -73,7 +73,7 @@
             }
         },
         data: function() {
-            let createMenuItems = [];
+            let items = [];
 
             this.openmct.types.listKeys().forEach(key => {
                 let menuItem = openmct.types.get(key).definition;
@@ -85,12 +85,12 @@
                         title: menuItem.description
                     };
 
-                    createMenuItems.push(menuItemTemplate);
+                    items.push(menuItemTemplate);
                 }
             });
 
             return {
-                createMenuItems: createMenuItems,
+                items: items,
                 selectedMenuItem: {}
             }
         }
