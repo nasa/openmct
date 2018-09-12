@@ -26,7 +26,8 @@
             <pane class="l-shell__pane-main">
                 <browse-object class="l-shell__main-container">
                 </browse-object>
-                <div class="js-conductor-holder l-shell__time-conductor"></div>
+                <component class="l-shell__time-conductor"
+                    :is="inspectorComponent"></component>
             </pane>
             <pane class="l-shell__pane-inspector l-pane--holds-multipane"
                   handle="before"
@@ -193,6 +194,11 @@
     import pane from '../controls/pane.vue';
 
     export default {
+        data() {
+            return {
+                inspectorComponent: {}
+            }
+        },
         components: {
             Inspector,
             MctStatus,

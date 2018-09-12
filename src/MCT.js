@@ -332,8 +332,8 @@ define([
                         openmct: this
                     }
                 });
+                this.layout = appLayout;
                 domElement.appendChild(appLayout.$mount().$el);
-
 
                 this.router.start();
                 this.emit('start');

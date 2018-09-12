@@ -91,15 +91,18 @@ function throwIfError(configResult) {
 }
 
 function mountComponent(openmct, configuration) {
-    let conductorComponent = new Vue({
-        mixins: [Conductor],
+    openmct.layout.inspectorComponent = {
+        components: {
+            Conductor
+        },
+        template: "<conductor></conductor>",
         provide: {
             openmct: openmct,
             configuration: configuration
         }
-    });
-    let conductorParent = Document.querySelector('.js-conductor-holder');
-    conductorParent.appendChild(conductorComponent.$mount().$el);
+    };
+    // let conductorParent = Document.querySelector('.js-conductor-holder');
+    // conductorParent.appendChild(conductorComponent.$mount().$el);
 }
 
 export default function (config){
