@@ -27,14 +27,14 @@ define([
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
-    '../../platform/features/notebook/bundle',
     '../../platform/import-export/bundle',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
     './telemetryMean/plugin',
     './plot/plugin',
     './telemetryTable/plugin',
-    './staticRootPlugin/plugin'
+    './staticRootPlugin/plugin',
+    './notebook/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -42,19 +42,18 @@ define([
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
-    Notebook,
     ImportExport,
     SummaryWidget,
     URLIndicatorPlugin,
     TelemetryMean,
     PlotPlugin,
     TelemetryTablePlugin,
-    StaticRootPlugin
+    StaticRootPlugin,
+    Notebook
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
-        MyItems: 'platform/features/my-items',
-        Notebook: 'platform/features/notebook'
+        MyItems: 'platform/features/my-items'
     };
 
     var plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
@@ -155,10 +154,11 @@ define([
     plugins.ExampleImagery = ExampleImagery;
     plugins.Plot = PlotPlugin;
     plugins.TelemetryTable = TelemetryTablePlugin;
-    
+
     plugins.SummaryWidget = SummaryWidget;
     plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicator = URLIndicatorPlugin;
+    plugins.Notebook = Notebook;
 
     return plugins;
 });

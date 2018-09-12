@@ -1,0 +1,35 @@
+<li class="l-flex-row has-local-controls l-notebook-entry s-notebook-entry"
+    v-on:drop="dropOnEntry(entry.id)"
+    v-on:dragover="dragoverOnEntry"
+    >
+
+    <div class="holder flex-elem l-flex-row grows w-notebook-entry-time-and-content">
+        <div class="holder flex-elem s-notebook-entry-time">
+            <span>{{formatTime(entry.createdOn, 'YYYY-MM-DD')}}</span>
+            <span>{{formatTime(entry.createdOn, 'HH:mm:ss')}}</span>
+        </div>
+
+        <div class="holder flex-elem l-flex-col grows l-notebook-entry-content">
+            <div class="flex-elem s-input-inline t-notebook-entry-input s-notebook-entry-text"
+                 contenteditable="true"
+                 ref="contenteditable"
+                 v-on:blur="textBlur($event, entry.id)"
+                 v-on:focus="textFocus($event, entry.id)"
+                 v-bind:key="entry.id"
+                 v-html="entry.text">
+            </div>
+
+            <div class="flex-elem entry-embeds l-flex-row">
+                <notebook-embed
+                    v-for="(embed, index) in entry.embeds"
+                    v-bind:embed="embed"
+                    v-bind:entry="entry"
+                ></notebook-embed>
+            </div>
+        </div>
+
+        <div class="holder flex-elem local-control local-controls-hidden notebook-entry-delete">
+                <a class="s-icon-button icon-trash" title="Delete Entry" v-on:click="deleteEntry"></a>
+        </div>
+    </div>
+</li>

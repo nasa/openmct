@@ -90,7 +90,7 @@ define(
             var dialogService = this.dialogService;
             var rootScope = this.$rootScope;
             rootScope.newEntryText = '';
-            // Create the overlay element and add it to the document's body
+            // // Create the overlay element and add it to the document's body
             this.$rootScope.selObj = domainObj;
             this.$rootScope.selValue = "";
             var newScope = rootScope.$new();
@@ -187,7 +187,7 @@ define(
             var domainObject = context.domainObject;
 
             if (domainObject) {
-                if (domainObject.getModel().type === 'Notebook') {
+                if (domainObject.getModel().type === 'notebook') {
                     // do not allow in context of a notebook
                     return false;
                 } else if (domainObject.getModel().type.includes('imagery')) {

@@ -26,6 +26,7 @@
 define(
     ["painterro", "zepto"],
     function (Painterro, $) {
+
         var annotationStruct = {
             title: "Annotate Snapshot",
             template: "annotate-snapshot",

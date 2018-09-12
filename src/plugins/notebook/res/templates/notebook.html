@@ -1,0 +1,46 @@
+<div class="mct-notebook w-notebook l-flex-col">
+    <div class="l-notebook-head holder l-flex-row flex-elem">
+        <div class="c-search flex-elem holder grows">
+            <input class="c-search__search-input"
+                    type="text" tabindex="10000"
+                    v-model="entrySearch"
+                    v-on:keyup="search($event)"/>
+            <a class="c-search__clear-input clear-icon icon-x-in-circle"
+                v-bind:class="[entrySearch ? 'show': '']"
+                v-on:click="entrySearch = ''; search($event)"></a>
+        </div>
+
+        <div class="notebook-view-controls l-flex-row flex-elem holder">
+            <div class="select notebook-view-controls__filter-time">
+                <select v-model="showTime">
+                    <option value="0" selected="selected">Show all</option>
+                    <option value="1">Last hour</option>
+                    <option value="8">Last 8 hours</option>
+                    <option value="24">Last 24 hours</option>
+                </select>
+            </div>
+            <div class="select notebook-view-controls__sort">
+                <select v-model="sortEntries">
+                    <option value="-createdOn" selected="selected">Newest first</option>
+                    <option value="createdOn">Oldest first</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!--  drag area -->
+    <div class="holder flex-elem l-flex-row icon-plus labeled l-notebook-drag-area" v-on:click="newEntry($event)"
+    id="newEntry" mct-entry-dnd>
+    <span class="label">To start a new entry, click here or drag and drop any object</span>
+    </div>
+
+    <!-- entries -->
+    <div class="holder flex-elem grows w-notebook-entries t-entries-list" ng-mouseover="handleActive()">
+        <ul>
+           <notebook-entry
+                v-for="entry in filterBySearch(entries, entrySearch)"
+                v-bind:entry="entry"
+           ></notebook-entry>
+        </ul>
+    </div>
+</div>

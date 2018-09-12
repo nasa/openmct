@@ -31,8 +31,7 @@ define(
             $scope.snapshot = undefined;
             $scope.snapToggle = true;
             $scope.entryText = '';
-            var annotateAction = $rootScope.selObj.getCapability('action').getActions(
-                {category: 'embed'})[1];
+            var annotateAction = $rootScope.selObj.getCapability('action').getActions({key: 'annotate-snapshot'})[0];                                                                
 
             $scope.$parent.$parent.ngModel[$scope.$parent.$parent.field] = $rootScope.selObj;
             $scope.objectName = $rootScope.selObj.getModel().name;
