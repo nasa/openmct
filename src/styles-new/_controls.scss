@@ -59,10 +59,14 @@
 .c-icon-button {
     // A clickable element that just includes the icon, no background
     // Padding is included to facilitate a bigger hit area
+    // Make the icon bigger relative to its container
     @extend %c-control;
+    $pLR: 3px;
+    $pTB: 3px;
     border-radius: $controlCr;
     color: $colorKey;
-    padding: nth($btnPad, 1) floor(nth($btnPad, 2) * 0.8);
+    font-size: $fontBaseSize * 1.2;
+    padding: $pTB $pLR ;
 
     &:hover {
         background: rgba($colorKey, 0.2);
@@ -80,7 +84,7 @@
     // c-icon-buttons get grouped more closely together
     // When one set is adjacent to another, provides a divider between
 
-    display: flex;
+    display: inline-flex;
 
     > * {
         // Assume buttons are immediate descendants

@@ -43,6 +43,10 @@
         font-size: 1.1em;
     }
 
+    .c-create-button .c-button__label {
+        text-transform: $createBtnTextTransform;
+    }
+
     .c-create-menu {
         max-height: 80vh;
         max-width: 500px;
