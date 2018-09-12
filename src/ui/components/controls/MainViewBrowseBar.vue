@@ -2,9 +2,12 @@
     <div class="l-browse-bar">
         <div class="l-browse-bar__start">
             <a class="l-browse-bar__nav-to-parent-button c-icon-button icon-pointer-left"></a>
-            <div class="l-browse-bar__object-name--w icon-folder">
-                <span class="l-browse-bar__object-name c-input-inline" contenteditable>
-                    Object Name Lorem ipsum dolor sit amet
+            <div v-bind:class="['l-browse-bar__object-name--w', type.cssClass]">
+                <span 
+                    class="l-browse-bar__object-name c-input-inline"
+                    v-on:blur="updateName" 
+                    contenteditable>
+                    {{ domainObject.name }}
                 </span>
             </div>
             <div class="l-browse-bar__context-actions c-disclosure-button"></div>
@@ -33,6 +36,7 @@
     import MenuPlaceholder from '../controls/ContextMenu.vue';
 
     export default {
+        inject: ['openmct'],
         props: {
             showMenu: {
                 type: Boolean,
@@ -46,10 +50,34 @@
         methods: {
             toggleMenu: function () {
                 this.showMenu = !this.showMenu;
+            },
+            updateName: function (event) {
+                if (event.target.innerText !== this.domainObject.name) {
+                    this.legacyObject.getCapability('mutation').mutate(function (model) {
+                        model.name = event.target.innerText
+                    });
+                }
+            }
+        },
+        data: function () {
+            return {
+                domainObject: {},
+                domainObjectModel: {}
             }
         },
         components: {
             MenuPlaceholder
+        },
+        computed: {
+            type() {
+                return this.openmct.types.get(this.domainObject.type).definition;
+            }
+        },
+        beforeMount: function () {
+            this.$root.$on('main-view-domain-object', (domainObject) => {
+                this.legacyObject = domainObject;
+                this.domainObject = domainObject.useCapability('adapter');
+            });
         }
     }
 </script>

@@ -25,8 +25,7 @@
             </pane>
             <pane class="l-shell__pane-main">
                 <MainViewBrowseBar class="l-shell__main-view-browse-bar"></MainViewBrowseBar>
-                <browse-object class="l-shell__main-container">
-                </browse-object>
+                <browse-object class="l-shell__main-container"></browse-object>
                 <mct-template template-key="conductor"
                               class="l-shell__time-conductor">
                 </mct-template>
