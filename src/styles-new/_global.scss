@@ -43,6 +43,15 @@ div {
     display: contents;
 }
 
+.u-space {
+    // Provides a separator space between elements
+    &--right {
+        + [class*="__"] {
+            margin-left: $interiorMarginLg !important;
+        }
+    }
+}
+
 /******************************* BROWSER ELEMENTS */
 body.desktop {
     ::-webkit-scrollbar {

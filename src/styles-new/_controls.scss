@@ -1,8 +1,10 @@
 /******************************************************** BUTTONS */
 %c-control {
     @include userSelectNone();
+    $fs: 1em;
     display: inline-flex;
     align-items: center;
+    font-size: $fs;
     justify-content: start;
     cursor: pointer;
 
@@ -13,12 +15,13 @@
         flex: 0 0 auto;
     }
 
-    &:before {
+    &:after {
         font-size: 0.8em;
     }
 
-    &:after {
-        font-size: 0.6em;
+    [class*="__label"] {
+        line-height: $fs; // Remove effect on top and bottom padding
+        font-size: $fs;
     }
 
 }
@@ -206,11 +209,19 @@
 // A text input or contenteditable element that indicates edit affordance on hover and looks like an input on focus
 .c-input-inline {
     @include input-base();
-    transition: all 250ms ease;
     border: 1px solid transparent;
-    min-width: 20px;
+    display: block !important;
+    min-width: 0;
     padding-left: 0;
     padding-right: 0;
+    overflow: hidden;
+    transition: all 250ms ease;
+    white-space: nowrap;
+
+    &:not(:focus) {
+        text-overflow: ellipsis;
+    }
+
     &:hover,
     &:focus {
         padding-left: $inputTextPLeftRight;

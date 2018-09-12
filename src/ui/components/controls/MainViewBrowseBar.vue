@@ -13,14 +13,19 @@
         <div class="l-browse-bar__end">
             <div class="l-browse-bar__view-switcher c-menu-button--w c-menu-button--menus-left">
                 <div class="c-menu-button icon-thumbs-strip"
+                     title="Switch view type"
                      @click="toggleMenu">
-                    Grid
+                    <span class="c-button__label">Grid</span>
                 </div>
                 <MenuPlaceholder v-if="showMenu"></MenuPlaceholder>
             </div>
+            <!-- Action buttons -->
+            <div class="l-browse-bar__actions">
+                <div class="l-browse-bar__action c-button icon-eye-open" title="Preview"></div>
+                <div class="l-browse-bar__action c-button icon-notebook" title="New Notebook entry"></div>
+                <div class="l-browse-bar__action c-button c-button--major icon-pencil" title="Edit"></div>
+            </div>
         </div>
-
-
     </div>
 </template>
 
@@ -59,6 +64,11 @@
         align-items: center;
         justify-content: space-between;
 
+        [class*="__"] {
+            // Removes extraneous horizontal white space
+            display: inline-flex;
+        }
+
         &__start {
             display: flex;
             align-items: center;
@@ -72,6 +82,10 @@
             display: flex;
             align-items: center;
             flex: 0 0 auto;
+
+            [class*="__"] + [class*="__"] {
+                margin-left: $interiorMarginSm;
+            }
         }
 
         &__nav-to-parent-button,
@@ -92,7 +106,7 @@
             display: flex;
             flex: 0 1 auto;
             min-width: 0;
-            @include test();
+
             &:before {
                 // Icon
                 opacity: 0.5;
@@ -102,9 +116,6 @@
 
         &__object-name {
             flex: 0 1 auto;
-            min-width: 0;
-            @include ellipsize();
         }
     }
-
 </style>

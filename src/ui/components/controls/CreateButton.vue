@@ -2,7 +2,7 @@
     <div class="c-create-button--w">
         <div class="c-create-button c-menu-button c-button--major icon-plus"
              @click="toggleCreateMenu">
-            Create
+            <span class="c-button__label">Create</span>
         </div>
         <div class="c-create-menu c-super-menu"
              v-if="showCreateMenu">
