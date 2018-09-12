@@ -3,7 +3,7 @@
         <div class="l-browse-bar__start">
             <a class="l-browse-bar__nav-to-parent-button c-icon-button icon-pointer-left"></a>
             <div class="l-browse-bar__object-name--w icon-folder">
-                <span class="l-browse-bar__object-name c-input-inline">
+                <span class="l-browse-bar__object-name c-input-inline" contenteditable>
                     Object Name Lorem ipsum dolor sit amet
                 </span>
             </div>
@@ -32,12 +32,16 @@
             showMenu: {
                 type: Boolean,
                 default: false
+            },
+            editNameEnabled: {
+                type: Boolean,
+                default: false
             }
         },
         methods: {
             toggleMenu: function () {
                 this.showMenu = !this.showMenu;
-            },
+            }
         },
         components: {
             MenuPlaceholder
@@ -51,18 +55,27 @@
     /******************************* START */
 
     .l-browse-bar {
-        &.l-browse-bar,
-        [class*="__"] {
-            display: flex;
-            align-items: center;
-        }
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
 
         &__start {
-            flex: 1 1 100%;
+            display: flex;
+            align-items: center;
+            flex: 1 1 auto;
             font-size: 1.4em;
+            margin-right: $interiorMargin;
+            min-width: 0; // Forces interior to compress when pushed on
         }
 
         &__end {
+            display: flex;
+            align-items: center;
+            flex: 0 0 auto;
+        }
+
+        &__nav-to-parent-button,
+        &__disclosure-button {
             flex: 0 0 auto;
         }
 
@@ -74,9 +87,23 @@
             padding-right: $p;
         }
 
-        &__object-name--w:before {
-            opacity: 0.5;
-            margin-right: $interiorMargin;
+        &__object-name--w {
+            align-items: center;
+            display: flex;
+            flex: 0 1 auto;
+            min-width: 0;
+            @include test();
+            &:before {
+                // Icon
+                opacity: 0.5;
+                margin-right: $interiorMargin;
+            }
+        }
+
+        &__object-name {
+            flex: 0 1 auto;
+            min-width: 0;
+            @include ellipsize();
         }
     }
 

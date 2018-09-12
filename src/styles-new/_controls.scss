@@ -220,7 +220,7 @@
         border-color: rgba($colorBodyFg, 0.2);
     }
     &:focus {
-        @include nice-input();
+        @include nice-input($shdw: rgba(0, 0, 0, 0.6) 0 1px 3px);
         border-color: transparent;
     }
 }
