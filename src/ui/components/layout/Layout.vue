@@ -26,9 +26,7 @@
             <pane class="l-shell__pane-main">
                 <browse-object class="l-shell__main-container">
                 </browse-object>
-                <mct-template template-key="conductor"
-                              class="l-shell__time-conductor">
-                </mct-template>
+                <div class="js-conductor-holder l-shell__time-conductor"></div>
             </pane>
             <pane class="l-shell__pane-inspector l-pane--holds-multipane"
                   handle="before"

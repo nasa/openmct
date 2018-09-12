@@ -102,7 +102,7 @@ define([
      */
     plugins.AutoflowView = AutoflowPlugin;
 
-    plugins.Conductor = TimeConductorPlugin;
+    plugins.Conductor = TimeConductorPlugin.default;
 
     plugins.CouchDB = function (url) {
         return function (openmct) {
