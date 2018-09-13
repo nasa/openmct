@@ -2,10 +2,11 @@
     <div class="l-browse-bar">
         <div class="l-browse-bar__start">
             <a class="l-browse-bar__nav-to-parent-button c-icon-button icon-pointer-left"></a>
-            <div v-bind:class="['l-browse-bar__object-name--w', type.cssClass]">
-                <span 
+            <div class="l-browse-bar__object-name--w"
+                 :class="type.cssClass">
+                <span
                     class="l-browse-bar__object-name c-input-inline"
-                    v-on:blur="updateName" 
+                    v-on:blur="updateName"
                     contenteditable>
                     {{ domainObject.name }}
                 </span>
@@ -15,19 +16,22 @@
 
         <div class="l-browse-bar__end">
             <div class="l-browse-bar__view-switcher c-menu-button--w c-menu-button--menus-left"
-                 v-if="domainObjectViews.length > 1">
-                <div v-bind:class="['c-menu-button', currentView.cssClass]"
+                 v-if="views.length > 1">
+                <div class="c-menu-button"
+                     :class="currentView.cssClass"
                      title="Switch view type"
                      @click="toggleViewMenu">
-                    <span class="c-button__label">{{ currentView.name }}</span>
+                    <span class="c-button__label">
+                          {{ currentView.name }}
+                    </span>
                 </div>
-                <div class="c-menu" v-if="showViewMenu">
+                <div class="c-menu" v-show="showViewMenu">
                     <ul>
-                        <li v-for="(view,index) in domainObjectViews"
-                            @click="updateViewParams(view)"
+                        <li v-for="(view, index) in views"
+                            @click="setView(view)"
                             :key="index"
                             :class="view.cssClass"
-                            :title="view.title">
+                            :title="view.name">
                             {{ view.name }}
                         </li>
                     </ul>
@@ -44,69 +48,64 @@
 </template>
 
 <script>
-    import MenuPlaceholder from '../controls/ContextMenu.vue';
-
     export default {
         inject: ['openmct'],
-        props: {
-            editNameEnabled: {
-                type: Boolean,
-                default: false
-            }
-        },
         methods: {
             toggleViewMenu: function (event) {
                 event.stopPropagation();
                 this.showViewMenu = !this.showViewMenu;
             },
             updateName: function (event) {
+                // TODO: handle isssues with contenteditable text escaping.
                 if (event.target.innerText !== this.domainObject.name) {
                     this.openmct.objects.mutate(this.domainObject, 'name', event.target.innerText);
                 }
             },
-            updateViewParams: function (view) {
-                this.openmct.router.updateParams({view: view.key});
-            },
-            updateCurrentView: function (viewKey) {
-                viewKey = viewKey || this.openmct.router.getParams().view;
-                
-                if (viewKey) {
-                    this.currentView = this.domainObjectViews.find((view) => view.key === viewKey) || {};
-                }
+            setView: function (view) {
+                this.viewKey = view.key;
+                this.openmct.router.updateParams({
+                    view: this.viewKey
+                });
             }
         },
         data: function () {
             return {
                 showViewMenu: false,
                 domainObject: {},
-                domainObjectViews: [],
-                currentView: {}
+                viewKey: undefined
             }
         },
-        components: {
-            MenuPlaceholder
-        },
         computed: {
+            currentView() {
+                return this.views.filter(v => v.key === this.viewKey)[0] || {};
+            },
+            views() {
+                return this
+                    .openmct
+                    .objectViews
+                    .get(this.domainObject)
+                    .map((p) => {
+                        return {
+                            key: p.key,
+                            cssClass: p.cssClass,
+                            name: p.name
+                        };
+                    });
+            },
             type() {
-                return this.openmct.types.get(this.domainObject.type).definition;
+                let objectType = this.openmct.types.get(this.domainObject.type);
+                if (!objectType) {
+                    return {}
+                }
+                return objectType.definition;
             }
         },
         mounted: function () {
-            this.$root.$on('main-view-domain-object', (domainObject) => {
-                this.legacyObject = domainObject;
-                this.domainObject = domainObject.useCapability('adapter');
-                this.domainObjectViews = domainObject.useCapability('view');
-
-                this.updateCurrentView();
-            });
-
             document.addEventListener('click', () => {
                 if (this.showViewMenu) {
                     this.showViewMenu = false;
                 }
             });
-
-            this.openmct.router.on('change:params', (params) => {this.updateCurrentView(params.view)});
         }
     }
 </script>

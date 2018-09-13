@@ -35,6 +35,7 @@ define([
     './ui/registries/InspectorViewRegistry',
     './ui/registries/ToolbarRegistry',
     './ui/router/ApplicationRouter',
+    './ui/router/Browse',
     '../platform/framework/src/Main',
     './styles-new/core.scss',
     './ui/components/layout/Layout.vue',
@@ -54,6 +55,7 @@ define([
     InspectorViewRegistry,
     ToolbarRegistry,
     ApplicationRouter,
+    Browse,
     Main,
     coreStyles,
     Layout,
@@ -334,7 +336,8 @@ define([
                 });
                 domElement.appendChild(appLayout.$mount().$el);
 
-
+                this.layout = appLayout;
+                Browse(this);
                 this.router.start();
                 this.emit('start');
             }.bind(this));
