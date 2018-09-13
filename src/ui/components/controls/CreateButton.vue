@@ -8,23 +8,19 @@
              v-if="showCreateMenu">
             <div class="c-super-menu__menu">
                 <ul>
-                    <li v-for="item in createMenuItems"
+                    <li v-for="(item, index) in items"
+                        :key="index"
                         :class="item.class"
                         :title="item.title"
-                        @mouseover="showItemDescription">
+                        @mouseover="showItemDescription(item)">
                         {{ item.name }}
                     </li>
                 </ul>
             </div>
             <div class="c-super-menu__item-description">
-                <div class="l-item-description__icon bg-icon-plot-stacked"></div>
-                <div class="l-item-description__name">Name</div>
-                <div class="l-item-description__description">
-                    A timer that counts up or down to a datetime.
-                    Timers can be started, stopped and reset whenever needed,
-                    and support a variety of display formats.
-                    Each Timer displays the same value to all users.
-                    Timers can be added to Display Layouts.</div>
+                <div :class="['l-item-description__icon', 'bg-' + selectedMenuItem.class]"></div>
+                <div class="l-item-description__name">{{selectedMenuItem.name}}</div>
+                <div class="l-item-description__description">{{selectedMenuItem.title}}</div>
             </div>
         </div>
     </div>
@@ -65,6 +61,7 @@
 
 <script>
     export default {
+        inject: ['openmct'],
         props: {
             showCreateMenu: {
                 type: Boolean,
@@ -75,27 +72,30 @@
             toggleCreateMenu: function () {
                 this.showCreateMenu = !this.showCreateMenu;
             },
+            showItemDescription: function (menuItem) {
+                this.selectedMenuItem = menuItem;
+            }
         },
         data: function() {
+            let items = [];
+
+            this.openmct.types.listKeys().forEach(key => {
+                let menuItem = openmct.types.get(key).definition;
+
+                if (menuItem.creatable) {
+                    let menuItemTemplate = {
+                        name: menuItem.name,
+                        class: menuItem.cssClass,
+                        title: menuItem.description
+                    };
+
+                    items.push(menuItemTemplate);
+                }
+            });
+
             return {
-                createMenuItems: [
-                    { name: 'Folder', class: 'icon-folder', title: 'Details will go here' },
-                    { name: 'Display Layout', class: 'icon-layout', title: 'Details will go here' },
-                    { name: 'Fixed Position Display', class: 'icon-box-with-dashed-lines', title: 'Details will go here' },
-                    { name: 'Overlay Plot', class: 'icon-plot-overlay', title: 'Details will go here' },
-                    { name: 'Stacked Plot', class: 'icon-plot-stacked', title: 'Details will go here' },
-                    { name: 'Telemetry Table', class: 'icon-tabular-realtime', title: 'Details will go here' },
-                    { name: 'Clock', class: 'icon-clock', title: 'Details will go here' },
-                    { name: 'Timer', class: 'icon-timer', title: 'Details will go here' },
-                    { name: 'Web Page', class: 'icon-page', title: 'Details will go here' },
-                    { name: 'Event Message Generator', class: 'icon-folder-new', title: 'Details will go here' },
-                    { name: 'Hyperlink', class: 'icon-chain-links', title: 'Details will go here' },
-                    { name: 'Notebook', class: 'icon-notebook', title: 'Details will go here' },
-                    { name: 'State Generator', class: 'icon-telemetry', title: 'Details will go here' },
-                    { name: 'Sine Wave Generator', class: 'icon-telemetry', title: 'Details will go here' },
-                    { name: 'Example Imagery', class: 'icon-image', title: 'Details will go here' },
-                    { name: 'Summary Widget', class: 'icon-summary-widget', title: 'Details will go here' }
-                ]
+                items: items,
+                selectedMenuItem: {}
             }
         }
     }
