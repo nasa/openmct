@@ -152,7 +152,7 @@
 
             &__collapse-button {
                 $m: 2px;
-                $h: 12px; //nth($splitterBtnD, 1) - ($m * 2);
+                $h: 12px;
                 color: $splitterBtnColorFg;
                 flex: 0 0 nth($splitterBtnD, 1);
                 font-size: $h * .9;
@@ -192,6 +192,7 @@
                 // Name of the pane
                 @include ellipsize();
                 display: block;
+                padding-right: nth($splitterBtnD, 2) + $interiorMargin; // Force label to ellipsis
                 text-transform: uppercase;
                 transform-origin: top left;
                 flex: 1 0 90%;

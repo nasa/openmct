@@ -69,7 +69,8 @@
 
         &:before {
             // Type icon
-            display: inline-block;
+            display: block;
+            flex: 0 0 auto;
             font-size: 1.3em;
             margin-right: $interiorMarginSm;
         }

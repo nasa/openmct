@@ -3,10 +3,8 @@
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
             <div class="l-shell__controls">
-                <div class="l-controls__elem c-button-set">
-                    <a class="c-icon-button icon-new-window" title="Open in a new browser tab"></a>
-                    <a class="c-icon-button icon-fullscreen-collapse" title="Enable full screen mode"></a>
-                </div>
+                <a class="c-icon-button icon-new-window" title="Open in a new browser tab"></a>
+                <a class="c-icon-button icon-fullscreen-collapse" title="Enable full screen mode"></a>
             </div>
             <div class="l-shell__app-logo">[ App Logo ]</div>
         </div>
@@ -149,7 +147,7 @@
         &__main-container {
             // Wrapper for main views
             flex: 1 1 100%;
-            font-size: 16px; // TEMP FOR LEGACY STYLING
+            font-size: 16px; // TEMP FOR LEGACY STYLING - TODO: REMOVE!
         }
 
         &__tree {
