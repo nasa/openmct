@@ -101,8 +101,6 @@ function mountComponent(openmct, configuration) {
             configuration: configuration
         }
     };
-    // let conductorParent = Document.querySelector('.js-conductor-holder');
-    // conductorParent.appendChild(conductorComponent.$mount().$el);
 }
 
 export default function (config){
