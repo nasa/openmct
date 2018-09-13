@@ -14,13 +14,24 @@
         </div>
 
         <div class="l-browse-bar__end">
-            <div class="l-browse-bar__view-switcher c-menu-button--w c-menu-button--menus-left">
-                <div class="c-menu-button icon-thumbs-strip"
+            <div class="l-browse-bar__view-switcher c-menu-button--w c-menu-button--menus-left"
+                 v-if="domainObjectViews.length > 1">
+                <div v-bind:class="['c-menu-button', currentView.cssClass]"
                      title="Switch view type"
-                     @click="toggleMenu">
-                    <span class="c-button__label">Grid</span>
+                     @click="toggleViewMenu">
+                    <span class="c-button__label">{{ currentView.name }}</span>
                 </div>
-                <MenuPlaceholder v-if="showMenu"></MenuPlaceholder>
+                <div class="c-menu" v-if="showViewMenu">
+                    <ul>
+                        <li v-for="(view,index) in domainObjectViews"
+                            @click="updateViewParams(view)"
+                            :key="index"
+                            :class="view.cssClass"
+                            :title="view.title">
+                            {{ view.name }}
+                        </li>
+                    </ul>
+                </div>
             </div>
             <!-- Action buttons -->
             <div class="l-browse-bar__actions">
@@ -38,31 +49,38 @@
     export default {
         inject: ['openmct'],
         props: {
-            showMenu: {
-                type: Boolean,
-                default: false
-            },
             editNameEnabled: {
                 type: Boolean,
                 default: false
             }
         },
         methods: {
-            toggleMenu: function () {
-                this.showMenu = !this.showMenu;
+            toggleViewMenu: function (event) {
+                event.stopPropagation();
+                this.showViewMenu = !this.showViewMenu;
             },
             updateName: function (event) {
                 if (event.target.innerText !== this.domainObject.name) {
-                    this.legacyObject.getCapability('mutation').mutate(function (model) {
-                        model.name = event.target.innerText
-                    });
+                    this.openmct.objects.mutate(this.domainObject, 'name', event.target.innerText);
+                }
+            },
+            updateViewParams: function (view) {
+                this.openmct.router.updateParams({view: view.key});
+            },
+            updateCurrentView: function (viewKey) {
+                viewKey = viewKey || this.openmct.router.getParams().view;
+                
+                if (viewKey) {
+                    this.currentView = this.domainObjectViews.find((view) => view.key === viewKey) || {};
                 }
             }
         },
         data: function () {
             return {
+                showViewMenu: false,
                 domainObject: {},
-                domainObjectModel: {}
+                domainObjectViews: [],
+                currentView: {}
             }
         },
         components: {
@@ -73,11 +91,22 @@
                 return this.openmct.types.get(this.domainObject.type).definition;
             }
         },
-        beforeMount: function () {
+        mounted: function () {
             this.$root.$on('main-view-domain-object', (domainObject) => {
                 this.legacyObject = domainObject;
                 this.domainObject = domainObject.useCapability('adapter');
+                this.domainObjectViews = domainObject.useCapability('view');
+
+                this.updateCurrentView();
             });
+
+            document.addEventListener('click', () => {
+                if (this.showViewMenu) {
+                    this.showViewMenu = false;
+                }
+            });
+
+            this.openmct.router.on('change:params', (params) => {this.updateCurrentView(params.view)});
         }
     }
 </script>
