@@ -12,7 +12,7 @@
 }
 
 // Global
-$fontBaseSize: 13px;
+$fontBaseSize: 12px;
 $colorBodyBg: #fcfcfc;
 $colorBodyFg: #666;
 $colorGenBg: #fff;
@@ -71,6 +71,7 @@ $sliderKnobR: 2px;
 $timeControllerToiLineColor: $colorBodyFg;
 $timeControllerToiLineColorHov: #0052b5;
 $colorTransLucBg: #666; // Used as a visual blocking element over variable backgrounds, like imagery
+$createBtnTextTransform: uppercase;
 
 // Foundation Colors
 $colorAlt1: #776ba2;

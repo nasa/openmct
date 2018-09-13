@@ -3,10 +3,8 @@
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
             <div class="l-shell__controls">
-                <div class="l-controls__elem c-button-set">
-                    <a class="c-icon-button icon-new-window" title="Open in a new browser tab"></a>
-                    <a class="c-icon-button icon-fullscreen-collapse" title="Enable full screen mode"></a>
-                </div>
+                <a class="c-icon-button icon-new-window" title="Open in a new browser tab"></a>
+                <a class="c-icon-button icon-fullscreen-collapse" title="Enable full screen mode"></a>
             </div>
             <div class="l-shell__app-logo">[ App Logo ]</div>
         </div>
@@ -24,8 +22,8 @@
                 </div>
             </pane>
             <pane class="l-shell__pane-main">
-                <browse-object class="l-shell__main-container">
-                </browse-object>
+                <MainViewBrowseBar class="l-shell__main-view-browse-bar"></MainViewBrowseBar>
+                <browse-object class="l-shell__main-container"></browse-object>
                 <mct-template template-key="conductor"
                               class="l-shell__time-conductor">
                 </mct-template>
@@ -149,7 +147,7 @@
         &__main-container {
             // Wrapper for main views
             flex: 1 1 100%;
-            font-size: 16px; // TEMP FOR LEGACY STYLING
+            font-size: 16px; // TEMP FOR LEGACY STYLING - TODO: REMOVE!
         }
 
         &__tree {
@@ -193,6 +191,7 @@
     import search from '../controls/search.vue';
     import multipane from '../controls/multipane.vue';
     import pane from '../controls/pane.vue';
+    import MainViewBrowseBar from '../controls/MainViewBrowseBar.vue';
 
     export default {
         components: {
@@ -205,7 +204,8 @@
             CreateButton,
             search,
             multipane,
-            pane
+            pane,
+            MainViewBrowseBar
         }
     }
 </script>

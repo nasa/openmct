@@ -1,8 +1,10 @@
-/**************************** BUTTONS */
+/******************************************************** BUTTONS */
 %c-control {
     @include userSelectNone();
+    $fs: 1em;
     display: inline-flex;
     align-items: center;
+    font-size: $fs;
     justify-content: start;
     cursor: pointer;
 
@@ -13,12 +15,13 @@
         flex: 0 0 auto;
     }
 
-    &:before {
+    &:after {
         font-size: 0.8em;
     }
 
-    &:after {
-        font-size: 0.6em;
+    [class*="__label"] {
+        line-height: $fs; // Remove effect on top and bottom padding
+        font-size: $fs;
     }
 
 }
@@ -56,10 +59,14 @@
 .c-icon-button {
     // A clickable element that just includes the icon, no background
     // Padding is included to facilitate a bigger hit area
+    // Make the icon bigger relative to its container
     @extend %c-control;
+    $pLR: 3px;
+    $pTB: 3px;
     border-radius: $controlCr;
     color: $colorKey;
-    padding: nth($btnPad, 1) floor(nth($btnPad, 2) * 0.8);
+    font-size: $fontBaseSize * 1.2;
+    padding: $pTB $pLR ;
 
     &:hover {
         background: rgba($colorKey, 0.2);
@@ -77,7 +84,7 @@
     // c-icon-buttons get grouped more closely together
     // When one set is adjacent to another, provides a divider between
 
-    display: flex;
+    display: inline-flex;
 
     > * {
         // Assume buttons are immediate descendants
@@ -118,6 +125,8 @@
 /********* Menu Buttons */
 // Always includes :after dropdown arrow
 // Optionally can include icon in :before
+// Default menu position is down and to the right
+// Apply c-menu-button--menus-up and c-menu-button--menus-left to --w wrapper element to modify menu position
 .c-menu-button {
     $m: $interiorMarginSm;
     @extend %c-button;
@@ -132,9 +141,106 @@
         margin-left: $m;
         opacity: 0.5;
     }
+
+    &--w {
+        // Wraps c-menu-button, contains button and menu
+        .c-menu {
+            // Default position
+            top: 100%; left: 0;
+        }
+
+        &.c-menu-button--menus-up {
+            .c-menu {
+                top: auto; bottom: 100%;
+            }
+        }
+
+        &.c-menu-button--menus-left {
+            .c-menu {
+                left: auto; right: 0;
+            }
+        }
+    }
 }
 
-/**************************** MENUS */
+/******************************************************** DISCLOSURE CONTROLS */
+/********* Disclosure Button */
+// Provides a downward arrow icon that when clicked displays a context menu
+// Always placed AFTER an element
+.c-disclosure-button {
+    @extend .c-icon-button;
+    margin-left: $interiorMarginSm;
+
+    &:before {
+        content: $glyph-icon-arrow-down;
+        font-family: symbolsfont;
+        font-size: 0.7em;
+    }
+}
+    /********* Disclosure Triangle */
+// Provides an arrow icon that when clicked expands an element to reveal its contents.
+// Used in tree items. Always placed BEFORE an element.
+.c-disclosure-triangle {
+    $d: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: $d;
+    position: relative;
+
+    &.is-enabled:before {
+        $s: .65;
+        content: $glyph-icon-arrow-right-equilateral;
+        display: block;
+        font-family: symbolsfont;
+        font-size: 1rem * $s;
+        position: absolute;
+        transform-origin: floor(($d / 2) * $s); // This is slightly better than 'center'
+        transition: transform 100ms ease-in-out;
+    }
+
+    &--expanded {
+        &:before {
+            transform: rotate(90deg);
+        }
+    }
+}
+
+
+/******************************************************** FORM ELEMENTS */
+/********* Inline inputs */
+// A text input or contenteditable element that indicates edit affordance on hover and looks like an input on focus
+.c-input-inline {
+    @include input-base();
+    border: 1px solid transparent;
+    display: block !important;
+    min-width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    overflow: hidden;
+    transition: all 250ms ease;
+    white-space: nowrap;
+
+    &:not(:focus) {
+        text-overflow: ellipsis;
+    }
+
+    &:hover,
+    &:focus {
+        padding-left: $inputTextPLeftRight;
+        padding-right: $inputTextPLeftRight;
+    }
+    &:hover {
+        border-color: rgba($colorBodyFg, 0.2);
+    }
+    &:focus {
+        @include nice-input($shdw: rgba(0, 0, 0, 0.6) 0 1px 3px);
+        border-color: transparent;
+    }
+}
+
+/******************************************************** MENUS */
 @mixin menuOuter() {
     border-radius: $basicCr;
     background: $colorMenuBg;
@@ -170,8 +276,6 @@
         }
     }
 }
-
-
 
 .c-menu {
     @include menuOuter();

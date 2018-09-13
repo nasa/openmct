@@ -114,6 +114,7 @@ export default {
                 this.templateMap["browseObject"]
             );
             document.title = object.getModel().name;
+            this.$root.$emit('main-view-domain-object', object);
             this.scheduleDigest();
         },
 
