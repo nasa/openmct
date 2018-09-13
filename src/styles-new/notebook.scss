@@ -86,20 +86,9 @@
 .c-ne {
     // A Notebook entry
     $p: $interiorMarginSm;
-    background-color: $discreteItemColorBg;
-    border-radius: $basicCr;
+    @include discreteItem();
     display: flex;
-    padding: $interiorMarginSm $interiorMarginLg;
-    //transition: $transOut;
-
-    > [class*="__"] {
-        //@include test(red);
-    }
-
-    //&:hover {
-    //    transition: $transIn;
-    //    background-color: rgba($colorBodyFg, 0.2);
-    //}
+    padding: $interiorMarginSm 0 $interiorMarginSm $interiorMargin;
 
     &__time,
     &__text,
@@ -110,17 +99,21 @@
 
     &__time,
     &__embed__time {
-        opacity: 0.6;
+        opacity: 0.7;
+        font-size: 0.9em;
     }
 
     &__time {
         flex: 0 0 auto;
-        text-align: right;
     }
 
     &__content {
         flex: 1 1 auto;
         margin-left: $interiorMarginLg;
+
+       > [class*="__"] + [class*="__"] {
+            margin-top: $interiorMarginSm;
+       }
     }
 
     &__text {
@@ -132,20 +125,14 @@
         flex-wrap: wrap;
 
         > [class*="__embed"] {
-            margin: 0 $interiorMargin $interiorMargin 0;
+            margin: 0 $interiorMarginSm $interiorMarginSm 0;
         }
-    }
-
-    .c-input-inline:hover {
-        // Need a little extra oomph on hover on this element
-        background: $colorBodyBg;
     }
 }
 
 /****************************** EMBEDS */
 .c-ne__embed {
-    border: 1px solid $discreteItemInnerElemColorBg;
-    border-radius: $controlCr;
+    @include discreteItemInnerElem();
     display: inline-flex;
     flex: 0 0 auto;
     padding: $interiorMargin;
@@ -155,7 +142,6 @@
     }
 
     &__info {
-        // > name > link
         display: flex;
         flex-direction: column;
 
@@ -182,7 +168,6 @@
     &__context-available {
         font-size: 0.7em;
         margin-left: $interiorMarginSm;
-
     }
 
     &__snap-thumb {
