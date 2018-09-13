@@ -293,3 +293,8 @@ $colorLoadingBg: rgba($colorLoadingFg, 0.1);
 // Transitions
 $transIn: all 50ms ease-in;
 $transOut: all 250ms ease-out;
+
+// Discrete items, like Notebook entries, Widget rules, plot bg
+$discreteItemColorBg: rgba($colorBodyFg, 0.1);
+$discreteItemColorBgHover: rgba($colorBodyFg, 0.2);
+$discreteItemInnerElemColorBg: $colorBodyBg;

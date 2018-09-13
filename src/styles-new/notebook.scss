@@ -13,8 +13,9 @@
     bottom: 0px;
     left: 0px;
 
-    > [class*="__"] + [class*="__"] { margin-top: $interiorMargin; }
-
+    > [class*="__"] + [class*="__"] {
+        margin-top: $interiorMargin;
+    }
 
     &__head,
     &__controls,
@@ -22,6 +23,11 @@
     &__entries {
         display: flex;
         flex-wrap: nowrap;
+    }
+
+    &__head,
+    &__drag-area {
+        flex: 0 0 auto;
     }
 
     &__head {
@@ -38,12 +44,12 @@
         border: 1px dashed rgba($colorKey, 0.7);
         border-radius: $controlCr;
         color: rgba($colorBodyFg, 0.7);
-
-
         padding: 10px;
         cursor: pointer;
 
-        &:before { margin-right: 7px !important; }
+        &:before {
+            margin-right: 7px !important;
+        }
 
         [class*="__label"] {
             font-style: italic;
@@ -69,36 +75,128 @@
         overflow-x: hidden;
         overflow-y: scroll;
 
+        [class*="__entry"] + [class*="__entry"] {
+            margin-top: $interiorMarginSm;
+        }
+
+    }
+}
+
+/****************************** ENTRIES */
+.c-ne {
+    // A Notebook entry
+    $p: $interiorMarginSm;
+    background-color: $discreteItemColorBg;
+    border-radius: $basicCr;
+    display: flex;
+    padding: $interiorMarginSm $interiorMarginLg;
+    //transition: $transOut;
+
+    > [class*="__"] {
+        //@include test(red);
     }
 
+    //&:hover {
+    //    transition: $transIn;
+    //    background-color: rgba($colorBodyFg, 0.2);
+    //}
 
+    &__time,
+    &__text,
+    &__local-controls {
+        padding-top: $p;
+        padding-bottom: $p;
+    }
 
+    &__time,
+    &__embed__time {
+        opacity: 0.6;
+    }
 
+    &__time {
+        flex: 0 0 auto;
+        text-align: right;
+    }
 
+    &__content {
+        flex: 1 1 auto;
+        margin-left: $interiorMarginLg;
+    }
 
+    &__text {
+        min-height: 24px; // Needed in Firefox when field is blank
+        white-space: pre-wrap;
+    }
 
+    &__embeds {
+        flex-wrap: wrap;
 
+        > [class*="__embed"] {
+            margin: 0 $interiorMargin $interiorMargin 0;
+        }
+    }
 
+    .c-input-inline:hover {
+        // Need a little extra oomph on hover on this element
+        background: $colorBodyBg;
+    }
+}
 
+/****************************** EMBEDS */
+.c-ne__embed {
+    border: 1px solid $discreteItemInnerElemColorBg;
+    border-radius: $controlCr;
+    display: inline-flex;
+    flex: 0 0 auto;
+    padding: $interiorMargin;
 
+    [class*="__"] + [class*="__"] {
+        margin-left: $interiorMargin;
+    }
 
+    &__info {
+        // > name > link
+        display: flex;
+        flex-direction: column;
 
+        a {
+            color: $colorKey;
+        }
+    }
 
+    &__name,
+    &__link {
+        // Holds __link and __context-available
+        display: flex;
+        align-items: center;
+    }
 
+    &__link {
+        &:before {
+            display: block;
+            font-size: 0.85em;
+            margin-right: $interiorMarginSm;
+        }
+    }
 
+    &__context-available {
+        font-size: 0.7em;
+        margin-left: $interiorMarginSm;
 
+    }
 
+    &__snap-thumb {
+        $d: 50px;
+        border: 1px solid $colorInteriorBorder;
+        cursor: pointer;
+        width: $d;
+        height: $d;
+        border-radius: 5px;
+        overflow: hidden;
 
-
-
-
-
-
-
-
-
-
-
-
-
+        img {
+            height: 100%;
+            width: 100%;
+        }
+    }
 }
