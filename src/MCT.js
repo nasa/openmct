@@ -37,6 +37,7 @@ define([
     './ui/router/ApplicationRouter',
     '../platform/framework/src/Main',
     './styles-new/core.scss',
+    './styles-new/notebook.scss',
     './ui/components/layout/Layout.vue',
     'vue'
 ], function (
@@ -56,6 +57,7 @@ define([
     ApplicationRouter,
     Main,
     coreStyles,
+    NotebookStyles,
     Layout,
     Vue
 ) {

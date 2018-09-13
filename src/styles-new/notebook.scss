@@ -1,0 +1,104 @@
+/*********************************************** NOTEBOOK */
+@import "sass-base.scss";
+
+
+.c-notebook {
+    //@include test(orange);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+
+    > [class*="__"] + [class*="__"] { margin-top: $interiorMargin; }
+
+
+    &__head,
+    &__controls,
+    &__drag-area,
+    &__entries {
+        display: flex;
+        flex-wrap: nowrap;
+    }
+
+    &__head {
+        [class*="__"] + [class*="__"] {
+            margin-left: $interiorMargin;
+        }
+
+        > [class*="__"]:first-of-type {
+            flex: 1 1 auto;
+        }
+    }
+
+    &__drag-area {
+        border: 1px dashed rgba($colorKey, 0.7);
+        border-radius: $controlCr;
+        color: rgba($colorBodyFg, 0.7);
+
+
+        padding: 10px;
+        cursor: pointer;
+
+        &:before { margin-right: 7px !important; }
+
+        [class*="__label"] {
+            font-style: italic;
+            @include ellipsize();
+        }
+
+        &:hover {
+            background: rgba($colorKey, 0.2);
+            color: $colorBodyFg;
+        }
+
+        &.drag-active,
+        &.is-active {
+            // Not currently working
+            border-color: $colorKey;
+        }
+    }
+
+    &__entries {
+        flex-direction: column;
+        flex: 1 1 auto;
+        padding-right: $interiorMarginSm;
+        overflow-x: hidden;
+        overflow-y: scroll;
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
