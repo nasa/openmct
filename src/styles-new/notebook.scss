@@ -41,6 +41,7 @@
     }
 
     &__drag-area {
+        background: rgba($colorKey, 0.1);
         border: 1px dashed rgba($colorKey, 0.7);
         border-radius: $controlCr;
         color: rgba($colorBodyFg, 0.7);
@@ -131,6 +132,27 @@
 }
 
 /****************************** EMBEDS */
+@mixin snapThumb() {
+    // LEGACY: TODO: refactor when .snap-thumb in New Entry dialog is refactored
+    $d: 50px;
+    border: 1px solid $colorInteriorBorder;
+    cursor: pointer;
+    width: $d;
+    height: $d;
+    border-radius: 5px;
+    overflow: hidden;
+
+    img {
+        height: 100%;
+        width: 100%;
+    }
+}
+
+.snap-thumb {
+    // LEGACY,
+    @include snapThumb();
+}
+
 .c-ne__embed {
     @include discreteItemInnerElem();
     display: inline-flex;
@@ -171,17 +193,143 @@
     }
 
     &__snap-thumb {
-        $d: 50px;
-        border: 1px solid $colorInteriorBorder;
-        cursor: pointer;
-        width: $d;
-        height: $d;
-        border-radius: 5px;
-        overflow: hidden;
+        @include snapThumb();
+    }
+}
+/****************************** SNAPSHOTTING */
+// LEGACY: TODO: refactor these names
+.t-contents,
+.snap-annotation {
+    overflow: hidden;
+}
 
-        img {
-            height: 100%;
-            width: 100%;
+.s-status-taking-snapshot,
+.overlay.snapshot {
+    // Handle overflow-y issues with tables and html2canvas
+    .l-sticky-headers .l-tabular-body { overflow: auto; }
+}
+
+/****************************** PAINTERRO OVERRIDES */
+.annotation-dialog .abs.editor {
+    border-radius: 0;
+}
+
+#snap-annotation {
+    $m: $interiorMargin;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: $m; right: 0; bottom: $m; left: 0; // LEGACY, deal with .editor border-radius clipping stuff
+}
+
+#snap-annotation-wrapper,
+#snap-annotation-bar {
+    position: relative;
+    top: auto; right: auto; bottom: auto; left: auto;
+}
+
+#snap-annotation-wrapper {
+    background: rgba($colorBodyFg, 0.1);
+    border: 1px solid $colorInteriorBorder;
+    order: 2;
+    flex: 10 0 auto;
+}
+
+#snap-annotation-bar {
+    // Holds tool buttons, color selectors, etc.
+    $h: 22px;
+    $fs: 0.8rem;
+
+    order: 1;
+    flex: 0 0 auto;
+    height: auto;
+    background-color: transparent !important;
+    margin-bottom: $interiorMargin;
+
+    > div > span {
+        display: flex;
+        align-items: center;
+        font-size: $fs;
+    }
+
+    > div,
+    > div > span,
+    .ptro-icon-btn,
+    .ptro-named-btn,
+    .ptro-color-btn,
+    .ptro-bordered-btn,
+    .ptro-tool-ctl-name,
+    .ptro-color-btn,
+    .tool-controls,
+    .ptro-input {
+        // Lot of resets for crappy CSS in Painterro
+        &:first-child {
+            margin-left: 0 !important;
         }
+        display: inline-block;
+        font-family: inherit;
+        font-size: $fs !important;
+        height: $h !important;
+        margin: 0 0 0 5px;
+        position: relative;
+        width: auto !important;
+        line-height: $h !important;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        left: auto;
+        vertical-align: top;
+    }
+
+    .ptro-tool-ctl-name {
+        border-radius: 0;
+        background: none;
+        top: auto;
+        font-family: inherit;
+        padding: 0;
+    }
+
+    .ptro-color-btn {
+        width: $h !important;
+    }
+
+    .ptro-color-control,
+    .ptro-icon-btn,
+    .ptro-named-btn {
+        // Buttons in toolbar. Why the f* they're named like this is a mystery
+        background-color: $colorBtnBg;
+        color: $colorBtnFg;
+        padding: 0 $interiorMargin;
+
+        &:hover {
+            background: $colorBtnBgHov;
+            color: $colorBtnFgHov;
+        }
+
+        i {
+            display: contents;
+            font-size: $fs * 1.2;
+            line-height: inherit;
+        }
+    }
+
+    .tool-controls {
+        //font-size: 0.8rem !important;
+    }
+
+    .ptro-color-active-control {
+        background: $colorBtnMajorBg  !important;
+        color: $colorBtnMajorFg !important;
+    }
+
+    .ptro-info,
+    .ptro-btn-color-checkers-bar,
+    *[title="Font name"],
+    *[title="Stroke color"],
+    *[title="Stroke width"],
+    *[data-id="fontName"],
+    *[data-id="fontStrokeSize"],
+    *[data-id="stroke"] {
+        display: none;
     }
 }

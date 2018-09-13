@@ -10,7 +10,6 @@
             <a class="c-search__clear-input icon-x-in-circle"
                v-on:click="entrySearch = ''; search($event)"></a>
         </div>
-
         <div class="c-notebook__controls">
             <div class="select c-notebook__controls__time">
                 <select v-model="showTime">
@@ -28,15 +27,11 @@
             </div>
         </div>
     </div>
-
-    <!--  drag area -->
     <div class="c-notebook__drag-area icon-plus"
          v-on:click="newEntry($event)"
          id="newEntry" mct-entry-dnd>
         <span class="c-notebook__drag-area__label">To start a new entry, click here or drag and drop any object</span>
     </div>
-
-    <!-- entries -->
     <div class="c-notebook__entries" ng-mouseover="handleActive()">
         <ul>
            <notebook-entry

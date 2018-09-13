@@ -47,8 +47,9 @@
 }
 
 /********* Buttons */
-// Optionally can include icon in :before
-.c-button {
+// Optionally can include icon in :before via markup
+.c-button,
+button {
     @extend %c-button;
 }
 
