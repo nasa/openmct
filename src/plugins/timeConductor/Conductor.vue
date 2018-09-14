@@ -66,7 +66,8 @@
 
         <!-- Holds time system and session selectors, and zoom control -->
         <div class="l-time-conductor-controls l-row-elem l-flex-row flex-elem">
-            <ConductorOptions />
+            <ConductorMode></ConductorMode>
+            <ConductorTimeSystem></ConductorTimeSystem>
             <!-- Zoom control -->
             <div v-if="zoom"
                  class="l-time-conductor-zoom-w grows flex-elem l-flex-row">
@@ -89,10 +90,15 @@
 </style>
 
 <script>
-import ConductorOptions from './ConductorOptions.vue';
+import ConductorMode from './ConductorMode.vue';
+import ConductorTimeSystem from './ConductorTimeSystem.vue';
 
 export default {
     inject: ['openmct', 'configuration'],
+    components: {
+        ConductorMode,
+        ConductorTimeSystem
+    },
     data: function () {
         let bounds = this.openmct.time.bounds();
         let offsets = this.openmct.time.clockOffsets();
