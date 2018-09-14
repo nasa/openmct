@@ -275,20 +275,13 @@ define([
             }.bind(this)
         });
 
+        // TODO: remove with legacy types.
         this.types.listKeys().forEach(function (typeKey) {
             var type = this.types.get(typeKey);
             var legacyDefinition = type.toLegacyDefinition();
             legacyDefinition.key = typeKey;
             this.legacyExtension('types', legacyDefinition);
         }.bind(this));
-
-        // TODO: move this to adapter bundle.
-        this.legacyExtension('runs', {
-            depends: ['types[]'],
-            implementation: (types) => {
-                this.types.importLegacyTypes(types);
-            }
-        });
 
         legacyRegistry.register('adapter', this.legacyBundle);
         legacyRegistry.enable('adapter');

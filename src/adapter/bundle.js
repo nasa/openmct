@@ -34,6 +34,7 @@ define([
     './runs/TimeSettingsURLHandler',
     './runs/TypeDeprecationChecker',
     './runs/LegacyTelemetryProvider',
+    './runs/RegisterLegacyTypes',
     './services/LegacyObjectAPIInterceptor',
     './views/installLegacyViews'
 ], function (
@@ -50,6 +51,7 @@ define([
     TimeSettingsURLHandler,
     TypeDeprecationChecker,
     LegacyTelemetryProvider,
+    RegisterLegacyTypes,
     LegacyObjectAPIInterceptor,
     installLegacyViews
 ) {
@@ -158,6 +160,13 @@ define([
                         "openmct",
                         "views[]",
                         "instantiate"
+                    ]
+                },
+                {
+                    implementation: RegisterLegacyTypes,
+                    depends: [
+                        "types[]",
+                        "openmct"
                     ]
                 }
             ],

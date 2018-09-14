@@ -5,8 +5,7 @@ define([
 ) {
 
     function LegacyViewProvider(legacyView, openmct, convertToLegacyObject) {
-        console.warn(`DEPRECATION WARNING: Please reimplement ${legacyView.key}
-from ${legacyView.bundle.path} using the new View APIs.  Legacy Views are being deprecated.`);
+        console.warn(`DEPRECATION WARNING: Migrate ${legacyView.key} from ${legacyView.bundle.path} to use the new View APIs.  Legacy view support will be removed soon.`);
         return {
             key: legacyView.key,
             name: legacyView.name,
@@ -14,6 +13,9 @@ from ${legacyView.bundle.path} using the new View APIs.  Legacy Views are being 
             description: legacyView.description,
             editable: legacyView.editable,
             canView: function (domainObject) {
+                if (!domainObject || !domainObject.identifier) {
+                    return false;
+                }
                 if (legacyView.type) {
                     return domainObject.type === legacyView.type;
                 }
