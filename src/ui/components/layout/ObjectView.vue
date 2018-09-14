@@ -1,7 +1,5 @@
 <template>
     <div>
-        <div class="abs l-flex-col ng-scope" ref="mountPoint">
-        </div>
     </div>
 </template>
 
@@ -18,7 +16,7 @@ export default {
         clear() {
             if (this.currentView) {
                 this.currentView.destroy();
-                this.$refs.mountPoint.innerHTML = '';
+                this.$el.innerHTML = '';
             }
             delete this.viewContainer;
             delete this.currentView;
@@ -27,7 +25,7 @@ export default {
             this.clear();
             this.currentObject = object;
             this.viewContainer = document.createElement('div');
-            this.$refs.mountPoint.append(this.viewContainer);
+            this.$el.append(this.viewContainer);
             this.currentView = provider.view(object);
             this.currentView.show(this.viewContainer);
         }
