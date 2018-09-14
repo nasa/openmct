@@ -22,8 +22,12 @@
                 </div>
             </pane>
             <pane class="l-shell__pane-main">
-                <MainViewBrowseBar class="l-shell__main-view-browse-bar"></MainViewBrowseBar>
-                <browse-object class="l-shell__main-container"></browse-object>
+                <browse-bar class="l-shell__main-view-browse-bar"
+                                   ref="browseBar">
+                </browse-bar>
+                <object-view class="l-shell__main-container"
+                             ref="browseObject">
+                </object-view>
                 <mct-template template-key="conductor"
                               class="l-shell__time-conductor">
                 </mct-template>
@@ -184,28 +188,28 @@
     import Inspector from '../inspector/Inspector.vue';
     import MctStatus from './MctStatus.vue';
     import MctTree from './mct-tree.vue';
-    import BrowseObject from './BrowseObject.vue';
+    import ObjectView from './ObjectView.vue';
     import MctTemplate from '../legacy/mct-template.vue';
     import ContextMenu from '../controls/ContextMenu.vue';
     import CreateButton from '../controls/CreateButton.vue';
     import search from '../controls/search.vue';
     import multipane from '../controls/multipane.vue';
     import pane from '../controls/pane.vue';
-    import MainViewBrowseBar from '../controls/MainViewBrowseBar.vue';
+    import BrowseBar from './BrowseBar.vue';
 
     export default {
         components: {
             Inspector,
             MctStatus,
             MctTree,
-            BrowseObject,
+            ObjectView,
             'mct-template': MctTemplate,
             ContextMenu,
             CreateButton,
             search,
             multipane,
             pane,
-            MainViewBrowseBar
+            BrowseBar
         }
     }
 </script>

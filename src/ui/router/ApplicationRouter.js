@@ -101,7 +101,7 @@ class ApplicationRouter extends EventEmitter {
     doPathChange(newPath, oldPath, newLocation) {
         let route = this.routes.filter(r => r.matcher.test(newPath))[0];
         if (route) {
-            route.callback(newPath, route.matcher.exec(newPath));
+            route.callback(newPath, route.matcher.exec(newPath), this.currentLocation.params);
         }
         this.emit('change:path', newPath, oldPath);
     }
