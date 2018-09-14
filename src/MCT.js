@@ -290,18 +290,6 @@ define([
             }
         });
 
-        this.objectViews.getAllProviders().forEach(function (p) {
-            this.legacyExtension('views', {
-                key: p.key,
-                provider: p,
-                name: p.name,
-                cssClass: p.cssClass,
-                description: p.description,
-                editable: p.editable,
-                template: '<mct-view mct-provider-key="' + p.key + '"/>'
-            });
-        }, this);
-
         legacyRegistry.register('adapter', this.legacyBundle);
         legacyRegistry.enable('adapter');
 
@@ -325,8 +313,6 @@ define([
                 // OpenMCT Object provider doesn't operate properly unless
                 // something has depended upon objectService.  Cool, right?
                 this.$injector.get('objectService');
-
-                console.log('Rendering app layout.');
 
                 var appLayout = new Vue({
                     mixins: [Layout.default],

@@ -34,7 +34,8 @@ define([
     './runs/TimeSettingsURLHandler',
     './runs/TypeDeprecationChecker',
     './runs/LegacyTelemetryProvider',
-    './services/LegacyObjectAPIInterceptor'
+    './services/LegacyObjectAPIInterceptor',
+    './views/installLegacyViews'
 ], function (
     legacyRegistry,
     ActionDialogDecorator,
@@ -49,7 +50,8 @@ define([
     TimeSettingsURLHandler,
     TypeDeprecationChecker,
     LegacyTelemetryProvider,
-    LegacyObjectAPIInterceptor
+    LegacyObjectAPIInterceptor,
+    installLegacyViews
 ) {
     legacyRegistry.register('src/adapter', {
         "extensions": {
@@ -147,6 +149,14 @@ define([
                     implementation: LegacyTelemetryProvider,
                     depends: [
                         "openmct",
+                        "instantiate"
+                    ]
+                },
+                {
+                    implementation: installLegacyViews,
+                    depends: [
+                        "openmct",
+                        "views[]",
                         "instantiate"
                     ]
                 }
