@@ -75,10 +75,9 @@ export default {
             this.showMenu = !this.showMenu;
 
             if (this.showMenu) {
-                document.addEventListener('click', this.toggleMenu);
-                event.stopPropagation();
+                document.addEventListener('click', this.toggleMenu, true);
             } else {
-                document.removeEventListener('click', this.toggleMenu);
+                document.removeEventListener('click', this.toggleMenu, true);
             }
         },
 

@@ -126,37 +126,43 @@ export default {
 
         setOption(option) {
             this.selectedClock = option;
-            let configuration = this.getConfigForClockAndTimeSystem(this.openmct.time.clock(), this.openmct.time.timeSystem());
+            let configuration = this.getConfigForClock(this.openmct.time.clock(), this.openmct.time.timeSystem());
             if (configuration === undefined) {
-                configuration = this.getDefaultConfigClock(option.clock);
-                this.openmct.time.timeSystem(timeSystem);
-                configuration = this.getConfigForClockAndTimeSystem(this.openmct.time.clock(), this.openmct.time.timeSystem());
+                configuration = this.getConfigClock(option.clock);
+                this.openmct.time.timeSystem(configuration.timeSystem);
             }
             this.openmct.time.clock(option.clock);
         },
 
-        getConfigForClockAndTimeSystem(clock, timeSystem) {
-            return this.configuration.menuOptions.filter(menuOption => {
+        getConfigForClock(clock, timeSystem) {
+            let matchingConfigs = this.configuration.menuOptions.filter(menuOption => {
                 return menuOption.clock === clock.key && 
-                    menuOption.timeSystem === timeSystem.key;
-            })
+                    (timeSystem!== undefined && menuOption.timeSystem === timeSystem.key);
+            });
+            return matchingConfigs && matchingConfigs[0];
+        },
+
+        setViewFromClock(clock) {
+            this.selectedClock = Object.create(clock);
         },
 
         toggleMenu(event) {
             this.showMenu = !this.showMenu;
 
             if (this.showMenu) {
-                document.addEventListener('click', this.toggleMenu);
-                event.stopPropagation();
+                document.addEventListener('click', this.toggleMenu, true);
             } else {
-                document.removeEventListener('click', this.toggleMenu);
+                document.removeEventListener('click', this.toggleMenu, true);
             }
         },
     },
     mounted: function () {
         this.loadClocksFromConfiguration();
+
+        this.openmct.time.on('clock', this.setViewFromClock);
     },
     destroyed: function () {
+        this.openmct.time.off('clock', this.setViewFromClock);
     }
 
 }
