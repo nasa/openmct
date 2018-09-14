@@ -34,7 +34,8 @@ define([
     './plot/plugin',
     './telemetryTable/plugin',
     './staticRootPlugin/plugin',
-    './notebook/plugin'
+    './notebook/plugin',
+    './layout/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -49,7 +50,8 @@ define([
     PlotPlugin,
     TelemetryTablePlugin,
     StaticRootPlugin,
-    Notebook
+    Notebook,
+    LayoutPlugin
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -159,6 +161,7 @@ define([
     plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicator = URLIndicatorPlugin;
     plugins.Notebook = Notebook;
+    plugins.Layout = LayoutPlugin.default;
 
     return plugins;
 });

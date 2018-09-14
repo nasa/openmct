@@ -46,7 +46,7 @@ webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 webpackConfig.plugins.push(function() { this.plugin('watch-run', function(watching, callback) { console.log('Begin compile at ' + new Date()); callback(); }) });
 
 webpackConfig.entry.openmct = [
-    'webpack-hot-middleware/client',
+    'webpack-hot-middleware/client?reload=true',
     webpackConfig.entry.openmct
 ];
 
