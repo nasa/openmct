@@ -7,10 +7,32 @@
 </style>
 
 <script>
+import _ from "lodash"
+
 export default {
     inject: ["openmct"],
+    props: {
+        view: String,
+        object: Object
+    },
     destroyed() {
         this.clear();
+    },
+    watch: {
+        view(newView, oldView) {
+            this.viewKey = newView;
+            this.debounceUpdateView();
+        },
+        object(newObject, oldObject) {
+            this.currentObject = newObject;
+            this.debounceUpdateView();
+        }
+    },
+    created() {
+        this.debounceUpdateView = _.debounce(this.updateView, 10);
+    },
+    mounted() {
+        this.updateView();
     },
     methods: {
         clear() {
@@ -21,13 +43,27 @@ export default {
             delete this.viewContainer;
             delete this.currentView;
         },
-        show(object, provider) {
+        updateView() {
             this.clear();
-            this.currentObject = object;
+            if (!this.currentObject) {
+                return;
+            }
             this.viewContainer = document.createElement('div');
             this.$el.append(this.viewContainer);
-            this.currentView = provider.view(object);
+            let provider = this.openmct.objectViews.getByProviderKey(this.viewKey);
+            if (!provider) {
+                provider = this.openmct.objectViews.get(this.currentObject)[0];
+                if (!provider) {
+                    return;
+                }
+            }
+            this.currentView = provider.view(this.currentObject);
             this.currentView.show(this.viewContainer);
+        },
+        show(object, viewKey) {
+            this.currentObject = object;
+            this.viewKey = viewKey;
+            this.updateView();
         }
     }
 }

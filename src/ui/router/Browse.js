@@ -10,7 +10,7 @@ define([
 
 
         function viewObject(object, viewProvider) {
-            openmct.layout.$refs.browseObject.show(object, viewProvider);
+            openmct.layout.$refs.browseObject.show(object, viewProvider.key);
             openmct.layout.$refs.browseBar.domainObject = object;
             openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
         };
