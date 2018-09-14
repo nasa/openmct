@@ -67,6 +67,10 @@
             // Not currently working
             border-color: $colorKey;
         }
+
+        body.mobile & {
+            display: none;
+        }
     }
 
     &__entries {
@@ -89,7 +93,8 @@
     $p: $interiorMarginSm;
     @include discreteItem();
     display: flex;
-    padding: $interiorMarginSm 0 $interiorMarginSm $interiorMargin;
+    flex-wrap: wrap;
+    padding: $interiorMarginSm $interiorMargin;
 
     &__time,
     &__text,
@@ -101,16 +106,20 @@
     &__time,
     &__embed__time {
         opacity: 0.7;
-        font-size: 0.9em;
     }
 
     &__time {
-        flex: 0 0 auto;
+        flex: 0 1 auto;
+        min-width: 130px;
+        margin-right: $interiorMarginLg;
+
+        * {
+            white-space: nowrap;
+        }
     }
 
     &__content {
         flex: 1 1 auto;
-        margin-left: $interiorMarginLg;
 
        > [class*="__"] + [class*="__"] {
             margin-top: $interiorMarginSm;
@@ -120,6 +129,14 @@
     &__text {
         min-height: 24px; // Needed in Firefox when field is blank
         white-space: pre-wrap;
+
+        &.is-blank-notebook-entry {
+            &:not(:focus):before {
+                content: 'Blank entry';
+                font-style: italic;
+                opacity: 0.5;
+            }
+        }
     }
 
     &__embeds {
@@ -313,10 +330,6 @@
         }
     }
 
-    .tool-controls {
-        //font-size: 0.8rem !important;
-    }
-
     .ptro-color-active-control {
         background: $colorBtnMajorBg  !important;
         color: $colorBtnMajorFg !important;
@@ -331,5 +344,35 @@
     *[data-id="fontStrokeSize"],
     *[data-id="stroke"] {
         display: none;
+    }
+}
+
+/****************************** MOBILE */
+body.mobile {
+    .c-notebook__drag-area { display: none; }
+    .c-notebook__entry {
+        [class*="local-controls"] {
+            display: none;
+        }
+    }
+
+    &.phone.portrait {
+        .c-notebook__head,
+        .c-notebook__entry {
+            flex-direction: column;
+
+            > [class*="__"] + [class*="__"] {
+                margin-left: 0;
+                margin-top: $interiorMargin;
+            }
+        }
+
+        .c-notebook__entry {
+            [class*="text"] {
+                min-height: 0;
+                padding: 0;
+                pointer-events: none;
+            }
+        }
     }
 }

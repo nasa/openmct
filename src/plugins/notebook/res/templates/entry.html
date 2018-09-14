@@ -3,8 +3,8 @@
     v-on:dragover="dragoverOnEntry"
     >
     <div class="c-ne__time">
-        <div>{{formatTime(entry.createdOn, 'YYYY-MM-DD')}}</div>
-        <div>{{formatTime(entry.createdOn, 'HH:mm:ss')}}</div>
+        <span>{{formatTime(entry.createdOn, 'YYYY-MM-DD')}}</span>
+        <span>{{formatTime(entry.createdOn, 'HH:mm:ss')}}</span>
     </div>
     <div class="c-ne__content">
         <!-- TODO: fix styling for c-input-inline when SCSS is merged and remove s-input-inline class here -->
