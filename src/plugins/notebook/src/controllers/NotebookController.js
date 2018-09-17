@@ -26,7 +26,8 @@ define([
     './EmbedController',
     '../../res/templates/notebook.html',
     '../../res/templates/entry.html',
-    '../../res/templates/embed.html'
+    '../../res/templates/embed.html',
+    '../../../../ui/components/controls/search.vue'
 ],
 function (
     Vue,
@@ -34,7 +35,8 @@ function (
     EmbedController,
     NotebookTemplate,
     EntryTemplate,
-    EmbedTemplate
+    EmbedTemplate,
+    search
 ) {
 
     function NotebookController(openmct, domainObject) {
@@ -79,7 +81,8 @@ function (
         var notebookVue = Vue.extend({
             template: NotebookTemplate,
             components: {
-                'notebook-entry': entryComponent
+                'notebook-entry': entryComponent,
+                'search': search.default
             },
             data: function () {
                 return {
