@@ -1,9 +1,10 @@
 <template>
-    <div>
-    </div>
 </template>
 
 <style lang="scss">
+    .l-object-view {
+        display: contents;
+    }
 </style>
 
 <script>
@@ -49,6 +50,7 @@ export default {
                 return;
             }
             this.viewContainer = document.createElement('div');
+            this.viewContainer.classList.add('l-object-view');
             this.$el.append(this.viewContainer);
             let provider = this.openmct.objectViews.getByProviderKey(this.viewKey);
             if (!provider) {

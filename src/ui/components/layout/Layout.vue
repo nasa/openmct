@@ -151,7 +151,7 @@
         &__main-container {
             // Wrapper for main views
             flex: 1 1 100%;
-            font-size: 16px; // TEMP FOR LEGACY STYLING - TODO: REMOVE!
+            //font-size: 16px; // TEMP FOR LEGACY STYLING
         }
 
         &__tree {
