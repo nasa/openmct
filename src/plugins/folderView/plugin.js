@@ -21,13 +21,16 @@
  *****************************************************************************/
 
 define([
-    './FolderGridView'
+    './FolderGridView',
+    './FolderListView'
 ], function (
-    FolderGridView
+    FolderGridView,
+    FolderListView
 ) {
     return function plugin() {
         return function install(openmct) {
             openmct.objectViews.addProvider(new FolderGridView(openmct));
+            openmct.objectViews.addProvider(new FolderListView(openmct));
         };
     };
 });

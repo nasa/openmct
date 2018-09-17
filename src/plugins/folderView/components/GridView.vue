@@ -25,7 +25,7 @@
                     <div class='details'>
                         <span>{{item.type.name}}</span>
                         <span v-if="item.model.composition !== undefined">
-                            - {{item.model.composition.length}} Item<span v-if="item.model.composition.length > 1">s</span>
+                            - {{item.model.composition.length}} Item<span v-if="item.model.composition.length !== 1">s</span>
                         </span>
                     </div>
                 </div>
