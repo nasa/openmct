@@ -1,15 +1,9 @@
 <div class="c-notebook">
     <div class="c-notebook__head">
-        <!-- TODO: use search component here -->
-        <div class="c-notebook__search c-search"
-             :class="{ 'is-active': entrySearch }">
-            <input class="c-search__input" type="search"
-                   type="text" tabindex="10000"
-                   v-model="entrySearch"
-                   v-on:keyup="search($event)"/>
-            <a class="c-search__clear-input icon-x-in-circle"
-               v-on:click="entrySearch = ''; search($event)"></a>
-        </div>
+        <search class="c-notebook__search"
+                v-model="entrySearch"
+                v-on:input="search($event)"
+                v-on:clear="entrySearch = ''; search($event)"></search>
         <div class="c-notebook__controls">
             <div class="select c-notebook__controls__time">
                 <select v-model="showTime">
