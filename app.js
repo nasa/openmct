@@ -16,7 +16,7 @@ const request = require('request');
 
 // Defaults
 options.port = options.port || options.p || 8080;
-options.host = options.host || options.h || 'localhost'
+options.host = options.host || options.h || 'localhost';
 options.directory = options.directory || options.D || '.';
 
 // Show command line options
@@ -60,12 +60,12 @@ app.use(require('webpack-dev-middleware')(
     }
 ));
 
-app.use(require('webpack-hot-middleware')(
-    compiler,
-    {
+// app.use(require('webpack-hot-middleware')(
+//     compiler,
+//     {
 
-    }
-));
+//     }
+// ));
 
 // Expose index.html for development users.
 app.get('/', function (req, res) {
