@@ -1,13 +1,16 @@
 <template>
     <div class="frame t-frame-outer child-frame panel s-selectable s-moveable s-hover-border"
-         :style="frameStyle"
-         :class="{ 's-drilled-in': drilledIn }">
+         :style="item.style"
+         :class="{ 
+            's-drilled-in': drilledIn,
+            'no-frame': !item.hasFrame 
+        }">
         
         <div class="t-rep-frame holder contents abs">
             <div class="frame frame-template t-frame-inner abs has-local-controls">
-                <!-- <div class="abs object-browse-bar l-flex-row">
+                <div class="abs object-browse-bar l-flex-row">
                         [ Object Header Frame ]
-                </div>   -->
+                </div>
                 <object-view :object="item.domainObject"></object-view>
             </div>
         </div>
@@ -26,7 +29,6 @@
         data() {
             return {
                 initSelect: false,
-                frameStyle: {},
                 selected: false,
                 drilledIn: false
             }

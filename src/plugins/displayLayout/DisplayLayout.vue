@@ -31,14 +31,9 @@
                 gridSize: DEFAULT_GRID_SIZE,
                 frameItems: [],
                 frames: [],                
-                composition: [],
-                configuration: {
-                    layout: {
-                        panels: {
-
-                        }
-                    }
-                }
+                composition: Object,
+                positions: [],
+                frameStyles: []
             }
         },          
         inject: ['openmct', 'objectUtils'],
@@ -49,12 +44,12 @@
         created: function () {
             console.log("domainObject", JSON.parse(JSON.stringify(this.domainObject)));                    
 
+            this.populatePositions(this.domainObject.configuration.layout.panels);
+
             this.composition = this.openmct.composition.get(this.domainObject);
             this.composition.on('add', this.onAddComposition);
             this.composition.on('remove', this.onRemoveComposition);
             this.composition.load();
-
-            console.log("frameItems", this.frameItems);
         },
         methods: {            
             onAddComposition(domainObject) {
@@ -62,9 +57,29 @@
                 const id = this.openmct.objects.makeKeyString(domainObject.identifier)
                 this.frameItems.push({
                     id: id,
-                    showFrame: this.hasFrame(id),
-                    domainObject
+                    hasFrame: this.hasFrame(id),
+                    domainObject,
+                    style: this.getFrameStyle(id)
                 });
+            },
+            populatePositions(panels) {
+                Object.keys(panels).forEach(function (key) {
+                    this.frameStyles[key] = this.convertPosition(panels[key]);
+                    this.frames[key] = panels[key].hasFrame;
+                }.bind(this));
+            },
+            convertPosition(raw) {
+                return {
+                    left: (this.gridSize[0] * raw.position[0]) + 'px',
+                    top: (this.gridSize[1] * raw.position[1]) + 'px',
+                    width: (this.gridSize[0] * raw.dimensions[0]) + 'px',
+                    height: (this.gridSize[1] * raw.dimensions[1]) + 'px',
+                    minWidth: (this.gridSize[0] * raw.dimensions[0]) + 'px',
+                    minHeight: (this.gridSize[1] * raw.dimensions[1]) + 'px'
+                };
+            },
+            getFrameStyle(id) {
+                return this.frameStyles[id];
             },
             onRemoveComposition(identifier) {
                 // TODO: remove the object from frameItems
@@ -74,7 +89,7 @@
             }
         },
         mounted() {
-
+            
         },
         destroyed: function () {
             this.composition.off('add', this.onAddComposition);
