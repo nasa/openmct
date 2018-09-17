@@ -1,17 +1,17 @@
-<div class="mct-notebook w-notebook l-flex-col">
-    <div class="l-notebook-head holder l-flex-row flex-elem">
-        <div class="c-search flex-elem holder grows">
-            <input class="c-search__search-input"
-                    type="text" tabindex="10000"
-                    v-model="entrySearch"
-                    v-on:keyup="search($event)"/>
-            <a class="c-search__clear-input clear-icon icon-x-in-circle"
-                v-bind:class="[entrySearch ? 'show': '']"
-                v-on:click="entrySearch = ''; search($event)"></a>
+<div class="c-notebook">
+    <div class="c-notebook__head">
+        <!-- TODO: use search component here -->
+        <div class="c-notebook__search c-search"
+             :class="{ 'is-active': entrySearch }">
+            <input class="c-search__input" type="search"
+                   type="text" tabindex="10000"
+                   v-model="entrySearch"
+                   v-on:keyup="search($event)"/>
+            <a class="c-search__clear-input icon-x-in-circle"
+               v-on:click="entrySearch = ''; search($event)"></a>
         </div>
-
-        <div class="notebook-view-controls l-flex-row flex-elem holder">
-            <div class="select notebook-view-controls__filter-time">
+        <div class="c-notebook__controls">
+            <div class="select c-notebook__controls__time">
                 <select v-model="showTime">
                     <option value="0" selected="selected">Show all</option>
                     <option value="1">Last hour</option>
@@ -19,7 +19,7 @@
                     <option value="24">Last 24 hours</option>
                 </select>
             </div>
-            <div class="select notebook-view-controls__sort">
+            <div class="select c-notebook__controls__sort">
                 <select v-model="sortEntries">
                     <option value="-createdOn" selected="selected">Newest first</option>
                     <option value="createdOn">Oldest first</option>
@@ -27,15 +27,12 @@
             </div>
         </div>
     </div>
-
-    <!--  drag area -->
-    <div class="holder flex-elem l-flex-row icon-plus labeled l-notebook-drag-area" v-on:click="newEntry($event)"
-    id="newEntry" mct-entry-dnd>
-    <span class="label">To start a new entry, click here or drag and drop any object</span>
+    <div class="c-notebook__drag-area icon-plus"
+         v-on:click="newEntry($event)"
+         id="newEntry" mct-entry-dnd>
+        <span class="c-notebook__drag-area__label">To start a new entry, click here or drag and drop any object</span>
     </div>
-
-    <!-- entries -->
-    <div class="holder flex-elem grows w-notebook-entries t-entries-list" ng-mouseover="handleActive()">
+    <div class="c-notebook__entries" ng-mouseover="handleActive()">
         <ul>
            <notebook-entry
                 v-for="entry in filterBySearch(entries, entrySearch)"

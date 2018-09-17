@@ -47,7 +47,7 @@
         &__input {
             background: none  !important;
             box-shadow: none !important; // !important needed to override default for [input]
-            flex: 0 1 100%;
+            flex: 1 1 auto;
             padding-left: 2px !important;
             padding-right: 2px !important;
             min-width: 10px; // Must be set to allow input to collapse below browser min

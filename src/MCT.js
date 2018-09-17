@@ -38,6 +38,7 @@ define([
     './ui/router/Browse',
     '../platform/framework/src/Main',
     './styles-new/core.scss',
+    './styles-new/notebook.scss',
     './ui/components/layout/Layout.vue',
     'vue'
 ], function (
@@ -58,6 +59,7 @@ define([
     Browse,
     Main,
     coreStyles,
+    NotebookStyles,
     Layout,
     Vue
 ) {

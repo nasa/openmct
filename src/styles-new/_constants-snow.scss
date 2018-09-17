@@ -1,6 +1,6 @@
 @import "constants";
 
-// Mixins
+// Functions
 @function pullForward($c: $colorBodyBg, $p: 20%) {
     // For dark interfaces, lighter things come forward - opposite for light interfaces
     @return darken($c, $p);
@@ -294,3 +294,16 @@ $colorLoadingBg: rgba($colorLoadingFg, 0.1);
 // Transitions
 $transIn: all 50ms ease-in;
 $transOut: all 250ms ease-out;
+
+// Discrete items, like Notebook entries, Widget rules
+@mixin discreteItem() {
+    background: rgba($colorBodyFg,0.1);
+    border: 1px solid $colorInteriorBorder;
+    border-radius: $controlCr;
+    .c-input-inline:hover {
+        background: $colorBodyBg;
+    }
+}
+@mixin discreteItemInnerElem() {
+    border: 1px solid $colorBodyBg;
+    border-radius: $controlCr; }
