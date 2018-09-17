@@ -26,7 +26,8 @@
     }
 
     &__head,
-    &__drag-area {
+    &__drag-area,
+    &__controls {
         flex: 0 0 auto;
     }
 
@@ -34,10 +35,10 @@
         [class*="__"] + [class*="__"] {
             margin-left: $interiorMargin;
         }
+    }
 
-        > [class*="__"]:first-of-type {
-            flex: 1 1 auto;
-        }
+    &__search {
+        flex: 1 1 auto;
     }
 
     &__drag-area {
@@ -93,8 +94,8 @@
     $p: $interiorMarginSm;
     @include discreteItem();
     display: flex;
-    flex-wrap: wrap;
-    padding: $interiorMarginSm $interiorMargin;
+    //flex-wrap: wrap;
+    padding: $interiorMarginSm $interiorMarginSm $interiorMarginSm $interiorMargin;
 
     &__time,
     &__text,
@@ -106,6 +107,12 @@
     &__time,
     &__embed__time {
         opacity: 0.7;
+    }
+
+    &__time-and-content {
+        display: flex;
+        flex: 1 1 auto;
+        flex-wrap: wrap;
     }
 
     &__time {
