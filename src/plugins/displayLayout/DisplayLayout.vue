@@ -1,5 +1,5 @@
 <template>
-    <div class="abs l-layout">
+    <div class="abs l-layout s-status-editing">
 
         <!-- Background grid -->
         <div class="l-grid-holder">            
@@ -23,7 +23,9 @@
 <script>
     import LayoutFrame from './LayoutFrame.vue'
     
-    const DEFAULT_GRID_SIZE = [32, 32];
+    const DEFAULT_GRID_SIZE = [32, 32],
+          DEFAULT_DIMENSIONS = [12, 8],
+          MINIMUM_FRAME_SIZE = [320, 180];
 
     export default {
         data() {
@@ -32,8 +34,8 @@
                 frameItems: [],
                 frames: [],                
                 composition: Object,
-                positions: [],
-                frameStyles: []
+                frameStyles: [],
+                rawPositions: {}
             }
         },          
         inject: ['openmct', 'objectUtils'],
@@ -63,10 +65,26 @@
                 });
             },
             populatePositions(panels) {
-                Object.keys(panels).forEach(function (key) {
-                    this.frameStyles[key] = this.convertPosition(panels[key]);
+                Object.keys(panels).forEach(function (key, index) {
+                    this.rawPositions[key] = {
+                        position: panels[key].position || this.defaultPosition(index),
+                        dimensions: panels[key].dimensions || this.defaultDimensions()
+                    };
+                    this.frameStyles[key] = this.convertPosition(this.rawPositions[key]);
                     this.frames[key] = panels[key].hasFrame;
                 }.bind(this));
+            },
+            defaultPosition(index) {
+                return [index, index];
+            },
+            defaultDimensions() {
+                let gridSize = this.gridSize;
+                return MINIMUM_FRAME_SIZE.map(function (min, i) {
+                    return Math.max(
+                        Math.ceil(min / gridSize[i]),
+                        DEFAULT_DIMENSIONS[i]
+                    );
+                });
             },
             convertPosition(raw) {
                 return {
