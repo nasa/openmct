@@ -2,16 +2,20 @@
     <table class="list-view">
         <thead>
             <tr>
-                <th>
+                <th v-bind:class="['sortable', orderByField == 'name' ? 'sort' : '', sortClass]"
+                    @click="sort('name')">
                     Name
                 </th>
-                <th>
+                <th v-bind:class="['sortable', orderByField == 'type' ? 'sort' : '', sortClass]"
+                    @click="sort('type')">
                     Type
                 </th>
-                <th>
+                <th v-bind:class="['sortable', orderByField == 'createdDate' ? 'sort' : '', sortClass]"
+                    @click="sort('createdDate')">
                     Created Date
                 </th>
-                <th>
+                <th v-bind:class="['sortable', orderByField == 'updatedDate' ? 'sort' : '', sortClass]"
+                    @click="sort('updatedDate')">
                     Updated Date
                 </th>
             </tr>
@@ -24,14 +28,14 @@
                 <td>
                     <div class="l-flex-row">
                         <span class="flex-elem t-item-icon">
-                            <span v-bind:class="['t-item-icon-glyph', item.type.cssClass]"></span>
+                            <span v-bind:class="['t-item-icon-glyph', item.cssClass]"></span>
                         </span>
-                        <span class="t-title-label flex-elem grows">{{item.model.name}}</span>
+                        <span class="t-title-label flex-elem grows">{{item.name}}</span>
                     </div>
                 </td>
-                <td>{{item.type.name}}</td>
-                <td>{{ formatTime(item.model.persisted, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z</td>
-                <td>{{ formatTime(item.model.modified, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z</td>
+                <td>{{ item.type }}</td>
+                <td>{{ formatTime(item.createdDate, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z</td>
+                <td>{{ formatTime(item.updatedDate, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z</td>
             </tr>
         </tbody>
     </table>
@@ -48,21 +52,28 @@ export default {
                     name: 'Unknown Type'
                 }
             };
+        if (this.domainObject.composition && this.domainObject.composition.length) {
 
-        this.domainObject.composition.forEach(item => {
-            this.openmct.objects.get(item.key).then(model => {
+            this.domainObject.composition.forEach(item => {
+                this.openmct.objects.get(item.key).then(model => {
 
-                var type = this.openmct.types.get(model.type) || unknownObjectType;
+                    var type = this.openmct.types.get(model.type) || unknownObjectType;
 
-                items.push({
-                    model: model,
-                    type: type.definition
+                    items.push({
+                        name: model.name,
+                        type: type.definition.name,
+                        cssClass: type.definition.cssClass,
+                        createdDate: model.persisted,
+                        updatedDate: model.modified 
+                    });
                 });
             });
-        });
+        }
 
         return {
-            items: items
+            items: items,
+            orderByField: '',
+            sortClass: ''
         }
     },
     methods: {
@@ -74,6 +85,19 @@ export default {
         },
         formatTime(unixTime, timeFormat) {
             return this.Moment(unixTime).format(timeFormat);
+        },
+        sort(field) {
+            this.orderByField = field;
+
+            if (this.sortClass === 'asc') {
+                this.sortClass = 'desc';
+
+                return this.items.sort((a,b) => a[field] < b[field]);
+            } else {
+                this.sortClass = 'asc';
+
+                return this.items.sort((a,b) => a[field] > b[field]);
+            }
         }
     }
 }
