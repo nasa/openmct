@@ -3,7 +3,10 @@
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
             <div class="l-shell__controls">
-                <a class="c-icon-button icon-new-window" title="Open in a new browser tab"></a>
+                <a class="c-icon-button icon-new-window" title="Open in a new browser tab" 
+                    target="_blank"
+                    @click="openInNewTab">
+                </a>
                 <a v-bind:class="['c-icon-button', fullScreen ? 'icon-fullscreen-expand' : 'icon-fullscreen-collapse']" 
                     v-bind:title="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
                     @click="fullScreenToggle">
@@ -257,6 +260,10 @@
                     this.fullScreen = true;
                     enterFullScreen();
                 }
+            },
+            openInNewTab (event) {
+                event.target.href = window.location.href;
+                event.target.click();
             }
         }   
     }
