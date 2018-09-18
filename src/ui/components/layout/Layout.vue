@@ -4,7 +4,8 @@
             <CreateButton class="l-shell__create-button"></CreateButton>
             <div class="l-shell__controls">
                 <a class="c-icon-button icon-new-window" title="Open in a new browser tab"></a>
-                <a class="c-icon-button icon-fullscreen-collapse" title="Enable full screen mode"
+                <a v-bind:class="['c-icon-button', fullScreen ? 'icon-fullscreen-expand' : 'icon-fullscreen-collapse']" 
+                    v-bind:title="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
                     @click="fullScreenToggle">
                 </a>
             </div>
@@ -248,7 +249,7 @@
         },
         methods: {
             fullScreenToggle () {
-                console.log(this);
+
                 if (this.fullScreen) {
                     this.fullScreen = false;
                     exitFullScreen();
