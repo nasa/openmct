@@ -17,6 +17,17 @@
 
         <!-- Drag handles -->
         <span class="abs t-edit-handle-holder" v-if="selected && !drilledIn">
+            <span class="edit-handle edit-move">
+            </span>
+
+            <span class="edit-corner edit-resize-nw">
+            </span>
+            <span class="edit-corner edit-resize-ne">
+            </span>
+            <span class="edit-corner edit-resize-sw">
+            </span>
+            <span class="edit-corner edit-resize-se">
+            </span>
         </span>
     </div>
 </template>
