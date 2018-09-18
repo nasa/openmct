@@ -25,6 +25,7 @@
                 <browse-bar class="l-shell__main-view-browse-bar"
                                    ref="browseBar">
                 </browse-bar>
+                <toolbar></toolbar>
                 <object-view class="l-shell__main-container"
                              ref="browseObject">
                 </object-view>
@@ -196,6 +197,7 @@
     import multipane from '../controls/multipane.vue';
     import pane from '../controls/pane.vue';
     import BrowseBar from './BrowseBar.vue';
+    import Toolbar from './Toolbar.vue';
 
     export default {
         components: {
@@ -209,7 +211,8 @@
             search,
             multipane,
             pane,
-            BrowseBar
+            BrowseBar,
+            Toolbar
         }
     }
 </script>

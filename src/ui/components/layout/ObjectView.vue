@@ -33,6 +33,7 @@ export default {
         this.debounceUpdateView = _.debounce(this.updateView, 10);
     },
     mounted() {
+        this.currentObject = this.object;
         this.updateView();
     },
     methods: {

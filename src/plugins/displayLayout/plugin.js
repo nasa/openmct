@@ -1,4 +1,4 @@
-import layout from './Layout.vue'
+import Layout from './DisplayLayout.vue'
 import Vue from 'vue'
 import objectUtils from '../../api/objects/object-utils.js'
 
@@ -17,7 +17,7 @@ export default function () {
                     show(container) {
                         component = new Vue({
                             components: {
-                                layout
+                                Layout
                             },
                             template: '<layout :domain-object="domainObject"></layout>',
                             provide: {

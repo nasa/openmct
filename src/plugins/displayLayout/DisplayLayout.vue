@@ -1,8 +1,17 @@
 <template>
     <div class="abs l-layout">
+
         <!-- Background grid -->
-        <div class="l-grid-holder">
+        <div class="l-grid-holder">            
+            <div class="l-grid l-grid-x"
+                 v-if="gridSize[0] >= 3"
+                 :style="{ backgroundSize: gridSize[0] + 'px 100%' }">
+            </div>
+            <div class="l-grid l-grid-y"
+                 v-if="gridSize[1] >= 3"
+                 :style="{ backgroundSize: gridSize[1] + 'px 100%' }"></div>
         </div>
+
         <layout-frame v-for="item in frameItems"
                       :key="item.id"
                       :item="item">
@@ -13,10 +22,13 @@
 
 <script>
     import LayoutFrame from './LayoutFrame.vue'
+    
+    const DEFAULT_GRID_SIZE = [32, 32];
 
     export default {
         data() {
-            return {                
+            return {
+                gridSize: DEFAULT_GRID_SIZE,
                 frameItems: [],
                 frames: [],                
                 composition: [],
@@ -46,7 +58,7 @@
         },
         methods: {            
             onAddComposition(domainObject) {
-                console.log('object', domainObject);
+                console.log('composition object', domainObject);
                 const id = this.openmct.objects.makeKeyString(domainObject.identifier)
                 this.frameItems.push({
                     id: id,
@@ -60,6 +72,9 @@
             hasFrame(id) {
                 return this.frames[id]
             }
+        },
+        mounted() {
+
         },
         destroyed: function () {
             this.composition.off('add', this.onAddComposition);

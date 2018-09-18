@@ -226,7 +226,7 @@ define([
         this.legacyRegistry = defaultRegistry;
         this.install(this.plugins.Plot());
         this.install(this.plugins.TelemetryTable());
-        this.install(this.plugins.Layout());
+        this.install(this.plugins.DisplayLayout());
 
         if (typeof BUILD_CONSTANTS !== 'undefined') {
             this.install(buildInfoPlugin(BUILD_CONSTANTS));
