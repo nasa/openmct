@@ -84,7 +84,8 @@
             }
         }
 
-        &__pane-main {
+        &__pane-main,
+        &__pane-tree {
             > .l-pane__contents {
                 display: flex;
                 flex-flow: column nowrap;
@@ -119,11 +120,15 @@
 
         &__head,
         &__status {
-            flex: 0 1 auto;
+            flex: 0 0 auto;
             display: flex;
         }
 
         /******************************* HEAD */
+        &__main-view-browse-bar {
+            flex: 0 0 auto;
+        }
+
         &__head {
             align-items: center;
             justify-content: space-between;
@@ -150,7 +155,8 @@
         /********** MAIN AREA */
         &__main-container {
             // Wrapper for main views
-            flex: 1 1 100%;
+            flex: 1 1 auto;
+            overflow: auto;
             //font-size: 16px; // TEMP FOR LEGACY STYLING
         }
 
