@@ -23,15 +23,11 @@
             </pane>
             <pane class="l-shell__pane-main">
                 <browse-bar class="l-shell__main-view-browse-bar"
-                                   ref="browseBar">
-                </browse-bar>
-                <toolbar></toolbar>
+                        ref="browseBar"></browse-bar>
                 <object-view class="l-shell__main-container"
-                             ref="browseObject">
-                </object-view>
+                             ref="browseObject"></object-view>
                 <mct-template template-key="conductor"
-                              class="l-shell__time-conductor">
-                </mct-template>
+                              class="l-shell__time-conductor"></mct-template>
             </pane>
             <pane class="l-shell__pane-inspector l-pane--holds-multipane"
                   handle="before"
@@ -148,7 +144,7 @@
             margin-right: 2.5%;
         }
 
-        /********** MAIN AREA */
+        /******************************* MAIN AREA */
         &__main-container {
             // Wrapper for main views
             flex: 1 1 100%;
@@ -211,8 +207,7 @@
             search,
             multipane,
             pane,
-            BrowseBar,
-            Toolbar
+            BrowseBar
         }
     }
 </script>

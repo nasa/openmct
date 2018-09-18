@@ -1,27 +1,83 @@
 <template>
-    <div class="abs l-layout s-status-editing">
-
-        <!-- Background grid -->
-        <div class="l-grid-holder">            
-            <div class="l-grid l-grid-x"
-                 v-if="gridSize[0] >= 3"
-                 :style="{ backgroundSize: gridSize[0] + 'px 100%' }">
+    <div class="l-layout"
+         :class="{'is-editing' : isEditing === true}">
+        <toolbar class="l-layout__toolbar"></toolbar>
+        <div class="l-layout__object">
+            <!-- Background grid -->
+            <div class="l-layout__grid-holder c-grid">
+                <div class="c-grid__x l-grid l-grid-x"
+                     v-if="gridSize[0] >= 3"
+                     :style="{ backgroundSize: gridSize[0] + 'px 100%' }">
+                </div>
+                <div class="c-grid__y l-grid l-grid-y"
+                     v-if="gridSize[1] >= 3"
+                     :style="{ backgroundSize: '100%' + gridSize[1] + 'px' }"></div>
             </div>
-            <div class="l-grid l-grid-y"
-                 v-if="gridSize[1] >= 3"
-                 :style="{ backgroundSize: gridSize[1] + 'px 100%' }"></div>
-        </div>
 
-        <layout-frame v-for="item in frameItems"
-                      :key="item.id"
-                      :item="item">
-        </layout-frame>
+            <layout-frame v-for="item in frameItems"
+                          class="l-layout__frame"
+                          :key="item.id"
+                          :item="item">
+            </layout-frame>
+        </div>
     </div>
 </template>
 
+<style lang="scss">
+    @import "~styles/sass-base";
+
+    .l-layout,
+    .c-grid,
+    .c-grid__x,
+    .c-grid__y {
+        @include abs();
+    }
+
+    .l-layout {
+        display: flex;
+        flex-direction: column;
+
+        &.is-editing {
+            > [class*="__object"] {
+                background: rgba($colorKey, 0.1);
+            }
+        }
+
+        &:not(.is-editing) {
+            [class*="__grid-holder"],
+            > [class*="__toolbar"] {
+                display: none;
+            }
+        }
+
+        &__toolbar {
+            flex: 0 0 auto;
+            margin-bottom: $interiorMargin;
+        }
+
+        &__object {
+            flex: 1 1 auto;
+            overflow: auto;
+        }
+
+        &__frame {
+            position: absolute;
+        }
+    }
+
+    .c-grid {
+        z-index: -1;
+        pointer-events: none;
+
+        &__x  { @include bgTicks($colorGridLines, 'x'); }
+        &__y  { @include bgTicks($colorGridLines, 'y'); }
+    }
+</style>
+
 
 <script>
-    import LayoutFrame from './LayoutFrame.vue'
+    import LayoutFrame from './LayoutFrame.vue';
+    import Toolbar from '../../ui/components/layout/Toolbar.vue';
     
     const DEFAULT_GRID_SIZE = [32, 32],
           DEFAULT_DIMENSIONS = [12, 8],
@@ -35,13 +91,15 @@
                 frames: [],                
                 composition: Object,
                 frameStyles: [],
-                rawPositions: {}
+                rawPositions: {},
+                isEditing: false
             }
         },          
         inject: ['openmct', 'objectUtils'],
         props: ['domainObject'],
         components: {
-            LayoutFrame
+            LayoutFrame,
+            Toolbar
         },
         created: function () {
             console.log("domainObject", JSON.parse(JSON.stringify(this.domainObject)));                    
