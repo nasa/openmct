@@ -1,41 +1,145 @@
 <template>
-    <div class="items-holder grid abs">
-        <div 
-            v-for="(item, index) in items"
+    <div class="l-grid-view">
+        <div v-for="(item, index) in items"
             v-bind:key="index"
-            class="item grid-item"
+            class="l-grid-view__item c-grid-item"
             @click="navigate(item.model.identifier.key)">
-
-            <div class="contents abs">
-
-                <div class='top-bar bar abs'>
-                    <span class='icon-people' title='Shared'></span>
-                    <mct-representation class="desktop-hide" key="'info-button'"></mct-representation>
-                </div>
-
-                <div class='item-main abs lg'>
-                    <span class="t-item-icon">
-                        <span v-bind:class="['t-item-icon-glyph', item.type.cssClass]"></span>
+            <div class="c-grid-item__type-icon"
+                 :class="(item.type.cssClass != undefined) ? 'bg-' + item.type.cssClass : 'bg-icon-object-unknown'">
+            </div>
+            <div class="c-grid-item__details">
+                <!-- Name and metadata -->
+                <div class="c-grid-item__name"
+                     :title="item.model.name">{{item.model.name}}</div>
+                <div class="c-grid-item__metadata"
+                     :title="item.type.name">
+                    <span>{{item.type.name}}</span>
+                    <span v-if="item.model.composition !== undefined">
+                        - {{item.model.composition.length}} item<span v-if="item.model.composition.length !== 1">s</span>
                     </span>
-                    <div class='abs item-open icon-pointer-right'></div>
                 </div>
-
-                <div class='bottom-bar bar abs'>
-                    <div class='title'>{{item.model.name}}</div>
-                    <div class='details'>
-                        <span>{{item.type.name}}</span>
-                        <span v-if="item.model.composition !== undefined">
-                            - {{item.model.composition.length}} Item<span v-if="item.model.composition.length !== 1">s</span>
-                        </span>
-                    </div>
-                </div>
-
+            </div>
+            <div class="c-grid-item__controls">
+                <div class="icon-people" title='Shared'></div>
+                <div class="c-icon-button icon-info c-info-button" title='More Info'></div>
+                <div class="icon-pointer-right c-pointer-icon"></div>
             </div>
         </div>
     </div>
 </template>
 
-<style>
+<style lang="scss">
+    @import "~styles/sass-base";
+
+    /******************************* GRID */
+    .l-grid-view {
+        display: flex;
+        flex-flow: column nowrap;
+
+        &__item {
+            flex: 0 0 auto;
+            + .l-grid-view__item { margin-top: $interiorMargin; }
+        }
+
+        body.desktop & {
+            flex-flow: row wrap;
+            &__item {
+                height: $ueBrowseGridItemLg;
+                width: $ueBrowseGridItemLg;
+                margin: 0 $interiorMargin $interiorMargin 0;
+            }
+        }
+    }
+
+    /******************************* GRID ITEMS */
+    .c-grid-item {
+        // Mobile-first
+        @include button($bg: $colorItemBg, $fg: $colorItemFg);
+        cursor: pointer;
+        display: flex;
+        padding: $interiorMarginLg;
+        transition: background 600ms ease-out;
+
+        &:hover {
+            background: $colorItemBgHov;
+            transition: $transIn;
+
+            .c-grid-item__type-icon {
+                filter: $colorKeyFilterHov;
+                transform: scale(1.125);
+                transform-origin: center;
+                transition: all 150ms ease-in-out;
+            }
+        }
+
+        &__type-icon {
+            filter: $colorKeyFilter;
+            flex: 0 0 32px;
+            margin-right: $interiorMarginLg;
+            transition: all 500ms ease-out;
+        }
+
+        &__details {
+            display: flex;
+            flex-flow: column nowrap;
+            flex: 1 1 auto;
+        }
+
+        &__name {
+            @include ellipsize();
+            color: $colorItemFg;
+            font-size: 1.3em;
+            font-weight: 400;
+            margin-bottom: $interiorMarginSm;
+        }
+
+        &__metadata {
+            color: $colorItemFgDetails;
+        }
+
+        &__controls {
+            color: $colorItemFgDetails;
+            flex: 0 0 64px;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+
+            > * + * {
+                margin-left: $interiorMargin;
+            }
+        }
+
+        body.desktop & {
+            flex-flow: column nowrap;
+
+            > * {
+                margin: 0;
+            }
+
+            &__controls {
+                align-items: start;
+                flex: 0 0 auto;
+                order: 1;
+                .c-info-button,
+                .c-pointer-icon { display: none; }
+            }
+
+            &__type-icon {
+                flex: 1 1 auto;
+                margin: $interiorMargin 25%;
+                order: 2;
+            }
+
+            &__details {
+                flex: 0 0 auto;
+                justify-content: flex-end;
+                order: 3;
+            }
+        }
+    }
+    
+    
 </style>
 
 <script>

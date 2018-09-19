@@ -13,7 +13,7 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";;
+    @import "~styles/sass-base";
 
     /******************************* SEARCH */
     .c-search {

@@ -21,6 +21,7 @@ $colorStatusBarFg: #999;
 $colorStatusBarFgHov: #aaa;
 $colorKey: #0099cc;
 $colorKeyFilter: brightness(0.9) sepia(1) hue-rotate(145deg) saturate(6);
+$colorKeyFilterHov: brightness(1) sepia(1) hue-rotate(145deg) saturate(7);
 $colorKeySelectedBg: $colorKey;
 $colorKeyFg: #fff;
 $colorKeyHov: #00c0f6;
@@ -182,7 +183,7 @@ $durLargeViewExpand: 250ms;
 
 // Items
 $colorItemBg: #ddd;
-$colorItemBgHov: pullForward($colorItemBg, $hoverRatioPercent * 0.7);
+$colorItemBgHov: pushBack($colorItemBg, $hoverRatioPercent * 0.4);
 $colorItemFg: $colorBodyFg;
 $colorItemFgDetails: pushBack($colorItemFg, 15%);
 $colorItemIc: $colorKey;
@@ -294,6 +295,7 @@ $colorLoadingBg: rgba($colorLoadingFg, 0.1);
 // Transitions
 $transIn: all 50ms ease-in;
 $transOut: all 250ms ease-out;
+$transInBouncy: all 200ms cubic-bezier(.2,1.6,.6,2.2);
 
 // Discrete items, like Notebook entries, Widget rules
 @mixin discreteItem() {
