@@ -19,16 +19,16 @@
                         :class="['is-sortable', sortOptions.key === key ? 'is-sorting' : '', sortOptions.direction].join(' ')"
                         :style="{ width: columnWidths[headerIndex], 'max-width': columnWidths[headerIndex]}">{{title}}</th>
                 </tr>
-                <tr class="s-filters">
+                <tr>
                     <th v-for="(title, key, headerIndex) in headers"
                         :style="{
                             width: columnWidths[headerIndex],
                             'max-width': columnWidths[headerIndex],
                         }">
-                        <div class="holder l-filter flex-elem grows" :class="{active: filters[key]}">
-                            <input type="text" v-model="filters[key]" v-on:input="filterChanged(key)" />
-                            <a class="clear-icon clear-input icon-x-in-circle" :class="{show: filters[key]}" @click="clearFilter(key)"></a>
-                        </div>
+                        <search class="c-table__search"
+                            v-model="filters[key]"
+                            v-on:input="filterChanged(key)"
+                            v-on:clear="clearFilter(key)" />
                     </th>
                 </tr>
             </thead>
@@ -266,6 +266,7 @@
 
 <script>
 import TelemetryTableRow from './table-row.vue';
+import search from '../../../ui/components/controls/search.vue';
 import _ from 'lodash';
 
 const VISIBLE_ROW_COUNT = 100;
@@ -275,7 +276,8 @@ const AUTO_SCROLL_TRIGGER_HEIGHT = 20;
 
 export default {
     components: {
-        TelemetryTableRow
+        TelemetryTableRow,
+        search
     },
     inject: ['table', 'openmct', 'csvExporter'],
     props: ['configuration'],
