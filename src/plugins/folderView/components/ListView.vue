@@ -1,6 +1,7 @@
 <template>
-    <table class="list-view">
-        <thead>
+    <div class="c-table c-table--sortable">
+        <table class="c-table__body xlist-view">
+            <thead class="c-table__header">
             <tr>
                 <th v-bind:class="['sortable', orderByField == 'name' ? 'sort' : '', sortClass]"
                     @click="sort('name')">
@@ -19,17 +20,17 @@
                     Updated Date
                 </th>
             </tr>
-        </thead>
-        <tbody>
+            </thead>
+            <tbody>
             <tr
-                v-for="(item,index) in items"
-                v-bind:key="index"
-                @click="navigate(item.model.identifier.key)">
+                    v-for="(item,index) in items"
+                    v-bind:key="index"
+                    @click="navigate(item.model.identifier.key)">
                 <td>
                     <div class="l-flex-row">
-                        <span class="flex-elem t-item-icon">
-                            <span v-bind:class="['t-item-icon-glyph', item.cssClass]"></span>
-                        </span>
+                            <span class="flex-elem t-item-icon">
+                                <span v-bind:class="['t-item-icon-glyph', item.cssClass]"></span>
+                            </span>
                         <span class="t-title-label flex-elem grows">{{item.name}}</span>
                     </div>
                 </td>
@@ -37,8 +38,9 @@
                 <td>{{ formatTime(item.createdDate, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z</td>
                 <td>{{ formatTime(item.updatedDate, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z</td>
             </tr>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 </template>
 
 <script>
