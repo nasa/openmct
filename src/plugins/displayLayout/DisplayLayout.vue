@@ -17,7 +17,9 @@
             <layout-frame v-for="item in frameItems"
                           class="l-layout__frame"
                           :key="item.id"
-                          :item="item">
+                          :item="item"
+                          @drilledIn="updateDrilledInState"
+                          @selected="updateSelectedState">
             </layout-frame>
         </div>
     </div>
@@ -92,7 +94,9 @@
                 composition: Object,
                 frameStyles: [],
                 rawPositions: {},
-                isEditing: false
+                isEditing: true,
+                initSelect: true,
+                drilledIn: undefined
             }
         },          
         inject: ['openmct', 'objectUtils'],
@@ -119,8 +123,13 @@
                     id: id,
                     hasFrame: this.hasFrame(id),
                     domainObject,
-                    style: this.getFrameStyle(id)
+                    style: this.frameStyles[id],
+                    drilledIn: this.isDrilledIn(id),
+                    selected: false
                 });
+            },
+            onRemoveComposition(identifier) {
+                // TODO: remove the object from frameItems
             },
             populatePositions(panels) {
                 Object.keys(panels).forEach(function (key, index) {
@@ -154,22 +163,53 @@
                     minHeight: (this.gridSize[1] * raw.dimensions[1]) + 'px'
                 };
             },
-            getFrameStyle(id) {
-                return this.frameStyles[id];
-            },
-            onRemoveComposition(identifier) {
-                // TODO: remove the object from frameItems
-            },
             hasFrame(id) {
                 return this.frames[id]
+            },
+            setSelection(selection) {
+                if (selection.length === 0) {
+                    return;
+                }
+
+                this.updateDrilledInState();
+                this.updateSelectedState();
+            },
+            updateDrilledInState(id) {
+                this.drilledIn = id;
+                this.frameItems.forEach(function (item) {
+                    item.drilledIn = item.id === id;
+                });
+            },
+            updateSelectedState(id) {
+                this.frameItems.forEach(function (item) {
+                    item.selected = item.id === id;
+                });
+            },
+            isDrilledIn(id) {
+                return this.drilledIn === id;
             }
         },
+        computed: {
+            //isDrilledIn(id) {
+            //    return this.drilledIn === id;
+            //}
+        },
         mounted() {
-            
+            this.removeSelectable = this.openmct.selection.selectable(
+                this.$el,
+                {
+                    item: this.domainObject
+                },
+                this.initSelect
+            );
+
+            this.openmct.selection.on('change', this.setSelection);
         },
         destroyed: function () {
             this.composition.off('add', this.onAddComposition);
             this.composition.off('remove', this.onRemoveComposition);
+            this.openmct.off('change', this.selection);
+            this.removeSelectable();
         }
     }
     

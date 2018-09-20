@@ -3,9 +3,10 @@
     <div class="c-frame has-local-controls"
          :style="item.style"
          :class="{
-            's-drilled-in': drilledIn,
+            's-drilled-in': item.drilledIn,
             'no-frame': !item.hasFrame
-        }">
+         }"
+         @dblclick="drill(item.id, $event)">
         <div class="c-frame__header">
             <div class="c-frame__header__start">
                 <div class="c-frame__name icon-object">Header</div>
@@ -20,7 +21,7 @@
                 :object="item.domainObject"></object-view>
 
         <!-- Drag handles -->
-        <span class="abs t-edit-handle-holder" v-if="selected && !drilledIn">
+        <span class="abs t-edit-handle-holder" v-if="item.selected && !item.drilledIn">
             <span class="edit-handle edit-move">
             </span>
             <span class="edit-corner edit-resize-nw">
@@ -108,13 +109,6 @@
     import ObjectView from '../../ui/components/layout/ObjectView.vue'
 
     export default {
-        data() {
-            return {
-                initSelect: false,
-                selected: false,
-                drilledIn: false
-            }
-        },
         inject: ['openmct'],
         props: {
             item: Object
@@ -123,25 +117,51 @@
             ObjectView
         },
         methods: {
-            setSelection(selectable) {
-                console.log("selectable", selectable);
-                this.selected = true;
+            setSelection(selection) {
+                if (selection.length === 0) {
+                    return;
+                }
+
+                let id = this.openmct.objects.makeKeyString(selection[0].context.item.identifier);
+                if (this.item.id === id) {
+                    this.$emit('selected', id);
+                }
+            },
+            drill(id, $event) {
+                if ($event) {
+                    $event.stopPropagation();
+                }
+
+                //if (!this.item.domainObject.getCapability('editor').inEditContext()) {
+                //    return;
+                //}
+
+                if (this.openmct.composition.get(this.item.domainObject) === undefined) {
+                    return;
+                }
+
+                // Disable for fixed position.
+                if (this.item.domainObject.type === 'telemetry.fixed') {
+                    return;
+                }
+
+                this.$emit('drilledIn', id);
             }
         },
         mounted() {
-            this.openmct.selection.selectable(
+            this.removeSelectable = this.openmct.selection.selectable(
                 this.$el,
                 {
                     item: this.item.domainObject
                 },
-                this.initSelect
+                this.item.selected
             );
 
-            // Add the listeners here and remove them in destroy
             this.openmct.selection.on('change', this.setSelection);
         },
         destroyed() {
             this.openmct.off('change', this.selection);
+            this.removeSelectable();
         }
     }
 </script>
