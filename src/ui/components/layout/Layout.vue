@@ -135,6 +135,10 @@
             flex: 0 0 auto;
         }
 
+        body.mobile & .l-shell__main-view-browse-bar {
+            margin-left: $mobileMenuIconD - $interiorMarginLg; // Make room for the hamburger!
+        }
+
         &__head {
             align-items: center;
             justify-content: space-between;

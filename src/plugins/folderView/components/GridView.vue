@@ -58,25 +58,11 @@
         cursor: pointer;
         display: flex;
         padding: $interiorMarginLg;
-        transition: background 600ms ease-out;
-
-        &:hover {
-            background: $colorItemBgHov;
-            transition: $transIn;
-
-            .c-grid-item__type-icon {
-                filter: $colorKeyFilterHov;
-                transform: scale(1.125);
-                transform-origin: center;
-                transition: all 150ms ease-in-out;
-            }
-        }
 
         &__type-icon {
             filter: $colorKeyFilter;
             flex: 0 0 32px;
             margin-right: $interiorMarginLg;
-            transition: all 500ms ease-out;
         }
 
         &__details {
@@ -111,10 +97,23 @@
         }
 
         body.desktop & {
+            $transOutMs: 300ms;
             flex-flow: column nowrap;
+            transition: background $transOutMs ease-in-out;
+
+            &:hover {
+                background: $colorItemBgHov;
+                transition: $transIn;
+
+                .c-grid-item__type-icon {
+                    filter: $colorKeyFilterHov;
+                    transform: scale(1);
+                    transition: $transInBounce;
+                }
+            }
 
             > * {
-                margin: 0;
+                margin: 0; // Reset from mobile
             }
 
             &__controls {
@@ -127,8 +126,11 @@
 
             &__type-icon {
                 flex: 1 1 auto;
-                margin: $interiorMargin 25%;
+                margin: $interiorMargin 22.5%;
                 order: 2;
+                transform: scale(0.9);
+                transform-origin: center;
+                transition: all $transOutMs ease-in-out;
             }
 
             &__details {
@@ -138,8 +140,6 @@
             }
         }
     }
-    
-    
 </style>
 
 <script>

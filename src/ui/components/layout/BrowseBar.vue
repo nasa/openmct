@@ -113,8 +113,6 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
-    /******************************* START */
-
     .l-browse-bar {
         display: flex;
         align-items: center;
