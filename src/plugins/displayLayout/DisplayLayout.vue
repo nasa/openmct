@@ -4,7 +4,7 @@
         <toolbar class="l-layout__toolbar"></toolbar>
         <div class="l-layout__object">
             <!-- Background grid -->
-            <div class="l-layout__grid-holder c-grid">
+            <div class="l-layout__grid-holder c-grid" v-if="!drilledIn">
                 <div class="c-grid__x l-grid l-grid-x"
                      v-if="gridSize[0] >= 3"
                      :style="{ backgroundSize: gridSize[0] + 'px 100%' }">
