@@ -1,47 +1,106 @@
 <template>
-    <div class="c-table c-table--sortable">
-        <table class="c-table__body xlist-view">
+    <div class="c-table c-table--sortable c-list-view">
+        <table class="c-table__body">
             <thead class="c-table__header">
             <tr>
-                <th v-bind:class="['sortable', orderByField == 'name' ? 'sort' : '', sortClass]"
+                <th class="is-sortable"
+                    v-bind:class="[orderByField == 'name' ? 'is-sorting' : '', sortClass]"
                     @click="sort('name')">
                     Name
                 </th>
-                <th v-bind:class="['sortable', orderByField == 'type' ? 'sort' : '', sortClass]"
+                <th class="is-sortable"
+                    v-bind:class="[orderByField == 'type' ? 'is-sorting' : '', sortClass]"
                     @click="sort('type')">
                     Type
                 </th>
-                <th v-bind:class="['sortable', orderByField == 'createdDate' ? 'sort' : '', sortClass]"
+                <th class="is-sortable"
+                    v-bind:class="[orderByField == 'createdDate' ? 'is-sorting' : '', sortClass]"
                     @click="sort('createdDate')">
                     Created Date
                 </th>
-                <th v-bind:class="['sortable', orderByField == 'updatedDate' ? 'sort' : '', sortClass]"
+                <th class="is-sortable"
+                    v-bind:class="[orderByField == 'updatedDate' ? 'is-sorting' : '', sortClass]"
                     @click="sort('updatedDate')">
                     Updated Date
+                </th>
+                <th class="is-sortable"
+                    v-bind:class="[orderByField == 'items' ? 'is-sorting' : '', sortClass]"
+                    @click="sort('items')">
+                    Items
                 </th>
             </tr>
             </thead>
             <tbody>
-            <tr
-                    v-for="(item,index) in items"
-                    v-bind:key="index"
-                    @click="navigate(item.model.identifier.key)">
-                <td>
-                    <div class="l-flex-row">
-                            <span class="flex-elem t-item-icon">
-                                <span v-bind:class="['t-item-icon-glyph', item.cssClass]"></span>
-                            </span>
-                        <span class="t-title-label flex-elem grows">{{item.name}}</span>
-                    </div>
+            <tr class="c-list-item"
+                v-for="(item,index) in items"
+                v-bind:key="index"
+                @click="navigate(item.model.identifier.key)">
+                <td class="c-list-item__name"
+                    :class="(item.cssClass != undefined) ? item.cssClass : 'icon-object-unknown'">
+                    {{item.name}}
                 </td>
-                <td>{{ item.type }}</td>
-                <td>{{ formatTime(item.createdDate, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z</td>
-                <td>{{ formatTime(item.updatedDate, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z</td>
+                <td class="c-list-item__type">{{ item.type }}</td>
+                <td class="c-list-item__date-created">{{ formatTime(item.createdDate, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z</td>
+                <td class="c-list-item__date-updated">{{ formatTime(item.updatedDate, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z</td>
+                <td class="c-list-item__items">{{ item.items }}</td>
             </tr>
             </tbody>
         </table>
     </div>
 </template>
+
+<style lang="scss">
+    @import "~styles/sass-base";
+
+    /******************************* LIST VIEW */
+    .c-list-view {
+        overflow-x: auto !important;
+        overflow-y: auto;
+
+        tbody tr {
+            background: $colorListItemBg;
+            transition: $transOut;
+        }
+
+        body.desktop & {
+            tbody tr {
+                cursor: pointer;
+
+                &:hover {
+                    background: $colorListItemBgHov;
+                    transition: $transIn;
+                }
+            }
+        }
+
+        td {
+            $p: floor($interiorMargin * 1.5);
+            font-size: 1.1em;
+            padding-top: $p;
+            padding-bottom: $p;
+
+            &:not(.c-list-item__name) {
+                color: $colorItemFgDetails;
+            }
+        }
+    }
+
+    .c-list-item {
+        &__name {
+            @include ellipsize();
+
+            &:before {
+                color: $colorKey;
+                display: inline-block;
+                width: 1em;
+                margin-right:$interiorMarginSm;
+            }
+        }
+    }
+
+
+    /******************************* LIST ITEM */
+</style>
 
 <script>
 export default {
@@ -66,7 +125,8 @@ export default {
                         type: type.definition.name,
                         cssClass: type.definition.cssClass,
                         createdDate: model.persisted,
-                        updatedDate: model.modified 
+                        updatedDate: model.modified,
+                        items: model.composition.length
                     });
                 });
             });

@@ -31,7 +31,7 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
-    /******************************* GRID */
+    /******************************* GRID VIEW */
     .l-grid-view {
         display: flex;
         flex-flow: column nowrap;

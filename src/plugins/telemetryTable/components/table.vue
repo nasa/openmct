@@ -72,6 +72,7 @@
 
     .c-telemetry-table {
         // Table that displays telemetry in a scrolling body area
+        overflow: hidden;
 
         th, td {
             display: block;

@@ -183,7 +183,9 @@ $durLargeViewExpand: 250ms;
 
 // Items
 $colorItemBg: #ddd;
-$colorItemBgHov: pushBack($colorItemBg, $hoverRatioPercent * 0.4);
+$colorItemBgHov: rgba($colorKey, 0.1); //pushBack($colorItemBg, $hoverRatioPercent * 0.4);
+$colorListItemBg: transparent;
+$colorListItemBgHov: rgba($colorKey, 0.1);
 $colorItemFg: $colorBodyFg;
 $colorItemFgDetails: pushBack($colorItemFg, 15%);
 $colorItemIc: $colorKey;
