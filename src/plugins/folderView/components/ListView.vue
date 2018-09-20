@@ -5,27 +5,27 @@
             <tr>
                 <th class="is-sortable"
                     v-bind:class="[orderByField == 'name' ? 'is-sorting' : '', sortClass]"
-                    @click="sort('name', 'asc')">
+                    @click="sortTrigger('name', sortToggle('name', 'asc'))">
                     Name
                 </th>
                 <th class="is-sortable"
                     v-bind:class="[orderByField == 'type' ? 'is-sorting' : '', sortClass]"
-                    @click="sort('type', 'asc')">
+                    @click="sortTrigger('type', sortToggle('type', 'asc'))">
                     Type
                 </th>
                 <th class="is-sortable"
                     v-bind:class="[orderByField == 'createdDate' ? 'is-sorting' : '', sortClass]"
-                    @click="sort('createdDate', 'desc')">
+                    @click="sortTrigger('createdDate', sortToggle('createdDate', 'desc'))">
                     Created Date
                 </th>
                 <th class="is-sortable"
                     v-bind:class="[orderByField == 'updatedDate' ? 'is-sorting' : '', sortClass]"
-                    @click="sort('updatedDate', 'desc')">
+                    @click="sortTrigger('updatedDate', sortToggle('updatedDate', 'desc'))">
                     Updated Date
                 </th>
                 <th class="is-sortable"
                     v-bind:class="[orderByField == 'items' ? 'is-sorting' : '', sortClass]"
-                    @click="sort('items', 'asc')">
+                    @click="sortTrigger('items', sortToggle('items', 'asc'))">
                     Items
                 </th>
             </tr>
@@ -34,7 +34,7 @@
             <tr class="c-list-item"
                 v-for="(item,index) in sortedItems"
                 v-bind:key="index"
-                @click="navigate(item.model.identifier.key)">
+                @click="navigate(item.identifier)">
                 <td class="c-list-item__name"
                     :class="(item.cssClass != undefined) ? item.cssClass : 'icon-object-unknown'">
                     {{item.name}}
@@ -153,6 +153,7 @@ export default {
 
                     items.push({
                         name: model.name,
+                        identifier: model.identifier.key,
                         type: type.definition.name,
                         cssClass: type.definition.cssClass,
                         createdDate: model.persisted,
@@ -171,10 +172,10 @@ export default {
     },
     computed: {
         sortedItems () {
-            if (this.orderByField === 'name' && this.sortClass === 'asc') {
-                return sortAsc(this.items, 'name');
-            } else {
-                return this.items;
+            if (this.sortClass === 'asc') {
+                return sortAsc(this.items, this.orderByField);
+            } else if (this.sortClass === 'desc') {
+                return sortDesc(this.items, this.orderByField);
             }
         }
     },
@@ -188,21 +189,15 @@ export default {
         formatTime(unixTime, timeFormat) {
             return this.Moment(unixTime).format(timeFormat);
         },
-        sort(field, defaultSortDirection) {
-            if (field === this.orderByField) {
-                // orderByField is the same, so reverse the sort
-                this.sortClass = (this.sortClass === 'asc') ? 'desc' : 'asc';
-            } else {
-                // New orderByField, default to asc
-                this.sortClass = defaultSortDirection;
-            }
-
+        sortTrigger(field, sortOrder) {
             this.orderByField = field;
-
-            if (this.sortClass === 'desc') {
-                return sortDesc(this.items, field);
+            this.sortClass = sortOrder;
+        },
+        sortToggle(field, sortOrder) {
+            if (this.orderByField === field) {
+                return this.sortClass === 'asc' ? 'desc' : 'asc';
             } else {
-               return sortAsc(this.items, field);
+                return sortOrder;
             }
         }
     }
