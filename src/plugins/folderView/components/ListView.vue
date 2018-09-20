@@ -5,27 +5,27 @@
             <tr>
                 <th class="is-sortable"
                     v-bind:class="[orderByField == 'name' ? 'is-sorting' : '', sortClass]"
-                    @click="sort('name')">
+                    @click="sort('name', 'asc')">
                     Name
                 </th>
                 <th class="is-sortable"
                     v-bind:class="[orderByField == 'type' ? 'is-sorting' : '', sortClass]"
-                    @click="sort('type')">
+                    @click="sort('type', 'asc')">
                     Type
                 </th>
                 <th class="is-sortable"
                     v-bind:class="[orderByField == 'createdDate' ? 'is-sorting' : '', sortClass]"
-                    @click="sort('createdDate')">
+                    @click="sort('createdDate', 'desc')">
                     Created Date
                 </th>
                 <th class="is-sortable"
                     v-bind:class="[orderByField == 'updatedDate' ? 'is-sorting' : '', sortClass]"
-                    @click="sort('updatedDate')">
+                    @click="sort('updatedDate', 'desc')">
                     Updated Date
                 </th>
                 <th class="is-sortable"
                     v-bind:class="[orderByField == 'items' ? 'is-sorting' : '', sortClass]"
-                    @click="sort('items')">
+                    @click="sort('items', 'asc')">
                     Items
                 </th>
             </tr>
@@ -134,10 +134,11 @@ export default {
 
         return {
             items: items,
-            orderByField: '',
-            sortClass: ''
+            orderByField: 'name',
+            sortClass: 'asc',
         }
     },
+
     methods: {
         navigate(identifier) {
             let currentLocation = this.openmct.router.currentLocation.path,
@@ -148,23 +149,27 @@ export default {
         formatTime(unixTime, timeFormat) {
             return this.Moment(unixTime).format(timeFormat);
         },
-        sort(field) {
+        sort(field, defaultSortDirection) {
+            if (field === this.orderByField) {
+                // orderByField is the same, so reverse the sort
+                this.sortClass = (this.sortClass === 'asc') ? 'desc' : 'asc';
+            } else {
+                // New orderByField, default to asc
+                this.sortClass = defaultSortDirection;
+            }
+
             this.orderByField = field;
 
-            if (this.sortClass === 'asc') {
-                this.sortClass = 'desc';
-
+            if (this.sortClass === 'desc') {
                 return this.items.sort((a,b) => a[field] < b[field]);
             } else {
-                this.sortClass = 'asc';
-
                 return this.items.sort((a,b) => a[field] > b[field]);
             }
         }
+    },
+
+    mounted() {
+        this.sort('name', 'asc')
     }
 }
 </script>
-
-<style>
-
-</style>
