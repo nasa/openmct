@@ -32,7 +32,7 @@
             </thead>
             <tbody>
             <tr class="c-list-item"
-                v-for="(item,index) in items"
+                v-for="(item,index) in sortedItems"
                 v-bind:key="index"
                 @click="navigate(item.model.identifier.key)">
                 <td class="c-list-item__name"
@@ -163,12 +163,19 @@ export default {
             });
         }
 
-        this.$nextTick(() => sortAsc(this.items, 'name'));
-
         return {
             items: items,
             orderByField: 'name',
             sortClass: 'asc',
+        }
+    },
+    computed: {
+        sortedItems () {
+            if (this.orderByField === 'name' && this.sortClass === 'asc') {
+                return sortAsc(this.items, 'name');
+            } else {
+                return this.items;
+            }
         }
     },
     methods: {
