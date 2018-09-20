@@ -5,27 +5,27 @@
             <tr>
                 <th class="is-sortable"
                     v-bind:class="[orderByField == 'name' ? 'is-sorting' : '', sortClass]"
-                    @click="sortTrigger('name', sortToggle('name', 'asc'))">
+                    @click="sortTrigger('name', 'asc')">
                     Name
                 </th>
                 <th class="is-sortable"
                     v-bind:class="[orderByField == 'type' ? 'is-sorting' : '', sortClass]"
-                    @click="sortTrigger('type', sortToggle('type', 'asc'))">
+                    @click="sortTrigger('type', 'asc')">
                     Type
                 </th>
                 <th class="is-sortable"
                     v-bind:class="[orderByField == 'createdDate' ? 'is-sorting' : '', sortClass]"
-                    @click="sortTrigger('createdDate', sortToggle('createdDate', 'desc'))">
+                    @click="sortTrigger('createdDate', 'desc')">
                     Created Date
                 </th>
                 <th class="is-sortable"
                     v-bind:class="[orderByField == 'updatedDate' ? 'is-sorting' : '', sortClass]"
-                    @click="sortTrigger('updatedDate', sortToggle('updatedDate', 'desc'))">
+                    @click="sortTrigger('updatedDate', 'desc')">
                     Updated Date
                 </th>
                 <th class="is-sortable"
                     v-bind:class="[orderByField == 'items' ? 'is-sorting' : '', sortClass]"
-                    @click="sortTrigger('items', sortToggle('items', 'asc'))">
+                    @click="sortTrigger('items', 'asc')">
                     Items
                 </th>
             </tr>
@@ -190,15 +190,12 @@ export default {
             return this.Moment(unixTime).format(timeFormat);
         },
         sortTrigger(field, sortOrder) {
-            this.orderByField = field;
-            this.sortClass = sortOrder;
-        },
-        sortToggle(field, sortOrder) {
             if (this.orderByField === field) {
-                return this.sortClass === 'asc' ? 'desc' : 'asc';
+                this.sortClass = (this.sortClass === 'asc') ? 'desc' : 'asc';
             } else {
-                return sortOrder;
+                this.sortClass = sortOrder;
             }
+            this.orderByField = field;
         }
     }
 }
