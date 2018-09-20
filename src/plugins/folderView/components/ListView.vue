@@ -103,6 +103,37 @@
 </style>
 
 <script>
+
+function sortAsc (array, field) {
+    return array.sort((a,b) => {
+        let first = a[field],
+            second = b[field];
+
+        if (first < second) {
+            return -1;
+        } else if (first > second) {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
+};
+
+function sortDesc (array, field) {
+    return array.sort((a,b) => {
+        let first = a[field],
+            second = b[field];
+
+        if (first < second) {
+            return 1;
+        } else if (first > second) {
+            return -1;
+        } else {
+            return 0;
+        }
+    });
+}
+
 export default {
     inject: ['openmct', 'domainObject', 'Moment'],
     data() {
@@ -126,11 +157,13 @@ export default {
                         cssClass: type.definition.cssClass,
                         createdDate: model.persisted,
                         updatedDate: model.modified,
-                        items: model.composition.length
+                        items: model.composition ? model.composition.length : 0
                     });
                 });
             });
         }
+
+        this.$nextTick(() => sortAsc(this.items, 'name'));
 
         return {
             items: items,
@@ -138,7 +171,6 @@ export default {
             sortClass: 'asc',
         }
     },
-
     methods: {
         navigate(identifier) {
             let currentLocation = this.openmct.router.currentLocation.path,
@@ -161,15 +193,11 @@ export default {
             this.orderByField = field;
 
             if (this.sortClass === 'desc') {
-                return this.items.sort((a,b) => a[field] < b[field]);
+                return sortDesc(this.items, field);
             } else {
-                return this.items.sort((a,b) => a[field] > b[field]);
+               return sortAsc(this.items, field);
             }
         }
-    },
-
-    mounted() {
-        this.sort('name', 'asc')
     }
 }
 </script>
