@@ -2,10 +2,7 @@
     <!-- - TODO: styles for selectable, moveable, etc. -->
     <div class="c-frame has-local-controls"
          :style="item.style"
-         :class="{
-            's-drilled-in': item.drilledIn,
-            'no-frame': !item.hasFrame
-         }"
+         :class="classObject"
          @dblclick="drill(item.id, $event)">
         <div class="c-frame__header">
             <div class="c-frame__header__start">
@@ -116,6 +113,14 @@
         components: {
             ObjectView
         },
+        computed: {
+            classObject: function () {
+                return {
+                    's-drilled-in': this.item.drilledIn,
+                    'no-frame': !this.item.hasFrame
+                }
+            }
+        },
         methods: {
             setSelection(selection) {
                 if (selection.length === 0) {
@@ -132,9 +137,9 @@
                     $event.stopPropagation();
                 }
 
-                //if (!this.item.domainObject.getCapability('editor').inEditContext()) {
-                //    return;
-                //}
+                if (!this.isBeingEdited(this.item.domainObject)) {
+                    return;
+                }
 
                 if (this.openmct.composition.get(this.item.domainObject) === undefined) {
                     return;
@@ -146,6 +151,10 @@
                 }
 
                 this.$emit('drilledIn', id);
+            },
+            isBeingEdited(object) {
+                // TODO: add logic when inEditContext() is implemented in Vue.
+                return true;
             }
         },
         mounted() {
