@@ -1,4 +1,4 @@
-/******************************************************** BUTTONS */
+/******************************************************** PLACEHOLDERS */
 %c-control {
     @include userSelectNone();
     $fs: 1em;
@@ -23,7 +23,6 @@
         line-height: $fs; // Remove effect on top and bottom padding
         font-size: $fs;
     }
-
 }
 
 %c-button {
@@ -45,6 +44,52 @@
         &:hover {
             background: $colorBtnMajorBgHov;
             color: $colorBtnMajorFgHov;
+        }
+    }
+
+    &[class*='--caution'] {
+        background: $colorBtnCautionBg;
+        color: $colorBtnCautionFg;
+
+        &:hover {
+            background: $colorBtnCautionBgHov;
+        }
+
+    }
+}
+
+%c-menu-button {
+    $m: $interiorMargin;
+    @extend %c-button;
+
+    &:before,
+    > * {
+        margin-right: $m;
+    }
+
+    &:after {
+        content: $glyph-icon-arrow-down;
+        font-family: symbolsfont;
+        opacity: 0.5;
+    }
+
+    &--w {
+        // Wraps c-menu-button, contains button and menu
+        .c-menu {
+            // Default position
+            top: 100%; left: 0;
+        }
+
+        &[class*='--menus-up'] {
+            .c-menu {
+                top: auto; bottom: 100%;
+            }
+        }
+
+        &[class*='--menus-left'] {
+            .c-menu {
+                left: auto; right: 0;
+            }
         }
     }
 }
@@ -80,9 +125,6 @@ button {
 
 /********* Button Sets */
 .c-button-set {
-    // Buttons are smashed together with minimal margin
-    // c-buttons don't have border-radius between buttons, creates a tool-button-strip look
-    // c-icon-buttons get grouped more closely together
     // When one set is adjacent to another, provides a divider between
 
     display: inline-flex;
@@ -91,6 +133,27 @@ button {
         // Assume buttons are immediate descendants
         flex: 0 0 auto;
 
+        + * {
+            margin-left: $interiorMarginSm;
+        }
+    }
+
+    + .c-button-set {
+        $m: $interiorMarginSm;
+        $b: 1px;
+        &:before {
+            content: '';
+            display: block;
+            width: $m + $b; // Allow for border
+            border-right: $b solid $colorInteriorBorder;
+            margin-right: $m;
+        }
+    }
+
+    &[class*='--strip'] {
+        // Buttons are smashed together with minimal margin
+        // c-buttons don't have border-radius between buttons, creates a tool-button-strip look
+        // c-icon-buttons get grouped more closely together
         &[class^="c-button"] {
             // Only apply the following to buttons that have background, eg. c-button
             border-radius: 0;
@@ -110,17 +173,6 @@ button {
             }
         }
     }
-
-    + .c-button-set {
-        $m: $interiorMarginSm;
-        &:before {
-            content: '';
-            display: block;
-            width: $m;
-            border-right: 1px solid $colorInteriorBorder;
-            margin-right: $m;
-        }
-    }
 }
 
 /********* Menu Buttons */
@@ -129,39 +181,22 @@ button {
 // Default menu position is down and to the right
 // Apply c-menu-button--menus-up and c-menu-button--menus-left to --w wrapper element to modify menu position
 .c-menu-button {
-    $m: $interiorMarginSm;
-    @extend %c-button;
+    @extend %c-menu-button;
+}
 
-    &:before {
-        margin-right: $m;
+.c-menu-swatch-button {
+    // Extends c-menu-button, requires a color swatch element in markup
+    @extend %c-menu-button;
+
+    [class*='swatch'] {
+        $d: 1em;
+        background: transparent;
+        border: 1px solid $colorSwatchBorder;
+        box-shadow: inset rgba(black, 0.4) 0 0 2px;
+        width: $d;
+        height: $d;
     }
 
-    &:after {
-        content: $glyph-icon-arrow-down;
-        font-family: symbolsfont;
-        margin-left: $m;
-        opacity: 0.5;
-    }
-
-    &--w {
-        // Wraps c-menu-button, contains button and menu
-        .c-menu {
-            // Default position
-            top: 100%; left: 0;
-        }
-
-        &.c-menu-button--menus-up {
-            .c-menu {
-                top: auto; bottom: 100%;
-            }
-        }
-
-        &.c-menu-button--menus-left {
-            .c-menu {
-                left: auto; right: 0;
-            }
-        }
-    }
 }
 
 /******************************************************** DISCLOSURE CONTROLS */
@@ -211,8 +246,8 @@ button {
 
 /******************************************************** FORM ELEMENTS */
 /********* Inline inputs */
-// A text input or contenteditable element that indicates edit affordance on hover and looks like an input on focus
 .c-input-inline {
+    // A text input or contenteditable element that indicates edit affordance on hover and looks like an input on focus
     @include input-base();
     border: 1px solid transparent;
     display: block !important;
@@ -238,6 +273,21 @@ button {
     &:focus {
         @include nice-input($shdw: rgba(0, 0, 0, 0.6) 0 1px 3px);
         border-color: transparent;
+    }
+}
+
+.c-labeled-input {
+    // An input used in the Toolbar
+    // Assumes label is before the input
+    @extend %c-control;
+    @include labeledInput();
+
+    input {
+        margin-left: $interiorMarginSm;
+    }
+
+    input[type="number"] {
+        //flex: 0 0 4em;
     }
 }
 

@@ -49,6 +49,9 @@ $colorBtnMajorBg: $colorKey;
 $colorBtnMajorBgHov: $colorKeyHov;
 $colorBtnMajorFg: $colorKeyFg;
 $colorBtnMajorFgHov: pushBack($colorBtnMajorFg, $hoverRatioPercent);
+$colorBtnCautionBg: #f16f6f;
+$colorBtnCautionBgHov: #f1504e;
+$colorBtnCautionFg: $colorBtnFg;
 $colorClickIcon: $colorKey;
 $colorClickIconHov: $colorKeyHov;
 $colorToggleIcon: rgba($colorClickIcon, 0.5);
@@ -278,8 +281,9 @@ $colorCalCellSelectedBg: $colorItemTreeSelectedBg;
 $colorCalCellSelectedFg: $colorItemTreeSelectedFg;
 $colorCalCellInMonthBg: pullForward($colorMenuBg, 5%);
 
-// Palettes
+// Palettes and Swatches
 $colorPaletteFg: pullForward($colorMenuBg, 30%);
+$colorSwatchBorder: rgba(#fff, 0.5);
 $colorPaletteSelected: #333;
 $shdwPaletteFg: none;
 $shdwPaletteSelected: inset 0 0 0 1px #fff;

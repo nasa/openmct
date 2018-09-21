@@ -42,6 +42,7 @@
         &.is-editing {
             > [class*="__object"] {
                 background: rgba($colorKey, 0.1);
+                box-shadow: inset rgba($colorKey, 0.7) 0 0 4px;
             }
         }
 

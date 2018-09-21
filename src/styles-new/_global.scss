@@ -89,6 +89,13 @@ body.desktop {
     }
 }
 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    //margin: -1px -5px inherit -5px !important;
+    margin-right: -5px !important;
+    margin-top: -1px !important;
+}
+
 /************************** HTML ENTITIES */
 a {
     color: $colorA;
