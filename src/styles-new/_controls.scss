@@ -6,7 +6,6 @@
     align-items: center;
     font-size: $fs;
     justify-content: start;
-    cursor: pointer;
 
     &:before,
     &:after {
@@ -31,6 +30,7 @@
     border-radius: $controlCr;
     color: $colorBtnFg;
     padding: nth($btnPad, 1) nth($btnPad, 2);
+    cursor: pointer;
 
     &:hover {
         background: $colorBtnBgHov;
@@ -111,6 +111,7 @@ button {
     $pTB: 3px;
     border-radius: $controlCr;
     color: $colorKey;
+    cursor: pointer;
     font-size: $fontBaseSize * 1.2;
     padding: $pTB $pLR ;
 
@@ -139,7 +140,7 @@ button {
     }
 
     + .c-button-set {
-        $m: $interiorMarginSm;
+        $m: $interiorMargin;
         $b: 1px;
         &:before {
             content: '';
