@@ -21,9 +21,11 @@
                     <mct-tree></mct-tree>
                 </div>
             </pane>
-            <pane class="l-shell__pane-main">
+            <pane class="l-shell__pane-main"
+                :class="{ 'is-editing' : true }">
                 <browse-bar class="l-shell__main-view-browse-bar"
                         ref="browseBar"></browse-bar>
+                <toolbar class="l-shell__toolbar"></toolbar>
                 <object-view class="l-shell__main-container"
                              ref="browseObject"></object-view>
                 <mct-template template-key="conductor"
@@ -183,6 +185,11 @@
             &__pane-inspector {
                 width: 200px;
             }
+
+            &__toolbar {
+                flex: 0 0 auto;
+                margin-bottom: $interiorMargin;
+            }
         }
     }
 </style>
@@ -213,7 +220,8 @@
             search,
             multipane,
             pane,
-            BrowseBar
+            BrowseBar,
+            Toolbar
         }
     }
 </script>

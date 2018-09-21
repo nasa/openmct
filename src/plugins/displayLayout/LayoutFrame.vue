@@ -18,8 +18,7 @@
                 :object="item.domainObject"></object-view>
 
         <!-- Drag handles -->
-        <div class="c-frame-edit"
-              v-if="item.selected && !item.drilledIn">
+        <div class="c-frame-edit">
             <div class="c-frame-edit__move"></div>
             <div class="c-frame-edit__handle --nw"></div>
             <div class="c-frame-edit__handle --ne"></div>
@@ -93,13 +92,36 @@
             border: 1px solid $colorInteriorBorder;
             padding: $interiorMargin;
         }
+
+        /*************************** SELECTION */
+        &.s-selected {
+            //Legacy name for now
+            border-color: $colorKey;
+        }
+
+        /*************************** EDITING */
+        .is-editing & {
+            border: 1px dotted rgba($colorKey, 0.5);
+
+            &:not(.s-selected) {
+                .c-frame-edit {
+                    display: none;
+                }
+            }
+        }
+
+        &.is-drilled-in {
+            //Legacy name for now
+            border: 1px dashed deeppink;
+        }
     }
 
     .c-frame-edit {
         $z: 10;
+
         @include abs();
-        //border: 1px dotted rgba($colorKey, 0.7);
         box-shadow: rgba($colorKey, 1) 0 0 10px;
+        //display: none;
 
         &__move {
             @include abs();
@@ -170,7 +192,7 @@
         computed: {
             classObject: function () {
                 return {
-                    's-drilled-in': this.item.drilledIn,
+                    'is-drilled-in': this.item.drilledIn,
                     'no-frame': !this.item.hasFrame
                 }
             }
