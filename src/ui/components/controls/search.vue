@@ -14,9 +14,7 @@
 
 <style lang="scss">
     @import "~styles/sass-base";
-    @import "~styles/controls";
 
-    /******************************* SEARCH */
     .c-search {
         @include wrappedInput();
 

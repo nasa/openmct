@@ -1,5 +1,5 @@
 /******************************************************** PLACEHOLDERS */
-%c-control {
+@mixin cControl() {
     @include userSelectNone();
     $fs: 1em;
     display: inline-flex;
@@ -19,13 +19,14 @@
     }
 
     [class*="__label"] {
+        display: block;
         line-height: $fs; // Remove effect on top and bottom padding
         font-size: $fs;
     }
 }
 
-%c-button {
-    @extend %c-control;
+@mixin cButton() {
+    @include cControl();
     background: $colorBtnBg;
     border-radius: $controlCr;
     color: $colorBtnFg;
@@ -57,9 +58,39 @@
     }
 }
 
-%c-menu-button {
+@mixin cClickIcon() {
+    // A clickable element that just includes the icon, no background
+    // Padding is included to facilitate a bigger hit area
+    // Make the icon bigger relative to its container
+    @include cControl();
+    $pLR: 3px;
+    $pTB: 3px;
+    border-radius: $controlCr;
+    color: $colorKey;
+    cursor: pointer;
+    font-size: $fontBaseSize * 1.2;
+    padding: $pTB $pLR ;
+
+    &:hover {
+        background: rgba($colorKey, 0.2);
+    }
+
+    &:before {
+        font-size: 1.1em;
+    }
+
+
+}
+
+/********* Buttons */
+// Optionally can include icon in :before via markup
+[class^='c-button'],
+button {
+    @include cButton();
+}
+
+.c-button--menu {
     $m: $interiorMargin;
-    @extend %c-button;
 
     &:before,
     > * {
@@ -93,39 +124,16 @@
     }
 }
 
-/********* Buttons */
-// Optionally can include icon in :before via markup
-.c-button,
-button {
-    @extend %c-button;
-}
-
 /********* Icon Buttons */
 .c-icon-button {
-    // A clickable element that just includes the icon, no background
-    // Padding is included to facilitate a bigger hit area
-    // Make the icon bigger relative to its container
-    @extend %c-control;
-    $pLR: 3px;
-    $pTB: 3px;
-    border-radius: $controlCr;
-    color: $colorKey;
-    cursor: pointer;
-    font-size: $fontBaseSize * 1.2;
-    padding: $pTB $pLR ;
-
-    &:hover {
-        background: rgba($colorKey, 0.2);
-    }
-
-    &:before {
-        font-size: 1.1em;
-    }
+    // TODO: rename to c-click-icon
+    @include cClickIcon();
 }
 
 /********* Toolbar Buttons */
 .c-toolbar-button {
-    @extend %c-control;
+    // TODO: refactor to use c-click-icon, c-click-icon--menu, and c-click-icon--swatched
+    @include cControl();
     $pLR: $interiorMargin;
     $pTB: 4px;
     border-radius: $controlCr;
@@ -245,6 +253,7 @@ button {
 // Optionally can include icon in :before
 // Default menu position is down and to the right
 // Apply c-menu-button--menus-up and c-menu-button--menus-left to --w wrapper element to modify menu position
+/*
 .c-menu-button {
     @extend %c-menu-button;
 }
@@ -263,13 +272,14 @@ button {
     }
 
 }
+*/
 
 /******************************************************** DISCLOSURE CONTROLS */
 /********* Disclosure Button */
 // Provides a downward arrow icon that when clicked displays a context menu
 // Always placed AFTER an element
 .c-disclosure-button {
-    @extend .c-icon-button;
+    @include cClickIcon();
     margin-left: $interiorMarginSm;
 
     &:before {
@@ -344,7 +354,7 @@ button {
 .c-labeled-input {
     // An input used in the Toolbar
     // Assumes label is before the input
-    @extend %c-control;
+    @include cControl();
     @include labeledInput();
 
     input {
@@ -371,7 +381,7 @@ button {
 @mixin menuInner() {
     color: $colorMenuFg;
     li {
-        @extend %c-control;
+        @include cControl();
         color: $colorMenuFg;
         display: flex;
         padding: nth($menuItemPad, 1) nth($menuItemPad, 2);
