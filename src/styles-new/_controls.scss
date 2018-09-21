@@ -54,7 +54,6 @@
         &:hover {
             background: $colorBtnCautionBgHov;
         }
-
     }
 }
 
@@ -124,6 +123,71 @@ button {
     }
 }
 
+/********* Toolbar Buttons */
+.c-toolbar-button {
+    @extend %c-control;
+    $pLR: $interiorMargin;
+    $pTB: 4px;
+    border-radius: $controlCr;
+    color: $colorBtnBg;
+    cursor: pointer;
+    font-size: $fontBaseSize * 1.1;
+    padding: $pTB $pLR;
+
+    &:hover {
+        background: rgba($colorKey, 0.2);
+    }
+
+    &:before {
+        color: $colorBodyFg;
+        font-size: 1.2em;
+    }
+
+    &--menu {
+        &:after {
+            content: $glyph-icon-arrow-down;
+            font-family: symbolsfont;
+            font-size: 0.6em;
+            margin-left: floor($interiorMarginSm * 0.8);
+            opacity: 0.5;
+        }
+    }
+
+    &--color {
+        // Color control, show swatch element
+        $p: $pTB - 2;
+        display: flex;
+        flex-flow: column nowrap;
+        align-items: center;
+        //padding-top: $pTB;
+        padding-bottom: $pTB;
+        width: 2em;
+
+        > [class*='__swatch'] {
+            box-shadow: inset rgba(black, 0.2) 0 0 1px;
+            flex: 0 0 auto;
+            height: 4px;
+            width: 100%;
+            background: red;
+            margin-top: 2px;
+        }
+
+        &:before {
+            flex: 1 1 auto;
+            font-size: 1em;
+        }
+    }
+
+    &[class*='--caution'] {
+        &:before { color: $colorBtnCautionBg; }
+
+        &:hover:before {
+            color: $colorBtnCautionBgHov;
+        }
+    }
+}
+
+
 /********* Button Sets */
 .c-button-set {
     // When one set is adjacent to another, provides a divider between
@@ -135,7 +199,7 @@ button {
         flex: 0 0 auto;
 
         + * {
-            margin-left: $interiorMarginSm;
+            // margin-left: $interiorMarginSm;
         }
     }
 

@@ -8,21 +8,25 @@
             </div>
         </div>
         <div class="c-button-set">
-            <div class="c-menu-button--w">
-                <div class="c-menu-button js-layers icon-layers"></div>
+            <div class="c-toolbar-button--w">
+                <div class="c-toolbar-button c-toolbar-button--menu js-layers icon-layers"></div>
             </div>
-            <div class="c-menu-button--w">
-                <div class="c-menu-swatch-button js-color-fill icon-paint-bucket">
-                    <div class="c-menu-button__swatch"></div>
+
+            <div class="c-toolbar-button--w">
+                <div class="c-toolbar-button c-toolbar-button--color js-color-fill icon-paint-bucket">
+                    <div class="c-toolbar-button__swatch" style="background: #33ff00;"></div>
                 </div>
             </div>
 
-            <div class="c-menu-button--w">
-                <div class="c-menu-swatch-button js-color-line icon-minus">
-                    <div class="c-menu-button__swatch"></div>
+            <div class="c-toolbar-button--w">
+                <div class="c-toolbar-button c-toolbar-button--color js-color-stroke icon-pencil">
+                    <div class="c-toolbar-button__swatch" style="background: #ffffff;"></div>
                 </div>
             </div>
-            <div class="c-button icon-image"></div>
+
+            <div class="c-toolbar-button--w">
+                <div class="c-toolbar-button js-image icon-image"></div>
+            </div>
         </div>
         <div class="c-button-set">
             <labeledNumberInput label="X" value="1" title="X position"></labeledNumberInput>
@@ -31,7 +35,7 @@
             <labeledNumberInput label="H" value="4" title="Height"></labeledNumberInput>
         </div>
         <div class="c-button-set">
-            <div class="c-button c-button--caution icon-trash"></div>
+            <div class="c-toolbar-button c-toolbar-button--caution icon-trash"></div>
         </div>
     </div>
 </template>
