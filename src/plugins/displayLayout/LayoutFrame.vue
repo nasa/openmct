@@ -99,20 +99,19 @@
             border-color: $colorKey;
         }
 
-        /*************************** EDITING */
-        .is-editing & {
-            border: 1px dotted rgba($colorKey, 0.5);
-
-            &:not(.s-selected) {
-                .c-frame-edit {
-                    display: none;
-                }
-            }
-        }
-
         &.is-drilled-in {
-            //Legacy name for now
             border: 1px dashed deeppink;
+        }
+    }
+
+    /*************************** EDITING */
+    .is-editing .c-frame:not(.is-drilled-in) {
+        border: 1px dotted rgba($colorKey, 0.5);
+
+        &.s-selected {
+            > .c-frame-edit {
+                display: block;
+            }
         }
     }
 
@@ -121,7 +120,7 @@
 
         @include abs();
         box-shadow: rgba($colorKey, 1) 0 0 10px;
-        //display: none;
+        display: none;
 
         &__move {
             @include abs();
