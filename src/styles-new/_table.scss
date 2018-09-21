@@ -51,7 +51,7 @@
     &--sortable {
         .is-sorting {
             &:after {
-                color: $colorIconLink;
+                color: $colorIconAlias;
                 content: $glyph-icon-arrow-tall-up;
                 font-family: symbolsfont;
                 font-size: 8px;

@@ -3,6 +3,7 @@
         <div v-for="(item, index) in items"
             v-bind:key="index"
             class="l-grid-view__item c-grid-item"
+             :class="{ 'is-alias': item.isAlias === true }"
             @click="navigate(item.model.identifier.key)">
             <div class="c-grid-item__type-icon"
                  :class="(item.type.cssClass != undefined) ? 'bg-' + item.type.cssClass : 'bg-icon-object-unknown'">
@@ -63,6 +64,22 @@
             filter: $colorKeyFilter;
             flex: 0 0 32px;
             margin-right: $interiorMarginLg;
+        }
+
+        &.is-alias {
+            // Object is an alias to an original.
+            [class*='__type-icon'] {
+                &:before {
+                    color: $colorIconAliasForKeyFilter;
+                    content: $glyph-icon-link;
+                    display: block;
+                    font-family: symbolsfont;
+                    font-size: 2.5em;
+                    position: absolute;
+                    text-shadow: rgba(black, 0.5) 0 1px 4px;
+                    top: auto; left: 0; bottom: 10px; right: auto;
+                }
+            }
         }
 
         &__details {
@@ -161,7 +178,8 @@ export default {
 
                 items.push({
                     model: model,
-                    type: type.definition
+                    type: type.definition,
+                    isAlias: false
                 });
             });
         });

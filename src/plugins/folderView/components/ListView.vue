@@ -34,9 +34,10 @@
             <tr class="c-list-item"
                 v-for="(item,index) in sortedItems"
                 v-bind:key="index"
+                :class="{ 'is-alias': item.isAlias === true }"
                 @click="navigate(item.identifier)">
-                <td class="c-list-item__name"
-                    :class="(item.cssClass != undefined) ? item.cssClass : 'icon-object-unknown'">
+                <td class="c-list-item__name">
+                    <div class="c-list-item__type-icon" :class="(item.cssClass != undefined) ? item.cssClass : 'icon-object-unknown'"></div>
                     {{item.name}}
                 </td>
                 <td class="c-list-item__type">{{ item.type }}</td>
@@ -88,12 +89,29 @@
     .c-list-item {
         &__name {
             @include ellipsize();
+        }
 
-            &:before {
-                color: $colorKey;
-                display: inline-block;
-                width: 1em;
-                margin-right:$interiorMarginSm;
+        &__type-icon {
+            color: $colorKey;
+            display: inline-block;
+            width: 1em;
+            margin-right:$interiorMarginSm;
+        }
+
+        &.is-alias {
+            // Object is an alias to an original.
+            [class*='__type-icon'] {
+                &:after {
+                    color: $colorIconAlias;
+                    content: $glyph-icon-link;
+                    font-family: symbolsfont;
+                    display: block;
+                    position: absolute;
+                    text-shadow: rgba(black, 0.5) 0 1px 2px;
+                    top: auto; left: -1px; bottom: 1px; right: auto;
+                    transform-origin: bottom left;
+                    transform: scale(0.65);
+                }
             }
         }
     }
@@ -155,6 +173,7 @@ export default {
                         name: model.name,
                         identifier: model.identifier.key,
                         type: type.definition.name,
+                        isAlias: false,
                         cssClass: type.definition.cssClass,
                         createdDate: model.persisted,
                         updatedDate: model.modified,
