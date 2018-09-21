@@ -1,17 +1,19 @@
 <template>
     <div class="l-layout"
-         :class="{'is-editing' : isEditing === true}">
+         :class="[{
+            'is-editing': isEditing === true
+         }]">
         <toolbar class="l-layout__toolbar"></toolbar>
         <div class="l-layout__object">
             <!-- Background grid -->
             <div class="l-layout__grid-holder c-grid" v-if="!drilledIn">
                 <div class="c-grid__x l-grid l-grid-x"
                      v-if="gridSize[0] >= 3"
-                     :style="{ backgroundSize: gridSize[0] + 'px 100%' }">
+                     :style="[{ backgroundSize: gridSize[0] + 'px 100%' }]">
                 </div>
                 <div class="c-grid__y l-grid l-grid-y"
                      v-if="gridSize[1] >= 3"
-                     :style="{ backgroundSize: '100%' + gridSize[1] + 'px' }"></div>
+                     :style="[{ backgroundSize: '100%' + gridSize[1] + 'px' }]"></div>
             </div>
 
             <layout-frame v-for="item in frameItems"
@@ -99,7 +101,7 @@
                 drilledIn: undefined
             }
         },          
-        inject: ['openmct', 'objectUtils'],
+        inject: ['openmct'],
         props: ['domainObject'],
         components: {
             LayoutFrame,
@@ -188,11 +190,6 @@
             isDrilledIn(id) {
                 return this.drilledIn === id;
             }
-        },
-        computed: {
-            //isDrilledIn(id) {
-            //    return this.drilledIn === id;
-            //}
         },
         mounted() {
             this.removeSelectable = this.openmct.selection.selectable(
