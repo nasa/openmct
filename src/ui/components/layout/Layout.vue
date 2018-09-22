@@ -3,8 +3,8 @@
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
             <div class="l-shell__controls">
-                <a class="c-icon-button icon-new-window" title="Open in a new browser tab"></a>
-                <a class="c-icon-button icon-fullscreen-collapse" title="Enable full screen mode"></a>
+                <a class="c-click-icon icon-new-window" title="Open in a new browser tab"></a>
+                <a class="c-click-icon icon-fullscreen-collapse" title="Enable full screen mode"></a>
             </div>
             <div class="l-shell__app-logo">[ App Logo ]</div>
         </div>

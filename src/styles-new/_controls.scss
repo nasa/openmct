@@ -78,13 +78,36 @@
     &:before {
         font-size: 1.1em;
     }
+}
 
+@mixin cCtrlWrapper {
+    // Provides a wrapper around  buttons and other controls
+    // Contains control and provides positioning context for contained menu/palette.
+    // Wraps --menu elements, contains button and menu
+    overflow: visible;
 
+    .c-menu {
+        // Default position of contained menu
+        top: 100%; left: 0;
+    }
+
+    &[class*='--menus-up'] {
+        .c-menu {
+            top: auto; bottom: 100%;
+        }
+    }
+
+    &[class*='--menus-left'] {
+        .c-menu {
+            left: auto; right: 0;
+        }
+    }
 }
 
 /********* Buttons */
 // Optionally can include icon in :before via markup
-[class^='c-button'],
+.c-button,
+.c-button--menu,
 button {
     @include cButton();
 }
@@ -102,54 +125,11 @@ button {
         font-family: symbolsfont;
         opacity: 0.5;
     }
-
-    &--w {
-        // Wraps c-menu-button, contains button and menu
-        .c-menu {
-            // Default position
-            top: 100%; left: 0;
-        }
-
-        &[class*='--menus-up'] {
-            .c-menu {
-                top: auto; bottom: 100%;
-            }
-        }
-
-        &[class*='--menus-left'] {
-            .c-menu {
-                left: auto; right: 0;
-            }
-        }
-    }
 }
 
 /********* Icon Buttons */
-.c-icon-button {
-    // TODO: rename to c-click-icon
+.c-click-icon {
     @include cClickIcon();
-}
-
-/********* Toolbar Buttons */
-.c-toolbar-button {
-    // TODO: refactor to use c-click-icon, c-click-icon--menu, and c-click-icon--swatched
-    @include cControl();
-    $pLR: $interiorMargin;
-    $pTB: 4px;
-    border-radius: $controlCr;
-    color: $colorBtnBg;
-    cursor: pointer;
-    font-size: $fontBaseSize * 1.1;
-    padding: $pTB $pLR;
-
-    &:hover {
-        background: rgba($colorKey, 0.2);
-    }
-
-    &:before {
-        color: $colorBodyFg;
-        font-size: 1.2em;
-    }
 
     &--menu {
         &:after {
@@ -161,40 +141,82 @@ button {
         }
     }
 
-    &--color {
+    &--swatched {
         // Color control, show swatch element
-        $p: $pTB - 2;
         display: flex;
         flex-flow: column nowrap;
         align-items: center;
-        //padding-top: $pTB;
-        padding-bottom: $pTB;
-        width: 2em;
 
-        > [class*='__swatch'] {
+        > [class*='swatch'] {
             box-shadow: inset rgba(black, 0.2) 0 0 1px;
             flex: 0 0 auto;
             height: 4px;
             width: 100%;
-            background: red;
-            margin-top: 2px;
+            margin-top: 1px;
         }
 
         &:before {
+            // Reduce size of icon to make a bit of room
             flex: 1 1 auto;
-            font-size: 1em;
-        }
-    }
-
-    &[class*='--caution'] {
-        &:before { color: $colorBtnCautionBg; }
-
-        &:hover:before {
-            color: $colorBtnCautionBgHov;
+            font-size: 0.7em;
         }
     }
 }
 
+.c-ctrl-wrapper {
+    @include cCtrlWrapper();
+}
+
+/********* Toolbar */
+.c-toolbar,
+.c-toolbar .c-ctrl-wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+.c-toolbar {
+    height: 24px; // Need to standardize the height
+
+    .c-click-icon {
+        @include cControl();
+        $pLR: $interiorMargin - 1;
+        $pTB: 2px;
+        border-radius: $controlCr;
+        color: $colorBtnBg;
+        cursor: pointer;
+        font-size: $fontBaseSize;
+        padding: $pTB $pLR;
+
+        &:hover {
+            background: rgba($colorKey, 0.2);
+        }
+
+        &:before {
+            color: $colorBodyFg;
+            font-size: 1.2em;
+        }
+
+        &--swatched {
+            padding-bottom: floor($pTB / 2);
+            width: 2em; // Standardize the width
+        }
+
+        &[class*='--caution'] {
+            &:before {
+                color: $colorBtnCautionBg;
+            }
+
+            &:hover:before {
+                color: $colorBtnCautionBgHov;
+            }
+        }
+    }
+
+    .c-labeled-input {
+        font-size: 0.9em;
+        width: 5em;
+    }
+}
 
 /********* Button Sets */
 .c-button-set {
@@ -226,7 +248,7 @@ button {
     &[class*='--strip'] {
         // Buttons are smashed together with minimal margin
         // c-buttons don't have border-radius between buttons, creates a tool-button-strip look
-        // c-icon-buttons get grouped more closely together
+        // c-click-icons get grouped more closely together
         &[class^="c-button"] {
             // Only apply the following to buttons that have background, eg. c-button
             border-radius: 0;
@@ -252,9 +274,9 @@ button {
 // Always includes :after dropdown arrow
 // Optionally can include icon in :before
 // Default menu position is down and to the right
-// Apply c-menu-button--menus-up and c-menu-button--menus-left to --w wrapper element to modify menu position
+// Apply c-button--menu--menus-up and c-button--menu--menus-left to --w wrapper element to modify menu position
 /*
-.c-menu-button {
+.c-button--menu {
     @extend %c-menu-button;
 }
 
