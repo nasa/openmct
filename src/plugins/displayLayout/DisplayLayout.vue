@@ -112,7 +112,7 @@
         },
         methods: {            
             onAddComposition(domainObject) {
-                console.log('composition object', domainObject);
+                console.log('composition', domainObject);
                 const id = this.openmct.objects.makeKeyString(domainObject.identifier)
                 this.frameItems.push({
                     id: id,
