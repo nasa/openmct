@@ -4,7 +4,7 @@
     $fs: 1em;
     display: inline-flex;
     align-items: center;
-    font-size: $fs;
+    //font-size: $fs;
     justify-content: start;
 
     &:before,
@@ -158,7 +158,7 @@ button {
         &:before {
             // Reduce size of icon to make a bit of room
             flex: 1 1 auto;
-            font-size: 0.7em;
+            font-size: 0.9em;
         }
     }
 }
@@ -181,10 +181,7 @@ button {
         @include cControl();
         $pLR: $interiorMargin - 1;
         $pTB: 2px;
-        border-radius: $controlCr;
         color: $colorBtnBg;
-        cursor: pointer;
-        font-size: $fontBaseSize;
         padding: $pTB $pLR;
 
         &:hover {
@@ -193,7 +190,7 @@ button {
 
         &:before {
             color: $colorBodyFg;
-            font-size: 1.2em;
+            //font-size: 1.2em;
         }
 
         &--swatched {
