@@ -19,11 +19,16 @@
 
         <!-- Drag handles -->
         <div class="c-frame-edit">
-            <div class="c-frame-edit__move"></div>
-            <div class="c-frame-edit__handle --nw"></div>
-            <div class="c-frame-edit__handle --ne"></div>
-            <div class="c-frame-edit__handle --se"></div>
-            <div class="c-frame-edit__handle --sw"></div>
+            <div class="c-frame-edit__move"
+                 @mousedown="startDrag([1,1], [0,0], $event)"></div>
+            <div class="c-frame-edit__handle --nw"
+                 @mousedown="startDrag([1,1], [-1,-1])"></div>
+            <div class="c-frame-edit__handle --ne"
+                 @mousedown="startDrag([0,1], [1,-1])"></div>
+            <div class="c-frame-edit__handle --se"
+                 @mousedown="startDrag([1,0], [-1,1])"></div>
+            <div class="c-frame-edit__handle --sw"
+                 @mousedown="startDrag([0,0], [1,1])"></div>
         </div>
     </div>
 </template>
@@ -179,6 +184,7 @@
 
 <script>
     import ObjectView from '../../ui/components/layout/ObjectView.vue'
+    import LayoutDrag from './LayoutDrag'
 
     export default {
         inject: ['openmct'],
@@ -230,6 +236,40 @@
             isBeingEdited(object) {
                 // TODO: add logic when inEditContext() is implemented in Vue.
                 return true;
+            },
+            updatePosition(event) {
+                let currentPosition = [event.pageX, event.pageY];
+                this.initialPosition = this.initialPosition || currentPosition;
+
+                // Compute relative position
+                this.delta = currentPosition.map(function (v, i) {
+                    return v - this.initialPosition[i];
+                }.bind(this));
+                console.log('delat', this.delta);
+            },
+            startDrag(posFactor, dimFactor, event) {
+                document.body.addEventListener('mousemove', this.continueDrag);
+                document.body.addEventListener('mouseup', this.endDrag);
+                this.updatePosition(event);
+                // fireListener("mctDragDown");
+                // fireListener("mctDrag");
+                event.preventDefault();
+            },
+            continueDrag(event) {
+                this.updatePosition(event);
+                // fireListener("mctDrag");
+                event.preventDefault();
+            },
+            endDrag(event) {
+                document.body.removeEventListener('mousemove', this.continueDrag);
+                document.body.removeEventListener('mouseup', this.endDrag);
+
+                // Also call continueDrag, to fire mctDrag
+                // and do its usual position update
+                this.continueDrag(event);
+                //fireListener("mctDragUp");
+                this.initialPosition = undefined;
+                event.preventDefault();
             }
         },
         mounted() {
