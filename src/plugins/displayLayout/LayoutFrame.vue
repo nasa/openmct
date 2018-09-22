@@ -18,18 +18,13 @@
                 :object="item.domainObject"></object-view>
 
         <!-- Drag handles -->
-        <span class="abs t-edit-handle-holder" v-if="item.selected && !item.drilledIn">
-            <span class="edit-handle edit-move">
-            </span>
-            <span class="edit-corner edit-resize-nw">
-            </span>
-            <span class="edit-corner edit-resize-ne">
-            </span>
-            <span class="edit-corner edit-resize-sw">
-            </span>
-            <span class="edit-corner edit-resize-se">
-            </span>
-        </span>
+        <div class="c-frame-edit">
+            <div class="c-frame-edit__move"></div>
+            <div class="c-frame-edit__handle --nw"></div>
+            <div class="c-frame-edit__handle --ne"></div>
+            <div class="c-frame-edit__handle --se"></div>
+            <div class="c-frame-edit__handle --sw"></div>
+        </div>
     </div>
 </template>
 
@@ -97,6 +92,86 @@
             border: 1px solid $colorInteriorBorder;
             padding: $interiorMargin;
         }
+
+        /*************************** SELECTION */
+        &.s-selected {
+            //Legacy name for now
+            border-color: $colorKey;
+        }
+
+        &.is-drilled-in {
+            border: 1px dashed deeppink;
+        }
+    }
+
+    /*************************** EDITING */
+    .is-editing .c-frame:not(.is-drilled-in) {
+        border: 1px dotted rgba($colorKey, 0.5);
+
+        &.s-selected {
+            > .c-frame-edit {
+                display: block;
+            }
+        }
+    }
+
+    .c-frame-edit {
+        $z: 10;
+
+        @include abs();
+        box-shadow: rgba($colorKey, 1) 0 0 10px;
+        display: none;
+
+        &__move {
+            @include abs();
+            cursor: move;
+            z-index: $z;
+        }
+
+        &__handle {
+            $d: 8px;
+            $o: floor($d * -0.5);
+            background: rgba($colorKey, 0.3);
+            border: 1px solid $colorKey;
+            position: absolute;
+            width: $d; height: $d;
+            top: auto; right: auto; bottom: auto; left: auto;
+            z-index: $z + 1;
+
+            &:before {
+                // Extended hit area
+                $m: -5px;
+                content: '';
+                display: block;
+                position: absolute;
+                top: $m; right: $m; bottom: $m; left: $m;
+                z-index: -1;
+            }
+
+            &:hover {
+                background: $colorKey;
+            }
+
+            &.--nw {
+                cursor: nw-resize;
+                left: $o; top: $o;
+            }
+
+            &.--ne {
+                cursor: ne-resize;
+                right: $o; top: $o;
+            }
+
+            &.--se {
+                cursor: se-resize;
+                right: $o; bottom: $o;
+            }
+
+            &.--sw {
+                cursor: sw-resize;
+                left: $o; bottom: $o;
+            }
+        }
     }
 
 </style>
@@ -116,7 +191,7 @@
         computed: {
             classObject: function () {
                 return {
-                    's-drilled-in': this.item.drilledIn,
+                    'is-drilled-in': this.item.drilledIn,
                     'no-frame': !this.item.hasFrame
                 }
             }

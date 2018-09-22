@@ -1,9 +1,5 @@
 <template>
-    <div class="l-layout"
-         :class="[{
-            'is-editing': isEditing === true
-         }]">
-        <toolbar class="l-layout__toolbar"></toolbar>
+    <div class="l-layout">
         <div class="l-layout__object">
             <!-- Background grid -->
             <div class="l-layout__grid-holder c-grid" v-if="!drilledIn">
@@ -41,23 +37,8 @@
         display: flex;
         flex-direction: column;
 
-        &.is-editing {
-            > [class*="__object"] {
-                background: rgba($colorKey, 0.1);
-                box-shadow: inset rgba($colorKey, 0.7) 0 0 4px;
-            }
-        }
-
-        &:not(.is-editing) {
-            [class*="__grid-holder"],
-            > [class*="__toolbar"] {
-                display: none;
-            }
-        }
-
-        &__toolbar {
-            flex: 0 0 auto;
-            margin-bottom: $interiorMargin;
+        &__grid-holder {
+            display: none;
         }
 
         &__object {
@@ -77,13 +58,25 @@
         &__x  { @include bgTicks($colorGridLines, 'x'); }
         &__y  { @include bgTicks($colorGridLines, 'y'); }
     }
+
+    .is-editing {
+        .l-layout {
+            background: rgba($colorKey, 0.1);
+
+            &.s-selected,
+            &.s-selected-parent {
+                [class*="__grid-holder"] {
+                    display: block;
+                }
+            }
+        }
+    }
 </style>
 
 
 <script>
     import LayoutFrame from './LayoutFrame.vue';
-    import Toolbar from '../../ui/components/layout/Toolbar.vue';
-    
+
     const DEFAULT_GRID_SIZE = [32, 32],
           DEFAULT_DIMENSIONS = [12, 8],
           MINIMUM_FRAME_SIZE = [320, 180];
@@ -105,8 +98,7 @@
         inject: ['openmct'],
         props: ['domainObject'],
         components: {
-            LayoutFrame,
-            Toolbar
+            LayoutFrame
         },
         created: function () {
             console.log("domainObject", JSON.parse(JSON.stringify(this.domainObject)));                    
