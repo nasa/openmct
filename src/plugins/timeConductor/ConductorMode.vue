@@ -142,7 +142,11 @@ export default {
                 this.openmct.time.timeSystem(configuration.timeSystem);
             }
             
-            this.openmct.time.clock(clockKey, configuration.clockOffsets);
+            if (clockKey === undefined) {
+                this.openmct.time.stopClock();
+            } else {
+                this.openmct.time.clock(clockKey, configuration.clockOffsets);
+            }
         },
 
         getMatchingConfig(options) {

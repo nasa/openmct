@@ -86,7 +86,7 @@
                 </span>
                 <input type="submit" class="invisible">
             </form>
-            <conductor-axis class="mobile-hide" @panZoom="setViewFromBounds"></conductor-axis>
+            <conductor-axis class="mobile-hide" :bounds="bounds" @panZoom="setViewFromBounds"></conductor-axis>
         </div>
 
         <!-- Holds time system and session selectors, and zoom control -->
@@ -94,16 +94,16 @@
             <ConductorMode></ConductorMode>
             <ConductorTimeSystem></ConductorTimeSystem>
             <!-- Zoom control -->
-            <div v-if="zoom"
+            <div v-if="isUTCBased && isFixed"
                  class="l-time-conductor-zoom-w grows flex-elem l-flex-row">
-                {{currentZoom}}
+                {{currentZoomText}}
                 <span class="time-conductor-zoom-current-range flex-elem flex-fixed holder">{{timeUnits}}</span>
                 <input class="time-conductor-zoom flex-elem" type="range"
-                       @mouseUp="onZoomStop(currentZoom)"
-                       @change="onZoom(currentZoom)"
-                       min="0.01"
-                       step="0.01"
-                       max="0.99" />
+                    v-model="currentZoom"
+                    @change="setBoundsFromView()"
+                    min="0.01"
+                    step="0.01"
+                    max="0.99" />
             </div>
         </div>
 
@@ -120,12 +120,19 @@
 </style>
 
 <script>
+import moment from 'moment';
 import ConductorMode from './ConductorMode.vue';
 import ConductorTimeSystem from './ConductorTimeSystem.vue';
 import DatePicker from './DatePicker.vue';
 import ConductorAxis from './ConductorAxis.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
+const SECONDS = 1000;
+const DAYS = 24 * 60 * 60 * SECONDS;
+const YEARS = 365 * DAYS;
+
+const MAX_ZOOM_OUT = 10 * YEARS;
+const MAX_ZOOM_IN = 5 * SECONDS;
 
 export default {
     inject: ['openmct', 'configuration'],
@@ -135,7 +142,7 @@ export default {
         DatePicker,
         ConductorAxis
     },
-    data: function () {
+    data() {
         let bounds = this.openmct.time.bounds();
         let offsets = this.openmct.time.clockOffsets();
         let timeSystem = this.openmct.time.timeSystem();
@@ -143,20 +150,18 @@ export default {
         let durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
 
         return {
+            currentZoom: this.calculateZoomFromBounds(),
             timeFormatter: timeFormatter,
             durationFormatter: durationFormatter,
             offsets: {
-                start: durationFormatter.format(Math.abs(offsets.start)),
-                end: durationFormatter.format(Math.abs(offsets.end)),
+                start: offsets && durationFormatter.format(Math.abs(offsets.start)),
+                end: offsets && durationFormatter.format(Math.abs(offsets.end)),
             },
             bounds: {
                 start: timeFormatter.format(bounds.start),
                 end: timeFormatter.format(bounds.end)
             },
             isFixed: this.openmct.time.clock() === undefined,
-            panning: false,
-            currentZoom: undefined,
-            zoom: false,
             isUTCBased: timeSystem.isUTCBased,
             showDatePicker: false
         }
@@ -281,9 +286,43 @@ export default {
             this.validateBounds('end', this.$refs.endDate);
             this.setBoundsFromView();
         },
+        zoomLevelToTimespan() {
+            let minMaxDelta = MAX_ZOOM_OUT - MAX_ZOOM_IN;
+            return minMaxDelta * Math.pow((1 - this.currentZoom), 4);
+        },
+        zoom() {
+            let zoomTimespan = this.zoomLevelToTimespan();
+            let start = this.openmct.time.bounds().start;
+            let end = this.openmct.time.bounds().end
+            let currentTimeSpan = end - start;
+            let delta = currentTimeSpan - zoomTimespan;
+            let bounds = {
+                start: start + delta / 2,
+                end: end - delta / 2
+            }
+            this.setViewFromBounds(bounds);
+        },
+        calculateZoomFromBounds() {
+            let start = this.openmct.time.bounds().start;
+            let end = this.openmct.time.bounds().end
+            let zoomMaxMinDelta = MAX_ZOOM_OUT - MAX_ZOOM_IN;
+            let currentBoundsDelta = end - start;
+
+            return 1 - Math.pow(currentBoundsDelta / zoomMaxMinDelta, 1 / 4);
+        }
 
     },
-    mounted: function () {
+    computed: {
+        currentZoomText() {
+            return moment.duration(this.zoomLevelToTimespan()).humanize();
+        }
+    },
+    watch: {
+        currentZoom() {
+            this.zoom();
+        }
+    },
+    mounted() {
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
 
         this.openmct.time.on('bounds', this.setViewFromBounds);
@@ -291,7 +330,7 @@ export default {
         this.openmct.time.on('clock', this.setViewFromClock);
         this.openmct.time.on('clockOffsets', this.setViewFromOffsets)
     },
-    destroyed: function () {
+    destroyed() {
         this.openmct.time.off('bounds', this.onBoundsChange);
         this.openmct.time.off('timeSystem', this.setTimeSystem);
         this.openmct.time.off('clock', this.setViewFromClock);

@@ -77,9 +77,7 @@ function validateRuntimeConfiguration(config, openmct) {
             return "menuOption at index " + index + " specifies a " +
                     "clock that does not exist: " + menuOption.clock;
         }
-    })
-        .filter(isTruthy)
-        .join('\n');
+    }).filter(isTruthy).join('\n');
 }
 
 function throwIfError(configResult) {

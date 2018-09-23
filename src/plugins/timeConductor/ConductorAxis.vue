@@ -42,17 +42,12 @@ const DEFAULT_DURATION_FORMATTER = 'duration';
 
 export default {
     inject: ['openmct'],
-    data: function () {
+    props: {
+        bounds: Object
     },
     methods: {
-        setViewFromBounds(bounds) {
-            this.bounds = bounds;
-            if (!this.zooming) {
-                this.setScale();
-            }
-        },
         setViewFromClock() {
-            this.formatter = this.getAc
+            //this.formatter = this.getAc;
         },
         setScale() {
             let width = this.$refs.axisHolder.offsetWidth;
@@ -128,24 +123,31 @@ export default {
                     start: newStart,
                     end: newStart + deltaTime
                 };
-                this.setViewFromBounds(panZoomBounds);
+                this.setScale();
                 this.$emit('panZoom', panZoomBounds);
             }
         },
         dragEnd() {
             this.dragStartX = undefined;
             document.removeEventListener('mousemove', this.drag);
+            this.openmct.bounds(this.bounds);
         }
     },
-    mounted: function () {
+    watch: {
+        bounds: {
+            handler() {
+                this.setScale();
+            },
+            deep: true
+        }
+    },
+    mounted() {
         let axisHolder = this.$refs.axisHolder;
         let height = axisHolder.offsetHeight;
         let vis = d3Selection.select(axisHolder)
             .append("svg:svg")
             .attr("width", "100%")
             .attr("height", height);
-
-        this.bounds = this.openmct.time.bounds();
 
         this.xAxis = d3Axis.axisTop();
 
@@ -159,10 +161,9 @@ export default {
 
         //Respond to changes in conductor
         this.openmct.time.on("timeSystem", this.setViewFromTimeSystem);
-        this.openmct.time.on("bounds", this.setViewFromBounds);
         this.openmct.time.on("clock", this.setViewFromClock);
     },
-    destroyed: function () {
+    destroyed() {
     }
 
 }
