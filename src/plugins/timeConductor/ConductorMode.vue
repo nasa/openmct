@@ -139,7 +139,8 @@ export default {
                 configuration = this.getMatchingConfig({
                     clock: clockKey
                 });
-                this.openmct.time.timeSystem(configuration.timeSystem);
+                
+                this.openmct.time.timeSystem(configuration.timeSystem, configuration.bounds);
             }
             
             if (clockKey === undefined) {

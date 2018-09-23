@@ -86,7 +86,7 @@
                 </span>
                 <input type="submit" class="invisible">
             </form>
-            <conductor-axis class="mobile-hide" :bounds="bounds" @panZoom="setViewFromBounds"></conductor-axis>
+            <conductor-axis class="mobile-hide" :bounds="zoomBounds" @panZoom="setViewFromBounds"></conductor-axis>
         </div>
 
         <!-- Holds time system and session selectors, and zoom control -->
@@ -133,6 +133,7 @@ const YEARS = 365 * DAYS;
 
 const MAX_ZOOM_OUT = 10 * YEARS;
 const MAX_ZOOM_IN = 5 * SECONDS;
+const RESIZE_POLL_INTERVAL = 200;
 
 export default {
     inject: ['openmct', 'configuration'],
@@ -160,6 +161,10 @@ export default {
             bounds: {
                 start: timeFormatter.format(bounds.start),
                 end: timeFormatter.format(bounds.end)
+            },
+            zoomBounds: {
+                start: bounds.start,
+                end: bounds.end
             },
             isFixed: this.openmct.time.clock() === undefined,
             isUTCBased: timeSystem.isUTCBased,
@@ -223,6 +228,8 @@ export default {
         setViewFromBounds(bounds) {
             this.bounds.start = this.timeFormatter.format(bounds.start);
             this.bounds.end = this.timeFormatter.format(bounds.end);
+            this.zoomBounds.start = bounds.start;
+            this.zoomBounds.end = bounds.end;
         },
         setViewFromOffsets(offsets) {
             this.offsets.start = this.durationFormatter.format(Math.abs(offsets.start));
@@ -299,15 +306,17 @@ export default {
             let bounds = {
                 start: start + delta / 2,
                 end: end - delta / 2
-            }
+            };
+            this.zoomBounds = bounds;
             this.setViewFromBounds(bounds);
+            this.zooming = false;
         },
         calculateZoomFromBounds() {
             let start = this.openmct.time.bounds().start;
             let end = this.openmct.time.bounds().end
             let zoomMaxMinDelta = MAX_ZOOM_OUT - MAX_ZOOM_IN;
             let currentBoundsDelta = end - start;
-
+            
             return 1 - Math.pow(currentBoundsDelta / zoomMaxMinDelta, 1 / 4);
         }
 
@@ -319,10 +328,14 @@ export default {
     },
     watch: {
         currentZoom() {
-            this.zoom();
+            if (!this.zooming) {
+                this.zooming = true;
+                requestAnimationFrame(this.zoom, RESIZE_POLL_INTERVAL);
+            }
         }
     },
     mounted() {
+        this.zooming = false;
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
 
         this.openmct.time.on('bounds', this.setViewFromBounds);

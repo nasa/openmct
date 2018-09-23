@@ -39,6 +39,7 @@ import utcMultiTimeFormat from './utcMultiTimeFormat.js';
 
 const PADDING = 1;
 const DEFAULT_DURATION_FORMATTER = 'duration';
+const RESIZE_POLL_INTERVAL = 200;
 
 export default {
     inject: ['openmct'],
@@ -50,24 +51,21 @@ export default {
             //this.formatter = this.getAc;
         },
         setScale() {
-            let width = this.$refs.axisHolder.offsetWidth;
             let timeSystem = this.openmct.time.timeSystem();
             let bounds = this.bounds;
 
             if (timeSystem.isUTCBased) {
-                this.xScale = this.xScale || d3Scale.scaleUtc();
                 this.xScale.domain([new Date(bounds.start), new Date(bounds.end)]);
             } else {
-                this.xScale = this.xScale || d3Scale.scaleLinear();
                 this.xScale.domain([bounds.start, bounds.end]);
             }
 
             this.xAxis.scale(this.xScale);
 
-            this.xScale.range([PADDING, width - PADDING * 2]);
+            this.xScale.range([PADDING, this.width - PADDING * 2]);
             this.axisElement.call(this.xAxis);
 
-            this.msPerPixel = (bounds.end - bounds.start) / width;
+            this.msPerPixel = (bounds.end - bounds.start) / this.width;
         },
         setViewFromTimeSystem(timeSystem) {
             let format = this.getActiveFormatter();
@@ -112,30 +110,44 @@ export default {
             }
         },
         drag($event) {
-            if (this.dragStartX !== undefined) {
-                let deltaX = $event.clientX - this.dragStartX;
-                let totalWidth = this.$refs.axisHolder.offsetWidth;
-                let percX = deltaX / totalWidth;
-                let bounds = this.openmct.time.bounds();
-                let deltaTime = bounds.end - bounds.start;
-                let newStart = bounds.start - percX * deltaTime;
-                let panZoomBounds = {
-                    start: newStart,
-                    end: newStart + deltaTime
-                };
-                this.setScale();
-                this.$emit('panZoom', panZoomBounds);
+            if (!this.dragging){
+                this.dragging = true;
+                requestAnimationFrame(()=>{
+                    let deltaX = $event.clientX - this.dragStartX;
+                    let totalWidth = this.$refs.axisHolder.offsetWidth;
+                    let percX = deltaX / totalWidth;
+                    let bounds = this.openmct.time.bounds();
+                    let deltaTime = bounds.end - bounds.start;
+                    let newStart = bounds.start - percX * deltaTime;
+                    this.bounds = {
+                        start: newStart,
+                        end: newStart + deltaTime
+                    };
+                    this.$emit('panZoom', this.bounds);
+                    this.dragging = false;
+                })
+            } else {
+                console.log('Rejected drag due to RAF cap');
             }
         },
         dragEnd() {
             this.dragStartX = undefined;
             document.removeEventListener('mousemove', this.drag);
-            this.openmct.bounds(this.bounds);
+            this.openmct.time.bounds({
+                start: this.bounds.start,
+                end: this.bounds.end
+            });
+        },
+        resize() {
+            if (this.$refs.axisHolder.clientWidth !== this.width) {
+                this.width = this.$refs.axisHolder.clientWidth;
+                this.setScale();
+            }
         }
     },
     watch: {
         bounds: {
-            handler() {
+            handler(bounds) {
                 this.setScale();
             },
             deep: true
@@ -149,19 +161,20 @@ export default {
             .attr("width", "100%")
             .attr("height", height);
 
+        this.width = this.$refs.axisHolder.clientWidth;
         this.xAxis = d3Axis.axisTop();
+        this.dragging = false;
 
         // draw x axis with labels. CSS is used to position them.
         this.axisElement = vis.append("g");
 
-        if (this.openmct.time.timeSystem() !== undefined) {
-            this.setViewFromTimeSystem(this.openmct.time.timeSystem());
-            this.setScale();
-        }
+        this.setViewFromTimeSystem(this.openmct.time.timeSystem());
+        this.setScale();
 
         //Respond to changes in conductor
         this.openmct.time.on("timeSystem", this.setViewFromTimeSystem);
         this.openmct.time.on("clock", this.setViewFromClock);
+        setInterval(this.resize, RESIZE_POLL_INTERVAL);
     },
     destroyed() {
     }

@@ -158,7 +158,7 @@ export default {
                 minute: this.time.minutes,
                 second: this.time.seconds
             });
-            this.$emit('date-selected', this.formatter.format(m.valueOf()));
+            this.$emit('date-selected', m.valueOf());
             //EMIT RESULT HERE ( I THINK )
             //this.ngModel[this.field] = m.valueOf();
         },
