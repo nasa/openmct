@@ -50,10 +50,10 @@
 export default {
     inject: ['openmct', 'configuration'],
     data: function () {
-        let activeClock = Object.create(this.openmct.time.clock());
+        let activeClock = this.openmct.time.clock();
+
         return {
-            selectedClock: activeClock,
-            selectedTimeSystem: Object.create(this.openmct.time.timeSystem()),
+            selectedTimeSystem: JSON.parse(JSON.stringify(this.openmct.time.timeSystem())),
             timeSystems: this.getValidTimesystemsForClock(activeClock),
             showMenu: false
         };
@@ -61,14 +61,43 @@ export default {
     methods: {
         getValidTimesystemsForClock(clock) {
             return this.configuration.menuOptions
-                .filter(menuOption => menuOption.clock === clock.key)
-                .map(menuOption => Object.create(this.openmct.time.timeSystems.get(menuOption.timeSystem)));
+                .filter(menuOption => menuOption.clock === (clock && clock.key))
+                .map(menuOption => JSON.parse(JSON.stringify(this.openmct.time.timeSystems.get(menuOption.timeSystem))));
         },
 
         setTimeSystemFromView(timeSystem) {
             if (timeSystem !== this.selectedTimeSystem) {
-                this.openmct.time.timeSystem(timeSystem.key);
+                let activeClock = this.openmct.time.clock();
+                let configuration = this.getMatchingConfig({
+                    clock: activeClock && activeClock.key, 
+                    timeSystem: timeSystem.key
+                });
+                if (activeClock === undefined) {
+                    this.openmct.time.timeSystem(timeSystem.key, configuration.bounds);
+                } else {
+                    this.openmct.time.timeSystem(timeSystem.key);
+                    this.openmct.time.clockOffsets(configuration.clockOffsets);
+                }
             }
+        },
+
+        getMatchingConfig(options) {
+            const matchers = {
+                clock(config) {
+                    return options.clock === config.clock
+                },
+                timeSystem(config) {
+                    return options.timeSystem === config.timeSystem
+                }
+            };
+
+            function configMatches(config) {
+                return Object.keys(options).reduce((match, option) => {
+                    return match && matchers[option](config);
+                }, true);
+            }
+
+            return this.configuration.menuOptions.filter(configMatches)[0];
         },
 
         toggleMenu(event) {
@@ -83,13 +112,20 @@ export default {
 
         setViewFromTimeSystem(timeSystem) {
             this.selectedTimeSystem = timeSystem;
+        },
+
+        setViewFromClock(clock) {
+            let activeClock = this.openmct.time.clock();
+            this.timeSystems = this.getValidTimesystemsForClock(activeClock);
         }
     },
     mounted: function () {
         this.openmct.time.on('timeSystem', this.setViewFromTimeSystem);
+        this.openmct.time.on('clock', this.setViewFromClock);
     },
     destroyed: function () {
         this.openmct.time.off('timeSystem', this.setViewFromTimeSystem);
+        this.openmct.time.on('clock', this.setViewFromClock);
     }
 
 }

@@ -23,33 +23,33 @@
 <div class="holder flex-elem menus-up time-system">
     <span>
         <div class="s-menu-button" @click="toggleMenu($event)">
-            <span class="title-label">{{selectedClock.name}}</span>
+            <span class="title-label">{{selectedMode.name}}</span>
         </div>
         <div class="menu super-menu mini l-mode-selector-menu"
             v-if="showMenu">
             <div class="w-menu">
                 <div class="col menu-items">
                     <ul>
-                        <li v-for="option in clocks"
-                            :key="option.key"
-                            @click="setOption(option)">
-                            <a @mouseover="hoveredClock = option"
-                            @mouseleave="hoveredClock = {}"
+                        <li v-for="mode in modes"
+                            :key="mode.key"
+                            @click="setOption(mode)">
+                            <a @mouseover="hoveredMode = mode"
+                            @mouseleave="hoveredMode = {}"
                             class="menu-item-a"
-                            :class="option.cssClass">
-                                {{option.name}}
+                            :class="mode.cssClass">
+                                {{mode.name}}
                             </a>
                         </li>
                     </ul>
                 </div>
                 <div class="col menu-item-description">
-                    <div class="desc-area ui-symbol icon type-icon" :class="hoveredClock.cssClass"></div>
+                    <div class="desc-area ui-symbol icon type-icon" :class="hoveredMode.cssClass"></div>
                     <div class="w-title-desc">
                         <div class="desc-area title">
-                            {{hoveredClock.name}}
+                            {{hoveredMode.name}}
                         </div>
                         <div class="desc-area description">
-                            {{hoveredClock.description}}
+                            {{hoveredMode.description}}
                         </div>
                     </div>
                 </div>
@@ -66,56 +66,56 @@
 export default {
     inject: ['openmct', 'configuration'],
     data: function () {
-        let activeClock = Object.create(this.openmct.time.clock());
+        let activeClock = this.openmct.time.clock();
+        if (activeClock !== undefined) {
+            //Create copy of active clock so the time API does not get reactified.
+            activeClock = Object.create(activeClock);
+        }
         return {
-            selectedClock: activeClock,
-            selectedTimeSystem: Object.create(this.openmct.time.timeSystem()),
-            clocks: [],
-            hoveredClock: {},
+            selectedMode: this.getModeOptionForClock(activeClock),
+            selectedTimeSystem: JSON.parse(JSON.stringify(this.openmct.time.timeSystem())),
+            modes: [],
+            hoveredMode: {},
             showMenu: false
         };
     },
     methods: {
         loadClocksFromConfiguration() {
+            let clocks = this.configuration.menuOptions
+                .map(menuOption => menuOption.clock)
+                .filter(isDefinedAndUnique)
+                .map(this.getClock);
+
             /*
-             * "Fixed Mode" is always the first available option.
+             * Populate the modes menu with metadata from the available clocks
+             * "Fixed Mode" is always first, and has no defined clock
              */
-            this.clocks = [{
-                key: 'fixed',
-                name: 'Fixed Timespan Mode',
-                description: 'Query and explore data that falls between two fixed datetimes.',
-                cssClass: 'icon-calendar'
-            }];
-            let clocks = {};
+            this.modes = [this.getModeOptionForClock(undefined)]
+                .concat(clocks)
+                .map(this.getModeOptionForClock);
 
-            this.configuration.menuOptions.forEach(menuOption => {
-                let clockKey = menuOption.clock || 'fixed';
-                let clock = this.getClock(clockKey);
+            function isDefinedAndUnique(key, index, array) {
+                return key!== undefined && array.indexOf(key) === index;
+            }
+        },
 
-                if (clock !== undefined) {
-                    clocks[clock.key] = clock;
+        getModeOptionForClock(clock) {
+            if (clock === undefined) {
+                return {
+                    key: 'fixed',
+                    name: 'Fixed Timespan Mode',
+                    description: 'Query and explore data that falls between two fixed datetimes.',
+                    cssClass: 'icon-calendar'
                 }
-            });
-
-            /*
-             * Populate the clocks menu with metadata from the available clocks
-             */
-            Object.values(clocks).forEach(clock => {
-                this.clocks.push({
+            } else {
+                return {
                     key: clock.key,
                     name: clock.name,
                     description: "Monitor streaming data in real-time. The Time " +
                     "Conductor and displays will automatically advance themselves based on this clock. " + clock.description,
-                    cssClass: clock.cssClass || 'icon-clock',
-                    clock: clock
-                });
-            });
-        },
-
-        getValidTimesystemsForClock(clock) {
-            return this.configuration.menuOptions
-                .filter(menuOption => menuOption.clock === clock.key)
-                .map(menuOption => Object.create(this.openmct.time.timeSystems.get(menuOption.timeSystem)));
+                    cssClass: clock.cssClass || 'icon-clock'
+                }
+            }
         },
 
         getClock(key) {
@@ -125,25 +125,47 @@ export default {
         },
 
         setOption(option) {
-            this.selectedClock = option;
-            let configuration = this.getConfigForClock(this.openmct.time.clock(), this.openmct.time.timeSystem());
+            let clockKey = option.key;
+            if (clockKey === 'fixed') {
+                clockKey = undefined;
+            }
+
+            let configuration = this.getMatchingConfig({
+                clock: clockKey, 
+                timeSystem: this.openmct.time.timeSystem().key
+            });
+
             if (configuration === undefined) {
-                configuration = this.getConfigClock(option.clock);
+                configuration = this.getMatchingConfig({
+                    clock: clockKey
+                });
                 this.openmct.time.timeSystem(configuration.timeSystem);
             }
-            this.openmct.time.clock(option.clock);
+            
+            this.openmct.time.clock(clockKey, configuration.clockOffsets);
         },
 
-        getConfigForClock(clock, timeSystem) {
-            let matchingConfigs = this.configuration.menuOptions.filter(menuOption => {
-                return menuOption.clock === clock.key && 
-                    (timeSystem!== undefined && menuOption.timeSystem === timeSystem.key);
-            });
-            return matchingConfigs && matchingConfigs[0];
+        getMatchingConfig(options) {
+            const matchers = {
+                clock(config) {
+                    return options.clock === config.clock
+                },
+                timeSystem(config) {
+                    return options.timeSystem === config.timeSystem
+                }
+            };
+
+            function configMatches(config) {
+                return Object.keys(options).reduce((match, option) => {
+                    return match && matchers[option](config);
+                }, true);
+            }
+
+            return this.configuration.menuOptions.filter(configMatches)[0];
         },
 
         setViewFromClock(clock) {
-            this.selectedClock = Object.create(clock);
+            this.selectedMode = this.getModeOptionForClock(clock);
         },
 
         toggleMenu(event) {
