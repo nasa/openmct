@@ -13,22 +13,21 @@
                 <div class="c-button icon-expand local-controls--hidden"></div>
             </div>
         </div>
-        <object-view
-                class="c-frame__object-view"
-                :object="item.domainObject"></object-view>
+        <object-view class="c-frame__object-view"
+                     :object="item.domainObject"></object-view>
 
         <!-- Drag handles -->
         <div class="c-frame-edit">
             <div class="c-frame-edit__move"
                  @mousedown="startDrag([1,1], [0,0], $event)"></div>
             <div class="c-frame-edit__handle --nw"
-                 @mousedown="startDrag([1,1], [-1,-1])"></div>
+                 @mousedown="startDrag([1,1], [-1,-1], $event)"></div>
             <div class="c-frame-edit__handle --ne"
-                 @mousedown="startDrag([0,1], [1,-1])"></div>
-            <div class="c-frame-edit__handle --se"
-                 @mousedown="startDrag([1,0], [-1,1])"></div>
+                 @mousedown="startDrag([0,1], [1,-1], $event)"></div>
             <div class="c-frame-edit__handle --sw"
-                 @mousedown="startDrag([0,0], [1,1])"></div>
+                 @mousedown="startDrag([1,0], [-1,1], $event)"></div>
+            <div class="c-frame-edit__handle --se"
+                 @mousedown="startDrag([0,0], [1,1], $event)"></div>
         </div>
     </div>
 </template>
@@ -189,7 +188,8 @@
     export default {
         inject: ['openmct'],
         props: {
-            item: Object
+            item: Object,
+            gridSize: Array
         },
         components: {
             ObjectView
@@ -206,11 +206,6 @@
             setSelection(selection) {
                 if (selection.length === 0) {
                     return;
-                }
-
-                let id = this.openmct.objects.makeKeyString(selection[0].context.item.identifier);
-                if (this.item.id === id) {
-                    this.$emit('selected', id);
                 }
             },
             drill(id, $event) {
@@ -240,34 +235,36 @@
             updatePosition(event) {
                 let currentPosition = [event.pageX, event.pageY];
                 this.initialPosition = this.initialPosition || currentPosition;
-
-                // Compute relative position
-                this.delta = currentPosition.map(function (v, i) {
-                    return v - this.initialPosition[i];
+                this.delta = currentPosition.map(function (value, index) {
+                    return value - this.initialPosition[index];
                 }.bind(this));
-                console.log('delat', this.delta);
             },
             startDrag(posFactor, dimFactor, event) {
                 document.body.addEventListener('mousemove', this.continueDrag);
                 document.body.addEventListener('mouseup', this.endDrag);
+
                 this.updatePosition(event);
-                // fireListener("mctDragDown");
-                // fireListener("mctDrag");
+                this.activeDrag = new LayoutDrag(
+                    this.item.rawPosition,
+                    posFactor,
+                    dimFactor,
+                    this.gridSize
+                );
                 event.preventDefault();
             },
             continueDrag(event) {
-                this.updatePosition(event);
-                // fireListener("mctDrag");
                 event.preventDefault();
+                this.updatePosition(event);
+
+                if (this.activeDrag) {
+                    this.$emit('dragInProgress', this.item.id, this.activeDrag.getAdjustedPosition(this.delta));
+                }
             },
             endDrag(event) {
                 document.body.removeEventListener('mousemove', this.continueDrag);
                 document.body.removeEventListener('mouseup', this.endDrag);
-
-                // Also call continueDrag, to fire mctDrag
-                // and do its usual position update
                 this.continueDrag(event);
-                //fireListener("mctDragUp");
+                this.$emit('endDrag', this.item.id);
                 this.initialPosition = undefined;
                 event.preventDefault();
             }
@@ -278,7 +275,7 @@
                 {
                     item: this.item.domainObject
                 },
-                this.item.selected
+                this.item.initSelect
             );
 
             this.openmct.selection.on('change', this.setSelection);

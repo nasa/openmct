@@ -1,8 +1,10 @@
 <template>
-    <div class="l-layout">
+    <div class="l-layout"
+         droppable="true" @drop="handleDrop">
         <div class="l-layout__object">
             <!-- Background grid -->
-            <div class="l-layout__grid-holder c-grid" v-if="!drilledIn">
+            <div class="l-layout__grid-holder c-grid"
+                 v-if="!drilledIn">
                 <div class="c-grid__x l-grid l-grid-x"
                      v-if="gridSize[0] >= 3"
                      :style="[{ backgroundSize: gridSize[0] + 'px 100%' }]">
@@ -11,13 +13,14 @@
                      v-if="gridSize[1] >= 3"
                      :style="[{ backgroundSize: '100%' + gridSize[1] + 'px' }]"></div>
             </div>
-
             <layout-frame v-for="item in frameItems"
                           class="l-layout__frame"
                           :key="item.id"
                           :item="item"
+                          :gridSize="gridSize"
                           @drilledIn="updateDrilledInState"
-                          @selected="updateSelectedState">
+                          @dragInProgress="updatePosition"
+                          @endDrag="mutate">
             </layout-frame>
         </div>
     </div>
@@ -79,6 +82,7 @@
 
     const DEFAULT_GRID_SIZE = [32, 32],
           DEFAULT_DIMENSIONS = [12, 8],
+          DEFAULT_POSITION = [0, 0],
           MINIMUM_FRAME_SIZE = [320, 180];
 
     export default {
@@ -101,43 +105,54 @@
             LayoutFrame
         },
         created: function () {
-            console.log("domainObject", JSON.parse(JSON.stringify(this.domainObject)));                    
-
-            this.populatePositions(this.domainObject.configuration.layout.panels);
-
+            console.log("domainObject", JSON.parse(JSON.stringify(this.domainObject)));
             this.composition = this.openmct.composition.get(this.domainObject);
-            this.composition.on('add', this.onAddComposition);
-            this.composition.on('remove', this.onRemoveComposition);
-            this.composition.load();
+            if (this.composition !== undefined) {
+                this.composition.load().then((composition) => {
+                    composition.forEach(function (domainObject) {
+                        this.readLayoutConfiguration(domainObject);
+                        this.makeFrameItem(domainObject, false);
+                    }.bind(this));
+                    this.composition.on('add', this.onAddComposition);
+                    this.composition.on('remove', this.onRemoveComposition);
+                });
+            }
+
+            this.unlisten = this.openmct.objects.observe(this.domainObject, '*', function (obj) {
+                this.domainObject = JSON.parse(JSON.stringify(obj));
+                this.gridSize = this.domainObject.layoutGrid;
+            }.bind(this));
         },
-        methods: {            
-            onAddComposition(domainObject) {
-                console.log('composition', domainObject);
-                const id = this.openmct.objects.makeKeyString(domainObject.identifier)
+        methods: {
+            readLayoutConfiguration(domainObject) {
+                let panels = this.domainObject.configuration.layout.panels;
+                let id = this.openmct.objects.makeKeyString(domainObject.identifier);
+                this.rawPositions[id] = {
+                    position: panels[id].position || DEFAULT_POSITION,
+                    dimensions: panels[id].dimensions || this.defaultDimensions()
+                };
+                this.frameStyles[id] = this.convertPosition(this.rawPositions[id]);
+                this.frames[id] = panels[id].hasFrame;
+            },
+            makeFrameItem(domainObject, initSelect) {
+                let id = this.openmct.objects.makeKeyString(domainObject.identifier);
                 this.frameItems.push({
                     id: id,
                     hasFrame: this.hasFrame(id),
                     domainObject,
                     style: this.frameStyles[id],
                     drilledIn: this.isDrilledIn(id),
-                    selected: false
+                    initSelect: initSelect,
+                    rawPosition: this.rawPositions[id]
                 });
+            },
+            onAddComposition(domainObject) {
+                console.log('onAddComposition', domainObject);
+                // TODO: set the appropriate values in rawPositions, frameStyles and frames
+                this.makeFrameItem(domainObject, true);
             },
             onRemoveComposition(identifier) {
                 // TODO: remove the object from frameItems
-            },
-            populatePositions(panels) {
-                Object.keys(panels).forEach(function (key, index) {
-                    this.rawPositions[key] = {
-                        position: panels[key].position || this.defaultPosition(index),
-                        dimensions: panels[key].dimensions || this.defaultDimensions()
-                    };
-                    this.frameStyles[key] = this.convertPosition(this.rawPositions[key]);
-                    this.frames[key] = panels[key].hasFrame;
-                }.bind(this));
-            },
-            defaultPosition(index) {
-                return [index, index];
             },
             defaultDimensions() {
                 let gridSize = this.gridSize;
@@ -167,7 +182,6 @@
                 }
 
                 this.updateDrilledInState();
-                this.updateSelectedState();
             },
             updateDrilledInState(id) {
                 this.drilledIn = id;
@@ -175,13 +189,32 @@
                     item.drilledIn = item.id === id;
                 });
             },
-            updateSelectedState(id) {
-                this.frameItems.forEach(function (item) {
-                    item.selected = item.id === id;
-                });
-            },
             isDrilledIn(id) {
                 return this.drilledIn === id;
+            },
+            updatePosition(id, newPosition) {
+                let newStyle = this.convertPosition(newPosition);
+                this.frameStyles[id] = newStyle;
+                this.rawPositions[id] = newPosition;
+                this.frameItems.forEach(function (item) {
+                    if (item.id === id) {
+                        item.style = newStyle;
+                        item.rawPosition = newPosition;
+                    }
+                });
+            },
+            mutate(id) {
+                console.log("endDrag");
+                this.dragInProgress = true;
+                setTimeout(function () {
+                    this.dragInProgress = false;
+                }.bind(this), 0);
+
+                // TODO: mutate the domainObject with the new position value
+            },
+            handleDrop($event) {
+                var child = JSON.parse($event.dataTransfer.getData('text/plain'));
+                this.composition.add(child);
             }
         },
         mounted() {
@@ -192,7 +225,6 @@
                 },
                 this.initSelect
             );
-
             this.openmct.selection.on('change', this.setSelection);
         },
         destroyed: function () {
@@ -200,6 +232,7 @@
             this.composition.off('remove', this.onRemoveComposition);
             this.openmct.off('change', this.selection);
             this.removeSelectable();
+            this.unlisten();
         }
     }
     

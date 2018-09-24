@@ -1,11 +1,11 @@
 <template>
     <li class="c-tree__item-h">
-        <div class="c-tree__item">
+        <div class="c-tree__item" draggable="true" @dragstart="dragStart">
             <view-control class="c-tree__item__view-control"
                           :enabled="hasChildren"
                           :expanded="expanded"
                           @click="toggleChildren">
-            </view-control>
+            </view-control>            
             <a class="c-tree__item__name c-object-name"
                :class="cssClass"
                :href="href">
@@ -83,6 +83,9 @@
                         .then(() => this.loaded = true);
                 }
             },
+            dragStart($event) {
+                $event.dataTransfer.setData("text/plain", JSON.stringify(this.node.object));
+            }
         },
         components: {
             viewControl
