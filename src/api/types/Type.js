@@ -89,12 +89,13 @@ define(function () {
                 }
             }
         }
-        if (Array.isArray(legacyDefinition.creatable) && 'creation' in legacyDefinition.creatable) {
+
+        if (legacyDefinition.features && legacyDefinition.features.includes("creation")) {
             definition.creatable = true;
         }
 
         return definition;
-    }
+    };
 
     return Type;
 });

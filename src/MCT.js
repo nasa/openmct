@@ -35,8 +35,10 @@ define([
     './ui/registries/InspectorViewRegistry',
     './ui/registries/ToolbarRegistry',
     './ui/router/ApplicationRouter',
+    './ui/router/Browse',
     '../platform/framework/src/Main',
     './styles-new/core.scss',
+    './styles-new/notebook.scss',
     './ui/components/layout/Layout.vue',
     'vue'
 ], function (
@@ -54,8 +56,10 @@ define([
     InspectorViewRegistry,
     ToolbarRegistry,
     ApplicationRouter,
+    Browse,
     Main,
     coreStyles,
+    NotebookStyles,
     Layout,
     Vue
 ) {
@@ -273,32 +277,13 @@ define([
             }.bind(this)
         });
 
+        // TODO: remove with legacy types.
         this.types.listKeys().forEach(function (typeKey) {
             var type = this.types.get(typeKey);
             var legacyDefinition = type.toLegacyDefinition();
             legacyDefinition.key = typeKey;
             this.legacyExtension('types', legacyDefinition);
         }.bind(this));
-
-        // TODO: move this to adapter bundle.
-        this.legacyExtension('runs', {
-            depends: ['types[]'],
-            implementation: (types) => {
-                this.types.importLegacyTypes(types);
-            }
-        });
-
-        this.objectViews.getAllProviders().forEach(function (p) {
-            this.legacyExtension('views', {
-                key: p.key,
-                provider: p,
-                name: p.name,
-                cssClass: p.cssClass,
-                description: p.description,
-                editable: p.editable,
-                template: '<mct-view mct-provider-key="' + p.key + '"/>'
-            });
-        }, this);
 
         legacyRegistry.register('adapter', this.legacyBundle);
         legacyRegistry.enable('adapter');
@@ -324,17 +309,15 @@ define([
                 // something has depended upon objectService.  Cool, right?
                 this.$injector.get('objectService');
 
-                console.log('Rendering app layout.');
-
                 var appLayout = new Vue({
                     mixins: [Layout.default],
                     provide: {
                         openmct: this
                     }
                 });
-                this.layout = appLayout;
                 domElement.appendChild(appLayout.$mount().$el);
-
+                this.layout = appLayout;
+                Browse(this);
                 this.router.start();
                 this.emit('start');
             }.bind(this));

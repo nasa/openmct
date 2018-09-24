@@ -15,7 +15,8 @@ define([
     function SummaryWidgetViewProvider(openmct) {
         return {
             key: 'summary-widget-viewer',
-            name: 'Widget View',
+            name: 'Summary View',
+            cssClass: 'icon-summary-widget',
             canView: function (domainObject) {
                 return domainObject.type === 'summary-widget';
             },

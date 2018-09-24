@@ -1,6 +1,6 @@
 @import "constants";
 
-// Mixins
+// Functions
 @function pullForward($c: $colorBodyBg, $p: 20%) {
     // For dark interfaces, lighter things come forward - opposite for light interfaces
     @return darken($c, $p);
@@ -12,7 +12,7 @@
 }
 
 // Global
-$fontBaseSize: 13px;
+$fontBaseSize: 12px;
 $colorBodyBg: #fcfcfc;
 $colorBodyFg: #666;
 $colorGenBg: #fff;
@@ -71,6 +71,7 @@ $sliderKnobR: 2px;
 $timeControllerToiLineColor: $colorBodyFg;
 $timeControllerToiLineColorHov: #0052b5;
 $colorTransLucBg: #666; // Used as a visual blocking element over variable backgrounds, like imagery
+$createBtnTextTransform: uppercase;
 
 // Foundation Colors
 $colorAlt1: #776ba2;
@@ -293,3 +294,16 @@ $colorLoadingBg: rgba($colorLoadingFg, 0.1);
 // Transitions
 $transIn: all 50ms ease-in;
 $transOut: all 250ms ease-out;
+
+// Discrete items, like Notebook entries, Widget rules
+@mixin discreteItem() {
+    background: rgba($colorBodyFg,0.1);
+    border: 1px solid $colorInteriorBorder;
+    border-radius: $controlCr;
+    .c-input-inline:hover {
+        background: $colorBodyBg;
+    }
+}
+@mixin discreteItemInnerElem() {
+    border: 1px solid $colorBodyBg;
+    border-radius: $controlCr; }

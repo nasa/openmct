@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,35 +20,47 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/**
- * This bundle implements object types and associated views for
- * display-building.
- */
-define(
-    [],
-    function () {
 
-        /**
-         * The LayoutNotebookController is responsible for supporting the
-         * notebook feature creation on theLayout view.
-         **/
+define([
+    'vue',
+    '../../res/templates/viewSnapshot.html'
+], function (
+    Vue,
+    snapshotOverlayTemplate
+) {
+    function SnapshotOverlay (embedObject, formatTime) {
+        this.embedObject = embedObject;
 
-        function LayoutNotebookController($scope) {
-            $scope.hasNotebookAction = undefined;
-
-            $scope.newNotebook = undefined;
-
-            var actions = $scope.domainObject.getCapability('action');
-            var notebookAction = actions.getActions({'key': 'notebook-new-entry'});
-            if (notebookAction.length > 0) {
-                $scope.hasNotebookAction = true;
-                $scope.newNotebook = function () {
-                    notebookAction[0].perform();
+        this.snapshotOverlayVue = new Vue({
+            template: snapshotOverlayTemplate,
+            data: function () {
+                return {
+                    embed: embedObject
                 };
+            },
+            methods: {
+                close: this.close.bind(this),
+                formatTime: formatTime
             }
-        }
+        });
 
-        return LayoutNotebookController;
+        this.open();
     }
-);
 
+    SnapshotOverlay.prototype.open = function () {
+        this.overlay = document.createElement('div');
+        this.overlay.classList.add('abs');
+
+        document.body.appendChild(this.overlay);
+
+        this.overlay.appendChild(this.snapshotOverlayVue.$mount().$el);
+    };
+
+    SnapshotOverlay.prototype.close = function (event) {
+        event.stopPropagation();
+        this.snapshotOverlayVue.$destroy();
+        this.overlay.parentNode.removeChild(this.overlay);
+    };
+
+    return SnapshotOverlay;
+});

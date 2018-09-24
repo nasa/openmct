@@ -1,9 +1,12 @@
 <template>
     <div class="c-search"
          :class="{ 'is-active': active === true }">
-        <input class="c-search__input" type="search"
-               v-bind:value="searchInput"
-               @input="handleInput($event)"/>
+        <input class="c-search__input"
+               tabindex="10000"
+               type="search"
+               v-bind="$attrs"
+               v-bind:value="value"
+               v-on="inputListeners"/>
         <a class="c-search__clear-input icon-x-in-circle"
            v-on:click="clearInput"></a>
     </div>
@@ -47,7 +50,7 @@
         &__input {
             background: none  !important;
             box-shadow: none !important; // !important needed to override default for [input]
-            flex: 0 1 100%;
+            flex: 1 1 auto;
             padding-left: 2px !important;
             padding-right: 2px !important;
             min-width: 10px; // Must be set to allow input to collapse below browser min
@@ -71,26 +74,36 @@
 </style>
 
 <script>
+    /* Emits input and clear events */
     export default {
+        inheritAttrs: false,
         props: {
             value: String
         },
+        computed: {
+            inputListeners: function () {
+                let vm = this;
+                return Object.assign({},
+                    this.$listeners,
+                    {
+                        input: function (event) {
+                            vm.$emit('input', event.target.value);
+                            vm.active = (event.target.value.length > 0);
+                        }
+                    }
+                )
+            }
+        },
         data: function() {
             return {
-                searchInput: '',
                 active: false
             }
         },
         methods: {
-            handleInput(e) {
-                // Grab input as the user types it
-                // and set 'active' based on input length > 0
-                this.searchInput = e.target.value;
-                this.active = (this.searchInput.length > 0);
-            },
             clearInput() {
                 // Clear the user's input and set 'active' to false
-                this.searchInput = '';
+                this.value = '';
+                this.$emit('clear','');
                 this.active = false;
             }
         }

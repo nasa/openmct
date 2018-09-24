@@ -110,13 +110,10 @@
 }
 
 /************************** CONTROLS, BUTTONS */
-@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.5) 0 0px 2px) {
+@mixin input-base() {
     appearance: none;
-    background: $bg;
     border: none;
-    color: $fg;
     border-radius: $controlCr;
-    box-shadow: inset $shdw;
     outline: none;
 
     &:focus {
@@ -127,6 +124,15 @@
         background-color: $colorFormFieldErrorBg;
         color: $colorFormFieldErrorFg;
     }
+}
+
+
+
+@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.5) 0 0px 2px) {
+    @include input-base();
+    background: $bg;
+    color: $fg;
+    box-shadow: inset $shdw;
 }
 
 @mixin button($bg: $colorBtnBg, $fg: $colorBtnFg, $radius: $controlCr, $shdw: none) {

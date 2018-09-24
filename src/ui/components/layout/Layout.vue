@@ -3,10 +3,8 @@
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
             <div class="l-shell__controls">
-                <div class="l-controls__elem c-button-set">
-                    <a class="c-icon-button icon-new-window" title="Open in a new browser tab"></a>
-                    <a class="c-icon-button icon-fullscreen-collapse" title="Enable full screen mode"></a>
-                </div>
+                <a class="c-icon-button icon-new-window" title="Open in a new browser tab"></a>
+                <a class="c-icon-button icon-fullscreen-collapse" title="Enable full screen mode"></a>
             </div>
             <div class="l-shell__app-logo">[ App Logo ]</div>
         </div>
@@ -24,8 +22,12 @@
                 </div>
             </pane>
             <pane class="l-shell__pane-main">
-                <browse-object class="l-shell__main-container">
-                </browse-object>
+                <browse-bar class="l-shell__main-view-browse-bar"
+                                   ref="browseBar">
+                </browse-bar>
+                <object-view class="l-shell__main-container"
+                             ref="browseObject">
+                </object-view>
                 <component class="l-shell__time-conductor"
                     :is="conductorComponent"></component>
             </pane>
@@ -81,7 +83,8 @@
             }
         }
 
-        &__pane-main {
+        &__pane-main,
+        &__pane-tree {
             > .l-pane__contents {
                 display: flex;
                 flex-flow: column nowrap;
@@ -116,11 +119,15 @@
 
         &__head,
         &__status {
-            flex: 0 1 auto;
+            flex: 0 0 auto;
             display: flex;
         }
 
         /******************************* HEAD */
+        &__main-view-browse-bar {
+            flex: 0 0 auto;
+        }
+
         &__head {
             align-items: center;
             justify-content: space-between;
@@ -147,8 +154,9 @@
         /********** MAIN AREA */
         &__main-container {
             // Wrapper for main views
-            flex: 1 1 100%;
-            font-size: 16px; // TEMP FOR LEGACY STYLING
+            flex: 1 1 auto;
+            overflow: auto;
+            //font-size: 16px; // TEMP FOR LEGACY STYLING
         }
 
         &__tree {
@@ -185,13 +193,14 @@
     import Inspector from '../inspector/Inspector.vue';
     import MctStatus from './MctStatus.vue';
     import MctTree from './mct-tree.vue';
-    import BrowseObject from './BrowseObject.vue';
+    import ObjectView from './ObjectView.vue';
     import MctTemplate from '../legacy/mct-template.vue';
     import ContextMenu from '../controls/ContextMenu.vue';
     import CreateButton from '../controls/CreateButton.vue';
     import search from '../controls/search.vue';
     import multipane from '../controls/multipane.vue';
     import pane from '../controls/pane.vue';
+    import BrowseBar from './BrowseBar.vue';
 
     export default {
         data() {
@@ -203,13 +212,14 @@
             Inspector,
             MctStatus,
             MctTree,
-            BrowseObject,
+            ObjectView,
             'mct-template': MctTemplate,
             ContextMenu,
             CreateButton,
             search,
             multipane,
-            pane
+            pane,
+            BrowseBar
         }
     }
 </script>

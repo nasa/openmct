@@ -22,8 +22,6 @@ export default {
 
         let $rootScope = $injector.get('$rootScope');
         this.$scope = $rootScope.$new();
-        console.log('mounting', this.templateKey);
-        console.log('template:', templateMap[this.templateKey]);
 
         templateLinker.link(
             this.$scope,
