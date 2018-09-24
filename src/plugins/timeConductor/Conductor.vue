@@ -40,10 +40,10 @@
                             <span class="time-range-input">
                                 <input type="text" autocorrect="off" spellcheck="false"
                                     ref="startDate"
-                                    v-model="bounds.start"
+                                    v-model="formattedBounds.start"
                                     @keyup="validateBounds('start', $event.target)"
                                     @blur="setBoundsFromView()">
-                                <date-picker :default-date-time="bounds.start" :formatter="timeFormatter" @date-selected="startDateSelected"></date-picker>
+                                <date-picker :default-date-time="formattedBounds.start" :formatter="timeFormatter" @date-selected="startDateSelected"></date-picker>
                             </span>
                         </span>
                         <span class="l-time-range-input-w time-delta start-delta"
@@ -64,12 +64,12 @@
                             <span class="title"></span>
                             <span class="time-range-input">
                                 <input type="text" autocorrect="off" spellcheck="false"
-                                    v-model="bounds.end"
+                                    v-model="formattedBounds.end"
                                     :disabled="!isFixed"
                                     ref="endDate"
                                     @keyup="validateBounds('end', $event.target)"
                                     @blur="setBoundsFromView()">
-                                <date-picker :default-date-time="bounds.end" :formatter="timeFormatter" @date-selected="endDateSelected"></date-picker>
+                                <date-picker :default-date-time="formattedBounds.end" :formatter="timeFormatter" @date-selected="endDateSelected"></date-picker>
                             </span>
                         </span>
                         <span class="l-time-range-input-w time-delta end-delta"
@@ -86,7 +86,7 @@
                 </span>
                 <input type="submit" class="invisible">
             </form>
-            <conductor-axis class="mobile-hide" :bounds="zoomBounds" @panZoom="setViewFromBounds"></conductor-axis>
+            <conductor-axis class="mobile-hide" :bounds="rawBounds" @panZoom="setViewFromBounds"></conductor-axis>
         </div>
 
         <!-- Holds time system and session selectors, and zoom control -->
@@ -162,11 +162,11 @@ export default {
                 start: offsets && durationFormatter.format(Math.abs(offsets.start)),
                 end: offsets && durationFormatter.format(Math.abs(offsets.end)),
             },
-            bounds: {
+            formattedBounds: {
                 start: timeFormatter.format(bounds.start),
                 end: timeFormatter.format(bounds.end)
             },
-            zoomBounds: {
+            rawBounds: {
                 start: bounds.start,
                 end: bounds.end
             },
@@ -205,8 +205,8 @@ export default {
         },
         setBoundsFromView($event) {
             if (this.boundsChanged() && this.$refs.conductorForm.checkValidity()){
-                let start = this.timeFormatter.parse(this.bounds.start);
-                let end = this.timeFormatter.parse(this.bounds.end);
+                let start = this.timeFormatter.parse(this.formattedBounds.start);
+                let end = this.timeFormatter.parse(this.formattedBounds.end);
 
                 this.openmct.time.bounds({
                     start: start,
@@ -220,8 +220,8 @@ export default {
         },
         boundsChanged() {
             let currentBounds = this.openmct.time.bounds();
-            return this.bounds.start !== currentBounds.start ||
-                this.bounds.end !== currentBounds.end;
+            return this.timeFormatter.parse(this.formattedBounds.start) !== currentBounds.start ||
+                this.timeFormatter.parse(this.formattedBounds.end) !== currentBounds.end;
         },
         showValidityMessage($event) {
             $event.target.reportValidity();
@@ -230,10 +230,10 @@ export default {
             this.isFixed = clock === undefined;
         },
         setViewFromBounds(bounds) {
-            this.bounds.start = this.timeFormatter.format(bounds.start);
-            this.bounds.end = this.timeFormatter.format(bounds.end);
-            this.zoomBounds.start = bounds.start;
-            this.zoomBounds.end = bounds.end;
+            this.formattedBounds.start = this.timeFormatter.format(bounds.start);
+            this.formattedBounds.end = this.timeFormatter.format(bounds.end);
+            this.rawBounds.start = bounds.start;
+            this.rawBounds.end = bounds.end;
         },
         setViewFromOffsets(offsets) {
             this.offsets.start = this.durationFormatter.format(Math.abs(offsets.start));
@@ -249,8 +249,8 @@ export default {
                 validationResult = 'Invalid date value';
             } else {
                 let boundsValues = {
-                    start: this.timeFormatter.parse(this.bounds.start),
-                    end: this.timeFormatter.parse(this.bounds.end)
+                    start: this.timeFormatter.parse(this.formattedBounds.start),
+                    end: this.timeFormatter.parse(this.formattedBounds.end)
                 };
                 validationResult = this.openmct.time.validateBounds(boundsValues);
             }
@@ -288,12 +288,12 @@ export default {
             }).formatter;
         },
         startDateSelected(date){
-            this.bounds.start = date;
+            this.formattedBounds.start = this.timeFormatter.format(date);
             this.validateBounds('start', this.$refs.startDate);
             this.setBoundsFromView();
         },
         endDateSelected(date){
-            this.bounds.end = date;
+            this.formattedBounds.end = this.timeFormatter.format(date);
             this.validateBounds('end', this.$refs.endDate);
             this.setBoundsFromView();
         },
@@ -311,7 +311,7 @@ export default {
                 start: start + delta / 2,
                 end: end - delta / 2
             };
-            this.zoomBounds = bounds;
+            this.rawBounds = bounds;
             this.setViewFromBounds(bounds);
             this.zooming = false;
         },
@@ -346,11 +346,6 @@ export default {
         this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.openmct.time.on('clock', this.setViewFromClock);
         this.openmct.time.on('clockOffsets', this.setViewFromOffsets)
-    },
-    destroyed() {
-        this.openmct.time.off('bounds', this.onBoundsChange);
-        this.openmct.time.off('timeSystem', this.setTimeSystem);
-        this.openmct.time.off('clock', this.setViewFromClock);
     }
 }
 </script>

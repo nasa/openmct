@@ -159,8 +159,6 @@ export default {
                 second: this.time.seconds
             });
             this.$emit('date-selected', m.valueOf());
-            //EMIT RESULT HERE ( I THINK )
-            //this.ngModel[this.field] = m.valueOf();
         },
 
         isInCurrentMonth(cell) {
