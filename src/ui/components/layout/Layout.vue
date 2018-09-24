@@ -27,7 +27,7 @@
                 <browse-object class="l-shell__main-container">
                 </browse-object>
                 <component class="l-shell__time-conductor"
-                    :is="inspectorComponent"></component>
+                    :is="conductorComponent"></component>
             </pane>
             <pane class="l-shell__pane-inspector l-pane--holds-multipane"
                   handle="before"
@@ -196,7 +196,7 @@
     export default {
         data() {
             return {
-                inspectorComponent: {}
+                conductorComponent: {}
             }
         },
         components: {

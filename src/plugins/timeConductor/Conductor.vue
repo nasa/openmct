@@ -117,6 +117,10 @@
     .l-time-conductor-inputs input:invalid {
         border: 1px solid $colorFormInvalid !important;
     }
+
+    .l-time-conductor-zoom-w {
+        text-transform: capitalize;
+    }
 </style>
 
 <script>

@@ -89,7 +89,7 @@ function throwIfError(configResult) {
 }
 
 function mountComponent(openmct, configuration) {
-    openmct.layout.inspectorComponent = {
+    openmct.layout.conductorComponent = Object.create({
         components: {
             Conductor
         },
@@ -98,7 +98,7 @@ function mountComponent(openmct, configuration) {
             openmct: openmct,
             configuration: configuration
         }
-    };
+    });
 }
 
 export default function (config){

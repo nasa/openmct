@@ -47,9 +47,6 @@ export default {
         bounds: Object
     },
     methods: {
-        setViewFromClock() {
-            //this.formatter = this.getAc;
-        },
         setScale() {
             let timeSystem = this.openmct.time.timeSystem();
             let bounds = this.bounds;
@@ -114,8 +111,7 @@ export default {
                 this.dragging = true;
                 requestAnimationFrame(()=>{
                     let deltaX = $event.clientX - this.dragStartX;
-                    let totalWidth = this.$refs.axisHolder.offsetWidth;
-                    let percX = deltaX / totalWidth;
+                    let percX = deltaX / this.width;
                     let bounds = this.openmct.time.bounds();
                     let deltaTime = bounds.end - bounds.start;
                     let newStart = bounds.start - percX * deltaTime;
@@ -131,7 +127,6 @@ export default {
             }
         },
         dragEnd() {
-            this.dragStartX = undefined;
             document.removeEventListener('mousemove', this.drag);
             this.openmct.time.bounds({
                 start: this.bounds.start,
@@ -173,7 +168,6 @@ export default {
 
         //Respond to changes in conductor
         this.openmct.time.on("timeSystem", this.setViewFromTimeSystem);
-        this.openmct.time.on("clock", this.setViewFromClock);
         setInterval(this.resize, RESIZE_POLL_INTERVAL);
     },
     destroyed() {
