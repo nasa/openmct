@@ -179,7 +179,7 @@ export default {
                 items.push({
                     model: model,
                     type: type.definition,
-                    isAlias: false
+                    isAlias: this.domainObject.identifier.key !== model.location
                 });
             });
         });

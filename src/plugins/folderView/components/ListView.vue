@@ -177,7 +177,8 @@ export default {
                         cssClass: type.definition.cssClass,
                         createdDate: model.persisted,
                         updatedDate: model.modified,
-                        items: model.composition ? model.composition.length : 0
+                        items: model.composition ? model.composition.length : 0,
+                        isAlias: this.domainObject.identifier.key !== model.location
                     });
                 });
             });
