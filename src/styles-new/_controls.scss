@@ -201,6 +201,10 @@ button {
     .c-labeled-input {
         font-size: 0.9em;
         width: 5em;
+
+        + .c-labeled-input {
+            margin-left: $interiorMargin;
+        }
     }
 }
 
@@ -367,10 +371,6 @@ button {
 
     input {
         margin-left: $interiorMarginSm;
-    }
-
-    input[type="number"] {
-        //flex: 0 0 4em;
     }
 }
 

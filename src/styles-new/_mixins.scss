@@ -235,18 +235,12 @@
 
 @mixin labeledInput() {
     // A text or numeric input preceded by a label. Mostly used in toolbar.
-    $m: $interiorMarginSm;
-    border-radius: $controlCr;
-    background: rgba($colorBodyFg, 0.1);
-    padding-left: $m;
-    padding-right: $m;
 
     input[type='text'],
     input[type='search'],
     input[type='number'] {
         width: 100%;
     }
-
 }
 
 /************************** MATH */
