@@ -9,40 +9,12 @@
     </div>
 </template>
 
-<style lang="scss">
-    @import "~styles/sass-base";
-    @import "~styles/controls";
-
-    /******************************* SEARCH */
-    .c-search {
-        @include wrappedInput();
-
-        padding-top: 2px;
-        padding-bottom: 2px;
-
-        &:before {
-            // Mag glass icon
-            content: $glyph-icon-magnify;
-        }
-
-        &__clear-input {
-            display: none;
-        }
-
-        &.is-active {
-            .c-search__clear-input {
-                display: block;
-            }
-        }
-    }
-</style>
-
 <script>
     /* Emits input and clear events */
     export default {
         inheritAttrs: false,
         props: {
-            value: Number,
+            value: String,
             label: String,
             title: String
         },

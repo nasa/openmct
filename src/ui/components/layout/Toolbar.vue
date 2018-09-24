@@ -2,20 +2,47 @@
     <div class="c-toolbar">
         <div class="c-button-set">
             <div class="c-ctrl-wrapper">
-                <div class="c-button--menu js-add-button icon-plus">
+                <div class="c-button--menu js-add-button icon-plus"
+                    @click="toggleMenus">
                     <div class="c-button__label">Add</div>
+                </div>
+                <div class="c-menu" v-if="showMenus">
+                    <ul>
+                        <li v-for="item in addMenuItems"
+                            :class="item.class"
+                            :title="item.title">
+                            {{ item.name }}
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
 
-        <div class="c-button-set">
-            <div class="c-ctrl-wrapper">
+        <div class="c-button-set"
+             v-if="toolsItemSelected">
+            <div class="c-ctrl-wrapper"
+                 v-if="toolsItemSelected">
+                <div class="c-click-icon c-click-icon--menu js-layers icon-layers"
+                     @click="toggleMenus"></div>
+                <div class="c-menu" v-if="showMenus">
+                    <ul>
+                        <li v-for="item in layersMenuItems"
+                            :class="item.class"
+                            :title="item.title">
+                            {{ item.name }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="c-ctrl-wrapper"
+                 v-if="toolsColorFill">
                 <div class="c-click-icon c-click-icon--swatched js-color-fill icon-paint-bucket"
-                     @click="toggleFillPalette">
+                     @click="toggleMenus">
                     <div class="c-swatch" style="background: #33ff00;"></div>
                 </div>
                 <div class="c-menu c-palette c-palette--color"
-                    v-if="showFillPalette">
+                    v-if="showMenus">
                     <div class="c-palette__item-none"
                         vif="this.palette.itemNone === true">
                         <div class="c-palette__item"
@@ -31,13 +58,15 @@
                 </div>
             </div>
 
-            <div class="c-ctrl-wrapper">
+            <div class="c-ctrl-wrapper"
+                 v-if="toolsColorStroke">
                 <div class="c-click-icon c-click-icon--swatched js-color-stroke icon-pencil">
                     <div class="c-toolbar-button__swatch" style="background: #ffffff;"></div>
                 </div>
             </div>
 
-            <div class="c-ctrl-wrapper">
+            <div class="c-ctrl-wrapper"
+                 v-if="toolsColorText">
                 <div class="c-click-icon c-click-icon--swatched js-color-text icon-font">
                     <div class="c-toolbar-button__swatch" style="background: #333333;"></div>
                 </div>
@@ -45,12 +74,14 @@
 
         </div>
 
-        <div class="c-button-set">
+        <div class="c-button-set"
+             v-if="toolsItemSelected && toolsFontSize">
             <div class="c-ctrl-wrapper">
-                <div class="c-click-icon c-click-icon--menu js-font-size" @click="toggleFontSizeMenu">
+                <div class="c-click-icon c-click-icon--menu js-font-size"
+                     @click="toggleMenus">
                     <div class="c-button__label">11 px</div>
                 </div>
-                <div class="c-menu" v-if="showFontSizeMenu">
+                <div class="c-menu" v-if="showMenus">
                     <ul>
                         <li v-for="item in fontSizeMenuItems">
                             {{ item.name }}
@@ -60,32 +91,23 @@
             </div>
         </div>
 
-        <div class="c-button-set">
+        <div class="c-button-set"
+             v-if="toolsItemSelected && toolsEditProperties">
             <div class="c-ctrl-wrapper">
-                <div class="c-click-icon js-image icon-image"></div>
+                <div class="c-click-icon js-image icon-gear"></div>
             </div>
         </div>
 
-        <div class="c-button-set">
-            <div class="c-ctrl-wrapper">
-                <div class="c-click-icon c-click-icon--menu js-layers icon-layers" @click="toggleLayersMenu"></div>
-                <div class="c-menu" v-if="showLayersMenu">
-                    <ul>
-                        <li v-for="item in layersMenuItems"
-                            :class="item.class"
-                            :title="item.title">
-                            {{ item.name }}
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <labeledNumberInput label="X" value="1" title="X position"></labeledNumberInput>
-            <labeledNumberInput label="Y" value="2" title="Y position"></labeledNumberInput>
-            <labeledNumberInput label="W" value="3" title="Width"></labeledNumberInput>
-            <labeledNumberInput label="H" value="4" title="Height"></labeledNumberInput>
+        <div class="c-button-set"
+             v-if="toolsItemSelected">
+            <labeledNumberInput label="X" value=1 title="X position"></labeledNumberInput>
+            <labeledNumberInput label="Y" value=2 title="Y position"></labeledNumberInput>
+            <labeledNumberInput label="W" value=3 title="Width"></labeledNumberInput>
+            <labeledNumberInput label="H" value=4 title="Height"></labeledNumberInput>
         </div>
 
-        <div class="c-button-set">
+        <div class="c-button-set"
+             v-if="toolsItemSelected">
             <div class="c-click-icon c-click-icon--caution icon-trash"></div>
         </div>
     </div>
@@ -98,22 +120,32 @@
         components: {
             labeledNumberInput
         },
-        props: {
-            showLayersMenu: {
-                type: Boolean,
-                default: false
-            },
-            showFillPalette: {
-                type: Boolean,
-                default: false
-            },
-            showFontSizeMenu: {
-                type: Boolean,
-                default: false
+        methods: {
+            toggleMenus: function () {
+                this.showMenus = !this.showMenus;
             }
+        },
+        props: {
+            toolsItemSelected: { type: Boolean,  default: true },
+            toolsColorFill: { type: Boolean,  default: true },
+            toolsColorStroke: { type: Boolean,  default: true },
+            toolsColorText: { type: Boolean,  default: true },
+            toolsFontSize: { type: Boolean,  default: true },
+            toolsEditProperties: { type: Boolean,  default: true },
+            toolSetBox: ['toolsColorFill', 'toolsColorStroke'],
+            toolSetLine: ['toolsColorStroke'],
+            toolSetText: ['toolsColorFill', 'toolsColorStroke', 'toolsColorText', 'toolsFontSize', 'toolsEditProperties'],
+            toolSetImage: ['toolsColorStroke', 'toolsEditProperties']
         },
         data: function () {
             return {
+                showMenus: false,
+                addMenuItems: [
+                    { name: 'Box', class: 'icon-box', title: 'Add Box' },
+                    { name: 'Line', class: 'icon-line-horz', title: 'Add Line' },
+                    { name: 'Text', class: 'icon-font', title: 'Add Text' },
+                    { name: 'Image', class: 'icon-image', title: 'Add Image' }
+                ],
                 layersMenuItems: [
                     { name: 'Move to top', class: 'icon-arrow-double-up', title: 'Move to top' },
                     { name: 'Move up', class: 'icon-arrow-up', title: 'Move up' },
@@ -226,18 +258,6 @@
                     { value: '#20124d' },
                     { value: '#4c1130' }
                 ]
-            }
-        },
-        methods: {
-            toggleLayersMenu: function () {
-                this.showLayersMenu = !this.showLayersMenu;
-            },
-            toggleFillPalette: function () {
-                this.showFillPalette = !this.showFillPalette;
-            },
-            toggleFontSizeMenu: function() {
-                this.showFontSizeMenu = !this.showFontSizeMenu;
-
             }
         }
     }
