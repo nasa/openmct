@@ -498,3 +498,50 @@ button {
     }
 }
 
+/******************************************************** PALETTES */
+.c-palette {
+    display: flex;
+    flex-flow: column nowrap;
+
+    &__items {
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: repeat(10, [col] auto );
+        grid-gap: 1px;
+    }
+
+    &__item {
+        $d: 16px;
+
+        border: 1px solid transparent;
+        cursor: pointer;
+        width: 16px; height: 16px;
+        transition: $transOut;
+
+        &:hover {
+            transition: $transIn;
+            $o: 0.7;
+            border-color: rgba($paletteItemBorderOuterColorSelected, $o);
+            box-shadow: inset rgba($paletteItemBorderInnerColorSelected, $o) 0 0 0 1px;
+        }
+
+        &.is-selected {
+            border-color: $paletteItemBorderOuterColorSelected !important;
+            border-width: 2px;
+            box-shadow: inset rgba($paletteItemBorderInnerColorSelected, 1) 0 0 0 1px;
+        }
+    }
+
+    &__item-none {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        margin-bottom: $interiorMarginSm;
+
+        .c-palette__item {
+            @include noColor();
+            border-color: $paletteItemBorderInnerColor;
+            margin-right: $interiorMarginSm;
+        }
+    }
+}
