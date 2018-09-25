@@ -110,15 +110,22 @@
              v-if="toolsItemSelected">
             <div class="c-click-icon c-click-icon--caution icon-trash"></div>
         </div>
+
+        <div class="c-button-set"
+             v-if="toolsItemSelected">
+            <checkbox>Checkbox</checkbox>
+        </div>
     </div>
 </template>
 
 <script>
     import labeledNumberInput from '../controls/labeledNumberInput.vue';
+    import checkbox from '../controls/checkboxCustom.vue';
 
     export default {
         components: {
-            labeledNumberInput
+            labeledNumberInput,
+            checkbox
         },
         methods: {
             toggleMenus: function () {

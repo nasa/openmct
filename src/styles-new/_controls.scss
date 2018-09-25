@@ -260,32 +260,6 @@ button {
     }
 }
 
-/********* Menu Buttons */
-// Always includes :after dropdown arrow
-// Optionally can include icon in :before
-// Default menu position is down and to the right
-// Apply c-button--menu--menus-up and c-button--menu--menus-left to --w wrapper element to modify menu position
-/*
-.c-button--menu {
-    @extend %c-menu-button;
-}
-
-.c-menu-swatch-button {
-    // Extends c-menu-button, requires a color swatch element in markup
-    @extend %c-menu-button;
-
-    [class*='swatch'] {
-        $d: 1em;
-        background: transparent;
-        border: 1px solid $colorSwatchBorder;
-        box-shadow: inset rgba(black, 0.4) 0 0 2px;
-        width: $d;
-        height: $d;
-    }
-
-}
-*/
-
 /******************************************************** DISCLOSURE CONTROLS */
 /********* Disclosure Button */
 // Provides a downward arrow icon that when clicked displays a context menu
