@@ -21,7 +21,7 @@
  *****************************************************************************/
 <template>
 <!-- Parent holder for time conductor. follow-mode | fixed-mode -->
-<div class="holder grows flex-elem l-flex-row l-time-conductor"
+<div class="l-flex-row l-time-conductor"
     :class="[isFixed ? 'fixed-mode' : 'realtime-mode', panning ? 'status-panning' : '']">
     <div class="flex-elem holder time-conductor-icon">
         <div class="hand-little"></div>
