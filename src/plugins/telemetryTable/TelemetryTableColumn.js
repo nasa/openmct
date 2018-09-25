@@ -48,7 +48,12 @@ define(function () {
         }
 
         getFormattedValue(telemetryDatum) {
-            return this.formatter.format(telemetryDatum);
+            let formattedValue = this.formatter.format(telemetryDatum);
+            if (typeof formattedValue !== 'string') {
+                return formattedValue.toString();
+            } else {
+                return formattedValue;
+            }
         }
 
     };
