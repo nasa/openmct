@@ -316,7 +316,6 @@ define([
                     }
                 });
                 domElement.appendChild(appLayout.$mount().$el);
-
                 this.layout = appLayout;
                 Browse(this);
                 this.router.start();

@@ -34,9 +34,8 @@
                 <object-view class="l-shell__main-container"
                              ref="browseObject">
                 </object-view>
-                <mct-template template-key="conductor"
-                              class="l-shell__time-conductor">
-                </mct-template>
+                <component class="l-shell__time-conductor"
+                    :is="conductorComponent"></component>
             </pane>
             <pane class="l-shell__pane-inspector l-pane--holds-multipane"
                   handle="before"
@@ -242,6 +241,11 @@
     }
 
     export default {
+        data() {
+            return {
+                conductorComponent: {}
+            }
+        },
         components: {
             Inspector,
             MctStatus,
