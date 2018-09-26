@@ -1,49 +1,22 @@
 <template>
-    <div class="c-search"
-         :class="{ 'is-active': active === true }">
-        <input class="c-search__input"
-               tabindex="10000"
-               type="search"
+    <div class="c-labeled-input"
+        :title="title">
+        <div class="c-labeled-input__label">{{ label }}</div>
+        <input type="number"
                v-bind="$attrs"
                v-bind:value="value"
                v-on="inputListeners"/>
-        <a class="c-search__clear-input icon-x-in-circle"
-           v-on:click="clearInput"></a>
     </div>
 </template>
-
-<style lang="scss">
-    @import "~styles/sass-base";
-
-    .c-search {
-        @include wrappedInput();
-
-        padding-top: 2px;
-        padding-bottom: 2px;
-
-        &:before {
-            // Mag glass icon
-            content: $glyph-icon-magnify;
-        }
-
-        &__clear-input {
-            display: none;
-        }
-
-        &.is-active {
-            .c-search__clear-input {
-                display: block;
-            }
-        }
-    }
-</style>
 
 <script>
     /* Emits input and clear events */
     export default {
         inheritAttrs: false,
         props: {
-            value: String
+            value: String,
+            label: String,
+            title: String
         },
         computed: {
             inputListeners: function () {
@@ -53,7 +26,9 @@
                     {
                         input: function (event) {
                             vm.$emit('input', event.target.value);
-                            vm.active = (event.target.value.length > 0);
+                        },
+                        change: function (event) {
+                            vm.$emit('change', event.target.value);
                         }
                     }
                 )
@@ -61,7 +36,7 @@
         },
         data: function() {
             return {
-                active: false
+                // active: false
             }
         },
         methods: {

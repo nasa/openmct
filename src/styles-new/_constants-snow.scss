@@ -49,6 +49,9 @@ $colorBtnMajorBg: $colorKey;
 $colorBtnMajorBgHov: $colorKeyHov;
 $colorBtnMajorFg: $colorKeyFg;
 $colorBtnMajorFgHov: pushBack($colorBtnMajorFg, $hoverRatioPercent);
+$colorBtnCautionBg: #f16f6f;
+$colorBtnCautionBgHov: #f1504e;
+$colorBtnCautionFg: $colorBtnFg;
 $colorClickIcon: $colorKey;
 $colorClickIconHov: $colorKeyHov;
 $colorToggleIcon: rgba($colorClickIcon, 0.5);
@@ -106,6 +109,11 @@ $shdwMenuText: none;
 $colorCreateMenuLgIcon: $colorKey;
 $colorCreateMenuText: $colorBodyFg;
 $menuItemPad: ($interiorMargin, nth($btnPad, 2));
+
+// Palettes and Swatches
+$paletteItemBorderOuterColorSelected: black;
+$paletteItemBorderInnerColorSelected: white;
+$paletteItemBorderInnerColor: rgba($paletteItemBorderOuterColorSelected, 0.3);
 
 // Form colors
 $colorCheck: $colorKey;
@@ -277,12 +285,6 @@ $colorCalCellHovFg: $colorKeyFg;
 $colorCalCellSelectedBg: $colorItemTreeSelectedBg;
 $colorCalCellSelectedFg: $colorItemTreeSelectedFg;
 $colorCalCellInMonthBg: pullForward($colorMenuBg, 5%);
-
-// Palettes
-$colorPaletteFg: pullForward($colorMenuBg, 30%);
-$colorPaletteSelected: #333;
-$shdwPaletteFg: none;
-$shdwPaletteSelected: inset 0 0 0 1px #fff;
 
 // About Screen
 $colorAboutLink: #84b3ff;
