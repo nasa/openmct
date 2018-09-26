@@ -1,6 +1,6 @@
 <template>
     <div class="l-layout"
-         droppable="true"
+         @dragover="handleDragOver"
          @click="bypassSelection"
          @drop="handleDrop">
         <div class="l-layout__object">
@@ -229,8 +229,12 @@
                 this.openmct.objects.mutate(this.newDomainObject, path, value);
             },
             handleDrop($event) {
-                var child = JSON.parse($event.dataTransfer.getData('text/plain'));
+                $event.preventDefault();
+                var child = JSON.parse($event.dataTransfer.getData('domainObject'));
                 this.composition.add(child);
+            },
+            handleDragOver($event){
+                $event.preventDefault();
             }
         },
         mounted() {

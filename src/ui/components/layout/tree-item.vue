@@ -84,7 +84,7 @@
                 }
             },
             dragStart($event) {
-                $event.dataTransfer.setData("text/plain", JSON.stringify(this.node.object));
+                $event.dataTransfer.setData("domainObject", JSON.stringify(this.node.object));
             }
         },
         components: {
