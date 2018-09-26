@@ -65,13 +65,14 @@
             }
         }
     }
-
 </style>
 
 <script>
     /*
-    Custom checkbox control. Use just like a checkbox in HTML.
-    Supports checked and disabled attributes.
+    Custom checkbox control. Use just like a checkbox in HTML, except label string is passed within tag.
+    Supports value, true-value, false-value, checked and disabled attributes.
+    Example usage:
+    <checkbox checked>Enable markers</checkbox>
      */
     export default {
         model: {
@@ -95,10 +96,6 @@
             },
             modelValue: {
                 default: undefined,
-            },
-            className: {
-                type: String,
-                default: null,
             },
             checked: {
                 type: Boolean,

@@ -113,7 +113,7 @@
 
         <div class="c-button-set"
              v-if="toolsItemSelected">
-            <checkbox>Checkbox</checkbox>
+            <checkbox checked title="This is a checkbox">Checkbox</checkbox>
         </div>
 
         <div class="c-button-set"
