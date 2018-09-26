@@ -118,10 +118,10 @@
 
         <div class="c-button-set"
              v-if="toolsItemSelected">
-            <toggle-button title="Snap to grid" checked
+            <toggle-button title="Show/hide object frame" checked
                     class="c-click-icon"
-                    inner-class-on="icon-grid-snap-to"
-                    inner-class-off="icon-grid-snap-no"></toggle-button>
+                    inner-class-on=" icon-frame-show"
+                    inner-class-off="icon-frame-hide"></toggle-button>
             <toggle-button title="Show label and value" checked
                     class="c-click-icon"
                     inner-class-on="icon-two-parts-both"
