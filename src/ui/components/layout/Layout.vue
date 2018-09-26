@@ -1,12 +1,12 @@
 <template>
-    <div class="l-shell">
+    <div class="l-shell" :class="{'is-editing': editing}">
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
             <div class="l-shell__controls">
                 <a class="c-icon-button icon-new-window" title="Open in a new browser tab"></a>
                 <a class="c-icon-button icon-fullscreen-collapse" title="Enable full screen mode"></a>
             </div>
-            <div class="l-shell__app-logo">[ App Logo ]</div>
+            <div class="l-shell__app-logo">[ App Logo ] Editing: {{editing}}</div>
         </div>
         <multipane class="l-shell__main"
                    type="horizontal">
@@ -204,6 +204,10 @@
     import BrowseBar from './BrowseBar.vue';
 
     export default {
+        inject: ['openmct'],
+        data() {
+            return {editing: false};
+        },
         components: {
             Inspector,
             MctStatus,
@@ -216,6 +220,11 @@
             multipane,
             pane,
             BrowseBar
+        },
+        mounted() {
+            this.openmct.editor.on('isEditing', (isEditing)=>{
+                this.editing = isEditing;
+            });
         }
     }
 </script>

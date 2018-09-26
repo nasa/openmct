@@ -1,3 +1,4 @@
+
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -20,37 +21,47 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './time/TimeAPI',
-    './objects/ObjectAPI',
-    './composition/CompositionAPI',
-    './types/TypeRegistry',
-    './ui/Dialog',
-    './ui/GestureAPI',
-    './telemetry/TelemetryAPI',
-    './indicators/IndicatorAPI',
-    './Editor'
+import EventEmitter from 'EventEmitter';
 
-], function (
-    TimeAPI,
-    ObjectAPI,
-    CompositionAPI,
-    TypeRegistry,
-    Dialog,
-    GestureAPI,
-    TelemetryAPI,
-    IndicatorAPI,
-    EditorAPI
-) {
-    return {
-        TimeAPI: TimeAPI,
-        ObjectAPI: ObjectAPI,
-        CompositionAPI: CompositionAPI,
-        Dialog: Dialog,
-        TypeRegistry: TypeRegistry,
-        GestureAPI: GestureAPI,
-        TelemetryAPI: TelemetryAPI,
-        IndicatorAPI: IndicatorAPI,
-        EditorAPI: EditorAPI
-    };
-});
+export default class Editor extends EventEmitter {
+    constructor(openmct) {
+        super();
+        this.editing = false;
+        this.openmct = openmct;
+    }
+
+    edit() {
+        this.editing = true;
+        this.getTransactionService().startTransaction();
+        this.emit('isEditing', true);
+    }
+
+    isEditing() {
+        return this.editing;
+    }
+
+    save() {
+        return this.getTransactionService().commit().then((result)=>{
+            this.editing = false;
+            this.emit('isEditing', false);
+            return result
+        }).catch((error)=>{
+            throw error;
+        });
+    }
+    cancel() {
+        this.getTransactionService().cancel();
+        this.editing = false;
+        this.emit('isEditing', false);
+    }
+
+    /**
+     * @private
+     */
+    getTransactionService() {
+        if (!this.transactionService) {
+            this.transactionService = this.openmct.$injector.get('transactionService');
+        }
+        return this.transactionService;
+    }
+}
