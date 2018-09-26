@@ -231,7 +231,10 @@
             handleDrop($event) {
                 $event.preventDefault();
                 var child = JSON.parse($event.dataTransfer.getData('domainObject'));
-                this.composition.add(child);
+                // let composition = this.newDomainObject.composition;
+                // composition.push(child.identifier);
+                // this.mutate('composition', composition);
+                // this.onAddComposition(child);
             },
             handleDragOver($event){
                 $event.preventDefault();
