@@ -1,6 +1,8 @@
 <template>
     <div class="l-layout"
-         droppable="true" @drop="handleDrop">
+         droppable="true"
+         @click="bypassSelection"
+         @drop="handleDrop">
         <div class="l-layout__object">
             <!-- Background grid -->
             <div class="l-layout__grid-holder c-grid"
@@ -20,7 +22,7 @@
                           :gridSize="gridSize"
                           @drilledIn="updateDrilledInState"
                           @dragInProgress="updatePosition"
-                          @endDrag="mutate">
+                          @endDrag="endDrag">
             </layout-frame>
         </div>
     </div>
@@ -88,13 +90,12 @@
     export default {
         data() {
             return {
-                gridSize: DEFAULT_GRID_SIZE,
+                gridSize: [],
                 frameItems: [],
                 frames: [],                
                 composition: Object,
                 frameStyles: [],
                 rawPositions: {},
-                isEditing: true,
                 initSelect: true,
                 drilledIn: undefined
             }
@@ -105,8 +106,11 @@
             LayoutFrame
         },
         created: function () {
-            console.log("domainObject", JSON.parse(JSON.stringify(this.domainObject)));
-            this.composition = this.openmct.composition.get(this.domainObject);
+            this.newDomainObject = this.domainObject;
+            console.log("newDomainObject", JSON.parse(JSON.stringify(this.newDomainObject)));
+            this.gridSize = this.newDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;
+            this.composition = this.openmct.composition.get(this.newDomainObject);
+
             if (this.composition !== undefined) {
                 this.composition.load().then((composition) => {
                     composition.forEach(function (domainObject) {
@@ -118,14 +122,14 @@
                 });
             }
 
-            this.unlisten = this.openmct.objects.observe(this.domainObject, '*', function (obj) {
-                this.domainObject = JSON.parse(JSON.stringify(obj));
-                this.gridSize = this.domainObject.layoutGrid;
+            this.unlisten = this.openmct.objects.observe(this.newDomainObject, '*', function (obj) {
+                this.newDomainObject = JSON.parse(JSON.stringify(obj));
+                this.gridSize = this.newDomainObject.layoutGrid || DEFAULT_GRID_SIZE;;
             }.bind(this));
         },
         methods: {
             readLayoutConfiguration(domainObject) {
-                let panels = this.domainObject.configuration.layout.panels;
+                let panels = (((this.newDomainObject.configuration || {}).layout || {}).panels || {});
                 let id = this.openmct.objects.makeKeyString(domainObject.identifier);
                 this.rawPositions[id] = {
                     position: panels[id].position || DEFAULT_POSITION,
@@ -203,14 +207,26 @@
                     }
                 });
             },
-            mutate(id) {
-                console.log("endDrag");
+            bypassSelection($event) {
+                if (this.dragInProgress) {
+                    if ($event) {
+                        $event.stopImmediatePropagation();
+                    }
+                    return;
+                }
+            },
+            endDrag(id) {
                 this.dragInProgress = true;
                 setTimeout(function () {
                     this.dragInProgress = false;
                 }.bind(this), 0);
 
-                // TODO: mutate the domainObject with the new position value
+                let path = "configuration.layout.panels[" + id + "]";
+                this.mutate(path + ".dimensions", this.rawPositions[id].dimensions);
+                this.mutate(path + ".position", this.rawPositions[id].position);
+            },
+            mutate(path, value) {
+                this.openmct.objects.mutate(this.newDomainObject, path, value);
             },
             handleDrop($event) {
                 var child = JSON.parse($event.dataTransfer.getData('text/plain'));
@@ -221,7 +237,7 @@
             this.removeSelectable = this.openmct.selection.selectable(
                 this.$el,
                 {
-                    item: this.domainObject
+                    item: this.newDomainObject
                 },
                 this.initSelect
             );
