@@ -60,12 +60,12 @@ app.use(require('webpack-dev-middleware')(
     }
 ));
 
-// app.use(require('webpack-hot-middleware')(
-//     compiler,
-//     {
+app.use(require('webpack-hot-middleware')(
+    compiler,
+    {
 
-//     }
-// ));
+    }
+));
 
 // Expose index.html for development users.
 app.get('/', function (req, res) {

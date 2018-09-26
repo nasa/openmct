@@ -122,36 +122,6 @@
 
 <script>
 
-function sortAsc (array, field) {
-    return array.sort((a,b) => {
-        let first = a[field],
-            second = b[field];
-
-        if (first < second) {
-            return -1;
-        } else if (first > second) {
-            return 1;
-        } else {
-            return 0;
-        }
-    });
-};
-
-function sortDesc (array, field) {
-    return array.sort((a,b) => {
-        let first = a[field],
-            second = b[field];
-
-        if (first < second) {
-            return 1;
-        } else if (first > second) {
-            return -1;
-        } else {
-            return 0;
-        }
-    });
-}
-
 export default {
     inject: ['openmct', 'domainObject', 'Moment'],
     data() {
@@ -161,26 +131,29 @@ export default {
                     cssClass: 'icon-object-unknown',
                     name: 'Unknown Type'
                 }
-            };
-        if (this.domainObject.composition && this.domainObject.composition.length) {
+            },
+            composition = this.openmct.composition.get(this.domainObject);
+    
+        if (composition) {
 
-            this.domainObject.composition.forEach(item => {
-                this.openmct.objects.get(item.key).then(model => {
+            composition.load().then((array) => {
+                if (Array.isArray(array)) {
+                    array.forEach(model => {
+                        var type = this.openmct.types.get(model.type) || unknownObjectType;
 
-                    var type = this.openmct.types.get(model.type) || unknownObjectType;
-
-                    items.push({
-                        name: model.name,
-                        identifier: model.identifier.key,
-                        type: type.definition.name,
-                        isAlias: false,
-                        cssClass: type.definition.cssClass,
-                        createdDate: model.persisted,
-                        updatedDate: model.modified,
-                        items: model.composition ? model.composition.length : 0,
-                        isAlias: this.domainObject.identifier.key !== model.location
+                        items.push({
+                            name: model.name,
+                            identifier: model.identifier.key,
+                            type: type.definition.name,
+                            isAlias: false,
+                            cssClass: type.definition.cssClass,
+                            createdDate: model.persisted,
+                            updatedDate: model.modified,
+                            items: model.composition ? model.composition.length : 0,
+                            isAlias: this.domainObject.identifier.key !== model.location
+                        });
                     });
-                });
+                }
             });
         }
 
@@ -193,9 +166,9 @@ export default {
     computed: {
         sortedItems () {
             if (this.sortClass === 'asc') {
-                return sortAsc(this.items, this.orderByField);
+                return this.items.sort(this.ascending.bind(this));
             } else if (this.sortClass === 'desc') {
-                return sortDesc(this.items, this.orderByField);
+                return this.items.sort(this.descending.bind(this));
             }
         }
     },
@@ -216,6 +189,24 @@ export default {
                 this.sortClass = sortOrder;
             }
             this.orderByField = field;
+        },
+        ascending(first, second) {
+            if (first[this.orderByField] < second[this.orderByField]) {
+                return -1;
+            } else if (first[this.orderByField] > second[this.orderByField]) {
+                return 1;
+            } else {
+                return 0;
+            }
+        },
+        descending(first, second) {
+            if (first[this.orderByField] > second[this.orderByField]) {
+                return -1;
+            } else if (first[this.orderByField] < second[this.orderByField]) {
+                return 1;
+            } else {
+                return 0;
+            }
         }
     }
 }

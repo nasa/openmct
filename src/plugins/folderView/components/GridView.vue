@@ -171,18 +171,25 @@ export default {
                 }
             };
 
-        this.domainObject.composition.forEach(item => {
-            this.openmct.objects.get(item.key).then(model => {
+        var composition = this.openmct.composition.get(this.domainObject);
 
-                var type = this.openmct.types.get(model.type) || unknownObjectType;
+        if (composition) {
 
-                items.push({
-                    model: model,
-                    type: type.definition,
-                    isAlias: this.domainObject.identifier.key !== model.location
-                });
+            composition.load().then((array) => {
+                if (Array.isArray(array)) {
+                    array.forEach((model) => {
+                        var type = this.openmct.types.get(model.type) || unknownObjectType;
+
+                        items.push({
+                            model: model,
+                            type: type.definition,
+                            isAlias: this.domainObject.identifier.key !== model.location
+                        });
+                    });
+                }
             });
-        });
+        }
+        
 
         return {
             items: items
