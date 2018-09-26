@@ -170,6 +170,11 @@ export default {
             } else if (this.sortClass === 'desc') {
                 return this.items.sort(this.descending.bind(this));
             }
+        },
+        formatTime () {
+            return function (timestamp, format) {
+                return this.Moment(timestamp).format(format);
+            }
         }
     },
     methods: {
@@ -178,9 +183,6 @@ export default {
                 navigateToPath = `${currentLocation}/${identifier}`;
             
             this.openmct.router.setPath(navigateToPath);
-        },
-        formatTime(unixTime, timeFormat) {
-            return this.Moment(unixTime).format(timeFormat);
         },
         sortTrigger(field, sortOrder) {
             if (this.orderByField === field) {
