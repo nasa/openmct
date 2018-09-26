@@ -32,7 +32,9 @@ export default {
         columnWidths: {
             type: Array,
             required: false,
-            default: [],
+            default() {
+                return [];
+            },
         },
         rowIndex: {
             type: Number,
@@ -48,10 +50,6 @@ export default {
             type: Number,
             required: false,
             default: 0
-        },
-        configuration: {
-            type: Object,
-            required: true
         }
     },
     methods: {

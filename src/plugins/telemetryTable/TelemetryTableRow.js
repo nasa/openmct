@@ -39,7 +39,7 @@ define([], function () {
 
         getFormattedValue(key) {
             let column = this.columns[key];
-            return column.getFormattedValue(this.datum[key]);
+            return column && column.getFormattedValue(this.datum[key]);
         }
 
         getRowLimitClass() {
