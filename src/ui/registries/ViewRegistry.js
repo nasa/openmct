@@ -22,6 +22,8 @@
 /*global console */
 
 define([], function () {
+    const DEFAULT_VIEW_PRIORITY = 100;
+
     /**
      * A ViewRegistry maintains the definitions for different kinds of views
      * that may occur in different places in the user interface.
@@ -40,10 +42,17 @@ define([], function () {
      *          which can provide views of this object
      */
     ViewRegistry.prototype.get = function (item) {
+        function byPriority(providerA, providerB) {
+            let priorityA = providerA.priority ? providerA.priority(item) : DEFAULT_VIEW_PRIORITY;
+            let priorityB = providerB.priority ? providerB.priority(item) : DEFAULT_VIEW_PRIORITY;
+
+            return priorityB - priorityA;
+        }
+
         return this.getAllProviders()
             .filter(function (provider) {
                 return provider.canView(item);
-            });
+            }).sort(byPriority);
     };
 
     /**
