@@ -115,17 +115,31 @@
              v-if="toolsItemSelected">
             <checkbox>Checkbox</checkbox>
         </div>
+
+        <div class="c-button-set"
+             v-if="toolsItemSelected">
+            <toggle-button title="Snap to grid" checked
+                    class="c-click-icon"
+                    inner-class-on="icon-grid-snap-to"
+                    inner-class-off="icon-grid-snap-no"></toggle-button>
+            <toggle-button title="Show label and value" checked
+                    class="c-click-icon"
+                    inner-class-on="icon-two-parts-both"
+                    inner-class-off="icon-two-parts-one-only"></toggle-button>
+        </div>
     </div>
 </template>
 
 <script>
     import labeledNumberInput from '../controls/labeledNumberInput.vue';
     import checkbox from '../controls/checkboxCustom.vue';
+    import toggleButton from '../controls/toggleButton.vue';
 
     export default {
         components: {
             labeledNumberInput,
-            checkbox
+            checkbox,
+            toggleButton
         },
         methods: {
             toggleMenus: function () {
@@ -142,7 +156,8 @@
             toolSetBox: ['toolsColorFill', 'toolsColorStroke'],
             toolSetLine: ['toolsColorStroke'],
             toolSetText: ['toolsColorFill', 'toolsColorStroke', 'toolsColorText', 'toolsFontSize', 'toolsEditProperties'],
-            toolSetImage: ['toolsColorStroke', 'toolsEditProperties']
+            toolSetImage: ['toolsColorStroke', 'toolsEditProperties'],
+            toolSetTelemetry: ['toolsColorFill', 'toolsColorStroke', 'toolsColorText', 'toolsFontSize', 'toolsLabelValue']
         },
         data: function () {
             return {

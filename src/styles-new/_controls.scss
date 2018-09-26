@@ -73,7 +73,10 @@
         background: rgba($colorKey, 0.2);
     }
 
-    &:before {
+    &:before,
+    *:before {
+        // *:before handles any nested containers that may contain glyph elements
+        // Needed for c-togglebutton.
         font-size: 1.3em;
     }
 }
@@ -144,6 +147,7 @@ button {
         display: flex;
         flex-flow: column nowrap;
         align-items: center;
+        justify-content: center;
 
         > [class*='swatch'] {
             box-shadow: inset rgba(black, 0.2) 0 0 1px;
@@ -192,8 +196,11 @@ button {
                 color: $colorBtnCautionBg;
             }
 
-            &:hover:before {
-                color: $colorBtnCautionBgHov;
+            &:hover {
+                background: rgba($colorBtnCautionBgHov, 0.2);
+                :before {
+                    color: $colorBtnCautionBgHov;
+                }
             }
         }
     }
@@ -213,6 +220,7 @@ button {
     // When one set is adjacent to another, provides a divider between
 
     display: inline-flex;
+    flex: 0 0 auto;
 
     > * {
         // Assume buttons are immediate descendants
