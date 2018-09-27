@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+// VERSION MANUALLY RESTORED FROM VUE-LAYOUT
+
 /************************** VISUALS */
 @mixin ancillaryIcon($d, $c) {
     // Used for small icons used in combination with larger icons,
@@ -230,16 +232,6 @@
             padding: 2px 0px;
             width: 0px;
         }
-    }
-}
-
-@mixin labeledInput() {
-    // A text or numeric input preceded by a label. Mostly used in toolbar.
-
-    input[type='text'],
-    input[type='search'],
-    input[type='number'] {
-        width: 100%;
     }
 }
 
