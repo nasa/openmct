@@ -65,14 +65,21 @@
     }
 
     .is-editing {
-        .l-layout {
-            background: rgba($colorKey, 0.1);
+        .l-layout.s-selected {
+            background: rgba($colorEdit, 0.1);
+        }
 
+        .c-frame,
+        .l-layout {
             &.s-selected,
             &.s-selected-parent {
                 [class*="__grid-holder"] {
                     display: block;
                 }
+            }
+
+            &.s-selected .l-layout {
+             //   background: red !important;
             }
         }
     }

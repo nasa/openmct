@@ -1,6 +1,6 @@
 <template>
     <!-- - TODO: styles for selectable, moveable, etc. -->
-    <div class="c-frame has-local-controls"
+    <div class="c-frame has-local-controls is-selectable is-moveable"
          :style="item.style"
          :class="classObject"
          @dblclick="drill(item.id, $event)">
