@@ -22,7 +22,7 @@
             </div>
             <div class="c-grid-item__controls">
                 <div class="icon-people" title='Shared'></div>
-                <div class="c-icon-button icon-info c-info-button" title='More Info'></div>
+                <div class="c-click-icon icon-info c-info-button" title='More Info'></div>
                 <div class="icon-pointer-right c-pointer-icon"></div>
             </div>
         </div>

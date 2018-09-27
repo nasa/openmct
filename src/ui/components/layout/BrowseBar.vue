@@ -1,7 +1,7 @@
 <template>
     <div class="l-browse-bar">
         <div class="l-browse-bar__start">
-            <a class="l-browse-bar__nav-to-parent-button c-icon-button icon-pointer-left"></a>
+            <a class="l-browse-bar__nav-to-parent-button c-click-icon icon-pointer-left"></a>
             <div class="l-browse-bar__object-name--w"
                  :class="type.cssClass">
                 <span
@@ -15,9 +15,9 @@
         </div>
 
         <div class="l-browse-bar__end">
-            <div class="l-browse-bar__view-switcher c-menu-button--w c-menu-button--menus-left"
+            <div class="l-browse-bar__view-switcher c-ctrl-wrapper c-ctrl-wrapper--menus-left"
                  v-if="views.length > 1">
-                <div class="c-menu-button"
+                <div class="c-button--menu"
                      :class="currentView.cssClass"
                      title="Switch view type"
                      @click="toggleViewMenu">
