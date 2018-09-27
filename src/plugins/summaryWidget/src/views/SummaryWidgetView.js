@@ -18,7 +18,7 @@ define([
         this.widget.title = datum.message;
         this.label.title = datum.message;
         this.label.innerHTML = datum.ruleLabel;
-        this.label.className = 'label widget-label ' + datum.icon;
+        this.label.className = 'label widget-label c-summary-widget__label ' + datum.icon;
     };
 
     SummaryWidgetView.prototype.render = function () {

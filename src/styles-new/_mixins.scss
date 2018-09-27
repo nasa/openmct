@@ -233,16 +233,6 @@
     }
 }
 
-@mixin labeledInput() {
-    // A text or numeric input preceded by a label. Mostly used in toolbar.
-
-    input[type='text'],
-    input[type='search'],
-    input[type='number'] {
-        width: 100%;
-    }
-}
-
 /************************** MATH */
 @function percentToDecimal($p) {
     @return $p / 100%;

@@ -82,11 +82,18 @@
         &__object-view {
             flex: 1 1 auto;
             overflow: auto;
+
+            .c-object-view {
+                .u-fills-container {
+                    // Expand component types that fill a container
+                    @include abs();
+                }
+            }
         }
 
         /*************************** NO-FRAME */
         &.no-frame {
-            [class*="__header"] {
+            > [class*="__header"] {
                 display: none;
             }
         }
@@ -109,21 +116,31 @@
     }
 
     /*************************** EDITING */
-    .is-editing .c-frame:not(.is-drilled-in) {
-        border: 1px dotted rgba($colorKey, 0.5);
+    .is-editing {
+        .c-frame {
+            &:not(.is-drilled-in) {
+                border: 1px dotted rgba($colorKey, 0.5);
 
-        &.s-selected {
-            > .c-frame-edit {
-                display: block;
+                &.s-selected {
+                    > .c-frame-edit {
+                        display: block; // Show the editing rect and handles
+                    }
+                }
+            }
+
+            .u-links {
+                // Applied to objects that provide links. Disable while editing.
+                pointer-events: none;
             }
         }
     }
 
     .c-frame-edit {
+        // The editing rect and handles
         $z: 10;
 
         @include abs();
-        box-shadow: rgba($colorKey, 1) 0 0 10px;
+        box-shadow: rgba($colorKey, 0.7) 0 0 10px;
         display: none;
 
         &__move {

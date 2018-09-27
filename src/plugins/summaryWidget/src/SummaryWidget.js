@@ -264,7 +264,7 @@ define([
         this.applyStyle($('#widget', this.domElement), activeRule.getProperty('style'));
         $('#widget', this.domElement).prop('title', activeRule.getProperty('message'));
         $('#widgetLabel', this.domElement).html(activeRule.getProperty('label'));
-        $('#widgetLabel', this.domElement).removeClass().addClass('label widget-label ' + activeRule.getProperty('icon'));
+        $('#widgetLabel', this.domElement).removeClass().addClass('label widget-label c-summary-widget__label ' + activeRule.getProperty('icon'));
     };
 
     /**
