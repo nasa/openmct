@@ -241,11 +241,6 @@
     }
 
     export default {
-        data() {
-            return {
-                conductorComponent: {}
-            }
-        },
         components: {
             Inspector,
             MctStatus,
@@ -261,7 +256,8 @@
         },
         data: () => {
             return {
-                fullScreen: false
+                fullScreen: false,
+                conductorComponent: {}
             }
         },
         methods: {
@@ -278,6 +274,9 @@
             openInNewTab (event) {
                 event.target.href = window.location.href;
             }
-        }   
+        },
+        updated(){
+            console.log
+        }
     }
 </script>
