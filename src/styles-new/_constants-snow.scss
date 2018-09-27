@@ -24,9 +24,8 @@ $colorKeyFilter: brightness(0.9) sepia(1) hue-rotate(145deg) saturate(6);
 $colorKeySelectedBg: $colorKey;
 $colorKeyFg: #fff;
 $colorKeyHov: #00c0f6;
-$colorEdit: orange;
-$colorEditAreaBg: #eafaff;
-$colorEditAreaFg: #4bb1c7;
+$colorEditAreaBg: #eafaff; // Deprecated, use $editColor instead
+$colorEditAreaFg: #4bb1c7; // Deprecated, use $editColor instead
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: #999;
 $colorAHov: $colorKey;
@@ -90,13 +89,20 @@ $colorIconLink: #49dedb;
 $colorPausedBg: #ff9900;
 $colorPausedFg: #fff;
 $colorCreateBtn: $colorKey;
-$colorGridLines: rgba(#000, 0.05);
 $colorInvokeMenu: #fff;
 $colorObjHdrTxt: $colorBodyFg;
 $colorObjHdrIc: lighten($colorObjHdrTxt, 30%);
 $colorTick: rgba(black, 0.2);
-$colorSelectableSelectedPrimary: $colorKey;
-$colorSelectableHov: rgba($colorBodyFg, 0.4);
+
+$editColor: #00c7c3;
+$browseBorderSelectableHov: 1px dotted rgba($colorBodyFg, 0.2);
+$browseShdwSelectableHov: rgba($colorBodyFg, 0.2) 0 0 3px;
+$browseBorderSelected: 1px solid rgba($colorBodyFg, 0.6);
+$editBorderSelectable: 1px dotted rgba($editColor, 1);
+$editBorderSelectableHov: 1px dashed rgba($editColor, 1);
+$editBorderSelected: 1px solid $editColor;
+$editBorderDrilledIn: 1px dashed #ff4d9a;
+$colorGridLines: rgba($editColor, 0.2);
 
 // Menus
 $colorMenuBg: pushBack($colorBodyBg, 10%);

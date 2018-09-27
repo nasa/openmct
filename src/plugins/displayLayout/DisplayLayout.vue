@@ -87,8 +87,9 @@
     }
 
     .is-editing {
-        .l-layout.s-selected {
-            background: rgba($colorEdit, 0.1);
+        .l-shell__main-container > .l-layout {
+            // Target the top-most layout container and color its background
+            background: rgba($editColor, 0.1);
         }
 
         .c-frame,
@@ -98,10 +99,6 @@
                 [class*="__grid-holder"] {
                     display: block;
                 }
-            }
-
-            &.s-selected .l-layout {
-             //   background: red !important;
             }
         }
     }

@@ -61,6 +61,8 @@
     .c-frame {
         display: flex;
         flex-direction: column;
+        border-width: 1px;
+        border-color: transparent;
 
         /*************************** HEADER */
         &__header {
@@ -127,31 +129,44 @@
         }
 
         /*************************** SELECTION */
-        &.s-selected {
-            //Legacy name for now
-            border-color: $colorKey;
+        &.is-selectable {
+            &:hover {
+                box-shadow: $browseShdwSelectableHov;
+            }
         }
 
-        &.is-drilled-in {
-            border: 1px dashed deeppink;
+        &.s-selected, // LEGACY
+        &.is-selected {
+            border: $browseBorderSelected;
         }
     }
 
     /*************************** EDITING */
     .is-editing {
         .c-frame {
-            &:not(.is-drilled-in) {
-                border: 1px dotted rgba($colorKey, 0.5);
+            &:not(.is-drilled-in).is-selectable {
+                border: $editBorderSelectable;
 
-                &.s-selected {
+                &:hover {
+                    border: $editBorderSelectableHov;
+                }
+
+                &.s-selected,
+                &.is-selected {
+                    border: $editBorderSelected;
+
                     > .c-frame-edit {
                         display: block; // Show the editing rect and handles
                     }
                 }
             }
 
+            &.is-drilled-in {
+                border: $editBorderDrilledIn;
+            }
+
             .u-links {
-                // Applied to objects that provide links. Disable while editing.
+                // Applied in markup to objects that provide links. Disable while editing.
                 pointer-events: none;
             }
         }
@@ -162,7 +177,7 @@
         $z: 10;
 
         @include abs();
-        box-shadow: rgba($colorKey, 0.7) 0 0 10px;
+        box-shadow: rgba($editColor, 0.5) 0 0 10px;
         display: none;
 
         &__move {
@@ -174,8 +189,8 @@
         &__handle {
             $d: 8px;
             $o: floor($d * -0.5);
-            background: rgba($colorKey, 0.3);
-            border: 1px solid $colorKey;
+            background: rgba($editColor, 0.3);
+            border: 1px solid $editColor;
             position: absolute;
             width: $d; height: $d;
             top: auto; right: auto; bottom: auto; left: auto;
@@ -192,7 +207,7 @@
             }
 
             &:hover {
-                background: $colorKey;
+                background: $editColor;
             }
 
             &.--nw {
