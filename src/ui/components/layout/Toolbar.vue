@@ -1,5 +1,6 @@
 <template>
     <div class="c-toolbar">
+        <!-- VERSION MANUALLY RESTORED FROM VUE-LAYOUT -->
         <div class="c-button-set">
             <div class="c-ctrl-wrapper">
                 <div class="c-button--menu js-add-button icon-plus"
@@ -118,10 +119,14 @@
 
         <div class="c-button-set"
              v-if="toolsItemSelected">
-            <toggle-button title="Show/hide object frame" checked
+            <toggle-button title="Toggle frame" checked
+                           class="c-click-icon"
+                           inner-class-on="icon-frame-show"
+                           inner-class-off="icon-frame-hide"></toggle-button>
+            <toggle-button title="Snap to grid" checked
                     class="c-click-icon"
-                    inner-class-on=" icon-frame-show"
-                    inner-class-off="icon-frame-hide"></toggle-button>
+                    inner-class-on="icon-grid-snap-to"
+                    inner-class-off="icon-grid-snap-no"></toggle-button>
             <toggle-button title="Show label and value" checked
                     class="c-click-icon"
                     inner-class-on="icon-two-parts-both"
