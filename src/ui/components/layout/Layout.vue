@@ -255,7 +255,7 @@
             pane,
             BrowseBar
         },
-        data: () => {
+        data: function () {
             return {
                 fullScreen: false,
                 conductorComponent: {}
