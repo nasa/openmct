@@ -6,7 +6,7 @@
 
         <a 
             class="close icon-x-in-circle"
-            v-on:click="destoy">
+            v-on:click="destroy">
         </a>
 
         <div class="abs inner-holder l-flex-col"> 

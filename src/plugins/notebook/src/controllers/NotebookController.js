@@ -60,6 +60,7 @@ function (
         this.container = container;
 
         var notebookEmbed = {
+            inject:['openmct'],
             props:['embed', 'entry'],
             template: EmbedTemplate,
             data: embedController.exposedData,
@@ -80,6 +81,7 @@ function (
 
         var notebookVue = Vue.extend({
             template: NotebookTemplate,
+            provide: {openmct: self.openmct},
             components: {
                 'notebook-entry': entryComponent,
                 'search': search.default

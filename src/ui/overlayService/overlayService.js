@@ -31,9 +31,10 @@ define([
     function OverlayService() {
         this.activeOverlays = [];
         this.overlayId = 0;
+        this.onDestroyCallbacks = {};
     }
 
-    OverlayService.prototype.show  = function (element) {
+    OverlayService.prototype.show  = function (element, onDestroyCallback) {
         if(this.activeOverlays.length) {
             this.activeOverlays[this.activeOverlays.length - 1].overlay.classList.add('invisible');
         }
@@ -58,14 +59,24 @@ define([
 
         this.activeOverlays.push({
             overlay: this.overlay,
-            component: this.component
+            component: this.component,
+            id: this.overlayId
         });
+
+        if (onDestroyCallback && typeof onDestroyCallback === 'function') {
+            console.log(onDestroyCallback);
+            this.onDestroyCallbacks[this.overlayId] = onDestroyCallback;
+        }
     };
 
     OverlayService.prototype.destroy = function () {
         var lastActiveOverlayObject = this.activeOverlays.pop(),
             lastActiveOverlay = lastActiveOverlayObject.overlay,
             lastActiveComponent = lastActiveOverlayObject.component;
+
+        if (this.onDestroyCallbacks[lastActiveOverlayObject.id]) {
+            this.onDestroyCallbacks[lastActiveOverlayObject.id]();
+        }
 
         lastActiveComponent.$destroy(true);
         document.body.removeChild(lastActiveOverlay);
