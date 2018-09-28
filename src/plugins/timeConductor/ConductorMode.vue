@@ -20,45 +20,63 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div class="holder flex-elem time-system c-ctrl-wrapper c-ctrl-wrapper--menus-up">
-    <div class="c-button--menu"
+<div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up">
+    <div class="c-button--menu c-mode-button"
          @click="toggleMenu($event)">
         <span class="c-button__label">{{selectedMode.name}}</span>
     </div>
-    <div class="c-menu super-menu mini l-mode-selector-menu"
+    <div class="c-menu c-super-menu c-conductor__mode-menu"
          v-if="showMenu">
-        <div class="w-menu">
-            <div class="col menu-items">
-                <ul>
-                    <li v-for="mode in modes"
-                        :key="mode.key"
-                        @click="setOption(mode)">
-                        <a @mouseover="hoveredMode = mode"
-                           @mouseleave="hoveredMode = {}"
-                           class="menu-item-a"
-                           :class="mode.cssClass">
-                            {{mode.name}}
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="col menu-item-description">
-                <div class="desc-area ui-symbol icon type-icon" :class="hoveredMode.cssClass"></div>
-                <div class="w-title-desc">
-                    <div class="desc-area title">
-                        {{hoveredMode.name}}
-                    </div>
-                    <div class="desc-area description">
-                        {{hoveredMode.description}}
-                    </div>
-                </div>
-            </div>
+        <div class="c-super-menu__menu">
+            <ul>
+                <li v-for="mode in modes"
+                    :key="mode.key"
+                    @click="setOption(mode)"
+                    @mouseover="hoveredMode = mode"
+                    @mouseleave="hoveredMode = {}"
+                    class="menu-item-a"
+                    :class="mode.cssClass">
+                    {{mode.name}}
+                </li>
+            </ul>
+        </div>
+        <div class="c-super-menu__item-description">
+            <div :class="['l-item-description__icon', 'bg-' + hoveredMode.cssClass]"></div>
+            <div class="l-item-description__name">{{hoveredMode.name}}</div>
+            <div class="l-item-description__description">{{hoveredMode.description}}</div>
         </div>
     </div>
 </div>
 </template>
 
 <style lang="scss">
+    @import "~styles/sass-base";
+
+    .c-conductor__mode-menu {
+        max-height: 80vh;
+        max-width: 500px;
+        min-height: 250px;
+        z-index: 70;
+
+        [class*="__icon"] {
+            filter: $colorKeyFilter;
+        }
+
+        [class*="__item-description"] {
+            min-width: 200px;
+        }
+    }
+
+    .is-realtime-mode {
+        .c-mode-button {
+            background: $colorTimeBg;
+
+            &:hover {
+                background: $colorTimeHov;
+            }
+        }
+    }
+
 </style>
 
 <script>

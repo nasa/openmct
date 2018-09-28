@@ -8,8 +8,6 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
-    $colorRT: deeppink;
-
     @keyframes clock-hands {
         0% { transform: translate(-50%, -50%) rotate(0deg); }
         100% { transform: translate(-50%, -50%) rotate(360deg);  }
@@ -45,7 +43,7 @@
 
 
     .c-clock-symbol {
-        $c: $colorBodyFg; //$colorObjHdrIc;
+        $c: $colorBtnBg; //$colorObjHdrIc;
         $d: 18px;
         height: $d;
         width: $d;
@@ -103,16 +101,16 @@
         }
 
         // Modes
-        .realtime-mode &,
-        .lad-mode & {
+        .is-realtime-mode &,
+        .is-lad-mode & {
             &:before {
                 // Brackets icon
-                color: $colorRT;
+                color: $colorTime;
             }
             div[class*="hand"] {
                 animation-name: clock-hands;
                 &:before {
-                    background: $colorRT;
+                    background: $colorTime;
                 }
             }
         }

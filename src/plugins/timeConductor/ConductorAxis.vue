@@ -20,14 +20,90 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="l-axis-holder" ref="axisHolder"
-        @mousedown="dragStart($event)"></div>
+    <div class="c-conductor-axis"
+         ref="axisHolder"
+         @mousedown="dragStart($event)">
+    </div>
 </template>
 
 <style lang="scss">
-    .l-axis-holder {
-        user-select: none;
+    @import "~styles/sass-base";
+
+    .c-conductor-axis {
+        $h: 18px;
+        $tickYPos: ($h / 2) + 12px;
+
+        @include userSelectNone();
+        @include bgTicks($c: rgba($colorBodyFg, 0.4));
+        background-position: 0 50%;
+        height: $h;
+
+        svg {
+            text-rendering: geometricPrecision;
+            width: 100%;
+            height: 100%;
+            > g {
+                // Overall Tick holder
+                transform: translateY($tickYPos);
+                path {
+                    // Domain line
+                    display: none;
+                }
+
+                g {
+                    // Each tick. These move on drag.
+                    line {
+                        // Line beneath ticks
+                        display: none;
+                    }
+                }
+            }
+
+            text {
+                // Tick labels
+                font-size: 1em;
+                paint-order: stroke;
+                font-weight: bold;
+                stroke-linecap: butt;
+                stroke-linejoin: bevel;
+                stroke-width: 6px;
+            }
+        }
+
+        .is-fixed-mode & {
+            @include cursorGrab();
+            background-size: 3px 30%;
+            border-radius: $controlCr;
+            background-color: $colorBodyBgSubtle;
+            box-shadow: inset rgba(black, 0.2) 0 1px 1px;
+
+            svg text {
+                fill: $colorBodyFg;
+                stroke: $colorBodyBgSubtle;
+            }
+
+            &:hover,
+            &:active {
+                $c: $colorKeySubtle;
+                background-color: $c;
+                svg text {
+                    stroke: $c;
+                }
+            }
+        }
+
+        .is-realtime-mode & {
+            background-size: 5px 2px;
+
+            svg text {
+                fill: $colorTime;
+                stroke: $colorBodyBg;
+            }
+
+        }
     }
+
+
 </style>
 
 <script>
