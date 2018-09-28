@@ -26,8 +26,6 @@ import objectUtils from '../../api/objects/object-utils.js'
 
 export default function () {
     return function (openmct) {
-        console.log("Installing Layout component...");
-
         openmct.objectViews.addProvider({
             key: 'layout.view',
             canView: function (domainObject) {
@@ -41,7 +39,7 @@ export default function () {
                             components: {
                                 Layout
                             },
-                            template: '<layout :new-domain-object="domainObject" @update:object="updateObject"></layout>',
+                            template: '<layout :domain-object="domainObject"></layout>',
                             provide: {
                                 openmct,
                                 objectUtils
@@ -50,11 +48,6 @@ export default function () {
                             data () {
                                 return {
                                     domainObject: domainObject
-                                }
-                            },
-                            methods: {
-                                updateObject(object) {
-                                    this.domainObject = object;
                                 }
                             }
                         });

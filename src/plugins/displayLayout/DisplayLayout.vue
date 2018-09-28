@@ -129,12 +129,13 @@
             }
         },          
         inject: ['openmct'],
-        props: ['newDomainObject'],
+        props: ['domainObject'],
         components: {
             LayoutFrame
         },
         created: function () {
-            console.log("created()>>> newDomainObject", JSON.parse(JSON.stringify(this.newDomainObject)));
+            console.log("created()", JSON.parse(JSON.stringify(this.domainObject)));
+            this.newDomainObject = this.domainObject;
             this.gridSize = this.newDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;
             this.composition = this.openmct.composition.get(this.newDomainObject);
             let panels = (((this.newDomainObject.configuration || {}).layout || {}).panels || {});
@@ -151,9 +152,8 @@
             }
 
             this.unlisten = this.openmct.objects.observe(this.newDomainObject, '*', function (obj) {
-                let newObject = JSON.parse(JSON.stringify(obj));
-                this.$emit('update:object', newObject);
-                this.gridSize = newObject.layoutGrid || DEFAULT_GRID_SIZE;;
+                this.newDomainObject = JSON.parse(JSON.stringify(obj));
+                this.gridSize = this.newDomainObject.layoutGrid || DEFAULT_GRID_SIZE;;
             }.bind(this));
         },
         methods: {
