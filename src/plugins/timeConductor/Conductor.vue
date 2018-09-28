@@ -20,106 +20,227 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<!-- Parent holder for time conductor. follow-mode | fixed-mode -->
-<div class="l-flex-row l-time-conductor"
-    :class="[isFixed ? 'fixed-mode' : 'realtime-mode', panning ? 'status-panning' : '']">
-    <div class="flex-elem holder time-conductor-icon">
-        <div class="hand-little"></div>
-        <div class="hand-big"></div>
-    </div>
+    <div class="u-contents"><!-- TEMP -->
+    <!-- Parent holder for time conductor. follow-mode | fixed-mode -->
+        <form class="u-contents" ref="conductorForm" @submit="isFixed ? setBoundsFromView($event) : setOffsetsFromView($event)">
 
-    <div class="flex-elem holder grows l-flex-col l-time-conductor-inner">
-        <!-- Holds inputs and ticks -->
-        <div class="l-time-conductor-inputs-and-ticks l-row-elem flex-elem no-margin">
-            <form class="l-time-conductor-inputs-holder" ref="conductorForm"
-                  @submit="isFixed ? setBoundsFromView($event) : setOffsetsFromView($event)">
-                <span class="l-time-range-w start-w">
-                    <span class="l-time-conductor-inputs">
-                        <span class="l-time-range-input-w start-date">
-                            <span class="title"></span>
-                            <span class="time-range-input">
-                                <input type="text" autocorrect="off" spellcheck="false"
-                                    ref="startDate"
-                                    v-model="formattedBounds.start"
-                                    @keyup="validateBounds('start', $event.target)"
-                                    @blur="setBoundsFromView()">
-                                <date-picker :default-date-time="formattedBounds.start" :formatter="timeFormatter" @date-selected="startDateSelected"></date-picker>
-                            </span>
-                        </span>
-                        <span class="l-time-range-input-w time-delta start-delta"
-                            :class="{'hide': isFixed}">
-                            - 
-                            <span class="s-input-inline hrs-min-input">
-                                <input type="text" autocorrect="off" spellcheck="false"
-                                    v-model="offsets.start"
-                                    @keyup="validateOffsets($event)"
-                                    @blur="setOffsetsFromView()">
-                            </span>
-                        </span>
+        <div class="c-conductor"
+             :class="[isFixed ? 'fixed-mode' : 'realtime-mode', panning ? 'status-panning' : '']">
+            <!-- grid with 4 columns, 2 rows -->
+            <ConductorModeIcon class="c-conductor__mode-icon"></ConductorModeIcon>
+
+            <div class="c-conductor__start">
+                <!-- Fixed input -->
+                <span class="c-ctrl-wrapper c-conductor__start__fixed"
+                      v-if="isFixed">
+                    <span class="title">Start</span>
+                    <span class="time-range-input">
+                        <input type="text" autocorrect="off" spellcheck="false"
+                               ref="startDate"
+                               v-model="formattedBounds.start"
+                               @keyup="validateBounds('start', $event.target)"
+                               @blur="setBoundsFromView()" />
+                        <date-picker :default-date-time="formattedBounds.start" :formatter="timeFormatter" @date-selected="startDateSelected"></date-picker>
                     </span>
                 </span>
-                <span class="l-time-range-w end-w">
-                    <span class="l-time-conductor-inputs">
-                        <span class="l-time-range-input-w end-date">
-                            <span class="title"></span>
-                            <span class="time-range-input">
-                                <input type="text" autocorrect="off" spellcheck="false"
-                                    v-model="formattedBounds.end"
-                                    :disabled="!isFixed"
-                                    ref="endDate"
-                                    @keyup="validateBounds('end', $event.target)"
-                                    @blur="setBoundsFromView()">
-                                <date-picker :default-date-time="formattedBounds.end" :formatter="timeFormatter" @date-selected="endDateSelected"></date-picker>
-                            </span>
-                        </span>
-                        <span class="l-time-range-input-w time-delta end-delta"
-                              :class="{'hide': isFixed}">
-                                +
-                            <span class="s-input-inline hrs-min-input">
-                                <input type="text" autocorrect="off" spellcheck="false"
-                                    v-model="offsets.end"
-                                    @keyup="validateOffsets($event)"
-                                    @blur="setOffsetsFromView()">
-                            </span>
-                        </span>
+                <!-- RT input -->
+                <span class="l-time-range-input-w c-ctrl-wrapper c-conductor__start__delta"
+                      v-if="!isFixed"> -
+                    <span class="s-input-inline hrs-min-input">
+                        <input type="text" autocorrect="off" spellcheck="false"
+                               v-model="offsets.start"
+                               @keyup="validateOffsets($event)"
+                               @blur="setOffsetsFromView()">
                     </span>
                 </span>
-                <input type="submit" class="invisible">
-            </form>
-            <conductor-axis class="mobile-hide" :bounds="rawBounds" @panZoom="setViewFromBounds"></conductor-axis>
-        </div>
-
-        <!-- Holds time system and session selectors, and zoom control -->
-        <div class="l-time-conductor-controls l-row-elem l-flex-row flex-elem">
-            <ConductorMode></ConductorMode>
-            <ConductorTimeSystem></ConductorTimeSystem>
-            <!-- Zoom control -->
-            <div v-if="isUTCBased && isFixed"
-                 class="l-time-conductor-zoom-w grows flex-elem l-flex-row">
-                {{currentZoomText}}
-                <span class="time-conductor-zoom-current-range flex-elem flex-fixed holder">{{timeUnits}}</span>
-                <input class="time-conductor-zoom flex-elem" type="range"
-                    v-model="currentZoom"
-                    @change="setBoundsFromView()"
-                    min="0.01"
-                    step="0.01"
-                    max="0.99" />
             </div>
-        </div>
+            <div class="c-conductor__ticks">
+                <!-- Start input and controls -->
+                [ticks]
+            </div>
+            <div class="c-conductor__end">
+                <!-- End input and controls -->
+                [end]
+            </div>
+            <div class="c-conductor__controls">
+                <!-- Mode, time system menu buttons and duration slider -->
+                <ConductorMode></ConductorMode>
+                <ConductorTimeSystem></ConductorTimeSystem>
+                <!-- Zoom control -->
+                <div class="c-slider"
+                     v-if="isUTCBased && isFixed">
+                    <input class="c-slider__input" type="range"
+                           v-model="currentZoom"
+                           @change="setBoundsFromView()"
+                           min="0.01"
+                           step="0.01"
+                           max="0.99" />
+                    <div class="c-slider__value">{{currentZoomText}}</div>
+                </div>
+            </div>
 
-    </div>
-</div>
+        </div><!--/ c-conductor -->
+
+
+
+
+
+
+
+
+
+
+
+
+        <!-- OLD CONDUCTOR -->
+        <div class="l-flex-row l-time-conductor"
+            :class="[isFixed ? 'fixed-mode' : 'realtime-mode', panning ? 'status-panning' : '']">
+            <div class="flex-elem holder time-conductor-icon">
+                <div class="hand-little"></div>
+                <div class="hand-big"></div>
+            </div>
+
+
+            <div class="flex-elem holder grows l-flex-col l-time-conductor-inner">
+                <!-- Holds inputs and ticks -->
+                <div class="l-time-conductor-inputs-and-ticks l-row-elem flex-elem no-margin">
+                    <!--<form class="l-time-conductor-inputs-holderx" ref="conductorForm"
+                          @submit="isFixed ? setBoundsFromView($event) : setOffsetsFromView($event)">-->
+                        <span class="l-time-range-w start-w">
+                            <span class="l-time-conductor-inputs">
+                                <span class="l-time-range-input-w start-date">
+                                    <span class="title"></span>
+                                    <span class="time-range-input">
+                                        <input type="text" autocorrect="off" spellcheck="false"
+                                            ref="startDate"
+                                            v-model="formattedBounds.start"
+                                            @keyup="validateBounds('start', $event.target)"
+                                            @blur="setBoundsFromView()">
+                                        <date-picker :default-date-time="formattedBounds.start" :formatter="timeFormatter" @date-selected="startDateSelected"></date-picker>
+                                    </span>
+                                </span>
+                                <span class="l-time-range-input-w time-delta start-delta"
+                                    :class="{'hide': isFixed}">
+                                    -
+                                    <span class="s-input-inline hrs-min-input">
+                                        <input type="text" autocorrect="off" spellcheck="false"
+                                            v-model="offsets.start"
+                                            @keyup="validateOffsets($event)"
+                                            @blur="setOffsetsFromView()">
+                                    </span>
+                                </span>
+                            </span>
+                        </span>
+                        <span class="l-time-range-w end-w">
+                            <span class="l-time-conductor-inputs">
+                                <span class="l-time-range-input-w end-date">
+                                    <span class="title"></span>
+                                    <span class="time-range-input">
+                                        <input type="text" autocorrect="off" spellcheck="false"
+                                            v-model="formattedBounds.end"
+                                            :disabled="!isFixed"
+                                            ref="endDate"
+                                            @keyup="validateBounds('end', $event.target)"
+                                            @blur="setBoundsFromView()">
+                                        <date-picker :default-date-time="formattedBounds.end" :formatter="timeFormatter" @date-selected="endDateSelected"></date-picker>
+                                    </span>
+                                </span>
+                                <span class="l-time-range-input-w time-delta end-delta"
+                                      :class="{'hide': isFixed}">
+                                        +
+                                    <span class="s-input-inline hrs-min-input">
+                                        <input type="text" autocorrect="off" spellcheck="false"
+                                            v-model="offsets.end"
+                                            @keyup="validateOffsets($event)"
+                                            @blur="setOffsetsFromView()">
+                                    </span>
+                                </span>
+                            </span>
+                        </span>
+                        <input type="submit" class="invisible">
+                   <!-- </form>-->
+                    <conductor-axis class="mobile-hide" :bounds="rawBounds" @panZoom="setViewFromBounds"></conductor-axis>
+                </div>
+
+                <!-- Holds time system and session selectors, and zoom control -->
+                <div class="l-time-conductor-controls l-row-elem l-flex-row flex-elem">
+                </div>
+
+            </div>
+
+
+        </div>
+        <!--/ OLD CONDUCTOR -->
+        </form>
+    </div><!--/ u-contents div -->
 </template>
 
 <style lang="scss">
     @import "~styles/sass-base";
 
+    /*********************************************** TEMP */
     .l-time-conductor-inputs input:invalid {
         border: 1px solid $colorFormInvalid !important;
     }
 
     .l-time-conductor-zoom-w {
         text-transform: capitalize;
+    }
+
+    /*********************************************** CONDUCTOR */
+    .c-conductor {
+        display: grid;
+        grid-column-gap: $interiorMarginSm;
+        grid-row-gap: $interiorMarginSm;
+        grid-template-columns: 20px 180px 1fr 180px;
+        grid-template-rows: 1fr 1fr;
+        grid-template-areas:
+            "tc-mode-icon tc-start tc-ticks tc-end"
+            "tc-controls tc-controls tc-controls tc-controls";
+
+        > [class*='__'] {
+            /*margin: 1px;*/
+            background: rgba(deeppink, 0.1);
+        }
+
+        &__mode-icon {
+            grid-area: tc-mode-icon;
+        }
+
+        &__start {
+            grid-area: tc-start;
+        }
+
+        &__ticks {
+            grid-area: tc-ticks;
+        }
+
+        &__end {
+            grid-area: tc-end;
+        }
+
+        &__controls {
+            grid-area: tc-controls;
+            display: flex;
+            align-items: center;
+            > * + * {
+                margin-left: $interiorMargin;
+            }
+        }
+
+
+
+        [class*='__delta'] {
+            &:before {
+                content: $glyph-icon-clock;
+                font-family: symbolsfont;
+            }
+        }
+
+
+
+
+
     }
 </style>
 
@@ -129,6 +250,7 @@ import ConductorMode from './ConductorMode.vue';
 import ConductorTimeSystem from './ConductorTimeSystem.vue';
 import DatePicker from './DatePicker.vue';
 import ConductorAxis from './ConductorAxis.vue';
+import ConductorModeIcon from './ConductorModeIcon.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const SECONDS = 1000;
@@ -145,7 +267,8 @@ export default {
         ConductorMode,
         ConductorTimeSystem,
         DatePicker,
-        ConductorAxis
+        ConductorAxis,
+        ConductorModeIcon
     },
     data() {
         let bounds = this.openmct.time.bounds();
