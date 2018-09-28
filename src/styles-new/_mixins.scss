@@ -164,13 +164,26 @@
     }
 }
 
-
-
-@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.5) 0 0px 2px) {
+@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.5) 0 0 2px) {
     @include input-base();
     background: $bg;
     color: $fg;
     box-shadow: inset $shdw;
+}
+
+@mixin reactive-input($bg: $colorInputBg, $fg: $colorInputFg) {
+    @include input-base();
+    background: $bg;
+    box-shadow: $shdwInput;
+    color: $fg;
+
+    &:hover {
+        box-shadow: $shdwInputHov;
+    }
+
+    &:focus {
+        box-shadow: $shdwInputFoc;
+    }
 }
 
 @mixin button($bg: $colorBtnBg, $fg: $colorBtnFg, $radius: $controlCr, $shdw: none) {
@@ -256,4 +269,13 @@
 
 @mixin userSelectNone() {
     @include browserPrefix(user-select, none);
+}
+
+@mixin cursorGrab() {
+    cursor: grab;
+    cursor: -webkit-grab;
+    &:active {
+        cursor: grabbing;
+        cursor: -webkit-grabbing;
+    }
 }

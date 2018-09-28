@@ -38,6 +38,16 @@ $smallCr: 2px;
 $overlayCr: 11px;
 $shdwTextSubtle: rgba(black, 0.2) 0 1px 2px;
 
+// Variations
+$colorBodyBgSubtle: pullForward($colorBodyBg, 5%);
+$colorBodyBgSubtleHov: pushBack($colorKey, 50%);
+$colorKeySubtle: pushBack($colorKey, 50%);
+$colorTime: #618cff;
+$colorTimeBg: $colorTime;
+$colorTimeFg: $colorBodyBg;
+$colorTimeHov: pushBack($colorTime, 5%);
+$colorTimeSubtle: pushBack($colorTime, 20%);
+
 // Buttons and Controls
 $btnPad: $interiorMargin, $interiorMargin * 1.25;
 $colorBtnBg: #aaaaaa;
@@ -73,7 +83,7 @@ $sliderColorRangeValHovFg: $colorBodyFg;
 $sliderKnobW: 15px;
 $sliderKnobR: 2px;
 $timeControllerToiLineColor: $colorBodyFg;
-$timeControllerToiLineColorHov: #0052b5;
+$timeControllerToiLineColorHov: $colorTime;
 $colorTransLucBg: #666; // Used as a visual blocking element over variable backgrounds, like imagery
 $createBtnTextTransform: uppercase;
 
@@ -140,6 +150,9 @@ $colorInputPlaceholder: pushBack($colorBodyFg, 20%);
 $colorFormText: pushBack($colorBodyFg, 10%);
 $colorInputIcon: pushBack($colorBodyFg, 25%);
 $colorFieldHint: pullForward($colorBodyFg, 40%);
+$shdwInput: inset rgba(black, 0.4) 0 0 1px;
+$shdwInputHov: inset rgba(black, 0.7) 0 0 1px;
+$shdwInputFoc: inset rgba(black, 0.7) 0 0 3px;
 
 // Inspector
 $colorInspectorBg: pullForward($colorBodyBg, 5%);

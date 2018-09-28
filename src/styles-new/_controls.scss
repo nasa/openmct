@@ -235,47 +235,79 @@ button {
     }
 }
 
-
 /******************************************************** FORM ELEMENTS */
-/********* Inline inputs */
-.c-input-inline {
-// A text input or contenteditable element that indicates edit affordance on hover and looks like an input on focus
-    @include input-base();
-    border: 1px solid transparent;
-    display: block !important;
-    min-width: 0;
-    padding-left: 0;
-    padding-right: 0;
-    overflow: hidden;
-    transition: all 250ms ease;
-    white-space: nowrap;
+input, textarea {
+    font-family: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+}
 
-    &:not(:focus) {
-        text-overflow: ellipsis;
+input[type=text],
+input[type=search],
+input[type=number] {
+    @include reactive-input();
+    padding: $inputTextP;
+    &.numeric {
+        text-align: right;
+    }
+}
+
+.c-input {
+    &--datetime {
+        // Sized for values such as 2018-09-28 22:32:33.468Z
+        width: 160px;
     }
 
-    &:hover,
-    &:focus {
-        padding-left: $inputTextPLeftRight;
-        padding-right: $inputTextPLeftRight;
+    &--hrs-min-sec {
+        // Sized for values such as 00:25:00
+        width: 60px;
     }
-    &:hover {
-        border-color: rgba($colorBodyFg, 0.2);
+
+    &-inline,
+    &--inline {
+        // A text input or contenteditable element that indicates edit affordance on hover and looks like an input on focus
+        @include reactive-input();
+        box-shadow: none;
+        display: block !important;
+        min-width: 0;
+        padding-left: 0;
+        padding-right: 0;
+        overflow: hidden;
+        transition: all 250ms ease;
+        white-space: nowrap;
+
+        &:not(:focus) {
+            text-overflow: ellipsis;
+        }
+
+        &:hover,
+        &:focus {
+            padding-left: $inputTextPLeftRight;
+            padding-right: $inputTextPLeftRight;
+        }
     }
-    &:focus {
-        @include nice-input($shdw: rgba(0, 0, 0, 0.6) 0 1px 3px);
-        border-color: transparent;
+
+    &--labeled {
+        // TODO: replace .c-labeled-input with this
+        // An input used in the Toolbar
+        // Assumes label is before the input
+        @include cControl();
+
+        input {
+            margin-left: $interiorMarginSm;
+        }
     }
 }
 
 .c-labeled-input {
     // An input used in the Toolbar
     // Assumes label is before the input
-    @include cControl();
+    @extend .c-input--labeled;
+    //@include cControl();
 
-    input {
-        margin-left: $interiorMarginSm;
-    }
+    //input {
+        //margin-left: $interiorMarginSm;
+    //}
 }
 
 /******************************************************** HYPERLINKS AND HYPERLINK BUTTONS */
@@ -307,6 +339,7 @@ button {
         @include cControl();
         justify-content: start;
         color: $colorMenuFg;
+        cursor: pointer;
         display: flex;
         padding: nth($menuItemPad, 1) nth($menuItemPad, 2);
         transition: $transIn;
