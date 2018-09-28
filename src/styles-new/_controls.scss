@@ -302,12 +302,11 @@ input[type=number] {
 .c-labeled-input {
     // An input used in the Toolbar
     // Assumes label is before the input
-    @extend .c-input--labeled;
-    //@include cControl();
+    @include cControl();
 
-    //input {
-        //margin-left: $interiorMarginSm;
-    //}
+    input {
+        margin-left: $interiorMarginSm;
+    }
 }
 
 /******************************************************** HYPERLINKS AND HYPERLINK BUTTONS */
