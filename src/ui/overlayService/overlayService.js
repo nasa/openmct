@@ -64,9 +64,10 @@ define([
         });
 
         if (onDestroyCallback && typeof onDestroyCallback === 'function') {
-            console.log(onDestroyCallback);
             this.onDestroyCallbacks[this.overlayId] = onDestroyCallback;
         }
+
+        this.overlayId++;
     };
 
     OverlayService.prototype.destroy = function () {
