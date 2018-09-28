@@ -35,7 +35,8 @@
                              ref="browseObject">
                 </object-view>
                 <component class="l-shell__time-conductor"
-                    :is="conductorComponent"></component>
+                    :is="conductorComponent">
+                </component>
             </pane>
             <pane class="l-shell__pane-inspector l-pane--holds-multipane"
                   handle="before"
@@ -261,7 +262,7 @@
             }
         },
         methods: {
-            fullScreenToggle () {
+            fullScreenToggle() {
 
                 if (this.fullScreen) {
                     this.fullScreen = false;
@@ -271,12 +272,9 @@
                     enterFullScreen();
                 }
             },
-            openInNewTab (event) {
+            openInNewTab(event) {
                 event.target.href = window.location.href;
             }
-        },
-        updated(){
-            console.log
         }
     }
 </script>
