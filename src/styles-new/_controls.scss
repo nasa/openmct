@@ -265,38 +265,38 @@ input[type=number] {
 
     &-inline,
     &--inline {
-        // A text input or contenteditable element that indicates edit affordance on hover and looks like an input on focus
-        @include reactive-input();
-        box-shadow: none;
-        display: block !important;
-        min-width: 0;
-        padding-left: 0;
-        padding-right: 0;
-        overflow: hidden;
-        transition: all 250ms ease;
-        white-space: nowrap;
+// A text input or contenteditable element that indicates edit affordance on hover and looks like an input on focus
+    @include reactive-input();
+    box-shadow: none;
+    display: block !important;
+    min-width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    overflow: hidden;
+    transition: all 250ms ease;
+    white-space: nowrap;
 
-        &:not(:focus) {
-            text-overflow: ellipsis;
-        }
-
-        &:hover,
-        &:focus {
-            padding-left: $inputTextPLeftRight;
-            padding-right: $inputTextPLeftRight;
-        }
+    &:not(:focus) {
+        text-overflow: ellipsis;
     }
+
+    &:hover,
+    &:focus {
+        padding-left: $inputTextPLeftRight;
+        padding-right: $inputTextPLeftRight;
+    }
+}
 
     &--labeled {
         // TODO: replace .c-labeled-input with this
-        // An input used in the Toolbar
-        // Assumes label is before the input
-        @include cControl();
+    // An input used in the Toolbar
+    // Assumes label is before the input
+    @include cControl();
 
-        input {
-            margin-left: $interiorMarginSm;
-        }
+    input {
+        margin-left: $interiorMarginSm;
     }
+}
 }
 
 .c-labeled-input {
@@ -582,4 +582,10 @@ input[type=number] {
             }
         }
     }
+}
+
+/***************************************************** SLIDERS */
+.c-slider {
+    @include cControl();
+    > * + * { margin-left: $interiorMargin; }
 }
