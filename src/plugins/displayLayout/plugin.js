@@ -41,7 +41,7 @@ export default function () {
                             components: {
                                 Layout
                             },
-                            template: '<layout :domain-object="domainObject"></layout>',
+                            template: '<layout :new-domain-object="domainObject" @update:object="updateObject"></layout>',
                             provide: {
                                 openmct,
                                 objectUtils
@@ -51,7 +51,12 @@ export default function () {
                                 return {
                                     domainObject: domainObject
                                 }
-                            }                            
+                            },
+                            methods: {
+                                updateObject(object) {
+                                    this.domainObject = object;
+                                }
+                            }
                         });
                     },
                     destroy() {

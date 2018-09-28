@@ -168,10 +168,10 @@ define([
      * @memberof module:openmct.CompositionProvider#
      * @method add
      */
-    DefaultCompositionProvider.prototype.add = function (domainObject, child) {
-        //this.publicAPI.objects.mutate()
-        //...
-        //this.emit('add', child.identifier);
+    DefaultCompositionProvider.prototype.add = function (domainObject, childId) {
+        // let composition = domainObject.composition;
+        // composition.push(childId);
+        // this.publicAPI.objects.mutate(domainObject, 'composition', composition);
         throw new Error('Default Provider does not implement adding.');
         // TODO: this needs to be synchronized via mutation
     };

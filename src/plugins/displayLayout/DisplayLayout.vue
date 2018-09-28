@@ -111,15 +111,17 @@
     const DEFAULT_GRID_SIZE = [32, 32],
           DEFAULT_DIMENSIONS = [12, 8],
           DEFAULT_POSITION = [0, 0],
-          MINIMUM_FRAME_SIZE = [320, 180];
+          MINIMUM_FRAME_SIZE = [320, 180],
+          DEFAULT_HIDDEN_FRAME_TYPES = [
+            'hyperlink'
+          ];
 
     export default {
         data() {
             return {
                 gridSize: [],
                 frameItems: [],
-                frames: [],                
-                composition: Object,
+                frames: [],
                 frameStyles: [],
                 rawPositions: {},
                 initSelect: true,
@@ -127,20 +129,20 @@
             }
         },          
         inject: ['openmct'],
-        props: ['domainObject'],
+        props: ['newDomainObject'],
         components: {
             LayoutFrame
         },
         created: function () {
-            this.newDomainObject = this.domainObject;
-            console.log("newDomainObject", JSON.parse(JSON.stringify(this.newDomainObject)));
+            console.log("created()>>> newDomainObject", JSON.parse(JSON.stringify(this.newDomainObject)));
             this.gridSize = this.newDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;
             this.composition = this.openmct.composition.get(this.newDomainObject);
+            let panels = (((this.newDomainObject.configuration || {}).layout || {}).panels || {});
 
             if (this.composition !== undefined) {
                 this.composition.load().then((composition) => {
                     composition.forEach(function (domainObject) {
-                        this.readLayoutConfiguration(domainObject);
+                        this.readLayoutConfiguration(domainObject, panels);
                         this.makeFrameItem(domainObject, false);
                     }.bind(this));
                     this.composition.on('add', this.onAddComposition);
@@ -149,26 +151,28 @@
             }
 
             this.unlisten = this.openmct.objects.observe(this.newDomainObject, '*', function (obj) {
-                this.newDomainObject = JSON.parse(JSON.stringify(obj));
-                this.gridSize = this.newDomainObject.layoutGrid || DEFAULT_GRID_SIZE;;
+                let newObject = JSON.parse(JSON.stringify(obj));
+                this.$emit('update:object', newObject);
+                this.gridSize = newObject.layoutGrid || DEFAULT_GRID_SIZE;;
             }.bind(this));
         },
         methods: {
-            readLayoutConfiguration(domainObject) {
-                let panels = (((this.newDomainObject.configuration || {}).layout || {}).panels || {});
+            readLayoutConfiguration(domainObject, panels) {
                 let id = this.openmct.objects.makeKeyString(domainObject.identifier);
                 this.rawPositions[id] = {
                     position: panels[id].position || DEFAULT_POSITION,
                     dimensions: panels[id].dimensions || this.defaultDimensions()
                 };
                 this.frameStyles[id] = this.convertPosition(this.rawPositions[id]);
-                this.frames[id] = panels[id].hasFrame;
+                this.frames[id] = panels[id].hasOwnProperty('hasFrame') ? 
+                                panels[id].hasFrame :
+                                this.hasFrameByDefault(domainObject.type);
             },
             makeFrameItem(domainObject, initSelect) {
                 let id = this.openmct.objects.makeKeyString(domainObject.identifier);
                 this.frameItems.push({
                     id: id,
-                    hasFrame: this.hasFrame(id),
+                    hasFrame: this.frames[id],
                     domainObject,
                     style: this.frameStyles[id],
                     drilledIn: this.isDrilledIn(id),
@@ -177,8 +181,21 @@
                 });
             },
             onAddComposition(domainObject) {
-                console.log('onAddComposition', domainObject);
-                // TODO: set the appropriate values in rawPositions, frameStyles and frames
+                console.log('onAddComposition', JSON.parse(JSON.stringify(domainObject)));
+                let id = this.openmct.objects.makeKeyString(domainObject.identifier);
+                this.rawPositions[id] = {
+                    position: [
+                        Math.floor(this.droppedObjectPosition.x / this.gridSize[0]),
+                        Math.floor(this.droppedObjectPosition.y / this.gridSize[1])
+                    ],
+                    dimensions: this.defaultDimensions()
+                };
+                this.frameStyles[id] = this.convertPosition(this.rawPositions[id]);
+                this.frames[id] = this.hasFrameByDefault(domainObject.type);
+
+                let newPanel = this.rawPositions[id];
+                newPanel.hasFrame = this.frames[id];
+                this.mutate("configuration.layout.panels[" + id + "]", newPanel);
                 this.makeFrameItem(domainObject, true);
             },
             onRemoveComposition(identifier) {
@@ -203,8 +220,15 @@
                     minHeight: (this.gridSize[1] * raw.dimensions[1]) + 'px'
                 };
             },
-            hasFrame(id) {
-                return this.frames[id]
+            /**
+             * Checks if the frame should be hidden or not.
+             *
+             * @param type the domain object type
+             * @return {boolean} true if the object should have
+             *         frame by default, false, otherwise
+             */
+            hasFrameByDefault(type) {
+                return DEFAULT_HIDDEN_FRAME_TYPES.indexOf(type) === -1;
             },
             setSelection(selection) {
                 if (selection.length === 0) {
@@ -256,14 +280,36 @@
             },
             handleDrop($event) {
                 $event.preventDefault();
-                var child = JSON.parse($event.dataTransfer.getData('domainObject'));
-                // let composition = this.newDomainObject.composition;
-                // composition.push(child.identifier);
-                // this.mutate('composition', composition);
-                // this.onAddComposition(child);
+
+                let child = JSON.parse($event.dataTransfer.getData('domainObject'));
+                let duplicates = [];
+                let composition = this.newDomainObject.composition;
+                composition.forEach((object) => {
+                    if (this.openmct.objects.makeKeyString(JSON.parse(JSON.stringify(object))) ===
+                        this.openmct.objects.makeKeyString(child.identifier)) {
+                        duplicates.push(object);
+                    }
+                });
+
+                // Disallow adding a duplicate object to the composition
+                if (duplicates.length !== 0) {
+                    return;
+                }
+
+                let elementRect = this.$el.getBoundingClientRect();
+                this.droppedObjectPosition = {
+                    x: $event.pageX - elementRect.left,
+                    y: $event.pageY - elementRect.top
+                }
+                // TODO: use the composition API to add child once the default composition
+                // provider supports it instead of mutating the composition directly.
+                // this.composition.add(child).
+                composition.push(child.identifier);
+                this.mutate('composition', composition);
             },
             handleDragOver($event){
                 $event.preventDefault();
+                // $event.dataTransfer.dropEffect = 'move';
             }
         },
         mounted() {
