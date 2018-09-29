@@ -39,7 +39,10 @@
                            v-model="formattedBounds.start"
                            @keyup="validateBounds('start', $event.target)"
                            @blur="setBoundsFromView()" />
-                    <date-picker :default-date-time="formattedBounds.start" :formatter="timeFormatter" @date-selected="startDateSelected"></date-picker>
+                    <date-picker
+                            :default-date-time="formattedBounds.start"
+                            :formatter="timeFormatter"
+                            @date-selected="startDateSelected"></date-picker>
                 </div>
 
                 <div class="c-ctrl-wrapper c-conductor-input c-conductor__start__delta"
@@ -68,7 +71,11 @@
                            ref="endDate"
                            @keyup="validateBounds('end', $event.target)"
                            @blur="setBoundsFromView()">
-                    <date-picker :default-date-time="formattedBounds.end" :formatter="timeFormatter" @date-selected="endDateSelected"></date-picker>
+                    <date-picker
+                            class="c-ctrl-wrapper--menus-left"
+                            :default-date-time="formattedBounds.end"
+                            :formatter="timeFormatter"
+                            @date-selected="endDateSelected"></date-picker>
                 </div>
 
                 <div class="c-ctrl-wrapper c-conductor-input c-conductor__end__delta"
@@ -96,7 +103,8 @@
                 <!-- Zoom control -->
                 <div class="c-slider"
                      v-if="isUTCBased && isFixed">
-                    <input class="c-slider__input" type="range"
+                    <input class="c-slider__input"
+                           type="range"
                            v-model="currentZoom"
                            @change="setBoundsFromView()"
                            min="0.01"
