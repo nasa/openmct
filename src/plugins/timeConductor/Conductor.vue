@@ -20,106 +20,98 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="u-contents"><!-- TEMP -->
-    <!-- Parent holder for time conductor. follow-mode | fixed-mode -->
+    <div class="c-conductor"
+         :class="[isFixed ? 'is-fixed-mode' : 'is-realtime-mode', panning ? 'status-panning' : '']">
         <form class="u-contents" ref="conductorForm"
               @submit="isFixed ? setBoundsFromView($event) : setOffsetsFromView($event)">
 
-            <div class="c-conductor"
-                 :class="[isFixed ? 'is-fixed-mode' : 'is-realtime-mode', panning ? 'status-panning' : '']">
-                <ConductorModeIcon class="c-conductor__mode-icon"></ConductorModeIcon>
+            <ConductorModeIcon class="c-conductor__mode-icon"></ConductorModeIcon>
 
-                <div class="c-conductor__start-input">
-                    <!-- Start input and controls -->
-                    <div class="c-ctrl-wrapper c-conductor-input c-conductor__start__fixed"
-                          v-if="isFixed">
-                        <!-- Fixed input -->
-                        <div class="c-conductor__start__fixed__label">Start</div>
-                        <input class="c-input--datetime"
-                               type="text" autocorrect="off" spellcheck="false"
-                               ref="startDate"
-                               v-model="formattedBounds.start"
-                               @keyup="validateBounds('start', $event.target)"
-                               @blur="setBoundsFromView()" />
-                        <date-picker :default-date-time="formattedBounds.start" :formatter="timeFormatter" @date-selected="startDateSelected"></date-picker>
-                    </div>
-
-                    <div class="c-ctrl-wrapper c-conductor-input c-conductor__start__delta"
-                          v-if="!isFixed">
-                        <!-- RT input -->
-                        <div class="c-direction-indicator icon-minus"></div>
-                        <input class="c-input--hrs-min-sec"
-                               type="text" autocorrect="off"
-                               spellcheck="false"
-                               v-model="offsets.start"
-                               @keyup="validateOffsets($event)"
-                               @blur="setOffsetsFromView()">
-                    </div>
-                </div>
-                
-                <div class="c-conductor__end-input">
-                    <!-- End input and controls -->
-                    <div class="c-ctrl-wrapper c-conductor-input c-conductor__end__fixed"
-                          v-if="isFixed">
-                        <!-- Fixed input -->
-                        <div class="c-conductor__end__fixed__label">End</div>
-                        <input class="c-input--datetime"
-                               type="text" autocorrect="off" spellcheck="false"
-                               v-model="formattedBounds.end"
-                               :disabled="!isFixed"
-                               ref="endDate"
-                               @keyup="validateBounds('end', $event.target)"
-                               @blur="setBoundsFromView()">
-                        <date-picker :default-date-time="formattedBounds.end" :formatter="timeFormatter" @date-selected="endDateSelected"></date-picker>
-                    </div>
-
-                    <div class="c-ctrl-wrapper c-conductor-input c-conductor__end__delta"
-                          v-if="!isFixed">
-                        <!-- RT input -->
-                        <div class="c-direction-indicator icon-plus"></div>
-                        <input class="c-input--hrs-min-sec"
-                               type="text"
-                               autocorrect="off"
-                               spellcheck="false"
-                               v-model="offsets.end"
-                               @keyup="validateOffsets($event)"
-                               @blur="setOffsetsFromView()">
-                    </div>
+            <div class="c-conductor__start-input">
+                <!-- Start input and controls -->
+                <div class="c-ctrl-wrapper c-conductor-input c-conductor__start__fixed"
+                     v-if="isFixed">
+                    <!-- Fixed input -->
+                    <div class="c-conductor__start__fixed__label">Start</div>
+                    <input class="c-input--datetime"
+                           type="text" autocorrect="off" spellcheck="false"
+                           ref="startDate"
+                           v-model="formattedBounds.start"
+                           @keyup="validateBounds('start', $event.target)"
+                           @blur="setBoundsFromView()" />
+                    <date-picker :default-date-time="formattedBounds.start" :formatter="timeFormatter" @date-selected="startDateSelected"></date-picker>
                 </div>
 
-                <conductor-axis
-                        class="c-conductor__ticks"
-                        :bounds="rawBounds"
-                        @panZoom="setViewFromBounds"></conductor-axis>
-                <div class="c-conductor__controls">
-                    <!-- Mode, time system menu buttons and duration slider -->
-                    <ConductorMode></ConductorMode>
-                    <ConductorTimeSystem></ConductorTimeSystem>
-                    <!-- Zoom control -->
-                    <div class="c-slider"
-                         v-if="isUTCBased && isFixed">
-                        <input class="c-slider__input" type="range"
-                               v-model="currentZoom"
-                               @change="setBoundsFromView()"
-                               min="0.01"
-                               step="0.01"
-                               max="0.99" />
-                        <div class="c-slider__value">{{currentZoomText}}</div>
-                    </div>
+                <div class="c-ctrl-wrapper c-conductor-input c-conductor__start__delta"
+                     v-if="!isFixed">
+                    <!-- RT input -->
+                    <div class="c-direction-indicator icon-minus"></div>
+                    <input class="c-input--hrs-min-sec"
+                           type="text" autocorrect="off"
+                           spellcheck="false"
+                           v-model="offsets.start"
+                           @keyup="validateOffsets($event)"
+                           @blur="setOffsetsFromView()">
                 </div>
-            </div><!--/ c-conductor -->
+            </div>
+
+            <div class="c-conductor__end-input">
+                <!-- End input and controls -->
+                <div class="c-ctrl-wrapper c-conductor-input c-conductor__end__fixed"
+                     v-if="isFixed">
+                    <!-- Fixed input -->
+                    <div class="c-conductor__end__fixed__label">End</div>
+                    <input class="c-input--datetime"
+                           type="text" autocorrect="off" spellcheck="false"
+                           v-model="formattedBounds.end"
+                           :disabled="!isFixed"
+                           ref="endDate"
+                           @keyup="validateBounds('end', $event.target)"
+                           @blur="setBoundsFromView()">
+                    <date-picker :default-date-time="formattedBounds.end" :formatter="timeFormatter" @date-selected="endDateSelected"></date-picker>
+                </div>
+
+                <div class="c-ctrl-wrapper c-conductor-input c-conductor__end__delta"
+                     v-if="!isFixed">
+                    <!-- RT input -->
+                    <div class="c-direction-indicator icon-plus"></div>
+                    <input class="c-input--hrs-min-sec"
+                           type="text"
+                           autocorrect="off"
+                           spellcheck="false"
+                           v-model="offsets.end"
+                           @keyup="validateOffsets($event)"
+                           @blur="setOffsetsFromView()">
+                </div>
+            </div>
+
+            <conductor-axis
+                    class="c-conductor__ticks"
+                    :bounds="rawBounds"
+                    @panZoom="setViewFromBounds"></conductor-axis>
+            <div class="c-conductor__controls">
+                <!-- Mode, time system menu buttons and duration slider -->
+                <ConductorMode></ConductorMode>
+                <ConductorTimeSystem></ConductorTimeSystem>
+                <!-- Zoom control -->
+                <div class="c-slider"
+                     v-if="isUTCBased && isFixed">
+                    <input class="c-slider__input" type="range"
+                           v-model="currentZoom"
+                           @change="setBoundsFromView()"
+                           min="0.01"
+                           step="0.01"
+                           max="0.99" />
+                    <div class="c-slider__value">{{currentZoomText}}</div>
+                </div>
+            </div>
             <input type="submit" class="invisible">
         </form>
-    </div><!--/ u-contents div -->
+    </div>
 </template>
 
 <style lang="scss">
     @import "~styles/sass-base";
-
-    /*********************************************** TEMP */
-    .l-time-conductor-inputs input:invalid {
-        border: 1px solid $colorFormInvalid !important; // NOT WORKING?
-    }
 
     /*********************************************** CONDUCTOR LAYOUT */
     .c-conductor {
@@ -196,6 +188,10 @@
         .c-direction-indicator {
             // Holds realtime-mode + and - symbols
             font-size: 0.7em;
+        }
+
+        input:invalid {
+            background: rgba($colorFormInvalid, 0.3);
         }
     }
 
