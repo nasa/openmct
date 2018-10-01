@@ -122,7 +122,7 @@ export default {
                     key: 'fixed',
                     name: 'Fixed Timespan Mode',
                     description: 'Query and explore data that falls between two fixed datetimes.',
-                    cssClass: 'icon-calendar'
+                    cssClass: 'icon-tabular'
                 }
             } else {
                 return {
