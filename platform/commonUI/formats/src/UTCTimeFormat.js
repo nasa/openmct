@@ -29,6 +29,7 @@ define([
     var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss.SSS",
         DATE_FORMATS = [
             DATE_FORMAT,
+            DATE_FORMAT + "Z",
             "YYYY-MM-DD HH:mm:ss",
             "YYYY-MM-DD HH:mm",
             "YYYY-MM-DD"
@@ -74,7 +75,7 @@ define([
     };
 
     UTCTimeFormat.prototype.validate = function (text) {
-        return moment.utc(text, DATE_FORMATS).isValid();
+        return moment.utc(text, DATE_FORMATS, true).isValid();
     };
 
     return UTCTimeFormat;
