@@ -9,11 +9,8 @@
             v-on:click="destroy">
         </a>
 
-        <div class="abs inner-holder l-flex-col"> 
-            <div class="t-contents flex-elem holder grows">
-            <div ref="element"></div>
-            </div>
-
+        <div class="abs inner-holder l-flex-col" > 
+            <div class="t-contents flex-elem holder grows" ref="element"></div>
             <div class="bottom-bar flex-elem holder" v-on:click="destroy">
                 <a class="t-done s-button major">Done</a> 
             </div> 
@@ -34,4 +31,3 @@ export default {
 <style lang="scss">
 
 </style>
-
