@@ -33,30 +33,6 @@ define([
 ) {
 
     function TableConfigurationViewProvider(openmct) {
-        let instantiateService;
-
-        function isBeingEdited(object) {
-            let oldStyleObject = getOldStyleObject(object);
-
-            return oldStyleObject.hasCapability('editor') &&
-                oldStyleObject.getCapability('editor').inEditContext();
-        }
-
-        function getOldStyleObject(object) {
-            let oldFormatModel = objectUtils.toOldFormat(object);
-            let oldFormatId = objectUtils.makeKeyString(object.identifier);
-
-            return instantiate(oldFormatModel, oldFormatId);
-        }
-
-        function instantiate(model, id) {
-            if (!instantiateService) {
-                instantiateService = openmct.$injector.get('instantiate');
-            }
-            return instantiateService(model, id);
-        }
-
-
         return {
             key: 'table-configuration',
             name: 'Telemetry Table Configuration',
@@ -64,16 +40,18 @@ define([
                 if (selection.length === 0) {
                     return false;
                 }
-                let object = selection[0].context.item;
+                let object = selection[selection.length - 1].context.item;
                 return object.type === 'table' &&
-                    isBeingEdited(object);
+                    openmct.editor.isEditing();
             },
             view: function (selection) {
                 let component;
-                let domainObject = selection[0].context.item;
+                let domainObject = selection[selection.length - 1].context.item;
                 const tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
+                let parentElement;
                 return {
                     show: function (element) {
+                        parentElement = element;
                         component = new Vue({
                             provide: {
                                 openmct,
@@ -82,13 +60,15 @@ define([
                             components: {
                                 TableConfiguration: TableConfigurationComponent.default
                             },
-                            template: '<table-configuration></table-configuration>',
-                            el: element
+                            template: '<table-configuration></table-configuration>'
                         });
+                        element.appendChild(component.$mount().$el);
                     },
-                    destroy: function (element) {
+                    destroy: function () {
                         component.$destroy();
+                        parentElement.removeChild(component.$el);
                         component = undefined;
+
                     }
                 }
             },

@@ -22,40 +22,50 @@ define([
             if (!Array.isArray(path)) {
                 path = path.split('/');
             }
-            let keyString = path[path.length - 1];
-            // TODO: retain complete path in navigation.
-            return openmct.objects.get(keyString)
-                .then((object) => {
-                    if (currentNavigation !== navigateCall) {
-                        return; // Prevent race.
-                    }
-                    openmct.layout.$refs.browseBar.domainObject = object;
-                    browseObject = object;
-                    if (!object) {
-                        openmct.layout.$refs.browseObject.clear();
-                        return;
-                    }
-                    let currentProvider = openmct
-                        .objectViews
-                        .getByProviderKey(currentViewKey)
+            return Promise.all(path.map((keyString)=>{
+                return openmct.objects.get(keyString);
+            })).then((objects)=>{
+                if (currentNavigation !== navigateCall) {
+                    return; // Prevent race.
+                }
 
-                    if (currentProvider && currentProvider.canView(object)) {
-                        viewObject(object,  currentProvider);
-                        return;
-                    }
-
-                    let defaultProvider = openmct.objectViews.get(object)[0];
-                    if (defaultProvider) {
-                        openmct.router.updateParams({
-                            view: defaultProvider.key
-                        });
-                    } else {
-                        openmct.router.updateParams({
-                            view: undefined
-                        });
-                        openmct.layout.$refs.browseObject.clear();
-                    }
+                let navigatedObject = objects[objects.length - 1];
+                let selection = objects.map((object)=>{
+                    return {
+                        context: {
+                            item: object
+                        }
+                    };
                 });
+                openmct.selection.select(selection);
+
+                openmct.layout.$refs.browseBar.domainObject = navigatedObject;
+                browseObject = navigatedObject;
+                if (!navigatedObject) {
+                    openmct.layout.$refs.browseObject.clear();
+                    return;
+                }
+                let currentProvider = openmct
+                    .objectViews
+                    .getByProviderKey(currentViewKey)
+
+                if (currentProvider && currentProvider.canView(navigatedObject)) {
+                    viewObject(navigatedObject,  currentProvider);
+                    return;
+                }
+
+                let defaultProvider = openmct.objectViews.get(navigatedObject)[0];
+                if (defaultProvider) {
+                    openmct.router.updateParams({
+                        view: defaultProvider.key
+                    });
+                } else {
+                    openmct.router.updateParams({
+                        view: undefined
+                    });
+                    openmct.layout.$refs.browseObject.clear();
+                }
+            });
         }
 
         openmct.router.route(/^\/browse\/(.*)$/, (path, results, params) => {

@@ -10,13 +10,16 @@
         inject: ['openmct'],
         mounted() {
             this.openmct.selection.on('change', this.updateSelection);
-            this.updateSelection(this.openmct.selection.get());
+            this.openmct.editor.on('isEditing', this.updateSelection);
+            this.updateSelection();
         },
         destroyed() {
             this.openmct.selection.off('change', this.updateSelection);
+            this.openmct.editor.off('isEditing', this.updateSelection);
         },
         methods: {
-            updateSelection(selection) {
+            updateSelection() {
+                let selection = this.openmct.selection.get();
                 if (this.selectedView && this.selectedView.destroy) {
                     this.selectedView.destroy();
                 }
