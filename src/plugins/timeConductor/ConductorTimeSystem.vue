@@ -74,7 +74,7 @@ export default {
         },
 
         setTimeSystemFromView(timeSystem) {
-            if (timeSystem !== this.selectedTimeSystem) {
+            if (timeSystem.key !== this.selectedTimeSystem.key) {
                 let activeClock = this.openmct.time.clock();
                 let configuration = this.getMatchingConfig({
                     clock: activeClock && activeClock.key, 

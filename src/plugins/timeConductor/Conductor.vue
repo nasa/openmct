@@ -37,8 +37,7 @@
                            type="text" autocorrect="off" spellcheck="false"
                            ref="startDate"
                            v-model="formattedBounds.start"
-                           @keyup="validateBounds('start', $event.target)"
-                           @blur="setBoundsFromView()" />
+                           @change="validateBounds('start', $event.target); setBoundsFromView()" />
                     <date-picker
                             :default-date-time="formattedBounds.start"
                             :formatter="timeFormatter"
@@ -53,8 +52,7 @@
                            type="text" autocorrect="off"
                            spellcheck="false"
                            v-model="offsets.start"
-                           @keyup="validateOffsets($event)"
-                           @blur="setOffsetsFromView()">
+                           @change="validateOffsets($event); setOffsetsFromView()">
                 </div>
             </div>
 
@@ -69,8 +67,7 @@
                            v-model="formattedBounds.end"
                            :disabled="!isFixed"
                            ref="endDate"
-                           @keyup="validateBounds('end', $event.target)"
-                           @blur="setBoundsFromView()">
+                           @change="validateBounds('end', $event.target); setBoundsFromView()">
                     <date-picker
                             class="c-ctrl-wrapper--menus-left"
                             :default-date-time="formattedBounds.end"
@@ -87,31 +84,18 @@
                            autocorrect="off"
                            spellcheck="false"
                            v-model="offsets.end"
-                           @keyup="validateOffsets($event)"
-                           @blur="setOffsetsFromView()">
+                           @change="validateOffsets($event); setOffsetsFromView()">
                 </div>
             </div>
 
             <conductor-axis
                     class="c-conductor__ticks"
                     :bounds="rawBounds"
-                    @panZoom="setViewFromBounds"></conductor-axis>
+                    @panAxis="setViewFromBounds"></conductor-axis>
             <div class="c-conductor__controls">
                 <!-- Mode, time system menu buttons and duration slider -->
                 <ConductorMode></ConductorMode>
                 <ConductorTimeSystem></ConductorTimeSystem>
-                <!-- Zoom control -->
-                <div class="c-slider"
-                     v-if="isUTCBased && isFixed">
-                    <input class="c-slider__input"
-                           type="range"
-                           v-model="currentZoom"
-                           @change="setBoundsFromView()"
-                           min="0.01"
-                           step="0.01"
-                           max="0.99" />
-                    <div class="c-slider__value">{{currentZoomText}}</div>
-                </div>
             </div>
             <input type="submit" class="invisible">
         </form>
@@ -225,8 +209,6 @@ const SECONDS = 1000;
 const DAYS = 24 * 60 * 60 * SECONDS;
 const YEARS = 365 * DAYS;
 
-const MAX_ZOOM_OUT = 10 * YEARS;
-const MAX_ZOOM_IN = 5 * SECONDS;
 const RESIZE_POLL_INTERVAL = 200;
 
 export default {
@@ -246,7 +228,6 @@ export default {
         let durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
 
         return {
-            currentZoom: this.calculateZoomFromBounds(),
             timeFormatter: timeFormatter,
             durationFormatter: durationFormatter,
             offsets: {
@@ -275,7 +256,7 @@ export default {
             this.isUTCBased = timeSystem.isUTCBased;
         },
         setOffsetsFromView($event) {
-            if (this.offsetsChanged() && this.$refs.conductorForm.checkValidity()){
+            if (this.$refs.conductorForm.checkValidity()){
                 let startOffset = 0 - this.durationFormatter.parse(this.offsets.start);
                 let endOffset = this.durationFormatter.parse(this.offsets.end);
 
@@ -289,13 +270,8 @@ export default {
                 return false;
             }
         },
-        offsetsChanged() {
-            let currentOffsets = this.openmct.time.clockOffsets();
-            return this.offsets.start !== currentOffsets.start ||
-                this.offsets.end !== currentOffsets.end;
-        },
         setBoundsFromView($event) {
-            if (this.boundsChanged() && this.$refs.conductorForm.checkValidity()){
+            if (this.$refs.conductorForm.checkValidity()){
                 let start = this.timeFormatter.parse(this.formattedBounds.start);
                 let end = this.timeFormatter.parse(this.formattedBounds.end);
 
@@ -309,14 +285,6 @@ export default {
                 return false;
             }
         },
-        boundsChanged() {
-            let currentBounds = this.openmct.time.bounds();
-            return this.timeFormatter.parse(this.formattedBounds.start) !== currentBounds.start ||
-                this.timeFormatter.parse(this.formattedBounds.end) !== currentBounds.end;
-        },
-        showValidityMessage($event) {
-            $event.target.reportValidity();
-        },
         setViewFromClock(clock) {
             this.isFixed = clock === undefined;
         },
@@ -329,9 +297,6 @@ export default {
         setViewFromOffsets(offsets) {
             this.offsets.start = this.durationFormatter.format(Math.abs(offsets.start));
             this.offsets.end = this.durationFormatter.format(Math.abs(offsets.end));
-        },
-        showValidityMessage($event) {
-            $event.target.reportValidity();
         },
         validateBounds(startOrEnd, input) {
             let validationResult = true;
@@ -388,49 +353,8 @@ export default {
             this.validateBounds('end', this.$refs.endDate);
             this.setBoundsFromView();
         },
-        zoomLevelToTimespan() {
-            let minMaxDelta = MAX_ZOOM_OUT - MAX_ZOOM_IN;
-            return minMaxDelta * Math.pow((1 - this.currentZoom), 4);
-        },
-        zoom() {
-            let zoomTimespan = this.zoomLevelToTimespan();
-            let start = this.openmct.time.bounds().start;
-            let end = this.openmct.time.bounds().end
-            let currentTimeSpan = end - start;
-            let delta = currentTimeSpan - zoomTimespan;
-            let bounds = {
-                start: start + delta / 2,
-                end: end - delta / 2
-            };
-            this.rawBounds = bounds;
-            this.setViewFromBounds(bounds);
-            this.zooming = false;
-        },
-        calculateZoomFromBounds() {
-            let start = this.openmct.time.bounds().start;
-            let end = this.openmct.time.bounds().end
-            let zoomMaxMinDelta = MAX_ZOOM_OUT - MAX_ZOOM_IN;
-            let currentBoundsDelta = end - start;
-            
-            return 1 - Math.pow(currentBoundsDelta / zoomMaxMinDelta, 1 / 4);
-        }
-
-    },
-    computed: {
-        currentZoomText() {
-            return moment.duration(this.zoomLevelToTimespan()).humanize();
-        }
-    },
-    watch: {
-        currentZoom() {
-            if (!this.zooming) {
-                this.zooming = true;
-                requestAnimationFrame(this.zoom, RESIZE_POLL_INTERVAL);
-            }
-        }
     },
     mounted() {
-        this.zooming = false;
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
 
         this.openmct.time.on('bounds', this.setViewFromBounds);
