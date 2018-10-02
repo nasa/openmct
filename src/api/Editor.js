@@ -30,16 +30,28 @@ export default class Editor extends EventEmitter {
         this.openmct = openmct;
     }
 
+    /**
+     * Initiate an editing session. This will start a transaction during
+     * which any persist operations will be deferred until either save()
+     * or finish() are called.
+     */
     edit() {
         this.editing = true;
         this.getTransactionService().startTransaction();
         this.emit('isEditing', true);
     }
 
+    /**
+     * @returns true if the application is in edit mode, false otherwise.
+     */
     isEditing() {
         return this.editing;
     }
 
+    /**
+     * Save any unsaved changes from this editing session. This will
+     * end the current transaction.
+     */
     save() {
         return this.getTransactionService().commit().then((result)=>{
             this.editing = false;
@@ -49,6 +61,10 @@ export default class Editor extends EventEmitter {
             throw error;
         });
     }
+
+    /**
+     * End the currently active transaction and discard unsaved changes.
+     */
     cancel() {
         this.getTransactionService().cancel();
         this.editing = false;
