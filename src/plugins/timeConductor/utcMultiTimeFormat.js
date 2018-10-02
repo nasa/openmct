@@ -20,34 +20,47 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+import moment from 'moment';
 
+export default function multiFormat(date) {
+    var momentified = moment.utc(date);
     /**
-     * Formatter for basic strings.
+     * Uses logic from d3 Time-Scales, v3 of the API. See
+     * https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Scales.md
      *
-     * @implements {Format}
-     * @constructor
-     * @memberof platform/commonUI/formats
+     * Licensed
      */
-    function StringFormat() {
-        this.key = 'string';
+    var format = [
+        [".SSS", function (m) {
+            return m.milliseconds();
+        }],
+        [":ss", function (m) {
+            return m.seconds();
+        }],
+        ["HH:mm", function (m) {
+            return m.minutes();
+        }],
+        ["HH:mm", function (m) {
+            return m.hours();
+        }],
+        ["ddd DD", function (m) {
+            return m.days() &&
+                m.date() !== 1;
+        }],
+        ["MMM DD", function (m) {
+            return m.date() !== 1;
+        }],
+        ["MMMM", function (m) {
+            return m.month();
+        }],
+        ["YYYY", function () {
+            return true;
+        }]
+    ].filter(function (row) {
+        return row[1](momentified);
+    })[0][0];
+
+    if (format !== undefined) {
+        return moment.utc(date).format(format);
     }
-
-    StringFormat.prototype.format = function (string) {
-        if (typeof string === 'string') {
-            return string;
-        } else {
-            return '' + string;
-        }
-    };
-
-    StringFormat.prototype.parse = function (string) {
-        return string;
-    };
-
-    StringFormat.prototype.validate = function (string) {
-        return typeof string === 'string';
-    };
-
-    return StringFormat;
-});
+}
