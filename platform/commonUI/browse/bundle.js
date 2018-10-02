@@ -35,12 +35,10 @@ define([
     "./src/windowing/WindowTitler",
     "./res/templates/browse.html",
     "./res/templates/browse-object.html",
-    "./res/templates/items/grid-item.html",
     "./res/templates/browse/object-header.html",
     "./res/templates/browse/object-header-frame.html",
     "./res/templates/menu-arrow.html",
     "./res/templates/back-arrow.html",
-    "./res/templates/items/items.html",
     "./res/templates/browse/object-properties.html",
     "./res/templates/browse/inspector-region.html",
     'legacyRegistry'
@@ -59,12 +57,10 @@ define([
     WindowTitler,
     browseTemplate,
     browseObjectTemplate,
-    gridItemTemplate,
     objectHeaderTemplate,
     objectHeaderFrameTemplate,
     menuArrowTemplate,
     backArrowTemplate,
-    itemsTemplate,
     objectPropertiesTemplate,
     inspectorRegionTemplate,
     legacyRegistry
@@ -157,19 +153,6 @@ define([
                     ]
                 },
                 {
-                    "key": "grid-item",
-                    "template": gridItemTemplate,
-                    "uses": [
-                        "type",
-                        "action",
-                        "location"
-                    ],
-                    "gestures": [
-                        "info",
-                        "menu"
-                    ]
-                },
-                {
                     "key": "object-header",
                     "template": objectHeaderTemplate,
                     "uses": [
@@ -249,23 +232,6 @@ define([
                     "category": "view-control",
                     "group": "windowing",
                     "priority": "default"
-                }
-            ],
-            "views": [
-                {
-                    "key": "items",
-                    "name": "Grid",
-                    "cssClass": "icon-thumbs-strip",
-                    "description": "Grid of available items",
-                    "template": itemsTemplate,
-                    "uses": [
-                        "composition"
-                    ],
-                    "gestures": [
-                        "drop"
-                    ],
-                    "type": "folder",
-                    "editable": false
                 }
             ],
             "runs": [

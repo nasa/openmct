@@ -1,0 +1,69 @@
+/******************************************************** TABLE */
+.c-table {
+    // Can be used by any type of table, scrolling, LAD, etc.
+    $min-w: 50px;
+
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+
+    &__control-bar,
+    &__headers-w {
+        flex: 0 0 auto;
+    }
+
+    /******************************* ELEMENTS */
+    th, td {
+        white-space: nowrap;
+        min-width: $min-w;
+        padding: $tabularTdPadTB $tabularTdPadLR;
+    }
+
+    td {
+        color: $colorTelemFresh;
+        vertical-align: top;
+    }
+
+    &__control-bar {
+        margin-bottom: $interiorMarginSm;
+    }
+
+    [class*="__header"] {
+        background: $colorTabHeaderBg;
+
+        th {
+            &:not(:first-child) {
+                border-left: 1px solid $colorTabHeaderBorder;
+            }
+        }
+    }
+
+    &__body {
+        tr {
+            &:not(:first-child) {
+                border-top: 1px solid $colorTabBorder;
+            }
+        }
+    }
+
+    &--sortable {
+        .is-sorting {
+            &:after {
+                color: $colorIconAlias;
+                content: $glyph-icon-arrow-tall-up;
+                font-family: symbolsfont;
+                font-size: 8px;
+                display: inline-block;
+                margin-left: $interiorMarginSm;
+            }
+            &.desc:after {
+                content: $glyph-icon-arrow-tall-down;
+            }
+        }
+        .is-sortable {
+            cursor: pointer;
+        }
+    }
+}

@@ -3,6 +3,16 @@ define([
 ], function (
 
 ) {
+    const DEFAULT_VIEW_PRIORITY = 100;
+
+    const PRIORITY_LEVELS = {
+        "fallback": Number.NEGATIVE_INFINITY,
+        "default": -100,
+        "none": 0,
+        "optional": DEFAULT_VIEW_PRIORITY,
+        "preferred": 1000,
+        "mandatory": Number.POSITIVE_INFINITY
+    };
 
     function LegacyViewProvider(legacyView, openmct, convertToLegacyObject) {
         console.warn(`DEPRECATION WARNING: Migrate ${legacyView.key} from ${legacyView.bundle.path} to use the new View APIs.  Legacy view support will be removed soon.`);
@@ -84,6 +94,13 @@ define([
                         scope.$destroy();
                     }
                 }
+            },
+            priority: function () {
+                let priority = legacyView.priority || DEFAULT_VIEW_PRIORITY;
+                if (typeof priority === 'string') {
+                    priority = PRIORITY_LEVELS[priority];
+                }
+                return priority;
             }
         };
     };
