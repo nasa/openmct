@@ -133,9 +133,13 @@
 
 /********* Buttons */
 // Optionally can include icon in :before via markup
+button {
+    @include htmlInputReset();
+}
+
 .c-button,
 .c-button--menu,
-button {
+button:not(.c-click-icon) {
     @include cButton();
 }
 
@@ -357,6 +361,10 @@ input[type=number] {
             margin-right: $interiorMargin;
         }
     }
+}
+
+@mixin modalMenu() {
+    // Optional modifier that makes a c-menu more mobile-friendly
 }
 
 .c-menu {
