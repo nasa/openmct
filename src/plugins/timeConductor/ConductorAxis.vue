@@ -195,7 +195,7 @@ export default {
                         start: newStart,
                         end: newStart + deltaTime
                     };
-                    this.$emit('panZoom', this.bounds);
+                    this.$emit('panAxis', this.bounds);
                     this.dragging = false;
                 })
             } else {

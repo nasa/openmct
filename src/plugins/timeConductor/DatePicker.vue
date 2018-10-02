@@ -21,13 +21,11 @@
  *****************************************************************************/
 <template>
     <!-- TODOS: changeMonth doesn't appear to work, was ng-click -->
-    <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up">
+    <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up" ref="calendarHolder">
         <a class="c-click-icon icon-calendar"
-           ref="calendarButton"
-           @click="togglePicker($event)"></a>
+           @click="togglePicker()"></a>
         <div class="c-menu c-datetime-picker"
-             v-if="showPicker"
-             ref="popup">
+             v-if="showPicker">
             <div class="c-datetime-picker__month-year-pager c-pager l-month-year-pager">
                 <div class="c-pager__prev c-click-icon icon-arrow-left"
                    @click="changeMonth(-1)"></div>
@@ -252,6 +250,7 @@ export default {
             this.date.year = cell.year;
             this.date.day = cell.day;
             this.updateFromView();
+            this.showPicker = false;
         },
 
         dateEquals(d1, d2) {
@@ -261,14 +260,14 @@ export default {
         },
 
         changeMonth(delta) {
-            picker.month += delta;
-            if (picker.month > 11) {
-                picker.month = 0;
-                picker.year += 1;
+            this.picker.month += delta;
+            if (this.picker.month > 11) {
+                this.picker.month = 0;
+                this.picker.year += 1;
             }
-            if (picker.month < 0) {
-                picker.month = 11;
-                picker.year -= 1;
+            if (this.picker.month < 0) {
+                this.picker.month = 11;
+                this.picker.year -= 1;
             }
             this.picker.interacted = true;
             this.updateViewForMonth();
@@ -283,19 +282,18 @@ export default {
         },
 
         hidePicker(event) {
-            if (event.srcElement !== this.$refs.calendarButton){
+            let path = event.composedPath();
+            if (path.indexOf(this.$refs.calendarHolder) === -1) {
                 this.showPicker = false;
             }
         },
         
-        togglePicker(event) {
+        togglePicker() {
             this.showPicker = !this.showPicker;
 
             if (this.showPicker) {
                 document.addEventListener('click', this.hidePicker, {
-                    capture: true,
-                    once: true,
-                    passive: true
+                    capture: true
                 });
             }
         }
@@ -305,6 +303,9 @@ export default {
         this.updateViewForMonth();
     },
     destroyed: function () {
+        document.addEventListener('click', this.hidePicker, {
+            capture: true
+        });
     }
 
 }

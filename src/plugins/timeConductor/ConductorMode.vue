@@ -106,7 +106,7 @@ export default {
              * Populate the modes menu with metadata from the available clocks
              * "Fixed Mode" is always first, and has no defined clock
              */
-            this.modes = [this.getModeOptionForClock(undefined)]
+            this.modes = [undefined]
                 .concat(clocks)
                 .map(this.getModeOptionForClock);
 
