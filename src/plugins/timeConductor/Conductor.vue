@@ -98,10 +98,10 @@
                     @panZoom="setViewFromBounds"></conductor-axis>
             <div class="c-conductor__controls">
                 <!-- Mode, time system menu buttons and duration slider -->
-                <ConductorMode></ConductorMode>
-                <ConductorTimeSystem></ConductorTimeSystem>
+                <ConductorMode class="c-conductor__mode-select"></ConductorMode>
+                <ConductorTimeSystem class="c-conductor__time-system-select"></ConductorTimeSystem>
                 <!-- Zoom control -->
-                <div class="c-slider"
+                <div class="c-conductor__zoom c-slider"
                      v-if="isUTCBased && isFixed">
                     <input class="c-slider__input"
                            type="range"
@@ -126,17 +126,50 @@
         display: grid;
         grid-column-gap: $interiorMargin;
         grid-row-gap: $interiorMargin;
+        align-items: center;
+
+
         grid-template-rows: 1fr 1fr;
         grid-template-columns: 20px auto 1fr auto;
         grid-template-areas:
-            "tc-mode-icon tc-start tc-ticks tc-end"
-            "tc-controls tc-controls tc-controls tc-controls";
-        align-items: center;
+                "tc-mode-icon tc-start tc-ticks tc-end"
+                "tc-controls tc-controls tc-controls tc-controls";
 
-/*        grid-template-columns: 20px 160px 1fr 180px;
-        grid-template-areas:
-                "tc-mode-icon tc-controls tc-controls tc-controls"
-                "tc-start tc-start tc-ticks tc-end";*/
+        .c-conductor__end-input {
+            justify-content: flex-end;
+        }
+
+        body.phone.portrait & {
+            &.is-fixed-mode {
+                grid-row-gap: $interiorMargin;
+                grid-template-rows: auto auto auto;
+                grid-template-columns: 20px auto;
+                grid-template-areas:
+                        "tc-mode-icon tc-start"
+                        "tc-mode-icon tc-end"
+                        "tc-mode-icon tc-controls";
+
+                .c-conductor {
+                    &__mode-icon {
+                        grid-row: 1;
+                    }
+
+                    &__ticks,
+                    &__zoom {
+                        display: none;
+                    }
+
+                    &-input [class*='__label'] {
+                        // Start and end are in separate columns; make the labels line up
+                        width: 40px;
+                    }
+
+                    &__end-input {
+                        justify-content: flex-start;
+                    }
+                }
+            }
+        }
 
         &__mode-icon {
             grid-area: tc-mode-icon;
@@ -154,7 +187,6 @@
         &__end-input {
             grid-area: tc-end;
             display: flex;
-            justify-content: flex-end;
         }
 
         &__ticks {

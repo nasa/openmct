@@ -36,6 +36,7 @@
         @include userSelectNone();
         @include bgTicks($c: rgba($colorBodyFg, 0.4));
         background-position: 0 50%;
+        background-size: 5px 2px;
         height: $h;
 
         svg {
@@ -61,16 +62,18 @@
 
             text {
                 // Tick labels
+                fill: $colorBodyFg;
                 font-size: 1em;
                 paint-order: stroke;
                 font-weight: bold;
+                stroke: $colorBodyBg;
                 stroke-linecap: butt;
                 stroke-linejoin: bevel;
                 stroke-width: 6px;
             }
         }
 
-        .is-fixed-mode & {
+        body.desktop .is-fixed-mode & {
             @include cursorGrab();
             background-size: 3px 30%;
             border-radius: $controlCr;
@@ -93,11 +96,8 @@
         }
 
         .is-realtime-mode & {
-            background-size: 5px 2px;
-
             svg text {
                 fill: $colorTime;
-                stroke: $colorBodyBg;
             }
 
         }

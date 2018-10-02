@@ -20,24 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div class="holder flex-elem time-system c-ctrl-wrapper c-ctrl-wrapper--menus-up"
-     v-if="selectedTimeSystem.name">
-    <div class="c-button--menu c-time-system-button"
-        :class="selectedTimeSystem.cssClass"
-         @click="toggleMenu($event)">
-        <span class="c-button__label">{{selectedTimeSystem.name}}</span>
+    <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
+         v-if="selectedTimeSystem.name">
+        <div class="c-button--menu c-time-system-button"
+            :class="selectedTimeSystem.cssClass"
+             @click="toggleMenu($event)">
+            <span class="c-button__label">{{selectedTimeSystem.name}}</span>
+        </div>
+        <div class="c-menu" v-if="showMenu">
+            <ul>
+                <li @click="setTimeSystemFromView(timeSystem)"
+                    v-for="timeSystem in timeSystems"
+                    :key="timeSystem.key"
+                    :class="timeSystem.cssClass">
+                    {{timeSystem.name}}
+                </li>
+            </ul>
+        </div>
     </div>
-    <div class="c-menu" v-if="showMenu">
-        <ul>
-            <li @click="setTimeSystemFromView(timeSystem)"
-                v-for="timeSystem in timeSystems"
-                :key="timeSystem.key"
-                :class="timeSystem.cssClass">
-                {{timeSystem.name}}
-            </li>
-        </ul>
-    </div>
-</div>
 </template>
 
 <style lang="scss">
