@@ -1,14 +1,12 @@
 <template>
-<div class="grid-properties">
-    <!--form class="form" -->
-        <ul class="l-inspector-part">
-            <h2>Table Columns</h2>
-            <li class="grid-row" v-for="(title, key) in headers">
-                <div class="grid-cell label" title="Show or Hide Column"><label :for="key + 'ColumnControl'">{{title}}</label></div>
-                <div class="grid-cell value"><input type="checkbox" :id="key + 'ColumnControl'" :checked="configuration.hiddenColumns[key] !== true" @change="toggleColumn(key)"></div>
-            </li>
-        </ul>
-    <!--/form -->
+<div class="c-properties">
+    <div class="c-properties__header">Table Columns</div>
+    <ul class="c-properties__section">
+        <li class="c-properties__row" v-for="(title, key) in headers">
+            <div class="c-properties__label" title="Show or Hide Column"><label :for="key + 'ColumnControl'">{{title}}</label></div>
+            <div class="c-properties__value"><input type="checkbox" :id="key + 'ColumnControl'" :checked="configuration.hiddenColumns[key] !== true" @change="toggleColumn(key)"></div>
+        </li>
+    </ul>
 </div>
 </template>
 

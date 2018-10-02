@@ -1,5 +1,5 @@
 <template>
-    <div class="c-properties"></div>
+    <div></div>
 </template>
 
 <style>
