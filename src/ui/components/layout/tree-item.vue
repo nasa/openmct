@@ -28,7 +28,7 @@
     import viewControl from '../controls/viewControl.vue'
     export default {
         name: 'tree-item',
-        inject: ['openmct', 'domainObject'],
+        inject: ['openmct'],
         props: {
             node: Object
         },
