@@ -99,7 +99,7 @@
                 children: []
             };
         },
-        inject: ['openmct', 'domainObject'],
+        inject: ['openmct'],
         mounted: function () {
             this.openmct.objects.get('ROOT')
                 .then(root => this.openmct.composition.get(root).load())
