@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <!-- TODOS: changeMonth doesn't appear to work, was ng-click -->
     <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up" ref="calendarHolder">
         <a class="c-click-icon icon-calendar"
            @click="togglePicker()"></a>
