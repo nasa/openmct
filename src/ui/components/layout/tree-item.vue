@@ -8,7 +8,8 @@
                           @click="toggleChildren">
             </view-control>
             <a class="c-tree__item__label"
-               draggable="true" @dragstart="dragStart"
+               draggable="true"
+               @dragstart="dragStart"
                :href="href">
                 <div class="c-tree__item__type-icon"
                       :class="cssClass"></div>
@@ -29,7 +30,7 @@
     import viewControl from '../controls/viewControl.vue'
     export default {
         name: 'tree-item',
-        inject: ['openmct', 'domainObject'],
+        inject: ['openmct'],
         props: {
             node: Object
         },
