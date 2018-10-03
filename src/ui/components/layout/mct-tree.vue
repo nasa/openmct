@@ -21,11 +21,12 @@
         }
 
         &__item {
+            $aPad: $interiorMarginSm;
             border-radius: $controlCr;
             display: flex;
             align-items: stretch;
             cursor: pointer;
-            padding: 5px;
+            padding: $interiorMargin - $aPad;
             transition: background 150ms ease;
 
             &:hover {
@@ -42,10 +43,14 @@
             }
 
             &__label {
-                // Holds type icon and name
+                // <a> tag that holds type icon and name.
+                // Draggable element.
+                border-radius: $controlCr;
                 display: flex;
                 align-items: center;
+                flex: 1 1 auto;
                 overflow: hidden;
+                padding: $aPad;
                 white-space: nowrap;
             }
 
