@@ -138,8 +138,7 @@ button {
 }
 
 .c-button,
-.c-button--menu,
-button:not(.c-click-icon) {
+.c-button--menu {
     @include cButton();
 }
 

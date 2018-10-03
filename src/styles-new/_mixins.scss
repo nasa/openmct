@@ -164,9 +164,12 @@
 /************************** CONTROLS, BUTTONS */
 @mixin htmlInputReset() {
     appearance: none;
+    background: none;
+    background-color: transparent;
     border: none;
-    border-radius: $controlCr;
+    border-radius: 0;
     outline: none;
+    text-align: inherit;
 
     &:focus {
         outline: 0;
@@ -176,6 +179,7 @@
 
 @mixin input-base() {
     @include htmlInputReset();
+    border-radius: $controlCr;
 
     &.error {
         background-color: $colorFormFieldErrorBg;
