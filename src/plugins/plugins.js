@@ -35,7 +35,8 @@ define([
     './telemetryTable/plugin',
     './staticRootPlugin/plugin',
     './notebook/plugin',
-    './displayLayout/plugin'
+    './displayLayout/plugin',
+    './folderView/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -51,7 +52,8 @@ define([
     TelemetryTablePlugin,
     StaticRootPlugin,
     Notebook,
-    DisplayLayoutPlugin
+    DisplayLayoutPlugin,
+    FolderView
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -103,7 +105,7 @@ define([
      */
     plugins.AutoflowView = AutoflowPlugin;
 
-    plugins.Conductor = TimeConductorPlugin;
+    plugins.Conductor = TimeConductorPlugin.default;
 
     plugins.CouchDB = function (url) {
         return function (openmct) {
@@ -162,6 +164,7 @@ define([
     plugins.URLIndicator = URLIndicatorPlugin;
     plugins.Notebook = Notebook;
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
+    plugins.FolderView = FolderView;
 
     return plugins;
 });

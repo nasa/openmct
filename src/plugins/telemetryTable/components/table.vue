@@ -9,7 +9,7 @@
         </a>
     </div>
     <!-- Headers table -->
-    <div class="c-table__headers-w js-table__headers-w">
+    <div class="c-telemetry-table__headers-w js-table__headers-w">
         <table class="c-table__headers c-telemetry-table__headers"
                :style="{ 'max-width': totalWidth + 'px'}">
             <thead>
@@ -68,48 +68,22 @@
 
 <style lang="scss">
     @import "~styles/sass-base";
+    @import "~styles/table";
 
-    .c-table {
-        // Can be used by any type of table, scrolling, LAD, etc.
-        $min-w: 50px;
-
-        display: flex;
-        flex-flow: column nowrap;
-        justify-content: flex-start;
+    .c-telemetry-table {
+        // Table that displays telemetry in a scrolling body area
         overflow: hidden;
-        position: absolute;
-        top: 0; right: 0; bottom: 0; left: 0;
 
-        &__control-bar,
-        &__headers-w {
-            // Don't allow top level elements to grow or shrink
-            flex: 0 0 auto;
-        }
-
-        /******************************* ELEMENTS */
         th, td {
             display: block;
             flex: 1 0 auto;
-            font-size: 0.7rem; // TEMP LEGACY TODO: refactor this when __main-container font-size is dealt with
-            white-space: nowrap;
-            min-width: $min-w;
-            padding: $tabularTdPadTB $tabularTdPadLR;
             vertical-align: middle; // This is crucial to hiding f**king 4px height injected by browser by default
-        }
-
-        td {
-            color: $colorTelemFresh;
-            vertical-align: top;
-        }
-
-        &__control-bar {
-            margin-bottom: $interiorMarginSm;
         }
 
         /******************************* WRAPPERS */
         &__headers-w {
             // Wraps __headers table
-            background: $colorTabHeaderBg;
+            flex: 0 0 auto;
             overflow: hidden;
         }
 
@@ -134,65 +108,6 @@
                 }
             }
         }
-
-        &__body {
-            // A table
-            tr {
-                &:not(:first-child) {
-                    border-top: 1px solid $colorTabBorder;
-                }
-            }
-        }
-
-        /******************************* MODIFIERS */
-        &--filterable {
-            // TODO: discuss using the search.vue custom control here
-
-            .l-filter {
-                input[type="text"],
-                input[type="search"] {
-                    $p: 20px;
-                    transition: padding 200ms ease-in-out;
-                    box-sizing: border-box;
-                    padding-right: $p; // Fend off from icon
-                    padding-left: $p; // Fend off from icon
-                    width: 100%;
-                }
-                &.active {
-                    // When user has typed something, hide the icon and collapse left padding
-                    &:before {
-                        opacity: 0;
-                    }
-                    input[type="text"],
-                    input[type="search"] {
-                        padding-left: $interiorMargin;
-                    }
-                }
-            }
-        }
-
-        &--sortable {
-            .is-sorting {
-                &:after {
-                    color: $colorIconLink;
-                    content: $glyph-icon-arrow-tall-up;
-                    font-family: symbolsfont;
-                    font-size: 8px;
-                    display: inline-block;
-                    margin-left: $interiorMarginSm;
-                }
-                &.desc:after {
-                    content: $glyph-icon-arrow-tall-down;
-                }
-            }
-            .is-sortable {
-                cursor: pointer;
-            }
-        }
-    }
-
-    .c-telemetry-table {
-        // Table that displays telemetry in a scrolling body area
 
         /******************************* ELEMENTS */
         &__scroll-forcer {
@@ -249,10 +164,6 @@
                 white-space: nowrap;
             }
         }
-    }
-
-    .c-table__control-bar {
-        margin-bottom: $interiorMarginSm;
     }
 
     /******************************* LEGACY */

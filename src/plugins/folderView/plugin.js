@@ -21,44 +21,16 @@
  *****************************************************************************/
 
 define([
-    './src/controllers/ListViewController',
-    './src/directives/MCTGesture',
-    './res/templates/listview.html',
-    'legacyRegistry'
+    './FolderGridView',
+    './FolderListView'
 ], function (
-    ListViewController,
-    MCTGesture,
-    listViewTemplate,
-    legacyRegistry
+    FolderGridView,
+    FolderListView
 ) {
-    legacyRegistry.register("platform/features/listview", {
-        "name": "List View Plugin",
-        "description": "Allows folder contents to be shown in list format",
-        "extensions":
-        {
-            "views": [
-                {
-                    "key": "list",
-                    "type": "folder",
-                    "name": "List",
-                    "cssClass": "icon-list-view",
-                    "template": listViewTemplate
-                }
-            ],
-            "controllers": [
-                {
-                    "key": "ListViewController",
-                    "implementation": ListViewController,
-                    "depends": ["$scope", "formatService"]
-                }
-            ],
-            "directives": [
-                {
-                    "key": "mctGesture",
-                    "implementation" : MCTGesture,
-                    "depends": ["gestureService"]
-                }
-            ]
-        }
-    });
+    return function plugin() {
+        return function install(openmct) {
+            openmct.objectViews.addProvider(new FolderGridView(openmct));
+            openmct.objectViews.addProvider(new FolderListView(openmct));
+        };
+    };
 });

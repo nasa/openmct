@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// VERSION MANUALLY RESTORED FROM VUE-LAYOUT
+// VERSION MANUALLY MIGRATED FROM VUE-TOOLBAR
 
 /******************************************************** PLACEHOLDERS */
 @mixin cControl() {
@@ -235,7 +235,6 @@ button {
     }
 }
 
-
 /******************************************************** FORM ELEMENTS */
 /********* Inline inputs */
 .c-input-inline {
@@ -259,12 +258,38 @@ button {
         padding-left: $inputTextPLeftRight;
         padding-right: $inputTextPLeftRight;
     }
-    &:hover {
-        border-color: rgba($colorBodyFg, 0.2);
+}
+
+    &--labeled {
+        // TODO: replace .c-labeled-input with this
+    // An input used in the Toolbar
+    // Assumes label is before the input
+    @include cControl();
+
+    input {
+        margin-left: $interiorMarginSm;
     }
-    &:focus {
-        @include nice-input($shdw: rgba(0, 0, 0, 0.6) 0 1px 3px);
-        border-color: transparent;
+}
+}
+
+.c-labeled-input {
+    // An input used in the Toolbar
+    // Assumes label is before the input
+    @include cControl();
+
+    input {
+        margin-left: $interiorMarginSm;
+    }
+}
+
+/******************************************************** HYPERLINKS AND HYPERLINK BUTTONS */
+.c-hyperlink {
+    &--link {
+        color: $colorKey;
+    }
+
+    &--button {
+        @include cButton();
     }
 }
 
@@ -307,6 +332,7 @@ button {
         @include cControl();
         justify-content: start;
         color: $colorMenuFg;
+        cursor: pointer;
         display: flex;
         padding: nth($menuItemPad, 1) nth($menuItemPad, 2);
         transition: $transIn;

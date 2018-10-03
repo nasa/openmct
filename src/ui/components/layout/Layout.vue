@@ -3,8 +3,14 @@
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
             <div class="l-shell__controls">
-                <a class="c-click-icon icon-new-window" title="Open in a new browser tab"></a>
-                <a class="c-click-icon icon-fullscreen-collapse" title="Enable full screen mode"></a>
+                <a class="c-click-icon icon-new-window" title="Open in a new browser tab"
+                    @click="openInNewTab"
+                    target="_blank">
+                </a>
+                <a v-bind:class="['c-click-icon', fullScreen ? 'icon-fullscreen-expand' : 'icon-fullscreen-collapse']"
+                    v-bind:title="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
+                    @click="fullScreenToggle">
+                </a>
             </div>
             <div class="l-shell__app-logo">[ App Logo ]</div>
         </div>
@@ -24,12 +30,15 @@
             <pane class="l-shell__pane-main"
                 :class="{ 'is-editing' : true }">
                 <browse-bar class="l-shell__main-view-browse-bar"
-                        ref="browseBar"></browse-bar>
+                            ref="browseBar">
+                </browse-bar>
                 <toolbar class="l-shell__toolbar"></toolbar>
                 <object-view class="l-shell__main-container"
-                             ref="browseObject"></object-view>
-                <mct-template template-key="conductor"
-                              class="l-shell__time-conductor"></mct-template>
+                             ref="browseObject">
+                </object-view>
+                <component class="l-shell__time-conductor"
+                    :is="conductorComponent">
+                </component>
             </pane>
             <pane class="l-shell__pane-inspector l-pane--holds-multipane"
                   handle="before"
@@ -128,6 +137,10 @@
             flex: 0 0 auto;
         }
 
+        body.mobile & .l-shell__main-view-browse-bar {
+            margin-left: $mobileMenuIconD - $interiorMarginLg; // Make room for the hamburger!
+        }
+
         &__head {
             align-items: center;
             justify-content: space-between;
@@ -168,7 +181,7 @@
         &__time-conductor {
             border-top: 1px solid $colorInteriorBorder;
             flex: 0 0 auto;
-            padding: $interiorMargin;
+            padding-top: $interiorMargin;
         }
 
         body.desktop & {
@@ -208,6 +221,34 @@
     import BrowseBar from './BrowseBar.vue';
     import Toolbar from './Toolbar.vue';
 
+    var enterFullScreen = () => {
+        var docElm = document.documentElement;
+
+        if (docElm.requestFullscreen) {
+            docElm.requestFullscreen();
+        } else if (docElm.mozRequestFullScreen) { /* Firefox */
+            docElm.mozRequestFullScreen();
+        } else if (docElm.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+            docElm.webkitRequestFullscreen();
+        } else if (docElm.msRequestFullscreen) { /* IE/Edge */
+            docElm.msRequestFullscreen();
+        }
+    };
+    var exitFullScreen = () => {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+        else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        }
+        else if (document.webkitCancelFullScreen) {
+            document.webkitCancelFullScreen();
+        }
+        else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    }
+
     export default {
         components: {
             Inspector,
@@ -222,6 +263,27 @@
             pane,
             BrowseBar,
             Toolbar
+        },
+        data: function () {
+            return {
+                fullScreen: false,
+                conductorComponent: {}
+            }
+        },
+        methods: {
+            fullScreenToggle() {
+
+                if (this.fullScreen) {
+                    this.fullScreen = false;
+                    exitFullScreen();
+                } else {
+                    this.fullScreen = true;
+                    enterFullScreen();
+                }
+            },
+            openInNewTab(event) {
+                event.target.href = window.location.href;
+            }
         }
     }
 </script>

@@ -15,7 +15,7 @@
         </div>
 
         <div class="l-browse-bar__end">
-            <div class="l-browse-bar__view-switcher c-menu-button--w c-menu-button--menus-left"
+            <div class="l-browse-bar__view-switcher c-ctrl-wrapper c-ctrl-wrapper--menus-left"
                  v-if="views.length > 1">
                 <div class="c-button--menu"
                      :class="currentView.cssClass"
@@ -112,8 +112,6 @@
 
 <style lang="scss">
     @import "~styles/sass-base";
-
-    /******************************* START */
 
     .l-browse-bar {
         display: flex;

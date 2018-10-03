@@ -1,5 +1,5 @@
 <template>
-    <div class="c-ctrl-wrapper">
+    <div class="c-create-button--w">
         <div class="c-create-button c-button--menu c-button--major icon-plus"
              @click="toggleCreateMenu">
             <span class="c-button__label">Create</span>
