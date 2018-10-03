@@ -20,106 +20,211 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<!-- Parent holder for time conductor. follow-mode | fixed-mode -->
-<div class="l-flex-row l-time-conductor"
-    :class="[isFixed ? 'fixed-mode' : 'realtime-mode', panning ? 'status-panning' : '']">
-    <div class="flex-elem holder time-conductor-icon">
-        <div class="hand-little"></div>
-        <div class="hand-big"></div>
-    </div>
+    <div class="c-conductor"
+         :class="[isFixed ? 'is-fixed-mode' : 'is-realtime-mode', panning ? 'status-panning' : '']">
+        <form class="u-contents" ref="conductorForm"
+              @submit="isFixed ? setBoundsFromView($event) : setOffsetsFromView($event)">
 
-    <div class="flex-elem holder grows l-flex-col l-time-conductor-inner">
-        <!-- Holds inputs and ticks -->
-        <div class="l-time-conductor-inputs-and-ticks l-row-elem flex-elem no-margin">
-            <form class="l-time-conductor-inputs-holder" ref="conductorForm"
-                  @submit="isFixed ? setBoundsFromView($event) : setOffsetsFromView($event)">
-                <span class="l-time-range-w start-w">
-                    <span class="l-time-conductor-inputs">
-                        <span class="l-time-range-input-w start-date">
-                            <span class="title"></span>
-                            <span class="time-range-input">
-                                <input type="text" autocorrect="off" spellcheck="false"
-                                    ref="startDate"
-                                    v-model="formattedBounds.start"
-                                    @keyup="validateBounds('start', $event.target)"
-                                    @blur="setBoundsFromView()">
-                                <date-picker :default-date-time="formattedBounds.start" :formatter="timeFormatter" @date-selected="startDateSelected"></date-picker>
-                            </span>
-                        </span>
-                        <span class="l-time-range-input-w time-delta start-delta"
-                            :class="{'hide': isFixed}">
-                            - 
-                            <span class="s-input-inline hrs-min-input">
-                                <input type="text" autocorrect="off" spellcheck="false"
-                                    v-model="offsets.start"
-                                    @keyup="validateOffsets($event)"
-                                    @blur="setOffsetsFromView()">
-                            </span>
-                        </span>
-                    </span>
-                </span>
-                <span class="l-time-range-w end-w">
-                    <span class="l-time-conductor-inputs">
-                        <span class="l-time-range-input-w end-date">
-                            <span class="title"></span>
-                            <span class="time-range-input">
-                                <input type="text" autocorrect="off" spellcheck="false"
-                                    v-model="formattedBounds.end"
-                                    :disabled="!isFixed"
-                                    ref="endDate"
-                                    @keyup="validateBounds('end', $event.target)"
-                                    @blur="setBoundsFromView()">
-                                <date-picker :default-date-time="formattedBounds.end" :formatter="timeFormatter" @date-selected="endDateSelected"></date-picker>
-                            </span>
-                        </span>
-                        <span class="l-time-range-input-w time-delta end-delta"
-                              :class="{'hide': isFixed}">
-                                +
-                            <span class="s-input-inline hrs-min-input">
-                                <input type="text" autocorrect="off" spellcheck="false"
-                                    v-model="offsets.end"
-                                    @keyup="validateOffsets($event)"
-                                    @blur="setOffsetsFromView()">
-                            </span>
-                        </span>
-                    </span>
-                </span>
-                <input type="submit" class="invisible">
-            </form>
-            <conductor-axis class="mobile-hide" :bounds="rawBounds" @panZoom="setViewFromBounds"></conductor-axis>
-        </div>
+            <ConductorModeIcon class="c-conductor__mode-icon"></ConductorModeIcon>
 
-        <!-- Holds time system and session selectors, and zoom control -->
-        <div class="l-time-conductor-controls l-row-elem l-flex-row flex-elem">
-            <ConductorMode></ConductorMode>
-            <ConductorTimeSystem></ConductorTimeSystem>
-            <!-- Zoom control -->
-            <div v-if="isUTCBased && isFixed"
-                 class="l-time-conductor-zoom-w grows flex-elem l-flex-row">
-                {{currentZoomText}}
-                <span class="time-conductor-zoom-current-range flex-elem flex-fixed holder">{{timeUnits}}</span>
-                <input class="time-conductor-zoom flex-elem" type="range"
-                    v-model="currentZoom"
-                    @change="setBoundsFromView()"
-                    min="0.01"
-                    step="0.01"
-                    max="0.99" />
+            <div class="c-conductor__start-input">
+                <!-- Start input and controls -->
+                <div class="c-ctrl-wrapper c-conductor-input c-conductor__start__fixed"
+                     v-if="isFixed">
+                    <!-- Fixed input -->
+                    <div class="c-conductor__start__fixed__label">Start</div>
+                    <input class="c-input--datetime"
+                           type="text" autocorrect="off" spellcheck="false"
+                           ref="startDate"
+                           v-model="formattedBounds.start"
+                           @change="validateBounds('start', $event.target); setBoundsFromView()" />
+                    <date-picker
+                            :default-date-time="formattedBounds.start"
+                            :formatter="timeFormatter"
+                            @date-selected="startDateSelected"></date-picker>
+                </div>
+
+                <div class="c-ctrl-wrapper c-conductor-input c-conductor__start__delta"
+                     v-if="!isFixed">
+                    <!-- RT input -->
+                    <div class="c-direction-indicator icon-minus"></div>
+                    <input class="c-input--hrs-min-sec"
+                           type="text" autocorrect="off"
+                           spellcheck="false"
+                           v-model="offsets.start"
+                           @change="validateOffsets($event); setOffsetsFromView()">
+                </div>
             </div>
-        </div>
 
+            <div class="c-conductor__end-input">
+                <!-- End input and controls -->
+                <div class="c-ctrl-wrapper c-conductor-input c-conductor__end__fixed"
+                     v-if="isFixed">
+                    <!-- Fixed input -->
+                    <div class="c-conductor__end__fixed__label">End</div>
+                    <input class="c-input--datetime"
+                           type="text" autocorrect="off" spellcheck="false"
+                           v-model="formattedBounds.end"
+                           :disabled="!isFixed"
+                           ref="endDate"
+                           @change="validateBounds('end', $event.target); setBoundsFromView()">
+                    <date-picker
+                            class="c-ctrl-wrapper--menus-left"
+                            :default-date-time="formattedBounds.end"
+                            :formatter="timeFormatter"
+                            @date-selected="endDateSelected"></date-picker>
+                </div>
+
+                <div class="c-ctrl-wrapper c-conductor-input c-conductor__end__delta"
+                     v-if="!isFixed">
+                    <!-- RT input -->
+                    <div class="c-direction-indicator icon-plus"></div>
+                    <input class="c-input--hrs-min-sec"
+                           type="text"
+                           autocorrect="off"
+                           spellcheck="false"
+                           v-model="offsets.end"
+                           @change="validateOffsets($event); setOffsetsFromView()">
+                </div>
+            </div>
+
+            <conductor-axis
+                    class="c-conductor__ticks"
+                    :bounds="rawBounds"
+                    @panAxis="setViewFromBounds"></conductor-axis>
+            <div class="c-conductor__controls">
+                <!-- Mode, time system menu buttons and duration slider -->
+                <ConductorMode class="c-conductor__mode-select"></ConductorMode>
+                <ConductorTimeSystem class="c-conductor__time-system-select"></ConductorTimeSystem>
+            </div>
+            <input type="submit" class="invisible">
+        </form>
     </div>
-</div>
 </template>
 
 <style lang="scss">
     @import "~styles/sass-base";
 
-    .l-time-conductor-inputs input:invalid {
-        border: 1px solid $colorFormInvalid !important;
+    /*********************************************** CONDUCTOR LAYOUT */
+    .c-conductor {
+        display: grid;
+        grid-column-gap: $interiorMargin;
+        grid-row-gap: $interiorMargin;
+        align-items: center;
+
+
+        grid-template-rows: 1fr 1fr;
+        grid-template-columns: 20px auto 1fr auto;
+        grid-template-areas:
+                "tc-mode-icon tc-start tc-ticks tc-end"
+                "tc-controls tc-controls tc-controls tc-controls";
+
+        .c-conductor__end-input {
+            justify-content: flex-end;
+        }
+
+        body.phone.portrait & {
+            &.is-fixed-mode {
+                grid-row-gap: $interiorMargin;
+                grid-template-rows: auto auto auto;
+                grid-template-columns: 20px auto;
+                grid-template-areas:
+                        "tc-mode-icon tc-start"
+                        "tc-mode-icon tc-end"
+                        "tc-mode-icon tc-controls";
+
+                .c-conductor {
+                    &__mode-icon {
+                        grid-row: 1;
+                    }
+
+                    &__ticks,
+                    &__zoom {
+                        display: none;
+                    }
+
+                    &-input [class*='__label'] {
+                        // Start and end are in separate columns; make the labels line up
+                        width: 40px;
+                    }
+
+                    &__end-input {
+                        justify-content: flex-start;
+                    }
+                }
+            }
+        }
+
+        &__mode-icon {
+            grid-area: tc-mode-icon;
+        }
+
+        &__start-input,
+        &__end-input {
+            display: flex;
+        }
+
+        &__start-input {
+            grid-area: tc-start;
+        }
+
+        &__end-input {
+            grid-area: tc-end;
+            display: flex;
+        }
+
+        &__ticks {
+            grid-area: tc-ticks;
+        }
+
+        &__controls {
+            grid-area: tc-controls;
+            display: flex;
+            align-items: center;
+            > * + * {
+                margin-left: $interiorMargin;
+            }
+        }
+
+        [class*='__delta'] {
+            &:before {
+                content: $glyph-icon-clock;
+                font-family: symbolsfont;
+            }
+        }
     }
 
-    .l-time-conductor-zoom-w {
-        text-transform: capitalize;
+    .c-conductor-input {
+        color: $colorInputFg;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+
+        > * + * {
+            margin-left: $interiorMarginSm;
+        }
+
+        &:before {
+            // Realtime-mode clock icon symbol
+            margin-right: $interiorMarginSm;
+        }
+
+        .c-direction-indicator {
+            // Holds realtime-mode + and - symbols
+            font-size: 0.7em;
+        }
+
+        input:invalid {
+            background: rgba($colorFormInvalid, 0.3);
+        }
+    }
+
+    .is-realtime-mode {
+        .c-conductor-input {
+            &:before {
+                color: $colorTime;
+            }
+        }
     }
 </style>
 
@@ -129,14 +234,13 @@ import ConductorMode from './ConductorMode.vue';
 import ConductorTimeSystem from './ConductorTimeSystem.vue';
 import DatePicker from './DatePicker.vue';
 import ConductorAxis from './ConductorAxis.vue';
+import ConductorModeIcon from './ConductorModeIcon.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const SECONDS = 1000;
 const DAYS = 24 * 60 * 60 * SECONDS;
 const YEARS = 365 * DAYS;
 
-const MAX_ZOOM_OUT = 10 * YEARS;
-const MAX_ZOOM_IN = 5 * SECONDS;
 const RESIZE_POLL_INTERVAL = 200;
 
 export default {
@@ -145,7 +249,8 @@ export default {
         ConductorMode,
         ConductorTimeSystem,
         DatePicker,
-        ConductorAxis
+        ConductorAxis,
+        ConductorModeIcon
     },
     data() {
         let bounds = this.openmct.time.bounds();
@@ -155,7 +260,6 @@ export default {
         let durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
 
         return {
-            currentZoom: this.calculateZoomFromBounds(),
             timeFormatter: timeFormatter,
             durationFormatter: durationFormatter,
             offsets: {
@@ -184,7 +288,7 @@ export default {
             this.isUTCBased = timeSystem.isUTCBased;
         },
         setOffsetsFromView($event) {
-            if (this.offsetsChanged() && this.$refs.conductorForm.checkValidity()){
+            if (this.$refs.conductorForm.checkValidity()){
                 let startOffset = 0 - this.durationFormatter.parse(this.offsets.start);
                 let endOffset = this.durationFormatter.parse(this.offsets.end);
 
@@ -198,13 +302,8 @@ export default {
                 return false;
             }
         },
-        offsetsChanged() {
-            let currentOffsets = this.openmct.time.clockOffsets();
-            return this.offsets.start !== currentOffsets.start ||
-                this.offsets.end !== currentOffsets.end;
-        },
         setBoundsFromView($event) {
-            if (this.boundsChanged() && this.$refs.conductorForm.checkValidity()){
+            if (this.$refs.conductorForm.checkValidity()){
                 let start = this.timeFormatter.parse(this.formattedBounds.start);
                 let end = this.timeFormatter.parse(this.formattedBounds.end);
 
@@ -218,14 +317,6 @@ export default {
                 return false;
             }
         },
-        boundsChanged() {
-            let currentBounds = this.openmct.time.bounds();
-            return this.timeFormatter.parse(this.formattedBounds.start) !== currentBounds.start ||
-                this.timeFormatter.parse(this.formattedBounds.end) !== currentBounds.end;
-        },
-        showValidityMessage($event) {
-            $event.target.reportValidity();
-        },
         setViewFromClock(clock) {
             this.isFixed = clock === undefined;
         },
@@ -238,9 +329,6 @@ export default {
         setViewFromOffsets(offsets) {
             this.offsets.start = this.durationFormatter.format(Math.abs(offsets.start));
             this.offsets.end = this.durationFormatter.format(Math.abs(offsets.end));
-        },
-        showValidityMessage($event) {
-            $event.target.reportValidity();
         },
         validateBounds(startOrEnd, input) {
             let validationResult = true;
@@ -297,49 +385,8 @@ export default {
             this.validateBounds('end', this.$refs.endDate);
             this.setBoundsFromView();
         },
-        zoomLevelToTimespan() {
-            let minMaxDelta = MAX_ZOOM_OUT - MAX_ZOOM_IN;
-            return minMaxDelta * Math.pow((1 - this.currentZoom), 4);
-        },
-        zoom() {
-            let zoomTimespan = this.zoomLevelToTimespan();
-            let start = this.openmct.time.bounds().start;
-            let end = this.openmct.time.bounds().end
-            let currentTimeSpan = end - start;
-            let delta = currentTimeSpan - zoomTimespan;
-            let bounds = {
-                start: start + delta / 2,
-                end: end - delta / 2
-            };
-            this.rawBounds = bounds;
-            this.setViewFromBounds(bounds);
-            this.zooming = false;
-        },
-        calculateZoomFromBounds() {
-            let start = this.openmct.time.bounds().start;
-            let end = this.openmct.time.bounds().end
-            let zoomMaxMinDelta = MAX_ZOOM_OUT - MAX_ZOOM_IN;
-            let currentBoundsDelta = end - start;
-            
-            return 1 - Math.pow(currentBoundsDelta / zoomMaxMinDelta, 1 / 4);
-        }
-
-    },
-    computed: {
-        currentZoomText() {
-            return moment.duration(this.zoomLevelToTimespan()).humanize();
-        }
-    },
-    watch: {
-        currentZoom() {
-            if (!this.zooming) {
-                this.zooming = true;
-                requestAnimationFrame(this.zoom, RESIZE_POLL_INTERVAL);
-            }
-        }
     },
     mounted() {
-        this.zooming = false;
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
 
         this.openmct.time.on('bounds', this.setViewFromBounds);

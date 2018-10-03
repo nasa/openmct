@@ -1,12 +1,35 @@
-/******************************************************** BUTTONS */
-%c-control {
-    @include userSelectNone();
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2018, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+// VERSION MANUALLY MIGRATED FROM VUE-TOOLBAR
+
+/******************************************************** PLACEHOLDERS */
+@mixin cControl() {
     $fs: 1em;
+    @include userSelectNone();
     display: inline-flex;
     align-items: center;
-    font-size: $fs;
-    justify-content: start;
-    cursor: pointer;
+    justify-content: center;
+    overflow: hidden;
 
     &:before,
     &:after {
@@ -20,17 +43,19 @@
     }
 
     [class*="__label"] {
+        @include ellipsize();
+        display: block;
         line-height: $fs; // Remove effect on top and bottom padding
         font-size: $fs;
     }
-
 }
 
-%c-button {
-    @extend %c-control;
+@mixin cButton() {
+    @include cControl();
     background: $colorBtnBg;
     border-radius: $controlCr;
     color: $colorBtnFg;
+    cursor: pointer;
     padding: nth($btnPad, 1) nth($btnPad, 2);
 
     &:hover {
@@ -47,119 +72,121 @@
             color: $colorBtnMajorFgHov;
         }
     }
+
+    &[class*='--caution'] {
+        background: $colorBtnCautionBg;
+        color: $colorBtnCautionFg;
+
+        &:hover {
+            background: $colorBtnCautionBgHov;
+        }
+}
 }
 
-/********* Buttons */
-// Optionally can include icon in :before via markup
-.c-button,
-button {
-    @extend %c-button;
-}
-
-/********* Icon Buttons */
-.c-icon-button {
+@mixin cClickIcon() {
     // A clickable element that just includes the icon, no background
     // Padding is included to facilitate a bigger hit area
     // Make the icon bigger relative to its container
-    @extend %c-control;
+    @include cControl();
     $pLR: 3px;
     $pTB: 3px;
     border-radius: $controlCr;
     color: $colorKey;
-    font-size: $fontBaseSize * 1.2;
+    cursor: pointer;
     padding: $pTB $pLR ;
 
     &:hover {
         background: rgba($colorKey, 0.2);
     }
 
-    &:before {
-        font-size: 1.1em;
+    &:before,
+    *:before {
+        // *:before handles any nested containers that may contain glyph elements
+        // Needed for c-togglebutton.
+        font-size: 1.3em;
     }
 }
 
-/********* Button Sets */
-.c-button-set {
-    // Buttons are smashed together with minimal margin
-    // c-buttons don't have border-radius between buttons, creates a tool-button-strip look
-    // c-icon-buttons get grouped more closely together
-    // When one set is adjacent to another, provides a divider between
+@mixin cCtrlWrapper {
+    // Provides a wrapper around  buttons and other controls
+    // Contains control and provides positioning context for contained menu/palette.
+    // Wraps --menu elements, contains button and menu
+    overflow: visible;
 
-    display: inline-flex;
+        .c-menu {
+        // Default position of contained menu
+            top: 100%; left: 0;
+        }
 
+    &[class*='--menus-up'] {
+            .c-menu {
+                top: auto; bottom: 100%;
+            }
+        }
+
+    &[class*='--menus-left'] {
+            .c-menu {
+                left: auto; right: 0;
+            }
+        }
+    }
+
+/********* Buttons */
+// Optionally can include icon in :before via markup
+.c-button,
+.c-button--menu,
+button {
+    @include cButton();
+}
+
+.c-button--menu {
+    $m: $interiorMargin;
+
+    &:before,
     > * {
-        // Assume buttons are immediate descendants
-        flex: 0 0 auto;
-
-        &[class^="c-button"] {
-            // Only apply the following to buttons that have background, eg. c-button
-            border-radius: 0;
-
-            + * {
-                margin-left: 1px;
-            }
-
-            &:first-child {
-                border-top-left-radius: $controlCr;
-                border-bottom-left-radius: $controlCr;
-            }
-
-            &:last-child {
-                border-top-right-radius: $controlCr;
-                border-bottom-right-radius: $controlCr;
-            }
-        }
-    }
-
-    + .c-button-set {
-        $m: $interiorMarginSm;
-        &:before {
-            content: '';
-            display: block;
-            width: $m;
-            border-right: 1px solid $colorInteriorBorder;
-            margin-right: $m;
-        }
-    }
-}
-
-/********* Menu Buttons */
-// Always includes :after dropdown arrow
-// Optionally can include icon in :before
-// Default menu position is down and to the right
-// Apply c-menu-button--menus-up and c-menu-button--menus-left to --w wrapper element to modify menu position
-.c-menu-button {
-    $m: $interiorMarginSm;
-    @extend %c-button;
-
-    &:before {
         margin-right: $m;
     }
 
     &:after {
         content: $glyph-icon-arrow-down;
         font-family: symbolsfont;
-        margin-left: $m;
         opacity: 0.5;
     }
+}
 
-    &--w {
-        // Wraps c-menu-button, contains button and menu
-        .c-menu {
-            // Default position
-            top: 100%; left: 0;
+/********* Icon Buttons */
+.c-click-icon {
+    @include cClickIcon();
+
+    &--menu {
+        &:after {
+            content: $glyph-icon-arrow-down;
+            font-family: symbolsfont;
+            font-size: 0.6em;
+            margin-left: floor($interiorMarginSm * 0.8);
+            opacity: 0.5;
+        }
+    }
+
+    &--swatched {
+        // Color control, show swatch element
+        display: flex;
+        flex-flow: column nowrap;
+        align-items: center;
+        justify-content: center;
+
+        > [class*='swatch'] {
+            box-shadow: inset rgba(black, 0.2) 0 0 1px;
+            flex: 0 0 auto;
+            height: 4px;
+            width: 100%;
+            margin-top: 1px;
         }
 
-        &.c-menu-button--menus-up {
-            .c-menu {
-                top: auto; bottom: 100%;
-            }
-        }
-
-        &.c-menu-button--menus-left {
-            .c-menu {
-                left: auto; right: 0;
-            }
+        &:before {
+            // Reduce size of icon to make a bit of room
+            flex: 1 1 auto;
+            font-size: 1.1em;
         }
     }
 }
@@ -169,7 +196,7 @@ button {
 // Provides a downward arrow icon that when clicked displays a context menu
 // Always placed AFTER an element
 .c-disclosure-button {
-    @extend .c-icon-button;
+    @include cClickIcon();
     margin-left: $interiorMarginSm;
 
     &:before {
@@ -208,13 +235,39 @@ button {
     }
 }
 
-
 /******************************************************** FORM ELEMENTS */
-/********* Inline inputs */
+input, textarea {
+    font-family: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+}
+
+input[type=text],
+input[type=search],
+input[type=number] {
+    @include reactive-input();
+    padding: $inputTextP;
+    &.numeric {
+        text-align: right;
+    }
+}
+
+.c-input {
+    &--datetime {
+        // Sized for values such as 2018-09-28 22:32:33.468Z
+        width: 160px;
+    }
+
+    &--hrs-min-sec {
+        // Sized for values such as 00:25:00
+        width: 60px;
+    }
+
+    &-inline,
+    &--inline {
 // A text input or contenteditable element that indicates edit affordance on hover and looks like an input on focus
-.c-input-inline {
-    @include input-base();
-    border: 1px solid transparent;
+    @include reactive-input();
+    box-shadow: none;
     display: block !important;
     min-width: 0;
     padding-left: 0;
@@ -232,12 +285,38 @@ button {
         padding-left: $inputTextPLeftRight;
         padding-right: $inputTextPLeftRight;
     }
-    &:hover {
-        border-color: rgba($colorBodyFg, 0.2);
+}
+
+    &--labeled {
+        // TODO: replace .c-labeled-input with this
+    // An input used in the Toolbar
+    // Assumes label is before the input
+    @include cControl();
+
+    input {
+        margin-left: $interiorMarginSm;
     }
-    &:focus {
-        @include nice-input($shdw: rgba(0, 0, 0, 0.6) 0 1px 3px);
-        border-color: transparent;
+}
+}
+
+.c-labeled-input {
+    // An input used in the Toolbar
+    // Assumes label is before the input
+    @include cControl();
+
+    input {
+        margin-left: $interiorMarginSm;
+    }
+}
+
+/******************************************************** HYPERLINKS AND HYPERLINK BUTTONS */
+.c-hyperlink {
+    &--link {
+        color: $colorKey;
+    }
+
+    &--button {
+        @include cButton();
     }
 }
 
@@ -256,8 +335,10 @@ button {
 @mixin menuInner() {
     color: $colorMenuFg;
     li {
-        @extend %c-control;
+        @include cControl();
+        justify-content: start;
         color: $colorMenuFg;
+        cursor: pointer;
         display: flex;
         padding: nth($menuItemPad, 1) nth($menuItemPad, 2);
         transition: $transIn;
@@ -281,11 +362,6 @@ button {
 .c-menu {
     @include menuOuter();
     @include menuInner();
-     li {
-         &:not(:first-child) {
-             border-top: 1px solid pullForward($colorMenuBg, 10%);
-         }
-     }
 }
 
 .c-super-menu {
@@ -354,3 +430,161 @@ button {
     }
 }
 
+/******************************************************** PALETTES */
+.c-palette {
+    display: flex;
+    flex-flow: column nowrap;
+
+    &__items {
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: repeat(10, [col] auto );
+        grid-gap: 1px;
+    }
+
+    &__item {
+        $d: 16px;
+
+        border: 1px solid transparent;
+        cursor: pointer;
+        width: 16px; height: 16px;
+        transition: $transOut;
+
+        &:hover {
+            transition: $transIn;
+            $o: 0.7;
+            border-color: rgba($paletteItemBorderOuterColorSelected, $o);
+            box-shadow: inset rgba($paletteItemBorderInnerColorSelected, $o) 0 0 0 1px;
+        }
+
+        &.is-selected {
+            border-color: $paletteItemBorderOuterColorSelected !important;
+            border-width: 2px;
+            box-shadow: inset rgba($paletteItemBorderInnerColorSelected, 1) 0 0 0 1px;
+        }
+    }
+
+    &__item-none {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        margin-bottom: $interiorMarginSm;
+
+        .c-palette__item {
+            @include noColor();
+            border-color: $paletteItemBorderInnerColor;
+            margin-right: $interiorMarginSm;
+        }
+    }
+}
+
+/******************************************************** TOOLBAR */
+.c-ctrl-wrapper {
+    @include cCtrlWrapper();
+}
+
+.c-toolbar,
+.c-toolbar .c-ctrl-wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+.c-toolbar {
+    height: 24px; // Need to standardize the height
+
+    .c-click-icon {
+        @include cControl();
+        $pLR: $interiorMargin - 1;
+        $pTB: 2px;
+        color: $colorBodyFg;
+        padding: $pTB $pLR;
+
+        &--swatched {
+            padding-bottom: floor($pTB / 2);
+            width: 2em; // Standardize the width
+        }
+
+        &[class*='--caution'] {
+            &:before {
+                color: $colorBtnCautionBg;
+            }
+
+            &:hover {
+                background: rgba($colorBtnCautionBgHov, 0.2);
+                :before {
+                    color: $colorBtnCautionBgHov;
+                }
+            }
+        }
+    }
+
+    .c-labeled-input {
+        font-size: 0.9em;
+        input[type='number'] {
+            width: 40px; // Number input sucks and must have size set using this method
+        }
+
+        + .c-labeled-input {
+            margin-left: $interiorMargin;
+        }
+    }
+}
+
+/********* Button Sets */
+.c-button-set {
+    // When one set is adjacent to another, provides a divider between
+
+    display: inline-flex;
+    flex: 0 0 auto;
+
+    > * {
+        // Assume buttons are immediate descendants
+        flex: 0 0 auto;
+
+        + * {
+            // margin-left: $interiorMarginSm;
+        }
+    }
+
+    + .c-button-set {
+        $m: $interiorMargin;
+        $b: 1px;
+        &:before {
+            content: '';
+            display: block;
+            width: $m + $b; // Allow for border
+            border-right: $b solid $colorInteriorBorder;
+            margin-right: $m;
+        }
+    }
+
+    &[class*='--strip'] {
+        // Buttons are smashed together with minimal margin
+        // c-buttons don't have border-radius between buttons, creates a tool-button-strip look
+        // c-click-icons get grouped more closely together
+        &[class^="c-button"] {
+            // Only apply the following to buttons that have background, eg. c-button
+            border-radius: 0;
+
+            + * {
+                margin-left: 1px;
+            }
+
+            &:first-child {
+                border-top-left-radius: $controlCr;
+                border-bottom-left-radius: $controlCr;
+            }
+
+            &:last-child {
+                border-top-right-radius: $controlCr;
+                border-bottom-right-radius: $controlCr;
+            }
+        }
+    }
+}
+
+/***************************************************** SLIDERS */
+.c-slider {
+    @include cControl();
+    > * + * { margin-left: $interiorMargin; }
+}

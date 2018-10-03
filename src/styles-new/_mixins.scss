@@ -53,6 +53,37 @@
     background-size: $bgsize $bgsize;
 }
 
+@mixin noColor() {
+    // A "no fill/stroke" selection option. Used in palettes.
+    $c: red;
+    $s: 48%;
+    $e: 52%;
+    background-image: linear-gradient(-45deg,
+        transparent $s - 5%,
+        $c $s,
+        $c $e,
+        transparent $e + 5%
+    );
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+@mixin bgTicks($c: $colorBodyFg, $repeatDir: 'x') {
+    $deg: 90deg;
+    @if ($repeatDir != 'x') {
+        $deg: 0deg;
+        $repeatDir: repeat-y;
+    } @else {
+        $repeatDir: repeat-x;
+    }
+
+    background-image: linear-gradient($deg,
+            $c 1px, transparent 1px,
+            transparent 100%
+    );
+    background-repeat: $repeatDir;
+}
+
 @mixin bgVertStripes($c: yellow, $a: 0.1, $d: 40px) {
     @include background-image(linear-gradient(-90deg,
         rgba($c, $a) 0%, rgba($c, $a) 50%,
@@ -63,6 +94,11 @@
 }
 
 /************************** LAYOUT */
+@mixin abs($m: 0) {
+    position: absolute;
+    top: $m; right: $m; bottom: $m; left: $m;
+}
+
 @mixin gridTwoColumn() {
     display: grid;
     grid-row-gap: 0;
@@ -126,13 +162,26 @@
     }
 }
 
-
-
-@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.5) 0 0px 2px) {
+@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.5) 0 0 2px) {
     @include input-base();
     background: $bg;
     color: $fg;
     box-shadow: inset $shdw;
+}
+
+@mixin reactive-input($bg: $colorInputBg, $fg: $colorInputFg) {
+    @include input-base();
+    background: $bg;
+    box-shadow: $shdwInput;
+    color: $fg;
+
+    &:hover {
+        box-shadow: $shdwInputHov;
+    }
+
+    &:focus {
+        box-shadow: $shdwInputFoc;
+    }
 }
 
 @mixin button($bg: $colorBtnBg, $fg: $colorBtnFg, $radius: $controlCr, $shdw: none) {
@@ -140,6 +189,63 @@
     color: $fg;
     border-radius: $radius;
     box-shadow: $shdw;
+}
+
+@mixin wrappedInput() {
+    // An input that is wrapped. Optionally includes a __label or icon element.
+    // Based on .c-search.
+    @include nice-input();
+    display: flex;
+    align-items: center;
+    padding-left: 4px;
+    padding-right: 4px;
+
+    &:before,
+    [class*='__label'] {
+        opacity: 0.5;
+    }
+
+    &:before {
+        // Adds an icon. Content defined in class.
+        direction: rtl; // Aligns glyph to right-hand side of container, for transition
+        display: block;
+        font-family: symbolsfont;
+        flex: 0 0 auto;
+        overflow: hidden;
+        padding: 2px 0; // Prevents clipping
+        transition: width 250ms ease;
+        width: 1em;
+    }
+
+    &:hover {
+        box-shadow: inset rgba(black, 0.8) 0 0px 2px;
+        &:before {
+            opacity: 0.9;
+        }
+    }
+
+    &--major {
+        padding: 4px;
+    }
+
+    &__input,
+    input[type='text'],
+    input[type='search'],
+    input[type='number'] {
+        background: none  !important;
+        box-shadow: none !important; // !important needed to override default for [input]
+        flex: 1 1 auto;
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+        min-width: 10px; // Must be set to allow input to collapse below browser min
+    }
+
+    &.is-active {
+        &:before {
+            padding: 2px 0px;
+            width: 0px;
+        }
+    }
 }
 
 /************************** MATH */
@@ -161,4 +267,13 @@
 
 @mixin userSelectNone() {
     @include browserPrefix(user-select, none);
+}
+
+@mixin cursorGrab() {
+    cursor: grab;
+    cursor: -webkit-grab;
+    &:active {
+        cursor: grabbing;
+        cursor: -webkit-grabbing;
+    }
 }

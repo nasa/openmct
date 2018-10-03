@@ -20,14 +20,90 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="l-axis-holder" ref="axisHolder"
-        @mousedown="dragStart($event)"></div>
+    <div class="c-conductor-axis"
+         ref="axisHolder"
+         @mousedown="dragStart($event)">
+    </div>
 </template>
 
 <style lang="scss">
-    .l-axis-holder {
-        user-select: none;
+    @import "~styles/sass-base";
+
+    .c-conductor-axis {
+        $h: 18px;
+        $tickYPos: ($h / 2) + 12px;
+
+        @include userSelectNone();
+        @include bgTicks($c: rgba($colorBodyFg, 0.4));
+        background-position: 0 50%;
+        background-size: 5px 2px;
+        height: $h;
+
+        svg {
+            text-rendering: geometricPrecision;
+            width: 100%;
+            height: 100%;
+            > g {
+                // Overall Tick holder
+                transform: translateY($tickYPos);
+                path {
+                    // Domain line
+                    display: none;
+                }
+
+                g {
+                    // Each tick. These move on drag.
+                    line {
+                        // Line beneath ticks
+                        display: none;
+                    }
+                }
+            }
+
+            text {
+                // Tick labels
+                fill: $colorBodyFg;
+                font-size: 1em;
+                paint-order: stroke;
+                font-weight: bold;
+                stroke: $colorBodyBg;
+                stroke-linecap: butt;
+                stroke-linejoin: bevel;
+                stroke-width: 6px;
+            }
+        }
+
+        body.desktop .is-fixed-mode & {
+            @include cursorGrab();
+            background-size: 3px 30%;
+            border-radius: $controlCr;
+            background-color: $colorBodyBgSubtle;
+            box-shadow: inset rgba(black, 0.2) 0 1px 1px;
+
+            svg text {
+                fill: $colorBodyFg;
+                stroke: $colorBodyBgSubtle;
+            }
+
+            &:hover,
+            &:active {
+                $c: $colorKeySubtle;
+                background-color: $c;
+                svg text {
+                    stroke: $c;
+                }
+            }
+        }
+
+        .is-realtime-mode & {
+            svg text {
+                fill: $colorTime;
+            }
+
+        }
     }
+
+
 </style>
 
 <script>
@@ -40,6 +116,8 @@ import utcMultiTimeFormat from './utcMultiTimeFormat.js';
 const PADDING = 1;
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const RESIZE_POLL_INTERVAL = 200;
+const PIXELS_PER_TICK = 100;
+const PIXELS_PER_TICK_WIDE = 200;
 
 export default {
     inject: ['openmct'],
@@ -61,6 +139,12 @@ export default {
 
             this.xScale.range([PADDING, this.width - PADDING * 2]);
             this.axisElement.call(this.xAxis);
+
+            if (this.width > 1800) {
+                this.xAxis.ticks(this.width / PIXELS_PER_TICK_WIDE);
+            } else {
+                this.xAxis.ticks(this.width / PIXELS_PER_TICK);
+            }
 
             this.msPerPixel = (bounds.end - bounds.start) / this.width;
         },
@@ -119,7 +203,7 @@ export default {
                         start: newStart,
                         end: newStart + deltaTime
                     };
-                    this.$emit('panZoom', this.bounds);
+                    this.$emit('panAxis', this.bounds);
                     this.dragging = false;
                 })
             } else {
