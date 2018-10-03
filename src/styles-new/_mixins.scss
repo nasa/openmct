@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// VERSION MANUALLY RESTORED FROM VUE-LAYOUT
-
 /************************** VISUALS */
 @mixin ancillaryIcon($d, $c) {
     // Used for small icons used in combination with larger icons,
@@ -31,6 +29,20 @@
     line-height: $d;
     height: $d;
     width: $d;
+}
+
+@mixin isAlias() {
+    &:after {
+        color:$colorIconAlias;
+        content: $glyph-icon-link;
+        display: block;
+        font-family: symbolsfont;
+        position: absolute;
+        text-shadow: rgba(black, 0.5) 0 1px 4px;
+        top: auto; left: 0; bottom: 10%; right: auto;
+        transform-origin: left bottom;
+        transform: scale(0.5);
+    }
 }
 
 @mixin bgDiagonalStripes($c: yellow, $a: 0.1, $d: 40px) {
@@ -148,15 +160,23 @@
 }
 
 /************************** CONTROLS, BUTTONS */
-@mixin input-base() {
+@mixin htmlInputReset() {
     appearance: none;
+    background: none;
+    background-color: transparent;
     border: none;
-    border-radius: $controlCr;
+    border-radius: 0;
     outline: none;
+    text-align: inherit;
 
     &:focus {
         outline: 0;
     }
+}
+
+@mixin input-base() {
+    @include htmlInputReset();
+    border-radius: $controlCr;
 
     &.error {
         background-color: $colorFormFieldErrorBg;
