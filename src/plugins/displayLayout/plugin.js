@@ -23,6 +23,7 @@
 import Layout from './DisplayLayout.vue'
 import Vue from 'vue'
 import objectUtils from '../../api/objects/object-utils.js'
+import DisplayLayoutType from './DisplayLayoutType.js'
 
 export default function () {
     return function (openmct) {
@@ -61,5 +62,6 @@ export default function () {
                 return 100;
             }
         });
+        openmct.types.addType('display-layout', DisplayLayoutType());
     }
 }
