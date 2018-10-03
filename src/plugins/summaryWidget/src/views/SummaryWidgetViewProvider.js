@@ -8,7 +8,7 @@ define([
     objectUtils
 ) {
 
-
+    const DEFAULT_VIEW_PRIORITY = 100;
     /**
      *
      */
@@ -34,7 +34,11 @@ define([
             },
             editable: true,
             priority: function (domainObject) {
-                return 1;
+                if (domainObject.type === 'summary-widget') {
+                    return Number.MAX_VALUE;
+                } else {
+                    return DEFAULT_VIEW_PRIORITY;
+                }
             }
         };
     }

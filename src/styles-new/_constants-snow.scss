@@ -21,11 +21,12 @@ $colorStatusBarFg: #999;
 $colorStatusBarFgHov: #aaa;
 $colorKey: #0099cc;
 $colorKeyFilter: brightness(0.9) sepia(1) hue-rotate(145deg) saturate(6);
+$colorKeyFilterHov: brightness(1) sepia(1) hue-rotate(145deg) saturate(7);
 $colorKeySelectedBg: $colorKey;
 $colorKeyFg: #fff;
 $colorKeyHov: #00c0f6;
-$colorEditAreaBg: #eafaff;
-$colorEditAreaFg: #4bb1c7;
+$colorEditAreaBg: #eafaff; // Deprecated, use $editColor instead
+$colorEditAreaFg: #4bb1c7; // Deprecated, use $editColor instead
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: #999;
 $colorAHov: $colorKey;
@@ -36,6 +37,16 @@ $controlCr: 3px;
 $smallCr: 2px;
 $overlayCr: 11px;
 $shdwTextSubtle: rgba(black, 0.2) 0 1px 2px;
+
+// Variations
+$colorBodyBgSubtle: pullForward($colorBodyBg, 5%);
+$colorBodyBgSubtleHov: pushBack($colorKey, 50%);
+$colorKeySubtle: pushBack($colorKey, 50%);
+$colorTime: #618cff;
+$colorTimeBg: $colorTime;
+$colorTimeFg: $colorBodyBg;
+$colorTimeHov: pushBack($colorTime, 5%);
+$colorTimeSubtle: pushBack($colorTime, 20%);
 
 // Buttons and Controls
 $btnPad: $interiorMargin, $interiorMargin * 1.25;
@@ -49,6 +60,9 @@ $colorBtnMajorBg: $colorKey;
 $colorBtnMajorBgHov: $colorKeyHov;
 $colorBtnMajorFg: $colorKeyFg;
 $colorBtnMajorFgHov: pushBack($colorBtnMajorFg, $hoverRatioPercent);
+$colorBtnCautionBg: #f16f6f;
+$colorBtnCautionBgHov: #f1504e;
+$colorBtnCautionFg: $colorBtnFg;
 $colorClickIcon: $colorKey;
 $colorClickIconHov: $colorKeyHov;
 $colorToggleIcon: rgba($colorClickIcon, 0.5);
@@ -69,7 +83,7 @@ $sliderColorRangeValHovFg: $colorBodyFg;
 $sliderKnobW: 15px;
 $sliderKnobR: 2px;
 $timeControllerToiLineColor: $colorBodyFg;
-$timeControllerToiLineColorHov: #0052b5;
+$timeControllerToiLineColorHov: $colorTime;
 $colorTransLucBg: #666; // Used as a visual blocking element over variable backgrounds, like imagery
 $createBtnTextTransform: uppercase;
 
@@ -82,17 +96,25 @@ $colorDiagnostic: #a4b442;
 $colorCommand: #3693bd;
 $colorInfo: #2294a2;
 $colorOk: #33cc33;
-$colorIconLink: #49dedb;
+$colorIconAlias: #4af6f3;
+$colorIconAliasForKeyFilter: #aaa;
 $colorPausedBg: #ff9900;
 $colorPausedFg: #fff;
 $colorCreateBtn: $colorKey;
-$colorGridLines: rgba(#000, 0.05);
 $colorInvokeMenu: #fff;
 $colorObjHdrTxt: $colorBodyFg;
 $colorObjHdrIc: lighten($colorObjHdrTxt, 30%);
 $colorTick: rgba(black, 0.2);
-$colorSelectableSelectedPrimary: $colorKey;
-$colorSelectableHov: rgba($colorBodyFg, 0.4);
+
+$editColor: #00c7c3;
+$browseBorderSelectableHov: 1px dotted rgba($colorBodyFg, 0.2);
+$browseShdwSelectableHov: rgba($colorBodyFg, 0.2) 0 0 3px;
+$browseBorderSelected: 1px solid rgba($colorBodyFg, 0.6);
+$editBorderSelectable: 1px dotted rgba($editColor, 1);
+$editBorderSelectableHov: 1px dashed rgba($editColor, 1);
+$editBorderSelected: 1px solid $editColor;
+$editBorderDrilledIn: 1px dashed #ff4d9a;
+$colorGridLines: rgba($editColor, 0.2);
 
 // Menus
 $colorMenuBg: pushBack($colorBodyBg, 10%);
@@ -106,6 +128,11 @@ $shdwMenuText: none;
 $colorCreateMenuLgIcon: $colorKey;
 $colorCreateMenuText: $colorBodyFg;
 $menuItemPad: ($interiorMargin, nth($btnPad, 2));
+
+// Palettes and Swatches
+$paletteItemBorderOuterColorSelected: black;
+$paletteItemBorderInnerColorSelected: white;
+$paletteItemBorderInnerColor: rgba($paletteItemBorderOuterColorSelected, 0.3);
 
 // Form colors
 $colorCheck: $colorKey;
@@ -123,6 +150,9 @@ $colorInputPlaceholder: pushBack($colorBodyFg, 20%);
 $colorFormText: pushBack($colorBodyFg, 10%);
 $colorInputIcon: pushBack($colorBodyFg, 25%);
 $colorFieldHint: pullForward($colorBodyFg, 40%);
+$shdwInput: inset rgba(black, 0.4) 0 0 1px;
+$shdwInputHov: inset rgba(black, 0.7) 0 0 1px;
+$shdwInputFoc: inset rgba(black, 0.7) 0 0 3px;
 
 // Inspector
 $colorInspectorBg: pullForward($colorBodyBg, 5%);
@@ -182,7 +212,9 @@ $durLargeViewExpand: 250ms;
 
 // Items
 $colorItemBg: #ddd;
-$colorItemBgHov: pullForward($colorItemBg, $hoverRatioPercent * 0.7);
+$colorItemBgHov: rgba($colorKey, 0.1); //pushBack($colorItemBg, $hoverRatioPercent * 0.4);
+$colorListItemBg: transparent;
+$colorListItemBgHov: rgba($colorKey, 0.1);
 $colorItemFg: $colorBodyFg;
 $colorItemFgDetails: pushBack($colorItemFg, 15%);
 $colorItemIc: $colorKey;
@@ -278,12 +310,6 @@ $colorCalCellSelectedBg: $colorItemTreeSelectedBg;
 $colorCalCellSelectedFg: $colorItemTreeSelectedFg;
 $colorCalCellInMonthBg: pullForward($colorMenuBg, 5%);
 
-// Palettes
-$colorPaletteFg: pullForward($colorMenuBg, 30%);
-$colorPaletteSelected: #333;
-$shdwPaletteFg: none;
-$shdwPaletteSelected: inset 0 0 0 1px #fff;
-
 // About Screen
 $colorAboutLink: #84b3ff;
 
@@ -292,8 +318,10 @@ $colorLoadingFg: $colorAlt1;
 $colorLoadingBg: rgba($colorLoadingFg, 0.1);
 
 // Transitions
-$transIn: all 50ms ease-in;
-$transOut: all 250ms ease-out;
+$transIn: all 50ms ease-in-out;
+$transOut: all 250ms ease-in-out;
+$transInBounce: all 200ms cubic-bezier(.47,.01,.25,1.5);
+$transInBounceBig: all 300ms cubic-bezier(.2,1.6,.6,3);
 
 // Discrete items, like Notebook entries, Widget rules
 @mixin discreteItem() {

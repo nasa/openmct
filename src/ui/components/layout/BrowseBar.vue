@@ -1,7 +1,7 @@
 <template>
     <div class="l-browse-bar">
         <div class="l-browse-bar__start">
-            <a class="l-browse-bar__nav-to-parent-button c-icon-button icon-pointer-left"></a>
+            <button class="l-browse-bar__nav-to-parent-button c-click-icon icon-pointer-left"></button>
             <div class="l-browse-bar__object-name--w"
                  :class="type.cssClass">
                 <span
@@ -15,16 +15,16 @@
         </div>
 
         <div class="l-browse-bar__end">
-            <div class="l-browse-bar__view-switcher c-menu-button--w c-menu-button--menus-left"
+            <div class="l-browse-bar__view-switcher c-ctrl-wrapper c-ctrl-wrapper--menus-left"
                  v-if="views.length > 1">
-                <div class="c-menu-button"
+                <button class="c-button--menu"
                      :class="currentView.cssClass"
                      title="Switch view type"
                      @click="toggleViewMenu">
                     <span class="c-button__label">
                           {{ currentView.name }}
                     </span>
-                </div>
+                </button>
                 <div class="c-menu" v-show="showViewMenu">
                     <ul>
                         <li v-for="(view, index) in views"
@@ -39,9 +39,8 @@
             </div>
             <!-- Action buttons -->
             <div class="l-browse-bar__actions">
-                <div class="l-browse-bar__action c-button icon-eye-open" title="Preview"></div>
-                <div class="l-browse-bar__action c-button icon-notebook" title="New Notebook entry"></div>
-                <div class="l-browse-bar__action c-button c-button--major icon-pencil" title="Edit"></div>
+                <button class="l-browse-bar__actions__notebook-entry c-button icon-notebook" title="New Notebook entry"></button>
+                <button class="l-browse-bar__actions__edit c-button c-button--major icon-pencil" title="Edit"></button>
             </div>
         </div>
     </div>
@@ -112,8 +111,6 @@
 
 <style lang="scss">
     @import "~styles/sass-base";
-
-    /******************************* START */
 
     .l-browse-bar {
         display: flex;

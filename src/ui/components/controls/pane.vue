@@ -14,11 +14,11 @@
              class="l-pane__handle"
              @mousedown="start">
         </div>
-        <a v-if="label"
+        <button v-if="label"
            class="l-pane__collapse-button"
            @click="toggleCollapse">
             <span class="l-pane__label">{{ label }}</span>
-        </a>
+        </button>
         <div class="l-pane__contents">
             <slot></slot>
         </div>
@@ -251,8 +251,8 @@
                 &[class*="--collapsed"] {
                     > .l-pane__collapse-button {
                         position: absolute;
-                        bottom: 0; left: 0;
-                        height: auto;
+                        top: 0; right: 0; bottom: 0; left: 0;
+                        height: auto; width: 100%;
 
                         [class*="label"] {
                             position: absolute;
@@ -263,7 +263,7 @@
                         &:after {
                             background: none;
                             padding: 0;
-                            top: $interiorMarginSm;
+                            top: $interiorMargin;
                             left: 50%;
                             right: auto;
                             transform: translateX(-50%);
