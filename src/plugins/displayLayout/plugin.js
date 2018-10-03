@@ -58,7 +58,7 @@ export default function () {
                 };
             },
             priority() {
-                return 1;
+                return 100;
             }
         });
     }
