@@ -258,18 +258,13 @@ button {
         padding-left: $inputTextPLeftRight;
         padding-right: $inputTextPLeftRight;
     }
-}
-
-    &--labeled {
-        // TODO: replace .c-labeled-input with this
-    // An input used in the Toolbar
-    // Assumes label is before the input
-    @include cControl();
-
-    input {
-        margin-left: $interiorMarginSm;
+    &:hover {
+        border-color: rgba($colorBodyFg, 0.2);
     }
-}
+    &:focus {
+        @include nice-input($shdw: rgba(0, 0, 0, 0.6) 0 1px 3px);
+        border-color: transparent;
+    }
 }
 
 .c-labeled-input {
