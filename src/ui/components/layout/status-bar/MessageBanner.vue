@@ -17,11 +17,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-    <span class="c-status">
-    <indicators></indicators>
-    <message-banner></message-banner>
-    <mct-include key="'about-logo'"></mct-include>
-    </span>
+<div></div>
 </template>
 
 <style lang="scss">
@@ -29,13 +25,21 @@
 </style>
 
 <script>
-    import Indicators from './Indicators.vue';
-    import MessageBanner from './MessageBanner.vue';
-
     export default {
-        components: {
-            Indicators,
-            MessageBanner
+        inject: ['openmct'],
+        data() {
+            return {
+                activeNotification: undefined
+            }
+        },
+        methods: {
+            showNotification(notification) {
+                this.activeNotification = notification;
+            }
+        },
+        mounted() {
+            openmct.notifications.on('notification', this.showNotification);
         }
+
     }
 </script>
