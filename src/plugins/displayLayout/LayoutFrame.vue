@@ -28,7 +28,7 @@
          @dblclick="drill(item.id, $event)">
         <div class="c-frame__header">
             <div class="c-frame__header__start">
-                <div class="c-frame__name icon-object">Header</div>
+                <div class="c-frame__name icon-object">{{ item.domainObject.name }}</div>
                 <div class="c-frame__context-actions c-disclosure-button"></div>
             </div>
             <div class="c-frame__header__end">
