@@ -177,7 +177,6 @@ export default {
                         items.push({
                             model: model,
                             type: type.definition,
-                            key: this.domainObject.identifier.key,
                             isAlias: this.domainObject.identifier.key !== model.location
                         });
                     });

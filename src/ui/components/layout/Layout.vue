@@ -179,7 +179,7 @@
         &__time-conductor {
             border-top: 1px solid $colorInteriorBorder;
             flex: 0 0 auto;
-            padding: $interiorMargin;
+            padding-top: $interiorMargin;
         }
 
         body.desktop & {
