@@ -1,6 +1,6 @@
 <template>
     <li class="c-tree__item-h">
-        <div class="c-tree__item" draggable="true" @dragstart="dragStart">
+        <div class="c-tree__item"
             :class="{ 'is-alias' : isAlias }">
             <view-control class="c-tree__item__view-control"
                           :enabled="hasChildren"
@@ -8,6 +8,7 @@
                           @click="toggleChildren">
             </view-control>
             <a class="c-tree__item__label"
+               draggable="true" @dragstart="dragStart"
                :href="href">
                 <div class="c-tree__item__type-icon"
                       :class="cssClass"></div>
