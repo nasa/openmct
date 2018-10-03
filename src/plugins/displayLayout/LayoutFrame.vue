@@ -76,13 +76,19 @@
                 align-items: center;
             }
 
+            > * + * {
+                margin-left: $interiorMargin;
+            }
+
             [class*="__start"] {
-                flex: 0 0 auto;
+                @include test();
+                flex: 1 1 auto;
+                overflow: hidden;
             }
 
             [class*="__end"] {
-                justify-content: flex-end;
-                flex: 1 1 auto;
+                //justify-content: flex-end;
+                flex: 0 0 auto;
 
                 [class*="button"] {
                     font-size: 0.7em;
