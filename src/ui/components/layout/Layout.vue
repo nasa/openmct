@@ -46,7 +46,7 @@
             </pane>
         </multipane>
         <div class="l-shell__status">
-            <MctStatus></MctStatus>
+            <StatusBar></StatusBar>
         </div>
     </div>
 </template>
@@ -202,7 +202,6 @@
 
 <script>
     import Inspector from '../inspector/Inspector.vue';
-    import MctStatus from './MctStatus.vue';
     import MctTree from './mct-tree.vue';
     import ObjectView from './ObjectView.vue';
     import MctTemplate from '../legacy/mct-template.vue';
@@ -212,6 +211,7 @@
     import multipane from '../controls/multipane.vue';
     import pane from '../controls/pane.vue';
     import BrowseBar from './BrowseBar.vue';
+    import StatusBar from './status-bar/StatusBar.vue';
 
     var enterFullScreen = () => {
         var docElm = document.documentElement;
@@ -244,7 +244,6 @@
     export default {
         components: {
             Inspector,
-            MctStatus,
             MctTree,
             ObjectView,
             'mct-template': MctTemplate,
@@ -253,7 +252,8 @@
             search,
             multipane,
             pane,
-            BrowseBar
+            BrowseBar,
+            StatusBar
         },
         data: function () {
             return {
