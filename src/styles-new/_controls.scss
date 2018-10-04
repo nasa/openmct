@@ -78,7 +78,7 @@
         &:hover {
             background: $colorBtnCautionBgHov;
         }
-}
+    }
 }
 
 @mixin cClickIcon() {
@@ -111,23 +111,23 @@
     // Wraps --menu elements, contains button and menu
     overflow: visible;
 
-        .c-menu {
+    .c-menu {
         // Default position of contained menu
-            top: 100%; left: 0;
-        }
+        top: 100%; left: 0;
+    }
 
     &[class*='--menus-up'] {
-            .c-menu {
-                top: auto; bottom: 100%;
-            }
-        }
-
-    &[class*='--menus-left'] {
-            .c-menu {
-                left: auto; right: 0;
-            }
+        .c-menu {
+            top: auto; bottom: 100%;
         }
     }
+
+    &[class*='--menus-left'] {
+        .c-menu {
+            left: auto; right: 0;
+        }
+    }
+}
 
 /********* Buttons */
 // Optionally can include icon in :before via markup
@@ -237,38 +237,11 @@ button {
 }
 
 /******************************************************** FORM ELEMENTS */
-input, textarea {
-    font-family: inherit;
-    font-weight: inherit;
-    letter-spacing: inherit;
-}
-
-input[type=text],
-input[type=search],
-input[type=number] {
-    @include reactive-input();
-    padding: $inputTextP;
-    &.numeric {
-        text-align: right;
-    }
-}
-
-.c-input {
-    &--datetime {
-        // Sized for values such as 2018-09-28 22:32:33.468Z
-        width: 160px;
-    }
-
-    &--hrs-min-sec {
-        // Sized for values such as 00:25:00
-        width: 60px;
-    }
-
-    &-inline,
-    &--inline {
-// A text input or contenteditable element that indicates edit affordance on hover and looks like an input on focus
-    @include reactive-input();
-    box-shadow: none;
+/********* Inline inputs */
+.c-input-inline {
+    // A text input or contenteditable element that indicates edit affordance on hover and looks like an input on focus
+    @include input-base();
+    border: 1px solid transparent;
     display: block !important;
     min-width: 0;
     padding-left: 0;
@@ -286,10 +259,16 @@ input[type=number] {
         padding-left: $inputTextPLeftRight;
         padding-right: $inputTextPLeftRight;
     }
+    &:hover {
+        border-color: rgba($colorBodyFg, 0.2);
+    }
+    &:focus {
+        @include nice-input($shdw: rgba(0, 0, 0, 0.6) 0 1px 3px);
+        border-color: transparent;
+    }
 }
 
-    &--labeled {
-        // TODO: replace .c-labeled-input with this
+.c-labeled-input {
     // An input used in the Toolbar
     // Assumes label is before the input
     @include cControl();
@@ -298,6 +277,16 @@ input[type=number] {
         margin-left: $interiorMarginSm;
     }
 }
+
+/******************************************************** HYPERLINKS AND HYPERLINK BUTTONS */
+.c-hyperlink {
+    &--link {
+        color: $colorKey;
+    }
+
+    &--button {
+        @include cButton();
+    }
 }
 
 .c-labeled-input {
@@ -358,6 +347,10 @@ input[type=number] {
             margin-right: $interiorMargin;
         }
     }
+}
+
+@mixin modalMenu() {
+    // Optional modifier that makes a c-menu more mobile-friendly
 }
 
 .c-menu {
@@ -582,10 +575,4 @@ input[type=number] {
             }
         }
     }
-}
-
-/***************************************************** SLIDERS */
-.c-slider {
-    @include cControl();
-    > * + * { margin-left: $interiorMargin; }
 }

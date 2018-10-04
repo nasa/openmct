@@ -113,7 +113,7 @@
 .icon-refresh {  @include glyphBefore($glyph-icon-refresh); }
 .icon-save {  @include glyphBefore($glyph-icon-save); }
 .icon-sine {  @include glyphBefore($glyph-icon-sine); }
-.icon-T {  @include glyphBefore($glyph-icon-T); }
+.icon-font {  @include glyphBefore($glyph-icon-font); }
 .icon-thumbs-strip {  @include glyphBefore($glyph-icon-thumbs-strip); }
 .icon-two-parts-both {  @include glyphBefore($glyph-icon-two-parts-both); }
 .icon-two-parts-one-only {  @include glyphBefore($glyph-icon-two-parts-one-only); }
@@ -130,6 +130,7 @@
 .icon-frame-hide {  @include glyphBefore($glyph-icon-frame-hide); }
 .icon-import {  @include glyphBefore($glyph-icon-import); }
 .icon-export {  @include glyphBefore($glyph-icon-export); }
+.icon-font-size {  @include glyphBefore($glyph-icon-font-size); }
 .icon-activity {  @include glyphBefore($glyph-icon-activity); }
 .icon-activity-mode {  @include glyphBefore($glyph-icon-activity-mode); }
 .icon-autoflow-tabular {  @include glyphBefore($glyph-icon-autoflow-tabular); }

@@ -49,7 +49,7 @@
     font-style: normal;
 }
 
-/******************************* RESETS */
+/******************************************************** RESETS */
 *,
 :before,
 :after {
@@ -60,7 +60,7 @@ div {
     position: relative;
 }
 
-/******************************* UTILITIES */
+/******************************************************** UTILITIES */
 .u-contents {
     display: contents;
 }
@@ -74,7 +74,7 @@ div {
     }
 }
 
-/******************************* BROWSER ELEMENTS */
+/******************************************************** BROWSER ELEMENTS */
 body.desktop {
     ::-webkit-scrollbar {
         box-sizing: border-box;
@@ -109,6 +109,13 @@ body.desktop {
     ::-webkit-scrollbar-corner {
         background: transparent;
     }
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    //margin: -1px -5px inherit -5px !important;
+    margin-right: -5px !important;
+    margin-top: -1px !important;
 }
 
 /************************** HTML ENTITIES */
@@ -175,7 +182,6 @@ li {
     padding: 0;
 }
 
-
 /******************************************************** HAS */
 // Local Controls: Controls placed in proximity to or overlaid on components and views
 body.desktop .has-local-controls {
@@ -217,7 +223,21 @@ body.desktop .has-local-controls {
     //}
 //}
 
-/************************** LEGACY */
+/******************************************************** IS */
+
+.is-selectable {
+    &:hover {
+        
+    }
+
+}
+
+.is-editing {
+    .is-selectable {
+
+    }
+}
+/******************************************************** LEGACY */
 
 mct-container {
     display: block;
@@ -287,21 +307,6 @@ a.disabled {
 
 .centered {
     text-align: center;
-}
-
-.no-selection {
-    // aka selection = "None". Used in palettes and their menu buttons.
-    $c: red;
-    $s: 48%;
-    $e: 52%;
-    background-image: linear-gradient(-45deg,
-            transparent $s - 5%,
-            $c $s,
-            $c $e,
-            transparent $e + 5%
-    );
-    background-repeat: no-repeat;
-    background-size: contain;
 }
 
 .scrolling,
@@ -385,4 +390,9 @@ a.disabled {
 /************************** TEMP LEGACY FIXES */
 .t-imagery {
     display: contents;
+}
+
+.t-frame-outer {
+    min-width: 200px;
+    min-height: 200px;
 }

@@ -177,7 +177,6 @@
     }
 }
 
-
 @mixin input-base() {
     @include htmlInputReset();
     border-radius: $controlCr;

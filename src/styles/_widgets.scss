@@ -21,6 +21,26 @@
  *****************************************************************************/
 
 /************************************************************* WIDGET OBJECT */
+@mixin cSummaryWidget() {
+    @include boxShdw($shdwBtns);
+    border-radius: $basicCr;
+    border-style: solid;
+    border-width: 1px;
+    cursor: default;
+    &[href] {
+        cursor: pointer;
+    }
+
+    &__label {
+        &:before {
+            // Widget icon
+            font-size: 0.9em;
+            margin-right: $interiorMarginSm;
+        }
+    }
+
+}
+
 .l-summary-widget {
     // Widget layout classes here
     @include ellipsize();
@@ -33,19 +53,9 @@
     }
 }
 
-.s-summary-widget {
-    // Widget style classes here
-    @include boxShdw($shdwBtns);
-    border-radius: $basicCr;
-    border-style: solid;
-    border-width: 1px;
-    box-sizing: border-box;
-    cursor: default;
-    font-size: 0.8rem;
+.c-summary-widget {
+    @include cSummaryWidget();
     padding: $interiorMarginLg $interiorMarginLg * 2;
-    &[href] {
-        cursor: pointer;
-    }
 }
 
 .widget-edit-holder {
@@ -267,7 +277,6 @@
 
 .widget-thumb {
     @include ellipsize();
-    @extend .s-summary-widget;
-    @extend .l-summary-widget;
+    @include cSummaryWidget();
     padding: $interiorMarginSm $interiorMargin;
 }

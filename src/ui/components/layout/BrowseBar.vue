@@ -142,7 +142,6 @@
             display: flex;
             align-items: center;
             flex: 1 1 auto;
-            font-size: 1.4em;
             margin-right: $interiorMargin;
             min-width: 0; // Forces interior to compress when pushed on
         }
@@ -174,6 +173,7 @@
             align-items: center;
             display: flex;
             flex: 0 1 auto;
+            font-size: 1.4em;
             min-width: 0;
 
             &:before {

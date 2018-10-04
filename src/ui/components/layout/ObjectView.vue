@@ -2,7 +2,7 @@
 </template>
 
 <style lang="scss">
-    .l-object-view {
+    .c-object-view {
         display: contents;
     }
 </style>
@@ -33,6 +33,7 @@ export default {
         this.debounceUpdateView = _.debounce(this.updateView, 10);
     },
     mounted() {
+        this.currentObject = this.object;
         this.updateView();
     },
     methods: {
@@ -50,7 +51,7 @@ export default {
                 return;
             }
             this.viewContainer = document.createElement('div');
-            this.viewContainer.classList.add('l-object-view');
+            this.viewContainer.classList.add('c-object-view');
             this.$el.append(this.viewContainer);
             let provider = this.openmct.objectViews.getByProviderKey(this.viewKey);
             if (!provider) {

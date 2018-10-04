@@ -8,6 +8,8 @@
                           @click="toggleChildren">
             </view-control>
             <a class="c-tree__item__label"
+               draggable="true"
+               @dragstart="dragStart"
                :href="href">
                 <div class="c-tree__item__type-icon"
                       :class="cssClass"></div>
@@ -89,6 +91,9 @@
                         .then(() => this.loaded = true);
                 }
             },
+            dragStart($event) {
+                $event.dataTransfer.setData("domainObject", JSON.stringify(this.node.object));
+            }
         },
         components: {
             viewControl

@@ -27,10 +27,12 @@
                     <mct-tree></mct-tree>
                 </div>
             </pane>
-            <pane class="l-shell__pane-main">
+            <pane class="l-shell__pane-main"
+                :class="{ 'is-editing' : true }">
                 <browse-bar class="l-shell__main-view-browse-bar"
-                                   ref="browseBar">
+                            ref="browseBar">
                 </browse-bar>
+                <toolbar class="l-shell__toolbar"></toolbar>
                 <object-view class="l-shell__main-container"
                              ref="browseObject">
                 </object-view>
@@ -162,7 +164,7 @@
             margin-right: 2.5%;
         }
 
-        /********** MAIN AREA */
+        /******************************* MAIN AREA */
         &__main-container {
             // Wrapper for main views
             flex: 1 1 auto;
@@ -196,6 +198,11 @@
             &__pane-inspector {
                 width: 200px;
             }
+
+            &__toolbar {
+                flex: 0 0 auto;
+                margin-bottom: $interiorMargin;
+            }
         }
     }
 </style>
@@ -212,6 +219,7 @@
     import multipane from '../controls/multipane.vue';
     import pane from '../controls/pane.vue';
     import BrowseBar from './BrowseBar.vue';
+    import Toolbar from './Toolbar.vue';
 
     var enterFullScreen = () => {
         var docElm = document.documentElement;
@@ -257,7 +265,8 @@
             search,
             multipane,
             pane,
-            BrowseBar
+            BrowseBar,
+            Toolbar
         },
         mounted() {
             this.openmct.editor.on('isEditing', (isEditing)=>{
