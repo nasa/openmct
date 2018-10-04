@@ -5,7 +5,7 @@ exported using this tool can then be exposed as read-only static root trees usin
 [Static Root Plugin](../../src/plugins/staticRootPlugin/README.md).
 
 Upon installation it will add two new context menu actions to allow import and export of objects. Initiating the Export 
-action on an object will produce a JSON file that includes the object and all of its composed children. Selecting import 
+action on an object will produce a JSON file that includes the object and all of its composed children. Selecting Import 
 on an object will allow the user to import a previously exported object tree as a child of the selected object.
 
 ## Installation
