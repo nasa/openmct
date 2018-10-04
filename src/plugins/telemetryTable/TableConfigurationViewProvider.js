@@ -33,30 +33,6 @@ define([
 ) {
 
     function TableConfigurationViewProvider(openmct) {
-        let instantiateService;
-
-        function isBeingEdited(object) {
-            let oldStyleObject = getOldStyleObject(object);
-
-            return oldStyleObject.hasCapability('editor') &&
-                oldStyleObject.getCapability('editor').inEditContext();
-        }
-
-        function getOldStyleObject(object) {
-            let oldFormatModel = objectUtils.toOldFormat(object);
-            let oldFormatId = objectUtils.makeKeyString(object.identifier);
-
-            return instantiate(oldFormatModel, oldFormatId);
-        }
-
-        function instantiate(model, id) {
-            if (!instantiateService) {
-                instantiateService = openmct.$injector.get('instantiate');
-            }
-            return instantiateService(model, id);
-        }
-
-
         return {
             key: 'table-configuration',
             name: 'Telemetry Table Configuration',
@@ -65,8 +41,7 @@ define([
                     return false;
                 }
                 let object = selection[0].context.item;
-                return object.type === 'table' &&
-                    isBeingEdited(object);
+                return object.type === 'table';
             },
             view: function (selection) {
                 let component;
@@ -86,7 +61,7 @@ define([
                             el: element
                         });
                     },
-                    destroy: function (element) {
+                    destroy: function () {
                         component.$destroy();
                         component = undefined;
                     }
