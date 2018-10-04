@@ -168,7 +168,7 @@ define([
      * @memberof module:openmct.CompositionProvider#
      * @method add
      */
-    DefaultCompositionProvider.prototype.add = function (domainObject, childId) {
+    DefaultCompositionProvider.prototype.add = function (domainObject, child) {
         throw new Error('Default Provider does not implement adding.');
         // TODO: this needs to be synchronized via mutation
     };
