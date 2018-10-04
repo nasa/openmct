@@ -132,7 +132,7 @@ define(['EventEmitter'], function (EventEmitter) {
         }
 
         return function () {
-            element.removeEventListener('click', capture);
+            element.removeEventListener('click', capture, true);
             element.removeEventListener('click', selectCapture);
 
             if (unlisten) {
