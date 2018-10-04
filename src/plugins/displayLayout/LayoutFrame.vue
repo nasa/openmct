@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 <template>
-    <!-- - TODO: styles for selectable, moveable, etc. -->
     <div class="c-frame has-local-controls is-selectable is-moveable"
          :style="item.style"
          :class="classObject"
@@ -262,11 +261,6 @@
             }
         },
         methods: {
-            setSelection(selection) {
-                if (selection.length === 0) {
-                    return;
-                }
-            },
             drill(id, $event) {
                 if ($event) {
                     $event.stopPropagation();
@@ -336,11 +330,8 @@
                 },
                 this.item.initSelect
             );
-
-            this.openmct.selection.on('change', this.setSelection);
         },
         destroyed() {
-            this.openmct.off('change', this.selection);
             this.removeSelectable();
         }
     }

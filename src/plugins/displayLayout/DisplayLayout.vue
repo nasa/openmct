@@ -134,7 +134,6 @@
             LayoutFrame
         },
         created: function () {
-            console.log("created()", JSON.parse(JSON.stringify(this.domainObject)));
             this.newDomainObject = this.domainObject;
             this.gridSize = this.newDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;
             this.composition = this.openmct.composition.get(this.newDomainObject);
@@ -181,7 +180,6 @@
                 });
             },
             onAddComposition(domainObject) {
-                console.log('onAddComposition', JSON.parse(JSON.stringify(domainObject)));
                 let id = this.openmct.objects.makeKeyString(domainObject.identifier);
                 this.rawPositions[id] = {
                     position: [
@@ -309,7 +307,6 @@
             },
             handleDragOver($event){
                 $event.preventDefault();
-                // $event.dataTransfer.dropEffect = 'move';
             }
         },
         mounted() {
