@@ -69,7 +69,6 @@ define(
          * Enter edit mode.
          */
         EditAction.prototype.perform = function () {
-
             //If this is not the currently navigated object, then navigate
             // to it.
             if (this.navigationService.getNavigation() !== this.domainObject) {

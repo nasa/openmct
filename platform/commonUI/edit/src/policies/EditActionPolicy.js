@@ -77,7 +77,7 @@ define(
             var domainObject = (context || {}).domainObject;
             return domainObject &&
                 domainObject.hasCapability('editor') &&
-                domainObject.getCapability('editor').isEditContextRoot();
+                domainObject.getCapability('editor').inEditContext();
         }
 
         EditActionPolicy.prototype.allow = function (action, context) {
