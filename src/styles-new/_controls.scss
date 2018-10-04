@@ -360,10 +360,6 @@ input[type=number] {
     }
 }
 
-@mixin modalMenu() {
-    // Optional modifier that makes a c-menu more mobile-friendly
-}
-
 .c-menu {
     @include menuOuter();
     @include menuInner();

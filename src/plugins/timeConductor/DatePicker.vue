@@ -23,7 +23,7 @@
     <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up c-datetime-picker__wrapper" ref="calendarHolder">
         <a class="c-click-icon icon-calendar"
            @click="togglePicker()"></a>
-        <div class="c-menu c-datetime-picker"
+        <div class="c-menu c-menu--mobile-modal c-datetime-picker"
              v-if="showPicker">
             <div class="c-datetime-picker__close-button">
                 <button class="c-click-icon icon-x-in-circle"
@@ -68,6 +68,10 @@
         flex-direction: column;
         > * + * {
             margin-top: $interiorMargin;
+        }
+
+        &__close-button {
+            display: none; // Only show when body.phone, see below.
         }
 
         &__pager {
@@ -138,16 +142,13 @@
     /******************************************************** MOBILE */
     body.phone {
         .c-datetime-picker {
-            position: fixed;
-            border-radius: 0;
-            top: 0 !important; right: 0 !important; bottom: 0 !important; left: 0 !important;
+            &.c-menu {
+                @include modalFullScreen();
+            }
 
             &__close-button {
                 display: flex;
                 justify-content: flex-end;
-                .c-click-icon {
-                  //  border-radius: 100%;
-                }
             }
         }
 
