@@ -31,42 +31,37 @@ define([
     function OverlayService() {
         this.activeOverlays = [];
         this.overlayId = 0;
-        this.onDestroyCallbacks = {};
     }
 
-    OverlayService.prototype.show  = function (element, onDestroyCallback) {
+    OverlayService.prototype.show  = function (element, options) {
         if(this.activeOverlays.length) {
             this.activeOverlays[this.activeOverlays.length - 1].overlay.classList.add('invisible');
         }
 
-        let overlayTypeCssClass = 'l-large-view'; // Values could be l-large-view, l-dialog, l-message
-        this.overlay = document.createElement('div');
-        this.overlay.classList.add('l-overlay-wrapper', overlayTypeCssClass);
+        let overlayTypeCssClass = options.cssClass, // Values could be l-large-view, l-dialog, l-message
+            overlay = document.createElement('div'),
+            component = new Vue({
+                provide: {
+                    destroy: this.destroy.bind(this),
+                    element: element
+                },
+                components: {
+                    OverlayComponent: OverlayComponent.default
+                },
+                template: '<overlay-component></overlay-component>'
+            });
 
-        document.body.appendChild(this.overlay);
+        overlay.classList.add('l-overlay-wrapper', overlayTypeCssClass);
+        document.body.appendChild(overlay);
 
-        this.component = new Vue({
-            provide: {
-                destroy: this.destroy.bind(this),
-                element: element
-            },
-            components: {
-                OverlayComponent: OverlayComponent.default
-            },
-            template: '<overlay-component></overlay-component>'
-        });
-
-        this.overlay.appendChild(this.component.$mount().$el);
+        overlay.appendChild(component.$mount().$el);
 
         this.activeOverlays.push({
-            overlay: this.overlay,
-            component: this.component,
+            overlay: overlay,
+            component: component,
+            onDestroy: options.onDestroy,
             id: this.overlayId
         });
-
-        if (onDestroyCallback && typeof onDestroyCallback === 'function') {
-            this.onDestroyCallbacks[this.overlayId] = onDestroyCallback;
-        }
 
         this.overlayId++;
     };
@@ -76,8 +71,8 @@ define([
             lastActiveOverlay = lastActiveOverlayObject.overlay,
             lastActiveComponent = lastActiveOverlayObject.component;
 
-        if (this.onDestroyCallbacks[lastActiveOverlayObject.id]) {
-            this.onDestroyCallbacks[lastActiveOverlayObject.id]();
+        if (lastActiveOverlayObject.onDestroy && typeof lastActiveOverlayObject.onDestroy === 'function') {
+            lastActiveOverlayObject.onDestroy();
         }
 
         lastActiveComponent.$destroy(true);

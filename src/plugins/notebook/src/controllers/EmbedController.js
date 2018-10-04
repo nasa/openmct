@@ -74,7 +74,7 @@ function (
             snapshot.$destroy(true);
         }
 
-        this.openmct.OverlayService.show(snapshot.$mount().$el, onDestroyCallback);
+        this.openmct.OverlayService.show(snapshot.$mount().$el, {onDestroy: onDestroyCallback, cssClass: 'l-large-view'});
     };
 
     EmbedController.prototype.formatTime = function (unixTime, timeFormat) {
