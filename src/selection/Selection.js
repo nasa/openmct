@@ -58,7 +58,7 @@ define(['EventEmitter'], function (EventEmitter) {
             this.selected[0].element.classList.remove('s-selected');
         }
 
-        if (this.selected[1]) {
+        if (this.selected[1] && this.selected[1].element) {
             this.selected[1].element.classList.remove('s-selected-parent');
         }
 
@@ -66,7 +66,7 @@ define(['EventEmitter'], function (EventEmitter) {
             selectable[0].element.classList.add('s-selected');
         }
 
-        if (selectable[1]) {
+        if (selectable[1] && selectable[1].element) {
             selectable[1].element.classList.add('s-selected-parent');
         }
 
@@ -132,7 +132,7 @@ define(['EventEmitter'], function (EventEmitter) {
         }
 
         return function () {
-            element.removeEventListener('click', capture);
+            element.removeEventListener('click', capture, true);
             element.removeEventListener('click', selectCapture);
 
             if (unlisten) {
