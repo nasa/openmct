@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// VERSION MANUALLY MIGRATED FROM VUE-TOOLBAR
-
 /******************************************************** PLACEHOLDERS */
 @mixin cControl() {
     $fs: 1em;
@@ -133,9 +131,12 @@
 
 /********* Buttons */
 // Optionally can include icon in :before via markup
-.c-button,
-.c-button--menu,
 button {
+    @include htmlInputReset();
+}
+
+.c-button,
+.c-button--menu {
     @include cButton();
 }
 

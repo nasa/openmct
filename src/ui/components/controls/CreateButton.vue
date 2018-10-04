@@ -1,9 +1,9 @@
 <template>
     <div class="c-create-button--w">
-        <div class="c-create-button c-button--menu c-button--major icon-plus"
+        <button class="c-create-button c-button--menu c-button--major icon-plus"
              @click="toggleCreateMenu">
             <span class="c-button__label">Create</span>
-        </div>
+        </button>
         <div class="c-create-menu c-super-menu"
              v-if="showCreateMenu">
             <div class="c-super-menu__menu">

@@ -31,6 +31,20 @@
     width: $d;
 }
 
+@mixin isAlias() {
+    &:after {
+        color:$colorIconAlias;
+        content: $glyph-icon-link;
+        display: block;
+        font-family: symbolsfont;
+        position: absolute;
+        text-shadow: rgba(black, 0.5) 0 1px 4px;
+        top: auto; left: 0; bottom: 10%; right: auto;
+        transform-origin: left bottom;
+        transform: scale(0.5);
+    }
+}
+
 @mixin bgDiagonalStripes($c: yellow, $a: 0.1, $d: 40px) {
     background-image: linear-gradient(-45deg,
         rgba($c, $a) 25%, transparent 25%,
@@ -128,6 +142,13 @@
     grid-column: 1 / 3;
 }
 
+@mixin modalFullScreen() {
+    // Optional modifier that makes a c-menu more mobile-friendly
+    position: fixed;
+    border-radius: 0;
+    top: 0; right: 0; bottom: 0; left: 0;
+}
+
 /************************** TEXT */
 @mixin ellipsize() {
     overflow: hidden;
@@ -141,20 +162,25 @@
     unicode-bidi:bidi-override;
 }
 
-@mixin test($c: #ffcc00, $a: 0.2) {
-    background-color: rgba($c, $a) !important;
-}
-
 /************************** CONTROLS, BUTTONS */
-@mixin input-base() {
+@mixin htmlInputReset() {
     appearance: none;
+    background: none;
+    background-color: transparent;
     border: none;
-    border-radius: $controlCr;
+    border-radius: 0;
     outline: none;
+    text-align: inherit;
 
     &:focus {
         outline: 0;
     }
+}
+
+
+@mixin input-base() {
+    @include htmlInputReset();
+    border-radius: $controlCr;
 
     &.error {
         background-color: $colorFormFieldErrorBg;
@@ -276,4 +302,8 @@
         cursor: grabbing;
         cursor: -webkit-grabbing;
     }
+}
+
+@mixin test($c: deeppink, $a: 0.3) {
+    background-color: rgba($c, $a) !important;
 }
