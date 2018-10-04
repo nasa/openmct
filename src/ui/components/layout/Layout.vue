@@ -98,7 +98,7 @@
             }
         }
 
-        @include phonePortrait() {
+        body.phone.portrait & {
             &__pane-tree {
                 width: calc(100% - #{$mobileMenuIconD});
 

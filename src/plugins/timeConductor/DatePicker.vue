@@ -20,12 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up" ref="calendarHolder">
+    <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up c-datetime-picker__wrapper" ref="calendarHolder">
         <a class="c-click-icon icon-calendar"
            @click="togglePicker()"></a>
-        <div class="c-menu c-datetime-picker"
+        <div class="c-menu c-menu--mobile-modal c-datetime-picker"
              v-if="showPicker">
-            <div class="c-datetime-picker__month-year-pager c-pager l-month-year-pager">
+            <div class="c-datetime-picker__close-button">
+                <button class="c-click-icon icon-x-in-circle"
+                        @click="togglePicker()"></button>
+            </div>
+            <div class="c-datetime-picker__pager c-pager l-month-year-pager">
                 <div class="c-pager__prev c-click-icon icon-arrow-left"
                    @click="changeMonth(-1)"></div>
                 <div class="c-pager__month-year">{{model.month}} {{model.year}}</div>
@@ -60,11 +64,23 @@
     .c-datetime-picker {
         @include userSelectNone();
         padding: $interiorMarginLg !important;
-        display: flex;
+        display: flex !important; // Override .c-menu display: block;
         flex-direction: column;
         > * + * {
-            border-top: 1px solid $colorInteriorBorder;
             margin-top: $interiorMargin;
+        }
+
+        &__close-button {
+            display: none; // Only show when body.phone, see below.
+        }
+
+        &__pager {
+            flex: 0 0 auto;
+        }
+
+        &__calendar {
+            border-top: 1px solid $colorInteriorBorder;
+            flex: 1 1 auto;
         }
     }
 
@@ -90,6 +106,7 @@
         grid-template-columns: repeat(7, min-content);
         grid-template-rows: auto;
         grid-gap: 1px;
+        height: 100%;
 
         $mutedOpacity: 0.7;
 
@@ -106,6 +123,7 @@
         li {
             display: flex;
             flex-direction: column;
+            justify-content: center !important;
             padding: $interiorMargin;
 
             &.is-in-month {
@@ -118,6 +136,24 @@
                 opacity: $mutedOpacity;
                 font-size: 0.8em;
             }
+        }
+    }
+
+    /******************************************************** MOBILE */
+    body.phone {
+        .c-datetime-picker {
+            &.c-menu {
+                @include modalFullScreen();
+            }
+
+            &__close-button {
+                display: flex;
+                justify-content: flex-end;
+            }
+        }
+
+        .c-calendar {
+            grid-template-columns: repeat(7, auto);
         }
     }
 </style>
