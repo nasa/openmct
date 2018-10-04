@@ -40,18 +40,16 @@ define([
                 if (selection.length === 0) {
                     return false;
                 }
-                let object = selection[selection.length - 1].context.item;
+                let object = selection[0].context.item;
                 return object.type === 'table' &&
                     openmct.editor.isEditing();
             },
             view: function (selection) {
                 let component;
-                let domainObject = selection[selection.length - 1].context.item;
+                let domainObject = selection[0].context.item;
                 const tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
-                let parentElement;
                 return {
                     show: function (element) {
-                        parentElement = element;
                         component = new Vue({
                             provide: {
                                 openmct,
@@ -60,15 +58,13 @@ define([
                             components: {
                                 TableConfiguration: TableConfigurationComponent.default
                             },
-                            template: '<table-configuration></table-configuration>'
+                            template: '<table-configuration></table-configuration>',
+                            el: element
                         });
-                        element.appendChild(component.$mount().$el);
                     },
                     destroy: function () {
                         component.$destroy();
-                        parentElement.removeChild(component.$el);
                         component = undefined;
-
                     }
                 }
             },

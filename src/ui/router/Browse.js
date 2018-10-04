@@ -7,12 +7,24 @@ define([
     return function install(openmct) {
         let navigateCall = 0;
         let browseObject;
+        let removeSelectable = undefined;
 
 
         function viewObject(object, viewProvider) {
+            if (removeSelectable) {
+                removeSelectable();
+                removeSelectable = undefined;
+            }
             openmct.layout.$refs.browseObject.show(object, viewProvider.key);
             openmct.layout.$refs.browseBar.domainObject = object;
             openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
+            removeSelectable = openmct.selection.selectable(
+                openmct.layout.$refs.browseObject.$el,
+                {
+                    item: object
+                },
+                true
+            );
         };
 
         function navigateToPath(path, currentViewKey) {
@@ -30,14 +42,6 @@ define([
                 }
 
                 let navigatedObject = objects[objects.length - 1];
-                let selection = objects.map((object)=>{
-                    return {
-                        context: {
-                            item: object
-                        }
-                    };
-                });
-                openmct.selection.select(selection);
 
                 openmct.layout.$refs.browseBar.domainObject = navigatedObject;
                 browseObject = navigatedObject;

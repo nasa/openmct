@@ -1,5 +1,6 @@
 <template>
-    <div></div>
+    <div>
+    </div>
 </template>
 
 <style>
@@ -22,13 +23,16 @@
                 let selection = this.openmct.selection.get();
                 if (this.selectedView && this.selectedView.destroy) {
                     this.selectedView.destroy();
+                    delete this.viewContainer;
+                    this.$el.innerHTML = '';
                 }
-                this.$el.innerHTML = '';
                 this.selectedView = this.openmct.inspectorViews.get(selection);
                 if (!this.selectedView) {
                     return;
                 }
-                this.selectedView.show(this.$el);
+                this.viewContainer = document.createElement('div');
+                this.$el.append(this.viewContainer)
+                this.selectedView.show(this.viewContainer);
             }
         }
     }
