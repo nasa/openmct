@@ -41,8 +41,7 @@ define([
                     return false;
                 }
                 let object = selection[0].context.item;
-                return object.type === 'table' &&
-                    openmct.editor.isEditing();
+                return object.type === 'table';
             },
             view: function (selection) {
                 let component;

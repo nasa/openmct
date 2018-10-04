@@ -1,5 +1,5 @@
 <template>
-<div class="c-properties">
+<div class="c-properties" v-if="isEditing">
     <div class="c-properties__header">Table Columns</div>
     <ul class="c-properties__section">
         <li class="c-properties__row" v-for="(title, key) in headers">
@@ -19,6 +19,7 @@ export default {
     data() {
         return {
             headers: {},
+            isEditing: this.openmct.editor.isEditing(),
             configuration: this.tableConfiguration.getConfiguration()
         }
     },
@@ -39,11 +40,14 @@ export default {
         removeObject(objectIdentifier) {
             this.tableConfiguration.removeColumnsForObject(objectIdentifier, true);
             this.updateHeaders(this.tableConfiguration.getAllHeaders());
+        },
+        toggleEdit(isEditing) {
+            this.isEditing = isEditing;
         }
-
     },
     mounted() {
         this.unlisteners = [];
+        this.openmct.editor.on('isEditing', this.toggleEdit);
         let compositionCollection = this.openmct.composition.get(this.tableConfiguration.domainObject);
 
         compositionCollection.load()
@@ -60,6 +64,7 @@ export default {
     },
     destroyed() {
         this.tableConfiguration.destroy();
+        this.openmct.editor.off('isEditing', this.toggleEdit);
         this.unlisteners.forEach((unlisten) => unlisten());
     }
 }
