@@ -1,5 +1,5 @@
 <template>
-    <div class="l-shell">
+    <div class="l-shell" :class="{'is-editing': isEditing}">
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
             <div class="l-shell__controls">
@@ -242,6 +242,10 @@
     }
 
     export default {
+        inject: ['openmct'],
+        data() {
+            return {isEditing: false};
+        },
         components: {
             Inspector,
             MctStatus,
@@ -254,6 +258,11 @@
             multipane,
             pane,
             BrowseBar
+        },
+        mounted() {
+            this.openmct.editor.on('isEditing', (isEditing)=>{
+                this.isEditing = isEditing;
+            });
         },
         data: function () {
             return {

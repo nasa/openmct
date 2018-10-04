@@ -225,6 +225,8 @@ define([
 
         this.Dialog = api.Dialog;
 
+        this.editor = new api.EditorAPI.default(this);
+
         this.OverlayService = new OverlayService();
 
         this.legacyRegistry = defaultRegistry;
@@ -314,13 +316,17 @@ define([
                 this.$injector.get('objectService');
 
                 var appLayout = new Vue({
-                    mixins: [Layout.default],
+                    components: {
+                        'Layout': Layout.default
+                    },
                     provide: {
                         openmct: this
-                    }
+                    },
+                    template: '<Layout ref="layout"></Layout>'
                 });
                 domElement.appendChild(appLayout.$mount().$el);
-                this.layout = appLayout;
+
+                this.layout = appLayout.$refs.layout;
                 Browse(this);
                 this.router.start();
                 this.emit('start');
