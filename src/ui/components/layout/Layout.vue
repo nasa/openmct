@@ -3,14 +3,14 @@
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
             <div class="l-shell__controls">
-                <a class="c-click-icon icon-new-window" title="Open in a new browser tab"
+                <button class="c-click-icon icon-new-window" title="Open in a new browser tab"
                     @click="openInNewTab"
                     target="_blank">
-                </a>
-                <a v-bind:class="['c-click-icon', fullScreen ? 'icon-fullscreen-expand' : 'icon-fullscreen-collapse']"
+                </button>
+                <button v-bind:class="['c-click-icon', fullScreen ? 'icon-fullscreen-expand' : 'icon-fullscreen-collapse']"
                     v-bind:title="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
                     @click="fullScreenToggle">
-                </a>
+                </button>
             </div>
             <div class="l-shell__app-logo">[ App Logo ]</div>
         </div>
@@ -98,7 +98,7 @@
             }
         }
 
-        @include phonePortrait() {
+        body.phone.portrait & {
             &__pane-tree {
                 width: calc(100% - #{$mobileMenuIconD});
 

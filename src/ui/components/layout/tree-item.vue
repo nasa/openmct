@@ -1,15 +1,17 @@
 <template>
     <li class="c-tree__item-h">
-        <div class="c-tree__item">
+        <div class="c-tree__item"
+            :class="{ 'is-alias' : isAlias }">
             <view-control class="c-tree__item__view-control"
                           :enabled="hasChildren"
                           :expanded="expanded"
                           @click="toggleChildren">
             </view-control>
-            <a class="c-tree__item__name c-object-name"
-               :class="cssClass"
+            <a class="c-tree__item__label"
                :href="href">
-                <span class="c-object-name__name">{{ node.object.name }}</span>
+                <div class="c-tree__item__type-icon"
+                      :class="cssClass"></div>
+                <div class="c-tree__item__name">{{ node.object.name }}</div>
             </a>
         </div>
         <ul v-if="expanded" class="c-tree">
@@ -36,7 +38,8 @@
                 loaded: false,
                 children: [],
                 expanded: false,
-                cssClass: 'icon-folder'
+                cssClass: 'icon-object-unknown',
+                isAlias: false
             }
         },
         computed: {
@@ -52,11 +55,14 @@
             // TODO: should highlight if navigated to.
             // TODO: should have context menu.
             // TODO: should support drag/drop composition
+            // TODO: set isAlias per tree-item
+
             let type = this.openmct.types.get(this.node.object.type);
-            if (type) {
+
+            if (type.definition.cssClass) {
                 this.cssClass = type.definition.cssClass;
             } else {
-                console.log("Failed to get typeDef for object", this.node.object.name, this.node.object.type);
+                console.log("Failed to get typeDef.cssClass for object", this.node.object.name, this.node.object.type);
             }
 
             let composition = this.openmct.composition.get(this.node.object);

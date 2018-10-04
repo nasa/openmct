@@ -21,16 +21,17 @@
         }
 
         &__item {
+            $aPad: $interiorMarginSm;
             border-radius: $controlCr;
             display: flex;
             align-items: stretch;
             cursor: pointer;
-            padding: 5px;
+            padding: $interiorMargin - $aPad;
             transition: background 150ms ease;
 
             &:hover {
                 background: $colorItemTreeHoverBg;
-                .c-tree__item__name:before {
+                .c-tree__item__type-icon {
                     // Type icon
                     color: $colorItemTreeIconHover;
                 }
@@ -41,12 +42,39 @@
                 margin-right: $interiorMarginSm;
             }
 
+            &__label {
+                // <a> tag that holds type icon and name.
+                // Draggable element.
+                border-radius: $controlCr;
+                display: flex;
+                align-items: center;
+                flex: 1 1 auto;
+                overflow: hidden;
+                padding: $aPad;
+                white-space: nowrap;
+            }
+
             &__name {
+                @include ellipsize();
+                display: inline;
                 color: $colorItemTreeFg;
                 width: 100%;
-                &:before {
-                    color: $colorItemTreeIcon;
-                    width: $treeTypeIconW;
+            }
+
+            &__type-icon {
+                // Type icon. Must be HTML entity to allow inclusion of alias indicator.
+                display: block;
+                flex: 0 0 auto;
+                font-size: 1.3em;
+                margin-right: $interiorMarginSm;
+                color: $colorItemTreeIcon;
+                width: $treeTypeIconW;
+            }
+
+            &.is-alias {
+                // Object is an alias to an original.
+                [class*='__type-icon'] {
+                    @include isAlias();
                 }
             }
 
@@ -58,26 +86,6 @@
                     width: ceil($mobileTreeItemH * 0.5);
                 }
             }
-        }
-    }
-
-    .c-object-name {
-        display: flex;
-        align-items: center;
-        overflow: hidden;
-        white-space: nowrap;
-
-        &:before {
-            // Type icon
-            display: block;
-            flex: 0 0 auto;
-            font-size: 1.3em;
-            margin-right: $interiorMarginSm;
-        }
-
-        &__name {
-            @include ellipsize();
-            display: inline;
         }
     }
 </style>

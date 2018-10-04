@@ -22,7 +22,7 @@
             </div>
             <div class="c-grid-item__controls">
                 <div class="icon-people" title='Shared'></div>
-                <div class="c-click-icon icon-info c-info-button" title='More Info'></div>
+                <button class="c-click-icon icon-info c-info-button" title='More Info'></button>
                 <div class="icon-pointer-right c-pointer-icon"></div>
             </div>
         </div>
@@ -63,22 +63,15 @@
         &__type-icon {
             filter: $colorKeyFilter;
             flex: 0 0 32px;
+            font-size: 2em; // Drives the size of the alias indicator when present
             margin-right: $interiorMarginLg;
         }
 
         &.is-alias {
             // Object is an alias to an original.
             [class*='__type-icon'] {
-                &:before {
-                    color: $colorIconAliasForKeyFilter;
-                    content: $glyph-icon-link;
-                    display: block;
-                    font-family: symbolsfont;
-                    font-size: 2.5em;
-                    position: absolute;
-                    text-shadow: rgba(black, 0.5) 0 1px 4px;
-                    top: auto; left: 0; bottom: 10px; right: auto;
-                }
+                @include isAlias();
+                color: $colorIconAliasForKeyFilter;
             }
         }
 
@@ -143,6 +136,7 @@
 
             &__type-icon {
                 flex: 1 1 auto;
+                font-size: 6em; // Drives the size of the alias indicator when present
                 margin: $interiorMargin 22.5%;
                 order: 2;
                 transform: scale(0.9);
@@ -189,7 +183,6 @@ export default {
                 }
             });
         }
-        
 
         return {
             items: items
