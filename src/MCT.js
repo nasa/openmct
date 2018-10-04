@@ -40,6 +40,7 @@ define([
     './styles-new/core.scss',
     './styles-new/notebook.scss',
     './ui/components/layout/Layout.vue',
+    './ui/overlayService/overlayService',
     'vue'
 ], function (
     EventEmitter,
@@ -61,6 +62,7 @@ define([
     coreStyles,
     NotebookStyles,
     Layout,
+    OverlayService,
     Vue
 ) {
     /**
@@ -224,6 +226,8 @@ define([
         this.Dialog = api.Dialog;
 
         this.editor = new api.EditorAPI.default(this);
+
+        this.OverlayService = new OverlayService();
 
         this.legacyRegistry = defaultRegistry;
         this.install(this.plugins.Plot());

@@ -224,9 +224,9 @@ $colorThumbsBubbleFg: pullForward($colorBodyFg, 10%);
 $colorThumbsBubbleBg: pullForward($colorBodyBg, 10%);
 
 // Overlay
-$colorOvrBlocker: rgba(black, 0.7);//
-$colorOvrBg: $colorBodyBg;
-$colorOvrFg: $colorBodyFg;
+$colorOvrBlocker: rgba(black, 0.7); // Used
+$colorOvrBg: $colorBodyBg; // Used
+$colorOvrFg: $colorBodyFg; // Used
 $colorOvrBtnBg: pullForward($colorOvrBg, 40%);
 $colorOvrBtnFg: #fff;
 $colorFieldHintOverlay: pullForward($colorOvrBg, 40%);
