@@ -39,8 +39,10 @@
             </div>
             <!-- Action buttons -->
             <div class="l-browse-bar__actions">
-                <button class="l-browse-bar__actions__notebook-entry c-button icon-notebook" title="New Notebook entry"></button>
-                <button class="l-browse-bar__actions__edit c-button c-button--major icon-pencil" title="Edit"></button>
+                <button class="l-browse-bar__actions__edit c-button icon-notebook" title="New Notebook entry"></button>
+                <button class="l-browse-bar__actions__notebook-entry c-button c-button--major icon-pencil" title="Edit" v-if="!isEditing" @click="edit()"></button>
+                <button class="l-browse-bar__actions c-button c-button--major icon-save" title="Save and Finish Editing" v-if="isEditing" @click="saveAndFinishEditing()"></button>
+                <button class="l-browse-bar__actions c-button icon-x" title="Cancel Editing" v-if="isEditing" @click="cancelEditing()"></button>
             </div>
         </div>
     </div>
@@ -65,13 +67,23 @@
                 this.openmct.router.updateParams({
                     view: this.viewKey
                 });
+            },
+            edit() {
+                this.openmct.editor.edit();
+            },
+            cancelEditing() {
+                this.openmct.editor.cancel();
+            },
+            saveAndFinishEditing() {
+                this.openmct.editor.save();
             }
         },
         data: function () {
             return {
                 showViewMenu: false,
                 domainObject: {},
-                viewKey: undefined
+                viewKey: undefined,
+                isEditing: this.openmct.editor.isEditing()
             }
         },
         computed: {
@@ -104,6 +116,10 @@
                 if (this.showViewMenu) {
                     this.showViewMenu = false;
                 }
+            });
+
+            this.openmct.editor.on('isEditing', (isEditing) => {
+                this.isEditing = isEditing;
             });
         }
     }
