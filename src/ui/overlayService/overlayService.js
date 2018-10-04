@@ -39,8 +39,9 @@ define([
             this.activeOverlays[this.activeOverlays.length - 1].overlay.classList.add('invisible');
         }
 
+        let overlayTypeCssClass = 'l-large-view'; // Values could be l-large-view, l-dialog, l-message
         this.overlay = document.createElement('div');
-        this.overlay.classList.add('abs');
+        this.overlay.classList.add('l-overlay-wrapper', overlayTypeCssClass);
 
         document.body.appendChild(this.overlay);
 

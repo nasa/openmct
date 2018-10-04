@@ -20,30 +20,38 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div class="holder flex-elem menus-up time-system">
-    <div class="s-menu-button menu-element"
-        :class="selectedTimeSystem.cssClass">
-
-        <span class="l-click-area" @click="toggleMenu($event)"></span>
-        <span class="title-label" v-if="selectedTimeSystem.name">
-            {{selectedTimeSystem.name}}
-        </span>
-
-        <div class="menu" v-if="showMenu">
+    <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
+         v-if="selectedTimeSystem.name">
+        <div class="c-button--menu c-time-system-button"
+            :class="selectedTimeSystem.cssClass"
+             @click="toggleMenu($event)">
+            <span class="c-button__label">{{selectedTimeSystem.name}}</span>
+        </div>
+        <div class="c-menu" v-if="showMenu">
             <ul>
                 <li @click="setTimeSystemFromView(timeSystem)"
                     v-for="timeSystem in timeSystems"
                     :key="timeSystem.key"
                     :class="timeSystem.cssClass">
-                        {{timeSystem.name}}
+                    {{timeSystem.name}}
                 </li>
             </ul>
         </div>
     </div>
-</div>
 </template>
 
 <style lang="scss">
+    @import "~styles/sass-base";
+
+    .is-realtime-mode {
+        .c-time-system-button {
+            background: $colorTimeBg;
+
+            &:hover {
+                background: $colorTimeHov;
+            }
+        }
+    }
 </style>
 
 <script>
@@ -66,7 +74,7 @@ export default {
         },
 
         setTimeSystemFromView(timeSystem) {
-            if (timeSystem !== this.selectedTimeSystem) {
+            if (timeSystem.key !== this.selectedTimeSystem.key) {
                 let activeClock = this.openmct.time.clock();
                 let configuration = this.getMatchingConfig({
                     clock: activeClock && activeClock.key, 

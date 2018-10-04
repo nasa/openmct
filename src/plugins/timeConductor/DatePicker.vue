@@ -20,35 +20,106 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<span class="menus-up">
-    <a class="ui-symbol icon icon-calendar" ref="calendarButton" @click="togglePicker($event)"></a>
-    <div class="l-datetime-picker s-datetime-picker s-menu" v-if="showPicker" ref="popup">
-        <div class="holder">
-            <div class="l-month-year-pager">
-                <a class="pager prev" ng-click="changeMonth(-1)"></a>
-                <span class="val">{{model.month}} {{model.year}}</span>
-                <a class="pager next" ng-click="changeMonth(1)"></a>
+    <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up" ref="calendarHolder">
+        <a class="c-click-icon icon-calendar"
+           @click="togglePicker()"></a>
+        <div class="c-menu c-datetime-picker"
+             v-if="showPicker">
+            <div class="c-datetime-picker__month-year-pager c-pager l-month-year-pager">
+                <div class="c-pager__prev c-click-icon icon-arrow-left"
+                   @click="changeMonth(-1)"></div>
+                <div class="c-pager__month-year">{{model.month}} {{model.year}}</div>
+                <div class="c-pager__next c-click-icon icon-arrow-right"
+                   @click="changeMonth(1)"></div>
             </div>
-            <div class="l-calendar">
-                <ul class="l-cal-row l-header">
-                    <li v-for="day in ['Su','Mo','Tu','We','Th','Fr','Sa']" :key="day">{{day}}</li>
+            <div class="c-datetime-picker__calendar c-calendar">
+                <ul class="c-calendar__row--header l-cal-row">
+                    <li v-for="day in ['Su','Mo','Tu','We','Th','Fr','Sa']"
+                        :key="day">{{day}}</li>
                 </ul>
-                <ul class="l-cal-row l-body" v-for="(row, index) in table" :key="index">
+                <ul class="c-calendar__row--body"
+                    v-for="(row, index) in table"
+                    :key="index">
                     <li v-for="(cell, index) in row"
                         :key="index"
                         @click="select(cell)"
-                        :class='{ "in-month": isInCurrentMonth(cell), selected: isSelected(cell) }'>
-                        <div class="prime">{{cell.day}}</div>
-                        <div class="sub">{{cell.dayOfYear}}</div>
+                        :class="{ 'is-in-month': isInCurrentMonth(cell), selected: isSelected(cell) }">
+                        <div class="c-calendar__day--prime">{{cell.day}}</div>
+                        <div class="c-calendar__day--sub">{{cell.dayOfYear}}</div>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
-</span>
 </template>
 
 <style lang="scss">
+    @import "~styles/sass-base";
+
+    /******************************************************** PICKER */
+    .c-datetime-picker {
+        @include userSelectNone();
+        padding: $interiorMarginLg !important;
+        display: flex;
+        flex-direction: column;
+        > * + * {
+            border-top: 1px solid $colorInteriorBorder;
+            margin-top: $interiorMargin;
+        }
+    }
+
+    .c-pager {
+        display: grid;
+        grid-column-gap: $interiorMargin;
+        grid-template-rows: 1fr;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+
+        .c-click-icon {
+            font-size: 0.8em;
+        }
+
+        &__month-year {
+            text-align: center;
+        }
+    }
+
+    /******************************************************** CALENDAR */
+    .c-calendar {
+        display: grid;
+        grid-template-columns: repeat(7, min-content);
+        grid-template-rows: auto;
+        grid-gap: 1px;
+
+        $mutedOpacity: 0.7;
+
+        ul {
+            display: contents;
+            &[class*='--header'] {
+                pointer-events: none;
+                li {
+                    opacity: $mutedOpacity;
+                }
+            }
+        }
+
+        li {
+            display: flex;
+            flex-direction: column;
+            padding: $interiorMargin;
+
+            &.is-in-month {
+                background: rgba($colorBodyFg, 0.1);
+            }
+        }
+
+        &__day {
+            &--sub {
+                opacity: $mutedOpacity;
+                font-size: 0.8em;
+            }
+        }
+    }
 </style>
 
 <script>
@@ -178,6 +249,7 @@ export default {
             this.date.year = cell.year;
             this.date.day = cell.day;
             this.updateFromView();
+            this.showPicker = false;
         },
 
         dateEquals(d1, d2) {
@@ -187,14 +259,14 @@ export default {
         },
 
         changeMonth(delta) {
-            picker.month += delta;
-            if (picker.month > 11) {
-                picker.month = 0;
-                picker.year += 1;
+            this.picker.month += delta;
+            if (this.picker.month > 11) {
+                this.picker.month = 0;
+                this.picker.year += 1;
             }
-            if (picker.month < 0) {
-                picker.month = 11;
-                picker.year -= 1;
+            if (this.picker.month < 0) {
+                this.picker.month = 11;
+                this.picker.year -= 1;
             }
             this.picker.interacted = true;
             this.updateViewForMonth();
@@ -209,26 +281,20 @@ export default {
         },
 
         hidePicker(event) {
-            if (event.srcElement !== this.$refs.calendarButton){
+            let path = event.composedPath();
+            if (path.indexOf(this.$refs.calendarHolder) === -1) {
                 this.showPicker = false;
             }
         },
         
-        togglePicker(event) {
+        togglePicker() {
             this.showPicker = !this.showPicker;
 
             if (this.showPicker) {
                 document.addEventListener('click', this.hidePicker, {
-                    capture: true,
-                    once: true,
-                    passive: true
+                    capture: true
                 });
-                this.$nextTick().then(this.setPopupPosition);
             }
-        },
-
-        setPopupPosition() {
-            this.$refs.popup.style.bottom = this.$refs.popup.offsetHeight + 20 + 'px';
         }
     },
     mounted: function () {
@@ -236,6 +302,9 @@ export default {
         this.updateViewForMonth();
     },
     destroyed: function () {
+        document.addEventListener('click', this.hidePicker, {
+            capture: true
+        });
     }
 
 }
