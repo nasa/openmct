@@ -32,7 +32,7 @@
                 <browse-bar class="l-shell__main-view-browse-bar"
                             ref="browseBar">
                 </browse-bar>
-                <!-- <toolbar class="l-shell__toolbar"></toolbar> -->
+                <toolbar class="l-shell__toolbar"></toolbar>
                 <object-view class="l-shell__main-container"
                              ref="browseObject">
                 </object-view>
