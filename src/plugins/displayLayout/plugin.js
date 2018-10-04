@@ -62,6 +62,6 @@ export default function () {
                 return 100;
             }
         });
-        openmct.types.addType('display-layout', DisplayLayoutType());
+        openmct.types.addType('layout', DisplayLayoutType());
     }
 }
