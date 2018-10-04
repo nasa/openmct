@@ -50,6 +50,6 @@ define([
         GestureAPI: GestureAPI,
         TelemetryAPI: TelemetryAPI,
         IndicatorAPI: IndicatorAPI,
-        NotificationAPI: NotificationAPI
+        NotificationAPI: NotificationAPI.default
     };
 });

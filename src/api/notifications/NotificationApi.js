@@ -31,6 +31,7 @@
  * @namespace platform/api/notifications
  */
 import moment from 'moment';
+import EventEmitter from 'EventEmitter';
 
 /**
  * A representation of a user action. Options are provided to
@@ -115,8 +116,9 @@ const MINIMIZE_ANIMATION_TIMEOUT = 500;
  * animation is shown. This animation requires some time to execute,
  * so a timeout is required before the notification is hidden
  */
-export default class NotificationService {
+export default class NotificationAPI extends EventEmitter {
     constructor() {
+        super();
         this.notifications = [];
         this.highest = { severity: "info" };
 
