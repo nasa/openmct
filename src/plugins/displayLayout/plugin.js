@@ -50,7 +50,7 @@ export default function () {
                                 return {
                                     domainObject: domainObject
                                 }
-                            }                            
+                            }
                         });
                     },
                     destroy() {

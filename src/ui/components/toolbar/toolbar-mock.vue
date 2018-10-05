@@ -1,23 +1,11 @@
 <template>
     <div class="c-toolbar">
         <!-- VERSION MANUALLY RESTORED FROM VUE-LAYOUT -->
-        <div class="c-button-set">
-            <div class="c-ctrl-wrapper">
-                <div class="c-button--menu js-add-button icon-plus"
-                    @click="toggleMenus">
-                    <div class="c-button__label">Add</div>
-                </div>
-                <div class="c-menu" v-if="showMenus">
-                    <ul>
-                        <li v-for="item in addMenuItems"
-                            :class="item.class"
-                            :title="item.title">
-                            {{ item.name }}
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+
+        <component v-for="control in controls" is="control.control"></component>
+
+        <toolbar-add-menu></toolbar-add-menu>
+
 
         <div class="c-button-set"
              v-if="toolsItemSelected">
@@ -136,16 +124,15 @@
 </template>
 
 <script>
-    import labeledNumberInput from '../controls/labeledNumberInput.vue';
-    import checkbox from '../controls/checkboxCustom.vue';
-    import toggleButton from '../controls/toggleButton.vue';
+//    import labeledNumberInput from '../controls/labeledNumberInput.vue';
+ //   import checkbox from '../controls/checkboxCustom.vue';
+  //  import toggleButton from '../controls/toggleButton.vue';
+    import toolbarCheckbox from './components/toolbar-checkbox.vue';
 
     export default {
         inject: ['openmct'],
         components: {
-            labeledNumberInput,
-            checkbox,
-            toggleButton
+            toolbarCheckbox
         },
         methods: {
             toggleMenus: function () {

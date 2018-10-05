@@ -220,7 +220,7 @@
     import multipane from '../controls/multipane.vue';
     import pane from '../controls/pane.vue';
     import BrowseBar from './BrowseBar.vue';
-    import Toolbar from './Toolbar.vue';
+    import Toolbar from '../toolbar/Toolbar.vue';
 
     var enterFullScreen = () => {
         var docElm = document.documentElement;
