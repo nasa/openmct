@@ -1,5 +1,7 @@
 <template>
-    <div class="l-shell" :class="{'is-editing': isEditing}">
+    <div class="l-shell" :class="{
+            'is-editing': true
+        }">
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
             <div class="l-shell__controls">
@@ -27,8 +29,7 @@
                     <mct-tree></mct-tree>
                 </div>
             </pane>
-            <pane class="l-shell__pane-main"
-                :class="{ 'is-editing' : true }">
+            <pane class="l-shell__pane-main">
                 <browse-bar class="l-shell__main-view-browse-bar"
                             ref="browseBar">
                 </browse-bar>
@@ -251,9 +252,6 @@
 
     export default {
         inject: ['openmct'],
-        data() {
-            return {isEditing: false};
-        },
         components: {
             Inspector,
             MctStatus,
@@ -276,7 +274,8 @@
         data: function () {
             return {
                 fullScreen: false,
-                conductorComponent: {}
+                conductorComponent: {},
+                isEditing: false
             }
         },
         methods: {
