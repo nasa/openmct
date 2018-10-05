@@ -23,16 +23,16 @@
 define([
     'moment',
     'zepto',
-    '../utils/SnapshotOverlay',
     '../../res/templates/snapshotTemplate.html',
-    'vue'
+    'vue',
+    'painterro'
 ],
 function (
     Moment,
     $,
-    SnapshotOverlay,
     SnapshotTemplate,
-    Vue
+    Vue,
+    Painterro
 ) {
     function EmbedController (openmct, domainObject) {
         this.openmct = openmct;
@@ -52,11 +52,102 @@ function (
 
     EmbedController.prototype.navigate = function (embedType) {
         this.objectService.getObjects([embedType]).then(function (objects) {
-            this.navigationService.setNavigation(objects[embedType]);   
+            this.navigationService.setNavigation(objects[embedType]);
         }.bind(this));
     };
 
-    EmbedController.prototype.openSnapshot = function () {
+    EmbedController.prototype.openSnapshot = function (domainObject, entry, embed) {
+
+        function annotateSnapshot(openmct) {
+            return function () {
+
+                var save = false,
+                    painterroInstance = {},
+                    annotateOverlay = new Vue({
+                        template: '<div id="snap-annotation"></div>'
+                    }),
+                    self = this;
+
+                var options = {
+                    cssClass: 'l-large-view',
+                    onDestroy: function () {
+                        annotateOverlay.$destroy(true);
+                    },
+                    bottomBarButtons: [
+                        {
+                            title: 'Cancel',
+                            clickHandler: function () {
+                                save = false;
+                                painterroInstance.save();
+                            }
+                        },
+                        {
+                            title: 'Save',
+                            clickHandler: function () {
+                                save = true;
+                                painterroInstance.save();
+                            }
+                        }
+                    ]
+                };
+
+                openmct.OverlayService.show(annotateOverlay.$mount().$el, options);
+
+                painterroInstance = Painterro({
+                    id: 'snap-annotation',
+                    activeColor: '#ff0000',
+                    activeColorAlpha: 1.0,
+                    activeFillColor: '#fff',
+                    activeFillColorAlpha: 0.0,
+                    backgroundFillColor: '#000',
+                    backgroundFillColorAlpha: 0.0,
+                    defaultFontSize: 16,
+                    defaultLineWidth: 2,
+                    defaultTool: 'ellipse',
+                    hiddenTools: ['save', 'open', 'close', 'eraser', 'pixelize', 'rotate', 'settings', 'resize'],
+                    translation: {
+                        name: 'en',
+                        strings: {
+                            lineColor: 'Line',
+                            fillColor: 'Fill',
+                            lineWidth: 'Size',
+                            textColor: 'Color',
+                            fontSize: 'Size',
+                            fontStyle: 'Style'
+                        }
+                    },
+                    saveHandler: function (image, done) {
+                        if (save) {
+                            var entryPos = self.findInArray(domainObject.entries, entry.id),
+                                embedPos = self.findInArray(entry.embeds, embed.id);
+
+                            if (entryPos !== -1 && embedPos !== -1) {
+                                var url = image.asBlob(),
+                                    reader = new window.FileReader();
+
+                                reader.readAsDataURL(url);
+                                reader.onloadend = function () {
+                                    var snapshot = reader.result,
+                                        snapshotObject = {
+                                            src: snapshot,
+                                            type: url.type,
+                                            size: url.size,
+                                            modified: Date.now()
+                                        },
+                                        dirString = 'entries[' + entryPos + '].embeds[' + embedPos + '].snapshot';
+
+                                    openmct.objects.mutate(domainObject, dirString, snapshotObject);
+                                };
+                            }
+                        } else {
+                            console.log('You cancelled the annotation!!!');
+                        }
+                        done(true);
+                    }
+                }).show(embed.snapshot.src);
+            };
+        }
+
         var self = this,
             snapshot = new Vue({
                 template: SnapshotTemplate,
@@ -66,15 +157,22 @@ function (
                     };
                 },
                 methods: {
-                    formatTime: self.formatTime
+                    formatTime: self.formatTime,
+                    annotateSnapshot: annotateSnapshot(self.openmct),
+                    findInArray: self.findInArray
                 }
             });
 
         function onDestroyCallback() {
             snapshot.$destroy(true);
         }
+        var options = {
+            onDestroy: onDestroyCallback,
+            cssClass: 'l-large-view'
+        };
 
-        this.openmct.OverlayService.show(snapshot.$mount().$el, {onDestroy: onDestroyCallback, cssClass: 'l-large-view'});
+
+        this.openmct.OverlayService.show(snapshot.$mount().$el, options);
     };
 
     EmbedController.prototype.formatTime = function (unixTime, timeFormat) {
@@ -207,7 +305,8 @@ function (
             openSnapshot: self.openSnapshot,
             formatTime: self.formatTime,
             toggleActionMenu: self.toggleActionMenu,
-            actionToMenuDecorator: self.actionToMenuDecorator
+            actionToMenuDecorator: self.actionToMenuDecorator,
+            findInArray: self.findInArray
         };
     };
 

@@ -43,7 +43,8 @@ define([
             component = new Vue({
                 provide: {
                     destroy: this.destroy.bind(this),
-                    element: element
+                    element: element,
+                    bottomBarButtons: options.bottomBarButtons
                 },
                 components: {
                     OverlayComponent: OverlayComponent.default

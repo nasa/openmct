@@ -15,7 +15,7 @@
         <div class="flex-elem holder flex-can-shrink s-snapshot-datetime">
             SNAPSHOT {{formatTime(embed.createdOn, 'YYYY-MM-DD HH:mm:ss')}}
         </div>
-        <a class="s-button icon-pencil" title="Annotate">
+        <a class="s-button icon-pencil" title="Annotate" v-on:click="annotateSnapshot">
             <span class="title-label">Annotate</span>
         </a>
     </div>
