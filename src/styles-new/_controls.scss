@@ -267,7 +267,7 @@ input[type=number] {
     &-inline,
     &--inline {
         // A text input or contenteditable element that indicates edit affordance on hover and looks like an input on focus
-        @include reactive-input();
+        @include reactive-input($bg: transparent);
         box-shadow: none;
         display: block !important;
         min-width: 0;

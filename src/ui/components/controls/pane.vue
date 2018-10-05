@@ -111,7 +111,7 @@
         &__contents {
             flex: 1 1 100%;
             opacity: 1;
-            padding: $interiorMargin;
+            padding: $contentsMargin;
             pointer-events: inherit;
             transition: opacity 250ms ease 250ms;
 
