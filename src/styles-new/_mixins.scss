@@ -115,33 +115,14 @@
     top: $m; right: $m; bottom: $m; left: $m;
 }
 
-@mixin gridTwoColumn() {
-    display: grid;
-    grid-row-gap: 0;
-    grid-template-columns: 1fr 2fr;
-    align-items: start;
-
-    [class*="header"] {
-        border-radius: $smallCr;
-        background-color: $colorInspectorSectionHeaderBg;
-        color: $colorInspectorSectionHeaderFg;
-        margin: 0 0 $interiorMarginSm 0;
-        padding: $interiorMarginSm $interiorMargin;
-
-        &:not(:first-child) {
-            // Allow multiple headers within a component
-            margin-top: $interiorMarginLg;
-        }
-    }
-
-    [class*="span-all"],
-    [class*="header"] {
-        @include gridTwoColumnSpanCols();
-    }
-}
-
-@mixin gridTwoColumnSpanCols() {
-    grid-column: 1 / 3;
+@mixin propertiesHeader() {
+    border-radius: $smallCr;
+    background-color: $colorInspectorSectionHeaderBg;
+    color: $colorInspectorSectionHeaderFg;
+    font-weight: normal;
+    margin: 0 0 $interiorMarginSm 0;
+    padding: $interiorMarginSm $interiorMargin;
+    text-transform: uppercase;
 }
 
 @mixin modalFullScreen() {
