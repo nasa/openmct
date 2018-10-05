@@ -310,20 +310,12 @@
             }
         },
         mounted() {
-            this.removeSelectable = this.openmct.selection.selectable(
-                this.$el,
-                {
-                    item: this.newDomainObject
-                },
-                this.initSelect
-            );
             this.openmct.selection.on('change', this.setSelection);
         },
         destroyed: function () {
             this.composition.off('add', this.onAddComposition);
             this.composition.off('remove', this.onRemoveComposition);
             this.openmct.off('change', this.selection);
-            this.removeSelectable();
             this.unlisten();
         }
     }
