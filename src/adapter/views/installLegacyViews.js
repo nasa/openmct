@@ -1,8 +1,10 @@
 define([
     './LegacyViewProvider',
+    './TypeInspectorViewProvider',
     '../../api/objects/object-utils'
 ], function (
     LegacyViewProvider,
+    TypeInspectorViewProvider,
     objectUtils
 ) {
     function installLegacyViews(openmct, legacyViews, instantiate) {
@@ -15,6 +17,13 @@ define([
 
         legacyViews.forEach(function (legacyView) {
             openmct.objectViews.addProvider(new LegacyViewProvider(legacyView, openmct, convertToLegacyObject));
+        });
+
+        let inspectorTypes = openmct.$injector.get('types[]')
+            .filter((t) => t.hasOwnProperty('inspector'));
+
+        inspectorTypes.forEach(function (typeDefinition) {
+            openmct.inspectorViews.addProvider(new TypeInspectorViewProvider(typeDefinition, openmct, convertToLegacyObject));
         });
     }
 
