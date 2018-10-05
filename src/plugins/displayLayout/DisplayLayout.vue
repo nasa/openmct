@@ -79,7 +79,6 @@
     }
 
     .c-grid {
-        z-index: -1;
         pointer-events: none;
 
         &__x  { @include bgTicks($colorGridLines, 'x'); }
@@ -92,12 +91,17 @@
             background: rgba($editColor, 0.1);
         }
 
-        .c-frame,
-        .l-layout {
-            &.s-selected,
-            &.s-selected-parent {
+        .s-selected,
+        .s-selected-parent {
+            .l-layout {
+                // Show the layout grid for the top-most child of the current selection,
+                // and hide the grid for deeper nested levels.
                 [class*="__grid-holder"] {
                     display: block;
+                }
+
+                .l-layout [class*="__grid-holder"] {
+                    display: none;
                 }
             }
         }

@@ -1,6 +1,6 @@
 <template>
     <div class="l-shell" :class="{
-            'is-editing': true
+            'is-editing': isEditing
         }">
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
