@@ -158,6 +158,8 @@
                 this.newDomainObject = JSON.parse(JSON.stringify(obj));
                 this.gridSize = this.newDomainObject.layoutGrid || DEFAULT_GRID_SIZE;;
             }.bind(this));
+
+            this.addToolbarProvider();
         },
         methods: {
             readLayoutConfiguration(domainObject, panels) {
@@ -311,6 +313,27 @@
             },
             handleDragOver($event){
                 $event.preventDefault();
+            },
+            addToolbarProvider() {
+                this.openmct.toolbars.addProvider({
+                    name: "Display Layout Toolbar",
+                    key: "layout",
+                    description: "A toolbar for objects inside a display layout.",
+                    forSelection: function (selection) {
+                        // Apply the layout toolbar if the selected object is inside a layout.
+                        return (selection && selection[1] && selection[1].context.item.type === 'layout');
+                    },
+                    toolbar: function (selection) {
+                        return [
+                            {
+                                control: "checkbox",
+                                name: "Show frame",
+                                domainObject: selection[1].context.item,
+                                property: "configuration.layout.panels[" + selection[0].context.item.identifier + "].hasFrame"
+                            }
+                        ];
+                    }
+                });
             }
         },
         mounted() {
