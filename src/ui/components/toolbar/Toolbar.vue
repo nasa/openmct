@@ -8,28 +8,33 @@
 </template>
 
 <script>
-
-    import toolbarAddMenu from './components/toolbar-add-menu.vue';
     import toolbarButton from './components/toolbar-button.vue';
     import toolbarColorPicker from './components/toolbar-color-picker.vue';
     import toolbarCheckbox from './components/toolbar-checkbox.vue';
     import toolbarInput from './components/toolbar-input.vue';
     import toolbarMenu from './components/toolbar-menu.vue';
     import toolbarSelectMenu from './components/toolbar-select-menu.vue';
+    import toolbarSeparator from './components/toolbar-separator.vue';
+    import toolbarToggleButton from './components/toolbar-toggle-button.vue';
 
     export default {
         inject: ['openmct'],
         components: {
-            toolbarAddMenu,
             toolbarButton,
             toolbarColorPicker,
             toolbarCheckbox,
             toolbarInput,
             toolbarMenu,
-            toolbarSelectMenu
+            toolbarSelectMenu,
+            toolbarSeparator,
+            toolbarToggleButton
         },
         methods: {
             handleSelection(selection) {
+                if (!selection[0]) {
+                    this.structure = [];
+                    return;
+                }
                 let domainObject = selection[0].context.item;
 
                 if (domainObject && domainObject === this.selectedObject) {
