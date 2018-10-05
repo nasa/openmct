@@ -50,7 +50,7 @@ export default function () {
                                 return {
                                     domainObject: domainObject
                                 }
-                            }
+                            }                            
                         });
                     },
                     destroy() {
@@ -63,5 +63,24 @@ export default function () {
             }
         });
         openmct.types.addType('layout', DisplayLayoutType());
+        openmct.toolbars.addProvider({
+            name: "Display Layout Toolbar",
+            key: "layout",
+            description: "A toolbar for objects inside a display layout.",
+            forSelection: function (selection) {
+                // Apply the layout toolbar if the selected object is inside a layout.
+                return (selection && selection[1] && selection[1].context.item.type === 'layout');
+            },
+            toolbar: function (selection) {
+                return [
+                    {
+                        control: "checkbox",
+                        name: "Show frame",
+                        domainObject: selection[1].context.item,
+                        property: "configuration.layout.panels[" + selection[0].context.item.identifier + "].hasFrame"
+                    }
+                ];
+            }
+        });
     }
 }

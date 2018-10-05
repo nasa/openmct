@@ -153,7 +153,7 @@
             },
             handleSelection(selection) {
                 let domainObject = selection[0].context.item;
-                console.log("toolbar", domainObject);
+                console.log("domainObject", JSON.parse(JSON.stringify(domainObject)));
 
                 if (domainObject && domainObject === this.selectedObject) {
                     return;
@@ -161,7 +161,7 @@
 
                 this.selectedObject = domainObject;
                 let structure = this.openmct.toolbars.get(selection) || [];
-                console.log('structure', structure);
+                console.log('toolbar structure', structure);
             }
         },
         mounted() {
