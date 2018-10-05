@@ -23,13 +23,11 @@
 define([
     "./src/NotificationIndicatorController",
     "./src/NotificationIndicator",
-    "./src/NotificationService",
     "./res/notification-indicator.html",
     'legacyRegistry'
 ], function (
     NotificationIndicatorController,
     NotificationIndicator,
-    NotificationService,
     notificationIndicatorTemplate,
     legacyRegistry
 ) {
@@ -76,12 +74,11 @@ define([
             "services": [
                 {
                     "key": "notificationService",
-                    "implementation": NotificationService,
+                    "implementation": function (openmct) {
+                        return openmct.notifications;
+                    },
                     "depends": [
-                        "$timeout",
-                        "topic",
-                        "DEFAULT_AUTO_DISMISS",
-                        "MINIMIZE_TIMEOUT"
+                        "openmct"
                     ]
                 }
             ]

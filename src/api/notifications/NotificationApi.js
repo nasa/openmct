@@ -32,17 +32,7 @@
  */
 import moment from 'moment';
 import EventEmitter from 'EventEmitter';
-
-/**
- * A representation of a user action. Options are provided to
- * dialogs and notifications and are shown as buttons.
- *
- * @typedef {object} NotificationOption
- * @property {string} label the label to appear on the button for
- * this action
- * @property {function} callback a callback function to be invoked
- * when the button is clicked
-*/
+import MCTNotification from './MCTNotification.js';
 
 /**
  * A representation of a banner notification. Banner notifications
@@ -66,44 +56,11 @@ import EventEmitter from 'EventEmitter';
  * as the delay period before being dismissed.
  * @property {boolean} [dismissable=true] If true, notification will
  * include an option to dismiss it completely.
- * @property {NotificationOption} [primaryOption] the default user
- * response to
- * this message. Will be represented as a button with the provided
- * label and action. May be used by banner notifications to display
- * only the most important option to users.
- * @property {NotificationOption[]} [options] any additional
- * actions the user can take. Will be represented as additional buttons
- * that may or may not be available from a banner.
  * @see DialogModel
  */
 
-/**
- * A wrapper object that is returned as a handle to a newly created
- * notification. Wraps the notifications model and decorates with
- * functions to dismiss or minimize the notification.
- *
- * @typedef {object} Notification
- * @property {function} dismiss This method is added to the object
- * returned by {@link NotificationService#notify} and can be used to
- * dismiss this notification. Dismissing a notification will remove
- * it completely and it will not appear in the notification indicator
- * @property {function} minimize This method is added to the object
- * returned by {@link NotificationService#notify} and can be used to
- * minimize this notification. Minimizing a notification will send
- * it to the notification indicator
- * @property {function} dismissOrMinimize This method is added to the
- * object returned by {@link NotificationService#notify}. It will
- * hide the notification by either dismissing or minimizing it,
- * depending on severity. Typically this is the method that should
- * be used for dismissing a notification. If more control is
- * required, then the minimize or dismiss functions can be called
- * individually.
- * @property {function} onDismiss Allows listening for on dismiss
- * events. This allows cleanup etc. when the notification is dismissed.
- */
-
-const DEFAULT_AUTO_DISMISS_TIMEOUT = 1000;
-const MINIMIZE_ANIMATION_TIMEOUT = 500;
+const DEFAULT_AUTO_DISMISS_TIMEOUT = 3000;
+const MINIMIZE_ANIMATION_TIMEOUT = 300;
 
 /**
  * The notification service is responsible for informing the user of
@@ -126,7 +83,7 @@ export default class NotificationAPI extends EventEmitter {
         * A context in which to hold the active notification and a
         * handle to its timeout.
         */
-        this.active = {};
+        this.activeNotification = undefined;
     }
 
     /**
@@ -142,17 +99,17 @@ export default class NotificationAPI extends EventEmitter {
         //Check this is a known notification
         let index = this.notifications.indexOf(notification);
 
-        if (this.active.timeout) {
+        if (this.activeTimeout) {
             /*
                 Method can be called manually (clicking dismiss) or
-                automatically from an auto-timeout. this.active.timeout
+                automatically from an auto-timeout. this.activeTimeout
                 acts as a semaphore to prevent race conditions. Cancel any
                 timeout in progress (for the case where a manual dismiss
                 has shortcut an active auto-dismiss), and clear the
                 semaphore.
                 */
-            clearTimeout(this.active.timeout);
-            delete this.active.timeout;
+            clearTimeout(this.activeTimeout);
+            delete this.activeTimeout;
         }
 
         if (index >= 0) {
@@ -160,6 +117,7 @@ export default class NotificationAPI extends EventEmitter {
             //Add a brief timeout before showing the next notification
             // in order to allow the minimize animation to run through.
             setTimeout(() => {
+                notification.emit('dismissed');
                 this.setActiveNotification(this.selectNextNotification());
             }, MINIMIZE_ANIMATION_TIMEOUT);
         }
@@ -179,17 +137,17 @@ export default class NotificationAPI extends EventEmitter {
         //Check this is a known notification
         let index = this.notifications.indexOf(notification);
 
-        if (this.active.timeout) {
+        if (this.activeTimeout) {
             /* Method can be called manually (clicking dismiss) or
-                * automatically from an auto-timeout. this.active.timeout
+                * automatically from an auto-timeout. this.activeTimeout
                 * acts as a semaphore to prevent race conditions. Cancel any
                 * timeout in progress (for the case where a manual dismiss
                 * has shortcut an active auto-dismiss), and clear the
                 * semaphore.
                 */
 
-            clearTimeout(this.active.timeout);
-            delete this.active.timeout;
+            clearTimeout(this.activeTimeout);
+            delete this.activeTimeout;
         }
 
         if (index >= 0) {
@@ -197,6 +155,7 @@ export default class NotificationAPI extends EventEmitter {
         }
         this.setActiveNotification(this.selectNextNotification());
         this.setHighestSeverity();
+        notification.emit('dismissed');
     }
 
     /**
@@ -209,12 +168,12 @@ export default class NotificationAPI extends EventEmitter {
         let model = notification.model;
         if (model.severity === "info") {
             if (model.autoDismiss === false) {
-                notification.minimize();
+                this.minimize(notification);
             } else {
-                notification.dismiss();
+                this.dismiss(notification);
             }
         } else {
-            notification.minimize();
+            this.minimize(notification);
         }
     }
 
@@ -223,7 +182,7 @@ export default class NotificationAPI extends EventEmitter {
      * @returns {Notification}
      */
     getActiveNotification() {
-        return this.active.notification;
+        return this.activeNotification;
     }
 
     /**
@@ -265,12 +224,12 @@ export default class NotificationAPI extends EventEmitter {
      * created via this method will will have severity of "error" enforced
      * @param {NotificationModel | string} message either a string for
      * the title of the error message with default options, or a
-     * {@link NotificationModel} defining the options notification to
+     * {@link NotificationModel} defining the options of the notification to
      * display
      * @returns {Notification} the provided notification decorated with
      * functions to dismiss or minimize
      */
-    erro(message) {
+    error(message) {
         let notificationModel = typeof message === "string" ? {title: message} : message;
         notificationModel.severity = "error";
         return this.notify(notificationModel);
@@ -306,61 +265,22 @@ export default class NotificationAPI extends EventEmitter {
      */
     notify(notificationModel) {
         let notification;
-        let activeNotification = this.active.notification;
-        let dismissCallback;
+        let activeNotification = this.activeNotification;
 
         notificationModel.severity = notificationModel.severity || "info";
         notificationModel.timestamp = moment.utc().format('YYYY-MM-DD hh:mm:ss.ms');
 
-        notification = {
-            model: notificationModel,
-
-            minimize: () => {
-                this.minimize(notification);
-            },
-
-            dismiss: () => {
-                this.dismiss(notification);
-                if (dismissCallback) {
-                    dismissCallback();
-                }
-            },
-
-            dismissOrMinimize: () => {
-                this.dismissOrMinimize(notification);
-            },
-
-            onDismiss: (callback) => {
-                dismissCallback = callback;
-            }
-        };
-
-        // Notifications support a 'dismissable' attribute. This is a
-        // convenience to support adding a 'dismiss' option to the
-        // notification for the common case of dismissing a
-        // notification. Could also be done manually by specifying an
-        // option on the model
-        if (notificationModel.dismissable !== false) {
-            notificationModel.options = notificationModel.options || [];
-            notificationModel.options.unshift({
-                label: "Dismiss",
-                callback: function () {
-                    notification.dismiss();
-                }
-            });
-        }
+        notification = new MCTNotification(notificationModel, this);
 
         this.notifications.push(notification);
-
         this.setHighestSeverity();
 
         /*
         Check if there is already an active (ie. visible) notification
             */
-        if (!this.active.notification) {
+        if (!this.activeNotification) {
             this.setActiveNotification(notification);
-
-        } else if (!this.active.timeout) {
+        } else if (!this.activeTimeout) {
             /*
                 If there is already an active notification, time it out. If it's
                 already got a timeout in progress (either because it has had
@@ -371,11 +291,11 @@ export default class NotificationAPI extends EventEmitter {
                 This notification has been added to queue and will be
                 serviced as soon as possible.
                 */
-            this.active.timeout = setTimeout(function () {
-                activeNotification.dismissOrMinimize();
+            this.activeTimeout = setTimeout(() => {
+                this.dismissOrMinimize(activeNotification);
             }, DEFAULT_AUTO_DISMISS_TIMEOUT);
         }
-
+        
         return notification;
     }
 
@@ -385,12 +305,13 @@ export default class NotificationAPI extends EventEmitter {
      */
     setActiveNotification(notification) {
         let shouldAutoDismiss;
-        this.active.notification = notification;
+        this.activeNotification = notification;
 
         if (!notification) {
-            delete this.active.timeout;
+            delete this.activeTimeout;
             return;
         }
+        this.emit('notification', notification);
 
         if (notification.model.severity === "info") {
             shouldAutoDismiss = true;
@@ -399,11 +320,11 @@ export default class NotificationAPI extends EventEmitter {
         }
 
         if (shouldAutoDismiss || this.selectNextNotification()) {
-            this.active.timeout = setTimeout(function () {
-                notification.dismissOrMinimize();
+            this.activeTimeout = setTimeout(() => {
+                this.dismissOrMinimize(notification);
             }, DEFAULT_AUTO_DISMISS_TIMEOUT);
         } else {
-            delete this.active.timeout;
+            delete this.activeTimeout;
         }
     }
 
@@ -424,8 +345,7 @@ export default class NotificationAPI extends EventEmitter {
             notification = this.notifications[i];
 
             if (!notification.model.minimized &&
-                notification !== this.active.notification) {
-
+                notification !== this.activeNotification) {
                 return notification;
             }
         }

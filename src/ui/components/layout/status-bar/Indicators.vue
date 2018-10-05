@@ -17,7 +17,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div id='status' class='status-holder'></div>
+<span id='status' class='status-holder'></span>
 </template>
 
 <style lang="scss">

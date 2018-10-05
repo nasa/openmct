@@ -17,24 +17,90 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div></div>
+<div class="l-message-banner s-message-banner" 
+    :class="[
+        activeModel.severity,
+        {
+            'minimized': activeModel.minimized,
+            'new': !activeModel.minimized
+        }]"
+    v-if="activeModel">
+    <span @click="maximize()" class="banner-elem label">{{activeModel.title}}</span>
+    <span @click="maximize()" v-if="activeModel.progress !== undefined || activeModel.unknownProgress">
+        <div class="banner-elem"><!-- was mct-include -->
+            <span class="l-progress-bar s-progress-bar"
+                :class="{'indeterminate': activeModel.unknownProgress }">
+                <span class="progress-amt-holder">
+                    <span class="progress-amt" :style="progressWidth"></span>
+                </span>
+            </span>
+            <div class="progress-info hint" v-if="activeModel.progressText !== undefined">
+                <span class="progress-amt-text" v-if="activeModel.progress > 0">{{activeModel.progress}}% complete. </span>
+                {{activeModel.progressText}}
+            </div>
+        </div>
+    </span>
+    <a class="close icon-x" @click="dismiss()"></a>
+</div>
 </template>
 
 <style lang="scss">
-
+    .l-message-banner {
+        display: inline;
+        left: 50%;
+        position: absolute;
+    }
+    .banner-elem {
+        display: inline;
+    }
 </style>
 
 <script>
+    let activeNotification = undefined;
+    let dialogService = undefined;
     export default {
         inject: ['openmct'],
         data() {
             return {
-                activeNotification: undefined
+                activeModel: undefined
             }
         },
         methods: {
             showNotification(notification) {
-                this.activeNotification = notification;
+                activeNotification = notification;
+                this.activeModel = notification.model;
+                activeNotification.once('dismissed', () => {
+                    //this.activeModel = undefined;
+                    //activeNotification = undefined;
+                });
+            },
+            dismiss() {
+                activeNotification.dismissOrMinimize();
+            },
+            maximize() {
+                dialogService = dialogService || this.openmct.$injector.get('dialogService');
+
+                if (this.activeModel.severity !== "info") {
+                    let dialog;
+                    this.activeModel.cancel = function () {
+                        dialog.dismiss();
+                    };
+                    //If the notification is dismissed by the user, close
+                    // the dialog.
+                    activeNotification.on('dismiss', function () {
+                        dialog.dismiss();
+                    });
+
+                    dialog = dialogService.showBlockingMessage(this.activeModel);
+                }
+
+            }
+        },
+        computed: {
+            progressWidth() {
+                return {
+                    width: this.activeModel.progress + '%'
+                };
             }
         },
         mounted() {

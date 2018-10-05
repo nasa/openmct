@@ -17,27 +17,10 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-    <span class="c-status">
-    <indicators></indicators>
-    <message-banner></message-banner>
-    <about-logo></about-logo>
-    </span>
 </template>
 
 <style lang="scss">
-    .c-status {
-        width: 100%;
-    }
 </style>
 
 <script>
-    import Indicators from './Indicators.vue';
-    import MessageBanner from './MessageBanner.vue';
-
-    export default {
-        components: {
-            Indicators,
-            MessageBanner
-        }
-    }
 </script>
