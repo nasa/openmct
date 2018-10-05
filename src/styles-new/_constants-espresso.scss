@@ -20,34 +20,34 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/****************************************************** SNOW THEME CONSTANTS */
+/************************************************** ESPRESSO THEME CONSTANTS */
 
 @import "constants";
 
 // Functions
 @function buttonBg($c: $colorBtnBg) {
-    @return $c;
+    @return linear-gradient(pullForward($c, 5%), $c);
 }
 
 @function pullForward($c: $colorBodyBg, $p: 20%) {
     // For dark interfaces, lighter things come forward - opposite for light interfaces
-    @return darken($c, $p);
+    @return lighten($c, $p); // !
 }
 
 @function pushBack($c: $colorBodyBg, $p: 20%) {
     // For dark interfaces, darker things move back - opposite for light interfaces
-    @return lighten($c, $p);
+    @return darken($c, $p); // !
 }
 
-$fontBaseSize: 12px;
+$fontBaseSize: 12px; // !
 $smallCr: 2px; // !
-$controlCr: 3px; // !
-$basicCr: 4px; // !
+$controlCr: 2px; // !
+$basicCr: 3px; // !
 
 // Base colors
-$colorBodyBg: #fcfcfc;
-$colorBodyFg: #666;
-$colorGenBg: #fff;
+$colorBodyBg: #333;
+$colorBodyFg: #aaa;
+$colorGenBg: #222;
 $colorStatusBarBg: #000;
 $colorStatusBarFg: #999;
 $colorStatusBarFgHov: #aaa;
@@ -57,8 +57,8 @@ $colorKeyHov: #00c0f6;
 $colorKeyFilter: brightness(0.9) sepia(1) hue-rotate(145deg) saturate(6);
 $colorKeyFilterHov: brightness(1) sepia(1) hue-rotate(145deg) saturate(7);
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
-$colorA: #999;
-$colorAHov: $colorKey;
+$colorA: #ccc;
+$colorAHov: #fff;
 
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #999;
@@ -106,9 +106,9 @@ $colorProgressBarOuter: rgba(#000, 0.1);
 $colorProgressBarAmt: #0a0;
 
 // Buttons and Controls
-$colorBtnBg: #aaaaaa;
-$colorBtnBgHov: pullForward($colorBtnBg, 10%);
-$colorBtnFg: #fff;
+$colorBtnBg: pullForward($colorBodyBg, 10%); // !
+$colorBtnBgHov: pullForward($colorBtnBg, 10%); // !
+$colorBtnFg: pullForward($colorBodyFg, 10%); // !
 $colorBtnFgHov: $colorBtnFg;
 $colorBtnMajorBg: $colorKey;
 $colorBtnMajorBgHov: $colorKeyHov;
@@ -121,8 +121,8 @@ $colorClickIcon: $colorKey;
 $colorClickIconHov: $colorKeyHov;
 
 // Menus
-$colorMenuBg: pushBack($colorBodyBg, 10%);
-$colorMenuFg: pullForward($colorMenuBg, 70%);
+$colorMenuBg: pullForward($colorBodyBg, 20%);
+$colorMenuFg: red; //pullForward($colorBodyFg, 30%);
 $colorMenuIc: $colorKey;
 $colorMenuHovBg: $colorMenuIc;
 $colorMenuHovFg: $colorMenuBg;
@@ -146,7 +146,7 @@ $colorFormFieldErrorBg: $colorFormError;
 $colorFormFieldErrorFg: rgba(#fff, 0.6);
 $colorFormLines: rgba(#000, 0.1);
 $colorFormSectionHeader: rgba(#000, 0.05);
-$colorInputBg: $colorGenBg;
+$colorInputBg: rgba(black, 0.2);
 $colorInputFg: $colorBodyFg;
 $colorInputPlaceholder: pushBack($colorBodyFg, 20%);
 $colorFormText: pushBack($colorBodyFg, 10%);
@@ -165,10 +165,10 @@ $colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
 // Overlay
-$overlayColorBg: $colorMenuBg;
+$overlayColorBg: $colorMenuBg; //pullForward($colorBodyBg, 10%);
 $overlayColorFg: $colorMenuFg;
-$overlayButtonColorBg: $colorBtnBg;
-$overlayButtonColorFg: $colorBtnFg;
+$overlayButtonColorBg: pullForward($overlayColorBg, 20%);
+$overlayButtonColorFg: #fff;
 $overlayCr: $interiorMarginLg;
 
 // Indicator colors
@@ -191,11 +191,11 @@ $colorInfoBubbleBg: $colorMenuBg;
 $colorInfoBubbleFg: #666;
 
 // Items
-$colorItemBg: #ddd;
-$colorItemBgHov: rgba($colorKey, 0.1); //pushBack($colorItemBg, 10% * 0.4);
+$colorItemBg: buttonBg($colorBtnBg);
+$colorItemBgHov: buttonBg(pullForward($colorBtnBg, 5%));
 $colorListItemBg: transparent;
 $colorListItemBgHov: rgba($colorKey, 0.1);
-$colorItemFg: $colorBodyFg;
+$colorItemFg: $colorBtnFg;
 $colorItemFgDetails: pushBack($colorItemFg, 15%);
 $shdwItemText: none;
 
@@ -219,7 +219,7 @@ $legendCollapsedNameMaxW: 50%;
 $legendHoverValueBg: rgba($colorBodyFg, 0.2);
 
 // Tree
-$colorTreeBg: #f0f0f0; // Used
+$colorTreeBg: pushBack($colorBodyBg, 3%); // Used
 $colorItemTreeHoverBg: pullForward($colorBodyBg, 10%);
 $colorItemTreeHoverFg: pullForward($colorBodyFg, 10%);
 $colorItemTreeIcon: $colorKey; // Used
@@ -283,7 +283,7 @@ $createBtnTextTransform: uppercase;
 
 @mixin discreteItem() {
     background: rgba($colorBodyFg,0.1);
-    border: 1px solid $colorInteriorBorder;
+    //border: 1px solid $colorInteriorBorder;
     border-radius: $controlCr;
 
     .c-input-inline:hover {

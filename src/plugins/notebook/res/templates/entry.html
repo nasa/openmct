@@ -8,8 +8,7 @@
             <span>{{formatTime(entry.createdOn, 'HH:mm:ss')}}</span>
         </div>
         <div class="c-ne__content">
-            <!-- TODO: fix styling for c-input-inline when SCSS is merged and remove s-input-inline class here -->
-            <div class="c-ne__text c-input-inline s-input-inline"
+            <div class="c-ne__text c-input-inline"
                  contenteditable="true"
                  ref="contenteditable"
                  v-on:blur="textBlur($event, entry.id)"
