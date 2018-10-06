@@ -50,7 +50,7 @@
 
 @mixin cButton() {
     @include cControl();
-    background: buttonBg($colorBtnBg);
+    @include themedButton();
     border-radius: $controlCr;
     color: $colorBtnFg;
     cursor: pointer;
@@ -86,7 +86,7 @@
     // Padding is included to facilitate a bigger hit area
     // Make the icon bigger relative to its container
     @include cControl();
-    $pLR: 3px;
+    $pLR: 4px;
     $pTB: 3px;
     border-radius: $controlCr;
     color: $colorKey;
@@ -101,7 +101,7 @@
     *:before {
         // *:before handles any nested containers that may contain glyph elements
         // Needed for c-togglebutton.
-        font-size: 1.3em;
+        font-size: 1.2em;
     }
 }
 
@@ -283,6 +283,7 @@ input[type=number] {
 
         &:hover,
         &:focus {
+            background: $colorInputBg;
             padding-left: $inputTextPLeftRight;
             padding-right: $inputTextPLeftRight;
         }

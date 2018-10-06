@@ -32,15 +32,17 @@
 // Constants
 $fontBaseSize: 12px;
 $smallCr: 2px;
-$controlCr: 2px;
-$basicCr: 3px;
+$controlCr: 3px;
+$basicCr: 4px;
 
 // Base colors
-$colorBodyBg: #333;
+$colorBodyBg: #393939;
 $colorBodyFg: #aaa;
 $colorGenBg: #222;
-$colorStatusBarBg: #000;
-$colorStatusBarFg: #999;
+$colorHeadBg: #222;
+$colorHeadFg: $colorBodyFg;
+$colorStatusBarBg: $colorHeadBg;
+$colorStatusBarFg: $colorBodyFg; // #999
 $colorStatusBarFgHov: #aaa;
 $colorKey: #0099cc;
 $colorKeyFg: #fff;
@@ -52,7 +54,9 @@ $colorA: #ccc;
 $colorAHov: #fff;
 
 // Layout
-$contentsMargin: $interiorMarginLg;
+$shellMainPad: 4px 0;
+$shellPanePad: 0 7px;
+// $contentsMargin: $interiorMargin $interiorMarginLg;
 
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #999;
@@ -75,8 +79,8 @@ $colorKeySubtle: darken($colorKey, 50%);
 // Time Colors
 $colorTime: #618cff;
 $colorTimeBg: $colorTime;
-$colorTimeFg: $colorBodyBg;
-$colorTimeHov: darken($colorTime, 5%);
+$colorTimeFg: lighten($colorTimeBg, 30%);
+$colorTimeHov: lighten($colorTime, 5%);
 $colorTimeSubtle: darken($colorTime, 20%);
 $colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
 $colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
@@ -190,7 +194,7 @@ $colorItemBgHov: buttonBg(lighten($colorBtnBg, 5%));
 $colorListItemBg: transparent;
 $colorListItemBgHov: rgba($colorKey, 0.1);
 $colorItemFg: $colorBtnFg;
-$colorItemFgDetails: darken($colorItemFg, 15%);
+$colorItemFgDetails: darken($colorItemFg, 20%);
 $shdwItemText: none;
 
 // Tabular
@@ -213,7 +217,7 @@ $legendCollapsedNameMaxW: 50%;
 $legendHoverValueBg: rgba($colorBodyFg, 0.2);
 
 // Tree
-$colorTreeBg: darken($colorBodyBg, 3%); // Used
+$colorTreeBg: transparent; //darken($colorBodyBg, 3%); // Used
 $colorItemTreeHoverBg: lighten($colorBodyBg, 10%);
 $colorItemTreeHoverFg: lighten($colorBodyFg, 10%);
 $colorItemTreeIcon: $colorKey; // Used
@@ -243,15 +247,18 @@ $scrollbarThumbColorMenuHov: lighten($scrollbarThumbColorMenu, 2%);
 $splitterHandleD: 2px;
 $splitterHandleHitMargin: 4px;
 $colorSplitterBaseBg: $colorBodyBg;
-$colorSplitterBg: lighten($colorSplitterBaseBg, 20%);
+$colorSplitterBg: lighten($colorSplitterBaseBg, 10%);
 $colorSplitterFg: $colorBodyBg;
 $colorSplitterHover: $colorKey;
 $colorSplitterActive: $colorKey;
 $splitterBtnD: (16px, 35px); // height, width
-$splitterBtnColorBg: #eee;
-$splitterBtnColorFg: #999;
-$splitterBtnColorHoverBg: rgba($colorKey, 1);
-$splitterBtnColorHoverFg: $colorBodyBg;
+$splitterBtnColorBg: deeppink; // Not used
+$splitterBtnColorFg: #999; // Controls color of label text
+$splitterBtnLabelColorFg: #666;
+$splitterCollapsedBtnColorBg: #222;
+$splitterCollapsedBtnColorFg: #666;
+$splitterCollapsedBtnColorBgHov: $colorKey;;
+$splitterCollapsedBtnColorFgHov: $colorKeyFg;
 
 // Mobile
 $colorMobilePaneLeft: darken($colorBodyBg, 2%);
@@ -286,8 +293,13 @@ $createBtnTextTransform: uppercase;
 }
 
 @mixin discreteItemInnerElem() {
-    border: 1px solid $colorBodyBg;
+    border: 1px solid rgba(#fff, 0.1);
     border-radius: $controlCr;
+}
+
+@mixin themedButton($c: $colorBtnBg) {
+    background: linear-gradient(lighten($c, 5%), $c);
+    box-shadow: rgba(black, 0.5) 0 0 2px;
 }
 
 /**************************************************** NOT USED, LEAVE FOR NOW */

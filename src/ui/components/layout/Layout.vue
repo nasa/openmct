@@ -64,8 +64,8 @@
         flex-flow: column nowrap;
 
         &__status {
-            background: $colorBodyFg;
-            color: $colorBodyBg;
+            background: $colorStatusBarBg;
+            color: $colorStatusBarFg;
             border-top: 1px solid $colorInteriorBorder;
             height: 24px;
             padding: $interiorMarginSm;
@@ -82,12 +82,12 @@
                     width: $mobileMenuIconD;
                     transform: translateX(100%);
 
-                    &:before {
+/*                    &:before {
                         color: $colorKey;
                         content: $glyph-icon-menu-hamburger;
                         font-family: symbolsfont;
                         font-size: 1.4em;
-                    }
+                    }*/
                 }
             }
         }
@@ -143,8 +143,8 @@
 
         &__head {
             align-items: center;
+            background: $colorHeadBg;
             justify-content: space-between;
-            border-bottom: 1px solid $colorInteriorBorder;
             padding: $interiorMargin;
 
             > [class*="__"] + [class*="__"] {
@@ -165,6 +165,13 @@
         }
 
         /******************************* MAIN AREA */
+        &__main {
+            padding: $shellMainPad;
+            [class*='__pane'] {
+                padding: $shellPanePad;
+            }
+        }
+
         &__main-container {
             // Wrapper for main views
             flex: 1 1 auto;
