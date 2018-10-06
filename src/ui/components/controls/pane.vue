@@ -84,6 +84,7 @@
                 transition: opacity 150ms ease;
                 opacity: 0;
                 pointer-events: none;
+                overflow: hidden;
 
                 > * {
                     min-width: 0 !important;
