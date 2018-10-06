@@ -94,7 +94,8 @@
     padding: $pTB $pLR ;
 
     &:hover {
-        background: rgba($colorKey, 0.2);
+        background: $colorClickIconBgHov;
+        color: $colorClickIconFgHov;
     }
 
     &:before,

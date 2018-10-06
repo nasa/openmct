@@ -116,7 +116,8 @@ $colorBtnCautionBg: #f16f6f;
 $colorBtnCautionBgHov: #f1504e;
 $colorBtnCautionFg: $colorBtnFg;
 $colorClickIcon: $colorKey;
-$colorClickIconHov: $colorKeyHov;
+$colorClickIconBgHov: rgba($colorKey, 0.6);
+$colorClickIconFgHov: $colorKeyHov;
 
 // Menus
 $colorMenuBg: lighten($colorBodyBg, 20%);
