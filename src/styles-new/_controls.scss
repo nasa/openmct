@@ -253,6 +253,12 @@ input[type=number] {
     }
 }
 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    margin-right: -5px !important;
+    margin-top: -1px !important;
+}
+
 .c-input {
     &--datetime {
         // Sized for values such as 2018-09-28 22:32:33.468Z
