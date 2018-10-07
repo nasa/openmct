@@ -42,7 +42,7 @@ $colorGenBg: #222;
 $colorHeadBg: #222;
 $colorHeadFg: $colorBodyFg;
 $colorStatusBarBg: $colorHeadBg;
-$colorStatusBarFg: $colorBodyFg; // #999
+$colorStatusBarFg: $colorBodyFg;
 $colorStatusBarFgHov: #aaa;
 $colorKey: #0099cc;
 $colorKeyFg: #fff;
@@ -56,7 +56,6 @@ $colorAHov: #fff;
 // Layout
 $shellMainPad: 4px 0;
 $shellPanePad: 0 7px;
-// $contentsMargin: $interiorMargin $interiorMarginLg;
 
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #999;
@@ -121,7 +120,7 @@ $colorClickIconFgHov: $colorKeyHov;
 
 // Menus
 $colorMenuBg: lighten($colorBodyBg, 20%);
-$colorMenuFg: red; //lighten($colorBodyFg, 30%);
+$colorMenuFg: lighten($colorBodyFg, 30%);
 $colorMenuIc: $colorKey;
 $colorMenuHovBg: $colorMenuIc;
 $colorMenuHovFg: $colorMenuBg;
@@ -164,7 +163,7 @@ $colorInspectorSectionHeaderBg: lighten($colorInspectorBg, 5%);
 $colorInspectorSectionHeaderFg: lighten($colorInspectorBg, 40%);
 
 // Overlay
-$overlayColorBg: $colorMenuBg; //lighten($colorBodyBg, 10%);
+$overlayColorBg: $colorMenuBg;
 $overlayColorFg: $colorMenuFg;
 $overlayButtonColorBg: lighten($overlayColorBg, 20%);
 $overlayButtonColorFg: #fff;
@@ -218,7 +217,7 @@ $legendCollapsedNameMaxW: 50%;
 $legendHoverValueBg: rgba($colorBodyFg, 0.2);
 
 // Tree
-$colorTreeBg: transparent; //darken($colorBodyBg, 3%); // Used
+$colorTreeBg: transparent;
 $colorItemTreeHoverBg: lighten($colorBodyBg, 10%);
 $colorItemTreeHoverFg: lighten($colorBodyFg, 10%);
 $colorItemTreeIcon: $colorKey; // Used
@@ -258,7 +257,7 @@ $splitterBtnColorFg: #999; // Controls color of label text
 $splitterBtnLabelColorFg: #666;
 $splitterCollapsedBtnColorBg: #222;
 $splitterCollapsedBtnColorFg: #666;
-$splitterCollapsedBtnColorBgHov: $colorKey;;
+$splitterCollapsedBtnColorBgHov: $colorKey;
 $splitterCollapsedBtnColorFgHov: $colorKeyFg;
 
 // Mobile
@@ -285,7 +284,7 @@ $createBtnTextTransform: uppercase;
 
 @mixin discreteItem() {
     background: rgba($colorBodyFg,0.1);
-    //border: 1px solid $colorInteriorBorder;
+    border: none;
     border-radius: $controlCr;
 
     .c-input-inline:hover {

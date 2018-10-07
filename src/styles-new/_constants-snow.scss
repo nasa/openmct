@@ -39,6 +39,8 @@ $basicCr: 4px;
 $colorBodyBg: #fcfcfc;
 $colorBodyFg: #666;
 $colorGenBg: #fff;
+$colorHeadBg: #eee;
+$colorHeadFg: $colorBodyFg;
 $colorStatusBarBg: #000;
 $colorStatusBarFg: #999;
 $colorStatusBarFgHov: #aaa;
@@ -52,7 +54,8 @@ $colorA: #999;
 $colorAHov: $colorKey;
 
 // Layout
-$contentsMargin: $interiorMargin;
+$shellMainPad: 4px 0;
+$shellPanePad: 0 7px;
 
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #999;
@@ -112,7 +115,8 @@ $colorBtnCautionBg: #f16f6f;
 $colorBtnCautionBgHov: #f1504e;
 $colorBtnCautionFg: $colorBtnFg;
 $colorClickIcon: $colorKey;
-$colorClickIconHov: $colorKeyHov;
+$colorClickIconBgHov: rgba($colorKey, 0.2);
+$colorClickIconFgHov: $colorKeyHov;
 
 // Menus
 $colorMenuBg: lighten($colorBodyBg, 10%);
@@ -185,11 +189,11 @@ $colorInfoBubbleBg: $colorMenuBg;
 $colorInfoBubbleFg: #666;
 
 // Items
-$colorItemBg: #ddd;
-$colorItemBgHov: rgba($colorKey, 0.1); //lighten($colorItemBg, 10% * 0.4);
+$colorItemBg: buttonBg($colorBtnBg);
+$colorItemBgHov: buttonBg(lighten($colorBtnBg, 5%));
 $colorListItemBg: transparent;
 $colorListItemBgHov: rgba($colorKey, 0.1);
-$colorItemFg: $colorBodyFg;
+$colorItemFg: $colorBtnFg;
 $colorItemFgDetails: lighten($colorItemFg, 15%);
 $shdwItemText: none;
 
@@ -213,7 +217,7 @@ $legendCollapsedNameMaxW: 50%;
 $legendHoverValueBg: rgba($colorBodyFg, 0.2);
 
 // Tree
-$colorTreeBg: #f0f0f0; // Used
+$colorTreeBg: transparent;
 $colorItemTreeHoverBg: darken($colorBodyBg, 10%);
 $colorItemTreeHoverFg: darken($colorBodyFg, 10%);
 $colorItemTreeIcon: $colorKey; // Used
@@ -248,10 +252,13 @@ $colorSplitterFg: $colorBodyBg;
 $colorSplitterHover: $colorKey;
 $colorSplitterActive: $colorKey;
 $splitterBtnD: (16px, 35px); // height, width
-$splitterBtnColorBg: #eee;
-$splitterBtnColorFg: #999;
-$splitterBtnColorHoverBg: rgba($colorKey, 1);
-$splitterBtnColorHoverFg: $colorBodyBg;
+$splitterBtnColorBg: #eee; // Not used?
+$splitterBtnColorFg: #999; // Controls color of label text
+$splitterBtnLabelColorFg: blue;
+$splitterCollapsedBtnColorBg: #ccc;
+$splitterCollapsedBtnColorFg: #666;
+$splitterCollapsedBtnColorBgHov: $colorKey;
+$splitterCollapsedBtnColorFgHov: $colorKeyFg;
 
 // Mobile
 $colorMobilePaneLeft: darken($colorBodyBg, 2%);
@@ -289,6 +296,11 @@ $createBtnTextTransform: uppercase;
     border: 1px solid $colorBodyBg;
     border-radius: $controlCr;
 }
+
+@mixin themedButton($c: $colorBtnBg) {
+    background: $c;
+}
+
 
 /**************************************************** NOT USED, LEAVE FOR NOW */
 // Slider controls, not in use

@@ -74,7 +74,6 @@
         }
 
         &__pane-tree {
-            background: $colorTreeBg;
             width: 40%;
 
             [class*="collapse-button"] {
