@@ -39,7 +39,7 @@ $basicCr: 4px;
 $colorBodyBg: #393939;
 $colorBodyFg: #aaa;
 $colorGenBg: #222;
-$colorHeadBg: #222;
+$colorHeadBg: #262626;
 $colorHeadFg: $colorBodyFg;
 $colorStatusBarBg: $colorHeadBg;
 $colorStatusBarFg: $colorBodyFg;
@@ -55,7 +55,7 @@ $colorAHov: #fff;
 
 // Layout
 $shellMainPad: 4px 0;
-$shellPanePad: 0 7px;
+$shellPanePad: $interiorMargin, 7px; // TODO: Sync this with Snow theme
 
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #999;

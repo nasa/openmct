@@ -16,7 +16,7 @@
         <div class="l-pane__header"
              v-if="label">
             <span class="l-pane__label">{{ label }}</span>
-            <button class="l-pane__collapse-button--new c-button"
+            <button class="l-pane__collapse-button c-button"
                     v-if="collapsable"
                     @click="toggleCollapse"></button>
         </div>
@@ -37,7 +37,6 @@
         &--horizontal,
         > .l-pane {
             flex-flow: row nowrap;
-            padding: $interiorMargin 0;
         }
 
         &--vertical,
@@ -120,9 +119,6 @@
             }
 
             > [class*="__"] + [class*="__"] {
-                // Create margin between elements in a pane
-                // Doesn't match first elem, but will match all subsequent
-                margin-top: $interiorMargin;
             }
         }
 
@@ -153,13 +149,18 @@
                 font-size: floor(12px * .9);
             }
 
-            &__collapse-button--new {
+            &__collapse-button {
                 box-shadow: none;
                 color: $splitterBtnColorFg;
                 border-radius: $smallCr;
                 font-size: 6px;
                 line-height: 90%;
                 padding: 3px 15px;
+
+                @include hover() {
+                    background: $colorBtnBgHov;
+                    color: $colorBtnFgHov;
+                }
             }
 
             &__label {
@@ -200,7 +201,7 @@
                         .l-pane__label {
                             color: inherit;
                         }
-                        .l-pane__collapse-button--new {
+                        .l-pane__collapse-button {
                             background: $splitterCollapsedBtnColorBgHov;
                             color: inherit;
                             transition: $transIn;
@@ -208,7 +209,7 @@
                     }
                 }
 
-                .l-pane__collapse-button--new {
+                .l-pane__collapse-button {
                     background: $splitterCollapsedBtnColorBg;
                     color: $splitterCollapsedBtnColorFg;
                 }
@@ -230,7 +231,7 @@
                     }
                 }
 
-                .l-pane__collapse-button--new {
+                .l-pane__collapse-button {
                     &:before {
                         content: $glyph-icon-arrow-right-equilateral;
                     }
@@ -251,7 +252,7 @@
                         z-index: 1;
                     }
 
-                    .l-pane__collapse-button--new {
+                    .l-pane__collapse-button {
                         border-top-left-radius: 0;
                         border-bottom-left-radius: 0; // Only have to do this once, because of scaleX(-1) below.
                         position: absolute;
@@ -275,7 +276,7 @@
                     }
 
                     &[class*="--collapsed"] {
-                        .l-pane__collapse-button--new {
+                        .l-pane__collapse-button {
                             transform: scaleX(-1);
                         }
                     }
@@ -290,7 +291,7 @@
                     }
 
                     &:not([class*="--collapsed"]) {
-                        .l-pane__collapse-button--new {
+                        .l-pane__collapse-button {
                             transform: scaleX(-1);
                         }
                     }
@@ -321,12 +322,12 @@
                         transform: translateY(floor($splitterHandleD / -1));
                     }
 
-                    .l-pane__collapse-button--new:before {
+                    .l-pane__collapse-button:before {
                         content: $glyph-icon-arrow-down;
                     }
 
                     &.l-pane--collapsed {
-                        > .l-pane__collapse-button--new {
+                        > .l-pane__collapse-button {
                             transform: scaleY(-1);
                         }
                     }
@@ -340,7 +341,7 @@
                         transform: translateY(floor($splitterHandleD / 1));
                     }
 
-                    &:not(.l-pane--collapsed) > .l-pane__collapse-button--new {
+                    &:not(.l-pane--collapsed) > .l-pane__collapse-button {
                         &:after {
                             transform: scaleY(-1);
                         }

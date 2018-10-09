@@ -68,7 +68,6 @@
         &__status {
             background: $colorStatusBarBg;
             color: $colorStatusBarFg;
-            border-top: 1px solid $colorInteriorBorder;
             height: 24px;
             padding: $interiorMarginSm;
         }
@@ -79,31 +78,52 @@
             [class*="collapse-button"] {
                 // For mobile, collapse button becomes menu icon
                 body.mobile & {
-                    height: $mobileMenuIconD;
-                    width: $mobileMenuIconD;
+                    @include cClickIcon();
+                    position: absolute;
+                    right: -2 * nth($shellPanePad, 2); // Needs to be -1 * when pane is collapsed
+                    top: 0;
                     transform: translateX(100%);
+                    width: $mobileMenuIconD;
+                    z-index: 2;
 
-/*                    &:before {
-                        color: $colorKey;
+                    &:before {
                         content: $glyph-icon-menu-hamburger;
-                        font-family: symbolsfont;
-                        font-size: 1.4em;
-                    }*/
+                    }
                 }
             }
         }
 
-        &__pane-main,
-        &__pane-tree {
-            > .l-pane__contents {
+        &__pane-tree,
+        &__pane-inspector,
+        &__pane-main {
+            .l-pane__contents {
                 display: flex;
                 flex-flow: column nowrap;
+
+                > * {
+                    flex: 0 0 auto;
+                    + * {
+                        margin-top: $interiorMarginLg;
+                    }
+                }
+            }
+        }
+
+        body.mobile & {
+            &__pane-tree {
+                background: linear-gradient(90deg, transparent 70%, rgba(black, 0.2) 99%, rgba(black, 0.3));
+
+                &[class*="--collapsed"] {
+                    [class*="collapse-button"] {
+                        right: -1 * nth($shellPanePad, 2);
+                    }
+                }
             }
         }
 
         body.phone.portrait & {
             &__pane-tree {
-                width: calc(100% - #{$mobileMenuIconD});
+                width: calc(100% - #{$mobileMenuIconD + (2 * nth($shellPanePad, 2))});
 
                 + .l-pane {
                     // Hide pane-main when this pane is expanded
@@ -139,7 +159,7 @@
         }
 
         body.mobile & .l-shell__main-view-browse-bar {
-            margin-left: $mobileMenuIconD - $interiorMarginLg; // Make room for the hamburger!
+            margin-left: $mobileMenuIconD; // Make room for the hamburger!
         }
 
         &__head {
@@ -166,16 +186,10 @@
         }
 
         /******************************* MAIN AREA */
-        &__main {
-            padding: $shellMainPad;
-            [class*='__pane'] {
-                padding: $shellPanePad;
-            }
-        }
 
         &__main-container {
             // Wrapper for main views
-            flex: 1 1 auto;
+            flex: 1 1 auto !important;
             overflow: auto;
             //font-size: 16px; // TEMP FOR LEGACY STYLING
         }
@@ -188,12 +202,25 @@
 
         &__time-conductor {
             border-top: 1px solid $colorInteriorBorder;
-            flex: 0 0 auto;
             padding-top: $interiorMargin;
         }
 
+        &__main {
+            > .l-pane {
+                padding: nth($shellPanePad, 1) nth($shellPanePad, 2);
+            }
+        }
+
         body.desktop & {
-            /********** HEAD AND STATUS */
+            &__main {
+                // Top and bottom padding in container that holds tree, __pane-main and Inspector
+                padding: $shellMainPad;
+                > .l-pane {
+                    padding-top: 0;
+                    padding-bottom: 0;
+                }
+            }
+
             &__pane-tree,
             &__pane-inspector {
                 max-width: 30%;
@@ -205,11 +232,6 @@
 
             &__pane-inspector {
                 width: 200px;
-            }
-
-            &__toolbar {
-                flex: 0 0 auto;
-                margin-bottom: $interiorMargin;
             }
         }
     }
