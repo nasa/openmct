@@ -81,10 +81,10 @@ function (
 
         if (entryPos !== -1) {
 
-            this.openmct.DialogService.showBlockingMessage({
+            this.openmct.OverlayService.showBlockingMessage({
                 severity: "error",
                 actionText: "This action will permanently delete this Notebook entry. Do you wish to continue?",
-                options: [{
+                buttons: [{
                     label: "No",
                     callback: function () {}
                 },

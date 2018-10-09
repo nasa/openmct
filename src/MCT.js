@@ -41,7 +41,6 @@ define([
     './styles-new/notebook.scss',
     './ui/components/layout/Layout.vue',
     './ui/overlayService/overlayService',
-    './ui/dialogService/dialogService',
     'vue'
 ], function (
     EventEmitter,
@@ -64,7 +63,6 @@ define([
     NotebookStyles,
     Layout,
     OverlayService,
-    DialogService,
     Vue
 ) {
     /**
@@ -230,7 +228,6 @@ define([
         this.editor = new api.EditorAPI.default(this);
 
         this.OverlayService = new OverlayService();
-        this.DialogService = new DialogService(this);
 
         this.legacyRegistry = defaultRegistry;
         this.install(this.plugins.Plot());

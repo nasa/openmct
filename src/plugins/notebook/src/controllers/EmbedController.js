@@ -73,7 +73,7 @@ function (
                     onDestroy: function () {
                         annotateOverlay.$destroy(true);
                     },
-                    bottomBarButtons: [
+                    buttons: [
                         {
                             label: 'Cancel',
                             callback: function () {
@@ -223,10 +223,10 @@ function (
                 var entryPosition = self.findInArray(self.domainObject.entries, entry.id),
                     embedPosition = self.findInArray(entry.embeds, embed.id);
 
-                self.openmct.DialogService.showBlockingMessage({
+                self.openmct.OverlayService.showBlockingMessage({
                     severity: "error",
                     actionText: 'This Action will permanently delete this embed. Do you wish to continue?',
-                    options: [{
+                    buttons: [{
                         label: "No",
                         callback: function () {}
                     },

@@ -22,15 +22,19 @@
 
 define([
     './overlay.vue',
+    './blockingMessage.vue',
     'vue'
 ], function (
     OverlayComponent,
+    BlockingMessage,
     Vue
 ) {
 
     function OverlayService() {
         this.activeOverlays = [];
         this.overlayId = 0;
+
+        this.showBlockingMessage = this.showBlockingMessage.bind(this);
     }
 
     OverlayService.prototype.show  = function (element, options) {
@@ -44,7 +48,7 @@ define([
                 provide: {
                     destroy: this.destroy.bind(this),
                     element: element,
-                    bottomBarButtons: options.bottomBarButtons
+                    buttons: options.buttons
                 },
                 components: {
                     OverlayComponent: OverlayComponent.default
@@ -82,6 +86,30 @@ define([
         if (this.activeOverlays.length) {
             this.activeOverlays[this.activeOverlays.length - 1].overlay.classList.remove('invisible');
         }
+    };
+
+    OverlayService.prototype.showBlockingMessage = function (model) {
+        let component = new Vue({
+            provide: {
+                model: model
+            },
+            components: {
+                BlockingMessage: BlockingMessage.default
+            },
+            template: '<blocking-message></blocking-message>'
+        });
+
+        function destroy() {
+            component.$destroy(true);
+        }
+
+        let options = {
+            cssClass: 'l-message',
+            onDestroy: destroy,
+            buttons: model.buttons
+        };
+
+        this.show(component.$mount().$el, options);
     };
 
     return OverlayService;
