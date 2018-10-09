@@ -81,21 +81,18 @@ function (
 
         if (entryPos !== -1) {
 
-            var errorDialog = this.dialogService.showBlockingMessage({
+            this.openmct.DialogService.showBlockingMessage({
                 severity: "error",
-                title: "This action will permanently delete this Notebook entry. Do you wish to continue?",
+                actionText: "This action will permanently delete this Notebook entry. Do you wish to continue?",
                 options: [{
-                    label: "OK",
+                    label: "No",
+                    callback: function () {}
+                },
+                {
+                    label: "Yes",
                     callback: function () {
                         domainObject.entries.splice(entryPos, 1);
                         openmct.objects.mutate(domainObject, 'entries', domainObject.entries);
-
-                        errorDialog.dismiss();
-                    }
-                },{
-                    label: "Cancel",
-                    callback: function () {
-                        errorDialog.dismiss();
                     }
                 }]
             });

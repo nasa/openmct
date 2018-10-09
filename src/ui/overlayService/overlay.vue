@@ -18,8 +18,8 @@
                 <button class="c-button c-button--major"
                         v-for="(button, index) in bottomBarButtons"
                         :key="index"
-                        @click="buttonClickHandler(button.clickHandler)">
-                    {{button.title}}
+                        @click="buttonClickHandler(button.callback)">
+                    {{button.label}}
                 </button>
             </div>
         </div>

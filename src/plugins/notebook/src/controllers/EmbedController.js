@@ -75,15 +75,15 @@ function (
                     },
                     bottomBarButtons: [
                         {
-                            title: 'Cancel',
-                            clickHandler: function () {
+                            label: 'Cancel',
+                            callback: function () {
                                 save = false;
                                 painterroInstance.save();
                             }
                         },
                         {
-                            title: 'Save',
-                            clickHandler: function () {
+                            label: 'Save',
+                            callback: function () {
                                 save = true;
                                 painterroInstance.save();
                             }
@@ -223,23 +223,20 @@ function (
                 var entryPosition = self.findInArray(self.domainObject.entries, entry.id),
                     embedPosition = self.findInArray(entry.embeds, embed.id);
 
-                var warningDialog = self.dialogService.showBlockingMessage({
+                self.openmct.DialogService.showBlockingMessage({
                     severity: "error",
-                    title: "This action will permanently delete this embed. Do you wish to continue?",
+                    actionText: 'This Action will permanently delete this embed. Do you wish to continue?',
                     options: [{
-                        label: "OK",
+                        label: "No",
+                        callback: function () {}
+                    },
+                    {
+                        label: "Yes",
                         callback: function () {
                             entry.embeds.splice(embedPosition, 1);
                             var dirString = 'entries[' + entryPosition + '].embeds';
 
                             self.openmct.objects.mutate(self.domainObject, dirString, entry.embeds);
-
-                            warningDialog.dismiss();
-                        }
-                    },{
-                        label: "Cancel",
-                        callback: function () {
-                            warningDialog.dismiss();
                         }
                     }]
                 });
