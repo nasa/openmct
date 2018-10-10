@@ -29,7 +29,7 @@ define([
     './ui/GestureAPI',
     './telemetry/TelemetryAPI',
     './indicators/IndicatorAPI',
-    './notifications/NotificationAPI'
+    './notifications/NotificationAPI',
     './Editor'
 
 ], function (

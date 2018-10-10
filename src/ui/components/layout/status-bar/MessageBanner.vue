@@ -70,8 +70,10 @@
                 activeNotification = notification;
                 this.activeModel = notification.model;
                 activeNotification.once('destroy', () => {
-                    this.activeModel = undefined;
-                    activeNotification = undefined;
+                    if (this.activeModel === notification.model){
+                        this.activeModel = undefined;
+                        activeNotification = undefined;
+                    }
                 });
             },
             dismiss() {
