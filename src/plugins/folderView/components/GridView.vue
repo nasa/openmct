@@ -14,9 +14,9 @@
                      :title="item.model.name">{{item.model.name}}</div>
                 <div class="c-grid-item__metadata"
                      :title="item.type.name">
-                    <span>{{item.type.name}}</span>
-                    <span v-if="item.model.composition !== undefined">
-                        - {{item.model.composition.length}} item<span v-if="item.model.composition.length !== 1">s</span>
+                    <span class="c-grid-item__metadata__type">{{item.type.name}}</span>
+                    <span class="c-grid-item__metadata__item-count" v-if="item.model.composition !== undefined">
+                        {{item.model.composition.length}} item<span v-if="item.model.composition.length !== 1">s</span>
                     </span>
                 </div>
             </div>
@@ -45,8 +45,8 @@
         body.desktop & {
             flex-flow: row wrap;
             &__item {
-                height: $ueBrowseGridItemLg;
-                width: $ueBrowseGridItemLg;
+                height: $gridItemDesk;
+                width: $gridItemDesk;
                 margin: 0 $interiorMargin $interiorMargin 0;
             }
         }
@@ -62,8 +62,8 @@
 
         &__type-icon {
             filter: $colorKeyFilter;
-            flex: 0 0 32px;
-            font-size: 2em; // Drives the size of the alias indicator when present
+            flex: 0 0 $gridItemMobile;
+            font-size: floor($gridItemMobile / 2);
             margin-right: $interiorMarginLg;
         }
 
@@ -84,13 +84,22 @@
         &__name {
             @include ellipsize();
             color: $colorItemFg;
-            font-size: 1.3em;
+            font-size: 1.2em;
             font-weight: 400;
             margin-bottom: $interiorMarginSm;
         }
 
         &__metadata {
             color: $colorItemFgDetails;
+            font-size: 0.9em;
+
+            body.mobile & {
+                [class*='__item-count'] {
+                    &:before {
+                        content: ' - ';
+                    }
+                }
+            }
         }
 
         &__controls {
@@ -136,8 +145,8 @@
 
             &__type-icon {
                 flex: 1 1 auto;
-                font-size: 6em; // Drives the size of the alias indicator when present
-                margin: $interiorMargin 22.5%;
+                font-size: floor($gridItemDesk / 3);
+                margin: $interiorMargin 22.5% $interiorMargin * 3 22.5%;
                 order: 2;
                 transform: scale(0.9);
                 transform-origin: center;
@@ -148,6 +157,20 @@
                 flex: 0 0 auto;
                 justify-content: flex-end;
                 order: 3;
+            }
+
+            &__metadata {
+                display: flex;
+
+                &__type {
+                    flex: 1 1 auto;
+                    @include ellipsize();
+                }
+
+                &__item-count {
+                    opacity: 0.7;
+                    flex: 0 0 auto;
+                }
             }
         }
     }

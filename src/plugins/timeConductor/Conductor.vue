@@ -220,6 +220,16 @@
     }
 
     .is-realtime-mode {
+        button {
+            @include themedButton($colorTimeBg);
+            color: $colorTimeFg;
+
+            &:hover {
+                background: $colorTimeHov !important;
+                color: $colorTimeFg !important;
+            }
+        }
+
         .c-conductor-input {
             &:before {
                 color: $colorTime;

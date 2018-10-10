@@ -116,7 +116,6 @@
     $p: $interiorMarginSm;
     @include discreteItem();
     display: flex;
-    //flex-wrap: wrap;
     padding: $interiorMarginSm $interiorMarginSm $interiorMarginSm $interiorMargin;
 
     &__time,
@@ -156,7 +155,7 @@
     }
 
     &__text {
-        min-height: 24px; // Needed in Firefox when field is blank
+        min-height: 22px; // Needed in Firefox when field is blank
         white-space: pre-wrap;
 
         &.is-blank-notebook-entry {

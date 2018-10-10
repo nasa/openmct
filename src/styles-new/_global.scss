@@ -49,7 +49,7 @@
     font-style: normal;
 }
 
-/******************************************************** RESETS */
+/******************************* RESETS */
 *,
 :before,
 :after {
@@ -60,7 +60,7 @@ div {
     position: relative;
 }
 
-/******************************************************** UTILITIES */
+/******************************* UTILITIES */
 .u-contents {
     display: contents;
 }
@@ -74,7 +74,7 @@ div {
     }
 }
 
-/******************************************************** BROWSER ELEMENTS */
+/******************************* BROWSER ELEMENTS */
 body.desktop {
     ::-webkit-scrollbar {
         box-sizing: border-box;
@@ -92,30 +92,16 @@ body.desktop {
         }
     }
 
-    .overlay ::-webkit-scrollbar-thumb {
-        background: $scrollbarThumbColorOverlay;
-        &:hover {
-            background: $scrollbarThumbColorOverlayHov;
-        }
+    ::-webkit-scrollbar-corner {
+        background: transparent;
     }
 
-    .menu ::-webkit-scrollbar-thumb {
+    .c-menu ::-webkit-scrollbar-thumb {
         background: $scrollbarThumbColorMenu;
         &:hover {
             background: $scrollbarThumbColorMenuHov;
         }
     }
-
-    ::-webkit-scrollbar-corner {
-        background: transparent;
-    }
-}
-
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-    //margin: -1px -5px inherit -5px !important;
-    margin-right: -5px !important;
-    margin-top: -1px !important;
 }
 
 /************************** HTML ENTITIES */
@@ -223,21 +209,7 @@ body.desktop .has-local-controls {
     //}
 //}
 
-/******************************************************** IS */
-
-.is-selectable {
-    &:hover {
-        
-    }
-
-}
-
-.is-editing {
-    .is-selectable {
-
-    }
-}
-/******************************************************** LEGACY */
+/************************** LEGACY */
 
 mct-container {
     display: block;
@@ -307,6 +279,21 @@ a.disabled {
 
 .centered {
     text-align: center;
+}
+
+.no-selection {
+    // aka selection = "None". Used in palettes and their menu buttons.
+    $c: red;
+    $s: 48%;
+    $e: 52%;
+    background-image: linear-gradient(-45deg,
+            transparent $s - 5%,
+            $c $s,
+            $c $e,
+            transparent $e + 5%
+    );
+    background-repeat: no-repeat;
+    background-size: contain;
 }
 
 .scrolling,
