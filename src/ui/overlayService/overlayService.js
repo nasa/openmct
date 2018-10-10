@@ -54,38 +54,51 @@ define([
                     OverlayComponent: OverlayComponent.default
                 },
                 template: '<overlay-component></overlay-component>'
-            });
+            }),
+            dialog = {};
+
 
         overlay.classList.add('l-overlay-wrapper', overlayTypeCssClass);
         document.body.appendChild(overlay);
 
         overlay.appendChild(component.$mount().$el);
 
-        this.activeOverlays.push({
+        var overlayObject = {
             overlay: overlay,
             component: component,
             onDestroy: options.onDestroy,
-            id: this.overlayId
-        });
+            id: this.overlayId,
+            dialog: dialog
+        };
 
+        dialog.dismiss = function () {
+            let pos = findInArray(overlayObject.id, this.activeOverlays);
+
+            if (pos !== -1) {
+                if (overlayObject.onDestroy && typeof overlayObject.onDestroy === 'function') {
+                    overlayObject.onDestroy();
+                }
+
+                overlayObject.component.$destroy(true);
+                document.body.removeChild(overlayObject.overlay);
+                this.activeOverlays.splice(pos, 1);
+
+                if (this.activeOverlays.length) {
+                    this.activeOverlays[this.activeOverlays.length - 1].overlay.classList.remove('invisible');
+                }
+            }
+        }.bind(this);
+
+        this.activeOverlays.push(overlayObject);
         this.overlayId++;
+
+        return dialog;
     };
 
     OverlayService.prototype.destroy = function () {
-        var lastActiveOverlayObject = this.activeOverlays.pop(),
-            lastActiveOverlay = lastActiveOverlayObject.overlay,
-            lastActiveComponent = lastActiveOverlayObject.component;
+        var lastActiveOverlayObject = this.activeOverlays[this.activeOverlays.length - 1];
 
-        if (lastActiveOverlayObject.onDestroy && typeof lastActiveOverlayObject.onDestroy === 'function') {
-            lastActiveOverlayObject.onDestroy();
-        }
-
-        lastActiveComponent.$destroy(true);
-        document.body.removeChild(lastActiveOverlay);
-
-        if (this.activeOverlays.length) {
-            this.activeOverlays[this.activeOverlays.length - 1].overlay.classList.remove('invisible');
-        }
+        lastActiveOverlayObject.dialog.dismiss(lastActiveOverlayObject.id);
     };
 
     OverlayService.prototype.showBlockingMessage = function (model) {
@@ -109,8 +122,21 @@ define([
             buttons: model.buttons
         };
 
-        this.show(component.$mount().$el, options);
+        return this.show(component.$mount().$el, options);
     };
+
+    function findInArray(id, array) {
+        var found = -1;
+
+        array.forEach(function (o,i) {
+            if (o.id === id) {
+                found = i;
+                return;
+            }
+        });
+
+        return found;
+    }
 
     return OverlayService;
 });
