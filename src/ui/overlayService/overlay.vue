@@ -35,8 +35,8 @@
 
         &__outer {
             @include abs();
-            background: $colorOvrBg;
-            color: $colorOvrFg;
+            background: $overlayColorBg;
+            color: $overlayColorFg;
             display: flex;
             flex-direction: column;
             padding: $overlayInnerMargin;
@@ -65,7 +65,7 @@
         body.desktop & {
             &__blocker {
                 @include abs();
-                background: $colorOvrBlocker;
+                background: rgba(black, 0.7);
                 cursor: pointer;
                 display: block;
             }

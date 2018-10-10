@@ -1,10 +1,12 @@
 <template>
-    <ul class="c-tree">
-        <tree-item v-for="child in children"
-                   :key="child.id"
-                   :node="child">
-        </tree-item>
-    </ul>
+    <div class="c-tree__wrapper">
+        <ul class="c-tree">
+            <tree-item v-for="child in children"
+                       :key="child.id"
+                       :node="child">
+            </tree-item>
+        </ul>
+    </div>
 </template>
 
 <style lang="scss">
@@ -15,6 +17,11 @@
         overflow-x: hidden;
         overflow-y: auto;
         height: 100%;
+
+        &__wrapper {
+            overflow-y: auto;
+            padding-right: $interiorMarginSm;
+        }
 
         .c-tree {
             margin-left: 15px;
@@ -99,7 +106,7 @@
                 children: []
             };
         },
-        inject: ['openmct', 'domainObject'],
+        inject: ['openmct'],
         mounted: function () {
             this.openmct.objects.get('ROOT')
                 .then(root => this.openmct.composition.get(root).load())

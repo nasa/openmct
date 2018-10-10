@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// VERSION MANUALLY MIGRATED FROM VUE-TOOLBAR
-
 /************************** VISUALS */
 @mixin ancillaryIcon($d, $c) {
     // Used for small icons used in combination with larger icons,
@@ -146,10 +144,17 @@
 }
 
 /************************** CONTROLS, BUTTONS */
+@mixin hover {
+    body.desktop & {
+        &:hover {
+            @content
+        }
+    }
+}
+
 @mixin htmlInputReset() {
     appearance: none;
-    background: none;
-    background-color: transparent;
+    background: transparent;
     border: none;
     border-radius: 0;
     outline: none;
@@ -165,7 +170,7 @@
     border-radius: $controlCr;
 
     &.error {
-        background-color: $colorFormFieldErrorBg;
+        background: $colorFormFieldErrorBg;
         color: $colorFormFieldErrorFg;
     }
 }
@@ -183,7 +188,7 @@
     box-shadow: $shdwInput;
     color: $fg;
 
-    &:hover {
+    @include hover() {
         box-shadow: $shdwInputHov;
     }
 
@@ -193,11 +198,132 @@
 }
 
 @mixin button($bg: $colorBtnBg, $fg: $colorBtnFg, $radius: $controlCr, $shdw: none) {
+    // Is this being used? Remove if not.
     background: $bg;
     color: $fg;
     border-radius: $radius;
     box-shadow: $shdw;
 }
+
+@mixin cControl() {
+    $fs: 1em;
+    @include userSelectNone();
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    &:before,
+    &:after {
+        font-family: symbolsfont;
+        display: block;
+        flex: 0 0 auto;
+    }
+
+    &:after {
+        font-size: 0.8em;
+    }
+
+    [class*="__label"] {
+        @include ellipsize();
+        display: block;
+        line-height: $fs; // Remove effect on top and bottom padding
+        font-size: $fs;
+    }
+}
+
+@mixin cButton() {
+    @include cControl();
+    @include themedButton();
+    border-radius: $controlCr;
+    color: $colorBtnFg;
+    cursor: pointer;
+    padding: $interiorMargin floor($interiorMargin * 1.25);
+
+    @include hover() {
+        background: $colorBtnBgHov;
+        color: $colorBtnFgHov;
+    }
+
+    &[class*="--major"] {
+        background: $colorBtnMajorBg;
+        color: $colorBtnMajorFg;
+
+        @include hover() {
+            background: $colorBtnMajorBgHov;
+            color: $colorBtnMajorFgHov;
+        }
+    }
+
+    &[class*='--caution'] {
+        background: $colorBtnCautionBg;
+        color: $colorBtnCautionFg;
+
+        &:hover {
+            background: $colorBtnCautionBgHov;
+        }
+    }
+}
+
+@mixin cClickIcon() {
+    // A clickable element that just includes the icon, no background
+    // Padding is included to facilitate a bigger hit area
+    // Make the icon bigger relative to its container
+    @include cControl();
+    $pLR: 4px;
+    $pTB: 3px;
+    background: none;
+    box-shadow: none;
+    border-radius: $controlCr;
+    color: $colorKey;
+    cursor: pointer;
+    padding: $pTB $pLR ;
+
+    @include hover() {
+        background: $colorClickIconBgHov;
+        color: $colorClickIconFgHov;
+    }
+
+    &:before,
+    *:before {
+        // *:before handles any nested containers that may contain glyph elements
+        // Needed for c-togglebutton.
+        font-size: 1.2em;
+    }
+}
+
+@mixin cCtrlWrapper {
+    // Provides a wrapper around  buttons and other controls
+    // Contains control and provides positioning context for contained menu/palette.
+    // Wraps --menu elements, contains button and menu
+    overflow: visible;
+
+    .c-menu {
+        // Default position of contained menu
+        top: 100%; left: 0;
+    }
+
+    &[class*='--menus-up'] {
+        .c-menu {
+            top: auto; bottom: 100%;
+        }
+    }
+
+    &[class*='--menus-left'] {
+        .c-menu {
+            left: auto; right: 0;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
 
 @mixin wrappedInput() {
     // An input that is wrapped. Optionally includes a __label or icon element.
