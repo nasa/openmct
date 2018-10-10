@@ -20,13 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/****************************************************** SNOW THEME CONSTANTS */
+/************************************************** ESPRESSO THEME CONSTANTS */
 
 @import "constants";
 
 // Functions
 @function buttonBg($c: $colorBtnBg) {
-    @return $c;
+    @return linear-gradient(lighten($c, 5%), $c);
 }
 
 // Constants
@@ -36,26 +36,26 @@ $controlCr: 3px;
 $basicCr: 4px;
 
 // Base colors
-$colorBodyBg: #fcfcfc;
-$colorBodyFg: #666;
-$colorGenBg: #fff;
-$colorHeadBg: #eee;
+$colorBodyBg: #393939;
+$colorBodyFg: #aaa;
+$colorGenBg: #222;
+$colorHeadBg: #262626;
 $colorHeadFg: $colorBodyFg;
-$colorStatusBarBg: #000;
-$colorStatusBarFg: #999;
+$colorStatusBarBg: $colorHeadBg;
+$colorStatusBarFg: $colorBodyFg;
 $colorStatusBarFgHov: #aaa;
 $colorKey: #0099cc;
 $colorKeyFg: #fff;
 $colorKeyHov: #00c0f6;
-$colorKeyFilter: brightness(0.9) sepia(1) hue-rotate(145deg) saturate(6);
+$colorKeyFilter: brightness(1) sepia(1) hue-rotate(145deg) saturate(6);
 $colorKeyFilterHov: brightness(1) sepia(1) hue-rotate(145deg) saturate(7);
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
-$colorA: #999;
-$colorAHov: $colorKey;
+$colorA: #ccc;
+$colorAHov: #fff;
 
 // Layout
 $shellMainPad: 4px 0;
-$shellPanePad: 0 7px;
+$shellPanePad: $interiorMargin, 7px; // TODO: Sync this with Snow theme
 
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #999;
@@ -71,16 +71,16 @@ $colorPausedFg: #fff;
 $colorOk: #33cc33;
 
 // Base variations
-$colorBodyBgSubtle: darken($colorBodyBg, 5%);
-$colorBodyBgSubtleHov: lighten($colorKey, 50%);
-$colorKeySubtle: lighten($colorKey, 50%);
+$colorBodyBgSubtle: lighten($colorBodyBg, 5%);
+$colorBodyBgSubtleHov: darken($colorKey, 50%);
+$colorKeySubtle: darken($colorKey, 50%);
 
 // Time Colors
 $colorTime: #618cff;
 $colorTimeBg: $colorTime;
-$colorTimeFg: $colorBodyBg;
-$colorTimeHov: lighten($colorTime, 5%);
-$colorTimeSubtle: lighten($colorTime, 20%);
+$colorTimeFg: lighten($colorTimeBg, 30%);
+$colorTimeHov: lighten($colorTime, 10%);
+$colorTimeSubtle: darken($colorTime, 20%);
 $colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
 $colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
 
@@ -103,29 +103,29 @@ $colorProgressBarOuter: rgba(#000, 0.1);
 $colorProgressBarAmt: #0a0;
 
 // Buttons and Controls
-$colorBtnBg: #aaaaaa;
-$colorBtnBgHov: darken($colorBtnBg, 10%);
-$colorBtnFg: #fff;
+$colorBtnBg: lighten($colorBodyBg, 10%); // !
+$colorBtnBgHov: lighten($colorBtnBg, 10%); // !
+$colorBtnFg: lighten($colorBodyFg, 10%); // !
 $colorBtnFgHov: $colorBtnFg;
 $colorBtnMajorBg: $colorKey;
 $colorBtnMajorBgHov: $colorKeyHov;
 $colorBtnMajorFg: $colorKeyFg;
-$colorBtnMajorFgHov: lighten($colorBtnMajorFg, 10%);
+$colorBtnMajorFgHov: darken($colorBtnMajorFg, 10%);
 $colorBtnCautionBg: #f16f6f;
 $colorBtnCautionBgHov: #f1504e;
 $colorBtnCautionFg: $colorBtnFg;
 $colorClickIcon: $colorKey;
-$colorClickIconBgHov: rgba($colorKey, 0.2);
+$colorClickIconBgHov: rgba($colorKey, 0.6);
 $colorClickIconFgHov: $colorKeyHov;
 
 // Menus
-$colorMenuBg: lighten($colorBodyBg, 10%);
-$colorMenuFg: darken($colorMenuBg, 70%);
-$colorMenuIc: $colorKey;
+$colorMenuBg: lighten($colorBodyBg, 20%);
+$colorMenuFg: lighten($colorBodyFg, 30%);
+$colorMenuIc: lighten($colorKey, 15%);
 $colorMenuHovBg: $colorMenuIc;
-$colorMenuHovFg: $colorMenuBg;
-$colorMenuHovIc: $colorMenuBg;
-$colorMenuElementHilite: darken($colorMenuBg, 10%);
+$colorMenuHovFg: lighten($colorMenuFg, 10%);
+$colorMenuHovIc: $colorMenuHovFg;
+$colorMenuElementHilite: lighten($colorMenuBg, 10%);
 $shdwMenu: rgba(black, 0.5) 0 1px 5px;
 $shdwMenuText: none;
 $menuItemPad: $interiorMargin, floor($interiorMargin * 1.25);
@@ -145,29 +145,29 @@ $colorFormFieldErrorBg: $colorFormError;
 $colorFormFieldErrorFg: rgba(#fff, 0.6);
 $colorFormLines: rgba(#000, 0.1);
 $colorFormSectionHeader: rgba(#000, 0.05);
-$colorInputBg: $colorGenBg;
+$colorInputBg: rgba(black, 0.2);
 $colorInputFg: $colorBodyFg;
-$colorInputPlaceholder: lighten($colorBodyFg, 20%);
-$colorFormText: lighten($colorBodyFg, 10%);
-$colorInputIcon: lighten($colorBodyFg, 25%);
-$colorFieldHint: darken($colorBodyFg, 40%);
+$colorInputPlaceholder: darken($colorBodyFg, 20%);
+$colorFormText: darken($colorBodyFg, 10%);
+$colorInputIcon: darken($colorBodyFg, 25%);
+$colorFieldHint: lighten($colorBodyFg, 40%);
 $shdwInput: inset rgba(black, 0.4) 0 0 1px;
 $shdwInputHov: inset rgba(black, 0.7) 0 0 1px;
 $shdwInputFoc: inset rgba(black, 0.7) 0 0 3px;
 
 // Inspector
-$colorInspectorBg: darken($colorBodyBg, 5%);
+$colorInspectorBg: lighten($colorBodyBg, 5%);
 $colorInspectorFg: $colorBodyFg;
-$colorInspectorPropName: lighten($colorBodyFg, 20%);
-$colorInspectorPropVal: darken($colorInspectorFg, 15%);
-$colorInspectorSectionHeaderBg: darken($colorInspectorBg, 5%);
-$colorInspectorSectionHeaderFg: darken($colorInspectorBg, 40%);
+$colorInspectorPropName: darken($colorBodyFg, 20%);
+$colorInspectorPropVal: lighten($colorInspectorFg, 15%);
+$colorInspectorSectionHeaderBg: lighten($colorInspectorBg, 5%);
+$colorInspectorSectionHeaderFg: lighten($colorInspectorBg, 40%);
 
 // Overlay
 $overlayColorBg: $colorMenuBg;
 $overlayColorFg: $colorMenuFg;
-$overlayButtonColorBg: $colorBtnBg;
-$overlayButtonColorFg: $colorBtnFg;
+$overlayButtonColorBg: lighten($overlayColorBg, 20%);
+$overlayButtonColorFg: #fff;
 $overlayCr: $interiorMarginLg;
 
 // Indicator colors
@@ -177,8 +177,8 @@ $colorIndicatorOn: $colorOk;
 $colorIndicatorOff: #666;
 
 // Limits and staleness colors//
-$colorTelemFresh: darken($colorBodyFg, 20%);
-$colorTelemStale: lighten($colorBodyFg, 20%);
+$colorTelemFresh: lighten($colorBodyFg, 20%);
+$colorTelemStale: darken($colorBodyFg, 20%);
 $styleTelemStale: italic;
 $colorLimitYellowBg: rgba(#ffaa00, 0.3);
 $colorLimitYellowIc: #ffaa00;
@@ -190,20 +190,20 @@ $colorInfoBubbleBg: $colorMenuBg;
 $colorInfoBubbleFg: #666;
 
 // Items
-$colorItemBg: lighten($colorBtnBg, 20%);
-$colorItemBgHov: lighten($colorItemBg, 5%);
+$colorItemBg: buttonBg($colorBtnBg);
+$colorItemBgHov: buttonBg(lighten($colorBtnBg, 5%));
 $colorListItemBg: transparent;
 $colorListItemBgHov: rgba($colorKey, 0.1);
-$colorItemFg: $colorBodyFg;
-$colorItemFgDetails: lighten($colorItemFg, 15%);
+$colorItemFg: $colorBtnFg;
+$colorItemFgDetails: darken($colorItemFg, 20%);
 $shdwItemText: none;
 
 // Tabular
-$colorTabBorder: darken($colorBodyBg, 10%);
+$colorTabBorder: lighten($colorBodyBg, 10%);
 $colorTabBodyBg: $colorBodyBg;
-$colorTabBodyFg: darken($colorBodyFg, 20%);
-$colorTabHeaderBg: darken($colorBodyBg, 10%);
-$colorTabHeaderFg: darken($colorBodyFg, 20%);
+$colorTabBodyFg: lighten($colorBodyFg, 20%);
+$colorTabHeaderBg: lighten($colorBodyBg, 10%);
+$colorTabHeaderFg: lighten($colorBodyFg, 20%);
 $colorTabHeaderBorder: $colorBodyBg;
 
 // Plot
@@ -213,18 +213,18 @@ $colorPlotHash: black;
 $opacityPlotHash: 0.2;
 $stylePlotHash: dashed;
 $colorPlotAreaBorder: $colorInteriorBorder;
-$colorPlotLabelFg: lighten($colorPlotFg, 20%);
+$colorPlotLabelFg: darken($colorPlotFg, 20%);
 $legendCollapsedNameMaxW: 50%;
 $legendHoverValueBg: rgba($colorBodyFg, 0.2);
 
 // Tree
 $colorTreeBg: transparent;
-$colorItemTreeHoverBg: darken($colorBodyBg, 10%);
-$colorItemTreeHoverFg: darken($colorBodyFg, 10%);
+$colorItemTreeHoverBg: lighten($colorBodyBg, 10%);
+$colorItemTreeHoverFg: lighten($colorBodyFg, 10%);
 $colorItemTreeIcon: $colorKey; // Used
 $colorItemTreeIconHover: $colorItemTreeIcon; // Used
 $colorItemTreeFg: $colorBodyFg;
-$colorItemTreeSelectedBg: lighten($colorKey, 15%);
+$colorItemTreeSelectedBg: darken($colorKey, 15%);
 $colorItemTreeSelectedFg: $colorBodyBg;
 $colorItemTreeEditingBg: $editColor;
 $colorItemTreeEditingFg: $editColorFg;
@@ -241,22 +241,22 @@ $scrollbarTrackShdw: rgba(#000, 0.2) 0 1px 2px;
 $scrollbarTrackColorBg: rgba(#000, 0.2);
 $scrollbarThumbColor: darken($colorBodyBg, 50%);
 $scrollbarThumbColorHov: $colorKey;
-$scrollbarThumbColorMenu: darken($colorMenuBg, 10%);
-$scrollbarThumbColorMenuHov: darken($scrollbarThumbColorMenu, 2%);
+$scrollbarThumbColorMenu: lighten($colorMenuBg, 10%);
+$scrollbarThumbColorMenuHov: lighten($scrollbarThumbColorMenu, 2%);
 
 // Splitter
 $splitterHandleD: 2px;
 $splitterHandleHitMargin: 4px;
 $colorSplitterBaseBg: $colorBodyBg;
-$colorSplitterBg: darken($colorSplitterBaseBg, 20%);
+$colorSplitterBg: lighten($colorSplitterBaseBg, 10%);
 $colorSplitterFg: $colorBodyBg;
 $colorSplitterHover: $colorKey;
 $colorSplitterActive: $colorKey;
 $splitterBtnD: (16px, 35px); // height, width
 $splitterBtnColorBg: $colorBtnBg;
-$splitterBtnColorFg: #ddd;
-$splitterBtnLabelColorFg: #999;
-$splitterCollapsedBtnColorBg: #ccc;
+$splitterBtnColorFg: #999;
+$splitterBtnLabelColorFg: #666;
+$splitterCollapsedBtnColorBg: #222;
 $splitterCollapsedBtnColorFg: #666;
 $splitterCollapsedBtnColorBgHov: $colorKey;
 $splitterCollapsedBtnColorFgHov: $colorKeyFg;
@@ -285,7 +285,7 @@ $createBtnTextTransform: uppercase;
 
 @mixin discreteItem() {
     background: rgba($colorBodyFg,0.1);
-    border: 1px solid $colorInteriorBorder;
+    border: none;
     border-radius: $controlCr;
 
     .c-input-inline:hover {
@@ -294,14 +294,14 @@ $createBtnTextTransform: uppercase;
 }
 
 @mixin discreteItemInnerElem() {
-    border: 1px solid $colorBodyBg;
+    border: 1px solid rgba(#fff, 0.1);
     border-radius: $controlCr;
 }
 
 @mixin themedButton($c: $colorBtnBg) {
-    background: $c;
+    background: linear-gradient(lighten($c, 5%), $c);
+    box-shadow: rgba(black, 0.5) 0 0 2px;
 }
-
 
 /**************************************************** NOT USED, LEAVE FOR NOW */
 // Slider controls, not in use
@@ -310,7 +310,7 @@ $sliderColorBase: $colorKey;
 $sliderColorRangeHolder: rgba(black, 0.07);
 $sliderColorRange: rgba($sliderColorBase, 0.2);
 $sliderColorRangeHov: rgba($sliderColorBase, 0.4);
-$sliderColorKnob: lighten($sliderColorBase, 20%);
+$sliderColorKnob: darken($sliderColorBase, 20%);
 $sliderColorKnobHov: rgba($sliderColorBase, 0.7);
 $sliderColorRangeValHovBg: $sliderColorRange;
 $sliderColorRangeValHovFg: $colorBodyFg;

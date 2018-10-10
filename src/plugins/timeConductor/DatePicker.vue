@@ -108,7 +108,7 @@
         grid-gap: 1px;
         height: 100%;
 
-        $mutedOpacity: 0.7;
+        $mutedOpacity: 0.5;
 
         ul {
             display: contents;
@@ -127,7 +127,7 @@
             padding: $interiorMargin;
 
             &.is-in-month {
-                background: rgba($colorBodyFg, 0.1);
+                background: $colorMenuElementHilite;
             }
         }
 

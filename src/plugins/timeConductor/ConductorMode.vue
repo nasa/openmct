@@ -21,10 +21,10 @@
  *****************************************************************************/
 <template>
     <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up">
-        <div class="c-button--menu c-mode-button"
+        <button class="c-button--menu c-mode-button"
              @click="toggleMenu($event)">
             <span class="c-button__label">{{selectedMode.name}}</span>
-        </div>
+        </button>
         <div class="c-menu c-super-menu c-conductor__mode-menu"
              v-if="showMenu">
             <div class="c-super-menu__menu">
@@ -64,16 +64,6 @@
 
         [class*="__item-description"] {
             min-width: 200px;
-        }
-    }
-
-    .is-realtime-mode {
-        .c-mode-button {
-            background: $colorTimeBg;
-
-            &:hover {
-                background: $colorTimeHov;
-            }
         }
     }
 </style>
