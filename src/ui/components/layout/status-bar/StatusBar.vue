@@ -19,7 +19,7 @@
 <template>
     <span class="c-status">
     <indicators></indicators>
-    <message-banner></message-banner>
+    <notification-banner></notification-banner>
     </span>
 </template>
 
@@ -31,12 +31,12 @@
 
 <script>
     import Indicators from './Indicators.vue';
-    import MessageBanner from './MessageBanner.vue';
+    import NotificationBanner from './NotificationBanner.vue';
 
     export default {
         components: {
             Indicators,
-            MessageBanner
+            NotificationBanner
         }
     }
 </script>
