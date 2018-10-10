@@ -91,8 +91,8 @@
             background: rgba($editColor, 0.1);
         }
 
-        .s-selected,
-        .s-selected-parent {
+        [s-selected],
+        [s-selected-parent] {
             .l-layout {
                 // Show the layout grid for the top-most child of the current selection,
                 // and hide the grid for deeper nested levels.
