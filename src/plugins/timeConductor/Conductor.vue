@@ -27,71 +27,61 @@
 
             <ConductorModeIcon class="c-conductor__mode-icon"></ConductorModeIcon>
 
-            <div class="c-conductor__start-input">
-                <!-- Start input and controls -->
-                <div class="c-ctrl-wrapper c-conductor-input c-conductor__start__fixed"
-                     v-if="isFixed">
-                    <!-- Fixed input -->
-                    <div class="c-conductor__start__fixed__label">Start</div>
-                    <input class="c-input--datetime"
-                           type="text" autocorrect="off" spellcheck="false"
-                           ref="startDate"
-                           v-model="formattedBounds.start"
-                           @change="validateBounds('start', $event.target); setBoundsFromView()" />
-                    <date-picker
-                            :default-date-time="formattedBounds.start"
-                            :formatter="timeFormatter"
-                            @date-selected="startDateSelected"></date-picker>
-                </div>
-
-                <div class="c-ctrl-wrapper c-conductor-input c-conductor__start__delta"
-                     v-if="!isFixed">
-                    <!-- RT input -->
-                    <div class="c-direction-indicator icon-minus"></div>
-                    <input class="c-input--hrs-min-sec"
-                           type="text" autocorrect="off"
-                           spellcheck="false"
-                           v-model="offsets.start"
-                           @change="validateOffsets($event); setOffsetsFromView()">
-                </div>
+            <div class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
+                 v-if="isFixed">
+                <!-- Fixed start -->
+                <div class="c-conductor__start-fixed__label">Start</div>
+                <input class="c-input--datetime"
+                       type="text" autocorrect="off" spellcheck="false"
+                       ref="startDate"
+                       v-model="formattedBounds.start"
+                       @change="validateBounds('start', $event.target); setBoundsFromView()" />
+                <date-picker
+                        :default-date-time="formattedBounds.start"
+                        :formatter="timeFormatter"
+                        @date-selected="startDateSelected"></date-picker>
             </div>
 
-            <div class="c-conductor__end-input c-ci__end">
-                <!-- Fixed End Input -->
-                <div class="c-ctrl-wrapper c-conductor-input c-conductor__end__fixed c-conductor__rt-last-update">
-                    <!-- Fixed input -->
-                    <div class="c-conductor__end__fixed__label">
-                        {{ isFixed ? 'End' : 'Updated' }}
-                    </div>
-                    <input class="c-input--datetime"
-                           type="text" autocorrect="off" spellcheck="false"
-                           v-model="formattedBounds.end"
-                           :disabled="!isFixed"
-                           ref="endDate"
-                           @change="validateBounds('end', $event.target); setBoundsFromView()">
-                    <date-picker
-                            class="c-ctrl-wrapper--menus-left"
-                            :default-date-time="formattedBounds.end"
-                            :formatter="timeFormatter"
-                            @date-selected="endDateSelected"
-                            v-if="isFixed"></date-picker>
-                </div>
+            <div class="c-ctrl-wrapper c-conductor-input c-conductor__start-delta"
+                 v-if="!isFixed">
+                <!-- RT start -->
+                <div class="c-direction-indicator icon-minus"></div>
+                <input class="c-input--hrs-min-sec"
+                       type="text" autocorrect="off"
+                       spellcheck="false"
+                       v-model="offsets.start"
+                       @change="validateOffsets($event); setOffsetsFromView()">
             </div>
 
-            <div class="c-conductor__end-input c-ci__end-rt"
-                v-if="!isFixed">
-                <!-- RT End Input -->
-                <div class="c-ctrl-wrapper c-conductor-input c-conductor__end__delta"
-                     v-if="!isFixed">
-                    <!-- RT input -->
-                    <div class="c-direction-indicator icon-plus"></div>
-                    <input class="c-input--hrs-min-sec"
-                           type="text"
-                           autocorrect="off"
-                           spellcheck="false"
-                           v-model="offsets.end"
-                           @change="validateOffsets($event); setOffsetsFromView()">
+            <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
+                <!-- Fixed end and RT 'last update' display -->
+                <div class="c-conductor__end-fixed__label">
+                    {{ isFixed ? 'End' : 'Updated' }}
                 </div>
+                <input class="c-input--datetime"
+                       type="text" autocorrect="off" spellcheck="false"
+                       v-model="formattedBounds.end"
+                       :disabled="!isFixed"
+                       ref="endDate"
+                       @change="validateBounds('end', $event.target); setBoundsFromView()">
+                <date-picker
+                        class="c-ctrl-wrapper--menus-left"
+                        :default-date-time="formattedBounds.end"
+                        :formatter="timeFormatter"
+                        @date-selected="endDateSelected"
+                        v-if="isFixed"></date-picker>
+            </div>
+
+            <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-delta"
+                 v-if="!isFixed">
+                <!-- RT end -->
+                <div class="c-direction-indicator icon-plus"></div>
+                <input class="c-input--hrs-min-sec"
+                       type="text"
+                       autocorrect="off"
+                       spellcheck="false"
+                       v-model="offsets.end"
+                       @change="validateOffsets($event); setOffsetsFromView()">
             </div>
 
             <conductor-axis
@@ -117,28 +107,29 @@
         grid-column-gap: $interiorMargin;
         grid-row-gap: $interiorMargin;
         align-items: center;
+
+        // Default: fixed mode, desktop
         grid-template-rows: 1fr 1fr;
         grid-template-columns: 20px auto 1fr auto;
         grid-template-areas:
-                "tc-mode-icon tc-start tc-ticks tc-end tc-end-rt"
-                "tc-controls tc-controls tc-controls tc-controls tc-controls";
+                "tc-mode-icon tc-start tc-ticks tc-end"
+                "tc-controls tc-controls tc-controls tc-controls";
 
         &__mode-icon {
             grid-area: tc-mode-icon;
         }
 
-        &__start-input {
+        &__start-fixed,
+        &__start-delta {
             grid-area: tc-start;
+            display: flex;
         }
 
-        &__end-input.c-ci__end {
+        &__end-fixed,
+        &__end-delta {
             grid-area: tc-end;
             display: flex;
-        }
-
-        &__end-input.c-ci__end-rt {
-            grid-area: tc-end-rt;
-            display: flex;
+            justify-content: flex-end;
         }
 
         &__ticks {
@@ -154,26 +145,22 @@
             }
         }
 
-        .c-conductor__end-input {
-            justify-content: flex-end;
-        }
-
-        &__start-input,
-        &__end-input {
-            display: flex;
-        }
-
-        [class*='__delta'] {
+        [class*='-delta'] {
             &:before {
                 content: $glyph-icon-clock;
                 font-family: symbolsfont;
             }
         }
 
-        &.is-fixed-mode {
+        &.is-realtime-mode {
+            grid-template-columns: 20px auto 1fr auto auto;
             grid-template-areas:
-                    "tc-mode-icon tc-start tc-ticks tc-end"
-                    "tc-controls tc-controls tc-controls tc-controls";
+                    "tc-mode-icon tc-start tc-ticks tc-updated tc-end"
+                    "tc-controls tc-controls tc-controls tc-controls tc-controls";
+
+            .c-conductor__end-fixed {
+                grid-area: tc-updated;
+            }
         }
 
         body.phone.portrait & {
@@ -190,32 +177,34 @@
                 display: none;
             }
 
-            &__end-input {
-                justify-content: flex-start;
-            }
-
             &.is-fixed-mode {
-                [class*='__start-input'],
-                [class*='__end-input'] {
+                [class*='__start-fixed'],
+                [class*='__end-fixed'] {
                     [class*='__label'] {
                         // Start and end are in separate columns; make the labels line up
                         width: 30px;
                     }
                 }
 
+                [class*='__end-input'] {
+                    justify-content: flex-start;
+                }
+
                 grid-template-areas:
                         "tc-mode-icon tc-start tc-start"
                         "tc-mode-icon tc-end tc-end"
                         "tc-mode-icon tc-controls tc-controls";
-
             }
 
             &.is-realtime-mode {
                 grid-template-areas:
-                        "tc-mode-icon tc-start tc-end"
-                        "tc-mode-icon tc-end-rt tc-end-rt"
+                        "tc-mode-icon tc-start tc-updated"
+                        "tc-mode-icon tc-end tc-end"
                         "tc-mode-icon tc-controls tc-controls";
 
+                .c-conductor__end-fixed {
+                    justify-content: flex-end;
+                }
             }
         }
     }
@@ -262,9 +251,10 @@
             }
         }
 
-        .c-conductor__rt-last-update {
+        .c-conductor__end-fixed {
+            // Displays last RT udpate
             color: $colorTime;
-            font-weight: 800;
+
             input {
                 // Remove input look
                 background: none;
