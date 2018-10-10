@@ -136,10 +136,11 @@
         components: {
             LayoutFrame
         },
-        created: function () {            
+        created: function () {
             this.newDomainObject = this.domainObject;
             this.gridSize = this.newDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;
             this.composition = this.openmct.composition.get(this.newDomainObject);
+            this.Listeners = [];
             let panels = (((this.newDomainObject.configuration || {}).layout || {}).panels || {});
 
             if (this.composition !== undefined) {
@@ -154,17 +155,9 @@
             }
 
             this.unlisten = this.openmct.objects.observe(this.newDomainObject, '*', function (obj) {
-                console.log('DisplayLayout', JSON.parse(JSON.stringify(obj)));
                 this.newDomainObject = JSON.parse(JSON.stringify(obj));
                 this.gridSize = this.newDomainObject.layoutGrid || DEFAULT_GRID_SIZE;;
             }.bind(this));
-
-            let id = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            let path = "configuration.layout.panels[" + id + "]";
-            this.Listeners = [];
-            this.Listeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".hasFrame", function (newValue) {
-                this.frames[id] = newValue;
-            }.bind(this)));            
         },
         methods: {
             readLayoutConfiguration(domainObject, panels) {
@@ -264,7 +257,7 @@
                 this.listeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".hasFrame", function (newValue) {
                     this.frameItems.forEach(function (item) {
                         if (item.id === id) {
-                            item.hasFrame = newValue;    
+                            item.hasFrame = newValue;
                         }
                     });
                     this.frames[id] = newValue;

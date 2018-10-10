@@ -82,7 +82,6 @@ export default {
     },
     methods: {
         onChange(event) {
-            console.log('changed!', event);
             this.$emit('change', event.target.checked, {...this.options});
         }
     }

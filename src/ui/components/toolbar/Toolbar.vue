@@ -36,20 +36,21 @@
         },
         methods: {
             handleSelection(selection) {
-                if (!selection[0]) {
+                if (!selection[0] || !this.openmct.editor.isEditing()) {
                     this.structure = [];
+                    this.selectedObject = undefined;
+                    this.removeListeners();
                     return;
                 }
-
-                // TODO: if in browse mode, do not show the toolbar
 
                 let domainObject = selection[0].context.item;
                 if (domainObject && domainObject === this.selectedObject) {
                     return;
                 }
-                
+
                 this.selectedObject = domainObject;
                 this.removeListeners();
+
                 let structure = this.openmct.toolbars.get(selection) || [];
                 this.structure = structure.map(function (item) {
                     let toolbarItem = {...item};
@@ -98,6 +99,16 @@
         mounted() {
             this.openmct.selection.on('change', this.handleSelection);
             this.handleSelection(this.openmct.selection.get());
+            this.openmct.editor.on('isEditing', (isEditing) => {
+                if (isEditing) {
+                    this.handleSelection(this.openmct.selection.get());
+                } else {
+                    this.structure = [];
+                    this.selectedObject = undefined;
+                    this.removeListeners();
+                }
+                this.isEditing = isEditing;
+            });
         },
         detroyed() {
             this.openmct.selection.off('change', this.handleSelection);
