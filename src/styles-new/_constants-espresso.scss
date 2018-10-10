@@ -252,8 +252,8 @@ $colorSplitterFg: $colorBodyBg;
 $colorSplitterHover: $colorKey;
 $colorSplitterActive: $colorKey;
 $splitterBtnD: (16px, 35px); // height, width
-$splitterBtnColorBg: deeppink; // Not used
-$splitterBtnColorFg: #999; // Controls color of label text
+$splitterBtnColorBg: $colorBtnBg;
+$splitterBtnColorFg: #999;
 $splitterBtnLabelColorFg: #666;
 $splitterCollapsedBtnColorBg: #222;
 $splitterCollapsedBtnColorFg: #666;

@@ -151,6 +151,7 @@
 
             &__collapse-button {
                 box-shadow: none;
+                background: $splitterBtnColorBg;
                 color: $splitterBtnColorFg;
                 border-radius: $smallCr;
                 font-size: 6px;

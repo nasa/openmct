@@ -189,11 +189,11 @@ $colorInfoBubbleBg: $colorMenuBg;
 $colorInfoBubbleFg: #666;
 
 // Items
-$colorItemBg: buttonBg($colorBtnBg);
-$colorItemBgHov: buttonBg(lighten($colorBtnBg, 5%));
+$colorItemBg: lighten($colorBtnBg, 20%);
+$colorItemBgHov: lighten($colorItemBg, 5%);
 $colorListItemBg: transparent;
 $colorListItemBgHov: rgba($colorKey, 0.1);
-$colorItemFg: $colorBtnFg;
+$colorItemFg: $colorBodyFg;
 $colorItemFgDetails: lighten($colorItemFg, 15%);
 $shdwItemText: none;
 
@@ -252,9 +252,9 @@ $colorSplitterFg: $colorBodyBg;
 $colorSplitterHover: $colorKey;
 $colorSplitterActive: $colorKey;
 $splitterBtnD: (16px, 35px); // height, width
-$splitterBtnColorBg: #eee; // Not used?
-$splitterBtnColorFg: #999; // Controls color of label text
-$splitterBtnLabelColorFg: blue;
+$splitterBtnColorBg: $colorBtnBg;
+$splitterBtnColorFg: #ddd;
+$splitterBtnLabelColorFg: #999;
 $splitterCollapsedBtnColorBg: #ccc;
 $splitterCollapsedBtnColorFg: #666;
 $splitterCollapsedBtnColorBgHov: $colorKey;

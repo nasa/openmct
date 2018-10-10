@@ -25,9 +25,7 @@
                 <div class="l-shell__search">
                     <search class="c-search--major" ref="shell-search"></search>
                 </div>
-                <div class="l-shell__tree">
-                    <mct-tree></mct-tree>
-                </div>
+                <mct-tree class="l-shell__tree"></mct-tree>
             </pane>
             <pane class="l-shell__pane-main">
                 <browse-bar class="l-shell__main-view-browse-bar"
@@ -196,8 +194,7 @@
 
         &__tree {
             // Tree component within __pane-tree
-            flex: 1 1 100%;
-            overflow-y: auto;
+            flex: 1 1 auto !important;
         }
 
         &__time-conductor {
