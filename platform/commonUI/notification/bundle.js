@@ -34,20 +34,6 @@ define([
 
     legacyRegistry.register("platform/commonUI/notification", {
         "extensions": {
-            "constants": [
-                {
-                    "key": "DEFAULT_AUTO_DISMISS",
-                    "value": 3000
-                },
-                {
-                    "key": "FORCE_AUTO_DISMISS",
-                    "value": 1000
-                },
-                {
-                    "key": "MINIMIZE_TIMEOUT",
-                    "value": 300
-                }
-            ],
             "templates": [
                 {
                     "key": "notificationIndicatorTemplate",
