@@ -56,12 +56,13 @@
                 </div>
             </div>
 
-            <div class="c-conductor__end-input">
-                <!-- End input and controls -->
-                <div class="c-ctrl-wrapper c-conductor-input c-conductor__end__fixed"
-                     v-if="isFixed">
+            <div class="c-conductor__end-input c-ci__end">
+                <!-- Fixed End Input -->
+                <div class="c-ctrl-wrapper c-conductor-input c-conductor__end__fixed c-conductor__rt-last-update">
                     <!-- Fixed input -->
-                    <div class="c-conductor__end__fixed__label">End</div>
+                    <div class="c-conductor__end__fixed__label">
+                        {{ isFixed ? 'End' : 'Updated' }}
+                    </div>
                     <input class="c-input--datetime"
                            type="text" autocorrect="off" spellcheck="false"
                            v-model="formattedBounds.end"
@@ -72,9 +73,14 @@
                             class="c-ctrl-wrapper--menus-left"
                             :default-date-time="formattedBounds.end"
                             :formatter="timeFormatter"
-                            @date-selected="endDateSelected"></date-picker>
+                            @date-selected="endDateSelected"
+                            v-if="isFixed"></date-picker>
                 </div>
+            </div>
 
+            <div class="c-conductor__end-input c-ci__end-rt"
+                v-if="!isFixed">
+                <!-- RT End Input -->
                 <div class="c-ctrl-wrapper c-conductor-input c-conductor__end__delta"
                      v-if="!isFixed">
                     <!-- RT input -->
@@ -111,65 +117,27 @@
         grid-column-gap: $interiorMargin;
         grid-row-gap: $interiorMargin;
         align-items: center;
-
-
         grid-template-rows: 1fr 1fr;
         grid-template-columns: 20px auto 1fr auto;
         grid-template-areas:
-                "tc-mode-icon tc-start tc-ticks tc-end"
-                "tc-controls tc-controls tc-controls tc-controls";
-
-        .c-conductor__end-input {
-            justify-content: flex-end;
-        }
-
-        body.phone.portrait & {
-            &.is-fixed-mode {
-                grid-row-gap: $interiorMargin;
-                grid-template-rows: auto auto auto;
-                grid-template-columns: 20px auto;
-                grid-template-areas:
-                        "tc-mode-icon tc-start"
-                        "tc-mode-icon tc-end"
-                        "tc-mode-icon tc-controls";
-
-                .c-conductor {
-                    &__mode-icon {
-                        grid-row: 1;
-                    }
-
-                    &__ticks,
-                    &__zoom {
-                        display: none;
-                    }
-
-                    &-input [class*='__label'] {
-                        // Start and end are in separate columns; make the labels line up
-                        width: 40px;
-                    }
-
-                    &__end-input {
-                        justify-content: flex-start;
-                    }
-                }
-            }
-        }
+                "tc-mode-icon tc-start tc-ticks tc-end tc-end-rt"
+                "tc-controls tc-controls tc-controls tc-controls tc-controls";
 
         &__mode-icon {
             grid-area: tc-mode-icon;
-        }
-
-        &__start-input,
-        &__end-input {
-            display: flex;
         }
 
         &__start-input {
             grid-area: tc-start;
         }
 
-        &__end-input {
+        &__end-input.c-ci__end {
             grid-area: tc-end;
+            display: flex;
+        }
+
+        &__end-input.c-ci__end-rt {
+            grid-area: tc-end-rt;
             display: flex;
         }
 
@@ -186,10 +154,68 @@
             }
         }
 
+        .c-conductor__end-input {
+            justify-content: flex-end;
+        }
+
+        &__start-input,
+        &__end-input {
+            display: flex;
+        }
+
         [class*='__delta'] {
             &:before {
                 content: $glyph-icon-clock;
                 font-family: symbolsfont;
+            }
+        }
+
+        &.is-fixed-mode {
+            grid-template-areas:
+                    "tc-mode-icon tc-start tc-ticks tc-end"
+                    "tc-controls tc-controls tc-controls tc-controls";
+        }
+
+        body.phone.portrait & {
+            grid-row-gap: $interiorMargin;
+            grid-template-rows: auto auto auto;
+            grid-template-columns: 20px auto auto;
+
+            &__mode-icon {
+                grid-row: 1;
+            }
+
+            &__ticks,
+            &__zoom {
+                display: none;
+            }
+
+            &__end-input {
+                justify-content: flex-start;
+            }
+
+            &.is-fixed-mode {
+                [class*='__start-input'],
+                [class*='__end-input'] {
+                    [class*='__label'] {
+                        // Start and end are in separate columns; make the labels line up
+                        width: 30px;
+                    }
+                }
+
+                grid-template-areas:
+                        "tc-mode-icon tc-start tc-start"
+                        "tc-mode-icon tc-end tc-end"
+                        "tc-mode-icon tc-controls tc-controls";
+
+            }
+
+            &.is-realtime-mode {
+                grid-template-areas:
+                        "tc-mode-icon tc-start tc-end"
+                        "tc-mode-icon tc-end-rt tc-end-rt"
+                        "tc-mode-icon tc-controls tc-controls";
+
             }
         }
     }
@@ -215,7 +241,7 @@
         }
 
         input:invalid {
-            background: rgba($colorFormInvalid, 0.3);
+            background: rgba($colorFormInvalid, 0.5);
         }
     }
 
@@ -233,6 +259,18 @@
         .c-conductor-input {
             &:before {
                 color: $colorTime;
+            }
+        }
+
+        .c-conductor__rt-last-update {
+            color: $colorTime;
+            font-weight: 800;
+            input {
+                // Remove input look
+                background: none;
+                box-shadow: none;
+                color: $colorTime;
+                pointer-events: none;
             }
         }
     }
@@ -406,5 +444,3 @@ export default {
     }
 }
 </script>
-
-

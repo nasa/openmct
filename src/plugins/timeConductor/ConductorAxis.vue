@@ -79,18 +79,22 @@
             border-radius: $controlCr;
             background-color: $colorBodyBgSubtle;
             box-shadow: inset rgba(black, 0.2) 0 1px 1px;
+            transition: $transOut;
 
             svg text {
                 fill: $colorBodyFg;
                 stroke: $colorBodyBgSubtle;
+                transition: $transOut;
             }
 
             &:hover,
             &:active {
                 $c: $colorKeySubtle;
                 background-color: $c;
+                transition: $transIn;
                 svg text {
                     stroke: $c;
+                    transition: $transIn;
                 }
             }
         }
