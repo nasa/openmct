@@ -68,8 +68,12 @@ export default function () {
             key: "layout",
             description: "A toolbar for objects inside a display layout.",
             forSelection: function (selection) {
-                // Apply the layout toolbar if the selected object is inside a layout.
-                return (selection && selection[1] && selection[1].context.item.type === 'layout');
+                // Apply the layout toolbar if the selected object is inside a layout,
+                // and in edit mode.
+                return (selection &&
+                    selection[1] &&
+                    selection[1].context.item.type === 'layout' &&
+                    openmct.editor.isEditing());
             },
             toolbar: function (selection) {                
                 let id = openmct.objects.makeKeyString(selection[0].context.item.identifier);

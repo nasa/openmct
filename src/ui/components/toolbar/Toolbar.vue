@@ -36,7 +36,7 @@
         },
         methods: {
             handleSelection(selection) {
-                if (!selection[0] || !this.openmct.editor.isEditing()) {
+                if (!selection[0]) {
                     this.structure = [];
                     this.selectedObject = undefined;
                     this.removeListeners();
@@ -99,6 +99,9 @@
         mounted() {
             this.openmct.selection.on('change', this.handleSelection);
             this.handleSelection(this.openmct.selection.get());
+
+            // TODO: This listener perhaps needs to be removed once the
+            // edit functionality is fully implemented.
             this.openmct.editor.on('isEditing', (isEditing) => {
                 if (isEditing) {
                     this.handleSelection(this.openmct.selection.get());
@@ -107,7 +110,6 @@
                     this.selectedObject = undefined;
                     this.removeListeners();
                 }
-                this.isEditing = isEditing;
             });
         },
         detroyed() {
