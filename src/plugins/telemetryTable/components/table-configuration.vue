@@ -1,14 +1,12 @@
 <template>
-<div class="grid-properties">
-    <!--form class="form" -->
-        <ul class="l-inspector-part">
-            <h2>Table Columns</h2>
-            <li class="grid-row" v-for="(title, key) in headers">
-                <div class="grid-cell label" title="Show or Hide Column"><label :for="key + 'ColumnControl'">{{title}}</label></div>
-                <div class="grid-cell value"><input type="checkbox" :id="key + 'ColumnControl'" :checked="configuration.hiddenColumns[key] !== true" @change="toggleColumn(key)"></div>
-            </li>
-        </ul>
-    <!--/form -->
+<div class="c-properties" v-if="isEditing">
+    <div class="c-properties__header">Table Columns</div>
+    <ul class="c-properties__section">
+        <li class="c-properties__row" v-for="(title, key) in headers">
+            <div class="c-properties__label" title="Show or Hide Column"><label :for="key + 'ColumnControl'">{{title}}</label></div>
+            <div class="c-properties__value"><input type="checkbox" :id="key + 'ColumnControl'" :checked="configuration.hiddenColumns[key] !== true" @change="toggleColumn(key)"></div>
+        </li>
+    </ul>
 </div>
 </template>
 
@@ -21,6 +19,7 @@ export default {
     data() {
         return {
             headers: {},
+            isEditing: this.openmct.editor.isEditing(),
             configuration: this.tableConfiguration.getConfiguration()
         }
     },
@@ -41,11 +40,14 @@ export default {
         removeObject(objectIdentifier) {
             this.tableConfiguration.removeColumnsForObject(objectIdentifier, true);
             this.updateHeaders(this.tableConfiguration.getAllHeaders());
+        },
+        toggleEdit(isEditing) {
+            this.isEditing = isEditing;
         }
-
     },
     mounted() {
         this.unlisteners = [];
+        this.openmct.editor.on('isEditing', this.toggleEdit);
         let compositionCollection = this.openmct.composition.get(this.tableConfiguration.domainObject);
 
         compositionCollection.load()
@@ -62,6 +64,7 @@ export default {
     },
     destroyed() {
         this.tableConfiguration.destroy();
+        this.openmct.editor.off('isEditing', this.toggleEdit);
         this.unlisteners.forEach((unlisten) => unlisten());
     }
 }

@@ -1,16 +1,18 @@
 <template>
-    <div class="l-shell">
+    <div class="l-shell" :class="{
+            'is-editing': isEditing
+        }">
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
             <div class="l-shell__controls">
-                <a class="c-icon-button icon-new-window" title="Open in a new browser tab" 
+                <button class="c-click-icon icon-new-window" title="Open in a new browser tab"
                     @click="openInNewTab"
                     target="_blank">
-                </a>
-                <a v-bind:class="['c-icon-button', fullScreen ? 'icon-fullscreen-expand' : 'icon-fullscreen-collapse']" 
+                </button>
+                <button v-bind:class="['c-click-icon', fullScreen ? 'icon-fullscreen-expand' : 'icon-fullscreen-collapse']"
                     v-bind:title="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
                     @click="fullScreenToggle">
-                </a>
+                </button>
             </div>
             <div class="l-shell__app-logo">[ App Logo ]</div>
         </div>
@@ -29,8 +31,9 @@
             </pane>
             <pane class="l-shell__pane-main">
                 <browse-bar class="l-shell__main-view-browse-bar"
-                                   ref="browseBar">
+                            ref="browseBar">
                 </browse-bar>
+                <toolbar class="l-shell__toolbar"></toolbar>
                 <object-view class="l-shell__main-container"
                              ref="browseObject">
                 </object-view>
@@ -60,6 +63,7 @@
         top: 0; right: 0; bottom: 0; left: 0;
         display: flex;
         flex-flow: column nowrap;
+        overflow: hidden;
 
         &__status {
             background: $colorBodyFg;
@@ -98,7 +102,7 @@
             }
         }
 
-        @include phonePortrait() {
+        body.phone.portrait & {
             &__pane-tree {
                 width: calc(100% - #{$mobileMenuIconD});
 
@@ -162,7 +166,7 @@
             margin-right: 2.5%;
         }
 
-        /********** MAIN AREA */
+        /******************************* MAIN AREA */
         &__main-container {
             // Wrapper for main views
             flex: 1 1 auto;
@@ -179,7 +183,7 @@
         &__time-conductor {
             border-top: 1px solid $colorInteriorBorder;
             flex: 0 0 auto;
-            padding: $interiorMargin;
+            padding-top: $interiorMargin;
         }
 
         body.desktop & {
@@ -195,6 +199,11 @@
 
             &__pane-inspector {
                 width: 200px;
+            }
+
+            &__toolbar {
+                flex: 0 0 auto;
+                margin-bottom: $interiorMargin;
             }
         }
     }
@@ -212,6 +221,7 @@
     import pane from '../controls/pane.vue';
     import BrowseBar from './BrowseBar.vue';
     import StatusBar from './status-bar/StatusBar.vue';
+    import Toolbar from './Toolbar.vue';
 
     var enterFullScreen = () => {
         var docElm = document.documentElement;
@@ -242,6 +252,7 @@
     }
 
     export default {
+        inject: ['openmct'],
         components: {
             Inspector,
             MctTree,
@@ -253,12 +264,19 @@
             multipane,
             pane,
             BrowseBar,
-            StatusBar
+            StatusBar,
+            Toolbar
+        },
+        mounted() {
+            this.openmct.editor.on('isEditing', (isEditing)=>{
+                this.isEditing = isEditing;
+            });
         },
         data: function () {
             return {
                 fullScreen: false,
-                conductorComponent: {}
+                conductorComponent: {},
+                isEditing: false
             }
         },
         methods: {

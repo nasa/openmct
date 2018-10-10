@@ -36,9 +36,11 @@ define(
          */
         function EditorCapability(
             transactionService,
+            openmct,
             domainObject
         ) {
             this.transactionService = transactionService;
+            this.openmct = openmct;
             this.domainObject = domainObject;
         }
 
@@ -48,19 +50,10 @@ define(
          * or finish() are called.
          */
         EditorCapability.prototype.edit = function () {
-            this.transactionService.startTransaction();
+            console.warn('DEPRECATED: cannot edit via edit capability, use openmct.editor instead.');
+            this.openmct.editor.edit();
             this.domainObject.getCapability('status').set('editing', true);
         };
-
-        function isEditContextRoot(domainObject) {
-            return domainObject.getCapability('status').get('editing');
-        }
-
-        function isEditing(domainObject) {
-            return isEditContextRoot(domainObject) ||
-                domainObject.hasCapability('context') &&
-                isEditing(domainObject.getCapability('context').getParent());
-        }
 
         /**
          * Determines whether this object, or any of its ancestors are
@@ -68,7 +61,8 @@ define(
          * @returns boolean
          */
         EditorCapability.prototype.inEditContext = function () {
-            return isEditing(this.domainObject);
+            console.warn('DEPRECATION WARNING: isEditing checks must be done via openmct.editor.');
+            return this.openmct.editor.isEditing();
         };
 
         /**
@@ -77,7 +71,8 @@ define(
          * @returns {*}
          */
         EditorCapability.prototype.isEditContextRoot = function () {
-            return isEditContextRoot(this.domainObject);
+            console.warn('DEPRECATION WARNING: isEditing checks must be done via openmct.editor.');
+            return this.openmct.editor.isEditing();
         };
 
         /**
@@ -86,10 +81,7 @@ define(
          * @returns {*}
          */
         EditorCapability.prototype.save = function () {
-            var transactionService = this.transactionService;
-            return transactionService.commit().then(function () {
-                transactionService.startTransaction();
-            });
+            console.warn('DEPRECATED: cannot save via edit capability, use openmct.editor instead.');
         };
 
         EditorCapability.prototype.invoke = EditorCapability.prototype.edit;
@@ -100,16 +92,7 @@ define(
          * @returns {*}
          */
         EditorCapability.prototype.finish = function () {
-            var domainObject = this.domainObject;
-
-            if (this.transactionService.isActive()) {
-                return this.transactionService.cancel().then(function () {
-                    domainObject.getCapability("status").set("editing", false);
-                    return domainObject;
-                });
-            } else {
-                return Promise.resolve(domainObject);
-            }
+            console.warn('DEPRECATED: cannot finish via edit capability, use openmct.editor instead.');
         };
 
         /**

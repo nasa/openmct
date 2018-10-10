@@ -405,7 +405,8 @@ define([
                     "description": "Provides transactional editing capabilities",
                     "implementation": EditorCapability,
                     "depends": [
-                        "transactionService"
+                        "transactionService",
+                        "openmct"
                     ]
                 }
             ],

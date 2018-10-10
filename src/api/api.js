@@ -30,6 +30,8 @@ define([
     './telemetry/TelemetryAPI',
     './indicators/IndicatorAPI',
     './notifications/NotificationAPI'
+    './Editor'
+
 ], function (
     TimeAPI,
     ObjectAPI,
@@ -39,7 +41,8 @@ define([
     GestureAPI,
     TelemetryAPI,
     IndicatorAPI,
-    NotificationAPI
+    NotificationAPI,
+    EditorAPI
 ) {
     return {
         TimeAPI: TimeAPI,
@@ -50,6 +53,7 @@ define([
         GestureAPI: GestureAPI,
         TelemetryAPI: TelemetryAPI,
         IndicatorAPI: IndicatorAPI,
-        NotificationAPI: NotificationAPI.default
+        NotificationAPI: NotificationAPI.default,
+        EditorAPI: EditorAPI
     };
 });

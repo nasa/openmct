@@ -40,6 +40,7 @@ define([
     './styles-new/core.scss',
     './styles-new/notebook.scss',
     './ui/components/layout/Layout.vue',
+    './ui/overlayService/overlayService',
     'vue'
 ], function (
     EventEmitter,
@@ -61,6 +62,7 @@ define([
     coreStyles,
     NotebookStyles,
     Layout,
+    OverlayService,
     Vue
 ) {
     /**
@@ -225,9 +227,14 @@ define([
 
         this.Dialog = api.Dialog;
 
+        this.editor = new api.EditorAPI.default(this);
+
+        this.OverlayService = new OverlayService();
+
         this.legacyRegistry = defaultRegistry;
         this.install(this.plugins.Plot());
         this.install(this.plugins.TelemetryTable());
+        this.install(this.plugins.DisplayLayout());
 
         if (typeof BUILD_CONSTANTS !== 'undefined') {
             this.install(buildInfoPlugin(BUILD_CONSTANTS));
@@ -312,13 +319,17 @@ define([
                 this.$injector.get('objectService');
 
                 var appLayout = new Vue({
-                    mixins: [Layout.default],
+                    components: {
+                        'Layout': Layout.default
+                    },
                     provide: {
                         openmct: this
-                    }
+                    },
+                    template: '<Layout ref="layout"></Layout>'
                 });
                 domElement.appendChild(appLayout.$mount().$el);
-                this.layout = appLayout;
+
+                this.layout = appLayout.$refs.layout;
                 Browse(this);
                 this.router.start();
                 this.emit('start');

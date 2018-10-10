@@ -24,11 +24,15 @@ define([
     'moment',
     'zepto',
     '../utils/SnapshotOverlay',
+    '../../res/templates/snapshotTemplate.html',
+    'vue'
 ],
 function (
     Moment,
     $,
-    SnapshotOverlay
+    SnapshotOverlay,
+    SnapshotTemplate,
+    Vue
 ) {
     function EmbedController (openmct, domainObject) {
         this.openmct = openmct;
@@ -53,11 +57,24 @@ function (
     };
 
     EmbedController.prototype.openSnapshot = function () {
-        if (!this.snapshotOverlay) {
-            this.snapShotOverlay = new SnapshotOverlay(this.embed, this.formatTime);
-        } else {
-            this.snapShotOverlay = undefined;
+        var self = this,
+            snapshot = new Vue({
+                template: SnapshotTemplate,
+                data: function () {
+                    return {
+                        embed: self.embed
+                    };
+                },
+                methods: {
+                    formatTime: self.formatTime
+                }
+            });
+
+        function onDestroyCallback() {
+            snapshot.$destroy(true);
         }
+
+        this.openmct.OverlayService.show(snapshot.$mount().$el, {onDestroy: onDestroyCallback, cssClass: 'l-large-view'});
     };
 
     EmbedController.prototype.formatTime = function (unixTime, timeFormat) {

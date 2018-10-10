@@ -20,16 +20,22 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-@import "vendor/normalize.min.css";
-@import "sass-base.scss";
+define(function () {
+    function DisplayLayoutType() {
+        return {
+            name: "Display Layout",
+            creatable: true,
+            cssClass: 'icon-layout',
+            initialize(domainObject) {
+                domainObject.composition = [];
+                domainObject.configuration = {
+                    layout: {
+                        panels: {}
+                    }
+                };
+            }
+        }
+    }
 
-/******************** RENDERS CSS */
-@import "glyphs";
-@import "global";
-@import "controls";
-
-/******************** LEGACY CSS */
-$output-bourbon-deprecation-warnings: false;
-@import "bourbon";
-@import "legacy-styles";
-
+    return DisplayLayoutType;
+});

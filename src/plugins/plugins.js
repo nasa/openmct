@@ -35,6 +35,7 @@ define([
     './telemetryTable/plugin',
     './staticRootPlugin/plugin',
     './notebook/plugin',
+    './displayLayout/plugin',
     './folderView/plugin'
 ], function (
     _,
@@ -51,6 +52,7 @@ define([
     TelemetryTablePlugin,
     StaticRootPlugin,
     Notebook,
+    DisplayLayoutPlugin,
     FolderView
 ) {
     var bundleMap = {
@@ -161,6 +163,7 @@ define([
     plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicator = URLIndicatorPlugin;
     plugins.Notebook = Notebook;
+    plugins.DisplayLayout = DisplayLayoutPlugin.default;
     plugins.FolderView = FolderView;
 
     return plugins;

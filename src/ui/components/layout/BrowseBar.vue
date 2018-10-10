@@ -1,7 +1,7 @@
 <template>
     <div class="l-browse-bar">
         <div class="l-browse-bar__start">
-            <a class="l-browse-bar__nav-to-parent-button c-icon-button icon-pointer-left"></a>
+            <button class="l-browse-bar__nav-to-parent-button c-click-icon icon-pointer-left"></button>
             <div class="l-browse-bar__object-name--w"
                  :class="type.cssClass">
                 <span
@@ -15,16 +15,16 @@
         </div>
 
         <div class="l-browse-bar__end">
-            <div class="l-browse-bar__view-switcher c-menu-button--w c-menu-button--menus-left"
+            <div class="l-browse-bar__view-switcher c-ctrl-wrapper c-ctrl-wrapper--menus-left"
                  v-if="views.length > 1">
-                <div class="c-menu-button"
+                <button class="c-button--menu"
                      :class="currentView.cssClass"
                      title="Switch view type"
                      @click="toggleViewMenu">
                     <span class="c-button__label">
                           {{ currentView.name }}
                     </span>
-                </div>
+                </button>
                 <div class="c-menu" v-show="showViewMenu">
                     <ul>
                         <li v-for="(view, index) in views"
@@ -39,9 +39,10 @@
             </div>
             <!-- Action buttons -->
             <div class="l-browse-bar__actions">
-                <div class="l-browse-bar__action c-button icon-eye-open" title="Preview"></div>
-                <div class="l-browse-bar__action c-button icon-notebook" title="New Notebook entry"></div>
-                <div class="l-browse-bar__action c-button c-button--major icon-pencil" title="Edit"></div>
+                <button class="l-browse-bar__actions__edit c-button icon-notebook" title="New Notebook entry"></button>
+                <button class="l-browse-bar__actions__notebook-entry c-button c-button--major icon-pencil" title="Edit" v-if="!isEditing" @click="edit()"></button>
+                <button class="l-browse-bar__actions c-button c-button--major icon-save" title="Save and Finish Editing" v-if="isEditing" @click="saveAndFinishEditing()"></button>
+                <button class="l-browse-bar__actions c-button icon-x" title="Cancel Editing" v-if="isEditing" @click="cancelEditing()"></button>
             </div>
         </div>
     </div>
@@ -66,13 +67,23 @@
                 this.openmct.router.updateParams({
                     view: this.viewKey
                 });
+            },
+            edit() {
+                this.openmct.editor.edit();
+            },
+            cancelEditing() {
+                this.openmct.editor.cancel();
+            },
+            saveAndFinishEditing() {
+                this.openmct.editor.save();
             }
         },
         data: function () {
             return {
                 showViewMenu: false,
                 domainObject: {},
-                viewKey: undefined
+                viewKey: undefined,
+                isEditing: this.openmct.editor.isEditing()
             }
         },
         computed: {
@@ -106,6 +117,10 @@
                     this.showViewMenu = false;
                 }
             });
+
+            this.openmct.editor.on('isEditing', (isEditing) => {
+                this.isEditing = isEditing;
+            });
         }
     }
 </script>
@@ -127,7 +142,6 @@
             display: flex;
             align-items: center;
             flex: 1 1 auto;
-            font-size: 1.4em;
             margin-right: $interiorMargin;
             min-width: 0; // Forces interior to compress when pushed on
         }
@@ -159,6 +173,7 @@
             align-items: center;
             display: flex;
             flex: 0 1 auto;
+            font-size: 1.4em;
             min-width: 0;
 
             &:before {

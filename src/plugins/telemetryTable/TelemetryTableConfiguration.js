@@ -23,10 +23,10 @@
 define([
     'lodash',
     'EventEmitter',
-    './TelemetryTableColumn',
+    './TelemetryTableColumn'
 ], function (_, EventEmitter, TelemetryTableColumn) {
 
-    class TelemetryTableConfiguration extends EventEmitter{
+    class TelemetryTableConfiguration extends EventEmitter {
         constructor(domainObject, openmct) {
             super();
 
@@ -37,6 +37,8 @@ define([
             this.addColumnsForObject = this.addColumnsForObject.bind(this);
             this.removeColumnsForObject = this.removeColumnsForObject.bind(this);
             this.objectMutated = this.objectMutated.bind(this);
+            //Make copy of configuration, otherwise change detection is impossible if shared instance is being modified.
+            this.oldConfiguration = JSON.parse(JSON.stringify(this.getConfiguration()));
 
             this.unlistenFromMutation = openmct.objects.observe(domainObject, '*', this.objectMutated);
         }
@@ -56,11 +58,11 @@ define([
          * @param {*} object 
          */
         objectMutated(object) {
-            let oldConfiguration = this.domainObject.configuration;
-
             //Synchronize domain object reference. Duplicate object otherwise change detection becomes impossible.
-            this.domainObject = JSON.parse(JSON.stringify(object));
-            if (!_.eq(object.configuration, oldConfiguration)){
+            this.domainObject = object;
+            if (!_.eq(object.configuration, this.oldConfiguration)) {
+                //Make copy of configuration, otherwise change detection is impossible if shared instance is being modified.
+                this.oldConfiguration = JSON.parse(JSON.stringify(this.getConfiguration()));
                 this.emit('change', object.configuration);
             }
         }
