@@ -117,7 +117,7 @@ export default class NotificationAPI extends EventEmitter {
             //Add a brief timeout before showing the next notification
             // in order to allow the minimize animation to run through.
             setTimeout(() => {
-                notification.emit('dismissed');
+                notification.emit('destroy');
                 this.setActiveNotification(this.selectNextNotification());
             }, MINIMIZE_ANIMATION_TIMEOUT);
         }
@@ -155,7 +155,7 @@ export default class NotificationAPI extends EventEmitter {
         }
         this.setActiveNotification(this.selectNextNotification());
         this.setHighestSeverity();
-        notification.emit('dismissed');
+        notification.emit('destroy');
     }
 
     /**
@@ -187,7 +187,7 @@ export default class NotificationAPI extends EventEmitter {
 
     /**
      * A convenience method for info notifications. Notifications
-     * created via this method will be auto-dismissed after a default
+     * created via this method will be auto-destroy after a default
      * wait period unless explicitly forbidden by the caller through
      * the {autoDismiss} property on the {NotificationModel}, in which
      * case the notification will be minimized after the wait.

@@ -69,31 +69,16 @@
             showNotification(notification) {
                 activeNotification = notification;
                 this.activeModel = notification.model;
-                activeNotification.once('dismissed', () => {
-                    //this.activeModel = undefined;
-                    //activeNotification = undefined;
+                activeNotification.once('destroy', () => {
+                    this.activeModel = undefined;
+                    activeNotification = undefined;
                 });
             },
             dismiss() {
                 activeNotification.dismissOrMinimize();
             },
             maximize() {
-                dialogService = dialogService || this.openmct.$injector.get('dialogService');
-
-                if (this.activeModel.severity !== "info") {
-                    let dialog;
-                    this.activeModel.cancel = function () {
-                        dialog.dismiss();
-                    };
-                    //If the notification is dismissed by the user, close
-                    // the dialog.
-                    activeNotification.on('dismiss', function () {
-                        dialog.dismiss();
-                    });
-
-                    dialog = dialogService.showBlockingMessage(this.activeModel);
-                }
-
+                //Not implemented yet.
             }
         },
         computed: {

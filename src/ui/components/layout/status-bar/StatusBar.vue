@@ -20,7 +20,6 @@
     <span class="c-status">
     <indicators></indicators>
     <message-banner></message-banner>
-    <about-logo></about-logo>
     </span>
 </template>
 
