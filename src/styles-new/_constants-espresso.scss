@@ -47,7 +47,7 @@ $colorStatusBarFgHov: #aaa;
 $colorKey: #0099cc;
 $colorKeyFg: #fff;
 $colorKeyHov: #00c0f6;
-$colorKeyFilter: brightness(0.9) sepia(1) hue-rotate(145deg) saturate(6);
+$colorKeyFilter: brightness(1) sepia(1) hue-rotate(145deg) saturate(6);
 $colorKeyFilterHov: brightness(1) sepia(1) hue-rotate(145deg) saturate(7);
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: #ccc;
@@ -79,7 +79,7 @@ $colorKeySubtle: darken($colorKey, 50%);
 $colorTime: #618cff;
 $colorTimeBg: $colorTime;
 $colorTimeFg: lighten($colorTimeBg, 30%);
-$colorTimeHov: lighten($colorTime, 5%);
+$colorTimeHov: lighten($colorTime, 10%);
 $colorTimeSubtle: darken($colorTime, 20%);
 $colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
 $colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
@@ -121,10 +121,11 @@ $colorClickIconFgHov: $colorKeyHov;
 // Menus
 $colorMenuBg: lighten($colorBodyBg, 20%);
 $colorMenuFg: lighten($colorBodyFg, 30%);
-$colorMenuIc: $colorKey;
+$colorMenuIc: lighten($colorKey, 15%);
 $colorMenuHovBg: $colorMenuIc;
-$colorMenuHovFg: $colorMenuBg;
-$colorMenuHovIc: $colorMenuBg;
+$colorMenuHovFg: lighten($colorMenuFg, 10%);
+$colorMenuHovIc: $colorMenuHovFg;
+$colorMenuElementHilite: lighten($colorMenuBg, 10%);
 $shdwMenu: rgba(black, 0.5) 0 1px 5px;
 $shdwMenuText: none;
 $menuItemPad: $interiorMargin, floor($interiorMargin * 1.25);

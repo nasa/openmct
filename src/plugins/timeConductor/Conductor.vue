@@ -225,8 +225,8 @@
             color: $colorTimeFg;
 
             &:hover {
-                background: $colorTimeHov;
-                color: $colorTimeFg;
+                background: $colorTimeHov !important;
+                color: $colorTimeFg !important;
             }
         }
 

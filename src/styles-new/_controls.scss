@@ -232,7 +232,6 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 @mixin menuInner() {
-    color: $colorMenuFg;
     li {
         @include cControl();
         justify-content: start;
@@ -302,11 +301,6 @@ input[type=number]::-webkit-outer-spin-button {
         justify-content: stretch;
 
         .l-item-description {
-            &__icon,
-            &__description {
-                //flex: 1 1 50%;
-            }
-
             &__name,
             &__description {
                 margin-top: $interiorMarginLg;
@@ -318,6 +312,7 @@ input[type=number]::-webkit-outer-spin-button {
             }
 
             &__name {
+                color: $colorMenuFg;
                 flex: 0 0 auto;
                 font-size: 1.25em;
             }
