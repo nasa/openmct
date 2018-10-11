@@ -44,9 +44,6 @@
                 }
 
                 let domainObject = selection[0].context.item;
-                if (domainObject && domainObject === this.selectedObject) {
-                    return;
-                }
 
                 this.selectedObject = domainObject;
                 this.removeListeners();
@@ -77,7 +74,7 @@
             removeListeners() {
                 if (this.unObserveObjects) {
                     this.unObserveObjects.forEach((unObserveObject) => {
-                        unObserveObject();            
+                        unObserveObject();
                     });
                 }
                 this.unObserveObjects = [];
@@ -98,16 +95,10 @@
             this.openmct.selection.on('change', this.handleSelection);
             this.handleSelection(this.openmct.selection.get());
 
-            // TODO: This listener perhaps needs to be removed once the
-            // edit functionality is fully implemented.
+            // Toolbars may change when edit mode is enabled/disabled, so listen
+            // for edit mode changes and update toolbars if necessary.
             this.openmct.editor.on('isEditing', (isEditing) => {
-                if (isEditing) {
-                    this.handleSelection(this.openmct.selection.get());
-                } else {
-                    this.structure = [];
-                    this.selectedObject = undefined;
-                    this.removeListeners();
-                }
+                this.handleSelection(this.openmct.selection.get());
             });
         },
         detroyed() {
