@@ -26,12 +26,16 @@ define([
     "./src/NotificationLaunchController",
     "./src/DialogLaunchIndicator",
     "./src/NotificationLaunchIndicator",
+    "./res/dialog-launch.html",
+    "./res/notification-launch.html",
     'legacyRegistry'
 ], function (
     DialogLaunchController,
     NotificationLaunchController,
     DialogLaunchIndicator,
     NotificationLaunchIndicator,
+    DialogLaunch,
+    NotificationLaunch,
     legacyRegistry
 ) {
     "use strict";
@@ -41,11 +45,11 @@ define([
             "templates": [
                 {
                     "key": "dialogLaunchTemplate",
-                    "templateUrl": "dialog-launch.html"
+                    "template": DialogLaunch
                 },
                 {
                     "key": "notificationLaunchTemplate",
-                    "templateUrl": "notification-launch.html"
+                    "template": NotificationLaunch
                 }
             ],
             "controllers": [

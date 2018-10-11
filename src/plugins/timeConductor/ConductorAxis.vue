@@ -37,6 +37,7 @@
         @include bgTicks($c: rgba($colorBodyFg, 0.4));
         background-position: 0 50%;
         background-size: 5px 2px;
+        border-radius: $controlCr;
         height: $h;
 
         svg {
@@ -76,34 +77,37 @@
         body.desktop .is-fixed-mode & {
             @include cursorGrab();
             background-size: 3px 30%;
-            border-radius: $controlCr;
             background-color: $colorBodyBgSubtle;
-            box-shadow: inset rgba(black, 0.2) 0 1px 1px;
+            box-shadow: inset rgba(black, 0.4) 0 1px 1px;
+            transition: $transOut;
 
             svg text {
                 fill: $colorBodyFg;
                 stroke: $colorBodyBgSubtle;
+                transition: $transOut;
             }
 
             &:hover,
             &:active {
                 $c: $colorKeySubtle;
                 background-color: $c;
+                transition: $transIn;
                 svg text {
                     stroke: $c;
+                    transition: $transIn;
                 }
             }
         }
 
         .is-realtime-mode & {
+            $c: 1px solid rgba($colorTime, 0.7);
+            border-left: $c;
+            border-right: $c;
             svg text {
                 fill: $colorTime;
             }
-
         }
     }
-
-
 </style>
 
 <script>
