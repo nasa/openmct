@@ -19,45 +19,30 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define([
-    './SimpleIndicator',
-    'lodash'
-], function (
-    SimpleIndicator,
-    _
-) {
-    function IndicatorAPI(openmct) {
-        this.openmct = openmct;
-        this.indicatorObjects = [];
+
+import EventEmitter from 'EventEmitter';
+export default class MCTNotification extends EventEmitter {
+
+    constructor(notificationModel, notificationAPI) {
+        super();
+        this.notifications = notificationAPI;
+        this.model = notificationModel;
+        this.initializeModel();
     }
 
-    IndicatorAPI.prototype.simpleIndicator = function () {
-        return new SimpleIndicator(this.openmct);
-    };
+    minimize() {
+        this.notifications.minimize(this);
+    }
 
-    /**
-     * Accepts an indicator object, which is a simple object
-     * with a single attribute, 'element' which has an HTMLElement
-     * as its value.
-     *
-     * We provide .simpleIndicator() as a convenience function
-     * which will create a default Open MCT indicator that can
-     * be passed to .add(indicator). This indicator also exposes
-     * functions for changing its appearance to support customization
-     * and dynamic behavior.
-     *
-     * Eg.
-     * var myIndicator = openmct.indicators.simpleIndicator();
-     * openmct.indicators.add(myIndicator);
-     *
-     * myIndicator.text("Hello World!");
-     * myIndicator.iconClass("icon-info");
-     *
-     */
-    IndicatorAPI.prototype.add = function (indicator) {
-        this.indicatorObjects.push(indicator);
-    };
+    dismiss() {
+        this.notifications.dismiss(this)
+    }
 
-    return IndicatorAPI;
+    dismissOrMinimize() {
+        this.notifications.dismissOrMinimize(this);
+    }
 
-});
+    initializeModel() {
+        this.model.minimized = this.model.minimized || false;
+    }
+}

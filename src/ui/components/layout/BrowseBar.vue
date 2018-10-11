@@ -75,7 +75,12 @@
                 this.openmct.editor.cancel();
             },
             saveAndFinishEditing() {
-                this.openmct.editor.save();
+                this.openmct.editor.save().then(()=> {
+                    this.openmct.notifications.info('Save successful');
+                }).catch((error) => {
+                    this.openmct.notifications.error('Error saving objects');
+                    console.error(error);
+                });
             }
         },
         data: function () {

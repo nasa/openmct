@@ -22,11 +22,11 @@
 <template>
     <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
          v-if="selectedTimeSystem.name">
-        <div class="c-button--menu c-time-system-button"
+        <button class="c-button--menu c-time-system-button"
             :class="selectedTimeSystem.cssClass"
              @click="toggleMenu($event)">
             <span class="c-button__label">{{selectedTimeSystem.name}}</span>
-        </div>
+        </button>
         <div class="c-menu" v-if="showMenu">
             <ul>
                 <li @click="setTimeSystemFromView(timeSystem)"
@@ -39,20 +39,6 @@
         </div>
     </div>
 </template>
-
-<style lang="scss">
-    @import "~styles/sass-base";
-
-    .is-realtime-mode {
-        .c-time-system-button {
-            background: $colorTimeBg;
-
-            &:hover {
-                background: $colorTimeHov;
-            }
-        }
-    }
-</style>
 
 <script>
 export default {

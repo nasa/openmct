@@ -18,8 +18,6 @@
     @import "~styles/sass-base";
 
     .c-inspector {
-        min-width: 150px;
-
         > [class*="__"] {
             min-height: 50px;
 
@@ -52,7 +50,7 @@
         }
 
         /************************************************************** LEGACY */
-        // TODO: refactor when markup can be converted
+        // TODO: refactor when legacy properties markup can be converted
         .inspector-location {
             display: inline-block;
 
@@ -93,10 +91,45 @@
                 width: 4px;
             }
         }
+
+        .l-inspector-part {
+            display: contents;
+        }
+
+        h2 {
+            @include propertiesHeader();
+            font-size: 0.65rem;
+            grid-column: 1 / 3;
+        }
+
+        .tree .grid-properties {
+            margin-left: $treeItemIndent + $interiorMarginLg;
+        }
     }
 
     .c-properties {
-        @include gridTwoColumn();
+        display: grid;
+        grid-row-gap: 0;
+        grid-template-columns: 1fr 2fr;
+        align-items: start;
+        min-width: 150px;
+
+        [class*="header"] {
+            @include propertiesHeader();
+
+            &:not(:first-child) {
+                // Allow multiple headers within a component
+                margin-top: $interiorMarginLg;
+            }
+        }
+
+        [class*="span-all"],
+        [class*="header"] {
+            grid-column: 1 / 3;
+        }
+
+
+
 
         + .c-properties {
             // Margin between components
@@ -139,7 +172,7 @@
             word-break: break-all;
             &:first-child {
                 // If there is no preceding .label element, make value span columns
-                @include gridTwoColumnSpanCols();
+                grid-column: 1 / 3;
             }
         }
     }
