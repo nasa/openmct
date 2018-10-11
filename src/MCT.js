@@ -223,6 +223,8 @@ define([
          */
         this.indicators = new api.IndicatorAPI(this);
 
+        this.notifications = new api.NotificationAPI();
+
         this.Dialog = api.Dialog;
 
         this.editor = new api.EditorAPI.default(this);
