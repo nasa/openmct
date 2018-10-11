@@ -1,7 +1,7 @@
 <template>
     <div class="c-ctrl-wrapper">
         <div class="c-click-icon"
-             :title="options.title"
+             :title="nextValue.title"
              :class="nextValue.icon"
              @click="cycle">
         </div>

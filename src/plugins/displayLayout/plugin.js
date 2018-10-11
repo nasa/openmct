@@ -79,10 +79,21 @@ export default function () {
                 let id = openmct.objects.makeKeyString(selection[0].context.item.identifier);
                 return [
                     {
-                        control: "checkbox",
-                        name: "Show frame",
+                        control: "toggle-button",
                         domainObject: selection[1].context.item,
-                        property: "configuration.layout.panels[" + id + "].hasFrame"
+                        property: "configuration.layout.panels[" + id + "].hasFrame",
+                        options: [
+                            {
+                                value: false,
+                                icon: 'icon-frame-hide',
+                                title: "Hide frame"
+                            },
+                            {
+                                value: true,
+                                icon: 'icon-frame-show',
+                                title: "Show frame"
+                            }
+                        ]
                     }
                 ];
             }
