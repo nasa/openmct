@@ -22,7 +22,6 @@
 
 define([
     "./src/MCTForm",
-    "./src/MCTToolbar",
     "./src/MCTControl",
     "./src/MCTFileInput",
     "./src/FileInputService",
@@ -48,7 +47,6 @@ define([
     'legacyRegistry'
 ], function (
     MCTForm,
-    MCTToolbar,
     MCTControl,
     MCTFileInput,
     FileInputService,
@@ -82,10 +80,6 @@ define([
                 {
                     "key": "mctForm",
                     "implementation": MCTForm
-                },
-                {
-                    "key": "mctToolbar",
-                    "implementation": MCTToolbar
                 },
                 {
                     "key": "mctControl",

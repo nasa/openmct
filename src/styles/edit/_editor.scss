@@ -85,15 +85,15 @@
     }
 
     // Display grid when selected or selection parent.
-    .s-selected .l-grid-holder,
-    .s-selected-parent .l-grid-holder {
+    [s-selected] .l-grid-holder,
+    [s-selected-parent] .l-grid-holder {
         display: block;
     }
 
     // Display in nested frames...
     .t-frame-outer {
         // ...when drilled in or selection parent...
-        &.s-drilled-in, &.s-selected-parent {
+        &.s-drilled-in, &[s-selected-parent] {
             .l-grid-holder {
                 display: block;
             }

@@ -49,7 +49,7 @@ body.desktop {
                 border-style: dashed !important;
             }
         }
-        .s-selected {
+        [s-selected] {
             > .s-hover-border,
             &.s-hover-border {
                 // Styles for a selected object. Also used by legacy Fixed Position/Panel objects.
@@ -71,8 +71,8 @@ body.desktop {
         }
     }
 
-    .s-selected > .s-hover-border,
-    .s-selected.s-hover-border {
+    [s-selected] > .s-hover-border,
+    [s-selected].s-hover-border {
         border-color: $colorSelectableSelectedPrimary !important;
         //z-index: 1; // Bring selected item from beneath others. BUT, this breaks editing in Fixed Position.
     }
