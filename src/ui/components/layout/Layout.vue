@@ -246,7 +246,7 @@
     import pane from '../controls/pane.vue';
     import BrowseBar from './BrowseBar.vue';
     import StatusBar from './status-bar/StatusBar.vue';
-    import Toolbar from './Toolbar.vue';
+    import Toolbar from '../toolbar/Toolbar.vue';
 
     var enterFullScreen = () => {
         var docElm = document.documentElement;
