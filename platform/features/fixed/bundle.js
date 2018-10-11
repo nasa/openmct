@@ -21,10 +21,24 @@
  *****************************************************************************/
 
 define([
-    "../layout/res/templates/fixed.html",
-    'legacyRegistry'
+    "./src/FixedController",
+    "./templates/fixed.html",
+    "./templates/frame.html",
+    "./templates/elements/telemetry.html",
+    "./templates/elements/box.html",
+    "./templates/elements/line.html",
+    "./templates/elements/text.html",
+    "./templates/elements/image.html",
+    "legacyRegistry"
 ], function (
+    FixedController,
     fixedTemplate,
+    frameTemplate,
+    telemetryTemplate,
+    boxTemplate,
+    lineTemplate,
+    textTemplate,
+    imageTemplate,
     legacyRegistry
 ) {
 
@@ -39,10 +53,46 @@ define([
                     "cssClass": "icon-box-with-dashed-lines",
                     "type": "telemetry.fixed",
                     "template": fixedTemplate,
-                    "uses": [],
+                    "uses": ["composition"],
                     "editable": true
                 }
             ],
+            "templates": [
+                {
+                    "key": "fixed.telemetry",
+                    "template": telemetryTemplate
+                },
+                {
+                    "key": "fixed.box",
+                    "template": boxTemplate
+                },
+                {
+                    "key": "fixed.line",
+                    "template": lineTemplate
+                },
+                {
+                    "key": "fixed.text",
+                    "template": textTemplate
+                },
+                {
+                    "key": "fixed.image",
+                    "template": imageTemplate
+                }
+            ],
+            "controllers": [
+                {
+                    "key": "FixedController",
+                    "implementation": FixedController,
+                    "depends": [
+                        "$scope",
+                        "$q",
+                        "dialogService",
+                        "openmct",
+                        "$element"
+                    ]
+                }
+            ],
+
             "toolbars": [
                 {
                     name: "Fixed Position Toolbar",
