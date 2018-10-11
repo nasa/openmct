@@ -91,8 +91,8 @@
             background: rgba($editColor, 0.1);
         }
 
-        .s-selected,
-        .s-selected-parent {
+        [s-selected],
+        [s-selected-parent] {
             .l-layout {
                 // Show the layout grid for the top-most child of the current selection,
                 // and hide the grid for deeper nested levels.
@@ -128,7 +128,6 @@
                 frames: [],
                 frameStyles: [],
                 rawPositions: {},
-                initSelect: true,
                 drilledIn: undefined
             }
         },          
@@ -141,6 +140,7 @@
             this.newDomainObject = this.domainObject;
             this.gridSize = this.newDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;
             this.composition = this.openmct.composition.get(this.newDomainObject);
+            this.Listeners = [];
             let panels = (((this.newDomainObject.configuration || {}).layout || {}).panels || {});
 
             if (this.composition !== undefined) {
@@ -237,7 +237,31 @@
                     return;
                 }
 
+                let domainObject = selection[0].context.item;
+                if (domainObject && domainObject === this.selectedObject) {
+                    return;
+                }
+                
+                this.selectedObject = domainObject;
+                this.removeListeners();
+
+                if (selection[1]) {
+                    this.attachSelectionListeners();
+                }
+
                 this.updateDrilledInState();
+            },
+            attachSelectionListeners() {
+                let id = this.openmct.objects.makeKeyString(this.selectedObject.identifier);
+                let path = "configuration.layout.panels[" + id + "]";
+                this.listeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".hasFrame", function (newValue) {
+                    this.frameItems.forEach(function (item) {
+                        if (item.id === id) {
+                            item.hasFrame = newValue;
+                        }
+                    });
+                    this.frames[id] = newValue;
+                }.bind(this)));  
             },
             updateDrilledInState(id) {
                 this.drilledIn = id;
@@ -282,6 +306,7 @@
             },
             handleDrop($event) {
                 $event.preventDefault();
+                $event.stopPropagation();
 
                 let child = JSON.parse($event.dataTransfer.getData('domainObject'));
                 let duplicates = [];
@@ -311,6 +336,14 @@
             },
             handleDragOver($event){
                 $event.preventDefault();
+            },
+            removeListeners() {
+                if (this.listeners) {
+                    this.listeners.forEach(function (l) {
+                        l();
+                    })
+                }
+                this.listeners = [];
             }
         },
         mounted() {
@@ -321,6 +354,7 @@
             this.composition.off('remove', this.onRemoveComposition);
             this.openmct.off('change', this.selection);
             this.unlisten();
+            this.removeListeners();
         }
     }
     
