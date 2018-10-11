@@ -34,21 +34,17 @@ export default {
     },
     methods: {
         select(option) {
-            if (this.value === option.value) {
+            if (this.options.value === option.value) {
                 return;
             }
-            this.value = option.value;
-            this.$emit('change', this.value, this.options);
+            this.$emit('change', option.value, this.options);
         }
     },
     data() {
-        return {
-            value: this.options.value
-        };
     },
     computed: {
         selectedName() {
-            let selectedOption = this.options.options.filter((o) => o.value === this.value)[0];
+            let selectedOption = this.options.options.filter((o) => o.value === this.options.value)[0];
             if (selectedOption) {
                 return selectedOption.name
             }

@@ -4,7 +4,7 @@
              :class="options.icon"
              @click="toggle">
             <div class="c-swatch" :style="{
-                background: value
+                background: options.value
             }"></div>
         </div>
         <div class="c-menu c-palette c-palette--color"
@@ -37,15 +37,13 @@ export default {
     },
     methods: {
         select(color) {
-            if (color.value !== this.value) {
-                this.value = color.value;
+            if (color.value !== this.options.value) {
                 this.$emit('change', color, this.options);
             }
         }
     },
     data() {
         return {
-            value: this.options.value,
             colorPalette: [
                 { value: '#000000' },
                 { value: '#434343' },
