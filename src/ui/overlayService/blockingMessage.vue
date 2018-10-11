@@ -20,13 +20,20 @@
                 v-if="model.actionText">
                 {{model.actionText}}
             </div>
-            <div class="c-message__actions"
-                 v-if="model.primaryOption">
-                <a class="c-button c-button--major"
-                   @click="model.primaryOption.callback()">
-                    {{model.primaryOption.label}}
-                </a>
+
+            <div class="banner-elem" v-if="model.progress !== undefined">
+                    <span class="l-progress-bar s-progress-bar"
+                          :class="{'indeterminate': model.unknownProgress }">
+                        <span class="progress-amt-holder">
+                            <span class="progress-amt" :style="progressWidth"></span>
+                        </span>
+                    </span>
+                <div class="progress-info hint" v-if="progressText !== undefined">
+                    <span class="progress-amt-text" v-if="progressValue > 0">{{progressValue}}% complete. </span>
+                    {{progressText}}
+                </div>
             </div>
+
         </div>
     </div>
 </template>
@@ -94,6 +101,12 @@
 
 <script>
 export default {
-    inject:['model']
+    inject:['model'],
+    props: ['progressValue', 'progressText'],
+    computed: {
+        progressWidth() {
+            return {width: this.progressValue + '%'};
+        }
+    }
 }
 </script>
