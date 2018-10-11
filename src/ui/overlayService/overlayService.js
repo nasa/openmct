@@ -167,8 +167,9 @@ define([
      * progress, as well as a series of actions that
      * the user can take if necessary
      * @param {model} dialogModel defines options for the dialog
-     * @returns {object} with a dismiss function that can be called from the calling code
-     * to dismiss/destroy the dialog
+     * @returns {object} with an object with a dismiss function that can be called from the calling code
+     * to dismiss/destroy the dialog, progressValue function that is a setter/getter for updating the progress percentage,
+     * and a progressText function that is a setter/getter for updating the progress text.
     */
     OverlayService.prototype.showBlockingMessage = function (model) {
         let component = new Vue({
@@ -178,7 +179,13 @@ define([
             components: {
                 BlockingMessage: BlockingMessage.default
             },
-            template: '<blocking-message></blocking-message>'
+            data: function () {
+                return {
+                    progressValue: 0,
+                    progressText: model.progressText
+                };
+            },
+            template: '<blocking-message v-bind:progressValue="progressValue" :progressText="progressText"></blocking-message>'
         });
 
         function destroy() {
@@ -191,7 +198,23 @@ define([
             buttons: model.buttons
         };
 
-        return this.show(component.$mount().$el, options);
+        return {
+            dialog: this.show(component.$mount().$el, options),
+            progressValue: (value) => {
+                if (value) {
+                    component.progressValue = value;
+                }
+
+                return component.progressValue;
+            },
+            progressText: (value) => {
+                if (value) {
+                    component.progressText = value;
+                }
+
+                return component.progressText;
+            }
+        };
     };
 
     function findInArray(id, array) {
