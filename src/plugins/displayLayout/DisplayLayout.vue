@@ -306,6 +306,7 @@
             },
             handleDrop($event) {
                 $event.preventDefault();
+                $event.stopPropagation();
 
                 let child = JSON.parse($event.dataTransfer.getData('domainObject'));
                 let duplicates = [];

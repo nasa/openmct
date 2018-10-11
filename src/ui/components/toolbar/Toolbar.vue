@@ -63,8 +63,7 @@
             registerListener(domainObject) {
                 let unobserveObject = this.openmct.objects.observe(domainObject, '*', function(newObject) {
                     let newObjectId = this.openmct.objects.makeKeyString(newObject.identifier);
-                    let structure = this.structure;
-                    this.structure = structure.map((item) => {
+                    this.structure = this.structure.map((item) => {
                         let toolbarItem = {...item};
                         let domainObjectId = this.openmct.objects.makeKeyString(toolbarItem.domainObject.identifier);
                         if (domainObjectId === newObjectId) {
@@ -85,8 +84,7 @@
             },
             updateObjectValue(value, item) {
                 let changedId = this.openmct.objects.makeKeyString(item.domainObject.identifier);
-                let structure = this.structure;
-                this.structure = structure.map((s) => {
+                this.structure = this.structure.map((s) => {
                     let toolbarItem = {...s};
                     if (changedId === this.openmct.objects.makeKeyString(toolbarItem.domainObject.identifier)) {
                         toolbarItem.value = value;
