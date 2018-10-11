@@ -21,7 +21,7 @@
  *****************************************************************************/
 <template>
     <div class="c-conductor"
-         :class="[isFixed ? 'is-fixed-mode' : 'is-realtime-mode', panning ? 'status-panning' : '']">
+         :class="[isFixed ? 'is-fixed-mode' : 'is-realtime-mode']">
         <form class="u-contents" ref="conductorForm"
               @submit="isFixed ? setBoundsFromView($event) : setOffsetsFromView($event)">
 
