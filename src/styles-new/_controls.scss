@@ -50,7 +50,12 @@ button {
 .c-click-icon {
     @include cClickIcon();
 
+    .c-click-icon__label {
+        margin-left: $interiorMargin;
+    }
+
     &--menu {
+
         &:after {
             content: $glyph-icon-arrow-down;
             font-family: symbolsfont;

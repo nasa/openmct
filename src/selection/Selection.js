@@ -55,19 +55,19 @@ define(['EventEmitter'], function (EventEmitter) {
         }
 
         if (this.selected[0] && this.selected[0].element) {
-            this.selected[0].element.classList.remove('s-selected');
+            this.selected[0].element.removeAttribute('s-selected');
         }
 
         if (this.selected[1] && this.selected[1].element) {
-            this.selected[1].element.classList.remove('s-selected-parent');
+            this.selected[1].element.removeAttribute('s-selected-parent');
         }
 
         if (selectable[0] && selectable[0].element) {
-            selectable[0].element.classList.add('s-selected');
+            selectable[0].element.setAttribute('s-selected', "");
         }
 
         if (selectable[1] && selectable[1].element) {
-            selectable[1].element.classList.add('s-selected-parent');
+            selectable[1].element.setAttribute('s-selected-parent', "");
         }
 
         this.selected = selectable;

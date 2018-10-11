@@ -139,7 +139,7 @@
             }
         }
 
-        &.s-selected, // LEGACY
+        &[s-selected], // LEGACY
         &.is-selected {
             border: $browseBorderSelected;
         }
@@ -155,7 +155,7 @@
                     border: $editBorderSelectableHov;
                 }
 
-                &.s-selected,
+                &[s-selected],
                 &.is-selected {
                     border: $editBorderSelected;
 
