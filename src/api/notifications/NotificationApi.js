@@ -54,8 +54,6 @@ import MCTNotification from './MCTNotification.js';
  * be automatically minimized or dismissed (depending on severity).
  * Additionally, if the provided value is a number, it will be used
  * as the delay period before being dismissed.
- * @property {boolean} [dismissable=true] If true, notification will
- * include an option to dismiss it completely.
  * @see DialogModel
  */
 
@@ -65,14 +63,9 @@ const MINIMIZE_ANIMATION_TIMEOUT = 300;
 /**
  * The notification service is responsible for informing the user of
  * events via the use of banner notifications.
- * @memberof platform/commonUI/notification
- * @constructor
- * @param defaultAutoDismissTimeout The period of time that an
- * auto-dismissed message will be displayed for.
- * @param minimizeAnimationTimeout When notifications are minimized, a brief
- * animation is shown. This animation requires some time to execute,
- * so a timeout is required before the notification is hidden
- */
+ * @memberof ui/notification
+ * @constructor */
+
 export default class NotificationAPI extends EventEmitter {
     constructor() {
         super();
@@ -90,8 +83,7 @@ export default class NotificationAPI extends EventEmitter {
      * Minimize a notification. The notification will still be available
      * from the notification list. Typically notifications with a
      * severity of 'info' should not be minimized, but rather
-     * dismissed. If you're not sure which is appropriate,
-     * use {@link Notification#dismissOrMinimize}
+     * dismissed.
      *
      * @private
      */
@@ -114,6 +106,7 @@ export default class NotificationAPI extends EventEmitter {
 
         if (index >= 0) {
             notification.model.minimized = true;
+            notification.emit('minimized');
             //Add a brief timeout before showing the next notification
             // in order to allow the minimize animation to run through.
             setTimeout(() => {

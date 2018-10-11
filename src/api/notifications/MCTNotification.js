@@ -21,28 +21,42 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
+/**
+ * Event is fired when notification is dismissed, either by the user or automatically.
+ * @event MCTNotification#destroy
+ */
+/**
+ * Event is fired when notification is minimized. A notification can be minimized either automatically, or by the user.
+ * When minimized, a notification is available from the notification list available from the notification indicator.
+ * @event MCTNotification#minimize
+ */
 export default class MCTNotification extends EventEmitter {
 
     constructor(notificationModel, notificationAPI) {
         super();
         this.notifications = notificationAPI;
         this.model = notificationModel;
-        this.initializeModel();
-    }
-
-    minimize() {
-        this.notifications.minimize(this);
+        this._initializeModel();
     }
 
     dismiss() {
-        this.notifications.dismiss(this)
-    }
-
-    dismissOrMinimize() {
         this.notifications.dismissOrMinimize(this);
     }
 
-    initializeModel() {
+    /**
+     * @param {Number} progress A value between 0 and 100
+     * @param {String} [progressText] Text to show when the user hovers on the progress bar.
+     */
+    progress(progress, progressText) {
+        this.model.progress = progress;
+        this.model.progressText = progressText;
+        this.emit('progress', progress, progressText);
+    }
+
+    /**
+     * @private
+     */
+    _initializeModel() {
         this.model.minimized = this.model.minimized || false;
     }
 }
