@@ -29,6 +29,13 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
+    @mixin overlaySizing($marginTB: 5%, $marginLR: $marginTB, $width: auto, $height: auto) {
+        position: absolute;
+        top: $marginTB; right: $marginLR; bottom: $marginTB; left: $marginLR;
+        width: $width;
+        height: $height;
+    }
+
     .l-overlay-wrapper {
         // Created by overlayService.js, contains this template.
         // Acts as an anchor for one or more overlays.
@@ -72,7 +79,26 @@
             margin-top: $interiorMargin;
         }
 
-        body.desktop & {
+
+        // Overlay types, styling independent of platform.
+        .l-large-view & {
+            // Default
+        }
+
+        .l-dialog & {
+            //
+        }
+
+        .l-message & {
+            &__outer {
+             //   background: orange;
+            }
+        }
+    }
+
+
+    body.desktop {
+        .c-overlay {
             &__blocker {
                 @include abs();
                 background: $colorOvrBlocker;
@@ -81,12 +107,34 @@
             }
 
             &__outer {
-                $m: $overlayOuterMargin;
-                top: $m; right: $m; bottom: $m; left: $m;
                 border-radius: $overlayCr;
                 box-shadow: rgba(black, 0.5) 0 2px 25px;
+                // Defaults to l-large-view
+                @include overlaySizing($overlayOuterMarginLg);
             }
         }
+
+        // Overlay types, styling for desktop.
+        .l-large-view {
+            // Default
+        }
+
+        .l-dialog {
+            .c-overlay__outer {
+                @include overlaySizing($overlayOuterMarginDialog);
+            }
+        }
+
+        .l-message {
+            .c-overlay__outer {
+                @include overlaySizing(auto);
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+
     }
 
 </style>
