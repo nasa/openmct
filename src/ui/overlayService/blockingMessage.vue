@@ -27,13 +27,6 @@
                     </div>
                 </div>
             </div>
-            <div class="bottom-bar">
-                <a class="s-button major"
-                v-if="model.primaryOption"
-                @click="model.primaryOption.callback()">
-                    {{model.primaryOption.label}}
-                </a>
-            </div>
         </div>
     </div>
 </template>

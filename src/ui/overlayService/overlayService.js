@@ -107,7 +107,7 @@ define([
                     overlayObject.onDestroy();
                 }
 
-                overlayObject.component.$destroy(true);
+                overlayObject.component.$destroy();
                 document.body.removeChild(overlayObject.overlay);
                 this.activeOverlays.splice(pos, 1);
 
@@ -151,11 +151,6 @@ define([
         * impossible to provide an estimate for. Providing a true value for
         * this attribute will indicate to the user that the progress and
         * duration cannot be estimated.
-        * @property {Object} primaryOption an action that will
-        * be added to the dialog as a button. The primary action can be
-        * used as the suggested course of action for the user. Making it
-        * distinct from other actions allows it to be styled differently,
-        * and treated preferentially in banner mode.
         * @property {buttons[]} buttons a list of buttons with title and callback properties that will
         * be added to the dialog.
     */
@@ -185,11 +180,11 @@ define([
                     progressText: model.progressText
                 };
             },
-            template: '<blocking-message v-bind:progressValue="progressValue" :progressText="progressText"></blocking-message>'
+            template: '<blocking-message :progressValue="progressValue" :progressText="progressText"></blocking-message>'
         });
 
         function destroy() {
-            component.$destroy(true);
+            component.$destroy();
         }
 
         let options = {
