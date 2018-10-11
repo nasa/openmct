@@ -23,33 +23,17 @@
 define([
     "./src/NotificationIndicatorController",
     "./src/NotificationIndicator",
-    "./src/NotificationService",
     "./res/notification-indicator.html",
     'legacyRegistry'
 ], function (
     NotificationIndicatorController,
     NotificationIndicator,
-    NotificationService,
     notificationIndicatorTemplate,
     legacyRegistry
 ) {
 
     legacyRegistry.register("platform/commonUI/notification", {
         "extensions": {
-            "constants": [
-                {
-                    "key": "DEFAULT_AUTO_DISMISS",
-                    "value": 3000
-                },
-                {
-                    "key": "FORCE_AUTO_DISMISS",
-                    "value": 1000
-                },
-                {
-                    "key": "MINIMIZE_TIMEOUT",
-                    "value": 300
-                }
-            ],
             "templates": [
                 {
                     "key": "notificationIndicatorTemplate",
@@ -76,12 +60,11 @@ define([
             "services": [
                 {
                     "key": "notificationService",
-                    "implementation": NotificationService,
+                    "implementation": function (openmct) {
+                        return openmct.notifications;
+                    },
                     "depends": [
-                        "$timeout",
-                        "topic",
-                        "DEFAULT_AUTO_DISMISS",
-                        "MINIMIZE_TIMEOUT"
+                        "openmct"
                     ]
                 }
             ]

@@ -60,7 +60,7 @@ define(
                     };
                     //If the notification is dismissed by the user, close
                     // the dialog.
-                    notification.onDismiss(function () {
+                    notification.on('dismiss', function () {
                         dialog.dismiss();
                     });
 

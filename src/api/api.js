@@ -29,6 +29,7 @@ define([
     './ui/GestureAPI',
     './telemetry/TelemetryAPI',
     './indicators/IndicatorAPI',
+    './notifications/NotificationAPI',
     './Editor'
 
 ], function (
@@ -40,6 +41,7 @@ define([
     GestureAPI,
     TelemetryAPI,
     IndicatorAPI,
+    NotificationAPI,
     EditorAPI
 ) {
     return {
@@ -51,6 +53,7 @@ define([
         GestureAPI: GestureAPI,
         TelemetryAPI: TelemetryAPI,
         IndicatorAPI: IndicatorAPI,
+        NotificationAPI: NotificationAPI.default,
         EditorAPI: EditorAPI
     };
 });
