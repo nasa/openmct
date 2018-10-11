@@ -11,6 +11,8 @@
 </template>
 
 <script>
+    import ContextMenuDirective from './ContextMenuDirective.js';
+
     export default {
         data: function () {
             return {
