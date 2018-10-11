@@ -20,7 +20,34 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// VERSION MANUALLY MIGRATED FROM VUE-TOOLBAR
+/************************** GLYPHS */
+@mixin glyphBefore($unicode, $family: 'symbolsfont') {
+    &:before {
+        content: $unicode;
+        font-family: $family;
+    }
+}
+
+@mixin glyphAfter($unicode, $family: 'symbolsfont') {
+    &:after {
+        content: $unicode;
+        font-family: $family;
+    }
+}
+
+@mixin glyphBg($glyphUrl) {
+    background-image: $glyphUrl;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+[class*="icon-"] {
+    &:before, &:after
+    {
+        -webkit-font-smoothing: antialiased;
+    }
+}
 
 /************************** VISUALS */
 @mixin ancillaryIcon($d, $c) {

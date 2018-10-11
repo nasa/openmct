@@ -20,7 +20,6 @@
                 v-if="model.actionText">
                 {{model.actionText}}
             </div>
-
             <div class="c-message__actions"
                  v-if="model.primaryOption">
                 <a class="c-button c-button--major"
@@ -37,27 +36,36 @@
 
     .c-message {
         display: flex;
+        align-items: center;
         padding: $interiorMarginLg;
 
         > * + * {
-            @include test();
             margin-left: $interiorMarginLg;
         }
 
         &__icon {
+            // Holds a background SVG graphic
             $s: 50px;
             flex: 0 0 auto;
             min-width: $s;
             min-height: $s;
 
             &.message-severity {
-                // TEMP: TODO: replace with SVG background assets
+                // TEMP: TODO: Move this into a common SCSS file so that messages and notifications can use it as well.
+                // Info, alert, error
+                &-info {
+                    @include glyphBg($bg-icon-info);
+                    filter: $colorStatusInfoFilter;
+                }
+
                 &-alert {
-                    background: $colorAlert;
+                    @include glyphBg($bg-icon-alert-rect);
+                    filter: $colorStatusAlertFilter;
                 }
 
                 &-error {
-                    background: $colorFormError;
+                    @include glyphBg($bg-icon-alert-triangle);
+                    filter: $colorStatusErrorFilter;
                 }
             }
         }
