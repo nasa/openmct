@@ -73,7 +73,7 @@ $colorOk: #33cc33;
 // Base variations
 $colorBodyBgSubtle: lighten($colorBodyBg, 5%);
 $colorBodyBgSubtleHov: darken($colorKey, 50%);
-$colorKeySubtle: darken($colorKey, 50%);
+$colorKeySubtle: darken($colorKey, 10%);
 
 // Time Colors
 $colorTime: #618cff;
@@ -152,8 +152,8 @@ $colorFormText: darken($colorBodyFg, 10%);
 $colorInputIcon: darken($colorBodyFg, 25%);
 $colorFieldHint: lighten($colorBodyFg, 40%);
 $shdwInput: inset rgba(black, 0.4) 0 0 1px;
-$shdwInputHov: inset rgba(black, 0.7) 0 0 1px;
-$shdwInputFoc: inset rgba(black, 0.7) 0 0 3px;
+$shdwInputHov: inset rgba(black, 0.7) 0 0 2px;
+$shdwInputFoc: inset rgba(black, 0.8) 0 0.25px 3px;
 
 // Inspector
 $colorInspectorBg: lighten($colorBodyBg, 5%);
