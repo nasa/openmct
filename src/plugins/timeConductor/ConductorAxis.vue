@@ -203,11 +203,10 @@ export default {
                     let bounds = this.openmct.time.bounds();
                     let deltaTime = bounds.end - bounds.start;
                     let newStart = bounds.start - percX * deltaTime;
-                    this.bounds = {
+                    this.$emit('panAxis',{
                         start: newStart,
                         end: newStart + deltaTime
-                    };
-                    this.$emit('panAxis', this.bounds);
+                    });
                     this.dragging = false;
                 })
             } else {
