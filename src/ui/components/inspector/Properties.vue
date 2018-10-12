@@ -4,19 +4,19 @@
     <ul class="c-properties__section">
         <li class="c-properties__row">
             <div class="c-properties__label">Title</div>
-            <div class="c-properties__value">{{ domainObject.name }}</div>
+            <div class="c-properties__value">{{ item.name }}</div>
         </li>
         <li class="c-properties__row">
             <div class="c-properties__label">Type</div>
             <div class="c-properties__value">{{ typeName }}</div>
         </li>
-        <li class="c-properties__row" v-if="domainObject.created">
+        <li class="c-properties__row" v-if="item.created">
             <div class="c-properties__label">Created</div>
-            <div class="c-properties__value">{{ domainObject.created }}</div>
+            <div class="c-properties__value">{{ item.created }}</div>
         </li>
-        <li class="c-properties__row" v-if="domainObject.modified">
+        <li class="c-properties__row" v-if="item.modified">
             <div class="c-properties__label">Modified</div>
-            <div class="c-properties__value">{{ domainObject.modified }}</div>
+            <div class="c-properties__value">{{ item.modified }}</div>
         </li>
         <li class="c-properties__row"
             v-for="prop in typeProperties"
@@ -37,12 +37,15 @@ export default {
         }
     },
     computed: {
+        item() {
+            return this.domainObject || {};
+        },
         type() {
-            return this.openmct.types.get(this.domainObject.type);
+            return this.openmct.types.get(this.item.type);
         },
         typeName() {
             if (!this.type) {
-                return `Unknown: ${this.domainObject.type}`;
+                return `Unknown: ${this.item.type}`;
             }
             return this.type.definition.name;
         },
@@ -71,7 +74,7 @@ export default {
                         name: field.name,
                         value: field.path.reduce((object, field) => {
                             return object[field];
-                        }, this.domainObject)
+                        }, this.item)
                     };
                 });
         }

@@ -10,7 +10,7 @@
                 <li v-for="option in options.options"
                     :key="option.value"
                     @click="select(option)">
-                    {{ option.name }}
+                    {{ option.name || option.value }}
                 </li>
             </ul>
         </div>
@@ -28,7 +28,7 @@ export default {
             validator(value) {
                 // must pass valid options array.
                 return Array.isArray(value.options) &&
-                    value.options.every((o) => o.value && o.name);
+                    value.options.every((o) => o.value);
             }
         }
     },
@@ -40,13 +40,11 @@ export default {
             this.$emit('change', option.value, this.options);
         }
     },
-    data() {
-    },
     computed: {
         selectedName() {
             let selectedOption = this.options.options.filter((o) => o.value === this.options.value)[0];
             if (selectedOption) {
-                return selectedOption.name
+                return selectedOption.name || selectedOption.value
             }
             return '';
         }

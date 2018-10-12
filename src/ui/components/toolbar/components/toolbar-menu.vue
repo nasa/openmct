@@ -11,6 +11,7 @@
         <div class="c-menu" v-if="open">
             <ul>
                 <li v-for="option in options.options"
+                    @click="onClick(option)"
                     :class="option.class"
                     :title="option.title">
                     {{ option.name }}
@@ -32,6 +33,11 @@ export default {
                 return Array.isArray(value.options) &&
                     value.options.every((o) => o.name);
             }
+        }
+    },
+    methods: {
+        onClick(option) {
+            this.$emit('click', option)
         }
     }
 }

@@ -138,96 +138,97 @@ define([
 
                         return [
                             {
-                                control: "menu-button",
+                                control: "menu",
                                 domainObject: domainObject || selection[0].context.item,
-                                method: function (value) {
-                                    selection[0].context.fixedController.add(value);
+                                method: function (option) {
+                                    selection[0].context.fixedController.add(option.key);
                                 },
                                 key: "add",
-                                cssClass: "icon-plus",
-                                text: "Add",
+                                icon: "icon-plus",
+                                label: "Add",
                                 options: [
                                     {
                                         "name": "Box",
-                                        "cssClass": "icon-box",
+                                        "class": "icon-box",
                                         "key": "fixed.box"
                                     },
                                     {
                                         "name": "Line",
-                                        "cssClass": "icon-line-horz",
+                                        "class": "icon-line-horz",
                                         "key": "fixed.line"
                                     },
                                     {
                                         "name": "Text",
-                                        "cssClass": "icon-T",
+                                        "class": "icon-T",
                                         "key": "fixed.text"
                                     },
                                     {
                                         "name": "Image",
-                                        "cssClass": "icon-image",
+                                        "class": "icon-image",
                                         "key": "fixed.image"
                                     }
                                 ]
                             },
                             {
-                                control: "menu-button",
+                                control: "menu",
                                 domainObject: domainObject,
-                                method: function (value) {
+                                method: function (option) {
+                                    console.log('option', option)
                                     selection[0].context.fixedController.order(
                                         selection[0].context.elementProxy,
-                                        value
+                                        option.key
                                     );
                                 },
                                 key: "order",
-                                cssClass: "icon-layers",
+                                icon: "icon-layers",
                                 title: "Layering",
                                 description: "Move the selected object above or below other objects",
                                 options: [
                                     {
                                         "name": "Move to Top",
-                                        "cssClass": "icon-arrow-double-up",
+                                        "class": "icon-arrow-double-up",
                                         "key": "top"
                                     },
                                     {
                                         "name": "Move Up",
-                                        "cssClass": "icon-arrow-up",
+                                        "class": "icon-arrow-up",
                                         "key": "up"
                                     },
                                     {
                                         "name": "Move Down",
-                                        "cssClass": "icon-arrow-down",
+                                        "class": "icon-arrow-down",
                                         "key": "down"
                                     },
                                     {
                                         "name": "Move to Bottom",
-                                        "cssClass": "icon-arrow-double-down",
+                                        "class": "icon-arrow-double-down",
                                         "key": "bottom"
                                     }
                                 ]
                             },
                             {
-                                control: "color",
+                                control: "color-pciker",
                                 domainObject: domainObject,
                                 property: path + ".fill",
-                                cssClass: "icon-paint-bucket",
+                                icon: "icon-paint-bucket",
                                 title: "Fill color",
                                 description: "Set fill color",
                                 key: 'fill'
                             },
                             {
-                                control: "color",
+                                control: "color-picker",
                                 domainObject: domainObject,
                                 property: path + ".stroke",
-                                cssClass: "icon-line-horz",
+                                icon: "icon-line-horz",
                                 title: "Border color",
                                 description: "Set border color",
                                 key: 'stroke'
                             },
                             {
-                                control: "dialog-button",
+                                control: "button",
                                 domainObject: domainObject,
                                 property: path + ".url",
-                                cssClass: "icon-image",
+                                icon: "icon-image",
                                 title: "Image Properties",
                                 description: "Edit image properties",
                                 key: 'url',
@@ -239,120 +240,139 @@ define([
                                 }
                             },
                             {
-                                control: "color",
+                                control: "color-picker",
                                 domainObject: domainObject,
                                 property: path + ".color",
-                                cssClass: "icon-T",
+                                icon: "icon-T",
                                 title: "Text color",
                                 mandatory: true,
                                 description: "Set text color",
                                 key: 'color'
                             },
                             {
-                                control: "select",
+                                control: "select-menu",
                                 domainObject: domainObject,
                                 property: path + ".size",
                                 title: "Text size",
                                 description: "Set text size",
-                                "options": [9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96].map(function (size) {
-                                    return { "name": size + " px", "value": size + "px" };
-                                }),
-                                key: 'size'
+                                key: 'size',
+                                options: [9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96].map(function (size) {
+                                    return { "value": size + " px"};
+                                })
                             },
                             {
-                                control: "numberfield",
+                                control: "input",
+                                type: "number",
                                 domainObject: domainObject,
                                 property: path + ".x",
-                                text: "X",
-                                name: "X",
+                                label: "X",
+                                title: "X position",
                                 key: "x",
-                                cssClass: "l-input-sm",
+                                class: "l-input-sm",
                                 min: "0"
                             },
                             {
-                                control: "numberfield",
+                                control: "input",
+                                type: "number",
                                 domainObject: domainObject,
                                 property: path + ".y",
-                                text: "Y",
-                                name: "Y",
+                                label: "Y",
+                                title: "Y position",
                                 key: "y",
-                                cssClass: "l-input-sm",
+                                class: "l-input-sm",
                                 min: "0"
                             },
                             {
-                                control: "numberfield",
+                                control: "input",
+                                type: "number",
                                 domainObject: domainObject,
                                 property: path + ".x",
-                                text: "X1",
-                                name: "X1",
+                                label: "X1",
+                                title: "X1 position",
                                 key: "x1",
-                                cssClass: "l-input-sm",
+                                class: "l-input-sm",
                                 min: "0"
                             },
                             {
-                                control: "numberfield",
+                                control: "input",
+                                type: "number",
                                 domainObject: domainObject,
                                 property: path + ".y",
-                                text: "Y1",
-                                name: "Y1",
+                                label: "Y1",
+                                title: "Y1 position",
                                 key: "y1",
-                                cssClass: "l-input-sm",
+                                class: "l-input-sm",
                                 min: "0"
                             },
                             {
-                                control: "numberfield",
+                                control: "input",
+                                type: "number",
                                 domainObject: domainObject,
                                 property: path + ".x2",
-                                text: "X2",
-                                name: "X2",
+                                label: "X2",
+                                title: "X2 position",
                                 key: "x2",
-                                cssClass: "l-input-sm",
+                                class: "l-input-sm",
                                 min: "0"
                             },
                             {
-                                control: "numberfield",
+                                control: "input",
+                                type: "number",
                                 domainObject: domainObject,
                                 property: path + ".y2",
-                                text: "Y2",
-                                name: "Y2",
+                                label: "Y2",
+                                title: "Y2 position",
                                 key: "y2",
-                                cssClass: "l-input-sm",
+                                class: "l-input-sm",
                                 min: "0"
                             },
                             {
-                                control: "numberfield",
+                                control: "input",
+                                type: "number",
                                 domainObject: domainObject,
                                 property: path + ".height",
-                                text: "H",
-                                name: "H",
+                                label: "H",
+                                title: "Height",
                                 key: "height",
-                                cssClass: "l-input-sm",
+                                class: "l-input-sm",
                                 description: "Resize object height",
                                 min: "1"
                             },
                             {
-                                control: "numberfield",
+                                control: "input",
+                                type: "number",
                                 domainObject: domainObject,
                                 property: path + ".width",
-                                text: "W",
-                                name: "W",
+                                label: "W",
+                                title: "Width",
                                 key: "width",
-                                cssClass: "l-input-sm",
+                                class: "l-input-sm",
                                 description: "Resize object width",
                                 min: "1"
                             },
                             {
-                                control: "checkbox",
+                                control: "toggle-button",
                                 domainObject: domainObject,
                                 property: path + ".useGrid",
-                                name: "Snap to Grid",
-                                key: "useGrid"
+                                key: "useGrid",
+                                options: [
+                                    {
+                                        value: true,
+                                        icon: 'icon-grid-snap-to',
+                                        title: 'Snap to grid'
+                                    },
+                                    {
+                                        value: false,
+                                        icon: 'icon-grid-snap-no',
+                                        title: "Do not snap to grid"
+                                    }
+                                ]
                             },
                             {
-                                control: "dialog-button",
+                                control: "button",
                                 domainObject: domainObject,
                                 property: path + ".text",
-                                cssClass: "icon-gear",
+                                icon: "icon-gear",
                                 title: "Text Properties",
                                 description: "Edit text properties",
                                 key: "text",
@@ -363,11 +383,22 @@ define([
                                 }
                             },
                             {
-                                control: "checkbox",
+                                control: "toggle-button",
                                 domainObject: domainObject,
                                 property: path + ".titled",
-                                name: "Show Title",
-                                key: "titled"
+                                key: "titled",
+                                options: [
+                                    {
+                                        value: true,
+                                        icon: 'icon-two-parts-both',
+                                        title: 'Show label'
+                                    },
+                                    {
+                                        value: false,
+                                        icon: 'icon-two-parts-one-only',
+                                        title: "Hide label"
+                                    }
+                                ]
                             },
                             {
                                 control: "button",
@@ -378,7 +409,7 @@ define([
                                     );
                                 },
                                 key: "remove",
-                                cssClass: "icon-trash"
+                                icon: "icon-trash"
                             }
                         ].filter(function (item) {
                             var filtered;

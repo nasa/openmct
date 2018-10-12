@@ -3,6 +3,7 @@
         <component v-for="item in structure"
             :is="item.control"
             :options="item"
+            @click="triggerMethod(item, $event)"
             @change="updateObjectValue"></component>
     </div>
 </template>
@@ -38,14 +39,10 @@
             handleSelection(selection) {
                 if (!selection[0]) {
                     this.structure = [];
-                    this.selectedObject = undefined;
                     this.removeListeners();
                     return;
                 }
 
-                let domainObject = selection[0].context.item;
-
-                this.selectedObject = domainObject;
                 this.removeListeners();
 
                 let structure = this.openmct.toolbars.get(selection) || [];
@@ -83,12 +80,20 @@
                 let changedId = this.openmct.objects.makeKeyString(item.domainObject.identifier);
                 this.structure = this.structure.map((s) => {
                     let toolbarItem = {...s};
-                    if (changedId === this.openmct.objects.makeKeyString(toolbarItem.domainObject.identifier)) {
+                    if (changedId === this.openmct.objects.makeKeyString(toolbarItem.domainObject.identifier)
+                        && item.property === s.property) {
                         toolbarItem.value = value;
                     }
                     return toolbarItem;
                 });
                 this.openmct.objects.mutate(item.domainObject, item.property, value);
+            },
+            triggerMethod(item, event) {
+                // console.log('arguments', {...item}, {...event})
+                if (item.method) {
+                    item.method({...event});
+                }
+
             }
         },
         mounted() {
