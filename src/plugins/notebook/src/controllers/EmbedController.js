@@ -221,9 +221,9 @@ function (
                 var entryPosition = self.findInArray(self.domainObject.entries, entry.id),
                     embedPosition = self.findInArray(entry.embeds, embed.id);
 
-                self.openmct.OverlayService.showBlockingMessage({
-                    severity: "error",
-                    actionText: 'This Action will permanently delete this embed. Do you wish to continue?',
+                self.openmct.Overlays.dialog({
+                    iconClass: "alert",
+                    message: 'This Action will permanently delete this embed. Do you wish to continue?',
                     buttons: [{
                         label: "No",
                         callback: function () {}
