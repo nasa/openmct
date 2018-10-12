@@ -18,7 +18,7 @@
                 <button class="c-button"
                         v-for="(button, index) in buttons"
                         :key="index"
-                        :class="button.emphasis ? 'c-button--major' : ''"
+                        :class="{'c-button--major': button.emphasis}"
                         @click="buttonClickHandler(button.callback)">
                     {{button.label}}
                 </button>
@@ -141,7 +141,6 @@
             buttonClickHandler: function (method) {
                 method();
                 this.dismiss();
-                console.log('CH was here');
             }
         }
     }
