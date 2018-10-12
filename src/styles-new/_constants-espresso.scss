@@ -172,8 +172,6 @@ $colorInspectorSectionHeaderFg: lighten($colorInspectorBg, 40%);
 // Overlay
 $overlayColorBg: $colorMenuBg;
 $overlayColorFg: $colorMenuFg;
-$overlayButtonColorBg: lighten($overlayColorBg, 20%); // Possibly deprecate
-$overlayButtonColorFg: #fff; // Possibly deprecate
 $overlayCr: $interiorMarginLg;
 $overlayBrightnessAdjust: brightness(1.3);
 
