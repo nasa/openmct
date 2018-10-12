@@ -35,9 +35,9 @@ define(
          * @param dialogService
          * @constructor
          */
-        function NotificationIndicatorController($scope, notificationService, dialogService) {
-            $scope.notifications = notificationService.notifications;
-            $scope.highest = notificationService.highest;
+        function NotificationIndicatorController($scope, openmct, dialogService) {
+            $scope.notifications = openmct.notifications.notifications;
+            $scope.highest = openmct.notifications.highest;
 
             /**
              * Launch a dialog showing a list of current notifications.
@@ -48,7 +48,7 @@ define(
                         title: "Messages",
                         //Launch the message list dialog with the models
                         // from the notifications
-                        messages: notificationService.notifications
+                        messages: openmct.notifications.notifications
                     }
                 });
 

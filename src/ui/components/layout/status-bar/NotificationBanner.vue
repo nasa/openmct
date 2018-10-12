@@ -24,18 +24,18 @@
             'minimized': activeModel.minimized,
             'new': !activeModel.minimized
         }]"
-    v-if="activeModel.title">
-    <span @click="maximize()" class="banner-elem label">{{activeModel.title}}</span>
-    <span @click="maximize()" v-if="activeModel.progress !== undefined || activeModel.unknownProgress">
+    v-if="activeModel.message">
+    <span @click="maximize()" class="banner-elem label">{{activeModel.message}}</span>
+    <span @click="maximize()" v-if="activeModel.progressPerc !== undefined">
         <div class="banner-elem"><!-- was mct-include -->
             <span class="l-progress-bar s-progress-bar"
-                :class="{'indeterminate': activeModel.unknownProgress }">
+                :class="{'indeterminate': activeModel.progressPerc === 'unknown' }">
                 <span class="progress-amt-holder">
                     <span class="progress-amt" :style="progressWidth"></span>
                 </span>
             </span>
             <div class="progress-info hint" v-if="activeModel.progressText !== undefined">
-                <span class="progress-amt-text" v-if="activeModel.progress > 0">{{activeModel.progress}}% complete. </span>
+                <span class="progress-amt-text" v-if="activeModel.progressPerc > 0">{{activeModel.progressPerc}}% complete. </span>
                 {{activeModel.progressText}}
             </div>
         </div>
@@ -56,8 +56,6 @@
 </style>
 
 <script>
-    import _ from 'lodash';
-
     let activeNotification = undefined;
     let dialogService = undefined;
     export default {
@@ -65,27 +63,31 @@
         data() {
             return {
                 activeModel: {
-                    title: undefined,
-                    progress: undefined,
+                    message: undefined,
+                    progressPerc: undefined,
                     progressText: undefined,
-                    unknownProgress: undefined,
                     minimized: undefined
                 }
             }
         },
         methods: {
             showNotification(notification) {
+                if (activeNotification) {
+                    activeNotification.off('progress', this.updateProgress);
+                    activeNotification.off('minimized', this.minimized);
+                    activeNotification.off('destroy', this.destroyActiveNotification);
+                }
                 activeNotification = notification;
+                this.clearModel();
                 this.applyModel(notification.model);
 
-                activeNotification.once('destroy', () => {
-                    if (_.eq(this.activeModel, notification.model)){
-                        this.clearModel();
-                        activeNotification = undefined;
-                    }
-                });
+                activeNotification.once('destroy', this.destroyActiveNotification);
                 activeNotification.on('progress', this.updateProgress);
                 activeNotification.on('minimized', this.minimized);
+            },
+            isEqual(modelA, modelB) {
+                return modelA.message === modelB.message &&
+                    modelA.timestamp === modelB.timestamp;
             },
             applyModel(model) {
                 Object.keys(model).forEach((key) => this.activeModel[key] = model[key]);
@@ -93,17 +95,26 @@
             clearModel() {
                 Object.keys(this.activeModel).forEach((key) => this.activeModel[key] = undefined);
             },
-            updateProgress(progress, progressText) {
-                this.activeModel.progress = progress;
+            updateProgress(progressPerc, progressText) {
+                this.activeModel.progressPerc = progressPerc;
                 this.activeModel.progressText = progressText;
             },
+            destroyActiveNotification() {
+                this.clearModel();
+                activeNotification = undefined;
+            },
             dismiss() {
-                activeNotification.off('progress', this.updateProgress);
-                activeNotification.off('minimized', this.minimized);
-                activeNotification.dismiss();
+                if (activeNotification.model.severity === 'info') {
+                    activeNotification.dismiss();
+                } else {
+                    this.openmct.notifications._minimize(activeNotification);
+                }
             },
             minimized() {
                 this.activeModel.minimized = true;
+                activeNotification.off('progress', this.updateProgress);
+                activeNotification.off('minimized', this.minimized);
+                activeNotification.off('destroy', this.destroyActiveNotification);
             },
             maximize() {
                 //Not implemented yet.
