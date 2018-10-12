@@ -1,6 +1,9 @@
 <template>
     <div class="l-message"
      v-bind:class="['message-severity-' + model.severity]">
+
+        <!-- DEPRECATED, DO NOT USE! USE DialogComponent.vue instead -->
+
         <div class="w-message-contents">
             <div class="top-bar">
                 <div class="title">{{model.title}}</div>

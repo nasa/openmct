@@ -1,5 +1,8 @@
 <template>
     <div class="c-overlay">
+
+        <!-- DEPRECATED, DO NOT USE! USE OverlayComponent.vue instead -->
+
         <div class="c-overlay__blocker"
              v-on:click="destroy">
         </div>
