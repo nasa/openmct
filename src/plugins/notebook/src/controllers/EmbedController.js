@@ -68,11 +68,9 @@ function (
                     }),
                     self = this;
 
-                var options = {
-                    cssClass: 'l-large-view',
-                    onDestroy: function () {
-                        annotateOverlay.$destroy(true);
-                    },
+                openmct.Overlays.overlay({
+                    element: annotateOverlay.$mount().$el,
+                    size: 'large',
                     buttons: [
                         {
                             label: 'Cancel',
@@ -88,10 +86,11 @@ function (
                                 painterroInstance.save();
                             }
                         }
-                    ]
-                };
-
-                openmct.OverlayService.show(annotateOverlay.$mount().$el, options);
+                    ],
+                    onDestroy: function () {
+                        annotateOverlay.$destroy(true);
+                    }
+                });
 
                 painterroInstance = Painterro({
                     id: 'snap-annotation',
@@ -166,13 +165,12 @@ function (
         function onDestroyCallback() {
             snapshot.$destroy(true);
         }
-        var options = {
+
+        this.openmct.Overlays.overlay({
+            element: snapshot.$mount().$el,
             onDestroy: onDestroyCallback,
-            cssClass: 'l-large-view'
-        };
-
-
-        this.openmct.OverlayService.show(snapshot.$mount().$el, options);
+            size: 'large'
+        });
     };
 
     EmbedController.prototype.formatTime = function (unixTime, timeFormat) {

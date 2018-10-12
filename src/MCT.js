@@ -26,6 +26,7 @@ define([
     'uuid',
     './defaultRegistry',
     './api/api',
+    './api/overlays/OverlayAPI',
     './selection/Selection',
     './api/objects/object-utils',
     './plugins/plugins',
@@ -48,6 +49,7 @@ define([
     uuid,
     defaultRegistry,
     api,
+    OverlayAPI,
     Selection,
     objectUtils,
     plugins,
@@ -230,6 +232,8 @@ define([
         this.editor = new api.EditorAPI.default(this);
 
         this.OverlayService = new OverlayService();
+
+        this.Overlays = new OverlayAPI.default();
 
         this.legacyRegistry = defaultRegistry;
         this.install(this.plugins.Plot());

@@ -81,9 +81,25 @@ function (
 
         if (entryPos !== -1) {
 
-            this.openmct.OverlayService.showBlockingMessage({
-                severity: "error",
-                actionText: "This action will permanently delete this Notebook entry. Do you wish to continue?",
+            // this.openmct.OverlayService.showBlockingMessage({
+            //     severity: "error",
+            //     actionText: "This action will permanently delete this Notebook entry. Do you wish to continue?",
+            //     buttons: [{
+            //         label: "No",
+            //         callback: function () {}
+            //     },
+            //     {
+            //         label: "Yes",
+            //         callback: function () {
+            //             domainObject.entries.splice(entryPos, 1);
+            //             openmct.objects.mutate(domainObject, 'entries', domainObject.entries);
+            //         }
+            //     }]
+            // });
+
+            this.openmct.Overlays.dialog({
+                iconClass: 'error',
+                message: 'This action will permanently delete this Entry. Do you wish to continue?',
                 buttons: [{
                     label: "No",
                     callback: function () {}
