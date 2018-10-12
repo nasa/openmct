@@ -3,9 +3,9 @@ import EventEmitter from 'EventEmitter';
 import Vue from 'vue';
 
 const cssClasses = {
-    large: 'l-large-view',
-    small: 'l-dialog',
-    fit: 'l-message'
+    large: 'l-overlay-large',
+    small: 'l-overlay-small',
+    fit: 'l-overlay-fit'
 };
 
 class Overlay extends EventEmitter {

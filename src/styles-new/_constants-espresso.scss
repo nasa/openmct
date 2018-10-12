@@ -125,7 +125,7 @@ $colorClickIconBgHov: rgba($colorKey, 0.6);
 $colorClickIconFgHov: $colorKeyHov;
 
 // Menus
-$colorMenuBg: lighten($colorBodyBg, 20%);
+$colorMenuBg: lighten($colorBodyBg, 15%);
 $colorMenuFg: lighten($colorBodyFg, 30%);
 $colorMenuIc: lighten($colorKey, 15%);
 $colorMenuHovBg: $colorMenuIc;
@@ -175,7 +175,7 @@ $overlayColorFg: $colorMenuFg;
 $overlayButtonColorBg: lighten($overlayColorBg, 20%); // Possibly deprecate
 $overlayButtonColorFg: #fff; // Possibly deprecate
 $overlayCr: $interiorMarginLg;
-$overlayBrightnessAdjust: brightness(1.5);
+$overlayBrightnessAdjust: brightness(1.3);
 
 // Indicator colors
 $colorIndicatorAvailable: $colorKey;

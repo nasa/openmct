@@ -78,15 +78,20 @@
             display: flex;
             justify-content: flex-end;
             margin-top: $interiorMargin;
-        }
 
-        .c-button {
-            &:not([class*='--major']) {
-                filter: $overlayBrightnessAdjust;
+            > * + * {
+                margin-left: $interiorMargin;
             }
         }
 
-        body.desktop & {
+        .c-button,
+        .c-click-icon {
+            filter: $overlayBrightnessAdjust;
+        }
+    }
+
+    body.desktop {
+        .c-overlay {
             &__blocker {
                 @include abs();
                 background: rgba(black, 0.7);
@@ -97,28 +102,29 @@
             &__outer {
                 border-radius: $overlayCr;
                 box-shadow: rgba(black, 0.5) 0 2px 25px;
-                // Defaults to l-large-view
+            }
+        }
+
+        // Overlay types, styling for desktop. Appended to .l-overlay-wrapper element.
+        .l-overlay-large {
+            // Default
+            .c-overlay__outer {
                 @include overlaySizing($overlayOuterMarginLg);
             }
+        }
 
-            // Overlay types, styling for desktop. Appended to .l-overlay-wrapper element.
-            .l-large-view {
-                // Default
+        .l-overlay-small {
+            .c-overlay__outer {
+                @include overlaySizing($overlayOuterMarginDialog);
             }
+        }
 
-            .l-dialog {
-                .c-overlay__outer {
-                    @include overlaySizing($overlayOuterMarginDialog);
-                }
-            }
-
-            .l-message {
-                .c-overlay__outer {
-                    @include overlaySizing(auto);
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                }
+        .l-overlay-fit {
+            .c-overlay__outer {
+                @include overlaySizing(auto);
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
             }
         }
     }
@@ -135,6 +141,7 @@
             buttonClickHandler: function (method) {
                 method();
                 this.dismiss();
+                console.log('CH was here');
             }
         }
     }
