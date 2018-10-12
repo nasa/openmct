@@ -89,11 +89,9 @@
                 this.openmct.objects.mutate(item.domainObject, item.property, value);
             },
             triggerMethod(item, event) {
-                // console.log('arguments', {...item}, {...event})
                 if (item.method) {
                     item.method({...event});
                 }
-
             }
         },
         mounted() {

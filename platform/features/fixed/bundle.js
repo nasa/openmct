@@ -181,8 +181,7 @@ define([
                                 },
                                 key: "order",
                                 icon: "icon-layers",
-                                title: "Layering",
-                                description: "Move the selected object above or below other objects",
+                                title: "Move the selected object above or below other objects",
                                 options: [
                                     {
                                         "name": "Move to Top",
@@ -207,12 +206,11 @@ define([
                                 ]
                             },
                             {
-                                control: "color-pciker",
+                                control: "color-picker",
                                 domainObject: domainObject,
                                 property: path + ".fill",
                                 icon: "icon-paint-bucket",
-                                title: "Fill color",
-                                description: "Set fill color",
+                                title: "Set fill color",
                                 key: 'fill'
                             },
                             {
@@ -220,8 +218,7 @@ define([
                                 domainObject: domainObject,
                                 property: path + ".stroke",
                                 icon: "icon-line-horz",
-                                title: "Border color",
-                                description: "Set border color",
+                                title: "Set border color",
                                 key: 'stroke'
                             },
                             {
@@ -229,13 +226,13 @@ define([
                                 domainObject: domainObject,
                                 property: path + ".url",
                                 icon: "icon-image",
-                                title: "Image Properties",
-                                description: "Edit image properties",
+                                title: "Edit image properties",
                                 key: 'url',
                                 dialog: {
-                                    control: "textfield",
+                                    control: "input",
+                                    type: "text",
                                     name: "Image URL",
-                                    cssClass: "l-input-lg",
+                                    class: "l-input-lg",
                                     required: true
                                 }
                             },
@@ -244,17 +241,15 @@ define([
                                 domainObject: domainObject,
                                 property: path + ".color",
                                 icon: "icon-T",
-                                title: "Text color",
                                 mandatory: true,
-                                description: "Set text color",
+                                title: "Set text color",
                                 key: 'color'
                             },
                             {
                                 control: "select-menu",
                                 domainObject: domainObject,
                                 property: path + ".size",
-                                title: "Text size",
-                                description: "Set text size",
+                                title: "Set text size",
                                 key: 'size',
                                 options: [9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96].map(function (size) {
                                     return { "value": size + " px"};
@@ -332,10 +327,9 @@ define([
                                 domainObject: domainObject,
                                 property: path + ".height",
                                 label: "H",
-                                title: "Height",
+                                title: "Resize object height",
                                 key: "height",
                                 class: "l-input-sm",
-                                description: "Resize object height",
                                 min: "1"
                             },
                             {
@@ -344,10 +338,9 @@ define([
                                 domainObject: domainObject,
                                 property: path + ".width",
                                 label: "W",
-                                title: "Width",
+                                title: "Resize object width",
                                 key: "width",
                                 class: "l-input-sm",
-                                description: "Resize object width",
                                 min: "1"
                             },
                             {
@@ -373,11 +366,11 @@ define([
                                 domainObject: domainObject,
                                 property: path + ".text",
                                 icon: "icon-gear",
-                                title: "Text Properties",
-                                description: "Edit text properties",
+                                title: "Edit text properties",
                                 key: "text",
                                 dialog: {
-                                    control: "textfield",
+                                    control: "input",
+                                    type: "text",
                                     name: "Text",
                                     required: true
                                 }

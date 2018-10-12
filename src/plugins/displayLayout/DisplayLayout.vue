@@ -237,22 +237,17 @@
                     return;
                 }
 
-                let domainObject = selection[0].context.item;
-                if (domainObject && domainObject === this.selectedObject) {
-                    return;
-                }
-                
-                this.selectedObject = domainObject;
                 this.removeListeners();
+                let domainObject = selection[0].context.item;
 
-                if (selection[1]) {
-                    this.attachSelectionListeners();
+                if (selection[1] && domainObject) {
+                    this.attachSelectionListeners(domainObject.identifier);
                 }
 
                 this.updateDrilledInState();
             },
-            attachSelectionListeners() {
-                let id = this.openmct.objects.makeKeyString(this.selectedObject.identifier);
+            attachSelectionListeners(identifier) {
+                let id = this.openmct.objects.makeKeyString(identifier);
                 let path = "configuration.layout.panels[" + id + "]";
                 this.listeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".hasFrame", function (newValue) {
                     this.frameItems.forEach(function (item) {

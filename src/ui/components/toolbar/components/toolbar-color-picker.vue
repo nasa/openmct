@@ -2,6 +2,7 @@
     <div class="c-ctrl-wrapper">
         <div class="c-click-icon c-click-icon--swatched"
              :class="options.icon"
+             :title="options.title"
              @click="toggle">
             <div class="c-swatch" :style="{
                 background: options.value

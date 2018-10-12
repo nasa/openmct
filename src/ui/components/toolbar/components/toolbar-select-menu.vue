@@ -2,6 +2,7 @@
     <div class="c-ctrl-wrapper">
         <div class="c-click-icon c-click-icon--menu"
              :class="options.icon"
+             :title="options.title"
              @click="toggle">
             <div class="c-button__label">{{ selectedName }}</div>
         </div>

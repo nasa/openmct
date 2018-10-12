@@ -2,6 +2,7 @@
     <div class="c-ctrl-wrapper">
         <div class="c-click-icon c-click-icon--menu"
              :class="options.icon"
+             :title="options.title"
              @click="toggle">
             <div class="c-click-icon__label"
                  v-if="options.label">
@@ -12,8 +13,7 @@
             <ul>
                 <li v-for="option in options.options"
                     @click="onClick(option)"
-                    :class="option.class"
-                    :title="option.title">
+                    :class="option.class">
                     {{ option.name }}
                 </li>
             </ul>
