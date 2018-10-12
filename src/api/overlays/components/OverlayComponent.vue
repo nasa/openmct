@@ -62,7 +62,7 @@
 
         &__close-button {
             $p: $interiorMarginSm;
-            border-radius: 100%;
+            border-radius: 100% !important;
             display: inline-block;
             position: absolute;
             top: $p; right: $p;
