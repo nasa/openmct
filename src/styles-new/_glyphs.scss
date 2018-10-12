@@ -20,34 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-@mixin glyphBefore($unicode, $family: 'symbolsfont') {
-    &:before {
-        content: $unicode;
-        font-family: $family;
-    }
-}
-
-@mixin glyphAfter($unicode, $family: 'symbolsfont') {
-    &:after {
-        content: $unicode;
-        font-family: $family;
-    }
-}
-
-@mixin glyphBg($glyphUrl) {
-    background-image: $glyphUrl;
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
-}
-
-[class*="icon-"] {
-    &:before, &:after
-    {
-        -webkit-font-smoothing: antialiased;
-    }
-}
-
 /************************** 16 PX CLASSES */
 .icon-alert-rect {  @include glyphBefore($glyph-icon-alert-rect); }
 .icon-alert-triangle {  @include glyphBefore($glyph-icon-alert-triangle); }
@@ -171,6 +143,10 @@
 .icon-grippy-12px {  @include glyphBefore($glyph-icon-grippy,'symbolsfont-12px'); }
 
 /************************** GLYPH BG CLASSES */
+.bg-icon-alert-rect { @include glyphBg($bg-icon-alert-rect); }
+.bg-icon-alert-triangle { @include glyphBg($bg-icon-alert-triangle); }
+.bg-icon-bell { @include glyphBg($bg-icon-bell); }
+.bg-icon-info { @include glyphBg($bg-icon-info); }
 .bg-icon-activity { @include glyphBg($bg-icon-activity); }
 .bg-icon-activity-mode { @include glyphBg($bg-icon-activity-mode); }
 .bg-icon-autoflow-tabular { @include glyphBg($bg-icon-autoflow-tabular); }

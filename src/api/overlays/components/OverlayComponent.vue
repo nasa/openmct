@@ -15,9 +15,10 @@
                 </button>
             </div>
             <div class="c-overlay__button-bar" v-if="buttons">
-                <button class="c-button c-button--major"
+                <button class="c-button"
                         v-for="(button, index) in buttons"
                         :key="index"
+                        :class="button.emphasis ? 'c-button--major' : ''"
                         @click="buttonClickHandler(button.callback)">
                     {{button.label}}
                 </button>
@@ -28,6 +29,13 @@
 
 <style lang="scss">
     @import "~styles/sass-base";
+
+    @mixin overlaySizing($marginTB: 5%, $marginLR: $marginTB, $width: auto, $height: auto) {
+        position: absolute;
+        top: $marginTB; right: $marginLR; bottom: $marginTB; left: $marginLR;
+        width: $width;
+        height: $height;
+    }
 
     .l-overlay-wrapper {
         // Created by overlayService.js, contains this template.
@@ -72,6 +80,12 @@
             margin-top: $interiorMargin;
         }
 
+        .c-button {
+            &:not([class*='--major']) {
+                filter: $overlayBrightnessAdjust;
+            }
+        }
+
         body.desktop & {
             &__blocker {
                 @include abs();
@@ -81,10 +95,30 @@
             }
 
             &__outer {
-                $m: $overlayOuterMargin;
-                top: $m; right: $m; bottom: $m; left: $m;
                 border-radius: $overlayCr;
                 box-shadow: rgba(black, 0.5) 0 2px 25px;
+                // Defaults to l-large-view
+                @include overlaySizing($overlayOuterMarginLg);
+            }
+
+            // Overlay types, styling for desktop. Appended to .l-overlay-wrapper element.
+            .l-large-view {
+                // Default
+            }
+
+            .l-dialog {
+                .c-overlay__outer {
+                    @include overlaySizing($overlayOuterMarginDialog);
+                }
+            }
+
+            .l-message {
+                .c-overlay__outer {
+                    @include overlaySizing(auto);
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                }
             }
         }
     }
