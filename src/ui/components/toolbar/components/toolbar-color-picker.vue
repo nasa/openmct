@@ -39,7 +39,7 @@ export default {
     methods: {
         select(color) {
             if (color.value !== this.options.value) {
-                this.$emit('change', color, this.options);
+                this.$emit('change', color.value, this.options);
             }
         }
     },
