@@ -53,14 +53,8 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
-    .l-layout,
-    .c-grid,
-    .c-grid__x,
-    .c-grid__y {
-        @include abs();
-    }
-
     .l-layout {
+        @include abs();
         display: flex;
         flex-direction: column;
 
@@ -78,34 +72,15 @@
         }
     }
 
-    .c-grid {
-        pointer-events: none;
-
-        &__x  { @include bgTicks($colorGridLines, 'x'); }
-        &__y  { @include bgTicks($colorGridLines, 'y'); }
-    }
-
-    .is-editing {
-        .l-shell__main-container > .l-layout {
-            // Target the top-most layout container and color its background
-            background: rgba($editColor, 0.1);
-        }
-
-        [s-selected],
-        [s-selected-parent] {
-            .l-layout {
-                // Show the layout grid for the top-most child of the current selection,
-                // and hide the grid for deeper nested levels.
-                [class*="__grid-holder"] {
-                    display: block;
-                }
-
-                .l-layout [class*="__grid-holder"] {
-                    display: none;
-                }
+    .l-shell__main-container {
+        > .l-layout {
+            [s-selected] {
+                border: $browseBorderSelected;
             }
         }
     }
+
+    // Styles moved to _global.scss;
 </style>
 
 
