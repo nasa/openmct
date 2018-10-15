@@ -50,7 +50,7 @@ define(
             };
             $scope.dismiss = function (notification, $event) {
                 $event.stopPropagation();
-                notification.dismissOrMinimize();
+                notification.dismiss();
             };
             $scope.maximize = function (notification) {
                 if (notification.model.severity !== "info") {
