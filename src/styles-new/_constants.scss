@@ -43,7 +43,6 @@ $treeTypeIconW: 18px;
 $overlayOuterMarginLg: 5%;
 $overlayOuterMarginDialog: 20%;
 $overlayInnerMargin: 25px;
-
 /*************** Items */
 $itemPadLR: 5px;
 $gridItemDesk: 175px;
@@ -59,6 +58,13 @@ $mobileTreeItemH: 35px; // Used
 
 /************************** VISUAL */
 $controlDisabledOpacity: 0.3;
+
+/************************** UI ELEMENTS */
+/*************** Progress Bar */
+$colorProgressBarHolder: rgba(black, 0.1);
+$colorProgressBar: #0085ad;
+$progressAnimW: 500px;
+$progressBarMinH: 6px;
 
 /************************** GLYPH CHAR UNICODES */
 $glyph-icon-alert-rect: '\e900';
