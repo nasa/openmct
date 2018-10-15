@@ -23,11 +23,13 @@
 define([
     "./src/NotificationIndicatorController",
     "./src/NotificationIndicator",
+    "./src/NotificationService",
     "./res/notification-indicator.html",
     'legacyRegistry'
 ], function (
     NotificationIndicatorController,
     NotificationIndicator,
+    NotificationService,
     notificationIndicatorTemplate,
     legacyRegistry
 ) {
@@ -46,7 +48,7 @@ define([
                     "implementation": NotificationIndicatorController,
                     "depends": [
                         "$scope",
-                        "notificationService",
+                        "openmct",
                         "dialogService"
                     ]
                 }
@@ -61,7 +63,7 @@ define([
                 {
                     "key": "notificationService",
                     "implementation": function (openmct) {
-                        return openmct.notifications;
+                        return new NotificationService.default(openmct);
                     },
                     "depends": [
                         "openmct"
