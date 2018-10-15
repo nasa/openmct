@@ -36,7 +36,8 @@ define([
     './staticRootPlugin/plugin',
     './notebook/plugin',
     './displayLayout/plugin',
-    './folderView/plugin'
+    './folderView/plugin',
+    '../../platform/features/fixed/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -53,7 +54,8 @@ define([
     StaticRootPlugin,
     Notebook,
     DisplayLayoutPlugin,
-    FolderView
+    FolderView,
+    FixedView
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -165,6 +167,7 @@ define([
     plugins.Notebook = Notebook;
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
     plugins.FolderView = FolderView;
+    plugins.FixedView = FixedView;
 
     return plugins;
 });
