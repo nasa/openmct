@@ -81,7 +81,7 @@ function (
 
         if (entryPos !== -1) {
 
-            this.openmct.Overlays.dialog({
+            var dialog = this.openmct.Overlays.dialog({
                 iconClass: 'alert',
                 message: 'This action will permanently delete this entry. Do you wish to continue?',
                 buttons: [
@@ -91,11 +91,14 @@ function (
                         callback: function () {
                             domainObject.entries.splice(entryPos, 1);
                             openmct.objects.mutate(domainObject, 'entries', domainObject.entries);
+                            dialog.dismiss();
                         }
                     },
                     {
                         label: "Cancel",
-                        callback: function () {}
+                        callback: function () {
+                            dialog.dismiss();
+                        }
                     }
                 ]
             });

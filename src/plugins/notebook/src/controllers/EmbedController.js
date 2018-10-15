@@ -221,20 +221,24 @@ function (
                 var entryPosition = self.findInArray(self.domainObject.entries, entry.id),
                     embedPosition = self.findInArray(entry.embeds, embed.id);
 
-                self.openmct.Overlays.dialog({
+                var dialog = self.openmct.Overlays.dialog({
                     iconClass: "alert",
                     message: 'This Action will permanently delete this embed. Do you wish to continue?',
                     buttons: [{
                         label: "No",
-                        callback: function () {}
+                        callback: function () {
+                            dialog.dismiss();
+                        }
                     },
                     {
                         label: "Yes",
+                        emphasis: true,
                         callback: function () {
                             entry.embeds.splice(embedPosition, 1);
                             var dirString = 'entries[' + entryPosition + '].embeds';
 
                             self.openmct.objects.mutate(self.domainObject, dirString, entry.embeds);
+                            dialog.dismiss();
                         }
                     }]
                 });

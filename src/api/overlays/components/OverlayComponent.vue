@@ -1,16 +1,17 @@
 <template>
     <div class="c-overlay">
         <div class="c-overlay__blocker"
-            @click="dismiss">
+            @click="destroy">
         </div>
         <div class="c-overlay__outer">
             <button class="c-click-icon c-overlay__close-button icon-x-in-circle"
-                @click="dismiss">
+                v-if="!notDismissable"
+                @click="destroy">
             </button>
             <div class="c-overlay__contents" ref="element"></div>
             <div class="c-overlay__button-bar" v-if="!buttons">
                 <button class="c-button c-button--major"
-                    @click="dismiss">
+                    @click="destroy">
                     Done
                 </button>
             </div>
@@ -133,14 +134,19 @@
 
 <script>
     export default {
-        inject: ['dismiss', 'element', 'buttons'],
+        inject: ['dismiss', 'element', 'buttons', 'notDismissable'],
         mounted() {
             this.$refs.element.appendChild(this.element);
         },
         methods: {
+            destroy: function () {
+                if (!this.notDismissable) {
+                    this.dismiss();
+                }
+            },
             buttonClickHandler: function (method) {
                 method();
-                this.dismiss();
+                this.destroy();
             }
         }
     }

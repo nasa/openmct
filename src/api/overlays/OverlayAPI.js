@@ -1,9 +1,11 @@
 import Overlay from './Overlay';
 import Dialog from './Dialog';
+import ProgressDialog from './ProgressDialog';
 
 class OverlayAPI {
     constructor() {
         this.activeOverlays = [];
+        window.exampleDialog = this.exampleDialog.bind(this);
     }
 
     showOverlay(overlay) {
@@ -40,8 +42,31 @@ class OverlayAPI {
         return dialog;
     }
 
-    progressDialog() {
+    progressDialog(options) {
+        let progressDialog = new ProgressDialog(options);
 
+        this.showOverlay(progressDialog);
+
+        return progressDialog;
+    }
+
+    exampleDialog(options) {
+        var dialog;
+        options = options || {
+            progressText: 'Hello World',
+            progressPerc: '40',
+            buttons: [
+                {
+                    label: 'Dismiss',
+                    callback: function () {
+                        dialog.dismiss();
+                    }
+                }
+            ]
+        };
+
+        dialog = this.progressDialog(options);
+        return dialog;
     }
 
 }

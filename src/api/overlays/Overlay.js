@@ -19,7 +19,8 @@ class Overlay extends EventEmitter {
             provide: {
                 dismiss: this.dismiss.bind(this),
                 element: options.element,
-                buttons: options.buttons
+                buttons: options.buttons,
+                notDismissable: options.notDismissable ? true : false
             },
             components: {
                 OverlayComponent: OverlayComponent
