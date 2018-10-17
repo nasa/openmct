@@ -79,30 +79,34 @@ define(
              * periodically, tracking an ongoing process.
              */
             $scope.newProgress = function () {
+                let progress = 0;
                 var notificationModel = {
                     title: "Progress notification example",
                     severity: "info",
-                    progress: 0,
+                    progress: progress,
                     actionText: getExampleActionText()
                 };
+                let notification;
 
                 /**
                  * Simulate an ongoing process and update the progress bar.
                  * @param notification
                  */
                 function incrementProgress() {
-                    notificationModel.progress = Math.min(100, Math.floor(notificationModel.progress + Math.random() * 30));
-                    notificationModel.progressText = ["Estimated time" +
+                    progress = Math.min(100, Math.floor(progress + Math.random() * 30))
+                    let progressText = ["Estimated time" +
                     " remaining:" +
-                    " about ", 60 - Math.floor((notificationModel.progress / 100) * 60), " seconds"].join(" ");
-                    if (notificationModel.progress < 100) {
+                    " about ", 60 - Math.floor((progress / 100) * 60), " seconds"].join(" ");
+                    notification.progress(progress, progressText);
+
+                    if (progress < 100) {
                         $timeout(function () {
                             incrementProgress(notificationModel);
                         }, 1000);
                     }
                 }
 
-                notificationService.notify(notificationModel);
+                notification = notificationService.notify(notificationModel);
                 incrementProgress();
             };
 
