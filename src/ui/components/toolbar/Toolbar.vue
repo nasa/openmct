@@ -37,13 +37,13 @@
         },
         methods: {
             handleSelection(selection) {
+                this.removeListeners();
+                this.domainObjectsById = {};
+
                 if (!selection[0]) {
                     this.structure = [];
-                    this.removeListeners();
                     return;
                 }
-
-                this.removeListeners();
 
                 let structure = this.openmct.toolbars.get(selection) || [];
                 this.structure = structure.map(function (item) {
@@ -55,18 +55,58 @@
                 }.bind(this));
             },
             registerListener(domainObject) {
+                let id = this.openmct.objects.makeKeyString(domainObject.identifier);
+
+                if (!this.domainObjectsById[id]) {
+                    this.domainObjectsById[id] = {
+                        domainObject: domainObject
+                    }
+                    this.observeObject(domainObject, id);
+                }
+            },
+            observeObject(domainObject, id) {
                 let unobserveObject = this.openmct.objects.observe(domainObject, '*', function(newObject) {
-                    let newObjectId = this.openmct.objects.makeKeyString(newObject.identifier);
-                    this.structure = this.structure.map((item) => {
-                        let toolbarItem = {...item};
-                        let domainObjectId = this.openmct.objects.makeKeyString(toolbarItem.domainObject.identifier);
-                        if (domainObjectId === newObjectId) {
-                            toolbarItem.domainObject = JSON.parse(JSON.stringify(newObject));
-                        }
-                        return toolbarItem;
-                    });
+                    this.domainObjectsById[id].newObject = JSON.parse(JSON.stringify(newObject));
+                    this.scheduleToolbarUpdate();
                 }.bind(this));
                 this.unObserveObjects.push(unobserveObject);
+            },
+            scheduleToolbarUpdate() {
+                if (this.toolbarUpdateScheduled) {
+                    return;
+                }
+
+                this.toolbarUpdateScheduled = true;
+                setTimeout(this.updateToolbarAfterMutation.bind(this));
+            },
+            updateToolbarAfterMutation() {
+                this.structure = this.structure.map((item) => {
+                    let toolbarItem = {...item};
+                    let domainObject = toolbarItem.domainObject;
+                    let id = this.openmct.objects.makeKeyString(domainObject.identifier);
+                    let newObject = this.domainObjectsById[id].newObject;
+
+                    if (!newObject) {
+                       return;
+                    }
+
+                    toolbarItem.domainObject = newObject;
+                    let newValue = _.get(newObject, item.property);
+
+                    if (toolbarItem.value !== newValue) {
+                        toolbarItem.value = newValue;
+                    }
+
+                    return toolbarItem;
+                });
+
+                Object.values(this.domainObjectsById).forEach(function (tracker) {
+                    if (tracker.newObject) {
+                        tracker.domainObject = tracker.newObject;
+                        delete tracker.newObject;
+                    }
+                });
+                this.toolbarUpdateScheduled = false;
             },
             removeListeners() {
                 if (this.unObserveObjects) {
@@ -77,11 +117,12 @@
                 this.unObserveObjects = [];
             },
             updateObjectValue(value, item) {
-                let changedId = this.openmct.objects.makeKeyString(item.domainObject.identifier);
+                let changedItemId = this.openmct.objects.makeKeyString(item.domainObject.identifier);
                 this.structure = this.structure.map((s) => {
                     let toolbarItem = {...s};
-                    if (changedId === this.openmct.objects.makeKeyString(toolbarItem.domainObject.identifier)
-                        && item.property === s.property) {
+                    let id = this.openmct.objects.makeKeyString(toolbarItem.domainObject.identifier);
+
+                    if (changedItemId === id && item.property === s.property) {
                         toolbarItem.value = value;
                     }
                     return toolbarItem;
@@ -92,6 +133,9 @@
                 if (item.method) {
                     item.method({...event});
                 }
+            },
+            handleEditing(isEditing) {
+                this.handleSelection(this.openmct.selection.get());
             }
         },
         mounted() {
@@ -100,12 +144,11 @@
 
             // Toolbars may change when edit mode is enabled/disabled, so listen
             // for edit mode changes and update toolbars if necessary.
-            this.openmct.editor.on('isEditing', (isEditing) => {
-                this.handleSelection(this.openmct.selection.get());
-            });
+            this.openmct.editor.on('isEditing', this.handleEditing);
         },
         detroyed() {
             this.openmct.selection.off('change', this.handleSelection);
+            this.openmct.editor.off('isEditing', this.handleEditing);
             this.removeListeners();
         }
     }
