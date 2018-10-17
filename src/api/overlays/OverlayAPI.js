@@ -14,7 +14,6 @@ import ProgressDialog from './ProgressDialog';
 class OverlayAPI {
     constructor() {
         this.activeOverlays = [];
-        window.exampleDialog = this.exampleDialog.bind(this);
     }
 
     /**
