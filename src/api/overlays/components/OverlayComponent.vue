@@ -9,12 +9,6 @@
                 @click="destroy">
             </button>
             <div class="c-overlay__contents" ref="element"></div>
-            <div class="c-overlay__button-bar" v-if="!buttons">
-                <button class="c-button c-button--major"
-                    @click="destroy">
-                    Done
-                </button>
-            </div>
             <div class="c-overlay__button-bar" v-if="buttons">
                 <button class="c-button"
                         v-for="(button, index) in buttons"

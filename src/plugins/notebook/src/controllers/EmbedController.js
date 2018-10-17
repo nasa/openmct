@@ -166,10 +166,19 @@ function (
             snapshot.$destroy(true);
         }
 
-        this.openmct.Overlays.overlay({
+        var snapshotOverlay = this.openmct.Overlays.overlay({
             element: snapshot.$mount().$el,
             onDestroy: onDestroyCallback,
-            size: 'large'
+            size: 'large',
+            buttons: [
+                {
+                    label: 'Done',
+                    emphasis: true,
+                    callback: function () {
+                        snapshotOverlay.dismiss();
+                    }
+                }
+            ]
         });
     };
 
