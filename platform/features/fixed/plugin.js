@@ -251,7 +251,7 @@ define([
                                         title: "Set text size",
                                         key: 'size',
                                         options: [9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96].map(function (size) {
-                                            return { "value": size + " px"};
+                                            return { "value": size + "px"};
                                         })
                                     },
                                     {

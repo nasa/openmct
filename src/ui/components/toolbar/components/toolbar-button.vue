@@ -24,7 +24,6 @@ export default {
     methods: {
         onClick(event) {
             if (this.options.dialog) {
-                console.log("dialog", {...this.options.dialog});
                 // TODO: display a dialog
             }
             this.$emit('click', this.options);

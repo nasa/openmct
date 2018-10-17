@@ -82,19 +82,16 @@
             updateToolbarAfterMutation() {
                 this.structure = this.structure.map((item) => {
                     let toolbarItem = {...item};
-                    let domainObject = toolbarItem.domainObject;
-                    let id = this.openmct.objects.makeKeyString(domainObject.identifier);
+                    let id = this.openmct.objects.makeKeyString(toolbarItem.domainObject.identifier);
                     let newObject = this.domainObjectsById[id].newObject;
 
-                    if (!newObject) {
-                       return;
-                    }
+                    if (newObject) {
+                        toolbarItem.domainObject = newObject;
+                        let newValue = _.get(newObject, item.property);
 
-                    toolbarItem.domainObject = newObject;
-                    let newValue = _.get(newObject, item.property);
-
-                    if (toolbarItem.value !== newValue) {
-                        toolbarItem.value = newValue;
+                        if (toolbarItem.value !== newValue) {
+                            toolbarItem.value = newValue;
+                        }
                     }
 
                     return toolbarItem;
@@ -125,6 +122,7 @@
                     if (changedItemId === id && item.property === s.property) {
                         toolbarItem.value = value;
                     }
+
                     return toolbarItem;
                 });
                 this.openmct.objects.mutate(item.domainObject, item.property, value);
