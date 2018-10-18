@@ -17,30 +17,90 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="l-message-banner s-message-banner" 
+<div class="c-message-banner s-message-banner"
     :class="[
         activeModel.severity,
         {
             'minimized': activeModel.minimized,
             'new': !activeModel.minimized
         }]"
-    v-if="activeModel.message">
-    <span @click="maximize()" class="banner-elem label">{{activeModel.message}}</span>
-    <progress-bar v-if="activeModel.progressPerc !== undefined" :model="activeModel">
+     @click="maximize()"
+     v-if="activeModel.message">
+    <span class="c-message-banner__message">{{activeModel.message}}</span>
+    <progress-bar
+            class="c-message-banner__progress-bar"
+            v-if="activeModel.progressPerc !== undefined" :model="activeModel">
     </progress-bar>
-    <a class="close icon-x" @click="dismiss()"></a>
+    <button class="c-message-banner__close-btn c-click-icon icon-x"
+            @click="dismiss()"></button>
 </div>
 </template>
 
 <style lang="scss">
+    @import "~styles/sass-base";
+
+    .c-message-banner {
+        $closeBtnSize: 7px;
+        $m: 1px;
+
+        display: flex;
+        align-items: center;
+        left: 50%;
+        max-width: 50%;
+        padding: $interiorMargin $interiorMarginLg;
+        position: absolute;
+        transform: translateX(-50%);
+        bottom: $m;
+        z-index: 2;
+
+        // TODOs:
+        // - Styling for message types, add color values to theme scss files
+        // - Factor out s-message-banner
+
+        > * + * {
+            margin-left: $interiorMargin;
+        }
+
+        &__message {
+            @include ellipsize();
+            flex: 1 1 auto;
+        }
+
+        &__progress-bar {
+            flex: 0 0 auto;
+            width: 70px;
+
+            // Only show the progress bar
+            .c-progress-bar {
+                &__text {
+                    display: none;
+                }
+            }
+        }
+
+        &__close-btn {
+            font-size: $closeBtnSize;
+        }
+
+    }
+
+
+
+
+
+
+
+
+   /*
+
     .l-message-banner {
-        display: inline;
+        display: flex;
         left: 50%;
         position: absolute;
     }
     .banner-elem {
         display: inline;
-    }
+    }*/
 </style>
 
 <script>
