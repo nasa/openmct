@@ -26,20 +26,8 @@
         }]"
     v-if="activeModel.message">
     <span @click="maximize()" class="banner-elem label">{{activeModel.message}}</span>
-    <span @click="maximize()" v-if="activeModel.progressPerc !== undefined">
-        <div class="banner-elem"><!-- was mct-include -->
-            <span class="l-progress-bar s-progress-bar"
-                :class="{'indeterminate': activeModel.progressPerc === 'unknown' }">
-                <span class="progress-amt-holder">
-                    <span class="progress-amt" :style="progressWidth"></span>
-                </span>
-            </span>
-            <div class="progress-info hint" v-if="activeModel.progressText !== undefined">
-                <span class="progress-amt-text" v-if="activeModel.progressPerc > 0">{{activeModel.progressPerc}}% complete. </span>
-                {{activeModel.progressText}}
-            </div>
-        </div>
-    </span>
+    <progress-bar v-if="activeModel.progressPerc !== undefined" :model="activeModel">
+    </progress-bar>
     <a class="close icon-x" @click="dismiss()"></a>
 </div>
 </template>
@@ -56,10 +44,37 @@
 </style>
 
 <script>
+    import ProgressBar from '../ProgressBar.vue';
     let activeNotification = undefined;
     let dialogService = undefined;
+    let maximizedDialog = undefined;
+    let minimizeButton = {
+        label: 'Dismiss',
+        callback: dismissMaximizedDialog
+    }
+
+    function dismissMaximizedDialog() {
+        if (maximizedDialog) {
+            maximizedDialog.dismiss();
+            maximizedDialog = undefined;
+        }
+    }
+
+    function updateMaxProgressBar(progressPerc, progressText) {
+        if (maximizedDialog) {
+            maximizedDialog.updateProgress(progressPerc, progressText);
+
+            if (progressPerc >= 100) {
+                dismissMaximizedDialog();
+            }
+        }
+    }
+
     export default {
         inject: ['openmct'],
+        components: {
+            ProgressBar: ProgressBar
+        },
         data() {
             return {
                 activeModel: {
@@ -115,9 +130,29 @@
                 activeNotification.off('progress', this.updateProgress);
                 activeNotification.off('minimized', this.minimized);
                 activeNotification.off('destroy', this.destroyActiveNotification);
+
+                activeNotification.off('progress', updateMaxProgressBar);
+                activeNotification.off('minimized', dismissMaximizedDialog);
+                activeNotification.off('destroy', dismissMaximizedDialog);
             },
             maximize() {
-                //Not implemented yet.
+                if (this.activeModel.progressPerc !== undefined) {
+                    maximizedDialog = this.openmct.Overlays.progressDialog({
+                        buttons: [minimizeButton],
+                        ...this.activeModel
+                    });
+
+                    activeNotification.on('progress', updateMaxProgressBar);
+                    activeNotification.on('minimized', dismissMaximizedDialog);
+                    activeNotification.on('destroy', dismissMaximizedDialog);
+
+                } else {
+                    maximizedDialog = this.openmct.Overlays.dialog({
+                        iconClass: this.activeModel.severity,
+                        buttons: [minimizeButton],
+                        ...this.activeModel
+                    })
+                }
             }
         },
         computed: {
