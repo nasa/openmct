@@ -20,20 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-    function AdapterCompositionPolicy(openmct) {
-        this.openmct = openmct;
-    }
+export default function legacyCompositionPolicyAdapter(openmct) {
+    const instantiate = this.openmct.$injector.get('instantiate');
+    const policyService = this.openmct.$injector.get('policyService');
 
-    AdapterCompositionPolicy.prototype.allow = function (
-        parent,
-        child
-    ) {
-        return this.openmct.composition.checkPolicy(
-            parent.useCapability('adapter'),
-            child.useCapability('adapter')
+    openmct.composition.addPolicy((parent, child) => {
+        let parentId = this.openmct.objects.makeKeyString(parent.identifier);
+        let childId = this.openmct.objects.makeKeyString(child.identifier);
+
+        let legacyParent = instantiate(parent, parentId);
+        let legacyChild = instantiate(child, childId);
+
+        return policyService.allow(
+            'composition',
+            legacyParent,
+            legacyChild
         );
-    };
-
-    return AdapterCompositionPolicy;
-});
+    });
+}

@@ -7,14 +7,7 @@
                           :expanded="expanded"
                           @click="toggleChildren">
             </view-control>
-            <a class="c-tree__item__label"
-               draggable="true"
-               @dragstart="dragStart"
-               :href="href">
-                <div class="c-tree__item__type-icon"
-                      :class="cssClass"></div>
-                <div class="c-tree__item__name">{{ node.object.name }}</div>
-            </a>
+            <object-label :domainObject="node.object" :urlLink="href"></object-label>
         </div>
         <ul v-if="expanded" class="c-tree">
             <tree-item v-for="child in children"
@@ -27,10 +20,12 @@
 </template>
 
 <script>
-    import viewControl from '../controls/viewControl.vue'
+    import viewControl from '../controls/viewControl.vue';
+    import ObjectLabel from '../controls/ObjectLabel.vue';
+
     export default {
         name: 'tree-item',
-        inject: ['openmct', 'domainObject'],
+        inject: ['openmct'],
         props: {
             node: Object
         },
@@ -40,7 +35,6 @@
                 loaded: false,
                 children: [],
                 expanded: false,
-                cssClass: 'icon-object-unknown',
                 isAlias: false
             }
         },
@@ -59,20 +53,11 @@
             // TODO: should support drag/drop composition
             // TODO: set isAlias per tree-item
 
-            let type = this.openmct.types.get(this.node.object.type);
-
-            if (type.definition.cssClass) {
-                this.cssClass = type.definition.cssClass;
-            } else {
-                console.log("Failed to get typeDef.cssClass for object", this.node.object.name, this.node.object.type);
-            }
-
             let composition = this.openmct.composition.get(this.node.object);
             if (!composition) {
                 return;
             }
             this.hasChildren = true;
-
         },
         methods: {
             toggleChildren: function () {
@@ -90,13 +75,11 @@
                         })
                         .then(() => this.loaded = true);
                 }
-            },
-            dragStart($event) {
-                $event.dataTransfer.setData("domainObject", JSON.stringify(this.node.object));
             }
         },
         components: {
-            viewControl
+            viewControl,
+            ObjectLabel
         }
     }
 </script>

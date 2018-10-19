@@ -35,6 +35,8 @@ export default {
     mounted() {
         this.currentObject = this.object;
         this.updateView();
+        this.$el.addEventListener('dragover', this.onDragOver);
+        this.$el.addEventListener('drop', this.onDrop);
     },
     methods: {
         clear() {
@@ -67,6 +69,24 @@ export default {
             this.currentObject = object;
             this.viewKey = viewKey;
             this.updateView();
+        },
+        onDragOver(event) {
+            event.preventDefault();
+        },
+        onDrop(event) {
+            let parentObject = this.currentObject;
+            let childObject = JSON.parse(event.dataTransfer.getData("domainObject"));
+
+            if (this.openmct.composition.checkPolicy(parentObject, childObject)){
+                if (!this.openmct.editor.isEditing() && parentObject.type !== 'folder'){
+                    this.openmct.editor.edit();
+                }
+                parentObject.composition.push(childObject.identifier);
+                this.openmct.objects.mutate(parentObject, 'composition', parentObject.composition);
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
         }
     }
 }
