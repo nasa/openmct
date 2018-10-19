@@ -4,7 +4,7 @@
             v-bind:key="index"
             class="l-grid-view__item c-grid-item"
              :class="{ 'is-alias': item.isAlias === true }"
-            @click="navigate(item.model.identifier.key)">
+            @click="navigate(item)">
             <div class="c-grid-item__type-icon"
                  :class="(item.type.cssClass != undefined) ? 'bg-' + item.type.cssClass : 'bg-icon-object-unknown'">
             </div>
@@ -15,9 +15,6 @@
                 <div class="c-grid-item__metadata"
                      :title="item.type.name">
                     <span class="c-grid-item__metadata__type">{{item.type.name}}</span>
-                    <span class="c-grid-item__metadata__item-count" v-if="item.model.composition !== undefined">
-                        {{item.model.composition.length}} item<span v-if="item.model.composition.length !== 1">s</span>
-                    </span>
                 </div>
             </div>
             <div class="c-grid-item__controls">
@@ -177,45 +174,17 @@
 </style>
 
 <script>
+
+import compositionLoader from './composition-loader';
+
 export default {
-    inject: ['openmct', 'domainObject'],
-    data() {
-        var items = [],
-            unknownObjectType = {
-                definition: {
-                    cssClass: 'icon-object-unknown',
-                    name: 'Unknown Type'
-                }
-            };
-
-        var composition = this.openmct.composition.get(this.domainObject);
-
-        if (composition) {
-
-            composition.load().then((array) => {
-                if (Array.isArray(array)) {
-                    array.forEach((model) => {
-                        var type = this.openmct.types.get(model.type) || unknownObjectType;
-
-                        items.push({
-                            model: model,
-                            type: type.definition,
-                            isAlias: this.domainObject.identifier.key !== model.location
-                        });
-                    });
-                }
-            });
-        }
-
-        return {
-            items: items
-        }
-    },
+    mixins: [compositionLoader],
+    inject: ['domainObject', 'openmct'],
     methods: {
-        navigate(identifier) {
+        navigate(item) {
             let currentLocation = this.openmct.router.currentLocation.path,
-                navigateToPath = `${currentLocation}/${identifier}`;
-            
+                navigateToPath = `${currentLocation}/${this.openmct.objects.makeKeyString(item.model.identifier)}`;
+
             this.openmct.router.setPath(navigateToPath);
         }
     }
