@@ -186,15 +186,6 @@ define([
         this.types = new api.TypeRegistry();
 
         /**
-         * Utilities for attaching common behaviors to views.
-         *
-         * @type {module:openmct.GestureAPI}
-         * @memberof module:openmct.MCT#
-         * @name gestures
-         */
-        this.gestures = new api.GestureAPI();
-
-        /**
          * An interface for interacting with domain objects and the domain
          * object hierarchy.
          *
@@ -224,8 +215,6 @@ define([
         this.indicators = new api.IndicatorAPI(this);
 
         this.notifications = new api.NotificationAPI();
-
-        this.Dialog = api.Dialog;
 
         this.editor = new api.EditorAPI.default(this);
 
