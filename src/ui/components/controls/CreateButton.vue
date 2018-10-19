@@ -12,7 +12,8 @@
                         :key="index"
                         :class="item.class"
                         :title="item.title"
-                        @mouseover="showItemDescription(item)">
+                        @mouseover="showItemDescription(item)"
+                        @click="create(item)">
                         {{ item.name }}
                     </li>
                 </ul>
@@ -56,6 +57,14 @@
 </style>
 
 <script>
+    import CreateAction from '../../../../platform/commonUI/edit/src/creation/CreateAction';
+    import objectUtils from '../../../api/objects/object-utils';
+
+    function convertToLegacyObject(domainObject) {
+        let keyString = objectUtils.makeKeyString(domainObject.identifier);
+        let oldModel = objectUtils.toOldFormat(domainObject);
+        return instantiate(oldModel, keyString);
+    }
     export default {
         inject: ['openmct'],
         props: {
@@ -70,6 +79,31 @@
             },
             showItemDescription: function (menuItem) {
                 this.selectedMenuItem = menuItem;
+            },
+            create: function (item) {
+                // Hack for support.  TODO: rewrite create action.
+                // 1. Get contextual object from navigation
+                // 2. Get legacy type from legacy api
+                // 3. Instantiate create action with type, parent, context
+                // 4. perform action.
+                let legacyContextualParent = this.convertToLegacy(openmct.router.path[0]);
+                let legacyType = openmct.$injector.get('typeService').getType(item.key);
+                let context = {
+                    key: "create",
+                    domainObject: legacyContextualParent // should be same as parent object.
+                };
+                let action = new CreateAction(
+                    legacyType,
+                    legacyContextualParent,
+                    context,
+                    this.openmct
+                );
+                return action.perform();
+            },
+            convertToLegacy (domainObject) {
+                let keyString = objectUtils.makeKeyString(domainObject.identifier);
+                let oldModel = objectUtils.toOldFormat(domainObject);
+                return openmct.$injector.get('instantiate')(oldModel, keyString);
             }
         },
         data: function() {
@@ -80,6 +114,7 @@
 
                 if (menuItem.creatable) {
                     let menuItemTemplate = {
+                        key: key,
                         name: menuItem.name,
                         class: menuItem.cssClass,
                         title: menuItem.description
