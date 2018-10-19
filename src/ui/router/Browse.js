@@ -34,14 +34,10 @@ define([
             if (!Array.isArray(path)) {
                 path = path.split('/');
             }
-            return Promise.all(path.map((keyString)=>{
-                return openmct.objects.get(keyString);
-            })).then((objects)=>{
+            return openmct.objects.get(path[path.length - 1]).then((navigatedObject)=>{
                 if (currentNavigation !== navigateCall) {
                     return; // Prevent race.
                 }
-
-                let navigatedObject = objects[objects.length - 1];
 
                 openmct.layout.$refs.browseBar.domainObject = navigatedObject;
                 browseObject = navigatedObject;
