@@ -40,20 +40,20 @@ function (
          */
     function SaveAsAction(
         $injector,
-        policyService,
         dialogService,
         copyService,
         notificationService,
+        openmct,
         context
     ) {
         this.domainObject = (context || {}).domainObject;
         this.injectObjectService = function () {
             this.objectService = $injector.get("objectService");
         };
-        this.policyService = policyService;
         this.dialogService = dialogService;
         this.copyService = copyService;
         this.notificationService = notificationService;
+        this.openmct = openmct;
     }
 
     /**
@@ -63,7 +63,7 @@ function (
         return new CreateWizard(
             this.domainObject,
             parent,
-            this.policyService
+            this.openmct
         );
     };
 

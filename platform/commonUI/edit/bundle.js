@@ -46,7 +46,6 @@ define([
     "./src/creation/LocatorController",
     "./src/creation/CreationPolicy",
     "./src/creation/CreateActionProvider",
-    "./src/creation/AddActionProvider",
     "./src/creation/CreationService",
     "./res/templates/create/locator.html",
     "./res/templates/create/create-button.html",
@@ -82,7 +81,6 @@ define([
     LocatorController,
     CreationPolicy,
     CreateActionProvider,
-    AddActionProvider,
     CreationService,
     locatorTemplate,
     createButtonTemplate,
@@ -213,10 +211,10 @@ define([
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "$injector",
-                        "policyService",
                         "dialogService",
                         "copyService",
-                        "notificationService"
+                        "notificationService",
+                        "openmct"
                     ],
                     "priority": "mandatory"
                 },
@@ -328,18 +326,6 @@ define([
                     "implementation": CreateActionProvider,
                     "depends": [
                         "typeService",
-                        "policyService"
-                    ]
-                },
-                {
-                    "key": "AddActionProvider",
-                    "provides": "actionService",
-                    "type": "provider",
-                    "implementation": AddActionProvider,
-                    "depends": [
-                        "$q",
-                        "typeService",
-                        "dialogService",
                         "policyService"
                     ]
                 },

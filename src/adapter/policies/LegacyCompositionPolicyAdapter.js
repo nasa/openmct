@@ -25,16 +25,18 @@ export default function legacyCompositionPolicyAdapter(openmct) {
     const policyService = this.openmct.$injector.get('policyService');
 
     openmct.composition.addPolicy((parent, child) => {
+
         let parentId = this.openmct.objects.makeKeyString(parent.identifier);
         let childId = this.openmct.objects.makeKeyString(child.identifier);
 
         let legacyParent = instantiate(parent, parentId);
         let legacyChild = instantiate(child, childId);
-
-        return policyService.allow(
+        let result = policyService.allow(
             'composition',
             legacyParent,
             legacyChild
         );
+
+        return result;
     });
 }

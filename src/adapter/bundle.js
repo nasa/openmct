@@ -28,7 +28,6 @@ define([
     './services/Instantiate',
     './services/MissingModelCompatibilityDecorator',
     './capabilities/APICapabilityDecorator',
-    './policies/AdapterCompositionPolicy',
     './policies/AdaptedViewPolicy',
     './runs/AlternateCompositionInitializer',
     './runs/TimeSettingsURLHandler',
@@ -46,7 +45,6 @@ define([
     Instantiate,
     MissingModelCompatibilityDecorator,
     APICapabilityDecorator,
-    AdapterCompositionPolicy,
     AdaptedViewPolicy,
     AlternateCompositionInitializer,
     TimeSettingsURLHandler,
@@ -120,11 +118,6 @@ define([
             ],
             policies: [
                 {
-                    category: "composition",
-                    implementation: AdapterCompositionPolicy,
-                    depends: ["openmct"]
-                },
-                {
                     category: "view",
                     implementation: AdaptedViewPolicy,
                     depends: ["openmct"]
@@ -172,7 +165,7 @@ define([
                     ]
                 },
                 {
-                    implementation: legacyCompositionPolicyAdapter,
+                    implementation: legacyCompositionPolicyAdapter.default,
                     depends: [
                         "openmct"
                     ]
