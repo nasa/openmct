@@ -1,7 +1,7 @@
 <div class="c-ne__embed">
     <div class="c-ne__embed__snap-thumb"
         v-if="embed.snapshot"
-        v-on:click="openSnapshot">
+        v-on:click="openSnapshot(domainObject, entry, embed)">
         <img v-bind:src="embed.snapshot.src">
     </div>
     <div class="c-ne__embed__info">

@@ -185,6 +185,26 @@ body.desktop .has-local-controls {
     }
 }
 
+/******************************************************** ICON BACKGROUNDS */
+// Used with elements that utilize an SVG background element where specific coloring is needed
+.u-icon-bg-color {
+    // Messages and notifications
+    &-info {
+        @include glyphBg($bg-icon-info);
+        filter: $colorStatusInfoFilter;
+    }
+
+    &-alert {
+        @include glyphBg($bg-icon-alert-rect);
+        filter: $colorStatusAlertFilter;
+    }
+
+    &-error {
+        @include glyphBg($bg-icon-alert-triangle);
+        filter: $colorStatusErrorFilter;
+    }
+}
+
 //[class*="local-controls"] {
 //    // An explicit outer holder for controls. Typically placed in upper right.
 //    //font-size: 0.7rem;
