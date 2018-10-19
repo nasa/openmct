@@ -20,6 +20,35 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/************************** GLYPHS */
+@mixin glyphBefore($unicode, $family: 'symbolsfont') {
+    &:before {
+        content: $unicode;
+        font-family: $family;
+    }
+}
+
+@mixin glyphAfter($unicode, $family: 'symbolsfont') {
+    &:after {
+        content: $unicode;
+        font-family: $family;
+    }
+}
+
+@mixin glyphBg($glyphUrl) {
+    background-image: $glyphUrl;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+[class*="icon-"] {
+    &:before, &:after
+    {
+        -webkit-font-smoothing: antialiased;
+    }
+}
+
 /************************** VISUALS */
 @mixin ancillaryIcon($d, $c) {
     // Used for small icons used in combination with larger icons,
@@ -290,7 +319,7 @@
     *:before {
         // *:before handles any nested containers that may contain glyph elements
         // Needed for c-togglebutton.
-        font-size: 1.2em;
+        font-size: 1.25em;
     }
 }
 
@@ -317,15 +346,6 @@
         }
     }
 }
-
-
-
-
-
-
-
-
-
 
 @mixin wrappedInput() {
     // An input that is wrapped. Optionally includes a __label or icon element.

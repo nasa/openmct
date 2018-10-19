@@ -26,6 +26,7 @@ define([
     'uuid',
     './defaultRegistry',
     './api/api',
+    './api/overlays/OverlayAPI',
     './selection/Selection',
     './api/objects/object-utils',
     './plugins/plugins',
@@ -40,7 +41,6 @@ define([
     './styles-new/core.scss',
     './styles-new/notebook.scss',
     './ui/components/layout/Layout.vue',
-    './ui/overlayService/overlayService',
     'vue'
 ], function (
     EventEmitter,
@@ -48,6 +48,7 @@ define([
     uuid,
     defaultRegistry,
     api,
+    OverlayAPI,
     Selection,
     objectUtils,
     plugins,
@@ -62,7 +63,6 @@ define([
     coreStyles,
     NotebookStyles,
     Layout,
-    OverlayService,
     Vue
 ) {
     /**
@@ -186,15 +186,6 @@ define([
         this.types = new api.TypeRegistry();
 
         /**
-         * Utilities for attaching common behaviors to views.
-         *
-         * @type {module:openmct.GestureAPI}
-         * @memberof module:openmct.MCT#
-         * @name gestures
-         */
-        this.gestures = new api.GestureAPI();
-
-        /**
          * An interface for interacting with domain objects and the domain
          * object hierarchy.
          *
@@ -225,11 +216,9 @@ define([
 
         this.notifications = new api.NotificationAPI();
 
-        this.Dialog = api.Dialog;
-
         this.editor = new api.EditorAPI.default(this);
 
-        this.OverlayService = new OverlayService();
+        this.overlays = new OverlayAPI.default();
 
         this.legacyRegistry = defaultRegistry;
         this.install(this.plugins.Plot());

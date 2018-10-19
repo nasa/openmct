@@ -32,7 +32,6 @@
  */
 import moment from 'moment';
 import EventEmitter from 'EventEmitter';
-import MCTNotification from './MCTNotification.js';
 
 /**
  * A representation of a banner notification. Banner notifications
@@ -42,20 +41,11 @@ import MCTNotification from './MCTNotification.js';
  * and then minimized to a banner notification if needed, or vice-versa.
  *
  * @typedef {object} NotificationModel
- * @property {string} title The title of the message
- * @property {string} severity The importance of the message (one of
- * 'info', 'alert', or 'error' where info < alert <error)
- * @property {number} [progress] The completion status of a task
- * represented numerically
- * @property {boolean} [unknownProgress] a boolean indicating that the
- * progress of the underlying task is unknown. This will result in a
- * visually distinct progress bar.
- * @property {boolean} [autoDismiss] If truthy, dialog will
- * be automatically minimized or dismissed (depending on severity).
- * Additionally, if the provided value is a number, it will be used
- * as the delay period before being dismissed.
- * @property {boolean} [dismissable=true] If true, notification will
- * include an option to dismiss it completely.
+ * @property {string} message The message to be displayed by the notification
+ * @property {number | 'unknown'} [progress] The progres of some ongoing task. Should be a number between 0 and 100, or 
+ * with the string literal 'unknown'.
+ * @property {string} [progressText] A message conveying progress of some ongoing task.
+
  * @see DialogModel
  */
 
@@ -65,14 +55,9 @@ const MINIMIZE_ANIMATION_TIMEOUT = 300;
 /**
  * The notification service is responsible for informing the user of
  * events via the use of banner notifications.
- * @memberof platform/commonUI/notification
- * @constructor
- * @param defaultAutoDismissTimeout The period of time that an
- * auto-dismissed message will be displayed for.
- * @param minimizeAnimationTimeout When notifications are minimized, a brief
- * animation is shown. This animation requires some time to execute,
- * so a timeout is required before the notification is hidden
- */
+ * @memberof ui/notification
+ * @constructor */
+
 export default class NotificationAPI extends EventEmitter {
     constructor() {
         super();
@@ -87,15 +72,71 @@ export default class NotificationAPI extends EventEmitter {
     }
 
     /**
+     * Info notifications are low priority informational messages for the user. They will be auto-destroy after a brief
+     * period of time.
+     * @param {string} message The message to display to the user
+     * @returns {InfoNotification}
+     */
+    info(message) {
+        let notificationModel = {
+            message: message,
+            autoDismiss: true,
+            severity: "info"
+        }
+        return this._notify(notificationModel);
+    }
+
+    /**
+     * Present an alert to the user.
+     * @param {string} message The message to display to the user.
+     * @returns {Notification}
+     */
+    alert(message) {
+        let notificationModel = {
+            message: message,
+            severity: "alert"
+        }
+        return this._notify(notificationModel);
+    }
+
+    /**
+     * Present an error message to the user
+     * @param {string} message
+     * @returns {Notification}
+     */
+    error(message) {
+        let notificationModel = {
+            message: message,
+            severity: "error"
+        }
+        return this._notify(notificationModel);
+    }
+
+    /**
+     * Create a new progress notification. These notifications will contain a progress bar.
+     * @param {string} message
+     * @param {number | 'unknown'} progressPerc A value between 0 and 100, or the string 'unknown'.
+     * @param {string} [progressText] Text description of progress (eg. "10 of 20 objects copied").
+     */
+    progress(message, progressPerc, progressText) {
+        let notificationModel = {
+            message: message,
+            progressPerc: progressPerc,
+            progressText: progressText,
+            severity: "info"
+        }
+        return this._notify(notificationModel);
+    }
+
+    /**
      * Minimize a notification. The notification will still be available
      * from the notification list. Typically notifications with a
      * severity of 'info' should not be minimized, but rather
-     * dismissed. If you're not sure which is appropriate,
-     * use {@link Notification#dismissOrMinimize}
+     * dismissed.
      *
      * @private
      */
-    minimize(notification) {
+    _minimize(notification) {
         //Check this is a known notification
         let index = this.notifications.indexOf(notification);
 
@@ -114,11 +155,12 @@ export default class NotificationAPI extends EventEmitter {
 
         if (index >= 0) {
             notification.model.minimized = true;
+            notification.emit('minimized');
             //Add a brief timeout before showing the next notification
             // in order to allow the minimize animation to run through.
             setTimeout(() => {
                 notification.emit('destroy');
-                this.setActiveNotification(this.selectNextNotification());
+                this._setActiveNotification(this._selectNextNotification());
             }, MINIMIZE_ANIMATION_TIMEOUT);
         }
     }
@@ -133,7 +175,7 @@ export default class NotificationAPI extends EventEmitter {
      *
      * @private
      */
-    dismiss(notification) {
+    _dismiss(notification) {
         //Check this is a known notification
         let index = this.notifications.indexOf(notification);
 
@@ -153,8 +195,8 @@ export default class NotificationAPI extends EventEmitter {
         if (index >= 0) {
             this.notifications.splice(index, 1);
         }
-        this.setActiveNotification(this.selectNextNotification());
-        this.setHighestSeverity();
+        this._setActiveNotification(this._selectNextNotification());
+        this._setHighestSeverity();
         notification.emit('destroy');
     }
 
@@ -164,81 +206,19 @@ export default class NotificationAPI extends EventEmitter {
      *
      * @private
      */
-    dismissOrMinimize(notification) {
+    _dismissOrMinimize(notification) {
         let model = notification.model;
         if (model.severity === "info") {
-            if (model.autoDismiss === false) {
-                this.minimize(notification);
-            } else {
-                this.dismiss(notification);
-            }
+            this._dismiss(notification);
         } else {
-            this.minimize(notification);
+            this._minimize(notification);
         }
-    }
-
-    /**
-     * Returns the notification that is currently visible in the banner area
-     * @returns {Notification}
-     */
-    getActiveNotification() {
-        return this.activeNotification;
-    }
-
-    /**
-     * A convenience method for info notifications. Notifications
-     * created via this method will be auto-destroy after a default
-     * wait period unless explicitly forbidden by the caller through
-     * the {autoDismiss} property on the {NotificationModel}, in which
-     * case the notification will be minimized after the wait.
-     * @param {NotificationModel | string} message either a string for
-     * the title of the notification message, or a {@link NotificationModel}
-     * defining the options notification to display
-     * @returns {Notification} the provided notification decorated with
-     * functions to dismiss or minimize
-     */
-    info(message) {
-        let notificationModel = typeof message === "string" ? {title: message} : message;
-        notificationModel.severity = "info";
-        return this.notify(notificationModel);
-    }
-
-    /**
-     * A convenience method for alert notifications. Notifications
-     * created via this method will will have severity of "alert" enforced
-     * @param {NotificationModel | string} message either a string for
-     * the title of the alert message with default options, or a
-     * {@link NotificationModel} defining the options notification to
-     * display
-     * @returns {Notification} the provided notification decorated with
-     * functions to dismiss or minimize
-     */
-    alert(message) {
-        let notificationModel = typeof message === "string" ? {title: message} : message;
-        notificationModel.severity = "alert";
-        return this.notify(notificationModel);
-    }
-
-    /**
-     * A convenience method for error notifications. Notifications
-     * created via this method will will have severity of "error" enforced
-     * @param {NotificationModel | string} message either a string for
-     * the title of the error message with default options, or a
-     * {@link NotificationModel} defining the options of the notification to
-     * display
-     * @returns {Notification} the provided notification decorated with
-     * functions to dismiss or minimize
-     */
-    error(message) {
-        let notificationModel = typeof message === "string" ? {title: message} : message;
-        notificationModel.severity = "error";
-        return this.notify(notificationModel);
     }
 
     /**
      * @private
      */
-    setHighestSeverity() {
+    _setHighestSeverity() {
         let severity = {
             "info": 1,
             "alert": 2,
@@ -263,23 +243,23 @@ export default class NotificationAPI extends EventEmitter {
      * @returns {Notification} the provided notification decorated with
      * functions to {@link Notification#dismiss} or {@link Notification#minimize}
      */
-    notify(notificationModel) {
+    _notify(notificationModel) {
         let notification;
         let activeNotification = this.activeNotification;
 
         notificationModel.severity = notificationModel.severity || "info";
         notificationModel.timestamp = moment.utc().format('YYYY-MM-DD hh:mm:ss.ms');
 
-        notification = new MCTNotification(notificationModel, this);
+        notification = this._createNotification(notificationModel);
 
         this.notifications.push(notification);
-        this.setHighestSeverity();
+        this._setHighestSeverity();
 
         /*
         Check if there is already an active (ie. visible) notification
             */
         if (!this.activeNotification) {
-            this.setActiveNotification(notification);
+            this._setActiveNotification(notification);
         } else if (!this.activeTimeout) {
             /*
                 If there is already an active notification, time it out. If it's
@@ -292,19 +272,38 @@ export default class NotificationAPI extends EventEmitter {
                 serviced as soon as possible.
                 */
             this.activeTimeout = setTimeout(() => {
-                this.dismissOrMinimize(activeNotification);
+                this._dismissOrMinimize(activeNotification);
             }, DEFAULT_AUTO_DISMISS_TIMEOUT);
         }
-        
+
         return notification;
     }
 
     /**
-     * Used internally by the NotificationService
      * @private
      */
-    setActiveNotification(notification) {
-        let shouldAutoDismiss;
+    _createNotification(notificationModel) {
+        let notification = new EventEmitter();
+        notification.model = notificationModel;
+        notification.dismiss = () => {
+            this._dismiss(notification);
+        };
+
+        if (notificationModel.hasOwnProperty('progressPerc')) {
+            notification.progress = (progressPerc, progressText) => {
+                notification.model.progressPerc = progressPerc;
+                notification.model.progressText = progressText;
+                notification.emit('progress', progressPerc, progressText);
+            }
+        }
+
+        return notification;
+    }
+
+    /**
+     * @private
+     */
+    _setActiveNotification(notification) {
         this.activeNotification = notification;
 
         if (!notification) {
@@ -313,15 +312,9 @@ export default class NotificationAPI extends EventEmitter {
         }
         this.emit('notification', notification);
 
-        if (notification.model.severity === "info") {
-            shouldAutoDismiss = true;
-        } else {
-            shouldAutoDismiss = notification.model.autoDismiss;
-        }
-
-        if (shouldAutoDismiss || this.selectNextNotification()) {
+        if (notification.model.autoDismiss || this._selectNextNotification()) {
             this.activeTimeout = setTimeout(() => {
-                this.dismissOrMinimize(notification);
+                this._dismissOrMinimize(notification);
             }, DEFAULT_AUTO_DISMISS_TIMEOUT);
         } else {
             delete this.activeTimeout;
@@ -333,7 +326,7 @@ export default class NotificationAPI extends EventEmitter {
      *
      * @private
      */
-    selectNextNotification() {
+    _selectNextNotification() {
         let notification;
         let i = 0;
 
