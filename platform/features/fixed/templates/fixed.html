@@ -52,7 +52,7 @@
              ng-style="controller.getSelectedElementStyle()">
         </div>
         <div ng-repeat="handle in controller.handles()"
-             class="c-frame-edit__handle"
+             class="c-frame-edit__handle c-frame-edit__handle--nwse"
              ng-style="handle.style()"
              mct-drag-down="handle.startDrag()"
              mct-drag="handle.continueDrag(delta)"

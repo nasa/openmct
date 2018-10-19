@@ -299,26 +299,26 @@ body.desktop .has-local-controls {
                 background: $editColor;
             }
 
-            &.--nwse {
+            &--nwse {
                 cursor: nwse-resize;
             }
 
-            &.--nw {
+            &--nw {
                 cursor: nw-resize;
                 left: $o; top: $o;
             }
 
-            &.--ne {
+            &--ne {
                 cursor: ne-resize;
                 right: $o; top: $o;
             }
 
-            &.--se {
+            &--se {
                 cursor: se-resize;
                 right: $o; bottom: $o;
             }
 
-            &.--sw {
+            &--sw {
                 cursor: sw-resize;
                 left: $o; bottom: $o;
             }
