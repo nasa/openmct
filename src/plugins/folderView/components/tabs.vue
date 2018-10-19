@@ -10,12 +10,13 @@
                 {{tab.name}}
             </div>
         </div>
-        <div class="object-view">
+        <div class="object">
             <object-view 
                 v-for="(object, index) in tabsList"
                 :class="{'invisible': object.identifier.key !== currentObject.identifier.key}"
                 :key="index"
                 :object="object"
+                style="min-height: 70vh"
             >
             </object-view>
         </div>
@@ -46,9 +47,10 @@
         }
     }
 
-    .object-view {
+    .object{
         min-height: 80%;
         width: 100%;
+        margin: 10px;
 
         .view {
             background: white;
