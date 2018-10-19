@@ -81,7 +81,7 @@ function (
 
         if (entryPos !== -1) {
 
-            var dialog = this.openmct.Overlays.dialog({
+            var dialog = this.openmct.overlays.dialog({
                 iconClass: 'alert',
                 message: 'This action will permanently delete this entry. Do you wish to continue?',
                 buttons: [

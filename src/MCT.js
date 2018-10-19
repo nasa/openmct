@@ -229,7 +229,7 @@ define([
 
         this.editor = new api.EditorAPI.default(this);
 
-        this.Overlays = new OverlayAPI.default();
+        this.overlays = new OverlayAPI.default();
 
         this.legacyRegistry = defaultRegistry;
         this.install(this.plugins.Plot());

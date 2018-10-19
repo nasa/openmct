@@ -197,7 +197,7 @@
             },
             maximize() {
                 if (this.activeModel.progressPerc !== undefined) {
-                    maximizedDialog = this.openmct.Overlays.progressDialog({
+                    maximizedDialog = this.openmct.overlays.progressDialog({
                         buttons: [minimizeButton],
                         ...this.activeModel
                     });
@@ -207,7 +207,7 @@
                     activeNotification.on('destroy', dismissMaximizedDialog);
 
                 } else {
-                    maximizedDialog = this.openmct.Overlays.dialog({
+                    maximizedDialog = this.openmct.overlays.dialog({
                         iconClass: this.activeModel.severity,
                         buttons: [minimizeButton],
                         ...this.activeModel

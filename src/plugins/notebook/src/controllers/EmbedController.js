@@ -68,7 +68,7 @@ function (
                     }),
                     self = this;
 
-                openmct.Overlays.overlay({
+                openmct.overlays.overlay({
                     element: annotateOverlay.$mount().$el,
                     size: 'large',
                     buttons: [
@@ -166,7 +166,7 @@ function (
             snapshot.$destroy(true);
         }
 
-        var snapshotOverlay = this.openmct.Overlays.overlay({
+        var snapshotOverlay = this.openmct.overlays.overlay({
             element: snapshot.$mount().$el,
             onDestroy: onDestroyCallback,
             size: 'large',
@@ -230,7 +230,7 @@ function (
                 var entryPosition = self.findInArray(self.domainObject.entries, entry.id),
                     embedPosition = self.findInArray(entry.embeds, embed.id);
 
-                var dialog = self.openmct.Overlays.dialog({
+                var dialog = self.openmct.overlays.dialog({
                     iconClass: "alert",
                     message: 'This Action will permanently delete this embed. Do you wish to continue?',
                     buttons: [{
