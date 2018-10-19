@@ -46,7 +46,8 @@ define([
                             },
                             provide: {
                                 openmct,
-                                domainObject
+                                domainObject,
+                                composition: openmct.composition.get(domainObject)
                             },
                             el: element,
                             template: '<tabs-component></tabs-component>'

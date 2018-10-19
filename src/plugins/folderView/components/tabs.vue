@@ -48,7 +48,6 @@
     }
 
     .object{
-        min-height: 80%;
         width: 100%;
         margin: 10px;
 
@@ -64,35 +63,41 @@
 import ObjectView from '../../../ui/components/layout/ObjectView.vue';
 
 export default {
-    inject: ['openmct','domainObject'],
+    inject: ['openmct','domainObject', 'composition'],
     components: {
         ObjectView
     },
     data: function () {
-        var composition = this.openmct.composition.get(this.domainObject),
-            tabsList = [];
 
-        if (composition) {
-            composition.load().then((array) => {
-                if (Array.isArray(array)) {
-                    this.currentObject = array[0];
-
-                    array.forEach((model) => {
-                        tabsList.push(model);
-                    });
-                }
-            });
+        if (this.composition) {
+            this.composition.load().then(this.loadItems.bind(this));
+            this.composition.on('add', this.loadItems, this);
+            this.composition.on('remove', this.loadItems, this);
         }
 
         return ({
             currentObject: {identifier:{}},
-            tabsList
+            tabsList: []
         });
     },
     methods:{
         setCurrentObject (object) {
             this.currentObject = object;
+        },
+        loadItems (array) {
+            if (Array.isArray(array)) {
+                this.tabsList = [];
+                this.currentObject = array[0];
+
+                array.forEach((model) => {
+                    this.tabsList.push(model);
+                });
+            }
         }
+    },
+    destroyed() {
+        this.composition.off('add', this.loadItems, this);
+        this.composition.off('remove', this.loadItems, this);
     }
 }
 </script>
