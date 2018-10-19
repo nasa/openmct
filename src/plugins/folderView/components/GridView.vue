@@ -15,9 +15,6 @@
                 <div class="c-grid-item__metadata"
                      :title="item.type.name">
                     <span class="c-grid-item__metadata__type">{{item.type.name}}</span>
-                    <span class="c-grid-item__metadata__item-count" v-if="item.model.composition !== undefined">
-                        {{item.model.composition.length}} item<span v-if="item.model.composition.length !== 1">s</span>
-                    </span>
                 </div>
             </div>
             <div class="c-grid-item__controls">
