@@ -8,7 +8,7 @@
         </pane>
         <pane class="c-inspector__elements"
               handle="before"
-              label="Elements">
+              label="Elements" v-if="isEditing">
             <elements></elements>
         </pane>
     </multipane>
@@ -188,6 +188,9 @@
 
     export default {
         inject: ['openmct'],
+        props: {
+            'isEditing': Boolean
+        },
         components: {
             multipane,
             pane,
