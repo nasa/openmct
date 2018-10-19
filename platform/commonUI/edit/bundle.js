@@ -23,7 +23,6 @@
 define([
     "./src/controllers/EditActionController",
     "./src/controllers/EditPanesController",
-    "./src/controllers/ElementsController",
     "./src/controllers/EditObjectController",
     "./src/actions/EditAndComposeAction",
     "./src/actions/EditAction",
@@ -55,13 +54,11 @@ define([
     "./res/templates/library.html",
     "./res/templates/edit-object.html",
     "./res/templates/edit-action-buttons.html",
-    "./res/templates/elements.html",
     "./res/templates/topbar-edit.html",
     'legacyRegistry'
 ], function (
     EditActionController,
     EditPanesController,
-    ElementsController,
     EditObjectController,
     EditAndComposeAction,
     EditAction,
@@ -93,7 +90,6 @@ define([
     libraryTemplate,
     editObjectTemplate,
     editActionButtonsTemplate,
-    elementsTemplate,
     topbarEditTemplate,
     legacyRegistry
 ) {
@@ -113,14 +109,6 @@ define([
                     "implementation": EditPanesController,
                     "depends": [
                         "$scope"
-                    ]
-                },
-                {
-                    "key": "ElementsController",
-                    "implementation": ElementsController,
-                    "depends": [
-                        "$scope",
-                        "openmct"
                     ]
                 },
                 {
@@ -297,13 +285,6 @@ define([
                     ]
                 },
                 {
-                    "key": "edit-elements",
-                    "template": elementsTemplate,
-                    "gestures": [
-                        "drop"
-                    ]
-                },
-                {
                     "key": "topbar-edit",
                     "template": topbarEditTemplate
                 },
@@ -317,12 +298,6 @@ define([
                     "uses": [
                         "action"
                     ]
-                }
-            ],
-            "templates": [
-                {
-                    key: "elementsPool",
-                    template: elementsTemplate
                 }
             ],
             "components": [
