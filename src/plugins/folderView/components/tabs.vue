@@ -1,62 +1,54 @@
 <template>
-    <div class="tabs-container">
-        <div class="tabs-list">
-            <div class="tab"
+    <div class="c-tabs-view">
+        <div class="c-tabs-view__tabs-holder">
+            <button class="c-button icon-layout"
                 v-for="(tab,index) in tabsList"
                 :key="index"
-                :class="{'selected': tab.identifier.key === currentObject.identifier.key}"
-                @click="setCurrentObject(tab)"
-            >
-                {{tab.name}}
-            </div>
+                :class="{'is-current': tab.identifier.key === currentObject.identifier.key}"
+                @click="setCurrentObject(tab)">
+                <span class="c-button__label">{{tab.name}}</span>
+            </button>
         </div>
-        <div class="object">
-            <object-view 
+        <div class="c-tabs-view__object-holder">
+            <object-view class="u-contents"
                 v-for="(object, index) in tabsList"
                 :class="{'invisible': object.identifier.key !== currentObject.identifier.key}"
                 :key="index"
-                :object="object"
-                style="min-height: 70vh"
-            >
+                :object="object">
             </object-view>
         </div>
     </div>
 </template>
 
 <style lang="scss">
-.tabs-container {
-    height: 100%;
-    width: 100%;
+    @import '~styles/sass-base.scss';
 
-    .tabs-list {
+    .c-tabs-view {
+        @include abs();
         display: flex;
-        flex-wrap: wrap; 
-        height: 20%;
-        width: 100%;
+        flex-flow: column nowrap;
 
-        .tab {
-            padding: 10px;
-            background: #0099cc;
-            border-radius: 5px;
-            color: white;
-            margin: 10px;
+        > * + * {
+            margin-top: $interiorMargin;
+        }
 
-            &.selected {
-                background: orange;
+        &__tabs-holder {
+            background: rgba($colorBodyFg, 0.1);
+            flex: 0 0 auto;
+            display: flex;
+            flex-flow: row wrap;
+            padding: $interiorMarginSm;
+
+            > * {
+                $m: $interiorMarginSm;
+                margin: 0 $m $m 0;
             }
         }
-    }
 
-    .object{
-        width: 100%;
-        margin: 10px;
-
-        .view {
-            background: white;
-            min-height: 100%;
+        &__object-holder {
+            flex: 1 1 auto;
         }
     }
-}
 </style>
 
 <script>
