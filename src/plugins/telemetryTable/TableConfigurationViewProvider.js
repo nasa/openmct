@@ -41,7 +41,7 @@ define([
                     return false;
                 }
                 let object = selection[0].context.item;
-                return object.type === 'table';
+                return object && object.type === 'table';
             },
             view: function (selection) {
                 let component;

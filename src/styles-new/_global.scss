@@ -229,6 +229,157 @@ body.desktop .has-local-controls {
     //}
 //}
 
+/******************************************************** SELECTION AND EDITING */
+// Provides supporting styles for Display Layouts and augmented legacy Fixed Position view
+
+.c-grid,
+.c-grid__x,
+.c-grid__y {
+    @include abs();
+}
+
+.c-grid {
+    pointer-events: none;
+
+    &__x  { @include bgTicks($colorGridLines, 'x'); }
+    &__y  { @include bgTicks($colorGridLines, 'y'); }
+}
+
+/*************************** SELECTION */
+.is-selectable {
+    &:hover {
+        box-shadow: $browseShdwSelectableHov;
+    }
+}
+
+/**************************** EDITING */
+.is-editing {
+    *:not(.is-drilled-in).is-selectable {
+        border: $editBorderSelectable;
+
+        &:hover {
+            border: $editBorderSelectableHov;
+        }
+
+        &[s-selected],
+        &.is-selected {
+            border: $editBorderSelected;
+
+            > .c-frame-edit {
+                display: block; // Show the editing rect and handles
+            }
+        }
+    }
+
+    *.is-drilled-in {
+        border: $editBorderDrilledIn;
+    }
+
+    .u-links {
+        // Applied in markup to objects that provide links. Disable while editing.
+        pointer-events: none;
+    }
+
+    .c-frame-edit {
+        // In Layouts, this is the editing rect and handles
+        // In Fixed Position, this is a wrapper element
+        $z: 10;
+
+        @include abs();
+        display: none;
+
+        &__move {
+            @include abs();
+            box-shadow: rgba($editColor, 0.5) 0 0 10px;
+            cursor: move;
+            z-index: $z;
+        }
+
+        &__handle {
+            $d: 8px;
+            $o: floor($d * -0.5);
+            background: rgba($editColor, 0.3);
+            border: 1px solid $editColor;
+            position: absolute;
+            width: $d; height: $d;
+            top: auto; right: auto; bottom: auto; left: auto;
+            z-index: $z + 1;
+
+            &:before {
+                // Extended hit area
+                $m: -5px;
+                content: '';
+                display: block;
+                position: absolute;
+                top: $m; right: $m; bottom: $m; left: $m;
+                z-index: -1;
+            }
+
+            &:hover {
+                background: $editColor;
+            }
+
+            &--nwse {
+                cursor: nwse-resize;
+            }
+
+            &--nw {
+                cursor: nw-resize;
+                left: $o; top: $o;
+            }
+
+            &--ne {
+                cursor: ne-resize;
+                right: $o; top: $o;
+            }
+
+            &--se {
+                cursor: se-resize;
+                right: $o; bottom: $o;
+            }
+
+            &--sw {
+                cursor: sw-resize;
+                left: $o; bottom: $o;
+            }
+        }
+    }
+
+    .l-shell__main-container > .l-layout,
+    .l-shell__main-container > .c-object-view .l-fixed-position {
+        // Target the top-most layout container and color its background
+        background: rgba($editColor, 0.1);
+    }
+
+    // Layouts
+    [s-selected],
+    [s-selected-parent] {
+        .l-layout {
+            // Show the layout grid for the top-most child of the current selection,
+            // and hide the grid for deeper nested levels.
+            [class*="__grid-holder"] {
+                display: block;
+            }
+
+            .l-layout [class*="__grid-holder"] {
+                display: none;
+            }
+        }
+    }
+
+    // Fixed position
+    .l-fixed-position {
+        &__grid-holder {
+            display: block;
+        }
+
+        .c-frame-edit {
+            display: block;
+        }
+    }
+}
+
+
 /************************** LEGACY */
 
 mct-container {

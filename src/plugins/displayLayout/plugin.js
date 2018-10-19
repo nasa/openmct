@@ -72,6 +72,7 @@ export default function () {
                 // and in edit mode.
                 return (selection &&
                     selection[1] &&
+                    selection[1].context.item &&
                     selection[1].context.item.type === 'layout' &&
                     openmct.editor.isEditing());
             },

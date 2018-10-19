@@ -53,14 +53,8 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
-    .l-layout,
-    .c-grid,
-    .c-grid__x,
-    .c-grid__y {
-        @include abs();
-    }
-
     .l-layout {
+        @include abs();
         display: flex;
         flex-direction: column;
 
@@ -78,34 +72,15 @@
         }
     }
 
-    .c-grid {
-        pointer-events: none;
-
-        &__x  { @include bgTicks($colorGridLines, 'x'); }
-        &__y  { @include bgTicks($colorGridLines, 'y'); }
-    }
-
-    .is-editing {
-        .l-shell__main-container > .l-layout {
-            // Target the top-most layout container and color its background
-            background: rgba($editColor, 0.1);
-        }
-
-        [s-selected],
-        [s-selected-parent] {
-            .l-layout {
-                // Show the layout grid for the top-most child of the current selection,
-                // and hide the grid for deeper nested levels.
-                [class*="__grid-holder"] {
-                    display: block;
-                }
-
-                .l-layout [class*="__grid-holder"] {
-                    display: none;
-                }
+    .l-shell__main-container {
+        > .l-layout {
+            [s-selected] {
+                border: $browseBorderSelected;
             }
         }
     }
+
+    // Styles moved to _global.scss;
 </style>
 
 
@@ -237,22 +212,17 @@
                     return;
                 }
 
-                let domainObject = selection[0].context.item;
-                if (domainObject && domainObject === this.selectedObject) {
-                    return;
-                }
-                
-                this.selectedObject = domainObject;
                 this.removeListeners();
+                let domainObject = selection[0].context.item;
 
-                if (selection[1]) {
-                    this.attachSelectionListeners();
+                if (selection[1] && domainObject) {
+                    this.attachSelectionListeners(domainObject.identifier);
                 }
 
                 this.updateDrilledInState();
             },
-            attachSelectionListeners() {
-                let id = this.openmct.objects.makeKeyString(this.selectedObject.identifier);
+            attachSelectionListeners(identifier) {
+                let id = this.openmct.objects.makeKeyString(identifier);
                 let path = "configuration.layout.panels[" + id + "]";
                 this.listeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".hasFrame", function (newValue) {
                     this.frameItems.forEach(function (item) {

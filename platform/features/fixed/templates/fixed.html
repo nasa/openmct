@@ -23,18 +23,18 @@
      ng-controller="FixedController as controller">
 
     <!-- Background grid -->
-    <div class="l-grid-holder" ng-click="controller.bypassSelection($event)">
-        <div class="l-grid l-grid-x"
+    <div class="l-fixed-position__grid-holder l-grid-holder c-grid" ng-click="controller.bypassSelection($event)">
+        <div class="c-grid__x l-grid l-grid-x"
              ng-if="!controller.getGridSize()[0] < 3"
              ng-style="{ 'background-size': controller.getGridSize() [0] + 'px 100%' }"></div>
-        <div class="l-grid l-grid-y"
+        <div class="c-grid__y l-grid l-grid-y"
              ng-if="!controller.getGridSize()[1] < 3"
              ng-style="{ 'background-size': '100% ' + controller.getGridSize() [1] + 'px' }"></div>
     </div>
 
     <!-- Fixed position elements -->
     <div ng-repeat="element in controller.getElements()"
-         class="l-fixed-position-item s-selectable s-moveable s-hover-border"
+         class="l-fixed-position-item s-selectable s-moveable is-selectable is-moveable"
          ng-style="element.style"
          mct-selectable="controller.getContext(element)"
          mct-init-select="controller.shouldSelect(element)">
@@ -44,15 +44,15 @@
         </mct-include>
     </div>
     <!-- Selection highlight, handles -->
-    <span class="s-selected s-moveable" ng-if="controller.isElementSelected()">
-        <div class="l-fixed-position-item t-edit-handle-holder"
+    <span class="c-frame-edit" ng-if="controller.isElementSelected()">
+        <div class="c-frame-edit__move"
              mct-drag-down="controller.moveHandle().startDrag()"
              mct-drag="controller.moveHandle().continueDrag(delta)"
              mct-drag-up="controller.endDrag()"
              ng-style="controller.getSelectedElementStyle()">
         </div>
         <div ng-repeat="handle in controller.handles()"
-             class="l-fixed-position-item-handle edit-corner"
+             class="c-frame-edit__handle c-frame-edit__handle--nwse"
              ng-style="handle.style()"
              mct-drag-down="handle.startDrag()"
              mct-drag="handle.continueDrag(delta)"
