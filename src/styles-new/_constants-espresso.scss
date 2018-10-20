@@ -49,7 +49,7 @@ $colorKeyFg: #fff;
 $colorKeyHov: #00c0f6;
 $colorKeyFilter: brightness(1) sepia(1) hue-rotate(145deg) saturate(6);
 $colorKeyFilterHov: brightness(1) sepia(1) hue-rotate(145deg) saturate(7);
-$colorInteriorBorder: rgba($colorBodyFg, 0.2);
+$colorInteriorBorder: rgba($colorBodyFg, 0.3);
 $colorA: #ccc;
 $colorAHov: #fff;
 
@@ -103,9 +103,11 @@ $colorProgressBarOuter: rgba(#000, 0.1);
 $colorProgressBarAmt: #0a0;
 
 // Buttons and Controls
-$colorBtnBg: lighten($colorBodyBg, 10%); // !
-$colorBtnBgHov: lighten($colorBtnBg, 10%); // !
-$colorBtnFg: lighten($colorBodyFg, 10%); // !
+$colorBtnBg: lighten($colorBodyBg, 10%);
+$colorBtnBgHov: lighten($colorBtnBg, 10%);
+$colorBtnFg: lighten($colorBodyFg, 10%);
+$colorBtnReverseFg: lighten($colorBtnFg, 10%);
+$colorBtnReverseBg: lighten($colorBtnBg, 10%);
 $colorBtnFgHov: $colorBtnFg;
 $colorBtnMajorBg: $colorKey;
 $colorBtnMajorBgHov: $colorKeyHov;

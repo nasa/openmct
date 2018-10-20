@@ -103,9 +103,11 @@ $colorProgressBarOuter: rgba(#000, 0.1);
 $colorProgressBarAmt: #0a0;
 
 // Buttons and Controls
-$colorBtnBg: #aaaaaa;
+$colorBtnBg: #aaa;
 $colorBtnBgHov: darken($colorBtnBg, 10%);
 $colorBtnFg: #fff;
+$colorBtnReverseFg: $colorBodyBg;
+$colorBtnReverseBg: $colorBodyFg;
 $colorBtnFgHov: $colorBtnFg;
 $colorBtnMajorBg: $colorKey;
 $colorBtnMajorBgHov: $colorKeyHov;

@@ -143,7 +143,7 @@
     unicode-bidi:bidi-override;
 }
 
-/************************** CONTROLS, BUTTONS */
+/************************** CONTROLS, BUTTONS, INPUTS */
 @mixin hover {
     body.desktop & {
         &:hover {
@@ -207,6 +207,15 @@
     box-shadow: $shdw;
 }
 
+@mixin buttonBehavior() {
+    // Assign transition timings
+    transition: $transOut;
+
+    @include hover() {
+        transition: $transIn;
+    }
+}
+
 @mixin cControl() {
     $fs: 1em;
     @include userSelectNone();
@@ -237,6 +246,7 @@
 @mixin cButton() {
     @include cControl();
     @include themedButton();
+    //@include buttonBehavior();
     border-radius: $controlCr;
     color: $colorBtnFg;
     cursor: pointer;
@@ -320,6 +330,52 @@
         .c-menu {
             left: auto; right: 0;
         }
+    }
+}
+
+@mixin cCompactButtons($bg, $fg, $bgHov) {
+    // Used in Tab view
+    // To be used in indicators popups?
+
+    $m: 1px;
+    $btnM: $m;
+
+    &-holder {
+        background: $colorInputBg;
+        border-radius: $controlCr;
+        padding: $m ($m - $btnM) ($m - $btnM) $m;
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: stretch;
+
+        > * {
+            margin: 0 $btnM $btnM 0;
+        }
+    }
+
+    background: rgba($colorBtnBg, 0.7);
+    color: $colorBtnFg;
+    flex: 1 1 auto;
+    padding: $interiorMargin;
+    //border-radius: $smallCr;
+    //border: 1px solid $colorInteriorBorder;
+
+    &:before {
+        opacity: 0.5;
+    }
+
+    > * {
+        margin-left: $interiorMarginSm;
+    }
+
+    @include hover() {
+        background: $bgHov;
+    }
+
+    &.is-current {
+        background: $colorBtnReverseBg;
+        color: $colorBtnReverseFg;
+        pointer-events: none;
     }
 }
 

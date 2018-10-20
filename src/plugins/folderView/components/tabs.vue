@@ -1,7 +1,7 @@
 <template>
     <div class="c-tabs-view">
-        <div class="c-tabs-view__tabs-holder">
-            <button class="c-button icon-layout"
+        <div class="c-tabs-view__tabs-holder c-compact-button-holder">
+            <button class="c-tabs-view__tab c-compact-button icon-layout"
                 v-for="(tab,index) in tabsList"
                 :key="index"
                 :class="{'is-current': tab.identifier.key === currentObject.identifier.key}"
@@ -33,17 +33,21 @@
         }
 
         &__tabs-holder {
-            background: rgba($colorBodyFg, 0.1);
+        //    background: rgba($colorBodyFg, 0.1);
+        //    border-radius: $controlCr;
             flex: 0 0 auto;
-            display: flex;
-            flex-flow: row wrap;
-            padding: $interiorMarginSm;
-
-            > * {
-                $m: $interiorMarginSm;
-                margin: 0 $m $m 0;
-            }
+        //    display: flex;
+        //    flex-flow: row wrap;
+        //    padding: $interiorMarginSm;
+         //   > * {
+         //       $m: $interiorMarginSm;
+         //       margin: 0 $m $m 0;
+         //   }
         }
+
+        //&__tab {
+         //   @include discreteItem();
+        //}
 
         &__object-holder {
             flex: 1 1 auto;

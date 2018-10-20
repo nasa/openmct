@@ -32,15 +32,15 @@ button {
 }
 
 .c-button--menu {
-    $m: $interiorMargin;
-
-    // Moved margin to cButton mixin
-
     &:after {
         content: $glyph-icon-arrow-down;
         font-family: symbolsfont;
         opacity: 0.5;
     }
+}
+
+.c-compact-button {
+    @include cCompactButtons($bg: $colorBtnBg, $fg: $colorBtnFg, $bgHov: $colorBtnBgHov);
 }
 
 /********* Icon Buttons */
