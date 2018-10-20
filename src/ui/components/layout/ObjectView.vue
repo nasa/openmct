@@ -66,7 +66,14 @@ export default {
             this.currentView.show(this.viewContainer);
         },
         show(object, viewKey) {
+            if (this.unlisten) {
+                this.unlisten();
+            }
             this.currentObject = object;
+            this.unlisten = this.openmct.objects.observe(this.currentObject, '*', (mutatedObject) => {
+                this.currentObject = mutatedObject;
+            });
+
             this.viewKey = viewKey;
             this.updateView();
         },
