@@ -13,14 +13,20 @@
         <table class="c-table__headers c-telemetry-table__headers"
                :style="{ 'max-width': totalWidth + 'px'}">
             <thead>
-                <tr>
-                    <th v-for="(title, key, headerIndex) in headers"
-                        v-on:click="sortBy(key)"
+                <tr @mousemove="checkForResize">
+                    <template v-for="(title, key, headerIndex) in headers">
+                    <th v-if="headerIndex!==0" :key="key" class="c-telemetry-table__resize-hotzone"></th>
+                    <th v-on:click="sortBy(key)"
+                        :key="key"
                         :class="['is-sortable', sortOptions.key === key ? 'is-sorting' : '', sortOptions.direction].join(' ')"
                         :style="{ width: columnWidths[headerIndex], 'max-width': columnWidths[headerIndex]}">{{title}}</th>
+                    <th :key="key" class="c-telemetry-table__resize-hotzone"></th>
+                    </template>
                 </tr>
                 <tr>
-                    <th v-for="(title, key, headerIndex) in headers"
+                    <template v-for="(title, key, headerIndex) in headers">
+                    <th v-if="headerIndex!==0" :key="key" class="c-telemetry-table__resize-hotzone"></th>
+                    <th :key="key"
                         :style="{
                             width: columnWidths[headerIndex],
                             'max-width': columnWidths[headerIndex],
@@ -30,6 +36,8 @@
                             v-on:input="filterChanged(key)"
                             v-on:clear="clearFilter(key)" />
                     </th>
+                    <th :key="key" class="c-telemetry-table__resize-hotzone"></th>
+                    </template>
                 </tr>
             </thead>
         </table>
@@ -46,8 +54,7 @@
                     :rowIndex="rowIndex"
                     :rowOffset="rowOffset"
                     :rowHeight="rowHeight"
-                    :row="row"
-                    >
+                    :row="row">
                 </telemetry-table-row>
             </tbody>
         </table>
@@ -56,7 +63,11 @@
     <table class="c-telemetry-table__sizing js-telemetry-table__sizing"
            :style="{width: calcTableWidth}">
         <tr>
-            <th v-for="(title, key, headerIndex) in headers">{{title}}</th>
+            <template v-for="(title, key) in headers">
+            <th :key="key" class="c-telemetry-table__resize-hotzone"></th>
+            <th :key="key" class="js-content-column">{{title}}</th>
+            <th :key="key" class="c-telemetry-table__resize-hotzone"></th>
+            </template>
         </tr>
         <telemetry-table-row v-for="(sizingRowData, objectKeyString) in sizingRows"
             :headers="headers"
@@ -100,12 +111,6 @@
             // A table
             thead {
                 display: block;
-            }
-
-            th {
-                &:not(:first-child) {
-                    border-left: 1px solid $colorTabHeaderBorder;
-                }
             }
         }
 
@@ -164,6 +169,15 @@
                 white-space: nowrap;
             }
         }
+
+        &__resize-hotzone {
+            min-width: 2px !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 2px !important;
+            cursor: col-resize;
+            border: none !important;
+        }
     }
 
     /******************************* LEGACY */
@@ -184,6 +198,7 @@ const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
 const RESIZE_POLL_INTERVAL = 200;
 const AUTO_SCROLL_TRIGGER_HEIGHT = 20;
+const RESIZE_HOT_ZONE = 10;
 
 export default {
     components: {
@@ -212,7 +227,8 @@ export default {
             headersHolderEl: undefined,
             calcTableWidth: '100%',
             processingScroll: false,
-            updatingView: false
+            updatingView: false,
+            resizeCursorColumn: undefined
         }
     },
     methods: {
@@ -275,7 +291,9 @@ export default {
 
             sizingCells.forEach((cell) => {
                 let columnWidth = cell.offsetWidth;
-                columnWidths.push(columnWidth + 'px');
+                if (cell.classList.contains('js-content-column')) {
+                    columnWidths.push(columnWidth + 'px');
+                }
                 totalWidth += columnWidth;
             });
 
@@ -404,10 +422,31 @@ export default {
             let objectKeyString = this.openmct.objects.makeKeyString(objectIdentifier);
             delete this.sizingRows[objectKeyString];
             this.updateHeaders();
+        },
+        setResizeColumn(key) {
+            this.resizeCursorColumn = key;
+        },
+        checkForResize(key, event) {
+            if (overHotZone()){
+                this.resizeCursorActive = true;
+            } else {
+                this.resizeCursorActive = false;
+            }
+
+            function overHotZone(){
+                let offsetLeft = 0;
+                return this.columnWidths.any((width) => {
+                    let isHotzoneLeft = event.offsetX <= columnOffset + RESIZE_HOT_ZONE / 2;
+                    offsetLeft += width;
+                    let isHotzoneRight = event.offsetX >= columnOffset - RESIZE_HOT_ZONE / 2;
+                    return isHotzoneLeft || isHotzoneRight;
+                });
+            }
         }
     },
     created() {
         this.filterChanged = _.debounce(this.filterChanged, 500);
+        this.checkForResize = _.throttle(this.checkForResize, 100);
     },
     mounted() {
         this.table.on('object-added', this.addObject);

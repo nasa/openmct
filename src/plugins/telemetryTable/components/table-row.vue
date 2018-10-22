@@ -1,9 +1,12 @@
 <template>
 <tr :style="{ top: rowTop }" :class="rowLimitClass">
-    <td v-for="(title, key, headerIndex) in headers"
-        :style="{ width: columnWidths[headerIndex], 'max-width': columnWidths[headerIndex]}"
+    <template v-for="(title, key, headerIndex) in headers">
+    <th class="c-telemetry-table__resize-hotzone"></th>
+    <td :style="{ width: columnWidths[headerIndex], 'max-width': columnWidths[headerIndex]}"
         :title="formattedRow[key]"
         :class="cellLimitClasses[key]">{{formattedRow[key]}}</td>
+    <th class="c-telemetry-table__resize-hotzone"></th>
+    </template>
 </tr>
 </template>
 
