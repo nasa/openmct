@@ -1,7 +1,7 @@
 <template>
     <div class="c-tabs-view">
         <div class="c-tabs-view__tabs-holder c-compact-button-holder">
-            <button class="c-tabs-view__tab c-compact-button icon-layout"
+            <button class="c-tabs-view__tab c-compact-button"
                 v-for="(tab,index) in tabsList"
                 :key="index"
                 :class="[{'is-current': tab.model.identifier.key === currentObject.model.identifier.key}, tab.type.cssClass]"
