@@ -1,20 +1,26 @@
 <template>
     <div class="c-tabs-view">
         <div class="c-tabs-view__tabs-holder">
-            <button class="c-button icon-layout"
+            <button class="c-button"
                 v-for="(tab,index) in tabsList"
                 :key="index"
-                :class="{'is-current': tab.identifier.key === currentObject.identifier.key}"
+                :class="[{'is-current': tab.model.identifier.key === currentObject.model.identifier.key}, tab.type.cssClass]"
                 @click="setCurrentObject(tab)">
-                <span class="c-button__label">{{tab.name}}</span>
+                <span class="c-button__label">{{tab.model.name}}</span>
             </button>
         </div>
-        <div class="c-tabs-view__object-holder">
+        <div class="c-tabs-view__object-holder" 
+            v-for="(object, index) in tabsList"
+            :key="index"
+            :class="{'invisible': object.model.identifier.key !== currentObject.model.identifier.key}">
+
+            <div class="object-header flex-elem l-flex-row grows">
+                <div class="type-icon flex-elem embed-icon holder" v-bind:class="currentObject.type.cssClass"></div>
+                <div class="title-label flex-elem holder flex-can-shrink">{{currentObject.model.name}}</div>
+            </div>
+
             <object-view class="u-contents"
-                v-for="(object, index) in tabsList"
-                :class="{'invisible': object.identifier.key !== currentObject.identifier.key}"
-                :key="index"
-                :object="object">
+                :object="object.model">
             </object-view>
         </div>
     </div>
@@ -54,6 +60,13 @@
 <script>
 import ObjectView from '../../../ui/components/layout/ObjectView.vue';
 
+var unknownObjectType = {
+    definition: {
+        cssClass: 'icon-object-unknown',
+        name: 'Unknown Type'
+    }
+};
+
 export default {
     inject: ['openmct','domainObject', 'composition'],
     components: {
@@ -68,7 +81,12 @@ export default {
         }
 
         return ({
-            currentObject: {identifier:{}},
+            currentObject: {
+                model: {
+                    identifier: {}
+                },
+                type: {}
+            },
             tabsList: []
         });
     },
@@ -79,10 +97,18 @@ export default {
         loadItems (array) {
             if (Array.isArray(array)) {
                 this.tabsList = [];
-                this.currentObject = array[0];
+                
+                array.forEach((model, index) => {
+                    let type = this.openmct.types.get(model.type) || unknownObjectType;
+                    
+                    this.tabsList.push({
+                        model: model,
+                        type: type.definition
+                    });
 
-                array.forEach((model) => {
-                    this.tabsList.push(model);
+                    if (index === 0) {
+                        this.currentObject = this.tabsList[index];
+                    }
                 });
             }
         }
