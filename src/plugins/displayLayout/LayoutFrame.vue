@@ -25,7 +25,7 @@
          :style="item.style"
          :class="classObject"
          @dblclick="drill(item.id, $event)">
-        <div class="c-frame__header">
+        <div v-if="!item.isTelemetry" class="c-frame__header">
             <div class="c-frame__header__start">
                 <div class="c-frame__name icon-object">{{ item.domainObject.name }}</div>
                 <div class="c-frame__context-actions c-disclosure-button"></div>
@@ -34,9 +34,13 @@
                 <div class="c-button icon-expand local-controls--hidden"></div>
             </div>
         </div>
-        <object-view class="c-frame__object-view"
+        <object-view v-if="!item.isTelemetry"
+                     class="c-frame__object-view"
                      :object="item.domainObject"></object-view>
-
+        <div v-if="item.isTelemetry">
+            <span>{{ item.domainObject.name }}</span>
+            <span :class=[telemetryClass]>{{ telemetryValue }}</span>
+        </div>
         <!-- Drag handles -->
         <div class="c-frame-edit">
             <div class="c-frame-edit__move"
@@ -150,12 +154,24 @@
         components: {
             ObjectView
         },
+        data() {
+            return {
+                telemetryValue: '',
+                telemetryClass: ''
+            }
+        },
         computed: {
             classObject: function () {
                 return {
                     'is-drilled-in': this.item.drilledIn,
                     'no-frame': !this.item.hasFrame
                 }
+            }
+        },
+        created: function () {
+            if (this.item.isTelemetry) {
+                this.subscriptions = {};
+                this.getTelemetry(this.item.domainObject);
             }
         },
         methods: {
@@ -218,6 +234,73 @@
                 this.$emit('endDrag', this.item.id);
                 this.initialPosition = undefined;
                 event.preventDefault();
+            },
+            getTelemetry(domainObject) {
+                let id = this.openmct.objects.makeKeyString(domainObject.identifier);
+
+                if (this.subscriptions[id]) {
+                    this.subscriptions[id]();
+                    delete this.subscriptions[id];
+                }
+
+                if (!this.openmct.telemetry.isTelemetryObject(domainObject)) {
+                    return;
+                }
+
+                return Promise.resolve(domainObject)
+                    .then(this.fetchHistoricalData)
+                    .then(this.subscribeToObject);
+            },
+            fetchHistoricalData(object) {
+                let bounds = this.openmct.time.bounds();
+
+                this.openmct.telemetry.request(object, {start: bounds.start, end: bounds.end, size: 1})
+                    .then(function (data) {
+                        if (data.length > 0) {
+                            this.updateView(object, data[data.length - 1]);
+                        }
+                    }.bind(this));
+
+                return object;
+            },
+            subscribeToObject(object) {
+                let id = this.openmct.objects.makeKeyString(object.identifier);
+                let self = this;
+                this.subscriptions[id] = this.openmct.telemetry.subscribe(object, function (datum) {
+                    if (self.openmct.time.clock() !== undefined) {
+                        self.updateView(object, datum);
+                    }
+                }, {});
+
+                return object;
+            },
+            updateView(telemetryObject, datum) {
+                let metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+                let valueMetadata = this.chooseValueMetadataToDisplay(metadata);
+                let formattedTelemetryValue = this.getFormattedTelemetryValueForKey(valueMetadata, datum);
+                let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
+                let alarm = limitEvaluator && limitEvaluator.evaluate(datum, valueMetadata);
+
+                this.telemetryValue = formattedTelemetryValue;
+                this.telemetryClass = alarm && alarm.cssClass;
+            },
+            getFormattedTelemetryValueForKey(valueMetadata, datum) {
+                let formatter = this.openmct.telemetry.getValueFormatter(valueMetadata);
+                return formatter.format(datum);
+            },
+            chooseValueMetadataToDisplay(metadata) {
+                // If there is a range value, show that preferentially
+                let valueMetadata = metadata.valuesForHints(['range'])[0];
+
+                // If no range is defined, default to the highest priority non time-domain data.
+                if (valueMetadata === undefined) {
+                    let valuesOrderedByPriority = metadata.values();
+                    valueMetadata = valuesOrderedByPriority.filter(function (values) {
+                        return !(values.hints.domain);
+                    })[0];
+                }
+
+                return valueMetadata;
             }
         },
         mounted() {
@@ -231,6 +314,10 @@
         },
         destroyed() {
             this.removeSelectable();
+            Object.values(this.subscriptions).forEach(unsubscribe => {
+                unsubscribe();
+            });
+            this.subscriptions = {};
         }
     }
 </script>
