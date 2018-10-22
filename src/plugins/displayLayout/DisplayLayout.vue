@@ -319,7 +319,8 @@
             isTelemetry(domainObject) {
                 let type = domainObject.type;
                 let typeDef = this.openmct.types.get(type).definition;
-                if (typeDef.creatable && this.openmct.telemetry.isTelemetryObject(domainObject)
+
+                if (this.openmct.telemetry.isTelemetryObject(domainObject)
                     && type !== 'summary-widget') {
                     return true;
                 } else {
