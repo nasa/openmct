@@ -7,7 +7,7 @@
                 :key="index"
                 :class="[
                     {'is-current': tab=== currentTab}, 
-                    tab.type.cssClass
+                    tab.type.definition.cssClass
                 ]"
                 @click="showTab(tab)">
                 <span class="c-button__label">{{tab.model.name}}</span>
@@ -20,7 +20,7 @@
 
             <div class="object-header flex-elem l-flex-row grows">
                 <div class="type-icon flex-elem embed-icon holder" 
-                     :class="currentTab.type.cssClass"></div>
+                     :class="currentTab.type.definition.cssClass"></div>
                 <div class="title-label flex-elem holder flex-can-shrink">
                     {{currentTab.model.name}}
                 </div>
@@ -111,6 +111,8 @@ export default {
             if (!this.currentTab.model) {
                 this.currentTab = tabItem;
             }
+
+            console.log(this.tabsList);
         },
         onDrop (e) {
            this.currentTab = {};
