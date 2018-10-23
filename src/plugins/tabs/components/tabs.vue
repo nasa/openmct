@@ -11,6 +11,11 @@
                 @click="showTab(tab)">
                 <span class="c-button__label">{{tab.model.name}}</span>
             </button>
+            <div style="position: absolute; top: 0; left: 0; background: #009ad0; min-height: 100%; min-width: 100%; font-size: 20px; text-align: center;"
+             v-if="isDragging"
+             @drop="onDrop">
+             Drop Here
+            </div>
         </div>
         <div class="c-tabs-view__object-holder" 
             v-for="(object, index) in tabsList"
@@ -28,11 +33,6 @@
             <object-view class="u-contents"
                 :object="object.model">
             </object-view>
-        </div>
-        <div style="position: absolute; top: 0; left: 0; background: red; min-height: 200px; min-width: 200px;"
-             v-if="isDragging"
-             @drop="onDrop">
-
         </div>
     </div>
 </template>
@@ -93,8 +93,8 @@ export default {
             this.composition.load();
         }
 
-        document.addEventListener('dragstart', this.dragstart, this);
-        document.addEventListener('dragend', this.dragend, this);
+        document.addEventListener('dragstart', this.dragstart);
+        document.addEventListener('dragend', this.dragend);
     },
     data: function () {
         return {
@@ -126,7 +126,9 @@ export default {
            this.setCurrentTab = true;
         },
         dragstart (e) {
-            this.isDragging = true;
+            if (e.dataTransfer.getData('domainObject')) {
+                this.isDragging = true;
+            }
         },
         dragend (e) {
             this.isDragging = false;
@@ -135,8 +137,8 @@ export default {
     destroyed() {
         this.composition.off('add', this.addItem, this);
 
-        document.removeEventListener('dragstart', this.dragstart, this);
-        document.removeEventListener('dragend', this.dragend, this);
+        document.removeEventListener('dragstart', this.dragstart);
+        document.removeEventListener('dragend', this.dragend);
     }
 }
 </script>
