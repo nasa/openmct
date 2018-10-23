@@ -33,7 +33,7 @@ define([
             name: 'Tabs',
             cssClass: 'icon-list-view',
             canView: function (domainObject) {
-                return domainObject.type === 'folder';
+                return domainObject.type === 'tabs';
             },
             view: function (domainObject) {
                 let component;

@@ -28,6 +28,15 @@ define([
     return function plugin() {
         return function install(openmct) {
             openmct.objectViews.addProvider(new Tabs(openmct));
+
+            openmct.types.addType('tabs', {
+                name: "Tabs",
+                creatable: true,
+                cssClass: 'icon-layout',
+                initialize(domainObject) {
+                    domainObject.composition = [];
+                }
+            });
         };
     };
 });
