@@ -36,6 +36,9 @@ export default class Editor extends EventEmitter {
      * or finish() are called.
      */
     edit() {
+        if (this.editing === true) {
+            throw "Already editing";
+        }
         this.editing = true;
         this.getTransactionService().startTransaction();
         this.emit('isEditing', true);

@@ -58,7 +58,8 @@ define([
                     "category": "action",
                     "implementation": ComposeActionPolicy,
                     "depends": [
-                        "$injector"
+                        "$injector",
+                        "openmct"
                     ],
                     "message": "Objects of this type cannot contain objects of that type."
                 },

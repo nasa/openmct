@@ -63,6 +63,13 @@ export default function () {
             }
         });
         openmct.types.addType('layout', DisplayLayoutType());
+        openmct.composition.addPolicy((parent, child) => {
+            if (parent.type === 'layout' && child.type === 'folder') {
+                return false;
+            } else {
+                return true;
+            }
+        });
         openmct.toolbars.addProvider({
             name: "Display Layout Toolbar",
             key: "layout",

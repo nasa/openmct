@@ -191,7 +191,6 @@ export default {
         search
     },
     inject: ['table', 'openmct', 'csvExporter'],
-    props: ['configuration'],
     data() {
         return {
             headers: {},

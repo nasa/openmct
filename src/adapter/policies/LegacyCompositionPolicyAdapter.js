@@ -20,32 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    function () {
+export default function legacyCompositionPolicyAdapter(openmct) {
+    const instantiate = this.openmct.$injector.get('instantiate');
+    const policyService = this.openmct.$injector.get('policyService');
 
-        /**
-         * Defines composition policy for Display Layout objects.
-         * They cannot contain folders.
-         * @constructor
-         * @memberof platform/features/layout
-         * @implements {Policy.<View, DomainObject>}
-         */
-        function LayoutCompositionPolicy() {
-        }
+    openmct.composition.addPolicy((parent, child) => {
 
-        LayoutCompositionPolicy.prototype.allow = function (parent, child) {
-            var parentType = parent.getCapability('type');
-            if (parentType.instanceOf('layout') &&
-                child.getCapability('type').instanceOf('folder')) {
+        let parentId = this.openmct.objects.makeKeyString(parent.identifier);
+        let childId = this.openmct.objects.makeKeyString(child.identifier);
 
-                return false;
-            }
+        let legacyParent = instantiate(parent, parentId);
+        let legacyChild = instantiate(child, childId);
+        let result = policyService.allow(
+            'composition',
+            legacyParent,
+            legacyChild
+        );
 
-            return true;
-        };
-
-        return LayoutCompositionPolicy;
-    }
-);
-
+        return result;
+    });
+}
