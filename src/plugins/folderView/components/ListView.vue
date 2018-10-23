@@ -4,29 +4,40 @@
             <thead class="c-table__header">
             <tr>
                 <th class="is-sortable"
-                    v-bind:class="[orderByField == 'name' ? 'is-sorting' : '', sortClass]"
-                    @click="sortTrigger('name', 'asc')">
+                    :class="{
+                        'is-sorting': sortBy === 'model.name',
+                        'asc': ascending,
+                        'desc': !ascending
+                    }"
+                    @click="sort('model.name', true)">
                     Name
                 </th>
                 <th class="is-sortable"
-                    v-bind:class="[orderByField == 'type' ? 'is-sorting' : '', sortClass]"
-                    @click="sortTrigger('type', 'asc')">
+                    :class="{
+                        'is-sorting': sortBy === 'type.name',
+                        'asc': ascending,
+                        'desc': !ascending
+                    }"
+                    @click="sort('type.name', true)">
                     Type
                 </th>
                 <th class="is-sortable"
-                    v-bind:class="[orderByField == 'createdDate' ? 'is-sorting' : '', sortClass]"
-                    @click="sortTrigger('createdDate', 'desc')">
+                    :class="{
+                        'is-sorting': sortBy === 'model.persisted',
+                        'asc': ascending,
+                        'desc': !ascending
+                    }"
+                    @click="sort('model.persisted', false)">
                     Created Date
                 </th>
                 <th class="is-sortable"
-                    v-bind:class="[orderByField == 'updatedDate' ? 'is-sorting' : '', sortClass]"
-                    @click="sortTrigger('updatedDate', 'desc')">
+                    :class="{
+                        'is-sorting': sortBy === 'model.modified',
+                        'asc': ascending,
+                        'desc': !ascending
+                    }"
+                    @click="sort('model.modified', false)">
                     Updated Date
-                </th>
-                <th class="is-sortable"
-                    v-bind:class="[orderByField == 'items' ? 'is-sorting' : '', sortClass]"
-                    @click="sortTrigger('items', 'asc')">
-                    Items
                 </th>
             </tr>
             </thead>
@@ -35,15 +46,15 @@
                 v-for="(item,index) in sortedItems"
                 v-bind:key="index"
                 :class="{ 'is-alias': item.isAlias === true }"
-                @click="navigate(item.identifier)">
+                @click="navigate(item)">
                 <td class="c-list-item__name">
-                    <div class="c-list-item__type-icon" :class="(item.cssClass != undefined) ? item.cssClass : 'icon-object-unknown'"></div>
-                    {{item.name}}
+                    <div class="c-list-item__type-icon"
+                         :class="item.type.cssClass"></div>
+                    {{item.model.name}}
                 </td>
-                <td class="c-list-item__type">{{ item.type }}</td>
-                <td class="c-list-item__date-created">{{ formatTime(item.createdDate, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z</td>
-                <td class="c-list-item__date-updated">{{ formatTime(item.updatedDate, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z</td>
-                <td class="c-list-item__items">{{ item.items }}</td>
+                <td class="c-list-item__type">{{ item.type.name }}</td>
+                <td class="c-list-item__date-created">{{ formatTime(item.model.persisted, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z</td>
+                <td class="c-list-item__date-updated">{{ formatTime(item.model.modified, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z</td>
             </tr>
             </tbody>
         </table>
@@ -122,92 +133,44 @@
 
 <script>
 
+import lodash from 'lodash';
+import moment from 'moment';
+import compositionLoader from './composition-loader';
+
 export default {
-    inject: ['openmct', 'domainObject', 'Moment'],
+    mixins: [compositionLoader],
+    inject: ['domainObject', 'openmct'],
     data() {
-        var items = [],
-            unknownObjectType = {
-                definition: {
-                    cssClass: 'icon-object-unknown',
-                    name: 'Unknown Type'
-                }
-            },
-            composition = this.openmct.composition.get(this.domainObject);
-    
-        if (composition) {
-
-            composition.load().then((array) => {
-                if (Array.isArray(array)) {
-                    array.forEach(model => {
-                        var type = this.openmct.types.get(model.type) || unknownObjectType;
-
-                        items.push({
-                            name: model.name,
-                            identifier: model.identifier.key,
-                            type: type.definition.name,
-                            isAlias: false,
-                            cssClass: type.definition.cssClass,
-                            createdDate: model.persisted,
-                            updatedDate: model.modified,
-                            items: model.composition ? model.composition.length : 0,
-                            isAlias: this.domainObject.identifier.key !== model.location
-                        });
-                    });
-                }
-            });
-        }
-
         return {
-            items: items,
-            orderByField: 'name',
-            sortClass: 'asc',
-        }
+            sortBy: 'model.name',
+            ascending: true
+        };
     },
     computed: {
         sortedItems () {
-            if (this.sortClass === 'asc') {
-                return this.items.sort(this.ascending.bind(this));
-            } else if (this.sortClass === 'desc') {
-                return this.items.sort(this.descending.bind(this));
+            let sortedItems = _.sortBy(this.items, this.sortBy);
+            if (!this.ascending) {
+                sortedItems = sortedItems.reverse();
             }
-        },
-        formatTime () {
-            return function (timestamp, format) {
-                return this.Moment(timestamp).format(format);
-            }
+            return sortedItems;
         }
     },
     methods: {
-        navigate(identifier) {
+        formatTime(timestamp, format) {
+            return moment(timestamp).format(format);
+        },
+        navigate(item) {
             let currentLocation = this.openmct.router.currentLocation.path,
-                navigateToPath = `${currentLocation}/${identifier}`;
-            
+                navigateToPath = `${currentLocation}/${this.openmct.objects.makeKeyString(item.model.identifier)}`;
+
             this.openmct.router.setPath(navigateToPath);
         },
-        sortTrigger(field, sortOrder) {
-            if (this.orderByField === field) {
-                this.sortClass = (this.sortClass === 'asc') ? 'desc' : 'asc';
+        sort(field, defaultDirection) {
+            if (this.sortBy === field) {
+                this.ascending = !this.ascending;
             } else {
-                this.sortClass = sortOrder;
-            }
-            this.orderByField = field;
-        },
-        ascending(first, second) {
-            if (first[this.orderByField] < second[this.orderByField]) {
-                return -1;
-            } else if (first[this.orderByField] > second[this.orderByField]) {
-                return 1;
-            } else {
-                return 0;
-            }
-        },
-        descending(first, second) {
-            if (first[this.orderByField] > second[this.orderByField]) {
-                return -1;
-            } else if (first[this.orderByField] < second[this.orderByField]) {
-                return 1;
-            } else {
-                return 0;
+                this.sortBy = field;
+                this.ascending = defaultDirection;
             }
         }
     }

@@ -44,7 +44,7 @@ define(
          * @param {ActionContext} context the context in which the
          *        action is being performed
          */
-        function CreateAction(type, parent, context) {
+        function CreateAction(type, parent, context, openmct) {
             this.metadata = {
                 key: 'create',
                 cssClass: type.getCssClass(),
@@ -55,6 +55,7 @@ define(
             };
             this.type = type;
             this.parent = parent;
+            this.openmct = openmct;
         }
 
         /**
@@ -63,37 +64,28 @@ define(
          */
         CreateAction.prototype.perform = function () {
             var newModel = this.type.getInitialModel(),
+                openmct = this.openmct,
                 newObject,
-                editAction,
-                editorCapability;
-
-            function closeEditor() {
-                return editorCapability.finish();
-            }
+                editAction;
 
             function onSave() {
-                return editorCapability.save()
-                    .then(closeEditor);
+                openmct.editor.save();
             }
 
             function onCancel() {
-                return closeEditor();
+                openmct.editor.cancel();
             }
 
             newModel.type = this.type.getKey();
             newModel.location = this.parent.getId();
             newObject = this.parent.useCapability('instantiation', newModel);
-            editorCapability = newObject.hasCapability('editor') && newObject.getCapability("editor");
 
+            openmct.editor.edit();
             editAction = newObject.getCapability("action").getActions("edit")[0];
-            //If an edit action is available, perform it
-            if (editAction) {
-                return editAction.perform();
-            } else if (editorCapability) {
-                //otherwise, use the save as action
-                editorCapability.edit();
-                return newObject.getCapability("action").perform("save-as").then(onSave, onCancel);
-            }
+            newObject.getCapability("action").perform("save-as").then(onSave, onCancel);
+            // TODO: support editing object without saving object first.
+            // Which means we have to toggle createwizard afterwards.  For now,
+            // We will disable this.
         };
 
 

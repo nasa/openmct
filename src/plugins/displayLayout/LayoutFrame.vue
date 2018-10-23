@@ -41,13 +41,13 @@
         <div class="c-frame-edit">
             <div class="c-frame-edit__move"
                  @mousedown="startDrag([1,1], [0,0], $event)"></div>
-            <div class="c-frame-edit__handle --nw"
+            <div class="c-frame-edit__handle c-frame-edit__handle--nw"
                  @mousedown="startDrag([1,1], [-1,-1], $event)"></div>
-            <div class="c-frame-edit__handle --ne"
+            <div class="c-frame-edit__handle c-frame-edit__handle--ne"
                  @mousedown="startDrag([0,1], [1,-1], $event)"></div>
-            <div class="c-frame-edit__handle --sw"
+            <div class="c-frame-edit__handle c-frame-edit__handle--sw"
                  @mousedown="startDrag([1,0], [-1,1], $event)"></div>
-            <div class="c-frame-edit__handle --se"
+            <div class="c-frame-edit__handle c-frame-edit__handle--se"
                  @mousedown="startDrag([0,0], [1,1], $event)"></div>
         </div>
     </div>
