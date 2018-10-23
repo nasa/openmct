@@ -7,7 +7,7 @@
                           :expanded="expanded"
                           @click="toggleChildren">
             </view-control>
-            <object-label :domainObject="node.object" :urlLink="href"></object-label>
+            <object-label :domainObject="node.object" :path="node.path"></object-label>
         </div>
         <ul v-if="expanded" class="c-tree">
             <tree-item v-for="child in children"
@@ -32,17 +32,11 @@
         data() {
             return {
                 hasChildren: false,
+                isLoading: false,
                 loaded: false,
                 children: [],
                 expanded: false,
                 isAlias: false
-            }
-        },
-        computed: {
-            href: function () {
-                return '#/browse/' + this.node.path
-                    .map(o => this.openmct.objects.makeKeyString(o))
-                    .join('/');
             }
         },
         mounted() {
@@ -53,28 +47,45 @@
             // TODO: should support drag/drop composition
             // TODO: set isAlias per tree-item
 
-            let composition = this.openmct.composition.get(this.node.object);
-            if (!composition) {
-                return;
+            this.composition = this.openmct.composition.get(this.node.object);
+            if (this.composition) {
+                this.hasChildren = true;
             }
-            this.hasChildren = true;
+        },
+        destroy() {
+            if (this.composition) {
+                this.composition.off('add', this.addChild);
+                this.composition.off('remove', this.removeChild);
+                delete this.composition;
+            }
         },
         methods: {
             toggleChildren: function () {
-                this.expanded = !this.expanded;
-                if (this.expanded && !this.loaded && this.hasChildren) {
-                    this.openmct.composition.get(this.node.object).load()
-                        .then(children => {
-                            this.children = children.map((c) => {
-                                return {
-                                    id: this.openmct.objects.makeKeyString(c.identifier),
-                                    object: c,
-                                    path: this.node.path.concat([c.identifier])
-                                };
-                            });
-                        })
-                        .then(() => this.loaded = true);
+                if (!this.hasChildren) {
+                    return;
                 }
+                this.expanded = !this.expanded;
+                if (!this.loaded && !this.isLoading) {
+                    this.composition = this.openmct.composition.get(this.node.object);
+                    this.composition.on('add', this.addChild);
+                    this.composition.on('remove', this.removeChild);
+                    this.composition.load().then(this.finishLoading());
+                }
+            },
+            addChild (child) {
+                this.children.push({
+                    id: this.openmct.objects.makeKeyString(child.identifier),
+                    object: child,
+                    path: this.node.path.concat([child.identifier])
+                });
+            },
+            removeChild(child) {
+                // TODO: remove child on remove event.
+                console.log('Tree should remove child', child);
+            },
+            finishLoading () {
+                this.isLoading = false;
+                this.loaded = true;
             }
         },
         components: {

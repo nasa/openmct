@@ -15,7 +15,17 @@ export default {
     inject: ['openmct'],
     props: {
         'domainObject': Object,
-        'urlLink': String
+        'path': Array
+    },
+    computed: {
+        urlLink() {
+            if (!this.path) {
+                return;
+            }
+            return '#/browse/' + this.path
+                .map(o => this.openmct.objects.makeKeyString(o))
+                .join('/');
+        }
     },
     data() {
         return {
