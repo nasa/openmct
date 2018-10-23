@@ -1,6 +1,5 @@
 <template>
-    <div class="c-tabs-view" 
-         @drop="onDrop">
+    <div class="c-tabs-view">
         <div class="c-tabs-view__tabs-holder c-compact-button-holder">
             <button class="c-tabs-view__tab c-compact-button"
                 v-for="(tab,index) in tabsList"
@@ -29,6 +28,11 @@
             <object-view class="u-contents"
                 :object="object.model">
             </object-view>
+        </div>
+        <div style="position: absolute; top: 0; left: 0; background: red; min-height: 200px; min-width: 200px;"
+             v-if="isDragging"
+             @drop="onDrop">
+
         </div>
     </div>
 </template>
@@ -88,11 +92,16 @@ export default {
             this.composition.on('add', this.addItem, this);
             this.composition.load();
         }
+
+        document.addEventListener('dragstart', this.dragstart, this);
+        document.addEventListener('dragend', this.dragend, this);
     },
     data: function () {
         return {
             currentTab: {},
-            tabsList: []
+            tabsList: [],
+            setCurrentTab: true,
+            isDragging: false
         };
     },
     methods:{
@@ -108,18 +117,26 @@ export default {
 
             this.tabsList.push(tabItem);
 
-            if (!this.currentTab.model) {
+            if (this.setCurrentTab) {
                 this.currentTab = tabItem;
+                this.setCurrentTab = false;
             }
-
-            console.log(this.tabsList);
         },
         onDrop (e) {
-           this.currentTab = {};
+           this.setCurrentTab = true;
+        },
+        dragstart (e) {
+            this.isDragging = true;
+        },
+        dragend (e) {
+            this.isDragging = false;
         }
     },
     destroyed() {
         this.composition.off('add', this.addItem, this);
+
+        document.removeEventListener('dragstart', this.dragstart, this);
+        document.removeEventListener('dragend', this.dragend, this);
     }
 }
 </script>
