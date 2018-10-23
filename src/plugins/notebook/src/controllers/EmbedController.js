@@ -23,16 +23,16 @@
 define([
     'moment',
     'zepto',
-    '../utils/SnapshotOverlay',
     '../../res/templates/snapshotTemplate.html',
-    'vue'
+    'vue',
+    'painterro'
 ],
 function (
     Moment,
     $,
-    SnapshotOverlay,
     SnapshotTemplate,
-    Vue
+    Vue,
+    Painterro
 ) {
     function EmbedController (openmct, domainObject) {
         this.openmct = openmct;
@@ -52,11 +52,101 @@ function (
 
     EmbedController.prototype.navigate = function (embedType) {
         this.objectService.getObjects([embedType]).then(function (objects) {
-            this.navigationService.setNavigation(objects[embedType]);   
+            this.navigationService.setNavigation(objects[embedType]);
         }.bind(this));
     };
 
-    EmbedController.prototype.openSnapshot = function () {
+    EmbedController.prototype.openSnapshot = function (domainObject, entry, embed) {
+
+        function annotateSnapshot(openmct) {
+            return function () {
+
+                var save = false,
+                    painterroInstance = {},
+                    annotateOverlay = new Vue({
+                        template: '<div id="snap-annotation"></div>'
+                    }),
+                    self = this;
+
+                openmct.overlays.overlay({
+                    element: annotateOverlay.$mount().$el,
+                    size: 'large',
+                    buttons: [
+                        {
+                            label: 'Cancel',
+                            callback: function () {
+                                save = false;
+                                painterroInstance.save();
+                            }
+                        },
+                        {
+                            label: 'Save',
+                            callback: function () {
+                                save = true;
+                                painterroInstance.save();
+                            }
+                        }
+                    ],
+                    onDestroy: function () {
+                        annotateOverlay.$destroy(true);
+                    }
+                });
+
+                painterroInstance = Painterro({
+                    id: 'snap-annotation',
+                    activeColor: '#ff0000',
+                    activeColorAlpha: 1.0,
+                    activeFillColor: '#fff',
+                    activeFillColorAlpha: 0.0,
+                    backgroundFillColor: '#000',
+                    backgroundFillColorAlpha: 0.0,
+                    defaultFontSize: 16,
+                    defaultLineWidth: 2,
+                    defaultTool: 'ellipse',
+                    hiddenTools: ['save', 'open', 'close', 'eraser', 'pixelize', 'rotate', 'settings', 'resize'],
+                    translation: {
+                        name: 'en',
+                        strings: {
+                            lineColor: 'Line',
+                            fillColor: 'Fill',
+                            lineWidth: 'Size',
+                            textColor: 'Color',
+                            fontSize: 'Size',
+                            fontStyle: 'Style'
+                        }
+                    },
+                    saveHandler: function (image, done) {
+                        if (save) {
+                            var entryPos = self.findInArray(domainObject.entries, entry.id),
+                                embedPos = self.findInArray(entry.embeds, embed.id);
+
+                            if (entryPos !== -1 && embedPos !== -1) {
+                                var url = image.asBlob(),
+                                    reader = new window.FileReader();
+
+                                reader.readAsDataURL(url);
+                                reader.onloadend = function () {
+                                    var snapshot = reader.result,
+                                        snapshotObject = {
+                                            src: snapshot,
+                                            type: url.type,
+                                            size: url.size,
+                                            modified: Date.now()
+                                        },
+                                        dirString = 'entries[' + entryPos + '].embeds[' + embedPos + '].snapshot';
+
+                                    openmct.objects.mutate(domainObject, dirString, snapshotObject);
+                                };
+                            }
+                        } else {
+                            console.log('You cancelled the annotation!!!');
+                        }
+                        done(true);
+                    }
+                }).show(embed.snapshot.src);
+            };
+        }
+
         var self = this,
             snapshot = new Vue({
                 template: SnapshotTemplate,
@@ -66,7 +156,9 @@ function (
                     };
                 },
                 methods: {
-                    formatTime: self.formatTime
+                    formatTime: self.formatTime,
+                    annotateSnapshot: annotateSnapshot(self.openmct),
+                    findInArray: self.findInArray
                 }
             });
 
@@ -74,7 +166,20 @@ function (
             snapshot.$destroy(true);
         }
 
-        this.openmct.OverlayService.show(snapshot.$mount().$el, {onDestroy: onDestroyCallback, cssClass: 'l-large-view'});
+        var snapshotOverlay = this.openmct.overlays.overlay({
+            element: snapshot.$mount().$el,
+            onDestroy: onDestroyCallback,
+            size: 'large',
+            buttons: [
+                {
+                    label: 'Done',
+                    emphasis: true,
+                    callback: function () {
+                        snapshotOverlay.dismiss();
+                    }
+                }
+            ]
+        });
     };
 
     EmbedController.prototype.formatTime = function (unixTime, timeFormat) {
@@ -125,23 +230,24 @@ function (
                 var entryPosition = self.findInArray(self.domainObject.entries, entry.id),
                     embedPosition = self.findInArray(entry.embeds, embed.id);
 
-                var warningDialog = self.dialogService.showBlockingMessage({
-                    severity: "error",
-                    title: "This action will permanently delete this embed. Do you wish to continue?",
-                    options: [{
-                        label: "OK",
+                var dialog = self.openmct.overlays.dialog({
+                    iconClass: "alert",
+                    message: 'This Action will permanently delete this embed. Do you wish to continue?',
+                    buttons: [{
+                        label: "No",
+                        callback: function () {
+                            dialog.dismiss();
+                        }
+                    },
+                    {
+                        label: "Yes",
+                        emphasis: true,
                         callback: function () {
                             entry.embeds.splice(embedPosition, 1);
                             var dirString = 'entries[' + entryPosition + '].embeds';
 
                             self.openmct.objects.mutate(self.domainObject, dirString, entry.embeds);
-
-                            warningDialog.dismiss();
-                        }
-                    },{
-                        label: "Cancel",
-                        callback: function () {
-                            warningDialog.dismiss();
+                            dialog.dismiss();
                         }
                     }]
                 });
@@ -207,7 +313,8 @@ function (
             openSnapshot: self.openSnapshot,
             formatTime: self.formatTime,
             toggleActionMenu: self.toggleActionMenu,
-            actionToMenuDecorator: self.actionToMenuDecorator
+            actionToMenuDecorator: self.actionToMenuDecorator,
+            findInArray: self.findInArray
         };
     };
 

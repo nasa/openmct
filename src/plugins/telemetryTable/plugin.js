@@ -20,20 +20,27 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
- define([
-     './TelemetryTableViewProvider',
-     './TableConfigurationViewProvider',
-     './TelemetryTableType'
-    ], function (
-        TelemetryTableViewProvider,
-        TableConfigurationViewProvider,
-        TelemetryTableType
-    ) {
+define([
+    './TelemetryTableViewProvider',
+    './TableConfigurationViewProvider',
+    './TelemetryTableType'
+], function (
+    TelemetryTableViewProvider,
+    TableConfigurationViewProvider,
+    TelemetryTableType
+) {
     return function plugin() {
         return function install(openmct) {
             openmct.objectViews.addProvider(new TelemetryTableViewProvider(openmct));
             openmct.inspectorViews.addProvider(new TableConfigurationViewProvider(openmct));
-            openmct.types.addType('table', TelemetryTableType());
+            openmct.types.addType('table', TelemetryTableType);
+            openmct.composition.addPolicy((parent, child) => {
+                if (parent.type === 'table') {
+                    return child.hasOwnProperty('telemetry');
+                } else {
+                    return true;
+                }
+            });
         };
     };
- });
+});

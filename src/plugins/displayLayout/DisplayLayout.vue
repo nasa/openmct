@@ -53,14 +53,8 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
-    .l-layout,
-    .c-grid,
-    .c-grid__x,
-    .c-grid__y {
-        @include abs();
-    }
-
     .l-layout {
+        @include abs();
         display: flex;
         flex-direction: column;
 
@@ -78,34 +72,15 @@
         }
     }
 
-    .c-grid {
-        pointer-events: none;
-
-        &__x  { @include bgTicks($colorGridLines, 'x'); }
-        &__y  { @include bgTicks($colorGridLines, 'y'); }
-    }
-
-    .is-editing {
-        .l-shell__main-container > .l-layout {
-            // Target the top-most layout container and color its background
-            background: rgba($editColor, 0.1);
-        }
-
-        [s-selected],
-        [s-selected-parent] {
-            .l-layout {
-                // Show the layout grid for the top-most child of the current selection,
-                // and hide the grid for deeper nested levels.
-                [class*="__grid-holder"] {
-                    display: block;
-                }
-
-                .l-layout [class*="__grid-holder"] {
-                    display: none;
-                }
+    .l-shell__main-container {
+        > .l-layout {
+            [s-selected] {
+                border: $browseBorderSelected;
             }
         }
     }
+
+    // Styles moved to _global.scss;
 </style>
 
 
@@ -237,22 +212,17 @@
                     return;
                 }
 
-                let domainObject = selection[0].context.item;
-                if (domainObject && domainObject === this.selectedObject) {
-                    return;
-                }
-                
-                this.selectedObject = domainObject;
                 this.removeListeners();
+                let domainObject = selection[0].context.item;
 
-                if (selection[1]) {
-                    this.attachSelectionListeners();
+                if (selection[1] && domainObject) {
+                    this.attachSelectionListeners(domainObject.identifier);
                 }
 
                 this.updateDrilledInState();
             },
-            attachSelectionListeners() {
-                let id = this.openmct.objects.makeKeyString(this.selectedObject.identifier);
+            attachSelectionListeners(identifier) {
+                let id = this.openmct.objects.makeKeyString(identifier);
                 let path = "configuration.layout.panels[" + id + "]";
                 this.listeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".hasFrame", function (newValue) {
                     this.frameItems.forEach(function (item) {
@@ -306,33 +276,14 @@
             },
             handleDrop($event) {
                 $event.preventDefault();
-                $event.stopPropagation();
 
                 let child = JSON.parse($event.dataTransfer.getData('domainObject'));
-                let duplicates = [];
-                let composition = this.newDomainObject.composition;
-                composition.forEach((object) => {
-                    if (this.openmct.objects.makeKeyString(JSON.parse(JSON.stringify(object))) ===
-                        this.openmct.objects.makeKeyString(child.identifier)) {
-                        duplicates.push(object);
-                    }
-                });
-
-                // Disallow adding a duplicate object to the composition
-                if (duplicates.length !== 0) {
-                    return;
-                }
 
                 let elementRect = this.$el.getBoundingClientRect();
                 this.droppedObjectPosition = {
                     x: $event.pageX - elementRect.left,
                     y: $event.pageY - elementRect.top
                 }
-                // TODO: use the composition API to add child once the default composition
-                // provider supports it instead of mutating the composition directly.
-                // this.composition.add(child).
-                composition.push(child.identifier);
-                this.mutate('composition', composition);
             },
             handleDragOver($event){
                 $event.preventDefault();

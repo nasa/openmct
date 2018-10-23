@@ -225,6 +225,8 @@ define(
             this.openmct.time.on("bounds", updateDisplayBounds);
 
             this.openmct.selection.on('change', this.setSelection.bind(this));
+            this.openmct.editor.on('isEditing', this.handleEditing.bind(this));
+
             this.$element.on('click', this.bypassSelection.bind(this));
             this.unlisten = this.openmct.objects.observe(this.newDomainObject, '*', function (obj) {
                 this.newDomainObject = JSON.parse(JSON.stringify(obj));
@@ -421,6 +423,7 @@ define(
             this.openmct.selection.off("change", this.setSelection);
             this.composition.off('add', this.onCompositionAdd, this);
             this.composition.off('remove', this.onCompositionRemove, this);
+            this.openmct.editor.off('isEditing', this.handleEditing, this);
         };
 
         /**
@@ -705,6 +708,12 @@ define(
         FixedController.prototype.mutate = function (path, value) {
             this.openmct.objects.mutate(this.newDomainObject, path, value);
         };
+
+        FixedController.prototype.handleEditing = function (isEditing) {
+            // Listen for edit mode changes and update selection if necessary.
+            // Mainly to ensure fixedController is on the selection context when editing.
+            this.setSelection(this.openmct.selection.get());
+        }
 
         return FixedController;
     }

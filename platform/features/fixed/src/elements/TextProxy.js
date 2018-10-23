@@ -67,10 +67,6 @@ define(
              */
             proxy.size = new AccessorMutator(element, 'size');
 
-            if (proxy.size() === undefined) {
-                proxy.size("13px");
-            }
-
             return proxy;
         }
 

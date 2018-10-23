@@ -23,7 +23,6 @@
 define([
     "./src/controllers/EditActionController",
     "./src/controllers/EditPanesController",
-    "./src/controllers/ElementsController",
     "./src/controllers/EditObjectController",
     "./src/actions/EditAndComposeAction",
     "./src/actions/EditAction",
@@ -47,7 +46,6 @@ define([
     "./src/creation/LocatorController",
     "./src/creation/CreationPolicy",
     "./src/creation/CreateActionProvider",
-    "./src/creation/AddActionProvider",
     "./src/creation/CreationService",
     "./res/templates/create/locator.html",
     "./res/templates/create/create-button.html",
@@ -55,13 +53,11 @@ define([
     "./res/templates/library.html",
     "./res/templates/edit-object.html",
     "./res/templates/edit-action-buttons.html",
-    "./res/templates/elements.html",
     "./res/templates/topbar-edit.html",
     'legacyRegistry'
 ], function (
     EditActionController,
     EditPanesController,
-    ElementsController,
     EditObjectController,
     EditAndComposeAction,
     EditAction,
@@ -85,7 +81,6 @@ define([
     LocatorController,
     CreationPolicy,
     CreateActionProvider,
-    AddActionProvider,
     CreationService,
     locatorTemplate,
     createButtonTemplate,
@@ -93,7 +88,6 @@ define([
     libraryTemplate,
     editObjectTemplate,
     editActionButtonsTemplate,
-    elementsTemplate,
     topbarEditTemplate,
     legacyRegistry
 ) {
@@ -113,14 +107,6 @@ define([
                     "implementation": EditPanesController,
                     "depends": [
                         "$scope"
-                    ]
-                },
-                {
-                    "key": "ElementsController",
-                    "implementation": ElementsController,
-                    "depends": [
-                        "$scope",
-                        "openmct"
                     ]
                 },
                 {
@@ -225,10 +211,10 @@ define([
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "$injector",
-                        "policyService",
                         "dialogService",
                         "copyService",
-                        "notificationService"
+                        "notificationService",
+                        "openmct"
                     ],
                     "priority": "mandatory"
                 },
@@ -297,13 +283,6 @@ define([
                     ]
                 },
                 {
-                    "key": "edit-elements",
-                    "template": elementsTemplate,
-                    "gestures": [
-                        "drop"
-                    ]
-                },
-                {
                     "key": "topbar-edit",
                     "template": topbarEditTemplate
                 },
@@ -317,12 +296,6 @@ define([
                     "uses": [
                         "action"
                     ]
-                }
-            ],
-            "templates": [
-                {
-                    key: "elementsPool",
-                    template: elementsTemplate
                 }
             ],
             "components": [
@@ -353,18 +326,6 @@ define([
                     "implementation": CreateActionProvider,
                     "depends": [
                         "typeService",
-                        "policyService"
-                    ]
-                },
-                {
-                    "key": "AddActionProvider",
-                    "provides": "actionService",
-                    "type": "provider",
-                    "implementation": AddActionProvider,
-                    "depends": [
-                        "$q",
-                        "typeService",
-                        "dialogService",
                         "policyService"
                     ]
                 },

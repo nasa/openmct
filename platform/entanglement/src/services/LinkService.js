@@ -32,8 +32,8 @@ define(
          * @memberof platform/entanglement
          * @implements {platform/entanglement.AbstractComposeService}
          */
-        function LinkService(policyService) {
-            this.policyService = policyService;
+        function LinkService(openmct) {
+            this.openmct = openmct;
         }
 
         LinkService.prototype.validate = function (object, parentCandidate) {
@@ -49,11 +49,7 @@ define(
             if (parentCandidate.getModel().composition.indexOf(object.getId()) !== -1) {
                 return false;
             }
-            return this.policyService.allow(
-                "composition",
-                parentCandidate,
-                object
-            );
+            return this.openmct.composition.checkPolicy(parentCandidate.useCapability('adapter'), object.useCapability('adapter'));
         };
 
         LinkService.prototype.perform = function (object, parentObject) {

@@ -2,6 +2,7 @@
     <div class="c-ctrl-wrapper">
         <div class="c-click-icon c-click-icon--menu"
              :class="options.icon"
+             :title="options.title"
              @click="toggle">
             <div class="c-click-icon__label"
                  v-if="options.label">
@@ -11,8 +12,8 @@
         <div class="c-menu" v-if="open">
             <ul>
                 <li v-for="option in options.options"
-                    :class="option.class"
-                    :title="option.title">
+                    @click="onClick(option)"
+                    :class="option.class">
                     {{ option.name }}
                 </li>
             </ul>
@@ -32,6 +33,11 @@ export default {
                 return Array.isArray(value.options) &&
                     value.options.every((o) => o.name);
             }
+        }
+    },
+    methods: {
+        onClick(option) {
+            this.$emit('click', option)
         }
     }
 }

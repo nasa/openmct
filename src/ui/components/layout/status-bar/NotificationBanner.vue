@@ -17,49 +17,124 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="l-message-banner s-message-banner" 
+<div class="c-message-banner s-message-banner"
     :class="[
         activeModel.severity,
         {
             'minimized': activeModel.minimized,
             'new': !activeModel.minimized
         }]"
-    v-if="activeModel.message">
-    <span @click="maximize()" class="banner-elem label">{{activeModel.message}}</span>
-    <span @click="maximize()" v-if="activeModel.progressPerc !== undefined">
-        <div class="banner-elem"><!-- was mct-include -->
-            <span class="l-progress-bar s-progress-bar"
-                :class="{'indeterminate': activeModel.progressPerc === 'unknown' }">
-                <span class="progress-amt-holder">
-                    <span class="progress-amt" :style="progressWidth"></span>
-                </span>
-            </span>
-            <div class="progress-info hint" v-if="activeModel.progressText !== undefined">
-                <span class="progress-amt-text" v-if="activeModel.progressPerc > 0">{{activeModel.progressPerc}}% complete. </span>
-                {{activeModel.progressText}}
-            </div>
-        </div>
-    </span>
-    <a class="close icon-x" @click="dismiss()"></a>
+     @click="maximize()"
+     v-if="activeModel.message">
+    <span class="c-message-banner__message">{{activeModel.message}}</span>
+    <progress-bar
+            class="c-message-banner__progress-bar"
+            v-if="activeModel.progressPerc !== undefined" :model="activeModel">
+    </progress-bar>
+    <button class="c-message-banner__close-btn c-click-icon icon-x"
+            @click="dismiss()"></button>
 </div>
 </template>
 
 <style lang="scss">
+    @import "~styles/sass-base";
+
+    .c-message-banner {
+        $closeBtnSize: 7px;
+        $m: 1px;
+
+        display: flex;
+        align-items: center;
+        left: 50%;
+        max-width: 50%;
+        padding: $interiorMargin $interiorMarginLg;
+        position: absolute;
+        transform: translateX(-50%);
+        bottom: $m;
+        z-index: 2;
+
+        // TODOs:
+        // - Styling for message types, add color values to theme scss files
+        // - Factor out s-message-banner
+
+        > * + * {
+            margin-left: $interiorMargin;
+        }
+
+        &__message {
+            @include ellipsize();
+            flex: 1 1 auto;
+        }
+
+        &__progress-bar {
+            flex: 0 0 auto;
+            width: 70px;
+
+            // Only show the progress bar
+            .c-progress-bar {
+                &__text {
+                    display: none;
+                }
+            }
+        }
+
+        &__close-btn {
+            font-size: $closeBtnSize;
+        }
+
+    }
+
+
+
+
+
+
+
+
+   /*
+
     .l-message-banner {
-        display: inline;
+        display: flex;
         left: 50%;
         position: absolute;
     }
     .banner-elem {
         display: inline;
-    }
+    }*/
 </style>
 
 <script>
+    import ProgressBar from '../ProgressBar.vue';
     let activeNotification = undefined;
     let dialogService = undefined;
+    let maximizedDialog = undefined;
+    let minimizeButton = {
+        label: 'Dismiss',
+        callback: dismissMaximizedDialog
+    }
+
+    function dismissMaximizedDialog() {
+        if (maximizedDialog) {
+            maximizedDialog.dismiss();
+            maximizedDialog = undefined;
+        }
+    }
+
+    function updateMaxProgressBar(progressPerc, progressText) {
+        if (maximizedDialog) {
+            maximizedDialog.updateProgress(progressPerc, progressText);
+
+            if (progressPerc >= 100) {
+                dismissMaximizedDialog();
+            }
+        }
+    }
+
     export default {
         inject: ['openmct'],
+        components: {
+            ProgressBar: ProgressBar
+        },
         data() {
             return {
                 activeModel: {
@@ -115,9 +190,29 @@
                 activeNotification.off('progress', this.updateProgress);
                 activeNotification.off('minimized', this.minimized);
                 activeNotification.off('destroy', this.destroyActiveNotification);
+
+                activeNotification.off('progress', updateMaxProgressBar);
+                activeNotification.off('minimized', dismissMaximizedDialog);
+                activeNotification.off('destroy', dismissMaximizedDialog);
             },
             maximize() {
-                //Not implemented yet.
+                if (this.activeModel.progressPerc !== undefined) {
+                    maximizedDialog = this.openmct.overlays.progressDialog({
+                        buttons: [minimizeButton],
+                        ...this.activeModel
+                    });
+
+                    activeNotification.on('progress', updateMaxProgressBar);
+                    activeNotification.on('minimized', dismissMaximizedDialog);
+                    activeNotification.on('destroy', dismissMaximizedDialog);
+
+                } else {
+                    maximizedDialog = this.openmct.overlays.dialog({
+                        iconClass: this.activeModel.severity,
+                        buttons: [minimizeButton],
+                        ...this.activeModel
+                    })
+                }
             }
         },
         computed: {

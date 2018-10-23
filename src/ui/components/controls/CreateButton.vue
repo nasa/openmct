@@ -1,18 +1,19 @@
 <template>
     <div class="c-create-button--w">
         <button class="c-create-button c-button--menu c-button--major icon-plus"
-             @click="toggleCreateMenu">
+             @click="open">
             <span class="c-button__label">Create</span>
         </button>
         <div class="c-create-menu c-super-menu"
-             v-if="showCreateMenu">
+             v-if="opened">
             <div class="c-super-menu__menu">
                 <ul>
                     <li v-for="(item, index) in items"
                         :key="index"
                         :class="item.class"
                         :title="item.title"
-                        @mouseover="showItemDescription(item)">
+                        @mouseover="showItemDescription(item)"
+                        @click="create(item)">
                         {{ item.name }}
                     </li>
                 </ul>
@@ -56,21 +57,62 @@
 </style>
 
 <script>
+    import CreateAction from '../../../../platform/commonUI/edit/src/creation/CreateAction';
+    import objectUtils from '../../../api/objects/object-utils';
+
+    function convertToLegacyObject(domainObject) {
+        let keyString = objectUtils.makeKeyString(domainObject.identifier);
+        let oldModel = objectUtils.toOldFormat(domainObject);
+        return instantiate(oldModel, keyString);
+    }
     export default {
         inject: ['openmct'],
-        props: {
-            showCreateMenu: {
-                type: Boolean,
-                default: false
-            }
-        },
         methods: {
-            toggleCreateMenu: function () {
-                this.showCreateMenu = !this.showCreateMenu;
+            open: function () {
+                if (this.opened) {
+                    return;
+                }
+                this.opened = true;
+                setTimeout(() => document.addEventListener('click', this.close));
+            },
+            close: function () {
+                if (!this.opened) {
+                    return;
+                }
+                this.opened = false;
+                document.removeEventListener('click', this.close);
             },
             showItemDescription: function (menuItem) {
                 this.selectedMenuItem = menuItem;
+            },
+            create: function (item) {
+                // Hack for support.  TODO: rewrite create action.
+                // 1. Get contextual object from navigation
+                // 2. Get legacy type from legacy api
+                // 3. Instantiate create action with type, parent, context
+                // 4. perform action.
+                let legacyContextualParent = this.convertToLegacy(openmct.router.path[0]);
+                let legacyType = openmct.$injector.get('typeService').getType(item.key);
+                let context = {
+                    key: "create",
+                    domainObject: legacyContextualParent // should be same as parent object.
+                };
+                let action = new CreateAction(
+                    legacyType,
+                    legacyContextualParent,
+                    context,
+                    this.openmct
+                );
+                return action.perform();
+            },
+            convertToLegacy (domainObject) {
+                let keyString = objectUtils.makeKeyString(domainObject.identifier);
+                let oldModel = objectUtils.toOldFormat(domainObject);
+                return openmct.$injector.get('instantiate')(oldModel, keyString);
             }
+        },
+        destroyed () {
+            document.removeEventListener('click', this.close);
         },
         data: function() {
             let items = [];
@@ -80,6 +122,7 @@
 
                 if (menuItem.creatable) {
                     let menuItemTemplate = {
+                        key: key,
                         name: menuItem.name,
                         class: menuItem.cssClass,
                         title: menuItem.description
@@ -91,7 +134,8 @@
 
             return {
                 items: items,
-                selectedMenuItem: {}
+                selectedMenuItem: {},
+                opened: false
             }
         }
     }

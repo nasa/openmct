@@ -51,8 +51,11 @@ define(
          */
         EditorCapability.prototype.edit = function () {
             console.warn('DEPRECATED: cannot edit via edit capability, use openmct.editor instead.');
-            this.openmct.editor.edit();
-            this.domainObject.getCapability('status').set('editing', true);
+
+            if (!this.openmct.editor.isEditing()) {
+                this.openmct.editor.edit();
+                this.domainObject.getCapability('status').set('editing', true);
+            }
         };
 
         /**
@@ -82,6 +85,7 @@ define(
          */
         EditorCapability.prototype.save = function () {
             console.warn('DEPRECATED: cannot save via edit capability, use openmct.editor instead.');
+            return Promise.resolve();
         };
 
         EditorCapability.prototype.invoke = EditorCapability.prototype.edit;
@@ -93,6 +97,7 @@ define(
          */
         EditorCapability.prototype.finish = function () {
             console.warn('DEPRECATED: cannot finish via edit capability, use openmct.editor instead.');
+            return Promise.resolve();
         };
 
         /**

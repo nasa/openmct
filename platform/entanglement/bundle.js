@@ -170,7 +170,7 @@ define([
                     "description": "Provides a service for moving objects",
                     "implementation": MoveService,
                     "depends": [
-                        "policyService",
+                        "openmct",
                         "linkService",
                         "$q"
                     ]
@@ -181,7 +181,7 @@ define([
                     "description": "Provides a service for linking objects",
                     "implementation": LinkService,
                     "depends": [
-                        "policyService"
+                        "openmct"
                     ]
                 },
                 {
@@ -192,7 +192,7 @@ define([
                     "depends": [
                         "$q",
                         "policyService",
-                        "now"
+                        "openmct"
                     ]
                 },
                 {
