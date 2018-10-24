@@ -21,19 +21,16 @@
  *****************************************************************************/
 
 define(function () {
-    function TelemetryTableType() {
-        return {
-            name: 'Telemetry Table',
-            description: 'Display telemetry values for the current time bounds in tabular form. Supports filtering and sorting.',
-            creatable: true,
-            cssClass: 'icon-tabular-realtime',
-            initialize(domainObject) {
-                domainObject.composition = [];
-                domainObject.configuration = {
-                    columns: {}
-                };
-            }
+    return {
+        name: 'Telemetry Table',
+        description: 'Display telemetry values for the current time bounds in tabular form. Supports filtering and sorting.',
+        creatable: true,
+        cssClass: 'icon-tabular-realtime',
+        initialize(domainObject) {
+            domainObject.composition = [];
+            domainObject.configuration = {
+                columns: {}
+            };
         }
-    }
-    return TelemetryTableType;
+    };
 });

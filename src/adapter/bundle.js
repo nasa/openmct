@@ -28,7 +28,6 @@ define([
     './services/Instantiate',
     './services/MissingModelCompatibilityDecorator',
     './capabilities/APICapabilityDecorator',
-    './policies/AdapterCompositionPolicy',
     './policies/AdaptedViewPolicy',
     './runs/AlternateCompositionInitializer',
     './runs/TimeSettingsURLHandler',
@@ -36,7 +35,8 @@ define([
     './runs/LegacyTelemetryProvider',
     './runs/RegisterLegacyTypes',
     './services/LegacyObjectAPIInterceptor',
-    './views/installLegacyViews'
+    './views/installLegacyViews',
+    './policies/legacyCompositionPolicyAdapter'
 ], function (
     legacyRegistry,
     ActionDialogDecorator,
@@ -45,7 +45,6 @@ define([
     Instantiate,
     MissingModelCompatibilityDecorator,
     APICapabilityDecorator,
-    AdapterCompositionPolicy,
     AdaptedViewPolicy,
     AlternateCompositionInitializer,
     TimeSettingsURLHandler,
@@ -53,7 +52,8 @@ define([
     LegacyTelemetryProvider,
     RegisterLegacyTypes,
     LegacyObjectAPIInterceptor,
-    installLegacyViews
+    installLegacyViews,
+    legacyCompositionPolicyAdapter
 ) {
     legacyRegistry.register('src/adapter', {
         "extensions": {
@@ -118,11 +118,6 @@ define([
             ],
             policies: [
                 {
-                    category: "composition",
-                    implementation: AdapterCompositionPolicy,
-                    depends: ["openmct"]
-                },
-                {
                     category: "view",
                     implementation: AdaptedViewPolicy,
                     depends: ["openmct"]
@@ -166,6 +161,12 @@ define([
                     implementation: RegisterLegacyTypes,
                     depends: [
                         "types[]",
+                        "openmct"
+                    ]
+                },
+                {
+                    implementation: legacyCompositionPolicyAdapter.default,
+                    depends: [
                         "openmct"
                     ]
                 }

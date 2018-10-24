@@ -43,7 +43,7 @@
                   handle="before"
                   label="Inspect"
                   collapsable>
-                <Inspector ref="inspector"></Inspector>
+                <Inspector :isEditing="isEditing" ref="inspector"></Inspector>
             </pane>
         </multipane>
         <div class="l-shell__status">

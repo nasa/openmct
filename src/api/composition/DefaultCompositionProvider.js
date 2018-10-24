@@ -43,9 +43,34 @@ define([
      * @memberof module:openmct
      */
 
-    function DefaultCompositionProvider(publicAPI) {
+    function DefaultCompositionProvider(publicAPI, compositionAPI) {
         this.publicAPI = publicAPI;
         this.listeningTo = {};
+
+        this.cannotContainDuplicates = this.cannotContainDuplicates.bind(this);
+        this.cannotContainItself = this.cannotContainItself.bind(this);
+
+        compositionAPI.addPolicy(this.cannotContainDuplicates);
+        compositionAPI.addPolicy(this.cannotContainItself);
+    }
+
+    /**
+     * @private
+     */
+    DefaultCompositionProvider.prototype.cannotContainDuplicates = function (parent, child) {
+        return this.appliesTo(parent) &&
+            parent.composition.findIndex((composeeId) => {
+                return composeeId.namespace === child.identifier.namespace &&
+                    composeeId.key === child.identifier.key;
+            }) === -1;
+    }
+
+    /**
+     * @private
+     */
+    DefaultCompositionProvider.prototype.cannotContainItself = function (parent, child) {
+        return !(parent.identifier.namespace === child.identifier.namespace &&
+            parent.identifier.key === child.identifier.key);
     }
 
     /**
@@ -203,7 +228,7 @@ define([
         }
 
         var oldComposition = listeners.composition.map(objectUtils.makeKeyString);
-        var newComposition = oldDomainObject.getModel().composition;
+        var newComposition = oldDomainObject.getModel().composition.map(objectUtils.makeKeyString);
 
         var added = _.difference(newComposition, oldComposition).map(objectUtils.parseKeyString);
         var removed = _.difference(oldComposition, newComposition).map(objectUtils.parseKeyString);

@@ -65,5 +65,12 @@ export default function () {
         });
         openmct.types.addType('layout', DisplayLayoutType());
         openmct.toolbars.addProvider(new DisplayLayoutToolbar(openmct));
+        openmct.composition.addPolicy((parent, child) => {
+            if (parent.type === 'layout' && child.type === 'folder') {
+                return false;
+            } else {
+                return true;
+            }
+        });
     }
 }
