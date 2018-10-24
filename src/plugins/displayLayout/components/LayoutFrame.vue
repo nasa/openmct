@@ -142,9 +142,9 @@
 
 
 <script>
-    import ObjectView from '../../ui/components/layout/ObjectView.vue'
+    import ObjectView from '../../../ui/components/layout/ObjectView.vue'
     import TelemetryView from './TelemetryView.vue'
-    import LayoutDrag from './LayoutDrag'
+    import LayoutDrag from './../LayoutDrag'
 
     export default {
         inject: ['openmct'],

@@ -82,11 +82,11 @@
             updateView(telemetryObject, datum) {
                 let metadata = this.openmct.telemetry.getMetadata(telemetryObject);
                 let valueMetadata = this.chooseValueMetadataToDisplay(metadata);
-                let formattedTelemetryValue = this.getFormattedTelemetryValueForKey(valueMetadata, datum);
-                let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
-                let alarm = limitEvaluator && limitEvaluator.evaluate(datum, valueMetadata);
+                console.log("valueMetadata", valueMetadata);
+                this.telemetryValue = this.getFormattedTelemetryValueForKey(valueMetadata, datum);
 
-                this.telemetryValue = formattedTelemetryValue;
+                let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
+                let alarm = limitEvaluator && limitEvaluator.evaluate(datum, valueMetadata);                
                 this.telemetryClass = alarm && alarm.cssClass;
             },
             getFormattedTelemetryValueForKey(valueMetadata, datum) {
