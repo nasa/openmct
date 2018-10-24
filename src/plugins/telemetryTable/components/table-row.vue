@@ -2,7 +2,7 @@
 <tr :style="{ top: rowTop }" :class="rowLimitClass">
     <template v-for="(title, key, headerIndex) in headers">
     <th class="c-telemetry-table__resize-hotzone"></th>
-    <td :style="{ width: columnWidths[headerIndex], 'max-width': columnWidths[headerIndex]}"
+    <td :style="{ width: columnWidths[headerIndex] + 'px', 'max-width': columnWidths[headerIndex] + 'px'}"
         :title="formattedRow[key]"
         :class="cellLimitClasses[key]">{{formattedRow[key]}}</td>
     <th class="c-telemetry-table__resize-hotzone"></th>

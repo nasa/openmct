@@ -8,35 +8,42 @@
             Export As CSV
         </a>
     </div>
+    <div v-if="currentDropIndex !== undefined" class="c-telemetry-table__drop-target" :style="dropTargetStyle"></div>
     <!-- Headers table -->
-    <div class="c-telemetry-table__headers-w js-table__headers-w">
+    <div class="c-telemetry-table__headers-w js-table__headers-w" ref="headersTable">
         <table class="c-table__headers c-telemetry-table__headers"
                :style="{ 'max-width': totalWidth + 'px'}">
             <thead>
-                <tr @mousemove="checkForResize">
+                <tr>
                     <template v-for="(title, key, headerIndex) in headers">
-                    <th v-if="headerIndex!==0" :key="key" class="c-telemetry-table__resize-hotzone"></th>
-                    <th v-on:click="sortBy(key)"
-                        :key="key"
+                    <th v-if="headerIndex!==0" @mousedown="startResizeColumn(headerIndex - 1, $event)" :key="key" class="c-telemetry-table__resize-hotzone"></th>
+                    <th :key="key"
+                        draggable="true"
+                        @dragstart="columnMoveStart(headerIndex)"
+                        @drop="columnMoveEnd(headerIndex)"
+                        @dragover="dragOverColumn(headerIndex, $event)"
                         :class="['is-sortable', sortOptions.key === key ? 'is-sorting' : '', sortOptions.direction].join(' ')"
-                        :style="{ width: columnWidths[headerIndex], 'max-width': columnWidths[headerIndex]}">{{title}}</th>
-                    <th :key="key" class="c-telemetry-table__resize-hotzone"></th>
+                        :style="{ width: columnWidths[headerIndex] + 'px', 'max-width': columnWidths[headerIndex] + 'px'}"
+                        >{{title}}</th>
+                    <th @mousedown="startResizeColumn(headerIndex, $event)"
+                        :key="key" 
+                        class="c-telemetry-table__resize-hotzone c-telemetry-table__resize-hotzone--right"></th>
                     </template>
                 </tr>
                 <tr>
                     <template v-for="(title, key, headerIndex) in headers">
-                    <th v-if="headerIndex!==0" :key="key" class="c-telemetry-table__resize-hotzone"></th>
+                    <th v-if="headerIndex!==0" @mousedown="startResizeColumn(headerIndex - 1, $event)" :key="key" class="c-telemetry-table__resize-hotzone"></th>
                     <th :key="key"
                         :style="{
-                            width: columnWidths[headerIndex],
-                            'max-width': columnWidths[headerIndex],
+                            width: columnWidths[headerIndex] + 'px',
+                            'max-width': columnWidths[headerIndex] + 'px'
                         }">
                         <search class="c-table__search"
                             v-model="filters[key]"
                             v-on:input="filterChanged(key)"
                             v-on:clear="clearFilter(key)" />
                     </th>
-                    <th :key="key" class="c-telemetry-table__resize-hotzone"></th>
+                    <th @mousedown="startResizeColumn(headerIndex, $event)" :key="key" class="c-telemetry-table__resize-hotzone c-telemetry-table__resize-hotzone--right"></th>
                     </template>
                 </tr>
             </thead>
@@ -44,7 +51,7 @@
     </div>
     <!-- Content table -->
     <div class="c-table__body-w c-telemetry-table__body-w js-telemetry-table__body-w" @scroll="scroll">
-        <div class="c-telemetry-table__scroll-forcer" :style="{ width: totalWidth }"></div>
+        <div class="c-telemetry-table__scroll-forcer" :style="{ width: totalWidth + 'px' }"></div>
         <table class="c-table__body c-telemetry-table__body"
                :style="{ height: totalHeight + 'px', 'max-width': totalWidth + 'px'}">
             <tbody>
@@ -80,6 +87,45 @@
 <style lang="scss">
     @import "~styles/sass-base";
     @import "~styles/table";
+
+    $hotzone-size: 6px;
+
+    .c-telemetry-table__drop-target {
+        position: absolute;
+        width: 2px;
+        top: 27px;
+        background-color: $editColor;
+        box-shadow: rgba($editColor, 0.5) 0 0 10px;
+        z-index: 1;
+    }
+
+    .c-table.c-telemetry-table [class*="__header"] {
+        th, td {
+            border: none;
+        }
+    }
+
+    .c-table.c-telemetry-table {
+        td.c-telemetry-table__resize-hotzone, th.c-telemetry-table__resize-hotzone {
+            min-width: 2px;
+            padding: 0;
+            margin: 0;
+            width: $hotzone-size / 2;
+            cursor: col-resize;
+            border: none;
+        }
+
+        th.c-telemetry-table__resize-hotzone--right {
+            &:not(:last-child) {
+                border-right: 1px solid $colorTabHeaderBorder;
+            }
+        }
+    }
+
+    .c-telemetry-table__headers__move-btn {
+        float: left;
+        cursor: grab;
+    }
 
     .c-telemetry-table {
         // Table that displays telemetry in a scrolling body area
@@ -169,15 +215,6 @@
                 white-space: nowrap;
             }
         }
-
-        &__resize-hotzone {
-            min-width: 2px !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            width: 2px !important;
-            cursor: col-resize;
-            border: none !important;
-        }
     }
 
     /******************************* LEGACY */
@@ -199,6 +236,7 @@ const ROW_HEIGHT = 17;
 const RESIZE_POLL_INTERVAL = 200;
 const AUTO_SCROLL_TRIGGER_HEIGHT = 20;
 const RESIZE_HOT_ZONE = 10;
+const MOVE_TRIGGER_WAIT = 500;
 
 export default {
     components: {
@@ -228,7 +266,21 @@ export default {
             calcTableWidth: '100%',
             processingScroll: false,
             updatingView: false,
-            resizeCursorColumn: undefined
+            resizeColumnIndex: undefined,
+            resizeStartX: undefined,
+            moveColumnFromIndex: undefined,
+            moveColumnStartTime: undefined,
+            currentDropIndex: undefined,
+            headersOffsetTop: undefined,
+            dropOffsetLeft: undefined
+        }
+    },
+    computed: {
+        dropTargetStyle() {
+            return {
+                height: this.totalHeight + 47 + 'px',
+                left: this.dropOffsetLeft + 'px'
+            }
         }
     },
     methods: {
@@ -292,7 +344,7 @@ export default {
             sizingCells.forEach((cell) => {
                 let columnWidth = cell.offsetWidth;
                 if (cell.classList.contains('js-content-column')) {
-                    columnWidths.push(columnWidth + 'px');
+                    columnWidths.push(columnWidth);
                 }
                 totalWidth += columnWidth;
             });
@@ -423,30 +475,95 @@ export default {
             delete this.sizingRows[objectKeyString];
             this.updateHeaders();
         },
-        setResizeColumn(key) {
-            this.resizeCursorColumn = key;
+        startResizeColumn(index, event) {
+            console.log('Start resizing column ' + index);
+            this.resizeColumnIndex = index;
+            this.resizeStartX = event.clientX;
+            document.addEventListener('mouseup', ()=>{
+                console.log('Release column ' + index);
+                this.resizeStartX = undefined;
+                this.resizeColumnIndex = undefined;
+                document.removeEventListener('mousemove', this.resizeColumn);
+
+            }, {once: true});
+            document.addEventListener('mousemove', this.resizeColumn);
+
+            event.preventDefault();
         },
-        checkForResize(key, event) {
-            if (overHotZone()){
-                this.resizeCursorActive = true;
+        resizeColumn(event) {
+            if (this.resizeColumnIndex !== undefined) {
+                let delta = event.clientX - this.resizeStartX;
+                this.$set(this.columnWidths, this.resizeColumnIndex, this.columnWidths[this.resizeColumnIndex] + delta);
+                if (this.resizeColumnIndex + 1 < this.columnWidths.length) {
+                    this.$set(this.columnWidths, this.resizeColumnIndex + 1, this.columnWidths[this.resizeColumnIndex + 1] - delta);
+                }
+                this.resizeStartX = event.clientX;
+            }
+        },
+        columnMoveStart(index, event) {
+            this.moveColumnFromIndex = index;
+        },
+        dragOverColumn(index, event) {
+            if (index !== this.moveColumnFromIndex) {
+                event.preventDefault();
+                if (event.offsetX < event.target.offsetWidth / 2) {
+                    this.dropOffsetLeft = event.target.offsetLeft - RESIZE_HOT_ZONE / 2;
+                    if (index > this.moveColumnFromIndex){
+                        this.currentDropIndex = index - 1;
+                    } else {
+                        this.currentDropIndex = index
+                    }
+                } else {
+                    this.dropOffsetLeft = event.target.offsetLeft + event.target.offsetWidth + 1;
+                    this.currentDropIndex = index;
+                    if (index > this.moveColumnFromIndex){
+                        this.currentDropIndex = index;
+                    } else {
+                        this.currentDropIndex = index + 1;
+                    }
+                }
+
             } else {
-                this.resizeCursorActive = false;
+
+            }                
+        },
+        columnMoveEnd(index, event) {
+            let newHeaderKeys = Object.keys(this.headers);
+            let moveFromKey = newHeaderKeys[this.moveColumnFromIndex];
+            //let columnWidths = [].concat(this.columnWidths);
+            let columnWidths = this.columnWidths;
+            let moveFromWidth = columnWidths[this.moveColumnFromIndex];
+
+            if (this.currentDropIndex < this.moveColumnFromIndex) {
+                newHeaderKeys.splice(this.moveColumnFromIndex, 1);
+                newHeaderKeys.splice(this.currentDropIndex, 0, moveFromKey);
+                columnWidths.splice(this.moveColumnFromIndex, 1);
+                columnWidths.splice(this.currentDropIndex, 0, moveFromWidth);
+            } else {
+                newHeaderKeys.splice(this.moveColumnFromIndex, 1);
+                newHeaderKeys.splice(this.currentDropIndex, 0, moveFromKey);
+                columnWidths.splice(this.moveColumnFromIndex, 1);
+                columnWidths.splice(this.currentDropIndex, 0, moveFromWidth);
             }
 
-            function overHotZone(){
-                let offsetLeft = 0;
-                return this.columnWidths.any((width) => {
-                    let isHotzoneLeft = event.offsetX <= columnOffset + RESIZE_HOT_ZONE / 2;
-                    offsetLeft += width;
-                    let isHotzoneRight = event.offsetX >= columnOffset - RESIZE_HOT_ZONE / 2;
-                    return isHotzoneLeft || isHotzoneRight;
-                });
-            }
+            let newHeaders = newHeaderKeys.reduce((headers, headerKey)=>{
+                headers[headerKey] = this.headers[headerKey];
+                return headers;
+            }, {});
+
+            this.columnWidths = columnWidths;
+            this.headers = newHeaders;
+
+            this.currentDropIndex = undefined;
+            this.dropOffsetLeft = undefined;
+            this.moveColumnFromIndex = undefined;
+            console.log("Column moved from %s to %s", this.moveColumnFromIndex, index);
         }
+
     },
     created() {
         this.filterChanged = _.debounce(this.filterChanged, 500);
-        this.checkForResize = _.throttle(this.checkForResize, 100);
+        this.resizeColumn = _.throttle(this.resizeColumn, 50);
     },
     mounted() {
         this.table.on('object-added', this.addObject);
