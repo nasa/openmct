@@ -31,16 +31,19 @@ export default {
     methods: {
         add(child, index, anything) {
             var type = this.openmct.types.get(child.type) || unknownObjectType;
-
             this.items.push({
                 model: child,
                 type: type.definition,
-                isAlias: this.domainObject.identifier.key !== child.location
+                isAlias: this.domainObject.identifier.key !== child.location,
+                objectPath: [child].concat(openmct.router.path)
             });
         },
-        remove(child) {
-            // TODO: implement remove action
-            console.log('remove child? might be identifier');
+        remove(identifier) {
+            this.items = this.items
+                .filter((i) => {
+                    return i.model.identifier.key !== identifier.key
+                        || i.model.identifier.namespace !== identifier.namespace
+                });
         }
     }
 }
