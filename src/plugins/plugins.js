@@ -37,7 +37,8 @@ define([
     './notebook/plugin',
     './displayLayout/plugin',
     './folderView/plugin',
-    '../../platform/features/fixed/plugin'
+    '../../platform/features/fixed/plugin',
+    './flexibleLayout/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -55,7 +56,8 @@ define([
     Notebook,
     DisplayLayoutPlugin,
     FolderView,
-    FixedView
+    FixedView,
+    FlexibleLayout
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -168,6 +170,7 @@ define([
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
     plugins.FolderView = FolderView;
     plugins.FixedView = FixedView;
+    plugins.FlexibleLayout = FlexibleLayout;
 
     return plugins;
 });
