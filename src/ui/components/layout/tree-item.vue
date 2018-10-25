@@ -7,7 +7,9 @@
                           :expanded="expanded"
                           @click="toggleChildren">
             </view-control>
-            <object-label :domainObject="node.object" :path="node.path"></object-label>
+            <object-label :domainObject="node.object"
+                          :objectPath="node.objectPath">
+            </object-label>
         </div>
         <ul v-if="expanded" class="c-tree">
             <tree-item v-for="child in children"
@@ -76,12 +78,13 @@
                 this.children.push({
                     id: this.openmct.objects.makeKeyString(child.identifier),
                     object: child,
-                    path: this.node.path.concat([child.identifier])
+                    objectPath: [child].concat(this.node.objectPath)
                 });
             },
-            removeChild(child) {
-                // TODO: remove child on remove event.
-                console.log('Tree should remove child', child);
+            removeChild(identifier) {
+                let removeId = this.openmct.objects.makeKeyString(identifier);
+                this.children = this.children
+                    .filter(c => c.id !== removeId);
             },
             finishLoading () {
                 this.isLoading = false;
