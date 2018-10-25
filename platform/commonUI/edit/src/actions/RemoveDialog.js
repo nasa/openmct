@@ -69,8 +69,8 @@ define([], function () {
                     }
                 ]
             };
+        setTimeout(() => this.removeCallback(domainObject));
 
-        dialog = this.dialogService.showBlockingMessage(model);
     };
 
     return RemoveDialog;
