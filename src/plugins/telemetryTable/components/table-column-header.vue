@@ -24,7 +24,7 @@
         isSortable ? 'is-sortable' : '', 
         isSortable && sortOptions.key === headerKey ? 'is-sorting' : '', 
         isSortable && sortOptions.direction].join(' ')"
-    :style="{ width: columnWidths[headerIndex] + 'px', 'max-width': columnWidths[headerIndex] + 'px'}"
+    :style="{ width: columnWidths[headerKey] + 'px', 'max-width': columnWidths[headerKey] + 'px'}"
     draggable="true"
     @mouseup="sort"
     @dragstart="columnMoveStart"
@@ -77,7 +77,7 @@ export default {
         headerIndex: Number,
         isHeaderTitle: Boolean,
         sortOptions: Object,
-        columnWidths: Array,
+        columnWidths: Object,
         hotzone: Boolean
     },
     computed: {
@@ -88,7 +88,7 @@ export default {
     methods: {
         startResizeColumn($event) {
             this.resizeStartX = event.clientX;
-            this.resizeStartWidth = this.columnWidths[this.headerIndex];
+            this.resizeStartWidth = this.columnWidths[this.headerKey];
 
             document.addEventListener('mouseup', ()=>{
                 this.resizeStartX = undefined;
@@ -103,7 +103,7 @@ export default {
         resizeColumn(event) {
             let delta = event.clientX - this.resizeStartX;
             let newWidth = this.resizeStartWidth + delta;
-            this.$emit('resizeColumn', this.headerIndex, newWidth);
+            this.$emit('resizeColumn', this.headerKey, newWidth);
         },
         columnMoveStart(event) {
             event.dataTransfer.setData('moveColumnFromIndex', this.headerIndex);
@@ -151,7 +151,7 @@ export default {
         }
     },
     created() {
-        this.resizeColumn = _.throttle(this.resizeColumn, 100);
+        this.resizeColumn = _.throttle(this.resizeColumn, 50);
     }
 }
 </script>

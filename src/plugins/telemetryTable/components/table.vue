@@ -88,11 +88,12 @@
            :style="{width: calcTableWidth}">
         <tr>
             <template v-for="(title, key) in headers">
-            <th :key="key" class="js-content-column">{{title}}</th>
+            <th :key="key">{{title}}</th>
             </template>
         </tr>
         <telemetry-table-row v-for="(sizingRowData, objectKeyString) in sizingRows"
             :headers="headers"
+            :columnWidths="configuredColumnWidths"
             :row="sizingRowData">
         </telemetry-table-row>
     </table>
@@ -237,7 +238,8 @@ export default {
         return {
             headers: {},
             visibleRows: [],
-            columnWidths: [],
+            columnWidths: {},
+            configuredColumnWidths: {},
             sizingRows: {},
             rowHeight: ROW_HEIGHT,
             scrollOffset: 0,
@@ -255,7 +257,8 @@ export default {
             processingScroll: false,
             updatingView: false,
             dropOffsetLeft: undefined,
-            isDropTargetActive: false
+            isDropTargetActive: false,
+            lastHeaderKey: undefined
         }
     },
     computed: {
@@ -307,8 +310,9 @@ export default {
         },
         updateHeaders() {
             let headers = this.table.configuration.getVisibleHeaders();
-
             this.headers = headers;
+            let headerKeys = Object.keys(this.headers);
+            this.lastHeaderKey = headerKeys[headerKeys.length - 1];
             this.$nextTick().then(this.calculateColumnWidths);
         },
         setSizingTableWidth() {
@@ -319,18 +323,17 @@ export default {
             }
         },
         calculateColumnWidths() {
-            let columnWidths = [];
+            let columnWidths = {};
             let totalWidth = 0;
             let sizingRowEl = this.sizingTable.children[0];
             let sizingCells = Array.from(sizingRowEl.children);
 
-            sizingCells.forEach((cell) => {
+            Object.keys(this.headers).forEach((headerKey, headerIndex)=>{
+                let cell = sizingCells[headerIndex];
                 let columnWidth = cell.offsetWidth;
-                if (cell.classList.contains('js-content-column')) {
-                    columnWidths.push(columnWidth);
-                }
+                columnWidths[headerKey] = columnWidth;
                 totalWidth += columnWidth;
-            });
+            })
 
             this.columnWidths = columnWidths;
             this.totalWidth = totalWidth;
@@ -458,10 +461,12 @@ export default {
             delete this.sizingRows[objectKeyString];
             this.updateHeaders();
         },
-        resizeColumn(index, newWidth) {
-            let delta = newWidth - this.columnWidths[index];
-            this.$set(this.columnWidths, index, newWidth);
-            this.$set(this.columnWidths, this.columnWidths.length - 1, this.columnWidths[this.columnWidths.length - 1] - delta);
+        resizeColumn(key, newWidth) {
+            let delta = newWidth - this.columnWidths[key];
+            this.columnWidths[key] = newWidth;
+            this.$set(this.configuredColumnWidths, key, newWidth);
+
+            this.columnWidths[this.lastHeaderKey] = this.columnWidths[this.lastHeaderKey] - delta;
         },
         setDropTargetOffset(dropOffsetLeft) {
             this.dropOffsetLeft = dropOffsetLeft;
@@ -469,19 +474,14 @@ export default {
         moveColumn(from, to) {
             let newHeaderKeys = Object.keys(this.headers);
             let moveFromKey = newHeaderKeys[from];
-            let columnWidths = this.columnWidths;
             let moveFromWidth = columnWidths[from];
 
             if (to < from) {
                 newHeaderKeys.splice(from, 1);
                 newHeaderKeys.splice(to, 0, moveFromKey);
-                columnWidths.splice(from, 1);
-                columnWidths.splice(to, 0, moveFromWidth);
             } else {
                 newHeaderKeys.splice(from, 1);
                 newHeaderKeys.splice(to, 0, moveFromKey);
-                columnWidths.splice(from, 1);
-                columnWidths.splice(to, 0, moveFromWidth);
             }
 
             let newHeaders = newHeaderKeys.reduce((headers, headerKey)=>{
@@ -489,9 +489,9 @@ export default {
                 return headers;
             }, {});
 
-            this.columnWidths = columnWidths;
             this.headers = newHeaders;
             this.dropOffsetLeft = undefined;
+            this.lastHeaderKey = newHeaderKeys[newHeaderKeys.length - 1];
 
             this.dropTargetActive(false);
         },
@@ -501,7 +501,6 @@ export default {
     },
     created() {
         this.filterChanged = _.debounce(this.filterChanged, 500);
-        //this.resizeColumn = _.throttle(this.resizeColumn, 50);
     },
     mounted() {
         this.$on('drop-target-offset-changed', this.setDropTargetOffset);

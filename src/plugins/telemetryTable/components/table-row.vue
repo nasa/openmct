@@ -21,8 +21,8 @@
  *****************************************************************************/
 <template>
 <tr :style="{ top: rowTop }" :class="rowLimitClass">
-    <template v-for="(title, key, headerIndex) in headers">
-    <td :style="{ width: columnWidths[headerIndex] + 'px', 'max-width': columnWidths[headerIndex] + 'px'}"
+    <template v-for="(title, key) in headers">
+    <td :style="{ width: columnWidths[key] + 'px', 'max-width': columnWidths[key] + 'px'}"
         :title="formattedRow[key]"
         :class="cellLimitClasses[key]">{{formattedRow[key]}}</td>
     </template>
@@ -52,11 +52,8 @@ export default {
             required: true
         },
         columnWidths: {
-            type: Array,
-            required: false,
-            default() {
-                return [];
-            },
+            type: Object,
+            required: true
         },
         rowIndex: {
             type: Number,
