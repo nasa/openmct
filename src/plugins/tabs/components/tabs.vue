@@ -81,12 +81,6 @@
             line-height: $h;
             width: 100%;
         }
-
-        .is-mouse-over {
-           .c-drop-hint {
-               background: yellow;
-           }
-        }
     }
 </style>
 

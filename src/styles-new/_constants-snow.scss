@@ -126,6 +126,7 @@ $colorClickIconBgHov: rgba($colorKey, 0.2);
 $colorClickIconFgHov: $colorKeyHov;
 $colorDropHint: $colorKey;
 $colorDropHintBg: darken($colorDropHint, 10%);
+$colorDropHintBgHov: $colorDropHint;
 $colorDropHintFg: lighten($colorDropHint, 40%);
 
 // Menus
