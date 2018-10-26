@@ -22,23 +22,17 @@
 
 /************************** FONTS */
 @font-face {
-    /*
-    * Use https://icomoon.io/app with icomoon-project-openmct-symbols-16px.json to generate font files
-    */
+    // Use https://icomoon.io/app with `Icomoon.Open MCT Symbols 2018.json` to generate font files
     font-family: 'symbolsfont';
-    src: url($dirFonts + 'openmct-symbols-16px.eot');
-    src: url($dirFonts + 'openmct-symbols-16px.eot?#iefix') format('embedded-opentype'),
-    url($dirFonts + 'openmct-symbols-16px.woff') format('woff'),
-    url($dirFonts + 'openmct-symbols-16px.ttf') format('truetype'),
-    url($dirFonts + 'openmct-symbols-16px.svg') format('svg');
+    src: url($dirFonts + 'Open-MCT-Symbols-16px.woff') format('woff'),
+    url($dirFonts + 'Open-MCT-Symbols-16px.ttf') format('truetype'),
+    url($dirFonts + 'Open-MCT-Symbols-16px.svg') format('svg');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
-    /*
-    * Use https://icomoon.io/app with icomoon-project-openmct-symbols-12px.json to generate font files
-    */
+    // Use https://icomoon.io/app with icomoon-project-openmct-symbols-12px.json to generate font files
     font-family: 'symbolsfont-12px';
     src: url($dirFonts + 'openmct-symbols-12px.eot');
     src: url($dirFonts + 'openmct-symbols-12px.eot?#iefix') format('embedded-opentype'),
