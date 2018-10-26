@@ -22,14 +22,15 @@
 
 <template>
     <div class="column"
-         :style="[{'min-width': minWidth}, {'background': allowDrop ? 'red' : 'none'}]">
+         :style="[{'min-width': minWidth}]">
 
         <div class="add"
-             v-if="!rows.length"
+             :class="[rows.length ? 'large' : 'small']"
              @click="addRow"
              :style="{
                     'min-height': `${100/(rows.length+1)}%`,
-                    'max-height': `${100/(rows.length+1)}%`
+                    'max-height': `${100/(rows.length+1)}%`,
+                    'background': allowDrop ? 'purple' : '#009bd140'
             }"
         >+</div>
 
@@ -57,12 +58,19 @@
         font-size: 100%;
         align-items: center;
         justify-content: center;
-        min-height: 100%;
         min-width: 100%;
         background: #009bd140;
         border: 3px solid #009bd1;
         border-width: 3px 1.5px;
         cursor: pointer;
+
+        .large{
+            min-height: 100%;
+        }
+
+        .small{
+            max-height: 100px;
+        }
     }
 
     &:hover{
