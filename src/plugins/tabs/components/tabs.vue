@@ -143,7 +143,7 @@ export default {
             }
         },
         onDrop (e) {
-           this.setCurrentTab = true;
+            this.setCurrentTab = true;
         },
         dragstart (e) {
             if (e.dataTransfer.getData('domainObject')) {
@@ -152,6 +152,7 @@ export default {
         },
         dragend (e) {
             this.isDragging = false;
+            this.allowDrop = false;
         },
         dragenter () {
             this.allowDrop = true;
