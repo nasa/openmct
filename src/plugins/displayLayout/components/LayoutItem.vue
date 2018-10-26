@@ -25,21 +25,8 @@
          :style="item.style"
          :class="classObject"
          @dblclick="drill(item.id, $event)">
-        <div v-if="!item.isTelemetry" class="c-frame__header">
-            <div class="c-frame__header__start">
-                <div class="c-frame__name icon-object">{{ item.domainObject.name }}</div>
-                <div class="c-frame__context-actions c-disclosure-button"></div>
-            </div>
-            <div class="c-frame__header__end">
-                <div class="c-button icon-expand local-controls--hidden"></div>
-            </div>
-        </div>
-        <object-view v-if="!item.isTelemetry"
-                     class="c-frame__object-view"
-                     :object="item.domainObject"></object-view>
 
-        <telemetry-view v-if="item.isTelemetry"
-                        :item="item"></telemetry-view>
+        <component :is="item.type" :item="item"></component>
 
         <!-- Drag handles -->
         <div class="c-frame-edit">
@@ -142,7 +129,7 @@
 
 
 <script>
-    import ObjectView from '../../../ui/components/layout/ObjectView.vue'
+    import SubobjectView from './SubobjectView.vue'
     import TelemetryView from './TelemetryView.vue'
     import LayoutDrag from './../LayoutDrag'
 
@@ -153,7 +140,7 @@
             gridSize: Array
         },
         components: {
-            ObjectView,
+            SubobjectView,
             TelemetryView
         },
         computed: {
@@ -170,7 +157,7 @@
                     $event.stopPropagation();
                 }
 
-                if (!this.isBeingEdited(this.item.domainObject)) {
+                if (!this.openmct.editor.isEditing()) {
                     return;
                 }
 
@@ -184,10 +171,6 @@
                 }
 
                 this.$emit('drilledIn', id);
-            },
-            isBeingEdited(object) {
-                // TODO: add logic when inEditContext() is implemented in Vue.
-                return true;
             },
             updatePosition(event) {
                 let currentPosition = [event.pageX, event.pageY];
@@ -227,11 +210,16 @@
             }
         },
         mounted() {
+            let context = {};
+            if (this.item.type === 'telemetry-view') {
+                context.telemetryView = this.item;
+            } else {
+                context.item = this.item.domainObject;
+            }
+
             this.removeSelectable = this.openmct.selection.selectable(
                 this.$el,
-                {
-                    item: this.item.domainObject
-                },
+                context,
                 this.item.initSelect
             );
         },

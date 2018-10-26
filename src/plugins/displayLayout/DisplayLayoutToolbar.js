@@ -6,10 +6,6 @@ define([], function () {
             key: "layout",
             description: "A toolbar for objects inside a display layout.",
             forSelection: function (selection) {
-                let selectedObject = selection[0].context.item;
-                let isTelemetry = openmct.telemetry.isTelemetryObject(selectedObject) &&
-                    selectedObject.type !== 'summary-widget';
-
                 // Apply the layout toolbar if the selected object is inside a layout,
                 // and in edit mode. Do not apply the toolbar if the selected object is
                 // a telemetry point.
@@ -18,7 +14,7 @@ define([], function () {
                     selection[1].context.item &&
                     selection[1].context.item.type === 'layout' &&
                     openmct.editor.isEditing() &&
-                    !isTelemetry);
+                    !selection[0].context.telemetryView);
             },
             toolbar: function (selection) {
                 let id = openmct.objects.makeKeyString(selection[0].context.item.identifier);
@@ -26,7 +22,7 @@ define([], function () {
                     {
                         control: "toggle-button",
                         domainObject: selection[1].context.item,
-                        property: "configuration.layout.panels[" + id + "].hasFrame",
+                        property: "configuration.panels[" + id + "].hasFrame",
                         options: [
                             {
                                 value: false,

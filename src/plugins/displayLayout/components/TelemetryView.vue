@@ -33,6 +33,11 @@
         props: {
             item: Object
         },
+        computed: {
+            telemetryLabel: function () {
+                return this.item.domainObject.name;
+            }
+        },
         data() {
             return {
                 telemetryValue: '',
@@ -40,6 +45,7 @@
             }
         },
         created: function () {
+            console.log("alphanumerics", {...this.item.domainObject});
             this.subscriptions = {};
             this.getTelemetry(this.item.domainObject);
         },
@@ -82,7 +88,7 @@
             updateView(telemetryObject, datum) {
                 let metadata = this.openmct.telemetry.getMetadata(telemetryObject);
                 let valueMetadata = this.chooseValueMetadataToDisplay(metadata);
-                console.log("valueMetadata", valueMetadata);
+                // console.log("valueMetadata", valueMetadata);
                 this.telemetryValue = this.getFormattedTelemetryValueForKey(valueMetadata, datum);
 
                 let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
@@ -109,9 +115,11 @@
             }
         },
         destroyed() {
-            Object.values(this.subscriptions).forEach(unsubscribe => {
-                unsubscribe();
-            });
+            if (this.subscriptions) {
+                Object.values(this.subscriptions).forEach(unsubscribe => {
+                    unsubscribe();
+                });
+            }
             this.subscriptions = {};
         }
     }
