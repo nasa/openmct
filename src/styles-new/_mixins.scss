@@ -370,7 +370,7 @@
     $btnM: $m;
 
     &-holder {
-        background: $colorInputBg;
+        background: $colorTabsHolderBg;
         border-radius: $controlCr;
         padding: $m ($m - $btnM) ($m - $btnM) $m;
         display: flex;
@@ -382,12 +382,10 @@
         }
     }
 
-    background: rgba($colorBtnBg, 0.7);
+    background: $colorBtnBg;
     color: $colorBtnFg;
     flex: 1 1 auto;
     padding: $interiorMargin;
-    //border-radius: $smallCr;
-    //border: 1px solid $colorInteriorBorder;
 
     &:before {
         opacity: 0.5;
@@ -407,15 +405,6 @@
         pointer-events: none;
     }
 }
-
-
-
-
-
-
-
-
-
 
 @mixin wrappedInput() {
     // An input that is wrapped. Optionally includes a __label or icon element.

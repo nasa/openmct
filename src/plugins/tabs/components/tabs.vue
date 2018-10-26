@@ -1,6 +1,14 @@
 <template>
     <div class="c-tabs-view">
-        <div class="c-tabs-view__tabs-holder c-compact-button-holder">
+        <div class="c-tabs-view__tabs-holder c-compact-button-holder"
+            :class="{
+                'is-dragging': isDragging,
+                'is-mouse-over': isMouseOver
+            }">
+            <div class="c-drop-hint"
+                 @drop="onDrop"></div>
+            <div class="c-tabs-view__empty-message"
+                 v-if="!tabsList.length > 0">Drag objects here to add them to this view.</div>
             <button class="c-tabs-view__tab c-compact-button"
                 v-for="(tab,index) in tabsList"
                 :key="index"
@@ -11,26 +19,18 @@
                 @click="showTab(tab)">
                 <span class="c-button__label">{{tab.model.name}}</span>
             </button>
-            <div style="position: absolute; top: 0; left: 0; background: #009ad0; min-height: 100%; min-width: 100%; font-size: 20px; text-align: center;"
-             v-if="isDragging"
-             @drop="onDrop">
-             Drop Here
-            </div>
         </div>
         <div class="c-tabs-view__object-holder" 
             v-for="(object, index) in tabsList"
             :key="index"
             :class="{'invisible': object !== currentTab}">
-
-            <div class="object-header flex-elem l-flex-row grows">
-                <div class="type-icon flex-elem embed-icon holder" 
-                     :class="currentTab.type.definition.cssClass"></div>
-                <div class="title-label flex-elem holder flex-can-shrink">
+            <div class="c-tabs-view__object-name l-browse-bar__object-name--w"
+                 :class="currentTab.type.definition.cssClass">
+                <div class="l-browse-bar__object-name">
                     {{currentTab.model.name}}
                 </div>
             </div>
-
-            <object-view class="u-contents"
+            <object-view class="c-tabs-view__object"
                 :object="object.model">
             </object-view>
         </div>
@@ -41,6 +41,7 @@
     @import '~styles/sass-base.scss';
 
     .c-tabs-view {
+        $h: 20px;
         @include abs();
         display: flex;
         flex-flow: column nowrap;
@@ -50,24 +51,33 @@
         }
 
         &__tabs-holder {
-        //    background: rgba($colorBodyFg, 0.1);
-        //    border-radius: $controlCr;
+            @include userSelectNone();
             flex: 0 0 auto;
-        //    display: flex;
-        //    flex-flow: row wrap;
-        //    padding: $interiorMarginSm;
-         //   > * {
-         //       $m: $interiorMarginSm;
-         //       margin: 0 $m $m 0;
-         //   }
+            min-height: $h;
         }
-
-        //&__tab {
-         //   @include discreteItem();
-        //}
 
         &__object-holder {
             flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        &__object-name {
+            flex: 0 0 auto;
+            font-size: 1.2em !important;
+            margin: $interiorMargin 0 $interiorMarginLg 0;
+        }
+
+        &__object {
+            flex: 1 1 auto;
+        }
+
+        &__empty-message {
+            color: rgba($colorBodyFg, 0.7);
+            font-style: italic;
+            text-align: center;
+            line-height: $h;
+            width: 100%;
         }
     }
 </style>
@@ -101,7 +111,8 @@ export default {
             currentTab: {},
             tabsList: [],
             setCurrentTab: true,
-            isDragging: false
+            isDragging: false,
+            isMouseOver: false
         };
     },
     methods:{
@@ -132,6 +143,13 @@ export default {
         },
         dragend (e) {
             this.isDragging = false;
+        },
+        mouseOver () {
+            console.log('mouseover');
+            this.isMouseOver = true;
+        },
+        mouseOut () {
+            this.isMouseOver = false;
         }
     },
     destroyed() {

@@ -484,3 +484,34 @@ input[type=number]::-webkit-outer-spin-button {
     @include cControl();
     > * + * { margin-left: $interiorMargin; }
 }
+
+/***************************************************** DRAG AND DROP */
+.c-drop-hint {
+    // Used in Tabs View, Flexible Grid Layouts
+    @include abs();
+    background: $colorDropHintBg;
+    color: $colorDropHintFg;
+    border-radius: $basicCr;
+    border: 1px dashed $colorDropHintFg;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+
+    display: none;
+
+    &:before {
+        content: $glyph-icon-plus;
+        font-family: symbolsfont;
+        font-size: 1.2em;
+    }
+
+    .is-dragging & {
+        display: flex;
+        opacity: 0.8;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
