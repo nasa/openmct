@@ -30,9 +30,9 @@ define([
             openmct.objectViews.addProvider(new Tabs(openmct));
 
             openmct.types.addType('tabs', {
-                name: "Tabs",
+                name: "Tabs View",
                 creatable: true,
-                cssClass: 'icon-layout',
+                cssClass: 'icon-tabs-view',
                 initialize(domainObject) {
                     domainObject.composition = [];
                 }
