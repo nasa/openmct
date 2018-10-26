@@ -197,24 +197,24 @@
                 this.updatePosition(event);
 
                 if (this.activeDrag) {
-                    this.$emit('dragInProgress', this.item.id, this.activeDrag.getAdjustedPosition(this.delta));
+                    this.$emit('dragInProgress', this.item, this.activeDrag.getAdjustedPosition(this.delta));
                 }
             },
             endDrag(event) {
                 document.body.removeEventListener('mousemove', this.continueDrag);
                 document.body.removeEventListener('mouseup', this.endDrag);
                 this.continueDrag(event);
-                this.$emit('endDrag', this.item.id);
+                this.$emit('endDrag', this.item);
                 this.initialPosition = undefined;
                 event.preventDefault();
             }
         },
         mounted() {
             let context = {};
+            context.item = this.item.domainObject;
+
             if (this.item.type === 'telemetry-view') {
                 context.telemetryView = this.item;
-            } else {
-                context.item = this.item.domainObject;
             }
 
             this.removeSelectable = this.openmct.selection.selectable(

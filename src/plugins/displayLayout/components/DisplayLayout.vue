@@ -86,6 +86,8 @@
 
 <script>
     import LayoutItem from './LayoutItem.vue';
+    import TelemetryViewConfiguration from './../TelemetryViewConfiguration.js'
+    import SubobjectViewConfiguration from './../SubobjectViewConfiguration.js'
 
     const DEFAULT_GRID_SIZE = [32, 32],
           DEFAULT_DIMENSIONS = [12, 8],
@@ -113,15 +115,14 @@
         },
         created: function () {
             this.newDomainObject = this.domainObject;
-            this.gridSize = this.newDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;
+            this.gridSize = this.newDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;            
             this.composition = this.openmct.composition.get(this.newDomainObject);
             this.Listeners = [];
 
-            if (this.composition !== undefined) {
-                this.composition.load().then((composition) => {
-                    this.composition.on('add', this.onAddComposition);
-                    this.composition.on('remove', this.onRemoveComposition);
-                });
+            if (this.composition) {
+                this.composition.load();
+                this.composition.on('add', this.onAddComposition);
+                this.composition.on('remove', this.onRemoveComposition);
             }
 
             // Read configuration
@@ -136,7 +137,7 @@
         methods: {
             getPanels() {
                 let panels = this.newDomainObject.configuration.panels;
-
+                console.log("panels", {...panels});
                 for (const id in panels) {
                     let panel = panels[id];
                     this.openmct.objects.get(id).then(domainObject => {
@@ -154,15 +155,17 @@
                 };
             },
             getAlphanumerics() {
+                console.log("configuration", {...this.newDomainObject.configuration});
                 let alphanumerics = this.newDomainObject.configuration.alphanumerics || [];
                 alphanumerics.forEach((alpha, i) => {
-                    console.log('alpha', alpha);
                     alpha.index = i;
                     this.makeTelemetryItem(alpha, false);
                 });
             },
             makeFrameItem(domainObject, initSelect) {
                 let id = this.openmct.objects.makeKeyString(domainObject.identifier);
+                // let subobjectViewConfiguration = new SubobjectViewConfiguration(
+                //     this.newDomainObject, id, rawPosition, style, openmct);
                 this.frameItems.push({
                     id: id,
                     hasFrame: this.frames[id],
@@ -180,22 +183,25 @@
                     dimensions: alphanumeric.dimensions
                 }
                 let style = this.convertPosition(rawPosition);
-                let id = this.openmct.objects.makeKeyString(alphanumeric.identifier);
+                let id = this.openmct.objects.makeKeyString(alphanumeric.identifier);                
 
-                this.openmct.objects.get(id).then(object => {
+                this.openmct.objects.get(id).then(domainObject => {
+                    let telemetryViewConfiguration = new TelemetryViewConfiguration(
+                        this.newDomainObject, alphanumeric, rawPosition, style, openmct);
                     this.frameItems.push({
                         id: id,
-                        domainObject: object,
+                        domainObject: domainObject,
                         style: style,
                         initSelect: initSelect,
                         rawPosition: rawPosition,
                         alphanumeric: alphanumeric,
-                        type: 'telemetry-view'
+                        type: 'telemetry-view',
+                        config: telemetryViewConfiguration
                     });
                 });
             },
             onAddComposition(domainObject) {
-                
+
             },
             onRemoveComposition(identifier) {
                 // TODO: remove the object from frameItems
@@ -271,16 +277,27 @@
             isDrilledIn(id) {
                 return this.drilledIn === id;
             },
-            updatePosition(id, newPosition) {
+            updatePosition(item, newPosition) {
+                let id = item.id;
                 let newStyle = this.convertPosition(newPosition);
-                this.frameStyles[id] = newStyle;
-                this.rawPositions[id] = newPosition;
-                this.frameItems.forEach(function (item) {
-                    if (item.id === id) {
-                        item.style = newStyle;
-                        item.rawPosition = newPosition;
-                    }
-                });
+
+                if (item.type === 'telemetry-view') {
+                    console.log("updatePosition");
+                    item.config.rawPosition = newPosition;
+                    item.config.style = newStyle;
+                    item.style = newStyle;
+                    item.rawPosition = newPosition;
+                    // TODO: find item in frameItems and update it.
+                } else {                    
+                    this.frameStyles[id] = newStyle;
+                    this.rawPositions[id] = newPosition;
+                    this.frameItems.forEach(function (item) {
+                        if (item.id === id) {
+                            item.style = newStyle;
+                            item.rawPosition = newPosition;
+                        }
+                    });
+                }    
             },
             bypassSelection($event) {
                 if (this.dragInProgress) {
@@ -290,15 +307,19 @@
                     return;
                 }
             },
-            endDrag(id) {
+            endDrag(item) {
                 this.dragInProgress = true;
                 setTimeout(function () {
                     this.dragInProgress = false;
                 }.bind(this), 0);
 
-                let path = "configuration.panels[" + id + "]";
-                this.mutate(path + ".dimensions", this.rawPositions[id].dimensions);
-                this.mutate(path + ".position", this.rawPositions[id].position);
+                if (item.type === 'telemetry-view') {
+                    item.config.mutatePosition();
+                } else {
+                    let path = "configuration.panels[" + item.id + "]";
+                    this.mutate(path + ".dimensions", this.rawPositions[item.id].dimensions);
+                    this.mutate(path + ".position", this.rawPositions[item.id].position);    
+                }
             },
             mutate(path, value) {
                 this.openmct.objects.mutate(this.newDomainObject, path, value);
@@ -385,8 +406,11 @@
             this.openmct.selection.on('change', this.setSelection);
         },
         destroyed: function () {
-            this.composition.off('add', this.onAddComposition);
-            this.composition.off('remove', this.onRemoveComposition);
+            if (this.composition) {
+                this.composition.off('add', this.onAddComposition);
+                this.composition.off('remove', this.onRemoveComposition);    
+            }
+
             this.openmct.off('change', this.setSelection);
             this.unlisten();
             this.removeListeners();

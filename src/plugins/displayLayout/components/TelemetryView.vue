@@ -45,18 +45,11 @@
             }
         },
         created: function () {
-            console.log("alphanumerics", {...this.item.domainObject});
-            this.subscriptions = {};
             this.getTelemetry(this.item.domainObject);
         },
         methods: {
             getTelemetry(domainObject) {
-                let id = this.openmct.objects.makeKeyString(domainObject.identifier);
-
-                if (this.subscriptions[id]) {
-                    this.subscriptions[id]();
-                    delete this.subscriptions[id];
-                }
+                this.removeSubscription();
 
                 return Promise.resolve(domainObject)
                     .then(this.fetchHistoricalData)
@@ -77,7 +70,7 @@
             subscribeToObject(object) {
                 let id = this.openmct.objects.makeKeyString(object.identifier);
                 let self = this;
-                this.subscriptions[id] = this.openmct.telemetry.subscribe(object, function (datum) {
+                this.subscription = this.openmct.telemetry.subscribe(object, function (datum) {
                     if (self.openmct.time.clock() !== undefined) {
                         self.updateView(object, datum);
                     }
@@ -112,15 +105,16 @@
                 }
 
                 return valueMetadata;
+            },
+            removeSubscription() {
+                if (this.subscription) {
+                    this.subscription();
+                    this.subscription = undefined;
+                }
             }
         },
         destroyed() {
-            if (this.subscriptions) {
-                Object.values(this.subscriptions).forEach(unsubscribe => {
-                    unsubscribe();
-                });
-            }
-            this.subscriptions = {};
+            this.removeSubscription();
         }
     }
 
