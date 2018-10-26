@@ -136,6 +136,8 @@
 .icon-notebook {  @include glyphBefore($glyph-icon-notebook); }
 .icon-tabs-view {  @include glyphBefore($glyph-icon-tabs-view); }
 .icon-flexible-layout {  @include glyphBefore($glyph-icon-flexible-layout); }
+.icon-generator-telemetry {  @include glyphBefore($glyph-icon-generator-telemetry); }
+.icon-generator-events {  @include glyphBefore($glyph-icon-generator-events); }
 
 /************************** 12 PX CLASSES */
 // TODO: sync with 16px redo as of 10/25/18
