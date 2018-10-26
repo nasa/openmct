@@ -3,10 +3,12 @@
         <div class="c-tabs-view__tabs-holder c-compact-button-holder"
             :class="{
                 'is-dragging': isDragging,
-                'is-mouse-over': isMouseOver
+                'is-mouse-over': allowDrop
             }">
             <div class="c-drop-hint"
-                 @drop="onDrop"></div>
+                 @drop="onDrop"
+                 ref="dropHint">
+            </div>
             <div class="c-tabs-view__empty-message"
                  v-if="!tabsList.length > 0">Drag objects here to add them to this view.</div>
             <button class="c-tabs-view__tab c-compact-button"
@@ -79,6 +81,12 @@
             line-height: $h;
             width: 100%;
         }
+
+        .is-mouse-over {
+           .c-drop-hint {
+               background: yellow;
+           }
+        }
     }
 </style>
 
@@ -105,6 +113,13 @@ export default {
 
         document.addEventListener('dragstart', this.dragstart);
         document.addEventListener('dragend', this.dragend);
+
+        let dropHint = this.$refs.dropHint;
+
+        if (dropHint) {
+            dropHint.addEventListener('dragenter', this.dragenter);
+            dropHint.addEventListener('dragleave', this.dragleave);
+        }
     },
     data: function () {
         return {
@@ -112,7 +127,7 @@ export default {
             tabsList: [],
             setCurrentTab: true,
             isDragging: false,
-            isMouseOver: false
+            allowDrop: false
         };
     },
     methods:{
@@ -144,12 +159,11 @@ export default {
         dragend (e) {
             this.isDragging = false;
         },
-        mouseOver () {
-            console.log('mouseover');
-            this.isMouseOver = true;
+        dragenter () {
+            this.allowDrop = true;
         },
-        mouseOut () {
-            this.isMouseOver = false;
+        dragleave() {
+            this.allowDrop = false;
         }
     },
     destroyed() {
@@ -157,6 +171,12 @@ export default {
 
         document.removeEventListener('dragstart', this.dragstart);
         document.removeEventListener('dragend', this.dragend);
+    },
+    beforeDestroy() {
+        let dropHint = this.$refs.dropHint;
+
+        dropHint.removeEventListener('dragenter', this.dragenter);
+        dropHint.removeEventListener('dragleave', this.dragleave);
     }
 }
 </script>
