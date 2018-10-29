@@ -348,7 +348,7 @@ body.desktop .has-local-controls {
     .l-shell__main-container > .l-layout,
     .l-shell__main-container > .c-object-view .l-fixed-position {
         // Target the top-most layout container and color its background
-        background: rgba($editColor, 0.1);
+        background: $editColorBg;
     }
 
     // Layouts

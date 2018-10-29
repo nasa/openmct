@@ -21,10 +21,10 @@
  *****************************************************************************/
 
 <template>
-    <div class="flex-container"
+    <div class="c-fl-container"
          :style="[{'min-width': minWidth}]">
 
-        <frame-component 
+        <frame-component
             v-for="(frame, index) in frames"
             :key="index"
             :style="{ 

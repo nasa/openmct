@@ -23,29 +23,55 @@
 </template>
 
 <style lang="scss">
-    @import '~styles/sass-base.scss';
+    @import '~styles/sass-base';
 
-    .flexible-layout-container {
+    .l-fl {
+        @include abs();
         display: flex;
         flex-direction: column;
         .header {
             font-size: 22px;
-            text-align: center; 
+            text-align: center;
             min-height: 30px;
             min-width: 100%;
             background: rgb(66, 96, 96);
+        }
 
-            &:hover{
-                cursor: pointer;
+        > * + * {
+            margin-top: $interiorMargin;
+        }
+
+        .temp-toolbar {
+            flex: 0 0 auto;
+        }
+
+        &__container-holder {
+            // Holds containers
+            display: flex;
+            flex: 1 1 auto;
+
+            &[class*='-column'] {
+               // @include test(blue);
+                flex-direction: column;
+
+                > * + * {
+                    margin-top: 1px;
+                }
+            }
+
+            &[class*='-row'] {
+               // @include test(red);
+                flex-direction: row;
+
+                > * + * {
+                    margin-left: 1px;
+                }
             }
         }
 
-        .body {
-            min-width: 100%;
-            min-height: 85vh;
-            max-height: 85vh;
-            display: flex;
-            flex-direction: row;
+        &__container {
+            background: $editColorBg;
+            flex: 1 1 auto;
         }
     }
 </style>
