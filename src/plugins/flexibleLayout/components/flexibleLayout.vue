@@ -1,6 +1,7 @@
 <template>
     <div class="flexible-layout-container">
         <div class="header" 
+             v-if="isEditing"
              @click="addColumn">
             Add a new column
         </div>
@@ -12,6 +13,7 @@
                  :index="index"
                  :minWidth="column.width || `${100/columns.length}%`"
                  :rows="column.rows"
+                 :isEditing="isEditing"
                  @addRow="addRow"
                  @object-drag-from="dragFromHandler"
                  @object-drop-to="dropToHandler">
@@ -62,7 +64,8 @@ export default {
 
         return {
             columns: columns,
-            dragFrom: []
+            dragFrom: [],
+            isEditing: false
         }
     },
     methods: {
@@ -88,7 +91,14 @@ export default {
         },
         persist(){
             this.openmct.objects.mutate(this.domainObject, '.configuration.columns', this.columns);
+        },
+        isEditingHandler(isEditing) {
+            this.isEditing = isEditing;
         }
+    },
+    mounted() {
+        console.log(this.openmct.editor);
+        this.openmct.editor.on('isEditing', this.isEditingHandler);
     }
 }
 </script>

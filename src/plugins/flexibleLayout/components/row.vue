@@ -30,6 +30,7 @@
             :object="row.domainObject">
         </object-view>
         <div class="drop-container add"
+             v-if="isEditing"
              @drop="dropHandler">
             +
         </div>
@@ -53,7 +54,7 @@
 import ObjectView from '../../../ui/components/layout/ObjectView.vue';
 
 export default {
-    props: ['row', 'index'],
+    props: ['row', 'index', 'isEditing'],
     components: {
         ObjectView
     },

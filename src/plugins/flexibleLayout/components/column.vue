@@ -32,6 +32,7 @@
                 }"
             :row="row"
             :index="index"
+            :isEditing="isEditing"
             @object-drag-from="dragFrom"
             @object-drop-to="dropTo">
         </row-component>
@@ -75,7 +76,7 @@ import RowComponent from './row.vue';
 import Row from '../utils/row'
 
 export default {
-    props: ['minWidth', 'rows', 'index'],
+    props: ['minWidth', 'rows', 'index', 'isEditing'],
     components: {
         RowComponent
     },
