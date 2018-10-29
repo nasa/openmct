@@ -212,10 +212,7 @@
         mounted() {
             let context = {};
             context.item = this.item.domainObject;
-
-            if (this.item.type === 'telemetry-view') {
-                context.telemetryView = this.item;
-            }
+            context.view = this.item;
 
             this.removeSelectable = this.openmct.selection.selectable(
                 this.$el,
