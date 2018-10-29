@@ -79,19 +79,16 @@ export default {
     components: {
         RowComponent
     },
-    data() {
-
-    },
     methods: {
         dragFrom(rowIndex) {
            this.$emit('object-drag-from', this.index, rowIndex);
         },
         dropTo(rowIndex, event) {
-            let domainObject = JSON.parse(event.dataTransfer.getData('domainObject')),
+            let domainObject = event.dataTransfer.getData('domainObject'),
                 rowObject;
 
             if (domainObject) {
-                rowObject = new Row(domainObject);
+                rowObject = new Row(JSON.parse(domainObject));
             }
 
             this.$emit('object-drop-to', this.index, rowIndex, rowObject);

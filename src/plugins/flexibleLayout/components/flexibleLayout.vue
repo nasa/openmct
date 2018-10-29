@@ -53,12 +53,15 @@ import ColumnComponent  from '../components/column.vue';
 import Column from '../utils/column';
 
 export default {
+    inject: ['openmct', 'domainObject'],
     components: {
         columnComponent: ColumnComponent
     },
     data() {
+        let columns = this.domainObject.configuration.columns;
+
         return {
-            columns: [],
+            columns: columns,
             dragFrom: []
         }
     },
@@ -80,6 +83,11 @@ export default {
             }
 
             this.columns[columnIndex].rows.splice((rowIndex + 1), 0, rowObject);
+
+            this.persist();
+        },
+        persist(){
+            this.openmct.objects.mutate(this.domainObject, '.configuration.columns', this.columns);
         }
     }
 }

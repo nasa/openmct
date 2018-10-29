@@ -22,7 +22,8 @@
 
 <template>
     <div class="row">
-        <object-view 
+        <object-view
+            class="c-object-view" 
             v-if="row.domainObject"
             ref="dragObject"
             draggable="true" 
