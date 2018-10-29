@@ -24,23 +24,16 @@
     <div class="column"
          :style="[{'min-width': minWidth}]">
 
-        <div v-if="!rows.length"
-             class="add large"
-             @click="addRow"
-             :style="{
-                    'min-height': `${100/(rows.length+1)}%`,
-                    'max-height': `${100/(rows.length+1)}%`,
-                    'background': allowDrop ? 'purple' : '#009bd140'
-            }"
-        >+</div>
-
         <row-component 
             v-for="(row, index) in rows"
             :key="index"
             :style="{ 
                 'min-height': row.height || `${100/rows.length}%`
                 }"
-            :row="row">
+            :row="row"
+            :index="index"
+            @object-drag-from="dragFrom"
+            @object-drop-to="dropTo">
         </row-component>
     </div>
 </template>
@@ -87,36 +80,22 @@ export default {
         RowComponent
     },
     data() {
-        return {
-            allowDrop: false
-        }
+
     },
     methods: {
-        addRow(domainObject) {
-            var row = new Row(domainObject);
-
-            this.$emit('addRow', row, this.index);
+        dragFrom(rowIndex) {
+           this.$emit('object-drag-from', this.index, rowIndex);
         },
-        activateDrop() {
-            this.allowDrop = true;
-        },
-        deactivateDrop() {
-            this.allowDrop = false
-        },
-        onDrop(e) {
-            let domainObject = JSON.parse(e.dataTransfer.getData('domainObject'));
+        dropTo(rowIndex, event) {
+            let domainObject = JSON.parse(event.dataTransfer.getData('domainObject')),
+                rowObject;
 
             if (domainObject) {
-                this.addRow(domainObject);
-            } 
+                rowObject = new Row(domainObject);
+            }
 
-            this.deactivateDrop();
+            this.$emit('object-drop-to', this.index, rowIndex, rowObject);
         }
-    },
-    mounted() {
-        this.$el.addEventListener('dragenter', this.activateDrop);
-        this.$el.addEventListener('dragleave', this.deactivateDrop);
-        this.$el.addEventListener('drop', this.onDrop);
     }
 }
 </script>

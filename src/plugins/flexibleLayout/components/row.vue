@@ -23,10 +23,13 @@
 <template>
     <div class="row">
         <object-view 
+            v-if="row.domainObject"
+            ref="dragObject"
             draggable="true" 
             :object="row.domainObject">
         </object-view>
-        <div class="drop-container add">
+        <div class="drop-container add"
+             @drop="dropHandler">
             +
         </div>
     </div>
@@ -49,12 +52,24 @@
 import ObjectView from '../../../ui/components/layout/ObjectView.vue';
 
 export default {
-    props: ['row'],
+    props: ['row', 'index'],
     components: {
         ObjectView
     },
+    methods: {
+        dragstart(event) {
+            this.$emit('object-drag-from', this.index);
+        },
+        dropHandler(event){
+            event.stopPropagation();
+
+            this.$emit('object-drop-to', this.index, event);
+        }
+    },
     mounted() {
-        console.log(this.row);
+        if (this.$refs.dragObject) {
+            this.$refs.dragObject.$el.addEventListener('dragstart', this.dragstart);
+        }
     }
 }
 </script>

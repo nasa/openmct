@@ -12,7 +12,9 @@
                  :index="index"
                  :minWidth="column.width || `${100/columns.length}%`"
                  :rows="column.rows"
-                 @addRow="addRow">
+                 @addRow="addRow"
+                 @object-drag-from="dragFromHandler"
+                 @object-drop-to="dropToHandler">
             </column-component>
         </div> 
     </div>
@@ -56,7 +58,8 @@ export default {
     },
     data() {
         return {
-            columns: []
+            columns: [],
+            dragFrom: []
         }
     },
     methods: {
@@ -67,6 +70,16 @@ export default {
         },
         addRow(row, index) {
             this.columns[index].addRow(row);
+        },
+        dragFromHandler(columnIndex, rowIndex) {
+            this.dragFrom = [columnIndex, rowIndex];
+        },
+        dropToHandler(columnIndex, rowIndex, rowObject) {
+            if (!rowObject) {
+                rowObject = this.columns[this.dragFrom[0]].rows.splice(this.dragFrom[1], 1)[0];
+            }
+
+            this.columns[columnIndex].rows.splice((rowIndex + 1), 0, rowObject);
         }
     }
 }
