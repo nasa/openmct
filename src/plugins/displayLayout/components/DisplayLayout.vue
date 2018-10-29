@@ -134,7 +134,7 @@
         methods: {
             getPanels() {
                 let panels = this.newDomainObject.configuration.panels;
-                console.log("panels", {...panels});
+
                 for (const id in panels) {
                     let panel = panels[id];
                     this.openmct.objects.get(id).then(domainObject => {
@@ -156,8 +156,7 @@
                     this.makeTelemetryItem(alpha, false);
                 });
             },
-            makeFrameItem(panel, initSelect) {   
-                console.log("hasFrame", panel.hasFrame);             
+            makeFrameItem(panel, initSelect) {
                 let rawPosition = {
                     position: panel.position,
                     dimensions: panel.dimensions
@@ -187,9 +186,9 @@
                 let rawPosition = {
                     position: alphanumeric.position,
                     dimensions: alphanumeric.dimensions
-                }
+                };
                 let style = this.convertPosition(rawPosition);
-                let id = this.openmct.objects.makeKeyString(alphanumeric.identifier);                
+                let id = this.openmct.objects.makeKeyString(alphanumeric.identifier);
 
                 this.openmct.objects.get(id).then(domainObject => {
                     let telemetryViewConfiguration = new TelemetryViewConfiguration(
@@ -252,7 +251,6 @@
                 }
 
                 this.removeListeners();
-                let context = selection[0].context;
                 let view = selection[0].context.view;
 
                 if (selection[1] && view) {
@@ -267,10 +265,8 @@
                 this.updateDrilledInState();
             },
             attachPanelListeners(item) {
-                // let id = this.openmct.objects.makeKeyString(domainObject.identifier);
                 let path = "configuration.panels[" + item.id + "]";
                 this.listeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".hasFrame", function (newValue) {
-                    console.log("hasFrame new value", newValue);
                     item.hasFrame = newValue;
                     // TODO: should update item.config.hasFrame?
                 }.bind(this)));
