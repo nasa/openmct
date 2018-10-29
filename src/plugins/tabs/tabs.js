@@ -21,19 +21,19 @@
  *****************************************************************************/
 
 define([
-    './components/flexibleLayout.vue',
+    './components/tabs.vue',
     'vue'
 ], function (
-    FlexibleLayoutComponent,
+    TabsComponent,
     Vue
 ) {
-    function FlexibleLayout(openmct) {
+    function Tabs(openmct) {
         return {
-            key: 'flexible-layout',
-            name: 'FlexibleLayout',
-            cssClass: 'icon-layout-view',
+            key: 'tabs',
+            name: 'Tabs',
+            cssClass: 'icon-list-view',
             canView: function (domainObject) {
-                return domainObject.type === 'flexible-layout';
+                return domainObject.type === 'tabs';
             },
             view: function (domainObject) {
                 let component;
@@ -42,7 +42,7 @@ define([
                     show: function (element) {
                         component =  new Vue({
                             components: {
-                                FlexibleLayoutComponent: FlexibleLayoutComponent.default
+                                TabsComponent: TabsComponent.default
                             },
                             provide: {
                                 openmct,
@@ -50,7 +50,7 @@ define([
                                 composition: openmct.composition.get(domainObject)
                             },
                             el: element,
-                            template: '<flexible-layout-component></flexible-layout-component>'
+                            template: '<tabs-component></tabs-component>'
                         });
                     },
                     destroy: function (element) {
@@ -64,5 +64,5 @@ define([
             }
         };
     }
-    return FlexibleLayout;
+    return Tabs;
 });
