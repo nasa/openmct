@@ -24,8 +24,8 @@
     <div class="column"
          :style="[{'min-width': minWidth}]">
 
-        <div class="add"
-             :class="[rows.length ? 'large' : 'small']"
+        <div v-if="!rows.length"
+             class="add large"
              @click="addRow"
              :style="{
                     'min-height': `${100/(rows.length+1)}%`,
@@ -37,8 +37,7 @@
         <row-component 
             v-for="(row, index) in rows"
             :key="index"
-            :style="{
-                'max-height':row.height || `${100/(rows.length)}%`, 
+            :style="{ 
                 'min-height': row.height || `${100/rows.length}%`
                 }"
             :row="row">
@@ -66,10 +65,6 @@
 
         .large{
             min-height: 100%;
-        }
-
-        .small{
-            max-height: 100px;
         }
     }
 

@@ -1,6 +1,8 @@
+import Row from './row';
+
 class Column {
     constructor (width) {
-        this.rows = [];
+        this.rows = [new Row({}, '5%')];
         this.width = width;
     }
 

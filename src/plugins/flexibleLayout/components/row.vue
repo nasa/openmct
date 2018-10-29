@@ -22,8 +22,13 @@
 
 <template>
     <div class="row">
-        <object-view :object="row.domainObject">
+        <object-view 
+            draggable="true" 
+            :object="row.domainObject">
         </object-view>
+        <div class="drop-container add">
+            +
+        </div>
     </div>
 </template>
 
@@ -32,6 +37,11 @@
     .row{
         min-width: 100%;
         min-height: 100%;
+
+        .drop-container {
+            min-height: 40px;
+            min-width: 100%;
+        }
     }
 </style>
 
