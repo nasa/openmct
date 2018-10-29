@@ -19,19 +19,18 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 <template>
-    <div style="display: contents;">
-        <div class="c-frame__header">
-            <div class="c-frame__header__start">
-                <div class="c-frame__name icon-object">{{ item.domainObject.name }}</div>
-                <div class="c-frame__context-actions c-disclosure-button"></div>
+    <div class="u-contents">
+        <div class="c-so-view__header">
+            <div class="c-so-view__header__start">
+                <div class="c-so-view__name icon-object">{{ item.domainObject.name }}</div>
+                <div class="c-so-view__context-actions c-disclosure-button"></div>
             </div>
-            <div class="c-frame__header__end">
+            <div class="c-so-view__header__end">
                 <div class="c-button icon-expand local-controls--hidden"></div>
             </div>
         </div>
-        <object-view class="c-frame__object-view"
+        <object-view class="c-so-view__object-view"
                      :object="item.domainObject"></object-view>
     </div>
 </template>
@@ -39,13 +38,7 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
-    /******************************* FRAME */
-    .c-frame {
-        display: flex;
-        flex-direction: column;
-        border-width: 1px;
-        border-color: transparent;
-
+    .c-so-view {
         /*************************** HEADER */
         &__header {
             display: flex;
@@ -101,24 +94,8 @@
                 }
             }
         }
-
-        /*************************** NO-FRAME */
-        &.no-frame {
-            > [class*="__header"] {
-                display: none;
-            }
-        }
-
-        &:not(.no-frame) {
-            background: $colorBodyBg;
-            border: 1px solid $colorInteriorBorder;
-            padding: $interiorMargin;
-        }
-
-        // Styles moved to _global.scss;
     }
 </style>
-
 
 <script>
     import ObjectView from '../../../ui/components/layout/ObjectView.vue'

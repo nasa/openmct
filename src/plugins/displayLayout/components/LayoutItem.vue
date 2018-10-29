@@ -51,68 +51,11 @@
     .c-frame {
         display: flex;
         flex-direction: column;
-        border-width: 1px;
-        border-color: transparent;
-
-        /*************************** HEADER */
-        &__header {
-            display: flex;
-            align-items: center;
-            flex: 0 0 auto;
-            margin-bottom: $interiorMargin;
-
-            > [class*="__"] {
-                display: flex;
-                align-items: center;
-            }
-
-            > * + * {
-                margin-left: $interiorMargin;
-            }
-
-            [class*="__start"] {
-                flex: 1 1 auto;
-                overflow: hidden;
-            }
-
-            [class*="__end"] {
-                //justify-content: flex-end;
-                flex: 0 0 auto;
-
-                [class*="button"] {
-                    font-size: 0.7em;
-                }
-            }
-        }
-
-        &__name {
-            @include ellipsize();
-            flex: 0 1 auto;
-            font-size: 1.2em;
-
-            &:before {
-                // Object type icon
-                flex: 0 0 auto;
-                margin-right: $interiorMarginSm;
-            }
-        }
-
-        /*************************** OBJECT VIEW */
-        &__object-view {
-            flex: 1 1 auto;
-            overflow: auto;
-
-            .c-object-view {
-                .u-fills-container {
-                    // Expand component types that fill a container
-                    @include abs();
-                }
-            }
-        }
+        border: 1px solid transparent;
 
         /*************************** NO-FRAME */
         &.no-frame {
-            > [class*="__header"] {
+            > [class*="contents"] > [class*="__header"] {
                 display: none;
             }
         }
@@ -122,8 +65,6 @@
             border: 1px solid $colorInteriorBorder;
             padding: $interiorMargin;
         }
-
-        // Styles moved to _global.scss;
     }
 </style>
 

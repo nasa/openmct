@@ -21,11 +21,28 @@
  *****************************************************************************/
 
  <template>
-    <div>
-        <span>{{ item.domainObject.name }}</span>
-        <span :class=[telemetryClass]>{{ telemetryValue }}</span>
+    <div class="c-telemetry-view">
+        <span class="c-telemetry-view__label">{{ item.domainObject.name }}</span>
+        <span class="c-telemetry-view__value"
+              :class=[telemetryClass]>{{ telemetryValue }}</span>
     </div>    
  </template>
+
+<style lang="scss">
+    @import '~styles/sass-base';
+
+    .c-telemetry-view {
+        display: flex;
+        > * + * {
+            margin-left: $interiorMargin;
+        }
+
+        > * {
+            @include ellipsize();
+            flex: 1 1 auto;
+        }
+    }
+</style>
 
  <script>
     export default {

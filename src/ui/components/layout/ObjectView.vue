@@ -1,12 +1,6 @@
 <template>
 </template>
 
-<style lang="scss">
-    .c-object-view {
-        display: contents;
-    }
-</style>
-
 <script>
 import _ from "lodash"
 
@@ -53,7 +47,7 @@ export default {
                 return;
             }
             this.viewContainer = document.createElement('div');
-            this.viewContainer.classList.add('c-object-view');
+            this.viewContainer.classList.add('c-object-view','u-contents');
             this.$el.append(this.viewContainer);
             let provider = this.openmct.objectViews.getByProviderKey(this.viewKey);
             if (!provider) {
