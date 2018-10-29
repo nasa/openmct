@@ -103,29 +103,21 @@
             updateView(telemetryObject, datum) {
                 let metadata = this.openmct.telemetry.getMetadata(telemetryObject);
                 let valueMetadata = this.chooseValueMetadataToDisplay(metadata);
-                // console.log("valueMetadata", valueMetadata);
-                this.telemetryValue = this.getFormattedTelemetryValueForKey(valueMetadata, datum);
-                // console.log("telemetryValue", this.telemetryValue);
+                if (valueMetadata === undefined) {
+                    return;
+                }
+
+                let formatter = this.openmct.telemetry.getValueFormatter(valueMetadata);
+                this.telemetryValue = formatter && formatter.format(datum);
 
                 let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
-                let alarm = limitEvaluator && limitEvaluator.evaluate(datum, valueMetadata);                
+                let alarm = limitEvaluator && limitEvaluator.evaluate(datum, valueMetadata);
                 this.telemetryClass = alarm && alarm.cssClass;
             },
-            getFormattedTelemetryValueForKey(valueMetadata, datum) {
-                let formatter = this.openmct.telemetry.getValueFormatter(valueMetadata);
-                return formatter.format(datum);
-            },
             chooseValueMetadataToDisplay(metadata) {
-                // If there is a range value, show that preferentially
-                let valueMetadata = metadata.valuesForHints(['range'])[0];
-
-                // If no range is defined, default to the highest priority non time-domain data.
-                if (valueMetadata === undefined) {
-                    let valuesOrderedByPriority = metadata.values();
-                    valueMetadata = valuesOrderedByPriority.filter(function (values) {
-                        return !(values.hints.domain);
-                    })[0];
-                }
+                let valueMetadata = metadata.values().filter(function (value) {
+                    return value.key === this.item.config.alphanumeric.value;
+                }.bind(this))[0];
 
                 return valueMetadata;
             },

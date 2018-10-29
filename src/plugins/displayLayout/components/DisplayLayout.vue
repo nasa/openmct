@@ -356,7 +356,7 @@
                 newAlpha.position = position;
                 newAlpha.dimensions = this.defaultDimensions();
                 newAlpha.displayMode = 'all'; // Default mode
-                newAlpha.value = 'sine'; // Default value
+                newAlpha.value = 'sin'; // Default value
 
                 let alphanumerics = this.newDomainObject.configuration.alphanumerics || [];
                 newAlpha.index = alphanumerics.push(newAlpha) - 1;
