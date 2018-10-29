@@ -24,7 +24,7 @@
     <div class="c-telemetry-view">
         <span class="c-telemetry-view__label">{{ item.domainObject.name }}</span>
         <span class="c-telemetry-view__value"
-              :class=[telemetryClass]>{{ telemetryValue }}</span>
+              :class="[telemetryClass]">{{ telemetryValue }}</span>
     </div>    
  </template>
 
@@ -100,10 +100,12 @@
                 let valueMetadata = this.chooseValueMetadataToDisplay(metadata);
                 // console.log("valueMetadata", valueMetadata);
                 this.telemetryValue = this.getFormattedTelemetryValueForKey(valueMetadata, datum);
+                // console.log("telemetryValue", this.telemetryValue);
 
                 let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
                 let alarm = limitEvaluator && limitEvaluator.evaluate(datum, valueMetadata);                
                 this.telemetryClass = alarm && alarm.cssClass;
+                // console.log("telemetryClass", this.telemetryClass);
             },
             getFormattedTelemetryValueForKey(valueMetadata, datum) {
                 let formatter = this.openmct.telemetry.getValueFormatter(valueMetadata);
