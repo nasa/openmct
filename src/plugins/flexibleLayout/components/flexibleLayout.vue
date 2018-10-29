@@ -2,22 +2,22 @@
     <div class="flexible-layout-container">
         <div class="header" 
              v-if="isEditing"
-             @click="addColumn">
-            Add a new column
+             @click="addContainer">
+            Add a new Container
         </div>
 
         <div class="body">
-            <column-component
-                 v-for="(column, index) in columns"
+            <container-component
+                 v-for="(container, index) in containers"
                  :key="index"
                  :index="index"
-                 :minWidth="column.width || `${100/columns.length}%`"
-                 :rows="column.rows"
+                 :minWidth="container.width || `${100/containers.length}%`"
+                 :frames="container.frames"
                  :isEditing="isEditing"
-                 @addRow="addRow"
+                 @addFrame="addFrame"
                  @object-drag-from="dragFromHandler"
                  @object-drop-to="dropToHandler">
-            </column-component>
+            </container-component>
         </div> 
     </div>
 </template>
@@ -51,53 +51,52 @@
 </style>
 
 <script>
-import ColumnComponent  from '../components/column.vue';
-import Column from '../utils/column';
+import ContainerComponent  from '../components/container.vue';
+import Container from '../utils/container';
 
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
-        columnComponent: ColumnComponent
+        ContainerComponent
     },
     data() {
-        let columns = this.domainObject.configuration.columns;
+        let containers = this.domainObject.configuration.containers;
 
         return {
-            columns: columns,
+            containers: containers,
             dragFrom: [],
             isEditing: false
         }
     },
     methods: {
-        addColumn() {
-            let column = new Column()
+        addContainer() {
+            let container = new Container()
 
-            this.columns.push(column);
+            this.containers.push(container);
         },
-        addRow(row, index) {
-            this.columns[index].addRow(row);
+        addFrame(frame, index) {
+            this.containers[index].addFrame(frame);
         },
-        dragFromHandler(columnIndex, rowIndex) {
-            this.dragFrom = [columnIndex, rowIndex];
+        dragFromHandler(containerIndex, frameIndex) {
+            this.dragFrom = [containerIndex, frameIndex];
         },
-        dropToHandler(columnIndex, rowIndex, rowObject) {
-            if (!rowObject) {
-                rowObject = this.columns[this.dragFrom[0]].rows.splice(this.dragFrom[1], 1)[0];
+        dropToHandler(containerIndex, frameIndex, frameObject) {
+            if (!frameObject) {
+                frameObject = this.containers[this.dragFrom[0]].frames.splice(this.dragFrom[1], 1)[0];
             }
 
-            this.columns[columnIndex].rows.splice((rowIndex + 1), 0, rowObject);
+            this.containers[containerIndex].frames.splice((frameIndex + 1), 0, frameObject);
 
             this.persist();
         },
         persist(){
-            this.openmct.objects.mutate(this.domainObject, '.configuration.columns', this.columns);
+            this.openmct.objects.mutate(this.domainObject, '.configuration.containers', this.containers);
         },
         isEditingHandler(isEditing) {
             this.isEditing = isEditing;
         }
     },
     mounted() {
-        console.log(this.openmct.editor);
         this.openmct.editor.on('isEditing', this.isEditingHandler);
     }
 }

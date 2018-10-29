@@ -21,13 +21,12 @@
  *****************************************************************************/
 
 <template>
-    <div class="row">
+    <div class="flex-frame" draggable="true">
         <object-view
-            class="c-object-view" 
-            v-if="row.domainObject"
+            class="c-object-view"
+            v-if="frame.domainObject"
             ref="dragObject"
-            draggable="true" 
-            :object="row.domainObject">
+            :object="frame.domainObject">
         </object-view>
         <div class="drop-container add"
              v-if="isEditing"
@@ -39,7 +38,7 @@
 
 <style lang="scss">
 
-    .row{
+    .flex-frame{
         min-width: 100%;
         min-height: 100%;
 
@@ -54,12 +53,13 @@
 import ObjectView from '../../../ui/components/layout/ObjectView.vue';
 
 export default {
-    props: ['row', 'index', 'isEditing'],
+    props: ['frame', 'index', 'isEditing'],
     components: {
         ObjectView
     },
     methods: {
         dragstart(event) {
+            console.log('dragging');
             this.$emit('object-drag-from', this.index);
         },
         dropHandler(event){
@@ -69,9 +69,7 @@ export default {
         }
     },
     mounted() {
-        if (this.$refs.dragObject) {
-            this.$refs.dragObject.$el.addEventListener('dragstart', this.dragstart);
-        }
+        this.$el.addEventListener('dragstart', this.dragstart);
     }
 }
 </script>

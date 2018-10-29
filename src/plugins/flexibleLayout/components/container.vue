@@ -21,27 +21,27 @@
  *****************************************************************************/
 
 <template>
-    <div class="column"
+    <div class="flex-container"
          :style="[{'min-width': minWidth}]">
 
-        <row-component 
-            v-for="(row, index) in rows"
+        <frame-component 
+            v-for="(frame, index) in frames"
             :key="index"
             :style="{ 
-                'min-height': row.height || `${100/rows.length}%`
+                'min-height': frame.height || `${100/frames.length}%`
                 }"
-            :row="row"
+            :frame="frame"
             :index="index"
             :isEditing="isEditing"
             @object-drag-from="dragFrom"
             @object-drop-to="dropTo">
-        </row-component>
+        </frame-component>
     </div>
 </template>
 
 <style lang="scss">
 
-.column{
+.flex-container{
     min-height: 100%;
     min-width: 100%;
 
@@ -72,27 +72,27 @@
 </style>
 
 <script>
-import RowComponent from './row.vue';
-import Row from '../utils/row'
+import FrameComponent from './frame.vue';
+import Frame from '../utils/frame'
 
 export default {
-    props: ['minWidth', 'rows', 'index', 'isEditing'],
+    props: ['minWidth', 'frames', 'index', 'isEditing'],
     components: {
-        RowComponent
+        FrameComponent
     },
     methods: {
-        dragFrom(rowIndex) {
-           this.$emit('object-drag-from', this.index, rowIndex);
+        dragFrom(frameIndex) {
+           this.$emit('object-drag-from', this.index, frameIndex);
         },
-        dropTo(rowIndex, event) {
+        dropTo(frameIndex, event) {
             let domainObject = event.dataTransfer.getData('domainObject'),
-                rowObject;
+                frameObject;
 
             if (domainObject) {
-                rowObject = new Row(JSON.parse(domainObject));
+                frameObject = new Frame(JSON.parse(domainObject));
             }
 
-            this.$emit('object-drop-to', this.index, rowIndex, rowObject);
+            this.$emit('object-drop-to', this.index, frameIndex, frameObject);
         }
     }
 }

@@ -36,7 +36,7 @@ define([
                 initialize: function (domainObject) {
                     domainObject.composition = [];
                     domainObject.configuration = {
-                        columns: []
+                        containers: []
                     };
                 }
             });
