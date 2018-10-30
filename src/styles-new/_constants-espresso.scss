@@ -90,6 +90,7 @@ $colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
 
 // Edit Colors
 $editColor: #00c7c3;
+$editColorBg: rgba($editColor, 0.1);
 $editColorFg: $colorBodyFg;
 $browseBorderSelectableHov: 1px dotted rgba($colorBodyFg, 0.2);
 $browseShdwSelectableHov: rgba($colorBodyFg, 0.2) 0 0 3px;
