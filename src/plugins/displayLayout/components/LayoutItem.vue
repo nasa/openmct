@@ -138,7 +138,11 @@
                 this.updatePosition(event);
 
                 if (this.activeDrag) {
-                    this.$emit('dragInProgress', this.item, this.activeDrag.getAdjustedPosition(this.delta));
+                    this.$emit(
+                        'dragInProgress',
+                        this.item,
+                        this.activeDrag.getAdjustedPosition(this.delta)
+                    );
                 }
             },
             endDrag(event) {

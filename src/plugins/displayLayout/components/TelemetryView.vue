@@ -22,9 +22,9 @@
 
  <template>
     <div class="c-telemetry-view">
-        <span v-if="!hideLabel"
+        <span v-if="showLabel"
               class="c-telemetry-view__label">{{ item.domainObject.name }}</span>
-        <span v-if="!hideValue"
+        <span v-if="showValue"
               class="c-telemetry-view__value"
               :class="[telemetryClass]">{{ telemetryValue }}</span>
     </div>    
@@ -53,11 +53,13 @@
             item: Object
         },
         computed: {
-            hideLabel: function () {
-                return this.item.config.displayMode === 'value' ? true : false;
+            showLabel: function () {
+                let displayMode = this.item.config.alphanumeric.displayMode;
+                return (displayMode === 'all' || displayMode === 'label') ? true : false;
             },
-            hideValue: function () {
-                return this.item.config.displayMode === 'label' ? true : false;
+            showValue: function () {
+                let displayMode = this.item.config.alphanumeric.displayMode;
+                return displayMode === 'value' || displayMode == 'all' ? true : false;
             }
         },
         data() {
@@ -71,15 +73,12 @@
         },
         methods: {
             getTelemetry(domainObject) {
-                this.removeSubscription();
-
                 return Promise.resolve(domainObject)
                     .then(this.fetchHistoricalData)
                     .then(this.subscribeToObject);
             },
             fetchHistoricalData(object) {
                 let bounds = this.openmct.time.bounds();
-
                 this.openmct.telemetry.request(object, {start: bounds.start, end: bounds.end, size: 1})
                     .then(function (data) {
                         if (data.length > 0) {
@@ -102,7 +101,10 @@
             },
             updateView(telemetryObject, datum) {
                 let metadata = this.openmct.telemetry.getMetadata(telemetryObject);
-                let valueMetadata = this.chooseValueMetadataToDisplay(metadata);
+                let valueMetadata = metadata.values().filter(function (value) {
+                    return value.key === this.item.config.alphanumeric.value;
+                }.bind(this))[0];
+
                 if (valueMetadata === undefined) {
                     return;
                 }
@@ -114,13 +116,6 @@
                 let alarm = limitEvaluator && limitEvaluator.evaluate(datum, valueMetadata);
                 this.telemetryClass = alarm && alarm.cssClass;
             },
-            chooseValueMetadataToDisplay(metadata) {
-                let valueMetadata = metadata.values().filter(function (value) {
-                    return value.key === this.item.config.alphanumeric.value;
-                }.bind(this))[0];
-
-                return valueMetadata;
-            },
             removeSubscription() {
                 if (this.subscription) {
                     this.subscription();
@@ -128,8 +123,12 @@
                 }
             }
         },
+        mounted() {
+            this.item.config.attachSelectionListeners();
+        },
         destroyed() {
             this.removeSubscription();
+            this.item.config.destroy();
         }
     }
 

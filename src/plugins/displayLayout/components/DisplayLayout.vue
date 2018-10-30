@@ -259,20 +259,18 @@
                     } else if (view.type === 'subobject-view') {
                         this.attachPanelListeners(view);
                     }
-                    // TODO: Replace with view.config.attachListeners();
                 }
 
                 this.updateDrilledInState();
             },
             attachPanelListeners(item) {
-                let path = "configuration.panels[" + item.id + "]";
-                this.listeners.push(this.openmct.objects.observe(this.newDomainObject, path + ".hasFrame", function (newValue) {
-                    item.hasFrame = newValue;
-                    // TODO: should update item.config.hasFrame?
-                }.bind(this)));
-            },
-            attachAlphanumericListeners(item) {
-                // TODO: listen for displayMode and value changes
+                let path = "configuration.panels[" + item.id + "].hasFrame";
+                this.listeners.push(
+                    this.openmct.objects.observe(this.newDomainObject, path, function (newValue) {
+                        item.hasFrame = newValue;
+                        // TODO: should update item.config.hasFrame?
+                    }.bind(this))
+                );                
             },
             updateDrilledInState(id) {
                 this.drilledIn = id;
@@ -284,7 +282,6 @@
                 return this.drilledIn === id;
             },
             updatePosition(item, newPosition) {
-                console.log("updatePosition");
                 let id = item.id;
                 let newStyle = this.convertPosition(newPosition);
                 item.config.style = newStyle;
@@ -376,11 +373,8 @@
                 this.listeners = [];
             },
             isTelemetry(domainObject) {
-                let type = domainObject.type;
-                let typeDef = this.openmct.types.get(type).definition;
-
                 if (this.openmct.telemetry.isTelemetryObject(domainObject)
-                    && type !== 'summary-widget') {
+                    && domainObject.type !== 'summary-widget') {
                     return true;
                 } else {
                     return false;
