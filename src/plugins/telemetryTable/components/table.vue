@@ -31,9 +31,8 @@
     </div>
     <div v-if="isDropTargetActive" class="c-telemetry-table__drop-target" :style="dropTargetStyle"></div>
     <!-- Headers table -->
-    <div class="c-telemetry-table__headers-w js-table__headers-w" ref="headersTable">
-        <table class="c-table__headers c-telemetry-table__headers"
-               :style="{ 'max-width': totalWidth + 'px'}">
+    <div class="c-telemetry-table__headers-w js-table__headers-w" ref="headersTable" :style="{ 'max-width': totalWidth + 'px'}">
+        <table class="c-table__headers c-telemetry-table__headers">
             <thead>
                 <tr>
                     <template v-for="(title, key, headerIndex) in headers">
@@ -67,10 +66,10 @@
         </table>
     </div>
     <!-- Content table -->
-    <div class="c-table__body-w c-telemetry-table__body-w js-telemetry-table__body-w" @scroll="scroll">
+    <div class="c-table__body-w c-telemetry-table__body-w js-telemetry-table__body-w" @scroll="scroll" :style="{'max-width': totalWidth + 'px'}">
         <div class="c-telemetry-table__scroll-forcer" :style="{ width: totalWidth + 'px' }"></div>
         <table class="c-table__body c-telemetry-table__body"
-               :style="{ height: totalHeight + 'px', 'max-width': totalWidth + 'px'}">
+               :style="{ height: totalHeight + 'px'}">
             <tbody>
                 <telemetry-table-row v-for="(row, rowIndex) in visibleRows"
                     :headers="headers"
@@ -84,8 +83,7 @@
         </table>
     </div>
     <!-- Sizing table -->
-    <table class="c-telemetry-table__sizing js-telemetry-table__sizing"
-           :style="{width: calcTableWidth}">
+    <table class="c-telemetry-table__sizing js-telemetry-table__sizing">
         <tr>
             <template v-for="(title, key) in headers">
             <th :key="key">{{title}}</th>
@@ -233,7 +231,6 @@ export default {
         search
     },
     inject: ['table', 'openmct', 'csvExporter'],
-    props: ['configuration'],
     data() {
         return {
             headers: {},
@@ -253,7 +250,6 @@ export default {
             scrollable: undefined,
             tableEl: undefined,
             headersHolderEl: undefined,
-            calcTableWidth: '100%',
             processingScroll: false,
             updatingView: false,
             dropOffsetLeft: undefined,
@@ -309,8 +305,8 @@ export default {
             return Math.floor(bottomScroll / this.rowHeight);
         },
         updateHeaders() {
-            let headers = this.table.configuration.getVisibleHeaders();
-            this.headers = headers;
+            this.headers = this.table.configuration.getVisibleHeaders();
+            this.configuredColumnWidths = this.table.configuration.getColumnWidths();
             let headerKeys = Object.keys(this.headers);
             this.lastHeaderKey = headerKeys[headerKeys.length - 1];
             this.$nextTick().then(this.calculateColumnWidths);
@@ -450,7 +446,6 @@ export default {
             }, RESIZE_POLL_INTERVAL);
         },
         updateConfiguration(configuration) {
-            this.configuration = configuration;
             this.updateHeaders();
         },
         addObject() {
@@ -464,9 +459,14 @@ export default {
         resizeColumn(key, newWidth) {
             let delta = newWidth - this.columnWidths[key];
             this.columnWidths[key] = newWidth;
-            this.$set(this.configuredColumnWidths, key, newWidth);
-
             this.columnWidths[this.lastHeaderKey] = this.columnWidths[this.lastHeaderKey] - delta;
+
+            this.updateConfiguredColumnWidth(key, newWidth);
+
+        },
+        updateConfiguredColumnWidth(key, newWidth) {
+            this.configuredColumnWidths[key] = newWidth;
+            this.table.configuration.setColumnWidths(this.configuredColumnWidths);
         },
         setDropTargetOffset(dropOffsetLeft) {
             this.dropOffsetLeft = dropOffsetLeft;
@@ -474,7 +474,6 @@ export default {
         moveColumn(from, to) {
             let newHeaderKeys = Object.keys(this.headers);
             let moveFromKey = newHeaderKeys[from];
-            let moveFromWidth = columnWidths[from];
 
             if (to < from) {
                 newHeaderKeys.splice(from, 1);
@@ -501,6 +500,7 @@ export default {
     },
     created() {
         this.filterChanged = _.debounce(this.filterChanged, 500);
+        this.updateConfiguredColumnWidth = _.debounce(this.updateConfiguredColumnWidth, 500);
     },
     mounted() {
         this.$on('drop-target-offset-changed', this.setDropTargetOffset);

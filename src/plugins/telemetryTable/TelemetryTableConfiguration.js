@@ -46,6 +46,7 @@ define([
         getConfiguration() {
             let configuration = this.domainObject.configuration || {};
             configuration.hiddenColumns = configuration.hiddenColumns || {};
+            configuration.columnWidths = configuration.columnWidths || {};
             return configuration;
         }
 
@@ -132,6 +133,17 @@ define([
             });
 
             return headers;
+        }
+
+        getColumnWidths() {
+            let configuration = this.getConfiguration();
+            return configuration.columnWidths;
+        }
+
+        setColumnWidths(columnWidths) {
+            let configuration = this.getConfiguration();
+            configuration.columnWidths = columnWidths;
+            this.updateConfiguration(configuration);
         }
 
         destroy() {
