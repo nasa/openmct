@@ -22,13 +22,14 @@
 
 <template>
     <div class="c-fl-container"
-         :style="[{'min-width': minWidth}]">
+         :style="[{'flex-basis': minWidth}]">
 
         <frame-component
+            class="c-fl-container__frame"
             v-for="(frame, index) in frames"
             :key="index"
             :style="{ 
-                'min-height': frame.height || `${100/frames.length}%`
+                'flex-basis': frame.height || `${100/frames.length}%`
                 }"
             :frame="frame"
             :index="index"
@@ -41,6 +42,21 @@
 </template>
 
 <style lang="scss">
+    @import '~styles/sass-base';
+
+    .c-fl-container {
+
+        background: $editColorBg;
+        // flex-basis set with inline style in code, controls size
+        flex-grow: 1;
+        flex-shrink: 1;
+    }
+
+
+
+
+
+
 
 .flex-container{
     min-height: 100%;

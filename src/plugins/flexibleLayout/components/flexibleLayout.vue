@@ -1,9 +1,12 @@
 <template>
-    <div class="flexible-layout-container">
-        <div class="header" 
-             v-if="isEditing"
-             @click="addContainer">
-            Add a new Container
+    <div class="l-fl">
+        <div class="temp-toolbar"
+             v-if="isEditing">
+            <button class="c-button"
+                    @click="addContainer">Add Container</button>
+            <button class="c-button"
+                    @click="toggleLayout">Toggle Layout</button>
+            <span>Layout is {{ layoutDirectionStr }}</span>
         </div>
 
         <div
@@ -11,8 +14,12 @@
             Click on EDIT and DRAG objects into your new Flexible Layout
         </div>
 
-        <div class="body">
+        <div class="l-fl__container-holder"
+            :class="{
+                'l-fl--rows': rowsLayout === true
+            }">
             <container-component
+                class="l-fl__container"
                  v-for="(container, index) in containers"
                  :key="index"
                  :index="index"
@@ -34,50 +41,27 @@
     .l-fl {
         @include abs();
         display: flex;
-        flex-direction: column;
-        .header {
-            font-size: 22px;
-            text-align: center;
-            min-height: 30px;
-            min-width: 100%;
-            background: rgb(66, 96, 96);
-        }
+        flex-direction: column; // TEMP: only needed to support temp-toolbar element
 
-        > * + * {
-            margin-top: $interiorMargin;
-        }
+        > * + * {  margin-top: $interiorMargin; }
 
         .temp-toolbar {
             flex: 0 0 auto;
         }
 
         &__container-holder {
-            // Holds containers
             display: flex;
             flex: 1 1 auto;
 
-            &[class*='-column'] {
-               // @include test(blue);
+            // Columns by default
+            flex-direction: row;
+            > * + * { margin-left: 1px; }
+
+            &[class*='--rows'] {
+                //@include test(blue, 0.1);
                 flex-direction: column;
-
-                > * + * {
-                    margin-top: 1px;
-                }
+                > * + * { margin-top: 1px; }
             }
-
-            &[class*='-row'] {
-               // @include test(red);
-                flex-direction: row;
-
-                > * + * {
-                    margin-left: 1px;
-                }
-            }
-        }
-
-        &__container {
-            background: $editColorBg;
-            flex: 1 1 auto;
         }
     }
 </style>
@@ -102,7 +86,9 @@ export default {
             containers: containers,
             dragFrom: [],
             isEditing: false,
-            isDragging: false
+            isDragging: false,
+            rowsLayout: false,
+            layoutDirectionStr: 'columns'
         }
     },
     methods: {
@@ -143,6 +129,10 @@ export default {
         },
         dragendHandler() {
             this.isDragging = false;
+        },
+        toggleLayout() {
+            this.rowsLayout = !this.rowsLayout;
+            this.layoutDirectionStr = (this.rowsLayout === true)? 'rows' : 'columns';
         }
     },
     mounted() {
