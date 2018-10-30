@@ -47,6 +47,9 @@ define([
             let configuration = this.domainObject.configuration || {};
             configuration.hiddenColumns = configuration.hiddenColumns || {};
             configuration.columnWidths = configuration.columnWidths || {};
+            configuration.columnOrder = configuration.columnOrder || [];
+            configuration.autosize = configuration.autosize === undefined ? true : configuration.autosize;
+
             return configuration;
         }
 
@@ -114,7 +117,7 @@ define([
             let headers = _.uniq(flattenedColumns, false, column => column.getKey())
                 .reduce(fromColumnsToHeadersMap, {});
 
-            function fromColumnsToHeadersMap(headersMap, column){
+            function fromColumnsToHeadersMap(headersMap, column) {
                 headersMap[column.getKey()] = column.getTitle();
                 return headersMap;
             }
@@ -123,16 +126,20 @@ define([
         }
 
         getVisibleHeaders() {
-            let headers = this.getAllHeaders();
+            let allHeaders = this.getAllHeaders();
             let configuration = this.getConfiguration();
 
-            Object.keys(headers).forEach((headerKey) => {
-                if (configuration.hiddenColumns[headerKey] === true) {
-                    delete headers[headerKey];
-                }
-            });
+            let orderedColumns = this.getColumnOrder();
+            let unorderedColumns = _.difference(Object.keys(allHeaders), orderedColumns);
 
-            return headers;
+            return orderedColumns.concat(unorderedColumns)
+                .filter((headerKey) => {
+                    return configuration.hiddenColumns[headerKey] !== true;
+                })
+                .reduce((headers, headerKey) => {
+                    headers[headerKey] = allHeaders[headerKey];
+                    return headers;
+                }, {});
         }
 
         getColumnWidths() {
@@ -143,6 +150,17 @@ define([
         setColumnWidths(columnWidths) {
             let configuration = this.getConfiguration();
             configuration.columnWidths = columnWidths;
+            this.updateConfiguration(configuration);
+        }
+
+        getColumnOrder() {
+            let configuration = this.getConfiguration();
+            return configuration.columnOrder;
+        }
+
+        setColumnOrder(columnOrder) {
+            let configuration = this.getConfiguration();
+            configuration.columnOrder = columnOrder;
             this.updateConfiguration(configuration);
         }
 

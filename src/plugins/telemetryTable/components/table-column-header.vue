@@ -20,10 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<th :class="[
-        isSortable ? 'is-sortable' : '', 
-        isSortable && sortOptions.key === headerKey ? 'is-sorting' : '', 
-        isSortable && sortOptions.direction].join(' ')"
+<th 
     :style="{ width: columnWidths[headerKey] + 'px', 'max-width': columnWidths[headerKey] + 'px'}"
     draggable="true"
     @mouseup="sort"
@@ -31,7 +28,10 @@
     @drop="columnMoveEnd"
     @dragleave="hideDropTarget"
     @dragover="dragOverColumn($event.currentTarget, $event)">
-        <div class="c-telemetry-table__headers__content">
+        <div class="c-telemetry-table__headers__content" :class="[
+        isSortable ? 'is-sortable' : '', 
+        isSortable && sortOptions.key === headerKey ? 'is-sorting' : '', 
+        isSortable && sortOptions.direction].join(' ')">
             <div class="c-telemetry-table__resize-hotzone c-telemetry-table__resize-hotzone--right"
                 @mousedown="startResizeColumn"
             ></div>
@@ -61,10 +61,10 @@
             cursor: col-resize;
             border: none;
             right: 0px;
-            margin-right: -$tabularTdPadLR - $hotzone-size / 2;
+            margin-right: -$tabularTdPadLR - 1 - $hotzone-size / 2;
         }
         th:last-child .c-telemetry-table__resize-hotzone {
-            display: none;
+            margin-right: -$tabularTdPadLR - 1;
         }
     }
 </style>
@@ -115,8 +115,6 @@ export default {
         updateDropOffset(element, clientX) {
             let thClientLeft = element.getBoundingClientRect().x;
             let offsetInHeader = clientX - thClientLeft;
-
-            this.calculate
             let dropOffsetLeft;
 
             if (offsetInHeader < element.offsetWidth / 2) {
@@ -143,7 +141,7 @@ export default {
                 }
             }
             if (toIndex !== fromIndex) {
-                this.$parent.$emit('move-column', fromIndex, toIndex);
+                this.$parent.$emit('reorder-column', fromIndex, toIndex);
             }
         },
         sort(){

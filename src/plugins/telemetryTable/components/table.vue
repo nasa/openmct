@@ -119,6 +119,7 @@
         th, td {
             display: block;
             flex: 1 0 auto;
+            width: 100px;
             vertical-align: middle; // This is crucial to hiding f**king 4px height injected by browser by default
         }
 
@@ -223,6 +224,7 @@ const RESIZE_POLL_INTERVAL = 200;
 const AUTO_SCROLL_TRIGGER_HEIGHT = 20;
 const RESIZE_HOT_ZONE = 10;
 const MOVE_TRIGGER_WAIT = 500;
+const VERTICAL_SCROLL_WIDTH = 30;
 
 export default {
     components: {
@@ -325,7 +327,7 @@ export default {
                 let columnWidth = cell.offsetWidth;
                 columnWidths[headerKey] = columnWidth;
                 totalWidth += columnWidth;
-            })
+            });
 
             this.columnWidths = columnWidths;
             this.totalWidth = totalWidth;
@@ -453,7 +455,7 @@ export default {
         setDropTargetOffset(dropOffsetLeft) {
             this.dropOffsetLeft = dropOffsetLeft;
         },
-        moveColumn(from, to) {
+        reorderColumn(from, to) {
             let newHeaderKeys = Object.keys(this.headers);
             let moveFromKey = newHeaderKeys[from];
 
@@ -469,6 +471,8 @@ export default {
                 headers[headerKey] = this.headers[headerKey];
                 return headers;
             }, {});
+
+            this.table.configuration.setColumnOrder(Object.keys(newHeaders));
 
             this.headers = newHeaders;
             this.dropOffsetLeft = undefined;
@@ -486,7 +490,7 @@ export default {
     mounted() {
         this.$on('drop-target-offset-changed', this.setDropTargetOffset);
         this.$on('drop-target-active', this.dropTargetActive);
-        this.$on('move-column', this.moveColumn);
+        this.$on('reorder-column', this.reorderColumn);
         
         this.table.on('object-added', this.addObject);
         this.table.on('object-removed', this.removeObject);
