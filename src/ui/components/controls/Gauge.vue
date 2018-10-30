@@ -1,17 +1,18 @@
 <template>
     <div class="c-gauge">
         <div class="c-gauge__wrapper">
-            <div class="c-gauge__value">
-                Limit degrees: {{ this.degLimit }}<br />
-                Value degrees: {{ this.degValue }}
-            </div>
+            <svg class="c-dial__ticks" viewBox="0 0 512 512">
+                <!--g>
+                    <polyline class="a" points="480.9 459.5 466.5 459.5 444.8 437.8"/>
+                    <polyline class="a" points="31.1 459.5 45.5 459.5 67.2 437.8"/>
+                </g-->
+                <text x="0" y="15">{{ this.degLimit }}</text>
+                <text x="0" y="35">{{ this.degValue }}</text>
+            </svg>
 
-            <!-- Dial base -->
             <div class="c-dial">
                 <svg class="c-dial__bg" viewBox="0 0 512 512">
                     <g>
-                        <polygon points="45.3 445.5 32.1 445.5 32.1 460.5 51.5 460.5 67.2 444.8 56.6 434.2 45.3 445.5"/>
-                        <polygon points="466.7 445.5 455.4 434.2 444.8 444.8 460.5 460.5 479.9 460.5 479.9 445.5 466.7 445.5"/>
                         <path d="M256,0C114.6,0,0,114.6,0,256S114.6,512,256,512,512,397.4,512,256,397.4,0,256,0Zm0,412A156,156,0,1,1,412,256,155.9,155.9,0,0,1,256,412Z"/>
                     </g>
                 </svg>
@@ -37,6 +38,16 @@
             </div>
 
 
+            <div class="c-gauge__value">
+                Limit degrees: {{ this.degValue }}
+            </div>
+
+            <div class="c-gauge__limit c-gauge__limit--low">
+                0
+            </div>
+            <div class="c-gauge__limit c-gauge__limit--high">
+                20000
+            </div>
 
         </div>
     </div>
@@ -46,15 +57,8 @@
     @import "~styles/sass-base";
 
     .c-gauge {
-        svg {
-            @include abs();
-
-            path {
-                transform-origin: center;
-            }
-        }
-
         &__wrapper {
+            @include test();
             position: absolute;
             width: 100%;
             padding-bottom: 100%;
@@ -66,7 +70,30 @@
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             font-size: 3vw;
-            text-align: center;
+        }
+
+        &__limit {
+            $o: 21%;
+          //  @include test();
+            display: inline-block;
+            font-size: 2.5vw;
+            position: absolute;
+           // bottom: 12%;
+            top: 82%;
+
+            &--low {
+                left: $o;
+                text-align: left;
+                transform-origin: bottom left;
+                transform: rotate(-45deg);
+            }
+
+            &--high {
+                right: $o;
+                text-align: right;
+                transform-origin: bottom right;
+                transform: rotate(45deg);
+            }
         }
     }
 
@@ -75,10 +102,19 @@
         @include abs();
         clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 50%, 0 100%);
 
+        svg,
+        &__ticks,
+        &__bg,
         &__limit,
         &__value {
            // @include test();
             @include abs();
+        }
+
+        svg {
+            path {
+                transform-origin: center;
+            }
         }
 
         &__limit {
@@ -114,13 +150,23 @@
                 fill: rgba(#fff, 0.1);
             }
         }
+
+        &__ticks {
+            polyline {
+                fill: none;
+                stroke: rgba(#fff, 0.1);
+                stroke-miterlimit: 10;
+                stroke-width: 5px;
+                vector-effect: non-scaling-stroke;
+            }
+        }
     }
 
 </style>
 
 <script>
-    let curVal = 33.3;
-    let limit1 = 97;
+    let curVal = 53.3;
+    let limit1 = 89;
 
     export default {
         name: "Gauge.vue",
