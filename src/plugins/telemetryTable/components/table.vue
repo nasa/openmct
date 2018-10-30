@@ -253,8 +253,7 @@ export default {
             processingScroll: false,
             updatingView: false,
             dropOffsetLeft: undefined,
-            isDropTargetActive: false,
-            lastHeaderKey: undefined
+            isDropTargetActive: false
         }
     },
     computed: {
@@ -307,9 +306,6 @@ export default {
         updateHeaders() {
             this.headers = this.table.configuration.getVisibleHeaders();
             this.configuredColumnWidths = this.table.configuration.getColumnWidths();
-            let headerKeys = Object.keys(this.headers);
-            this.lastHeaderKey = headerKeys[headerKeys.length - 1];
-            this.$nextTick().then(this.calculateColumnWidths);
         },
         setSizingTableWidth() {
             let scrollW = this.scrollable.offsetWidth - this.scrollable.clientWidth;
@@ -432,19 +428,6 @@ export default {
             this.setSizingTableWidth();
             this.$nextTick().then(this.calculateColumnWidths);
         },
-        pollForResize() {
-            let el = this.$el;
-            let width = el.clientWidth;
-            let height = el.clientHeight;
-
-            this.resizePollHandle = setInterval(() => {
-                if (el.clientWidth !== width || el.clientHeight !== height) {
-                    this.calculateTableSize();
-                    width = el.clientWidth;
-                    height = el.clientHeight;
-                }
-            }, RESIZE_POLL_INTERVAL);
-        },
         updateConfiguration(configuration) {
             this.updateHeaders();
         },
@@ -459,8 +442,7 @@ export default {
         resizeColumn(key, newWidth) {
             let delta = newWidth - this.columnWidths[key];
             this.columnWidths[key] = newWidth;
-            this.columnWidths[this.lastHeaderKey] = this.columnWidths[this.lastHeaderKey] - delta;
-
+            this.totalWidth += delta;
             this.updateConfiguredColumnWidth(key, newWidth);
 
         },
@@ -490,7 +472,6 @@ export default {
 
             this.headers = newHeaders;
             this.dropOffsetLeft = undefined;
-            this.lastHeaderKey = newHeaderKeys[newHeaderKeys.length - 1];
 
             this.dropTargetActive(false);
         },
@@ -525,7 +506,6 @@ export default {
         this.table.configuration.on('change', this.updateConfiguration);
 
         this.calculateTableSize();
-        this.pollForResize();
 
         this.table.initialize();
     },
