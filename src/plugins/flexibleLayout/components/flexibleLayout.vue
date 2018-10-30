@@ -6,6 +6,11 @@
             Add a new Container
         </div>
 
+        <div
+             v-if="containers.length === 1 && !containers[0].frames[1]">
+            Click on EDIT and DRAG objects into your new Flexible Layout
+        </div>
+
         <div class="body">
             <container-component
                  v-for="(container, index) in containers"
@@ -14,6 +19,7 @@
                  :minWidth="container.width || `${100/containers.length}%`"
                  :frames="container.frames"
                  :isEditing="isEditing"
+                 :isDragging="isDragging"
                  @addFrame="addFrame"
                  @object-drag-from="dragFromHandler"
                  @object-drop-to="dropToHandler">
@@ -62,10 +68,15 @@ export default {
     data() {
         let containers = this.domainObject.configuration.containers;
 
+        if (!containers.length) {
+            containers = [new Container()];
+        }
+
         return {
             containers: containers,
             dragFrom: [],
-            isEditing: false
+            isEditing: false,
+            isDragging: false
         }
     },
     methods: {
@@ -94,10 +105,29 @@ export default {
         },
         isEditingHandler(isEditing) {
             this.isEditing = isEditing;
+            
+            if (this.isDragging && isEditing === false) {
+                this.isDragging = false;
+            }
+        },
+        dragstartHandler() {
+            if (this.isEditing) {
+                this.isDragging = true;
+            }
+        },
+        dragendHandler() {
+            this.isDragging = false;
         }
     },
     mounted() {
         this.openmct.editor.on('isEditing', this.isEditingHandler);
+        document.addEventListener('dragstart', this.dragstartHandler);
+        document.addEventListener('dragend', this.dragendHandler);
+    },
+    destroyed() {
+        this.openmct.editor.off('isEditing', this.isEditingHandler);
+        document.removeEventListener('dragstart', this.dragstartHandler);
+        document.addEventListener('dragend', this.dragendHandler);
     }
 }
 </script>

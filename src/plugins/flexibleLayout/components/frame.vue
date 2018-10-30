@@ -21,15 +21,17 @@
  *****************************************************************************/
 
 <template>
-    <div class="flex-frame" draggable="true">
-        <object-view
-            class="c-object-view"
-            v-if="frame.domainObject"
-            ref="dragObject"
-            :object="frame.domainObject">
-        </object-view>
+    <div class="flex-frame">
+        <div draggable="true">
+            <object-view
+                class="c-object-view"
+                v-if="frame.domainObject"
+                ref="dragObject"
+                :object="frame.domainObject">
+            </object-view>
+        </div>
         <div class="drop-container add"
-             v-if="isEditing"
+             v-if="isDragging"
              @drop="dropHandler">
             +
         </div>
@@ -53,13 +55,12 @@
 import ObjectView from '../../../ui/components/layout/ObjectView.vue';
 
 export default {
-    props: ['frame', 'index', 'isEditing'],
+    props: ['frame', 'index', 'isEditing', 'isDragging'],
     components: {
         ObjectView
     },
     methods: {
         dragstart(event) {
-            console.log('dragging');
             this.$emit('object-drag-from', this.index);
         },
         dropHandler(event){

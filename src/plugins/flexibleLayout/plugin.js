@@ -34,7 +34,6 @@ define([
                 creatable: true,
                 cssClass: 'icon-layout',
                 initialize: function (domainObject) {
-                    domainObject.composition = [];
                     domainObject.configuration = {
                         containers: []
                     };

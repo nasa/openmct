@@ -33,6 +33,7 @@
             :frame="frame"
             :index="index"
             :isEditing="isEditing"
+            :isDragging="isDragging"
             @object-drag-from="dragFrom"
             @object-drop-to="dropTo">
         </frame-component>
@@ -76,7 +77,7 @@ import FrameComponent from './frame.vue';
 import Frame from '../utils/frame'
 
 export default {
-    props: ['minWidth', 'frames', 'index', 'isEditing'],
+    props: ['minWidth', 'frames', 'index', 'isEditing', 'isDragging'],
     components: {
         FrameComponent
     },
