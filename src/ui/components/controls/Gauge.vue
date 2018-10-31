@@ -25,6 +25,7 @@
                 </svg>
 
                 <svg class="c-dial__value" viewBox="0 0 512 512"
+                     v-if="this.degValue > 0"
                      :class="{
                         'c-dial-clip--90': this.degValue < 90,
                         'c-dial-clip--180': this.degValue >= 90 && this.degValue < 180
@@ -101,10 +102,12 @@
 
         &__value {
             &.c-dial-clip--90 {
+              //  @include test();
                 clip-path: polygon(0 0, 50% 50%, 0 100%);
             }
 
             &.c-dial-clip--180 {
+               // @include test();
                 clip-path: polygon(0 0, 100% 0, 0 100%);
             }
 
@@ -128,7 +131,7 @@
         data() {
             this.rangeLow = -20;
             this.rangeHigh= 10;
-            this.curVal = 9;
+            this.curVal = -10;
             this.limit1 = 9;
         },
         methods: {
@@ -137,7 +140,7 @@
                 return Math.round(val * precision)/precision;
             },
             valToPercent: function(vValue) {
-                return (vValue / (this.rangeHigh - this.rangeLow)) * 100;
+                return ((vValue - this.rangeLow) / (this.rangeHigh - this.rangeLow)) * 100;
             },
             percentToDegrees: function(vPercent) {
                 return this.round((vPercent/100)*270, 2);
@@ -145,9 +148,7 @@
         },
         computed: {
             degValue: function() {
-                let v = this.valToPercent(this.curVal);
-                console.log(v);
-                return this.percentToDegrees(v);
+                return this.percentToDegrees(this.valToPercent(this.curVal));
             },
             degLimit: function() {
                 return this.percentToDegrees(this.valToPercent(this.limit1));
