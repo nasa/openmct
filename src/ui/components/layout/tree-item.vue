@@ -7,14 +7,7 @@
                           :expanded="expanded"
                           @click="toggleChildren">
             </view-control>
-            <a class="c-tree__item__label"
-               draggable="true"
-               @dragstart="dragStart"
-               :href="href">
-                <div class="c-tree__item__type-icon"
-                      :class="cssClass"></div>
-                <div class="c-tree__item__name">{{ node.object.name }}</div>
-            </a>
+            <object-label :domainObject="node.object" :path="node.path"></object-label>
         </div>
         <ul v-if="expanded" class="c-tree">
             <tree-item v-for="child in children"
@@ -27,28 +20,23 @@
 </template>
 
 <script>
-    import viewControl from '../controls/viewControl.vue'
+    import viewControl from '../controls/viewControl.vue';
+    import ObjectLabel from '../controls/ObjectLabel.vue';
+
     export default {
         name: 'tree-item',
-        inject: ['openmct', 'domainObject'],
+        inject: ['openmct'],
         props: {
             node: Object
         },
         data() {
             return {
                 hasChildren: false,
+                isLoading: false,
                 loaded: false,
                 children: [],
                 expanded: false,
-                cssClass: 'icon-object-unknown',
                 isAlias: false
-            }
-        },
-        computed: {
-            href: function () {
-                return '#/browse/' + this.node.path
-                    .map(o => this.openmct.objects.makeKeyString(o))
-                    .join('/');
             }
         },
         mounted() {
@@ -59,44 +47,50 @@
             // TODO: should support drag/drop composition
             // TODO: set isAlias per tree-item
 
-            let type = this.openmct.types.get(this.node.object.type);
-
-            if (type.definition.cssClass) {
-                this.cssClass = type.definition.cssClass;
-            } else {
-                console.log("Failed to get typeDef.cssClass for object", this.node.object.name, this.node.object.type);
+            this.composition = this.openmct.composition.get(this.node.object);
+            if (this.composition) {
+                this.hasChildren = true;
             }
-
-            let composition = this.openmct.composition.get(this.node.object);
-            if (!composition) {
-                return;
+        },
+        destroy() {
+            if (this.composition) {
+                this.composition.off('add', this.addChild);
+                this.composition.off('remove', this.removeChild);
+                delete this.composition;
             }
-            this.hasChildren = true;
-
         },
         methods: {
             toggleChildren: function () {
+                if (!this.hasChildren) {
+                    return;
+                }
                 this.expanded = !this.expanded;
-                if (this.expanded && !this.loaded && this.hasChildren) {
-                    this.openmct.composition.get(this.node.object).load()
-                        .then(children => {
-                            this.children = children.map((c) => {
-                                return {
-                                    id: this.openmct.objects.makeKeyString(c.identifier),
-                                    object: c,
-                                    path: this.node.path.concat([c.identifier])
-                                };
-                            });
-                        })
-                        .then(() => this.loaded = true);
+                if (!this.loaded && !this.isLoading) {
+                    this.composition = this.openmct.composition.get(this.node.object);
+                    this.composition.on('add', this.addChild);
+                    this.composition.on('remove', this.removeChild);
+                    this.composition.load().then(this.finishLoading());
                 }
             },
-            dragStart($event) {
-                $event.dataTransfer.setData("domainObject", JSON.stringify(this.node.object));
+            addChild (child) {
+                this.children.push({
+                    id: this.openmct.objects.makeKeyString(child.identifier),
+                    object: child,
+                    path: this.node.path.concat([child.identifier])
+                });
+            },
+            removeChild(child) {
+                // TODO: remove child on remove event.
+                console.log('Tree should remove child', child);
+            },
+            finishLoading () {
+                this.isLoading = false;
+                this.loaded = true;
             }
         },
         components: {
-            viewControl
+            viewControl,
+            ObjectLabel
         }
     }
 </script>

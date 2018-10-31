@@ -104,10 +104,15 @@ $colorGridLines: rgba($editColor, 0.2);
 $colorIconAlias: #4af6f3;
 $colorIconAliasForKeyFilter: #aaa;
 
+// Holders
+$colorTabsHolderBg: rgba($colorBodyFg, 0.2);
+
 // Buttons and Controls
-$colorBtnBg: #aaaaaa;
+$colorBtnBg: #aaa;
 $colorBtnBgHov: darken($colorBtnBg, 10%);
 $colorBtnFg: #fff;
+$colorBtnReverseFg: $colorBodyBg;
+$colorBtnReverseBg: $colorBodyFg;
 $colorBtnFgHov: $colorBtnFg;
 $colorBtnMajorBg: $colorKey;
 $colorBtnMajorBgHov: $colorKeyHov;
@@ -119,6 +124,10 @@ $colorBtnCautionFg: $colorBtnFg;
 $colorClickIcon: $colorKey;
 $colorClickIconBgHov: rgba($colorKey, 0.2);
 $colorClickIconFgHov: $colorKeyHov;
+$colorDropHint: $colorKey;
+$colorDropHintBg: darken($colorDropHint, 10%);
+$colorDropHintBgHov: $colorDropHint;
+$colorDropHintFg: lighten($colorDropHint, 40%);
 
 // Menus
 $colorMenuBg: lighten($colorBodyBg, 10%);

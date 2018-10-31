@@ -276,33 +276,14 @@
             },
             handleDrop($event) {
                 $event.preventDefault();
-                $event.stopPropagation();
 
                 let child = JSON.parse($event.dataTransfer.getData('domainObject'));
-                let duplicates = [];
-                let composition = this.newDomainObject.composition;
-                composition.forEach((object) => {
-                    if (this.openmct.objects.makeKeyString(JSON.parse(JSON.stringify(object))) ===
-                        this.openmct.objects.makeKeyString(child.identifier)) {
-                        duplicates.push(object);
-                    }
-                });
-
-                // Disallow adding a duplicate object to the composition
-                if (duplicates.length !== 0) {
-                    return;
-                }
 
                 let elementRect = this.$el.getBoundingClientRect();
                 this.droppedObjectPosition = {
                     x: $event.pageX - elementRect.left,
                     y: $event.pageY - elementRect.top
                 }
-                // TODO: use the composition API to add child once the default composition
-                // provider supports it instead of mutating the composition directly.
-                // this.composition.add(child).
-                composition.push(child.identifier);
-                this.mutate('composition', composition);
             },
             handleDragOver($event){
                 $event.preventDefault();

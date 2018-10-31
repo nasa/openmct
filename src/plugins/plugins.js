@@ -37,6 +37,7 @@ define([
     './notebook/plugin',
     './displayLayout/plugin',
     './folderView/plugin',
+    './tabs/plugin',
     '../../platform/features/fixed/plugin'
 ], function (
     _,
@@ -55,6 +56,7 @@ define([
     Notebook,
     DisplayLayoutPlugin,
     FolderView,
+    Tabs,
     FixedView
 ) {
     var bundleMap = {
@@ -167,6 +169,7 @@ define([
     plugins.Notebook = Notebook;
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
     plugins.FolderView = FolderView;
+    plugins.Tabs = Tabs;
     plugins.FixedView = FixedView;
 
     return plugins;

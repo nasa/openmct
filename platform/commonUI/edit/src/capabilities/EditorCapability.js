@@ -51,8 +51,11 @@ define(
          */
         EditorCapability.prototype.edit = function () {
             console.warn('DEPRECATED: cannot edit via edit capability, use openmct.editor instead.');
-            this.openmct.editor.edit();
-            this.domainObject.getCapability('status').set('editing', true);
+
+            if (!this.openmct.editor.isEditing()) {
+                this.openmct.editor.edit();
+                this.domainObject.getCapability('status').set('editing', true);
+            }
         };
 
         /**

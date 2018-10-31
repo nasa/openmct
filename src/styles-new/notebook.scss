@@ -64,6 +64,7 @@
     }
 
     &__drag-area {
+        // TODO: recast this element to use c-drop-hint element
         background: rgba($colorKey, 0.1);
         border: 1px dashed rgba($colorKey, 0.7);
         border-radius: $controlCr;

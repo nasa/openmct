@@ -20,20 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-    function AdapterCompositionPolicy(openmct) {
-        this.openmct = openmct;
-    }
+define([
+    './tabs'
+], function (
+    Tabs
+) {
+    return function plugin() {
+        return function install(openmct) {
+            openmct.objectViews.addProvider(new Tabs(openmct));
 
-    AdapterCompositionPolicy.prototype.allow = function (
-        parent,
-        child
-    ) {
-        return this.openmct.composition.checkPolicy(
-            parent,
-            child
-        );
+            openmct.types.addType('tabs', {
+                name: "Tabs View",
+                creatable: true,
+                cssClass: 'icon-tabs-view',
+                initialize(domainObject) {
+                    domainObject.composition = [];
+                }
+            });
+        };
     };
-
-    return AdapterCompositionPolicy;
 });

@@ -34,6 +34,7 @@ define([
             if (!Array.isArray(path)) {
                 path = path.split('/');
             }
+
             return Promise.all(path.map((keyString)=>{
                 return openmct.objects.get(keyString);
             })).then((objects)=>{
@@ -42,6 +43,7 @@ define([
                 }
 
                 let navigatedObject = objects[objects.length - 1];
+
                 // FIXME: this is a hack to support create action, intended to
                 // expose the current routed path.  We need to rewrite the
                 // navigation service and router to expose a clear and minimal
