@@ -22,15 +22,18 @@
 
 <template>
     <div class="c-fl-container"
-         :style="[{'flex-basis': minWidth}]">
-
+         :style="[{'flex-basis': size}]">
+        <div class="c-fl-container__header"
+            v-if="isEditing">
+            <span class="c-fl-container__label">{{ size }}</span>
+        </div>
         <frame-component
             class="c-fl-container__frame"
             v-for="(frame, index) in frames"
             :key="index"
-            :style="{ 
-                'flex-basis': frame.height || `${100/frames.length}%`
-                }"
+            :style="{
+                'flex-basis': frame.height || `${Math.round(100/(frames.length -1))}%`
+            }"
             :frame="frame"
             :index="index"
             :isEditing="isEditing"
@@ -45,46 +48,73 @@
     @import '~styles/sass-base';
 
     .c-fl-container {
+        display: flex;
+        flex-direction: column; // Default
+        align-content: stretch;
+        align-items: stretch;
+        justify-content: space-around;
 
-        background: $editColorBg;
-        // flex-basis set with inline style in code, controls size
+        // flex-basis is set with inline style in code, controls size
         flex-grow: 1;
         flex-shrink: 1;
-    }
 
+        > * + * {
+            .c-fl-frame__drag-wrapper {
+                border-top: 1px solid $colorInteriorBorder;
+            }
+        }
 
+        .is-editing & {
+            background: $editColorBg;
 
+            .c-fl-frame__drag-wrapper {
+              border-top: 1px dotted $editColor;
+            }
+        }
 
+        &__header {
+            background: rgba($editColor, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+        }
 
+        .c-fl--rows & {
+            // Layout is rows
+            flex-direction: row;
 
+            > * + * {
+                .c-fl-frame__drag-wrapper {
+                    border-top: none;
+                    border-left: 1px solid $colorInteriorBorder;
+                }
+            }
 
-.flex-container{
-    min-height: 100%;
-    min-width: 100%;
+            .is-editing & {
+                > * + * {
+                    .c-fl-frame__drag-wrapper {
+                        border-left: 1px dotted $editColor;
+                    }
+                }
 
-    .add{
-        display: flex;
-        flex-direction: columm;
-        font-size: 100%;
-        align-items: center;
-        justify-content: center;
-        min-width: 100%;
-        background: #009bd140;
-        border: 3px solid #009bd1;
-        border-width: 3px 1.5px;
-        cursor: pointer;
+            }
 
-        .large{
-            min-height: 100%;
+            &__header {
+                flex-basis: 20px;
+                overflow: hidden;
+            }
+
+            &__label {
+                transform-origin: center;
+                transform: rotate(-90deg);
+            }
+
+            &__frames-holder {
+                flex-direction: row;
+            }
         }
     }
-
-    &:hover{
-        .allow-drop {
-            background: red;
-        }
-    }
-}
 
 </style>
 
@@ -93,7 +123,7 @@ import FrameComponent from './frame.vue';
 import Frame from '../utils/frame'
 
 export default {
-    props: ['minWidth', 'frames', 'index', 'isEditing', 'isDragging'],
+    props: ['size', 'frames', 'index', 'isEditing', 'isDragging'],
     components: {
         FrameComponent
     },

@@ -500,8 +500,10 @@ input[type=number]::-webkit-outer-spin-button {
     transition: $transOut;
     z-index: 50;
 
-    opacity: 0; // Must use this (rather than display: none) to enable transition effects
-    pointer-events: none;
+    &:not(.c-drop-hint--always-show) {
+        opacity: 0; // Must use this (rather than display: none) to enable transition effects
+        pointer-events: none;
+    }
 
     &:before {
         $h: 80%;
@@ -517,13 +519,15 @@ input[type=number]::-webkit-outer-spin-button {
         max-height: $mh; max-width: $mh;
     }
 
-    .is-dragging & {
+    .is-dragging &,
+    &.is-dragging {
         pointer-events: inherit;
         transition: $transIn;
         opacity: 0.8;
     }
 
-    .is-mouse-over & {
+    .is-mouse-over &,
+    &.is-mouse-over {
         transition: $transIn;
         background-color: $colorDropHintBgHov;
         opacity: 0.9;

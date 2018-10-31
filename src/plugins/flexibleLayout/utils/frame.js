@@ -1,7 +1,8 @@
 class Frame {
-    constructor(domainObject, height) {
+    constructor(domainObject, height, cssClass) {
         this.domainObject = domainObject;
         this.height = height;
+        this.cssClass = cssClass;
     }
 }
 

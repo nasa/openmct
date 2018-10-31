@@ -1,5 +1,5 @@
 <template>
-    <div class="l-fl">
+    <div class="c-fl">
         <div class="temp-toolbar"
              v-if="isEditing">
             <button class="c-button"
@@ -14,16 +14,16 @@
             Click on EDIT and DRAG objects into your new Flexible Layout
         </div>
 
-        <div class="l-fl__container-holder"
+        <div class="c-fl__container-holder"
             :class="{
-                'l-fl--rows': rowsLayout === true
+                'c-fl--rows': rowsLayout === true
             }">
             <container-component
-                class="l-fl__container"
+                class="c-fl__container"
                  v-for="(container, index) in containers"
                  :key="index"
                  :index="index"
-                 :minWidth="container.width || `${100/containers.length}%`"
+                 :size="container.width || `${Math.round(100/containers.length)}%`"
                  :frames="container.frames"
                  :isEditing="isEditing"
                  :isDragging="isDragging"
@@ -38,7 +38,7 @@
 <style lang="scss">
     @import '~styles/sass-base';
 
-    .l-fl {
+    .c-fl {
         @include abs();
         display: flex;
         flex-direction: column; // TEMP: only needed to support temp-toolbar element
@@ -51,7 +51,7 @@
 
         &__container-holder {
             display: flex;
-            flex: 1 1 auto;
+            flex: 1 1 100%;
 
             // Columns by default
             flex-direction: row;
@@ -60,7 +60,10 @@
             &[class*='--rows'] {
                 //@include test(blue, 0.1);
                 flex-direction: column;
-                > * + * { margin-top: 1px; }
+                > * + * {
+                    margin-left: 0;
+                    margin-top: 1px;
+                }
             }
         }
     }
@@ -88,7 +91,7 @@ export default {
             isEditing: false,
             isDragging: false,
             rowsLayout: false,
-            layoutDirectionStr: 'columns'
+            layoutDirectionStr: (this.rowsLayout === true)? 'columns' : 'rows'
         }
     },
     methods: {

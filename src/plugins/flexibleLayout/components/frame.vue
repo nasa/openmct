@@ -21,32 +21,53 @@
  *****************************************************************************/
 
 <template>
-    <div class="flex-frame">
-        <div draggable="true">
+    <div class="c-fl-frame"
+        :class="[frame.cssClass]">
+        <div draggable="true"
+             class="c-fl-frame__drag-wrapper"
+             v-if="frame.domainObject">
             <object-view
                 class="c-object-view"
-                v-if="frame.domainObject"
                 ref="dragObject"
                 :object="frame.domainObject">
             </object-view>
         </div>
-        <div class="drop-container add"
+        <div class="c-fl-frame__drop-hint"
              v-if="isDragging"
              @drop="dropHandler">
-            +
+            <div class="c-drop-hint c-drop-hint--always-show"></div>
         </div>
     </div>
 </template>
 
 <style lang="scss">
+    @import '~styles/sass-base';
 
-    .flex-frame{
-        min-width: 100%;
-        min-height: 100%;
+    .c-fl-frame {
+        display: flex;
+        justify-content: stretch;
+        align-items: stretch;
+        flex: 1 1;
+        flex-direction: column;
 
-        .drop-container {
-            min-height: 40px;
-            min-width: 100%;
+        &__drag-wrapper {
+            flex: 1 1 100%;
+            overflow: auto;
+        }
+
+        &__drop-hint {
+            flex: 0 0 15px;
+            .c-drop-hint {
+                border-radius: $smallCr;
+            }
+        }
+
+        &--empty-container {
+            flex-grow: 0;
+        }
+
+        .c-fl--rows & {
+            flex-direction: row;
         }
     }
 </style>
