@@ -1,13 +1,10 @@
 <template>
     <div class="c-gauge">
         <div class="c-gauge__wrapper">
-            <svg class="c-dial__ticks" viewBox="0 0 512 512">
-                <!--g>
-                    <polyline class="a" points="480.9 459.5 466.5 459.5 444.8 437.8"/>
-                    <polyline class="a" points="31.1 459.5 45.5 459.5 67.2 437.8"/>
-                </g-->
-                <text x="0" y="15">{{ this.degLimit }}</text>
-                <text x="0" y="35">{{ this.degValue }}</text>
+            <svg class="c-gauge__range" viewBox="0 0 512 512">
+                <text font-size="100" transform="translate(256 280)" text-anchor="middle">{{ this.curVal }}</text>
+                <text font-size="35" transform="translate(105 455) rotate(-45)">{{ this.rangeLow }}</text>
+                <text font-size="35" transform="translate(407 455) rotate(45)" text-anchor="end">{{ this.rangeHigh }}</text>
             </svg>
 
             <div class="c-dial">
@@ -36,19 +33,6 @@
                           :style="`transform: rotate(${this.degValue}deg)`"/>
                 </svg>
             </div>
-
-
-            <div class="c-gauge__value">
-                Limit degrees: {{ this.degValue }}
-            </div>
-
-            <div class="c-gauge__limit c-gauge__limit--low">
-                0
-            </div>
-            <div class="c-gauge__limit c-gauge__limit--high">
-                20000
-            </div>
-
         </div>
     </div>
 </template>
@@ -58,7 +42,7 @@
 
     .c-gauge {
         &__wrapper {
-            @include test();
+            //@include test();
             position: absolute;
             width: 100%;
             padding-bottom: 100%;
@@ -72,28 +56,12 @@
             font-size: 3vw;
         }
 
-        &__limit {
+        &__range {
             $o: 21%;
-          //  @include test();
-            display: inline-block;
-            font-size: 2.5vw;
+            /*display: block; //inline-block;*/
+           //font-size: 2.5vw;
             position: absolute;
-           // bottom: 12%;
-            top: 82%;
-
-            &--low {
-                left: $o;
-                text-align: left;
-                transform-origin: bottom left;
-                transform: rotate(-45deg);
-            }
-
-            &--high {
-                right: $o;
-                text-align: right;
-                transform-origin: bottom right;
-                transform: rotate(45deg);
-            }
+            fill: rgba(#fff, 0.8);
         }
     }
 
@@ -150,36 +118,26 @@
                 fill: rgba(#fff, 0.1);
             }
         }
-
-        &__ticks {
-            polyline {
-                fill: none;
-                stroke: rgba(#fff, 0.1);
-                stroke-miterlimit: 10;
-                stroke-width: 5px;
-                vector-effect: non-scaling-stroke;
-            }
-        }
     }
 
 </style>
 
 <script>
-    let curVal = 53.3;
-    let limit1 = 89;
-
     export default {
         name: "Gauge.vue",
-        props: {
-            dialVal:  {
-                type: Number,
-                value: 10
-            }
+        data() {
+            this.rangeLow = -20;
+            this.rangeHigh= 10;
+            this.curVal = 9;
+            this.limit1 = 9;
         },
         methods: {
             round: function(val, decimals) {
                 let precision = Math.pow(10, decimals);
                 return Math.round(val * precision)/precision;
+            },
+            valToPercent: function(vValue) {
+                return (vValue / (this.rangeHigh - this.rangeLow)) * 100;
             },
             percentToDegrees: function(vPercent) {
                 return this.round((vPercent/100)*270, 2);
@@ -187,10 +145,12 @@
         },
         computed: {
             degValue: function() {
-                return this.percentToDegrees(curVal);
+                let v = this.valToPercent(this.curVal);
+                console.log(v);
+                return this.percentToDegrees(v);
             },
             degLimit: function() {
-                return this.percentToDegrees(limit1);
+                return this.percentToDegrees(this.valToPercent(this.limit1));
             }
         }
     }
