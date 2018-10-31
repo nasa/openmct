@@ -21,11 +21,11 @@
  *****************************************************************************/
 <template>
 <tr :style="{ top: rowTop }" :class="rowLimitClass">
-    <template v-for="(title, key) in headers">
-    <td :style="{ width: columnWidths[key] + 'px', 'max-width': columnWidths[key] + 'px'}"
+    <td v-for="(title, key) in headers" 
+        :key="key"
+        :style="columnWidths[key] === undefined ? {} : { width: columnWidths[key] + 'px', 'max-width': columnWidths[key] + 'px'}"
         :title="formattedRow[key]"
         :class="cellLimitClasses[key]">{{formattedRow[key]}}</td>
-    </template>
 </tr>
 </template>
 

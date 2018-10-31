@@ -83,7 +83,7 @@
         </table>
     </div>
     <!-- Sizing table -->
-    <table class="c-telemetry-table__sizing js-telemetry-table__sizing">
+    <table class="c-telemetry-table__sizing js-telemetry-table__sizing" :class="{'js-telemetry-table__sizing--auto': isAutosizeEnabled}">
         <tr>
             <template v-for="(title, key) in headers">
             <th :key="key">{{title}}</th>
@@ -102,6 +102,11 @@
     @import "~styles/sass-base";
     @import "~styles/table";
 
+    .js-telemetry-table__sizing {
+        &--auto{
+            min-width: 100%;
+        }
+    }
     .c-telemetry-table__drop-target {
         position: absolute;
         width: 2px;
@@ -255,7 +260,8 @@ export default {
             processingScroll: false,
             updatingView: false,
             dropOffsetLeft: undefined,
-            isDropTargetActive: false
+            isDropTargetActive: false,
+            isAutosizeEnabled: true
         }
     },
     computed: {
@@ -307,7 +313,6 @@ export default {
         },
         updateHeaders() {
             this.headers = this.table.configuration.getVisibleHeaders();
-            this.configuredColumnWidths = this.table.configuration.getColumnWidths();
         },
         setSizingTableWidth() {
             let scrollW = this.scrollable.offsetWidth - this.scrollable.clientWidth;
@@ -430,8 +435,19 @@ export default {
             this.setSizingTableWidth();
             this.$nextTick().then(this.calculateColumnWidths);
         },
+        enableAutosize() {
+                this.configuredColumnWidths = {};
+                this.columnWidths = {};
+                this.$nextTick().then(this.calculateTableSize);
+        },
         updateConfiguration(configuration) {
+            this.isAutosizeEnabled = configuration.autosize;
+            
             this.updateHeaders();
+            
+            if (this.isAutosizeEnabled){
+                this.enableAutosize();
+            }
         },
         addObject() {
             this.updateHeaders();
@@ -481,7 +497,21 @@ export default {
         },
         dropTargetActive(isActive) {
             this.isDropTargetActive = isActive;
-        }
+        },
+        pollForResize() {
+            let el = this.$el;
+            let width = el.clientWidth;
+            let height = el.clientHeight;
+
+            this.resizePollHandle = setInterval(() => {
+                if (el.clientWidth !== width || el.clientHeight !== height) {
+                    this.calculateTableSize();
+                    width = el.clientWidth;
+                    height = el.clientHeight;
+                }
+            }, RESIZE_POLL_INTERVAL);
+        },
+
     },
     created() {
         this.filterChanged = _.debounce(this.filterChanged, 500);
@@ -510,6 +540,7 @@ export default {
         this.table.configuration.on('change', this.updateConfiguration);
 
         this.calculateTableSize();
+        this.pollForResize();
 
         this.table.initialize();
     },
