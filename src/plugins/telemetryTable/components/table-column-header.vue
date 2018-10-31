@@ -24,15 +24,17 @@
     :style="{ width: columnWidths[headerKey] + 'px', 'max-width': columnWidths[headerKey] + 'px'}"
     draggable="true"
     @mouseup="sort"
-    @dragstart="columnMoveStart"
-    @drop="columnMoveEnd"
-    @dragleave="hideDropTarget"
-    @dragover="dragOverColumn($event.currentTarget, $event)">
+    v-on="isEditing ? {
+        dragstart: columnMoveStart,
+        drop: columnMoveEnd,
+        dragleave: hideDropTarget,
+        dragover: ($event) => dragOverColumn($event.currentTarget, $event)
+    } : {}">
         <div class="c-telemetry-table__headers__content" :class="[
-        isSortable ? 'is-sortable' : '', 
-        isSortable && sortOptions.key === headerKey ? 'is-sorting' : '', 
-        isSortable && sortOptions.direction].join(' ')">
-            <div class="c-telemetry-table__resize-hotzone c-telemetry-table__resize-hotzone--right"
+            isSortable ? 'is-sortable' : '', 
+            isSortable && sortOptions.key === headerKey ? 'is-sorting' : '', 
+            isSortable && sortOptions.direction].join(' ')">
+            <div v-if="isEditing" class="c-telemetry-table__resize-hotzone c-telemetry-table__resize-hotzone--right"
                 @mousedown="startResizeColumn"
             ></div>
             <slot></slot>
@@ -72,6 +74,12 @@
 import _ from 'lodash';
 
 export default {
+    inject: ['openmct'],
+    data() {
+        return {
+            isEditing: false
+        }
+    },
     props: {
         headerKey: String,
         headerIndex: Number,
@@ -146,10 +154,18 @@ export default {
         },
         sort(){
             this.$emit("sort");
+        },
+        toggleEditMode(isEditing) {
+            this.isEditing = isEditing;
         }
     },
     created() {
         this.resizeColumn = _.throttle(this.resizeColumn, 50);
+
+        this.openmct.editor.on('isEditing', this.toggleEditMode);
+    },
+    destroyed() {
+        this.openmct.editor.off('isEditing', this.toggleEditMode);
     }
 }
 </script>
