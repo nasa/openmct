@@ -91,6 +91,7 @@
 
     const DEFAULT_GRID_SIZE = [32, 32],
           DEFAULT_DIMENSIONS = [12, 8],
+          DEFAULT_TELEMETRY_DIMENSIONS = [2, 1],
           DEFAULT_POSITION = [0, 0],
           MINIMUM_FRAME_SIZE = [320, 180],
           DEFAULT_HIDDEN_FRAME_TYPES = [
@@ -118,11 +119,10 @@
 
             if (this.composition) {
                 this.composition.load();
-                this.composition.on('add', this.onAddComposition);
                 this.composition.on('remove', this.onRemoveComposition);
             }
 
-            // Read configuration
+            // Read layout configuration
             this.getPanels();
             this.getAlphanumerics();
 
@@ -140,7 +140,7 @@
                     this.openmct.objects.get(id).then(domainObject => {
                         panel.domainObject = domainObject;
                         panel.position = panel.position || DEFAULT_POSITION;
-                        panel.dimensions = panel.dimensions || this.defaultDimensions();
+                        panel.dimensions = panel.dimensions || this.getSubobjectDefaultDimensions();
                         panel.hasFrame = panel.hasOwnProperty('hasFrame') ?
                             panel.hasFrame :
                             this.hasFrameByDefault(domainObject.type);
@@ -149,10 +149,9 @@
                 };
             },
             getAlphanumerics() {
-                console.log("configuration", {...this.newDomainObject.configuration});
                 let alphanumerics = this.newDomainObject.configuration.alphanumerics || [];
-                alphanumerics.forEach((alpha, i) => {
-                    alpha.index = i;
+                alphanumerics.forEach((alpha, index) => {
+                    alpha.index = index;
                     this.makeTelemetryItem(alpha, false);
                 });
             },
@@ -163,19 +162,14 @@
                 };
                 let style = this.convertPosition(rawPosition);
                 let id = this.openmct.objects.makeKeyString(panel.domainObject.identifier);
-                let subobjectViewConfiguration = new SubobjectViewConfiguration(
-                    this.newDomainObject,
-                    id,
-                    rawPosition,
-                    style,
-                    openmct
-                );
+                let subobjectViewConfiguration =
+                    new SubobjectViewConfiguration(this.newDomainObject, id, rawPosition, style, openmct);
                 this.layoutItems.push({
                     id: id,
                     hasFrame: panel.hasFrame,
                     domainObject: panel.domainObject,
                     style: style,
-                    drilledIn: this.isDrilledIn(id),
+                    drilledIn: this.isItemDrilledIn(id),
                     initSelect: initSelect,
                     rawPosition: rawPosition,
                     type: 'subobject-view',
@@ -203,20 +197,17 @@
                         domainObject: domainObject,
                         style: style,
                         initSelect: initSelect,
-                        rawPosition: rawPosition,
                         alphanumeric: alphanumeric,
+                        rawPosition: rawPosition,
                         type: 'telemetry-view',
                         config: telemetryViewConfiguration
                     });
                 });
             },
-            onAddComposition(domainObject) {
-
-            },
             onRemoveComposition(identifier) {
 
             },
-            defaultDimensions() {
+            getSubobjectDefaultDimensions() {
                 let gridSize = this.gridSize;
                 return MINIMUM_FRAME_SIZE.map(function (min, i) {
                     return Math.max(
@@ -251,13 +242,11 @@
                 }
 
                 this.removeListeners();
-                let view = selection[0].context.view;
+                let layoutItem = selection[0].context.layoutItem;
 
-                if (selection[1] && view) {
-                    if (view.type === 'telemetry-view' ) {
-                        this.attachAlphanumericListeners(view);
-                    } else if (view.type === 'subobject-view') {
-                        this.attachPanelListeners(view);
+                if (selection[1] && layoutItem) {
+                    if (layoutItem.type === 'subobject-view') {
+                        this.attachPanelListeners(layoutItem);
                     }
                 }
 
@@ -275,10 +264,12 @@
             updateDrilledInState(id) {
                 this.drilledIn = id;
                 this.layoutItems.forEach(function (item) {
-                    item.drilledIn = item.id === id;
+                    if (item.config.type === 'subobject-view') {
+                        item.drilledIn = item.id === id;
+                    }
                 });
             },
-            isDrilledIn(id) {
+            isItemDrilledIn(id) {
                 return this.drilledIn === id;
             },
             updatePosition(item, newPosition) {
@@ -286,8 +277,8 @@
                 let newStyle = this.convertPosition(newPosition);
                 item.config.style = newStyle;
                 item.config.rawPosition = newPosition;
-                item.style = newStyle;
                 item.rawPosition = newPosition;
+                item.style = newStyle;
             },
             bypassSelection($event) {
                 if (this.dragInProgress) {
@@ -313,61 +304,60 @@
 
                 let domainObject = JSON.parse($event.dataTransfer.getData('domainObject'));
                 let elementRect = this.$el.getBoundingClientRect();
-                this.droppedObjectPosition = {
+                let droppedObjectPosition = {
                     x: $event.pageX - elementRect.left,
                     y: $event.pageY - elementRect.top
                 }
 
                 if (this.isTelemetry(domainObject)) {
-                    this.addNewAlphanumeric(domainObject);
+                    this.addAlphanumeric(domainObject, droppedObjectPosition);
                 } else {
-                    this.addNewPanel(domainObject);
+                    this.addPanel(domainObject, droppedObjectPosition);
                 }
             },
-            addNewPanel(domainObject) {
+            addPanel(domainObject, position) {
                 // TODO: check if object exists in composition.
-
+                let panel = {
+                    position: [
+                        Math.floor(position.x / this.gridSize[0]),
+                        Math.floor(position.y / this.gridSize[1])
+                    ],
+                    dimensions: this.getSubobjectDefaultDimensions(),
+                    hasFrame: this.hasFrameByDefault(domainObject.type)
+                };
                 let id = this.openmct.objects.makeKeyString(domainObject.identifier);
-                let position = [
-                        Math.floor(this.droppedObjectPosition.x / this.gridSize[0]),
-                        Math.floor(this.droppedObjectPosition.y / this.gridSize[1])
-                ];
-                let newPanel = {};
-                newPanel.position = position;
-                newPanel.dimensions = this.defaultDimensions();
-                newPanel.hasFrame = this.hasFrameByDefault(domainObject.type);
-
                 let path = "configuration.panels[" + id + "]";
-                this.mutate(path, newPanel);
-
-                newPanel.domainObject = domainObject;
-                this.makeFrameItem(newPanel, true);
+                this.mutate(path, panel);
+                panel.domainObject = domainObject;
+                this.makeFrameItem(panel, true);
             },
-            addNewAlphanumeric(domainObject) {
-                let position = [
-                    Math.floor(this.droppedObjectPosition.x / this.gridSize[0]),
-                    Math.floor(this.droppedObjectPosition.y / this.gridSize[1])
-                ];
-                let newAlpha = {}; 
-                newAlpha.identifier = domainObject.identifier;
-                newAlpha.position = position;
-                newAlpha.dimensions = this.defaultDimensions();
-                newAlpha.displayMode = 'all'; // Default mode
-                newAlpha.value = 'sin'; // Default value
-
+            addAlphanumeric(domainObject, position) {
+                let alphanumeric = {
+                    identifier: domainObject.identifier,
+                    position: [
+                        Math.floor(position.x / this.gridSize[0]),
+                        Math.floor(position.y / this.gridSize[1])
+                    ],
+                    dimensions: DEFAULT_TELEMETRY_DIMENSIONS,
+                    displayMode: 'all',
+                    value: 'sin',
+                    stroke: "transparent",
+                    fill: "",
+                    color: "",
+                    size: "13px",
+                };
                 let alphanumerics = this.newDomainObject.configuration.alphanumerics || [];
-                newAlpha.index = alphanumerics.push(newAlpha) - 1;
-
+                alphanumeric.index = alphanumerics.push(alphanumeric) - 1;
                 this.mutate("configuration.alphanumerics", alphanumerics);
-                this.makeTelemetryItem(newAlpha, true);
+                this.makeTelemetryItem(alphanumeric, true);
             },
             handleDragOver($event){
                 $event.preventDefault();
             },
             removeListeners() {
                 if (this.listeners) {
-                    this.listeners.forEach(function (l) {
-                        l();
+                    this.listeners.forEach(function (listener) {
+                        listener();
                     })
                 }
                 this.listeners = [];
@@ -386,7 +376,6 @@
         },
         destroyed: function () {
             if (this.composition) {
-                this.composition.off('add', this.onAddComposition);
                 this.composition.off('remove', this.onRemoveComposition);    
             }
 

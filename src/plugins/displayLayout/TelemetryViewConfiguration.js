@@ -24,18 +24,25 @@ define([],
                 this.mutate(path + ".position", this.rawPosition.position);                   
             }
 
-            attachSelectionListeners() {
+            attachListeners() {
                 let path = "configuration.alphanumerics[" + this.alphanumeric.index + "]";
-                this.listeners.push(
-                    this.openmct.objects.observe(this.domainObject, path + ".displayMode", function (newValue) {
-                        this.alphanumeric.displayMode = newValue;
-                    }.bind(this))
-                );
-                this.listeners.push(
-                    this.openmct.objects.observe(this.domainObject, path + ".value", function (newValue) {
-                        this.alphanumeric.value = newValue;
-                    }.bind(this))
-                );
+                [
+                    'displayMode',
+                    'value',
+                    'fill',
+                    'stroke',
+                    'color',
+                    'size'
+                ].forEach(property => {
+                    this.listeners.push(
+                        this.openmct.objects.observe(this.domainObject, path + "." + property, function (newValue) {
+                            this.alphanumeric[property] = newValue;
+                        }.bind(this))
+                    );
+                });
+                this.listeners.push(this.openmct.objects.observe(this.domainObject, '*', function (obj) {
+                    this.domainObject = JSON.parse(JSON.stringify(obj));
+                }.bind(this)));
             }
 
             destroy() {

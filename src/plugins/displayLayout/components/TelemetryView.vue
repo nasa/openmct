@@ -68,9 +68,6 @@
                 telemetryClass: ''
             }
         },
-        created: function () {
-            this.getTelemetry(this.item.domainObject);
-        },
         methods: {
             getTelemetry(domainObject) {
                 return Promise.resolve(domainObject)
@@ -124,7 +121,8 @@
             }
         },
         mounted() {
-            this.item.config.attachSelectionListeners();
+            this.getTelemetry(this.item.domainObject);
+            this.item.config.attachListeners();
         },
         destroyed() {
             this.removeSubscription();
