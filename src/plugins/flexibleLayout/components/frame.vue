@@ -23,20 +23,25 @@
 <template>
     <div class="c-fl-frame"
         :class="[frame.cssClass]">
-        <div draggable="true"
-             class="c-fl-frame__drag-wrapper"
+        <div class="c-fl-frame__drag-wrapper"
              v-if="frame.domainObject">
             <object-view
+                draggable="true"
                 class="c-object-view"
-                ref="dragObject"
                 :object="frame.domainObject">
             </object-view>
         </div>
-        <div class="c-fl-frame__drop-hint"
-             v-if="isDragging"
-             @drop="dropHandler">
-            <div class="c-drop-hint c-drop-hint--always-show"></div>
-        </div>
+        <drop-hint
+             v-show="isEditing && isDragging"
+             class="c-fl-frame__drop-hint"
+             :class="{'is-dragging': isDragging}"
+             @object-drop-to="dropHandler">
+        </drop-hint>
+        <resize-handle
+             v-show="isEditing && !isDragging"
+             :orientation="layoutDirectionStr === 'rows' ? 'horizontal' : 'vertical'"
+             @start-frame-resizing="resizingHandler">
+        </resize-handle>
     </div>
 </template>
 
@@ -74,24 +79,32 @@
 
 <script>
 import ObjectView from '../../../ui/components/layout/ObjectView.vue';
+import DropHint from './dropHint.vue';
+import ResizeHandle from './resizeHandle.vue';
 
 export default {
-    props: ['frame', 'index', 'isEditing', 'isDragging'],
+    props: ['frame', 'index', 'isEditing', 'isDragging', 'layoutDirectionStr'],
     components: {
-        ObjectView
+        ObjectView,
+        DropHint,
+        ResizeHandle
     },
     methods: {
         dragstart(event) {
             this.$emit('object-drag-from', this.index);
         },
-        dropHandler(event){
-            event.stopPropagation();
-
+        dropHandler(event) {
             this.$emit('object-drop-to', this.index, event);
+        },
+        resizingHandler(event) {
+            this.$emit('start-frame-resizing', this.index, event);
         }
     },
     mounted() {
         this.$el.addEventListener('dragstart', this.dragstart);
+    },
+    beforeDestroy() {
+        this.$el.removeEventListener('dragstart', this.dragstart);
     }
 }
 </script>
