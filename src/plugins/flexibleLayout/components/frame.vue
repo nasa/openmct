@@ -22,7 +22,10 @@
 
 <template>
     <div class="c-fl-frame"
-        :class="[frame.cssClass]">
+        :class="{
+            'is-dragging': isDragging,
+            [frame.cssClass]: true
+        }">
         <div draggable="true"
              class="c-fl-frame__drag-wrapper"
              v-if="frame.domainObject">
@@ -39,38 +42,6 @@
         </div>
     </div>
 </template>
-
-<style lang="scss">
-    @import '~styles/sass-base';
-
-    .c-fl-frame {
-        display: flex;
-        justify-content: stretch;
-        align-items: stretch;
-        flex: 1 1;
-        flex-direction: column;
-
-        &__drag-wrapper {
-            flex: 1 1 100%;
-            overflow: auto;
-        }
-
-        &__drop-hint {
-            flex: 0 0 15px;
-            .c-drop-hint {
-                border-radius: $smallCr;
-            }
-        }
-
-        &--empty-container {
-            flex-grow: 0;
-        }
-
-        .c-fl--rows & {
-            flex-direction: row;
-        }
-    }
-</style>
 
 <script>
 import ObjectView from '../../../ui/components/layout/ObjectView.vue';
