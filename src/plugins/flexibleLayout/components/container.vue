@@ -34,14 +34,16 @@
                 v-for="(frame, index) in frames"
                 :key="index"
                 :style="{
-                    'flex-basis': frame.height
+                    'flex-basis': `${frame.height}%`
                 }"
                 :frame="frame"
                 :index="index"
                 :isEditing="isEditing"
                 :isDragging="isDragging"
+                :layoutDirectionStr="layoutDirectionStr"
                 @object-drag-from="dragFrom"
-                @object-drop-to="dropTo">
+                @object-drop-to="dropTo"
+                @start-frame-resizing="startFrameResizing">
             </frame-component>
         </div>
     </div>
@@ -51,12 +53,28 @@
 import FrameComponent from './frame.vue';
 import Frame from '../utils/frame'
 
+const SNAP_TO_PERCENTAGE = 5;
+
 export default {
-    props: ['size', 'frames', 'index', 'isEditing', 'isDragging'],
+    inject:['openmct'],
+    props: ['size', 'frames', 'index', 'isEditing', 'isDragging', 'layoutDirectionStr'],
     components: {
         FrameComponent
     },
+    data() {
+        return {
+            initialPos: 0,
+            frameIndex: 0
+        }
+    },
     methods: {
+        framesResize(newSize) {
+            this.frames.forEach((frame) => {
+                if(!frame.cssClass) {
+                    frame.height = newSize;
+                }
+            });
+        },
         dragFrom(frameIndex) {
            this.$emit('object-drag-from', this.index, frameIndex);
         },
@@ -65,10 +83,55 @@ export default {
                 frameObject;
 
             if (domainObject) {
-                frameObject = new Frame(JSON.parse(domainObject));
+                let newFrameSize = Math.round(100/(this.frames.length));
+
+                this.framesResize(newFrameSize);
+
+                frameObject = new Frame(JSON.parse(domainObject), newFrameSize);
             }
 
             this.$emit('object-drop-to', this.index, frameIndex, frameObject);
+        },
+        mousemove(event) {
+            let delta = this.initialPos - this.getPosition(event),
+                percentageMoved = (delta/this.getElHeight(this.$el))*100,
+                beforeFrame = this.frames[this.frameIndex],
+                afterFrame = this.frames[this.frameIndex + 1];
+
+                beforeFrame.height = beforeFrame.height - percentageMoved;
+                afterFrame.height = afterFrame.height + percentageMoved;
+
+                this.initialPos = this.getPosition(event);
+        },
+        mouseup(event) {
+            this.persist();
+
+            document.body.removeEventListener('mousemove', this.mousemove);
+            document.body.removeEventListener('mouseup', this.mouseup);
+        },
+        getPosition(event) {
+            if (this.layoutDirectionStr === 'rows') {
+                return event.pageX;
+            } else {
+                return event.pageY;
+            };
+        },
+        getElHeight(el) {
+            if (this.layoutDirectionStr === 'rows') {
+                return el.offsetWidth;
+            } else {
+                return el.offsetHeight;
+            }
+        },
+        startFrameResizing(frameIndex, event) {
+            this.initialPos = this.getPosition(event);
+            this.frameIndex = frameIndex;
+
+            document.body.addEventListener('mousemove', this.mousemove);
+            document.body.addEventListener('mouseup', this.mouseup);
+        },
+        persist() {
+            this.$emit('persist', this.index);
         }
     }
 }

@@ -27,9 +27,11 @@
                  :frames="container.frames"
                  :isEditing="isEditing"
                  :isDragging="isDragging"
+                 :layoutDirectionStr="layoutDirectionStr"
                  @addFrame="addFrame"
                  @object-drag-from="dragFromHandler"
-                 @object-drop-to="dropToHandler">
+                 @object-drop-to="dropToHandler"
+                 @persist="persist">
             </container-component>
         </div> 
     </div>
@@ -217,7 +219,7 @@ export default {
             isEditing: false,
             isDragging: false,
             rowsLayout: false,
-            layoutDirectionStr: (this.rowsLayout === true)? 'columns' : 'rows'
+            layoutDirectionStr: 'columns'
         }
     },
     methods: {
@@ -241,8 +243,12 @@ export default {
 
             this.persist();
         },
-        persist(){
-            this.openmct.objects.mutate(this.domainObject, '.configuration.containers', this.containers);
+        persist(index){
+            if (index) {
+                this.openmct.objects.mutate(this.domainObject, `.configuration.containers[${index}]`, this.containers[index]);
+            } else {
+                this.openmct.objects.mutate(this.domainObject, '.configuration.containers', this.containers);
+            }
         },
         isEditingHandler(isEditing) {
             this.isEditing = isEditing;
@@ -261,7 +267,7 @@ export default {
         },
         toggleLayout() {
             this.rowsLayout = !this.rowsLayout;
-            this.layoutDirectionStr = (this.rowsLayout === true)? 'rows' : 'columns';
+            this.layoutDirectionStr = (this.rowsLayout === true) ? 'rows' : 'columns';
         }
     },
     mounted() {
