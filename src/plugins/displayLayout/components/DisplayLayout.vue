@@ -230,7 +230,7 @@
             updateDrilledInState(id) {
                 this.drilledIn = id;
                 this.layoutItems.forEach(function (item) {
-                    if (item.config.type === 'subobject-view') {
+                    if (item.type === 'subobject-view') {
                         item.drilledIn = item.id === id;
                     }
                 });
@@ -283,11 +283,10 @@
                 let id = this.openmct.objects.makeKeyString(domainObject.identifier);
                 this.openmct.composition.get(this.newDomainObject).load()
                     .then(composition => {
-                        // console.log("composition", {...composition});
                         const result = composition.filter(object => 
                             id === this.openmct.objects.makeKeyString(object.identifier)
                         );
-                        // console.log("result", result);
+
                         // Do not add the object if it's already in the composition.
                         if (result.length > 0) {
                             return;
