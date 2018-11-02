@@ -113,14 +113,8 @@
         },
         created: function () {
             this.newDomainObject = this.domainObject;
-            this.gridSize = this.newDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;            
-            this.composition = this.openmct.composition.get(this.newDomainObject);
+            this.gridSize = this.newDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;
             this.Listeners = [];
-
-            if (this.composition) {
-                this.composition.load();
-                this.composition.on('remove', this.onRemoveComposition);
-            }
 
             // Read layout configuration
             this.getPanels();
@@ -170,7 +164,6 @@
                     style: style,
                     drilledIn: this.isItemDrilledIn(id),
                     initSelect: initSelect,
-                    rawPosition: rawPosition,
                     type: 'subobject-view',
                     config: config
                 });
@@ -189,15 +182,11 @@
                         domainObject: domainObject,
                         style: style,
                         initSelect: initSelect,
-                        rawPosition: rawPosition,
                         alphanumeric: alphanumeric,
                         type: 'telemetry-view',
                         config: config
                     });
                 });
-            },
-            onRemoveComposition(identifier) {
-
             },
             getSubobjectDefaultDimensions() {
                 let gridSize = this.gridSize;
@@ -269,7 +258,6 @@
                 let newStyle = this.convertPosition(newPosition);
                 item.config.style = newStyle;
                 item.config.rawPosition = newPosition;
-                item.rawPosition = newPosition;
                 item.style = newStyle;
             },
             bypassSelection($event) {
@@ -308,20 +296,31 @@
                 }
             },
             addPanel(domainObject, position) {
-                // TODO: check if object exists in composition.
-                let panel = {
-                    position: [
-                        Math.floor(position.x / this.gridSize[0]),
-                        Math.floor(position.y / this.gridSize[1])
-                    ],
-                    dimensions: this.getSubobjectDefaultDimensions(),
-                    hasFrame: this.hasFrameByDefault(domainObject.type)
-                };
                 let id = this.openmct.objects.makeKeyString(domainObject.identifier);
-                let path = "configuration.panels[" + id + "]";
-                this.mutate(path, panel);
-                panel.domainObject = domainObject;
-                this.makeFrameItem(panel, true);
+                this.openmct.composition.get(this.newDomainObject).load()
+                    .then(composition => {
+                        const result = composition.filter(object => 
+                            id === this.openmct.objects.makeKeyString(object.identifier)
+                        );
+
+                        // Do not add the object if it's already in the composition.
+                        if (result.length > 0) {
+                            return;
+                        }
+
+                        let panel = {
+                            position: [
+                                Math.floor(position.x / this.gridSize[0]),
+                                Math.floor(position.y / this.gridSize[1])
+                            ],
+                            dimensions: this.getSubobjectDefaultDimensions(),
+                            hasFrame: this.hasFrameByDefault(domainObject.type)
+                        };
+                        let path = "configuration.panels[" + id + "]";
+                        this.mutate(path, panel);
+                        panel.domainObject = domainObject;
+                        this.makeFrameItem(panel, true);
+                    });
             },
             addAlphanumeric(domainObject, position) {
                 let alphanumeric = {
@@ -367,10 +366,6 @@
             this.openmct.selection.on('change', this.setSelection);
         },
         destroyed: function () {
-            if (this.composition) {
-                this.composition.off('remove', this.onRemoveComposition);    
-            }
-
             this.openmct.off('change', this.setSelection);
             this.unlisten();
             this.removeListeners();
