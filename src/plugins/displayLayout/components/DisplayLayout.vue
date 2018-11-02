@@ -162,8 +162,7 @@
                 };
                 let style = this.convertPosition(rawPosition);
                 let id = this.openmct.objects.makeKeyString(panel.domainObject.identifier);
-                let subobjectViewConfiguration =
-                    new SubobjectViewConfiguration(this.newDomainObject, id, rawPosition, style, openmct);
+                let config = new SubobjectViewConfiguration(this.newDomainObject, id, rawPosition, style, openmct);
                 this.layoutItems.push({
                     id: id,
                     hasFrame: panel.hasFrame,
@@ -173,7 +172,7 @@
                     initSelect: initSelect,
                     rawPosition: rawPosition,
                     type: 'subobject-view',
-                    config: subobjectViewConfiguration
+                    config: config
                 });
             },
             makeTelemetryItem(alphanumeric, initSelect) {
@@ -183,24 +182,17 @@
                 };
                 let style = this.convertPosition(rawPosition);
                 let id = this.openmct.objects.makeKeyString(alphanumeric.identifier);
-
                 this.openmct.objects.get(id).then(domainObject => {
-                    let telemetryViewConfiguration = new TelemetryViewConfiguration(
-                        this.newDomainObject,
-                        alphanumeric,
-                        rawPosition,
-                        style,
-                        openmct
-                    );
+                    let config = new TelemetryViewConfiguration(this.newDomainObject, alphanumeric, rawPosition, style, openmct);
                     this.layoutItems.push({
                         id: id,
                         domainObject: domainObject,
                         style: style,
                         initSelect: initSelect,
-                        alphanumeric: alphanumeric,
                         rawPosition: rawPosition,
+                        alphanumeric: alphanumeric,
                         type: 'telemetry-view',
-                        config: telemetryViewConfiguration
+                        config: config
                     });
                 });
             },

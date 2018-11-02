@@ -21,7 +21,8 @@
  *****************************************************************************/
 
  <template>
-    <div class="c-telemetry-view">
+    <div class="c-telemetry-view"
+         :style="styleObject">
         <span v-if="showLabel"
               class="c-telemetry-view__label">{{ item.domainObject.name }}</span>
         <span v-if="showValue"
@@ -60,6 +61,15 @@
             showValue: function () {
                 let displayMode = this.item.config.alphanumeric.displayMode;
                 return displayMode === 'value' || displayMode == 'all' ? true : false;
+            },
+            styleObject: function () {
+                let alphanumeric = this.item.config.alphanumeric;
+                return {
+                    backgroundColor: alphanumeric.fill,
+                    borderColor: alphanumeric.stroke,
+                    color: alphanumeric.color,
+                    fontSize: alphanumeric.size
+                }
             }
         },
         data() {

@@ -22,7 +22,7 @@
 
 <template>
     <div class="c-frame has-local-controls is-selectable is-moveable"
-         :style="styleObject"
+         :style="item.config.style"
          :class="classObject"
          @dblclick="drill(item.id, $event)">
 
@@ -90,20 +90,6 @@
                     'is-drilled-in': this.item.drilledIn,
                     'no-frame': !this.item.hasFrame
                 }
-            },
-            styleObject: function () {
-                let viewConfiguration = this.item.config;
-                let style = viewConfiguration.style;
-                let alphanumeric = viewConfiguration.alphanumeric;
-
-                if (alphanumeric) {
-                    style.backgroundColor = alphanumeric.fill;
-                    style.borderColor = alphanumeric.stroke;
-                    style.color = alphanumeric.color;
-                    style.fontSize = alphanumeric.size;
-                }
-
-                return style;
             }
         },
         methods: {
