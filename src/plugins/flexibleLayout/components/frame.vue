@@ -27,15 +27,16 @@
             [frame.cssClass]: true
         }">
 
-        <frame-header 
-             v-if="index !== 0"
-             v-show="isEditing"
-             draggable="true"
-             :domainObject="frame.domainObject">
-        </frame-header>
-        
         <div class="c-fl-frame__drag-wrapper"
+             draggable="true"
              v-if="frame.domainObject">
+
+             <frame-header 
+                v-if="index !== 0"
+                ref="dragObject"
+                :domainObject="frame.domainObject">
+            </frame-header>
+
             <object-view
                 class="c-object-view"
                 :object="frame.domainObject">
@@ -71,13 +72,20 @@ export default {
         },
         dropHandler(event) {
             this.$emit('object-drop-to', this.index, event);
+        },
+        drag(event) {
+            if (!this.isDragging) {
+                this.isDragging = true;
+            }
         }
     },
     mounted() {
         this.$el.addEventListener('dragstart', this.dragstart);
+        this.$el.addEventListener('drag', this.drag);
     },
     beforeDestroy() {
         this.$el.removeEventListener('dragstart', this.dragstart);
+        this.$el.addEventListener('drag', this.drag);
     }
 }
 </script>
