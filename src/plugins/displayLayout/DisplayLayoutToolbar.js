@@ -56,6 +56,9 @@ define([], function () {
                             })
                         },
                         {
+                            control: "separator"
+                        },
+                        {
                             control: "color-picker",
                             domainObject: domainObject,
                             property: path + ".fill",

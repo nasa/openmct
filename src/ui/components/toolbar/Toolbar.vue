@@ -48,9 +48,14 @@
                 let structure = this.openmct.toolbars.get(selection) || [];
                 this.structure = structure.map(function (item) {
                     let toolbarItem = {...item};
+                    let domainObject = toolbarItem.domainObject;
                     toolbarItem.control = "toolbar-" + toolbarItem.control;
-                    toolbarItem.value = _.get(toolbarItem.domainObject, item.property);
-                    this.registerListener(toolbarItem.domainObject);
+
+                    if (domainObject) {
+                        toolbarItem.value = _.get(domainObject, item.property);
+                        this.registerListener(domainObject);
+                    }
+
                     return toolbarItem;
                 }.bind(this));
             },
