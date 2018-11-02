@@ -173,7 +173,7 @@
 
         &__resize-handle {
             $size: 2px;
-            $margin: 3px;
+            $margin: 5px;
             $marginHov: 16px;
 
             &:before {
@@ -201,7 +201,7 @@
 
             &:hover {
                 //flex-basis: $marginHov * 2;
-                padding: 10px;
+                // padding: 10px;
                 &:before {
                     background: $editColor;
                 }
