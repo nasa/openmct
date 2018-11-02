@@ -53,7 +53,7 @@
 
         &__container-holder {
             display: flex;
-            flex: 1 1 100%;
+            flex: 1 1 100%; // Must needs to be 100% to work
 
             // Columns by default
             flex-direction: row;
@@ -69,6 +69,177 @@
             }
         }
     }
+
+    .c-fl-container {
+        /***************************************************** CONTAINERS */
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+
+        // flex-basis is set with inline style in code, controls size
+        flex-grow: 1;
+        flex-shrink: 1;
+
+        .is-editing & {
+            background: $editColorBg;
+        }
+
+        &__header {
+            background: rgba($editColor, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+        }
+
+        &__frames-holder {
+//            @include test($a: 0.6);
+            display: flex;
+            flex: 1 1 100%; // Must be 100% to work
+            flex-direction: column; // Default
+            align-content: stretch;
+            align-items: stretch;
+            overflow: hidden; // This sucks, but doing in the short-term
+        }
+
+        /****** THEIR FRAMES */
+        // Frames get styled here because this is particular to their presence in this layout type
+        .c-fl-frame {
+            @include browserPrefix(margin-collapse, collapse);
+            margin: 1px;
+
+            &__drag-wrapper {
+                border: 1px solid $colorInteriorBorder;
+            }
+        }
+
+        /****** LAYOUT */
+        .c-fl--rows & {
+            // Layout is rows
+            flex-direction: row;
+
+            > * + * {
+                .c-fl-frame__drag-wrapper {
+                    // border-top: none;
+                    // border-left: 1px solid $colorInteriorBorder;
+                }
+            }
+
+            .is-editing & {
+                > * + * {
+                    .c-fl-frame__drag-wrapper {
+                        //  border-left: 1px dotted $editColor;
+                    }
+                }
+            }
+
+            &__header {
+                flex-basis: 20px;
+                overflow: hidden;
+            }
+
+            &__label {
+                transform-origin: center;
+                transform: rotate(-90deg);
+            }
+
+            &__frames-holder {
+                flex-direction: row;
+            }
+        }
+    }
+
+    .c-fl-frame {
+        display: flex;
+        justify-content: stretch;
+        align-items: stretch;
+        flex: 1 1;
+        flex-direction: column;
+
+        &__drag-wrapper {
+            flex: 1 1 auto;
+            overflow: auto;
+        }
+
+        &__drop-hint {
+            /* TODO: make this independent of the flex-basis of .c-fl-frame
+             * so that the first-in-container element can be set to basis 0;
+             */
+            flex: 0 0 15px;
+            .c-drop-hint {
+                border-radius: $smallCr;
+            }
+        }
+
+        &__resize-handle {
+            $size: 2px;
+            $margin: 5px;
+            $marginHov: 16px;
+
+            &:before {
+                content: '';
+                //@include abs($margin);
+                display: block;
+                min-height: $size; min-width: $size;
+                background: rgba($editColor, 0.6);
+            }
+
+            flex: 0 0 ($margin * 2) + $size;
+            padding: $margin;
+
+            &.vertical {
+                &:hover{
+                    cursor: row-resize;
+                }
+            }
+
+            &.horizontal {
+                &:hover{
+                    cursor: col-resize;
+                }
+            }
+
+            &:hover {
+                //flex-basis: $marginHov * 2;
+                // padding: 10px;
+                &:before {
+                    background: $editColor;
+                }
+            }
+        }
+
+        // Hide the resize-handles in first and last c-fl-frame elements
+        &:first-child,
+        &:last-child {
+            .c-fl-frame__resize-handle {
+                display: none;
+            }
+        }
+
+        .c-fl--rows & {
+            flex-direction: row;
+        }
+
+
+        &--first-in-container {
+            border: none;
+            flex: 0 0 0;
+            .c-fl-frame__drag-wrapper {
+                display: none;
+            }
+        }
+
+        .is-empty & {
+            &.c-fl-frame--first-in-container {
+                flex: 1 1 auto;
+            }
+
+            &__drop-hint {
+                flex: 1 1 100%;
+            }
+        }
+    }
+
 </style>
 
 <script>

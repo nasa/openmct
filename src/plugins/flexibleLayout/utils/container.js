@@ -2,7 +2,7 @@ import Frame from './frame';
 
 class Container {
     constructor (width) {
-        this.frames = [new Frame({}, '15px', 'c-fl-frame--empty-container')];
+        this.frames = [new Frame({}, '', 'c-fl-frame--first-in-container')];
         this.width = width;
     }
 

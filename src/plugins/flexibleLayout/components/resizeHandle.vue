@@ -21,33 +21,10 @@
  *****************************************************************************/
 
 <template>
-    <div class="resize-handle"
+    <div class="c-fl-frame__resize-handle"
          :class="[orientation]">
     </div>
 </template>
-
-<style lang="scss">
-    .resize-handle {
-        background: rgba(0, 199, 195, 0.3);
-        flex: 0 0 5px;
-
-        &:hover {
-            background: rgba(0, 199, 195, 1);
-        }
-    }
-
-    .vertical {
-        &:hover{
-            cursor: row-resize;
-        }
-    }
-
-    .horizontal {
-        &:hover{
-            cursor: col-resize;
-        }
-    }
-</style>
 
 <script>
 export default {

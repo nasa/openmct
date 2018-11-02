@@ -22,104 +22,33 @@
 
 <template>
     <div class="c-fl-container"
-         :style="[{'flex-basis': size}]">
+         :style="[{'flex-basis': size}]"
+         :class="{'is-empty': frames.length === 1}">
         <div class="c-fl-container__header"
             v-if="isEditing">
             <span class="c-fl-container__label">{{ size }}</span>
         </div>
-        <frame-component
-            class="c-fl-container__frame"
-            v-for="(frame, index) in frames"
-            :key="index"
-            :style="{
-                'flex-basis': `${frame.height}%`
-            }"
-            :frame="frame"
-            :index="index"
-            :isEditing="isEditing"
-            :isDragging="isDragging"
-            :layoutDirectionStr="layoutDirectionStr"
-            @object-drag-from="dragFrom"
-            @object-drop-to="dropTo"
-            @frame-resizing="frameResizing"
-            @end-frame-resizing="endFrameResizing">
-        </frame-component>
+        <div class="c-fl-container__frames-holder">
+            <frame-component
+                class="c-fl-container__frame"
+                v-for="(frame, index) in frames"
+                :key="index"
+                :style="{
+                    'flex-basis': `${frame.height}%`
+                }"
+                :frame="frame"
+                :index="index"
+                :isEditing="isEditing"
+                :isDragging="isDragging"
+                :layoutDirectionStr="layoutDirectionStr"
+                @object-drag-from="dragFrom"
+                @object-drop-to="dropTo"
+                @frame-resizing="frameResizing"
+                @end-frame-resizing="endFrameResizing">
+            </frame-component>
+        </div>
     </div>
 </template>
-
-<style lang="scss">
-    @import '~styles/sass-base';
-
-    .c-fl-container {
-        display: flex;
-        flex-direction: column; // Default
-        align-content: stretch;
-        align-items: stretch;
-        justify-content: space-around;
-
-        // flex-basis is set with inline style in code, controls size
-        flex-grow: 1;
-        flex-shrink: 1;
-
-        > * + * {
-            .c-fl-frame__drag-wrapper {
-                border-top: 1px solid $colorInteriorBorder;
-            }
-        }
-
-        .is-editing & {
-            background: $editColorBg;
-
-            .c-fl-frame__drag-wrapper {
-              border-top: 1px dotted $editColor;
-            }
-        }
-
-        &__header {
-            background: rgba($editColor, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex: 0 0 auto;
-        }
-
-        .c-fl--rows & {
-            // Layout is rows
-            flex-direction: row;
-
-            > * + * {
-                .c-fl-frame__drag-wrapper {
-                    border-top: none;
-                    border-left: 1px solid $colorInteriorBorder;
-                }
-            }
-
-            .is-editing & {
-                > * + * {
-                    .c-fl-frame__drag-wrapper {
-                        border-left: 1px dotted $editColor;
-                    }
-                }
-
-            }
-
-            &__header {
-                flex-basis: 20px;
-                overflow: hidden;
-            }
-
-            &__label {
-                transform-origin: center;
-                transform: rotate(-90deg);
-            }
-
-            &__frames-holder {
-                flex-direction: row;
-            }
-        }
-    }
-
-</style>
 
 <script>
 import FrameComponent from './frame.vue';
