@@ -36,12 +36,16 @@ export default {
     },
     methods: {
         mousedown(event) {
+            event.preventDefault();
+
             this.initialPos = this.getPosition(event);
 
-            document.addEventListener('mousemove', this.mousemove);
-            document.addEventListener('mouseup', this.mouseup);
+            document.body.addEventListener('mousemove', this.mousemove);
+            document.body.addEventListener('mouseup', this.mouseup);
         },
         mousemove(event) {
+            event.preventDefault();
+
             let delta = this.initialPos - this.getPosition(event);
             this.initialPos = this.getPosition(event);
 
@@ -50,8 +54,8 @@ export default {
         mouseup(event) {
             this.$emit('mouseup', event);
 
-            document.removeEventListener('mousemove', this.mousemove);
-            document.removeEventListener('mouseup', this.mouseup);
+            document.body.removeEventListener('mousemove', this.mousemove);
+            document.body.removeEventListener('mouseup', this.mouseup);
         },
         getPosition(event) {
             if (this.orientation === 'horizontal') {

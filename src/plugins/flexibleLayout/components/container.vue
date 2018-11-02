@@ -125,7 +125,13 @@ export default {
             }
         },
         getFrameSize(size) {
-            return Math.max(MIN_FRAME_SIZE, size);
+            if (size < MIN_FRAME_SIZE) {
+                return MIN_FRAME_SIZE
+            } else if (size > (100 - MIN_FRAME_SIZE)) {
+                return (100 - MIN_FRAME_SIZE);
+            } else {
+                return size;
+            }
         },
         persist() {
             this.$emit('persist', this.index);
