@@ -23,11 +23,16 @@
  <template>
     <div class="c-telemetry-view"
          :style="styleObject">
-        <span v-if="showLabel"
-              class="c-telemetry-view__label">{{ item.domainObject.name }}</span>
-        <span v-if="showValue"
+        <div v-if="showLabel"
+              class="c-telemetry-view__label">
+            <div class="c-telemetry-view__label-text">{{ item.domainObject.name }}</div>
+        </div>
+
+        <div v-if="showValue"
               class="c-telemetry-view__value"
-              :class="[telemetryClass]">{{ telemetryValue }}</span>
+              :class="[telemetryClass]">
+            <div class="c-telemetry-view__value-text">{{ telemetryValue }}</div>
+        </div>
     </div>    
  </template>
 
@@ -36,13 +41,31 @@
 
     .c-telemetry-view {
         display: flex;
+        align-items: stretch;
+
+        > * {
+            // Label and value holders
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: row;
+           // justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding: $interiorMargin;
+
+            > * {
+                // Text elements
+                @include ellipsize();
+            }
+        }
+
         > * + * {
             margin-left: $interiorMargin;
         }
 
-        > * {
-            @include ellipsize();
-            flex: 1 1 auto;
+        .c-frame & {
+            @include abs();
+            border: 1px solid transparent;
         }
     }
 </style>
