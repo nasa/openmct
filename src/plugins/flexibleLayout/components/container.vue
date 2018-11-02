@@ -29,38 +29,51 @@
             <span class="c-fl-container__label">{{ size }}</span>
         </div>
         <div class="c-fl-container__frames-holder">
-            <frame-component
-                class="c-fl-container__frame"
-                v-for="(frame, index) in frames"
-                :key="index"
-                :style="{
-                    'flex-basis': `${frame.height}%`
-                }"
-                :frame="frame"
-                :index="index"
-                :isEditing="isEditing"
-                :isDragging="isDragging"
-                :layoutDirectionStr="layoutDirectionStr"
-                @object-drag-from="dragFrom"
-                @object-drop-to="dropTo"
-                @frame-resizing="frameResizing"
-                @end-frame-resizing="endFrameResizing">
-            </frame-component>
+            <div class="u-contents"
+                 v-for="(frame, index) in frames"
+                 :key="index">
+
+                <frame-component
+                    class="c-fl-container__frame"
+                    :style="{
+                        'flex-basis': `${frame.height}%`
+                    }"
+                    :frame="frame"
+                    :index="index"
+                    :isEditing="isEditing"
+                    :isDragging="isDragging"
+                    @object-drag-from="dragFrom"
+                    @object-drop-to="dropTo">
+                </frame-component>
+
+                <resize-handle
+                    v-if="index !== 0 && (index !== frames.length - 1)"
+                    v-show="isEditing"
+                    :index="index"
+                    :orientation="layoutDirectionStr === 'rows' ? 'horizontal' : 'vertical'"
+                    @mousemove="frameResizing"
+                    @mouseup="endFrameResizing">
+                </resize-handle>
+            </div>
         </div>
+
     </div>
 </template>
 
 <script>
 import FrameComponent from './frame.vue';
-import Frame from '../utils/frame'
+import Frame from '../utils/frame';
+import ResizeHandle from './resizeHandle.vue';
 
 const SNAP_TO_PERCENTAGE = 5;
+const MIN_FRAME_SIZE = 10;
 
 export default {
     inject:['openmct'],
     props: ['size', 'frames', 'index', 'isEditing', 'isDragging', 'layoutDirectionStr'],
     components: {
-        FrameComponent
+        FrameComponent,
+        ResizeHandle
     },
     data() {
         return {
@@ -94,22 +107,25 @@ export default {
             this.$emit('object-drop-to', this.index, frameIndex, frameObject);
         },
         frameResizing(index, delta) {
-            let percentageMoved = (delta/this.getElHeight(this.$el))*100,
+            let percentageMoved = (delta/this.getElSize(this.$el))*100,
                 beforeFrame = this.frames[index],
                 afterFrame = this.frames[index + 1];
 
-                beforeFrame.height = beforeFrame.height - percentageMoved;
-                afterFrame.height = afterFrame.height + percentageMoved;
+                beforeFrame.height = this.getFrameSize(beforeFrame.height - percentageMoved);
+                afterFrame.height = this.getFrameSize(afterFrame.height + percentageMoved);
         },
         endFrameResizing(event) {
             this.persist();
         },
-        getElHeight(el) {
+        getElSize(el) {
             if (this.layoutDirectionStr === 'rows') {
                 return el.offsetWidth;
             } else {
                 return el.offsetHeight;
             }
+        },
+        getFrameSize(size) {
+            return Math.max(MIN_FRAME_SIZE, size);
         },
         persist() {
             this.$emit('persist', this.index);

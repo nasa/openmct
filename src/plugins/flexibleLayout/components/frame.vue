@@ -41,13 +41,6 @@
              :class="{'is-dragging': isDragging}"
              @object-drop-to="dropHandler">
         </drop-hint>
-
-        <resize-handle
-             v-show="isEditing && !isDragging"
-             :orientation="layoutDirectionStr === 'rows' ? 'horizontal' : 'vertical'"
-             @mousemove="resizingHandler"
-             @mouseup="endResizingHandler">
-        </resize-handle>
     </div>
 </template>
 
@@ -57,7 +50,7 @@ import DropHint from './dropHint.vue';
 import ResizeHandle from './resizeHandle.vue';
 
 export default {
-    props: ['frame', 'index', 'isEditing', 'isDragging', 'layoutDirectionStr'],
+    props: ['frame', 'index', 'isEditing', 'isDragging'],
     components: {
         ObjectView,
         DropHint,
@@ -69,12 +62,6 @@ export default {
         },
         dropHandler(event) {
             this.$emit('object-drop-to', this.index, event);
-        },
-        resizingHandler(delta) {
-            this.$emit('frame-resizing', this.index, delta);
-        },
-        endResizingHandler(event){
-            this.$emit('end-frame-resizing', event);
         }
     },
     mounted() {

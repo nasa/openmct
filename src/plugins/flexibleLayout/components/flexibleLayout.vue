@@ -18,21 +18,32 @@
             :class="{
                 'c-fl--rows': rowsLayout === true
             }">
-            <container-component
-                class="c-fl__container"
+
+            <div class="u-contents"
                  v-for="(container, index) in containers"
-                 :key="index"
-                 :index="index"
-                 :size="container.width || `${Math.round(100/containers.length)}%`"
-                 :frames="container.frames"
-                 :isEditing="isEditing"
-                 :isDragging="isDragging"
-                 :layoutDirectionStr="layoutDirectionStr"
-                 @addFrame="addFrame"
-                 @object-drag-from="dragFromHandler"
-                 @object-drop-to="dropToHandler"
-                 @persist="persist">
-            </container-component>
+                 :key="index">
+                <container-component
+                    class="c-fl__container"
+                    :index="index"
+                    :size="`${container.width}%`"
+                    :frames="container.frames"
+                    :isEditing="isEditing"
+                    :isDragging="isDragging"
+                    :layoutDirectionStr="layoutDirectionStr"
+                    @addFrame="addFrame"
+                    @object-drag-from="dragFromHandler"
+                    @object-drop-to="dropToHandler"
+                    @persist="persist">
+                </container-component>
+
+                <resize-handle
+                    v-show="isEditing"
+                    :index="index"
+                    :orientation="layoutDirectionStr === 'rows' ? 'vertical' : 'horizontal'"
+                    @mousemove="containerResizing"
+                    @mouseup="endContainerResizing">
+                </resize-handle>
+            </div>
         </div> 
     </div>
 </template>
@@ -152,7 +163,7 @@
     .c-fl-frame {
         display: flex;
         justify-content: stretch;
-        align-items: stretch;
+        align-items: st retch;
         flex: 1 1;
         flex-direction: column;
 
@@ -201,7 +212,7 @@
 
             &:hover {
                 //flex-basis: $marginHov * 2;
-                // padding: 10px;
+                padding: 10px;
                 &:before {
                     background: $editColor;
                 }
@@ -243,19 +254,21 @@
 </style>
 
 <script>
-import ContainerComponent  from '../components/container.vue';
+import ContainerComponent  from './container.vue';
 import Container from '../utils/container';
+import ResizeHandle from  './resizeHandle.vue';
 
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
-        ContainerComponent
+        ContainerComponent,
+        ResizeHandle
     },
     data() {
         let containers = this.domainObject.configuration.containers;
 
         if (!containers.length) {
-            containers = [new Container()];
+            containers = [new Container(100)];
         }
 
         return {
@@ -269,9 +282,18 @@ export default {
     },
     methods: {
         addContainer() {
-            let container = new Container()
+            let newSize = 100/(this.containers.length+1);
+
+            let container = new Container(newSize)
+
+            this.recalculateContainerSize(newSize);
 
             this.containers.push(container);
+        },
+        recalculateContainerSize(newSize) {
+            this.containers.forEach((container) => {
+                container.width = newSize;
+            });
         },
         addFrame(frame, index) {
             this.containers[index].addFrame(frame);
@@ -313,6 +335,27 @@ export default {
         toggleLayout() {
             this.rowsLayout = !this.rowsLayout;
             this.layoutDirectionStr = (this.rowsLayout === true) ? 'rows' : 'columns';
+        },
+        containerResizing(index, delta) {
+            let percentageMoved = (delta/this.getElSize(this.$el))*100,
+                beforeContainer = this.containers[index],
+                afterContainer = this.containers[index + 1];
+
+                beforeContainer.width = this.getContainerSize(beforeContainer.width - percentageMoved);
+                afterContainer.width = this.getContainerSize(afterContainer.width + percentageMoved);
+        },
+        stopContainerResizing(event) {
+
+        },
+        getElSize(el) {
+            if (this.layoutDirectionStr === 'rows') {
+                return el.offsetHeight;
+            } else {
+                return el.offsetWidth;
+            }
+        },
+        getContainerSize(size) {
+            return Math.max(10, size);
         }
     },
     mounted() {

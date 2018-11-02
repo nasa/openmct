@@ -28,7 +28,7 @@
 
 <script>
 export default {
-    props: ['orientation'],
+    props: ['orientation', 'index'],
     data() {
         return {
             initialPos: 0
@@ -45,7 +45,7 @@ export default {
             let delta = this.initialPos - this.getPosition(event);
             this.initialPos = this.getPosition(event);
 
-            this.$emit('mousemove', delta);
+            this.$emit('mousemove', this.index, delta);
         },
         mouseup(event) {
             this.$emit('mouseup', event);
