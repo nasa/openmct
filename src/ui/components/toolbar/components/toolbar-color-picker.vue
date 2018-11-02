@@ -14,7 +14,7 @@
                 v-if="!this.options.preventNone"
                 @click="select({value: 'transparent'})">
                 <div class="c-palette__item"></div>
-                No fill
+                {{ noColorTitle }}
             </div>
             <div class="c-palette__items">
                 <div class="c-palette__item"
@@ -35,6 +35,11 @@ export default {
     mixins: [toggleMixin],
     props: {
         options: Object
+    },
+    computed: {
+        noColorTitle: function () {
+            return this.options.type === 'stroke' ? "No border" : "No fill";
+        }
     },
     methods: {
         select(color) {
