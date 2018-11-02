@@ -108,9 +108,11 @@
         components: {
             ObjectView,
         },
-        computed: {
+        mounted() {
+            this.item.config.attachListeners();
         },
-        methods: {
+        destroyed() {
+            this.item.config.destroy();
         }
     }
 </script>

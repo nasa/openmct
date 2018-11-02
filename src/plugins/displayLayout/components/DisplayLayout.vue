@@ -114,7 +114,6 @@
         created: function () {
             this.newDomainObject = this.domainObject;
             this.gridSize = this.newDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;
-            this.Listeners = [];
 
             // Read layout configuration
             this.getPanels();
@@ -144,9 +143,9 @@
             },
             getAlphanumerics() {
                 let alphanumerics = this.newDomainObject.configuration.alphanumerics || [];
-                alphanumerics.forEach((alpha, index) => {
-                    alpha.index = index;
-                    this.makeTelemetryItem(alpha, false);
+                alphanumerics.forEach((alphanumeric, index) => {
+                    alphanumeric.index = index;
+                    this.makeTelemetryItem(alphanumeric, false);
                 });
             },
             makeFrameItem(panel, initSelect) {
@@ -156,10 +155,11 @@
                 };
                 let style = this.convertPosition(rawPosition);
                 let id = this.openmct.objects.makeKeyString(panel.domainObject.identifier);
-                let config = new SubobjectViewConfiguration(this.newDomainObject, id, rawPosition, style, openmct);
+                let config = new SubobjectViewConfiguration(
+                    this.newDomainObject, id, panel.hasFrame, rawPosition, openmct);
+
                 this.layoutItems.push({
                     id: id,
-                    hasFrame: panel.hasFrame,
                     domainObject: panel.domainObject,
                     style: style,
                     drilledIn: this.isItemDrilledIn(id),
@@ -175,8 +175,11 @@
                 };
                 let style = this.convertPosition(rawPosition);
                 let id = this.openmct.objects.makeKeyString(alphanumeric.identifier);
+
                 this.openmct.objects.get(id).then(domainObject => {
-                    let config = new TelemetryViewConfiguration(this.newDomainObject, alphanumeric, rawPosition, style, openmct);
+                    let config = new TelemetryViewConfiguration(
+                        this.newDomainObject, alphanumeric, rawPosition, openmct);
+
                     this.layoutItems.push({
                         id: id,
                         domainObject: domainObject,
@@ -222,25 +225,7 @@
                     return;
                 }
 
-                this.removeListeners();
-                let layoutItem = selection[0].context.layoutItem;
-
-                if (selection[1] && layoutItem) {
-                    if (layoutItem.type === 'subobject-view') {
-                        this.attachPanelListeners(layoutItem);
-                    }
-                }
-
                 this.updateDrilledInState();
-            },
-            attachPanelListeners(item) {
-                let path = "configuration.panels[" + item.id + "].hasFrame";
-                this.listeners.push(
-                    this.openmct.objects.observe(this.newDomainObject, path, function (newValue) {
-                        item.hasFrame = newValue;
-                        // TODO: should update item.config.hasFrame?
-                    }.bind(this))
-                );                
             },
             updateDrilledInState(id) {
                 this.drilledIn = id;
@@ -256,7 +241,6 @@
             updatePosition(item, newPosition) {
                 let id = item.id;
                 let newStyle = this.convertPosition(newPosition);
-                item.config.style = newStyle;
                 item.config.rawPosition = newPosition;
                 item.style = newStyle;
             },
@@ -299,10 +283,11 @@
                 let id = this.openmct.objects.makeKeyString(domainObject.identifier);
                 this.openmct.composition.get(this.newDomainObject).load()
                     .then(composition => {
+                        // console.log("composition", {...composition});
                         const result = composition.filter(object => 
                             id === this.openmct.objects.makeKeyString(object.identifier)
                         );
-
+                        // console.log("result", result);
                         // Do not add the object if it's already in the composition.
                         if (result.length > 0) {
                             return;
@@ -345,14 +330,6 @@
             handleDragOver($event){
                 $event.preventDefault();
             },
-            removeListeners() {
-                if (this.listeners) {
-                    this.listeners.forEach(function (listener) {
-                        listener();
-                    })
-                }
-                this.listeners = [];
-            },
             isTelemetry(domainObject) {
                 if (this.openmct.telemetry.isTelemetryObject(domainObject)
                     && domainObject.type !== 'summary-widget') {
@@ -368,7 +345,6 @@
         destroyed: function () {
             this.openmct.off('change', this.setSelection);
             this.unlisten();
-            this.removeListeners();
         }
     }
     
