@@ -22,7 +22,7 @@
 <template>
 <th 
     :style="{ width: columnWidths[headerKey] + 'px', 'max-width': columnWidths[headerKey] + 'px'}"
-    draggable="true"
+    :draggable="isEditing"
     @mouseup="sort"
     v-on="isEditing ? {
         dragstart: columnMoveStart,
@@ -72,6 +72,7 @@
 </style>
 <script>
 import _ from 'lodash';
+const MOVE_COLUMN_DT_TYPE = 'movecolumnfromindex';
 
 export default {
     inject: ['openmct'],
@@ -111,14 +112,24 @@ export default {
         resizeColumn(event) {
             let delta = event.clientX - this.resizeStartX;
             let newWidth = this.resizeStartWidth + delta;
-            this.$emit('resizeColumn', this.headerKey, newWidth);
+            let minWidth = parseInt(window.getComputedStyle(this.$el).minWidth);
+            if (newWidth > minWidth) {
+                this.$emit('resizeColumn', this.headerKey, newWidth);
+            }
         },
         columnMoveStart(event) {
-            event.dataTransfer.setData('moveColumnFromIndex', this.headerIndex);
+            event.dataTransfer.setData(MOVE_COLUMN_DT_TYPE, this.headerIndex);
+        },
+        isColumnMoveEvent(event) {
+            return [...event.dataTransfer.types].includes(MOVE_COLUMN_DT_TYPE);
         },
         dragOverColumn(element, event) {
-            event.preventDefault();
-            this.updateDropOffset(element, event.clientX);
+            if (this.isColumnMoveEvent(event)){
+                event.preventDefault();
+                this.updateDropOffset(element, event.clientX);
+            } else {
+                return false;
+            }
         },
         updateDropOffset(element, clientX) {
             let thClientLeft = element.getBoundingClientRect().x;
@@ -136,20 +147,22 @@ export default {
         hideDropTarget(){
             this.$parent.$emit('drop-target-active', false);
         },
-        columnMoveEnd(){
-            let toIndex = this.headerIndex;
-            let fromIndex = event.dataTransfer.getData('moveColumnFromIndex');
-            if (event.offsetX < event.target.offsetWidth / 2) {
-                if (toIndex > fromIndex){
-                    toIndex--;
+        columnMoveEnd(event){
+            if (this.isColumnMoveEvent(event)){
+                let toIndex = this.headerIndex;
+                let fromIndex = event.dataTransfer.getData(MOVE_COLUMN_DT_TYPE);
+                if (event.offsetX < event.target.offsetWidth / 2) {
+                    if (toIndex > fromIndex){
+                        toIndex--;
+                    }
+                } else {
+                    if (toIndex < fromIndex){
+                        toIndex++;
+                    }
                 }
-            } else {
-                if (toIndex < fromIndex){
-                    toIndex++;
+                if (toIndex !== fromIndex) {
+                    this.$parent.$emit('reorder-column', fromIndex, toIndex);
                 }
-            }
-            if (toIndex !== fromIndex) {
-                this.$parent.$emit('reorder-column', fromIndex, toIndex);
             }
         },
         sort(){

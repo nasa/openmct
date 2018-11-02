@@ -239,11 +239,13 @@ export default {
     },
     inject: ['table', 'openmct', 'csvExporter'],
     data() {
+        let configuration = this.table.configuration.getConfiguration();
+
         return {
             headers: {},
             visibleRows: [],
             columnWidths: {},
-            configuredColumnWidths: {},
+            configuredColumnWidths: configuration.columnWidths,
             sizingRows: {},
             rowHeight: ROW_HEIGHT,
             scrollOffset: 0,
@@ -261,7 +263,7 @@ export default {
             updatingView: false,
             dropOffsetLeft: undefined,
             isDropTargetActive: false,
-            isAutosizeEnabled: true
+            isAutosizeEnabled: configuration.autosize
         }
     },
     computed: {
@@ -436,9 +438,7 @@ export default {
             this.$nextTick().then(this.calculateColumnWidths);
         },
         enableAutosize() {
-                this.configuredColumnWidths = {};
-                this.columnWidths = {};
-                this.$nextTick().then(this.calculateTableSize);
+            this.$nextTick().then(this.calculateTableSize);
         },
         updateConfiguration(configuration) {
             this.isAutosizeEnabled = configuration.autosize;
@@ -462,11 +462,15 @@ export default {
             this.columnWidths[key] = newWidth;
             this.totalWidth += delta;
             this.updateConfiguredColumnWidth(key, newWidth);
-
         },
         updateConfiguredColumnWidth(key, newWidth) {
             this.configuredColumnWidths[key] = newWidth;
-            this.table.configuration.setColumnWidths(this.configuredColumnWidths);
+
+            let configuration = this.table.configuration.getConfiguration();
+            configuration.autosize = false;
+            configuration.columnWidths = this.configuredColumnWidths;
+
+            this.table.configuration.updateConfiguration(configuration);
         },
         setDropTargetOffset(dropOffsetLeft) {
             this.dropOffsetLeft = dropOffsetLeft;
@@ -504,7 +508,7 @@ export default {
             let height = el.clientHeight;
 
             this.resizePollHandle = setInterval(() => {
-                if (el.clientWidth !== width || el.clientHeight !== height) {
+                if ((el.clientWidth !== width || el.clientHeight !== height) && this.isAutosizeEnabled) {
                     this.calculateTableSize();
                     width = el.clientWidth;
                     height = el.clientHeight;
