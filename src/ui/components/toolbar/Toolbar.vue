@@ -87,15 +87,19 @@
             updateToolbarAfterMutation() {
                 this.structure = this.structure.map((item) => {
                     let toolbarItem = {...item};
-                    let id = this.openmct.objects.makeKeyString(toolbarItem.domainObject.identifier);
-                    let newObject = this.domainObjectsById[id].newObject;
+                    let domainObject = toolbarItem.domainObject;
 
-                    if (newObject) {
-                        toolbarItem.domainObject = newObject;
-                        let newValue = _.get(newObject, item.property);
+                    if (domainObject) {
+                        let id = this.openmct.objects.makeKeyString(domainObject.identifier);
+                        let newObject = this.domainObjectsById[id].newObject;
 
-                        if (toolbarItem.value !== newValue) {
-                            toolbarItem.value = newValue;
+                        if (newObject) {
+                            toolbarItem.domainObject = newObject;
+                            let newValue = _.get(newObject, item.property);
+
+                            if (toolbarItem.value !== newValue) {
+                                toolbarItem.value = newValue;
+                            }
                         }
                     }
 
@@ -122,10 +126,14 @@
                 let changedItemId = this.openmct.objects.makeKeyString(item.domainObject.identifier);
                 this.structure = this.structure.map((s) => {
                     let toolbarItem = {...s};
-                    let id = this.openmct.objects.makeKeyString(toolbarItem.domainObject.identifier);
+                    let domainObject = toolbarItem.domainObject;
 
-                    if (changedItemId === id && item.property === s.property) {
-                        toolbarItem.value = value;
+                    if (domainObject) {
+                        let id = this.openmct.objects.makeKeyString(domainObject.identifier);
+
+                        if (changedItemId === id && item.property === s.property) {
+                            toolbarItem.value = value;
+                        }
                     }
 
                     return toolbarItem;
