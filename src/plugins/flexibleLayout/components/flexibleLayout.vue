@@ -25,7 +25,7 @@
                 <container-component
                     class="c-fl__container"
                     :index="index"
-                    :size="`${container.width}%`"
+                    :size="`${Math.round(container.width)}%`"
                     :frames="container.frames"
                     :isEditing="isEditing"
                     :isDragging="isDragging"
@@ -344,8 +344,8 @@ export default {
                 beforeContainer.width = this.getContainerSize(beforeContainer.width - percentageMoved);
                 afterContainer.width = this.getContainerSize(afterContainer.width + percentageMoved);
         },
-        stopContainerResizing(event) {
-
+        endContainerResizing(event) {
+            this.persist();
         },
         getElSize(el) {
             if (this.layoutDirectionStr === 'rows') {
