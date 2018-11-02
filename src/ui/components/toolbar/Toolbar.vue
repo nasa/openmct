@@ -1,5 +1,5 @@
 <template>
-    <div class="c-toolbar" v-if="structure.length !== 0">
+    <div class="c-toolbar">
         <component v-for="item in structure"
             :is="item.control"
             :options="item"
