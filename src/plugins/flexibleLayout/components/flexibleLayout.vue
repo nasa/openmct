@@ -185,35 +185,40 @@
 
         &__resize-handle {
             $size: 2px;
-            $margin: 5px;
-            $marginHov: 16px;
+            $margin: 3px;
+            $marginHov: 10px;
+
+            display: flex;
+            flex-direction: column;
+            flex: 0 0 ($margin * 2) + $size;
+            transition: $transOut;
 
             &:before {
                 content: '';
-                //@include abs($margin);
                 display: block;
+                flex: 1 1 auto;
                 min-height: $size; min-width: $size;
                 background: rgba($editColor, 0.6);
             }
 
-            flex: 0 0 ($margin * 2) + $size;
-            padding: $margin;
-
             &.vertical {
+                padding: $margin 0;
                 &:hover{
+                    padding: $marginHov 0;
                     cursor: row-resize;
                 }
             }
 
             &.horizontal {
+                padding: 0 $margin;
                 &:hover{
+                    padding: 0 $marginHov;
                     cursor: col-resize;
                 }
             }
 
             &:hover {
-                //flex-basis: $marginHov * 2;
-                padding: 10px;
+                transition: $transOut;
                 &:before {
                     background: $editColor;
                 }
