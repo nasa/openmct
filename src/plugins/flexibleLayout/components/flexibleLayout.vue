@@ -308,6 +308,8 @@ export default {
             this.dragFrom = [containerIndex, frameIndex];
         },
         dropToHandler(containerIndex, frameIndex, frameObject) {
+            this.isDragging = false;
+
             if (!frameObject) {
                 frameObject = this.containers[this.dragFrom[0]].frames.splice(this.dragFrom[1], 1)[0];
             }
