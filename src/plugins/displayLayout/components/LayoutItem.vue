@@ -22,7 +22,7 @@
 
 <template>
     <div class="c-frame has-local-controls is-selectable is-moveable"
-         :style="item.config.style"
+         :style="item.style"
          :class="classObject"
          @dblclick="drill(item.id, $event)">
 
@@ -88,7 +88,7 @@
             classObject: function () {
                 return {
                     'is-drilled-in': this.item.drilledIn,
-                    'no-frame': !this.item.hasFrame
+                    'no-frame': !this.item.config.hasFrame
                 }
             }
         },

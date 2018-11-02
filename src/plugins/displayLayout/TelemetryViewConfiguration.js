@@ -2,17 +2,16 @@ define([],
     function () {
         class TelemetryViewConfiguration {
             /**
+             *
              * @param domainObject the domain object to mutate.
              * @param alphanumeric
              * @param rawPosition
-             * @param style
              * @param openmct
              */
-            constructor(domainObject, alphanumeric, rawPosition, style, openmct) {
+            constructor(domainObject, alphanumeric, rawPosition, openmct) {
                 this.domainObject = domainObject;
                 this.alphanumeric = alphanumeric;
                 this.rawPosition = rawPosition;
-                this.style = style;
                 this.openmct = openmct;
                 this.mutatePosition = this.mutatePosition.bind(this);
                 this.listeners = [];
