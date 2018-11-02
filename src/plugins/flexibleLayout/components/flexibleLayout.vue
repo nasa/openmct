@@ -37,6 +37,7 @@
                 </container-component>
 
                 <resize-handle
+                    v-if="index !== (containers.length - 1)"
                     v-show="isEditing"
                     :index="index"
                     :orientation="layoutDirectionStr === 'rows' ? 'vertical' : 'horizontal'"

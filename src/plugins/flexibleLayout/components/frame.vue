@@ -26,8 +26,15 @@
             'is-dragging': isDragging,
             [frame.cssClass]: true
         }">
-        <div draggable="true"
-             class="c-fl-frame__drag-wrapper"
+
+        <frame-header 
+             v-if="index !== 0"
+             v-show="isEditing"
+             draggable="true"
+             :domainObject="frame.domainObject">
+        </frame-header>
+        
+        <div class="c-fl-frame__drag-wrapper"
              v-if="frame.domainObject">
             <object-view
                 class="c-object-view"
@@ -48,13 +55,15 @@
 import ObjectView from '../../../ui/components/layout/ObjectView.vue';
 import DropHint from './dropHint.vue';
 import ResizeHandle from './resizeHandle.vue';
+import FrameHeader from '../../../ui/components/utils/frameHeader.vue';
 
 export default {
     props: ['frame', 'index', 'isEditing', 'isDragging'],
     components: {
         ObjectView,
         DropHint,
-        ResizeHandle
+        ResizeHandle,
+        FrameHeader
     },
     methods: {
         dragstart(event) {
