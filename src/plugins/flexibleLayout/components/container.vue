@@ -41,7 +41,8 @@
             :layoutDirectionStr="layoutDirectionStr"
             @object-drag-from="dragFrom"
             @object-drop-to="dropTo"
-            @start-frame-resizing="startFrameResizing">
+            @frame-resizing="frameResizing"
+            @end-frame-resizing="endFrameResizing">
         </frame-component>
     </div>
 </template>
@@ -163,29 +164,16 @@ export default {
 
             this.$emit('object-drop-to', this.index, frameIndex, frameObject);
         },
-        mousemove(event) {
-            let delta = this.initialPos - this.getPosition(event),
-                percentageMoved = (delta/this.getElHeight(this.$el))*100,
-                beforeFrame = this.frames[this.frameIndex],
-                afterFrame = this.frames[this.frameIndex + 1];
+        frameResizing(index, delta) {
+            let percentageMoved = (delta/this.getElHeight(this.$el))*100,
+                beforeFrame = this.frames[index],
+                afterFrame = this.frames[index + 1];
 
                 beforeFrame.height = beforeFrame.height - percentageMoved;
                 afterFrame.height = afterFrame.height + percentageMoved;
-
-                this.initialPos = this.getPosition(event);
         },
-        mouseup(event) {
+        endFrameResizing(event) {
             this.persist();
-
-            document.body.removeEventListener('mousemove', this.mousemove);
-            document.body.removeEventListener('mouseup', this.mouseup);
-        },
-        getPosition(event) {
-            if (this.layoutDirectionStr === 'rows') {
-                return event.pageX;
-            } else {
-                return event.pageY;
-            };
         },
         getElHeight(el) {
             if (this.layoutDirectionStr === 'rows') {
@@ -193,13 +181,6 @@ export default {
             } else {
                 return el.offsetHeight;
             }
-        },
-        startFrameResizing(frameIndex, event) {
-            this.initialPos = this.getPosition(event);
-            this.frameIndex = frameIndex;
-
-            document.body.addEventListener('mousemove', this.mousemove);
-            document.body.addEventListener('mouseup', this.mouseup);
         },
         persist() {
             this.$emit('persist', this.index);

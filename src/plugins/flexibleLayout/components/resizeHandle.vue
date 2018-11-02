@@ -29,7 +29,7 @@
 <style lang="scss">
     .resize-handle {
         background: rgba(0, 199, 195, 0.3);
-        flex: 0 0 2px;
+        flex: 0 0 5px;
 
         &:hover {
             background: rgba(0, 199, 195, 1);
@@ -52,9 +52,36 @@
 <script>
 export default {
     props: ['orientation'],
+    data() {
+        return {
+            initialPos: 0
+        }
+    },
     methods: {
         mousedown(event) {
-            this.$emit('start-frame-resizing', event);
+            this.initialPos = this.getPosition(event);
+
+            document.addEventListener('mousemove', this.mousemove);
+            document.addEventListener('mouseup', this.mouseup);
+        },
+        mousemove(event) {
+            let delta = this.initialPos - this.getPosition(event);
+            this.initialPos = this.getPosition(event);
+
+            this.$emit('mousemove', delta);
+        },
+        mouseup(event) {
+            this.$emit('mouseup', event);
+
+            document.removeEventListener('mousemove', this.mousemove);
+            document.removeEventListener('mouseup', this.mouseup);
+        },
+        getPosition(event) {
+            if (this.orientation === 'horizontal') {
+                return event.pageX;
+            } else {
+                return event.pageY;
+            }
         }
     },
     mounted() {

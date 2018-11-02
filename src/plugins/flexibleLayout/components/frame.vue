@@ -24,23 +24,26 @@
     <div class="c-fl-frame"
         :class="[frame.cssClass]">
         <div class="c-fl-frame__drag-wrapper"
-             v-if="frame.domainObject">
+             v-if="frame.domainObject"
+             :draggable="isEditing">
             <object-view
-                draggable="true"
                 class="c-object-view"
                 :object="frame.domainObject">
             </object-view>
         </div>
+
         <drop-hint
              v-show="isEditing && isDragging"
              class="c-fl-frame__drop-hint"
              :class="{'is-dragging': isDragging}"
              @object-drop-to="dropHandler">
         </drop-hint>
+
         <resize-handle
              v-show="isEditing && !isDragging"
              :orientation="layoutDirectionStr === 'rows' ? 'horizontal' : 'vertical'"
-             @start-frame-resizing="resizingHandler">
+             @mousemove="resizingHandler"
+             @mouseup="endResizingHandler">
         </resize-handle>
     </div>
 </template>
@@ -96,8 +99,11 @@ export default {
         dropHandler(event) {
             this.$emit('object-drop-to', this.index, event);
         },
-        resizingHandler(event) {
-            this.$emit('start-frame-resizing', this.index, event);
+        resizingHandler(delta) {
+            this.$emit('frame-resizing', this.index, delta);
+        },
+        endResizingHandler(event){
+            this.$emit('end-frame-resizing', event);
         }
     },
     mounted() {

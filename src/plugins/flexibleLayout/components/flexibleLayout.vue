@@ -152,7 +152,7 @@ export default {
     destroyed() {
         this.openmct.editor.off('isEditing', this.isEditingHandler);
         document.removeEventListener('dragstart', this.dragstartHandler);
-        document.addEventListener('dragend', this.dragendHandler);
+        document.removeEventListener('dragend', this.dragendHandler);
     }
 }
 </script>
