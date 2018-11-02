@@ -102,7 +102,7 @@
             overflow: hidden; // This sucks, but doing in the short-term
         }
 
-        /***************************************************** THEIR FRAMES */
+        /****** THEIR FRAMES */
         // Frames get styled here because this is particular to their presence in this layout type
         .c-fl-frame {
             @include browserPrefix(margin-collapse, collapse);
@@ -113,7 +113,7 @@
             }
         }
 
-        /***************************************************** LAYOUT */
+        /****** LAYOUT */
         .c-fl--rows & {
             // Layout is rows
             flex-direction: row;
@@ -168,6 +168,51 @@
             flex: 0 0 15px;
             .c-drop-hint {
                 border-radius: $smallCr;
+            }
+        }
+
+        &__resize-handle {
+            $size: 2px;
+            $margin: 3px;
+            $marginHov: 16px;
+
+            &:before {
+                content: '';
+                //@include abs($margin);
+                display: block;
+                min-height: $size; min-width: $size;
+                background: rgba($editColor, 0.6);
+            }
+
+            flex: 0 0 ($margin * 2) + $size;
+            padding: $margin;
+
+            &.vertical {
+                &:hover{
+                    cursor: row-resize;
+                }
+            }
+
+            &.horizontal {
+                &:hover{
+                    cursor: col-resize;
+                }
+            }
+
+            &:hover {
+                //flex-basis: $marginHov * 2;
+                padding: 10px;
+                &:before {
+                    background: $editColor;
+                }
+            }
+        }
+
+        // Hide the resize-handles in first and last c-fl-frame elements
+        &:first-child,
+        &:last-child {
+            .c-fl-frame__resize-handle {
+                display: none;
             }
         }
 
