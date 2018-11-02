@@ -44,6 +44,9 @@ define([], function () {
                             ]
                         },
                         {
+                            control: "separator"
+                        },
+                        {
                             control: "select-menu",
                             domainObject: domainObject,
                             property: path + ".value",
@@ -82,6 +85,9 @@ define([], function () {
                             mandatory: true,
                             title: "Set text color",
                             preventNone: true
+                        },
+                        {
+                            control: "separator"
                         },
                         {
                             control: "select-menu",
