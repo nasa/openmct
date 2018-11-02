@@ -126,7 +126,7 @@
 
                 this.updatePosition(event);
                 this.activeDrag = new LayoutDrag(
-                    this.item.rawPosition,
+                    this.item.config.rawPosition,
                     posFactor,
                     dimFactor,
                     this.gridSize
