@@ -21,7 +21,7 @@
  *****************************************************************************/
 <template>
 <th 
-    :style="{ width: columnWidths[headerKey] + 'px', 'max-width': columnWidths[headerKey] + 'px'}"
+    :style="{ width: columnWidth + 'px', 'max-width': columnWidth + 'px'}"
     :draggable="isEditing"
     @mouseup="sort"
     v-on="isEditing ? {
@@ -65,9 +65,6 @@
             right: 0px;
             margin-right: -$tabularTdPadLR - 1 - $hotzone-size / 2;
         }
-        th:last-child .c-telemetry-table__resize-hotzone {
-            margin-right: -$tabularTdPadLR - 1;
-        }
     }
 </style>
 <script>
@@ -86,7 +83,7 @@ export default {
         headerIndex: Number,
         isHeaderTitle: Boolean,
         sortOptions: Object,
-        columnWidths: Object,
+        columnWidth: Object,
         hotzone: Boolean
     },
     computed: {
@@ -97,7 +94,7 @@ export default {
     methods: {
         startResizeColumn($event) {
             this.resizeStartX = event.clientX;
-            this.resizeStartWidth = this.columnWidths[this.headerKey];
+            this.resizeStartWidth = this.columnWidth;
 
             document.addEventListener('mouseup', ()=>{
                 this.resizeStartX = undefined;

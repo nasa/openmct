@@ -31,7 +31,7 @@
     </div>
     <div v-if="isDropTargetActive" class="c-telemetry-table__drop-target" :style="dropTargetStyle"></div>
     <!-- Headers table -->
-    <div class="c-telemetry-table__headers-w js-table__headers-w" ref="headersTable" :style="{ 'max-width': totalWidth + 'px'}">
+    <div class="c-telemetry-table__headers-w js-table__headers-w" ref="headersTable" :style="{ 'max-width': widthWithScroll}">
         <table class="c-table__headers c-telemetry-table__headers">
             <thead>
                 <tr>
@@ -42,7 +42,7 @@
                         :headerIndex="headerIndex"
                         @sort="sortBy(key)"
                         @resizeColumn="resizeColumn"
-                        :columnWidths="columnWidths"
+                        :columnWidth="columnWidths[key]"
                         :sortOptions="sortOptions"
                         >{{title}}</table-column-header>
                     </template>
@@ -54,7 +54,7 @@
                         :headerKey="key"
                         :headerIndex="headerIndex"
                         @resizeColumn="resizeColumn"
-                        :columnWidths="columnWidths">
+                        :columnWidth="columnWidths[key]">
                         <search class="c-table__search"
                             v-model="filters[key]"
                             v-on:input="filterChanged(key)"
@@ -66,7 +66,7 @@
         </table>
     </div>
     <!-- Content table -->
-    <div class="c-table__body-w c-telemetry-table__body-w js-telemetry-table__body-w" @scroll="scroll" :style="{'max-width': totalWidth + 'px'}">
+    <div class="c-table__body-w c-telemetry-table__body-w js-telemetry-table__body-w" @scroll="scroll" :style="{ 'max-width': widthWithScroll}">
         <div class="c-telemetry-table__scroll-forcer" :style="{ width: totalWidth + 'px' }"></div>
         <table class="c-table__body c-telemetry-table__body"
                :style="{ height: totalHeight + 'px'}">
@@ -83,10 +83,10 @@
         </table>
     </div>
     <!-- Sizing table -->
-    <table class="c-telemetry-table__sizing js-telemetry-table__sizing" :class="{'js-telemetry-table__sizing--auto': isAutosizeEnabled}">
+    <table class="c-telemetry-table__sizing js-telemetry-table__sizing" :style="sizingTableWidth === undefined ? {} : {width: sizingTableWidth}">
         <tr>
             <template v-for="(title, key) in headers">
-            <th :key="key">{{title}}</th>
+            <th :key="key" :style="{ width: configuredColumnWidths[key] + 'px', 'max-width': configuredColumnWidths[key] + 'px'}">{{title}}</th>
             </template>
         </tr>
         <telemetry-table-row v-for="(sizingRowData, objectKeyString) in sizingRows"
@@ -272,6 +272,19 @@ export default {
                 height: this.totalHeight + 47 + 'px',
                 left: this.dropOffsetLeft && this.dropOffsetLeft + 'px'
             }
+        },
+        lastHeaderKey() {
+            let headerKeys = Object.keys(this.headers);
+            return headerKeys[headerKeys.length - 1];
+        },
+        widthWithScroll() {
+            return this.totalWidth + this.scrollW + "px";
+        },
+        sizingTableWidth() {
+            if (this.isAutosizeEnabled) {
+                console.log('Autosize sizing table');
+                return "calc(100% - " + this.scrollW + "px)";
+            }
         }
     },
     methods: {
@@ -316,20 +329,18 @@ export default {
         updateHeaders() {
             this.headers = this.table.configuration.getVisibleHeaders();
         },
-        setSizingTableWidth() {
-            let scrollW = this.scrollable.offsetWidth - this.scrollable.clientWidth;
-
-            if (scrollW && scrollW > 0) {
-                this.calcTableWidth = 'calc(100% - ' + scrollW + 'px)';
-            }
+        calculateScrollbarWidth() {
+            this.scrollW = this.scrollable.offsetWidth - this.scrollable.clientWidth;
+            //this.scrollW = 30;
         },
         calculateColumnWidths() {
             let columnWidths = {};
             let totalWidth = 0;
             let sizingRowEl = this.sizingTable.children[0];
             let sizingCells = Array.from(sizingRowEl.children);
+            let headerKeys = Object.keys(this.headers);
 
-            Object.keys(this.headers).forEach((headerKey, headerIndex)=>{
+            headerKeys.forEach((headerKey, headerIndex)=>{
                 let cell = sizingCells[headerIndex];
                 let columnWidth = cell.offsetWidth;
                 columnWidths[headerKey] = columnWidth;
@@ -338,6 +349,8 @@ export default {
 
             this.columnWidths = columnWidths;
             this.totalWidth = totalWidth;
+
+            this.calculateScrollbarWidth();
         },
         sortBy(columnKey) {
             // If sorting by the same column, flip the sort direction.
@@ -434,7 +447,6 @@ export default {
             this.loading = loading;
         },
         calculateTableSize() {
-            this.setSizingTableWidth();
             this.$nextTick().then(this.calculateColumnWidths);
         },
         enableAutosize() {
@@ -444,10 +456,7 @@ export default {
             this.isAutosizeEnabled = configuration.autosize;
             
             this.updateHeaders();
-            
-            if (this.isAutosizeEnabled){
-                this.enableAutosize();
-            }
+            this.$nextTick().then(this.calculateColumnWidths);
         },
         addObject() {
             this.updateHeaders();
@@ -473,7 +482,7 @@ export default {
             this.table.configuration.updateConfiguration(configuration);
         },
         setDropTargetOffset(dropOffsetLeft) {
-            this.dropOffsetLeft = dropOffsetLeft;
+            this.dropOffsetLeft = dropOffsetLeft + this.scrollable.scrollLeft;
         },
         reorderColumn(from, to) {
             let newHeaderKeys = Object.keys(this.headers);
@@ -545,6 +554,7 @@ export default {
 
         this.calculateTableSize();
         this.pollForResize();
+        this.calculateScrollbarWidth();
 
         this.table.initialize();
     },
