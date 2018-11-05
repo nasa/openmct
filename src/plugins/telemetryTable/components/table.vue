@@ -114,7 +114,6 @@
     .c-telemetry-table__drop-target {
         position: absolute;
         width: 2px;
-        top: 27px;
         background-color: $editColor;
         box-shadow: rgba($editColor, 0.5) 0 0 10px;
         z-index: 1;
@@ -274,7 +273,8 @@ export default {
     computed: {
         dropTargetStyle() {
             return {
-                height: this.totalHeight + 47 + 'px',
+                top: this.$refs.headersTable.offsetTop + 'px',
+                height: this.totalHeight + this.$refs.headersTable.offsetHeight + 'px',
                 left: this.dropOffsetLeft && this.dropOffsetLeft + 'px'
             }
         },
