@@ -43,6 +43,7 @@ define([], function () {
                 if (layoutItem && layoutItem.type === 'telemetry-view') {
                     let path = "configuration.alphanumerics[" + layoutItem.config.alphanumeric.index + "]";
                     let metadata = openmct.telemetry.getMetadata(layoutItem.domainObject);
+                    const TEXT_SIZE = [9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96];
 
                     return [
                         {
@@ -116,7 +117,7 @@ define([], function () {
                             domainObject: domainObject,
                             property: path + ".size",
                             title: "Set text size",
-                            options: [9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96].map(function (size) {
+                            options: TEXT_SIZE.map(size => {
                                 return {
                                     value: size + "px"
                                 };
