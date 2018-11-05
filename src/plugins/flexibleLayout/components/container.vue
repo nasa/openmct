@@ -65,7 +65,7 @@ import FrameComponent from './frame.vue';
 import Frame from '../utils/frame';
 import ResizeHandle from './resizeHandle.vue';
 
-const SNAP_TO_PERCENTAGE = 5;
+const SNAP_TO_PERCENTAGE = 1;
 const MIN_FRAME_SIZE = 10;
 
 export default {
@@ -106,15 +106,16 @@ export default {
 
             this.$emit('object-drop-to', this.index, frameIndex, frameObject);
         },
-        frameResizing(index, delta) {
-            let percentageMoved = (delta/this.getElSize(this.$el))*100,
+        frameResizing(index, delta, event) {
+
+            let percentageMoved = (delta / this.getElSize(this.$el))*100,
                 beforeFrame = this.frames[index],
                 afterFrame = this.frames[index + 1];
 
-                beforeFrame.height = this.getFrameSize(beforeFrame.height - percentageMoved);
-                afterFrame.height = this.getFrameSize(afterFrame.height + percentageMoved);
+            beforeFrame.height = this.snapToPercentage(beforeFrame.height + percentageMoved);
+            afterFrame.height = this.snapToPercentage(afterFrame.height - percentageMoved);
         },
-        endFrameResizing(event) {
+        endFrameResizing(index, event) {
             this.persist();
         },
         getElSize(el) {
@@ -132,6 +133,18 @@ export default {
             } else {
                 return size;
             }
+        },
+        snapToPercentage(value){
+            let rem = value % SNAP_TO_PERCENTAGE,
+                roundedValue;
+            
+            if (rem < 0.5) {
+                 roundedValue = Math.floor(value/SNAP_TO_PERCENTAGE)*SNAP_TO_PERCENTAGE;
+            } else {
+                roundedValue = Math.ceil(value/SNAP_TO_PERCENTAGE)*SNAP_TO_PERCENTAGE;
+            }
+
+            return this.getFrameSize(roundedValue);
         },
         persist() {
             this.$emit('persist', this.index);

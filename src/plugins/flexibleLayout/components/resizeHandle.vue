@@ -38,18 +38,14 @@ export default {
         mousedown(event) {
             event.preventDefault();
 
-            this.initialPos = this.getPosition(event);
-
             document.body.addEventListener('mousemove', this.mousemove);
             document.body.addEventListener('mouseup', this.mouseup);
         },
         mousemove(event) {
             event.preventDefault();
 
-            let delta = this.initialPos - this.getPosition(event);
-            this.initialPos = this.getPosition(event);
-
-            this.$emit('mousemove', this.index, delta);
+            let delta = this.getMousePosition(event) - this.getElSizeFromRect(this.$el);
+            this.$emit('mousemove', this.index, delta, event);
         },
         mouseup(event) {
             this.$emit('mouseup', event);
@@ -57,13 +53,20 @@ export default {
             document.body.removeEventListener('mousemove', this.mousemove);
             document.body.removeEventListener('mouseup', this.mouseup);
         },
-        getPosition(event) {
+        getMousePosition(event) {
             if (this.orientation === 'horizontal') {
-                return event.pageX;
+                return event.clientX;
             } else {
-                return event.pageY;
+                return event.clientY;
             }
-        }
+        },
+        getElSizeFromRect(el) {
+            if (this.orientation === 'horizontal') {
+                return el.getBoundingClientRect().x;
+            } else {
+                return el.getBoundingClientRect().y;
+            }
+        },
     },
     mounted() {
         this.$el.addEventListener('mousedown', this.mousedown);
