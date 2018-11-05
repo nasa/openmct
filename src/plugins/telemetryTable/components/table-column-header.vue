@@ -138,11 +138,11 @@ export default {
             } else {
                 dropOffsetLeft = element.offsetLeft + element.offsetWidth;
             }
-            this.$parent.$emit('drop-target-offset-changed', dropOffsetLeft);
-            this.$parent.$emit('drop-target-active', true);
+            this.$emit('dropTargetOffsetChanged', dropOffsetLeft);
+            this.$emit('dropTargetActive', true);
         },
         hideDropTarget(){
-            this.$parent.$emit('drop-target-active', false);
+            this.$emit('dropTargetActive', false);
         },
         columnMoveEnd(event){
             if (this.isColumnMoveEvent(event)){
@@ -158,11 +158,11 @@ export default {
                     }
                 }
                 if (toIndex !== fromIndex) {
-                    this.$parent.$emit('reorder-column', fromIndex, toIndex);
+                    this.$emit('reorderColumn', fromIndex, toIndex);
                 }
             }
         },
-        sort(){
+        sort() {
             this.$emit("sort");
         },
         toggleEditMode(isEditing) {

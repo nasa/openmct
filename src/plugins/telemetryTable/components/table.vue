@@ -35,32 +35,36 @@
         <table class="c-table__headers c-telemetry-table__headers">
             <thead>
                 <tr>
-                    <template v-for="(title, key, headerIndex) in headers">
                     <table-column-header 
+                        v-for="(title, key, headerIndex) in headers"
                         :key="key"
                         :headerKey="key"
                         :headerIndex="headerIndex"
                         @sort="sortBy(key)"
                         @resizeColumn="resizeColumn"
+                        @dropTargetOffsetChanged="setDropTargetOffset"
+                        @dropTargetActive="dropTargetActive"
+                        @reorderColumn="reorderColumn"
                         :columnWidth="columnWidths[key]"
                         :sortOptions="sortOptions"
                         >{{title}}</table-column-header>
-                    </template>
                 </tr>
                 <tr>
-                    <template v-for="(title, key, headerIndex) in headers">
-                    <table-column-header 
+                    <table-column-header
+                        v-for="(title, key, headerIndex) in headers"
                         :key="key"
                         :headerKey="key"
                         :headerIndex="headerIndex"
                         @resizeColumn="resizeColumn"
+                        @dropTargetOffsetChanged="setDropTargetOffset"
+                        @dropTargetActive="dropTargetActive"
+                        @reorderColumn="reorderColumn"
                         :columnWidth="columnWidths[key]">
                         <search class="c-table__search"
                             v-model="filters[key]"
                             v-on:input="filterChanged(key)"
                             v-on:clear="clearFilter(key)" />
                     </table-column-header>
-                    </template>
                 </tr>
             </thead>
         </table>
@@ -294,7 +298,6 @@ export default {
 
                 style = {width: totalWidth + 'px'};
             }
-            console.log('sizingTableWidth');
             return style;
         }
     },
@@ -543,9 +546,6 @@ export default {
         this.updateConfiguredColumnWidths = _.debounce(this.updateConfiguredColumnWidths, 500);
     },
     mounted() {
-        this.$on('drop-target-offset-changed', this.setDropTargetOffset);
-        this.$on('drop-target-active', this.dropTargetActive);
-        this.$on('reorder-column', this.reorderColumn);
         
         this.table.on('object-added', this.addObject);
         this.table.on('object-removed', this.removeObject);
