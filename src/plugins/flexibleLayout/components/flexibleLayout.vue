@@ -85,7 +85,7 @@
 
     .c-fl-container {
         /***************************************************** CONTAINERS */
-        $headerFB: 16px;
+        $headerSize: 16px;
 
         display: flex;
         flex-direction: column;
@@ -103,8 +103,18 @@
             background: rgba($editColor, 0.3);
             display: flex;
             align-items: center;
-         //   justify-content: center;
-            flex: 0 0 $headerFB;
+            flex: 0 0 $headerSize;
+
+            &:before {
+                // Drag grippy
+                content: $glyph-icon-list-view;
+                font-size: 0.8em;
+                opacity: 0.5;
+                position: absolute;
+                left: 50%; top: 50%;
+                transform-origin: center;
+                transform: rotate(90deg) translate(-50%, 50%);
+            }
         }
 
         &__size-indicator {
@@ -114,7 +124,6 @@
         }
 
         &__frames-holder {
-//            @include test($a: 0.6);
             display: flex;
             flex: 1 1 100%; // Must be 100% to work
             flex-direction: column; // Default
@@ -134,14 +143,19 @@
             }
         }
 
-        /****** LAYOUT */
+        /****** ROWS LAYOUT */
         .c-fl--rows & {
             // Layout is rows
             flex-direction: row;
 
             &__header {
-                flex-basis: $headerFB;
+                flex-basis: $headerSize;
                 overflow: hidden;
+
+                &:before {
+                    // Drag grippy
+                    transform: rotate(0) translate(-50%, -50%);
+                }
             }
 
             &__size-indicator {
@@ -158,11 +172,14 @@
     }
 
     .c-fl-frame {
+        $sizeIndicatorM: 16px;
+
         display: flex;
         justify-content: stretch;
-        align-items: st retch;
+        align-items: stretch;
         flex: 1 1;
         flex-direction: column;
+        overflow: hidden; // Needed to allow frames to collapse
 
         &__drag-wrapper {
             flex: 1 1 auto;
@@ -170,26 +187,25 @@
         }
 
         &__size-indicator {
-            $size: 50px;
+            $size: 35px;
 
             @include ellipsize();
             background: $colorBtnBg;
             border-top-left-radius: $controlCr;
+            box-shadow: rgba(black, 0.3) 0 -1px 2px;
             color: $colorBtnFg;
             display: inline-block;
-            padding: $interiorMarginSm $interiorMargin;
+            padding: $interiorMarginSm 0;
             position: absolute;
-            right: 1px;
             pointer-events: none;
             text-align: center;
-            transform-origin: bottom right;
             width: $size;
             z-index: 2;
 
-            // Following is overwritten when layout is rows
-            bottom: $size + $interiorMarginLg;
+            // Changed when layout is different, see below
             border-top-right-radius: $controlCr;
-            transform: rotate(-90deg);
+            bottom: 1px;
+            right: $sizeIndicatorM;
         }
 
         &__drop-hint {
@@ -205,7 +221,7 @@
         &__resize-handle {
             $size: 2px;
             $margin: 3px;
-            $marginHov: 3px;
+            $marginHov: 0;
 
             display: flex;
             flex-direction: column;
@@ -223,7 +239,7 @@
             &.vertical {
                 padding: $margin 0;
                 &:hover{
-                    padding: $marginHov 0;
+                  //  padding: $marginHov 0;
                     cursor: row-resize;
                 }
             }
@@ -231,7 +247,7 @@
             &.horizontal {
                 padding: 0 $margin;
                 &:hover{
-                    padding: 0 $marginHov;
+                 //   padding: 0 $marginHov;
                     cursor: col-resize;
                 }
             }
@@ -256,10 +272,11 @@
             flex-direction: row;
 
             &__size-indicator {
-                bottom: $interiorMarginLg;
                 border-bottom-left-radius: $controlCr;
                 border-top-right-radius: 0;
-                transform: rotate(0);
+                bottom: $sizeIndicatorM;
+                box-shadow: rgba(black, 0.3) -1px 0 5px;
+                right: 1px;
             }
         }
 

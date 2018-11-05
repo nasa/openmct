@@ -43,7 +43,10 @@
             </object-view>
         </div>
 
-        <div class="c-fl-frame__size-indicator">{{size}}%</div>
+        <div class="c-fl-frame__size-indicator"
+            v-if="size && size < 100">
+            {{size}}%
+        </div>
 
         <drop-hint
              v-show="isEditing && isDragging"
