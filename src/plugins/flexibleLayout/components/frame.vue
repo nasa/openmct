@@ -27,7 +27,7 @@
             [frame.cssClass]: true
         }">
 
-        <div class="c-fl-frame__drag-wrapper"
+        <div class="c-frame c-fl-frame__drag-wrapper"
              draggable="true"
              v-if="frame.domainObject">
 
@@ -42,6 +42,8 @@
                 :object="frame.domainObject">
             </object-view>
         </div>
+
+        <div class="c-fl-container__frame-size-indicator">{{size}}%</div>
 
         <drop-hint
              v-show="isEditing && isDragging"
@@ -59,7 +61,7 @@ import ResizeHandle from './resizeHandle.vue';
 import FrameHeader from '../../../ui/components/utils/frameHeader.vue';
 
 export default {
-    props: ['frame', 'index', 'isEditing', 'isDragging'],
+    props: ['frame', 'index', 'size', 'isEditing', 'isDragging'],
     components: {
         ObjectView,
         DropHint,

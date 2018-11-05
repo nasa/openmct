@@ -114,6 +114,29 @@
             overflow: hidden; // This sucks, but doing in the short-term
         }
 
+        &__frame-size-indicator {
+            $size: 50px;
+
+            @include ellipsize();
+            background: $colorBtnBg;
+            border-top-left-radius: $controlCr;
+            color: $colorBtnFg;
+            display: inline-block;
+            padding: $interiorMarginSm $interiorMargin;
+            position: absolute;
+            right: 1px;
+            pointer-events: none;
+            text-align: center;
+            transform-origin: bottom right;
+            width: $size;
+            z-index: 2;
+
+            // Following is overwritten when layout is rows
+            bottom: $size + $interiorMarginLg;
+            border-top-right-radius: $controlCr;
+            transform: rotate(-90deg);
+        }
+
         /****** THEIR FRAMES */
         // Frames get styled here because this is particular to their presence in this layout type
         .c-fl-frame {
@@ -157,6 +180,13 @@
 
             &__frames-holder {
                 flex-direction: row;
+            }
+
+            &__frame-size-indicator {
+                bottom: $interiorMarginLg;
+                border-bottom-left-radius: $controlCr;
+                border-top-right-radius: 0;
+                transform: rotate(0);
             }
         }
     }

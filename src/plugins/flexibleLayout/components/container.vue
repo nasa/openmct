@@ -39,6 +39,7 @@
                         'flex-basis': `${frame.height}%`
                     }"
                     :frame="frame"
+                    :size="frame.height"
                     :index="index"
                     :isEditing="isEditing"
                     :isDragging="isDragging"
