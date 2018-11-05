@@ -258,6 +258,10 @@
         }
     }
 
+    [s-selected] {
+        border: $browseBorderSelected
+    }
+
 </style>
 
 <script>
