@@ -291,7 +291,7 @@ export default {
                     total += this.configuredColumnWidths[key];
                     return total;
                 }, 0);
-                
+
                 style = {width: totalWidth + 'px'};
             }
             console.log('sizingTableWidth');
@@ -494,7 +494,7 @@ export default {
             this.table.configuration.updateConfiguration(configuration);
         },
         setDropTargetOffset(dropOffsetLeft) {
-            this.dropOffsetLeft = dropOffsetLeft + this.scrollable.scrollLeft;
+            this.dropOffsetLeft = dropOffsetLeft - this.scrollable.scrollLeft;
         },
         reorderColumn(from, to) {
             let newHeaderKeys = Object.keys(this.headers);
