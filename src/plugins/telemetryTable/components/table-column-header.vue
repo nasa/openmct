@@ -170,8 +170,6 @@ export default {
         }
     },
     created() {
-        this.resizeColumn = _.throttle(this.resizeColumn, 50);
-
         this.openmct.editor.on('isEditing', this.toggleEditMode);
     },
     destroyed() {
