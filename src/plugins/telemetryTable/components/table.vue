@@ -83,7 +83,7 @@
         </table>
     </div>
     <!-- Sizing table -->
-    <table class="c-telemetry-table__sizing js-telemetry-table__sizing" :style="sizingTableWidth === undefined ? {} : {width: sizingTableWidth}">
+    <table class="c-telemetry-table__sizing js-telemetry-table__sizing" :style="sizingTableWidth">
         <tr>
             <template v-for="(title, key) in headers">
             <th :key="key" :style="{ width: configuredColumnWidths[key] + 'px', 'max-width': configuredColumnWidths[key] + 'px'}">{{title}}</th>
@@ -263,7 +263,8 @@ export default {
             updatingView: false,
             dropOffsetLeft: undefined,
             isDropTargetActive: false,
-            isAutosizeEnabled: configuration.autosize
+            isAutosizeEnabled: configuration.autosize,
+            scrollW: 0
         }
     },
     computed: {
@@ -281,10 +282,20 @@ export default {
             return this.totalWidth + this.scrollW + "px";
         },
         sizingTableWidth() {
+            let style;
+
             if (this.isAutosizeEnabled) {
-                console.log('Autosize sizing table');
-                return "calc(100% - " + this.scrollW + "px)";
+                style = { width: "calc(100% - " + this.scrollW + "px)" };
+            } else {
+                let totalWidth = Object.keys(this.headers).reduce((total, key) => {
+                    total += this.configuredColumnWidths[key];
+                    return total;
+                }, 0);
+                
+                style = {width: totalWidth + 'px'};
             }
+            console.log('sizingTableWidth');
+            return style;
         }
     },
     methods: {
@@ -331,7 +342,6 @@ export default {
         },
         calculateScrollbarWidth() {
             this.scrollW = this.scrollable.offsetWidth - this.scrollable.clientWidth;
-            //this.scrollW = 30;
         },
         calculateColumnWidths() {
             let columnWidths = {};
@@ -460,20 +470,22 @@ export default {
         },
         addObject() {
             this.updateHeaders();
+            this.$nextTick().then(this.calculateColumnWidths);
         },
         removeObject(objectIdentifier) {
             let objectKeyString = this.openmct.objects.makeKeyString(objectIdentifier);
             delete this.sizingRows[objectKeyString];
             this.updateHeaders();
+            this.$nextTick().then(this.calculateColumnWidths);
         },
         resizeColumn(key, newWidth) {
             let delta = newWidth - this.columnWidths[key];
             this.columnWidths[key] = newWidth;
             this.totalWidth += delta;
-            this.updateConfiguredColumnWidth(key, newWidth);
+            this.updateConfiguredColumnWidths();
         },
-        updateConfiguredColumnWidth(key, newWidth) {
-            this.configuredColumnWidths[key] = newWidth;
+        updateConfiguredColumnWidths() {
+            this.configuredColumnWidths = this.columnWidths;
 
             let configuration = this.table.configuration.getConfiguration();
             configuration.autosize = false;
@@ -528,7 +540,7 @@ export default {
     },
     created() {
         this.filterChanged = _.debounce(this.filterChanged, 500);
-        this.updateConfiguredColumnWidth = _.debounce(this.updateConfiguredColumnWidth, 500);
+        this.updateConfiguredColumnWidths = _.debounce(this.updateConfiguredColumnWidths, 500);
     },
     mounted() {
         this.$on('drop-target-offset-changed', this.setDropTargetOffset);

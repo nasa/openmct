@@ -75,7 +75,7 @@ export default {
     inject: ['openmct'],
     data() {
         return {
-            isEditing: false
+            isEditing: this.openmct.editor.isEditing()
         }
     },
     props: {
