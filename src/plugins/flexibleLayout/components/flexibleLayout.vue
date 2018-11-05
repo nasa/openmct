@@ -204,7 +204,7 @@
         &__resize-handle {
             $size: 2px;
             $margin: 3px;
-            $marginHov: 10px;
+            $marginHov: 3px;
 
             display: flex;
             flex-direction: column;
@@ -289,6 +289,9 @@ import ContainerComponent  from './container.vue';
 import Container from '../utils/container';
 import ResizeHandle from  './resizeHandle.vue';
 
+const SNAP_TO_PERCENTAGE = 1,
+      MIN_CONTAINER_SIZE = 10;
+
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
@@ -369,13 +372,13 @@ export default {
             this.rowsLayout = !this.rowsLayout;
             this.layoutDirectionStr = (this.rowsLayout === true) ? 'rows' : 'columns';
         },
-        containerResizing(index, delta) {
+        containerResizing(index, delta, event) {
             let percentageMoved = (delta/this.getElSize(this.$el))*100,
                 beforeContainer = this.containers[index],
                 afterContainer = this.containers[index + 1];
 
-                beforeContainer.width = this.getContainerSize(beforeContainer.width - percentageMoved);
-                afterContainer.width = this.getContainerSize(afterContainer.width + percentageMoved);
+                beforeContainer.width = this.snapToPercentage(beforeContainer.width + percentageMoved);
+                afterContainer.width = this.snapToPercentage(afterContainer.width - percentageMoved);
         },
         endContainerResizing(event) {
             this.persist();
@@ -388,7 +391,25 @@ export default {
             }
         },
         getContainerSize(size) {
-            return Math.max(10, size);
+            if (size < MIN_CONTAINER_SIZE) {
+                return MIN_CONTAINER_SIZE
+            } else if (size > (100 - MIN_CONTAINER_SIZE)) {
+                return (100 - MIN_CONTAINER_SIZE);
+            } else {
+                return size;
+            }
+        },
+        snapToPercentage(value) {
+            let rem = value % SNAP_TO_PERCENTAGE,
+                roundedValue;
+            
+            if (rem < 0.5) {
+                 roundedValue = Math.floor(value/SNAP_TO_PERCENTAGE)*SNAP_TO_PERCENTAGE;
+            } else {
+                roundedValue = Math.ceil(value/SNAP_TO_PERCENTAGE)*SNAP_TO_PERCENTAGE;
+            }
+
+            return this.getContainerSize(roundedValue);
         }
     },
     mounted() {
