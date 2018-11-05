@@ -43,7 +43,7 @@
             </object-view>
         </div>
 
-        <div class="c-fl-container__frame-size-indicator">{{size}}%</div>
+        <div class="c-fl-frame__size-indicator">{{size}}%</div>
 
         <drop-hint
              v-show="isEditing && isDragging"

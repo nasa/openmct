@@ -26,7 +26,7 @@
          :class="{'is-empty': frames.length === 1}">
         <div class="c-fl-container__header"
             v-if="isEditing">
-            <span class="c-fl-container__label">{{ size }}</span>
+            <span class="c-fl-container__size-indicator">{{ size }}</span>
         </div>
         <div class="c-fl-container__frames-holder">
             <div class="u-contents"

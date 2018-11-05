@@ -84,6 +84,8 @@
 
     .c-fl-container {
         /***************************************************** CONTAINERS */
+        $headerFB: 16px;
+
         display: flex;
         flex-direction: column;
         overflow: auto;
@@ -100,8 +102,14 @@
             background: rgba($editColor, 0.3);
             display: flex;
             align-items: center;
-            justify-content: center;
-            flex: 0 0 auto;
+         //   justify-content: center;
+            flex: 0 0 $headerFB;
+        }
+
+        &__size-indicator {
+            position: absolute;
+            display: inline-block;
+            right: $interiorMargin;
         }
 
         &__frames-holder {
@@ -114,7 +122,53 @@
             overflow: hidden; // This sucks, but doing in the short-term
         }
 
-        &__frame-size-indicator {
+        /****** THEIR FRAMES */
+        // Frames get styled here because this is particular to their presence in this layout type
+        .c-fl-frame {
+            @include browserPrefix(margin-collapse, collapse);
+            margin: 1px;
+
+            &__drag-wrapper {
+                border: 1px solid $colorInteriorBorder;
+            }
+        }
+
+        /****** LAYOUT */
+        .c-fl--rows & {
+            // Layout is rows
+            flex-direction: row;
+
+            &__header {
+                flex-basis: $headerFB;
+                overflow: hidden;
+            }
+
+            &__size-indicator {
+                right: 0;
+                top: $interiorMargin;
+                transform-origin: top right;
+                transform: rotate(-90deg) translateY(-100%);
+            }
+
+            &__frames-holder {
+                flex-direction: row;
+            }
+        }
+    }
+
+    .c-fl-frame {
+        display: flex;
+        justify-content: stretch;
+        align-items: st retch;
+        flex: 1 1;
+        flex-direction: column;
+
+        &__drag-wrapper {
+            flex: 1 1 auto;
+            overflow: auto;
+        }
+
+        &__size-indicator {
             $size: 50px;
 
             @include ellipsize();
@@ -135,72 +189,6 @@
             bottom: $size + $interiorMarginLg;
             border-top-right-radius: $controlCr;
             transform: rotate(-90deg);
-        }
-
-        /****** THEIR FRAMES */
-        // Frames get styled here because this is particular to their presence in this layout type
-        .c-fl-frame {
-            @include browserPrefix(margin-collapse, collapse);
-            margin: 1px;
-
-            &__drag-wrapper {
-                border: 1px solid $colorInteriorBorder;
-            }
-        }
-
-        /****** LAYOUT */
-        .c-fl--rows & {
-            // Layout is rows
-            flex-direction: row;
-
-            > * + * {
-                .c-fl-frame__drag-wrapper {
-                    // border-top: none;
-                    // border-left: 1px solid $colorInteriorBorder;
-                }
-            }
-
-            .is-editing & {
-                > * + * {
-                    .c-fl-frame__drag-wrapper {
-                        //  border-left: 1px dotted $editColor;
-                    }
-                }
-            }
-
-            &__header {
-                flex-basis: 20px;
-                overflow: hidden;
-            }
-
-            &__label {
-                transform-origin: center;
-                transform: rotate(-90deg);
-            }
-
-            &__frames-holder {
-                flex-direction: row;
-            }
-
-            &__frame-size-indicator {
-                bottom: $interiorMarginLg;
-                border-bottom-left-radius: $controlCr;
-                border-top-right-radius: 0;
-                transform: rotate(0);
-            }
-        }
-    }
-
-    .c-fl-frame {
-        display: flex;
-        justify-content: stretch;
-        align-items: st retch;
-        flex: 1 1;
-        flex-direction: column;
-
-        &__drag-wrapper {
-            flex: 1 1 auto;
-            overflow: auto;
         }
 
         &__drop-hint {
@@ -265,6 +253,13 @@
 
         .c-fl--rows & {
             flex-direction: row;
+
+            &__size-indicator {
+                bottom: $interiorMarginLg;
+                border-bottom-left-radius: $controlCr;
+                border-top-right-radius: 0;
+                transform: rotate(0);
+            }
         }
 
 
