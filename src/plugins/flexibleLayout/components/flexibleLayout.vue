@@ -41,6 +41,7 @@
                     v-show="isEditing"
                     :index="index"
                     :orientation="layoutDirectionStr === 'rows' ? 'vertical' : 'horizontal'"
+                    @mousedown="startContainerResizing"
                     @mousemove="containerResizing"
                     @mouseup="endContainerResizing">
                 </resize-handle>
@@ -290,7 +291,7 @@ import Container from '../utils/container';
 import ResizeHandle from  './resizeHandle.vue';
 
 const SNAP_TO_PERCENTAGE = 1,
-      MIN_CONTAINER_SIZE = 10;
+      MIN_CONTAINER_SIZE = 5;
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -311,7 +312,8 @@ export default {
             isEditing: false,
             isDragging: false,
             rowsLayout: false,
-            layoutDirectionStr: 'columns'
+            layoutDirectionStr: 'columns',
+            maxMoveSize: 0
         }
     },
     methods: {
@@ -372,6 +374,12 @@ export default {
             this.rowsLayout = !this.rowsLayout;
             this.layoutDirectionStr = (this.rowsLayout === true) ? 'rows' : 'columns';
         },
+        startContainerResizing(index) {
+            let beforeContainer = this.containers[index],
+                afterContainer = this.containers[index + 1];
+
+            this.maxMoveSize = beforeContainer.width + afterContainer.width;
+        },
         containerResizing(index, delta, event) {
             let percentageMoved = (delta/this.getElSize(this.$el))*100,
                 beforeContainer = this.containers[index],
@@ -393,8 +401,8 @@ export default {
         getContainerSize(size) {
             if (size < MIN_CONTAINER_SIZE) {
                 return MIN_CONTAINER_SIZE
-            } else if (size > (100 - MIN_CONTAINER_SIZE)) {
-                return (100 - MIN_CONTAINER_SIZE);
+            } else if (size > (this.maxMoveSize - MIN_CONTAINER_SIZE)) {
+                return (this.maxMoveSize - MIN_CONTAINER_SIZE);
             } else {
                 return size;
             }

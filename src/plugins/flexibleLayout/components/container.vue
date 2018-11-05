@@ -52,6 +52,7 @@
                     v-show="isEditing"
                     :index="index"
                     :orientation="layoutDirectionStr === 'rows' ? 'horizontal' : 'vertical'"
+                    @mousedown="startFrameResizing"
                     @mousemove="frameResizing"
                     @mouseup="endFrameResizing">
                 </resize-handle>
@@ -67,7 +68,7 @@ import Frame from '../utils/frame';
 import ResizeHandle from './resizeHandle.vue';
 
 const SNAP_TO_PERCENTAGE = 1;
-const MIN_FRAME_SIZE = 10;
+const MIN_FRAME_SIZE = 5;
 
 export default {
     inject:['openmct'],
@@ -79,7 +80,8 @@ export default {
     data() {
         return {
             initialPos: 0,
-            frameIndex: 0
+            frameIndex: 0,
+            maxMoveSize: 0
         }
     },
     methods: {
@@ -107,6 +109,12 @@ export default {
 
             this.$emit('object-drop-to', this.index, frameIndex, frameObject);
         },
+        startFrameResizing(index) {
+            let beforeFrame = this.frames[index],
+                afterFrame = this.frames[index + 1];
+            
+            this.maxMoveSize = beforeFrame.height + afterFrame.height;
+        },
         frameResizing(index, delta, event) {
 
             let percentageMoved = (delta / this.getElSize(this.$el))*100,
@@ -129,8 +137,8 @@ export default {
         getFrameSize(size) {
             if (size < MIN_FRAME_SIZE) {
                 return MIN_FRAME_SIZE
-            } else if (size > (100 - MIN_FRAME_SIZE)) {
-                return (100 - MIN_FRAME_SIZE);
+            } else if (size > (this.maxMoveSize - MIN_FRAME_SIZE)) {
+                return (this.maxMoveSize - MIN_FRAME_SIZE);
             } else {
                 return size;
             }

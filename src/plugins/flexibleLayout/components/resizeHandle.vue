@@ -38,6 +38,8 @@ export default {
         mousedown(event) {
             event.preventDefault();
 
+            this.$emit('mousedown', this.index);
+
             document.body.addEventListener('mousemove', this.mousemove);
             document.body.addEventListener('mouseup', this.mouseup);
         },
