@@ -32,18 +32,15 @@ button {
 }
 
 .c-button--menu {
-    $m: $interiorMargin;
-
-    &:before,
-    > * {
-        margin-right: $m;
-    }
-
     &:after {
         content: $glyph-icon-arrow-down;
         font-family: symbolsfont;
         opacity: 0.5;
     }
+}
+
+.c-compact-button {
+    @include cCompactButtons($bg: $colorBtnBg, $fg: $colorBtnFg, $bgHov: $colorBtnBgHov);
 }
 
 /********* Icon Buttons */
@@ -486,4 +483,49 @@ input[type=number]::-webkit-outer-spin-button {
 .c-slider {
     @include cControl();
     > * + * { margin-left: $interiorMargin; }
+}
+
+/***************************************************** DRAG AND DROP */
+.c-drop-hint {
+    // Used in Tabs View, Flexible Grid Layouts
+    @include abs();
+    background-color: $colorDropHintBg;
+    color: $colorDropHintFg;
+    border-radius: $basicCr;
+    border: 1px dashed $colorDropHintFg;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: $transOut;
+    z-index: 50;
+
+    opacity: 0; // Must use this (rather than display: none) to enable transition effects
+    pointer-events: none;
+
+    &:before {
+        $h: 80%;
+        $mh: 50px;
+        background: $bg-icon-activity; // TODO: change to $bg-icon-plus
+        background-size: contain;
+        background-position: center center;
+        background-repeat: no-repeat;
+        content: '';
+        display: block;
+        filter: $colorKeyFilterHov;
+        height: $h; width: $h;
+        max-height: $mh; max-width: $mh;
+    }
+
+    .is-dragging & {
+        pointer-events: inherit;
+        transition: $transIn;
+        opacity: 0.8;
+    }
+
+    .is-mouse-over & {
+        transition: $transIn;
+        background-color: $colorDropHintBgHov;
+        opacity: 0.9;
+    }
 }
