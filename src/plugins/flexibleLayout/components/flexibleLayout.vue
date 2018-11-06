@@ -1,13 +1,5 @@
 <template>
     <div class="c-fl">
-        <div class="temp-toolbar"
-             v-if="isEditing">
-            <button class="c-button"
-                    @click="addContainer">
-                    Add Container
-            </button>
-        </div>
-
         <div class="c-fl__empty"
              v-if="containers.length === 1 && !containers[0].frames[1]">
             <span class="c-fl__empty-message">This Flexible Layout is currently empty</span>
@@ -33,7 +25,8 @@
                     @frame-drag-from="frameDragFromHandler"
                     @frame-drop-to="frameDropToHandler"
                     @persist="persist"
-                    @delete-container="promptBeforeDeletingContainer">
+                    @delete-container="promptBeforeDeletingContainer"
+                    @add-container="addContainer">
                 </container-component>
 
                 <resize-handle
@@ -489,6 +482,13 @@ export default {
         },
         deleteContainer(containerIndex) {
             this.containers.splice(containerIndex, 1);
+
+            this.recalculateContainerSize(100/this.containers.length);
+            this.persist();
+        },
+        addContainer(containerIndex) {
+            this.containers.splice(containerIndex+1, 0, new Container());
+
             this.recalculateContainerSize(100/this.containers.length);
             this.persist();
         }

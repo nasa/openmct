@@ -87,6 +87,9 @@ export default {
         },
         deleteFrame() {
             this.$emit('delete-frame', this.index);
+        },
+        addContainer() {
+            this.$emit('add-container');
         }
     },
     mounted() {
@@ -97,6 +100,7 @@ export default {
                 let context = {
                 item: this.frame.domainObject,
                 method: this.deleteFrame,
+                addContainer: this.addContainer,
                 type: 'frame'
             }
 

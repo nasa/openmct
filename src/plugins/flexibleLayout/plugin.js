@@ -82,6 +82,14 @@ define([
                                         title: 'Rows'
                                     }
                                 ]
+                            },
+                            {
+                                control: "button",
+                                domainObject: selection[0].context.item,
+                                method: selection[0].context.addContainer,
+                                key: "add",
+                                icon: "icon-plus",
+                                title: `Add Container`
                             }
                         ];
                     } else {

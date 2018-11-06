@@ -45,7 +45,8 @@
                     :isDragging="isDragging"
                     @frame-drag-from="frameDragFrom"
                     @frame-drop-to="frameDropTo"
-                    @delete-frame="promptBeforeDeletingFrame">
+                    @delete-frame="promptBeforeDeletingFrame"
+                    @add-container="addContainer">
                 </frame-component>
 
                 <resize-handle
@@ -190,12 +191,16 @@ export default {
         },
         deleteContainer() {
             this.$emit('delete-container', this.index);
+        },
+        addContainer() {
+            this.$emit('add-container', this.index);
         }
     },
     mounted() {
         let context = {
             item: this.domainObject,
             method: this.deleteContainer,
+            addContainer: this.addContainer,
             type: 'container'
         }
 
