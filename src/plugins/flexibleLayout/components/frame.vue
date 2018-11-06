@@ -42,11 +42,11 @@
                 class="c-object-view"
                 :object="frame.domainObject">
             </object-view>
-        </div>
 
-        <div class="c-fl-frame__size-indicator"
-            v-if="size && size < 100 && isEditing">
-            {{size}}%
+            <div class="c-fl-frame__size-indicator"
+                 v-if="size && size < 100 && isEditing">
+                {{size}}%
+            </div>
         </div>
 
         <drop-hint

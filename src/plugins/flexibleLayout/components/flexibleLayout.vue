@@ -187,13 +187,14 @@
 
     .c-fl-frame {
         $sizeIndicatorM: 16px;
+        $dropHintSize: 15px;
 
         display: flex;
         justify-content: stretch;
         align-items: stretch;
         flex: 1 1;
         flex-direction: column;
-        overflow: hidden; // Needed to allow frames to collapse
+        overflow: hidden; // Needed to allow frames to collapse when sized down
 
         &__drag-wrapper {
             flex: 1 1 auto;
@@ -212,7 +213,6 @@
             @include ellipsize();
             background: $colorBtnBg;
             border-top-left-radius: $controlCr;
-            box-shadow: rgba(black, 0.3) 0 -1px 2px;
             color: $colorBtnFg;
             display: inline-block;
             padding: $interiorMarginSm 0;
@@ -229,10 +229,7 @@
         }
 
         &__drop-hint {
-            /* TODO: make this independent of the flex-basis of .c-fl-frame
-             * so that the first-in-container element can be set to basis 0;
-             */
-            flex: 0 0 15px;
+            flex: 0 0 $dropHintSize;
             .c-drop-hint {
                 border-radius: $smallCr;
             }
@@ -295,7 +292,6 @@
                 border-bottom-left-radius: $controlCr;
                 border-top-right-radius: 0;
                 bottom: $sizeIndicatorM;
-                box-shadow: rgba(black, 0.3) -1px 0 5px;
                 right: 1px;
             }
         }
@@ -306,6 +302,10 @@
             .c-fl-frame__drag-wrapper {
                 display: none;
             }
+
+            &.is-dragging {
+                flex-basis: $dropHintSize;
+            }
         }
 
         .is-empty & {
@@ -315,6 +315,7 @@
 
             &__drop-hint {
                 flex: 1 1 100%;
+                margin: 0;
             }
         }
     }
