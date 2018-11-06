@@ -164,7 +164,7 @@ export default {
 
             let prompt = this.openmct.overlays.dialog({
                 iconClass: 'alert',
-                message: `This action will permanently delete ${this.frames[frameIndex].domainObject.name} from this Flexible Layout`,
+                message: `This action will remove ${this.frames[frameIndex].domainObject.name} from this Flexible Layout. Do you want to continue?`,
                 buttons: [
                     {
                         label: 'Ok',

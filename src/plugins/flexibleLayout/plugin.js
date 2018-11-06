@@ -33,7 +33,8 @@ define([
             openmct.types.addType('flexible-layout', {
                 name: "Flexible Layout",
                 creatable: true,
-                cssClass: 'icon-layout',
+                description: "A fluid, flexible layout canvas that can display multiple objects in rows or columns.",
+                cssClass: 'icon-flexible-layout',
                 initialize: function (domainObject) {
                     domainObject.configuration = {
                         containers: [],
@@ -45,7 +46,7 @@ define([
             openmct.toolbars.addProvider({
                 name: "Flexible Layout Toolbar",
                 key: "flex-layout",
-                description: "A toolbar for objects inside a flexible layout.",
+                description: "A toolbar for objects inside a Flexible Layout.",
                 forSelection: function (selection) {
                     // Apply the layout toolbar if the selected object is inside a layout,
                     // and in edit mode.

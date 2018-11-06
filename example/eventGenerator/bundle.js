@@ -49,7 +49,7 @@ define([
                 {
                     "key": "eventGenerator",
                     "name": "Event Message Generator",
-                    "cssClass": "icon-folder-new",
+                    "cssClass": "icon-generator-events",
                     "description": "For development use. Creates sample event message data that mimics a live data stream.",
                     "priority": 10,
                     "features": "creation",
