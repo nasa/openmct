@@ -30,8 +30,8 @@
                     :isDragging="isDragging"
                     :rowsLayout="rowsLayout"
                     @addFrame="addFrame"
-                    @object-drag-from="dragFromHandler"
-                    @object-drop-to="dropToHandler"
+                    @frame-drag-from="frameDragFromHandler"
+                    @frame-drop-to="frameDropToHandler"
                     @persist="persist"
                     @delete-container="promptBeforeDeletingContainer">
                 </container-component>
@@ -340,7 +340,7 @@ export default {
             rowsLayout = this.domainObject.configuration.rowsLayout;
 
         if (!containers.length) {
-            containers = [new Container(100)];
+            containers = [new Container(50), new Container(50)];
         }
 
         return {
@@ -379,10 +379,10 @@ export default {
         addFrame(frame, index) {
             this.containers[index].addFrame(frame);
         },
-        dragFromHandler(containerIndex, frameIndex) {
+        frameDragFromHandler(containerIndex, frameIndex) {
             this.dragFrom = [containerIndex, frameIndex];
         },
-        dropToHandler(containerIndex, frameIndex, frameObject) {
+        frameDropToHandler(containerIndex, frameIndex, frameObject) {
             this.isDragging = false;
 
             if (!frameObject) {

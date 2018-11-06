@@ -75,10 +75,10 @@ export default {
     },
     methods: {
         dragstart(event) {
-            this.$emit('object-drag-from', this.index);
+            this.$emit('frame-drag-from', this.index);
         },
         dropHandler(event) {
-            this.$emit('object-drop-to', this.index, event);
+            this.$emit('frame-drop-to', this.index, event);
         },
         drag(event) {
             if (!this.isDragging) {

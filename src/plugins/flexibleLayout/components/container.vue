@@ -43,8 +43,8 @@
                     :index="index"
                     :isEditing="isEditing"
                     :isDragging="isDragging"
-                    @object-drag-from="dragFrom"
-                    @object-drop-to="dropTo"
+                    @frame-drag-from="frameDragFrom"
+                    @frame-drop-to="frameDropTo"
                     @delete-frame="promptBeforeDeletingFrame">
                 </frame-component>
 
@@ -93,10 +93,10 @@ export default {
                 }
             });
         },
-        dragFrom(frameIndex) {
-           this.$emit('object-drag-from', this.index, frameIndex);
+        frameDragFrom(frameIndex) {
+           this.$emit('frame-drag-from', this.index, frameIndex);
         },
-        dropTo(frameIndex, event) {
+        frameDropTo(frameIndex, event) {
             let domainObject = event.dataTransfer.getData('domainObject'),
                 frameObject;
 
@@ -108,7 +108,7 @@ export default {
                 frameObject = new Frame(JSON.parse(domainObject), newFrameSize);
             }
 
-            this.$emit('object-drop-to', this.index, frameIndex, frameObject);
+            this.$emit('frame-drop-to', this.index, frameIndex, frameObject);
         },
         startFrameResizing(index) {
             let beforeFrame = this.frames[index],
