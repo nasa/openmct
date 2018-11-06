@@ -3,10 +3,9 @@
         <div class="temp-toolbar"
              v-if="isEditing">
             <button class="c-button"
-                    @click="addContainer">Add Container</button>
-            <button class="c-button"
-                    @click="toggleLayout">Toggle Layout</button>
-            <span>Layout is {{ layoutDirectionStr }}</span>
+                    @click="addContainer">
+                    Add Container
+            </button>
         </div>
 
         <div class="c-fl__empty"
@@ -29,18 +28,19 @@
                     :frames="container.frames"
                     :isEditing="isEditing"
                     :isDragging="isDragging"
-                    :layoutDirectionStr="layoutDirectionStr"
+                    :rowsLayout="rowsLayout"
                     @addFrame="addFrame"
                     @object-drag-from="dragFromHandler"
                     @object-drop-to="dropToHandler"
-                    @persist="persist">
+                    @persist="persist"
+                    @delete-container="promptBeforeDeletingContainer">
                 </container-component>
 
                 <resize-handle
                     v-if="index !== (containers.length - 1)"
                     v-show="isEditing"
                     :index="index"
-                    :orientation="layoutDirectionStr === 'rows' ? 'vertical' : 'horizontal'"
+                    :orientation="rowsLayout ? 'vertical' : 'horizontal'"
                     @mousedown="startContainerResizing"
                     @mousemove="containerResizing"
                     @mouseup="endContainerResizing">
@@ -336,7 +336,8 @@ export default {
         ResizeHandle
     },
     data() {
-        let containers = this.domainObject.configuration.containers;
+        let containers = this.domainObject.configuration.containers,
+            rowsLayout = this.domainObject.configuration.rowsLayout;
 
         if (!containers.length) {
             containers = [new Container(100)];
@@ -347,9 +348,17 @@ export default {
             dragFrom: [],
             isEditing: false,
             isDragging: false,
-            rowsLayout: false,
-            layoutDirectionStr: 'columns',
+            rowsLayout: rowsLayout,
             maxMoveSize: 0
+        }
+    },
+    computed: {
+        layoutDirectionStr() {
+            if (this.rowsLayout) {
+                return 'Rows'
+            } else {
+                return 'Columns'
+            }
         }
     },
     methods: {
@@ -406,10 +415,6 @@ export default {
         dragendHandler() {
             this.isDragging = false;
         },
-        toggleLayout() {
-            this.rowsLayout = !this.rowsLayout;
-            this.layoutDirectionStr = (this.rowsLayout === true) ? 'rows' : 'columns';
-        },
         startContainerResizing(index) {
             let beforeContainer = this.containers[index],
                 afterContainer = this.containers[index + 1];
@@ -428,7 +433,7 @@ export default {
             this.persist();
         },
         getElSize(el) {
-            if (this.layoutDirectionStr === 'rows') {
+            if (this.rowsLayout) {
                 return el.offsetHeight;
             } else {
                 return el.offsetWidth;
@@ -454,10 +459,44 @@ export default {
             }
 
             return this.getContainerSize(roundedValue);
+        },
+        toggleLayoutDirection(v) {
+            this.rowsLayout = v;
+        },
+        promptBeforeDeletingContainer(containerIndex) {
+            let deleteContainer = this.deleteContainer;
+
+            let prompt = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: `This action will permanently delete container ${containerIndex + 1} from this Flexible Layout`,
+                buttons: [
+                    {
+                        label: 'Ok',
+                        emphasis: 'true',
+                        callback: function () {
+                            deleteContainer(containerIndex);
+                            prompt.dismiss();
+                        },
+                    },
+                    {
+                        label: 'Cancel',
+                        callback: function () {
+                            prompt.dismiss();
+                        }
+                    }
+                ]
+            });
+        },
+        deleteContainer(containerIndex) {
+            this.containers.splice(containerIndex, 1);
+            this.recalculateContainerSize(100/this.containers.length);
+            this.persist();
         }
     },
     mounted() {
+        this.openmct.objects.observe(this.domainObject, 'configuration.rowsLayout', this.toggleLayoutDirection);
         this.openmct.editor.on('isEditing', this.isEditingHandler);
+
         document.addEventListener('dragstart', this.dragstartHandler);
         document.addEventListener('dragend', this.dragendHandler);
     },

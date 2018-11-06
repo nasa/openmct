@@ -26,6 +26,7 @@ define([
     FlexibleLayout
 ) {
     return function plugin() {
+
         return function install(openmct) {
             openmct.objectViews.addProvider(new FlexibleLayout(openmct));
 
@@ -35,7 +36,8 @@ define([
                 cssClass: 'icon-layout',
                 initialize: function (domainObject) {
                     domainObject.configuration = {
-                        containers: []
+                        containers: [],
+                        rowsLayout: false
                     };
                 }
             });
@@ -47,19 +49,62 @@ define([
                 forSelection: function (selection) {
                     // Apply the layout toolbar if the selected object is inside a layout,
                     // and in edit mode.
-                    return (selection[1] && openmct.editor.isEditing());
+                    return (selection[0] && openmct.editor.isEditing());
                 },
                 toolbar: function (selection) {
 
-                    return [
-                        {
-                            control: "button",
-                            domainObject: selection[0].context.item,
-                            method: selection[0].context.method,
-                            key: "remove",
-                            icon: "icon-trash"
-                        }
-                    ];
+                    if (selection[0].context.type === 'frame' || selection[0].context.type === 'container') {
+
+                        return [
+                            {
+                                control: "button",
+                                domainObject: selection[0].context.item,
+                                method: selection[0].context.method,
+                                key: "remove",
+                                icon: "icon-trash",
+                                title: `Remove ${selection[0].context.type}`
+                            },
+                            {
+                                control: 'toggle-button',
+                                key: 'toggle-layout',
+                                domainObject: selection[1].context.item,
+                                property: 'configuration.rowsLayout',
+                                options: [
+                                    {
+                                        value: false,
+                                        icon: 'icon-grid-snap-no',
+                                        title: 'Columns'
+                                    },
+                                    {
+                                        value: true,
+                                        icon: 'icon-grid-snap-to',
+                                        title: 'Rows'
+                                    }
+                                ]
+                            }
+                        ];
+                    } else {
+                        return [
+                            {
+                                control: 'toggle-button',
+                                key: 'toggle-layout',
+                                domainObject: selection[0].context.item,
+                                property: 'configuration.rowsLayout',
+                                options: [
+                                    {
+                                        value: false,
+                                        icon: 'icon-grid-snap-no',
+                                        title: 'Columns'
+                                    },
+                                    {
+                                        value: true,
+                                        icon: 'icon-grid-snap-to',
+                                        title: 'Rows'
+                                    }
+                                ]
+                            }
+                        ];
+                    }
                 }
             });
         };

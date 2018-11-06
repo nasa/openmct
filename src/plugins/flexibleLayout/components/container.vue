@@ -52,7 +52,7 @@
                     v-if="index !== 0 && (index !== frames.length - 1)"
                     v-show="isEditing"
                     :index="index"
-                    :orientation="layoutDirectionStr === 'rows' ? 'horizontal' : 'vertical'"
+                    :orientation="rowsLayout ? 'horizontal' : 'vertical'"
                     @mousedown="startFrameResizing"
                     @mousemove="frameResizing"
                     @mouseup="endFrameResizing">
@@ -72,8 +72,8 @@ const SNAP_TO_PERCENTAGE = 1;
 const MIN_FRAME_SIZE = 5;
 
 export default {
-    inject:['openmct'],
-    props: ['size', 'frames', 'index', 'isEditing', 'isDragging', 'layoutDirectionStr'],
+    inject:['openmct', 'domainObject'],
+    props: ['size', 'frames', 'index', 'isEditing', 'isDragging', 'rowsLayout'],
     components: {
         FrameComponent,
         ResizeHandle
@@ -129,7 +129,7 @@ export default {
             this.persist();
         },
         getElSize(el) {
-            if (this.layoutDirectionStr === 'rows') {
+            if (this.rowsLayout) {
                 return el.offsetWidth;
             } else {
                 return el.offsetHeight;
@@ -187,7 +187,19 @@ export default {
             this.frames.splice(frameIndex, 1);
             this.framesResize(100/(this.frames.length - 1));
             this.persist();
+        },
+        deleteContainer() {
+            this.$emit('delete-container', this.index);
         }
+    },
+    mounted() {
+        let context = {
+            item: this.domainObject,
+            method: this.deleteContainer,
+            type: 'container'
+        }
+
+        this.openmct.selection.selectable(this.$el, context, false);
     }
 }
 </script>
