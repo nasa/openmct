@@ -55,6 +55,7 @@
 .icon-crosshair {  @include glyphBefore($glyph-icon-crosshair); }
 .icon-grippy {  @include glyphBefore($glyph-icon-grippy); }
 .icon-grid {  @include glyphBefore($glyph-icon-grid); }
+.icon-grippy-ew {  @include glyphBefore($glyph-icon-grippy-ew); }
 .icon-arrows-right-left {  @include glyphBefore($glyph-icon-arrows-right-left); }
 .icon-arrows-up-down {  @include glyphBefore($glyph-icon-arrows-up-down); }
 .icon-bullet {  @include glyphBefore($glyph-icon-bullet); }
@@ -154,6 +155,9 @@
 .bg-icon-activity { @include glyphBg($bg-icon-activity); }
 .bg-icon-activity-mode { @include glyphBg($bg-icon-activity-mode); }
 .bg-icon-autoflow-tabular { @include glyphBg($bg-icon-autoflow-tabular); }
+.bg-icon-plus { @include glyphBg($bg-icon-plus); }
+.bg-icon-grippy-ew { @include glyphBg($bg-icon-grippy-ew); }
+.bg-icon-chain-links { @include glyphBg($bg-icon-chain-links); }
 .bg-icon-clock { @include glyphBg($bg-icon-clock); }
 .bg-icon-database { @include glyphBg($bg-icon-database); }
 .bg-icon-database-query { @include glyphBg($bg-icon-database-query); }
@@ -184,3 +188,5 @@
 .bg-icon-notebook { @include glyphBg($bg-icon-notebook); }
 .bg-icon-tabs-view { @include glyphBg($bg-icon-tabs-view); }
 .bg-icon-flexible-layout { @include glyphBg($bg-icon-flexible-layout); }
+.bg-icon-generator-telemetry { @include glyphBg($bg-icon-generator-telemetry); }
+.bg-icon-generator-events { @include glyphBg($bg-icon-generator-events); }
