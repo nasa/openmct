@@ -9,9 +9,9 @@
             <span>Layout is {{ layoutDirectionStr }}</span>
         </div>
 
-        <div
+        <div class="c-fl__empty"
              v-if="containers.length === 1 && !containers[0].frames[1]">
-            Click on EDIT and DRAG objects into your new Flexible Layout
+            <span class="c-fl__empty-message">This Flexible Layout is currently empty</span>
         </div>
 
         <div class="c-fl__container-holder"
@@ -81,6 +81,20 @@
                 }
             }
         }
+
+        &__empty {
+            @include abs();
+            background: rgba($colorBodyFg, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+
+            > * {
+                font-style: italic;
+                opacity: 0.5;
+            }
+        }
     }
 
     .c-fl-container {
@@ -94,10 +108,6 @@
         // flex-basis is set with inline style in code, controls size
         flex-grow: 1;
         flex-shrink: 1;
-
-        .is-editing & {
-            background: $editColorBg;
-        }
 
         &__header {
             background: rgba($editColor, 0.3);
@@ -132,15 +142,19 @@
             overflow: hidden; // This sucks, but doing in the short-term
         }
 
+        .is-editing & {
+            background: $editColorBg;
+        }
+
         /****** THEIR FRAMES */
         // Frames get styled here because this is particular to their presence in this layout type
         .c-fl-frame {
             @include browserPrefix(margin-collapse, collapse);
             margin: 1px;
 
-            &__drag-wrapper {
-                border: 1px solid $colorInteriorBorder;
-            }
+            //&__drag-wrapper {
+                // border: 1px solid $colorInteriorBorder; // Now handled by is-selectable
+            //}
         }
 
         /****** ROWS LAYOUT */
@@ -184,6 +198,12 @@
         &__drag-wrapper {
             flex: 1 1 auto;
             overflow: auto;
+
+            .is-editing & {
+                > * {
+                    pointer-events: none;
+                }
+            }
         }
 
         &__size-indicator {
@@ -280,7 +300,6 @@
             }
         }
 
-
         &--first-in-container {
             border: none;
             flex: 0 0 0;
@@ -299,11 +318,6 @@
             }
         }
     }
-
-    [s-selected] {
-        border: $browseBorderSelected
-    }
-
 </style>
 
 <script>

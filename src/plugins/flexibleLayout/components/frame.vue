@@ -27,8 +27,9 @@
             [frame.cssClass]: true
         }">
 
-        <div class="c-frame c-fl-frame__drag-wrapper"
+        <div class="c-frame c-fl-frame__drag-wrapper is-selectable"
              draggable="true"
+             ref="frame"
              v-if="frame.domainObject">
 
              <frame-header 
@@ -44,7 +45,7 @@
         </div>
 
         <div class="c-fl-frame__size-indicator"
-            v-if="size && size < 100">
+            v-if="size && size < 100 && isEditing">
             {{size}}%
         </div>
 
@@ -94,7 +95,7 @@ export default {
             elementProxy: this.frame
         }
 
-        this.openmct.selection.selectable(this.$el, context, false)
+        this.openmct.selection.selectable(this.$refs.frame, context, false);
     },
     beforeDestroy() {
         this.$el.removeEventListener('dragstart', this.dragstart);
