@@ -84,18 +84,23 @@ export default {
             if (!this.isDragging) {
                 this.isDragging = true;
             }
+        },
+        deleteFrame() {
+            this.$emit('delete-frame', this.index);
         }
     },
     mounted() {
         this.$el.addEventListener('dragstart', this.dragstart);
         this.$el.addEventListener('drag', this.drag);
 
-        let context = {
-            item: this.frame.domainObject,
-            elementProxy: this.frame
-        }
+        if (this.frame.domainObject.identifier) {
+                let context = {
+                item: this.frame.domainObject,
+                method: this.deleteFrame
+            }
 
-        this.openmct.selection.selectable(this.$refs.frame, context, false);
+            this.openmct.selection.selectable(this.$refs.frame, context, false);
+        }
     },
     beforeDestroy() {
         this.$el.removeEventListener('dragstart', this.dragstart);

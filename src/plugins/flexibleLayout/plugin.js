@@ -39,6 +39,29 @@ define([
                     };
                 }
             });
+
+            openmct.toolbars.addProvider({
+                name: "Flexible Layout Toolbar",
+                key: "flex-layout",
+                description: "A toolbar for objects inside a flexible layout.",
+                forSelection: function (selection) {
+                    // Apply the layout toolbar if the selected object is inside a layout,
+                    // and in edit mode.
+                    return (selection[1] && openmct.editor.isEditing());
+                },
+                toolbar: function (selection) {
+
+                    return [
+                        {
+                            control: "button",
+                            domainObject: selection[0].context.item,
+                            method: selection[0].context.method,
+                            key: "remove",
+                            icon: "icon-trash"
+                        }
+                    ];
+                }
+            });
         };
     };
 });

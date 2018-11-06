@@ -44,7 +44,8 @@
                     :isEditing="isEditing"
                     :isDragging="isDragging"
                     @object-drag-from="dragFrom"
-                    @object-drop-to="dropTo">
+                    @object-drop-to="dropTo"
+                    @delete-frame="promptBeforeDeletingFrame">
                 </frame-component>
 
                 <resize-handle
@@ -157,6 +158,35 @@ export default {
         },
         persist() {
             this.$emit('persist', this.index);
+        },
+        promptBeforeDeletingFrame(frameIndex) {
+            let deleteFrame = this.deleteFrame;
+
+            let prompt = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: `This action will permanently delete ${this.frames[frameIndex].domainObject.name} from this Flexible Layout`,
+                buttons: [
+                    {
+                        label: 'Ok',
+                        emphasis: 'true',
+                        callback: function () {
+                            deleteFrame(frameIndex);
+                            prompt.dismiss();
+                        },
+                    },
+                    {
+                        label: 'Cancel',
+                        callback: function () {
+                            prompt.dismiss();
+                        }
+                    }
+                ]
+            });
+        },
+        deleteFrame(frameIndex) {
+            this.frames.splice(frameIndex, 1);
+            this.framesResize(100/(this.frames.length - 1));
+            this.persist();
         }
     }
 }
