@@ -32,7 +32,7 @@ define([
             openmct.types.addType('gauge', {
                 name: "Gauge",
                 creatable: true,
-                cssClass: 'icon-generator-telemetry',
+                cssClass: 'icon-gauge',
                 initialize(domainObject) {
                     domainObject.composition = [];
                 }

@@ -31,7 +31,7 @@ define([
         return {
             key: 'gauge',
             name: 'Gauge',
-            cssClass: 'icon-generator-telemetry',
+            cssClass: 'icon-gauge',
             canView: function (domainObject) {
                 return domainObject.type === 'gauge';
             },
