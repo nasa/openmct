@@ -89,7 +89,36 @@ define([
                                 method: selection[0].context.addContainer,
                                 key: "add",
                                 icon: "icon-plus",
-                                title: `Add Container`
+                                title: 'Add Container'
+                            }
+                        ];
+                    } else if (selection[0].context.type === 'flexible-layout') {
+                        return [
+                            {
+                                control: 'toggle-button',
+                                key: 'toggle-layout',
+                                domainObject: selection[0].context.item,
+                                property: 'configuration.rowsLayout',
+                                options: [
+                                    {
+                                        value: false,
+                                        icon: 'icon-grid-snap-no',
+                                        title: 'Columns'
+                                    },
+                                    {
+                                        value: true,
+                                        icon: 'icon-grid-snap-to',
+                                        title: 'Rows'
+                                    }
+                                ]
+                            },
+                            {
+                                control: "button",
+                                domainObject: selection[0].context.item,
+                                method: selection[0].context.addContainer,
+                                key: "add",
+                                icon: "icon-plus",
+                                title: 'Add Container'
                             }
                         ];
                     } else {

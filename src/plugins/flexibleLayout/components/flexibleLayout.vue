@@ -487,13 +487,30 @@ export default {
             this.persist();
         },
         addContainer(containerIndex) {
-            this.containers.splice(containerIndex+1, 0, new Container());
+            let newContainer = new Container();
+
+            if (typeof containerIndex === 'number') {
+                this.containers.splice(containerIndex+1, 0, newContainer);
+            } else {
+
+                this.containers.push(newContainer);
+            }
 
             this.recalculateContainerSize(100/this.containers.length);
             this.persist();
         }
     },
     mounted() {
+
+        let context = {
+            item: this.domainObject,
+            addContainer: this.addContainer,
+            type: 'flexible-layout'
+        }
+
+        this.openmct.selection.selectable(this.$el, context, true);
+        this.$el.click();
+
         this.openmct.objects.observe(this.domainObject, 'configuration.rowsLayout', this.toggleLayoutDirection);
         this.openmct.editor.on('isEditing', this.isEditingHandler);
 
