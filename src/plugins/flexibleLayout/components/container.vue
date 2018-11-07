@@ -24,7 +24,7 @@
     <div class="c-fl-container"
          :style="[{'flex-basis': size}]"
          :class="{'is-empty': frames.length === 1}">
-        <div class="c-fl-container__header"
+        <div class="c-fl-container__header icon-grippy-ew"
             v-if="isEditing">
             <span class="c-fl-container__size-indicator">{{ size }}</span>
         </div>
@@ -60,7 +60,6 @@
                 </resize-handle>
             </div>
         </div>
-
     </div>
 </template>
 

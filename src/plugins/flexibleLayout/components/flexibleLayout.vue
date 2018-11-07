@@ -110,13 +110,12 @@
 
             &:before {
                 // Drag grippy
-                content: $glyph-icon-list-view;
                 font-size: 0.8em;
                 opacity: 0.5;
                 position: absolute;
                 left: 50%; top: 50%;
                 transform-origin: center;
-                transform: rotate(90deg) translate(-50%, 50%);
+                transform: translate(-50%, -50%);
             }
         }
 
@@ -161,7 +160,7 @@
 
                 &:before {
                     // Drag grippy
-                    transform: rotate(0) translate(-50%, -50%);
+                    transform: rotate(90deg) translate(-50%, 50%);
                 }
             }
 
