@@ -45,6 +45,7 @@
                         @dropTargetOffsetChanged="setDropTargetOffset"
                         @dropTargetActive="dropTargetActive"
                         @reorderColumn="reorderColumn"
+                        @resizeColumnEnd="updateConfiguredColumnWidths"
                         :columnWidth="columnWidths[key]"
                         :sortOptions="sortOptions"
                         >{{title}}</table-column-header>
@@ -59,6 +60,7 @@
                         @dropTargetOffsetChanged="setDropTargetOffset"
                         @dropTargetActive="dropTargetActive"
                         @reorderColumn="reorderColumn"
+                        @resizeColumnEnd="updateConfiguredColumnWidths"
                         :columnWidth="columnWidths[key]">
                         <search class="c-table__search"
                             v-model="filters[key]"
@@ -106,11 +108,6 @@
     @import "~styles/sass-base";
     @import "~styles/table";
 
-    .js-telemetry-table__sizing {
-        &--auto{
-            min-width: 100%;
-        }
-    }
     .c-telemetry-table__drop-target {
         position: absolute;
         width: 2px;
@@ -344,7 +341,8 @@ export default {
             this.headers = this.table.configuration.getVisibleHeaders();
         },
         calculateScrollbarWidth() {
-            this.scrollW = this.scrollable.offsetWidth - this.scrollable.clientWidth;
+            // Scroll width seems to vary by a pixel for reasons that are not clear.
+            this.scrollW = (this.scrollable.offsetWidth - this.scrollable.clientWidth) + 1;
         },
         calculateColumnWidths() {
             let columnWidths = {};
@@ -462,9 +460,6 @@ export default {
         calculateTableSize() {
             this.$nextTick().then(this.calculateColumnWidths);
         },
-        enableAutosize() {
-            this.$nextTick().then(this.calculateTableSize);
-        },
         updateConfiguration(configuration) {
             this.isAutosizeEnabled = configuration.autosize;
             
@@ -485,7 +480,6 @@ export default {
             let delta = newWidth - this.columnWidths[key];
             this.columnWidths[key] = newWidth;
             this.totalWidth += delta;
-            this.updateConfiguredColumnWidths();
         },
         updateConfiguredColumnWidths() {
             this.configuredColumnWidths = this.columnWidths;
@@ -543,7 +537,6 @@ export default {
     },
     created() {
         this.filterChanged = _.debounce(this.filterChanged, 500);
-        this.updateConfiguredColumnWidths = _.debounce(this.updateConfiguredColumnWidths, 500);
     },
     mounted() {
         

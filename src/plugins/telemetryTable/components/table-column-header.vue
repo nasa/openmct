@@ -28,7 +28,7 @@
         dragstart: columnMoveStart,
         drop: columnMoveEnd,
         dragleave: hideDropTarget,
-        dragover: ($event) => dragOverColumn($event.currentTarget, $event)
+        dragover: dragOverColumn
     } : {}">
         <div class="c-telemetry-table__headers__content" :class="[
             isSortable ? 'is-sortable' : '', 
@@ -92,19 +92,22 @@ export default {
         }
     },
     methods: {
-        startResizeColumn($event) {
-            this.resizeStartX = event.clientX;
+        startResizeColumn(mouseMoveEvent) {
+            this.resizeStartX = mouseMoveEvent.clientX;
             this.resizeStartWidth = this.columnWidth;
 
-            document.addEventListener('mouseup', ()=>{
+            document.addEventListener('mouseup', (mouseUpEvent)=>{
                 this.resizeStartX = undefined;
                 this.resizeStartWidth = undefined;
                 document.removeEventListener('mousemove', this.resizeColumn);
-                event.preventDefault();
-                event.stopPropagation();
+                mouseUpEvent.preventDefault();
+                mouseUpEvent.stopPropagation();
+                
+                this.$emit('resizeColumnEnd');
+
             }, {once: true, capture: true});
             document.addEventListener('mousemove', this.resizeColumn);
-            event.preventDefault();
+            mouseMoveEvent.preventDefault();
         },
         resizeColumn(event) {
             let delta = event.clientX - this.resizeStartX;
@@ -120,10 +123,10 @@ export default {
         isColumnMoveEvent(event) {
             return [...event.dataTransfer.types].includes(MOVE_COLUMN_DT_TYPE);
         },
-        dragOverColumn(element, event) {
+        dragOverColumn(event) {
             if (this.isColumnMoveEvent(event)){
                 event.preventDefault();
-                this.updateDropOffset(element, event.clientX);
+                this.updateDropOffset(event.currentTarget, event.clientX);
             } else {
                 return false;
             }
