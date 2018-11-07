@@ -20,18 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(function () {
-    return {
-        name: 'Telemetry Table',
-        description: 'Display telemetry values for the current time bounds in tabular form. Supports filtering and sorting.',
-        creatable: true,
-        cssClass: 'icon-tabular-realtime',
-        initialize(domainObject) {
-            domainObject.composition = [];
-            domainObject.configuration = {
-                columnWidths: {},
-                hiddenColumns: {}
-            };
-        }
+define([
+    './tabs'
+], function (
+    Tabs
+) {
+    return function plugin() {
+        return function install(openmct) {
+            openmct.objectViews.addProvider(new Tabs(openmct));
+
+            openmct.types.addType('tabs', {
+                name: "Tabs View",
+                creatable: true,
+                cssClass: 'icon-tabs-view',
+                initialize(domainObject) {
+                    domainObject.composition = [];
+                }
+            });
+        };
     };
 });
