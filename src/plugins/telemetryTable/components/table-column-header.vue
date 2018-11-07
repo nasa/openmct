@@ -35,7 +35,7 @@
             isSortable && sortOptions.key === headerKey ? 'is-sorting' : '', 
             isSortable && sortOptions.direction].join(' ')">
             <div v-if="isEditing" class="c-telemetry-table__resize-hotzone c-telemetry-table__resize-hotzone--right"
-                @mousedown="startResizeColumn"
+                @mousedown="resizeColumnStart"
             ></div>
             <slot></slot>
         </div>
@@ -92,22 +92,22 @@ export default {
         }
     },
     methods: {
-        startResizeColumn(mouseMoveEvent) {
-            this.resizeStartX = mouseMoveEvent.clientX;
+        resizeColumnStart(event) {
+            this.resizeStartX = event.clientX;
             this.resizeStartWidth = this.columnWidth;
 
-            document.addEventListener('mouseup', (mouseUpEvent)=>{
+            document.addEventListener('mouseup', this.resizeColumnEnd, {once: true, capture: true});
+            document.addEventListener('mousemove', this.resizeColumn);
+            event.preventDefault();
+        },
+        resizeColumnEnd(event) {
                 this.resizeStartX = undefined;
                 this.resizeStartWidth = undefined;
                 document.removeEventListener('mousemove', this.resizeColumn);
-                mouseUpEvent.preventDefault();
-                mouseUpEvent.stopPropagation();
-                
-                this.$emit('resizeColumnEnd');
+                event.preventDefault();
+                event.stopPropagation();
 
-            }, {once: true, capture: true});
-            document.addEventListener('mousemove', this.resizeColumn);
-            mouseMoveEvent.preventDefault();
+                this.$emit('resizeColumnEnd');
         },
         resizeColumn(event) {
             let delta = event.clientX - this.resizeStartX;
