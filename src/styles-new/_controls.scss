@@ -138,7 +138,8 @@ input, textarea {
 
 input[type=text],
 input[type=search],
-input[type=number] {
+input[type=number],
+textarea {
     @include reactive-input();
     padding: $inputTextP;
     &.numeric {
