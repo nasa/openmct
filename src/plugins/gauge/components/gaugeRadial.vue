@@ -60,7 +60,7 @@
         &__range {
             $o: 21%;
             /*display: block; //inline-block;*/
-           //font-size: 2.5vw;
+            //font-size: 2.5vw;
             position: absolute;
             fill: rgba(#fff, 0.8);
         }
@@ -76,7 +76,7 @@
         &__bg,
         &__limit,
         &__value {
-           // @include test();
+            // @include test();
             @include abs();
         }
 
@@ -102,12 +102,12 @@
 
         &__value {
             &.c-dial-clip--90 {
-              //  @include test();
+                //  @include test();
                 clip-path: polygon(0 0, 50% 50%, 0 100%);
             }
 
             &.c-dial-clip--180 {
-               // @include test();
+                // @include test();
                 clip-path: polygon(0 0, 100% 0, 0 100%);
             }
 
@@ -127,7 +127,7 @@
 
 <script>
     export default {
-        name: "Gauge.vue",
+        name: "gaugeRadial.vue",
         data() {
             this.rangeLow = -20;
             this.rangeHigh= 10;

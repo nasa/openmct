@@ -38,6 +38,7 @@ define([
     './displayLayout/plugin',
     './folderView/plugin',
     './tabs/plugin',
+    './gauge/plugin',
     '../../platform/features/fixed/plugin'
 ], function (
     _,
@@ -57,6 +58,7 @@ define([
     DisplayLayoutPlugin,
     FolderView,
     Tabs,
+    Gauge,
     FixedView
 ) {
     var bundleMap = {
@@ -170,6 +172,7 @@ define([
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
+    plugins.Gauge = Gauge;
     plugins.FixedView = FixedView;
 
     return plugins;

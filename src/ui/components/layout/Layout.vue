@@ -32,8 +32,9 @@
                             ref="browseBar">
                 </browse-bar>
                 <toolbar class="l-shell__toolbar"></toolbar>
-                <Gauge class="l-shell__main-container">
-                </Gauge>
+                <object-view class="l-shell__main-container"
+                             ref="browseObject">
+                </object-view>
                 <component class="l-shell__time-conductor"
                     :is="conductorComponent">
                 </component>
@@ -246,7 +247,6 @@
     import BrowseBar from './BrowseBar.vue';
     import StatusBar from './status-bar/StatusBar.vue';
     import Toolbar from '../toolbar/Toolbar.vue';
-    import Gauge from '../controls/Gauge.vue';
 
     var enterFullScreen = () => {
         var docElm = document.documentElement;
@@ -290,8 +290,7 @@
             pane,
             BrowseBar,
             StatusBar,
-            Toolbar,
-            Gauge
+            Toolbar
         },
         mounted() {
             this.openmct.editor.on('isEditing', (isEditing)=>{
