@@ -48,100 +48,63 @@ define([
                 key: "flex-layout",
                 description: "A toolbar for objects inside a Flexible Layout.",
                 forSelection: function (selection) {
-                    // Apply the layout toolbar if the selected object is inside a layout,
-                    // and in edit mode.
                     return (selection[0] && openmct.editor.isEditing());
                 },
                 toolbar: function (selection) {
+                    let domainObject;
+
+                    if (selection[1]) {
+                        domainObject = selection[1].context.item;
+                    } else {
+                        domainObject = selection[0].context.item;
+                    }
+
+                    let deleteButton = {
+                            control: "button",
+                            domainObject: selection[0].context.item,
+                            method: selection[0].context.method,
+                            key: "remove",
+                            icon: "icon-trash",
+                            title: `Remove ${selection[0].context.type}`
+                        },
+                        toggleButton = {
+                            control: 'toggle-button',
+                            key: 'toggle-layout',
+                            domainObject: domainObject,
+                            property: 'configuration.rowsLayout',
+                            options: [
+                                {
+                                    value: false,
+                                    icon: 'icon-grid-snap-no',
+                                    title: 'Columns'
+                                },
+                                {
+                                    value: true,
+                                    icon: 'icon-grid-snap-to',
+                                    title: 'Rows'
+                                }
+                            ]
+                        },
+                        addContainerButton = {
+                            control: "button",
+                            domainObject: selection[0].context.item,
+                            method: selection[0].context.addContainer,
+                            key: "add",
+                            icon: "icon-plus",
+                            title: 'Add Container'
+                        };
 
                     if (selection[0].context.type === 'frame' || selection[0].context.type === 'container') {
 
-                        return [
-                            {
-                                control: "button",
-                                domainObject: selection[0].context.item,
-                                method: selection[0].context.method,
-                                key: "remove",
-                                icon: "icon-trash",
-                                title: `Remove ${selection[0].context.type}`
-                            },
-                            {
-                                control: 'toggle-button',
-                                key: 'toggle-layout',
-                                domainObject: selection[1].context.item,
-                                property: 'configuration.rowsLayout',
-                                options: [
-                                    {
-                                        value: false,
-                                        icon: 'icon-grid-snap-no',
-                                        title: 'Columns'
-                                    },
-                                    {
-                                        value: true,
-                                        icon: 'icon-grid-snap-to',
-                                        title: 'Rows'
-                                    }
-                                ]
-                            },
-                            {
-                                control: "button",
-                                domainObject: selection[0].context.item,
-                                method: selection[0].context.addContainer,
-                                key: "add",
-                                icon: "icon-plus",
-                                title: 'Add Container'
-                            }
-                        ];
+                        return [toggleButton, addContainerButton, deleteButton];
+
                     } else if (selection[0].context.type === 'flexible-layout') {
-                        return [
-                            {
-                                control: 'toggle-button',
-                                key: 'toggle-layout',
-                                domainObject: selection[0].context.item,
-                                property: 'configuration.rowsLayout',
-                                options: [
-                                    {
-                                        value: false,
-                                        icon: 'icon-grid-snap-no',
-                                        title: 'Columns'
-                                    },
-                                    {
-                                        value: true,
-                                        icon: 'icon-grid-snap-to',
-                                        title: 'Rows'
-                                    }
-                                ]
-                            },
-                            {
-                                control: "button",
-                                domainObject: selection[0].context.item,
-                                method: selection[0].context.addContainer,
-                                key: "add",
-                                icon: "icon-plus",
-                                title: 'Add Container'
-                            }
-                        ];
+
+                        return [toggleButton, addContainerButton];
+
                     } else {
-                        return [
-                            {
-                                control: 'toggle-button',
-                                key: 'toggle-layout',
-                                domainObject: selection[0].context.item,
-                                property: 'configuration.rowsLayout',
-                                options: [
-                                    {
-                                        value: false,
-                                        icon: 'icon-grid-snap-no',
-                                        title: 'Columns'
-                                    },
-                                    {
-                                        value: true,
-                                        icon: 'icon-grid-snap-to',
-                                        title: 'Rows'
-                                    }
-                                ]
-                            }
-                        ];
+
+                        return [toggleButton];
                     }
                 }
             });
