@@ -30,7 +30,7 @@
                         'c-dial-clip--90': this.degValue < 90,
                         'c-dial-clip--180': this.degValue >= 90 && this.degValue < 180
                      }">
-                    <path d="M256,31A224.4,224.4,0,0,0,96.9,96.9l48.8,48.8a156,156,0,1,1,0,220.6L96.9,415.1A224.4,224.4,0,0,0,256,481c124.3,0,225-100.7,225-225S380.3,31,256,31Z"
+                    <path d="M256,31A224.3,224.3,0,0,0,98.3,95.5l48.4,49.2a156,156,0,1,1-1,221.6L96.9,415.1A224.4,224.4,0,0,0,256,481c124.3,0,225-100.7,225-225S380.3,31,256,31Z"
                           :style="`transform: rotate(${this.degValue}deg)`"/>
                 </svg>
             </div>
@@ -43,7 +43,6 @@
 
     .c-gauge {
         &__wrapper {
-            //@include test();
             position: absolute;
             width: 100%;
             padding-bottom: 100%;
@@ -59,8 +58,6 @@
 
         &__range {
             $o: 21%;
-            /*display: block; //inline-block;*/
-            //font-size: 2.5vw;
             position: absolute;
             fill: rgba(#fff, 0.8);
         }
@@ -76,7 +73,6 @@
         &__bg,
         &__limit,
         &__value {
-            // @include test();
             @include abs();
         }
 
@@ -102,12 +98,10 @@
 
         &__value {
             &.c-dial-clip--90 {
-                //  @include test();
                 clip-path: polygon(0 0, 50% 50%, 0 100%);
             }
 
             &.c-dial-clip--180 {
-                // @include test();
                 clip-path: polygon(0 0, 100% 0, 0 100%);
             }
 
@@ -131,7 +125,7 @@
         data() {
             this.rangeLow = -20;
             this.rangeHigh= 10;
-            this.curVal = -10;
+            this.curVal = 9.9;
             this.limit1 = 9;
         },
         methods: {
