@@ -49,6 +49,7 @@
 .icon-people {  @include glyphBefore($glyph-icon-people); }
 .icon-person {  @include glyphBefore($glyph-icon-person); }
 .icon-plus {  @include glyphBefore($glyph-icon-plus); }
+.icon-plus-in-rect {  @include glyphBefore($glyph-icon-plus-in-rect); }
 .icon-trash {  @include glyphBefore($glyph-icon-trash); }
 .icon-x {  @include glyphBefore($glyph-icon-x); }
 .icon-brackets {  @include glyphBefore($glyph-icon-brackets); }
@@ -56,6 +57,8 @@
 .icon-grippy {  @include glyphBefore($glyph-icon-grippy); }
 .icon-grid {  @include glyphBefore($glyph-icon-grid); }
 .icon-grippy-ew {  @include glyphBefore($glyph-icon-grippy-ew); }
+.icon-columns {  @include glyphBefore($glyph-icon-columns); }
+.icon-rows {  @include glyphBefore($glyph-icon-rows); }
 .icon-arrows-right-left {  @include glyphBefore($glyph-icon-arrows-right-left); }
 .icon-arrows-up-down {  @include glyphBefore($glyph-icon-arrows-up-down); }
 .icon-bullet {  @include glyphBefore($glyph-icon-bullet); }
