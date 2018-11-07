@@ -111,19 +111,6 @@
         components: {
             LayoutItem
         },
-        created: function () {
-            this.newDomainObject = this.domainObject;
-            this.gridSize = this.newDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;
-
-            // Read layout configuration
-            this.getPanels();
-            this.getAlphanumerics();
-
-            this.unlisten = this.openmct.objects.observe(this.newDomainObject, '*', function (obj) {
-                this.newDomainObject = JSON.parse(JSON.stringify(obj));
-                this.gridSize = this.newDomainObject.layoutGrid || DEFAULT_GRID_SIZE;;
-            }.bind(this));
-        },
         methods: {
             getPanels() {
                 let panels = this.newDomainObject.configuration.panels;
@@ -239,7 +226,6 @@
                 return this.drilledIn === id;
             },
             updatePosition(item, newPosition) {
-                let id = item.id;
                 let newStyle = this.convertPosition(newPosition);
                 item.config.rawPosition = newPosition;
                 item.style = newStyle;
@@ -268,51 +254,51 @@
 
                 let domainObject = JSON.parse($event.dataTransfer.getData('domainObject'));
                 let elementRect = this.$el.getBoundingClientRect();
-                let droppedObjectPosition = {
-                    x: $event.pageX - elementRect.left,
-                    y: $event.pageY - elementRect.top
-                }
+                this.droppedObjectPosition = [
+                    Math.floor(($event.pageX - elementRect.left) / this.gridSize[0]),
+                    Math.floor(($event.pageY - elementRect.top) / this.gridSize[1])
+                ];
 
                 if (this.isTelemetry(domainObject)) {
-                    this.addAlphanumeric(domainObject, droppedObjectPosition);
+                    this.addAlphanumeric(domainObject, this.droppedObjectPosition);
                 } else {
-                    this.addPanel(domainObject, droppedObjectPosition);
+                    this.promptForDupliactePanel(domainObject);
+                }
+            },
+            promptForDupliactePanel(domainObject) {
+                let id = this.openmct.objects.makeKeyString(domainObject.identifier);
+                let panels = this.newDomainObject.configuration.panels;
+
+                if (panels && panels[id]) {
+                    let prompt = this.openmct.overlays.dialog({
+                        iconClass: 'alert',
+                        message: "This item is already in layout and will not be added again.",
+                        buttons: [
+                            {
+                                label: 'OK',
+                                callback: function () {
+                                    prompt.dismiss();
+                                }
+                            }
+                        ]
+                    });
                 }
             },
             addPanel(domainObject, position) {
                 let id = this.openmct.objects.makeKeyString(domainObject.identifier);
-                this.openmct.composition.get(this.newDomainObject).load()
-                    .then(composition => {
-                        const result = composition.filter(object => 
-                            id === this.openmct.objects.makeKeyString(object.identifier)
-                        );
-
-                        // Do not add the object if it's already in the composition.
-                        if (result.length > 0) {
-                            return;
-                        }
-
-                        let panel = {
-                            position: [
-                                Math.floor(position.x / this.gridSize[0]),
-                                Math.floor(position.y / this.gridSize[1])
-                            ],
-                            dimensions: this.getSubobjectDefaultDimensions(),
-                            hasFrame: this.hasFrameByDefault(domainObject.type)
-                        };
-                        let path = "configuration.panels[" + id + "]";
-                        this.mutate(path, panel);
-                        panel.domainObject = domainObject;
-                        this.makeFrameItem(panel, true);
-                    });
+                let panel = {
+                    position: position,
+                    dimensions: this.getSubobjectDefaultDimensions(),
+                    hasFrame: this.hasFrameByDefault(domainObject.type)
+                };
+                this.mutate("configuration.panels[" + id + "]", panel);
+                panel.domainObject = domainObject;
+                this.makeFrameItem(panel, true);
             },
             addAlphanumeric(domainObject, position) {
                 let alphanumeric = {
                     identifier: domainObject.identifier,
-                    position: [
-                        Math.floor(position.x / this.gridSize[0]),
-                        Math.floor(position.y / this.gridSize[1])
-                    ],
+                    position: position,
                     dimensions: DEFAULT_TELEMETRY_DIMENSIONS,
                     displayMode: 'all',
                     value: 'sin',
@@ -323,6 +309,7 @@
                 };
                 let alphanumerics = this.newDomainObject.configuration.alphanumerics || [];
                 alphanumeric.index = alphanumerics.push(alphanumeric) - 1;
+
                 this.mutate("configuration.alphanumerics", alphanumerics);
                 this.makeTelemetryItem(alphanumeric, true);
             },
@@ -336,13 +323,54 @@
                 } else {
                     return false;
                 }
+            },
+            addObject(domainObject) {
+                if (!this.isTelemetry(domainObject)) {
+                    let position = [];
+
+                    if (this.droppedObjectPosition) {
+                        position = this.droppedObjectPosition;
+                        this.droppedObjectPosition = undefined;
+                    } else {
+                        position = DEFAULT_POSITION;
+                    }
+
+                    this.addPanel(domainObject, position);
+                }
+            },
+            removeObject() {
+
+            },
+            getPosition(position) {
+                return [
+                    Math.floor(position.x / this.gridSize[0]),
+                    Math.floor(position.y / this.gridSize[1])
+                ];
             }
         },
         mounted() {
+            this.newDomainObject = this.domainObject;
+            this.gridSize = this.newDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;
+
+            // Read layout configuration
+            this.getPanels();
+            this.getAlphanumerics();
+
+            this.unlisten = this.openmct.objects.observe(this.newDomainObject, '*', function (obj) {
+                this.newDomainObject = JSON.parse(JSON.stringify(obj));
+                this.gridSize = this.newDomainObject.layoutGrid || DEFAULT_GRID_SIZE;;
+            }.bind(this));
+
             this.openmct.selection.on('change', this.setSelection);
+
+            this.composition = this.openmct.composition.get(this.newDomainObject);
+            this.composition.on('add', this.addObject);
+            this.composition.on('remove', this.removeObject);
         },
         destroyed: function () {
             this.openmct.off('change', this.setSelection);
+            this.composition.off('add', this.addObject);
+            this.composition.off('remove', this.removeObject);
             this.unlisten();
         }
     }
