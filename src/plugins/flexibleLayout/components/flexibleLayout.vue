@@ -1,7 +1,7 @@
 <template>
     <div class="c-fl">
         <div class="c-fl__empty"
-             v-if="containers.length === 1 && !containers[0].frames[1]">
+             v-if="areAllContainersEmpty()">
             <span class="c-fl__empty-message">This Flexible Layout is currently empty</span>
         </div>
 
@@ -355,6 +355,9 @@ export default {
         }
     },
     methods: {
+        areAllContainersEmpty() {
+           return !!!this.containers.filter(container => container.frames.length > 1).length;
+        },
         addContainer() {
             let newSize = 100/(this.containers.length+1);
 
