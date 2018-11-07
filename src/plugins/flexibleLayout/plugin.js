@@ -108,8 +108,7 @@ define([
                         return [toggleButton, addContainerButton];
 
                     } else {
-
-                        return [toggleButton];
+                        return [];
                     }
                 }
             });

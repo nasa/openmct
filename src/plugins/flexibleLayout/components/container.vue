@@ -174,7 +174,7 @@ export default {
         },
         deleteFrame(frameIndex) {
             this.frames.splice(frameIndex, 1);
-            this.framesResize(100/(this.frames.length - 1));
+            this.$parent.recalculateOldFrameSize(this.frames);
             this.persist();
         },
         deleteContainer() {
