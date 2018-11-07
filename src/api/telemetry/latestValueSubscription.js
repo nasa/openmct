@@ -140,8 +140,16 @@ define([
                 });
         }
 
+        function reloadInFixedMode(bounds, isTick) {
+            if (isTick || openmct.time.clock()) {
+                return;
+            }
+            updateTimeSystem(openmct.time.timeSystem());
+        }
+
         openmct.time.on('clock', updateClock);
         openmct.time.on('timeSystem', updateTimeSystem);
+        openmct.time.on('bounds', reloadInFixedMode);
         var internalUnsubscribe = telemetryAPI.subscribe(domainObject, callbackIfLatest);
 
         updateClock(openmct.time.clock());
@@ -152,6 +160,7 @@ define([
             internalUnsubscribe();
             openmct.time.off('clock', updateClock);
             openmct.time.off('timeSystem', updateTimeSystem);
+            openmct.time.off('bounds', reloadInFixedMode);
         }
     };
 
