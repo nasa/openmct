@@ -177,10 +177,14 @@ define([
     CompositionCollection.prototype.load = function () {
         return this.provider.load(this.domainObject)
             .then(function (children) {
-                return Promise.all(children.map((c) => this.publicAPI.objects.get(c)));
+                return Promise.all(children.map(function (c) {
+                    return this.publicAPI.objects.get(c);
+                }, this));
             }.bind(this))
             .then(function (childObjects) {
-                childObjects.forEach(c => this.add(c, true));
+                childObjects.forEach(function (c) {
+                    this.add(c, true);
+                }, this);
                 return childObjects;
             }.bind(this))
             .then(function (children) {
