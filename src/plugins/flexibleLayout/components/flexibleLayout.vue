@@ -371,6 +371,43 @@ export default {
                 container.width = newSize;
             });
         },
+        recalculateNewFrameSize(multFactor, framesArray){
+            framesArray.forEach((frame, index) => {
+                if (index === 0) {
+                    return;
+                }
+                if (framesArray.length === 2) {
+                    frame.height = 100;
+                } else {
+                    let frameSize = frame.height
+                    frame.height = this.snapToPercentage(multFactor * frameSize);
+                }
+            });
+        },
+        recalculateOldFrameSize(framesArray) {
+            let totalRemainingSum = framesArray.map((frame,i) => {
+                if (i !== 0) {
+                    return frame.height
+                } else {
+                    return 0;
+                }
+            }).reduce((a, c) => a + c);
+
+            framesArray.forEach((frame, index) => {
+
+                if (index === 0) {
+                    return;
+                }
+                if (framesArray.length === 2) {
+
+                    frame.height = 100;
+                } else {
+
+                    let newSize = frame.height + ((frame.height / totalRemainingSum) * (100 - totalRemainingSum));
+                    frame.height = this.snapToPercentage(newSize);
+                }
+            });
+        },
         addFrame(frame, index) {
             this.containers[index].addFrame(frame);
         },
@@ -382,9 +419,14 @@ export default {
 
             if (!frameObject) {
                 frameObject = this.containers[this.dragFrom[0]].frames.splice(this.dragFrom[1], 1)[0];
+                this.recalculateOldFrameSize(this.containers[this.dragFrom[0]].frames);
             }
 
+            let newMultFactor = 100/(frameObject.height + 100);
+
             this.containers[containerIndex].frames.splice((frameIndex + 1), 0, frameObject);
+
+            this.recalculateNewFrameSize(newMultFactor, this.containers[containerIndex].frames);
 
             this.persist();
         },
@@ -421,8 +463,8 @@ export default {
                 beforeContainer = this.containers[index],
                 afterContainer = this.containers[index + 1];
 
-                beforeContainer.width = this.snapToPercentage(beforeContainer.width + percentageMoved);
-                afterContainer.width = this.snapToPercentage(afterContainer.width - percentageMoved);
+                beforeContainer.width = this.getContainerSize(this.snapToPercentage(beforeContainer.width + percentageMoved));
+                afterContainer.width = this.getContainerSize(this.snapToPercentage(afterContainer.width - percentageMoved));
         },
         endContainerResizing(event) {
             this.persist();
@@ -453,7 +495,7 @@ export default {
                 roundedValue = Math.ceil(value/SNAP_TO_PERCENTAGE)*SNAP_TO_PERCENTAGE;
             }
 
-            return this.getContainerSize(roundedValue);
+            return roundedValue;
         },
         toggleLayoutDirection(v) {
             this.rowsLayout = v;

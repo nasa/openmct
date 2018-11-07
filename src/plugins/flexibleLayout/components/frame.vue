@@ -44,8 +44,8 @@
             </object-view>
 
             <div class="c-fl-frame__size-indicator"
-                 v-if="size && size < 100 && isEditing">
-                {{size}}%
+                 v-if="frame.height && frame.height < 100 && isEditing">
+                {{frame.height}}%
             </div>
         </div>
 
