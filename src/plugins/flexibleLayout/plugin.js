@@ -75,12 +75,12 @@ define([
                             options: [
                                 {
                                     value: false,
-                                    icon: 'icon-grid-snap-no',
+                                    icon: 'icon-columns',
                                     title: 'Columns'
                                 },
                                 {
                                     value: true,
-                                    icon: 'icon-grid-snap-to',
+                                    icon: 'icon-rows',
                                     title: 'Rows'
                                 }
                             ]
@@ -90,13 +90,18 @@ define([
                             domainObject: selection[0].context.item,
                             method: selection[0].context.addContainer,
                             key: "add",
-                            icon: "icon-plus",
+                            icon: "icon-plus-in-rect",
                             title: 'Add Container'
+                        },
+                        separator = {
+                            control: "separator",
+                            domainObject: selection[0].context.item,
+                            key: "separator"
                         };
 
                     if (selection[0].context.type === 'frame' || selection[0].context.type === 'container') {
 
-                        return [toggleButton, addContainerButton, deleteButton];
+                        return [toggleButton, addContainerButton, separator, deleteButton];
 
                     } else if (selection[0].context.type === 'flexible-layout') {
 

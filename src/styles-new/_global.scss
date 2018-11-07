@@ -540,6 +540,35 @@ a.disabled {
 }
 
 /************************** TEMP LEGACY FIXES */
+.overlay {
+    .outer-holder {
+        background: $colorMenuBg;
+        color: $colorMenuFg !important;
+    }
+}
+
+.form .form-row {
+    .label {
+        color: $colorMenuFg !important;
+    }
+    .selector-list {
+        @include reactive-input();
+        background: $colorInputBg !important;
+        color: $colorInputFg !important;
+    }
+}
+
+.ui-symbol.view-control {
+    display: block;
+    transform-origin: center center;
+
+    &:before { content: $glyph-icon-arrow-right-equilateral; }
+
+    &.expanded {
+        transform: rotate(90deg);
+    }
+}
+
 .t-imagery {
     display: contents;
 }
