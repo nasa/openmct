@@ -268,7 +268,6 @@
 
 .gl-plot-tick,
 .tick-label {
-    @include reverseEllipsis();
     font-size: 0.7rem;
     position: absolute;
     &.gl-plot-x-tick-label,
