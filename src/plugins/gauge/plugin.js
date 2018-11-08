@@ -32,6 +32,7 @@ define([
             openmct.types.addType('gauge', {
                 name: "Gauge",
                 creatable: true,
+                description: "Graphically visualize a telemetry element's current value between a minimum and maximum.",
                 cssClass: 'icon-gauge',
                 initialize(domainObject) {
                     domainObject.composition = [];
