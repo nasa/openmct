@@ -21,9 +21,11 @@
  *****************************************************************************/
 
 define([
-    './flexibleLayout'
+    './flexibleLayout',
+    './utils/container'
 ], function (
-    FlexibleLayout
+    FlexibleLayout,
+    Container
 ) {
     return function plugin() {
 
@@ -37,7 +39,7 @@ define([
                 cssClass: 'icon-flexible-layout',
                 initialize: function (domainObject) {
                     domainObject.configuration = {
-                        containers: [],
+                        containers: [new Container.default(50), new Container.default(50)],
                         rowsLayout: false
                     };
                 }
@@ -48,65 +50,36 @@ define([
                 key: "flex-layout",
                 description: "A toolbar for objects inside a Flexible Layout.",
                 forSelection: function (selection) {
-                    let parent = selection[selection.length - 1];
+                    let context = selection[0].context;
 
-                    return (parent && parent.context.item &&
-                        parent.context.item.type === 'flexible-layout' &&
-                        openmct.editor.isEditing());
+                    return (openmct.editor.isEditing && context && context.type &&
+                        (context.type === 'flexible-layout' || context.type === 'container' || context.type === 'frame'));
                 },
                 toolbar: function (selection) {
-                    let domainObject = selection[selection.length - 1].context.item;
 
-                    let deleteButton = {
+                    let primary = selection[0],
+                        parent = selection[1],
+                        deleteFrame,
+                        toggleContainer,
+                        deleteContainer,
+                        addContainer,
+                        toggleFrame,
+                        separator;
+
+                    if (primary.context.type === 'frame') {
+
+                        deleteFrame = {
                             control: "button",
-                            domainObject: selection[0].context.item,
-                            method: selection[0].context.method,
+                            domainObject: primary.context.item,
+                            method: primary.context.method,
                             key: "remove",
                             icon: "icon-trash",
-                            title: `Remove ${selection[0].context.type}`
-                        },
-                        toggleButton = {
-                            control: 'toggle-button',
-                            key: 'toggle-layout',
-                            domainObject: domainObject,
-                            property: 'configuration.rowsLayout',
-                            options: [
-                                {
-                                    value: false,
-                                    icon: 'icon-columns',
-                                    title: 'Columns'
-                                },
-                                {
-                                    value: true,
-                                    icon: 'icon-rows',
-                                    title: 'Rows'
-                                }
-                            ]
-                        },
-                        addContainerButton = {
-                            control: "button",
-                            domainObject: selection[0].context.item,
-                            method: selection[0].context.addContainer,
-                            key: "add",
-                            icon: "icon-plus-in-rect",
-                            title: 'Add Container'
-                        },
-                        separator = {
-                            control: "separator",
-                            domainObject: selection[0].context.item,
-                            key: "separator"
+                            title: "Remove Frame"
                         };
-
-                    if (selection[0].context.type === 'container') {
-
-                        return [toggleButton, addContainerButton, separator, deleteButton];
-
-                    } else if (selection[0].context.type === 'frame') {
-                        let context = selection[0].context;
-                        let toggleFrame = {
+                        toggleFrame = {
                             control: "toggle-button",
-                            domainObject: context.parentDomainObject,
-                            property: `configuration.containers[${context.containerIndex}].frames[${context.frameIndex}].noFrame`,
+                            domainObject: parent.context.item,
+                            property: `configuration.containers[${parent.context.index}].frames[${primary.context.index}].noFrame`,
                             options: [
                                 {
                                     value: false,
@@ -119,18 +92,70 @@ define([
                                     title: "Show frame"
                                 }
                             ]
-                        }
+                        };
 
-                        return [toggleButton, toggleFrame, addContainerButton, separator, deleteButton];
 
-                    } else if (selection[0].context.type === 'flexible-layout') {
+                    } else if (primary.context.type === 'container') {
 
-                        return [toggleButton, addContainerButton];
+                        deleteContainer = {
+                            control: "button",
+                            domainObject: primary.context.item,
+                            method: primary.context.method,
+                            key: "remove",
+                            icon: "icon-trash",
+                            title: "Remove Container"
+                        };
 
-                    } else {
+                    } else if (primary.context.type === 'flexible-layout') {
 
-                        return [toggleButton];
+                        addContainer = {
+                            control: "button",
+                            domainObject: primary.context.item,
+                            method: primary.context.addContainer,
+                            key: "add",
+                            icon: "icon-plus-in-rect",
+                            title: 'Add Container'
+                        };
+
                     }
+
+                    separator = {
+                        control: "separator",
+                        domainObject: selection[0].context.item,
+                        key: "separator"
+                    };
+
+                    addContainer = {
+                        control: "button",
+                        domainObject: parent ? parent.context.item : primary.context.item,
+                        method: parent ? parent.context.addContainer : primary.context.addContainer,
+                        key: "add",
+                        icon: "icon-plus-in-rect",
+                        title: 'Add Container'
+                    };
+
+                    toggleContainer = {
+                        control: 'toggle-button',
+                        key: 'toggle-layout',
+                        domainObject: parent ? parent.context.item : primary.context.item,
+                        property: 'configuration.rowsLayout',
+                        options: [
+                            {
+                                value: false,
+                                icon: 'icon-columns',
+                                title: 'Columns'
+                            },
+                            {
+                                value: true,
+                                icon: 'icon-rows',
+                                title: 'Rows'
+                            }
+                        ]
+                    };
+
+                    let toolbar = [toggleContainer, addContainer, toggleFrame, separator, deleteFrame, deleteContainer];
+
+                    return toolbar.filter(button => button !== undefined);
                 }
             });
         };

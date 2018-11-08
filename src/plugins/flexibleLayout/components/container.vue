@@ -200,6 +200,7 @@ export default {
             item: this.domainObject,
             method: this.deleteContainer,
             addContainer: this.addContainer,
+            index: this.index,
             type: 'container'
         }
 

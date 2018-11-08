@@ -414,10 +414,6 @@ export default {
         let containers = this.domainObject.configuration.containers,
             rowsLayout = this.domainObject.configuration.rowsLayout;
 
-        if (!containers.length) {
-            containers = [new Container(50), new Container(50)];
-        }
-
         return {
             containers: containers,
             dragFrom: [],

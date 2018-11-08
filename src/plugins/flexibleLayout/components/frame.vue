@@ -108,12 +108,10 @@ export default {
         if (this.frame.domainObject.identifier) {
                 let context = {
                 item: this.frame.domainObject,
-                parentDomainObject: this.domainObject,
                 method: this.deleteFrame,
                 addContainer: this.addContainer,
                 type: 'frame',
-                frameIndex: this.index,
-                containerIndex: this.containerIndex
+                index: this.index
             }
 
             this.openmct.selection.selectable(this.$refs.frame, context, false);
