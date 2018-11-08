@@ -24,6 +24,8 @@
 
 @import "constants";
 
+// TODO: parity with font approach as in maelstrom2 theme
+
 // Functions
 @function buttonBg($c: $colorBtnBg) {
     @return linear-gradient(lighten($c, 5%), $c);
