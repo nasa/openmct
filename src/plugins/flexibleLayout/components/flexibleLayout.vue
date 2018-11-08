@@ -507,10 +507,12 @@ export default {
             newContainer.frames.splice((frameIndex + 1), 0, frameObject);
 
             let newTotalHeight = newContainer.frames.reduce((total, frame) => {
-                        if(isNaN(frame.height)) {
+                        let num = Number(frame.height);
+
+                        if(isNaN(num)) {
                             return total;
                         } else {
-                            return total + frame.height;
+                            return total + num;
                         }
                     },0);
             let newMultFactor = 100 / newTotalHeight;
