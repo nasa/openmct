@@ -107,6 +107,7 @@
             // Only displayed when editing
             background: $editSelectableColor;
             color: $editSelectableColorFg;
+            cursor: move;
             display: flex;
             align-items: center;
             flex: 0 0 $headerSize;
@@ -245,9 +246,11 @@
         }
 
         &__resize-handle {
-            $size: 3px;
+            $size: 2px;
             $margin: 3px;
             $marginHov: 0;
+            $grippyThickness: $size + 6;
+            $grippyLen: $grippyThickness * 2;
 
             display: flex;
             flex-direction: column;
@@ -263,11 +266,42 @@
                 min-height: $size; min-width: $size;
             }
 
+            &:after {
+                // Grippy element
+                /*background: deeppink;*/
+                $c: black;
+                $a: 0.9;
+                $d: 5px;
+                background: $editColor;
+                color: $editColorBg;
+                border-radius: $smallCr;
+                content: $glyph-icon-grippy-ew;
+                font-family: symbolsfont;
+                font-size: 0.8em;
+                display: inline-block;
+                padding: 10px 0;
+                position: absolute;
+                left: 50%; top: 50%;
+                text-align: center;
+                transform-origin: center center;
+                transform: translate(-50%, -50%);
+                z-index: 10;
+            }
+
             &.vertical {
                 padding: $margin $size;
                 &:hover{
                   //  padding: $marginHov 0;
                     cursor: row-resize;
+                }
+
+                &:after {
+                    transform: rotate(90deg) translate(-50%, -50%);
+                    //top: $margin + $size - 2px;
+                    //left: 50%;
+                   // transform: translateX(-50%);
+                    /*width: $grippyLen;
+                    height: $grippyThickness;*/
                 }
             }
 
@@ -276,6 +310,14 @@
                 &:hover{
                  //   padding: 0 $marginHov;
                     cursor: col-resize;
+                }
+
+                &:after {
+                    //left: $margin + $size - 2px;
+                    //top: 50%;
+                    //transform: translateY(-50%);
+                   /* height: $grippyLen;
+                    width: $grippyThickness;*/
                 }
             }
 

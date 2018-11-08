@@ -27,7 +27,7 @@
             [frame.cssClass]: true
         }">
 
-        <div class="c-frame c-fl-frame__drag-wrapper is-selectable"
+        <div class="c-frame c-fl-frame__drag-wrapper is-selectable is-moveable"
              draggable="true"
              ref="frame"
              v-if="frame.domainObject">

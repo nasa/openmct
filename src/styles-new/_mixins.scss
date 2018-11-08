@@ -128,10 +128,10 @@
 }
 
 @mixin bgVertStripes($c: yellow, $a: 0.1, $d: 40px) {
-    @include background-image(linear-gradient(-90deg,
+    background-image: linear-gradient(-90deg,
         rgba($c, $a) 0%, rgba($c, $a) 50%,
         transparent 50%, transparent 100%
-    ));
+    );
     background-repeat: repeat;
     background-size: $d $d;
 }
