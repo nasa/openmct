@@ -98,7 +98,7 @@
                 return this.metadata.value(this.item.config.alphanumeric.value);
             },
             valueFormatter: function () {
-                return this.openmct.telemetry.getValueFormatter(this.valueMetadata);
+                return this.formats[this.item.config.alphanumeric.value];
             }
         },
         data() {
@@ -127,7 +127,6 @@
                     });
             },
             subscribeToObject(object) {
-                // let self = this;
                 this.subscription = this.openmct.telemetry.subscribe(object, function (datum) {
                     if (this.openmct.time.clock() !== undefined) {
                         this.updateView(object, datum);
@@ -151,6 +150,8 @@
             },
             refreshData(bounds, isTick) {
                 if (!isTick) {
+                    this.telemetryClass = "";
+                    this.telemetryValue = "";
                     this.requestHistoricalData(this.item.domainObject);
                 }
             }
@@ -159,6 +160,8 @@
             let telemetryObject = this.item.domainObject;
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
             this.metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
+
             this.getTelemetry(telemetryObject);
 
             this.item.config.attachListeners();
