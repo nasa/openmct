@@ -87,8 +87,8 @@
 <script>
     import LayoutFrame from './LayoutFrame.vue';
 
-    const DEFAULT_GRID_SIZE = [32, 32],
-          DEFAULT_DIMENSIONS = [12, 8],
+    const DEFAULT_GRID_SIZE = [5, 5],
+          DEFAULT_DIMENSIONS = [50, 50],
           DEFAULT_POSITION = [0, 0],
           MINIMUM_FRAME_SIZE = [320, 180],
           DEFAULT_HIDDEN_FRAME_TYPES = [
