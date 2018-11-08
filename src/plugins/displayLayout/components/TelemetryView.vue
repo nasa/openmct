@@ -143,6 +143,11 @@
                     this.subscription();
                     this.subscription = undefined;
                 }
+            },
+            refreshData(bounds, isTick) {
+                if (!isTick) {
+                    this.requestHistoricalData(this.item.domainObject);
+                }
             }
         },
         mounted() {
@@ -151,10 +156,12 @@
             this.metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             this.getTelemetry(telemetryObject);
             this.item.config.attachListeners();
+            this.openmct.time.on("bounds", this.refreshData);
         },
         destroyed() {
             this.removeSubscription();
             this.item.config.removeListeners();
+            this.openmct.time.off("bounds", this.refreshData);
         }
     }
 
