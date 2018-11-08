@@ -89,16 +89,14 @@ define([], function () {
                             domainObject: domainObject,
                             property: path + ".fill",
                             icon: "icon-paint-bucket",
-                            title: "Set fill color",
-                            type: "fill"
+                            title: "Set fill color"
                         },
                         {
                             control: "color-picker",
                             domainObject: domainObject,
                             property: path + ".stroke",
                             icon: "icon-line-horz",
-                            title: "Set border color",
-                            type: "stroke"
+                            title: "Set border color"
                         },
                         {
                             control: "color-picker",

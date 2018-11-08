@@ -66,7 +66,7 @@ define([],
                 }.bind(this)));
             }
 
-            destroy() {
+            removeListeners() {
                 this.listeners.forEach(listener => {
                     listener();
                 });

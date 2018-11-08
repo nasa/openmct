@@ -112,7 +112,7 @@
             this.item.config.attachListeners();
         },
         destroyed() {
-            this.item.config.destroy();
+            this.item.config.removeListeners();
         }
     }
 </script>
