@@ -86,13 +86,6 @@ export default {
         }
     },
     methods: {
-        framesResize(newSize) {
-            this.frames.forEach((frame) => {
-                if(!frame.cssClass) {
-                    frame.height = newSize;
-                }
-            });
-        },
         frameDragFrom(frameIndex) {
            this.$emit('frame-drag-from', this.index, frameIndex);
         },
@@ -101,11 +94,7 @@ export default {
                 frameObject;
 
             if (domainObject) {
-                let newFrameSize = Math.round(100/(this.frames.length));
-
-                this.framesResize(newFrameSize);
-
-                frameObject = new Frame(JSON.parse(domainObject), newFrameSize);
+                frameObject = new Frame(JSON.parse(domainObject), 50);
             }
 
             this.$emit('frame-drop-to', this.index, frameIndex, frameObject);
@@ -185,7 +174,7 @@ export default {
         },
         deleteFrame(frameIndex) {
             this.frames.splice(frameIndex, 1);
-            this.framesResize(100/(this.frames.length - 1));
+            this.$parent.recalculateOldFrameSize(this.frames);
             this.persist();
         },
         deleteContainer() {

@@ -114,6 +114,7 @@
                 this.unObserveObjects = [];
             },
             updateObjectValue(value, item) {
+                console.log(item);
                 let changedItemId = this.openmct.objects.makeKeyString(item.domainObject.identifier);
                 this.structure = this.structure.map((s) => {
                     let toolbarItem = {...s};
