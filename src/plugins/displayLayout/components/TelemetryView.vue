@@ -83,7 +83,7 @@
             },
             showValue: function () {
                 let displayMode = this.item.config.alphanumeric.displayMode;
-                return displayMode === 'value' || displayMode === 'all';
+                return displayMode === 'all' || displayMode === 'value';
             },
             styleObject: function () {
                 let alphanumeric = this.item.config.alphanumeric;
@@ -93,6 +93,12 @@
                     color: alphanumeric.color,
                     fontSize: alphanumeric.size
                 }
+            },
+            valueMetadata: function () {
+                return this.metadata.value(this.item.config.alphanumeric.value);
+            },
+            valueFormatter: function () {
+                return this.openmct.telemetry.getValueFormatter(this.valueMetadata);
             }
         },
         data() {
@@ -102,10 +108,9 @@
             }
         },
         methods: {
-            getTelemetry(domainObject) {
-                this.limitEvaluator = this.openmct.telemetry.limitEvaluator(domainObject);
-                this.requestHistoricalData(domainObject);
-                this.subscribeToObject(domainObject);
+            getTelemetry(telemetryObject) {
+                this.requestHistoricalData(telemetryObject);
+                this.subscribeToObject(telemetryObject);
             },
             requestHistoricalData(object) {
                 let bounds = this.openmct.time.bounds();
@@ -125,20 +130,13 @@
                 }, {});
             },
             updateView(telemetryObject, datum) {
-                let metadata = this.openmct.telemetry.getMetadata(telemetryObject);
-                let valueMetadata = metadata.values().filter(value => {
-                    return value.key === this.item.config.alphanumeric.value;
-                })[0];
-
-                if (valueMetadata === undefined) {
+                if (this.valueMetadata === undefined) {
                     return;
                 }
 
-                let formatter = this.openmct.telemetry.getValueFormatter(valueMetadata);
-                this.telemetryValue = formatter && formatter.format(datum);
-
-                let alarm = this.limitEvaluator && this.limitEvaluator.evaluate(datum, valueMetadata);
+                let alarm = this.limitEvaluator && this.limitEvaluator.evaluate(datum, this.valueMetadata);
                 this.telemetryClass = alarm && alarm.cssClass;
+                this.telemetryValue = this.valueFormatter && this.valueFormatter.format(datum);
             },
             removeSubscription() {
                 if (this.subscription) {
@@ -148,7 +146,10 @@
             }
         },
         mounted() {
-            this.getTelemetry(this.item.domainObject);
+            let telemetryObject = this.item.domainObject;
+            this.limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
+            this.metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            this.getTelemetry(telemetryObject);
             this.item.config.attachListeners();
         },
         destroyed() {

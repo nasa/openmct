@@ -112,22 +112,6 @@
             LayoutItem
         },
         methods: {
-            getPanels() {
-                let panels = this.newDomainObject.configuration.panels;
-
-                for (const id in panels) {
-                    let panel = panels[id];
-                    this.openmct.objects.get(id).then(domainObject => {
-                        panel.domainObject = domainObject;
-                        panel.position = panel.position || DEFAULT_POSITION;
-                        panel.dimensions = panel.dimensions || this.getSubobjectDefaultDimensions();
-                        panel.hasFrame = panel.hasOwnProperty('hasFrame') ?
-                            panel.hasFrame :
-                            this.hasFrameByDefault(domainObject.type);
-                        this.makeFrameItem(panel, false);    
-                    });
-                };
-            },
             getAlphanumerics() {
                 let alphanumerics = this.newDomainObject.configuration.alphanumerics || [];
                 alphanumerics.forEach((alphanumeric, index) => {
@@ -262,10 +246,10 @@
                 if (this.isTelemetry(domainObject)) {
                     this.addAlphanumeric(domainObject, this.droppedObjectPosition);
                 } else {
-                    this.promptForDupliactePanel(domainObject);
+                    this.checkForDupliactePanel(domainObject);
                 }
             },
-            promptForDupliactePanel(domainObject) {
+            checkForDupliactePanel(domainObject) {
                 let id = this.openmct.objects.makeKeyString(domainObject.identifier);
                 let panels = this.newDomainObject.configuration.panels;
 
@@ -283,17 +267,6 @@
                         ]
                     });
                 }
-            },
-            addPanel(domainObject, position) {
-                let id = this.openmct.objects.makeKeyString(domainObject.identifier);
-                let panel = {
-                    position: position,
-                    dimensions: this.getSubobjectDefaultDimensions(),
-                    hasFrame: this.hasFrameByDefault(domainObject.type)
-                };
-                this.mutate("configuration.panels[" + id + "]", panel);
-                panel.domainObject = domainObject;
-                this.makeFrameItem(panel, true);
             },
             addAlphanumeric(domainObject, position) {
                 let alphanumeric = {
@@ -326,35 +299,46 @@
             },
             addObject(domainObject) {
                 if (!this.isTelemetry(domainObject)) {
-                    let position = [];
+                    let panels = this.newDomainObject.configuration.panels,
+                        id = this.openmct.objects.makeKeyString(domainObject.identifier),
+                        panel = panels[id],
+                        mutateObject = false,
+                        initSelect = false;
 
-                    if (this.droppedObjectPosition) {
-                        position = this.droppedObjectPosition;
-                        this.droppedObjectPosition = undefined;
-                    } else {
-                        position = DEFAULT_POSITION;
+                    // If this is a new panel, select it and save the configuration.
+                    if (!panel) {
+                        panel = {};
+                        mutateObject = true;
+                        initSelect = true;
                     }
 
-                    this.addPanel(domainObject, position);
+                    panel.dimensions = panel.dimensions || this.getSubobjectDefaultDimensions();
+                    panel.hasFrame = panel.hasOwnProperty('hasFrame') ?
+                        panel.hasFrame :
+                        this.hasFrameByDefault(domainObject.type);
+
+                    if (this.droppedObjectPosition) {
+                        panel.position = this.droppedObjectPosition;
+                        this.droppedObjectPosition = undefined;
+                    } else {
+                        panel.position = panel.position || DEFAULT_POSITION;
+                    }
+
+                    if (mutateObject) {
+                        this.mutate("configuration.panels[" + id + "]", panel);
+                    }
+
+                    panel.domainObject = domainObject;
+                    this.makeFrameItem(panel, initSelect);
                 }
             },
             removeObject() {
 
-            },
-            getPosition(position) {
-                return [
-                    Math.floor(position.x / this.gridSize[0]),
-                    Math.floor(position.y / this.gridSize[1])
-                ];
             }
         },
         mounted() {
             this.newDomainObject = this.domainObject;
             this.gridSize = this.newDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;
-
-            // Read layout configuration
-            this.getPanels();
-            this.getAlphanumerics();
 
             this.unlisten = this.openmct.objects.observe(this.newDomainObject, '*', function (obj) {
                 this.newDomainObject = JSON.parse(JSON.stringify(obj));
@@ -366,6 +350,8 @@
             this.composition = this.openmct.composition.get(this.newDomainObject);
             this.composition.on('add', this.addObject);
             this.composition.on('remove', this.removeObject);
+            this.composition.load();
+            this.getAlphanumerics();
         },
         destroyed: function () {
             this.openmct.off('change', this.setSelection);
