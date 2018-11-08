@@ -523,7 +523,11 @@ export default {
         },
         isEditingHandler(isEditing) {
             this.isEditing = isEditing;
-            
+
+            if (this.isEditing) {
+                this.$el.click(); //force selection of flexible-layout for toolbar
+            }
+
             if (this.isDragging && isEditing === false) {
                 this.isDragging = false;
             }
