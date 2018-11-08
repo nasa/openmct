@@ -25,7 +25,9 @@
          :style="[{'flex-basis': size}]"
          :class="{'is-empty': frames.length === 1}">
         <div class="c-fl-container__header icon-grippy-ew"
-            v-if="isEditing">
+            v-show="isEditing"
+            draggable="true"
+            ref="draggableHeader">
             <span class="c-fl-container__size-indicator">{{ size }}</span>
         </div>
         <div class="c-fl-container__frames-holder">
@@ -182,6 +184,14 @@ export default {
         },
         addContainer() {
             this.$emit('add-container', this.index);
+        },
+        startContainerDrag(event) {
+            event.stopPropagation();
+            this.$emit('start-container-drag', this.index);
+        },
+        stopContainerDrag(event) {
+            event.stopPropagation();
+            this.$emit('stop-container-drag');
         }
     },
     mounted() {
@@ -193,6 +203,11 @@ export default {
         }
 
         this.openmct.selection.selectable(this.$el, context, false);
+        
+        let draggableHeader = this.$refs.draggableHeader;
+
+        draggableHeader.addEventListener('dragstart', this.startContainerDrag);
+        draggableHeader.addEventListener('dragend', this.stopContainerDrag);
     }
 }
 </script>

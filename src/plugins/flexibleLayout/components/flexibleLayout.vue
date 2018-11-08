@@ -13,8 +13,18 @@
             <div class="u-contents"
                  v-for="(container, index) in containers"
                  :key="index">
+                
+                <drop-hint
+                    style="flex-basis: 15px;"
+                    v-if="index === 0 && containers.length > 1"
+                    v-show="isContainerDragging"
+                    :index="-1"
+                    @object-drop-to="containerDropTo">
+                </drop-hint>
+
                 <container-component
                     class="c-fl__container"
+                    ref="containerComponent"
                     :index="index"
                     :size="`${Math.round(container.width)}%`"
                     :frames="container.frames"
@@ -26,7 +36,9 @@
                     @frame-drop-to="frameDropToHandler"
                     @persist="persist"
                     @delete-container="promptBeforeDeletingContainer"
-                    @add-container="addContainer">
+                    @add-container="addContainer"
+                    @start-container-drag="startContainerDrag"
+                    @stop-container-drag="stopContainerDrag">
                 </container-component>
 
                 <resize-handle
@@ -38,6 +50,14 @@
                     @mousemove="containerResizing"
                     @mouseup="endContainerResizing">
                 </resize-handle>
+
+                <drop-hint
+                    style="flex-basis: 15px;"
+                    v-if="containers.length > 1"
+                    v-show="isContainerDragging"
+                    :index="index"
+                    @object-drop-to="containerDropTo">
+                </drop-hint>
             </div>
         </div> 
     </div>
@@ -336,6 +356,7 @@
 import ContainerComponent  from './container.vue';
 import Container from '../utils/container';
 import ResizeHandle from  './resizeHandle.vue';
+import DropHint from './dropHint.vue';
 
 const SNAP_TO_PERCENTAGE = 1,
       MIN_CONTAINER_SIZE = 5;
@@ -344,7 +365,8 @@ export default {
     inject: ['openmct', 'domainObject'],
     components: {
         ContainerComponent,
-        ResizeHandle
+        ResizeHandle,
+        DropHint
     },
     data() {
         let containers = this.domainObject.configuration.containers,
@@ -359,6 +381,7 @@ export default {
             dragFrom: [],
             isEditing: false,
             isDragging: false,
+            isContainerDragging: false,
             rowsLayout: rowsLayout,
             maxMoveSize: 0
         }
@@ -374,7 +397,7 @@ export default {
     },
     methods: {
         areAllContainersEmpty() {
-           return !!!this.containers.filter(container => container.frames.length > 1).length;
+            return !!!this.containers.filter(container => container.frames.length > 1).length;
         },
         addContainer() {
             let newSize = 100/(this.containers.length+1);
@@ -560,6 +583,24 @@ export default {
             }
 
             this.recalculateContainerSize(100/this.containers.length);
+            this.persist();
+        },
+        startContainerDrag(index) {
+            this.isContainerDragging = true;
+            this.containerDragFrom = index;
+        },
+        stopContainerDrag() {
+            this.isContainerDragging = false;
+        },
+        containerDropTo(event, index) {
+            let fromContainer = this.containers.splice(this.containerDragFrom, 1)[0];
+
+            if (index === -1) {
+                this.containers.unshift(fromContainer);
+            } else {
+                this.containers.splice(index, 0, fromContainer);
+            }
+
             this.persist();
         }
     },

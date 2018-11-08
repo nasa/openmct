@@ -35,6 +35,7 @@
 
 <script>
 export default {
+    props:['index'],
     data() {
         return {
             isMouseOver: false
@@ -48,7 +49,7 @@ export default {
             this.isMouseOver = false;
         },
         dropHandler(event) {
-            this.$emit('object-drop-to', event);
+            this.$emit('object-drop-to', event, this.index);
         }
     },
     mounted() {
