@@ -77,15 +77,15 @@
             item: Object
         },
         computed: {
-            showLabel: function () {
+            showLabel() {
                 let displayMode = this.item.config.alphanumeric.displayMode;
                 return displayMode === 'all' || displayMode === 'label';
             },
-            showValue: function () {
+            showValue() {
                 let displayMode = this.item.config.alphanumeric.displayMode;
                 return displayMode === 'all' || displayMode === 'value';
             },
-            styleObject: function () {
+            styleObject() {
                 let alphanumeric = this.item.config.alphanumeric;
                 return {
                     backgroundColor: alphanumeric.fill,
@@ -94,53 +94,57 @@
                     fontSize: alphanumeric.size
                 }
             },
-            valueMetadata: function () {
+            valueMetadata() {
                 return this.metadata.value(this.item.config.alphanumeric.value);
             },
-            valueFormatter: function () {
+            valueFormatter() {
                 return this.formats[this.item.config.alphanumeric.value];
+            },
+            telemetryValue() {
+                if (!this.datum) {
+                    return;
+                }
+
+                return this.valueFormatter && this.valueFormatter.format(this.datum);
+            },
+            telemetryClass() {
+                if (!this.datum) {
+                    return;
+                }
+
+                let alarm = this.limitEvaluator && this.limitEvaluator.evaluate(this.datum, this.valueMetadata);
+                return alarm && alarm.cssClass;
             }
         },
         data() {
             return {
-                telemetryValue: '',
-                telemetryClass: ''
+                datum: {}
             }
         },
         methods: {
-            getTelemetry(telemetryObject) {
-                this.requestHistoricalData(telemetryObject);
-                this.subscribeToObject(telemetryObject);
-            },
-            requestHistoricalData(object) {
+            requestHistoricalData() {
                 let bounds = this.openmct.time.bounds();
                 let options = {
                     start: bounds.start,
                     end: bounds.end,
                     size: 1
                 };
-                this.openmct.telemetry.request(object, options)
+                this.openmct.telemetry.request(this.item.domainObject, options)
                     .then(data => {
                         if (data.length > 0) {
-                            this.updateView(object, data[data.length - 1]);
+                            this.updateView(data[data.length - 1]);
                         }
                     });
             },
-            subscribeToObject(object) {
-                this.subscription = this.openmct.telemetry.subscribe(object, function (datum) {
+            subscribeToObject() {
+                this.subscription = this.openmct.telemetry.subscribe(this.item.domainObject, function (datum) {
                     if (this.openmct.time.clock() !== undefined) {
-                        this.updateView(object, datum);
+                        this.updateView(datum);
                     }
                 }.bind(this));
             },
-            updateView(telemetryObject, datum) {
-                if (this.valueMetadata === undefined) {
-                    return;
-                }
-
-                let alarm = this.limitEvaluator && this.limitEvaluator.evaluate(datum, this.valueMetadata);
-                this.telemetryClass = alarm && alarm.cssClass;
-                this.telemetryValue = this.valueFormatter && this.valueFormatter.format(datum);
+            updateView(datum) {
+                this.datum = datum;
             },
             removeSubscription() {
                 if (this.subscription) {
@@ -150,19 +154,18 @@
             },
             refreshData(bounds, isTick) {
                 if (!isTick) {
-                    this.telemetryClass = "";
-                    this.telemetryValue = "";
+                    this.datum = undefined;
                     this.requestHistoricalData(this.item.domainObject);
                 }
             }
         },
         mounted() {
-            let telemetryObject = this.item.domainObject;
-            this.limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
-            this.metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.item.domainObject);
+            this.metadata = this.openmct.telemetry.getMetadata(this.item.domainObject);
             this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
 
-            this.getTelemetry(telemetryObject);
+            this.requestHistoricalData();
+            this.subscribeToObject();
 
             this.item.config.attachListeners();
             this.openmct.time.on("bounds", this.refreshData);
