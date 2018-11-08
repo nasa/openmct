@@ -155,9 +155,10 @@
             }
         },
         mounted() {
-            let context = {};
-            context.item = this.item.domainObject;
-            context.layoutItem = this.item;
+            let context = {
+                item: this.item.domainObject,
+                layoutItem: this.item
+            };
 
             this.removeSelectable = this.openmct.selection.selectable(
                 this.$el,
