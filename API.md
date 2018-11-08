@@ -52,7 +52,6 @@
     - [The URL Status Indicator](#the-url-status-indicator)
     - [Creating a Simple Indicator](#creating-a-simple-indicator)
     - [Custom Indicators](#custom-indicators)
-  - [Included Plugins](#included-plugins)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -994,7 +993,7 @@ A common use case for indicators is to convey the state of some external system 
 persistence backend or HTTP server. So long as this system is accessible via HTTP request, 
 Open MCT provides a general purpose indicator to show whether the server is available and 
 returing a 2xx status code. The URL Status Indicator is made available as a default plugin. See
-[Included Plugins](#included-plugins) below for details on how to install and configure the 
+the [documentation](./src/plugins/URLIndicatorPlugin) for details on how to install and configure the 
 URL Status Indicator.
 
 ### Creating a Simple Indicator
@@ -1045,60 +1044,4 @@ A completely custom indicator can be added by simple providing a DOM element to 
     openmct.indicators.add({
         element: domNode
     });
-```
-
-## Included Plugins
-
-Open MCT is packaged along with a few general-purpose plugins:
-
-* `openmct.plugins.Conductor` provides a user interface for working with time
-within the application. If activated, configuration must be provided. This is 
-detailed in the section on [Time Conductor Configuration](#time-conductor-configuration).
-* `openmct.plugins.CouchDB` is an adapter for using CouchDB for persistence
-  of user-created objects. This is a constructor that takes the URL for the
-  CouchDB database as a parameter, e.g.
-```javascript
-openmct.install(openmct.plugins.CouchDB('http://localhost:5984/openmct'))
-```
-* `openmct.plugins.Elasticsearch` is an adapter for using Elasticsearch for
-  persistence of user-created objects. This is a
-  constructor that takes the URL for the Elasticsearch instance as a
-  parameter. eg.
-```javascript
-openmct.install(openmct.plugins.CouchDB('http://localhost:9200'))
-```
-* `openmct.plugins.Espresso` and `openmct.plugins.Snow` are two different
-  themes (dark and light) available for Open MCT. Note that at least one
-  of these themes must be installed for Open MCT to appear correctly.
-* `openmct.plugins.URLIndicator` adds an indicator which shows the
-availability of a URL with the following options: 
-  - `url` : URL to indicate the status of
-  - `iconClass`: Icon to show in the status bar, defaults to `icon-database`, [list of all icons](https://nasa.github.io/openmct/style-guide/#/browse/styleguide:home?view=items)
-  - `interval`: Interval between checking the connection, defaults to `10000`
-  - `label` Name showing up as text in the status bar, defaults to url
-```javascript
-openmct.install(openmct.plugins.URLIndicator({
-  url: 'http://localhost:8080',
-    iconClass: 'check',
-    interval: 10000,
-    label: 'Localhost'
- })
-);
-```
-* `openmct.plugins.LocalStorage` provides persistence of user-created
-  objects in browser-local storage. This is particularly useful in
-  development environments.
-* `openmct.plugins.MyItems` adds a top-level folder named "My Items"
-  when the application is first started, providing a place for a
-  user to store created items.
-* `openmct.plugins.UTCTimeSystem` provides a default time system for Open MCT.
-
-Generally, you will want to either install these plugins, or install
-different plugins that provide persistence and an initial folder
-hierarchy.
-
-eg.
-```javascript
-openmct.install(openmct.plugins.LocalStorage());
-openmct.install(openmct.plugins.MyItems());
 ```

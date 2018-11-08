@@ -31,7 +31,6 @@ var gulp = require('gulp'),
     git = require('git-rev-sync'),
     moment = require('moment'),
     project = require('./package.json'),
-    _ = require('lodash'),
     paths = {
         main: 'openmct.js',
         dist: 'dist',
@@ -140,7 +139,7 @@ gulp.task('checkstyle', function () {
     var mkdirp = require('mkdirp');
     var reportName = 'jscs-html-report.html';
     var reportPath = path.resolve(paths.reports, 'checkstyle', reportName);
-    var moveReport = fs.rename.bind(fs, reportName, reportPath, _.noop);
+    var moveReport = fs.rename.bind(fs, reportName, reportPath, function () {});
 
     mkdirp.sync(path.resolve(paths.reports, 'checkstyle'));
 
