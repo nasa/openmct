@@ -114,7 +114,12 @@
             },
             requestHistoricalData(object) {
                 let bounds = this.openmct.time.bounds();
-                this.openmct.telemetry.request(object, {start: bounds.start, end: bounds.end, size: 1})
+                let options = {
+                    start: bounds.start,
+                    end: bounds.end,
+                    size: 1
+                };
+                this.openmct.telemetry.request(object, options)
                     .then(data => {
                         if (data.length > 0) {
                             this.updateView(object, data[data.length - 1]);
@@ -122,12 +127,12 @@
                     });
             },
             subscribeToObject(object) {
-                let self = this;
+                // let self = this;
                 this.subscription = this.openmct.telemetry.subscribe(object, function (datum) {
-                    if (self.openmct.time.clock() !== undefined) {
-                        self.updateView(object, datum);
+                    if (this.openmct.time.clock() !== undefined) {
+                        this.updateView(object, datum);
                     }
-                }, {});
+                }.bind(this));
             },
             updateView(telemetryObject, datum) {
                 if (this.valueMetadata === undefined) {
@@ -155,6 +160,7 @@
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
             this.metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             this.getTelemetry(telemetryObject);
+
             this.item.config.attachListeners();
             this.openmct.time.on("bounds", this.refreshData);
         },
