@@ -97,7 +97,7 @@
         &__name {
             @include ellipsize();
             flex: 0 1 auto;
-            font-size: 1.2em;
+            @include headerFont($size: 1.2em);
 
             &:before {
                 // Object type icon

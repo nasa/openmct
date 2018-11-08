@@ -178,7 +178,7 @@
             align-items: center;
             display: flex;
             flex: 0 1 auto;
-            font-size: 1.4em;
+            @include headerFont($size: 1.4em);
             min-width: 0;
 
             &:before {

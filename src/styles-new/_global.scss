@@ -116,8 +116,7 @@ body, html {
 body {
     -webkit-font-smoothing: subpixel-antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: $fontBaseSize;
+    @include bodyFont($size: $fontBaseSize);
     font-weight: normal;
     background-color: $colorBodyBg;
     color: $colorBodyFg;
