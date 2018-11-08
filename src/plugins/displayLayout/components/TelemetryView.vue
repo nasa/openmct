@@ -118,7 +118,8 @@
         },
         data() {
             return {
-                datum: {}
+                datum: {},
+                formats: {}
             }
         },
         methods: {

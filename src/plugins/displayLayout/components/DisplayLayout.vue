@@ -274,7 +274,7 @@
                     position: position,
                     dimensions: DEFAULT_TELEMETRY_DIMENSIONS,
                     displayMode: 'all',
-                    value: 'sin',
+                    value: this.getDefaultTelemetryValue(domainObject),
                     stroke: "transparent",
                     fill: "",
                     color: "",
@@ -285,6 +285,22 @@
 
                 this.mutate("configuration.alphanumerics", alphanumerics);
                 this.makeTelemetryItem(alphanumeric, true);
+            },
+            getDefaultTelemetryValue(domainObject) {
+                var metadata = this.openmct.telemetry.getMetadata(domainObject);
+                var valueMetadata = metadata.valuesForHints(['range'])[0];
+
+                if (valueMetadata === undefined) {
+                    valueMetadata = metadata.values().filter(values => {
+                        return !(values.hints.domain);
+                    })[0];
+                }
+
+                if (valueMetadata === undefined) {
+                    valueMetadata = metadata.values()[0];
+                }
+
+                return valueMetadata.key;
             },
             handleDragOver($event){
                 $event.preventDefault();
