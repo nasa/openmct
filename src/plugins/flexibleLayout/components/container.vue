@@ -32,8 +32,8 @@
         </div>
         <div class="c-fl-container__frames-holder">
             <div class="u-contents"
-                 v-for="(frame, index) in frames"
-                 :key="index">
+                 v-for="(frame, i) in frames"
+                 :key="i">
 
                 <frame-component
                     class="c-fl-container__frame"
@@ -42,7 +42,8 @@
                     }"
                     :frame="frame"
                     :size="frame.height"
-                    :index="index"
+                    :index="i"
+                    :containerIndex="index"
                     :isEditing="isEditing"
                     :isDragging="isDragging"
                     @frame-drag-from="frameDragFrom"
@@ -52,9 +53,9 @@
                 </frame-component>
 
                 <resize-handle
-                    v-if="index !== 0 && (index !== frames.length - 1)"
+                    v-if="i !== 0 && (index !== frames.length - 1)"
                     v-show="isEditing"
-                    :index="index"
+                    :index="i"
                     :orientation="rowsLayout ? 'horizontal' : 'vertical'"
                     @mousedown="startFrameResizing"
                     @mousemove="frameResizing"
@@ -75,7 +76,7 @@ const MIN_FRAME_SIZE = 5;
 
 export default {
     inject:['openmct', 'domainObject'],
-    props: ['size', 'frames', 'index', 'isEditing', 'isDragging', 'rowsLayout'],
+    props: ['size', 'frames', 'index', 'isEditing', 'isDragging', 'rowsLayout', ''],
     components: {
         FrameComponent,
         ResizeHandle
@@ -208,6 +209,12 @@ export default {
 
         draggableHeader.addEventListener('dragstart', this.startContainerDrag);
         draggableHeader.addEventListener('dragend', this.stopContainerDrag);
+    },
+    beforeDestroy() {
+        let draggableHeader = this.$refs.draggableHeader;
+
+        draggableHeader.removeEventListener('dragstart', this.startContainerDrag);
+        draggableHeader.removeEventListener('dragend', this.stopContainerDrag);
     }
 }
 </script>

@@ -3,6 +3,7 @@ class Frame {
         this.domainObject = domainObject;
         this.height = height;
         this.cssClass = cssClass? cssClass : '';
+        this.noFrame = false;
     }
 }
 

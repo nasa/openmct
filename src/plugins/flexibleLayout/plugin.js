@@ -21,11 +21,9 @@
  *****************************************************************************/
 
 define([
-    './flexibleLayout',
-    './utils/container.js'
+    './flexibleLayout'
 ], function (
-    FlexibleLayout,
-    Container
+    FlexibleLayout
 ) {
     return function plugin() {
 
@@ -99,9 +97,31 @@ define([
                             key: "separator"
                         };
 
-                    if (selection[0].context.type === 'frame' || selection[0].context.type === 'container') {
+                    if (selection[0].context.type === 'container') {
 
                         return [toggleButton, addContainerButton, separator, deleteButton];
+
+                    } else if (selection[0].context.type === 'frame') {
+                        let context = selection[0].context;
+                        let toggleFrame = {
+                            control: "toggle-button",
+                            domainObject: context.parentDomainObject,
+                            property: `configuration.containers[${context.containerIndex}].frames[${context.frameIndex}].noFrame`,
+                            options: [
+                                {
+                                    value: false,
+                                    icon: 'icon-frame-hide',
+                                    title: "Hide frame"
+                                },
+                                {
+                                    value: true,
+                                    icon: 'icon-frame-show',
+                                    title: "Show frame"
+                                }
+                            ]
+                        }
+
+                        return [toggleButton, toggleFrame, addContainerButton, separator, deleteButton];
 
                     } else if (selection[0].context.type === 'flexible-layout') {
 

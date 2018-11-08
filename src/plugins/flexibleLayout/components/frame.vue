@@ -28,6 +28,7 @@
         }">
 
         <div class="c-frame c-fl-frame__drag-wrapper is-selectable is-moveable"
+             :class="{'no-frame': noFrame}"
              draggable="true"
              ref="frame"
              v-if="frame.domainObject">
@@ -65,8 +66,13 @@ import ResizeHandle from './resizeHandle.vue';
 import FrameHeader from '../../../ui/components/utils/frameHeader.vue';
 
 export default {
-    inject: ['openmct'],
-    props: ['frame', 'index', 'size', 'isEditing', 'isDragging'],
+    inject: ['openmct', 'domainObject'],
+    props: ['frame', 'index', 'containerIndex', 'size', 'isEditing', 'isDragging'],
+    data() {
+        return {
+            noFrame: this.frame.noFrame
+        }
+    },
     components: {
         ObjectView,
         DropHint,
@@ -90,6 +96,9 @@ export default {
         },
         addContainer() {
             this.$emit('add-container');
+        },
+        toggleFrame(v) {
+            this.noFrame = v;
         }
     },
     mounted() {
@@ -99,12 +108,17 @@ export default {
         if (this.frame.domainObject.identifier) {
                 let context = {
                 item: this.frame.domainObject,
+                parentDomainObject: this.domainObject,
                 method: this.deleteFrame,
                 addContainer: this.addContainer,
-                type: 'frame'
+                type: 'frame',
+                frameIndex: this.index,
+                containerIndex: this.containerIndex
             }
 
             this.openmct.selection.selectable(this.$refs.frame, context, false);
+            
+            this.openmct.objects.observe(this.domainObject, `configuration.containers[${this.containerIndex}].frames[${this.index}].noFrame`, this.toggleFrame);
         }
     },
     beforeDestroy() {
