@@ -70,14 +70,19 @@ define([
         }
 
         function applyBoundsFilter(datum) {
-            if (!restrictToBounds || !timeFormatter) {
+            if (withinBounds(datum)) {
                 callback(datum);
-                return;
+            }
+        }
+
+        function withinBounds(datum) {
+            if (!restrictToBounds || !timeFormatter) {
+                return true;
             }
             var timestamp = timeFormatter.parse(datum);
             var bounds = openmct.time.bounds();
             if (timestamp >= bounds.start && timestamp <= bounds.end) {
-                callback(datum);
+                return true;
             }
         }
 
@@ -93,8 +98,10 @@ define([
             }
             // If we don't have latest data, store datum for later processing.
             if (typeof latestDatum === 'undefined') {
-                if (typeof pendingRealtimeDatum === 'undefined' ||
-                    isLater(datum, pendingRealtimeDatum)) {
+                if (typeof pendingRealtimeDatum === 'undefined' || (
+                        isLater(datum, pendingRealtimeDatum) &&
+                        withinBounds(datum)
+                    )) {
 
                     pendingRealtimeDatum = datum;
                 }
@@ -127,7 +134,7 @@ define([
                     if (currentRequest !== thisRequest) {
                         return; // prevent race.
                     }
-                    if (!datum) {
+                    if (!datum || !withinBounds(datum)) {
                         latestDatum = false;
                     } else {
                         latestDatum = datum;

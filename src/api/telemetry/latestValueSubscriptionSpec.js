@@ -25,16 +25,58 @@ define([
     latestValueSubscription
 ) {
 
+    function slowPromise() {
+        // Emprically, using setTimeout to resolve a promise results in a
+        // promise that will resolve after every other promise.  This is a
+        // simple way to defer code.
+        return new Promise(function (resolve, reject) {
+            setTimeout(resolve);
+        });
+    }
+
     describe("latestValueSubscription", function () {
 
         var openmct;
         var telemetryAPI;
+        var telemetryMetadata;
         var formatMap;
         var pendingRequests;
         var subscriptions;
         var domainObject;
         var callback;
         var unsubscribe;
+        var triggerTimeEvent;
+
+        var noLADTestcases = [
+            {
+                name: "empty LAD",
+                trigger: function () {
+                    pendingRequests[0].resolve([]);
+                }
+            },
+            {
+                name: "rejected LAD",
+                trigger: function () {
+                    pendingRequests[0].reject();
+                }
+            }
+        ];
+
+        var outOfBoundsLADTestcases = [
+            {
+                name: "future LAD",
+                trigger: function () {
+                    pendingRequests[0].resolve([{test: 1123}]);
+                }
+            },
+            {
+                name: "prehistoric LAD",
+                trigger: function () {
+                    pendingRequests[0].resolve([{test: -150}]);
+                }
+            }
+        ];
+
 
         beforeEach(function () {
             openmct = {
@@ -47,9 +89,7 @@ define([
                 ])
             };
 
-            openmct.time.timeSystem.and.return({
-                key: 'testKey'
-            });
+            openmct.time.timeSystem.and.returnValue({key: 'test'});
 
             telemetryAPI = jasmine.createSpyObj('telemetryAPI', [
                 'getMetadata',
@@ -58,13 +98,22 @@ define([
                 'subscribe'
             ]);
 
-            telemetryAPI.getMetadata.and.return('metadata');
+            telemetryMetadata = jasmine.createSpyObj('metadata', [
+                'values'
+            ]);
+            telemetryAPI.getMetadata.and.returnValue(telemetryMetadata);
 
             formatMap = {
-                testKey: jasmine.createSpyObj('testFormatter', ['parse']),
-                otherKey: jasmine.createSpyObj('otherFormatter', ['parse'])
+                test: jasmine.createSpyObj('testFormatter', ['parse']),
+                other: jasmine.createSpyObj('otherFormatter', ['parse'])
             };
-            telemetryAPI.getFormatMap.and.return(formatMap);
+            formatMap.test.parse.and.callFake(function (datum) {
+                return datum.test;
+            });
+            formatMap.other.parse.and.callFake(function (datum) {
+                return datum.other;
+            });
+            telemetryAPI.getFormatMap.and.returnValue(formatMap);
 
             pendingRequests = [];
             telemetryAPI.request.and.callFake(function (domainObject, options) {
@@ -72,7 +121,7 @@ define([
                     domainObject: domainObject,
                     options: options
                 };
-                request.promise = new Promise(function (resolve, reject)) {
+                request.promise = new Promise(function (resolve, reject) {
                     request.resolve = resolve;
                     request.reject = reject;
                 });
@@ -94,6 +143,12 @@ define([
             callback = jasmine.createSpy('callback');
 
             domainObject = {};
+
+            triggerTimeEvent = function (event, args) {
+                openmct.time.on.calls.allArgs().filter(function (callArgs) {
+                    return callArgs[0] === event;
+                })[0][1].apply(null, args);
+            };
         });
 
 
@@ -138,6 +193,9 @@ define([
             var unsubscribe;
 
             beforeEach(function () {
+                openmct.time.clock.and.returnValue(undefined);
+                openmct.time.timeSystem.and.returnValue({key: 'test'});
+                openmct.time.bounds.and.returnValue({start: 0, end: 1000});
                 unsubscribe = latestValueSubscription(
                     domainObject,
                     callback,
@@ -147,35 +205,465 @@ define([
             });
 
             describe("nominal LAD response", function () {
+                it("provides LAD datum on resolve", function (done) {
+                    pendingRequests[0].resolve([{test: 123}]);
+                    slowPromise().then(function () {
+                        expect(callback).toHaveBeenCalledWith({test: 123});
+                        done();
+                    });
+                });
 
+                it("sends realtime values synchronously after resolve", function (done) {
+                    pendingRequests[0].resolve([{test: 123}]);
+                    slowPromise().then(function () {
+                        expect(callback).toHaveBeenCalledWith({test: 123});
+                        subscriptions[0].callback({test: 456})
+                        expect(callback).toHaveBeenCalledWith({test: 456});
+                        done();
+                    });
+                });
+
+                it("holds realtime values until resolved", function (done) {
+                    pendingRequests[0].resolve([{test: 123}]);
+                    subscriptions[0].callback({test: 456})
+                    expect(callback).not.toHaveBeenCalledWith({test: 456});
+                    slowPromise().then(function () {
+                        expect(callback).toHaveBeenCalledWith({test: 123});
+                        expect(callback).toHaveBeenCalledWith({test: 456});
+                        done();
+                    });
+                });
+
+                it("only sends latest realtime value after resolve", function (done) {
+                    pendingRequests[0].resolve([{test: 123}]);
+                    subscriptions[0].callback({test: 456});
+                    subscriptions[0].callback({test: 567});
+                    expect(callback).not.toHaveBeenCalledWith({test: 456});
+                    expect(callback).not.toHaveBeenCalledWith({test: 567});
+                    slowPromise().then(function () {
+                        expect(callback).toHaveBeenCalledWith({test: 123});
+                        expect(callback).not.toHaveBeenCalledWith({test: 456});
+                        expect(callback).toHaveBeenCalledWith({test: 567});
+                        done();
+                    });
+                });
+
+                it("filters realtime values before latest", function (done) {
+                    pendingRequests[0].resolve([{test: 456}]);
+                    slowPromise().then(function () {
+                        expect(callback).toHaveBeenCalledWith({test: 456});
+                        subscriptions[0].callback({test: 123})
+                        expect(callback).not.toHaveBeenCalledWith({test: 123});
+                        done();
+                    });
+                });
+
+                it("filters realtime values outside bounds", function (done) {
+                    pendingRequests[0].resolve([{test: 456}]);
+                    slowPromise().then(function () {
+                        expect(callback).toHaveBeenCalledWith({test: 456});
+                        subscriptions[0].callback({test: 1123})
+                        expect(callback).not.toHaveBeenCalledWith({test: 1123});
+                        done();
+                    });
+                });
+
+                it("doesn't override pending value with one outside bounds", function (done) {
+                    pendingRequests[0].resolve([{test: 123}]);
+                    subscriptions[0].callback({test: 456});
+                    subscriptions[0].callback({test: 1123});
+                    slowPromise().then(function () {
+                        expect(callback).toHaveBeenCalledWith({test: 123});
+                        expect(callback).toHaveBeenCalledWith({test: 456});
+                        expect(callback).not.toHaveBeenCalledWith({test: 1123});
+                        done();
+                    });
+                });
+
+                it("doesn't send out of order realtime value", function (done) {
+                    pendingRequests[0].resolve([{test: 123}]);
+                    slowPromise().then(function () {
+                        expect(callback).toHaveBeenCalledWith({test: 123});
+                        subscriptions[0].callback({test: 567});
+                        expect(callback).toHaveBeenCalledWith({test: 567});
+                        subscriptions[0].callback({test: 456});
+                        expect(callback).not.toHaveBeenCalledWith({test: 456});
+                        done();
+                    });
+                });
             });
-            describe("out of bounds LAD response", function () {
 
-            });
-            describe("no LAD response", function () {
 
+            outOfBoundsLADTestcases.concat(noLADTestcases).forEach(function (testCase) {
+                describe(testCase.name, function () {
+                    it("does not provide LAD datum", function (done) {
+                        testCase.trigger();
+                        slowPromise().then(function () {
+                            expect(callback).not.toHaveBeenCalled();
+                            done();
+                        });
+                    });
+
+                    it("sends realtime values synchronously after resolve", function (done) {
+                        testCase.trigger();
+                        slowPromise().then(function () {
+                            subscriptions[0].callback({test: 456})
+                            expect(callback).toHaveBeenCalledWith({test: 456});
+                            done();
+                        });
+                    });
+
+                    it("holds realtime values until resolved", function (done) {
+                        testCase.trigger();
+                        subscriptions[0].callback({test: 456})
+                        expect(callback).not.toHaveBeenCalledWith({test: 456});
+                        slowPromise().then(function () {
+                            expect(callback).toHaveBeenCalledWith({test: 456});
+                            done();
+                        });
+                    });
+
+                    it("only sends latest realtime value after resolve", function (done) {
+                        testCase.trigger();
+                        subscriptions[0].callback({test: 456});
+                        subscriptions[0].callback({test: 567});
+                        expect(callback).not.toHaveBeenCalledWith({test: 456});
+                        expect(callback).not.toHaveBeenCalledWith({test: 567});
+                        slowPromise().then(function () {
+                            expect(callback).not.toHaveBeenCalledWith({test: 456});
+                            expect(callback).toHaveBeenCalledWith({test: 567});
+                            done();
+                        });
+                    });
+
+                    it("filters realtime values outside bounds", function (done) {
+                        testCase.trigger();
+                        slowPromise().then(function () {
+                            subscriptions[0].callback({test: 1123})
+                            expect(callback).not.toHaveBeenCalledWith({test: 1123});
+                            done();
+                        });
+                    });
+
+                    it("doesn't override pending value with one outside bounds", function (done) {
+                        testCase.trigger();
+                        subscriptions[0].callback({test: 456});
+                        subscriptions[0].callback({test: 1123});
+                        slowPromise().then(function () {
+                            expect(callback).toHaveBeenCalledWith({test: 456});
+                            expect(callback).not.toHaveBeenCalledWith({test: 1123});
+                            done();
+                        });
+                    });
+
+                    it("doesn't send out of order realtime value", function (done) {
+                        testCase.trigger();
+                        slowPromise().then(function () {
+                            subscriptions[0].callback({test: 567});
+                            expect(callback).toHaveBeenCalledWith({test: 567});
+                            subscriptions[0].callback({test: 456});
+                            expect(callback).not.toHaveBeenCalledWith({test: 456});
+                            done();
+                        });
+                    });
+                });
             });
         });
 
         describe("with clock (AKA realtime)", function () {
-            describe("nominal LAD response", function () {
 
+            beforeEach(function () {
+                openmct.time.clock.and.returnValue({});
+                openmct.time.timeSystem.and.returnValue({key: 'test'});
+                openmct.time.bounds.and.returnValue({start: 0, end: 1000});
+                unsubscribe = latestValueSubscription(
+                    domainObject,
+                    callback,
+                    telemetryAPI,
+                    openmct
+                );
             });
-            describe("no LAD response", function () {
 
+            describe("nominal LAD response", function () {
+                it("provides LAD datum on resolve", function (done) {
+                    pendingRequests[0].resolve([{test: 123}]);
+                    slowPromise().then(function () {
+                        expect(callback).toHaveBeenCalledWith({test: 123});
+                        done();
+                    });
+                });
+
+                it("sends realtime values synchronously after resolve", function (done) {
+                    pendingRequests[0].resolve([{test: 123}]);
+                    slowPromise().then(function () {
+                        expect(callback).toHaveBeenCalledWith({test: 123});
+                        subscriptions[0].callback({test: 456})
+                        expect(callback).toHaveBeenCalledWith({test: 456});
+                        done();
+                    });
+                });
+
+                it("holds realtime values until resolved", function (done) {
+                    pendingRequests[0].resolve([{test: 123}]);
+                    subscriptions[0].callback({test: 456})
+                    expect(callback).not.toHaveBeenCalledWith({test: 456});
+                    slowPromise().then(function () {
+                        expect(callback).toHaveBeenCalledWith({test: 123});
+                        expect(callback).toHaveBeenCalledWith({test: 456});
+                        done();
+                    });
+                });
+
+                it("only sends latest realtime value after resolve", function (done) {
+                    pendingRequests[0].resolve([{test: 123}]);
+                    subscriptions[0].callback({test: 456});
+                    subscriptions[0].callback({test: 567});
+                    expect(callback).not.toHaveBeenCalledWith({test: 456});
+                    expect(callback).not.toHaveBeenCalledWith({test: 567});
+                    slowPromise().then(function () {
+                        expect(callback).toHaveBeenCalledWith({test: 123});
+                        expect(callback).not.toHaveBeenCalledWith({test: 456});
+                        expect(callback).toHaveBeenCalledWith({test: 567});
+                        done();
+                    });
+                });
+
+                it("filters realtime values before latest", function (done) {
+                    pendingRequests[0].resolve([{test: 456}]);
+                    slowPromise().then(function () {
+                        expect(callback).toHaveBeenCalledWith({test: 456});
+                        subscriptions[0].callback({test: 123})
+                        expect(callback).not.toHaveBeenCalledWith({test: 123});
+                        done();
+                    });
+                });
+
+                it("does not filter realtime values outside bounds", function (done) {
+                    pendingRequests[0].resolve([{test: 456}]);
+                    slowPromise().then(function () {
+                        expect(callback).toHaveBeenCalledWith({test: 456});
+                        subscriptions[0].callback({test: 1123})
+                        expect(callback).toHaveBeenCalledWith({test: 1123});
+                        done();
+                    });
+                });
+
+                it("overrides pending realtime value with one outside bounds", function (done) {
+                    pendingRequests[0].resolve([{test: 123}]);
+                    subscriptions[0].callback({test: 456});
+                    subscriptions[0].callback({test: 1123});
+                    slowPromise().then(function () {
+                        expect(callback).toHaveBeenCalledWith({test: 123});
+                        expect(callback).not.toHaveBeenCalledWith({test: 456});
+                        expect(callback).toHaveBeenCalledWith({test: 1123});
+                        done();
+                    });
+                });
+
+                it("doesn't send out of order realtime value", function (done) {
+                    pendingRequests[0].resolve([{test: 123}]);
+                    slowPromise().then(function () {
+                        expect(callback).toHaveBeenCalledWith({test: 123});
+                        subscriptions[0].callback({test: 567});
+                        expect(callback).toHaveBeenCalledWith({test: 567});
+                        subscriptions[0].callback({test: 456});
+                        expect(callback).not.toHaveBeenCalledWith({test: 456});
+                        done();
+                    });
+                });
+            });
+
+            noLADTestcases.forEach(function (testCase) {
+                describe(testCase.name, function () {
+                    it("does not provide LAD datum", function (done) {
+                        testCase.trigger();
+                        slowPromise().then(function () {
+                            expect(callback).not.toHaveBeenCalled();
+                            done();
+                        });
+                    });
+
+                    it("sends realtime values synchronously after resolve", function (done) {
+                        testCase.trigger();
+                        slowPromise().then(function () {
+                            subscriptions[0].callback({test: 456})
+                            expect(callback).toHaveBeenCalledWith({test: 456});
+                            done();
+                        });
+                    });
+
+                    it("holds realtime values until resolved", function (done) {
+                        testCase.trigger();
+                        subscriptions[0].callback({test: 456})
+                        expect(callback).not.toHaveBeenCalledWith({test: 456});
+                        slowPromise().then(function () {
+                            expect(callback).toHaveBeenCalledWith({test: 456});
+                            done();
+                        });
+                    });
+
+                    it("only sends latest realtime value after resolve", function (done) {
+                        testCase.trigger();
+                        subscriptions[0].callback({test: 456});
+                        subscriptions[0].callback({test: 567});
+                        expect(callback).not.toHaveBeenCalledWith({test: 456});
+                        expect(callback).not.toHaveBeenCalledWith({test: 567});
+                        slowPromise().then(function () {
+                            expect(callback).not.toHaveBeenCalledWith({test: 456});
+                            expect(callback).toHaveBeenCalledWith({test: 567});
+                            done();
+                        });
+                    });
+
+                    it("doesn't filter realtime values outside bounds", function (done) {
+                        testCase.trigger();
+                        slowPromise().then(function () {
+                            subscriptions[0].callback({test: 1123})
+                            expect(callback).toHaveBeenCalledWith({test: 1123});
+                            done();
+                        });
+                    });
+
+                    it("doesn't filter pending realtime values outside bounds", function (done) {
+                        testCase.trigger();
+                        subscriptions[0].callback({test: 456});
+                        subscriptions[0].callback({test: 1123});
+                        slowPromise().then(function () {
+                            expect(callback).not.toHaveBeenCalledWith({test: 456});
+                            expect(callback).toHaveBeenCalledWith({test: 1123});
+                            done();
+                        });
+                    });
+
+                    it("doesn't send out of order realtime value", function (done) {
+                        testCase.trigger();
+                        slowPromise().then(function () {
+                            subscriptions[0].callback({test: 567});
+                            expect(callback).toHaveBeenCalledWith({test: 567});
+                            subscriptions[0].callback({test: 456});
+                            expect(callback).not.toHaveBeenCalledWith({test: 456});
+                            done();
+                        });
+                    });
+                });
+            });
+
+            describe("out of bounds LAD", function () {
+                outOfBoundsLADTestcases.forEach(function (testCase) {
+                    it(`provides ${testCase} datum`, function (done) {
+                        testCase.trigger();
+                        slowPromise().then(function () {
+                            expect(callback).toHaveBeenCalled();
+                            done();
+                        });
+                    });
+                });
             });
         });
 
         describe("clock changes", function () {
 
+            beforeEach(function () {
+                openmct.time.timeSystem.and.returnValue({key: 'test'});
+                openmct.time.bounds.and.returnValue({start: 0, end: 1000});
+            });
+
+            it("starts bounds filtering when clock is cleared", function (done) {
+                openmct.time.clock.and.returnValue({});
+                unsubscribe = latestValueSubscription(
+                    domainObject,
+                    callback,
+                    telemetryAPI,
+                    openmct
+                );
+                pendingRequests[0].resolve([]);
+                slowPromise().then(function () {
+                    subscriptions[0].callback({test: 1123});
+                    expect(callback).toHaveBeenCalledWith({test: 1123});
+                    triggerTimeEvent('clock', undefined);
+                    subscriptions[0].callback({test: 1223});
+                    expect(callback).not.toHaveBeenCalledWith({test: 1223});
+                    done();
+                });
+            });
+
+            it("stops bounds filtering when clock is set", function (done) {
+                openmct.time.clock.and.returnValue(undefined);
+                unsubscribe = latestValueSubscription(
+                    domainObject,
+                    callback,
+                    telemetryAPI,
+                    openmct
+                );
+                pendingRequests[0].resolve([]);
+                slowPromise().then(function () {
+                    subscriptions[0].callback({test: 1123});
+                    expect(callback).not.toHaveBeenCalledWith({test: 1123});
+                    triggerTimeEvent('clock', [{}]);
+                    subscriptions[0].callback({test: 1223});
+                    expect(callback).toHaveBeenCalledWith({test: 1223});
+                    done();
+                });
+            });
         });
 
         describe("timesystem changes", function () {
+            it("requeries lad and uses new keys.", function (done) {
+                openmct.time.clock.and.returnValue(undefined);
+                openmct.time.timeSystem.and.returnValue({key: 'test'});
+                openmct.time.bounds.and.returnValue({start: 0, end: 1000});
+                unsubscribe = latestValueSubscription(
+                    domainObject,
+                    callback,
+                    telemetryAPI,
+                    openmct
+                );
+
+                expect(pendingRequests.length).toBe(1);
+                expect(subscriptions.length).toBe(1);
+                pendingRequests[0].resolve([{test: 234}]);
+                slowPromise().then(function () {
+                    expect(callback).toHaveBeenCalledWith({test: 234});
+                    triggerTimeEvent('timeSystem', [{key: 'other'}]);
+                    expect(pendingRequests.length).toBe(2);
+                    expect(subscriptions.length).toBe(1);
+                    pendingRequests[1].resolve([{test: 123, other: 456}]);
+                    return slowPromise(); // wait for new lad to resolve.
+                }).then(function() {
+                    expect(callback).toHaveBeenCalledWith({test: 123, other: 456});
+                    // should have synchronous callbacks when other is greater.
+                    subscriptions[0].callback({test: 234, other: 567});
+                    expect(callback).toHaveBeenCalledWith({test: 234, other:567});
+                    // should filter out when other is less.
+                    subscriptions[0].callback({test: 345, other: 345});
+                    expect(callback).not.toHaveBeenCalledWith({test: 345, other: 345});
+                    done();
+                });
+            });
+        });
+
+        it("does not filter when no value matches timesystem", function (done) {
+            openmct.time.clock.and.returnValue(undefined);
+            openmct.time.timeSystem.and.returnValue({key: 'blah'});
+            openmct.time.bounds.and.returnValue({start: 0, end: 1000});
+            unsubscribe = latestValueSubscription(
+                domainObject,
+                callback,
+                telemetryAPI,
+                openmct
+            );
+            pendingRequests[0].resolve([{test: 1234}]);
+            slowPromise().then(function () {
+                expect(callback).toHaveBeenCalledWith({test: 1234});
+                subscriptions[0].callback({test: 567});
+                expect(callback).toHaveBeenCalledWith({test: 567});
+                done();
+            });
 
         });
 
         describe("on bounds event", function () {
-
+            // TODO: test cases for what happens when bounds changes.
         });
     });
 
