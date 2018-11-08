@@ -94,6 +94,7 @@
         /***************************************************** CONTAINERS */
         $headerSize: 16px;
 
+        border: 1px solid transparent;
         display: flex;
         flex-direction: column;
         overflow: auto;
@@ -103,7 +104,9 @@
         flex-shrink: 1;
 
         &__header {
-            background: rgba($editColor, 0.3);
+            // Only displayed when editing
+            background: $editSelectableColor;
+            color: $editSelectableColorFg;
             display: flex;
             align-items: center;
             flex: 0 0 $headerSize;
@@ -135,7 +138,21 @@
         }
 
         .is-editing & {
-            background: $editColorBg;
+            //background: $editCanvasColorBg;
+            border-color: $editSelectableColor;
+
+            &:hover {
+                border-color: $editSelectableColorHov;
+            }
+
+            &[s-selected] {
+                border-color: $editSelectableColorSelected;
+
+                .c-fl-container__header {
+                    background: $editSelectableColorSelected;
+                    color: $editSelectableColorSelectedFg;
+                }
+            }
         }
 
         /****** THEIR FRAMES */
@@ -228,7 +245,7 @@
         }
 
         &__resize-handle {
-            $size: 2px;
+            $size: 3px;
             $margin: 3px;
             $marginHov: 0;
 
@@ -238,15 +255,16 @@
             transition: $transOut;
 
             &:before {
+                // The visible resize line
+                background: $editColor;
                 content: '';
                 display: block;
                 flex: 1 1 auto;
                 min-height: $size; min-width: $size;
-                background: rgba($editColor, 0.6);
             }
 
             &.vertical {
-                padding: $margin 0;
+                padding: $margin $size;
                 &:hover{
                   //  padding: $marginHov 0;
                     cursor: row-resize;
@@ -254,7 +272,7 @@
             }
 
             &.horizontal {
-                padding: 0 $margin;
+                padding: $size $margin;
                 &:hover{
                  //   padding: 0 $marginHov;
                     cursor: col-resize;
@@ -264,7 +282,8 @@
             &:hover {
                 transition: $transOut;
                 &:before {
-                    background: $editColor;
+                    // The visible resize line
+                    background: $editColorHov;
                 }
             }
         }
