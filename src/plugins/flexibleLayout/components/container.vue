@@ -53,7 +53,7 @@
                 </frame-component>
 
                 <resize-handle
-                    v-if="i !== 0 && (index !== frames.length - 1)"
+                    v-if="i !== 0 && (i !== frames.length - 1)"
                     v-show="isEditing"
                     :index="i"
                     :orientation="rowsLayout ? 'horizontal' : 'vertical'"
