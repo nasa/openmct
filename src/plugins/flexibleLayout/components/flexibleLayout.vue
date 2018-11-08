@@ -456,12 +456,8 @@ export default {
                 if (index === 0) {
                     return;
                 }
-                if (framesArray.length === 2) {
-                    frame.height = 100;
-                } else {
-                    let frameSize = frame.height
-                    frame.height = this.snapToPercentage(multFactor * frameSize);
-                }
+                let frameSize = frame.height
+                frame.height = this.snapToPercentage(multFactor * frameSize);
             });
         },
         recalculateOldFrameSize(framesArray) {
@@ -495,6 +491,8 @@ export default {
             this.dragFrom = [containerIndex, frameIndex];
         },
         frameDropToHandler(containerIndex, frameIndex, frameObject) {
+            let newContainer = this.containers[containerIndex];
+
             this.isDragging = false;
 
             if (!frameObject) {
@@ -502,11 +500,22 @@ export default {
                 this.recalculateOldFrameSize(this.containers[this.dragFrom[0]].frames);
             }
 
-            let newMultFactor = 100/(frameObject.height + 100);
+            if (!frameObject.height) {
+                frameObject.height = 100 / Math.max(newContainer.frames.length - 1, 1);
+            }
 
-            this.containers[containerIndex].frames.splice((frameIndex + 1), 0, frameObject);
+            newContainer.frames.splice((frameIndex + 1), 0, frameObject);
 
-            this.recalculateNewFrameSize(newMultFactor, this.containers[containerIndex].frames);
+            let newTotalHeight = newContainer.frames.reduce((total, frame) => {
+                        if(isNaN(frame.height)) {
+                            return total;
+                        } else {
+                            return total + frame.height;
+                        }
+                    },0);
+            let newMultFactor = 100 / newTotalHeight;
+
+            this.recalculateNewFrameSize(newMultFactor, newContainer.frames);
 
             this.persist();
         },
