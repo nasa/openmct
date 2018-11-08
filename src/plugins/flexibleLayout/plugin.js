@@ -21,9 +21,11 @@
  *****************************************************************************/
 
 define([
-    './flexibleLayout'
+    './flexibleLayout',
+    './utils/container.js'
 ], function (
-    FlexibleLayout
+    FlexibleLayout,
+    Container
 ) {
     return function plugin() {
 
@@ -48,16 +50,14 @@ define([
                 key: "flex-layout",
                 description: "A toolbar for objects inside a Flexible Layout.",
                 forSelection: function (selection) {
-                    return (selection[0] && openmct.editor.isEditing());
+                    let parent = selection[selection.length - 1];
+
+                    return (parent && parent.context.item &&
+                        parent.context.item.type === 'flexible-layout' &&
+                        openmct.editor.isEditing());
                 },
                 toolbar: function (selection) {
-                    let domainObject;
-
-                    if (selection[1]) {
-                        domainObject = selection[1].context.item;
-                    } else {
-                        domainObject = selection[0].context.item;
-                    }
+                    let domainObject = selection[selection.length - 1].context.item;
 
                     let deleteButton = {
                             control: "button",
@@ -108,7 +108,8 @@ define([
                         return [toggleButton, addContainerButton];
 
                     } else {
-                        return [];
+
+                        return [toggleButton];
                     }
                 }
             });
