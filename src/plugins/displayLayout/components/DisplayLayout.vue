@@ -246,10 +246,10 @@
                 if (this.isTelemetry(domainObject)) {
                     this.addAlphanumeric(domainObject, this.droppedObjectPosition);
                 } else {
-                    this.checkForDupliactePanel(domainObject);
+                    this.checkForDuplicatePanel(domainObject);
                 }
             },
-            checkForDupliactePanel(domainObject) {
+            checkForDuplicatePanel(domainObject) {
                 let id = this.openmct.objects.makeKeyString(domainObject.identifier);
                 let panels = this.newDomainObject.configuration.panels;
 
