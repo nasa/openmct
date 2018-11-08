@@ -21,16 +21,16 @@
  *****************************************************************************/
 
 define([
-    './flexibleLayout',
+    './flexibleLayoutViewProvider',
     './utils/container'
 ], function (
-    FlexibleLayout,
+    FlexibleLayoutViewProvider,
     Container
 ) {
     return function plugin() {
 
         return function install(openmct) {
-            openmct.objectViews.addProvider(new FlexibleLayout(openmct));
+            openmct.objectViews.addProvider(new FlexibleLayoutViewProvider(openmct));
 
             openmct.types.addType('flexible-layout', {
                 name: "Flexible Layout",
@@ -52,7 +52,7 @@ define([
                 forSelection: function (selection) {
                     let context = selection[0].context;
 
-                    return (openmct.editor.isEditing && context && context.type &&
+                    return (openmct.editor.isEditing() && context && context.type &&
                         (context.type === 'flexible-layout' || context.type === 'container' || context.type === 'frame'));
                 },
                 toolbar: function (selection) {
@@ -65,6 +65,40 @@ define([
                         addContainer,
                         toggleFrame,
                         separator;
+
+                    addContainer = {
+                        control: "button",
+                        domainObject: parent ? parent.context.item : primary.context.item,
+                        method: parent ? parent.context.addContainer : primary.context.addContainer,
+                        key: "add",
+                        icon: "icon-plus-in-rect",
+                        title: 'Add Container'
+                    };
+
+                    separator = {
+                        control: "separator",
+                        domainObject: selection[0].context.item,
+                        key: "separator"
+                    };
+
+                    toggleContainer = {
+                        control: 'toggle-button',
+                        key: 'toggle-layout',
+                        domainObject: parent ? parent.context.item : primary.context.item,
+                        property: 'configuration.rowsLayout',
+                        options: [
+                            {
+                                value: false,
+                                icon: 'icon-columns',
+                                title: 'Columns'
+                            },
+                            {
+                                value: true,
+                                icon: 'icon-rows',
+                                title: 'Rows'
+                            }
+                        ]
+                    };
 
                     if (primary.context.type === 'frame') {
 
@@ -118,40 +152,6 @@ define([
                         };
 
                     }
-
-                    separator = {
-                        control: "separator",
-                        domainObject: selection[0].context.item,
-                        key: "separator"
-                    };
-
-                    addContainer = {
-                        control: "button",
-                        domainObject: parent ? parent.context.item : primary.context.item,
-                        method: parent ? parent.context.addContainer : primary.context.addContainer,
-                        key: "add",
-                        icon: "icon-plus-in-rect",
-                        title: 'Add Container'
-                    };
-
-                    toggleContainer = {
-                        control: 'toggle-button',
-                        key: 'toggle-layout',
-                        domainObject: parent ? parent.context.item : primary.context.item,
-                        property: 'configuration.rowsLayout',
-                        options: [
-                            {
-                                value: false,
-                                icon: 'icon-columns',
-                                title: 'Columns'
-                            },
-                            {
-                                value: true,
-                                icon: 'icon-rows',
-                                title: 'Rows'
-                            }
-                        ]
-                    };
 
                     let toolbar = [toggleContainer, addContainer, toggleFrame, separator, deleteFrame, deleteContainer];
 

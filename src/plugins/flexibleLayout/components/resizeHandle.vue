@@ -22,7 +22,8 @@
 
 <template>
     <div class="c-fl-frame__resize-handle"
-         :class="[orientation]">
+         :class="[orientation]"
+         @mousedown="mousedown">
     </div>
 </template>
 
@@ -69,12 +70,6 @@ export default {
                 return el.getBoundingClientRect().y;
             }
         },
-    },
-    mounted() {
-        this.$el.addEventListener('mousedown', this.mousedown);
-    },
-    destroyed() {
-        this.$el.removeEventListener('mousedown', this.mousedown);
     }
 }
 </script>

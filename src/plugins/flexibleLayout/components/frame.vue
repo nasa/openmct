@@ -25,7 +25,9 @@
         :class="{
             'is-dragging': isDragging,
             [frame.cssClass]: true
-        }">
+        }"
+        @dragstart="initDrag"
+        @drag="continueDrag">
 
         <div class="c-frame c-fl-frame__drag-wrapper is-selectable is-moveable"
              :class="{'no-frame': noFrame}"
@@ -45,7 +47,8 @@
             </object-view>
 
             <div class="c-fl-frame__size-indicator"
-                 v-if="frame.height && frame.height < 100 && isEditing">
+                 v-if="isEditing"
+                 v-show="frame.height && frame.height < 100">
                 {{frame.height}}%
             </div>
         </div>
@@ -80,13 +83,13 @@ export default {
         FrameHeader
     },
     methods: {
-        dragstart(event) {
+        initDrag(event) {
             this.$emit('frame-drag-from', this.index);
         },
         dropHandler(event) {
             this.$emit('frame-drop-to', this.index, event);
         },
-        drag(event) {
+        continueDrag(event) {
             if (!this.isDragging) {
                 this.isDragging = true;
             }
@@ -102,8 +105,6 @@ export default {
         }
     },
     mounted() {
-        this.$el.addEventListener('dragstart', this.dragstart);
-        this.$el.addEventListener('drag', this.drag);
 
         if (this.frame.domainObject.identifier) {
                 let context = {
@@ -118,10 +119,6 @@ export default {
             
             this.openmct.objects.observe(this.domainObject, `configuration.containers[${this.containerIndex}].frames[${this.index}].noFrame`, this.toggleFrame);
         }
-    },
-    beforeDestroy() {
-        this.$el.removeEventListener('dragstart', this.dragstart);
-        this.$el.addEventListener('drag', this.drag);
     }
 }
 </script>

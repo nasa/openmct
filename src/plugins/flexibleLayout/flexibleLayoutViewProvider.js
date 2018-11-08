@@ -27,7 +27,7 @@ define([
     FlexibleLayoutComponent,
     Vue
 ) {
-    function FlexibleLayout(openmct) {
+    function FlexibleLayoutViewProvider(openmct) {
         return {
             key: 'flexible-layout',
             name: 'FlexibleLayout',
@@ -63,5 +63,5 @@ define([
             }
         };
     }
-    return FlexibleLayout;
+    return FlexibleLayoutViewProvider;
 });
