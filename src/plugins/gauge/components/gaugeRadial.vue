@@ -2,7 +2,7 @@
     <div class="c-gauge">
         <div class="c-gauge__wrapper">
             <svg class="c-gauge__range" viewBox="0 0 512 512">
-                <text font-size="100" transform="translate(256 280)" text-anchor="middle">{{ this.curVal }}</text>
+                <text class="c-gauge__curval" transform="translate(256 310)" text-anchor="middle">{{ this.curVal }}</text>
                 <text font-size="35" transform="translate(105 455) rotate(-45)">{{ this.rangeLow }}</text>
                 <text font-size="35" transform="translate(407 455) rotate(45)" text-anchor="end">{{ this.rangeHigh }}</text>
             </svg>
@@ -42,6 +42,9 @@
     @import "~styles/sass-base";
 
     .c-gauge {
+        @include abs();
+        overflow: hidden;
+
         &__wrapper {
             position: absolute;
             width: 100%;
@@ -60,6 +63,11 @@
             $o: 21%;
             position: absolute;
             fill: rgba(#fff, 0.8);
+        }
+
+        &__curval {
+            font-family: $heroFont;
+            font-size: 170px;
         }
     }
 
@@ -123,10 +131,10 @@
     export default {
         name: "gaugeRadial.vue",
         data() {
-            this.rangeLow = -20;
-            this.rangeHigh= 10;
-            this.curVal = 9.9;
-            this.limit1 = 9;
+            this.rangeLow = 0;
+            this.rangeHigh= 1000;
+            this.curVal = 919;
+            this.limit1 = 980;
         },
         methods: {
             round: function(val, decimals) {
