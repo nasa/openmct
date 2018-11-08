@@ -287,8 +287,8 @@
                 this.makeTelemetryItem(alphanumeric, true);
             },
             getDefaultTelemetryValue(domainObject) {
-                var metadata = this.openmct.telemetry.getMetadata(domainObject);
-                var valueMetadata = metadata.valuesForHints(['range'])[0];
+                let metadata = this.openmct.telemetry.getMetadata(domainObject);
+                let valueMetadata = metadata.valuesForHints(['range'])[0];
 
                 if (valueMetadata === undefined) {
                     valueMetadata = metadata.values().filter(values => {
