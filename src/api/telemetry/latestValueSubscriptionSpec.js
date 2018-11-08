@@ -20,16 +20,102 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 define([
-
+    './latestValueSubscription'
 ], function (
-
+    latestValueSubscription
 ) {
 
     describe("latestValueSubscription", function () {
 
+        var openmct;
+        var telemetryAPI;
+        var formatMap;
+        var pendingRequests;
+        var subscriptions;
+        var domainObject;
+        var callback;
+        var unsubscribe;
 
         beforeEach(function () {
+            openmct = {
+                time: jasmine.createSpyObj('timeAPI', [
+                    'clock',
+                    'timeSystem',
+                    'bounds',
+                    'on',
+                    'off'
+                ])
+            };
 
+            openmct.time.timeSystem.and.return({
+                key: 'testKey'
+            });
+
+            telemetryAPI = jasmine.createSpyObj('telemetryAPI', [
+                'getMetadata',
+                'getFormatMap',
+                'request',
+                'subscribe'
+            ]);
+
+            telemetryAPI.getMetadata.and.return('metadata');
+
+            formatMap = {
+                testKey: jasmine.createSpyObj('testFormatter', ['parse']),
+                otherKey: jasmine.createSpyObj('otherFormatter', ['parse'])
+            };
+            telemetryAPI.getFormatMap.and.return(formatMap);
+
+            pendingRequests = [];
+            telemetryAPI.request.and.callFake(function (domainObject, options) {
+                var request = {
+                    domainObject: domainObject,
+                    options: options
+                };
+                request.promise = new Promise(function (resolve, reject)) {
+                    request.resolve = resolve;
+                    request.reject = reject;
+                });
+                pendingRequests.push(request);
+                return request.promise;
+            });
+
+            subscriptions = [];
+            telemetryAPI.subscribe.and.callFake(function (domainObject, callback) {
+                var subscription = {
+                    domainObject: domainObject,
+                    callback: callback,
+                    unsubscribe: jasmine.createSpy('unsubscribe')
+                };
+                subscriptions.push(subscription);
+                return subscription.unsubscribe;
+            });
+
+            callback = jasmine.createSpy('callback');
+
+            domainObject = {};
+        });
+
+
+        // A simple test case to make sure we have appropriate mocks.
+        it("requests, subscribes, and unsubscribes", function () {
+            var unsubscribe = latestValueSubscription(
+                domainObject,
+                callback,
+                telemetryAPI,
+                openmct
+            );
+
+            expect(unsubscribe).toEqual(jasmine.any(Function));
+            expect(telemetryAPI.request)
+                .toHaveBeenCalledWith(domainObject, jasmine.any(Object))
+            expect(telemetryAPI.subscribe)
+                .toHaveBeenCalledWith(domainObject, jasmine.any(Function))
+            expect(subscriptions[0].unsubscribe).not.toHaveBeenCalled();
+
+            unsubscribe();
+
+            expect(subscriptions[0].unsubscribe).toHaveBeenCalled();
         });
 
         /** TODO:
@@ -49,6 +135,17 @@ define([
          *
         */
         describe("no clock (AKA fixed)", function () {
+            var unsubscribe;
+
+            beforeEach(function () {
+                unsubscribe = latestValueSubscription(
+                    domainObject,
+                    callback,
+                    telemetryAPI,
+                    openmct
+                );
+            });
+
             describe("nominal LAD response", function () {
 
             });
@@ -67,6 +164,18 @@ define([
             describe("no LAD response", function () {
 
             });
+        });
+
+        describe("clock changes", function () {
+
+        });
+
+        describe("timesystem changes", function () {
+
+        });
+
+        describe("on bounds event", function () {
+
         });
     });
 
