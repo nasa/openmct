@@ -269,6 +269,10 @@ body.desktop .has-local-controls {
         border: $editBorderDrilledIn;
     }
 
+    *[s-selected] .is-moveable {
+        cursor: move;
+    }
+
     .u-links {
         // Applied in markup to objects that provide links. Disable while editing.
         pointer-events: none;
