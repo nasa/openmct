@@ -104,7 +104,7 @@ define([], function () {
                             control: "color-picker",
                             domainObject: domainObject,
                             property: path + ".color",
-                            icon: "icon-T",
+                            icon: "icon-font",
                             mandatory: true,
                             title: "Set text color",
                             preventNone: true
