@@ -97,7 +97,7 @@ export default {
                 frameObject;
 
             if (domainObject) {
-                frameObject = new Frame(JSON.parse(domainObject), 50);
+                frameObject = new Frame(JSON.parse(domainObject));
             }
 
             this.$emit('frame-drop-to', this.index, frameIndex, frameObject);
