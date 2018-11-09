@@ -115,9 +115,14 @@ export default {
                 index: this.index
             }
 
-            this.openmct.selection.selectable(this.$refs.frame, context, false);
+            this.unsubscribeSelection = this.openmct.selection.selectable(this.$refs.frame, context, false);
             
             this.openmct.objects.observe(this.domainObject, `configuration.containers[${this.containerIndex}].frames[${this.index}].noFrame`, this.toggleFrame);
+        }
+    },
+    beforeDestroy() {
+        if (this.unsubscribeSelection) {
+            this.unsubscribeSelection();
         }
     }
 }

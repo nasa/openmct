@@ -205,7 +205,10 @@ export default {
             type: 'container'
         }
 
-        this.openmct.selection.selectable(this.$el, context, false);
+        this.unsubscribeSelection = this.openmct.selection.selectable(this.$el, context, false);
+    }, 
+    beforeDestroy() {
+        this.unsubscribeSelection();
     }
 }
 </script>

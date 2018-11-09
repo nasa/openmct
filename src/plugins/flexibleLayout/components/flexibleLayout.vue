@@ -665,7 +665,7 @@ export default {
             type: 'flexible-layout'
         }
 
-        this.openmct.selection.selectable(this.$el, context, true);
+        this.unsubscribeSelection = this.openmct.selection.selectable(this.$el, context, true);
 
         this.openmct.objects.observe(this.domainObject, 'configuration.rowsLayout', this.toggleLayoutDirection);
         this.openmct.editor.on('isEditing', this.isEditingHandler);
@@ -673,7 +673,9 @@ export default {
         document.addEventListener('dragstart', this.dragstartHandler);
         document.addEventListener('dragend', this.dragendHandler);
     },
-    destroyed() {
+    beforeDestroy() {
+        this.unsubscribeSelection();
+
         this.openmct.editor.off('isEditing', this.isEditingHandler);
         document.removeEventListener('dragstart', this.dragstartHandler);
         document.removeEventListener('dragend', this.dragendHandler);
