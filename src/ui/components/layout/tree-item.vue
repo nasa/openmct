@@ -49,8 +49,12 @@
             // TODO: should support drag/drop composition
             // TODO: set isAlias per tree-item
 
-            this.composition = this.openmct.composition.get(this.node.object);
-            if (this.composition) {
+            this.domainObject = this.node.object;
+            let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
+                this.domainObject = newObject;
+            });
+            this.$once('hook:destroyed', removeListener);
+            if (this.openmct.composition.get(this.node.object)) {
                 this.hasChildren = true;
             }
         },
@@ -68,7 +72,7 @@
                 }
                 this.expanded = !this.expanded;
                 if (!this.loaded && !this.isLoading) {
-                    this.composition = this.openmct.composition.get(this.node.object);
+                    this.composition = this.openmct.composition.get(this.domainObject);
                     this.composition.on('add', this.addChild);
                     this.composition.on('remove', this.removeChild);
                     this.composition.load().then(this.finishLoading());

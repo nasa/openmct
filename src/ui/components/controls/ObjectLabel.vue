@@ -5,7 +5,7 @@
     :href="objectLink">
     <div class="c-tree__item__type-icon"
         :class="typeClass"></div>
-    <div class="c-tree__item__name">{{ domainObject.name }}</div>
+    <div class="c-tree__item__name">{{ observedObject.name }}</div>
 </a>
 </template>
 
@@ -18,11 +18,24 @@ export default {
     mixins: [ContextMenu, ObjectLink],
     inject: ['openmct'],
     props: {
-        'domainObject': Object,
+        domainObject: Object
+    },
+    data() {
+        return {
+            observedObject: this.domainObject
+        };
+    },
+    mounted() {
+        if (this.observedObject) {
+            let removeListener = this.openmct.objects.observe(this.observedObject, '*', (newObject) => {
+                this.observedObject = newObject;
+            });
+            this.$once('hook:destroyed', removeListener);
+        }
     },
     computed: {
         typeClass() {
-            let type = this.openmct.types.get(this.domainObject.type);
+            let type = this.openmct.types.get(this.observedObject.type);
             if (!type) {
                 return 'icon-object-unknown';
             }
@@ -31,7 +44,7 @@ export default {
     },
     methods: {
         dragStart(event) {
-            event.dataTransfer.setData("domainObject", JSON.stringify(this.domainObject));
+            event.dataTransfer.setData("domainObject", JSON.stringify(this.observedObject));
         }
     }
 }
