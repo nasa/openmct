@@ -70,7 +70,7 @@ import FrameHeader from '../../../ui/components/utils/frameHeader.vue';
 
 export default {
     inject: ['openmct', 'domainObject'],
-    props: ['frame', 'index', 'containerIndex', 'size', 'isEditing', 'isDragging'],
+    props: ['frame', 'index', 'containerIndex', 'isEditing', 'isDragging'],
     data() {
         return {
             noFrame: this.frame.noFrame

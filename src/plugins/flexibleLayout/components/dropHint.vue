@@ -24,6 +24,8 @@
     <div>
         <div class="c-drop-hint c-drop-hint--always-show"
              :class="{'is-mouse-over': isMouseOver}"
+             @dragenter="dragenter"
+             @dragleave="dragleave"
              @drop="dropHandler">
         </div>
     </div>
@@ -51,14 +53,6 @@ export default {
         dropHandler(event) {
             this.$emit('object-drop-to', event, this.index);
         }
-    },
-    mounted() {
-        this.$el.addEventListener('dragenter', this.dragenter);
-        this.$el.addEventListener('dragleave', this.dragleave);
-    },
-    destroyed() {
-        this.$el.removeEventListener('dragenter', this.dragenter);
-        this.$el.removeEventListener('dragleave', this.dragleave);
     }
 }
 </script>

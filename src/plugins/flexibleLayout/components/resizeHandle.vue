@@ -39,7 +39,7 @@ export default {
         mousedown(event) {
             event.preventDefault();
 
-            this.$emit('mousedown', this.index);
+            this.$emit('init-move', this.index);
 
             document.body.addEventListener('mousemove', this.mousemove);
             document.body.addEventListener('mouseup', this.mouseup);
@@ -48,10 +48,10 @@ export default {
             event.preventDefault();
 
             let delta = this.getMousePosition(event) - this.getElSizeFromRect(this.$el);
-            this.$emit('mousemove', this.index, delta, event);
+            this.$emit('move', this.index, delta, event);
         },
         mouseup(event) {
-            this.$emit('mouseup', event);
+            this.$emit('end-move', event);
 
             document.body.removeEventListener('mousemove', this.mousemove);
             document.body.removeEventListener('mouseup', this.mouseup);

@@ -46,9 +46,9 @@
                     v-show="isEditing"
                     :index="index"
                     :orientation="rowsLayout ? 'vertical' : 'horizontal'"
-                    @mousedown="startContainerResizing"
-                    @mousemove="containerResizing"
-                    @mouseup="endContainerResizing">
+                    @init-move="startContainerResizing"
+                    @move="containerResizing"
+                    @end-move="endContainerResizing">
                 </resize-handle>
 
                 <drop-hint
@@ -666,7 +666,6 @@ export default {
         }
 
         this.openmct.selection.selectable(this.$el, context, true);
-        this.$el.click();
 
         this.openmct.objects.observe(this.domainObject, 'configuration.rowsLayout', this.toggleLayoutDirection);
         this.openmct.editor.on('isEditing', this.isEditingHandler);

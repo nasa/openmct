@@ -58,9 +58,9 @@
                     v-show="isEditing"
                     :index="i"
                     :orientation="rowsLayout ? 'horizontal' : 'vertical'"
-                    @mousedown="startFrameResizing"
-                    @mousemove="frameResizing"
-                    @mouseup="endFrameResizing">
+                    @init-move="startFrameResizing"
+                    @move="frameResizing"
+                    @end-move="endFrameResizing">
                 </resize-handle>
             </div>
         </div>
@@ -77,7 +77,7 @@ const MIN_FRAME_SIZE = 5;
 
 export default {
     inject:['openmct', 'domainObject'],
-    props: ['size', 'frames', 'index', 'isEditing', 'isDragging', 'rowsLayout', ''],
+    props: ['size', 'frames', 'index', 'isEditing', 'isDragging', 'rowsLayout'],
     components: {
         FrameComponent,
         ResizeHandle
