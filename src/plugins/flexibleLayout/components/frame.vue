@@ -33,17 +33,19 @@
              :class="{'no-frame': noFrame}"
              draggable="true"
              ref="frame"
-             v-if="frame.domainObject">
+             v-if="frame.domainObjectIdentifier.key">
 
+            <frame-header
              <frame-header 
-                v-if="index !== 0"
+            <frame-header
+                v-if="index !== 0 && frameDomainObject.identifier"
                 ref="dragObject"
-                :domainObject="frame.domainObject">
+                :domainObject="frameDomainObject">
             </frame-header>
 
             <object-view
                 class="c-object-view"
-                :object="frame.domainObject">
+                :object="frameDomainObject">
             </object-view>
 
             <div class="c-fl-frame__size-indicator"
@@ -57,6 +59,7 @@
              v-show="isEditing && isDragging"
              class="c-fl-frame__drop-hint"
              :class="{'is-dragging': isDragging}"
+             :index="index"
              @object-drop-to="dropHandler">
         </drop-hint>
     </div>
@@ -73,6 +76,7 @@ export default {
     props: ['frame', 'index', 'containerIndex', 'isEditing', 'isDragging'],
     data() {
         return {
+            frameDomainObject: {},
             noFrame: this.frame.noFrame
         }
     },
@@ -83,6 +87,25 @@ export default {
         FrameHeader
     },
     methods: {
+        setDomainObject(object) {
+            this.frameDomainObject = object;
+            this.setSelection();
+        },
+        setSelection() {
+           
+            let context = {
+                item: this.frameDomainObject,
+                method: this.deleteFrame,
+                addContainer: this.addContainer,
+                type: 'frame',
+                index: this.index
+            };
+
+            this.unsubscribeSelection = this.openmct.selection.selectable(this.$refs.frame, context, false);
+            
+            this.openmct.objects.observe(this.domainObject, `configuration.containers[${this.containerIndex}].frames[${this.index}].noFrame`, this.toggleFrame);
+
+        },
         initDrag(event) {
             this.$emit('frame-drag-from', this.index);
         },
@@ -105,19 +128,10 @@ export default {
         }
     },
     mounted() {
-
-        if (this.frame.domainObject.identifier) {
-                let context = {
-                item: this.frame.domainObject,
-                method: this.deleteFrame,
-                addContainer: this.addContainer,
-                type: 'frame',
-                index: this.index
-            }
-
-            this.unsubscribeSelection = this.openmct.selection.selectable(this.$refs.frame, context, false);
-            
-            this.openmct.objects.observe(this.domainObject, `configuration.containers[${this.containerIndex}].frames[${this.index}].noFrame`, this.toggleFrame);
+        if (this.frame.domainObjectIdentifier.key) {
+            this.openmct.objects.get(this.frame.domainObjectIdentifier).then((object)=>{
+                this.setDomainObject(object);
+            });
         }
     },
     beforeDestroy() {

@@ -31,6 +31,7 @@
             @dragend="stopContainerDrag">
             <span class="c-fl-container__size-indicator">{{ size }}</span>
         </div>
+
         <div class="c-fl-container__frames-holder">
             <div class="u-contents"
                  v-for="(frame, i) in frames"
@@ -71,6 +72,7 @@
 import FrameComponent from './frame.vue';
 import Frame from '../utils/frame';
 import ResizeHandle from './resizeHandle.vue';
+import DropHint from './dropHint.vue';
 
 const SNAP_TO_PERCENTAGE = 1;
 const MIN_FRAME_SIZE = 5;
@@ -80,7 +82,8 @@ export default {
     props: ['size', 'frames', 'index', 'isEditing', 'isDragging', 'rowsLayout'],
     components: {
         FrameComponent,
-        ResizeHandle
+        ResizeHandle,
+        DropHint
     },
     data() {
         return {
@@ -98,7 +101,7 @@ export default {
                 frameObject;
 
             if (domainObject) {
-                frameObject = new Frame(JSON.parse(domainObject));
+                frameObject = new Frame(JSON.parse(domainObject).identifier);
             }
 
             this.$emit('frame-drop-to', this.index, frameIndex, frameObject);
@@ -157,7 +160,7 @@ export default {
 
             let prompt = this.openmct.overlays.dialog({
                 iconClass: 'alert',
-                message: `This action will remove ${this.frames[frameIndex].domainObject.name} from this Flexible Layout. Do you want to continue?`,
+                message: `This action will remove this frame from this Flexible Layout. Do you want to continue?`,
                 buttons: [
                     {
                         label: 'Ok',

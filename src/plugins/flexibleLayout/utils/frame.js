@@ -1,6 +1,6 @@
 class Frame {
-    constructor(domainObject, height, cssClass) {
-        this.domainObject = domainObject;
+    constructor(domainObjectIdentifier, height, cssClass) {
+        this.domainObjectIdentifier = domainObjectIdentifier;
         this.height = height;
         this.cssClass = cssClass ? cssClass : '';
         this.noFrame = false;
