@@ -37,6 +37,7 @@ define([
     './notebook/plugin',
     './displayLayout/plugin',
     './folderView/plugin',
+    './flexibleLayout/plugin',
     './tabs/plugin',
     '../../platform/features/fixed/plugin'
 ], function (
@@ -56,6 +57,7 @@ define([
     Notebook,
     DisplayLayoutPlugin,
     FolderView,
+    FlexibleLayout,
     Tabs,
     FixedView
 ) {
@@ -171,6 +173,7 @@ define([
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
     plugins.FixedView = FixedView;
+    plugins.FlexibleLayout = FlexibleLayout;
 
     return plugins;
 });

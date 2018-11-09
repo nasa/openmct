@@ -235,8 +235,8 @@ body.desktop .has-local-controls {
 .c-grid {
     pointer-events: none;
 
-    &__x  { @include bgTicks($colorGridLines, 'x'); }
-    &__y  { @include bgTicks($colorGridLines, 'y'); }
+    &__x  { @include bgTicks($editCanvasColorGrid, 'x'); }
+    &__y  { @include bgTicks($editCanvasColorGrid, 'y'); }
 }
 
 /*************************** SELECTION */
@@ -249,15 +249,15 @@ body.desktop .has-local-controls {
 /**************************** EDITING */
 .is-editing {
     *:not(.is-drilled-in).is-selectable {
-        border: $editBorderSelectable;
+        border: $editSelectableBorder;
 
         &:hover {
-            border: $editBorderSelectableHov;
+            border: $editSelectableBorderHov;
         }
 
         &[s-selected],
         &.is-selected {
-            border: $editBorderSelected;
+            border: $editSelectableBorderSelected;
 
             > .c-frame-edit {
                 display: block; // Show the editing rect and handles
@@ -267,6 +267,10 @@ body.desktop .has-local-controls {
 
     *.is-drilled-in {
         border: $editBorderDrilledIn;
+    }
+
+    *[s-selected] .is-moveable {
+        cursor: move;
     }
 
     .u-links {
@@ -284,7 +288,7 @@ body.desktop .has-local-controls {
 
         &__move {
             @include abs();
-            box-shadow: rgba($editColor, 0.5) 0 0 10px;
+            box-shadow: $editMoveableSelectedShdw;
             cursor: move;
             z-index: $z;
         }
@@ -339,10 +343,11 @@ body.desktop .has-local-controls {
         }
     }
 
+    // TODO: move this into DisplayLayout and Fixed Position vue files respectively
     .l-shell__main-container > .l-layout,
     .l-shell__main-container > .c-object-view .l-fixed-position {
         // Target the top-most layout container and color its background
-        background: rgba($editColor, 0.1);
+        background: $editCanvasColorBg;
     }
 
     // Layouts

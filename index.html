@@ -78,6 +78,7 @@
         openmct.install(openmct.plugins.Notebook());
         openmct.install(openmct.plugins.FolderView());
         openmct.install(openmct.plugins.Tabs());
+        openmct.install(openmct.plugins.FlexibleLayout());
         openmct.time.clock('local', {start: -THIRTY_MINUTES, end: 0});
         openmct.time.timeSystem('utc');
         openmct.start();

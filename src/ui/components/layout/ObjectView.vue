@@ -76,14 +76,18 @@ export default {
         },
         onDrop(event) {
             let parentObject = this.currentObject;
-            let childObject = JSON.parse(event.dataTransfer.getData("domainObject"));
+            let d = event.dataTransfer.getData("domainObject");
 
-            if (this.openmct.composition.checkPolicy(parentObject, childObject)){
-                if (!this.openmct.editor.isEditing() && parentObject.type !== 'folder'){
-                    this.openmct.editor.edit();
+            if (d) {
+                let childObject = JSON.parse(d);
+
+                if (this.openmct.composition.checkPolicy(parentObject, childObject)){
+                    if (!this.openmct.editor.isEditing() && parentObject.type !== 'folder'){
+                        this.openmct.editor.edit();
+                    }
+                    parentObject.composition.push(childObject.identifier);
+                    this.openmct.objects.mutate(parentObject, 'composition', parentObject.composition);
                 }
-                parentObject.composition.push(childObject.identifier);
-                this.openmct.objects.mutate(parentObject, 'composition', parentObject.composition);
             }
 
             event.preventDefault();

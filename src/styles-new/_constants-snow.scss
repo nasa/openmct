@@ -88,17 +88,34 @@ $colorTimeSubtle: lighten($colorTime, 20%);
 $colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
 $colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
 
-// Edit Colors
+/************************************************** EDITING */
+// Base Colors
+$dlSpread: 20%;
 $editColor: #00c7c3;
-$editColorFg: $colorBodyFg;
+$editColorBg: darken($editColor, $dlSpread);
+$editColorFg: lighten($editColor, $dlSpread);
+$editColorHov: lighten($editColor, 20%);
+// Canvas
+$editCanvasColorBg: #e6ffff;
+$editCanvasColorGrid: darken($editCanvasColorBg, 10%);
+// Selectable
+$editSelectableColor: darken($colorBodyBg, 10%);
+$editSelectableColorFg: darken($editSelectableColor, 20%);
+$editSelectableColorHov: darken($editSelectableColor, 10%); //darken($colorBodyBg, 20%);
+// Selectable selected
+$editSelectableColorSelected: $editColor; //$editSelectableColorHov;
+$editSelectableColorSelectedFg: lighten($editSelectableColorSelected, 50%);
+$editSelectableColorFg: darken($editSelectableColor, 40%);
+$editSelectableBorder: 1px dotted $editSelectableColor;
+$editSelectableBorderHov: 1px dotted $editColor;
+$editSelectableBorderSelected: 1px solid $editColor;
+$editMoveableSelectedShdw: rgba($editColor, 0.5) 0 0 10px;
+$editBorderDrilledIn: 1px dashed #9971ff;
+
+/************************************************** BROWSING */
 $browseBorderSelectableHov: 1px dotted rgba($colorBodyFg, 0.2);
 $browseShdwSelectableHov: rgba($colorBodyFg, 0.2) 0 0 3px;
 $browseBorderSelected: 1px solid rgba($colorBodyFg, 0.6);
-$editBorderSelectable: 1px dotted rgba($editColor, 1);
-$editBorderSelectableHov: 1px dashed rgba($editColor, 1);
-$editBorderSelected: 1px solid $editColor;
-$editBorderDrilledIn: 1px dashed #ff4d9a;
-$colorGridLines: rgba($editColor, 0.2);
 
 // Icons
 $colorIconAlias: #4af6f3;
@@ -125,9 +142,9 @@ $colorClickIcon: $colorKey;
 $colorClickIconBgHov: rgba($colorKey, 0.2);
 $colorClickIconFgHov: $colorKeyHov;
 $colorDropHint: $colorKey;
-$colorDropHintBg: darken($colorDropHint, 10%);
-$colorDropHintBgHov: $colorDropHint;
-$colorDropHintFg: lighten($colorDropHint, 40%);
+$colorDropHintBg: lighten($colorDropHint, 30%);
+$colorDropHintBgHov: lighten($colorDropHint, 40%);
+$colorDropHintFg: lighten($colorDropHint, 0);
 
 // Menus
 $colorMenuBg: lighten($colorBodyBg, 10%);
