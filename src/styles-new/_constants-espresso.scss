@@ -111,6 +111,7 @@ $editSelectableBorderHov: 1px dotted $editColor;
 $editSelectableBorderSelected: 1px solid $editColor;
 $editMoveableSelectedShdw: rgba($editColor, 0.5) 0 0 10px;
 $editBorderDrilledIn: 1px dashed #9971ff;
+$colorGridLines: rgba($editColor, 0.2);
 
 /************************************************** BROWSING */
 $browseBorderSelectableHov: 1px dotted rgba($colorBodyFg, 0.2);

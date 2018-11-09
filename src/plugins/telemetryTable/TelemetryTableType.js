@@ -29,7 +29,8 @@ define(function () {
         initialize(domainObject) {
             domainObject.composition = [];
             domainObject.configuration = {
-                columns: {}
+                columnWidths: {},
+                hiddenColumns: {}
             };
         }
     };

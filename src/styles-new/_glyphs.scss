@@ -142,6 +142,7 @@
 .icon-flexible-layout {  @include glyphBefore($glyph-icon-flexible-layout); }
 .icon-generator-telemetry {  @include glyphBefore($glyph-icon-generator-telemetry); }
 .icon-generator-events {  @include glyphBefore($glyph-icon-generator-events); }
+.icon-gauge {  @include glyphBefore($glyph-icon-gauge); }
 
 /************************** 12 PX CLASSES */
 // TODO: sync with 16px redo as of 10/25/18
@@ -193,3 +194,4 @@
 .bg-icon-flexible-layout { @include glyphBg($bg-icon-flexible-layout); }
 .bg-icon-generator-telemetry { @include glyphBg($bg-icon-generator-telemetry); }
 .bg-icon-generator-events { @include glyphBg($bg-icon-generator-events); }
+.bg-icon-gauge { @include glyphBg($bg-icon-gauge); }

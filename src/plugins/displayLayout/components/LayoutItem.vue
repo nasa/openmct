@@ -25,17 +25,8 @@
          :style="item.style"
          :class="classObject"
          @dblclick="drill(item.id, $event)">
-        <div class="c-frame__header">
-            <div class="c-frame__header__start">
-                <div class="c-frame__name icon-object">{{ item.domainObject.name }}</div>
-                <div class="c-frame__context-actions c-disclosure-button"></div>
-            </div>
-            <div class="c-frame__header__end">
-                <div class="c-button icon-expand local-controls--hidden"></div>
-            </div>
-        </div>
-        <object-view class="c-frame__object-view"
-                     :object="item.domainObject"></object-view>
+
+        <component :is="item.type" :item="item"></component>
 
         <!-- Drag handles -->
         <div class="c-frame-edit">
@@ -60,68 +51,11 @@
     .c-frame {
         display: flex;
         flex-direction: column;
-        border-width: 1px;
-        border-color: transparent;
-
-        /*************************** HEADER */
-        &__header {
-            display: flex;
-            align-items: center;
-            flex: 0 0 auto;
-            margin-bottom: $interiorMargin;
-
-            > [class*="__"] {
-                display: flex;
-                align-items: center;
-            }
-
-            > * + * {
-                margin-left: $interiorMargin;
-            }
-
-            [class*="__start"] {
-                flex: 1 1 auto;
-                overflow: hidden;
-            }
-
-            [class*="__end"] {
-                //justify-content: flex-end;
-                flex: 0 0 auto;
-
-                [class*="button"] {
-                    font-size: 0.7em;
-                }
-            }
-        }
-
-        &__name {
-            @include ellipsize();
-            flex: 0 1 auto;
-            font-size: 1.2em;
-
-            &:before {
-                // Object type icon
-                flex: 0 0 auto;
-                margin-right: $interiorMarginSm;
-            }
-        }
-
-        /*************************** OBJECT VIEW */
-        &__object-view {
-            flex: 1 1 auto;
-            overflow: auto;
-
-            .c-object-view {
-                .u-fills-container {
-                    // Expand component types that fill a container
-                    @include abs();
-                }
-            }
-        }
+        border: 1px solid transparent;
 
         /*************************** NO-FRAME */
         &.no-frame {
-            > [class*="__header"] {
+            > [class*="contents"] > [class*="__header"] {
                 display: none;
             }
         }
@@ -131,15 +65,14 @@
             border: 1px solid $colorInteriorBorder;
             padding: $interiorMargin;
         }
-
-        // Styles moved to _global.scss;
     }
 </style>
 
 
 <script>
-    import ObjectView from '../../ui/components/layout/ObjectView.vue'
-    import LayoutDrag from './LayoutDrag'
+    import SubobjectView from './SubobjectView.vue'
+    import TelemetryView from './TelemetryView.vue'
+    import LayoutDrag from './../LayoutDrag'
 
     export default {
         inject: ['openmct'],
@@ -148,13 +81,14 @@
             gridSize: Array
         },
         components: {
-            ObjectView
+            SubobjectView,
+            TelemetryView
         },
         computed: {
             classObject: function () {
                 return {
                     'is-drilled-in': this.item.drilledIn,
-                    'no-frame': !this.item.hasFrame
+                    'no-frame': !this.item.config.hasFrame
                 }
             }
         },
@@ -164,7 +98,7 @@
                     $event.stopPropagation();
                 }
 
-                if (!this.isBeingEdited(this.item.domainObject)) {
+                if (!this.openmct.editor.isEditing()) {
                     return;
                 }
 
@@ -179,10 +113,6 @@
 
                 this.$emit('drilledIn', id);
             },
-            isBeingEdited(object) {
-                // TODO: add logic when inEditContext() is implemented in Vue.
-                return true;
-            },
             updatePosition(event) {
                 let currentPosition = [event.pageX, event.pageY];
                 this.initialPosition = this.initialPosition || currentPosition;
@@ -196,7 +126,7 @@
 
                 this.updatePosition(event);
                 this.activeDrag = new LayoutDrag(
-                    this.item.rawPosition,
+                    this.item.config.rawPosition,
                     posFactor,
                     dimFactor,
                     this.gridSize
@@ -208,24 +138,31 @@
                 this.updatePosition(event);
 
                 if (this.activeDrag) {
-                    this.$emit('dragInProgress', this.item.id, this.activeDrag.getAdjustedPosition(this.delta));
+                    this.$emit(
+                        'dragInProgress',
+                        this.item,
+                        this.activeDrag.getAdjustedPosition(this.delta)
+                    );
                 }
             },
             endDrag(event) {
                 document.body.removeEventListener('mousemove', this.continueDrag);
                 document.body.removeEventListener('mouseup', this.endDrag);
                 this.continueDrag(event);
-                this.$emit('endDrag', this.item.id);
+                this.$emit('endDrag', this.item);
                 this.initialPosition = undefined;
                 event.preventDefault();
             }
         },
         mounted() {
+            let context = {
+                item: this.item.domainObject,
+                layoutItem: this.item
+            };
+
             this.removeSelectable = this.openmct.selection.selectable(
                 this.$el,
-                {
-                    item: this.item.domainObject
-                },
+                context,
                 this.item.initSelect
             );
         },
