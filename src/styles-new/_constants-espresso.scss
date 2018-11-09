@@ -96,7 +96,7 @@ $browseShdwSelectableHov: rgba($colorBodyFg, 0.2) 0 0 3px;
 $browseBorderSelected: 1px solid rgba($colorBodyFg, 0.6);
 $editBorderSelectable: 1px dotted rgba($editColor, 1);
 $editBorderSelectableHov: 1px dashed rgba($editColor, 1);
-$editBorderSelected: 1px solid $editColor;
+$editBorderSelected: 1px solid rgba($editColor, 0.7);
 $editBorderDrilledIn: 1px dashed #ff4d9a;
 $colorGridLines: rgba($editColor, 0.2);
 

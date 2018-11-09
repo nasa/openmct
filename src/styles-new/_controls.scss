@@ -386,8 +386,24 @@ input[type=number]::-webkit-outer-spin-button {
     align-items: stretch;
 }
 
+@mixin cToolbarSeparator() {
+    $m: $interiorMargin;
+    $b: 1px;
+    display: block;
+    width: $m + $b; // Allow for border
+    border-right: $b solid $colorInteriorBorder;
+    margin-right: $m;
+}
+
 .c-toolbar {
-    height: 24px; // Need to standardize the height
+    $p: $interiorMargin;
+    border-top: 1px solid $colorInteriorBorder;
+    height: $p + 24px; // Need to standardize the height
+    padding-top: $p;
+
+    &__separator {
+        @include cToolbarSeparator();
+    }
 
     .c-click-icon {
         @include cControl();
@@ -444,14 +460,9 @@ input[type=number]::-webkit-outer-spin-button {
     }
 
     + .c-button-set {
-        $m: $interiorMargin;
-        $b: 1px;
         &:before {
+            @include cToolbarSeparator();
             content: '';
-            display: block;
-            width: $m + $b; // Allow for border
-            border-right: $b solid $colorInteriorBorder;
-            margin-right: $m;
         }
     }
 
