@@ -83,7 +83,7 @@ export default {
         headerIndex: Number,
         isHeaderTitle: Boolean,
         sortOptions: Object,
-        columnWidth: Object,
+        columnWidth: Number,
         hotzone: Boolean
     },
     computed: {
