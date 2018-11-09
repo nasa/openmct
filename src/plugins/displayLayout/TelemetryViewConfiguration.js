@@ -34,7 +34,10 @@ define([],
                 this.domainObject = domainObject;
                 this.alphanumeric = alphanumeric;
                 this.rawPosition = rawPosition;
-                this.openmct = openmct;
+                this.observe = openmct.objects.observe.bind(openmct.objects);
+                this.mutate = function (path, value) {
+                    openmct.objects.mutate(this.domainObject, path, value);
+                }.bind(this);
                 this.mutatePosition = this.mutatePosition.bind(this);
                 this.listeners = [];
             }
@@ -42,7 +45,7 @@ define([],
             mutatePosition() {
                 let path = "configuration.alphanumerics[" + this.alphanumeric.index + "]";
                 this.mutate(path + ".dimensions", this.rawPosition.dimensions);
-                this.mutate(path + ".position", this.rawPosition.position);                   
+                this.mutate(path + ".position", this.rawPosition.position);
             }
 
             attachListeners() {
@@ -56,12 +59,12 @@ define([],
                     'size'
                 ].forEach(property => {
                     this.listeners.push(
-                        this.openmct.objects.observe(this.domainObject, path + "." + property, function (newValue) {
+                        this.observe(this.domainObject, path + "." + property, function (newValue) {
                             this.alphanumeric[property] = newValue;
                         }.bind(this))
                     );
                 });
-                this.listeners.push(this.openmct.objects.observe(this.domainObject, '*', function (obj) {
+                this.listeners.push(this.observe(this.domainObject, '*', function (obj) {
                     this.domainObject = JSON.parse(JSON.stringify(obj));
                 }.bind(this)));
             }
@@ -71,10 +74,6 @@ define([],
                     listener();
                 });
                 this.listeners = [];
-            }
-
-            mutate(path, value) {
-                this.openmct.objects.mutate(this.domainObject, path, value);
             }
 
         }

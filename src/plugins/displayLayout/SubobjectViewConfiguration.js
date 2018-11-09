@@ -35,28 +35,27 @@ define([],
                 this.id = id;
                 this.hasFrame = hasFrame;
                 this.rawPosition = rawPosition;
-                this.openmct = openmct;
                 this.mutatePosition = this.mutatePosition.bind(this);
+                this.observe = openmct.objects.observe.bind(openmct.objects);
+                this.mutate = function (path, value) {
+                    openmct.objects.mutate(this.domainObject, path, value);
+                }.bind(this);
                 this.listeners = [];
             }
 
             mutatePosition() {
                 let path = "configuration.panels[" + this.id + "]";
                 this.mutate(path + ".dimensions", this.rawPosition.dimensions);
-                this.mutate(path + ".position", this.rawPosition.position);                   
-            }
-
-            mutate(path, value) {
-                this.openmct.objects.mutate(this.domainObject, path, value);
+                this.mutate(path + ".position", this.rawPosition.position);
             }
 
             attachListeners() {
                 let path = "configuration.panels[" + this.id + "].hasFrame";
-                this.listeners.push(this.openmct.objects.observe(this.domainObject, path, function (newValue) {
+                this.listeners.push(this.observe(this.domainObject, path, function (newValue) {
                     this.hasFrame = newValue;
                 }.bind(this)));
 
-                this.listeners.push(this.openmct.objects.observe(this.domainObject, '*', function (obj) {
+                this.listeners.push(this.observe(this.domainObject, '*', function (obj) {
                     this.domainObject = JSON.parse(JSON.stringify(obj));
                 }.bind(this)));
             }
