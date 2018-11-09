@@ -114,7 +114,7 @@
                     return {
                         id: this.openmct.objects.makeKeyString(c.identifier),
                         object: c,
-                        path: [c.identifier]
+                        objectPath: [c]
                     };
                 }))
         },

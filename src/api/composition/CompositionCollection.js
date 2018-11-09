@@ -177,7 +177,11 @@ define([
     CompositionCollection.prototype.load = function () {
         return this.provider.load(this.domainObject)
             .then(function (children) {
-                return Promise.all(children.map(this.onProviderAdd, this));
+                return Promise.all(children.map((c) => this.publicAPI.objects.get(c)));
+            }.bind(this))
+            .then(function (childObjects) {
+                childObjects.forEach(c => this.add(c, true));
+                return childObjects;
             }.bind(this))
             .then(function (children) {
                 this.emit('load');

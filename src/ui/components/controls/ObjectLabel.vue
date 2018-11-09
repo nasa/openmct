@@ -2,51 +2,37 @@
 <a class="c-tree__item__label"
     draggable="true"
     @dragstart="dragStart"
-    :href="urlLink">
+    :href="objectLink">
     <div class="c-tree__item__type-icon"
-        :class="cssClass"></div>
+        :class="typeClass"></div>
     <div class="c-tree__item__name">{{ domainObject.name }}</div>
 </a>
 </template>
 
 <script>
 
+import ContextMenu from '../mixins/context-menu';
+import ObjectLink from '../mixins/object-link';
+
 export default {
+    mixins: [ContextMenu, ObjectLink],
     inject: ['openmct'],
     props: {
         'domainObject': Object,
-        'path': Array
     },
     computed: {
-        urlLink() {
-            if (!this.path) {
-                return;
+        typeClass() {
+            let type = this.openmct.types.get(this.domainObject.type);
+            if (!type) {
+                return 'icon-object-unknown';
             }
-            return '#/browse/' + this.path
-                .map(o => this.openmct.objects.makeKeyString(o))
-                .join('/');
-        }
-    },
-    data() {
-        return {
-            cssClass: 'icon-object-unknown'
-        }
-    },
-    mounted() {
-        let type = this.openmct.types.get(this.domainObject.type);
-
-        if (type.definition.cssClass) {
-            this.cssClass = type.definition.cssClass;
-        } else {
-            console.log("Failed to get typeDef.cssClass for object", this.domainObject.name, this.domainObject.type);
+            return type.definition.cssClass;
         }
     },
     methods: {
         dragStart(event) {
             event.dataTransfer.setData("domainObject", JSON.stringify(this.domainObject));
         }
-    },
-    destroyed() {
     }
 }
 </script>

@@ -55,16 +55,19 @@ define(
                 navigatedObject = this.navigationService.getNavigation(),
                 actionMetadata = action.getMetadata ? action.getMetadata() : {};
 
+            // FIXME: need to restore support for changing contextual actions
+            // based on edit mode.
             // if (navigatedObject.hasCapability("editor") && navigatedObject.getCapability("editor").isEditContextRoot()) {
-                if (selectedObject.hasCapability("editor") && selectedObject.getCapability("editor").inEditContext()) {
-                    return this.editModeBlacklist.indexOf(actionMetadata.key) === -1;
-                } else {
-                    //Target is in the context menu
-                    return this.nonEditContextBlacklist.indexOf(actionMetadata.key) === -1;
-                }
+                // if (selectedObject.hasCapability("editor") && selectedObject.getCapability("editor").inEditContext()) {
+                //     return this.editModeBlacklist.indexOf(actionMetadata.key) === -1;
+                // } else {
+                //     //Target is in the context menu
+                //     return this.nonEditContextBlacklist.indexOf(actionMetadata.key) === -1;
+                // }
             // } else {
             //     return true;
             // }
+            return true;
         };
 
         return EditContextualActionPolicy;
