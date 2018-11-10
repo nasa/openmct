@@ -41,6 +41,7 @@ define([
     './styles-new/core.scss',
     './styles-new/notebook.scss',
     './ui/components/layout/Layout.vue',
+    '../platform/core/src/capabilities/ContextualDomainObject',
     'vue'
 ], function (
     EventEmitter,
@@ -63,6 +64,7 @@ define([
     coreStyles,
     NotebookStyles,
     Layout,
+    ContextualDomainObject,
     Vue
 ) {
     /**
@@ -239,6 +241,34 @@ define([
         this.legacyBundle.extensions[category] =
             this.legacyBundle.extensions[category] || [];
         this.legacyBundle.extensions[category].push(extension);
+    };
+
+    /**
+     * Return a legacy object, for compatibility purposes only.  This method
+     * will be deprecated and removed in the future.
+     * @private
+     */
+    MCT.prototype.legacyObject = function (domainObject) {
+        if (Array.isArray(domainObject)) {
+            // an array of domain objects. [object, ...ancestors] representing
+            // a single object with a given chain of ancestors.  We instantiate
+            // as a single contextual domain object.
+            return domainObject
+                .map((o) => {
+                    let keyString = objectUtils.makeKeyString(o.identifier);
+                    let oldModel = objectUtils.toOldFormat(o);
+                    return this.$injector.get('instantiate')(oldModel, keyString);
+                })
+                .reverse()
+                .reduce((parent, child) => {
+                    return new ContextualDomainObject(child, parent);
+                });
+
+        } else {
+            let keyString = objectUtils.makeKeyString(domainObject.identifier);
+            let oldModel = objectUtils.toOldFormat(domainObject);
+            return this.$injector.get('instantiate')(oldModel, keyString);
+        }
     };
 
     /**

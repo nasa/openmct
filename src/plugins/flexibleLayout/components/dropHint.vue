@@ -20,21 +20,39 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(function () {
-    function DisplayLayoutType() {
+<template>
+    <div>
+        <div class="c-drop-hint c-drop-hint--always-show"
+             :class="{'is-mouse-over': isMouseOver}"
+             @dragenter="dragenter"
+             @dragleave="dragleave"
+             @drop="dropHandler">
+        </div>
+    </div>
+</template>
+
+<style lang="scss">
+
+</style>
+
+<script>
+export default {
+    props:['index'],
+    data() {
         return {
-            name: "Display Layout",
-            creatable: true,
-            cssClass: 'icon-layout',
-            initialize(domainObject) {
-                domainObject.composition = [];
-                domainObject.configuration = {
-                    panels: {},
-                    alphanumerics: []
-                };
-            }
+            isMouseOver: false
+        }
+    },
+    methods: {
+        dragenter() {
+            this.isMouseOver = true;
+        },
+        dragleave() {
+            this.isMouseOver = false;
+        },
+        dropHandler(event) {
+            this.$emit('object-drop-to', event, this.index);
         }
     }
-
-    return DisplayLayoutType;
-});
+}
+</script>

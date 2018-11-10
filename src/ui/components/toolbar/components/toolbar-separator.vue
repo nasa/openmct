@@ -1,7 +1,5 @@
 <template>
-    <div>
-        <div class="c-button-set"></div>
-    </div>
+    <div class="c-toolbar__separator"></div>
 </template>
 
 <script>

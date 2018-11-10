@@ -1,36 +1,29 @@
 <template>
-    <div class="l-grid-view">
-        <grid-item v-for="(item, index) in items"
-            :key="index"
-            :item="item"
-            :object-path="item.objectPath">
-        </grid-item>
-    </div>
+    <a class="l-grid-view__item c-grid-item"
+        :class="{ 'is-alias': item.isAlias === true }"
+        :href="objectLink">
+        <div class="c-grid-item__type-icon"
+             :class="(item.type.cssClass != undefined) ? 'bg-' + item.type.cssClass : 'bg-icon-object-unknown'">
+        </div>
+        <div class="c-grid-item__details">
+            <!-- Name and metadata -->
+            <div class="c-grid-item__name"
+                 :title="item.model.name">{{item.model.name}}</div>
+            <div class="c-grid-item__metadata"
+                 :title="item.type.name">
+                <span class="c-grid-item__metadata__type">{{item.type.name}}</span>
+            </div>
+        </div>
+        <div class="c-grid-item__controls">
+            <div class="icon-people" title='Shared'></div>
+            <button class="c-click-icon icon-info c-info-button" title='More Info'></button>
+            <div class="icon-pointer-right c-pointer-icon"></div>
+        </div>
+    </a>
 </template>
 
 <style lang="scss">
     @import "~styles/sass-base";
-
-    /******************************* GRID VIEW */
-    .l-grid-view {
-        display: flex;
-        flex-flow: column nowrap;
-        overflow: auto;
-
-        &__item {
-            flex: 0 0 auto;
-            + .l-grid-view__item { margin-top: $interiorMargin; }
-        }
-
-        body.desktop & {
-            flex-flow: row wrap;
-            &__item {
-                height: $gridItemDesk;
-                width: $gridItemDesk;
-                margin: 0 $interiorMargin $interiorMargin 0;
-            }
-        }
-    }
 
     /******************************* GRID ITEMS */
     .c-grid-item {
@@ -157,13 +150,11 @@
 </style>
 
 <script>
-
-import compositionLoader from './composition-loader';
-import GridItem from './GridItem.vue';
+import contextMenu from '../../../ui/components/mixins/context-menu';
+import objectLink from '../../../ui/components/mixins/object-link';
 
 export default {
-    components: {GridItem},
-    mixins: [compositionLoader],
-    inject: ['openmct']
+    mixins: [contextMenu, objectLink],
+    props: ['item']
 }
 </script>

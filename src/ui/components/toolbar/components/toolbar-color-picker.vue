@@ -14,7 +14,7 @@
                 v-if="!this.options.preventNone"
                 @click="select({value: 'transparent'})">
                 <div class="c-palette__item"></div>
-                No fill
+                None
             </div>
             <div class="c-palette__items">
                 <div class="c-palette__item"

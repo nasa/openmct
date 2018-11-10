@@ -1,12 +1,6 @@
 <template>
 </template>
 
-<style lang="scss">
-    .c-object-view {
-        display: contents;
-    }
-</style>
-
 <script>
 import _ from "lodash"
 
@@ -53,7 +47,7 @@ export default {
                 return;
             }
             this.viewContainer = document.createElement('div');
-            this.viewContainer.classList.add('c-object-view');
+            this.viewContainer.classList.add('c-object-view','u-contents');
             this.$el.append(this.viewContainer);
             let provider = this.openmct.objectViews.getByProviderKey(this.viewKey);
             if (!provider) {
@@ -82,14 +76,18 @@ export default {
         },
         onDrop(event) {
             let parentObject = this.currentObject;
-            let childObject = JSON.parse(event.dataTransfer.getData("domainObject"));
+            let d = event.dataTransfer.getData("domainObject");
 
-            if (this.openmct.composition.checkPolicy(parentObject, childObject)){
-                if (!this.openmct.editor.isEditing() && parentObject.type !== 'folder'){
-                    this.openmct.editor.edit();
+            if (d) {
+                let childObject = JSON.parse(d);
+
+                if (this.openmct.composition.checkPolicy(parentObject, childObject)){
+                    if (!this.openmct.editor.isEditing() && parentObject.type !== 'folder'){
+                        this.openmct.editor.edit();
+                    }
+                    parentObject.composition.push(childObject.identifier);
+                    this.openmct.objects.mutate(parentObject, 'composition', parentObject.composition);
                 }
-                parentObject.composition.push(childObject.identifier);
-                this.openmct.objects.mutate(parentObject, 'composition', parentObject.composition);
             }
 
             event.preventDefault();

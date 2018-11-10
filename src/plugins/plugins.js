@@ -37,6 +37,7 @@ define([
     './notebook/plugin',
     './displayLayout/plugin',
     './folderView/plugin',
+    './flexibleLayout/plugin',
     './tabs/plugin',
     './gauge/plugin',
     '../../platform/features/fixed/plugin'
@@ -57,6 +58,7 @@ define([
     Notebook,
     DisplayLayoutPlugin,
     FolderView,
+    FlexibleLayout,
     Tabs,
     Gauge,
     FixedView
@@ -174,6 +176,7 @@ define([
     plugins.Tabs = Tabs;
     plugins.Gauge = Gauge;
     plugins.FixedView = FixedView;
+    plugins.FlexibleLayout = FlexibleLayout;
 
     return plugins;
 });

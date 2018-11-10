@@ -2,51 +2,50 @@
 <a class="c-tree__item__label"
     draggable="true"
     @dragstart="dragStart"
-    :href="urlLink">
+    :href="objectLink">
     <div class="c-tree__item__type-icon"
-        :class="cssClass"></div>
-    <div class="c-tree__item__name">{{ domainObject.name }}</div>
+        :class="typeClass"></div>
+    <div class="c-tree__item__name">{{ observedObject.name }}</div>
 </a>
 </template>
 
 <script>
 
+import ContextMenu from '../mixins/context-menu';
+import ObjectLink from '../mixins/object-link';
+
 export default {
+    mixins: [ContextMenu, ObjectLink],
     inject: ['openmct'],
     props: {
-        'domainObject': Object,
-        'path': Array
-    },
-    computed: {
-        urlLink() {
-            if (!this.path) {
-                return;
-            }
-            return '#/browse/' + this.path
-                .map(o => this.openmct.objects.makeKeyString(o))
-                .join('/');
-        }
+        domainObject: Object
     },
     data() {
         return {
-            cssClass: 'icon-object-unknown'
-        }
+            observedObject: this.domainObject
+        };
     },
     mounted() {
-        let type = this.openmct.types.get(this.domainObject.type);
-
-        if (type.definition.cssClass) {
-            this.cssClass = type.definition.cssClass;
-        } else {
-            console.log("Failed to get typeDef.cssClass for object", this.domainObject.name, this.domainObject.type);
+        if (this.observedObject) {
+            let removeListener = this.openmct.objects.observe(this.observedObject, '*', (newObject) => {
+                this.observedObject = newObject;
+            });
+            this.$once('hook:destroyed', removeListener);
+        }
+    },
+    computed: {
+        typeClass() {
+            let type = this.openmct.types.get(this.observedObject.type);
+            if (!type) {
+                return 'icon-object-unknown';
+            }
+            return type.definition.cssClass;
         }
     },
     methods: {
         dragStart(event) {
-            event.dataTransfer.setData("domainObject", JSON.stringify(this.domainObject));
+            event.dataTransfer.setData("domainObject", JSON.stringify(this.observedObject));
         }
-    },
-    destroyed() {
     }
 }
 </script>

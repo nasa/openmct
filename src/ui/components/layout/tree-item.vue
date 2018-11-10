@@ -7,7 +7,9 @@
                           :expanded="expanded"
                           @click="toggleChildren">
             </view-control>
-            <object-label :domainObject="node.object" :path="node.path"></object-label>
+            <object-label :domainObject="node.object"
+                          :objectPath="node.objectPath">
+            </object-label>
         </div>
         <ul v-if="expanded" class="c-tree">
             <tree-item v-for="child in children"
@@ -47,8 +49,12 @@
             // TODO: should support drag/drop composition
             // TODO: set isAlias per tree-item
 
-            this.composition = this.openmct.composition.get(this.node.object);
-            if (this.composition) {
+            this.domainObject = this.node.object;
+            let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
+                this.domainObject = newObject;
+            });
+            this.$once('hook:destroyed', removeListener);
+            if (this.openmct.composition.get(this.node.object)) {
                 this.hasChildren = true;
             }
         },
@@ -66,7 +72,7 @@
                 }
                 this.expanded = !this.expanded;
                 if (!this.loaded && !this.isLoading) {
-                    this.composition = this.openmct.composition.get(this.node.object);
+                    this.composition = this.openmct.composition.get(this.domainObject);
                     this.composition.on('add', this.addChild);
                     this.composition.on('remove', this.removeChild);
                     this.composition.load().then(this.finishLoading());
@@ -76,12 +82,13 @@
                 this.children.push({
                     id: this.openmct.objects.makeKeyString(child.identifier),
                     object: child,
-                    path: this.node.path.concat([child.identifier])
+                    objectPath: [child].concat(this.node.objectPath)
                 });
             },
-            removeChild(child) {
-                // TODO: remove child on remove event.
-                console.log('Tree should remove child', child);
+            removeChild(identifier) {
+                let removeId = this.openmct.objects.makeKeyString(identifier);
+                this.children = this.children
+                    .filter(c => c.id !== removeId);
             },
             finishLoading () {
                 this.isLoading = false;

@@ -20,57 +20,48 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Layout from './components/DisplayLayout.vue'
-import Vue from 'vue'
-import objectUtils from '../../api/objects/object-utils.js'
-import DisplayLayoutType from './DisplayLayoutType.js'
-import DisplayLayoutToolbar from './DisplayLayoutToolbar.js'
-
-export default function () {
-    return function (openmct) {
-        openmct.objectViews.addProvider({
-            key: 'layout.view',
+define([
+    './components/flexibleLayout.vue',
+    'vue'
+], function (
+    FlexibleLayoutComponent,
+    Vue
+) {
+    function FlexibleLayoutViewProvider(openmct) {
+        return {
+            key: 'flexible-layout',
+            name: 'FlexibleLayout',
+            cssClass: 'icon-layout-view',
             canView: function (domainObject) {
-                return domainObject.type === 'layout';
+                return domainObject.type === 'flexible-layout';
             },
             view: function (domainObject) {
                 let component;
+
                 return {
-                    show(container) {
-                        component = new Vue({
+                    show: function (element) {
+                        component =  new Vue({
                             components: {
-                                Layout
+                                FlexibleLayoutComponent: FlexibleLayoutComponent.default
                             },
-                            template: '<layout :domain-object="domainObject"></layout>',
                             provide: {
                                 openmct,
-                                objectUtils
+                                domainObject
                             },
-                            el: container,
-                            data () {
-                                return {
-                                    domainObject: domainObject
-                                }
-                            }
+                            el: element,
+                            template: '<flexible-layout-component></flexible-layout-component>'
                         });
                     },
-                    destroy() {
+                    destroy: function (element) {
                         component.$destroy();
+                        component = undefined;
                     }
                 };
             },
-            priority() {
-                return 100;
+            priority: function () {
+                return 1;
             }
-        });
-        openmct.types.addType('layout', DisplayLayoutType());
-        openmct.toolbars.addProvider(new DisplayLayoutToolbar(openmct));
-        openmct.composition.addPolicy((parent, child) => {
-            if (parent.type === 'layout' && child.type === 'folder') {
-                return false;
-            } else {
-                return true;
-            }
-        });
+        };
     }
-}
+    return FlexibleLayoutViewProvider;
+});

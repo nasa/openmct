@@ -1,0 +1,72 @@
+<template>
+    <tr class="c-list-item"
+        :class="{ 'is-alias': item.isAlias === true }"
+        @click="navigate">
+        <td class="c-list-item__name">
+            <a :href="objectLink" ref="objectLink">
+                <div class="c-list-item__type-icon"
+                     :class="item.type.cssClass"></div>
+                {{item.model.name}}
+            </a>
+        </td>
+        <td class="c-list-item__type">{{ item.type.name }}</td>
+        <td class="c-list-item__date-created">{{ formatTime(item.model.persisted, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z</td>
+        <td class="c-list-item__date-updated">{{ formatTime(item.model.modified, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z</td>
+    </tr>
+</template>
+
+<style lang="scss">
+    @import "~styles/sass-base";
+
+    /******************************* LIST ITEM */
+    .c-list-item {
+        &__name {
+            @include ellipsize();
+        }
+
+        &__type-icon {
+            color: $colorKey;
+            display: inline-block;
+            width: 1em;
+            margin-right:$interiorMarginSm;
+        }
+
+        &.is-alias {
+            // Object is an alias to an original.
+            [class*='__type-icon'] {
+                &:after {
+                    color: $colorIconAlias;
+                    content: $glyph-icon-link;
+                    font-family: symbolsfont;
+                    display: block;
+                    position: absolute;
+                    text-shadow: rgba(black, 0.5) 0 1px 2px;
+                    top: auto; left: -1px; bottom: 1px; right: auto;
+                    transform-origin: bottom left;
+                    transform: scale(0.65);
+                }
+            }
+        }
+    }
+
+</style>
+
+<script>
+
+import moment from 'moment';
+import contextMenu from '../../../ui/components/mixins/context-menu';
+import objectLink from '../../../ui/components/mixins/object-link';
+
+export default {
+    mixins: [contextMenu, objectLink],
+    props: ['item'],
+    methods: {
+        formatTime(timestamp, format) {
+            return moment(timestamp).format(format);
+        },
+        navigate() {
+            this.$refs.objectLink.click();
+        }
+    }
+}
+</script>

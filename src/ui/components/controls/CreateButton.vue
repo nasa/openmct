@@ -91,19 +91,22 @@
                 // 2. Get legacy type from legacy api
                 // 3. Instantiate create action with type, parent, context
                 // 4. perform action.
-                let legacyContextualParent = this.convertToLegacy(openmct.router.path[0]);
-                let legacyType = openmct.$injector.get('typeService').getType(item.key);
-                let context = {
-                    key: "create",
-                    domainObject: legacyContextualParent // should be same as parent object.
-                };
-                let action = new CreateAction(
-                    legacyType,
-                    legacyContextualParent,
-                    context,
-                    this.openmct
-                );
-                return action.perform();
+                return this.openmct.objects.get(openmct.router.path[0].identifier)
+                    .then((currentObject) => {
+                        let legacyContextualParent = this.convertToLegacy(currentObject);
+                        let legacyType = openmct.$injector.get('typeService').getType(item.key);
+                        let context = {
+                            key: "create",
+                            domainObject: legacyContextualParent // should be same as parent object.
+                        };
+                        let action = new CreateAction(
+                            legacyType,
+                            legacyContextualParent,
+                            context,
+                            this.openmct
+                        );
+                        return action.perform();
+                    });
             },
             convertToLegacy (domainObject) {
                 let keyString = objectUtils.makeKeyString(domainObject.identifier);
