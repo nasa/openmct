@@ -24,6 +24,31 @@
 
 @import "constants";
 
+// FONTS
+@import url('https://fonts.googleapis.com/css?family=Chakra+Petch:400,600,700|Michroma|Teko:400,700');
+
+$heroFont: "Helvetica Neue", Helvetica, Arial, sans-serif;
+$headerFont: $heroFont;
+$bodyFont: $heroFont;
+
+@mixin heroFont($size: 1em) {
+    $mult: 1;
+    font-family: $heroFont;
+    font-size: $size * $mult;
+}
+
+@mixin headerFont($size: 1em) {
+    $mult: 1;
+    font-family: $headerFont;
+    font-size: $size * $mult;
+}
+
+@mixin bodyFont($size: 1em) {
+    $mult: 1;
+    font-family: $bodyFont;
+    font-size: $size * $mult;
+}
+
 // Functions
 @function buttonBg($c: $colorBtnBg) {
     @return $c;
