@@ -118,7 +118,7 @@ button {
         font-family: symbolsfont;
         font-size: 1rem * $s;
         position: absolute;
-        transform-origin: floor(($d / 2) * $s); // This is slightly better than 'center'
+        transform-origin: center;
         transition: transform 100ms ease-in-out;
     }
 

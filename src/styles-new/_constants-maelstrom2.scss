@@ -64,7 +64,7 @@ $basicCr: 4px;
 
 // Base colors
 $colorBodyBg: #393939;
-$colorBodyFg: #aaa;
+$colorBodyFg: #ccc;
 $colorGenBg: #222;
 $colorHeadBg: #262626;
 $colorHeadFg: $colorBodyFg;
@@ -283,7 +283,7 @@ $colorItemTreeSelectedBg: darken($colorKey, 15%);
 $colorItemTreeSelectedFg: $colorBodyBg;
 $colorItemTreeEditingBg: $editColor;
 $colorItemTreeEditingFg: $editColorFg;
-$colorItemTreeVC: $colorBodyFg;
+$colorItemTreeVC: rgba($colorBodyFg, 0.5);
 $colorItemTreeVCHover: $colorKey;
 $shdwItemTreeIcon: none;
 
