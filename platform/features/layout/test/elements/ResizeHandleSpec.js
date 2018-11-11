@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,10 +25,12 @@ define(
     function (ResizeHandle) {
 
         var TEST_MIN_WIDTH = 4,
-            TEST_MIN_HEIGHT = 2;
+            TEST_MIN_HEIGHT = 2,
+            TEST_GRID_SIZE = [34, 81];
 
         describe("A fixed position drag handle", function () {
             var testElement,
+                mockElementProxy,
                 handle;
 
             beforeEach(function () {
@@ -39,12 +41,18 @@ define(
                     height: 36,
                     useGrid: true
                 };
+                mockElementProxy = jasmine.createSpyObj('elementProxy', [
+                    'getGridSize',
+                    'getMinWidth',
+                    'getMinHeight'
+                ]);
+                mockElementProxy.getGridSize.and.returnValue(TEST_GRID_SIZE);
+                mockElementProxy.getMinWidth.and.returnValue(TEST_MIN_WIDTH);
+                mockElementProxy.getMinHeight.and.returnValue(TEST_MIN_HEIGHT);
 
                 handle = new ResizeHandle(
-                    testElement,
-                    TEST_MIN_WIDTH,
-                    TEST_MIN_HEIGHT,
-                    [34,81]
+                    mockElementProxy,
+                    testElement
                 );
             });
 
@@ -77,7 +85,7 @@ define(
             });
 
             it("returns the correct grid size", function () {
-                expect(handle.getGridSize()).toEqual([34,81]);
+                expect(handle.getGridSize()).toEqual(TEST_GRID_SIZE);
             });
 
         });

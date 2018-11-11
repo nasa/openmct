@@ -146,13 +146,17 @@ define([
                     this.updateStats(seriesStats);
                 }
             }, this);
+            this.listenTo(series, 'change:yKey', function () {
+                this.updateFromSeries(this.seriesCollection);
+            }, this);
         },
         untrackSeries: function (series) {
             this.stopListening(series);
             this.resetStats();
+            this.updateFromSeries(this.seriesCollection);
         },
         toggleAutoscale: function (autoscale) {
-            if (autoscale) {
+            if (autoscale && this.has('stats')) {
                 this.set('displayRange', this.applyPadding(this.get('stats')));
             } else {
                 this.set('displayRange', this.get('range'));
@@ -162,8 +166,13 @@ define([
          * Update yAxis format, values, and label from known series.
          */
         updateFromSeries: function (series) {
+            var plotModel = this.plot.get('domainObject');
+            var label = _.get(plotModel, 'configuration.yAxis.label');
             var sampleSeries = series.first();
             if (!sampleSeries) {
+                if (!label) {
+                    this.unset('label');
+                }
                 return;
             }
 
@@ -172,9 +181,6 @@ define([
             var yFormat = sampleSeries.formats[yKey];
             this.set('format', yFormat.format.bind(yFormat));
             this.set('values', yMetadata.values);
-
-            var plotModel = this.plot.get('domainObject');
-            var label = _.get(plotModel, 'configuration.xAxis.label');
             if (!label) {
                 var labelUnits = series.map(function (s) {
                     return s.metadata.value(s.get('yKey')).units;

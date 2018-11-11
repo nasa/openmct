@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,8 +28,8 @@ define(
 
         describe("A fixed position drag handle", function () {
             var mockElementHandle,
-                mockUpdate,
-                mockCommit,
+                mockConfigPath,
+                mockFixedControl,
                 handle;
 
             beforeEach(function () {
@@ -37,18 +37,23 @@ define(
                     'elementHandle',
                     ['x', 'y','getGridSize']
                 );
-                mockUpdate = jasmine.createSpy('update');
-                mockCommit = jasmine.createSpy('commit');
+                mockElementHandle.x.and.returnValue(6);
+                mockElementHandle.y.and.returnValue(8);
+                mockElementHandle.getGridSize.and.returnValue(TEST_GRID_SIZE);
 
-                mockElementHandle.x.andReturn(6);
-                mockElementHandle.y.andReturn(8);
-                mockElementHandle.getGridSize.andReturn(TEST_GRID_SIZE);
+                mockFixedControl = jasmine.createSpyObj(
+                    'fixedControl',
+                    ['updateSelectionStyle', 'mutate']
+                );
+                mockFixedControl.updateSelectionStyle.and.returnValue();
+                mockFixedControl.mutate.and.returnValue();
+
+                mockConfigPath = jasmine.createSpy('configPath');
 
                 handle = new FixedDragHandle(
                     mockElementHandle,
-                    TEST_GRID_SIZE,
-                    mockUpdate,
-                    mockCommit
+                    mockConfigPath,
+                    mockFixedControl
                 );
             });
 
@@ -74,13 +79,12 @@ define(
                 expect(mockElementHandle.x).toHaveBeenCalledWith(5);
                 expect(mockElementHandle.y).toHaveBeenCalledWith(7);
 
-                // Should have called update once per continueDrag
-                expect(mockUpdate.calls.length).toEqual(2);
+                // Should have called updateSelectionStyle once per continueDrag
+                expect(mockFixedControl.updateSelectionStyle.calls.count()).toEqual(2);
 
-                // Finally, ending drag should commit
-                expect(mockCommit).not.toHaveBeenCalled();
+                // Finally, ending drag should mutate
                 handle.endDrag();
-                expect(mockCommit).toHaveBeenCalled();
+                expect(mockFixedControl.mutate).toHaveBeenCalled();
             });
 
         });

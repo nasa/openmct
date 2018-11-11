@@ -20,14 +20,8 @@ API. Open MCT is also being refactored to minimize the dependencies that using
 Open MCT imposes on developers, such as the current requirement to use
 AngularJS.
 
-This new API has not yet been heavily used and is likely to contain defects.
-You can help by trying it out, and reporting any issues you encounter
-using our GitHub issue tracker. Such issues may include bugs, suggestions,
-missing documentation, or even just requests for help if you're having
-trouble.
-
 We want Open MCT to be as easy to use, install, run, and develop for as
-possible, and your feedback will help us get there!
+possible, and your feedback will help us get there! Feedback can be provided via [GitHub issues](https://github.com/nasa/openmct/issues), or by emailing us at [arc-dl-openmct@mail.nasa.gov](mailto:arc-dl-openmct@mail.nasa.gov).
 
 ## Building and Running Open MCT Locally
 

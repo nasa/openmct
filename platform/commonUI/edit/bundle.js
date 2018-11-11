@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -39,7 +39,6 @@ define([
     "./src/policies/EditableMovePolicy",
     "./src/policies/EditContextualActionPolicy",
     "./src/representers/EditRepresenter",
-    "./src/representers/EditToolbarRepresenter",
     "./src/capabilities/EditorCapability",
     "./src/capabilities/TransactionCapabilityDecorator",
     "./src/services/TransactionManager",
@@ -78,7 +77,6 @@ define([
     EditableMovePolicy,
     EditContextualActionPolicy,
     EditRepresenter,
-    EditToolbarRepresenter,
     EditorCapability,
     TransactionCapabilityDecorator,
     TransactionManager,
@@ -190,6 +188,7 @@ define([
                     "name": "Remove",
                     "description": "Remove this object from its containing object.",
                     "depends": [
+                        "dialogService",
                         "navigationService"
                     ]
                 },
@@ -381,12 +380,6 @@ define([
                     "depends": [
                         "$log"
                     ]
-                },
-                {
-                    "implementation": EditToolbarRepresenter,
-                    "depends": [
-                        "openmct"
-                    ]
                 }
             ],
             "constants": [
@@ -423,6 +416,17 @@ define([
                     "depends": [
                         "transactionService"
                     ]
+                }
+            ],
+            "runs": [
+                {
+                    depends: [
+                        "toolbars[]",
+                        "openmct"
+                    ],
+                    implementation: function (toolbars, openmct) {
+                        toolbars.forEach(openmct.toolbars.addProvider, openmct.toolbars);
+                    }
                 }
             ]
         }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -47,7 +47,7 @@ define(
                     'policyService',
                     ['allow']
                 );
-                policyService.allow.andReturn(true);
+                policyService.allow.and.returnValue(true);
 
                 selectedObjectContextCapability = jasmine.createSpyObj(
                     'selectedObjectContextCapability',
@@ -72,7 +72,7 @@ define(
 
                 selectedObjectContextCapability
                     .getParent
-                    .andReturn(currentParent);
+                    .and.returnValue(currentParent);
 
                 newParent = domainObjectFactory({
                     name: 'newParent'
@@ -94,7 +94,7 @@ define(
 
                 locationService
                     .getLocationFromUser
-                    .andReturn(locationServicePromise);
+                    .and.returnValue(locationServicePromise);
 
                 linkService = new MockLinkService();
             });
@@ -141,7 +141,7 @@ define(
                     it("links object to selected location", function () {
                         locationServicePromise
                             .then
-                            .mostRecentCall
+                            .calls.mostRecent()
                             .args[0](newParent);
 
                         expect(linkService.perform)

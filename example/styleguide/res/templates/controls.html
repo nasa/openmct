@@ -149,12 +149,21 @@
         <h2>Local Controls</h2>
         <div class="cols cols1-1">
             <div class="col">
-                <p>Local controls are typically buttons and selects that provide local control to an individual element. Typically, these controls are hidden in order to not block data display until the user hovers their cursor over an element, when the controls are displayed using a transition fade. Mousing out of the element fades the controls from view.</p>
+                <p>Local controls are typically buttons and selects that provide actions in close proximity to a component.</p>
+                <p>These controls can optionally be hidden to reduce clutter until the user hovers their cursor over an enclosing element. To use this approach, apply the class <code>.has-local-controls</code> to the element that should be aware of the hover and ensure that element encloses <code>.h-local-controls</code>.</p>
             </div>
-            <mct-example><div class="plot-display-area" style="height: 100px; padding: 10px; position: relative;">Hover over me
-    <div class="l-local-controls gl-plot-local-controls t-plot-display-controls">
+            <mct-example><div class="plot-display-area" style="padding: 10px; position: relative;">
+                Some content in here
+    <div class="h-local-controls h-local-controls-overlay-content l-btn-set">
         <a class="s-button icon-arrow-left" title="Restore previous pan/zoom"></a>
-        <a class="s-button icon-arrows-out" title="Reset pan/zoom"></a>
+        <a class="s-button icon-reset" title="Reset pan/zoom"></a>
+    </div>
+</div>
+<div class="plot-display-area has-local-controls" style="padding: 10px; position: relative;">
+    Hover here
+    <div class="h-local-controls h-local-controls-overlay-content local-controls-hidden l-btn-set">
+        <a class="s-button icon-arrow-left" title="Restore previous pan/zoom"></a>
+        <a class="s-button icon-reset" title="Reset pan/zoom"></a>
     </div>
 </div></mct-example>
         </div>

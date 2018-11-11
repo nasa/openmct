@@ -48,7 +48,7 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                     "off"
                 ]
             );
-            mockTimeConductor.bounds.andReturn({start: undefined, end: undefined});
+            mockTimeConductor.bounds.and.returnValue({start: undefined, end: undefined});
 
             mockConductorViewService = jasmine.createSpyObj(
                 "ConductorViewService",
@@ -62,8 +62,8 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                     "off"
                 ]
             );
-            mockConductorViewService.availableModes.andReturn([]);
-            mockConductorViewService.availableTimeSystems.andReturn([]);
+            mockConductorViewService.availableModes.and.returnValue([]);
+            mockConductorViewService.availableTimeSystems.and.returnValue([]);
 
             mockFormatService = jasmine.createSpyObj('formatService', [
                 'getFormat'
@@ -71,17 +71,17 @@ define(['./TimeConductorController'], function (TimeConductorController) {
             mockFormat = jasmine.createSpyObj('format', [
                 'format'
             ]);
-            mockFormatService.getFormat.andReturn(mockFormat);
+            mockFormatService.getFormat.and.returnValue(mockFormat);
             mockLocation = jasmine.createSpyObj('location', [
                 'search'
             ]);
-            mockLocation.search.andReturn({});
+            mockLocation.search.and.returnValue({});
 
             mockTimeSystems = [];
         });
 
         function getListener(target, event) {
-            return target.calls.filter(function (call) {
+            return target.calls.all().filter(function (call) {
                 return call.args[0] === event;
             })[0].args[1];
         }
@@ -167,7 +167,7 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                     min: 100,
                     max: 10
                 };
-                mockTimeConductor.timeSystem.andReturn(timeSystem);
+                mockTimeConductor.timeSystem.and.returnValue(timeSystem);
                 tsListener(timeSystem);
 
                 expect(mockScope.boundsModel.start).toEqual(defaultBounds.start);
@@ -216,7 +216,7 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                     return 1 - Math.pow(rawValue, 1 / 4);
                 }
 
-                mockTimeConductor.timeSystem.andReturn(timeSystem);
+                mockTimeConductor.timeSystem.and.returnValue(timeSystem);
                 //Set zoom defaults
                 tsListener(timeSystem);
 
@@ -292,14 +292,14 @@ define(['./TimeConductorController'], function (TimeConductorController) {
             });
 
             it("sets the mode on scope", function () {
-                mockConductorViewService.availableTimeSystems.andReturn(mockTimeSystems);
+                mockConductorViewService.availableTimeSystems.and.returnValue(mockTimeSystems);
                 controller.setMode(mode);
 
                 expect(mockScope.modeModel.selectedKey).toEqual(mode);
             });
 
             it("sets available time systems on scope when mode changes", function () {
-                mockConductorViewService.availableTimeSystems.andReturn(mockTimeSystems);
+                mockConductorViewService.availableTimeSystems.and.returnValue(mockTimeSystems);
                 controller.setMode(mode);
 
                 expect(mockScope.timeSystemModel.options.length).toEqual(3);
@@ -451,8 +451,8 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                     "tc.endDelta": urlDeltas.end,
                     "tc.timeSystem": urlTimeSystem
                 };
-                mockLocation.search.andReturn(mockSearchObject);
-                mockTimeConductor.timeSystem.andReturn(timeSystem);
+                mockLocation.search.and.returnValue(mockSearchObject);
+                mockTimeConductor.timeSystem.and.returnValue(timeSystem);
 
                 controller = new TimeConductorController(
                     mockScope,
@@ -493,7 +493,7 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                 });
 
                 it("updates the URL with the bounds", function () {
-                    mockConductorViewService.mode.andReturn("fixed");
+                    mockConductorViewService.mode.and.returnValue("fixed");
                     controller.changeBounds({start: 500, end: 600});
                     expect(mockLocation.search).toHaveBeenCalledWith("tc.startBound", 500);
                     expect(mockLocation.search).toHaveBeenCalledWith("tc.endBound", 600);

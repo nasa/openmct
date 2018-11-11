@@ -31,12 +31,12 @@ define(['../../src/input/ObjectSelect'], function (ObjectSelect) {
                 'getComposition'
             ]);
 
-            mockManager.on.andCallFake(function (event, callback) {
+            mockManager.on.and.callFake(function (event, callback) {
                 this.callbacks = this.callbacks || {};
                 this.callbacks[event] = callback;
             });
 
-            mockManager.triggerCallback.andCallFake(function (event, newObj) {
+            mockManager.triggerCallback.and.callFake(function (event, newObj) {
                 if (event === 'add') {
                     this.callbacks.add(newObj);
                 } else {
@@ -44,14 +44,14 @@ define(['../../src/input/ObjectSelect'], function (ObjectSelect) {
                 }
             });
 
-            mockManager.getComposition.andCallFake(function () {
+            mockManager.getComposition.and.callFake(function () {
                 return mockComposition;
             });
 
         });
 
         it('allows setting special keyword options', function () {
-            mockManager.loadCompleted.andReturn(true);
+            mockManager.loadCompleted.and.returnValue(true);
             objectSelect = new ObjectSelect(mockConfig, mockManager, [
                 ['keyword1', 'A special option'],
                 ['keyword2', 'A special option']
@@ -61,32 +61,32 @@ define(['../../src/input/ObjectSelect'], function (ObjectSelect) {
         });
 
         it('waits until the composition fully loads to populate itself', function () {
-            mockManager.loadCompleted.andReturn(false);
+            mockManager.loadCompleted.and.returnValue(false);
             objectSelect = new ObjectSelect(mockConfig, mockManager);
             expect(objectSelect.getSelected()).toEqual('');
         });
 
         it('populates itself with composition objects on a composition load', function () {
-            mockManager.loadCompleted.andReturn(false);
+            mockManager.loadCompleted.and.returnValue(false);
             objectSelect = new ObjectSelect(mockConfig, mockManager);
             mockManager.triggerCallback('load');
             expect(objectSelect.getSelected()).toEqual('key1');
         });
 
         it('populates itself with composition objects if load is already complete', function () {
-            mockManager.loadCompleted.andReturn(true);
+            mockManager.loadCompleted.and.returnValue(true);
             objectSelect = new ObjectSelect(mockConfig, mockManager);
             expect(objectSelect.getSelected()).toEqual('key1');
         });
 
         it('clears its selection state if the object in its config is not in the composition', function () {
-            mockManager.loadCompleted.andReturn(true);
+            mockManager.loadCompleted.and.returnValue(true);
             objectSelect = new ObjectSelect(mockBadConfig, mockManager);
             expect(objectSelect.getSelected()).toEqual('');
         });
 
         it('adds a new option on a composition add', function () {
-            mockManager.loadCompleted.andReturn(true);
+            mockManager.loadCompleted.and.returnValue(true);
             objectSelect = new ObjectSelect(mockConfig, mockManager);
             mockManager.triggerCallback('add', {
                 identifier: {
@@ -99,7 +99,7 @@ define(['../../src/input/ObjectSelect'], function (ObjectSelect) {
         });
 
         it('removes an option on a composition remove', function () {
-            mockManager.loadCompleted.andReturn(true);
+            mockManager.loadCompleted.and.returnValue(true);
             objectSelect = new ObjectSelect(mockConfig, mockManager);
             delete mockComposition.key1;
             mockManager.triggerCallback('remove');

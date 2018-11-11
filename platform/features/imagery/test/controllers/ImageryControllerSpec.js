@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -39,7 +39,7 @@ define(
                 metadata,
                 prefix,
                 controller,
-                hasLoaded,
+                requestPromise,
                 mockWindow,
                 mockElement;
 
@@ -50,7 +50,7 @@ define(
                     ['getId']
                 );
                 newDomainObject = { name: 'foo' };
-                oldDomainObject.getId.andReturn('testID');
+                oldDomainObject.getId.and.returnValue('testID');
                 openmct = {
                     objects: jasmine.createSpyObj('objectAPI', [
                         'get'
@@ -59,7 +59,8 @@ define(
                         'timeSystem',
                         'clock',
                         'on',
-                        'off'
+                        'off',
+                        'bounds'
                     ]),
                     telemetry: jasmine.createSpyObj('telemetryAPI', [
                         'subscribe',
@@ -72,39 +73,41 @@ define(
                     'value',
                     'valuesForHints'
                 ]);
+                metadata.value.and.returnValue("timestamp");
+                metadata.valuesForHints.and.returnValue(["value"]);
+
                 prefix = "formatted ";
                 unsubscribe = jasmine.createSpy('unsubscribe');
-                openmct.telemetry.subscribe.andReturn(unsubscribe);
-                openmct.time.timeSystem.andReturn({
+                openmct.telemetry.subscribe.and.returnValue(unsubscribe);
+                openmct.time.timeSystem.and.returnValue({
                     key: 'testKey'
                 });
                 $scope.domainObject = oldDomainObject;
-                openmct.objects.get.andReturn(Promise.resolve(newDomainObject));
-                openmct.telemetry.getMetadata.andReturn(metadata);
-                openmct.telemetry.getValueFormatter.andCallFake(function (property) {
+                openmct.objects.get.and.returnValue(Promise.resolve(newDomainObject));
+                openmct.telemetry.getMetadata.and.returnValue(metadata);
+                openmct.telemetry.getValueFormatter.and.callFake(function (property) {
                     var formatter =
                         jasmine.createSpyObj("formatter-" + property, ['format']);
                     var isTime = (property === "timestamp");
-                    formatter.format.andCallFake(function (datum) {
+                    formatter.format.and.callFake(function (datum) {
                         return (isTime ? prefix : "") + datum[property];
                     });
                     return formatter;
                 });
-                hasLoaded = false;
-                openmct.telemetry.request.andCallFake(function () {
+
+                requestPromise = new Promise(function (resolve) {
                     setTimeout(function () {
-                        hasLoaded = true;
-                    }, 10);
-                    return Promise.resolve([{
+                        resolve([{
                             timestamp: 1434600258123,
                             value: 'some/url'
                         }]);
+                    }, 10);
                 });
-                metadata.value.andReturn("timestamp");
-                metadata.valuesForHints.andReturn(["value"]);
+
+                openmct.telemetry.request.and.returnValue(requestPromise);
                 mockElement = $(MOCK_ELEMENT_TEMPLATE);
                 mockWindow = jasmine.createSpyObj('$window', ['requestAnimationFrame']);
-                mockWindow.requestAnimationFrame.andCallFake(function (f) {
+                mockWindow.requestAnimationFrame.and.callFake(function (f) {
                     return f();
                 });
 
@@ -118,32 +121,24 @@ define(
 
             describe("when loaded", function () {
                 var callback,
-                    boundsListener;
+                    boundsListener,
+                    bounds;
 
                 beforeEach(function () {
-                    waitsFor(function () {
-                        return hasLoaded;
-                    }, 500);
-
-
-                    runs(function () {
-                        openmct.time.on.calls.forEach(function (call) {
+                    return requestPromise.then(function () {
+                        openmct.time.on.calls.all().forEach(function (call) {
                             if (call.args[0] === "bounds") {
                                 boundsListener = call.args[1];
                             }
                         });
                         callback =
-                            openmct.telemetry.subscribe.mostRecentCall.args[1];
+                            openmct.telemetry.subscribe.calls.mostRecent().args[1];
                     });
                 });
 
-                it("uses LAD telemetry", function () {
+                it("requests history", function () {
                     expect(openmct.telemetry.request).toHaveBeenCalledWith(
-                        newDomainObject,
-                        {
-                            strategy: 'latest',
-                            size: 1
-                        }
+                        newDomainObject, bounds
                     );
                     expect(controller.getTime()).toEqual(prefix + 1434600258123);
                     expect(controller.getImageUrl()).toEqual('some/url');
@@ -204,14 +199,14 @@ define(
                 it("requests telemetry", function () {
                     expect(openmct.telemetry.request).toHaveBeenCalledWith(
                         newDomainObject,
-                        jasmine.any(Object)
+                        bounds
                     );
                 });
 
                 it("unsubscribes and unlistens when scope is destroyed", function () {
                     expect(unsubscribe).not.toHaveBeenCalled();
 
-                    $scope.$on.calls.forEach(function (call) {
+                    $scope.$on.calls.all().forEach(function (call) {
                         if (call.args[0] === '$destroy') {
                             call.args[1]();
                         }
@@ -224,7 +219,7 @@ define(
                 it("listens for bounds event and responds to tick and manual change", function () {
                     var mockBounds = {start: 1434600000000, end: 1434600500000};
                     expect(openmct.time.on).toHaveBeenCalled();
-                    openmct.telemetry.request.reset();
+                    openmct.telemetry.request.calls.reset();
                     boundsListener(mockBounds, true);
                     expect(openmct.telemetry.request).not.toHaveBeenCalled();
                     boundsListener(mockBounds, false);
@@ -232,10 +227,14 @@ define(
                 });
 
                 it ("doesnt append duplicate datum", function () {
-                    var mockDatum = {url: 'image/url', utc: 1434600000000};
+                    var mockDatum  = {value: 'image/url', timestamp: 1434700000000};
+                    var mockDatum2 = {value: 'image/url', timestamp: 1434700000000};
+                    var mockDatum3 = {value: 'image/url', url: 'someval', timestamp: 1434700000000};
                     expect(controller.updateHistory(mockDatum)).toBe(true);
                     expect(controller.updateHistory(mockDatum)).toBe(false);
                     expect(controller.updateHistory(mockDatum)).toBe(false);
+                    expect(controller.updateHistory(mockDatum2)).toBe(false);
+                    expect(controller.updateHistory(mockDatum3)).toBe(false);
                 });
 
                 describe("when user clicks on imagery thumbnail", function () {

@@ -60,8 +60,8 @@ define([
                         "source": "eventGenerator",
                         "domains": [
                             {
-                                "key": "time",
-                                "name": "Time",
+                                "key": "utc",
+                                "name": "Timestamp",
                                 "format": "utc"
                             }
                         ],

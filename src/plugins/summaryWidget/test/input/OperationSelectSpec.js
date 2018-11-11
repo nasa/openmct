@@ -55,68 +55,68 @@ define(['../../src/input/OperationSelect'], function (OperationSelect) {
                 'getOperationText'
             ]);
 
-            mockEvaluator.getOperationKeys.andReturn(Object.keys(mockOperations));
+            mockEvaluator.getOperationKeys.and.returnValue(Object.keys(mockOperations));
 
-            mockEvaluator.getOperationText.andCallFake(function (key) {
+            mockEvaluator.getOperationText.and.callFake(function (key) {
                 return mockOperations[key].text;
             });
 
-            mockEvaluator.operationAppliesTo.andCallFake(function (operation, type) {
+            mockEvaluator.operationAppliesTo.and.callFake(function (operation, type) {
                 return (mockOperations[operation].appliesTo.includes(type));
             });
 
-            mockKeySelect.on.andCallFake(function (event, callback) {
+            mockKeySelect.on.and.callFake(function (event, callback) {
                 this.callbacks = this.callbacks || {};
                 this.callbacks[event] = callback;
             });
 
-            mockKeySelect.triggerCallback.andCallFake(function (event, key) {
+            mockKeySelect.triggerCallback.and.callFake(function (event, key) {
                 this.callbacks[event](key);
             });
 
-            mockManager.on.andCallFake(function (event, callback) {
+            mockManager.on.and.callFake(function (event, callback) {
                 this.callbacks = this.callbacks || {};
                 this.callbacks[event] = callback;
             });
 
-            mockManager.triggerCallback.andCallFake(function (event) {
+            mockManager.triggerCallback.and.callFake(function (event) {
                 this.callbacks[event]();
             });
 
-            mockManager.getTelemetryPropertyType.andCallFake(function (object, key) {
+            mockManager.getTelemetryPropertyType.and.callFake(function (object, key) {
                 return mockPropertyTypes[object][key];
             });
 
-            mockManager.getEvaluator.andReturn(mockEvaluator);
+            mockManager.getEvaluator.and.returnValue(mockEvaluator);
         });
 
         it('waits until the metadata fully loads to populate itself', function () {
-            mockManager.metadataLoadCompleted.andReturn(false);
+            mockManager.metadataLoadCompleted.and.returnValue(false);
             operationSelect = new OperationSelect(mockConfig, mockKeySelect, mockManager);
             expect(operationSelect.getSelected()).toEqual('');
         });
 
         it('populates itself with operations on a metadata load', function () {
-            mockManager.metadataLoadCompleted.andReturn(false);
+            mockManager.metadataLoadCompleted.and.returnValue(false);
             operationSelect = new OperationSelect(mockConfig, mockKeySelect, mockManager);
             mockManager.triggerCallback('metadata');
             expect(operationSelect.getSelected()).toEqual('operation1');
         });
 
         it('populates itself with operations if metadata load is already complete', function () {
-            mockManager.metadataLoadCompleted.andReturn(true);
+            mockManager.metadataLoadCompleted.and.returnValue(true);
             operationSelect = new OperationSelect(mockConfig, mockKeySelect, mockManager);
             expect(operationSelect.getSelected()).toEqual('operation1');
         });
 
         it('clears its selection state if the operation in its config does not apply', function () {
-            mockManager.metadataLoadCompleted.andReturn(true);
+            mockManager.metadataLoadCompleted.and.returnValue(true);
             operationSelect = new OperationSelect(mockBadConfig, mockKeySelect, mockManager);
             expect(operationSelect.getSelected()).toEqual('');
         });
 
         it('populates with the appropriate options when its linked key changes', function () {
-            mockManager.metadataLoadCompleted.andReturn(true);
+            mockManager.metadataLoadCompleted.and.returnValue(true);
             operationSelect = new OperationSelect(mockConfig, mockKeySelect, mockManager);
             mockKeySelect.triggerCallback('change', 'b');
             operationSelect.setSelected('operation2');
@@ -126,14 +126,14 @@ define(['../../src/input/OperationSelect'], function (OperationSelect) {
         });
 
         it('clears its selection on a change if the operation does not apply', function () {
-            mockManager.metadataLoadCompleted.andReturn(true);
+            mockManager.metadataLoadCompleted.and.returnValue(true);
             operationSelect = new OperationSelect(mockConfig, mockKeySelect, mockManager);
             mockKeySelect.triggerCallback('change', 'b');
             expect(operationSelect.getSelected()).toEqual('');
         });
 
         it('maintains its selected state on change if the operation does apply', function () {
-            mockManager.metadataLoadCompleted.andReturn(true);
+            mockManager.metadataLoadCompleted.and.returnValue(true);
             operationSelect = new OperationSelect(mockConfig, mockKeySelect, mockManager);
             mockKeySelect.triggerCallback('change', 'c');
             expect(operationSelect.getSelected()).toEqual('operation1');

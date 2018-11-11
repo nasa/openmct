@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -41,7 +41,7 @@ define(
 
             it("only allows composition for types which can be created/modified", function () {
                 expect(policy.allow(mockObject)).toBeFalsy();
-                mockType.hasFeature.andReturn(true);
+                mockType.hasFeature.and.returnValue(true);
                 expect(policy.allow(mockObject)).toBeTruthy();
                 expect(mockType.hasFeature).toHaveBeenCalledWith('creation');
             });

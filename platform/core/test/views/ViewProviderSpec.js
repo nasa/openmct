@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -116,17 +116,17 @@ define(
                     "type",
                     ["instanceOf", "invoke", "getDefinition"]
                 );
-                capabilities.type.invoke.andReturn(capabilities.type);
+                capabilities.type.invoke.and.returnValue(capabilities.type);
 
                 // Should be included when types match
-                capabilities.type.instanceOf.andReturn(true);
+                capabilities.type.instanceOf.and.returnValue(true);
                 expect(viewProvider.getViews(mockDomainObject))
                     .toEqual([testView]);
                 expect(capabilities.type.instanceOf)
                     .toHaveBeenCalledWith(testType);
 
                 // ...but not when they don't
-                capabilities.type.instanceOf.andReturn(false);
+                capabilities.type.instanceOf.and.returnValue(false);
                 expect(viewProvider.getViews(mockDomainObject))
                     .toEqual([]);
 
@@ -141,17 +141,17 @@ define(
                     "type",
                     ["instanceOf", "invoke", "getDefinition"]
                 );
-                capabilities.type.invoke.andReturn(capabilities.type);
+                capabilities.type.invoke.and.returnValue(capabilities.type);
 
                 // Should be included when view keys match
                 capabilities.type.getDefinition
-                    .andReturn({ views: [testView.key]});
+                    .and.returnValue({ views: [testView.key]});
                 expect(viewProvider.getViews(mockDomainObject))
                     .toEqual([testView]);
 
                 // ...but not when they don't
                 capabilities.type.getDefinition
-                    .andReturn({ views: ["somethingElse"]});
+                    .and.returnValue({ views: ["somethingElse"]});
                 expect(viewProvider.getViews(mockDomainObject))
                     .toEqual([]);
             });

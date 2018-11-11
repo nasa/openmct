@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -39,7 +39,7 @@ define(
                     'policyService',
                     ['allow']
                 );
-                mockPolicyService.allow.andReturn(true);
+                mockPolicyService.allow.and.returnValue(true);
                 linkService = new LinkService(mockPolicyService);
             });
 
@@ -92,7 +92,7 @@ define(
                     });
                     object.id = 'abc';
                     parentCandidate.id = 'xyz';
-                    parentCandidate.hasCapability.andCallFake(function (c) {
+                    parentCandidate.hasCapability.and.callFake(function (c) {
                         return c !== 'composition';
                     });
                     expect(validate()).toBe(false);
@@ -119,13 +119,13 @@ define(
                     });
 
                     it("and returns false", function () {
-                        mockPolicyService.allow.andReturn(true);
+                        mockPolicyService.allow.and.returnValue(true);
                         expect(validate()).toBe(true);
                         expect(mockPolicyService.allow).toHaveBeenCalled();
                     });
 
                     it("and returns true", function () {
-                        mockPolicyService.allow.andReturn(false);
+                        mockPolicyService.allow.and.returnValue(false);
                         expect(validate()).toBe(false);
                         expect(mockPolicyService.allow).toHaveBeenCalled();
                     });
@@ -149,8 +149,8 @@ define(
                         'compositionCapability',
                         ['invoke', 'add']
                     );
-                    compositionCapability.invoke.andReturn(compositionPromise);
-                    compositionCapability.add.andReturn(addPromise);
+                    compositionCapability.invoke.and.returnValue(compositionPromise);
+                    compositionCapability.add.and.returnValue(addPromise);
                     parentModel = {
                         composition: []
                     };
@@ -205,9 +205,9 @@ define(
                     }
 
                     spyOn(linkService, 'validate');
-                    linkService.validate.andReturn(true);
+                    linkService.validate.and.returnValue(true);
                     expect(perform).not.toThrow();
-                    linkService.validate.andReturn(false);
+                    linkService.validate.and.returnValue(false);
                     expect(perform).toThrow();
                 });
             });

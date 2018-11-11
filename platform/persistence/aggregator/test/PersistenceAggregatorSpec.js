@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -60,14 +60,14 @@ define(
                         PERSISTENCE_SERVICE_METHODS
                     );
                     PERSISTENCE_SERVICE_METHODS.forEach(function (m) {
-                        mockProvider[m].andReturn(fakePromise(true));
+                        mockProvider[m].and.returnValue(fakePromise(true));
                     });
-                    mockProvider.listSpaces.andReturn(fakePromise([space]));
+                    mockProvider.listSpaces.and.returnValue(fakePromise([space]));
                     return mockProvider;
                 });
                 mockCallback = jasmine.createSpy();
 
-                mockQ.all.andCallFake(function (fakePromises) {
+                mockQ.all.and.callFake(function (fakePromises) {
                     var result = [];
                     fakePromises.forEach(function (p) {
                         p.then(function (v) {

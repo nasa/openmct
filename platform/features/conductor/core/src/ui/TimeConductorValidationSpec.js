@@ -40,7 +40,7 @@ define(['./TimeConductorValidation'], function (TimeConductorValidation) {
                     end: 20
                 };
 
-                mockTimeConductor.bounds.andReturn(mockBounds);
+                mockTimeConductor.bounds.and.returnValue(mockBounds);
 
             });
             it("Validates start values using Time Conductor", function () {

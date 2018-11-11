@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -46,9 +46,9 @@ define(
                 );
                 mockUnlisten = jasmine.createSpy('unlisten');
 
-                mockStatusService.listen.andReturn(mockUnlisten);
-                mockStatusService.listStatuses.andReturn(testStatusFlags);
-                mockDomainObject.getId.andReturn(testId);
+                mockStatusService.listen.and.returnValue(mockUnlisten);
+                mockStatusService.listStatuses.and.returnValue(testStatusFlags);
+                mockDomainObject.getId.and.returnValue(testId);
 
                 capability = new StatusCapability(
                     mockStatusService,

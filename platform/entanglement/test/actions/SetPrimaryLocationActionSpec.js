@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -43,7 +43,7 @@ define(
                     ['setPrimaryLocation', 'getContextualLocation']
                 );
 
-                mockLocationCapability.getContextualLocation.andReturn(testId);
+                mockLocationCapability.getContextualLocation.and.returnValue(testId);
 
                 testContext = {
                     domainObject: domainObjectFactory({
@@ -58,7 +58,7 @@ define(
             it("is applicable to objects with no location specified", function () {
                 expect(SetPrimaryLocation.appliesTo(testContext))
                     .toBe(true);
-                testContext.domainObject.getModel.andReturn({
+                testContext.domainObject.getModel.and.returnValue({
                     location: "something",
                     name: "some name"
                 });

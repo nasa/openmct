@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,6 +22,9 @@
 .frame {
     $ohH: $btnFrameH;
     $bc: $colorInteriorBorder;
+
+    position: absolute;
+
     &.child-frame.panel {
         z-index: 0; // Needed to prevent child-frame controls from showing through when another child-frame is above
         &:not(.no-frame) {
@@ -61,14 +64,16 @@
         left: $m;
     }
     &.frame-template {
-        .s-button,
-        .s-menu-button {
-            height: $ohH;
-            line-height: $ohH;
-            padding: 0 $interiorMargin;
-            > span,
-            &:before {
-                font-size: 0.65rem;
+        .h-local-controls {
+            .s-button,
+            .s-menu-button {
+                height: $btnFrameH;
+                line-height: $btnFrameH;
+                padding: 0 $interiorMargin;
+                > span,
+                &:before {
+                    font-size: 0.65rem;
+                }
             }
         }
 
@@ -93,8 +98,6 @@
         border-color: transparent;
         .object-browse-bar .right {
             $m: 0;
-            background: rgba(black, 0.3);
-            border-radius: $basicCr;
             padding: $interiorMarginSm;
             position: absolute;
             top: $m; right: $m;
@@ -108,10 +111,23 @@
                 bottom: $m;
                 left: $m;
             }
+
             > .t-frame-inner {
-                > .object-browse-bar .left {
-                    display: none;
+                &.t-object-type-layout {
+                    > .object-browse-bar {
+                        .t-btn-view-large {
+                            // When a nested layout has its frame hidden, don't display a view large button
+                            display: none;
+                        }
+                    }
                 }
+
+                > .object-browse-bar {
+                    .left {
+                        display: none;
+                    }
+                }
+
                 > .object-holder.abs {
                     overflow: hidden;
                     top: 0 !important;
@@ -120,8 +136,8 @@
         }
     }
 
-    &.t-frame-outer .s-input-inline {
-        // Prevent inline inputs from being edited when nested in a Layout
+    &.t-frame-outer .title-label.s-input-inline {
+        // Prevent frame titles from being edited when nested in a Layout
         pointer-events: none !important;
     }
 
@@ -142,7 +158,7 @@
         .l-hyperlink.s-button {
             .label {
                 @include ellipsize();
-                @include transform(translateY(-50%));
+                transform: translateY(-50%);
                 padding: 0 $interiorMargin;
                 position: absolute;
                 min-width: 0;
@@ -158,6 +174,7 @@ body.desktop .frame {
     // Hide local controls initially and show it them on hover when they're in an element that's in a frame context
     // Frame template is used because we need to target the lowest nested frame
     .object-browse-bar .btn-bar {
+        @include trans-prop-nice($props: opacity, $dur: 250ms);
         opacity: 0;
         pointer-events: none;
     }
@@ -166,8 +183,82 @@ body.desktop .frame {
     // Handles the case where we have layouts in layouts.
     &:hover > .object-browse-bar {
         .btn-bar {
+            @include trans-prop-nice($props: opacity, $dur: 10ms);
             opacity: 1;
             pointer-events: inherit;
         }
+    }
+}
+
+.holder-object:not(.s-status-editing) {
+    .l-layout {
+        &.fl-column,
+        &.fl-row,
+        &.fl-wrap,
+        &.fl-phone-best-fit,
+        &.fl-mobile-best-fit {
+            display: flex;
+            flex-wrap: nowrap;
+            align-content: stretch;
+            align-items: stretch;
+            > .frame {
+                display: block;
+                flex: 1 1 auto;
+                width: auto !important;
+                height: auto !important;
+                &.t-object-type-summary-widget {
+                    &.no-frame.t-frame-outer > .t-rep-frame {
+                        &.contents {
+                            // When frame is hidden, add a bit of margin to the contents
+                            $m: $interiorMargin;
+                            top: $m; right: $m; bottom: $m; left: $m;
+                        }
+                    }
+                }
+            }
+        }
+        &.fl-column {
+            flex-direction: column;
+            padding-right: $interiorMargin;
+        }
+        &.fl-row {
+            flex-direction: row;
+            padding-bottom: $interiorMargin;
+        }
+
+        &.fl-wrap {
+            align-content: flex-start;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+    }
+}
+
+.holder-object {
+    .l-layout {
+        &.fl-column,
+        &.fl-row,
+        &.fl-wrap,
+        &.fl-phone-best-fit,
+        &.fl-mobile-best-fit {
+            > .frame {
+                top: auto !important;
+                left: auto !important;
+                position: relative;
+            }
+        }
+    }
+}
+
+body.mobile {
+    .l-layout.fl-mobile-best-fit {
+        flex-wrap: wrap !important;
+        padding: 0 !important;
+    }
+    &.portrait .l-layout.fl-mobile-best-fit {
+        flex-direction: column !important;
+    }
+    &.landscape .l-layout.fl-mobile-best-fit {
+        flex-direction: row !important;
     }
 }

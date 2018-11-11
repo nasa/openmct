@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -39,7 +39,7 @@ define(
                 testPath = "/test/path";
                 testInterval = 12321; // Some number
 
-                mockHttp.get.andReturn(mockPromise);
+                mockHttp.get.and.returnValue(mockPromise);
 
                 indicator = new ElasticIndicator(
                     mockHttp,
@@ -73,7 +73,7 @@ define(
 
                 // Nominal just means getting back an object, without
                 // an error field.
-                mockPromise.then.mostRecentCall.args[0]({ data: {} });
+                mockPromise.then.calls.mostRecent().args[0]({ data: {} });
 
                 // Verify that these values changed;
                 // don't test for specific text.
@@ -92,7 +92,7 @@ define(
 
                 // Nominal just means getting back an object, without
                 // an error field.
-                mockPromise.then.mostRecentCall.args[1]({ data: {} });
+                mockPromise.then.calls.mostRecent().args[1]({ data: {} });
 
                 // Verify that these values changed;
                 // don't test for specific text.

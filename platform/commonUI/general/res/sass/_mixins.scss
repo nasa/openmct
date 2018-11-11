@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-@mixin absPosDefault($offset: 0px, $overflowHidden: hidden) {
-    overflow: $overflowHidden;
+@mixin absPosDefault($offset: 0px, $overflow: hidden) {
+    overflow: $overflow;
     position: absolute;
     top: $offset;
     right: $offset;
@@ -299,7 +299,7 @@
 		color: $ic;
 	}
   @if $bgHov != none {
-      &:not(.disabled):hover {
+      &:not([disabled="true"]):not(.disabled):hover {
           background: $bgHov;
           color: $fgHov;
           >.icon,
@@ -334,7 +334,7 @@
     color: $fg;
 }
 
-@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.6) 0 1px 3px) {
+@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.5) 0 0px 2px) {
     @include s-input($bg, $fg, $shdw);
     border: none;
     outline: none;
@@ -382,7 +382,7 @@
     /* This doesn't work on an element inside an element with absolute positioning that has height: auto */
     //position: relative;
     top: 50%;
-    @include transform(translateY(-50%));
+    transform: translateY(-50%);
 }
 
 @mixin verticalCenterBlock($holderH, $itemH) {

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+.user-environ,
 .browse-area,
 .edit-area,
 .editor {
@@ -46,7 +47,22 @@
     }
 }
 
+
+.status-holder {
+    text-transform: uppercase;
+}
+
+.s-ue-bottom-bar {
+    background: $colorStatusBarBg;
+    color: $colorStatusBarFg;
+    cursor: default;
+    font-size: .7rem;
+}
+
 .user-environ {
+    height: 100%;
+    width: 100%;
+    overflow: hidden !important;
     .browse-area,
     .editor {
         top: 0; left: 0; right: 0; bottom: $ueFooterH;
@@ -77,21 +93,17 @@
         }
     }
 
-    .ue-bottom-bar {
-        @include absPosDefault(0);// New status bar design
+    .l-ue-bottom-bar {
+        $m: $interiorMarginSm;
+        @include absPosDefault(0, $overflow: visible);// New status bar design
         top: auto;
         height: $ueFooterH;
-        line-height: $ueFooterH - ($interiorMargin * 2);
-        background: $colorStatusBarBg;
-        color: lighten($colorBodyBg, 30%);
-        font-size: .7rem;
+        line-height: $ueFooterH - ($m * 2);
         .status-holder {
             box-sizing: border-box;
-            @include absPosDefault($interiorMargin);
-            @include ellipsize();
+            @include absPosDefault($m, $overflow: visible);
             right: 120px;
-            text-transform: uppercase;
-            z-index: 1;
+            z-index: 10;
         }
         .app-logo {
             background-position: right center;
@@ -141,38 +153,36 @@
 body.desktop .pane .mini-tab-icon.toggle-pane {
     $hi: splitterHandleInset($splitterD, $splitterHandleD);
     $paneExpandedOffset: $hi + $splitterHandleD + $uePaneMiniTabW;
-    top: $bodyMargin + ($ueTopBarH - $uePaneMiniTabH)/2;
+    top: 0;
 
     &.toggle-tree.anchor-left.collapsed,
     &.toggle-inspect.anchor-right:not(.collapsed) {
         @extend .icon-arrow-right;
         border-bottom-right-radius: $controlCr;
-        border-top-right-radius: $controlCr;
     }
 
     &.toggle-tree.anchor-left:not(.collapsed),
     &.toggle-inspect.anchor-right.collapsed {
         @extend .icon-arrow-left;
         border-bottom-left-radius: $controlCr;
-        border-top-left-radius: $controlCr;
     }
 
     &.toggle-tree.anchor-left {
         left: 0;
-        @include transform(translateX(-1 * $paneExpandedOffset));
+        transform: translateX(-1 * $paneExpandedOffset);
         &.collapsed {
-            @include transform(translateX(-1 * $ueCollapsedPaneEdgeM));
+            transform: translateX(-1 * $ueCollapsedPaneEdgeM);
         }
     }
 
     &.toggle-inspect.anchor-right {
         right: 0;
-        @include transform(translateX($paneExpandedOffset));
+        transform: translateX($paneExpandedOffset);
         &.flush-right {
-            @include transform(translateX(($uePaneMiniTabW + ceil($splitterD / 2))));
+            transform: translateX(($uePaneMiniTabW + ceil($splitterD / 2)));
         }
         &.collapsed {
-            @include transform(translateX($ueCollapsedPaneEdgeM));
+            transform: translateX($ueCollapsedPaneEdgeM);
         }
     }
 }
@@ -236,7 +246,6 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
     }
 }
 
-.object-browse-bar .s-button,
 .top-bar .buttons-main .s-button,
 .top-bar .s-menu-button,
 .tool-bar .s-button,
@@ -264,7 +273,12 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
 
     .left {
         .l-back {
-            margin-right: $interiorMarginLg;
+            a {
+                display: inline-block;
+                text-align: center;
+                width: 24px;
+            }
+            margin-right: $interiorMargin;
             &.s-status-editing { display: none; }
         }
     }

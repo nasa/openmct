@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -40,7 +40,7 @@ define(
                 mockApp = jasmine.createSpyObj("app", ["service"]);
                 mockLog = jasmine.createSpyObj("$log", ["error", "warn", "info", "debug"]);
 
-                mockApp.service.andCallFake(function (name, value) {
+                mockApp.service.and.callFake(function (name, value) {
                     var factory = value[value.length - 1];
 
                     registered[name] = {
@@ -195,8 +195,8 @@ define(
                 expect(mockApp.service).not.toHaveBeenCalled();
 
                 // Should have gotten one warning for each skipped component
-                expect(mockLog.warn.calls.length).toEqual(2);
-                expect(mockLog.info.calls.length).toEqual(1);
+                expect(mockLog.warn.calls.count()).toEqual(2);
+                expect(mockLog.info.calls.count()).toEqual(1);
             });
 
             it("warns about and skips aggregators with zero providers", function () {

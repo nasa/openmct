@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -39,7 +39,7 @@ define(
                     "gestureService",
                     ["attachGestures"]
                 );
-                gestureService.attachGestures.andReturn(
+                gestureService.attachGestures.and.returnValue(
                     attachedGesture
                 );
                 mctGesture = MCTGesture(gestureService);
@@ -77,7 +77,7 @@ define(
                     '$destroy',
                      jasmine.any(Function)
                 );
-                scope.$on.mostRecentCall.args[1]();
+                scope.$on.calls.mostRecent().args[1]();
                 expect(attachedGesture.destroy).toHaveBeenCalled();
             });
 

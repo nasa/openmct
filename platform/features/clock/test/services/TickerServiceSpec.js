@@ -37,23 +37,23 @@ define(
                 mockNow = jasmine.createSpy('now');
                 mockCallback = jasmine.createSpy('callback');
 
-                mockNow.andReturn(TEST_TIMESTAMP);
+                mockNow.and.returnValue(TEST_TIMESTAMP);
 
                 tickerService = new TickerService(mockTimeout, mockNow);
             });
 
             it("notifies listeners of clock ticks", function () {
                 tickerService.listen(mockCallback);
-                mockNow.andReturn(TEST_TIMESTAMP + 12321);
-                mockTimeout.mostRecentCall.args[0]();
+                mockNow.and.returnValue(TEST_TIMESTAMP + 12321);
+                mockTimeout.calls.mostRecent().args[0]();
                 expect(mockCallback)
                     .toHaveBeenCalledWith(TEST_TIMESTAMP + 12321);
             });
 
             it("allows listeners to unregister", function () {
                 tickerService.listen(mockCallback)(); // Unregister immediately
-                mockNow.andReturn(TEST_TIMESTAMP + 12321);
-                mockTimeout.mostRecentCall.args[0]();
+                mockNow.and.returnValue(TEST_TIMESTAMP + 12321);
+                mockTimeout.calls.mostRecent().args[0]();
                 expect(mockCallback).not
                     .toHaveBeenCalledWith(TEST_TIMESTAMP + 12321);
             });

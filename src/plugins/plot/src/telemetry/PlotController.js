@@ -82,6 +82,10 @@ define([
     };
 
     PlotController.prototype.loadSeriesData = function (series) {
+        if (this.$element[0].offsetWidth === 0) {
+            this.scheduleLoad(series);
+            return;
+        }
         this.startLoading();
         var options = {
             size: this.$element[0].offsetWidth,
@@ -90,6 +94,26 @@ define([
 
         series.load(options)
             .then(this.stopLoading.bind(this));
+    };
+
+    PlotController.prototype.scheduleLoad = function (series) {
+        if (!this.scheduledLoads) {
+            this.startLoading();
+            this.scheduledLoads = [];
+            this.checkForSize = setInterval(function () {
+                if (this.$element[0].offsetWidth === 0) {
+                    return;
+                }
+                this.stopLoading();
+                this.scheduledLoads.forEach(this.loadSeriesData, this);
+                delete this.scheduledLoads;
+                clearInterval(this.checkForSize);
+                delete this.checkForSize;
+            }.bind(this));
+        }
+        if (this.scheduledLoads.indexOf(series) === -1) {
+            this.scheduledLoads.push(series);
+        }
     };
 
     PlotController.prototype.addSeries = function (series) {
@@ -126,6 +150,10 @@ define([
     PlotController.prototype.destroy = function () {
         configStore.untrack(this.config.id);
         this.stopListening();
+        if (this.checkForSize) {
+            clearInterval(this.checkForSize);
+            delete this.checkForSize;
+        }
     };
 
     PlotController.prototype.loadMoreData = function (range, purge) {
@@ -153,7 +181,9 @@ define([
         };
         this.config.xAxis.set('range', newRange);
         if (!isTick) {
+            this.skipReloadOnInteraction = true;
             this.$scope.$broadcast('plot:clearHistory');
+            this.skipReloadOnInteraction = false;
             this.loadMoreData(newRange, true);
         } else {
             // Drop any data that is more than 1x (max-min) before min.
@@ -206,7 +236,9 @@ define([
         var xDisplayRange = this.config.xAxis.get('displayRange');
         var xRange = this.config.xAxis.get('range');
 
-        this.loadMoreData(xDisplayRange);
+        if (!this.skipReloadOnInteraction) {
+            this.loadMoreData(xDisplayRange);
+        }
 
         this.synchronized(xRange.min === xDisplayRange.min &&
                           xRange.max === xDisplayRange.max);
@@ -217,7 +249,7 @@ define([
      */
     PlotController.prototype.exportJPG = function () {
         this.hideExportButtons = true;
-        this.exportImageService.exportJPG(this.$element[0], 'plot.jpg', 'white')
+        this.exportImageService.exportJPG(this.$element[0], 'plot.jpg', 'export-plot')
             .finally(function () {
                 this.hideExportButtons = false;
             }.bind(this));
@@ -228,7 +260,7 @@ define([
      */
     PlotController.prototype.exportPNG = function () {
         this.hideExportButtons = true;
-        this.exportImageService.exportPNG(this.$element[0], 'plot.png', 'white')
+        this.exportImageService.exportPNG(this.$element[0], 'plot.png', 'export-plot')
             .finally(function () {
                 this.hideExportButtons = false;
             }.bind(this));

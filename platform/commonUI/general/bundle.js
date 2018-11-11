@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -34,7 +34,6 @@ define([
     "./src/controllers/ContextMenuController",
     "./src/controllers/ClickAwayController",
     "./src/controllers/ViewSwitcherController",
-    "./src/controllers/BottomBarController",
     "./src/controllers/GetterSetterController",
     "./src/controllers/SelectorController",
     "./src/controllers/ObjectInspectorController",
@@ -49,11 +48,14 @@ define([
     "./src/directives/MCTSplitPane",
     "./src/directives/MCTSplitter",
     "./src/directives/MCTTree",
+    "./src/directives/MCTIndicators",
+    "./src/directives/MCTPreview",
+    "./src/actions/MCTPreviewAction",
     "./src/filters/ReverseFilter",
     "text!./res/templates/bottombar.html",
     "text!./res/templates/controls/action-button.html",
     "text!./res/templates/controls/input-filter.html",
-    "text!./res/templates/indicator.html",
+    "text!./res/templates/angular-indicator.html",
     "text!./res/templates/message-banner.html",
     "text!./res/templates/progress-bar.html",
     "text!./res/templates/controls/time-controller.html",
@@ -69,6 +71,7 @@ define([
     "text!./res/templates/controls/selector.html",
     "text!./res/templates/controls/datetime-picker.html",
     "text!./res/templates/controls/datetime-field.html",
+    "text!./res/templates/preview.html",
     'legacyRegistry'
 ], function (
     UrlService,
@@ -84,7 +87,6 @@ define([
     ContextMenuController,
     ClickAwayController,
     ViewSwitcherController,
-    BottomBarController,
     GetterSetterController,
     SelectorController,
     ObjectInspectorController,
@@ -99,6 +101,9 @@ define([
     MCTSplitPane,
     MCTSplitter,
     MCTTree,
+    MCTIndicators,
+    MCTPreview,
+    MCTPreviewAction,
     ReverseFilter,
     bottombarTemplate,
     actionButtonTemplate,
@@ -119,6 +124,7 @@ define([
     selectorTemplate,
     datetimePickerTemplate,
     datetimeFieldTemplate,
+    previewTemplate,
     legacyRegistry
 ) {
 
@@ -276,13 +282,6 @@ define([
                     ]
                 },
                 {
-                    "key": "BottomBarController",
-                    "implementation": BottomBarController,
-                    "depends": [
-                        "indicators[]"
-                    ]
-                },
-                {
                     "key": "GetterSetterController",
                     "implementation": GetterSetterController,
                     "depends": [
@@ -327,7 +326,8 @@ define([
                     "key": "mctDrag",
                     "implementation": MCTDrag,
                     "depends": [
-                        "$document"
+                        "$document",
+                        "agentService"
                     ]
                 },
                 {
@@ -394,7 +394,37 @@ define([
                 {
                     "key": "mctTree",
                     "implementation": MCTTree,
-                    "depends": ['gestureService']
+                    "depends": ['gestureService', 'openmct']
+                },
+                {
+                    "key": "mctIndicators",
+                    "implementation": MCTIndicators,
+                    "depends": ['openmct']
+                },
+                {
+                    "key": "mctPreview",
+                    "implementation": MCTPreview,
+                    "depends": [
+                        "$document"
+                    ]
+                }
+            ],
+            "actions": [
+                {
+                    "key": "mct-preview-action",
+                    "implementation": MCTPreviewAction,
+                    "name": "Preview",
+                    "cssClass": "hide-in-t-main-view icon-eye-open",
+                    "description": "Preview in large dialog",
+                    "category": [
+                        "contextual",
+                         "view-control"
+                    ],
+                    "depends": [
+                      "$compile",
+                      "$rootScope"
+                    ],
+                    "priority": "preferred"
                 }
             ],
             "constants": [
@@ -510,6 +540,10 @@ define([
                 {
                     "key": "object-inspector",
                     "template": objectInspectorTemplate
+                },
+                {
+                    "key": "mct-preview",
+                    "template": previewTemplate
                 }
             ],
             "controls": [

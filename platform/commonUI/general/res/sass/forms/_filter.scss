@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -87,7 +87,6 @@
     $iconD: $formInputH - ($iconEdgeM * 2);
     @extend .icon-magnify;
     // Adds a magnifying glass before, holds an input and a clear button
-    display: inline-block;
     position: relative;
 
     input[type="search"] {
@@ -97,19 +96,25 @@
     .menu-icon,
     &:before {
         box-sizing: border-box;
+		color: $colorInputIcon;
         display: inline-block;
         line-height: inherit;
         position: absolute;
         top: 50%;
-        @include transform(translateY(-50%));
+        transform: translateY(-50%);
         z-index: 1;
     }
 
     &:before {
         // Magnify glass icon
+        opacity: 0.7;
         left: $interiorMargin;
-        @include trans-prop-nice(color, 250ms);
+        @include trans-prop-nice(opacity, 250ms);
         pointer-events: none;
+    }
+
+    &:hover:before {
+        opacity: 1;
     }
 
     .clear-icon {

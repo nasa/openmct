@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -78,6 +78,8 @@ define(
             this.domainObject = objectUtils.toNewFormat($scope.domainObject.getModel(),
                 $scope.domainObject.getId());
 
+            this.$scope.exportAs = this.$scope.domainObject.getModel().name;
+
             _.bindAll(this, [
                 'destroy',
                 'sortByTimeSystem',
@@ -116,23 +118,18 @@ define(
          * to sort by. By default will just match on key.
          *
          * @private
-         * @param {TimeSystem} timeSystem
          */
-        TelemetryTableController.prototype.sortByTimeSystem = function (timeSystem) {
+        TelemetryTableController.prototype.sortByTimeSystem = function () {
             var scope = this.$scope;
             var sortColumn;
             scope.defaultSort = undefined;
 
-            if (timeSystem !== undefined) {
-                this.table.columns.forEach(function (column) {
-                    if (column.getKey() === timeSystem.key) {
-                        sortColumn = column;
-                    }
-                });
-                if (sortColumn) {
-                    scope.defaultSort = sortColumn.getTitle();
-                    this.telemetry.sort(sortColumn.getTitle() + '.value');
-                }
+            sortColumn = this.table.columns.filter(function (column) {
+                return column.isCurrentTimeSystem();
+            })[0];
+            if (sortColumn) {
+                scope.defaultSort = sortColumn.title();
+                this.telemetry.sort(sortColumn.title() + '.value');
             }
         };
 
@@ -170,9 +167,6 @@ define(
          * @param rows
          */
         TelemetryTableController.prototype.addRowsToTable = function (rows) {
-            rows.forEach(function (row) {
-                this.$scope.rows.push(row);
-            }, this);
             this.$scope.$broadcast('add:rows', rows);
         };
 
@@ -224,12 +218,6 @@ define(
             if (this.timeoutHandle) {
                 this.$timeout.cancel(this.timeoutHandle);
             }
-
-            // In case controller instance lingers around (currently there is a
-            // temporary memory leak with PlotController), clean up scope as it
-            // can be extremely large.
-            this.$scope = null;
-            this.table = null;
         };
 
         /**
@@ -241,32 +229,23 @@ define(
         TelemetryTableController.prototype.loadColumns = function (objects) {
             var telemetryApi = this.openmct.telemetry;
 
+            this.table = new TableConfiguration(this.$scope.domainObject,
+                this.openmct);
+
             this.$scope.headers = [];
 
             if (objects.length > 0) {
-                var metadatas = objects.map(telemetryApi.getMetadata.bind(telemetryApi));
-                var allColumns = telemetryApi.commonValuesForHints(metadatas, []);
-
-                this.table.populateColumns(allColumns);
-
-                var domainColumns = telemetryApi.commonValuesForHints(metadatas, ['domain']);
-                this.timeColumns = domainColumns.map(function (metadatum) {
-                    return metadatum.name;
-                });
+                objects.forEach(function (object) {
+                    var metadataValues = telemetryApi.getMetadata(object).values();
+                    metadataValues.forEach(function (metadatum) {
+                        this.table.addColumn(object, metadatum);
+                    }.bind(this));
+                }.bind(this));
 
                 this.filterColumns();
-
-                // Default to no sort on underlying telemetry collection. Sorting
-                // is necessary to do bounds filtering, but this is only possible
-                // if data matches selected time system
-                this.telemetry.sort(undefined);
-
-                var timeSystem = this.openmct.time.timeSystem();
-                if (timeSystem !== undefined) {
-                    this.sortByTimeSystem(timeSystem);
-                }
-
+                this.sortByTimeSystem();
             }
+
             return objects;
         };
 
@@ -293,7 +272,7 @@ define(
                 function finishProcessing() {
                     telemetryCollection.add(rowData);
                     scope.rows = telemetryCollection.telemetry;
-                    scope.loading = false;
+                    self.loading(false);
 
                     resolve(scope.rows);
                 }
@@ -301,7 +280,7 @@ define(
                 /*
                  * Process a batch of historical data
                  */
-                function processData(historicalData, index, limitEvaluator) {
+                function processData(object, historicalData, index, limitEvaluator) {
                     if (index >= historicalData.length) {
                         processedObjects++;
 
@@ -310,14 +289,13 @@ define(
                         }
                     } else {
                         rowData = rowData.concat(historicalData.slice(index, index + self.batchSize)
-                            .map(self.table.getRowValues.bind(self.table, limitEvaluator)));
-
+                            .map(self.table.getRowValues.bind(self.table, object, limitEvaluator)));
                         /*
                          Use timeout to yield process to other UI activities. On
                          return, process next batch
                          */
                         self.timeoutHandle = self.$timeout(function () {
-                            processData(historicalData, index + self.batchSize, limitEvaluator);
+                            processData(object, historicalData, index + self.batchSize, limitEvaluator);
                         });
                     }
                 }
@@ -326,7 +304,7 @@ define(
                     // Only process the most recent request
                     if (requestTime === self.lastRequestTime) {
                         var limitEvaluator = openmct.telemetry.limitEvaluator(object);
-                        processData(historicalData, 0, limitEvaluator);
+                        processData(object, historicalData, 0, limitEvaluator);
                     } else {
                         resolve(rowData);
                     }
@@ -347,7 +325,7 @@ define(
                 if (objects.length > 0) {
                     objects.forEach(requestData);
                 } else {
-                    scope.loading = false;
+                    self.loading(false);
                     resolve([]);
                 }
             }.bind(this));
@@ -366,7 +344,6 @@ define(
             var telemetryCollection = this.telemetry;
             //Set table max length to avoid unbounded growth.
             var limitEvaluator;
-            var added = false;
             var table = this.table;
 
             this.subscriptions.forEach(function (subscription) {
@@ -376,7 +353,7 @@ define(
 
             function newData(domainObject, datum) {
                 limitEvaluator = telemetryApi.limitEvaluator(domainObject);
-                added = telemetryCollection.add([table.getRowValues(limitEvaluator, datum)]);
+                telemetryCollection.add([table.getRowValues(domainObject, limitEvaluator, datum)]);
             }
 
             objects.forEach(function (object) {
@@ -399,14 +376,14 @@ define(
             var compositionApi = this.openmct.composition;
 
             function filterForTelemetry(objects) {
-                return objects.filter(telemetryApi.canProvideTelemetry.bind(telemetryApi));
+                return objects.filter(telemetryApi.isTelemetryObject.bind(telemetryApi));
             }
 
             /*
              * If parent object is a telemetry object, subscribe to it. Do not
              * test composees.
              */
-            if (telemetryApi.canProvideTelemetry(this.domainObject)) {
+            if (telemetryApi.isTelemetryObject(this.domainObject)) {
                 return Promise.resolve([this.domainObject]);
             } else {
                 /*
@@ -435,20 +412,23 @@ define(
             this.telemetry.clear();
             this.telemetry.bounds(this.openmct.time.bounds());
 
-            this.$scope.loading = true;
-
-            function error(e) {
-                scope.loading = false;
-                console.error(e.stack);
-            }
-
+            this.loading(true);
             scope.rows = [];
 
             return this.getTelemetryObjects()
                 .then(this.loadColumns)
                 .then(this.subscribeToNewData)
                 .then(this.getHistoricalData)
-                .catch(error);
+                .catch(function error(e) {
+                    this.loading(false);
+                    console.error(e.stack || e);
+                }.bind(this));
+        };
+
+        TelemetryTableController.prototype.loading = function (loading) {
+            this.$timeout(function () {
+                this.$scope.loading = loading;
+            }.bind(this));
         };
 
         /**

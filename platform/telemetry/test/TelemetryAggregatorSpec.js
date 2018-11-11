@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -44,8 +44,8 @@ define(
                         ["requestTelemetry", "subscribe"]
                     ),
                     unsubscribe = jasmine.createSpy("unsubscribe" + index);
-                provider.requestTelemetry.andReturn({ someKey: key });
-                provider.subscribe.andReturn(unsubscribe);
+                provider.requestTelemetry.and.returnValue({ someKey: key });
+                provider.subscribe.and.returnValue(unsubscribe);
 
                 // Store to verify interactions later
                 mockUnsubscribes[index] = unsubscribe;
@@ -54,7 +54,7 @@ define(
 
             beforeEach(function () {
                 mockQ = jasmine.createSpyObj("$q", ["all"]);
-                mockQ.all.andReturn(mockPromise([]));
+                mockQ.all.and.returnValue(mockPromise([]));
 
                 mockUnsubscribes = [];
                 mockProviders = ["a", "b", "c"].map(makeMockProvider);
@@ -79,7 +79,7 @@ define(
             it("merges results from all providers", function () {
                 var capture = jasmine.createSpy("capture");
 
-                mockQ.all.andReturn(mockPromise([
+                mockQ.all.and.returnValue(mockPromise([
                     { someKey: "some value" },
                     { someOtherKey: "some other value" }
                 ]));

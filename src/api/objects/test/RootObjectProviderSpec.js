@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,24 +28,14 @@ define([
         var rootRegistry,
             rootObjectProvider;
 
-        function done() {
-            var isDone = false;
-            waitsFor(function () {
-                return isDone;
-            });
-            return function () {
-                isDone = true;
-            };
-        }
-
         beforeEach(function () {
             rootRegistry = jasmine.createSpyObj('rootRegistry', ['getRoots']);
-            rootRegistry.getRoots.andReturn(Promise.resolve(['some root']));
+            rootRegistry.getRoots.and.returnValue(Promise.resolve(['some root']));
             rootObjectProvider = new RootObjectProvider(rootRegistry);
         });
 
         it('supports fetching root', function () {
-            rootObjectProvider.get()
+            return rootObjectProvider.get()
                 .then(function (root) {
                     expect(root).toEqual({
                         identifier: {
@@ -56,8 +46,7 @@ define([
                         type: 'root',
                         composition: ['some root']
                     });
-                })
-                .then(done());
+                });
         });
     });
 });

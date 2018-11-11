@@ -1,4 +1,16 @@
-define(['./src/SummaryWidget', './SummaryWidgetsCompositionPolicy'], function (SummaryWidget, SummaryWidgetsCompositionPolicy) {
+define([
+    './SummaryWidgetsCompositionPolicy',
+    './src/telemetry/SummaryWidgetMetadataProvider',
+    './src/telemetry/SummaryWidgetTelemetryProvider',
+    './src/views/SummaryWidgetViewProvider',
+    './SummaryWidgetViewPolicy'
+], function (
+    SummaryWidgetsCompositionPolicy,
+    SummaryWidgetMetadataProvider,
+    SummaryWidgetTelemetryProvider,
+    SummaryWidgetViewProvider,
+    SummaryWidgetViewPolicy
+) {
 
     function plugin() {
 
@@ -9,8 +21,40 @@ define(['./src/SummaryWidget', './SummaryWidgetsCompositionPolicy'], function (S
             cssClass: 'icon-summary-widget',
             initialize: function (domainObject) {
                 domainObject.composition = [];
-                domainObject.configuration = {};
+                domainObject.configuration = {
+                    ruleOrder: ['default'],
+                    ruleConfigById: {
+                        default: {
+                            name: 'Default',
+                            label: 'Unnamed Rule',
+                            message: '',
+                            id: 'default',
+                            icon: ' ',
+                            style: {
+                                'color': '#ffffff',
+                                'background-color': '#38761d',
+                                'border-color': 'rgba(0,0,0,0)'
+                            },
+                            description: 'Default appearance for the widget',
+                            conditions: [{
+                                object: '',
+                                key: '',
+                                operation: '',
+                                values: []
+                            }],
+                            jsCondition: '',
+                            trigger: 'any',
+                            expanded: 'true'
+                        }
+                    },
+                    testDataConfig: [{
+                        object: '',
+                        key: '',
+                        value: ''
+                    }]
+                };
                 domainObject.openNewTab = 'thisTab';
+                domainObject.telemetry = {};
             },
             form: [
                 {
@@ -40,26 +84,19 @@ define(['./src/SummaryWidget', './SummaryWidgetsCompositionPolicy'], function (S
             ]
         };
 
-        function initViewProvider(openmct) {
-            return {
-                name: 'Widget View',
-                view: function (domainObject) {
-                    return new SummaryWidget(domainObject, openmct);
-                },
-                canView: function (domainObject) {
-                    return (domainObject.type === 'summary-widget');
-                },
-                editable: true,
-                key: 'summaryWidgets'
-            };
-        }
-
         return function install(openmct) {
             openmct.types.addType('summary-widget', widgetType);
-            openmct.objectViews.addProvider(initViewProvider(openmct));
             openmct.legacyExtension('policies', {category: 'composition',
                 implementation: SummaryWidgetsCompositionPolicy, depends: ['openmct']
             });
+            openmct.legacyExtension('policies', {
+                category: 'view',
+                implementation: SummaryWidgetViewPolicy,
+                depends: ['openmct']
+            });
+            openmct.telemetry.addProvider(new SummaryWidgetMetadataProvider(openmct));
+            openmct.telemetry.addProvider(new SummaryWidgetTelemetryProvider(openmct));
+            openmct.objectViews.addProvider(new SummaryWidgetViewProvider(openmct));
         };
     }
 

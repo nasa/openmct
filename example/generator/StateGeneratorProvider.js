@@ -47,7 +47,9 @@ define([
 
         var interval = setInterval(function () {
             var now = Date.now();
-            callback(pointForTimestamp(now, duration, domainObject.name));
+            var datum = pointForTimestamp(now, duration, domainObject.name);
+            datum.value += "";
+            callback(datum);
         }, duration);
 
         return function () {
@@ -70,7 +72,7 @@ define([
         var data = [];
         while (start <= end && data.length < 5000) {
             data.push(pointForTimestamp(start, duration, domainObject.name));
-            start += 5000;
+            start += duration;
         }
         return Promise.resolve(data);
     };

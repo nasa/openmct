@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -111,9 +111,11 @@ define(
         CopyAction.prototype.perform = function () {
             var self = this;
 
-            function success() {
+            function success(domainObject) {
+                var domainObjectName = domainObject.model.name;
+
                 self.notification.dismiss();
-                self.notificationService.info("Copying complete.");
+                self.notificationService.info(domainObjectName + " copied successfully.");
             }
 
             function error(errorDetails) {
@@ -160,4 +162,3 @@ define(
         return CopyAction;
     }
 );
-

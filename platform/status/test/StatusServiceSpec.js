@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -45,8 +45,8 @@ define(
                 mockUnlisten = jasmine.createSpy('unlisten');
                 mockCallback = jasmine.createSpy('callback');
 
-                mockTopic.andReturn(mockTopicInstance);
-                mockTopicInstance.listen.andReturn(mockUnlisten);
+                mockTopic.and.returnValue(mockTopicInstance);
+                mockTopicInstance.listen.and.returnValue(mockUnlisten);
 
                 statusService = new StatusService(mockTopic);
             });
@@ -68,7 +68,7 @@ define(
                 expect(mockTopic)
                     .toHaveBeenCalledWith(jasmine.any(String));
                 // Just care that the topic was somehow unique to the object
-                expect(mockTopic.mostRecentCall.args[0].indexOf(testId))
+                expect(mockTopic.calls.mostRecent().args[0].indexOf(testId))
                     .not.toEqual(-1);
             });
 
@@ -83,7 +83,7 @@ define(
                 expect(mockTopic)
                     .toHaveBeenCalledWith(jasmine.any(String));
                 // Just care that the topic was somehow unique to the object
-                expect(mockTopic.mostRecentCall.args[0].indexOf(testId))
+                expect(mockTopic.calls.mostRecent().args[0].indexOf(testId))
                     .not.toEqual(-1);
             });
 

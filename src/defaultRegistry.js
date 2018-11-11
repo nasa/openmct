@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,8 +24,6 @@ define([
     'legacyRegistry',
 
     '../src/adapter/bundle',
-    '../src/api/objects/bundle',
-    '../src/api/telemetry/bundle',
 
     '../example/builtins/bundle',
     '../example/composite/bundle',
@@ -93,8 +91,6 @@ define([
 
     var DEFAULTS = [
         'src/adapter',
-        'src/api/objects',
-        'src/api/telemetry',
         'platform/framework',
         'platform/core',
         'platform/representation',

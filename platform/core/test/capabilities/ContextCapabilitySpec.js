@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -48,10 +48,10 @@ define(
                 mockGrandparent = jasmine.createSpyObj("grandparent", DOMAIN_OBJECT_METHODS);
                 mockContext = jasmine.createSpyObj("context", ["getParent", "getRoot", "getPath"]);
 
-                mockParent.getCapability.andReturn(mockContext);
-                mockContext.getParent.andReturn(mockGrandparent);
-                mockContext.getRoot.andReturn(mockGrandparent);
-                mockContext.getPath.andReturn([mockGrandparent, mockParent]);
+                mockParent.getCapability.and.returnValue(mockContext);
+                mockContext.getParent.and.returnValue(mockGrandparent);
+                mockContext.getRoot.and.returnValue(mockGrandparent);
+                mockContext.getPath.and.returnValue([mockGrandparent, mockParent]);
 
                 context = new ContextCapability(mockParent, mockDomainObject);
             });
@@ -69,7 +69,7 @@ define(
             });
 
             it("treats ancestors with no context capability as deepest ancestors", function () {
-                mockParent.getCapability.andReturn(undefined);
+                mockParent.getCapability.and.returnValue(undefined);
                 expect(context.getPath()).toEqual([mockParent, mockDomainObject]);
                 expect(context.getRoot()).toEqual(mockParent);
             });

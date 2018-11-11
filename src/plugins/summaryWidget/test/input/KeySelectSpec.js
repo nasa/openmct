@@ -48,57 +48,57 @@ define(['../../src/input/KeySelect'], function (KeySelect) {
                 'triggerCallback'
             ]);
 
-            mockObjectSelect.on.andCallFake(function (event, callback) {
+            mockObjectSelect.on.and.callFake(function (event, callback) {
                 this.callbacks = this.callbacks || {};
                 this.callbacks[event] = callback;
             });
 
-            mockObjectSelect.triggerCallback.andCallFake(function (event, key) {
+            mockObjectSelect.triggerCallback.and.callFake(function (event, key) {
                 this.callbacks[event](key);
             });
 
-            mockManager.on.andCallFake(function (event, callback) {
+            mockManager.on.and.callFake(function (event, callback) {
                 this.callbacks = this.callbacks || {};
                 this.callbacks[event] = callback;
             });
 
-            mockManager.triggerCallback.andCallFake(function (event) {
+            mockManager.triggerCallback.and.callFake(function (event) {
                 this.callbacks[event]();
             });
 
-            mockManager.getTelemetryMetadata.andCallFake(function (key) {
+            mockManager.getTelemetryMetadata.and.callFake(function (key) {
                 return mockMetadata[key];
             });
 
         });
 
         it('waits until the metadata fully loads to populate itself', function () {
-            mockManager.metadataLoadCompleted.andReturn(false);
+            mockManager.metadataLoadCompleted.and.returnValue(false);
             keySelect = new KeySelect(mockConfig, mockObjectSelect, mockManager);
             expect(keySelect.getSelected()).toEqual('');
         });
 
         it('populates itself with metadata on a metadata load', function () {
-            mockManager.metadataLoadCompleted.andReturn(false);
+            mockManager.metadataLoadCompleted.and.returnValue(false);
             keySelect = new KeySelect(mockConfig, mockObjectSelect, mockManager);
             mockManager.triggerCallback('metadata');
             expect(keySelect.getSelected()).toEqual('a');
         });
 
         it('populates itself with metadata if metadata load is already complete', function () {
-            mockManager.metadataLoadCompleted.andReturn(true);
+            mockManager.metadataLoadCompleted.and.returnValue(true);
             keySelect = new KeySelect(mockConfig, mockObjectSelect, mockManager);
             expect(keySelect.getSelected()).toEqual('a');
         });
 
         it('clears its selection state if the property in its config is not in its object', function () {
-            mockManager.metadataLoadCompleted.andReturn(true);
+            mockManager.metadataLoadCompleted.and.returnValue(true);
             keySelect = new KeySelect(mockBadConfig, mockObjectSelect, mockManager);
             expect(keySelect.getSelected()).toEqual('');
         });
 
         it('populates with the appropriate options when its linked object changes', function () {
-            mockManager.metadataLoadCompleted.andReturn(true);
+            mockManager.metadataLoadCompleted.and.returnValue(true);
             keySelect = new KeySelect(mockConfig, mockObjectSelect, mockManager);
             mockObjectSelect.triggerCallback('change', 'object2');
             keySelect.setSelected('alpha');
@@ -106,14 +106,14 @@ define(['../../src/input/KeySelect'], function (KeySelect) {
         });
 
         it('clears its selected state on change if the field is not present in the new object', function () {
-            mockManager.metadataLoadCompleted.andReturn(true);
+            mockManager.metadataLoadCompleted.and.returnValue(true);
             keySelect = new KeySelect(mockConfig, mockObjectSelect, mockManager);
             mockObjectSelect.triggerCallback('change', 'object2');
             expect(keySelect.getSelected()).toEqual('');
         });
 
         it('maintains its selected state on change if field is present in new object', function () {
-            mockManager.metadataLoadCompleted.andReturn(true);
+            mockManager.metadataLoadCompleted.and.returnValue(true);
             keySelect = new KeySelect(mockConfig, mockObjectSelect, mockManager);
             mockObjectSelect.triggerCallback('change', 'object3');
             expect(keySelect.getSelected()).toEqual('a');

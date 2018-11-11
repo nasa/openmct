@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -52,12 +52,6 @@ define(
              * @memberof platform/features/layout.BoxProxy#
              */
             proxy.fill = new AccessorMutator(element, 'fill');
-
-            //Expose x,y, width and height for editing
-            proxy.editWidth = new AccessorMutator(element, 'width');
-            proxy.editHeight = new AccessorMutator(element, 'height');
-            proxy.editX = new AccessorMutator(element, 'x');
-            proxy.editY = new AccessorMutator(element, 'y');
 
             return proxy;
         }

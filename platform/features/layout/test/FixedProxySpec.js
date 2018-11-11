@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -37,7 +37,7 @@ define(
                 mockDialogService = jasmine.createSpyObj('dialogService', ['getUserInput']);
                 mockPromise = jasmine.createSpyObj('promise', ['then']);
 
-                mockQ.when.andReturn(mockPromise);
+                mockQ.when.and.returnValue(mockPromise);
 
                 proxy = new FixedProxy(mockCallback, mockQ, mockDialogService);
             });
@@ -54,7 +54,7 @@ define(
                 // Callback should not have been invoked yet
                 expect(mockCallback).not.toHaveBeenCalled();
                 // Resolve the promise
-                mockPromise.then.mostRecentCall.args[0]({});
+                mockPromise.then.calls.mostRecent().args[0]({});
                 // Should have fired the callback
                 expect(mockCallback).toHaveBeenCalledWith({
                     type: "fixed.box",

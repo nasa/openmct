@@ -28,6 +28,7 @@ define([
     "./src/ui/TimeOfInterestController",
     "./src/ui/ConductorAxisDirective",
     "./src/ui/NumberFormat",
+    "./src/ui/StringFormat",
     "text!./res/templates/time-conductor.html",
     "text!./res/templates/mode-selector/mode-selector.html",
     "text!./res/templates/mode-selector/mode-menu.html",
@@ -41,6 +42,7 @@ define([
     TimeOfInterestController,
     ConductorAxisDirective,
     NumberFormat,
+    StringFormat,
     timeConductorTemplate,
     modeSelectorTemplate,
     modeMenuTemplate,
@@ -145,6 +147,10 @@ define([
                 {
                     "key": "number",
                     "implementation": NumberFormat
+                },
+                {
+                    "key": "string",
+                    "implementation": StringFormat
                 }
             ]
         }

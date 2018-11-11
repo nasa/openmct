@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -79,9 +79,9 @@ define(
             it("deactivates and detaches listener on document click", function () {
                 var callback, timeout;
                 controller.setState(true);
-                callback = mockDocument.on.mostRecentCall.args[1];
+                callback = mockDocument.on.calls.mostRecent().args[1];
                 callback();
-                timeout = mockTimeout.mostRecentCall.args[0];
+                timeout = mockTimeout.calls.mostRecent().args[0];
                 timeout();
                 expect(controller.isActive()).toEqual(false);
                 expect(mockDocument.off).toHaveBeenCalledWith("mouseup", callback);

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2009-2016, United States Government
+ * Open MCT, Copyright (c) 2009-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,38 +20,32 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    ['moment'],
-    function (moment) {
-        var NO_TIMER = "No timer being followed";
+define([], function () {
 
-        /**
-         * Indicator that displays the active timer, as well as its
-         * current state.
-         * @implements {Indicator}
-         * @memberof platform/features/clock
-         */
-        function FollowIndicator(timerService) {
-            this.timerService = timerService;
+    /**
+     * Indicator that displays the active timer, as well as its
+     * current state.
+     * @memberof platform/features/clock
+     */
+    return function installFollowIndicator(openmct, timerService) {
+        var indicator = openmct.indicators.simpleIndicator();
+        var timer = timerService.getTimer();
+        setIndicatorStatus(timer);
+
+        function setIndicatorStatus(newTimer) {
+            if (newTimer !== undefined) {
+                indicator.iconClass('icon-timer');
+                indicator.statusClass('s-status-on');
+                indicator.text('Following timer ' + newTimer.name);
+            } else {
+                indicator.iconClass('icon-timer');
+                indicator.statusClass('s-status-disabled');
+                indicator.text('No timer being followed');
+            }
         }
 
-        FollowIndicator.prototype.getGlyphClass = function () {
-            return "";
-        };
+        timerService.on('change', setIndicatorStatus);
 
-        FollowIndicator.prototype.getCssClass = function () {
-            return (this.timerService.getTimer()) ? "icon-timer s-status-ok" : "icon-timer";
-        };
-
-        FollowIndicator.prototype.getText = function () {
-            var timer = this.timerService.getTimer();
-            return timer ? ('Following timer ' + timer.name) : NO_TIMER;
-        };
-
-        FollowIndicator.prototype.getDescription = function () {
-            return "";
-        };
-
-        return FollowIndicator;
-    }
-);
+        openmct.indicators.add(indicator);
+    };
+});

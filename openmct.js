@@ -29,7 +29,6 @@ requirejs.config({
         "csv": "bower_components/comma-separated-values/csv.min",
         "EventEmitter": "bower_components/eventemitter3/index",
         "es6-promise": "bower_components/es6-promise/es6-promise.min",
-        "html2canvas": "bower_components/html2canvas/build/html2canvas.min",
         "moment": "bower_components/moment/moment",
         "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
         "moment-timezone": "bower_components/moment-timezone/builds/moment-timezone-with-data",
@@ -45,11 +44,14 @@ requirejs.config({
         "d3-axis": "node_modules/d3-axis/dist/d3-axis.min",
         "d3-array": "node_modules/d3-array/dist/d3-array.min",
         "d3-collection": "node_modules/d3-collection/dist/d3-collection.min",
-        "d3-color": "node_modules/d3-color/dist/d3-color.min",
-        "d3-format": "node_modules/d3-format/dist/d3-format.min",
-        "d3-interpolate": "node_modules/d3-interpolate/dist/d3-interpolate.min",
+        "d3-color": "node_modules/d3-color/build/d3-color.min",
+        "d3-format": "node_modules/d3-format/build/d3-format.min",
+        "d3-interpolate": "node_modules/d3-interpolate/build/d3-interpolate.min",
         "d3-time": "node_modules/d3-time/dist/d3-time.min",
-        "d3-time-format": "node_modules/d3-time-format/dist/d3-time-format.min"
+        "d3-time-format": "node_modules/d3-time-format/dist/d3-time-format.min",
+        "html2canvas": "node_modules/html2canvas/dist/html2canvas.min",
+        "painterro": "node_modules/painterro/build/painterro.min",
+        "printj": "node_modules/printj/dist/printj.min"
     },
     "shim": {
         "angular": {
@@ -61,11 +63,11 @@ requirejs.config({
         "EventEmitter": {
             "exports": "EventEmitter"
         },
-        "html2canvas": {
-            "exports": "html2canvas"
-        },
         "moment-duration-format": {
             "deps": ["moment"]
+        },
+        "painterro": {
+            "exports": "Painterro"
         },
         "saveAs": {
             "exports": "saveAs"
@@ -88,6 +90,9 @@ requirejs.config({
         },
         "d3-axis": {
             "exports": "d3-axis"
+        },
+        "dom-to-image": {
+            "exports": "domtoimage"
         }
     }
 });

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -128,26 +128,70 @@
     }
 }
 
-.l-local-controls {
-    // Control shown when hovering over an object, like plots and imagery
-    // Default position is upper right
-    $p: $interiorMargin;
-    position: absolute;
-    top: $p; right: $p; bottom: auto;
-    text-align: right;
-    z-index: 5;
+
+
+/******************************************************** LOCAL CONTROLS */
+// Controls placed in proximity to or overlaid on components and views
+
+.local-controls-hidden {
+    // Used within .has-local-controls, hidden by default
+
 }
 
-.s-local-controls {
-    @include trans-prop-nice(opacity);
-    font-size: 0.7rem;
-    &.s-wrapper-transluc {
-        // Semi-opaque wrapper to visually distinguish a control
-        // from the background
-        background: rgba($colorTransLucBg, 0.7);
-        box-sizing: border-box;
-        border-radius: $controlCr;
+body.desktop .has-local-controls {
+    // Helper class, provides hover ability to show local controls
+
+    &:hover .local-controls-hidden {
+        @include trans-prop-nice($props: opacity, $dur: 50ms);
+        opacity: 1;
+        pointer-events: inherit;
     }
+
+    .local-controls-hidden {
+        @include trans-prop-nice($props: opacity, $dur: 500ms);
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+.h-local-controls {
+    // An explicit outer holder for controls. Typically placed in upper right.
+    align-items: center;
+    font-size: 0.7rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+
+
+    &.h-local-controls-overlay-content {
+        $p: $interiorMargin;
+        position: absolute;
+        top: $p; right: $p;
+        z-index: 2;
+    }
+
+    .l-btn-set,
+    .s-button {
+        &:not(:first-child) {
+            margin-left: $interiorMargin;
+        }
+    }
+}
+
+.h-local-controls-overlay-content {
+    background: $colorBodyBg;
+    border-radius: $controlCr + 1;
+    box-sizing: border-box;
+    border-radius: $controlCr;
+    padding: 1px;
+    .s-button {
+        background: $colorBtnBg;
+    }
+}
+
+.h-local-controls-trans {
+    background: rgba($colorTransLucBg, 0.5);
+    padding: $interiorMargin;
 }
 
 /******************************************************** VIEW CONTROLS */
@@ -159,10 +203,11 @@
     cursor: pointer;
     height: 1em; width: 1em;
     line-height: inherit;
+    position: relative;
     &:before {
         position: absolute;
         @include trans-prop-nice(transform, 100ms);
-        content: $glyph-icon-arrow-right;
+        content: $glyph-icon-arrow-right-equilateral;
         @include transform-origin(center);
     }
     &.expanded:before {
@@ -338,6 +383,7 @@ input[type="text"].s-input-inline,
     @include btnSubtle($bg: $colorSelectBg);
     @extend .icon-arrow-down; // Context arrow
     display: inline-block;
+    flex: 0 0 auto; // When used in a flex context, controls need to hold their width
     padding: 0 $interiorMargin;
     overflow: hidden;
     position: relative;
@@ -356,7 +402,7 @@ input[type="text"].s-input-inline,
         }
     }
     &:before {
-        @include transform(translateY(-50%));
+        transform: translateY(-50%);
         color: rgba($colorInvokeMenu, percentToDecimal($contrastInvokeMenuPercent));
         display: block;
         pointer-events: none;
@@ -434,7 +480,7 @@ input[type="text"].s-input-inline,
 
     .context-available {
         font-size: 0.7em;
-        @include flex(0 0 1);
+        flex: 0 0 1;
     }
 
     .t-object-alert {
@@ -675,14 +721,14 @@ input[type="range"] {
 .l-calendar {
     $colorMuted: pushBack($colorMenuFg, 30%);
     ul.l-cal-row {
-        @include display(flex);
-        @include flex-flow(row nowrap);
+        display: flex;
+        flex-flow: row nowrap;
         margin-top: 1px;
         &:first-child {
             margin-top: 0;
         }
         li {
-            @include flex(1 0);
+            flex: 1 0;
             margin-left: 1px;
             padding: $interiorMargin;
             text-align: center;
@@ -760,19 +806,43 @@ textarea {
     @extend .icon-arrow-right;
     cursor: pointer;
     font-size: 0.75em;
+    width: $treeVCW;
     &:before {
+        // Arrow glyph
+        left: 50%;
         position: absolute;
         @include trans-prop-nice(transform, 100ms);
-        @include transform-origin(center);
+        transform: translateX(-50%);
+        transform-origin: center;
     }
     &.expanded:before {
-        @include transform(rotate(90deg));
+        transform: translateX(-50%) rotate(90deg);
     }
 }
 
-.grippy {
-    @extend .icon-grippy;
+.grippy,
+.grippy-sm,
+.drag-vertical,
+.drag-vertical-sm {
     cursor: move;
+}
+
+.drag-vertical {
+    @extend .icon-list-view;
+}
+
+.drag-vertical-sm {
+    @extend .icon-list-view-12px;
+}
+
+.grippy {
+    // Used in Summary Widgets
+    @extend .icon-grippy;
+}
+
+.grippy-sm {
+    // Used in editor Elements pool
+    @extend .icon-grippy-12px;
 }
 
 /******************************************************** BROWSER ELEMENTS */
