@@ -364,6 +364,7 @@ $createBtnTextTransform: uppercase;
         $bc: #666;
         $bLR: 3px solid transparent;
         $br: 20px;
+        background: none !important;
         border-radius: $br;
         border-top: 4px solid $bc !important;
         border-bottom: 2px solid $bc !important;
