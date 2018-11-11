@@ -24,6 +24,7 @@
     <div class="c-frame has-local-controls is-selectable is-moveable"
          :style="item.style"
          :class="classObject"
+         :title="item.domainObject.name"
          @dblclick="drill(item.id, $event)">
 
         <component :is="item.type" :item="item"></component>
