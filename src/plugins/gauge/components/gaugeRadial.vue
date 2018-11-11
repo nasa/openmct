@@ -129,12 +129,14 @@
 
 <script>
     export default {
-        name: "gaugeRadial.vue",
-        data() {
-            this.rangeLow = 0;
-            this.rangeHigh= 1000;
-            this.curVal = 919;
-            this.limit1 = 980;
+        name: "gaugeRadial",
+        data: function () {
+            return {
+                rangeLow:  -10.4,
+                rangeHigh: 100,
+                curVal: 79.09,
+                limit1: 91.0
+            }
         },
         methods: {
             round: function(val, decimals) {
