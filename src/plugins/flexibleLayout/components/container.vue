@@ -32,6 +32,15 @@
             <span class="c-fl-container__size-indicator">{{ size }}</span>
         </div>
 
+        <drop-hint
+            :index="-1"
+            :class="{
+                'c-fl-frame__drop-hint': true
+            }"
+            v-show="isEditing && isDragging"
+            @object-drop-to="frameDropTo">
+        </drop-hint>
+
         <div class="c-fl-container__frames-holder">
             <div class="u-contents"
                  v-for="(frame, i) in frames"
@@ -54,9 +63,17 @@
                     @add-container="addContainer">
                 </frame-component>
 
+                <drop-hint
+                    v-show="isEditing && isDragging"
+                    class="c-fl-frame__drop-hint"
+                    :class="{'is-dragging': isDragging}"
+                    :index="i"
+                    @object-drop-to="frameDropTo">
+                </drop-hint>
+
                 <resize-handle
-                    v-if="i !== 0 && (i !== frames.length - 1)"
-                    v-show="isEditing"
+                    v-if="(i !== frames.length - 1)"
+                    v-show="isEditing && !isDragging"
                     :index="i"
                     :orientation="rowsLayout ? 'horizontal' : 'vertical'"
                     @init-move="startFrameResizing"
@@ -102,9 +119,9 @@ export default {
 
             if (domainObject) {
                 frameObject = new Frame(JSON.parse(domainObject).identifier);
-            }
 
-            this.$emit('frame-drop-to', this.index, frameIndex, frameObject);
+                this.$emit('frame-drop-to', this.index, frameIndex, frameObject);
+            }
         },
         startFrameResizing(index) {
             let beforeFrame = this.frames[index],

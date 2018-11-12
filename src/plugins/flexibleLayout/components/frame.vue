@@ -36,8 +36,6 @@
              v-if="frame.domainObjectIdentifier.key">
 
             <frame-header
-             <frame-header 
-            <frame-header
                 v-if="index !== 0 && frameDomainObject.identifier"
                 ref="dragObject"
                 :domainObject="frameDomainObject">
@@ -54,14 +52,6 @@
                 {{frame.height}}%
             </div>
         </div>
-
-        <drop-hint
-             v-show="isEditing && isDragging"
-             class="c-fl-frame__drop-hint"
-             :class="{'is-dragging': isDragging}"
-             :index="index"
-             @object-drop-to="dropHandler">
-        </drop-hint>
     </div>
 </template>
 
@@ -108,9 +98,6 @@ export default {
         },
         initDrag(event) {
             this.$emit('frame-drag-from', this.index);
-        },
-        dropHandler(event) {
-            this.$emit('frame-drop-to', this.index, event);
         },
         continueDrag(event) {
             if (!this.isDragging) {

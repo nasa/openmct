@@ -51,7 +51,7 @@ export default {
             this.isMouseOver = false;
         },
         dropHandler(event) {
-            this.$emit('object-drop-to', event, this.index);
+            this.$emit('object-drop-to', this.index, event);
         }
     }
 }
