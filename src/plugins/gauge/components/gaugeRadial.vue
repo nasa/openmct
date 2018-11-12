@@ -130,12 +130,18 @@
 <script>
     export default {
         name: "gaugeRadial",
+        inject: ['domainObject'],
         data: function () {
+            let config = this.domainObject.configuration,
+                rangeLow = config.min,
+                rangeHigh = config.max,
+                limit = config.limit;
+            console.log(config);
             return {
-                rangeLow:  -10.4,
-                rangeHigh: 100,
-                curVal: 79.09,
-                limit1: 91.0
+                rangeLow,
+                rangeHigh,
+                limit1: limit,
+                curVal: 79.09
             }
         },
         methods: {

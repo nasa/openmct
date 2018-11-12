@@ -36,7 +36,44 @@ define([
                 cssClass: 'icon-gauge',
                 initialize(domainObject) {
                     domainObject.composition = [];
-                }
+                    domainObject.configuration = {
+                        min: -10.4,
+                        max: 100,
+                        limit: 91.0
+                    };
+                },
+                form: [
+                    {
+                        name: "Minimum Value",
+                        control: "numberfield",
+                        cssClass: "l-input-sm l-numeric",
+                        key: "min",
+                        property: [
+                            "configuration",
+                            "min"
+                        ]
+                    },
+                    {
+                        name: "Maximum Value",
+                        control: "numberfield",
+                        cssClass: "l-input-sm l-numeric",
+                        key: "max",
+                        property: [
+                            "configuration",
+                            "max"
+                        ]
+                    },
+                    {
+                        name: "Limit",
+                        control: "numberfield",
+                        cssClass: "l-input-sm l-numeric",
+                        key: "min",
+                        property: [
+                            "configuration",
+                            "limit"
+                        ]
+                    }
+                ]
             });
         };
     };
