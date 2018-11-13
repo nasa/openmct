@@ -23,7 +23,7 @@
 <template>
     <div class="c-fl-container"
          :style="[{'flex-basis': size}]"
-         :class="{'is-empty': frames.length === 1}">
+         :class="{'is-empty': !frames.length}">
         <div class="c-fl-container__header icon-grippy-ew"
             v-show="isEditing"
             draggable="true"

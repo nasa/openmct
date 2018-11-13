@@ -438,7 +438,7 @@ export default {
             return !!!this.containers.filter(container => container.frames.length > 1).length;
         },
         addContainer() {
-            let newSize = 100/(this.containers.length+1);
+            let newSize = 100/(this.containers.length);
 
             let container = new Container(newSize)
 
@@ -453,28 +453,17 @@ export default {
         },
         recalculateNewFrameSize(multFactor, framesArray){
             framesArray.forEach((frame, index) => {
-                if (index === 0) {
-                    return;
-                }
                 let frameSize = frame.height
                 frame.height = this.snapToPercentage(multFactor * frameSize);
             });
         },
         recalculateOldFrameSize(framesArray) {
-            let totalRemainingSum = framesArray.map((frame,i) => {
-                if (i !== 0) {
-                    return frame.height
-                } else {
-                    return 0;
-                }
-            }).reduce((a, c) => a + c);
+            let totalRemainingSum = framesArray.length ? framesArray.map((frame) => {
+                return frame.height;
+            }).reduce((a, c) => a + c) : 100;
 
             framesArray.forEach((frame, index) => {
-
-                if (index === 0) {
-                    return;
-                }
-                if (framesArray.length === 2) {
+                if (framesArray.length === 1) {
 
                     frame.height = 100;
                 } else {
@@ -501,7 +490,7 @@ export default {
             }
 
             if (!frameObject.height) {
-                frameObject.height = 100 / Math.max(newContainer.frames.length - 1, 1);
+                frameObject.height = 100 / Math.max(newContainer.frames.length, 1);
             }
 
             newContainer.frames.splice((frameIndex + 1), 0, frameObject);
