@@ -36,7 +36,7 @@
              v-if="frame.domainObjectIdentifier.key">
 
             <frame-header
-                v-if="index !== 0 && frameDomainObject.identifier"
+                v-if="frameDomainObject.identifier"
                 ref="dragObject"
                 :domainObject="frameDomainObject">
             </frame-header>

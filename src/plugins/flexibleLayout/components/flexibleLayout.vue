@@ -435,7 +435,7 @@ export default {
     },
     methods: {
         areAllContainersEmpty() {
-            return !!!this.containers.filter(container => container.frames.length > 1).length;
+            return !!!this.containers.filter(container => container.frames.length).length;
         },
         addContainer() {
             let newSize = 100/(this.containers.length);

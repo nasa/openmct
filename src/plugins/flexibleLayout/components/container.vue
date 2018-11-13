@@ -119,9 +119,9 @@ export default {
 
             if (domainObject) {
                 frameObject = new Frame(JSON.parse(domainObject).identifier);
-
-                this.$emit('frame-drop-to', this.index, frameIndex, frameObject);
             }
+
+            this.$emit('frame-drop-to', this.index, frameIndex, frameObject);
         },
         startFrameResizing(index) {
             let beforeFrame = this.frames[index],
