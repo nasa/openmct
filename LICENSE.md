@@ -1,4 +1,4 @@
-# Open MCT Licenses
+# Open MCT License
 
 Open MCT, Copyright (c) 2014-2019, United States Government as represented by the Administrator of the National Aeronautics and Space Administration. All rights reserved.
 
