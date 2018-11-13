@@ -22,14 +22,14 @@
 
 <template>
     <div class="c-fl-container"
-         :style="[{'flex-basis': size}]"
+         :style="[{'flex-basis': sizeString}]"
          :class="{'is-empty': !frames.length}">
         <div class="c-fl-container__header icon-grippy-ew"
             v-show="isEditing"
             draggable="true"
             @dragstart="startContainerDrag"
             @dragend="stopContainerDrag">
-            <span class="c-fl-container__size-indicator">{{ size }}</span>
+            <span class="c-fl-container__size-indicator">{{ sizeString }}</span>
         </div>
 
         <drop-hint
@@ -96,7 +96,7 @@ const MIN_FRAME_SIZE = 5;
 
 export default {
     inject:['openmct', 'domainObject'],
-    props: ['size', 'container', 'index', 'isEditing', 'isDragging', 'rowsLayout'],
+    props: ['sizeString', 'container', 'index', 'isEditing', 'isDragging', 'rowsLayout'],
     components: {
         FrameComponent,
         ResizeHandle,

@@ -10,11 +10,10 @@
                 'c-fl--rows': rowsLayout === true
             }">
 
-            <div class="u-contents"
-                 v-for="(container, index) in containers"
-                 :key="container.index">
+            <template v-for="(container, index) in containers">
                 
                 <drop-hint
+                    :key="index"
                     style="flex-basis: 15px;"
                     v-if="index === 0 && containers.length > 1"
                     v-show="isContainerDragging"
@@ -23,10 +22,11 @@
                 </drop-hint>
 
                 <container-component
+                    :key="container.index"
                     class="c-fl__container"
                     ref="containerComponent"
                     :index="index"
-                    :size="`${Math.round(container.width)}%`"
+                    :sizeString="`${Math.round(container.width)}%`"
                     :container="container"
                     :isEditing="isEditing"
                     :isDragging="isDragging"
@@ -42,8 +42,9 @@
                 </container-component>
 
                 <resize-handle
+                    :key="index"
                     v-if="index !== (containers.length - 1)"
-                    v-show="isEditing"
+                    v-show="isEditing && !isContainerDragging"
                     :index="index"
                     :orientation="rowsLayout ? 'vertical' : 'horizontal'"
                     @init-move="startContainerResizing"
@@ -52,13 +53,14 @@
                 </resize-handle>
 
                 <drop-hint
+                    :key="index"
                     style="flex-basis: 15px;"
                     v-if="containers.length > 1"
                     v-show="isContainerDragging"
                     :index="index"
                     @object-drop-to="containerDropTo">
                 </drop-hint>
-            </div>
+            </template>
         </div> 
     </div>
 </template>
