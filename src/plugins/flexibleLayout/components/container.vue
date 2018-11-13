@@ -96,7 +96,7 @@ const MIN_FRAME_SIZE = 5;
 
 export default {
     inject:['openmct', 'domainObject'],
-    props: ['size', 'frames', 'index', 'isEditing', 'isDragging', 'rowsLayout'],
+    props: ['size', 'container', 'index', 'isEditing', 'isDragging', 'rowsLayout'],
     components: {
         FrameComponent,
         ResizeHandle,
@@ -106,7 +106,8 @@ export default {
         return {
             initialPos: 0,
             frameIndex: 0,
-            maxMoveSize: 0
+            maxMoveSize: 0,
+            frames: this.container.frames
         }
     },
     methods: {
@@ -217,6 +218,7 @@ export default {
         }
     },
     mounted() {
+        console.log(this.container);
         let context = {
             item: this.domainObject,
             method: this.deleteContainer,

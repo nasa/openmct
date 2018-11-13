@@ -12,7 +12,7 @@
 
             <div class="u-contents"
                  v-for="(container, index) in containers"
-                 :key="index">
+                 :key="container.index">
                 
                 <drop-hint
                     style="flex-basis: 15px;"
@@ -27,7 +27,7 @@
                     ref="containerComponent"
                     :index="index"
                     :size="`${Math.round(container.width)}%`"
-                    :frames="container.frames"
+                    :container="container"
                     :isEditing="isEditing"
                     :isDragging="isDragging"
                     :rowsLayout="rowsLayout"
@@ -634,13 +634,16 @@ export default {
         stopContainerDrag() {
             this.isContainerDragging = false;
         },
-        containerDropTo(event, index) {
+        containerDropTo(index, event) {
+            event.preventDefault();
+            event.stopPropagation();
+
             let fromContainer = this.containers.splice(this.containerDragFrom, 1)[0];
 
             if (index === -1) {
-                this.containers.unshift(fromContainer);
+                this.containers.splice(0, 0, fromContainer);
             } else {
-                this.containers.splice(index, 0, fromContainer);
+                this.containers.splice(index+1, 0, fromContainer);
             }
 
             this.persist();

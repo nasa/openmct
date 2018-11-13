@@ -36,8 +36,7 @@
              v-if="frame.domainObjectIdentifier.key">
 
             <frame-header
-                v-if="frameDomainObject.identifier"
-                ref="dragObject"
+                v-show="!noFrame"
                 :domainObject="frameDomainObject">
             </frame-header>
 
@@ -115,6 +114,7 @@ export default {
         }
     },
     mounted() {
+        console.log('mounted');
         if (this.frame.domainObjectIdentifier.key) {
             this.openmct.objects.get(this.frame.domainObjectIdentifier).then((object)=>{
                 this.setDomainObject(object);
