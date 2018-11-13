@@ -38,11 +38,12 @@
              <frame-header 
                 v-if="index !== 0"
                 ref="dragObject"
+                class="c-fl-frame__header"
                 :domainObject="frame.domainObject">
             </frame-header>
 
             <object-view
-                class="c-object-view"
+                class="c-fl-frame__object-view"
                 :object="frame.domainObject">
             </object-view>
 

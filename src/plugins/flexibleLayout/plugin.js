@@ -116,12 +116,12 @@ define([
                             property: `configuration.containers[${parent.context.index}].frames[${primary.context.index}].noFrame`,
                             options: [
                                 {
-                                    value: false,
+                                    value: true,
                                     icon: 'icon-frame-hide',
                                     title: "Hide frame"
                                 },
                                 {
-                                    value: true,
+                                    value: false,
                                     icon: 'icon-frame-show',
                                     title: "Show frame"
                                 }
