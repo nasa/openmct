@@ -389,7 +389,7 @@
             }
 
             &__drop-hint {
-                flex: 1 1 100%;
+                flex: 1 0 100%;
                 margin: 0;
             }
         }
