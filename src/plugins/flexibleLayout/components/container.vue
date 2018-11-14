@@ -218,7 +218,6 @@ export default {
         }
     },
     mounted() {
-        console.log(this.container);
         let context = {
             item: this.domainObject,
             method: this.deleteContainer,
@@ -228,7 +227,7 @@ export default {
         }
 
         this.unsubscribeSelection = this.openmct.selection.selectable(this.$el, context, false);
-    }, 
+    },
     beforeDestroy() {
         this.unsubscribeSelection();
     }

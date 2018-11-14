@@ -16,7 +16,7 @@
                     :key="index"
                     style="flex-basis: 15px;"
                     v-if="index === 0 && containers.length > 1"
-                    v-show="isContainerDragging"
+                    v-show="isContainerDragging && containerDragFrom !== 0"
                     :index="-1"
                     @object-drop-to="containerDropTo">
                 </drop-hint>
@@ -56,7 +56,7 @@
                     :key="index"
                     style="flex-basis: 15px;"
                     v-if="containers.length > 1"
-                    v-show="isContainerDragging"
+                    v-show="isContainerDragging && containerDragFrom !== index && (containerDragFrom - 1) !== index"
                     :index="index"
                     @object-drop-to="containerDropTo">
                 </drop-hint>
@@ -491,7 +491,7 @@ export default {
                 this.recalculateOldFrameSize(this.containers[this.dragFrom[0]].frames);
             }
 
-            if (!frameObject.height) {
+            if (frameObject && !frameObject.height) {
                 frameObject.height = 100 / Math.max(newContainer.frames.length, 1);
             }
 

@@ -112,7 +112,6 @@ export default {
         }
     },
     mounted() {
-        console.log('mounted');
         if (this.frame.domainObjectIdentifier.key) {
             this.openmct.objects.get(this.frame.domainObjectIdentifier).then((object)=>{
                 this.setDomainObject(object);
