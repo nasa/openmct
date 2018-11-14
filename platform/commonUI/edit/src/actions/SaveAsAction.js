@@ -50,6 +50,7 @@ define([
             this.injectObjectService = function () {
                 this.objectService = $injector.get("objectService");
             };
+            this.$injector = $injector;
             this.policyService = policyService;
             this.dialogService = dialogService;
             this.copyService = copyService;
@@ -160,6 +161,7 @@ define([
             }
 
             function undirty(object) {
+                self.$injector.get('transactionManager').clearTransactionsFor(object.getId());
                 return object.getCapability('persistence').refresh();
             }
 
