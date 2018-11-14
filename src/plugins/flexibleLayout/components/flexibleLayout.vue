@@ -515,6 +515,7 @@ export default {
             let newMultFactor = 100 / newTotalHeight;
 
             this.recalculateNewFrameSize(newMultFactor, newContainer.frames);
+            this.dragFrom = [];
 
             this.persist();
         },
@@ -647,11 +648,11 @@ export default {
             event.stopPropagation();
 
             let fromContainer = this.containers.splice(this.containerDragFrom, 1)[0];
-
-            if (index === -1) {
-                this.containers.splice(0, 0, fromContainer);
-            } else {
+            
+            if (this.containerDragFrom > index) {
                 this.containers.splice(index+1, 0, fromContainer);
+            } else {
+                this.containers.splice(index, 0, fromContainer);
             }
 
             this.persist();

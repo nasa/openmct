@@ -112,8 +112,6 @@ export default {
     },
     methods: {
         frameDragFrom(frameIndex) {
-           this.frameDragFromIndex = frameIndex;
-           console.log(this.frameDragFromIndex);
            this.$emit('frame-drag-from', this.index, frameIndex);
         },
         frameDropTo(frameIndex, event) {
