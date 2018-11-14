@@ -35,16 +35,14 @@
              ref="frame"
              v-if="frame.domainObjectIdentifier.key">
 
-             <frame-header 
-                v-if="index !== 0"
-                ref="dragObject"
+            <frame-header 
                 class="c-fl-frame__header"
-                :domainObject="frame.domainObject">
+                :domainObject="frameDomainObject">
             </frame-header>
 
             <object-view
                 class="c-fl-frame__object-view"
-                :object="frame.domainObject">
+                :object="frameDomainObject">
             </object-view>
 
             <div class="c-fl-frame__size-indicator"
@@ -58,7 +56,6 @@
 
 <script>
 import ObjectView from '../../../ui/components/layout/ObjectView.vue';
-import DropHint from './dropHint.vue';
 import ResizeHandle from './resizeHandle.vue';
 import FrameHeader from '../../../ui/components/utils/frameHeader.vue';
 
@@ -73,7 +70,6 @@ export default {
     },
     components: {
         ObjectView,
-        DropHint,
         ResizeHandle,
         FrameHeader
     },

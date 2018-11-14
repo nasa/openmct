@@ -44,7 +44,7 @@
         <div class="c-fl-container__frames-holder">
             <div class="u-contents"
                  v-for="(frame, i) in frames"
-                 :key="i">
+                 :key="frame.id">
 
                 <frame-component
                     class="c-fl-container__frame"

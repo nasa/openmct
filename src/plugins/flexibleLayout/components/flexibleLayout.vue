@@ -22,7 +22,7 @@
                 </drop-hint>
 
                 <container-component
-                    :key="container.index"
+                    :key="container.id"
                     class="c-fl__container"
                     ref="containerComponent"
                     :index="index"

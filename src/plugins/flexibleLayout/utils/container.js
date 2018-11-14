@@ -4,7 +4,7 @@ var id = 0;
 
 class Container {
     constructor (width) {
-        this.index = id;
+        this.id = id;
         this.frames = [];
         this.width = width;
         id++;
