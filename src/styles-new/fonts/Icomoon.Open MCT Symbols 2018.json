@@ -2,7 +2,7 @@
   "metadata": {
     "name": "Open MCT Symbols",
     "lastOpened": 0,
-    "created": 1541657905509
+    "created": 1541830438012
   },
   "iconSets": [
     {
@@ -2974,7 +2974,7 @@
       },
       "metrics": {
         "emSize": 1024,
-        "baseline": 6.25,
+        "baseline": 0,
         "whitespace": 50
       },
       "embed": false,
@@ -2984,8 +2984,10 @@
       "showSelector": true,
       "showVersion": true,
       "autoHost": false,
-      "selector": "",
-      "classSelector": ".icon"
+      "selector": "i",
+      "classSelector": ".icon",
+      "showMetrics": true,
+      "showMetadata": true
     },
     "imagePref": {
       "prefix": "icon-",

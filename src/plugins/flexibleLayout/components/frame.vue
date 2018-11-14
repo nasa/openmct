@@ -35,14 +35,16 @@
              ref="frame"
              v-if="frame.domainObjectIdentifier.key">
 
-            <frame-header
-                v-show="!noFrame"
-                :domainObject="frameDomainObject">
+             <frame-header 
+                v-if="index !== 0"
+                ref="dragObject"
+                class="c-fl-frame__header"
+                :domainObject="frame.domainObject">
             </frame-header>
 
             <object-view
-                class="c-object-view"
-                :object="frameDomainObject">
+                class="c-fl-frame__object-view"
+                :object="frame.domainObject">
             </object-view>
 
             <div class="c-fl-frame__size-indicator"

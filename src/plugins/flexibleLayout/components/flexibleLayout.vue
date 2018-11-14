@@ -218,12 +218,13 @@
     }
 
     .c-fl-frame {
+        /***************************************************** CONTAINER FRAMES */
         $sizeIndicatorM: 16px;
         $dropHintSize: 15px;
 
         display: flex;
-        justify-content: stretch;
-        align-items: stretch;
+      //  justify-content: stretch;
+      //  align-items: stretch;
         flex: 1 1;
         flex-direction: column;
         overflow: hidden; // Needed to allow frames to collapse when sized down
@@ -237,6 +238,16 @@
                     pointer-events: none;
                 }
             }
+        }
+
+        &__header {
+            flex: 0 0 auto;
+            margin-bottom: $interiorMargin;
+        }
+
+        &__object-view {
+            flex: 1 1 auto;
+            overflow: auto;
         }
 
         &__size-indicator {
@@ -288,20 +299,18 @@
                 min-height: $size; min-width: $size;
             }
 
-            &:after {
+            &__grippy {
                 // Grippy element
-                /*background: deeppink;*/
+                $d: 4px;
                 $c: black;
                 $a: 0.9;
                 $d: 5px;
                 background: $editColor;
                 color: $editColorBg;
                 border-radius: $smallCr;
-                content: $glyph-icon-grippy-ew;
-                font-family: symbolsfont;
                 font-size: 0.8em;
-                display: inline-block;
-                padding: 10px 0;
+                height: $d;
+                width: $d * 10;
                 position: absolute;
                 left: 50%; top: 50%;
                 text-align: center;
@@ -316,15 +325,6 @@
                   //  padding: $marginHov 0;
                     cursor: row-resize;
                 }
-
-                &:after {
-                    transform: rotate(90deg) translate(-50%, -50%);
-                    //top: $margin + $size - 2px;
-                    //left: 50%;
-                   // transform: translateX(-50%);
-                    /*width: $grippyLen;
-                    height: $grippyThickness;*/
-                }
             }
 
             &.horizontal {
@@ -334,12 +334,8 @@
                     cursor: col-resize;
                 }
 
-                &:after {
-                    //left: $margin + $size - 2px;
-                    //top: 50%;
-                    //transform: translateY(-50%);
-                   /* height: $grippyLen;
-                    width: $grippyThickness;*/
+                [class*='grippy'] {
+                    transform: translate(-50%) rotate(90deg);
                 }
             }
 
@@ -392,6 +388,10 @@
                 flex: 1 0 100%;
                 margin: 0;
             }
+        }
+
+        .c-object-view {
+            display: contents;
         }
     }
 </style>
