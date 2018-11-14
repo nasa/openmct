@@ -37,7 +37,7 @@
             :class="{
                 'c-fl-frame__drop-hint': true
             }"
-            v-show="isEditing && isDragging"
+            v-show="isEditing && isDragging && allowDrop !== 0"
             @object-drop-to="frameDropTo">
         </drop-hint>
 
@@ -64,7 +64,7 @@
                 </frame-component>
 
                 <drop-hint
-                    v-show="isEditing && isDragging"
+                    v-show="isEditing && isDragging && allowDrop !== i"
                     class="c-fl-frame__drop-hint"
                     :class="{'is-dragging': isDragging}"
                     :index="i"
@@ -96,7 +96,7 @@ const MIN_FRAME_SIZE = 5;
 
 export default {
     inject:['openmct', 'domainObject'],
-    props: ['sizeString', 'container', 'index', 'isEditing', 'isDragging', 'rowsLayout'],
+    props: ['sizeString', 'container', 'index', 'isEditing', 'isDragging', 'rowsLayout', 'allowDrop'],
     components: {
         FrameComponent,
         ResizeHandle,
@@ -112,6 +112,8 @@ export default {
     },
     methods: {
         frameDragFrom(frameIndex) {
+           this.frameDragFromIndex = frameIndex;
+           console.log(this.frameDragFromIndex);
            this.$emit('frame-drag-from', this.index, frameIndex);
         },
         frameDropTo(frameIndex, event) {

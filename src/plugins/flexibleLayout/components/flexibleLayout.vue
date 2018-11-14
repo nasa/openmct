@@ -31,6 +31,7 @@
                     :isEditing="isEditing"
                     :isDragging="isDragging"
                     :rowsLayout="rowsLayout"
+                    :allowDrop="allowDrop(index)"
                     @addFrame="addFrame"
                     @frame-drag-from="frameDragFromHandler"
                     @frame-drop-to="frameDropToHandler"
@@ -447,6 +448,11 @@ export default {
             this.recalculateContainerSize(newSize);
 
             this.containers.push(container);
+        },
+        allowDrop(containerIndex) {
+            if (this.dragFrom[0] === containerIndex) {
+                return this.dragFrom[1];
+            }
         },
         recalculateContainerSize(newSize) {
             this.containers.forEach((container) => {
