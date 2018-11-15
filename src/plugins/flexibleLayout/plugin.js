@@ -153,7 +153,7 @@ define([
 
                     }
 
-                    let toolbar = [toggleContainer, addContainer, toggleFrame, separator, deleteFrame, deleteContainer];
+                    let toolbar = [toggleContainer, addContainer, toggleFrame ? separator: undefined, toggleFrame, deleteFrame || deleteContainer ? separator: undefined, deleteFrame, deleteContainer];
 
                     return toolbar.filter(button => button !== undefined);
                 }
