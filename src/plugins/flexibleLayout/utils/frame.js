@@ -1,14 +1,12 @@
-var id = 0;
+import uuid from 'uuid';
 
 class Frame {
-    constructor(domainObjectIdentifier, height, cssClass) {
-        this.id = id;
+    constructor(domainObjectIdentifier, height) {
+        this.id = uuid();
         this.domainObjectIdentifier = domainObjectIdentifier;
         this.height = height;
-        this.cssClass = cssClass ? cssClass : '';
-        this.noFrame = false;
 
-        id++;
+        this.noFrame = false;
     }
 }
 

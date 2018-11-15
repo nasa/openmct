@@ -1,13 +1,10 @@
-import Frame from './frame';
-
-var id = 0;
+import uuid from 'uuid';
 
 class Container {
     constructor (width) {
-        this.id = id;
+        this.id = uuid();
         this.frames = [];
         this.width = width;
-        id++;
     }
 
     addFrame(frameObject) {

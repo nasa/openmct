@@ -42,12 +42,12 @@
         </drop-hint>
 
         <div class="c-fl-container__frames-holder">
-            <div class="u-contents"
-                 v-for="(frame, i) in frames"
-                 :key="frame.id">
+            <template
+                 v-for="(frame, i) in frames">
 
                 <frame-component
                     class="c-fl-container__frame"
+                    :key="frame.id"
                     :style="{
                         'flex-basis': `${frame.height}%`
                     }"
@@ -64,8 +64,9 @@
                 </frame-component>
 
                 <drop-hint
-                    v-show="isEditing && isDragging && allowDrop !== i"
+                    v-show="isEditing && isDragging && allowDrop !== i && allowDrop - 1 !== i"
                     class="c-fl-frame__drop-hint"
+                    :key="i"
                     :class="{'is-dragging': isDragging}"
                     :index="i"
                     @object-drop-to="frameDropTo">
@@ -74,13 +75,14 @@
                 <resize-handle
                     v-if="(i !== frames.length - 1)"
                     v-show="isEditing && !isDragging"
+                    :key="i"
                     :index="i"
                     :orientation="rowsLayout ? 'horizontal' : 'vertical'"
                     @init-move="startFrameResizing"
                     @move="frameResizing"
                     @end-move="endFrameResizing">
                 </resize-handle>
-            </div>
+            </template>
         </div>
     </div>
 </template>

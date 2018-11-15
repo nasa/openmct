@@ -23,8 +23,7 @@
 <template>
     <div class="c-fl-frame"
         :class="{
-            'is-dragging': isDragging,
-            [frame.cssClass]: true
+            'is-dragging': isDragging
         }"
         @dragstart="initDrag"
         @drag="continueDrag">

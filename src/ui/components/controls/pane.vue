@@ -429,6 +429,8 @@ export default {
             }
         },
         start: function (event) {
+            event.preventDefault(); // stop from firing drag event
+
             this.startPosition = this.getPosition(event);
             document.body.addEventListener('mousemove', this.updatePosition);
             document.body.addEventListener('mouseup', this.end);

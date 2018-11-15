@@ -13,18 +13,17 @@
             <template v-for="(container, index) in containers">
                 
                 <drop-hint
-                    :key="index"
                     style="flex-basis: 15px;"
                     v-if="index === 0 && containers.length > 1"
                     v-show="isContainerDragging && containerDragFrom !== 0"
+                    :key="index"
                     :index="-1"
                     @object-drop-to="containerDropTo">
                 </drop-hint>
 
                 <container-component
-                    :key="container.id"
                     class="c-fl__container"
-                    ref="containerComponent"
+                    :key="container.id"
                     :index="index"
                     :sizeString="`${Math.round(container.width)}%`"
                     :container="container"
@@ -54,10 +53,10 @@
                 </resize-handle>
 
                 <drop-hint
-                    :key="index"
                     style="flex-basis: 15px;"
                     v-if="containers.length > 1"
                     v-show="isContainerDragging && containerDragFrom !== index && (containerDragFrom - 1) !== index"
+                    :key="index"
                     :index="index"
                     @object-drop-to="containerDropTo">
                 </drop-hint>
@@ -537,7 +536,11 @@ export default {
                 this.isDragging = false;
             }
         },
-        dragstartHandler() {
+        dragstartHandler(event) {
+            if (event.dataTransfer.getData('domainObject')) {
+                this.dragFrom = [];
+            }
+
             if (this.isEditing) {
                 this.isDragging = true;
             }
@@ -644,8 +647,6 @@ export default {
             this.isContainerDragging = false;
         },
         containerDropTo(index, event) {
-            event.preventDefault();
-            event.stopPropagation();
 
             let fromContainer = this.containers.splice(this.containerDragFrom, 1)[0];
             
