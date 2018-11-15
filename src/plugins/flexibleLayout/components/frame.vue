@@ -35,6 +35,7 @@
              v-if="frame.domainObjectIdentifier.key">
 
             <subobject-view
+                v-if="item.domainObject.identifier"
                 :item="item">
             </subobject-view>
 

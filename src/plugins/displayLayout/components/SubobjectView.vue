@@ -23,7 +23,9 @@
     <div class="u-contents">
         <div class="c-so-view__header">
             <div class="c-so-view__header__start">
-                <div class="c-so-view__name icon-object">{{ item.domainObject.name }}</div>
+                <div class="c-so-view__name"
+                     :class="cssClass">
+                    {{ item.domainObject.name }}</div>
                 <div class="c-so-view__context-actions c-disclosure-button"></div>
             </div>
             <div class="c-so-view__header__end">
@@ -104,6 +106,13 @@
         inject: ['openmct'],
         props: {
             item: Object
+        },
+        data() {
+            let type = this.openmct.types.get(this.item.domainObject.type);
+
+            return {
+                cssClass: type.definition.cssClass
+            }
         },
         components: {
             ObjectView,
