@@ -34,15 +34,9 @@
              ref="frame"
              v-if="frame.domainObjectIdentifier.key">
 
-            <frame-header 
-                class="c-fl-frame__header"
-                :domainObject="frameDomainObject">
-            </frame-header>
-
-            <object-view
-                class="c-fl-frame__object-view"
-                :object="frameDomainObject">
-            </object-view>
+            <subobject-view
+                :item="item">
+            </subobject-view>
 
             <div class="c-fl-frame__size-indicator"
                  v-if="isEditing"
@@ -54,33 +48,31 @@
 </template>
 
 <script>
-import ObjectView from '../../../ui/components/layout/ObjectView.vue';
 import ResizeHandle from './resizeHandle.vue';
-import FrameHeader from '../../../ui/components/utils/frameHeader.vue';
+import SubobjectView from '../../displayLayout/components/SubobjectView.vue';
 
 export default {
     inject: ['openmct', 'domainObject'],
     props: ['frame', 'index', 'containerIndex', 'isEditing', 'isDragging'],
     data() {
         return {
-            frameDomainObject: {},
+            item: {domainObject: {}},
             noFrame: this.frame.noFrame
         }
     },
     components: {
-        ObjectView,
         ResizeHandle,
-        FrameHeader
+        SubobjectView
     },
     methods: {
         setDomainObject(object) {
-            this.frameDomainObject = object;
+            this.item.domainObject = object;
             this.setSelection();
         },
         setSelection() {
            
             let context = {
-                item: this.frameDomainObject,
+                item: this.item.domainObject,
                 method: this.deleteFrame,
                 addContainer: this.addContainer,
                 type: 'frame',

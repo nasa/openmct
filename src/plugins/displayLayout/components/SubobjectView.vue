@@ -109,10 +109,14 @@
             ObjectView,
         },
         mounted() {
-            this.item.config.attachListeners();
+            if (this.item.config) {
+                this.item.config.attachListeners();
+            }
         },
         destroyed() {
-            this.item.config.removeListeners();
+            if (this.item.config) {
+                this.item.config.removeListeners();
+            }
         }
     }
 </script>
