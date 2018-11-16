@@ -25,8 +25,12 @@
             <div class="c-so-view__header__start">
                 <div class="c-so-view__name"
                      :class="cssClass">
-                    {{ item.domainObject.name }}</div>
-                <div class="c-so-view__context-actions c-disclosure-button"></div>
+                    {{ item.domainObject.name }}
+                </div>
+                <context-menu-drop-down
+                    :leftClick="true"
+                    :object-path="objectPath">
+                </context-menu-drop-down>
             </div>
             <div class="c-so-view__header__end">
                 <div class="c-button icon-expand local-controls--hidden"></div>
@@ -100,22 +104,25 @@
 </style>
 
 <script>
-    import ObjectView from '../../../ui/components/layout/ObjectView.vue'
+    import ObjectView from '../../../ui/components/layout/ObjectView.vue';
+    import contextMenuDropDown from './contextMenuDropDown.vue';
 
     export default {
         inject: ['openmct'],
         props: {
             item: Object
         },
+        components: {
+            ObjectView,
+            contextMenuDropDown
+        },
         data() {
             let type = this.openmct.types.get(this.item.domainObject.type);
 
             return {
-                cssClass: type.definition.cssClass
+                cssClass: type.definition.cssClass,
+                objectPath: [this.item.domainObject].concat(this.openmct.router.path)
             }
-        },
-        components: {
-            ObjectView,
         },
         mounted() {
             if (this.item.config) {

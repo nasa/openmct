@@ -6,11 +6,23 @@ export default {
             default() {
                 return [];
             }
+        },
+        'leftClick': {
+            type: Boolean,
+            default() {
+                return false;
+            }
         }
     },
     mounted() {
-        // TODO: handle mobile contet menu listeners.
-        this.$el.addEventListener('contextmenu', this.showContextMenu);
+        // TODO: handle mobile context menu listeners.
+
+        if (this.leftClick) {
+            this.$el.addEventListener('click', this.showContextMenu);
+        } else {
+            this.$el.addEventListener('contextmenu', this.showContextMenu);
+        }
+
         this.objectPath.forEach((o, i) => {
             let removeListener = this.openmct.objects.observe(
                 o,
@@ -23,7 +35,11 @@ export default {
         });
     },
     destroyed() {
-        this.$el.removeEventListener('contextmenu', this.showContextMenu);
+        if (this.rightclick) {
+            this.$el.removeEventListener('click', this.showContextMenu);
+        } else {
+            this.$el.removeEventListener('contextmenu', this.showContextMenu);
+        }
     },
     methods: {
         showContextMenu(event) {
