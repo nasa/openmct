@@ -126,8 +126,13 @@
                 };
                 let style = this.convertPosition(rawPosition);
                 let id = this.openmct.objects.makeKeyString(panel.domainObject.identifier);
-                let config = new SubobjectViewConfiguration(
-                    this.newDomainObject, id, panel.hasFrame, rawPosition, openmct);
+                let config = new SubobjectViewConfiguration({
+                    domainObject: this.newDomainObject,
+                    id: id,
+                    hasFrame: panel.hasFrame,
+                    rawPosition: rawPosition,
+                    openmct: openmct
+                });
 
                 this.layoutItems.push({
                     id: id,
@@ -148,8 +153,12 @@
                 let id = this.openmct.objects.makeKeyString(alphanumeric.identifier);
 
                 this.openmct.objects.get(id).then(domainObject => {
-                    let config = new TelemetryViewConfiguration(
-                        this.newDomainObject, alphanumeric, rawPosition, openmct);
+                    let config = new TelemetryViewConfiguration({
+                        domainObject: this.newDomainObject,
+                        alphanumeric: alphanumeric,
+                        rawPosition: rawPosition,
+                        openmct: openmct
+                    });
 
                     this.layoutItems.push({
                         id: id,

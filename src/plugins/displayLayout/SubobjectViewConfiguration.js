@@ -20,51 +20,34 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([],
-    function () {
-        class SubobjectViewConfiguration {
+define(
+    ['./ViewConfiguration'],
+    function (ViewConfiguration) {
+        class SubobjectViewConfiguration extends ViewConfiguration {
+
             /**
              *
-             * @param domainObject the domain object to mutate.
-             * @param id
-             * @param rawPosition
-             * @param openmct
+             * @param {Object} configuration the subobject view configuration
+             * @param {String} configuration.id the domain object keystring identifier
+             * @param {Boolean} configuration.hasFrame flag to show/hide the frame
+             * @param {Object} configuration.domainObject the domain object
+             * @param {Object} configuration.rawPosition an object that holds raw position and dimensions
+             * @param {Object} configuration.openmct the openmct object
              */
-            constructor(domainObject, id, hasFrame, rawPosition, openmct) {
-                this.domainObject = domainObject;
+            constructor({id, hasFrame, ...rest}) {
+                super(rest);
                 this.id = id;
                 this.hasFrame = hasFrame;
-                this.rawPosition = rawPosition;
-                this.mutatePosition = this.mutatePosition.bind(this);
-                this.observe = openmct.objects.observe.bind(openmct.objects);
-                this.mutate = function (path, value) {
-                    openmct.objects.mutate(this.domainObject, path, value);
-                }.bind(this);
-                this.listeners = [];
             }
 
-            mutatePosition() {
-                let path = "configuration.panels[" + this.id + "]";
-                this.mutate(path + ".dimensions", this.rawPosition.dimensions);
-                this.mutate(path + ".position", this.rawPosition.position);
+            path() {
+                return "configuration.panels[" + this.id + "]";
             }
 
-            attachListeners() {
-                let path = "configuration.panels[" + this.id + "].hasFrame";
-                this.listeners.push(this.observe(this.domainObject, path, function (newValue) {
+            observeProperties() {
+                this.attachListener("hasFrame", newValue => {
                     this.hasFrame = newValue;
-                }.bind(this)));
-
-                this.listeners.push(this.observe(this.domainObject, '*', function (obj) {
-                    this.domainObject = JSON.parse(JSON.stringify(obj));
-                }.bind(this)));
-            }
-
-            removeListeners() {
-                this.listeners.forEach(listener => {
-                    listener();
                 });
-                this.listeners = [];
             }
         }
 

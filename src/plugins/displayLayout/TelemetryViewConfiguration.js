@@ -20,36 +20,28 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([],
-    function () {
-        class TelemetryViewConfiguration {
+define(
+    ['./ViewConfiguration'],
+    function (ViewConfiguration) {
+        class TelemetryViewConfiguration extends ViewConfiguration {
+
             /**
-             *
-             * @param domainObject the domain object to mutate.
-             * @param alphanumeric
-             * @param rawPosition
-             * @param openmct
+             * @param {Object} configuration the telemetry object view configuration
+             * @param {Object} configuration.alphanumeric
+             * @param {Object} configuration.domainObject the telemetry domain object
+             * @param {Object} configuration.rawPosition an object that holds raw position and dimensions
+             * @param {Object} configuration.openmct the openmct object
              */
-            constructor(domainObject, alphanumeric, rawPosition, openmct) {
-                this.domainObject = domainObject;
+            constructor({alphanumeric, ...rest}) {
+                super(rest);
                 this.alphanumeric = alphanumeric;
-                this.rawPosition = rawPosition;
-                this.observe = openmct.objects.observe.bind(openmct.objects);
-                this.mutate = function (path, value) {
-                    openmct.objects.mutate(this.domainObject, path, value);
-                }.bind(this);
-                this.mutatePosition = this.mutatePosition.bind(this);
-                this.listeners = [];
             }
 
-            mutatePosition() {
-                let path = "configuration.alphanumerics[" + this.alphanumeric.index + "]";
-                this.mutate(path + ".dimensions", this.rawPosition.dimensions);
-                this.mutate(path + ".position", this.rawPosition.position);
+            path() {
+                return "configuration.alphanumerics[" + this.alphanumeric.index + "]";
             }
 
-            attachListeners() {
-                let path = "configuration.alphanumerics[" + this.alphanumeric.index + "]";
+            observeProperties() {
                 [
                     'displayMode',
                     'value',
@@ -58,24 +50,11 @@ define([],
                     'color',
                     'size'
                 ].forEach(property => {
-                    this.listeners.push(
-                        this.observe(this.domainObject, path + "." + property, function (newValue) {
-                            this.alphanumeric[property] = newValue;
-                        }.bind(this))
-                    );
+                    this.attachListener(property, newValue => {
+                        this.alphanumeric[property] = newValue;
+                    });
                 });
-                this.listeners.push(this.observe(this.domainObject, '*', function (obj) {
-                    this.domainObject = JSON.parse(JSON.stringify(obj));
-                }.bind(this)));
             }
-
-            removeListeners() {
-                this.listeners.forEach(listener => {
-                    listener();
-                });
-                this.listeners = [];
-            }
-
         }
 
         return TelemetryViewConfiguration;
