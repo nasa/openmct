@@ -26,7 +26,7 @@
          :class="classObject"
          @dblclick="drill(item.id, $event)">
 
-        <component :is="item.type" :item="item"></component>
+        <component :is="item.type" :item="item" :gridSize="gridSize"></component>
 
         <!-- Drag handles -->
         <div class="c-frame-edit">
@@ -72,6 +72,10 @@
 <script>
     import SubobjectView from './SubobjectView.vue'
     import TelemetryView from './TelemetryView.vue'
+    import BoxView from './BoxView.vue'
+    import TextView from './TextView.vue'
+    import LineView from './LineView.vue'
+    import ImageView from './ImageView.vue'
     import LayoutDrag from './../LayoutDrag'
 
     export default {

@@ -104,9 +104,9 @@ define([
                                 }
                                 
                                 return (openmct.editor.isEditing() &&
-                                    (selection[0] && selection[0].context.elementProxy &&
-                                    selection[1] && selection[1].context.item.type === 'telemetry.fixed' ||
-                                    selection[0] && selection[0].context.item.type === 'telemetry.fixed'));
+                                    selection[0] && selection[0].context.elementProxy &&
+                                    ((selection[1] && selection[1].context.item.type === 'telemetry.fixed') ||
+                                    (selection[0] && selection[0].context.item && selection[0].context.item.type === 'telemetry.fixed')));
                             },
                             toolbar: function (selection) {
                                 var imageProperties = ["add", "remove", "order", "stroke", "useGrid", "x", "y", "height", "width", "url"];

@@ -88,6 +88,7 @@
     import LayoutItem from './LayoutItem.vue';
     import TelemetryViewConfiguration from './../TelemetryViewConfiguration.js'
     import SubobjectViewConfiguration from './../SubobjectViewConfiguration.js'
+    import ElementViewConfiguration from './../ElementViewConfiguration.js'
 
     const DEFAULT_GRID_SIZE = [32, 32],
           DEFAULT_DIMENSIONS = [12, 8],
@@ -165,10 +166,30 @@
                         domainObject: domainObject,
                         style: style,
                         initSelect: initSelect,
-                        alphanumeric: alphanumeric,
+                        alphanumeric: alphanumeric, // TODO: can be remmoved?
                         type: 'telemetry-view',
                         config: config
                     });
+                });
+            },
+            makeElementItem(element, initSelect) {
+                let rawPosition = {
+                    position: element.position,
+                    dimensions: element.dimensions
+                };
+                let style = this.convertPosition(rawPosition);
+                let config = new ElementViewConfiguration({
+                    domainObject: this.newDomainObject,
+                    element: element,
+                    rawPosition: rawPosition,
+                    openmct: openmct
+                });
+
+                this.layoutItems.push({
+                    style: style,
+                    initSelect: initSelect,
+                    type: element.type + '-view',
+                    config: config
                 });
             },
             getSubobjectDefaultDimensions() {
@@ -362,6 +383,17 @@
             },
             addElement(type) {
                 console.log("add element", type);
+                let element = {
+                    position: DEFAULT_POSITION,
+                    dimensions: DEFAULT_TELEMETRY_DIMENSIONS,
+                    stroke: "transparent",
+                    fill: "",
+                    type: type
+                };
+                let elements = this.newDomainObject.configuration.elements || [];
+                element.index = elements.push(element) - 1;
+                // this.mutate("configuration.elements", elements);                
+                this.makeElementItem(element, true);
             }
         },
         mounted() {

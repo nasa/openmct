@@ -28,7 +28,7 @@ define(
             /**
              * @param {Object} configuration the telemetry object view configuration
              * @param {Object} configuration.alphanumeric
-             * @param {Object} configuration.domainObject the telemetry domain object
+             * @param {Object} configuration.domainObject the domain object to observe the changes on
              * @param {Object} configuration.rawPosition an object that holds raw position and dimensions
              * @param {Object} configuration.openmct the openmct object
              */

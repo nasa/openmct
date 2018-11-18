@@ -30,7 +30,7 @@ define(
              * @param {Object} configuration the subobject view configuration
              * @param {String} configuration.id the domain object keystring identifier
              * @param {Boolean} configuration.hasFrame flag to show/hide the frame
-             * @param {Object} configuration.domainObject the domain object
+             * @param {Object} configuration.domainObject the domain object to observe the changes on
              * @param {Object} configuration.rawPosition an object that holds raw position and dimensions
              * @param {Object} configuration.openmct the openmct object
              */

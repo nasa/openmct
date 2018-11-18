@@ -32,7 +32,7 @@ define([], function () {
                 // is inside a layout, or the main layout is selected.
                 return (openmct.editor.isEditing() && selection &&
                     ((selection[1] && selection[1].context.item && selection[1].context.item.type === 'layout') ||
-                    (selection[0].context.item.type === 'layout')));
+                    (selection[0].context.item && selection[0].context.item.type === 'layout')));
             },
             toolbar: function (selection) {
                 let selectedParent = selection[1] && selection[1].context.item;
@@ -121,10 +121,13 @@ define([], function () {
                             })
                         },
                     ];
+                } else if (layoutItem && (layoutItem.type === 'text-view' || layoutItem.type === 'box-view' ||
+                    layoutItem.type === 'image-view' || layoutItem.type === 'line-view')) {
+                    return [];    
                 } else {
                     let toolbar = [];
 
-                    if (selectedObject.type === 'layout') {
+                    if (selectedObject && selectedObject.type === 'layout') {
                         toolbar.push({
                             control: "menu",
                             domainObject: selectedObject,
@@ -160,6 +163,7 @@ define([], function () {
                     }
 
                     if (selectedParent) {
+                        // TODO: get the selectedObject id instead of using layoutItem.id
                         toolbar.push({
                             control: "toggle-button",
                             domainObject: selectedParent,
