@@ -41,7 +41,7 @@ export default {
             delete this.viewContainer;
             delete this.currentView;
         },
-        updateView() {
+        updateView(immediatelySelect) {
             this.clear();
             if (!this.currentObject) {
                 return;
@@ -58,18 +58,34 @@ export default {
             }
             this.currentView = provider.view(this.currentObject);
             this.currentView.show(this.viewContainer);
+
+            if (immediatelySelect) {
+                this.removeSelectable = openmct.selection.selectable(
+                    this.$el,
+                    this.currentView.getSelectionContext ?
+                        this.currentView.getSelectionContext() :
+                        { item: this.currentObject },
+                    true
+                );
+            }
         },
-        show(object, viewKey) {
+        show(object, viewKey, immediatelySelect) {
             if (this.unlisten) {
                 this.unlisten();
             }
+
+            if (this.removeSelectable) {
+                this.removeSelectable();
+                delete this.removeSelectable;
+            }
+
             this.currentObject = object;
             this.unlisten = this.openmct.objects.observe(this.currentObject, '*', (mutatedObject) => {
                 this.currentObject = mutatedObject;
             });
 
             this.viewKey = viewKey;
-            this.updateView();
+            this.updateView(immediatelySelect);
         },
         onDragOver(event) {
             event.preventDefault();

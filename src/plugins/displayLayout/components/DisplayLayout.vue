@@ -359,6 +359,9 @@
             },
             removeObject() {
 
+            },
+            addElement(type) {
+                console.log("add element", type);
             }
         },
         mounted() {

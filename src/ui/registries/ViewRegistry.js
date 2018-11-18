@@ -132,6 +132,16 @@ define([], function () {
      */
 
     /**
+     * Returns the selection context.
+     *
+     * View implementations should use this method to customize
+     * the selection context.
+     *
+     * @method getSelectionContext
+     * @memberof module:openmct.View#
+     */
+
+    /**
      * Exposes types of views in Open MCT.
      *
      * @interface ViewProvider

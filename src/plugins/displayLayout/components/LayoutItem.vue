@@ -157,7 +157,8 @@
         mounted() {
             let context = {
                 item: this.item.domainObject,
-                layoutItem: this.item
+                layoutItem: this.item,
+                displayLayout: {...this.$parent}
             };
 
             this.removeSelectable = this.openmct.selection.selectable(

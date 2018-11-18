@@ -41,7 +41,7 @@ export default function () {
                             components: {
                                 Layout
                             },
-                            template: '<layout :domain-object="domainObject"></layout>',
+                            template: '<layout ref="displayLayout" :domain-object="domainObject"></layout>',
                             provide: {
                                 openmct,
                                 objectUtils
@@ -53,6 +53,12 @@ export default function () {
                                 }
                             }
                         });
+                    },
+                    getSelectionContext() {
+                        return {
+                            item: domainObject,
+                            displayLayout: component && component.$refs.displayLayout
+                        }
                     },
                     destroy() {
                         component.$destroy();

@@ -28,16 +28,15 @@ define([], function () {
             key: "layout",
             description: "A toolbar for objects inside a display layout.",
             forSelection: function (selection) {
-                // Apply the layout toolbar if the selected object is inside a layout,
-                // and in edit mode.
-                return (selection &&
-                    selection[1] &&
-                    selection[1].context.item &&
-                    selection[1].context.item.type === 'layout' &&
-                    openmct.editor.isEditing());
+                // Apply the layout toolbar if the edit mode is on, and the selected object
+                // is inside a layout, or the main layout is selected.
+                return (openmct.editor.isEditing() && selection &&
+                    ((selection[1] && selection[1].context.item && selection[1].context.item.type === 'layout') ||
+                    (selection[0].context.item.type === 'layout')));
             },
             toolbar: function (selection) {
-                let domainObject = selection[1].context.item;
+                let selectedParent = selection[1] && selection[1].context.item;
+                let selectedObject = selection[0].context.item;
                 let layoutItem = selection[0].context.layoutItem;
 
                 if (layoutItem && layoutItem.type === 'telemetry-view') {
@@ -48,7 +47,7 @@ define([], function () {
                     return [
                         {
                             control: "select-menu",
-                            domainObject: domainObject,
+                            domainObject: selectedParent,
                             property: path + ".displayMode",
                             title: "Set display mode",
                             options: [
@@ -71,7 +70,7 @@ define([], function () {
                         },
                         {
                             control: "select-menu",
-                            domainObject: domainObject,
+                            domainObject: selectedParent,
                             property: path + ".value",
                             title: "Set value",
                             options: metadata.values().map(value => {
@@ -86,21 +85,21 @@ define([], function () {
                         },
                         {
                             control: "color-picker",
-                            domainObject: domainObject,
+                            domainObject: selectedParent,
                             property: path + ".fill",
                             icon: "icon-paint-bucket",
                             title: "Set fill color"
                         },
                         {
                             control: "color-picker",
-                            domainObject: domainObject,
+                            domainObject: selectedParent,
                             property: path + ".stroke",
                             icon: "icon-line-horz",
                             title: "Set border color"
                         },
                         {
                             control: "color-picker",
-                            domainObject: domainObject,
+                            domainObject: selectedParent,
                             property: path + ".color",
                             icon: "icon-font",
                             mandatory: true,
@@ -112,7 +111,7 @@ define([], function () {
                         },
                         {
                             control: "select-menu",
-                            domainObject: domainObject,
+                            domainObject: selectedParent,
                             property: path + ".size",
                             title: "Set text size",
                             options: TEXT_SIZE.map(size => {
@@ -123,10 +122,47 @@ define([], function () {
                         },
                     ];
                 } else {
-                    return [
-                        {
+                    let toolbar = [];
+
+                    if (selectedObject.type === 'layout') {
+                        toolbar.push({
+                            control: "menu",
+                            domainObject: selectedObject,
+                            method: function (option) {
+                                selection[0].context.displayLayout.addElement(option.key);
+                            },
+                            key: "add",
+                            icon: "icon-plus",
+                            label: "Add",
+                            options: [
+                                {
+                                    "name": "Box",
+                                    "class": "icon-box",
+                                    "key": "box"
+                                },
+                                {
+                                    "name": "Line",
+                                    "class": "icon-line-horz",
+                                    "key": "line"
+                                },
+                                {
+                                    "name": "Text",
+                                    "class": "icon-T",
+                                    "key": "text"
+                                },
+                                {
+                                    "name": "Image",
+                                    "class": "icon-image",
+                                    "key": "image"
+                                }
+                            ]
+                        });
+                    }
+
+                    if (selectedParent) {
+                        toolbar.push({
                             control: "toggle-button",
-                            domainObject: domainObject,
+                            domainObject: selectedParent,
                             property: "configuration.panels[" + layoutItem.id + "].hasFrame",
                             options: [
                                 {
@@ -140,8 +176,10 @@ define([], function () {
                                     title: "Show frame"
                                 }
                             ]
-                        }
-                    ];    
+                        });
+                    }
+
+                    return toolbar;
                 }
             }
         }
