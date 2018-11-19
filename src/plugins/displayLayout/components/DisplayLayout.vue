@@ -121,6 +121,13 @@
                     this.makeTelemetryItem(alphanumeric, false);
                 });
             },
+            getElements() {
+                let elements = this.newDomainObject.configuration.elements || [];
+                elements.forEach((element, index) => {
+                    element.index = index;
+                    this.makeElementItem(element, false);
+                });
+            },
             makeFrameItem(panel, initSelect) {
                 let rawPosition = {
                     position: panel.position,
@@ -391,7 +398,7 @@
                 let element = this.elementFactory.createElement(type);
                 element.type = type;
                 element.index = elements.push(element) - 1;
-                // this.mutate("configuration.elements", elements);                
+                this.mutate("configuration.elements", elements);
                 this.makeElementItem(element, true);
             }
         },
@@ -411,6 +418,7 @@
             this.composition.on('remove', this.removeObject);
             this.composition.load();
             this.getAlphanumerics();
+            this.getElements();
         },
         destroyed: function () {
             this.openmct.off('change', this.setSelection);
