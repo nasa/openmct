@@ -21,10 +21,25 @@
  *****************************************************************************/
 
  <template>
-    <div :style="styleObject">
+    <div class="c-text-view"
+         :style="styleObject">
         {{ item.config.element.text }}
     </div>
  </template>
+
+<style lang="scss">
+    @import '~styles/sass-base';
+
+    .c-text-view {
+        display: flex;
+        align-items: stretch;
+
+        .c-frame & {
+            @include abs();
+            border: 1px solid transparent;
+        }
+    }
+</style>
 
  <script>
     export default {

@@ -86,7 +86,11 @@
         },
         components: {
             SubobjectView,
-            TelemetryView
+            TelemetryView,
+            BoxView,
+            TextView,
+            LineView,
+            ImageView
         },
         computed: {
             classObject: function () {
@@ -103,6 +107,10 @@
                 }
 
                 if (!this.openmct.editor.isEditing()) {
+                    return;
+                }
+
+                if (!this.item.domainObject) {
                     return;
                 }
 

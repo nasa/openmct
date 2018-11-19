@@ -21,8 +21,8 @@
  *****************************************************************************/
 
  <template>
-    <!-- <svg width="{{ gridSize[0] * element.width }}"
-         height="{{ gridSize[1] * element.height }}">
+    <!-- <svg width="{{ gridSize[0] * element.dimensions[0] }}"
+         height="{{ gridSize[1] * element.dimensions[1] }}">
         <line x1="{{ gridSize[0] * element.x1 + 1 }}"
               y1="{{ gridSize[1] * element.y1 + 1 }}"
               x2="{{ gridSize[0] * element.x2 + 1 }}"

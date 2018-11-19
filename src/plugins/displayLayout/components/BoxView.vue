@@ -21,9 +21,23 @@
  *****************************************************************************/
 
 <template>
-    <div :style="styleObject">
+    <div class="c-box-view"
+         :style="styleObject">
     </div>
  </template>
+
+<style lang="scss">
+    @import '~styles/sass-base';
+
+    .c-box-view {
+        display: flex;
+        align-items: stretch;
+
+        .c-frame & {
+            @include abs();
+        }
+    }
+</style>
 
  <script>
     export default {

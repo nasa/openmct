@@ -89,6 +89,7 @@
     import TelemetryViewConfiguration from './../TelemetryViewConfiguration.js'
     import SubobjectViewConfiguration from './../SubobjectViewConfiguration.js'
     import ElementViewConfiguration from './../ElementViewConfiguration.js'
+    import ElementFactory from './../ElementFactory.js'
 
     const DEFAULT_GRID_SIZE = [32, 32],
           DEFAULT_DIMENSIONS = [12, 8],
@@ -382,15 +383,13 @@
 
             },
             addElement(type) {
-                console.log("add element", type);
-                let element = {
-                    position: DEFAULT_POSITION,
-                    dimensions: DEFAULT_TELEMETRY_DIMENSIONS,
-                    stroke: "transparent",
-                    fill: "",
-                    type: type
-                };
+                if (!this.elementFacotry) {
+                    this.elementFactory = new ElementFactory();
+                }
+
                 let elements = this.newDomainObject.configuration.elements || [];
+                let element = this.elementFactory.createElement(type);
+                element.type = type;
                 element.index = elements.push(element) - 1;
                 // this.mutate("configuration.elements", elements);                
                 this.makeElementItem(element, true);
