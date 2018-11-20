@@ -23,7 +23,44 @@
 define(
     ['./ViewConfiguration'],
     function (ViewConfiguration) {
+
         class TelemetryViewConfiguration extends ViewConfiguration {
+            static create(domainObject, position, openmct) {
+                const DEFAULT_TELEMETRY_DIMENSIONS = [2, 1];
+
+                function getDefaultTelemetryValue(domainObject, openmct) {
+                    let metadata = openmct.telemetry.getMetadata(domainObject);
+                    let valueMetadata = metadata.valuesForHints(['range'])[0];
+
+                    if (valueMetadata === undefined) {
+                        valueMetadata = metadata.values().filter(values => {
+                            return !(values.hints.domain);
+                        })[0];
+                    }
+
+                    if (valueMetadata === undefined) {
+                        valueMetadata = metadata.values()[0];
+                    }
+
+                    return valueMetadata.key;
+                }
+
+                // Apply defaults then construct and return object
+                let alphanumeric = {
+                    identifier: domainObject.identifier,
+                    position: position,
+                    dimensions: DEFAULT_TELEMETRY_DIMENSIONS,
+                    displayMode: 'all',
+                    value: getDefaultTelemetryValue(domainObject, openmct),
+                    stroke: "transparent",
+                    fill: "",
+                    color: "",
+                    size: "13px",
+                };
+
+                // return new TelemetryViewConfiguration({alphanumeric, domainObject, openmct});
+                return alphanumeric;
+            }
 
             /**
              * @param {Object} configuration the telemetry object view configuration
@@ -33,6 +70,10 @@ define(
              * @param {Object} configuration.openmct the openmct object
              */
             constructor({alphanumeric, ...rest}) {
+                rest.rawPosition = {
+                    position: alphanumeric.position,
+                    dimensions: alphanumeric.dimensions
+                };
                 super(rest);
                 this.alphanumeric = alphanumeric;
             }

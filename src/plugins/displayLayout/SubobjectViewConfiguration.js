@@ -29,15 +29,18 @@ define(
              *
              * @param {Object} configuration the subobject view configuration
              * @param {String} configuration.id the domain object keystring identifier
-             * @param {Boolean} configuration.hasFrame flag to show/hide the frame
+             * @param {Boolean} configuration.panel
              * @param {Object} configuration.domainObject the domain object to observe the changes on
-             * @param {Object} configuration.rawPosition an object that holds raw position and dimensions
              * @param {Object} configuration.openmct the openmct object
              */
-            constructor({id, hasFrame, ...rest}) {
+            constructor({panel, id, ...rest}) {
+                rest.rawPosition = {
+                    position: panel.position,
+                    dimensions: panel.dimensions
+                };
                 super(rest);
                 this.id = id;
-                this.hasFrame = hasFrame;
+                this.hasFrame = panel.hasFrame;
             }
 
             path() {

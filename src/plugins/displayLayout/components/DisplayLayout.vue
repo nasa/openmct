@@ -89,11 +89,9 @@
     import TelemetryViewConfiguration from './../TelemetryViewConfiguration.js'
     import SubobjectViewConfiguration from './../SubobjectViewConfiguration.js'
     import ElementViewConfiguration from './../ElementViewConfiguration.js'
-    import ElementFactory from './../ElementFactory.js'
 
     const DEFAULT_GRID_SIZE = [32, 32],
           DEFAULT_DIMENSIONS = [12, 8],
-          DEFAULT_TELEMETRY_DIMENSIONS = [2, 1],
           DEFAULT_POSITION = [0, 0],
           MINIMUM_FRAME_SIZE = [320, 180],
           DEFAULT_HIDDEN_FRAME_TYPES = [
@@ -129,24 +127,17 @@
                 });
             },
             makeFrameItem(panel, initSelect) {
-                let rawPosition = {
-                    position: panel.position,
-                    dimensions: panel.dimensions
-                };
-                let style = this.convertPosition(rawPosition);
                 let id = this.openmct.objects.makeKeyString(panel.domainObject.identifier);
                 let config = new SubobjectViewConfiguration({
                     domainObject: this.newDomainObject,
+                    panel: panel,
                     id: id,
-                    hasFrame: panel.hasFrame,
-                    rawPosition: rawPosition,
                     openmct: openmct
                 });
-
                 this.layoutItems.push({
                     id: id,
                     domainObject: panel.domainObject,
-                    style: style,
+                    style: this.convertPosition(config.rawPosition),
                     drilledIn: this.isItemDrilledIn(id),
                     initSelect: initSelect,
                     type: 'subobject-view',
@@ -154,25 +145,17 @@
                 });
             },
             makeTelemetryItem(alphanumeric, initSelect) {
-                let rawPosition = {
-                    position: alphanumeric.position,
-                    dimensions: alphanumeric.dimensions
-                };
-                let style = this.convertPosition(rawPosition);
                 let id = this.openmct.objects.makeKeyString(alphanumeric.identifier);
-
                 this.openmct.objects.get(id).then(domainObject => {
                     let config = new TelemetryViewConfiguration({
                         domainObject: this.newDomainObject,
                         alphanumeric: alphanumeric,
-                        rawPosition: rawPosition,
                         openmct: openmct
                     });
-
                     this.layoutItems.push({
                         id: id,
                         domainObject: domainObject,
-                        style: style,
+                        style: this.convertPosition(config.rawPosition),
                         initSelect: initSelect,
                         alphanumeric: alphanumeric, // TODO: can be remmoved?
                         type: 'telemetry-view',
@@ -181,20 +164,13 @@
                 });
             },
             makeElementItem(element, initSelect) {
-                let rawPosition = {
-                    position: element.position,
-                    dimensions: element.dimensions
-                };
-                let style = this.convertPosition(rawPosition);
                 let config = new ElementViewConfiguration({
                     domainObject: this.newDomainObject,
                     element: element,
-                    rawPosition: rawPosition,
                     openmct: openmct
                 });
-
                 this.layoutItems.push({
-                    style: style,
+                    style: this.convertPosition(config.rawPosition),
                     initSelect: initSelect,
                     type: element.type + '-view',
                     config: config
@@ -307,38 +283,11 @@
                 }
             },
             addAlphanumeric(domainObject, position) {
-                let alphanumeric = {
-                    identifier: domainObject.identifier,
-                    position: position,
-                    dimensions: DEFAULT_TELEMETRY_DIMENSIONS,
-                    displayMode: 'all',
-                    value: this.getDefaultTelemetryValue(domainObject),
-                    stroke: "transparent",
-                    fill: "",
-                    color: "",
-                    size: "13px",
-                };
                 let alphanumerics = this.newDomainObject.configuration.alphanumerics || [];
+                let alphanumeric = TelemetryViewConfiguration.create(domainObject, position, this.openmct);
                 alphanumeric.index = alphanumerics.push(alphanumeric) - 1;
-
                 this.mutate("configuration.alphanumerics", alphanumerics);
                 this.makeTelemetryItem(alphanumeric, true);
-            },
-            getDefaultTelemetryValue(domainObject) {
-                let metadata = this.openmct.telemetry.getMetadata(domainObject);
-                let valueMetadata = metadata.valuesForHints(['range'])[0];
-
-                if (valueMetadata === undefined) {
-                    valueMetadata = metadata.values().filter(values => {
-                        return !(values.hints.domain);
-                    })[0];
-                }
-
-                if (valueMetadata === undefined) {
-                    valueMetadata = metadata.values()[0];
-                }
-
-                return valueMetadata.key;
             },
             handleDragOver($event){
                 $event.preventDefault();
@@ -390,16 +339,13 @@
 
             },
             addElement(type) {
-                if (!this.elementFacotry) {
-                    this.elementFactory = new ElementFactory();
-                }
-
                 let elements = this.newDomainObject.configuration.elements || [];
-                let element = this.elementFactory.createElement(type);
-                element.type = type;
-                element.index = elements.push(element) - 1;
-                this.mutate("configuration.elements", elements);
-                this.makeElementItem(element, true);
+                Promise.resolve(ElementViewConfiguration.create(type, this.openmct))
+                    .then(element => {
+                        element.index = elements.push(element) - 1;
+                        this.mutate("configuration.elements", elements);
+                        this.makeElementItem(element, true);
+                    });
             }
         },
         mounted() {
