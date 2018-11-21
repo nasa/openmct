@@ -2,9 +2,9 @@
     <div class="c-bigalpha">
         <div class="c-bigalpha__wrapper">
             <svg class="c-bigalpha__vals" viewBox="0 0 512 512">
-                <text class="c-bigalpha__int" transform="translate(305 180)" text-anchor="end">{{ this.curValInt }}</text>
-                <text class="c-bigalpha__dec" transform="translate(305 105)" text-anchor="start">.{{ this.curValDec }}</text>
-                <text class="c-bigalpha__units" transform="translate(305 180)" text-anchor="start">{{ this.units }}</text>
+                <text class="c-bigalpha__int" transform="translate(320 180)" text-anchor="end">{{ this.curValInt }}</text>
+                <text class="c-bigalpha__dec" transform="translate(320 110)" text-anchor="start">{{ this.curValDec }}</text>
+                <text class="c-bigalpha__units" transform="translate(290 177)" style="font-size: 47px;" text-anchor="start">{{ this.units }}</text>
             </svg>
         </div>
     </div>
@@ -33,21 +33,21 @@
         &__int,
         &__dec {
             font-family: $heroFont;
+            letter-spacing: -0.15em;
         }
 
         &__int {
-            font-size: 280px;
+            font-size: 256px;
             opacity: 0.8;
         }
 
         &__dec {
-            font-size: 160px;
+            font-size: 155px;
             opacity: 0.4;
         }
 
         &__units {
             font-family: $headerFont;
-            font-size: 43px;
             opacity: 0.2;
         }
     }
