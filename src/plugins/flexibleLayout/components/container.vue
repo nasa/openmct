@@ -49,10 +49,10 @@
                     class="c-fl-container__frame"
                     :key="frame.id"
                     :style="{
-                        'flex-basis': `${frame.height}%`
+                        'flex-basis': `${frame.size}%`
                     }"
                     :frame="frame"
-                    :size="frame.height"
+                    :size="frame.size"
                     :index="i"
                     :containerIndex="index"
                     :isEditing="isEditing"
@@ -130,7 +130,7 @@ export default {
             let beforeFrame = this.frames[index],
                 afterFrame = this.frames[index + 1];
             
-            this.maxMoveSize = beforeFrame.height + afterFrame.height;
+            this.maxMoveSize = beforeFrame.size + afterFrame.size;
         },
         frameResizing(index, delta, event) {
 
@@ -138,8 +138,8 @@ export default {
                 beforeFrame = this.frames[index],
                 afterFrame = this.frames[index + 1];
 
-            beforeFrame.height = this.snapToPercentage(beforeFrame.height + percentageMoved);
-            afterFrame.height = this.snapToPercentage(afterFrame.height - percentageMoved);
+            beforeFrame.size = this.snapToPercentage(beforeFrame.size + percentageMoved);
+            afterFrame.size = this.snapToPercentage(afterFrame.size - percentageMoved);
         },
         endFrameResizing(index, event) {
             this.persist();

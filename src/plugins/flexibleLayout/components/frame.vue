@@ -41,8 +41,8 @@
 
             <div class="c-fl-frame__size-indicator"
                  v-if="isEditing"
-                 v-show="frame.height && frame.height < 100">
-                {{frame.height}}%
+                 v-show="frame.size && frame.size < 100">
+                {{frame.size}}%
             </div>
         </div>
     </div>

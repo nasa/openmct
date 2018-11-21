@@ -25,7 +25,7 @@
                     class="c-fl__container"
                     :key="container.id"
                     :index="index"
-                    :sizeString="`${Math.round(container.width)}%`"
+                    :sizeString="`${Math.round(container.size)}%`"
                     :container="container"
                     :isEditing="isEditing"
                     :isDragging="isDragging"
@@ -455,28 +455,28 @@ export default {
         },
         recalculateContainerSize(newSize) {
             this.containers.forEach((container) => {
-                container.width = newSize;
+                container.size = newSize;
             });
         },
         recalculateNewFrameSize(multFactor, framesArray){
             framesArray.forEach((frame, index) => {
-                let frameSize = frame.height
-                frame.height = this.snapToPercentage(multFactor * frameSize);
+                let frameSize = frame.size
+                frame.size = this.snapToPercentage(multFactor * frameSize);
             });
         },
         recalculateOldFrameSize(framesArray) {
             let totalRemainingSum = framesArray.length ? framesArray.map((frame) => {
-                return frame.height;
+                return frame.size;
             }).reduce((a, c) => a + c) : 100;
 
             framesArray.forEach((frame, index) => {
                 if (framesArray.length === 1) {
 
-                    frame.height = 100;
+                    frame.size = 100;
                 } else {
 
-                    let newSize = frame.height + ((frame.height / totalRemainingSum) * (100 - totalRemainingSum));
-                    frame.height = this.snapToPercentage(newSize);
+                    let newSize = frame.size + ((frame.size / totalRemainingSum) * (100 - totalRemainingSum));
+                    frame.size = this.snapToPercentage(newSize);
                 }
             });
         },
@@ -496,14 +496,14 @@ export default {
                 this.recalculateOldFrameSize(this.containers[this.dragFrom[0]].frames);
             }
 
-            if (frameObject && !frameObject.height) {
-                frameObject.height = 100 / Math.max(newContainer.frames.length, 1);
+            if (frameObject && !frameObject.size) {
+                frameObject.size = 100 / Math.max(newContainer.frames.length, 1);
             }
 
             newContainer.frames.splice((frameIndex + 1), 0, frameObject);
 
-            let newTotalHeight = newContainer.frames.reduce((total, frame) => {
-                        let num = Number(frame.height);
+            let newTotalSize = newContainer.frames.reduce((total, frame) => {
+                        let num = Number(frame.size);
 
                         if(isNaN(num)) {
                             return total;
@@ -511,7 +511,7 @@ export default {
                             return total + num;
                         }
                     },0);
-            let newMultFactor = 100 / newTotalHeight;
+            let newMultFactor = 100 / newTotalSize;
 
             this.recalculateNewFrameSize(newMultFactor, newContainer.frames);
             this.dragFrom = [];
@@ -552,15 +552,15 @@ export default {
             let beforeContainer = this.containers[index],
                 afterContainer = this.containers[index + 1];
 
-            this.maxMoveSize = beforeContainer.width + afterContainer.width;
+            this.maxMoveSize = beforeContainer.size + afterContainer.size;
         },
         containerResizing(index, delta, event) {
             let percentageMoved = (delta/this.getElSize(this.$el))*100,
                 beforeContainer = this.containers[index],
                 afterContainer = this.containers[index + 1];
 
-                beforeContainer.width = this.getContainerSize(this.snapToPercentage(beforeContainer.width + percentageMoved));
-                afterContainer.width = this.getContainerSize(this.snapToPercentage(afterContainer.width - percentageMoved));
+                beforeContainer.size = this.getContainerSize(this.snapToPercentage(beforeContainer.size + percentageMoved));
+                afterContainer.size = this.getContainerSize(this.snapToPercentage(afterContainer.size - percentageMoved));
         },
         endContainerResizing(event) {
             this.persist();

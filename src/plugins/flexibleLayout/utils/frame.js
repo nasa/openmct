@@ -1,10 +1,10 @@
 import uuid from 'uuid';
 
 class Frame {
-    constructor(domainObjectIdentifier, height) {
+    constructor(domainObjectIdentifier, size) {
         this.id = uuid();
         this.domainObjectIdentifier = domainObjectIdentifier;
-        this.height = height;
+        this.size = size;
 
         this.noFrame = false;
     }
