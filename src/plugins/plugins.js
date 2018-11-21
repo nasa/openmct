@@ -40,6 +40,7 @@ define([
     './flexibleLayout/plugin',
     './tabs/plugin',
     './gauge/plugin',
+    './bigalpha/plugin',
     '../../platform/features/fixed/plugin'
 ], function (
     _,
@@ -61,6 +62,7 @@ define([
     FlexibleLayout,
     Tabs,
     Gauge,
+    Bigalpha,
     FixedView
 ) {
     var bundleMap = {
@@ -175,6 +177,7 @@ define([
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
     plugins.Gauge = Gauge;
+    plugins.Bigalpha = Bigalpha;
     plugins.FixedView = FixedView;
     plugins.FlexibleLayout = FlexibleLayout;
 
