@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    './components/bigalphaRadial.vue',
+    './components/bigalpha.vue',
     'vue'
 ], function (
     BigalphaComponent,
