@@ -47,7 +47,18 @@ export default {
         mousemove(event) {
             event.preventDefault();
 
-            let delta = this.getMousePosition(event) - this.getElSizeFromRect(this.$el);
+            let elSize, mousePos, delta;
+
+            if (this.orientation === 'horizontal') {
+                elSize = this.$el.getBoundingClientRect().x;
+                mousePos = event.clientX;
+            } else {
+                elSize = this.$el.getBoundingClientRect().y;
+                mousePos = event.clientY;
+            }
+
+            delta = mousePos - elSize;
+
             this.$emit('move', this.index, delta, event);
         },
         mouseup(event) {
@@ -55,21 +66,7 @@ export default {
 
             document.body.removeEventListener('mousemove', this.mousemove);
             document.body.removeEventListener('mouseup', this.mouseup);
-        },
-        getMousePosition(event) {
-            if (this.orientation === 'horizontal') {
-                return event.clientX;
-            } else {
-                return event.clientY;
-            }
-        },
-        getElSizeFromRect(el) {
-            if (this.orientation === 'horizontal') {
-                return el.getBoundingClientRect().x;
-            } else {
-                return el.getBoundingClientRect().y;
-            }
-        },
+        }
     }
 }
 </script>
