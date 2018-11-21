@@ -51,10 +51,12 @@
 <script>
 import ResizeHandle from './resizeHandle.vue';
 import SubobjectView from '../../displayLayout/components/SubobjectView.vue';
+import isEditingMixin from '../mixins/isEditing';
 
 export default {
     inject: ['openmct', 'domainObject'],
-    props: ['frame', 'index', 'containerIndex', 'isEditing', 'isDragging'],
+    props: ['frame', 'index', 'containerIndex', 'isDragging'],
+    mixins: [isEditingMixin],
     data() {
         return {
             item: {domainObject: {}},

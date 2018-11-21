@@ -55,7 +55,6 @@
                     :size="frame.size"
                     :index="i"
                     :containerIndex="index"
-                    :isEditing="isEditing"
                     :isDragging="isDragging"
                     @frame-drag-from="frameDragFrom"
                     @frame-drop-to="frameDropTo"
@@ -92,13 +91,15 @@ import FrameComponent from './frame.vue';
 import Frame from '../utils/frame';
 import ResizeHandle from './resizeHandle.vue';
 import DropHint from './dropHint.vue';
+import isEditingMixin from '../mixins/isEditing';
 
 const SNAP_TO_PERCENTAGE = 1;
 const MIN_FRAME_SIZE = 5;
 
 export default {
     inject:['openmct', 'domainObject'],
-    props: ['sizeString', 'container', 'index', 'isEditing', 'isDragging', 'rowsLayout', 'allowDrop'],
+    props: ['sizeString', 'container', 'index', 'isDragging', 'rowsLayout', 'allowDrop'],
+    mixins: [isEditingMixin],
     components: {
         FrameComponent,
         ResizeHandle,

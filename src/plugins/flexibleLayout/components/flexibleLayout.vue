@@ -27,7 +27,6 @@
                     :index="index"
                     :sizeString="`${Math.round(container.size)}%`"
                     :container="container"
-                    :isEditing="isEditing"
                     :isDragging="isDragging"
                     :rowsLayout="rowsLayout"
                     :allowDrop="allowDrop(index)"
@@ -401,12 +400,14 @@ import ContainerComponent  from './container.vue';
 import Container from '../utils/container';
 import ResizeHandle from  './resizeHandle.vue';
 import DropHint from './dropHint.vue';
+import isEditingMixin from '../mixins/isEditing';
 
 const SNAP_TO_PERCENTAGE = 1,
       MIN_CONTAINER_SIZE = 5;
 
 export default {
     inject: ['openmct', 'domainObject'],
+    mixins: [isEditingMixin],
     components: {
         ContainerComponent,
         ResizeHandle,
@@ -419,7 +420,6 @@ export default {
         return {
             containers: containers,
             dragFrom: [],
-            isEditing: false,
             isDragging: false,
             isContainerDragging: false,
             rowsLayout: rowsLayout,
@@ -523,17 +523,6 @@ export default {
                 this.openmct.objects.mutate(this.domainObject, `.configuration.containers[${index}]`, this.containers[index]);
             } else {
                 this.openmct.objects.mutate(this.domainObject, '.configuration.containers', this.containers);
-            }
-        },
-        isEditingHandler(isEditing) {
-            this.isEditing = isEditing;
-
-            if (this.isEditing) {
-                this.$el.click(); //force selection of flexible-layout for toolbar
-            }
-
-            if (this.isDragging && isEditing === false) {
-                this.isDragging = false;
             }
         },
         dragstartHandler(event) {
@@ -670,7 +659,6 @@ export default {
         this.unsubscribeSelection = this.openmct.selection.selectable(this.$el, context, true);
 
         this.openmct.objects.observe(this.domainObject, 'configuration.rowsLayout', this.toggleLayoutDirection);
-        this.openmct.editor.on('isEditing', this.isEditingHandler);
 
         document.addEventListener('dragstart', this.dragstartHandler);
         document.addEventListener('dragend', this.dragendHandler);
@@ -678,7 +666,6 @@ export default {
     beforeDestroy() {
         this.unsubscribeSelection();
 
-        this.openmct.editor.off('isEditing', this.isEditingHandler);
         document.removeEventListener('dragstart', this.dragstartHandler);
         document.removeEventListener('dragend', this.dragendHandler);
     }
