@@ -28,7 +28,6 @@
                     {{ item.domainObject.name }}
                 </div>
                 <context-menu-drop-down
-                    :leftClick="true"
                     :object-path="objectPath">
                 </context-menu-drop-down>
             </div>

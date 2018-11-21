@@ -6,22 +6,12 @@ export default {
             default() {
                 return [];
             }
-        },
-        'leftClick': {
-            type: Boolean,
-            default() {
-                return false;
-            }
         }
     },
     mounted() {
         // TODO: handle mobile context menu listeners.
 
-        if (this.leftClick) {
-            this.$el.addEventListener('click', this.showContextMenu);
-        } else {
-            this.$el.addEventListener('contextmenu', this.showContextMenu);
-        }
+        this.$el.addEventListener('contextmenu', this.showContextMenu);
 
         this.objectPath.forEach((o, i) => {
             let removeListener = this.openmct.objects.observe(
@@ -35,11 +25,7 @@ export default {
         });
     },
     destroyed() {
-        if (this.rightclick) {
-            this.$el.removeEventListener('click', this.showContextMenu);
-        } else {
-            this.$el.removeEventListener('contextmenu', this.showContextMenu);
-        }
+        this.$el.removeEventListener('contextmenu', this.showContextMenu);
     },
     methods: {
         showContextMenu(event) {
