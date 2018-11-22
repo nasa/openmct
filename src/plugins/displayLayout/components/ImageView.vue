@@ -21,9 +21,24 @@
  *****************************************************************************/
 
 <template>
-    <div :style="styleObject">
+    <div class="c-image-view"
+         :style="styleObject">
     </div>
  </template>
+
+<style lang="scss">
+    @import '~styles/sass-base';
+
+    .c-image-view {
+        display: flex;
+        align-items: stretch;
+
+        .c-frame & {
+            @include abs();
+            border: 1px solid transparent;
+        }
+    }
+</style>
 
  <script>
     export default {
@@ -38,6 +53,12 @@
                     border: '1px solid ' + element.stroke
                 }
             }
+        },
+        mounted() {
+            this.item.config.attachListeners();
+        },
+        destroyed() {
+            this.item.config.removeListeners();
         }
     }
  </script>

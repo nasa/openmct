@@ -52,6 +52,12 @@
                     border: '1px solid ' + element.stroke
                 }
             }
+        },
+        mounted() {
+            this.item.config.attachListeners();
+        },
+        destroyed() {
+            this.item.config.removeListeners();
         }
     }
  </script>

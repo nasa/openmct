@@ -45,6 +45,12 @@
             element() {
                 return this.item.config.element;
             }
+        },
+        mounted() {
+            this.item.config.attachListeners();
+        },
+        destroyed() {
+            this.item.config.removeListeners();
         }
     }
  </script>

@@ -35,7 +35,6 @@ define(
                     },
                     "box": {
                         fill: "#717171",
-                        border: "transparent",
                         stroke: "transparent"
                     },
                     "line": {
@@ -48,7 +47,8 @@ define(
                     "text": {
                         fill: "transparent",
                         stroke: "transparent",
-                        size: "13px"
+                        size: "13px",
+                        color: ""
                     }
                 };
                 const DIALOGS = {
@@ -134,9 +134,10 @@ define(
                     "color",
                     "size",
                     "text",
-                    "titled"
+                    "url"
                 ].forEach(property => {
                     this.attachListener(property, newValue => {
+                        console.log("newValue", newValue, "property", property);
                         this.element[property] = newValue;
                     });
                 });
