@@ -1,12 +1,14 @@
 <template>
     <div class="c-bigalpha">
-        <div class="c-bigalpha__wrapper">
-            <svg class="c-bigalpha__vals" viewBox="0 0 512 512">
-                <text class="c-bigalpha__int" transform="translate(320 180)" text-anchor="end">{{ this.curValInt }}</text>
-                <text class="c-bigalpha__dec" transform="translate(320 110)" text-anchor="start">{{ this.curValDec }}</text>
-                <text class="c-bigalpha__units" transform="translate(290 177)" style="font-size: 47px;" text-anchor="start">{{ this.units }}</text>
-            </svg>
-        </div>
+        <svg class="c-bigalpha__int" viewBox="0 0 52 31">
+            <text textLength=100% lengthAdjust=spacingAndGlyphs x="0" y="31">{{ this.curValInt }}</text>
+        </svg>
+        <svg class="c-bigalpha__dec" viewBox="0 0 40 20">
+            <text textLength=100% lengthAdjust=spacing x="0" y="20">.{{ this.curValDec }}</text>
+        </svg>
+        <svg class="c-bigalpha__units" viewBox="0 0 45 11">
+            <text textLength=100% lengthAdjust=spacingAndGlyphs x="0" y="11">{{ this.units }}</text>
+        </svg>
     </div>
 </template>
 
@@ -14,41 +16,44 @@
     @import "~styles/sass-base";
 
     .c-bigalpha {
-        @include abs();
-        overflow: hidden;
+        $w1: 53%;
 
-        &__wrapper {
-            position: absolute;
-            width: 100%;
-            padding-bottom: 50%;
-            overflow: hidden;
-        }
+        @include abs();
+        bottom: auto;
+        padding-bottom: 32%;
 
         &__int,
         &__dec,
         &__units {
+            position: absolute;
             fill: #fff;
         }
 
         &__int,
         &__dec {
             font-family: $heroFont;
-            letter-spacing: -0.15em;
         }
 
         &__int {
-            font-size: 256px;
+            font-size: 49px;
             opacity: 0.8;
+            width: $w1;
         }
 
         &__dec {
-            font-size: 155px;
+            left: $w1;
+            font-size: 32px;
             opacity: 0.4;
+            width: 100% - $w1;
         }
 
         &__units {
+            font-size: 9px;
             font-family: $headerFont;
+            left: $w1;
+            bottom: 0;
             opacity: 0.2;
+            width: 99% - $w1; // Font has different char spacing, so use reduced width
         }
     }
 
@@ -68,9 +73,9 @@
                 rangeLow,
                 rangeHigh,
                 limit1: limit,
-                curValInt: 799,
-                curValDec: 999,
-                units: 'M/SEC'
+                curValInt: 108,
+                curValDec: '043',
+                units: 'M/SEC2'
 
             }
         },
