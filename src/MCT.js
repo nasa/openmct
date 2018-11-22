@@ -222,6 +222,8 @@ define([
 
         this.overlays = new OverlayAPI.default();
 
+        this.contextMenu = new api.ContextMenuRegistry();
+
         this.legacyRegistry = defaultRegistry;
         this.install(this.plugins.Plot());
         this.install(this.plugins.TelemetryTable());

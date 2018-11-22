@@ -11,11 +11,10 @@
 
 <script>
 
-import ContextMenu from '../mixins/context-menu';
 import ObjectLink from '../mixins/object-link';
 
 export default {
-    mixins: [ContextMenu, ObjectLink],
+    mixins: [ObjectLink],
     inject: ['openmct'],
     props: {
         domainObject: Object
@@ -32,6 +31,8 @@ export default {
             });
             this.$once('hook:destroyed', removeListener);
         }
+        let detachContextMenu = this.openmct.contextMenu.attachTo(this.$el);
+        this.$once('hook:destroyed', detachContextMenu);
     },
     computed: {
         typeClass() {
