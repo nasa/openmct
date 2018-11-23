@@ -30,47 +30,25 @@ define([
             openmct.objectViews.addProvider(new Bigalpha(openmct));
 
             openmct.types.addType('bigalpha', {
-                name: "Bigalpha",
+                name: "Big Numbers",
                 creatable: true,
-                description: "Graphically visualize a telemetry element's current value between a minimum and maximum.",
+                description: "Display the value of a telemetry element with units in a stylized numeric view.",
                 cssClass: 'icon-telemetry',
                 initialize(domainObject) {
                     domainObject.composition = [];
                     domainObject.configuration = {
-                        min: -10.4,
-                        max: 100,
-                        limit: 91.0
+                        units: ''
                     };
                 },
                 form: [
                     {
-                        name: "Minimum Value",
-                        control: "numberfield",
-                        cssClass: "l-input-sm l-numeric",
-                        key: "min",
+                        name: "Units",
+                        control: "textfield",
+                        cssClass: "",
+                        key: "units",
                         property: [
                             "configuration",
-                            "min"
-                        ]
-                    },
-                    {
-                        name: "Maximum Value",
-                        control: "numberfield",
-                        cssClass: "l-input-sm l-numeric",
-                        key: "max",
-                        property: [
-                            "configuration",
-                            "max"
-                        ]
-                    },
-                    {
-                        name: "Limit",
-                        control: "numberfield",
-                        cssClass: "l-input-sm l-numeric",
-                        key: "min",
-                        property: [
-                            "configuration",
-                            "limit"
+                            "units"
                         ]
                     }
                 ]

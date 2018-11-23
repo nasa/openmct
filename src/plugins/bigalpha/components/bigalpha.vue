@@ -1,10 +1,10 @@
 <template>
     <div class="c-bigalpha">
         <svg class="c-bigalpha__int" viewBox="0 0 52 31">
-            <text textLength=100% lengthAdjust=spacingAndGlyphs x="0" y="31">{{ this.curValInt }}</text>
+            <text textLength=100% lengthAdjust=spacingAndGlyphs x="0" y="31">{{ numToStr(this.curValInt, 3) }}</text>
         </svg>
         <svg class="c-bigalpha__dec" viewBox="0 0 40 20">
-            <text textLength=100% lengthAdjust=spacing x="0" y="20">.{{ this.curValDec }}</text>
+            <text textLength=100% lengthAdjust=spacing x="0" y="20">.{{ numToStr(this.curValDec, 3) }}</text>
         </svg>
         <svg class="c-bigalpha__units" viewBox="0 0 45 11">
             <text textLength=100% lengthAdjust=spacingAndGlyphs x="0" y="11">{{ this.units }}</text>
@@ -65,39 +65,26 @@
         inject: ['domainObject'],
         data: function () {
             let config = this.domainObject.configuration,
-                rangeLow = config.min,
-                rangeHigh = config.max,
-                limit = config.limit;
+                units = config.units;
             console.log(config);
             return {
-                rangeLow,
-                rangeHigh,
-                limit1: limit,
-                curValInt: 108,
-                curValDec: '043',
-                units: 'M/SEC2'
+                curValInt: 8,
+                curValDec: 43,
+                units: units
 
             }
         },
         methods: {
-            round: function(val, decimals) {
-                let precision = Math.pow(10, decimals);
-                return Math.round(val * precision)/precision;
-            },
-            valToPercent: function(vValue) {
-                return ((vValue - this.rangeLow) / (this.rangeHigh - this.rangeLow)) * 100;
-            },
-            percentToDegrees: function(vPercent) {
-                return this.round((vPercent/100)*270, 2);
+            numToStr: function(val, length) {
+                // Zero pads an integer and returns it as a string
+                let s = val.toString();
+                for (var i = 0; i <= (length - s.length); i++) {
+                    s = '0' + s;
+                }
+                return s;
             }
         },
         computed: {
-            degValue: function() {
-                return this.percentToDegrees(this.valToPercent(this.curVal));
-            },
-            degLimit: function() {
-                return this.percentToDegrees(this.valToPercent(this.limit1));
-            }
         }
     }
 </script>
