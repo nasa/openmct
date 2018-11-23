@@ -70,7 +70,7 @@ class ContextMenuRegistry {
         this._activeContextMenu = this._createContextMenuForObject(objectPath, applicableActions);
         this._activeContextMenu.$mount();
         document.body.appendChild(this._activeContextMenu.$el);
-        
+
         let position = this._calculatePopupPosition(event, this._activeContextMenu.$el);
         this._activeContextMenu.$el.style.left = `${position.x}px`;
         this._activeContextMenu.$el.style.top = `${position.y}px`;
@@ -78,6 +78,9 @@ class ContextMenuRegistry {
         document.addEventListener('click', this._hideActiveContextMenu);
     }
 
+    /**
+     * @private
+     */
     _calculatePopupPosition(event, menuElement) {
         let x = event.clientX;
         let y = event.clientY;
