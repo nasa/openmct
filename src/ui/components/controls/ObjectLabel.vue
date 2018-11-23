@@ -31,7 +31,7 @@ export default {
             });
             this.$once('hook:destroyed', removeListener);
         }
-        let detachContextMenu = this.openmct.contextMenu.attachTo(this.$el);
+        let detachContextMenu = this.openmct.contextMenu.attachTo(this.$el, this.objectPath);
         this.$once('hook:destroyed', detachContextMenu);
     },
     computed: {

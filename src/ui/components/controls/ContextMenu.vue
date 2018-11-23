@@ -5,7 +5,7 @@
                 :key="action.name"
                 :class="action.cssClass"
                 :title="action.description"
-                @click="action.invoke">
+                @click="action.invoke(objectPath)">
                 {{ action.name }}
             </li>
             <li v-if="actions.length === 0">No actions defined.</li>
@@ -15,6 +15,6 @@
 
 <script>
     export default {
-        inject: ['actions']
+        inject: ['actions', 'objectPath']
     }
 </script>
