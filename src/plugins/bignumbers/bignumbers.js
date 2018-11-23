@@ -21,19 +21,19 @@
  *****************************************************************************/
 
 define([
-    './components/bigalpha.vue',
+    './components/bignumbers.vue',
     'vue'
 ], function (
-    BigalphaComponent,
+    BignumbersComponent,
     Vue
 ) {
-    function Bigalpha(openmct) {
+    function Bignumbers(openmct) {
         return {
-            key: 'bigalpha',
-            name: 'Bigalpha',
+            key: 'bignumbers',
+            name: 'Bignumbers',
             cssClass: 'icon-telemetry',
             canView: function (domainObject) {
-                return domainObject.type === 'bigalpha';
+                return domainObject.type === 'bignumbers';
             },
             view: function (domainObject) {
                 let component;
@@ -42,7 +42,7 @@ define([
                     show: function (element) {
                         component =  new Vue({
                             components: {
-                                BigalphaComponent: BigalphaComponent.default
+                                BignumbersComponent: BignumbersComponent.default
                             },
                             provide: {
                                 openmct,
@@ -50,7 +50,7 @@ define([
                                 composition: openmct.composition.get(domainObject)
                             },
                             el: element,
-                            template: '<bigalpha-component></bigalpha-component>'
+                            template: '<bignumbers-component></bignumbers-component>'
                         });
                     },
                     destroy: function (element) {
@@ -64,5 +64,5 @@ define([
             }
         };
     }
-    return Bigalpha;
+    return Bignumbers;
 });

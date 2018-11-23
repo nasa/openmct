@@ -21,15 +21,15 @@
  *****************************************************************************/
 
 define([
-    './bigalpha'
+    './bignumbers'
 ], function (
-    Bigalpha
+    Bignumbers
 ) {
     return function plugin() {
         return function install(openmct) {
-            openmct.objectViews.addProvider(new Bigalpha(openmct));
+            openmct.objectViews.addProvider(new Bignumbers(openmct));
 
-            openmct.types.addType('bigalpha', {
+            openmct.types.addType('bignumbers', {
                 name: "Big Numbers",
                 creatable: true,
                 description: "Display the value of a telemetry element with units in a stylized numeric view.",

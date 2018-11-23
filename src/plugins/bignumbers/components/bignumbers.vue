@@ -1,12 +1,12 @@
 <template>
-    <div class="c-bigalpha">
-        <svg class="c-bigalpha__int" viewBox="0 0 52 31">
-            <text textLength=100% lengthAdjust=spacingAndGlyphs x="0" y="31">{{ numToStr(this.curValInt, 3) }}</text>
+    <div class="c-bignumbers">
+        <svg class="c-bignumbers__int" viewBox="0 0 52 32">
+            <text textLength=100% lengthAdjust=spacing x="0" y="32">{{ numToStr(this.curValInt, 3) }}</text>
         </svg>
-        <svg class="c-bigalpha__dec" viewBox="0 0 40 20">
+        <svg class="c-bignumbers__dec" viewBox="0 0 40 20">
             <text textLength=100% lengthAdjust=spacing x="0" y="20">.{{ numToStr(this.curValDec, 3) }}</text>
         </svg>
-        <svg class="c-bigalpha__units" viewBox="0 0 45 11">
+        <svg class="c-bignumbers__units" viewBox="0 0 45 11">
             <text textLength=100% lengthAdjust=spacingAndGlyphs x="0" y="11">{{ this.units }}</text>
         </svg>
     </div>
@@ -15,12 +15,12 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
-    .c-bigalpha {
+    .c-bignumbers {
         $w1: 53%;
 
         @include abs();
         bottom: auto;
-        padding-bottom: 32%;
+        padding-bottom: 33%;
 
         &__int,
         &__dec,
@@ -35,7 +35,7 @@
         }
 
         &__int {
-            font-size: 49px;
+            font-size: 51px;
             opacity: 0.8;
             width: $w1;
         }
@@ -61,15 +61,15 @@
 
 <script>
     export default {
-        name: "bigalpha",
+        name: "bignumbers",
         inject: ['domainObject'],
         data: function () {
             let config = this.domainObject.configuration,
                 units = config.units;
             console.log(config);
             return {
-                curValInt: 8,
-                curValDec: 43,
+                curValInt: 10,
+                curValDec: 70,
                 units: units
 
             }
