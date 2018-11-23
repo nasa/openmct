@@ -161,7 +161,6 @@ define([
             }
 
             function undirty(object) {
-                self.$injector.get('transactionManager').clearTransactionsFor(object.getId());
                 return object.getCapability('persistence').refresh();
             }
 
