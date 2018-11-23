@@ -13,15 +13,21 @@ class ContextMenuRegistry {
         this._allActions.push(actionDefinition);
     }
 
-    attachTo(targetElement, objectPath) {
+    attachTo(targetElement, objectPath, eventName) {
+        eventName = eventName || 'contextmenu';
+
+        if (eventName !== 'contextmenu' && eventName !== 'click') {
+            throw `'${eventName}' event not supported for context menu`;
+        }
+
         let showContextMenu = (event) => {
             this._showContextMenuForObjectPath(event, objectPath);
         };
 
-        targetElement.addEventListener('contextmenu', showContextMenu);
+        targetElement.addEventListener(eventName, showContextMenu);
 
         return function detach() {
-            targetElement.removeEventListener('contextMenu', showContextMenu);
+            targetElement.removeEventListener(eventName, showContextMenu);
         }
     }
 
