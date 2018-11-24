@@ -24,23 +24,33 @@ define(
     ["../../src/runs/TransactingMutationListener"],
     function (TransactingMutationListener) {
 
-        xdescribe("TransactingMutationListener", function () {
+        describe("TransactingMutationListener", function () {
             var mockTopic,
                 mockMutationTopic,
+                mockCacheService,
                 mockTransactionService,
+                mockTransactionManager,
                 mockDomainObject,
+                mockModel,
                 mockPersistence;
 
             beforeEach(function () {
                 mockTopic = jasmine.createSpy('topic');
                 mockMutationTopic =
                     jasmine.createSpyObj('mutation', ['listen']);
+                mockCacheService =
+                    jasmine.createSpyObj('cacheService', [
+                        'put'
+                    ]);
                 mockTransactionService =
                     jasmine.createSpyObj('transactionService', [
                         'isActive',
                         'startTransaction',
-                        'addToTransaction',
                         'commit'
+                    ]);
+                mockTransactionManager =
+                    jasmine.createSpyObj('transactionManager', [
+                        'addToTransaction'
                     ]);
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
@@ -55,15 +65,20 @@ define(
                     return (t === 'mutation') && mockMutationTopic;
                 });
 
+                mockDomainObject.getId.and.returnValue('mockId');
                 mockDomainObject.getCapability.and.callFake(function (c) {
                     return (c === 'persistence') && mockPersistence;
                 });
+                mockModel = {};
+                mockDomainObject.getModel.and.returnValue(mockModel);
 
                 mockPersistence.persisted.and.returnValue(true);
 
                 return new TransactingMutationListener(
                     mockTopic,
-                    mockTransactionService
+                    mockTransactionService,
+                    mockCacheService,
+                    mockTransactionManager
                 );
             });
 
@@ -100,8 +115,9 @@ define(
                         });
 
                         it("adds to the active transaction", function () {
-                            expect(mockTransactionService.addToTransaction)
+                            expect(mockTransactionManager.addToTransaction)
                                 .toHaveBeenCalledWith(
+                                'mockId',
                                 jasmine.any(Function),
                                 jasmine.any(Function)
                             );
