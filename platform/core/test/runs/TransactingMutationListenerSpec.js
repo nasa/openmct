@@ -24,22 +24,27 @@ define(
     ["../../src/runs/TransactingMutationListener"],
     function (TransactingMutationListener) {
 
-        xdescribe("TransactingMutationListener", function () {
+        describe("TransactingMutationListener", function () {
             var mockTopic,
                 mockMutationTopic,
+                mockCacheService,
                 mockTransactionService,
                 mockDomainObject,
+                mockModel,
                 mockPersistence;
 
             beforeEach(function () {
                 mockTopic = jasmine.createSpy('topic');
                 mockMutationTopic =
                     jasmine.createSpyObj('mutation', ['listen']);
+                mockCacheService =
+                    jasmine.createSpyObj('cacheService', [
+                        'put'
+                    ]);
                 mockTransactionService =
                     jasmine.createSpyObj('transactionService', [
                         'isActive',
                         'startTransaction',
-                        'addToTransaction',
                         'commit'
                     ]);
                 mockDomainObject = jasmine.createSpyObj(
@@ -52,18 +57,24 @@ define(
                 );
 
                 mockTopic.and.callFake(function (t) {
-                    return (t === 'mutation') && mockMutationTopic;
+                    expect(t).toBe('mutation');
+                    return mockMutationTopic;
                 });
 
+                mockDomainObject.getId.and.returnValue('mockId');
                 mockDomainObject.getCapability.and.callFake(function (c) {
-                    return (c === 'persistence') && mockPersistence;
+                    expect(c).toBe('persistence');
+                    return mockPersistence;
                 });
+                mockModel = {};
+                mockDomainObject.getModel.and.returnValue(mockModel);
 
                 mockPersistence.persisted.and.returnValue(true);
 
                 return new TransactingMutationListener(
                     mockTopic,
-                    mockTransactionService
+                    mockTransactionService,
+                    mockCacheService
                 );
             });
 
@@ -99,12 +110,8 @@ define(
                             ).toHaveBeenCalled();
                         });
 
-                        it("adds to the active transaction", function () {
-                            expect(mockTransactionService.addToTransaction)
-                                .toHaveBeenCalledWith(
-                                jasmine.any(Function),
-                                jasmine.any(Function)
-                            );
+                        it("calls persist", function () {
+                            expect(mockPersistence.persist).toHaveBeenCalled();
                         });
 
                         it(innerVerb + " immediately commit", function () {

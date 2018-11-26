@@ -52,10 +52,7 @@ define([], function () {
                     transactionService.startTransaction();
                 }
 
-                transactionService.addToTransaction(
-                    persistence.persist.bind(persistence),
-                    persistence.refresh.bind(persistence)
-                );
+                persistence.persist();
 
                 if (!wasActive) {
                     transactionService.commit();
