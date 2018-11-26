@@ -23,6 +23,12 @@
 import ContextMenuComponent from '../../ui/components/controls/ContextMenu.vue';
 import Vue from 'vue';
 
+/**
+ * The ContextMenuRegistry allows the addition of new context menu actions, and for the context menu to be launched from 
+ * custom HTML elements.
+ * @interface ViewRegistry
+ * @memberof module:openmct
+ */
 class ContextMenuRegistry {
     constructor() {
         this._allActions = [];
@@ -32,6 +38,23 @@ class ContextMenuRegistry {
         this.registerAction = this.registerAction.bind(this);
     }
 
+    /**
+     * Exposes types of views in Open MCT.
+     *
+     * @interface ViewProvider
+     * @property {string} key a unique identifier for this view
+     * @property {string} name the human-readable name of this view
+     * @property {string} [description] a longer-form description (typically
+     *           a single sentence or short paragraph) of this kind of view
+     * @property {string} [cssClass] the CSS class to apply to labels for this
+     *           view (to add icons, for instance)
+     * @memberof module:openmct
+     */
+
+    /**
+     * 
+     * @param {*} actionDefinition 
+     */
     registerAction(actionDefinition) {
         this._allActions.push(actionDefinition);
     }
