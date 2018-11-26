@@ -48,10 +48,6 @@ define(
                         'startTransaction',
                         'commit'
                     ]);
-                mockTransactionManager =
-                    jasmine.createSpyObj('transactionManager', [
-                        'addToTransaction'
-                    ]);
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
                     ['getId', 'getCapability', 'getModel']
@@ -62,12 +58,14 @@ define(
                 );
 
                 mockTopic.and.callFake(function (t) {
-                    return (t === 'mutation') && mockMutationTopic;
+                    expect(t).toBe('mutation');
+                    return mockMutationTopic;
                 });
 
                 mockDomainObject.getId.and.returnValue('mockId');
                 mockDomainObject.getCapability.and.callFake(function (c) {
-                    return (c === 'persistence') && mockPersistence;
+                    expect(c).toBe('persistence');
+                    return mockPersistence;
                 });
                 mockModel = {};
                 mockDomainObject.getModel.and.returnValue(mockModel);
@@ -77,8 +75,7 @@ define(
                 return new TransactingMutationListener(
                     mockTopic,
                     mockTransactionService,
-                    mockCacheService,
-                    mockTransactionManager
+                    mockCacheService
                 );
             });
 
@@ -114,13 +111,8 @@ define(
                             ).toHaveBeenCalled();
                         });
 
-                        it("adds to the active transaction", function () {
-                            expect(mockTransactionManager.addToTransaction)
-                                .toHaveBeenCalledWith(
-                                'mockId',
-                                jasmine.any(Function),
-                                jasmine.any(Function)
-                            );
+                        it("calls persist", function () {
+                            expect(mockPersistence.persist).toHaveBeenCalled();
                         });
 
                         it(innerVerb + " immediately commit", function () {

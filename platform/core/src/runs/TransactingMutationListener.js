@@ -32,8 +32,7 @@ define([], function () {
     function TransactingMutationListener(
         topic,
         transactionService,
-        cacheService,
-        transactionManager
+        cacheService
     ) {
 
         function hasChanged(domainObject) {
@@ -53,11 +52,7 @@ define([], function () {
                     transactionService.startTransaction();
                 }
 
-                transactionManager.addToTransaction(
-                    domainObject.getId(),
-                    persistence.persist.bind(persistence),
-                    persistence.refresh.bind(persistence)
-                );
+                persistence.persist();
 
                 if (!wasActive) {
                     transactionService.commit();
