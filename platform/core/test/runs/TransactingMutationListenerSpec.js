@@ -29,7 +29,6 @@ define(
                 mockMutationTopic,
                 mockCacheService,
                 mockTransactionService,
-                mockTransactionManager,
                 mockDomainObject,
                 mockModel,
                 mockPersistence;
