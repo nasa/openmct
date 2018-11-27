@@ -62,6 +62,10 @@
                 throw "NOT IMPLEMENTED;"
             }
 
+            inspectable() {
+                return true;
+            }
+
             observeProperties() {
                 // Not implemented
             }

@@ -137,12 +137,15 @@ define(
                     "url"
                 ].forEach(property => {
                     this.attachListener(property, newValue => {
-                        console.log("newValue", newValue, "property", property);
                         this.element[property] = newValue;
                     });
                 });
 
                 // TODO: attach listener for useGrid
+            }
+
+            inspectable() {
+                return false;
             }
         }
 
