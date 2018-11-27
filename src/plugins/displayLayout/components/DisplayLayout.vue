@@ -95,7 +95,8 @@
           DEFAULT_POSITION = [0, 0],
           MINIMUM_FRAME_SIZE = [320, 180],
           DEFAULT_HIDDEN_FRAME_TYPES = [
-            'hyperlink'
+            'hyperlink',
+            'summary-widget'
           ];
 
     export default {
