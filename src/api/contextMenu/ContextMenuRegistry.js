@@ -24,9 +24,9 @@ import ContextMenuComponent from '../../ui/components/controls/ContextMenu.vue';
 import Vue from 'vue';
 
 /**
- * The ContextMenuRegistry allows the addition of new context menu actions, and for the context menu to be launched from 
+ * The ContextMenuRegistry allows the addition of new context menu actions, and for the context menu to be launched from
  * custom HTML elements.
- * @interface ViewRegistry
+ * @interface ContextMenuRegistry
  * @memberof module:openmct
  */
 class ContextMenuRegistry {
@@ -39,27 +39,40 @@ class ContextMenuRegistry {
     }
 
     /**
-     * Exposes types of views in Open MCT.
+     * Defines an item to be added to context menus. Allows specification of text, appearance, and behavior when
+     * selected. Applicabilioty can be restricted by specification of an `appliesTo` function.
      *
-     * @interface ViewProvider
-     * @property {string} key a unique identifier for this view
-     * @property {string} name the human-readable name of this view
-     * @property {string} [description] a longer-form description (typically
-     *           a single sentence or short paragraph) of this kind of view
-     * @property {string} [cssClass] the CSS class to apply to labels for this
-     *           view (to add icons, for instance)
+     * @interface ContextMenuAction
      * @memberof module:openmct
+     * @property {string} name the human-readable name of this view
+     * @property {string} description a longer-form description (typically
+     *           a single sentence or short paragraph) of this kind of view
+     * @property {string} cssClass the CSS class to apply to labels for this
+     *           view (to add icons, for instance)
      */
-
     /**
-     * 
-     * @param {*} actionDefinition 
+     * @method appliesTo
+     * @memberof module:openmct.ContextMenuAction#
+     * @param {DomainObject[]} objectPath the path of the object that the context menu has been invoked on.
+     * @returns {boolean} true if the action applies to the objects specified in the 'objectPath', otherwise false.
+     */
+    /**
+     * Code to be executed when the action is selected from a context menu
+     * @method invoke
+     * @memberof module:openmct.ContextMenuAction#
+     * @param {DomainObject[]} objectPath the path of the object to invoke the action on.
+     */
+    /**
+     * @param {ContextMenuAction} actionDefinition
      */
     registerAction(actionDefinition) {
         this._allActions.push(actionDefinition);
     }
 
-    attachTo(targetElement, objectPath, eventName) {
+    /**
+     * @private
+     */
+    _attachTo(targetElement, objectPath, eventName) {
         eventName = eventName || 'contextmenu';
 
         if (eventName !== 'contextmenu' && eventName !== 'click') {
@@ -80,7 +93,7 @@ class ContextMenuRegistry {
     /**
      * @private
      */
-    _showContextMenuForObjectPath(event, objectPath) {
+    _showContextMenuForObjectPath(objectPath, event) {
         let applicableActions = this._allActions.filter(
             (action) => action.appliesTo(objectPath));
 
