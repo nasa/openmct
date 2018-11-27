@@ -27,17 +27,12 @@
                     :index="index"
                     :sizeString="`${Math.round(container.size)}%`"
                     :container="container"
-                    :isDragging="isDragging"
                     :rowsLayout="rowsLayout"
-                    :allowDrop="allowDrop(index)"
-                    @addFrame="addFrame"
                     @frame-drag-from="frameDragFromHandler"
                     @frame-drop-to="frameDropToHandler"
                     @persist="persist"
                     @delete-container="promptBeforeDeletingContainer"
-                    @add-container="addContainer"
-                    @start-container-drag="startContainerDrag"
-                    @stop-container-drag="stopContainerDrag">
+                    @add-container="addContainer">
                 </container-component>
 
                 <resize-handle
@@ -419,8 +414,6 @@ export default {
         return {
             containers: containers,
             dragFrom: [],
-            isDragging: false,
-            isContainerDragging: false,
             rowsLayout: rowsLayout,
             maxMoveSize: 0
         }
@@ -462,11 +455,6 @@ export default {
                 return containerPos !== index && (containerPos - 1) !== index
             }
         },
-        allowDrop(containerIndex) {
-            if (this.dragFrom[0] === containerIndex) {
-                return this.dragFrom[1];
-            }
-        },
         recalculateContainerSize(newSize) {
             this.containers.forEach((container) => {
                 container.size = newSize;
@@ -494,16 +482,11 @@ export default {
                 }
             });
         },
-        addFrame(frame, index) {
-            this.containers[index].addFrame(frame);
-        },
         frameDragFromHandler(containerIndex, frameIndex) {
             this.dragFrom = [containerIndex, frameIndex];
         },
         frameDropToHandler(containerIndex, frameIndex, frameObject) {
             let newContainer = this.containers[containerIndex];
-
-            this.isDragging = false;
 
             if (!frameObject) {
                 frameObject = this.containers[this.dragFrom[0]].frames.splice(this.dragFrom[1], 1)[0];
@@ -538,18 +521,6 @@ export default {
             } else {
                 this.openmct.objects.mutate(this.domainObject, '.configuration.containers', this.containers);
             }
-        },
-        dragstartHandler(event) {
-            if (event.dataTransfer.getData('domainObject')) {
-                this.dragFrom = [];
-            }
-
-            if (this.isEditing) {
-                this.isDragging = true;
-            }
-        },
-        dragendHandler() {
-            this.isDragging = false;
         },
         startContainerResizing(index) {
             let beforeContainer = this.containers[index],
@@ -642,24 +613,22 @@ export default {
             this.recalculateContainerSize(100/this.containers.length);
             this.persist();
         },
-        startContainerDrag(index) {
-            this.isContainerDragging = true;
-            this.containerDragFrom = index;
-        },
-        stopContainerDrag() {
-            this.isContainerDragging = false;
-        },
         containerDropTo(index, event) {
+            let containerId = event.dataTransfer.getData('containerid');
 
-            let fromContainer = this.containers.splice(this.containerDragFrom, 1)[0];
-            
-            if (this.containerDragFrom > index) {
-                this.containers.splice(index+1, 0, fromContainer);
-            } else {
-                this.containers.splice(index, 0, fromContainer);
+            if (containerId) {
+                let container = this.containers.filter(c => c.id === containerId)[0],
+                    containerPos = this.containers.indexOf(container),
+                    fromContainer = this.containers.splice(containerPos, 1)[0];
+
+                if (this.containerDragFrom > index) {
+                    this.containers.splice(index+1, 0, fromContainer);
+                } else {
+                    this.containers.splice(index, 0, fromContainer);
+                }
+
+                this.persist();
             }
-
-            this.persist();
         }
     },
     mounted() {
@@ -673,15 +642,9 @@ export default {
         this.unsubscribeSelection = this.openmct.selection.selectable(this.$el, context, true);
 
         this.openmct.objects.observe(this.domainObject, 'configuration.rowsLayout', this.toggleLayoutDirection);
-
-        document.addEventListener('dragstart', this.dragstartHandler);
-        document.addEventListener('dragend', this.dragendHandler);
     },
     beforeDestroy() {
         this.unsubscribeSelection();
-
-        document.removeEventListener('dragstart', this.dragstartHandler);
-        document.removeEventListener('dragend', this.dragendHandler);
     }
 }
 </script>

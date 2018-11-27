@@ -55,7 +55,6 @@
                     :size="frame.size"
                     :index="i"
                     :containerIndex="index"
-                    :isDragging="isDragging"
                     @frame-drag-from="frameDragFrom"
                     @frame-drop-to="frameDropTo"
                     @delete-frame="promptBeforeDeletingFrame"
@@ -96,7 +95,7 @@ const MIN_FRAME_SIZE = 5;
 
 export default {
     inject:['openmct', 'domainObject'],
-    props: ['sizeString', 'container', 'index', 'isDragging', 'rowsLayout'],
+    props: ['sizeString', 'container', 'index', 'rowsLayout'],
     mixins: [isEditingMixin],
     components: {
         FrameComponent,

@@ -21,18 +21,13 @@
  *****************************************************************************/
 
 <template>
-    <div class="c-fl-frame"
-        :class="{
-            'is-dragging': isDragging
-        }"
-    >
+    <div class="c-fl-frame">
 
         <div class="c-frame c-fl-frame__drag-wrapper is-selectable is-moveable"
              :class="{'no-frame': noFrame}"
              draggable="true"
              @dragstart="initDrag"
              @dragend="endDrag"
-             @drag="continueDrag"
              ref="frame"
              v-if="frame.domainObjectIdentifier.key">
 
@@ -57,7 +52,7 @@ import isEditingMixin from '../mixins/isEditing';
 
 export default {
     inject: ['openmct', 'domainObject'],
-    props: ['frame', 'index', 'containerIndex', 'isDragging'],
+    props: ['frame', 'index', 'containerIndex'],
     mixins: [isEditingMixin],
     data() {
         return {
@@ -95,11 +90,6 @@ export default {
         },
         endDrag(event) {
             event.dataTransfer.clearData('frameid');
-        },
-        continueDrag(event) {
-            if (!this.isDragging) {
-                this.isDragging = true;
-            }
         },
         deleteFrame() {
             this.$emit('delete-frame', this.index);
