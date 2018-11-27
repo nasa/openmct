@@ -23,16 +23,21 @@
 <template>
     <div class="c-fl-frame__resize-handle"
          :class="[orientation]"
+         v-show="isEditing && !isDragging"
          @mousedown="mousedown">
     </div>
 </template>
 
 <script>
+import isEditingMixin from '../mixins/isEditing';
+
 export default {
     props: ['orientation', 'index'],
+    mixins: [isEditingMixin],
     data() {
         return {
-            initialPos: 0
+            initialPos: 0,
+            isDragging: false,
         }
     },
     methods: {
@@ -66,7 +71,21 @@ export default {
 
             document.body.removeEventListener('mousemove', this.mousemove);
             document.body.removeEventListener('mouseup', this.mouseup);
+        },
+        setDragging(event) {
+            this.isDragging = true;
+        },
+        unsetDragging(event) {
+            this.isDragging = false;
         }
+    },
+    mounted() {
+        document.addEventListener('dragstart', this.setDragging);
+        document.addEventListener('dragend', this.unsetDragging);
+    },
+    destroyed() {
+        document.removeEventListener('dragstart', this.setDragging);
+        document.removeEventListener('dragend', this.unsetDragging);
     }
 }
 </script>

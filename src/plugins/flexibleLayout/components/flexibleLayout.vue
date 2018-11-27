@@ -15,9 +15,9 @@
                 <drop-hint
                     style="flex-basis: 15px;"
                     v-if="index === 0 && containers.length > 1"
-                    v-show="isContainerDragging && containerDragFrom !== 0"
                     :key="index"
                     :index="-1"
+                    :allow-drop="allowContainerDrop"
                     @object-drop-to="containerDropTo">
                 </drop-hint>
 
@@ -41,9 +41,8 @@
                 </container-component>
 
                 <resize-handle
-                    :key="index"
                     v-if="index !== (containers.length - 1)"
-                    v-show="isEditing && !isContainerDragging"
+                    :key="index"
                     :index="index"
                     :orientation="rowsLayout ? 'vertical' : 'horizontal'"
                     @init-move="startContainerResizing"
@@ -54,9 +53,9 @@
                 <drop-hint
                     style="flex-basis: 15px;"
                     v-if="containers.length > 1"
-                    v-show="isContainerDragging && containerDragFrom !== index && (containerDragFrom - 1) !== index"
                     :key="index"
                     :index="index"
+                    :allowDrop="allowContainerDrop"
                     @object-drop-to="containerDropTo">
                 </drop-hint>
             </template>
@@ -447,6 +446,21 @@ export default {
             this.recalculateContainerSize(newSize);
 
             this.containers.push(container);
+        },
+        allowContainerDrop(event, index) {
+            if (!event.dataTransfer.types.includes('containerid')) {
+                return false;
+            }
+
+            let containerId = event.dataTransfer.getData('containerid'),
+                container = this.containers.filter((c) => c.id === containerId)[0],
+                containerPos = this.containers.indexOf(container);
+
+            if (index === -1) {
+                return containerPos !== 0;
+            } else {
+                return containerPos !== index && (containerPos - 1) !== index
+            }
         },
         allowDrop(containerIndex) {
             if (this.dragFrom[0] === containerIndex) {

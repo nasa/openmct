@@ -37,7 +37,7 @@
             :class="{
                 'c-fl-frame__drop-hint': true
             }"
-            v-show="isEditing && isDragging && allowDrop !== 0"
+            :allow-drop="allowDrop"
             @object-drop-to="frameDropTo">
         </drop-hint>
 
@@ -63,17 +63,15 @@
                 </frame-component>
 
                 <drop-hint
-                    v-show="isEditing && isDragging && allowDrop !== i && allowDrop - 1 !== i"
                     class="c-fl-frame__drop-hint"
                     :key="i"
-                    :class="{'is-dragging': isDragging}"
                     :index="i"
+                    :allowDrop="allowDrop"
                     @object-drop-to="frameDropTo">
                 </drop-hint>
 
                 <resize-handle
                     v-if="(i !== frames.length - 1)"
-                    v-show="isEditing && !isDragging"
                     :key="i"
                     :index="i"
                     :orientation="rowsLayout ? 'horizontal' : 'vertical'"
@@ -98,7 +96,7 @@ const MIN_FRAME_SIZE = 5;
 
 export default {
     inject:['openmct', 'domainObject'],
-    props: ['sizeString', 'container', 'index', 'isDragging', 'rowsLayout', 'allowDrop'],
+    props: ['sizeString', 'container', 'index', 'isDragging', 'rowsLayout'],
     mixins: [isEditingMixin],
     components: {
         FrameComponent,
@@ -114,6 +112,34 @@ export default {
         }
     },
     methods: {
+        allowDrop(event, index) {
+            let data = event.dataTransfer.getData('frameid');
+            
+            if (data) {
+                data = JSON.parse(data);
+                let containerIndex = data[1],
+                    frameId = data[0];
+
+                if (containerIndex === this.index) {
+                    let frame = this.container.frames.filter((f) => f.id === frameId)[0],
+                        framePos = this.container.frames.indexOf(frame);
+
+                    if (index === -1) {
+                        return framePos !== 0;
+                    } else {
+                        return framePos !== index && (framePos - 1) !== index
+                    }
+                } else {
+                    return true;
+                }
+            } else {
+                if (event.dataTransfer.getData('domainObject')) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        },
         frameDragFrom(frameIndex) {
            this.$emit('frame-drag-from', this.index, frameIndex);
         },
@@ -212,12 +238,14 @@ export default {
             this.$emit('add-container', this.index);
         },
         startContainerDrag(event) {
-            event.stopPropagation();
             this.$emit('start-container-drag', this.index);
+
+            event.dataTransfer.setData('containerid', this.container.id);
         },
         stopContainerDrag(event) {
-            event.stopPropagation();
             this.$emit('stop-container-drag');
+
+            event.dataTransfer.clearData('containerid');
         }
     },
     mounted() {

@@ -25,12 +25,14 @@
         :class="{
             'is-dragging': isDragging
         }"
-        @dragstart="initDrag"
-        @drag="continueDrag">
+    >
 
         <div class="c-frame c-fl-frame__drag-wrapper is-selectable is-moveable"
              :class="{'no-frame': noFrame}"
              draggable="true"
+             @dragstart="initDrag"
+             @dragend="endDrag"
+             @drag="continueDrag"
              ref="frame"
              v-if="frame.domainObjectIdentifier.key">
 
@@ -89,6 +91,10 @@ export default {
         },
         initDrag(event) {
             this.$emit('frame-drag-from', this.index);
+            event.dataTransfer.setData('frameid', JSON.stringify([this.frame.id, this.containerIndex]));
+        },
+        endDrag(event) {
+            event.dataTransfer.clearData('frameid');
         },
         continueDrag(event) {
             if (!this.isDragging) {
