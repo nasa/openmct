@@ -101,7 +101,6 @@ define([
                     };
 
                     if (primary.context.type === 'frame') {
-
                         deleteFrame = {
                             control: "button",
                             domainObject: primary.context.item,

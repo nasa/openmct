@@ -55,8 +55,6 @@
                     :size="frame.size"
                     :index="i"
                     :containerIndex="index"
-                    @frame-drag-from="frameDragFrom"
-                    @frame-drop-to="frameDropTo"
                     @delete-frame="promptBeforeDeletingFrame"
                     @add-container="addContainer">
                 </frame-component>
@@ -104,10 +102,12 @@ export default {
     },
     data() {
         return {
-            initialPos: 0,
-            frameIndex: 0,
-            maxMoveSize: 0,
-            frames: this.container.frames
+            maxMoveSize: 0
+        }
+    },
+    computed: {
+        frames() {
+            return this.container.frames;
         }
     },
     methods: {
@@ -139,18 +139,27 @@ export default {
                 }
             }
         },
-        frameDragFrom(frameIndex) {
-           this.$emit('frame-drag-from', this.index, frameIndex);
-        },
-        frameDropTo(frameIndex, event) {
+        frameDropTo(index, event) {
             let domainObject = event.dataTransfer.getData('domainObject'),
-                frameObject;
+                frameIdString = event.dataTransfer.getData('frameid'),
+                options;
 
             if (domainObject) {
-                frameObject = new Frame(JSON.parse(domainObject).identifier);
+                let frameObject = new Frame(JSON.parse(domainObject).identifier);
+                options = {
+                    frameObject
+                }
+            } else if (frameIdString) {
+                let frameLocation = JSON.parse(frameIdString);
+
+                options = {
+                    frameLocation
+                }
             }
 
-            this.$emit('frame-drop-to', this.index, frameIndex, frameObject);
+            options.dropHintIndex = index;
+
+            this.$emit('frame-drop-to', this.index, options);
         },
         startFrameResizing(index) {
             let beforeFrame = this.frames[index],
@@ -237,13 +246,9 @@ export default {
             this.$emit('add-container', this.index);
         },
         startContainerDrag(event) {
-            this.$emit('start-container-drag', this.index);
-
             event.dataTransfer.setData('containerid', this.container.id);
         },
         stopContainerDrag(event) {
-            this.$emit('stop-container-drag');
-
             event.dataTransfer.clearData('containerid');
         }
     },

@@ -28,7 +28,6 @@
                     :sizeString="`${Math.round(container.size)}%`"
                     :container="container"
                     :rowsLayout="rowsLayout"
-                    @frame-drag-from="frameDragFromHandler"
                     @frame-drop-to="frameDropToHandler"
                     @persist="persist"
                     @delete-container="promptBeforeDeletingContainer"
@@ -413,7 +412,6 @@ export default {
 
         return {
             containers: containers,
-            dragFrom: [],
             rowsLayout: rowsLayout,
             maxMoveSize: 0
         }
@@ -482,22 +480,24 @@ export default {
                 }
             });
         },
-        frameDragFromHandler(containerIndex, frameIndex) {
-            this.dragFrom = [containerIndex, frameIndex];
-        },
-        frameDropToHandler(containerIndex, frameIndex, frameObject) {
+        frameDropToHandler(containerIndex, options) {
             let newContainer = this.containers[containerIndex];
 
-            if (!frameObject) {
-                frameObject = this.containers[this.dragFrom[0]].frames.splice(this.dragFrom[1], 1)[0];
-                this.recalculateOldFrameSize(this.containers[this.dragFrom[0]].frames);
+            if (!options.frameObject) {
+                let container = this.containers[options.frameLocation[1]];
+                    options.frameObject = container.frames.filter(f => f.id === options.frameLocation[0])[0];
+
+                let framePos = container.frames.indexOf(options.frameObject);
+
+                container.frames.splice(framePos, 1);
+                this.recalculateOldFrameSize(container.frames);
             }
 
-            if (frameObject && !frameObject.size) {
-                frameObject.size = 100 / Math.max(newContainer.frames.length, 1);
+            if (options.frameObject && !options.frameObject.size) {
+                options.frameObject.size = 100 / Math.max(newContainer.frames.length, 1);
             }
 
-            newContainer.frames.splice((frameIndex + 1), 0, frameObject);
+            newContainer.frames.splice((options.dropHintIndex + 1), 0, options.frameObject);
 
             let newTotalSize = newContainer.frames.reduce((total, frame) => {
                         let num = Number(frame.size);
@@ -511,7 +511,6 @@ export default {
             let newMultFactor = 100 / newTotalSize;
 
             this.recalculateNewFrameSize(newMultFactor, newContainer.frames);
-            this.dragFrom = [];
 
             this.persist();
         },
@@ -621,7 +620,7 @@ export default {
                     containerPos = this.containers.indexOf(container),
                     fromContainer = this.containers.splice(containerPos, 1)[0];
 
-                if (this.containerDragFrom > index) {
+                if (containerPos > index) {
                     this.containers.splice(index+1, 0, fromContainer);
                 } else {
                     this.containers.splice(index, 0, fromContainer);
