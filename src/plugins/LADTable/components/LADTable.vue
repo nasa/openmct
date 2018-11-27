@@ -21,11 +21,13 @@
  *****************************************************************************/
 
  <template>
-    <table>
+    <table class="c-table">
         <thead>
-            <td>Name</td>
-            <td>Timestamp</td>
-            <td>Value</td>
+            <tr>
+                <th>Name</th>
+                <th>Timestamp</th>
+                <th>Value</th>
+            </tr>
         </thead>
         <tbody>
             <LADRow 

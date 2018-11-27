@@ -35,6 +35,11 @@
                 display: block;
             }
         }
+
+        input[type='text'],
+        input[type='search'] {
+            text-align: left;
+        }
     }
 </style>
 

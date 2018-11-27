@@ -32,7 +32,8 @@ define([
             openmct.types.addType('LADTable', {
                 name: "LAD Table",
                 creatable: true,
-                cssClass: 'icon-tabs-view',
+                description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
+                cssClass: 'icon-tabular-lad',
                 initialize(domainObject) {
                     domainObject.composition = [];
                 }

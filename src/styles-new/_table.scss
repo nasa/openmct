@@ -25,11 +25,9 @@
     // Can be used by any type of table, scrolling, LAD, etc.
     $min-w: 50px;
 
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: flex-start;
     position: absolute;
     top: 0; right: 0; bottom: 0; left: 0;
+    width: 100%;
 
     &__control-bar,
     &__headers-w {
@@ -52,6 +50,7 @@
         margin-bottom: $interiorMarginSm;
     }
 
+    thead tr,
     [class*="__header"] {
         background: $colorTabHeaderBg;
 
@@ -62,6 +61,7 @@
         }
     }
 
+    tbody,
     &__body {
         tr {
             &:not(:first-child) {

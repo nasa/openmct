@@ -31,7 +31,7 @@ define([
         return {
             key: 'LADTable',
             name: 'LAD Table',
-            cssClass: 'icon-table-view',
+            cssClass: 'icon-tabular-lad',
             canView: function (domainObject) {
                 return domainObject.type === 'LADTable';
             },
