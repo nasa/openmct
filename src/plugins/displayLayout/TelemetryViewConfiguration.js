@@ -58,7 +58,6 @@ define(
                     size: "13px",
                 };
 
-                // return new TelemetryViewConfiguration({alphanumeric, domainObject, openmct});
                 return alphanumeric;
             }
 
