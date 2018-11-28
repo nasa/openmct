@@ -97,7 +97,7 @@ $editColorFg: lighten($editColor, $dlSpread);
 $editColorHov: lighten($editColor, 20%);
 // Canvas
 $editCanvasColorBg: #002524;
-$editCanvasColorGrid: darken($editCanvasColorBg, 2%);
+$editCanvasColorGrid: lighten($editCanvasColorBg, 3%);
 // Selectable
 $editSelectableColor: #006563;
 $editSelectableColorFg: lighten($editSelectableColor, 20%);

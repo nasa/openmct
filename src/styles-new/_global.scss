@@ -350,6 +350,13 @@ body.desktop .has-local-controls {
         background: $editCanvasColorBg;
     }
 
+    .l-shell__main-container {
+        &[s-selected] {
+            // Provide a clearer selection context articulation
+            box-shadow: $colorBodyBg 0 0 0 1px, $editColor 0 0 10px 2px;
+        }
+    }
+
     // Layouts
     [s-selected],
     [s-selected-parent] {
