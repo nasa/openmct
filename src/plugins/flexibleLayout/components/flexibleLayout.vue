@@ -428,7 +428,7 @@ export default {
             return !!!this.containers.filter(container => container.frames.length).length;
         },
         addContainer() {
-            let newSize = 100/(this.containers.length);
+            let newSize = 100/(this.containers.length + 1);
 
             let container = new Container(newSize)
 
