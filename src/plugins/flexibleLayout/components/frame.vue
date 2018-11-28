@@ -73,7 +73,6 @@ export default {
            
             let context = {
                 item: this.item.domainObject,
-                method: this.deleteFrame,
                 addContainer: this.addContainer,
                 type: 'frame',
                 index: this.index
@@ -90,12 +89,6 @@ export default {
         },
         endDrag(event) {
             event.dataTransfer.clearData('frameid');
-        },
-        deleteFrame() {
-            this.$emit('delete-frame', this.index);
-        },
-        addContainer() {
-            this.$emit('add-container');
         },
         toggleFrame(v) {
             this.noFrame = v;

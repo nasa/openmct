@@ -54,9 +54,7 @@
                     :frame="frame"
                     :size="frame.size"
                     :index="i"
-                    :containerIndex="index"
-                    @delete-frame="promptBeforeDeletingFrame"
-                    @add-container="addContainer">
+                    :containerIndex="index">
                 </frame-component>
 
                 <drop-hint
@@ -93,7 +91,7 @@ const MIN_FRAME_SIZE = 5;
 
 export default {
     inject:['openmct', 'domainObject'],
-    props: ['sizeString', 'container', 'index', 'rowsLayout'],
+    props: ['container', 'index', 'rowsLayout'],
     mixins: [isEditingMixin],
     components: {
         FrameComponent,
@@ -108,6 +106,9 @@ export default {
     computed: {
         frames() {
             return this.container.frames;
+        },
+        sizeString() {
+            return `${Math.round(this.container.size)}%`
         }
     },
     methods: {
@@ -210,41 +211,6 @@ export default {
         persist() {
             this.$emit('persist', this.index);
         },
-        promptBeforeDeletingFrame(frameIndex) {
-            let deleteFrame = this.deleteFrame;
-
-            let prompt = this.openmct.overlays.dialog({
-                iconClass: 'alert',
-                message: `This action will remove this frame from this Flexible Layout. Do you want to continue?`,
-                buttons: [
-                    {
-                        label: 'Ok',
-                        emphasis: 'true',
-                        callback: function () {
-                            deleteFrame(frameIndex);
-                            prompt.dismiss();
-                        },
-                    },
-                    {
-                        label: 'Cancel',
-                        callback: function () {
-                            prompt.dismiss();
-                        }
-                    }
-                ]
-            });
-        },
-        deleteFrame(frameIndex) {
-            this.frames.splice(frameIndex, 1);
-            this.$parent.recalculateOldFrameSize(this.frames);
-            this.persist();
-        },
-        deleteContainer() {
-            this.$emit('delete-container', this.index);
-        },
-        addContainer() {
-            this.$emit('add-container', this.index);
-        },
         startContainerDrag(event) {
             event.dataTransfer.setData('containerid', this.container.id);
         },
@@ -255,7 +221,6 @@ export default {
     mounted() {
         let context = {
             item: this.domainObject,
-            method: this.deleteContainer,
             addContainer: this.addContainer,
             index: this.index,
             type: 'container'

@@ -30,7 +30,6 @@
                     :rowsLayout="rowsLayout"
                     @frame-drop-to="frameDropToHandler"
                     @persist="persist"
-                    @delete-container="promptBeforeDeletingContainer"
                     @add-container="addContainer">
                 </container-component>
 
@@ -569,47 +568,16 @@ export default {
         toggleLayoutDirection(v) {
             this.rowsLayout = v;
         },
-        promptBeforeDeletingContainer(containerIndex) {
-            let deleteContainer = this.deleteContainer;
-
-            let prompt = this.openmct.overlays.dialog({
-                iconClass: 'alert',
-                message: `This action will permanently delete container ${containerIndex + 1} from this Flexible Layout`,
-                buttons: [
-                    {
-                        label: 'Ok',
-                        emphasis: 'true',
-                        callback: function () {
-                            deleteContainer(containerIndex);
-                            prompt.dismiss();
-                        },
-                    },
-                    {
-                        label: 'Cancel',
-                        callback: function () {
-                            prompt.dismiss();
-                        }
-                    }
-                ]
-            });
-        },
         deleteContainer(containerIndex) {
             this.containers.splice(containerIndex, 1);
 
             this.recalculateContainerSize(100/this.containers.length);
             this.persist();
         },
-        addContainer(containerIndex) {
-            let newContainer = new Container();
-
-            if (typeof containerIndex === 'number') {
-                this.containers.splice(containerIndex+1, 0, newContainer);
-            } else {
-
-                this.containers.push(newContainer);
-            }
-
-            this.recalculateContainerSize(100/this.containers.length);
+        deleteFrame(frameIndex, containerIndex) {
+            this.containers[containerIndex].frames.splice(frameIndex, 1);
+            
+            this.recalculateOldFrameSize(this.containers[containerIndex].frames);
             this.persist();
         },
         containerDropTo(index, event) {
@@ -635,6 +603,8 @@ export default {
         let context = {
             item: this.domainObject,
             addContainer: this.addContainer,
+            deleteContainer: this.deleteContainer,
+            deleteFrame: this.deleteFrame,
             type: 'flexible-layout'
         }
 

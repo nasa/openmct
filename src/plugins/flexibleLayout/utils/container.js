@@ -6,10 +6,6 @@ class Container {
         this.frames = [];
         this.size = size;
     }
-
-    addFrame(frameObject) {
-        this.frames.push(frameObject);
-    }
 }
 
 export default Container;
