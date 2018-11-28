@@ -130,13 +130,13 @@
 <script>
     export default {
         name: "gaugeRadial",
-        inject: ['domainObject'],
+        inject: ['openmct', 'domainObject', 'composition'],
         data: function () {
             let config = this.domainObject.configuration,
                 rangeLow = config.min,
                 rangeHigh = config.max,
                 limit = config.limit;
-            console.log(config);
+
             return {
                 rangeLow,
                 rangeHigh,
@@ -154,6 +154,24 @@
             },
             percentToDegrees: function(vPercent) {
                 return this.round((vPercent/100)*270, 2);
+            },
+            updateValue(datum) {
+                this.curVal = this.formats[this.valueKey].format(datum);
+            },
+            subscribe(domainObject) {
+                this.metadata = this.openmct.telemetry.getMetadata(domainObject);
+                this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
+
+                this.valueKey = this
+                    .metadata
+                    .valuesForHints(['range'])[0].key;
+                this.unsubscribe = this.openmct
+                    .telemetry
+                    .subscribe(domainObject, this.updateValue.bind(this), {});
+                this.openmct
+                    .telemetry
+                    .request(domainObject, {strategy: 'latest'})
+                    .then((values) => values.forEach(this.updateValue));
             }
         },
         computed: {
@@ -163,6 +181,14 @@
             degLimit: function() {
                 return this.percentToDegrees(this.valToPercent(this.limit1));
             }
+        },
+        mounted() {
+            this.composition.on('add', this.subscribe);
+            this.composition.load();
+        },
+        destroyed() {
+            this.composition.off('add', this.subscribe);
+            this.unsubscribe();
         }
     }
 </script>
