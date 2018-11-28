@@ -101,7 +101,8 @@ define([], function () {
                 } else {
                     const TEXT_SIZE = [9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96];
                     let path;
-
+                    // TODO: get the path from the view configuration
+                    // let path = layoutItem.config.path();
                     if (layoutItem.type === 'telemetry-view') {
                         path = "configuration.alphanumerics[" + layoutItem.config.alphanumeric.index + "]";
                     } else {
@@ -230,13 +231,28 @@ define([], function () {
                             width
                         ];
                     } else if (layoutItem.type === 'text-view' ) {
-                        // TODO: Add "remove", "order", "useGrid", "text"
+                        // TODO: Add "remove", "order", "useGrid"
                         let text = {
                             control: "button",
                             domainObject: selectedParent,
-                            property: path + ".text",
+                            property: path,
                             icon: "icon-gear",
-                            title: "Edit text properties"
+                            title: "Edit text properties",
+                            dialog: {
+                                name: "Text Element Properties",
+                                sections: [
+                                    {
+                                        rows: [
+                                            {
+                                                key: "text",
+                                                control: "textfield",
+                                                name: "Text",
+                                                required: true
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
                         };
                         toolbar = [
                             fill,
@@ -249,8 +265,8 @@ define([], function () {
                             y,
                             height,
                             width,
-                            // separator,
-                            // text
+                            separator,
+                            text
                         ];
                     } else if (layoutItem.type === 'box-view') {
                         // TODO: Add "remove", "order", "useGrid"
@@ -264,13 +280,29 @@ define([], function () {
                             width
                         ];
                     } else if (layoutItem.type === 'image-view') {
-                        // TODO: Add "remove", "order", "useGrid", "url"
+                        // TODO: Add "remove", "order", "useGrid"
                         let url = {
                             control: "button",
                             domainObject: selectedParent,
-                            property: path + ".url",
+                            property: path,
                             icon: "icon-image",
-                            title: "Edit image properties"
+                            title: "Edit image properties",
+                            dialog: {
+                                name: "Image Properties",
+                                sections: [
+                                    {
+                                        rows: [
+                                            {
+                                                key: "url",
+                                                control: "textfield",
+                                                name: "Image URL",
+                                                "cssClass": "l-input-lg",
+                                                required: true
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
                         };                        
                         toolbar = [
                             stroke,
@@ -279,8 +311,8 @@ define([], function () {
                             y,
                             height,
                             width,
-                            // separator,
-                            // url
+                            separator,
+                            url
                         ];
                     } else if (layoutItem.type === 'line-view') {
                         // TODO: Add "remove", "order", "useGrid", "x2", "y2"
