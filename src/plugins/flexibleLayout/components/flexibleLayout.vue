@@ -29,8 +29,7 @@
                     :container="container"
                     :rowsLayout="rowsLayout"
                     @frame-drop-to="frameDropToHandler"
-                    @persist="persist"
-                    @add-container="addContainer">
+                    @persist="persist">
                 </container-component>
 
                 <resize-handle
