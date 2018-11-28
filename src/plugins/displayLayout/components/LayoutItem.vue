@@ -21,10 +21,10 @@
  *****************************************************************************/
 
 <template>
-    <div class="c-frame has-local-controls is-selectable is-moveable"
+    <div class="c-frame has-local-controls"
          :style="item.style"
          :class="[classObject, {
-            'c-frame-inspectable': item.config.inspectable()
+            'u-inspectable': item.config.inspectable()
          }]"
          @dblclick="drill(item.id, $event)">
 

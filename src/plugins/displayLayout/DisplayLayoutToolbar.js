@@ -53,7 +53,7 @@ define([], function () {
                         options: [
                             {
                                 "name": "Box",
-                                "class": "icon-box"
+                                "class": "icon-box-round-corners"
                             },
                             {
                                 "name": "Line",
