@@ -9,6 +9,7 @@ export default {
         }
     },
     mounted() {
+        //TODO: touch support
         this.$el.addEventListener('contextmenu', this.showContextMenu);
     },
     destroyed() {
@@ -16,7 +17,8 @@ export default {
     },
     methods: {
         showContextMenu(event) {
-            this.openmct.contextMenu._showContextMenuForObjectPath(this.objectPath, event);
+            event.preventDefault();
+            this.openmct.contextMenu._showContextMenuForObjectPath(this.objectPath, event.clientX, event.clientY);
         }
     }
 };

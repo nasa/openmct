@@ -24,12 +24,12 @@ import ContextMenuComponent from '../../ui/components/controls/ContextMenu.vue';
 import Vue from 'vue';
 
 /**
- * The ContextMenuRegistry allows the addition of new context menu actions, and for the context menu to be launched from
+ * The ContextMenuAPI allows the addition of new context menu actions, and for the context menu to be launched from
  * custom HTML elements.
- * @interface ContextMenuRegistry
+ * @interface ContextMenuAPI
  * @memberof module:openmct
  */
-class ContextMenuRegistry {
+class ContextMenuAPI {
     constructor() {
         this._allActions = [];
         this._activeContextMenu = undefined;
@@ -72,32 +72,9 @@ class ContextMenuRegistry {
     /**
      * @private
      */
-    _attachTo(targetElement, objectPath, eventName) {
-        eventName = eventName || 'contextmenu';
-
-        if (eventName !== 'contextmenu' && eventName !== 'click') {
-            throw `'${eventName}' event not supported for context menu`;
-        }
-
-        let showContextMenu = (event) => {
-            this._showContextMenuForObjectPath(event, objectPath);
-        };
-
-        targetElement.addEventListener(eventName, showContextMenu);
-
-        return function detach() {
-            targetElement.removeEventListener(eventName, showContextMenu);
-        }
-    }
-
-    /**
-     * @private
-     */
-    _showContextMenuForObjectPath(objectPath, event) {
+    _showContextMenuForObjectPath(objectPath, x, y) {
         let applicableActions = this._allActions.filter(
             (action) => action.appliesTo(objectPath));
-
-        event.preventDefault();
 
         if (this._activeContextMenu) {
             this._hideActiveContextMenu();
@@ -107,7 +84,7 @@ class ContextMenuRegistry {
         this._activeContextMenu.$mount();
         document.body.appendChild(this._activeContextMenu.$el);
 
-        let position = this._calculatePopupPosition(event, this._activeContextMenu.$el);
+        let position = this._calculatePopupPosition(x, y, this._activeContextMenu.$el);
         this._activeContextMenu.$el.style.left = `${position.x}px`;
         this._activeContextMenu.$el.style.top = `${position.y}px`;
 
@@ -117,24 +94,22 @@ class ContextMenuRegistry {
     /**
      * @private
      */
-    _calculatePopupPosition(event, menuElement) {
-        let x = event.clientX;
-        let y = event.clientY;
+    _calculatePopupPosition(eventPosX, eventPosY, menuElement) {
         let menuDimensions = menuElement.getBoundingClientRect();
-        let diffX = (x + menuDimensions.width) - document.body.clientWidth;
-        let diffY = (y + menuDimensions.height) - document.body.clientHeight;
+        let diffX = (eventPosX + menuDimensions.width) - document.body.clientWidth;
+        let diffY = (eventPosY + menuDimensions.height) - document.body.clientHeight;
 
         if (diffX > 0) {
-            x = x - diffX;
+            eventPosX = eventPosX - diffX;
         }
 
         if (diffY > 0) {
-            y = y - diffY;
+            eventPosY = eventPosY - diffY;
         }
 
         return {
-            x: x,
-            y: y
+            x: eventPosX,
+            y: eventPosY
         }
     }
     /**
@@ -163,4 +138,4 @@ class ContextMenuRegistry {
         });
     }
 }
-export default ContextMenuRegistry;
+export default ContextMenuAPI;
