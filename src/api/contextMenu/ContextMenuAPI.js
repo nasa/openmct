@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ContextMenuComponent from '../../ui/components/controls/ContextMenu.vue';
+import ContextMenuComponent from './ContextMenu.vue';
 import Vue from 'vue';
 
 /**
