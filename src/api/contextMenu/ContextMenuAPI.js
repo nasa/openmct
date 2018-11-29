@@ -96,15 +96,15 @@ class ContextMenuAPI {
      */
     _calculatePopupPosition(eventPosX, eventPosY, menuElement) {
         let menuDimensions = menuElement.getBoundingClientRect();
-        let diffX = (eventPosX + menuDimensions.width) - document.body.clientWidth;
-        let diffY = (eventPosY + menuDimensions.height) - document.body.clientHeight;
+        let overflowX = (eventPosX + menuDimensions.width) - document.body.clientWidth;
+        let overflowY = (eventPosY + menuDimensions.height) - document.body.clientHeight;
 
-        if (diffX > 0) {
-            eventPosX = eventPosX - diffX;
+        if (overflowX > 0) {
+            eventPosX = eventPosX - overflowX;
         }
 
-        if (diffY > 0) {
-            eventPosY = eventPosY - diffY;
+        if (overflowY > 0) {
+            eventPosY = eventPosY - overflowY;
         }
 
         return {
