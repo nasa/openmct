@@ -1,8 +1,7 @@
 export default function LegacyActionAdapter(openmct, legacyActions) {
-    legacyActions
-        .filter(contextCategoryOnly)
-        .map(createContextMenuAction)
-        .forEach(openmct.contextMenu.registerAction);
+    function contextCategoryOnly(action) {
+        return action.category === 'contextual';
+    }
 
     function createContextMenuAction(LegacyAction) {
         return {
@@ -34,7 +33,7 @@ export default function LegacyActionAdapter(openmct, legacyActions) {
         }
     }
 
-    function contextCategoryOnly(action) {
-        return action.category === 'contextual';
-    }
+    legacyActions.filter(contextCategoryOnly)
+        .map(createContextMenuAction)
+        .forEach(openmct.contextMenu.registerAction);
 }
