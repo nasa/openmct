@@ -30,7 +30,8 @@ define(function () {
                 domainObject.composition = [];
                 domainObject.configuration = {
                     panels: {},
-                    alphanumerics: []
+                    alphanumerics: [],
+                    elements: []
                 };
             }
         }

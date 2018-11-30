@@ -41,7 +41,6 @@
                 this.mutate(this.path() + ".y", this.newPosition.position[1]);
                 this.mutate(this.path() + ".width", this.newPosition.dimensions[0]);
                 this.mutate(this.path() + ".height", this.newPosition.dimensions[1]);
-                // TODO: delete this.newPosition;
             }
 
             attachListener(property, callback) {

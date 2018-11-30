@@ -231,7 +231,7 @@
                 setTimeout(function () {
                     this.dragInProgress = false;
                 }.bind(this), 0);
-                // TODO: emit "finishResizing" for view components to mutate position
+                // TODO: emit "finishResizing" for view components to mutate position?
                 item.config.mutatePosition();
             },
             mutate(path, value) {
