@@ -88,6 +88,10 @@ export default {
             .telemetry
             .request(this.dObject, {strategy: 'latest'})
             .then((values) => values.forEach(this.updateValues));
+    },
+    destroyed() {
+        this.stopWatchingMutation();
+        this.unsubscribe();
     }
 }
 </script>

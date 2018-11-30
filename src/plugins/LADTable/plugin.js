@@ -21,16 +21,29 @@
  *****************************************************************************/
 
 define([
-    './LADTableViewProvider'
+    './LADTableViewProvider',
+    './LADTableSummaryViewProvider'
 ], function (
-    LADTableViewProvider
+    LADTableViewProvider,
+    LADTableSummaryViewProvider
 ) {
     return function plugin() {
         return function install(openmct) {
             openmct.objectViews.addProvider(new LADTableViewProvider(openmct));
+            openmct.objectViews.addProvider(new LADTableSummaryViewProvider(openmct));
 
             openmct.types.addType('LADTable', {
                 name: "LAD Table",
+                creatable: true,
+                description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
+                cssClass: 'icon-tabular-lad',
+                initialize(domainObject) {
+                    domainObject.composition = [];
+                }
+            });
+
+            openmct.types.addType('LADTableSummary', {
+                name: "LAD Table Summary",
                 creatable: true,
                 description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
                 cssClass: 'icon-tabular-lad',
