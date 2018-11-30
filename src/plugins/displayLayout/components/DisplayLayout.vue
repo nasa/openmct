@@ -91,7 +91,7 @@
     import ElementViewConfiguration from './../ElementViewConfiguration.js'
 
     const DEFAULT_GRID_SIZE = [10, 10],
-          DEFAULT_DIMENSIONS = [100, 100],
+          DEFAULT_DIMENSIONS = [10, 10],
           DEFAULT_POSITION = [0, 0],
           MINIMUM_FRAME_SIZE = [320, 180],
           DEFAULT_HIDDEN_FRAME_TYPES = [

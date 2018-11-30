@@ -26,7 +26,7 @@ define(
 
         class TelemetryViewConfiguration extends ViewConfiguration {
             static create(domainObject, position, openmct) {
-                const DEFAULT_TELEMETRY_DIMENSIONS = [2, 1];
+                const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
 
                 function getDefaultTelemetryValue(domainObject, openmct) {
                     let metadata = openmct.telemetry.getMetadata(domainObject);
