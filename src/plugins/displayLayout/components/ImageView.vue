@@ -30,8 +30,9 @@
     @import '~styles/sass-base';
 
     .c-image-view {
-        display: flex;
-        align-items: stretch;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
 
         .c-frame & {
             @include abs();

@@ -26,7 +26,7 @@ define(
         class ElementViewConfiguration extends ViewConfiguration {
 
             static create(type, openmct) {
-                const DEFAULT_DIMENSIONS = [2, 1],
+                const DEFAULT_DIMENSIONS = [10, 5],
                       DEFAULT_X = 1,
                       DEFAULT_Y = 1;
                 const INITIAL_STATES = {
