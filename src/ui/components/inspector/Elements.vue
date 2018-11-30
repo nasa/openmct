@@ -11,7 +11,7 @@
                           draggable="true"
                           @dragstart="moveFrom(index)">
                     </span>
-                    <object-label :domainObject="element"></object-label>
+                    <object-label :domainObject="element" :objectPath="[element, parentObject]"></object-label>
                 </span>
             </li>
             <li class="js-last-place" @drop="moveToIndex(elements.length)"></li>
@@ -47,7 +47,8 @@ export default {
     data() {
         return {
             elements: [],
-            isEditing: this.openmct.editor.isEditing()
+            isEditing: this.openmct.editor.isEditing(),
+            parentObject: undefined
         }
     },
     mounted() {
