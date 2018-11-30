@@ -34,22 +34,53 @@ define(
              * @param {Object} configuration.openmct the openmct object
              */
             constructor({panel, id, ...rest}) {
-                rest.rawPosition = {
-                    position: panel.position,
-                    dimensions: panel.dimensions
-                };
                 super(rest);
                 this.id = id;
-                this.hasFrame = panel.hasFrame;
+                this.panel = panel;
+                this.hasFrame = this.hasFrame.bind(this);
+                this.updateStyle(this.position());
             }
 
             path() {
                 return "configuration.panels[" + this.id + "]";
             }
 
+            x() {
+                return this.panel.x;
+            }
+
+            y() {
+                return this.panel.y;
+            }
+
+            width() {
+                return this.panel.width;
+            }
+
+            height() {
+                return this.panel.height;
+            }
+
+            hasFrame() {
+                return this.panel.hasFrame;
+            }
+
             observeProperties() {
-                this.attachListener("hasFrame", newValue => {
-                    this.hasFrame = newValue;
+                [
+                    'hasFrame',
+                    'x',
+                    'y',
+                    'width',
+                    'height'
+                ].forEach(property => {
+                    this.attachListener(property, newValue => {
+                        this.panel[property] = newValue;
+
+                        if (property === 'width' || property === 'height' ||
+                            property === 'x' || property === 'y') {
+                            this.updateStyle();
+                        }
+                    });
                 });
             }
         }

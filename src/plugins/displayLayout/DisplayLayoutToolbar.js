@@ -150,7 +150,7 @@ define([], function () {
                             control: "input",
                             type: "number",
                             domainObject: selectedParent,
-                            property: path + ".position[0]",
+                            property: path + ".x",
                             label: "X:",
                             title: "X position"
                         },
@@ -158,7 +158,7 @@ define([], function () {
                             control: "input",
                             type: "number",
                             domainObject: selectedParent,
-                            property: path + ".position[1]",
+                            property: path + ".y",
                             label: "Y:",
                             title: "Y position",
                         },
@@ -166,7 +166,7 @@ define([], function () {
                             control: 'input',
                             type: 'number',
                             domainObject: selectedParent,
-                            property: path + ".dimensions[0]",
+                            property: path + ".width",
                             label: 'W:',
                             title: 'Resize object width'
                         },
@@ -174,7 +174,7 @@ define([], function () {
                             control: 'input',
                             type: 'number',
                             domainObject: selectedParent,
-                            property: path + ".dimensions[1]",
+                            property: path + ".height",
                             label: 'H:',
                             title: 'Resize object height'
                         };
@@ -315,7 +315,7 @@ define([], function () {
                             url
                         ];
                     } else if (layoutItem.type === 'line-view') {
-                        // TODO: Add "remove", "order", "useGrid", "x2", "y2"
+                        // TODO: Add "remove", "order", "useGrid", "x1", "y1", x2", "y2"
                         toolbar = [stroke];
                     }
                 }

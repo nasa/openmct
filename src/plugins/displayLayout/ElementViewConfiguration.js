@@ -26,7 +26,8 @@ define(
         class ElementViewConfiguration extends ViewConfiguration {
 
             static create(type, openmct) {
-                const DEFAULT_DIMENSIONS = [10, 5],
+                const DEFAULT_WIDTH = 10,
+                      DEFAULT_HEIGHT = 5,
                       DEFAULT_X = 1,
                       DEFAULT_Y = 1;
                 const INITIAL_STATES = {
@@ -87,11 +88,10 @@ define(
 
                 let element = INITIAL_STATES[type] || {};
                 element = JSON.parse(JSON.stringify(element));
-                element.position = [
-                    element.x || DEFAULT_X,
-                    element.y || DEFAULT_Y
-                ];
-                element.dimensions = DEFAULT_DIMENSIONS;
+                element.x = element.x || DEFAULT_X;
+                element.y = element.y || DEFAULT_Y;
+                element.width = DEFAULT_WIDTH;
+                element.height = DEFAULT_HEIGHT;
                 element.type = type;
 
                 return DIALOGS[type] ?
@@ -103,20 +103,32 @@ define(
              * @param {Object} configuration the element (line, box, text or image) view configuration
              * @param {Object} configuration.element
              * @param {Object} configuration.domainObject the telemetry domain object
-             * @param {Object} configuration.rawPosition an object that holds raw position and dimensions
              * @param {Object} configuration.openmct the openmct object
              */
             constructor({element, ...rest}) {
-                rest.rawPosition = {
-                    position: element.position,
-                    dimensions: element.dimensions
-                };
                 super(rest);
                 this.element = element;
+                this.updateStyle(this.position());
             }
 
             path() {
                 return "configuration.elements[" + this.element.index + "]";
+            }
+
+            x() {
+                return this.element.x;
+            }
+
+            y() {
+                return this.element.y;
+            }
+
+            width() {
+                return this.element.width;
+            }
+
+            height() {
+                return this.element.height;
             }
 
             observeProperties() {
@@ -138,6 +150,11 @@ define(
                 ].forEach(property => {
                     this.attachListener(property, newValue => {
                         this.element[property] = newValue;
+
+                        if (property === 'width' || property === 'height' ||
+                            property === 'x' || property === 'y') {
+                            this.updateStyle();
+                        }
                     });
                 });
 

@@ -133,12 +133,12 @@
                     domainObject: this.newDomainObject,
                     panel: panel,
                     id: id,
-                    openmct: openmct
+                    openmct: openmct,
+                    gridSize: this.gridSize
                 });
                 this.layoutItems.push({
                     id: id,
                     domainObject: panel.domainObject,
-                    style: this.convertPosition(config.rawPosition),
                     drilledIn: this.isItemDrilledIn(id),
                     initSelect: initSelect,
                     type: 'subobject-view',
@@ -151,12 +151,12 @@
                     let config = new TelemetryViewConfiguration({
                         domainObject: this.newDomainObject,
                         alphanumeric: alphanumeric,
-                        openmct: openmct
+                        openmct: openmct,
+                        gridSize: this.gridSize
                     });
                     this.layoutItems.push({
                         id: id,
                         domainObject: domainObject,
-                        style: this.convertPosition(config.rawPosition),
                         initSelect: initSelect,
                         alphanumeric: alphanumeric, // TODO: can be remmoved?
                         type: 'telemetry-view',
@@ -168,10 +168,10 @@
                 let config = new ElementViewConfiguration({
                     domainObject: this.newDomainObject,
                     element: element,
-                    openmct: openmct
+                    openmct: openmct,
+                    gridSize: this.gridSize
                 });
                 this.layoutItems.push({
-                    style: this.convertPosition(config.rawPosition),
                     initSelect: initSelect,
                     type: element.type + '-view',
                     config: config
@@ -185,16 +185,6 @@
                         DEFAULT_DIMENSIONS[i]
                     );
                 });
-            },
-            convertPosition(raw) {
-                return {
-                    left: (this.gridSize[0] * raw.position[0]) + 'px',
-                    top: (this.gridSize[1] * raw.position[1]) + 'px',
-                    width: (this.gridSize[0] * raw.dimensions[0]) + 'px',
-                    height: (this.gridSize[1] * raw.dimensions[1]) + 'px',
-                    minWidth: (this.gridSize[0] * raw.dimensions[0]) + 'px',
-                    minHeight: (this.gridSize[1] * raw.dimensions[1]) + 'px'
-                };
             },
             /**
              * Checks if the frame should be hidden or not.
@@ -225,9 +215,8 @@
                 return this.drilledIn === id;
             },
             updatePosition(item, newPosition) {
-                let newStyle = this.convertPosition(newPosition);
-                item.config.rawPosition = newPosition;
-                item.style = newStyle;
+                item.config.newPosition = newPosition;
+                item.config.updateStyle(newPosition);
             },
             bypassSelection($event) {
                 if (this.dragInProgress) {
@@ -242,7 +231,7 @@
                 setTimeout(function () {
                     this.dragInProgress = false;
                 }.bind(this), 0);
-
+                // TODO: emit "finishResizing" for view components to mutate position
                 item.config.mutatePosition();
             },
             mutate(path, value) {
@@ -316,16 +305,20 @@
                         initSelect = true;
                     }
 
-                    panel.dimensions = panel.dimensions || this.getSubobjectDefaultDimensions();
+                    let defaultDimensions = this.getSubobjectDefaultDimensions();
+                    panel.width = panel.width || defaultDimensions[0];
+                    panel.height = panel.height || defaultDimensions[1];
                     panel.hasFrame = panel.hasOwnProperty('hasFrame') ?
                         panel.hasFrame :
                         this.hasFrameByDefault(domainObject.type);
 
                     if (this.droppedObjectPosition) {
-                        panel.position = this.droppedObjectPosition;
+                        panel.x = this.droppedObjectPosition[0];
+                        panel.y = this.droppedObjectPosition[1];
                         this.droppedObjectPosition = undefined;
                     } else {
-                        panel.position = panel.position || DEFAULT_POSITION;
+                        panel.x = panel.x || DEFAULT_POSITION[0];
+                        panel.y = panel.y || DEFAULT_POSITION[1];
                     }
 
                     if (mutateObject) {

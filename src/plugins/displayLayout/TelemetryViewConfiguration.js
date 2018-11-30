@@ -45,11 +45,12 @@ define(
                     return valueMetadata.key;
                 }
 
-                // Apply defaults then construct and return object
                 let alphanumeric = {
                     identifier: domainObject.identifier,
-                    position: position,
-                    dimensions: DEFAULT_TELEMETRY_DIMENSIONS,
+                    x: position[0],
+                    y: position[1],
+                    width: DEFAULT_TELEMETRY_DIMENSIONS[0],
+                    height: DEFAULT_TELEMETRY_DIMENSIONS[1],
                     displayMode: 'all',
                     value: getDefaultTelemetryValue(domainObject, openmct),
                     stroke: "transparent",
@@ -65,20 +66,32 @@ define(
              * @param {Object} configuration the telemetry object view configuration
              * @param {Object} configuration.alphanumeric
              * @param {Object} configuration.domainObject the domain object to observe the changes on
-             * @param {Object} configuration.rawPosition an object that holds raw position and dimensions
              * @param {Object} configuration.openmct the openmct object
              */
             constructor({alphanumeric, ...rest}) {
-                rest.rawPosition = {
-                    position: alphanumeric.position,
-                    dimensions: alphanumeric.dimensions
-                };
                 super(rest);
                 this.alphanumeric = alphanumeric;
+                this.updateStyle(this.position());
             }
 
             path() {
                 return "configuration.alphanumerics[" + this.alphanumeric.index + "]";
+            }
+
+            x() {
+                return this.alphanumeric.x;
+            }
+
+            y() {
+                return this.alphanumeric.y;
+            }
+
+            width() {
+                return this.alphanumeric.width;
+            }
+
+            height() {
+                return this.alphanumeric.height;
             }
 
             observeProperties() {
@@ -88,10 +101,19 @@ define(
                     'fill',
                     'stroke',
                     'color',
-                    'size'
+                    'size',
+                    'x',
+                    'y',
+                    'width',
+                    'height'
                 ].forEach(property => {
                     this.attachListener(property, newValue => {
                         this.alphanumeric[property] = newValue;
+
+                        if (property === 'width' || property === 'height' ||
+                            property === 'x' || property === 'y') {
+                            this.updateStyle();
+                        }
                     });
                 });
             }

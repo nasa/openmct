@@ -22,7 +22,7 @@
 
 <template>
     <div class="c-frame has-local-controls"
-         :style="item.style"
+         :style="item.config.style"
          :class="[classObject, {
             'u-inspectable': item.config.inspectable()
          }]"
@@ -98,7 +98,7 @@
             classObject: function () {
                 return {
                     'is-drilled-in': this.item.drilledIn,
-                    'no-frame': !this.item.config.hasFrame
+                    'no-frame': !this.item.config.hasFrame()
                 }
             }
         },
@@ -140,7 +140,7 @@
 
                 this.updatePosition(event);
                 this.activeDrag = new LayoutDrag(
-                    this.item.config.rawPosition,
+                    this.item.config.position(),
                     posFactor,
                     dimFactor,
                     this.gridSize
