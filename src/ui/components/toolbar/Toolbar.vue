@@ -162,8 +162,9 @@
                     return toolbarItem;
                 });
 
+                // If value is an object, iterate the toolbar structure and mutate all keys in form.
+                // Otherwise, mutate the property.
                 if (value === Object(value)) {
-                    // Iterate toolbar structure and mutate all keys in form
                     this.structure.map(s => {
                         if (s.formKeys) {
                             s.formKeys.forEach(key => {
