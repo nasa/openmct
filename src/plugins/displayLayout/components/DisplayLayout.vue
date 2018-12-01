@@ -90,15 +90,6 @@
     import SubobjectViewConfiguration from './../SubobjectViewConfiguration.js'
     import ElementViewConfiguration from './../ElementViewConfiguration.js'
 
-    const DEFAULT_GRID_SIZE = [10, 10],
-          DEFAULT_DIMENSIONS = [10, 10],
-          DEFAULT_POSITION = [0, 0],
-          MINIMUM_FRAME_SIZE = [320, 180],
-          DEFAULT_HIDDEN_FRAME_TYPES = [
-            'hyperlink',
-            'summary-widget'
-          ];
-
     export default {
         data() {
             return {
@@ -127,7 +118,7 @@
                     this.makeElementItem(element, false);
                 });
             },
-            makeFrameItem(panel, initSelect) {
+            makeSubobjectItem(panel, initSelect) {
                 let id = this.openmct.objects.makeKeyString(panel.domainObject.identifier);
                 let config = new SubobjectViewConfiguration({
                     domainObject: this.newDomainObject,
@@ -158,7 +149,6 @@
                         id: id,
                         domainObject: domainObject,
                         initSelect: initSelect,
-                        alphanumeric: alphanumeric, // TODO: can be remmoved?
                         type: 'telemetry-view',
                         config: config
                     });
@@ -176,25 +166,6 @@
                     type: element.type + '-view',
                     config: config
                 });
-            },
-            getSubobjectDefaultDimensions() {
-                let gridSize = this.gridSize;
-                return MINIMUM_FRAME_SIZE.map(function (min, i) {
-                    return Math.max(
-                        Math.ceil(min / gridSize[i]),
-                        DEFAULT_DIMENSIONS[i]
-                    );
-                });
-            },
-            /**
-             * Checks if the frame should be hidden or not.
-             *
-             * @param type the domain object type
-             * @return {boolean} true if the object should have
-             *         frame by default, false, otherwise
-             */
-            hasFrameByDefault(type) {
-                return DEFAULT_HIDDEN_FRAME_TYPES.indexOf(type) === -1;
             },
             setSelection(selection) {
                 if (selection.length === 0) {
@@ -290,7 +261,7 @@
                     return false;
                 }
             },
-            addObject(domainObject) {
+            addSubobject(domainObject) {
                 if (!this.isTelemetry(domainObject)) {
                     let panels = this.newDomainObject.configuration.panels,
                         id = this.openmct.objects.makeKeyString(domainObject.identifier),
@@ -298,39 +269,40 @@
                         mutateObject = false,
                         initSelect = false;
 
-                    // If this is a new panel, select it and save the configuration.
+                    // If the panel doesn't exist, create one and mutate the configuration
                     if (!panel) {
-                        panel = {};
-                        mutateObject = true;
+                        panel = SubobjectViewConfiguration.create(domainObject, this.gridSize, this.droppedObjectPosition);
                         initSelect = true;
-                    }
-
-                    let defaultDimensions = this.getSubobjectDefaultDimensions();
-                    panel.width = panel.width || defaultDimensions[0];
-                    panel.height = panel.height || defaultDimensions[1];
-                    panel.hasFrame = panel.hasOwnProperty('hasFrame') ?
-                        panel.hasFrame :
-                        this.hasFrameByDefault(domainObject.type);
-
-                    if (this.droppedObjectPosition) {
-                        panel.x = this.droppedObjectPosition[0];
-                        panel.y = this.droppedObjectPosition[1];
-                        this.droppedObjectPosition = undefined;
-                    } else {
-                        panel.x = panel.x || DEFAULT_POSITION[0];
-                        panel.y = panel.y || DEFAULT_POSITION[1];
-                    }
-
-                    if (mutateObject) {
                         this.mutate("configuration.panels[" + id + "]", panel);
+                        delete this.droppedObjectPosition;
                     }
+
+                    // let defaultDimensions = this.getSubobjectDefaultDimensions();
+                    // panel.width = panel.width || defaultDimensions[0];
+                    // panel.height = panel.height || defaultDimensions[1];
+                    // panel.hasFrame = panel.hasOwnProperty('hasFrame') ?
+                    //     panel.hasFrame :
+                    //     this.hasFrameByDefault(domainObject.type);
+
+                    // if (this.droppedObjectPosition) {
+                    //     panel.x = this.droppedObjectPosition[0];
+                    //     panel.y = this.droppedObjectPosition[1];
+                    //     this.droppedObjectPosition = undefined;
+                    // } else {
+                    //     panel.x = panel.x || DEFAULT_POSITION[0];
+                    //     panel.y = panel.y || DEFAULT_POSITION[1];
+                    // }
+
+                    // if (mutateObject) {
+                    //     this.mutate("configuration.panels[" + id + "]", panel);
+                    // }
 
                     panel.domainObject = domainObject;
-                    this.makeFrameItem(panel, initSelect);
+                    this.makeSubobjectItem(panel, initSelect);
                 }
             },
-            removeObject() {
-
+            removeSubobject() {
+                // Not yet implemented
             },
             addElement(type) {
                 let elements = this.newDomainObject.configuration.elements || [];
@@ -354,16 +326,16 @@
             this.openmct.selection.on('change', this.setSelection);
 
             this.composition = this.openmct.composition.get(this.newDomainObject);
-            this.composition.on('add', this.addObject);
-            this.composition.on('remove', this.removeObject);
+            this.composition.on('add', this.addSubobject);
+            this.composition.on('remove', this.removeSubobject);
             this.composition.load();
             this.getAlphanumerics();
             this.getElements();
         },
         destroyed: function () {
             this.openmct.off('change', this.setSelection);
-            this.composition.off('add', this.addObject);
-            this.composition.off('remove', this.removeObject);
+            this.composition.off('add', this.addSubobject);
+            this.composition.off('remove', this.removeSubobject);
             this.unlisten();
         }
     }

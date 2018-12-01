@@ -25,6 +25,36 @@ define(
     function (ViewConfiguration) {
         class SubobjectViewConfiguration extends ViewConfiguration {
 
+            static create(domainObject, gridSize, position) {
+                const MINIMUM_FRAME_SIZE = [320, 180],
+                      DEFAULT_DIMENSIONS = [10, 10],
+                      DEFAULT_HIDDEN_FRAME_TYPES = ['hyperlink', 'summary-widget'];
+
+                function getDefaultDimensions() {
+                    return MINIMUM_FRAME_SIZE.map((min, index) => {
+                        return Math.max(
+                            Math.ceil(min / gridSize[index]),
+                            DEFAULT_DIMENSIONS[index]
+                        );
+                    });
+                }
+
+                function hasFrameByDefault(type) {
+                    return DEFAULT_HIDDEN_FRAME_TYPES.indexOf(type) === -1;
+                }
+
+                let defaultDimensions = getDefaultDimensions();
+                let panel = {
+                    width: defaultDimensions[0],
+                    height: defaultDimensions[1],
+                    x: position[0],
+                    y: position[1],
+                    hasFrame: hasFrameByDefault(domainObject.type)
+                };
+
+                return panel;
+            }
+
             /**
              *
              * @param {Object} configuration the subobject view configuration
