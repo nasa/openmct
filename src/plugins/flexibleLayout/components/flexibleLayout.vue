@@ -433,7 +433,9 @@ export default {
 
             this.recalculateContainerSize(newSize);
 
-            this.containers.push(container);
+            this.domainObject.configuration.containers.push(container);
+
+            this.persist();
         },
         allowContainerDrop(event, index) {
             if (!event.dataTransfer.types.includes('containerid')) {
