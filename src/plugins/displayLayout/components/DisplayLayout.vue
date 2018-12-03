@@ -90,6 +90,8 @@
     import SubobjectViewConfiguration from './../SubobjectViewConfiguration.js'
     import ElementViewConfiguration from './../ElementViewConfiguration.js'
 
+    const DEFAULT_GRID_SIZE = [10, 10];
+
     export default {
         data() {
             return {
@@ -276,26 +278,6 @@
                         this.mutate("configuration.panels[" + id + "]", panel);
                         delete this.droppedObjectPosition;
                     }
-
-                    // let defaultDimensions = this.getSubobjectDefaultDimensions();
-                    // panel.width = panel.width || defaultDimensions[0];
-                    // panel.height = panel.height || defaultDimensions[1];
-                    // panel.hasFrame = panel.hasOwnProperty('hasFrame') ?
-                    //     panel.hasFrame :
-                    //     this.hasFrameByDefault(domainObject.type);
-
-                    // if (this.droppedObjectPosition) {
-                    //     panel.x = this.droppedObjectPosition[0];
-                    //     panel.y = this.droppedObjectPosition[1];
-                    //     this.droppedObjectPosition = undefined;
-                    // } else {
-                    //     panel.x = panel.x || DEFAULT_POSITION[0];
-                    //     panel.y = panel.y || DEFAULT_POSITION[1];
-                    // }
-
-                    // if (mutateObject) {
-                    //     this.mutate("configuration.panels[" + id + "]", panel);
-                    // }
 
                     panel.domainObject = domainObject;
                     this.makeSubobjectItem(panel, initSelect);
