@@ -21,15 +21,16 @@
  *****************************************************************************/
 
 <template>
-    <div class="c-fl-frame">
+    <div class="c-fl-frame" 
+        :style="{
+            'flex-basis': `${frame.size}%`
+        }">
 
         <div class="c-frame c-fl-frame__drag-wrapper is-selectable is-moveable"
              :class="{'no-frame': noFrame}"
              draggable="true"
              @dragstart="initDrag"
-             @dragend="endDrag"
-             ref="frame"
-             v-if="frame.domainObjectIdentifier.key">
+             ref="frame">
 
             <subobject-view
                 v-if="item.domainObject.identifier"
@@ -84,11 +85,7 @@ export default {
 
         },
         initDrag(event) {
-            this.$emit('frame-drag-from', this.index);
             event.dataTransfer.setData('frameid', JSON.stringify([this.frame.id, this.containerIndex]));
-        },
-        endDrag(event) {
-            event.dataTransfer.clearData('frameid');
         },
         toggleFrame(v) {
             this.noFrame = v;

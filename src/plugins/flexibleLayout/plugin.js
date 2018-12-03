@@ -47,7 +47,9 @@ define([
                 }
             });
 
-            openmct.toolbars.addProvider(ToolBarProvider.default);
+            let toolbar = new ToolBarProvider.default(openmct);
+
+            openmct.toolbars.addProvider(toolbar.provide());
         };
     };
 });

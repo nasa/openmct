@@ -25,7 +25,6 @@
                     class="c-fl__container"
                     :key="container.id"
                     :index="index"
-                    :sizeString="`${Math.round(container.size)}%`"
                     :container="container"
                     :rowsLayout="rowsLayout"
                     @frame-drop-to="frameDropToHandler"

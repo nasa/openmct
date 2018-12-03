@@ -40,7 +40,13 @@
 import isEditingMixin from '../mixins/isEditing';
 
 export default {
-    props:['index', 'allowDrop'],
+    props:{
+        index: Number,
+        allowDrop: {
+            type: Function,
+            required: true
+        }
+    },
     mixins: [isEditingMixin],
     data() {
         return {

@@ -2,7 +2,7 @@ export default {
     inject: ['openmct'],
     data() {
         return {
-            isEditing: this.openmct.editor.editing
+            isEditing: this.openmct.editor.isEditing()
         };
     },
     mounted() {

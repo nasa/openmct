@@ -27,16 +27,13 @@
         <div class="c-fl-container__header icon-grippy-ew"
             v-show="isEditing"
             draggable="true"
-            @dragstart="startContainerDrag"
-            @dragend="stopContainerDrag">
+            @dragstart="startContainerDrag">
             <span class="c-fl-container__size-indicator">{{ sizeString }}</span>
         </div>
 
         <drop-hint
             :index="-1"
-            :class="{
-                'c-fl-frame__drop-hint': true
-            }"
+            class="c-fl-frame__drop-hint"
             :allow-drop="allowDrop"
             @object-drop-to="frameDropTo">
         </drop-hint>
@@ -48,11 +45,7 @@
                 <frame-component
                     class="c-fl-container__frame"
                     :key="frame.id"
-                    :style="{
-                        'flex-basis': `${frame.size}%`
-                    }"
                     :frame="frame"
-                    :size="frame.size"
                     :index="i"
                     :containerIndex="index">
                 </frame-component>
@@ -213,9 +206,6 @@ export default {
         },
         startContainerDrag(event) {
             event.dataTransfer.setData('containerid', this.container.id);
-        },
-        stopContainerDrag(event) {
-            event.dataTransfer.clearData('containerid');
         }
     },
     mounted() {
