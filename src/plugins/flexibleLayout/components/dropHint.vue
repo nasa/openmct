@@ -66,9 +66,7 @@ export default {
             this.isValidTarget = false;
         },
         dragstart(event) {
-            if (this.allowDrop && this.allowDrop(event, this.index)) {
-                this.isValidTarget = true;
-            }
+            this.isValidTarget = this.allowDrop(event, this.index);
         },
         dragend() {
             this.isValidTarget = false;

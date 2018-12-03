@@ -106,12 +106,10 @@ export default {
     },
     methods: {
         allowDrop(event, index) {
-            let data = event.dataTransfer.getData('frameid');
+            let frameId = event.dataTransfer.getData('frameid'),
+                containerIndex = Number(event.dataTransfer.getData('containerIndex'));
             
-            if (data) {
-                data = JSON.parse(data);
-                let containerIndex = data[1],
-                    frameId = data[0];
+            if (frameId) {
 
                 if (containerIndex === this.index) {
                     let frame = this.container.frames.filter((f) => f.id === frameId)[0],
@@ -135,7 +133,8 @@ export default {
         },
         frameDropTo(index, event) {
             let domainObject = event.dataTransfer.getData('domainObject'),
-                frameIdString = event.dataTransfer.getData('frameid'),
+                frameId = event.dataTransfer.getData('frameid'),
+                containerIndex = Number(event.dataTransfer.getData('containerIndex')),
                 options;
 
             if (domainObject) {
@@ -143,8 +142,8 @@ export default {
                 options = {
                     frameObject
                 }
-            } else if (frameIdString) {
-                let frameLocation = JSON.parse(frameIdString);
+            } else if (frameId) {
+                let frameLocation = [frameId, containerIndex];
 
                 options = {
                     frameLocation

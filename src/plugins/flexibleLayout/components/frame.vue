@@ -85,14 +85,15 @@ export default {
 
         },
         initDrag(event) {
-            event.dataTransfer.setData('frameid', JSON.stringify([this.frame.id, this.containerIndex]));
+            event.dataTransfer.setData('frameid', this.frame.id);
+            event.dataTransfer.setData('containerIndex', this.containerIndex);
         },
         toggleFrame(v) {
             this.noFrame = v;
         }
     },
     mounted() {
-        if (this.frame.domainObjectIdentifier.key) {
+        if (this.frame.domainObjectIdentifier) {
             this.openmct.objects.get(this.frame.domainObjectIdentifier).then((object)=>{
                 this.setDomainObject(object);
             });
