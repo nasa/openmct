@@ -563,36 +563,39 @@ export default {
 
             return roundedValue;
         },
-        toggleLayoutDirection(v) {
-            this.rowsLayout = v;
+        updateDomainObject(newDomainObject) {
+            this.rowsLayout = newDomainObject.configuration.rowsLayout;
+            this.containers = newDomainObject.configuration.containers;
         },
         deleteContainer(containerIndex) {
-            this.containers.splice(containerIndex, 1);
+            this.domainObject.configuration.containers.splice(containerIndex, 1);
 
             this.recalculateContainerSize(100/this.containers.length);
+
             this.persist();
         },
         deleteFrame(frameIndex, containerIndex) {
-            this.containers[containerIndex].frames.splice(frameIndex, 1);
+            this.domainObject.configuration.containers[containerIndex].frames.splice(frameIndex, 1);
             
-            this.recalculateOldFrameSize(this.containers[containerIndex].frames);
-            this.persist();
+            this.recalculateOldFrameSize(this.domainObject.configuration.containers[containerIndex].frames);
+            this.persist(containerIndex);
         },
         containerDropTo(index, event) {
-            let containerId = event.dataTransfer.getData('containerid');
+            let containerId = event.dataTransfer.getData('containerid'),
+                containers = this.domainObject.configuration.containers;
 
             if (containerId) {
-                let container = this.containers.filter(c => c.id === containerId)[0],
-                    containerPos = this.containers.indexOf(container),
-                    fromContainer = this.containers.splice(containerPos, 1)[0];
+                let container = containers.filter(c => c.id === containerId)[0],
+                    containerPos = containers.indexOf(container),
+                    fromContainer = containers.splice(containerPos, 1)[0];
 
                 if (containerPos > index) {
-                    this.containers.splice(index+1, 0, fromContainer);
+                    containers.splice(index+1, 0, fromContainer);
                 } else {
-                    this.containers.splice(index, 0, fromContainer);
+                    containers.splice(index, 0, fromContainer);
                 }
 
-                this.persist();
+                this.openmct.objects.mutate(this.domainObject, 'configuration.containers', containers);
             }
         }
     },
@@ -608,7 +611,7 @@ export default {
 
         this.unsubscribeSelection = this.openmct.selection.selectable(this.$el, context, true);
 
-        this.openmct.objects.observe(this.domainObject, 'configuration.rowsLayout', this.toggleLayoutDirection);
+        this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
     },
     beforeDestroy() {
         this.unsubscribeSelection();

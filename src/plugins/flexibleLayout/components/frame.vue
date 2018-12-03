@@ -57,13 +57,17 @@ export default {
     mixins: [isEditingMixin],
     data() {
         return {
-            item: {domainObject: {}},
-            noFrame: this.frame.noFrame
+            item: {domainObject: {}}
         }
     },
     components: {
         ResizeHandle,
         SubobjectView
+    },
+    computed: {
+        noFrame() {
+            return this.frame.noFrame;
+        }
     },
     methods: {
         setDomainObject(object) {
@@ -80,16 +84,10 @@ export default {
             };
 
             this.unsubscribeSelection = this.openmct.selection.selectable(this.$refs.frame, context, false);
-            
-            this.openmct.objects.observe(this.domainObject, `configuration.containers[${this.containerIndex}].frames[${this.index}].noFrame`, this.toggleFrame);
-
         },
         initDrag(event) {
             event.dataTransfer.setData('frameid', this.frame.id);
             event.dataTransfer.setData('containerIndex', this.containerIndex);
-        },
-        toggleFrame(v) {
-            this.noFrame = v;
         }
     },
     mounted() {
