@@ -172,7 +172,7 @@
             let context = {
                 item: this.item.domainObject,
                 layoutItem: this.item,
-                displayLayout: {...this.$parent}
+                addElement: this.$parent.addElement
             };
 
             this.removeSelectable = this.openmct.selection.selectable(

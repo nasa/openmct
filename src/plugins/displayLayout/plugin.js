@@ -57,7 +57,7 @@ export default function () {
                     getSelectionContext() {
                         return {
                             item: domainObject,
-                            displayLayout: component && component.$refs.displayLayout
+                            addElement: component && component.$refs.displayLayout.addElement
                         }
                     },
                     destroy() {

@@ -45,7 +45,7 @@ define([], function () {
                         control: "menu",
                         domainObject: selectedObject,
                         method: function (option) {
-                            selection[0].context.displayLayout.addElement(option.name.toLowerCase());
+                            selection[0].context.addElement(option.name.toLowerCase());
                         },
                         key: "add",
                         icon: "icon-plus",
