@@ -28,6 +28,7 @@ define(
             static create(domainObject, gridSize, position) {
                 const MINIMUM_FRAME_SIZE = [320, 180],
                       DEFAULT_DIMENSIONS = [10, 10],
+                      DEFAULT_POSITION = [0, 0],
                       DEFAULT_HIDDEN_FRAME_TYPES = ['hyperlink', 'summary-widget'];
 
                 function getDefaultDimensions() {
@@ -43,6 +44,7 @@ define(
                     return DEFAULT_HIDDEN_FRAME_TYPES.indexOf(type) === -1;
                 }
 
+                position = position || DEFAULT_POSITION;
                 let defaultDimensions = getDefaultDimensions();
                 let panel = {
                     width: defaultDimensions[0],
