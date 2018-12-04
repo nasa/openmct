@@ -52,7 +52,7 @@ import SubobjectView from '../../displayLayout/components/SubobjectView.vue';
 import isEditingMixin from '../mixins/isEditing';
 
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct'],
     props: ['frame', 'index', 'containerIndex'],
     mixins: [isEditingMixin],
     data() {

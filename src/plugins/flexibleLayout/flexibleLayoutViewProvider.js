@@ -46,7 +46,7 @@ define([
                             },
                             provide: {
                                 openmct,
-                                domainObject
+                                dObject: domainObject
                             },
                             el: element,
                             template: '<flexible-layout-component></flexible-layout-component>'

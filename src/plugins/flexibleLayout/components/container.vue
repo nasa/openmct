@@ -83,7 +83,7 @@ const SNAP_TO_PERCENTAGE = 1;
 const MIN_FRAME_SIZE = 5;
 
 export default {
-    inject:['openmct', 'domainObject'],
+    inject:['openmct'],
     props: ['container', 'index', 'rowsLayout'],
     mixins: [isEditingMixin],
     components: {
@@ -209,7 +209,7 @@ export default {
     },
     mounted() {
         let context = {
-            item: this.domainObject,
+            item: this.$parent.domainObject,
             addContainer: this.addContainer,
             index: this.index,
             type: 'container'

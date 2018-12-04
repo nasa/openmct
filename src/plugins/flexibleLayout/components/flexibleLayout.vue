@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
- 
+
 <template>
     <div class="c-fl">
         <div class="c-fl__empty"
@@ -418,7 +418,7 @@ const SNAP_TO_PERCENTAGE = 1,
       MIN_CONTAINER_SIZE = 5;
 
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'dObject'],
     mixins: [isEditingMixin],
     components: {
         ContainerComponent,
@@ -426,12 +426,14 @@ export default {
         DropHint
     },
     data() {
-        let containers = this.domainObject.configuration.containers,
-            rowsLayout = this.domainObject.configuration.rowsLayout;
+        let containers = this.dObject.configuration.containers,
+            rowsLayout = this.dObject.configuration.rowsLayout,
+            domainObject = this.dObject;
 
         return {
-            containers: containers,
-            rowsLayout: rowsLayout,
+            containers,
+            rowsLayout,
+            domainObject,
             maxMoveSize: 0
         }
     },
