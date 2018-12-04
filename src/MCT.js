@@ -255,6 +255,12 @@ define([
     MCT.prototype.legacyObject = function (domainObject) {
         let capabilityService = this.$injector.get('capabilityService');
 
+        function instantiate(model, keyString) {
+            var capabilities = capabilityService.getCapabilities(model, keyString);
+            model.id = keyString;
+            return new DomainObjectImpl(keyString, model, capabilities);
+        }
+
         if (Array.isArray(domainObject)) {
             // an array of domain objects. [object, ...ancestors] representing
             // a single object with a given chain of ancestors.  We instantiate
@@ -274,12 +280,6 @@ define([
             let keyString = objectUtils.makeKeyString(domainObject.identifier);
             let oldModel = objectUtils.toOldFormat(domainObject);
             return instantiate(oldModel, keyString);
-        }
-
-        function instantiate(model, keyString) {
-            var capabilities = capabilityService.getCapabilities(model, keyString);
-            model.id = keyString;
-            return new DomainObjectImpl(keyString, model, capabilities);
         }
     };
 

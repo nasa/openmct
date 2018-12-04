@@ -52,6 +52,7 @@
             this.domainObject = this.node.object;
             let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
                 this.domainObject = newObject;
+                this.node.objectPath.splice(0, 1, newObject);
             });
             this.$once('hook:destroyed', removeListener);
             if (this.openmct.composition.get(this.node.object)) {

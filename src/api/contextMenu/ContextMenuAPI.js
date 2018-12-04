@@ -20,10 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ContextMenuComponent from '../../ui/components/controls/ContextMenu.vue';
+import ContextMenuComponent from './ContextMenu.vue';
 import Vue from 'vue';
 
-class ContextMenuRegistry {
+/**
+ * The ContextMenuAPI allows the addition of new context menu actions, and for the context menu to be launched from
+ * custom HTML elements.
+ * @interface ContextMenuAPI
+ * @memberof module:openmct
+ */
+class ContextMenuAPI {
     constructor() {
         this._allActions = [];
         this._activeContextMenu = undefined;
@@ -32,36 +38,43 @@ class ContextMenuRegistry {
         this.registerAction = this.registerAction.bind(this);
     }
 
+    /**
+     * Defines an item to be added to context menus. Allows specification of text, appearance, and behavior when
+     * selected. Applicabilioty can be restricted by specification of an `appliesTo` function.
+     *
+     * @interface ContextMenuAction
+     * @memberof module:openmct
+     * @property {string} name the human-readable name of this view
+     * @property {string} description a longer-form description (typically
+     *           a single sentence or short paragraph) of this kind of view
+     * @property {string} cssClass the CSS class to apply to labels for this
+     *           view (to add icons, for instance)
+     */
+    /**
+     * @method appliesTo
+     * @memberof module:openmct.ContextMenuAction#
+     * @param {DomainObject[]} objectPath the path of the object that the context menu has been invoked on.
+     * @returns {boolean} true if the action applies to the objects specified in the 'objectPath', otherwise false.
+     */
+    /**
+     * Code to be executed when the action is selected from a context menu
+     * @method invoke
+     * @memberof module:openmct.ContextMenuAction#
+     * @param {DomainObject[]} objectPath the path of the object to invoke the action on.
+     */
+    /**
+     * @param {ContextMenuAction} actionDefinition
+     */
     registerAction(actionDefinition) {
         this._allActions.push(actionDefinition);
-    }
-
-    attachTo(targetElement, objectPath, eventName) {
-        eventName = eventName || 'contextmenu';
-
-        if (eventName !== 'contextmenu' && eventName !== 'click') {
-            throw `'${eventName}' event not supported for context menu`;
-        }
-
-        let showContextMenu = (event) => {
-            this._showContextMenuForObjectPath(event, objectPath);
-        };
-
-        targetElement.addEventListener(eventName, showContextMenu);
-
-        return function detach() {
-            targetElement.removeEventListener(eventName, showContextMenu);
-        }
     }
 
     /**
      * @private
      */
-    _showContextMenuForObjectPath(event, objectPath) {
+    _showContextMenuForObjectPath(objectPath, x, y) {
         let applicableActions = this._allActions.filter(
             (action) => action.appliesTo(objectPath));
-
-        event.preventDefault();
 
         if (this._activeContextMenu) {
             this._hideActiveContextMenu();
@@ -71,7 +84,7 @@ class ContextMenuRegistry {
         this._activeContextMenu.$mount();
         document.body.appendChild(this._activeContextMenu.$el);
 
-        let position = this._calculatePopupPosition(event, this._activeContextMenu.$el);
+        let position = this._calculatePopupPosition(x, y, this._activeContextMenu.$el);
         this._activeContextMenu.$el.style.left = `${position.x}px`;
         this._activeContextMenu.$el.style.top = `${position.y}px`;
 
@@ -81,24 +94,22 @@ class ContextMenuRegistry {
     /**
      * @private
      */
-    _calculatePopupPosition(event, menuElement) {
-        let x = event.clientX;
-        let y = event.clientY;
+    _calculatePopupPosition(eventPosX, eventPosY, menuElement) {
         let menuDimensions = menuElement.getBoundingClientRect();
-        let diffX = (x + menuDimensions.width) - document.body.clientWidth;
-        let diffY = (y + menuDimensions.height) - document.body.clientHeight;
+        let overflowX = (eventPosX + menuDimensions.width) - document.body.clientWidth;
+        let overflowY = (eventPosY + menuDimensions.height) - document.body.clientHeight;
 
-        if (diffX > 0) {
-            x = x - diffX;
+        if (overflowX > 0) {
+            eventPosX = eventPosX - overflowX;
         }
 
-        if (diffY > 0) {
-            y = y - diffY;
+        if (overflowY > 0) {
+            eventPosY = eventPosY - overflowY;
         }
 
         return {
-            x: x,
-            y: y
+            x: eventPosX,
+            y: eventPosY
         }
     }
     /**
@@ -127,4 +138,4 @@ class ContextMenuRegistry {
         });
     }
 }
-export default ContextMenuRegistry;
+export default ContextMenuAPI;
