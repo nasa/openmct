@@ -23,22 +23,75 @@
 define(
     ['./ViewConfiguration'],
     function (ViewConfiguration) {
+
         class TelemetryViewConfiguration extends ViewConfiguration {
+            static create(domainObject, position, openmct) {
+                const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
+
+                function getDefaultTelemetryValue(domainObject, openmct) {
+                    let metadata = openmct.telemetry.getMetadata(domainObject);
+                    let valueMetadata = metadata.valuesForHints(['range'])[0];
+
+                    if (valueMetadata === undefined) {
+                        valueMetadata = metadata.values().filter(values => {
+                            return !(values.hints.domain);
+                        })[0];
+                    }
+
+                    if (valueMetadata === undefined) {
+                        valueMetadata = metadata.values()[0];
+                    }
+
+                    return valueMetadata.key;
+                }
+
+                let alphanumeric = {
+                    identifier: domainObject.identifier,
+                    x: position[0],
+                    y: position[1],
+                    width: DEFAULT_TELEMETRY_DIMENSIONS[0],
+                    height: DEFAULT_TELEMETRY_DIMENSIONS[1],
+                    displayMode: 'all',
+                    value: getDefaultTelemetryValue(domainObject, openmct),
+                    stroke: "transparent",
+                    fill: "",
+                    color: "",
+                    size: "13px",
+                };
+
+                return alphanumeric;
+            }
 
             /**
              * @param {Object} configuration the telemetry object view configuration
              * @param {Object} configuration.alphanumeric
-             * @param {Object} configuration.domainObject the telemetry domain object
-             * @param {Object} configuration.rawPosition an object that holds raw position and dimensions
+             * @param {Object} configuration.domainObject the domain object to observe the changes on
              * @param {Object} configuration.openmct the openmct object
              */
             constructor({alphanumeric, ...rest}) {
                 super(rest);
                 this.alphanumeric = alphanumeric;
+                this.updateStyle(this.position());
             }
 
             path() {
                 return "configuration.alphanumerics[" + this.alphanumeric.index + "]";
+            }
+
+            x() {
+                return this.alphanumeric.x;
+            }
+
+            y() {
+                return this.alphanumeric.y;
+            }
+
+            width() {
+                return this.alphanumeric.width;
+            }
+
+            height() {
+                return this.alphanumeric.height;
             }
 
             observeProperties() {
@@ -48,10 +101,19 @@ define(
                     'fill',
                     'stroke',
                     'color',
-                    'size'
+                    'size',
+                    'x',
+                    'y',
+                    'width',
+                    'height'
                 ].forEach(property => {
                     this.attachListener(property, newValue => {
                         this.alphanumeric[property] = newValue;
+
+                        if (property === 'width' || property === 'height' ||
+                            property === 'x' || property === 'y') {
+                            this.updateStyle();
+                        }
                     });
                 });
             }

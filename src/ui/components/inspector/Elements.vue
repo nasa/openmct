@@ -70,11 +70,14 @@ export default {
             if (this.mutationUnobserver) {
                 this.mutationUnobserver();
             }
-            this.mutationUnobserver = this.openmct.objects.observe(this.parentObject, '*', (updatedModel) => {
-                this.parentObject = updatedModel;
+
+            if (this.parentObject) {
+                this.mutationUnobserver = this.openmct.objects.observe(this.parentObject, '*', (updatedModel) => {
+                    this.parentObject = updatedModel;
+                    this.refreshComposition();
+                });
                 this.refreshComposition();
-            });
-            this.refreshComposition();
+            }
         },
         refreshComposition() {
             let composition = this.openmct.composition.get(this.parentObject);

@@ -20,22 +20,44 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(function () {
-    function DisplayLayoutType() {
-        return {
-            name: "Display Layout",
-            creatable: true,
-            cssClass: 'icon-layout',
-            initialize(domainObject) {
-                domainObject.composition = [];
-                domainObject.configuration = {
-                    panels: {},
-                    alphanumerics: [],
-                    elements: []
-                };
-            }
+<template>
+    <div class="c-box-view"
+         :style="styleObject">
+    </div>
+ </template>
+
+<style lang="scss">
+    @import '~styles/sass-base';
+
+    .c-box-view {
+        display: flex;
+        align-items: stretch;
+
+        .c-frame & {
+            @include abs();
         }
     }
+</style>
 
-    return DisplayLayoutType;
-});
+ <script>
+    export default {
+        props: {
+            item: Object
+        },
+        computed: {
+            styleObject() {                
+                let element = this.item.config.element;
+                return {
+                    backgroundColor: element.fill,
+                    border: '1px solid ' + element.stroke
+                }
+            }
+        },
+        mounted() {
+            this.item.config.attachListeners();
+        },
+        destroyed() {
+            this.item.config.removeListeners();
+        }
+    }
+ </script>

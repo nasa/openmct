@@ -240,7 +240,7 @@ body.desktop .has-local-controls {
 }
 
 /*************************** SELECTION */
-.is-selectable {
+.u-inspectable {
     &:hover {
         box-shadow: $browseShdwSelectableHov;
     }
@@ -248,7 +248,7 @@ body.desktop .has-local-controls {
 
 /**************************** EDITING */
 .is-editing {
-    *:not(.is-drilled-in).is-selectable {
+    *:not(.is-drilled-in).c-frame {
         border: $editSelectableBorder;
 
         &:hover {
@@ -269,7 +269,7 @@ body.desktop .has-local-controls {
         border: $editBorderDrilledIn;
     }
 
-    *[s-selected] .is-moveable {
+    *[s-selected] {
         cursor: move;
     }
 
@@ -348,6 +348,14 @@ body.desktop .has-local-controls {
     .l-shell__main-container > .c-object-view .l-fixed-position {
         // Target the top-most layout container and color its background
         background: $editCanvasColorBg;
+    }
+
+    .l-shell__main-container {
+        box-shadow: $colorBodyBg 0 0 0 1px, rgba($editColor, 0.7) 0 0 0 2px;
+        &[s-selected] {
+            // Provide a clearer selection context articulation
+            box-shadow: $colorBodyBg 0 0 0 1px, $editColor 0 0 0px 3px;
+        }
     }
 
     // Layouts

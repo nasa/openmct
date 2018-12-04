@@ -20,22 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(function () {
-    function DisplayLayoutType() {
-        return {
-            name: "Display Layout",
-            creatable: true,
-            cssClass: 'icon-layout',
-            initialize(domainObject) {
-                domainObject.composition = [];
-                domainObject.configuration = {
-                    panels: {},
-                    alphanumerics: [],
-                    elements: []
-                };
+ <template>
+  <div>
+    <svg :width="gridSize[0] * element.width"
+         :height=" gridSize[1] * element.height">
+        <line :x1=" gridSize[0] * element.x1 + 1"
+              :y1="gridSize[1] * element.y1 + 1 "
+              :x2="gridSize[0] * element.x2 + 1"
+              :y2=" gridSize[1] * element.y2 + 1 "
+              :stroke="element.stroke"
+              stroke-width="2">
+        </line>
+    </svg>
+  </div>
+ </template>
+
+ <script>
+    export default {
+        props: {
+            item: Object,
+            gridSize: Array
+        },
+        computed: {
+            element() {
+                return this.item.config.element;
             }
+        },
+        mounted() {
+            this.item.config.attachListeners();
+        },
+        destroyed() {
+            this.item.config.removeListeners();
         }
     }
-
-    return DisplayLayoutType;
-});
+ </script>

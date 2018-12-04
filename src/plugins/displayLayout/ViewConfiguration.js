@@ -24,20 +24,23 @@
     function () {
         class ViewConfiguration {
 
-            constructor({domainObject, openmct, rawPosition}) {
+            constructor({domainObject, openmct, gridSize}) {
                 this.domainObject = domainObject;
-                this.rawPosition = rawPosition;
+                this.gridSize = gridSize;
                 this.mutatePosition = this.mutatePosition.bind(this);
                 this.listeners = [];
                 this.observe = openmct.objects.observe.bind(openmct.objects);
                 this.mutate = function (path, value) {
                     openmct.objects.mutate(this.domainObject, path, value);
                 }.bind(this);
+                this.newPosition = {};
             }
 
             mutatePosition() {
-                this.mutate(this.path() + ".dimensions", this.rawPosition.dimensions);
-                this.mutate(this.path() + ".position", this.rawPosition.position);
+                this.mutate(this.path() + ".x", this.newPosition.position[0]);
+                this.mutate(this.path() + ".y", this.newPosition.position[1]);
+                this.mutate(this.path() + ".width", this.newPosition.dimensions[0]);
+                this.mutate(this.path() + ".height", this.newPosition.dimensions[1]);
             }
 
             attachListener(property, callback) {
@@ -58,11 +61,57 @@
                 this.listeners = [];
             }
 
-             path() {
+            position() {
+                return {
+                    position: [this.x(), this.y()],
+                    dimensions: [this.width(), this.height()]
+                };
+            }
+
+            path() {
                 throw "NOT IMPLEMENTED;"
             }
 
+            inspectable() {
+                return true;
+            }
+
+            updateStyle(raw) {
+                if (!raw) {
+                    raw = this.position();
+                }
+
+                this.style = {
+                    left: (this.gridSize[0] * raw.position[0]) + 'px',
+                    top: (this.gridSize[1] * raw.position[1]) + 'px',
+                    width: (this.gridSize[0] * raw.dimensions[0]) + 'px',
+                    height: (this.gridSize[1] * raw.dimensions[1]) + 'px',
+                    minWidth: (this.gridSize[0] * raw.dimensions[0]) + 'px',
+                    minHeight: (this.gridSize[1] * raw.dimensions[1]) + 'px'
+                };
+            }
+
             observeProperties() {
+                // Not implemented
+            }
+
+            x() {
+                // Not implemented
+            }
+
+            y() {
+                // Not implemented
+            }
+
+            width() {
+                // Not implemented
+            }
+
+            height() {
+                // Not implemented
+            }
+
+            hasFrame() {
                 // Not implemented
             }
         }

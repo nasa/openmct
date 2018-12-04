@@ -92,12 +92,13 @@ $colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
 // Base Colors
 $dlSpread: 20%;
 $editColor: #00c7c3;
-$editColorBg: darken($editColor, $dlSpread);
+$editColorBgBase: darken($editColor, $dlSpread);
+$editColorBg: rgba($editColorBgBase, 0.2);
 $editColorFg: lighten($editColor, $dlSpread);
 $editColorHov: lighten($editColor, 20%);
 // Canvas
-$editCanvasColorBg: #002524;
-$editCanvasColorGrid: darken($editCanvasColorBg, 2%);
+$editCanvasColorBg: $editColorBg; //#002524;
+$editCanvasColorGrid: rgba($editColorBgBase, 0.4); //lighten($editCanvasColorBg, 3%);
 // Selectable
 $editSelectableColor: #006563;
 $editSelectableColorFg: lighten($editSelectableColor, 20%);

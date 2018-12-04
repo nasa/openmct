@@ -20,22 +20,46 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(function () {
-    function DisplayLayoutType() {
-        return {
-            name: "Display Layout",
-            creatable: true,
-            cssClass: 'icon-layout',
-            initialize(domainObject) {
-                domainObject.composition = [];
-                domainObject.configuration = {
-                    panels: {},
-                    alphanumerics: [],
-                    elements: []
-                };
-            }
+<template>
+    <div class="c-image-view"
+         :style="styleObject">
+    </div>
+ </template>
+
+<style lang="scss">
+    @import '~styles/sass-base';
+
+    .c-image-view {
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+
+        .c-frame & {
+            @include abs();
+            border: 1px solid transparent;
         }
     }
+</style>
 
-    return DisplayLayoutType;
-});
+ <script>
+    export default {
+        props: {
+            item: Object
+        },
+        computed: {
+            styleObject() {                
+                let element = this.item.config.element;
+                return {
+                    backgroundImage: 'url(' + element.url + ')',
+                    border: '1px solid ' + element.stroke
+                }
+            }
+        },
+        mounted() {
+            this.item.config.attachListeners();
+        },
+        destroyed() {
+            this.item.config.removeListeners();
+        }
+    }
+ </script>
