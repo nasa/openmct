@@ -1,3 +1,5 @@
+import { timingSafeEqual } from "crypto";
+
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -20,18 +22,36 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import LegacyContextMenuAction from './LegacyContextMenuAction';
-
-export default function LegacyActionAdapter(openmct, legacyActions) {
-    function contextualCategoryOnly(action) {
-        if (action.category === 'contextual') {
-            return true;
-        }
-        console.warn(`DEPRECATION WARNING: Action ${action.definition.key} in bundle ${action.bundle.path} is non-contextual and should be migrated.`);
-        return false;
+export default class LegacyContextMenuAction {
+    constructor(openmct, LegacyAction) {
+        this.openmct = openmct;
+        this.name = LegacyAction.definition.name;
+        this.description = LegacyAction.definition.description;
+        this.cssClass = LegacyAction.definition.cssClass;
+        this.LegacyAction = LegacyAction;
     }
 
-    legacyActions.filter(contextualCategoryOnly)
-        .map(LegacyAction => new LegacyContextMenuAction(openmct, LegacyAction))
-        .forEach(openmct.contextMenu.registerAction);
+    appliesTo(objectPath) {
+        let legacyObject = this.openmct.legacyObject(objectPath);
+        return this.LegacyAction.appliesTo({
+            domainObject: legacyObject
+        });
+    }
+
+    invoke(objectPath) {
+        let context = {
+            category: 'contextual',
+            domainObject: this.openmct.legacyObject(objectPath)
+        }
+        let legacyAction = new this.LegacyAction(context);
+
+        if (!legacyAction.getMetadata) {
+            let metadata = Object.create(this.LegacyAction.definition);
+            metadata.context = context;
+            legacyAction.getMetadata = function () {
+                return metadata;
+            }.bind(legacyAction);
+        }
+        legacyAction.perform();
+    }
 }
