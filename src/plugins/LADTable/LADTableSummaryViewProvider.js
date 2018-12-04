@@ -27,7 +27,7 @@ define([
     LADTableSummaryComponent,
     Vue
 ) {
-    function Tabs(openmct) {
+    function LADTableSummaryView(openmct) {
         return {
             key: 'LADTableSummary',
             name: 'LAD Table Summary',
@@ -64,5 +64,5 @@ define([
             }
         };
     }
-    return Tabs;
+    return LADTableSummaryView;
 });

@@ -27,7 +27,7 @@ define([
     LADTableComponent,
     Vue
 ) {
-    function Tabs(openmct) {
+    function LADTableView(openmct) {
         return {
             key: 'LADTable',
             name: 'LAD Table',
@@ -64,5 +64,5 @@ define([
             }
         };
     }
-    return Tabs;
+    return LADTableView;
 });
