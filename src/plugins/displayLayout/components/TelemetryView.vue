@@ -29,6 +29,7 @@
         </div>
 
         <div v-if="showValue"
+              :title="fieldName"
               class="c-telemetry-view__value"
               :class="[telemetryClass]">
             <div class="c-telemetry-view__value-text">{{ telemetryValue }}</div>
@@ -93,6 +94,9 @@
                     color: alphanumeric.color,
                     fontSize: alphanumeric.size
                 }
+            },
+            fieldName() {
+                return this.valueMetadata.name;
             },
             valueMetadata() {
                 return this.metadata.value(this.item.config.alphanumeric.value);
