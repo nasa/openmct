@@ -20,19 +20,22 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="u-contents">
-        <div class="c-so-view__header">
-            <div class="c-so-view__header__start">
-                <div class="c-so-view__name icon-object">{{ item.domainObject.name }}</div>
-                <div class="c-so-view__context-actions c-disclosure-button"></div>
+    <layout-frame :item="item"
+                  :grid-size="gridSize">
+        <div class="u-contents">
+            <div class="c-so-view__header">
+                <div class="c-so-view__header__start">
+                    <div class="c-so-view__name icon-object">{{ domainObject && domainObject.name }}</div>
+                    <div class="c-so-view__context-actions c-disclosure-button"></div>
+                </div>
+                <div class="c-so-view__header__end">
+                    <div class="c-button icon-expand local-controls--hidden"></div>
+                </div>
             </div>
-            <div class="c-so-view__header__end">
-                <div class="c-button icon-expand local-controls--hidden"></div>
-            </div>
+            <object-view class="c-so-view__object-view"
+                         :object="domainObject"></object-view>
         </div>
-        <object-view class="c-so-view__object-view"
-                     :object="item.domainObject"></object-view>
-    </div>
+    </layout-frame>
 </template>
 
 <style lang="scss">
@@ -99,20 +102,60 @@
 
 <script>
     import ObjectView from '../../../ui/components/layout/ObjectView.vue'
+    import LayoutFrame from './LayoutFrame.vue'
+
+    const MINIMUM_FRAME_SIZE = [320, 180],
+          DEFAULT_DIMENSIONS = [10, 10],
+          DEFAULT_POSITION = [0, 0],
+          DEFAULT_HIDDEN_FRAME_TYPES = ['hyperlink', 'summary-widget'];
+
+    function getDefaultDimensions(gridSize) {
+        return MINIMUM_FRAME_SIZE.map((min, index) => {
+            return Math.max(
+                Math.ceil(min / gridSize[index]),
+                DEFAULT_DIMENSIONS[index]
+            );
+        });
+    }
+
+    function hasFrameByDefault(type) {
+        return DEFAULT_HIDDEN_FRAME_TYPES.indexOf(type) === -1;
+    }
 
     export default {
+        makeDefinition(openmct, gridSize, domainObject, position) {
+            position = position || DEFAULT_POSITION;
+            let defaultDimensions = getDefaultDimensions(gridSize);
+            let definition = {
+                width: defaultDimensions[0],
+                height: defaultDimensions[1],
+                x: position[0],
+                y: position[1],
+                identifier: domainObject.identifier,
+                hasFrame: hasFrameByDefault(domainObject.type)
+            };
+            return definition;
+        },
         inject: ['openmct'],
         props: {
-            item: Object
+            item: Object,
+            gridSize: Array
+        },
+        computed: {
+        },
+        data() {
+            return {
+                domainObject: undefined
+            }
         },
         components: {
             ObjectView,
+            LayoutFrame
         },
         mounted() {
-            this.item.config.attachListeners();
-        },
-        destroyed() {
-            this.item.config.removeListeners();
+            console.log('mounted subobject view!', this);
+            this.openmct.objects.get(this.item.identifier)
+                .then(domainObject => this.domainObject = domainObject);
         }
     }
 </script>

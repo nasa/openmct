@@ -21,10 +21,54 @@
  *****************************************************************************/
 
 <template>
-    <component :is="item.type" :item="item" :gridSize="gridSize"></component>
+    <div class="c-frame has-local-controls"
+         :class="{
+             'no-frame': !item.hasFrame,
+             'u-inspectable': item.inspectable
+         }"
+         :style="style"
+         @dblclick="drill(item.id, $event)">
+
+        <slot></slot>
+
+        <!-- Drag handles -->
+        <div class="c-frame-edit">
+            <div class="c-frame-edit__move"
+                 @mousedown="startDrag([1,1], [0,0], $event)"></div>
+            <div class="c-frame-edit__handle c-frame-edit__handle--nw"
+                 @mousedown="startDrag([1,1], [-1,-1], $event)"></div>
+            <div class="c-frame-edit__handle c-frame-edit__handle--ne"
+                 @mousedown="startDrag([0,1], [1,-1], $event)"></div>
+            <div class="c-frame-edit__handle c-frame-edit__handle--sw"
+                 @mousedown="startDrag([1,0], [-1,1], $event)"></div>
+            <div class="c-frame-edit__handle c-frame-edit__handle--se"
+                 @mousedown="startDrag([0,0], [1,1], $event)"></div>
+        </div>
+    </div>
 </template>
 
 <style lang="scss">
+    @import "~styles/sass-base";
+
+    /******************************* FRAME */
+    .c-frame {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid transparent;
+
+        /*************************** NO-FRAME */
+        &.no-frame {
+            > [class*="contents"] > [class*="__header"] {
+                display: none;
+            }
+        }
+
+        &:not(.no-frame) {
+            background: $colorBodyBg;
+            border: 1px solid $colorInteriorBorder;
+            padding: $interiorMargin;
+        }
+    }
 </style>
 
 
@@ -52,14 +96,16 @@
             if (!itemType) {
                 throw `Invalid itemType: ${itemType}`;
             }
-            let itemDefinition = itemView.makeDefinition(...options);
-            itemDefinition.type = itemType;
-            return itemDefinition;
+            return itemView.makeDefinition(...options);
         },
         inject: ['openmct'],
         props: {
             item: Object,
-            gridSize: Array
+            gridSize: Array,
+            customStyle: {
+                type: Object,
+                required: false
+            }
         },
         components: {
             SubobjectView,
@@ -70,19 +116,17 @@
             ImageView
         },
         computed: {
-            classObject: function () {
-                return {
-                    'no-frame': !this.item.hasFrame
-                }
-            },
             style() {
+                if (this.customStyle) {
+                    return this.customStyle;
+                }
                 return {
-                    left: (this.gridSize[0] * this.item.position[0]) + 'px',
-                    top: (this.gridSize[1] * raw.position[1]) + 'px',
-                    width: (this.gridSize[0] * raw.dimensions[0]) + 'px',
-                    height: (this.gridSize[1] * raw.dimensions[1]) + 'px',
-                    minWidth: (this.gridSize[0] * raw.dimensions[0]) + 'px',
-                    minHeight: (this.gridSize[1] * raw.dimensions[1]) + 'px'
+                    left: (this.gridSize[0] * this.item.x) + 'px',
+                    top: (this.gridSize[1] * this.item.y) + 'px',
+                    width: (this.gridSize[0] * this.item.width) + 'px',
+                    height: (this.gridSize[1] * this.item.height) + 'px',
+                    minWidth: (this.gridSize[0] * this.item.width) + 'px',
+                    minHeight: (this.gridSize[1] * this.item.height) + 'px'
                 };
             }
         },
@@ -153,8 +197,6 @@
             }
         },
         mounted() {
-            console.log('mounting layout item!', this);
-
             let context = {
                 item: this.item.domainObject,
                 layoutItem: this.item,

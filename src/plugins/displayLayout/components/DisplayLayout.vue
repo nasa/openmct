@@ -86,20 +86,29 @@
 
 <script>
     import LayoutItem from './LayoutItem.vue';
-    import TelemetryViewConfiguration from './../TelemetryViewConfiguration.js'
-    import SubobjectViewConfiguration from './../SubobjectViewConfiguration.js'
-    import ElementViewConfiguration from './../ElementViewConfiguration.js'
+    import TelemetryViewConfiguration from './../TelemetryViewConfiguration.js';
+    import SubobjectViewConfiguration from './../SubobjectViewConfiguration.js';
+    import ElementViewConfiguration from './../ElementViewConfiguration.js';
+    import uuid from 'uuid';
 
     const DEFAULT_GRID_SIZE = [10, 10];
 
     export default {
         data() {
+            let domainObject = JSON.parse(JSON.stringify(this.domainObject));
             return {
-                gridSize: [],
-                layoutItems: [],
-                drilledIn: undefined
+                drilledIn: undefined,
+                internalDomainObject: domainObject
+            };
+        },
+        computed: {
+            gridSize() {
+                return this.internalDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;
+            },
+            layoutItems() {
+                return this.domainObject.configuration.items || []
             }
-        },          
+        },
         inject: ['openmct'],
         props: ['domainObject'],
         components: {
@@ -107,14 +116,14 @@
         },
         methods: {
             getAlphanumerics() {
-                let alphanumerics = this.newDomainObject.configuration.alphanumerics || [];
+                let alphanumerics = this.internalDomainObject.configuration.alphanumerics || [];
                 alphanumerics.forEach((alphanumeric, index) => {
                     alphanumeric.index = index;
                     this.makeTelemetryItem(alphanumeric, false);
                 });
             },
             getElements() {
-                let elements = this.newDomainObject.configuration.elements || [];
+                let elements = this.internalDomainObject.configuration.elements || [];
                 elements.forEach((element, index) => {
                     element.index = index;
                     this.makeElementItem(element, false);
@@ -123,7 +132,7 @@
             makeSubobjectItem(panel, initSelect) {
                 let id = this.openmct.objects.makeKeyString(panel.domainObject.identifier);
                 let config = new SubobjectViewConfiguration({
-                    domainObject: this.newDomainObject,
+                    domainObject: this.internalDomainObject,
                     panel: panel,
                     id: id,
                     openmct: openmct,
@@ -142,7 +151,7 @@
                 let id = this.openmct.objects.makeKeyString(alphanumeric.identifier);
                 this.openmct.objects.get(id).then(domainObject => {
                     let config = new TelemetryViewConfiguration({
-                        domainObject: this.newDomainObject,
+                        domainObject: this.internalDomainObject,
                         alphanumeric: alphanumeric,
                         openmct: openmct,
                         gridSize: this.gridSize
@@ -158,7 +167,7 @@
             },
             makeElementItem(element, initSelect) {
                 let config = new ElementViewConfiguration({
-                    domainObject: this.newDomainObject,
+                    domainObject: this.internalDomainObject,
                     element: element,
                     openmct: openmct,
                     gridSize: this.gridSize
@@ -208,27 +217,33 @@
                 item.config.mutatePosition();
             },
             mutate(path, value) {
-                this.openmct.objects.mutate(this.newDomainObject, path, value);
+                this.openmct.objects.mutate(this.internalDomainObject, path, value);
             },
             handleDrop($event) {
+                if (!$event.dataTransfer.types.includes('domainObject')) {
+                    return;
+                }
                 $event.preventDefault();
 
                 let domainObject = JSON.parse($event.dataTransfer.getData('domainObject'));
+
                 let elementRect = this.$el.getBoundingClientRect();
-                this.droppedObjectPosition = [
+                let droppedObjectPosition = [
                     Math.floor(($event.pageX - elementRect.left) / this.gridSize[0]),
                     Math.floor(($event.pageY - elementRect.top) / this.gridSize[1])
                 ];
-
                 if (this.isTelemetry(domainObject)) {
-                    this.addAlphanumeric(domainObject, this.droppedObjectPosition);
+                    this.addItem('telemetry-view', domainObject, this.droppedObjectPosition, true);
                 } else {
-                    this.checkForDuplicatePanel(domainObject);
+                    let identifier = this.openmct.objects.makeKeyString(domainObject.identifier);
+                    if (!this.objectViewMap[identifier]) {
+                        this.addItem('subobject-view', domainObject, this.droppedObjectPosition, true);
+                    }
                 }
             },
             checkForDuplicatePanel(domainObject) {
                 let id = this.openmct.objects.makeKeyString(domainObject.identifier);
-                let panels = this.newDomainObject.configuration.panels;
+                let panels = this.internalDomainObject.configuration.panels;
 
                 if (panels && panels[id]) {
                     let prompt = this.openmct.overlays.dialog({
@@ -244,14 +259,14 @@
                         ]
                     });
                 }
-            },
+            },/*
             addAlphanumeric(domainObject, position) {
-                let alphanumerics = this.newDomainObject.configuration.alphanumerics || [];
+                let alphanumerics = this.internalDomainObject.configuration.alphanumerics || [];
                 let alphanumeric = TelemetryViewConfiguration.create(domainObject, position, this.openmct);
                 alphanumeric.index = alphanumerics.push(alphanumeric) - 1;
                 this.mutate("configuration.alphanumerics", alphanumerics);
                 this.makeTelemetryItem(alphanumeric, true);
-            },
+            },*/
             handleDragOver($event){
                 $event.preventDefault();
             },
@@ -263,56 +278,53 @@
                     return false;
                 }
             },
-            addSubobject(domainObject) {
-                if (!this.isTelemetry(domainObject)) {
-                    let panels = this.newDomainObject.configuration.panels,
-                        id = this.openmct.objects.makeKeyString(domainObject.identifier),
-                        panel = panels[id],
-                        mutateObject = false,
-                        initSelect = false;
-
-                    // If the panel doesn't exist, create one and mutate the configuration
-                    if (!panel) {
-                        panel = SubobjectViewConfiguration.create(domainObject, this.gridSize, this.droppedObjectPosition);
-                        initSelect = true;
-                        this.mutate("configuration.panels[" + id + "]", panel);
-                        delete this.droppedObjectPosition;
-                    }
-
-                    panel.domainObject = domainObject;
-                    this.makeSubobjectItem(panel, initSelect);
+            addItem(itemType, ...options) {
+                let item = LayoutItem.getItemDefinition(itemType, this.openmct, this.gridSize, ...options);
+                this.trackItem(item);
+                this.layoutItems.push(item);
+                this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
+            },
+            trackItem(item) {
+                if (!item.id) {
+                    item.id = uuid();
+                }
+                this.itemMap[item.id] = item;
+                if (item.type === "telemetry-view") {
+                    this.telemetryViewMap[this.openmct.objects.makeKeyString(item.identifier)] = true;
+                } else if (item.type === "subobject-view") {
+                    this.objectViewMap[this.openmct.objects.makeKeyString(item.identifier)] = true;
                 }
             },
-            removeSubobject() {
-                // Not yet implemented
+            initializeItems() {
+                this.itemMap = {};
+                this.telemetryViewMap = {};
+                this.objectViewMap = {};
+                this.layoutItems.forEach(this.trackItem);
             },
-            addElement(type) {
-                let elements = this.newDomainObject.configuration.elements || [];
-                Promise.resolve(ElementViewConfiguration.create(type, this.openmct))
-                    .then(element => {
-                        element.index = elements.push(element) - 1;
-                        this.mutate("configuration.elements", elements);
-                        this.makeElementItem(element, true);
-                    });
+            addChild(child) {
+                let identifier = this.openmct.objects.makeKeyString(child.identifier);
+                if (this.isTelemetry(child) && !this.telemetryViewMap[identifier]) {
+                    this.addItem('telemetry-view', child);
+                } else if (!this.objectViewMap[identifier]) {
+                    this.addItem('subobject-view', child);
+                }
+            },
+            removeChild(identifier) {
+                // TODO: implement
             }
         },
         mounted() {
-            this.newDomainObject = this.domainObject;
-            this.gridSize = this.newDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;
-
-            this.unlisten = this.openmct.objects.observe(this.newDomainObject, '*', function (obj) {
-                this.newDomainObject = JSON.parse(JSON.stringify(obj));
-                this.gridSize = this.newDomainObject.layoutGrid || DEFAULT_GRID_SIZE;;
+            console.log('LayoutItem', LayoutItem);
+            this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', function (obj) {
+                this.internalDomainObject = JSON.parse(JSON.stringify(obj));
             }.bind(this));
 
             this.openmct.selection.on('change', this.setSelection);
-
-            this.composition = this.openmct.composition.get(this.newDomainObject);
-            this.composition.on('add', this.addSubobject);
-            this.composition.on('remove', this.removeSubobject);
+            this.initializeItems();
+            this.composition = this.openmct.composition.get(this.internalDomainObject);
+            this.composition.on('add', this.addChild);
+            this.composition.on('remove', this.removeChild);
             this.composition.load();
-            this.getAlphanumerics();
-            this.getElements();
         },
         destroyed: function () {
             this.openmct.off('change', this.setSelection);
@@ -321,5 +333,5 @@
             this.unlisten();
         }
     }
-    
+
 </script>
