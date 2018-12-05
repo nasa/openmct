@@ -30,11 +30,20 @@
             </tr>
         </thead>
         <tbody>
-            <LADRow 
-                v-for="item in items"
-                :key="item.identifier.key"
-                :domainObject="item">
-            </LADRow>
+            <template
+                v-for="primary in primaryCollection">
+
+                <tr
+                    :key="primary.identifier.key">
+                    <th>{{primary.name}}</th>
+                </tr>
+                
+                <lad-row
+                    v-for="secondary in secondaryCollection[primary.identifier.key]"
+                    :key="secondary.identifier.key"
+                    :domainObject="secondary">
+                </lad-row>
+            </template>
         </tbody>
     </table>
     
@@ -45,29 +54,38 @@
 </style>
 
 <script>
-    import LADRow from './LADRow.vue';
+    import LadRow from './LadRow.vue';
 
     export default {
     inject: ['openmct', 'domainObject'],
     components: {
-        LADRow
+        LadRow
     },
     data() {
         return {
-            items: [],
+            primaryCollection: [],
+            secondaryCollection: {},
             compositions: []
         }
     },
     methods: {
         getComposition(domainObject) {
-            let composition = openmct.composition.get(domainObject);
-                composition.on('add', this.addItem);
+            this.$set(this.secondaryCollection, domainObject.identifier.key, []);
+            this.primaryCollection.push(domainObject);
+
+            let composition = openmct.composition.get(domainObject),
+                callback = this.addSecondary(domainObject);
+                composition.on('add', callback);
                 composition.load();
 
-            this.compositions.push(composition);
+            this.compositions.push({composition, callback});
         },
-        addItem(domainObject) {
-            this.items.push(domainObject);
+        addSecondary(primary) {
+            return (secondary) => {
+                let array = this.secondaryCollection[primary.identifier.key];
+                    array.push(secondary);
+                this.$set(this.secondaryCollection, primary.identifier.key, array);
+            }
         }
     },
     mounted() {
@@ -78,7 +96,7 @@
     destroyed() {
         this.composition.off('add', this.getComposition);
         this.compositions.forEach(c => {
-            c.off('add', this.addItem);
+            c.composition.off('add', c.callback);
         });
     }
 }
