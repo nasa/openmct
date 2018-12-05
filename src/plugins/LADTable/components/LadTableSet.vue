@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-    <table class="c-table">
+    <table class="c-table" style="table-layout: fixed;">
         <thead>
             <tr>
                 <th>Name</th>
@@ -35,7 +35,7 @@
 
                 <tr
                     :key="primary.identifier.key">
-                    <th>{{primary.name}}</th>
+                    <th colsize="100">{{primary.name}}</th>
                 </tr>
                 
                 <lad-row

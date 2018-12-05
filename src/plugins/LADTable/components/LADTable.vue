@@ -21,7 +21,7 @@
  *****************************************************************************/
 
  <template>
-    <table class="c-table">
+    <table class="c-table" style="table-layout: fixed;">
         <thead>
             <tr>
                 <th>Name</th>
