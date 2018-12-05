@@ -174,7 +174,7 @@ define([
                     "name": "Remove",
                     "description": "Remove this object from its containing object.",
                     "depends": [
-                        "dialogService",
+                        "openmct",
                         "navigationService"
                     ]
                 },

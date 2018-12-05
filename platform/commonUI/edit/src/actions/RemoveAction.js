@@ -42,9 +42,9 @@ define([
      * @constructor
      * @implements {Action}
      */
-    function RemoveAction(dialogService, navigationService, context) {
+    function RemoveAction(openmct, navigationService, context) {
         this.domainObject = (context || {}).domainObject;
-        this.dialogService = dialogService;
+        this.openmct = openmct;
         this.navigationService = navigationService;
     }
 
@@ -53,7 +53,6 @@ define([
      */
     RemoveAction.prototype.perform = function () {
         var dialog,
-            dialogService = this.dialogService,
             domainObject = this.domainObject,
             navigationService = this.navigationService;
         /*
@@ -104,13 +103,13 @@ define([
          * capability. Based on object's location and selected object's location
          * user may be navigated to existing parent object
          */
-        function removeFromContext(object) {
-            var contextCapability = object.getCapability('context'),
+        function removeFromContext() {
+            var contextCapability = domainObject.getCapability('context'),
                 parent = contextCapability.getParent();
 
             // If currently within path of removed object(s),
             // navigates to existing object up tree
-            checkObjectNavigation(object, parent);
+            checkObjectNavigation(domainObject, parent);
 
             return parent.useCapability('mutation', doMutate);
         }
@@ -119,7 +118,7 @@ define([
          * Pass in the function to remove the domain object so it can be
          * associated with an 'OK' button press
          */
-        dialog = new RemoveDialog(dialogService, domainObject, removeFromContext);
+        dialog = new RemoveDialog(this.openmct, domainObject, removeFromContext);
         dialog.show();
     };
 
