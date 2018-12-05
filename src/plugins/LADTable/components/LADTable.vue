@@ -30,11 +30,11 @@
             </tr>
         </thead>
         <tbody>
-            <LADRow 
+            <lad-row 
                 v-for="item in items"
                 :key="item.identifier.key"
-                :dObject="item">
-            </LADRow>
+                :domainObject="item">
+            </lad-row>
         </tbody>
     </table>
      
@@ -45,29 +45,30 @@
  </style>
  
  <script>
- import LADRow from './LADRow.vue';
+ import LadRow from './LadRow.vue';
 
  export default {
-    inject: ['openmct', 'domainObject', 'composition'],
+    inject: ['openmct', 'domainObject'],
     components: {
-        LADRow
+        LadRow
     },
     data() {
         return {
             items: []
         }
     },
+    methods: {
+        addItem(dObject) {
+            this.items.push(dObject);
+        }
+    },
     mounted() {
+        this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addItem);
         this.composition.load();
     },
     destroyed() {
         this.composition.off('add', this.addItem);
-    },
-    methods: {
-        addItem(dObject) {
-            this.items.push(dObject);
-        }
     }
  }
  </script>

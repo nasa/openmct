@@ -21,19 +21,19 @@
  *****************************************************************************/
 
 define([
-    './components/LADTableSummary.vue',
+    './components/LadTableSet.vue',
     'vue'
 ], function (
-    LADTableSummaryComponent,
+    LadTableSet,
     Vue
 ) {
     function LADTableSummaryView(openmct) {
         return {
-            key: 'LADTableSummary',
-            name: 'LAD Table Summary',
+            key: 'LadTableSet',
+            name: 'LAD Table Set',
             cssClass: 'icon-tabular-lad',
             canView: function (domainObject) {
-                return domainObject.type === 'LADTableSummary';
+                return domainObject.type === 'LadTableSet';
             },
             view: function (domainObject) {
                 let component;
@@ -42,15 +42,14 @@ define([
                     show: function (element) {
                         component =  new Vue({
                             components: {
-                                LADTableSummaryComponent: LADTableSummaryComponent.default
+                                LadTableSet: LadTableSet.default
                             },
                             provide: {
                                 openmct,
-                                domainObject,
-                                composition: openmct.composition.get(domainObject)
+                                domainObject
                             },
                             el: element,
-                            template: '<LADTableSummaryComponent></LADTableSummaryComponent>'
+                            template: '<lad-table-set></lad-table-set>'
                         });
                     },
                     destroy: function (element) {

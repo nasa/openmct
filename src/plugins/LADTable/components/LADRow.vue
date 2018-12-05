@@ -22,7 +22,7 @@
 
 <template>
     <tr>
-        <td>{{dObject.name}}</td>
+        <td>{{name}}</td>
         <td>{{timestamp}}</td>
         <td>{{value}}</td>
     </tr>
@@ -35,10 +35,10 @@
 <script>
 export default {
     inject: ['openmct'],
-    props: ['dObject'],
+    props: ['domainObject'],
     data() {
         return {
-            name: this.dObject.name,
+            name: this.domainObject.name,
             timestamp: '---',
             value: '---',
             valueClass: ''
@@ -54,39 +54,42 @@ export default {
             } else {
                 this.valueClass = '';
             }
+        },
+        updateName(name){
+            this.name = name;
         }
     },
     mounted() {
-        this.metadata = this.openmct.telemetry.getMetadata(this.dObject);
+        this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
 
         this.limitEvaluator = openmct
             .telemetry
-            .limitEvaluator(this.dObject);
+            .limitEvaluator(this.domainObject);
 
         this.stopWatchingMutation = openmct
             .objects
             .observe(
-                this.dObject,
+                this.domainObject,
                 '*',
                 this.updateName
             );
 
-         this.openmct.time.on('timeSystem', this.updateTimeSystem, this);
+        this.openmct.time.on('timeSystem', this.updateTimeSystem, this);
 
-         this.timestampKey = this.openmct.time.timeSystem().key;
+        this.timestampKey = this.openmct.time.timeSystem().key;
 
-         this.valueKey = this
+        this.valueKey = this
             .metadata
             .valuesForHints(['range'])[0].key;
 
-         this.unsubscribe = this.openmct
+        this.unsubscribe = this.openmct
             .telemetry
-            .subscribe(this.dObject, this.updateValues.bind(this), {});
+            .subscribe(this.domainObject, this.updateValues.bind(this), {});
 
-         this.openmct
+        this.openmct
             .telemetry
-            .request(this.dObject, {strategy: 'latest'})
+            .request(this.domainObject, {strategy: 'latest'})
             .then((values) => values.forEach(this.updateValues));
     },
     destroyed() {

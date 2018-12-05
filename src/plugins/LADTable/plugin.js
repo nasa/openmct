@@ -42,8 +42,8 @@ define([
                 }
             });
 
-            openmct.types.addType('LADTableSummary', {
-                name: "LAD Table Summary",
+            openmct.types.addType('LadTableSet', {
+                name: "LAD Table Set",
                 creatable: true,
                 description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
                 cssClass: 'icon-tabular-lad',

@@ -21,10 +21,10 @@
  *****************************************************************************/
 
 define([
-    './components/LADTable.vue',
+    './components/LadTable.vue',
     'vue'
 ], function (
-    LADTableComponent,
+    LadTableComponent,
     Vue
 ) {
     function LADTableView(openmct) {
@@ -42,15 +42,14 @@ define([
                     show: function (element) {
                         component =  new Vue({
                             components: {
-                                LADTableComponent: LADTableComponent.default
+                                LadTableComponent: LadTableComponent.default
                             },
                             provide: {
                                 openmct,
-                                domainObject,
-                                composition: openmct.composition.get(domainObject)
+                                domainObject
                             },
                             el: element,
-                            template: '<LADTableComponent></LADTableComponent>'
+                            template: '<lad-table-component></lad-table-component>'
                         });
                     },
                     destroy: function (element) {

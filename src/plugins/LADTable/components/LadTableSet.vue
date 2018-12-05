@@ -33,7 +33,7 @@
             <LADRow 
                 v-for="item in items"
                 :key="item.identifier.key"
-                :dObject="item">
+                :domainObject="item">
             </LADRow>
         </tbody>
     </table>
@@ -48,7 +48,7 @@
     import LADRow from './LADRow.vue';
 
     export default {
-    inject: ['openmct', 'domainObject', 'composition'],
+    inject: ['openmct', 'domainObject'],
     components: {
         LADRow
     },
@@ -59,18 +59,19 @@
         }
     },
     methods: {
-        getComposition(dObject) {
-            let composition = openmct.composition.get(dObject);
+        getComposition(domainObject) {
+            let composition = openmct.composition.get(domainObject);
                 composition.on('add', this.addItem);
                 composition.load();
 
             this.compositions.push(composition);
         },
-        addItem(dObject) {
-            this.items.push(dObject);
+        addItem(domainObject) {
+            this.items.push(domainObject);
         }
     },
     mounted() {
+        this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.getComposition);
         this.composition.load();
     },
