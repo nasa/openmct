@@ -31,7 +31,6 @@ define([
     "./src/controllers/TreeNodeController",
     "./src/controllers/ActionGroupController",
     "./src/controllers/ToggleController",
-    "./src/controllers/ContextMenuController",
     "./src/controllers/ClickAwayController",
     "./src/controllers/ViewSwitcherController",
     "./src/controllers/GetterSetterController",
@@ -65,7 +64,6 @@ define([
     "./res/templates/tree-node.html",
     "./res/templates/label.html",
     "./res/templates/controls/action-group.html",
-    "./res/templates/menu/context-menu.html",
     "./res/templates/controls/switcher.html",
     "./res/templates/object-inspector.html",
     "./res/templates/controls/selector.html",
@@ -84,7 +82,6 @@ define([
     TreeNodeController,
     ActionGroupController,
     ToggleController,
-    ContextMenuController,
     ClickAwayController,
     ViewSwitcherController,
     GetterSetterController,
@@ -118,7 +115,6 @@ define([
     treeNodeTemplate,
     labelTemplate,
     actionGroupTemplate,
-    contextMenuTemplate,
     switcherTemplate,
     objectInspectorTemplate,
     selectorTemplate,
@@ -251,13 +247,6 @@ define([
                 {
                     "key": "ToggleController",
                     "implementation": ToggleController
-                },
-                {
-                    "key": "ContextMenuController",
-                    "implementation": ContextMenuController,
-                    "depends": [
-                        "$scope"
-                    ]
                 },
                 {
                     "key": "ClickAwayController",
@@ -513,13 +502,6 @@ define([
                 {
                     "key": "action-group",
                     "template": actionGroupTemplate,
-                    "uses": [
-                        "action"
-                    ]
-                },
-                {
-                    "key": "context-menu",
-                    "template": contextMenuTemplate,
                     "uses": [
                         "action"
                     ]
