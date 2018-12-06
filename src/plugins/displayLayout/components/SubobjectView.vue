@@ -72,13 +72,14 @@
 
         &__name {
             @include ellipsize();
+            @include headerFont(1.2em);
             flex: 0 1 auto;
-            font-size: 1.2em;
 
             &:before {
                 // Object type icon
                 flex: 0 0 auto;
                 margin-right: $interiorMarginSm;
+                opacity: 0.5;
             }
         }
 
