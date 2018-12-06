@@ -79,7 +79,6 @@ import ResizeHandle from './resizeHandle.vue';
 import DropHint from './dropHint.vue';
 import isEditingMixin from '../mixins/isEditing';
 
-const SNAP_TO_PERCENTAGE = 1;
 const MIN_FRAME_SIZE = 5;
 
 export default {
@@ -90,11 +89,6 @@ export default {
         FrameComponent,
         ResizeHandle,
         DropHint
-    },
-    data() {
-        return {
-            maxMoveSize: 0
-        }
     },
     computed: {
         frames() {
@@ -108,7 +102,7 @@ export default {
         allowDrop(event, index) {
             let frameId = event.dataTransfer.getData('frameid'),
                 containerIndex = Number(event.dataTransfer.getData('containerIndex'));
-            
+
             if (frameId) {
 
                 if (containerIndex === this.index) {
@@ -157,26 +151,25 @@ export default {
         startFrameResizing(index) {
             let beforeFrame = this.frames[index],
                 afterFrame = this.frames[index + 1];
-            
+
             this.maxMoveSize = beforeFrame.size + afterFrame.size;
         },
         frameResizing(index, delta, event) {
-
-            let percentageMoved = (delta / this.getElSize(this.$el))*100,
+            let percentageMoved = Math.round(delta / this.getElSize() * 100),
                 beforeFrame = this.frames[index],
                 afterFrame = this.frames[index + 1];
 
-            beforeFrame.size = this.snapToPercentage(beforeFrame.size + percentageMoved);
-            afterFrame.size = this.snapToPercentage(afterFrame.size - percentageMoved);
+            beforeFrame.size = this.getFrameSize(beforeFrame.size + percentageMoved);
+            afterFrame.size = this.getFrameSize(afterFrame.size - percentageMoved);
         },
         endFrameResizing(index, event) {
             this.persist();
         },
-        getElSize(el) {
+        getElSize() {
             if (this.rowsLayout) {
-                return el.offsetWidth;
+                return this.$el.offsetWidth;
             } else {
-                return el.offsetHeight;
+                return this.$el.offsetHeight;
             }
         },
         getFrameSize(size) {
@@ -187,18 +180,6 @@ export default {
             } else {
                 return size;
             }
-        },
-        snapToPercentage(value){
-            let rem = value % SNAP_TO_PERCENTAGE,
-                roundedValue;
-            
-            if (rem < 0.5) {
-                 roundedValue = Math.floor(value/SNAP_TO_PERCENTAGE)*SNAP_TO_PERCENTAGE;
-            } else {
-                roundedValue = Math.ceil(value/SNAP_TO_PERCENTAGE)*SNAP_TO_PERCENTAGE;
-            }
-
-            return this.getFrameSize(roundedValue);
         },
         persist() {
             this.$emit('persist', this.index);

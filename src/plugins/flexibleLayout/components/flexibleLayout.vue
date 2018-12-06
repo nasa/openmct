@@ -33,7 +33,7 @@
             }">
 
             <template v-for="(container, index) in containers">
-                
+
                 <drop-hint
                     class="c-fl-frame__drop-hint"
                     v-if="index === 0 && containers.length > 1"
@@ -72,7 +72,7 @@
                     @object-drop-to="containerDropTo">
                 </drop-hint>
             </template>
-        </div> 
+        </div>
     </div>
 </template>
 
@@ -414,11 +414,10 @@ import ResizeHandle from  './resizeHandle.vue';
 import DropHint from './dropHint.vue';
 import isEditingMixin from '../mixins/isEditing';
 
-const SNAP_TO_PERCENTAGE = 1,
-      MIN_CONTAINER_SIZE = 5;
+const MIN_CONTAINER_SIZE = 5;
 
 export default {
-    inject: ['openmct', 'dObject'],
+    inject: ['openmct', 'layoutObject'],
     mixins: [isEditingMixin],
     components: {
         ContainerComponent,
@@ -426,15 +425,8 @@ export default {
         DropHint
     },
     data() {
-        let containers = this.dObject.configuration.containers,
-            rowsLayout = this.dObject.configuration.rowsLayout,
-            domainObject = this.dObject;
-
         return {
-            containers,
-            rowsLayout,
-            domainObject,
-            maxMoveSize: 0
+            domainObject: this.layoutObject
         }
     },
     computed: {
@@ -444,6 +436,12 @@ export default {
             } else {
                 return 'Columns'
             }
+        },
+        containers() {
+            return this.domainObject.configuration.containers;
+        },
+        rowsLayout() {
+            return this.domainObject.configuration.rowsLayout;
         }
     },
     methods: {
@@ -484,7 +482,7 @@ export default {
         recalculateNewFrameSize(multFactor, framesArray){
             framesArray.forEach((frame, index) => {
                 let frameSize = frame.size
-                frame.size = this.snapToPercentage(multFactor * frameSize);
+                frame.size = Math.round(multFactor * frameSize);
             });
         },
         recalculateOldFrameSize(framesArray) {
@@ -499,7 +497,7 @@ export default {
                 } else {
 
                     let newSize = frame.size + ((frame.size / totalRemainingSum) * (100 - totalRemainingSum));
-                    frame.size = this.snapToPercentage(newSize);
+                    frame.size = Math.round(newSize);
                 }
             });
         },
@@ -551,21 +549,21 @@ export default {
             this.maxMoveSize = beforeContainer.size + afterContainer.size;
         },
         containerResizing(index, delta, event) {
-            let percentageMoved = (delta/this.getElSize(this.$el))*100,
+            let percentageMoved = (delta/this.getElSize())*100,
                 beforeContainer = this.containers[index],
                 afterContainer = this.containers[index + 1];
 
-                beforeContainer.size = this.getContainerSize(this.snapToPercentage(beforeContainer.size + percentageMoved));
-                afterContainer.size = this.getContainerSize(this.snapToPercentage(afterContainer.size - percentageMoved));
+                beforeContainer.size = this.getContainerSize(Math.round(beforeContainer.size + percentageMoved));
+                afterContainer.size = this.getContainerSize(Math.round(afterContainer.size - percentageMoved));
         },
         endContainerResizing(event) {
             this.persist();
         },
-        getElSize(el) {
+        getElSize() {
             if (this.rowsLayout) {
-                return el.offsetHeight;
+                return this.$el.offsetHeight;
             } else {
-                return el.offsetWidth;
+                return this.$el.offsetWidth;
             }
         },
         getContainerSize(size) {
@@ -577,22 +575,8 @@ export default {
                 return size;
             }
         },
-        snapToPercentage(value) {
-            let rem = value % SNAP_TO_PERCENTAGE,
-                roundedValue;
-            
-            if (rem < 0.5) {
-                 roundedValue = Math.floor(value/SNAP_TO_PERCENTAGE)*SNAP_TO_PERCENTAGE;
-            } else {
-                roundedValue = Math.ceil(value/SNAP_TO_PERCENTAGE)*SNAP_TO_PERCENTAGE;
-            }
-
-            return roundedValue;
-        },
         updateDomainObject(newDomainObject) {
             this.domainObject = newDomainObject;
-            this.rowsLayout = newDomainObject.configuration.rowsLayout;
-            this.containers = newDomainObject.configuration.containers;
         },
         deleteContainer(containerIndex) {
             this.domainObject.configuration.containers.splice(containerIndex, 1);
@@ -603,7 +587,7 @@ export default {
         },
         deleteFrame(frameIndex, containerIndex) {
             this.domainObject.configuration.containers[containerIndex].frames.splice(frameIndex, 1);
-            
+
             this.recalculateOldFrameSize(this.domainObject.configuration.containers[containerIndex].frames);
             this.persist(containerIndex);
         },
