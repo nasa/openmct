@@ -35,7 +35,7 @@
             <template v-for="(container, index) in containers">
                 
                 <drop-hint
-                    style="flex-basis: 15px;"
+                    class="c-fl-frame__drop-hint"
                     v-if="index === 0 && containers.length > 1"
                     :key="index"
                     :index="-1"
@@ -64,7 +64,7 @@
                 </resize-handle>
 
                 <drop-hint
-                    style="flex-basis: 15px;"
+                    class="c-fl-frame__drop-hint"
                     v-if="containers.length > 1"
                     :key="index"
                     :index="index"

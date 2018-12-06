@@ -32,8 +32,8 @@
         </div>
 
         <drop-hint
-            :index="-1"
             class="c-fl-frame__drop-hint"
+            :index="-1"
             :allow-drop="allowDrop"
             @object-drop-to="frameDropTo">
         </drop-hint>
