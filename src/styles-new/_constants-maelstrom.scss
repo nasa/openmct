@@ -36,7 +36,7 @@ $bodyFont: 'Chakra Petch', sans-serif;
 
 @mixin headerFont($size: 1em) {
     font-family: $headerFont;
-    font-size: $size * 0.8;
+    font-size: $size * 0.8; // This font is comparatively large, so reduce it a bit
     text-transform: uppercase;
     word-spacing: 0.25em;
 }
