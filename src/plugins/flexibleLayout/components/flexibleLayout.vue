@@ -416,6 +416,45 @@ import isEditingMixin from '../mixins/isEditing';
 
 const MIN_CONTAINER_SIZE = 5;
 
+// Resize items so that newItem fits proportionally (newItem must be an element
+// of items).  If newItem does not have a size or is sized at 100%, newItem will
+// have size set to 1/n * 100, where n is the total number of items.
+function sizeItems(items, newItem) {
+    if (items.length === 1) {
+        newItem.size = 100;
+    } else {
+        if (!newItem.size || newItem.size === 100) {
+            newItem.size = Math.round(100 / items.length);
+        }
+        let oldItems = items.filter(item => item !== newItem);
+        // Resize oldItems to fit inside remaining space;
+        let remainder = 100 - newItem.size;
+        oldItems.forEach((item) => {
+            item.size = Math.round(item.size * remainder / 100);
+        });
+        // Ensure items add up to 100 in case of rounding error.
+        let total = items.reduce((t, item) => t + item.size, 0);
+        let excess = Math.round(100 - total);
+        oldItems[oldItems.length - 1].size += excess;
+    }
+}
+
+// Scales items proportionally so total is equal to 100.  Assumes that an item
+// was removed from array.
+function sizeToFill(items) {
+    if (items.length === 0) {
+        return;
+    }
+    let oldTotal = items.reduce((total, item) => total + item.size, 0);
+    items.forEach((item) => {
+        item.size = Math.round(item.size * 100 / oldTotal);
+    });
+    // Ensure items add up to 100 in case of rounding error.
+    let total = items.reduce((t, item) => t + item.size, 0);
+    let excess = Math.round(100 - total);
+    items[items.length - 1].size += excess;
+}
+
 export default {
     inject: ['openmct', 'layoutObject'],
     mixins: [isEditingMixin],
@@ -449,14 +488,9 @@ export default {
             return !!!this.containers.filter(container => container.frames.length).length;
         },
         addContainer() {
-            let newSize = 100/(this.containers.length + 1);
-
-            let container = new Container(newSize)
-
-            this.recalculateContainerSize(newSize);
-
-            this.domainObject.configuration.containers.push(container);
-
+            let container = new Container();
+            this.containers.push(container);
+            sizeItems(this.containers, container);
             this.persist();
         },
         allowContainerDrop(event, index) {
@@ -474,44 +508,17 @@ export default {
                 return containerPos !== index && (containerPos - 1) !== index
             }
         },
-        recalculateContainerSize(newSize) {
-            this.containers.forEach((container) => {
-                container.size = newSize;
-            });
-        },
-        recalculateNewFrameSize(multFactor, framesArray){
-            framesArray.forEach((frame, index) => {
-                let frameSize = frame.size
-                frame.size = Math.round(multFactor * frameSize);
-            });
-        },
-        recalculateOldFrameSize(framesArray) {
-            let totalRemainingSum = framesArray.length ? framesArray.map((frame) => {
-                return frame.size;
-            }).reduce((a, c) => a + c) : 100;
-
-            framesArray.forEach((frame, index) => {
-                if (framesArray.length === 1) {
-
-                    frame.size = 100;
-                } else {
-
-                    let newSize = frame.size + ((frame.size / totalRemainingSum) * (100 - totalRemainingSum));
-                    frame.size = Math.round(newSize);
-                }
-            });
-        },
         frameDropToHandler(containerIndex, options) {
             let newContainer = this.containers[containerIndex];
 
             if (!options.frameObject) {
                 let container = this.containers[options.frameLocation[1]];
-                    options.frameObject = container.frames.filter(f => f.id === options.frameLocation[0])[0];
+                options.frameObject = container.frames.filter(f => f.id === options.frameLocation[0])[0];
 
                 let framePos = container.frames.indexOf(options.frameObject);
 
                 container.frames.splice(framePos, 1);
-                this.recalculateOldFrameSize(container.frames);
+                sizeToFill(container.frames);
             }
 
             if (options.frameObject && !options.frameObject.size) {
@@ -519,19 +526,7 @@ export default {
             }
 
             newContainer.frames.splice((options.dropHintIndex + 1), 0, options.frameObject);
-
-            let newTotalSize = newContainer.frames.reduce((total, frame) => {
-                        let num = Number(frame.size);
-
-                        if(isNaN(num)) {
-                            return total;
-                        } else {
-                            return total + num;
-                        }
-                    },0);
-            let newMultFactor = 100 / newTotalSize;
-
-            this.recalculateNewFrameSize(newMultFactor, newContainer.frames);
+            sizeItems(newContainer.frames, options.frameObject);
 
             this.persist();
         },
@@ -549,12 +544,12 @@ export default {
             this.maxMoveSize = beforeContainer.size + afterContainer.size;
         },
         containerResizing(index, delta, event) {
-            let percentageMoved = (delta/this.getElSize())*100,
+            let percentageMoved = Math.round(delta / this.getElSize() * 100),
                 beforeContainer = this.containers[index],
                 afterContainer = this.containers[index + 1];
 
-                beforeContainer.size = this.getContainerSize(Math.round(beforeContainer.size + percentageMoved));
-                afterContainer.size = this.getContainerSize(Math.round(afterContainer.size - percentageMoved));
+            beforeContainer.size = this.getContainerSize(beforeContainer.size + percentageMoved);
+            afterContainer.size = this.getContainerSize(afterContainer.size - percentageMoved);
         },
         endContainerResizing(event) {
             this.persist();
@@ -580,15 +575,12 @@ export default {
         },
         deleteContainer(containerIndex) {
             this.domainObject.configuration.containers.splice(containerIndex, 1);
-
-            this.recalculateContainerSize(100/this.containers.length);
-
+            sizeToFill(this.containers);
             this.persist();
         },
         deleteFrame(frameIndex, containerIndex) {
-            this.domainObject.configuration.containers[containerIndex].frames.splice(frameIndex, 1);
-
-            this.recalculateOldFrameSize(this.domainObject.configuration.containers[containerIndex].frames);
+            this.containers[containerIndex].frames.splice(frameIndex, 1);
+            sizeToFill(this.containers[containerIndex].frames);
             this.persist(containerIndex);
         },
         containerDropTo(index, event) {
@@ -621,11 +613,11 @@ export default {
         }
 
         this.unsubscribeSelection = this.openmct.selection.selectable(this.$el, context, true);
-
-        this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
+        this.unobserve = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
     },
     beforeDestroy() {
         this.unsubscribeSelection();
+        this.unobserve();
     }
 }
 </script>
