@@ -96,10 +96,8 @@ function (
                 };
             },
             methods: {
-                search: function (event) {
-                    if (event.target.value) {
-                        this.entrySearch = event.target.value;
-                    }
+                search(value) {
+                    this.entrySearch = value;
                 },
                 newEntry: self.newEntry,
                 filterBySearch: self.filterBySearch

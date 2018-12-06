@@ -1,9 +1,10 @@
 <div class="c-notebook">
     <div class="c-notebook__head">
         <search class="c-notebook__search"
-                v-model="entrySearch"
-                v-on:input="search($event)"
-                v-on:clear="entrySearch = ''; search($event)"></search>
+                :value="entrySearch"
+                @input="search"
+                @clear="search">
+            </search>
         <div class="c-notebook__controls">
             <div class="select c-notebook__controls__time">
                 <select v-model="showTime">
