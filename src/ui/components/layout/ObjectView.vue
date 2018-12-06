@@ -88,10 +88,10 @@ export default {
                     parentObject.composition.push(childObject.identifier);
                     this.openmct.objects.mutate(parentObject, 'composition', parentObject.composition);
                 }
-            }
 
-            event.preventDefault();
-            event.stopPropagation();
+                event.preventDefault();
+                event.stopPropagation();
+            }
         }
     }
 }
