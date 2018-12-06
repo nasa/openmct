@@ -50,6 +50,7 @@ function (
         this.destroy = this.destroy.bind(this);
         this.newEntry = this.newEntry.bind(this);
         this.entryPosById = this.entryPosById.bind(this);
+        console.log(domainObject);
     }
 
     NotebookController.prototype.initializeVue = function (container) {
@@ -90,25 +91,34 @@ function (
                 return {
                     entrySearch: self.entrySearch,
                     showTime: '0',
-                    sortEntries: '-createdOn',
+                    sortEntries: self.domainObject.defaultSort,
                     entries: self.domainObject.entries,
                     currentEntryValue: ''
                 };
+            },
+            computed: {
+                filteredAndSortedEntries() {
+                    return this.sort(this.filterBySearch(this.entries, this.entrySearch), this.sortEntries);
+                }
             },
             methods: {
                 search(value) {
                     this.entrySearch = value;
                 },
                 newEntry: self.newEntry,
-                filterBySearch: self.filterBySearch
+                filterBySearch: self.filterBySearch,
+                sort: self.sort
             }
         });
+
+        console.log(self.domainObject.defaultSort);
 
         this.NotebookVue =  new notebookVue();
         container.appendChild(this.NotebookVue.$mount().$el);
     };
 
     NotebookController.prototype.newEntry = function (event) {
+        this.NotebookVue.search('');
 
         var date = Date.now(),
             embed;
@@ -128,7 +138,7 @@ function (
         }
 
         var entries = this.domainObject.entries,
-            lastEntryIndex = entries.length - 1,
+            lastEntryIndex = this.NotebookVue.sortEntries === 'newest' ? 0 : entries.length - 1,
             lastEntry = entries[lastEntryIndex];
 
         if (lastEntry === undefined || lastEntry.text || lastEntry.embeds.length) {
@@ -150,8 +160,6 @@ function (
             this.openmct.objects.mutate(this.domainObject, 'entries[entries.length-1]', lastEntry);
             this.focusOnEntry.bind(this.NotebookVue.$children[lastEntryIndex+1])();
         }
-
-        this.entrySearch = '';
     };
 
     NotebookController.prototype.entryPosById = function (entryId) {
@@ -186,6 +194,33 @@ function (
             });
         } else {
             return entryArray;
+        }
+    };
+
+    NotebookController.prototype.sort = function (array, sortDirection) {
+        let oldest = (a,b) => {
+                if (a.createdOn < b.createdOn) {
+                    return -1;
+                } else if (a.createdOn > b.createdOn) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            },
+            newest = (a,b) => {
+                if (a.createdOn < b.createdOn) {
+                    return 1;
+                } else if (a.createdOn > b.createdOn) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            };
+
+        if (sortDirection === 'newest') {
+            return array.sort(newest);
+        } else {
+            return array.sort(oldest);
         }
     };
 

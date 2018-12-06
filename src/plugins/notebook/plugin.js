@@ -68,7 +68,7 @@ define([
                             model: {
                                 entries: [],
                                 entryTypes: [],
-                                defaultSort: '-createdOn'
+                                defaultSort: 'oldest'
                             },
                             properties: [
                                 {
@@ -78,11 +78,11 @@ define([
                                     options: [
                                         {
                                             name: 'Newest First',
-                                            value: "-createdOn",
+                                            value: "newest"
                                         },
                                         {
                                             name: 'Oldest First',
-                                            value: "createdOn"
+                                            value: "oldest"
                                         }
                                     ],
                                     cssClass: 'l-inline'

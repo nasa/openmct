@@ -16,8 +16,8 @@
             </div>
             <div class="select c-notebook__controls__sort">
                 <select v-model="sortEntries">
-                    <option value="-createdOn" selected="selected">Newest first</option>
-                    <option value="createdOn">Oldest first</option>
+                    <option value="newest" :selected="sortEntries === 'newest'">Newest first</option>
+                    <option value="oldest" :selected="sortEntries === 'oldest'">Oldest first</option>
                 </select>
             </div>
         </div>
@@ -31,7 +31,7 @@
     <div class="c-notebook__entries" ng-mouseover="handleActive()">
         <ul>
             <notebook-entry
-                v-for="entry in filterBySearch(entries, entrySearch)"
+                v-for="entry in filteredAndSortedEntries"
                 v-bind:entry="entry">
             </notebook-entry>
         </ul>
