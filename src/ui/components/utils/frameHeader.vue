@@ -28,6 +28,7 @@
         }
 
         &__name {
+            @include headerFont(1em);
             display: flex;
             &:before {
                 margin-right: $interiorMarginSm;
