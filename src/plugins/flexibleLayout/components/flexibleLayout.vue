@@ -40,7 +40,7 @@
                     :key="index"
                     :index="-1"
                     :allow-drop="allowContainerDrop"
-                    @object-drop-to="containerDropTo">
+                    @object-drop-to="moveContainer">
                 </drop-hint>
 
                 <container-component
@@ -49,7 +49,8 @@
                     :index="index"
                     :container="container"
                     :rowsLayout="rowsLayout"
-                    @frame-drop-to="frameDropToHandler"
+                    @move-frame="moveFrame"
+                    @create-frame="createFrame"
                     @persist="persist">
                 </container-component>
 
@@ -69,7 +70,7 @@
                     :key="index"
                     :index="index"
                     :allowDrop="allowContainerDrop"
-                    @object-drop-to="containerDropTo">
+                    @object-drop-to="moveContainer">
                 </drop-hint>
             </template>
         </div>
@@ -410,6 +411,7 @@
 <script>
 import ContainerComponent  from './container.vue';
 import Container from '../utils/container';
+import Frame from '../utils/frame';
 import ResizeHandle from  './resizeHandle.vue';
 import DropHint from './dropHint.vue';
 import isEditingMixin from '../mixins/isEditing';
@@ -493,6 +495,34 @@ export default {
             sizeItems(this.containers, container);
             this.persist();
         },
+        deleteContainer(containerIndex) {
+            this.domainObject.configuration.containers.splice(containerIndex, 1);
+            sizeToFill(this.containers);
+            this.persist();
+        },
+        moveFrame(toContainerIndex, toFrameIndex, frameId, fromContainerIndex) {
+            let toContainer = this.containers[toContainerIndex];
+            let fromContainer = this.containers[fromContainerIndex];
+            let frame = fromContainer.frames.filter(f => f.id === frameId)[0];
+            let fromIndex = fromContainer.frames.indexOf(frame);
+            fromContainer.frames.splice(fromIndex, 1);
+            sizeToFill(fromContainer.frames);
+            toContainer.frames.splice(toFrameIndex + 1, 0, frame);
+            sizeItems(toContainer.frames, frame);
+            this.persist();
+        },
+        createFrame(containerIndex, insertFrameIndex, objectIdentifier) {
+            let frame = new Frame(objectIdentifier);
+            let container = this.containers[containerIndex];
+            container.frames.splice(insertFrameIndex + 1, 0, frame);
+            sizeItems(container.frames, frame);
+            this.persist();
+        },
+        deleteFrame(frameIndex, containerIndex) {
+            this.containers[containerIndex].frames.splice(frameIndex, 1);
+            sizeToFill(this.containers[containerIndex].frames);
+            this.persist(containerIndex);
+        },
         allowContainerDrop(event, index) {
             if (!event.dataTransfer.types.includes('containerid')) {
                 return false;
@@ -507,28 +537,6 @@ export default {
             } else {
                 return containerPos !== index && (containerPos - 1) !== index
             }
-        },
-        frameDropToHandler(containerIndex, options) {
-            let newContainer = this.containers[containerIndex];
-
-            if (!options.frameObject) {
-                let container = this.containers[options.frameLocation[1]];
-                options.frameObject = container.frames.filter(f => f.id === options.frameLocation[0])[0];
-
-                let framePos = container.frames.indexOf(options.frameObject);
-
-                container.frames.splice(framePos, 1);
-                sizeToFill(container.frames);
-            }
-
-            if (options.frameObject && !options.frameObject.size) {
-                options.frameObject.size = 100 / Math.max(newContainer.frames.length, 1);
-            }
-
-            newContainer.frames.splice((options.dropHintIndex + 1), 0, options.frameObject);
-            sizeItems(newContainer.frames, options.frameObject);
-
-            this.persist();
         },
         persist(index){
             if (index) {
@@ -573,33 +581,17 @@ export default {
         updateDomainObject(newDomainObject) {
             this.domainObject = newDomainObject;
         },
-        deleteContainer(containerIndex) {
-            this.domainObject.configuration.containers.splice(containerIndex, 1);
-            sizeToFill(this.containers);
-            this.persist();
-        },
-        deleteFrame(frameIndex, containerIndex) {
-            this.containers[containerIndex].frames.splice(frameIndex, 1);
-            sizeToFill(this.containers[containerIndex].frames);
-            this.persist(containerIndex);
-        },
-        containerDropTo(index, event) {
-            let containerId = event.dataTransfer.getData('containerid'),
-                containers = this.domainObject.configuration.containers;
-
-            if (containerId) {
-                let container = containers.filter(c => c.id === containerId)[0],
-                    containerPos = containers.indexOf(container),
-                    fromContainer = containers.splice(containerPos, 1)[0];
-
-                if (containerPos > index) {
-                    containers.splice(index+1, 0, fromContainer);
-                } else {
-                    containers.splice(index, 0, fromContainer);
-                }
-
-                this.openmct.objects.mutate(this.domainObject, 'configuration.containers', containers);
+        moveContainer(toIndex, event) {
+            let containerId = event.dataTransfer.getData('containerid');
+            let container = this.containers.filter(c => c.id === containerId)[0];
+            let fromIndex = this.containers.indexOf(container);
+            this.containers.splice(fromIndex, 1);
+            if (fromIndex > toIndex) {
+                this.containers.splice(toIndex + 1, 0, container);
+            } else {
+                this.containers.splice(toIndex, 0, container);
             }
+            this.persist();
         }
     },
     mounted() {

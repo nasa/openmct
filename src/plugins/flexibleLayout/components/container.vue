@@ -35,7 +35,7 @@
             class="c-fl-frame__drop-hint"
             :index="-1"
             :allow-drop="allowDrop"
-            @object-drop-to="frameDropTo">
+            @object-drop-to="moveOrCreateFrame">
         </drop-hint>
 
         <div class="c-fl-container__frames-holder">
@@ -55,7 +55,7 @@
                     :key="i"
                     :index="i"
                     :allowDrop="allowDrop"
-                    @object-drop-to="frameDropTo">
+                    @object-drop-to="moveOrCreateFrame">
                 </drop-hint>
 
                 <resize-handle
@@ -100,53 +100,51 @@ export default {
     },
     methods: {
         allowDrop(event, index) {
+            if (event.dataTransfer.getData('domainObject')) {
+                return true;
+            }
             let frameId = event.dataTransfer.getData('frameid'),
                 containerIndex = Number(event.dataTransfer.getData('containerIndex'));
 
-            if (frameId) {
+            if (!frameId) {
+                return false;
+            }
 
-                if (containerIndex === this.index) {
-                    let frame = this.container.frames.filter((f) => f.id === frameId)[0],
-                        framePos = this.container.frames.indexOf(frame);
+            if (containerIndex === this.index) {
+                let frame = this.container.frames.filter((f) => f.id === frameId)[0],
+                    framePos = this.container.frames.indexOf(frame);
 
-                    if (index === -1) {
-                        return framePos !== 0;
-                    } else {
-                        return framePos !== index && (framePos - 1) !== index
-                    }
+                if (index === -1) {
+                    return framePos !== 0;
                 } else {
-                    return true;
+                    return framePos !== index && (framePos - 1) !== index
                 }
             } else {
-                if (event.dataTransfer.getData('domainObject')) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return true;
             }
         },
-        frameDropTo(index, event) {
-            let domainObject = event.dataTransfer.getData('domainObject'),
-                frameId = event.dataTransfer.getData('frameid'),
-                containerIndex = Number(event.dataTransfer.getData('containerIndex')),
-                options;
-
-            if (domainObject) {
-                let frameObject = new Frame(JSON.parse(domainObject).identifier);
-                options = {
-                    frameObject
-                }
-            } else if (frameId) {
-                let frameLocation = [frameId, containerIndex];
-
-                options = {
-                    frameLocation
-                }
-            }
-
-            options.dropHintIndex = index;
-
-            this.$emit('frame-drop-to', this.index, options);
+        moveOrCreateFrame(insertIndex, event) {
+            if (event.dataTransfer.types.includes('domainobject')) {
+                // create frame using domain object
+                let domainObject = JSON.parse(event.dataTransfer.getData('domainObject'));
+                this.$emit(
+                    'create-frame',
+                    this.index,
+                    insertIndex,
+                    domainObject.identifier
+                );
+                return;
+            };
+            // move frame.
+            let frameId = event.dataTransfer.getData('frameid');
+            let containerIndex = Number(event.dataTransfer.getData('containerIndex'));
+            this.$emit(
+                'move-frame',
+                this.index,
+                insertIndex,
+                frameId,
+                containerIndex
+            );
         },
         startFrameResizing(index) {
             let beforeFrame = this.frames[index],
