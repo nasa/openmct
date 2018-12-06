@@ -495,8 +495,10 @@ export default {
             sizeItems(this.containers, container);
             this.persist();
         },
-        deleteContainer(containerIndex) {
-            this.domainObject.configuration.containers.splice(containerIndex, 1);
+        deleteContainer(containerId) {
+            let container = this.containers.filter(c => c.id === containerId)[0];
+            let containerIndex = this.containers.indexOf(container);
+            this.containers.splice(containerIndex, 1);
             sizeToFill(this.containers);
             this.persist();
         },
@@ -518,9 +520,16 @@ export default {
             sizeItems(container.frames, frame);
             this.persist();
         },
-        deleteFrame(frameIndex, containerIndex) {
-            this.containers[containerIndex].frames.splice(frameIndex, 1);
-            sizeToFill(this.containers[containerIndex].frames);
+        deleteFrame(frameId) {
+            let container = this.containers
+                .filter(c => c.frames.some(f => f.id === frameId))[0];
+            let containerIndex = this.containers.indexOf(container);
+            let frame = container
+                .frames
+                .filter((f => f.id === frameId))[0];
+            let frameIndex = container.frames.indexOf(frame);
+            container.frames.splice(frameIndex, 1);
+            sizeToFill(container.frames);
             this.persist(containerIndex);
         },
         allowContainerDrop(event, index) {
@@ -540,9 +549,9 @@ export default {
         },
         persist(index){
             if (index) {
-                this.openmct.objects.mutate(this.domainObject, `.configuration.containers[${index}]`, this.containers[index]);
+                this.openmct.objects.mutate(this.domainObject, `configuration.containers[${index}]`, this.containers[index]);
             } else {
-                this.openmct.objects.mutate(this.domainObject, '.configuration.containers', this.containers);
+                this.openmct.objects.mutate(this.domainObject, 'configuration.containers', this.containers);
             }
         },
         startContainerResizing(index) {

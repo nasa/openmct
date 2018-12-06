@@ -190,8 +190,8 @@ export default {
         let context = {
             item: this.$parent.domainObject,
             addContainer: this.addContainer,
-            index: this.index,
-            type: 'container'
+            type: 'container',
+            containerId: this.container.id
         }
 
         this.unsubscribeSelection = this.openmct.selection.selectable(this.$el, context, false);

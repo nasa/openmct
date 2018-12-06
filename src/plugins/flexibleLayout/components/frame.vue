@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-    <div class="c-fl-frame" 
+    <div class="c-fl-frame"
         :style="{
             'flex-basis': `${frame.size}%`
         }">
@@ -75,12 +75,11 @@ export default {
             this.setSelection();
         },
         setSelection() {
-           
             let context = {
                 item: this.item.domainObject,
                 addContainer: this.addContainer,
                 type: 'frame',
-                index: this.index
+                frameId: this.frame.id
             };
 
             this.unsubscribeSelection = this.openmct.selection.selectable(this.$refs.frame, context, false);

@@ -70,6 +70,19 @@ function ToolbarProvider(openmct) {
             };
 
             if (primary.context.type === 'frame') {
+                let frameId = primary.context.frameId;
+                let layoutObject = tertiary.context.item;
+                let containers = layoutObject
+                    .configuration
+                    .containers;
+                let container = containers
+                    .filter(c => c.frames.some(f => f.id === frameId))[0];
+                let frame = container
+                    .frames
+                    .filter((f => f.id === frameId))[0];
+                let containerIndex = containers.indexOf(container);
+                let frameIndex = container.frames.indexOf(frame);
+
                 deleteFrame = {
                     control: "button",
                     domainObject: primary.context.item,
@@ -84,7 +97,7 @@ function ToolbarProvider(openmct) {
                                     label: 'Ok',
                                     emphasis: 'true',
                                     callback: function () {
-                                        deleteFrameAction(primary.context.index, secondary.context.index);
+                                        deleteFrameAction(primary.context.frameId);
                                         prompt.dismiss();
                                     }
                                 },
@@ -104,7 +117,7 @@ function ToolbarProvider(openmct) {
                 toggleFrame = {
                     control: "toggle-button",
                     domainObject: secondary.context.item,
-                    property: `configuration.containers[${secondary.context.index}].frames[${primary.context.index}].noFrame`,
+                    property: `configuration.containers[${containerIndex}].frames[${frameIndex}].noFrame`,
                     options: [
                         {
                             value: true,
@@ -134,7 +147,7 @@ function ToolbarProvider(openmct) {
                     domainObject: primary.context.item,
                     method: function () {
                         let removeContainer = secondary.context.deleteContainer,
-                            containerIndex = primary.context.index;
+                            containerId = primary.context.containerId;
 
                         let prompt = openmct.overlays.dialog({
                             iconClass: 'alert',
@@ -144,7 +157,7 @@ function ToolbarProvider(openmct) {
                                     label: 'Ok',
                                     emphasis: 'true',
                                     callback: function () {
-                                        removeContainer(containerIndex);
+                                        removeContainer(containerId);
                                         prompt.dismiss();
                                     }
                                 },
