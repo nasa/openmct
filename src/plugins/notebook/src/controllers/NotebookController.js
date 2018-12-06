@@ -50,7 +50,6 @@ function (
         this.destroy = this.destroy.bind(this);
         this.newEntry = this.newEntry.bind(this);
         this.entryPosById = this.entryPosById.bind(this);
-        console.log(domainObject);
     }
 
     NotebookController.prototype.initializeVue = function (container) {
@@ -110,8 +109,6 @@ function (
                 sort: self.sort
             }
         });
-
-        console.log(self.domainObject.defaultSort);
 
         this.NotebookVue =  new notebookVue();
         container.appendChild(this.NotebookVue.$mount().$el);
