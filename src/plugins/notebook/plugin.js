@@ -27,7 +27,6 @@ define([
     "./src/actions/NewEntryContextual",
     "./src/actions/AnnotateSnapshot",
     "./src/directives/MCTSnapshot",
-    "./src/directives/EntryDnd",
     "./res/templates/controls/snapSelect.html",
     "./res/templates/controls/embedControl.html",
     "./res/templates/annotation.html",
@@ -39,7 +38,6 @@ define([
     newEntryAction,
     AnnotateSnapshotAction,
     MCTSnapshotDirective,
-    EntryDndDirective,
     snapSelectTemplate,
     embedControlTemplate,
     annotationTemplate,
@@ -164,17 +162,6 @@ define([
                                 "$document",
                                 "exportImageService",
                                 "dialogService",
-                                "notificationService"
-                            ]
-                        },
-                        {
-                            "key": "mctEntryDnd",
-                            "implementation": EntryDndDirective,
-                            "depends": [
-                                "$rootScope",
-                                "$compile",
-                                "dndService",
-                                "typeService",
                                 "notificationService"
                             ]
                         }
