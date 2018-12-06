@@ -47,6 +47,8 @@ define(
                 position = position || DEFAULT_POSITION;
                 let defaultDimensions = getDefaultDimensions();
                 let panel = {
+                    identifier: domainObject.identifier,
+                    type: 'subobject',
                     width: defaultDimensions[0],
                     height: defaultDimensions[1],
                     x: position[0],
@@ -60,21 +62,19 @@ define(
             /**
              *
              * @param {Object} configuration the subobject view configuration
-             * @param {String} configuration.id the domain object keystring identifier
              * @param {Boolean} configuration.panel
              * @param {Object} configuration.domainObject the domain object to observe the changes on
              * @param {Object} configuration.openmct the openmct object
              */
-            constructor({panel, id, ...rest}) {
+            constructor({panel, ...rest}) {
                 super(rest);
-                this.id = id;
                 this.panel = panel;
                 this.hasFrame = this.hasFrame.bind(this);
                 this.updateStyle(this.position());
             }
 
             path() {
-                return "configuration.panels[" + this.id + "]";
+                return "configuration.items[" + this.panel.index + "]";
             }
 
             x() {

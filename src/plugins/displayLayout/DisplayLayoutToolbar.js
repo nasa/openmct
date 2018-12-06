@@ -75,6 +75,8 @@ define([], function () {
                     return toolbar;
                 }
 
+                let path = layoutItem.config.path();
+
                 if (layoutItem.type === 'subobject-view') {
                     if (toolbar.length > 0) {
                         toolbar.push({
@@ -84,7 +86,7 @@ define([], function () {
                     toolbar.push({
                         control: "toggle-button",
                         domainObject: selectedParent,
-                        property: "configuration.panels[" + layoutItem.id + "].hasFrame",
+                        property: path + ".hasFrame",
                         options: [
                             {
                                 value: false,
@@ -100,15 +102,6 @@ define([], function () {
                     });
                 } else {
                     const TEXT_SIZE = [9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96];
-                    let path;
-                    // TODO: get the path from the view configuration
-                    // let path = layoutItem.config.path();
-                    if (layoutItem.type === 'telemetry-view') {
-                        path = "configuration.alphanumerics[" + layoutItem.config.alphanumeric.index + "]";
-                    } else {
-                        path = "configuration.elements[" + layoutItem.config.element.index + "]";
-                    }
-
                     let separator = {
                             control: "separator"
                         },

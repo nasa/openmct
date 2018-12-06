@@ -26,7 +26,8 @@ define(
 
         class TelemetryViewConfiguration extends ViewConfiguration {
             static create(domainObject, position, openmct) {
-                const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
+                const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5],
+                      DEFAULT_POSITION = [1, 1];
 
                 function getDefaultTelemetryValue(domainObject, openmct) {
                     let metadata = openmct.telemetry.getMetadata(domainObject);
@@ -45,6 +46,7 @@ define(
                     return valueMetadata.key;
                 }
 
+                position = position || DEFAULT_POSITION;
                 let alphanumeric = {
                     identifier: domainObject.identifier,
                     x: position[0],
@@ -57,6 +59,7 @@ define(
                     fill: "",
                     color: "",
                     size: "13px",
+                    type: "telemetry"
                 };
 
                 return alphanumeric;
@@ -75,7 +78,8 @@ define(
             }
 
             path() {
-                return "configuration.alphanumerics[" + this.alphanumeric.index + "]";
+                console.log("path", "configuration.items[" + this.alphanumeric.index + "]");
+                return "configuration.items[" + this.alphanumeric.index + "]";
             }
 
             x() {

@@ -29,9 +29,7 @@ define(function () {
             initialize(domainObject) {
                 domainObject.composition = [];
                 domainObject.configuration = {
-                    panels: {},
-                    alphanumerics: [],
-                    elements: []
+                    items: []
                 };
             }
         }

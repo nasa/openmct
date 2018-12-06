@@ -112,7 +112,7 @@ define(
             }
 
             path() {
-                return "configuration.elements[" + this.element.index + "]";
+                return "configuration.items[" + this.element.index + "]";
             }
 
             x() {

@@ -106,44 +106,36 @@
             LayoutItem
         },
         methods: {
-            getAlphanumerics() {
-                let alphanumerics = this.newDomainObject.configuration.alphanumerics || [];
-                alphanumerics.forEach((alphanumeric, index) => {
-                    alphanumeric.index = index;
-                    this.makeTelemetryItem(alphanumeric, false);
+            getConfigurationItems() {
+                this.subobjectViewsById = new Map();
+                this.telemetryViewsById = new Map();
+                let items = this.newDomainObject.configuration.items;
+                items.forEach((item, index) => {
+                    if (item.type === 'subobject') {
+                        this.subobjectViewsById.set(this.openmct.objects.makeKeyString(item.identifier), true); 
+                    } else if (item.type === 'telemetry') {
+                        this.telemetryViewsById.set(this.openmct.objects.makeKeyString(item.identifier), true);
+                    }
+
+                    item.index = index;
+                    this.makeLayoutItem(item, false);
                 });
             },
-            getElements() {
-                let elements = this.newDomainObject.configuration.elements || [];
-                elements.forEach((element, index) => {
-                    element.index = index;
-                    this.makeElementItem(element, false);
-                });
+            makeLayoutItem(item, initSelect) {
+                if (item.type === 'telemetry') {
+                    this.makeTelemetryItem(item, initSelect);
+                } else if (item.type === 'subobject') {
+                    this.makeSubobjectItem(item, initSelect);
+                } else {
+                    this.makeElementItem(item, initSelect);
+                }
             },
-            makeSubobjectItem(panel, initSelect) {
-                let id = this.openmct.objects.makeKeyString(panel.domainObject.identifier);
-                let config = new SubobjectViewConfiguration({
-                    domainObject: this.newDomainObject,
-                    panel: panel,
-                    id: id,
-                    openmct: openmct,
-                    gridSize: this.gridSize
-                });
-                this.layoutItems.push({
-                    id: id,
-                    domainObject: panel.domainObject,
-                    drilledIn: this.isItemDrilledIn(id),
-                    initSelect: initSelect,
-                    type: 'subobject-view',
-                    config: config
-                });
-            },
-            makeTelemetryItem(alphanumeric, initSelect) {
-                let id = this.openmct.objects.makeKeyString(alphanumeric.identifier);
+            makeTelemetryItem(item, initSelect) {
+                let id = this.openmct.objects.makeKeyString(item.identifier);
                 this.openmct.objects.get(id).then(domainObject => {
                     let config = new TelemetryViewConfiguration({
                         domainObject: this.newDomainObject,
-                        alphanumeric: alphanumeric,
+                        alphanumeric: item,
                         openmct: openmct,
                         gridSize: this.gridSize
                     });
@@ -151,21 +143,40 @@
                         id: id,
                         domainObject: domainObject,
                         initSelect: initSelect,
-                        type: 'telemetry-view',
+                        type: item.type + '-view',
                         config: config
                     });
                 });
             },
-            makeElementItem(element, initSelect) {
+            makeSubobjectItem(item, initSelect) {
+                let id = this.openmct.objects.makeKeyString(item.identifier);
+                this.openmct.objects.get(id).then(domainObject => {
+                    let config = new SubobjectViewConfiguration({
+                        domainObject: this.newDomainObject,
+                        panel: item,
+                        openmct: openmct,
+                        gridSize: this.gridSize
+                    });
+                    this.layoutItems.push({
+                        id: id,
+                        domainObject: domainObject,
+                        initSelect: initSelect,
+                        type: item.type + '-view',
+                        config: config,
+                        drilledIn: this.isItemDrilledIn(id)
+                    });
+                });
+            },
+            makeElementItem(item, initSelect) {
                 let config = new ElementViewConfiguration({
                     domainObject: this.newDomainObject,
-                    element: element,
+                    element: item,
                     openmct: openmct,
                     gridSize: this.gridSize
                 });
                 this.layoutItems.push({
                     initSelect: initSelect,
-                    type: element.type + '-view',
+                    type: item.type + '-view',
                     config: config
                 });
             },
@@ -221,7 +232,7 @@
                 ];
 
                 if (this.isTelemetry(domainObject)) {
-                    this.addAlphanumeric(domainObject, this.droppedObjectPosition);
+                    this.addTelemetryObject(domainObject, this.droppedObjectPosition);
                 } else {
                     this.checkForDuplicatePanel(domainObject);
                 }
@@ -245,12 +256,22 @@
                     });
                 }
             },
-            addAlphanumeric(domainObject, position) {
-                let alphanumerics = this.newDomainObject.configuration.alphanumerics || [];
-                let alphanumeric = TelemetryViewConfiguration.create(domainObject, position, this.openmct);
-                alphanumeric.index = alphanumerics.push(alphanumeric) - 1;
-                this.mutate("configuration.alphanumerics", alphanumerics);
-                this.makeTelemetryItem(alphanumeric, true);
+            addItem(item) {
+                let items = this.newDomainObject.configuration.items || [];
+                item.index = items.push(item) - 1;
+                this.mutate("configuration.items", items);
+                this.makeLayoutItem(item, true);
+            },
+            addTelemetryObject(domainObject, position) {
+                let item = TelemetryViewConfiguration.create(domainObject, position, this.openmct);
+                this.addItem(item);
+                this.telemetryViewsById.set(this.openmct.objects.makeKeyString(domainObject.identifier), true);
+            },
+            addElement(type) {
+                Promise.resolve(ElementViewConfiguration.create(type, this.openmct))
+                    .then(item => {
+                        this.addItem(item);
+                    });
             },
             handleDragOver($event){
                 $event.preventDefault();
@@ -264,61 +285,49 @@
                 }
             },
             addSubobject(domainObject) {
-                if (!this.isTelemetry(domainObject)) {
-                    let panels = this.newDomainObject.configuration.panels,
-                        id = this.openmct.objects.makeKeyString(domainObject.identifier),
-                        panel = panels[id],
-                        mutateObject = false,
-                        initSelect = false;
+                let id = this.openmct.objects.makeKeyString(domainObject.identifier);
 
-                    // If the panel doesn't exist, create one and mutate the configuration
-                    if (!panel) {
-                        panel = SubobjectViewConfiguration.create(domainObject, this.gridSize, this.droppedObjectPosition);
-                        initSelect = true;
-                        this.mutate("configuration.panels[" + id + "]", panel);
+                if (this.isTelemetry(domainObject)) {
+                    if (!this.telemetryViewsById.has(id)) {
+                        this.addTelemetryObject(domainObject);
+                    }
+                } else {
+                    if (!this.subobjectViewsById.has(id)) {
+                        let item = SubobjectViewConfiguration.create(domainObject, this.gridSize, this.droppedObjectPosition);
+                        this.subobjectViewsById.set(id, true);
+                        this.addItem(item, true);
                         delete this.droppedObjectPosition;
                     }
-
-                    panel.domainObject = domainObject;
-                    this.makeSubobjectItem(panel, initSelect);
                 }
             },
             removeSubobject() {
                 // Not yet implemented
-            },
-            addElement(type) {
-                let elements = this.newDomainObject.configuration.elements || [];
-                Promise.resolve(ElementViewConfiguration.create(type, this.openmct))
-                    .then(element => {
-                        element.index = elements.push(element) - 1;
-                        this.mutate("configuration.elements", elements);
-                        this.makeElementItem(element, true);
-                    });
             }
         },
         mounted() {
             this.newDomainObject = this.domainObject;
             this.gridSize = this.newDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;
-
             this.unlisten = this.openmct.objects.observe(this.newDomainObject, '*', function (obj) {
                 this.newDomainObject = JSON.parse(JSON.stringify(obj));
                 this.gridSize = this.newDomainObject.layoutGrid || DEFAULT_GRID_SIZE;;
             }.bind(this));
 
             this.openmct.selection.on('change', this.setSelection);
+            this.getConfigurationItems();
 
             this.composition = this.openmct.composition.get(this.newDomainObject);
             this.composition.on('add', this.addSubobject);
             this.composition.on('remove', this.removeSubobject);
             this.composition.load();
-            this.getAlphanumerics();
-            this.getElements();
         },
         destroyed: function () {
             this.openmct.off('change', this.setSelection);
             this.composition.off('add', this.addSubobject);
             this.composition.off('remove', this.removeSubobject);
             this.unlisten();
+
+            delete this.subobjectViewsById;
+            delete this.telemetryViewsById;
         }
     }
     
