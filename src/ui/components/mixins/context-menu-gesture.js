@@ -22,7 +22,6 @@ export default {
     },
     destroyed() {
         this.$el.removeEventListener('contextMenu', this.showContextMenu);
-        this.allRemoveListeners.forEach(removeListener => removeListener());
     },
     methods: {
         showContextMenu(event) {

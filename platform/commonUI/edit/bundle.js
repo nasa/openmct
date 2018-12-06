@@ -34,9 +34,6 @@ define([
     "./src/actions/CancelAction",
     "./src/policies/EditActionPolicy",
     "./src/policies/EditPersistableObjectsPolicy",
-    "./src/policies/EditableLinkPolicy",
-    "./src/policies/EditableMovePolicy",
-    "./src/policies/EditContextualActionPolicy",
     "./src/representers/EditRepresenter",
     "./src/capabilities/EditorCapability",
     "./src/capabilities/TransactionCapabilityDecorator",
@@ -69,9 +66,6 @@ define([
     CancelAction,
     EditActionPolicy,
     EditPersistableObjectsPolicy,
-    EditableLinkPolicy,
-    EditableMovePolicy,
-    EditContextualActionPolicy,
     EditRepresenter,
     EditorCapability,
     TransactionCapabilityDecorator,
@@ -241,19 +235,6 @@ define([
                     "depends": ["openmct"]
                 },
                 {
-                    "category": "action",
-                    "implementation": EditContextualActionPolicy,
-                    "depends": ["navigationService", "editModeBlacklist", "nonEditContextBlacklist"]
-                },
-                {
-                    "category": "action",
-                    "implementation": EditableMovePolicy
-                },
-                {
-                    "category": "action",
-                    "implementation": EditableLinkPolicy
-                },
-                {
                     "implementation": CreationPolicy,
                     "category": "creation"
                 }
@@ -347,16 +328,6 @@ define([
                     "depends": [
                         "$log"
                     ]
-                }
-            ],
-            "constants": [
-                {
-                    "key": "editModeBlacklist",
-                    "value": ["copy", "follow", "link", "locate"]
-                },
-                {
-                    "key": "nonEditContextBlacklist",
-                    "value": ["copy", "follow", "properties", "move", "link", "remove", "locate"]
                 }
             ],
             "capabilities": [
