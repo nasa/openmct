@@ -112,21 +112,45 @@ function (
 
     NotebookController.prototype.newEntry = function (event) {
 
+        var date = Date.now(),
+            embed;
+
+        if (event.dataTransfer && event.dataTransfer.getData('domainObject')) {
+            var selectedObject = JSON.parse(event.dataTransfer.getData('domainObject')),
+                selectedObjectId = selectedObject.identifier.key,
+                cssClass = this.openmct.types.get(selectedObject.type);
+
+            embed = {
+                type: selectedObjectId,
+                id: '' + date,
+                cssClass: cssClass,
+                name: selectedObject.name,
+                snapshot: ''
+            };
+        }
+
         var entries = this.domainObject.entries,
             lastEntryIndex = entries.length - 1,
-            lastEntry = entries[lastEntryIndex],
-            date = Date.now();
+            lastEntry = entries[lastEntryIndex];
 
         if (lastEntry === undefined || lastEntry.text || lastEntry.embeds.length) {
             var createdEntry = {'id': 'entry-' + date, 'createdOn': date, 'embeds':[]};
+
+            if (embed) {
+                createdEntry.embeds.push(embed);
+            }
 
             entries.push(createdEntry);
             this.openmct.objects.mutate(this.domainObject, 'entries', entries);
         } else {
             lastEntry.createdOn = date;
 
+            if(embed) {
+                lastEntry.embeds.push(embed);
+            }
+
             this.openmct.objects.mutate(this.domainObject, 'entries[entries.length-1]', lastEntry);
-            this.focusOnEntry.bind(this.NotebookVue.$children[lastEntryIndex])();
+            this.focusOnEntry.bind(this.NotebookVue.$children[lastEntryIndex+1])();
         }
 
         this.entrySearch = '';

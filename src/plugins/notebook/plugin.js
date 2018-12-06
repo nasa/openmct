@@ -67,7 +67,6 @@ define([
                             features: 'creation',
                             model: {
                                 entries: [],
-                                composition: [],
                                 entryTypes: [],
                                 defaultSort: '-createdOn'
                             },

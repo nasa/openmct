@@ -22,16 +22,17 @@
         </div>
     </div>
     <div class="c-notebook__drag-area icon-plus"
-         v-on:click="newEntry($event)"
-         id="newEntry" mct-entry-dnd>
+         @click="newEntry($event)"
+         @drop="newEntry($event)"
+         id="newEntry">
         <span class="c-notebook__drag-area__label">To start a new entry, click here or drag and drop any object</span>
     </div>
     <div class="c-notebook__entries" ng-mouseover="handleActive()">
         <ul>
-           <notebook-entry
+            <notebook-entry
                 v-for="entry in filterBySearch(entries, entrySearch)"
-                v-bind:entry="entry"
-           ></notebook-entry>
+                v-bind:entry="entry">
+            </notebook-entry>
         </ul>
     </div>
 </div>
