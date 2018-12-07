@@ -25,7 +25,7 @@
         <td>{{name}}</td>
         <td>{{timestamp}}</td>
         <td 
-            :class="valueClass">
+            :class="[valueClass]">
             {{value}}
         </td>
     </tr>
@@ -51,7 +51,9 @@ export default {
         updateValues(datum) {
             this.timestamp = this.formats[this.timestampKey].format(datum);
             this.value = this.formats[this.valueKey].format(datum);
-            var limit = this.limitEvaluator.evaluate(datum, this.valueKey);
+
+            var limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
+
             if (limit) {
                 this.valueClass = limit.cssClass;
             } else {
@@ -85,9 +87,11 @@ export default {
 
         this.timestampKey = this.openmct.time.timeSystem().key;
 
-        this.valueKey = this
+        this.valueMetadata = this
             .metadata
-            .valuesForHints(['range'])[0].key;
+            .valuesForHints(['range'])[0];
+
+        this.valueKey = this.valueMetadata.key
 
         this.unsubscribe = this.openmct
             .telemetry
