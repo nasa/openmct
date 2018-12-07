@@ -22,15 +22,15 @@
 
 define([
     './LADTableViewProvider',
-    './LADTableSummaryViewProvider'
+    './LADTableSetViewProvider'
 ], function (
     LADTableViewProvider,
-    LADTableSummaryViewProvider
+    LADTableSetViewProvider
 ) {
     return function plugin() {
         return function install(openmct) {
             openmct.objectViews.addProvider(new LADTableViewProvider(openmct));
-            openmct.objectViews.addProvider(new LADTableSummaryViewProvider(openmct));
+            openmct.objectViews.addProvider(new LADTableSetViewProvider(openmct));
 
             openmct.types.addType('LADTable', {
                 name: "LAD Table",

@@ -32,8 +32,8 @@
         <tbody>
             <lad-row 
                 v-for="item in items"
-                :key="item.identifier.key"
-                :domainObject="item">
+                :key="item.key"
+                :domainObject="item.domainObject">
             </lad-row>
         </tbody>
     </table>
@@ -58,17 +58,41 @@
         }
     },
     methods: {
-        addItem(dObject) {
-            this.items.push(dObject);
+        indexOf(object, array) {
+            let index = -1;
+
+            array.forEach((o,i) => {
+                if(o.domainObject.identifier.key === object.key) {
+                    index = i;
+                    return;
+                }
+            });
+
+            return index;
+        },
+        addItem(domainObject) {
+            let item = {};
+            item.domainObject = domainObject;
+            item.key = this.openmct.objects.makeKeyString(domainObject.identifier);
+            console.log(item);
+
+            this.items.push(item);
+        },
+        removeItem(identifier) {
+            let index = this.indexOf(identifier, this.items);
+
+            this.items.splice(index, 1);
         }
     },
     mounted() {
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addItem);
+        this.composition.on('remove', this.removeItem);
         this.composition.load();
     },
     destroyed() {
         this.composition.off('add', this.addItem);
+        this.composition.off('remove', this.removeItem);
     }
  }
  </script>

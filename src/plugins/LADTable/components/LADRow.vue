@@ -24,7 +24,10 @@
     <tr>
         <td>{{name}}</td>
         <td>{{timestamp}}</td>
-        <td>{{value}}</td>
+        <td 
+            :class="valueClass">
+            {{value}}
+        </td>
     </tr>
 </template>
 
@@ -85,7 +88,7 @@ export default {
 
         this.unsubscribe = this.openmct
             .telemetry
-            .subscribe(this.domainObject, this.updateValues.bind(this), {});
+            .subscribe(this.domainObject, this.updateValues);
 
         this.openmct
             .telemetry

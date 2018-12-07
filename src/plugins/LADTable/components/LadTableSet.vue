@@ -34,14 +34,14 @@
                 v-for="primary in primaryCollection">
 
                 <tr
-                    :key="primary.identifier.key">
-                    <th colsize="100">{{primary.name}}</th>
+                    :key="primary.key">
+                    <th colsize="100">{{primary.domainObject.name}}</th>
                 </tr>
                 
                 <lad-row
-                    v-for="secondary in secondaryCollection[primary.identifier.key]"
-                    :key="secondary.identifier.key"
-                    :domainObject="secondary">
+                    v-for="secondary in secondaryCollection[primary.key]"
+                    :key="secondary.key"
+                    :domainObject="secondary.domainObject">
                 </lad-row>
             </template>
         </tbody>
@@ -69,36 +69,81 @@
         }
     },
     methods: {
-        getComposition(domainObject) {
-            this.$set(this.secondaryCollection, domainObject.identifier.key, []);
-            this.primaryCollection.push(domainObject);
+        indexOf(object, array) {
+            let index = -1;
 
-            let composition = openmct.composition.get(domainObject),
-                callback = this.addSecondary(domainObject);
-                composition.on('add', callback);
-                composition.load();
+            array.forEach((o,i) => {
+                if(o.domainObject.identifier.key === object.key) {
+                    index = i;
+                    return;
+                }
+            });
 
-            this.compositions.push({composition, callback});
+            return index;
+        },
+        addPrimary(domainObject) {
+            let primary = {};
+            primary.domainObject = domainObject;
+            primary.key = this.openmct.objects.makeKeyString(domainObject.identifier);
+
+            this.$set(this.secondaryCollection, primary.key, []);
+            this.primaryCollection.push(primary);
+
+            let composition = openmct.composition.get(primary.domainObject),
+                addCallback = this.addSecondary(primary),
+                removeCallback = this.removeSecondary(primary);
+
+            composition.on('add', addCallback);
+            composition.on('remove', removeCallback);
+            composition.load();
+
+            this.compositions.push({composition, addCallback, removeCallback});
+        },
+        removePrimary(identifier) {
+            let index = this.indexOf(identifier, this.primaryCollection),
+                primary = this.primaryCollection[index];
+            
+            this.$set(this.secondaryCollection, primary.key, undefined);
+            this.primaryCollection.splice(index,1);
+            primary = undefined;
         },
         addSecondary(primary) {
-            return (secondary) => {
-                let array = this.secondaryCollection[primary.identifier.key];
-                    array.push(secondary);
-                this.$set(this.secondaryCollection, primary.identifier.key, array);
+            return (domainObject) => {
+                let secondary = {};
+                secondary.key = this.openmct.objects.makeKeyString(domainObject.identifier);
+                secondary.domainObject = domainObject;
+
+                let array = this.secondaryCollection[primary.key];
+                array.push(secondary);
+    
+                this.$set(this.secondaryCollection, primary.key, array);
+            }
+        },
+        removeSecondary(primary) {
+            return (identifier) => {
+                let array = this.secondaryCollection[primary.key],
+                    index = this.indexOf(identifier, array);
+
+                array.splice(index, 1);
+
+                this.$set(this.secondaryCollection, primary.key, array);
             }
         }
     },
     mounted() {
         this.composition = this.openmct.composition.get(this.domainObject);
-        this.composition.on('add', this.getComposition);
+        this.composition.on('add', this.addPrimary);
+        this.composition.on('remove', this.removePrimary);
         this.composition.load();
     },
     destroyed() {
-        this.composition.off('add', this.getComposition);
+        this.composition.off('add', this.addPrimary);
+        this.composition.off('remove', this.removePrimary);
         this.compositions.forEach(c => {
-            c.composition.off('add', c.callback);
+            c.composition.off('add', c.addCallback);
+            c.composition.off('remove', c.removeCallback);
         });
     }
 }
 </script>
- 
+  
