@@ -29,7 +29,7 @@ define(
                 actionContext,
                 capabilities,
                 mockContext,
-                mockDialogService,
+                mockOverlayAPI,
                 mockDomainObject,
                 mockMutation,
                 mockNavigationService,
@@ -68,9 +68,9 @@ define(
                     }
                 };
 
-                mockDialogService = jasmine.createSpyObj(
-                    "dialogService",
-                    ["showBlockingMessage"]
+                mockOverlayAPI = jasmine.createSpyObj(
+                    "overlayAPI",
+                    ["dialog"]
                 );
 
                 mockNavigationService = jasmine.createSpyObj(
@@ -96,7 +96,7 @@ define(
 
                 actionContext = { domainObject: mockDomainObject };
 
-                action = new RemoveAction(mockDialogService, mockNavigationService, actionContext);
+                action = new RemoveAction({overlays: mockOverlayAPI}, mockNavigationService, actionContext);
             });
 
             it("only applies to objects with parents", function () {
@@ -118,7 +118,7 @@ define(
 
                 action.perform();
 
-                expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
+                expect(mockOverlayAPI.dialog).toHaveBeenCalled();
 
                 // Also check that no mutation happens at this point
                 expect(mockParent.useCapability).not.toHaveBeenCalledWith("mutation", jasmine.any(Function));
@@ -158,13 +158,13 @@ define(
                     mockGrandchildContext = jasmine.createSpyObj("context", ["getParent"]);
                     mockRootContext = jasmine.createSpyObj("context", ["getParent"]);
 
-                    mockDialogService.showBlockingMessage.and.returnValue(mockDialogHandle);
+                    mockOverlayAPI.dialog.and.returnValue(mockDialogHandle);
                 });
 
                 it("mutates the parent when performed", function () {
                     action.perform();
-                    mockDialogService.showBlockingMessage.calls.mostRecent().args[0]
-                        .primaryOption.callback();
+                    mockOverlayAPI.dialog.calls.mostRecent().args[0]
+                        .buttons[0].callback();
 
                     expect(mockMutation.invoke)
                         .toHaveBeenCalledWith(jasmine.any(Function));
@@ -174,8 +174,8 @@ define(
                     var mutator, result;
 
                     action.perform();
-                    mockDialogService.showBlockingMessage.calls.mostRecent().args[0]
-                        .primaryOption.callback();
+                    mockOverlayAPI.dialog.calls.mostRecent().args[0]
+                        .buttons[0].callback();
 
                     mutator = mockMutation.invoke.calls.mostRecent().args[0];
                     result = mutator(model);
@@ -212,8 +212,8 @@ define(
                     mockType.hasFeature.and.returnValue(true);
 
                     action.perform();
-                    mockDialogService.showBlockingMessage.calls.mostRecent().args[0]
-                        .primaryOption.callback();
+                    mockOverlayAPI.dialog.calls.mostRecent().args[0]
+                        .buttons[0].callback();
 
                     // Expects navigation to parent of domainObject (removed object)
                     expect(mockNavigationService.setNavigation).toHaveBeenCalledWith(mockParent);
@@ -242,8 +242,8 @@ define(
                     mockType.hasFeature.and.returnValue(true);
 
                     action.perform();
-                    mockDialogService.showBlockingMessage.calls.mostRecent().args[0]
-                        .primaryOption.callback();
+                    mockOverlayAPI.dialog.calls.mostRecent().args[0]
+                        .buttons[0].callback();
 
                     // Expects no navigation to occur
                     expect(mockNavigationService.setNavigation).not.toHaveBeenCalled();

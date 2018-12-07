@@ -4,11 +4,11 @@
 </template>
 
 <script>
-import contextMenu from '../../../ui/components/mixins/context-menu'
+import contextMenu from '../../../ui/components/mixins/context-menu-gesture'
 
 export default {
-    props: ['object-path'],
-    mixins: [contextMenu]
+    props: ['objectPath'],
+    mixins: [contextMenu],
 }
 </script>
 
