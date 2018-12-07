@@ -204,8 +204,7 @@
                 this.openmct.objects.mutate(this.internalDomainObject, path, value);
             },
             handleDrop($event) {
-                console.log('handle drop');
-                if (!$event.dataTransfer.types.includes('domainObject')) {
+                if (!$event.dataTransfer.types.includes('domainobject')) {
                     return;
                 }
                 $event.preventDefault();
@@ -221,7 +220,6 @@
                 if (this.isTelemetry(domainObject)) {
                     this.addItem('telemetry-view', domainObject, this.droppedObjectPosition, true);
                 } else {
-                    console.log("it's subobject");
                     let identifier = this.openmct.objects.makeKeyString(domainObject.identifier);
                     if (!this.objectViewMap[identifier]) {
                         console.log("add subobject item");
