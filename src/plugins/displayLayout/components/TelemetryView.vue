@@ -164,9 +164,11 @@
                 }
             }
         },
+        created() {
+            this.metadata = this.openmct.telemetry.getMetadata(this.item.domainObject);
+        },
         mounted() {
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.item.domainObject);
-            this.metadata = this.openmct.telemetry.getMetadata(this.item.domainObject);
             this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
 
             this.requestHistoricalData();
