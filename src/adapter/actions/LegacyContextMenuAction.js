@@ -32,6 +32,23 @@ export default class LegacyContextMenuAction {
         this.LegacyAction = LegacyAction;
     }
 
+    invoke(objectPath) {
+        let context = {
+            category: 'contextual',
+            domainObject: this.openmct.legacyObject(objectPath)
+        }
+        let legacyAction = new this.LegacyAction(context);
+
+        if (!legacyAction.getMetadata) {
+            let metadata = Object.create(this.LegacyAction.definition);
+            metadata.context = context;
+            legacyAction.getMetadata = function () {
+                return metadata;
+            }.bind(legacyAction);
+        }
+        legacyAction.perform();
+    }
+
     appliesTo(objectPath) {
         let legacyObject = this.openmct.legacyObject(objectPath);
 
@@ -62,22 +79,5 @@ export default class LegacyContextMenuAction {
             }
         }
         return false;
-    }
-
-    invoke(objectPath) {
-        let context = {
-            category: 'contextual',
-            domainObject: this.openmct.legacyObject(objectPath)
-        }
-        let legacyAction = new this.LegacyAction(context);
-
-        if (!legacyAction.getMetadata) {
-            let metadata = Object.create(this.LegacyAction.definition);
-            metadata.context = context;
-            legacyAction.getMetadata = function () {
-                return metadata;
-            }.bind(legacyAction);
-        }
-        legacyAction.perform();
     }
 }
