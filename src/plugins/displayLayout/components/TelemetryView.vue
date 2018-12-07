@@ -29,7 +29,7 @@
              v-if="domainObject">
             <div v-if="showLabel"
                   class="c-telemetry-view__label">
-                <div class="c-telemetry-view__label-text">{{ item.domainObject.name }}</div>
+                <div class="c-telemetry-view__label-text">{{ domainObject.name }}</div>
             </div>
 
             <div v-if="showValue"
@@ -163,7 +163,7 @@
                     end: bounds.end,
                     size: 1
                 };
-                this.openmct.telemetry.request(this.item.domainObject, options)
+                this.openmct.telemetry.request(this.domainObject, options)
                     .then(data => {
                         if (data.length > 0) {
                             this.updateView(data[data.length - 1]);
@@ -171,7 +171,7 @@
                     });
             },
             subscribeToObject() {
-                this.subscription = this.openmct.telemetry.subscribe(this.item.domainObject, function (datum) {
+                this.subscription = this.openmct.telemetry.subscribe(this.domainObject, function (datum) {
                     if (this.openmct.time.clock() !== undefined) {
                         this.updateView(datum);
                     }
@@ -189,12 +189,12 @@
             refreshData(bounds, isTick) {
                 if (!isTick) {
                     this.datum = undefined;
-                    this.requestHistoricalData(this.item.domainObject);
+                    this.requestHistoricalData(this.domainObject);
                 }
             },
             setObject(domainObject) {
                 this.domainObject = domainObject;
-                this.metadata = this.openmct.telemetry.getMetadata(this.item.domainObject);
+                this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
                 this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
                 this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
                 this.requestHistoricalData();
