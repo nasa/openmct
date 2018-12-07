@@ -165,22 +165,6 @@
                 this.delta = undefined;
                 event.preventDefault();
             }
-        },
-        mounted() {
-            let context = {
-                item: this.item.domainObject,
-                layoutItem: this.item,
-                addElement: this.$parent.addElement
-            };
-
-            this.removeSelectable = this.openmct.selection.selectable(
-                this.$el,
-                context,
-                this.item.initSelect
-            );
-        },
-        destroyed() {
-            this.removeSelectable();
         }
     }
 </script>

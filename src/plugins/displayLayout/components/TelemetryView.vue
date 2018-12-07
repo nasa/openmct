@@ -101,7 +101,8 @@
         inject: ['openmct'],
         props: {
             item: Object,
-            gridSize: Array
+            gridSize: Array,
+            initSelect: Boolean
         },
         components: {
             LayoutFrame
@@ -199,6 +200,16 @@
                 this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
                 this.requestHistoricalData();
                 this.subscribeToObject();
+                let context = {
+                    item: domainObject,
+                    layoutItem: this.item
+                };
+
+                this.removeSelectable = this.openmct.selection.selectable(
+                    this.$el,
+                    context,
+                    this.initSelect
+                );
             }
         },
         mounted() {
@@ -208,6 +219,9 @@
         },
         destroyed() {
             this.removeSubscription();
+            if (this.removeSelectable) {
+                this.removeSelectable();
+            }
             this.openmct.time.off("bounds", this.refreshData);
         }
     }

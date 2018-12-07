@@ -141,7 +141,8 @@
         inject: ['openmct'],
         props: {
             item: Object,
-            gridSize: Array
+            gridSize: Array,
+            initSelect: Boolean
         },
         computed: {
         },
@@ -155,9 +156,25 @@
             LayoutFrame
         },
         mounted() {
-            console.log('mounted subobject view!', this);
             this.openmct.objects.get(this.item.identifier)
-                .then(domainObject => this.domainObject = domainObject);
+                .then(domainObject => {
+                    this.domainObject = domainObject;
+                    let context = {
+                        item: domainObject,
+                        layoutItem: this.item
+                    };
+
+                    this.removeSelectable = this.openmct.selection.selectable(
+                        this.$el,
+                        context,
+                        this.initSelect
+                    );
+                });
+        },
+        destroyed() {
+            if (this.removeSelectable) {
+                this.removeSelectable();
+            }
         }
     }
 </script>

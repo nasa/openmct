@@ -42,6 +42,7 @@
                 :item="item"
                 :key="index"
                 :gridSize="gridSize"
+                :initSelect="initSelectIndex === index"
                 @drilledIn="updateDrilledInState"
                 @endDrag="endDrag"
                 >
@@ -121,7 +122,8 @@
             let domainObject = JSON.parse(JSON.stringify(this.domainObject));
             return {
                 drilledIn: undefined,
-                internalDomainObject: domainObject
+                internalDomainObject: domainObject,
+                initSelectIndex: undefined
             };
         },
         computed: {
@@ -292,6 +294,7 @@
                 this.trackItem(item);
                 this.layoutItems.push(item);
                 this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
+                this.initSelectIndex = this.layoutItems.length - 1;
             },
             trackItem(item) {
                 if (!item.id) {
@@ -338,8 +341,8 @@
         },
         destroyed: function () {
             this.openmct.off('change', this.setSelection);
-            this.composition.off('add', this.addSubobject);
-            this.composition.off('remove', this.removeSubobject);
+            this.composition.off('add', this.addChild);
+            this.composition.off('remove', this.removeChild);
             this.unlisten();
         }
     }
