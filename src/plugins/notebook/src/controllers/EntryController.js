@@ -105,23 +105,27 @@ function (
         }
     };
 
-    EntryController.prototype.dropOnEntry = function (entryId) {
-        var selectedObject = this.dndService.getData('mct-domain-object'),
-            selectedObjectId = selectedObject.getId(),
-            selectedModel = selectedObject.getModel(),
-            cssClass = selectedObject.getCapability('type').typeDef.cssClass,
-            entryPos = this.entryPosById(entryId),
-            currentEntryEmbeds = this.domainObject.entries[entryPos].embeds,
-            newEmbed = {
-                type: selectedObjectId,
-                id: '' + Date.now(),
-                cssClass: cssClass,
-                name: selectedModel.name,
-                snapshot: ''
-            };
+    EntryController.prototype.dropOnEntry = function (entryid, event) {
 
-        currentEntryEmbeds.push(newEmbed);
-        this.openmct.objects.mutate(this.domainObject, 'entries[' + entryPos + '].embeds', currentEntryEmbeds);
+        var data = event.dataTransfer.getData('domainObject');
+
+        if (data) {
+            var selectedObject = JSON.parse(data),
+                selectedObjectId = selectedObject.identifier.key,
+                cssClass = this.openmct.types.get(selectedObject.type),
+                entryPos = this.entryPosById(entryid),
+                currentEntryEmbeds = this.domainObject.entries[entryPos].embeds,
+                newEmbed = {
+                    type: selectedObjectId,
+                    id: '' + Date.now(),
+                    cssClass: cssClass,
+                    name: selectedObject.name,
+                    snapshot: ''
+                };
+
+            currentEntryEmbeds.push(newEmbed);
+            this.openmct.objects.mutate(this.domainObject, 'entries[' + entryPos + '].embeds', currentEntryEmbeds);
+        }
     };
 
     EntryController.prototype.dragoverOnEntry = function () {
@@ -132,7 +136,6 @@ function (
         return {
             openmct: this.openmct,
             domainObject: this.domainObject,
-            dndService: this.dndService,
             dialogService: this.dialogService,
             currentEntryValue: this.currentEntryValue
         };
