@@ -1,13 +1,10 @@
-import Frame from './frame';
+import uuid from 'uuid';
 
 class Container {
-    constructor (width) {
-        this.frames = [new Frame({}, '', 'c-fl-frame--first-in-container')];
-        this.width = width;
-    }
-
-    addFrame(frameObject) {
-        this.frames.push(frameObject);
+    constructor (size) {
+        this.id = uuid();
+        this.frames = [];
+        this.size = size;
     }
 }
 

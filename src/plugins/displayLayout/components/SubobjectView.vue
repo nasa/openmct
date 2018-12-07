@@ -23,8 +23,13 @@
     <div class="u-contents">
         <div class="c-so-view__header">
             <div class="c-so-view__header__start">
-                <div class="c-so-view__name icon-object">{{ item.domainObject.name }}</div>
-                <div class="c-so-view__context-actions c-disclosure-button"></div>
+                <div class="c-so-view__name"
+                     :class="cssClass">
+                    {{ item.domainObject.name }}
+                </div>
+                <context-menu-drop-down
+                    :object-path="objectPath">
+                </context-menu-drop-down>
             </div>
             <div class="c-so-view__header__end">
                 <div class="c-button icon-expand local-controls--hidden"></div>
@@ -98,7 +103,8 @@
 </style>
 
 <script>
-    import ObjectView from '../../../ui/components/layout/ObjectView.vue'
+    import ObjectView from '../../../ui/components/layout/ObjectView.vue';
+    import contextMenuDropDown from './contextMenuDropDown.vue';
 
     export default {
         inject: ['openmct'],
@@ -107,12 +113,25 @@
         },
         components: {
             ObjectView,
+            contextMenuDropDown
+        },
+        data() {
+            let type = this.openmct.types.get(this.item.domainObject.type);
+
+            return {
+                cssClass: type.definition.cssClass,
+                objectPath: [this.item.domainObject].concat(this.openmct.router.path)
+            }
         },
         mounted() {
-            this.item.config.attachListeners();
+            if (this.item.config) {
+                this.item.config.attachListeners();
+            }
         },
         destroyed() {
-            this.item.config.removeListeners();
+            if (this.item.config) {
+                this.item.config.removeListeners();
+            }
         }
     }
 </script>
