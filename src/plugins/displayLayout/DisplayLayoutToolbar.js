@@ -38,6 +38,7 @@ define([], function () {
                 let selectedParent = selection[1] && selection[1].context.item,
                     selectedObject = selection[0].context.item,
                     layoutItem = selection[0].context.layoutItem,
+                    layoutItemIndex = selection[0].context.index,
                     toolbar = [];
 
                 if (selectedObject && selectedObject.type === 'layout') {
@@ -75,7 +76,7 @@ define([], function () {
                     return toolbar;
                 }
 
-                let path = "configuration.items[" + layoutItem.index + "]";
+                let path = `configuration.items[${layoutItemIndex}]`;
 
                 if (layoutItem.type === 'subobject-view') {
                     if (toolbar.length > 0) {
@@ -295,7 +296,7 @@ define([], function () {
                                     }
                                 ]
                             }
-                        };                        
+                        };
                         toolbar = [
                             stroke,
                             separator,

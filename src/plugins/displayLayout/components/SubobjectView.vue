@@ -142,7 +142,8 @@
         props: {
             item: Object,
             gridSize: Array,
-            initSelect: Boolean
+            initSelect: Boolean,
+            index: Number
         },
         computed: {
         },
@@ -161,7 +162,8 @@
                     this.domainObject = domainObject;
                     let context = {
                         item: domainObject,
-                        layoutItem: this.item
+                        layoutItem: this.item,
+                        index: this.index
                     };
 
                     this.removeSelectable = this.openmct.selection.selectable(

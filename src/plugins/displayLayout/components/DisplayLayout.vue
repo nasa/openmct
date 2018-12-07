@@ -40,9 +40,9 @@
             <component v-for="(item, index) in layoutItems"
                 :is="item.type"
                 :item="item"
-                :key="index"
                 :gridSize="gridSize"
                 :initSelect="initSelectIndex === index"
+                :index="index"
                 @drilledIn="updateDrilledInState"
                 @endDrag="endDrag"
                 >
@@ -138,42 +138,6 @@
         props: ['domainObject'],
         components: ITEM_TYPE_VIEW_MAP,
         methods: {
-            makeSubobjectItem(panel, initSelect) {
-                let id = this.openmct.objects.makeKeyString(panel.domainObject.identifier);
-                let config = new SubobjectViewConfiguration({
-                    domainObject: this.internalDomainObject,
-                    panel: panel,
-                    id: id,
-                    openmct: openmct,
-                    gridSize: this.gridSize
-                });
-                this.layoutItems.push({
-                    id: id,
-                    domainObject: panel.domainObject,
-                    drilledIn: this.isItemDrilledIn(id),
-                    initSelect: initSelect,
-                    type: 'subobject-view',
-                    config: config
-                });
-            },
-            makeTelemetryItem(alphanumeric, initSelect) {
-                let id = this.openmct.objects.makeKeyString(alphanumeric.identifier);
-                this.openmct.objects.get(id).then(domainObject => {
-                    let config = new TelemetryViewConfiguration({
-                        domainObject: this.internalDomainObject,
-                        alphanumeric: alphanumeric,
-                        openmct: openmct,
-                        gridSize: this.gridSize
-                    });
-                    this.layoutItems.push({
-                        id: id,
-                        domainObject: domainObject,
-                        initSelect: initSelect,
-                        type: 'telemetry-view',
-                        config: config
-                    });
-                });
-            },
             makeElementItem(element, initSelect) {
                 let config = new ElementViewConfiguration({
                     domainObject: this.internalDomainObject,
@@ -204,10 +168,6 @@
             },
             isItemDrilledIn(id) {
                 return this.drilledIn === id;
-            },
-            updatePosition(item, newPosition) {
-                item.config.newPosition = newPosition;
-                item.config.updateStyle(newPosition);
             },
             bypassSelection($event) {
                 if (this.dragInProgress) {
