@@ -20,12 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/************************************************** ESPRESSO THEME CONSTANTS */
+/************************************************** MAELSTROM2 THEME CONSTANTS */
 
 // Fonts
-$heroFont: "Helvetica Neue", Helvetica, Arial, sans-serif;
-$headerFont: $heroFont;
-$bodyFont: $heroFont;
+@import url('https://fonts.googleapis.com/css?family=Chakra+Petch:400,600,700|Michroma|Teko:400,700');
+
+$heroFont: 'Teko', sans-serif;
+$headerFont: 'Michroma', sans-serif;
+$bodyFont: 'Chakra Petch', sans-serif;
 
 @mixin heroFont($size: 1em) {
     font-family: $heroFont;
@@ -34,7 +36,9 @@ $bodyFont: $heroFont;
 
 @mixin headerFont($size: 1em) {
     font-family: $headerFont;
-    font-size: $size;
+    font-size: $size * 0.8; // This font is comparatively large, so reduce it a bit
+    text-transform: uppercase;
+    word-spacing: 0.25em;
 }
 
 @mixin bodyFont($size: 1em) {
@@ -55,7 +59,7 @@ $basicCr: 4px;
 
 // Base colors
 $colorBodyBg: #393939;
-$colorBodyFg: #aaa;
+$colorBodyFg: #ccc;
 $colorGenBg: #222;
 $colorHeadBg: #262626;
 $colorHeadFg: $colorBodyFg;
@@ -110,13 +114,12 @@ $colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
 // Base Colors
 $dlSpread: 20%;
 $editColor: #00c7c3;
-$editColorBgBase: darken($editColor, $dlSpread);
-$editColorBg: rgba($editColorBgBase, 0.2);
+$editColorBg: darken($editColor, $dlSpread);
 $editColorFg: lighten($editColor, $dlSpread);
 $editColorHov: lighten($editColor, 20%);
 // Canvas
-$editCanvasColorBg: $editColorBg; //#002524;
-$editCanvasColorGrid: rgba($editColorBgBase, 0.4); //lighten($editCanvasColorBg, 3%);
+$editCanvasColorBg: #002524;
+$editCanvasColorGrid: darken($editCanvasColorBg, 2%);
 // Selectable
 $editSelectableColor: #006563;
 $editSelectableColorFg: lighten($editSelectableColor, 20%);
@@ -350,28 +353,18 @@ $createBtnTextTransform: uppercase;
     box-shadow: rgba(black, 0.5) 0 0.5px 2px;
 }
 
-/**************************************************** NOT USED, LEAVE FOR NOW */
-// Slider controls, not in use
-/*
-$sliderColorBase: $colorKey;
-$sliderColorRangeHolder: rgba(black, 0.07);
-$sliderColorRange: rgba($sliderColorBase, 0.2);
-$sliderColorRangeHov: rgba($sliderColorBase, 0.4);
-$sliderColorKnob: darken($sliderColorBase, 20%);
-$sliderColorKnobHov: rgba($sliderColorBase, 0.7);
-$sliderColorRangeValHovBg: $sliderColorRange;
-$sliderColorRangeValHovFg: $colorBodyFg;
-$sliderKnobW: 15px;
-$sliderKnobR: 2px;
-*/
-
-// Content status
-/*
-$colorAlert: #ff3c00;
-$colorWarningHi: #990000;
-$colorWarningLo: #ff9900;
-$colorDiagnostic: #a4b442;
-$colorCommand: #3693bd;
-$colorInfo: #2294a2;
-$colorOk: #33cc33;
-*/
+/**************************************************** OVERRIDES */
+.c-frame {
+    &:not(.no-frame) {
+        $bc: #666;
+        $bLR: 3px solid transparent;
+        $br: 20px;
+        background: none !important;
+        border-radius: $br;
+        border-top: 4px solid $bc !important;
+        border-bottom: 2px solid $bc !important;
+        border-left: $bLR !important;;
+        border-right: $bLR !important;;
+        padding: 5px 10px 10px 10px !important;
+    }
+}

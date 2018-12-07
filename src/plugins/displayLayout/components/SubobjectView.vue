@@ -23,7 +23,7 @@
     <div class="u-contents">
         <div class="c-so-view__header">
             <div class="c-so-view__header__start">
-                <div class="c-so-view__name"
+                <div class="c-so-view__header__name"
                      :class="cssClass">
                     {{ item.domainObject.name }}
                 </div>
@@ -48,42 +48,40 @@
         &__header {
             display: flex;
             align-items: center;
-            flex: 0 0 auto;
-            margin-bottom: $interiorMargin;
 
-            > [class*="__"] {
+            &__start,
+            &__end {
                 display: flex;
-                align-items: center;
-            }
-
-            > * + * {
-                margin-left: $interiorMargin;
-            }
-
-            [class*="__start"] {
                 flex: 1 1 auto;
-                overflow: hidden;
             }
 
-            [class*="__end"] {
-                //justify-content: flex-end;
-                flex: 0 0 auto;
+            &__end {
+                justify-content: flex-end;
+            }
 
-                [class*="button"] {
-                    font-size: 0.7em;
+            &__name {
+                @include headerFont(1em);
+                display: flex;
+                &:before {
+                    margin-right: $interiorMarginSm;
                 }
+            }
+
+            .no-frame & {
+                display: none;
             }
         }
 
         &__name {
             @include ellipsize();
+            @include headerFont(1.2em);
             flex: 0 1 auto;
-            font-size: 1.2em;
 
             &:before {
                 // Object type icon
                 flex: 0 0 auto;
                 margin-right: $interiorMarginSm;
+                opacity: 0.5;
             }
         }
 
