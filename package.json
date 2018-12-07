@@ -58,7 +58,6 @@
     "printj": "^1.1.0",
     "raw-loader": "^0.5.1",
     "request": "^2.69.0",
-    "screenfull": "^3.3.2",
     "split": "^1.0.0",
     "style-loader": "^0.21.0",
     "v8-compile-cache": "^1.1.0",

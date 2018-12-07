@@ -24,7 +24,7 @@ import LegacyContextMenuAction from './LegacyContextMenuAction';
 
 export default function LegacyActionAdapter(openmct, legacyActions) {
     function contextualCategoryOnly(action) {
-        if (action.category === 'contextual') {
+        if (action.category === 'contextual' || (Array.isArray(action.category) && action.category.includes('contextual'))) {
             return true;
         }
         console.warn(`DEPRECATION WARNING: Action ${action.definition.key} in bundle ${action.bundle.path} is non-contextual and should be migrated.`);
