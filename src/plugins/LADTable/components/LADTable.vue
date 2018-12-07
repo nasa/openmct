@@ -21,7 +21,7 @@
  *****************************************************************************/
 
  <template>
-    <table class="c-table" style="table-layout: fixed;">
+    <table class="c-table c-lad-table">
         <thead>
             <tr>
                 <th>Name</th>
@@ -37,13 +37,8 @@
             </lad-row>
         </tbody>
     </table>
-     
  </template>
 
- <style lang="scss">
- 
- </style>
- 
  <script>
  import LadRow from './LadRow.vue';
 

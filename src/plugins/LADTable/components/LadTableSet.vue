@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-    <table class="c-table" style="table-layout: fixed;">
+    <table class="c-table c-lad-table">
         <thead>
             <tr>
                 <th>Name</th>
@@ -32,12 +32,10 @@
         <tbody>
             <template
                 v-for="primary in primaryCollection">
-
-                <tr
+                <tr class="c-table__group-header"
                     :key="primary.key">
-                    <th colsize="100">{{primary.domainObject.name}}</th>
+                    <td colspan="10">{{primary.domainObject.name}}</td>
                 </tr>
-                
                 <lad-row
                     v-for="secondary in secondaryCollection[primary.key]"
                     :key="secondary.key"
@@ -46,7 +44,6 @@
             </template>
         </tbody>
     </table>
-    
 </template>
 
 <style lang="scss">

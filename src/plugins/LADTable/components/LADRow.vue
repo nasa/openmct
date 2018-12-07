@@ -24,8 +24,7 @@
     <tr>
         <td>{{name}}</td>
         <td>{{timestamp}}</td>
-        <td 
-            :class="[valueClass]">
+        <td :class="[valueClass]">
             {{value}}
         </td>
     </tr>
