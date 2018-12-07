@@ -1,8 +1,11 @@
+import uuid from 'uuid';
+
 class Frame {
-    constructor(domainObject, height, cssClass) {
-        this.domainObject = domainObject;
-        this.height = height;
-        this.cssClass = cssClass ? cssClass : '';
+    constructor(domainObjectIdentifier, size) {
+        this.id = uuid();
+        this.domainObjectIdentifier = domainObjectIdentifier;
+        this.size = size;
+
         this.noFrame = false;
     }
 }

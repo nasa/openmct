@@ -22,10 +22,12 @@
 
 define([
     './flexibleLayoutViewProvider',
-    './utils/container'
+    './utils/container',
+    './toolbarProvider'
 ], function (
     FlexibleLayoutViewProvider,
-    Container
+    Container,
+    ToolBarProvider
 ) {
     return function plugin() {
 
@@ -45,119 +47,9 @@ define([
                 }
             });
 
-            openmct.toolbars.addProvider({
-                name: "Flexible Layout Toolbar",
-                key: "flex-layout",
-                description: "A toolbar for objects inside a Flexible Layout.",
-                forSelection: function (selection) {
-                    let context = selection[0].context;
+            let toolbar = ToolBarProvider.default(openmct);
 
-                    return (openmct.editor.isEditing() && context && context.type &&
-                        (context.type === 'flexible-layout' || context.type === 'container' || context.type === 'frame'));
-                },
-                toolbar: function (selection) {
-
-                    let primary = selection[0],
-                        parent = selection[1],
-                        deleteFrame,
-                        toggleContainer,
-                        deleteContainer,
-                        addContainer,
-                        toggleFrame,
-                        separator;
-
-                    addContainer = {
-                        control: "button",
-                        domainObject: parent ? parent.context.item : primary.context.item,
-                        method: parent ? parent.context.addContainer : primary.context.addContainer,
-                        key: "add",
-                        icon: "icon-plus-in-rect",
-                        title: 'Add Container'
-                    };
-
-                    separator = {
-                        control: "separator",
-                        domainObject: selection[0].context.item,
-                        key: "separator"
-                    };
-
-                    toggleContainer = {
-                        control: 'toggle-button',
-                        key: 'toggle-layout',
-                        domainObject: parent ? parent.context.item : primary.context.item,
-                        property: 'configuration.rowsLayout',
-                        options: [
-                            {
-                                value: false,
-                                icon: 'icon-columns',
-                                title: 'Columns'
-                            },
-                            {
-                                value: true,
-                                icon: 'icon-rows',
-                                title: 'Rows'
-                            }
-                        ]
-                    };
-
-                    if (primary.context.type === 'frame') {
-
-                        deleteFrame = {
-                            control: "button",
-                            domainObject: primary.context.item,
-                            method: primary.context.method,
-                            key: "remove",
-                            icon: "icon-trash",
-                            title: "Remove Frame"
-                        };
-                        toggleFrame = {
-                            control: "toggle-button",
-                            domainObject: parent.context.item,
-                            property: `configuration.containers[${parent.context.index}].frames[${primary.context.index}].noFrame`,
-                            options: [
-                                {
-                                    value: true,
-                                    icon: 'icon-frame-hide',
-                                    title: "Hide frame"
-                                },
-                                {
-                                    value: false,
-                                    icon: 'icon-frame-show',
-                                    title: "Show frame"
-                                }
-                            ]
-                        };
-
-
-                    } else if (primary.context.type === 'container') {
-
-                        deleteContainer = {
-                            control: "button",
-                            domainObject: primary.context.item,
-                            method: primary.context.method,
-                            key: "remove",
-                            icon: "icon-trash",
-                            title: "Remove Container"
-                        };
-
-                    } else if (primary.context.type === 'flexible-layout') {
-
-                        addContainer = {
-                            control: "button",
-                            domainObject: primary.context.item,
-                            method: primary.context.addContainer,
-                            key: "add",
-                            icon: "icon-plus-in-rect",
-                            title: 'Add Container'
-                        };
-
-                    }
-
-                    let toolbar = [toggleContainer, addContainer, toggleFrame, separator, deleteFrame, deleteContainer];
-
-                    return toolbar.filter(button => button !== undefined);
-                }
-            });
+            openmct.toolbars.addProvider(toolbar);
         };
     };
 });

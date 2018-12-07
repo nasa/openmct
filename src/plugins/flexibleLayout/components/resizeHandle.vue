@@ -23,16 +23,21 @@
 <template>
     <div class="c-fl-frame__resize-handle"
          :class="[orientation]"
+         v-show="isEditing && !isDragging"
          @mousedown="mousedown">
     </div>
 </template>
 
 <script>
+import isEditingMixin from '../mixins/isEditing';
+
 export default {
     props: ['orientation', 'index'],
+    mixins: [isEditingMixin],
     data() {
         return {
-            initialPos: 0
+            initialPos: 0,
+            isDragging: false,
         }
     },
     methods: {
@@ -47,7 +52,18 @@ export default {
         mousemove(event) {
             event.preventDefault();
 
-            let delta = this.getMousePosition(event) - this.getElSizeFromRect(this.$el);
+            let elSize, mousePos, delta;
+
+            if (this.orientation === 'horizontal') {
+                elSize = this.$el.getBoundingClientRect().x;
+                mousePos = event.clientX;
+            } else {
+                elSize = this.$el.getBoundingClientRect().y;
+                mousePos = event.clientY;
+            }
+
+            delta = mousePos - elSize;
+
             this.$emit('move', this.index, delta, event);
         },
         mouseup(event) {
@@ -56,20 +72,20 @@ export default {
             document.body.removeEventListener('mousemove', this.mousemove);
             document.body.removeEventListener('mouseup', this.mouseup);
         },
-        getMousePosition(event) {
-            if (this.orientation === 'horizontal') {
-                return event.clientX;
-            } else {
-                return event.clientY;
-            }
+        setDragging(event) {
+            this.isDragging = true;
         },
-        getElSizeFromRect(el) {
-            if (this.orientation === 'horizontal') {
-                return el.getBoundingClientRect().x;
-            } else {
-                return el.getBoundingClientRect().y;
-            }
-        },
+        unsetDragging(event) {
+            this.isDragging = false;
+        }
+    },
+    mounted() {
+        document.addEventListener('dragstart', this.setDragging);
+        document.addEventListener('dragend', this.unsetDragging);
+    },
+    destroyed() {
+        document.removeEventListener('dragstart', this.setDragging);
+        document.removeEventListener('dragend', this.unsetDragging);
     }
 }
 </script>

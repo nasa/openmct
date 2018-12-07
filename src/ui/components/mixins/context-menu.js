@@ -9,8 +9,10 @@ export default {
         }
     },
     mounted() {
-        // TODO: handle mobile contet menu listeners.
+        // TODO: handle mobile context menu listeners.
+
         this.$el.addEventListener('contextmenu', this.showContextMenu);
+
         this.objectPath.forEach((o, i) => {
             let removeListener = this.openmct.objects.observe(
                 o,
