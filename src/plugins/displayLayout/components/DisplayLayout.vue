@@ -102,8 +102,8 @@
         'subobject-view': SubobjectView,
         'telemetry-view': TelemetryView,
         'box-view': BoxView,
-        'line-view': TextView,
-        'text-view': LineView,
+        'line-view': LineView,
+        'text-view': TextView,
         'image-view': ImageView
     };
 
@@ -138,6 +138,9 @@
         props: ['domainObject'],
         components: ITEM_TYPE_VIEW_MAP,
         methods: {
+            addElement(itemType) {
+                this.addItem(itemType + '-view');
+            },
             makeElementItem(element, initSelect) {
                 let config = new ElementViewConfiguration({
                     domainObject: this.internalDomainObject,

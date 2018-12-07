@@ -21,14 +21,14 @@
  *****************************************************************************/
 
  <template>
-  <div>
-    <svg :width="gridSize[0] * element.width"
-         :height=" gridSize[1] * element.height">
-        <line :x1=" gridSize[0] * element.x1 + 1"
-              :y1="gridSize[1] * element.y1 + 1 "
-              :x2="gridSize[0] * element.x2 + 1"
-              :y2=" gridSize[1] * element.y2 + 1 "
-              :stroke="element.stroke"
+  <div :style="style">
+    <svg width="100%"
+         height="100%">
+        <line x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="100%"
+              :stroke="item.stroke"
               stroke-width="2">
         </line>
     </svg>
@@ -37,20 +37,61 @@
 
  <script>
     export default {
+        makeDefinition() {
+            return {
+                x: 5,
+                y: 3,
+                x2: 6,
+                y2: 6,
+                stroke: "#717171"
+            };
+        },
+        inject: ['openmct'],
         props: {
             item: Object,
-            gridSize: Array
+            gridSize: Array,
+            initSelect: Boolean,
+            index: Number
         },
         computed: {
-            element() {
-                return this.item.config.element;
-            }
+            style() {
+                let width = this.gridSize[0] * Math.abs(this.item.x - this.item.x2);
+                let height = this.gridSize[1] * Math.abs(this.item.y - this.item.y2);
+                let left = this.gridSize[0] * Math.min(this.item.x, this.item.x2);
+                let top = this.gridSize[1] * Math.min(this.item.y, this.item.y2);
+                return {
+                    left: `${left}px`,
+                    top: `${top}px`,
+                    width: `${width}px`,
+                    height: `${height}px`,
+                    minWidth: `${width}px`,
+                    minHeight: `${height}px`,
+                    position: 'absolute'
+                };
+            },
+            width() {
+                return this.gridSize[0] * Math.abs(this.item.x - this.item.x2);
+            },
+            height() {
+                return
+            },
         },
         mounted() {
-            this.item.config.attachListeners();
+            let context = {
+                layoutItem: this.item,
+                index: this.index
+            };
+
+            this.removeSelectable = this.openmct.selection.selectable(
+                this.$el,
+                context,
+                this.initSelect
+            );
         },
         destroyed() {
-            this.item.config.removeListeners();
+            if (this.removeSelectable) {
+                this.removeSelectable();
+            }
         }
     }
  </script>
