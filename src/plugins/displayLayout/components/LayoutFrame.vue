@@ -166,13 +166,12 @@
                 document.body.addEventListener('mousemove', this.continueDrag);
                 document.body.addEventListener('mouseup', this.endDrag);
 
+                let rawPosition = {
+                    position: [this.item.x, this.item.y],
+                    dimensions: [this.item.width, this.item.height]
+                };
                 this.updatePosition(event);
-                this.activeDrag = new LayoutDrag(
-                    this.item.config.position(),
-                    posFactor,
-                    dimFactor,
-                    this.gridSize
-                );
+                this.activeDrag = new LayoutDrag(rawPosition, posFactor, dimFactor, this.gridSize);
                 event.preventDefault();
             },
             continueDrag(event) {

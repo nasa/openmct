@@ -91,8 +91,6 @@
     import ElementViewConfiguration from './../ElementViewConfiguration.js';
     import uuid from 'uuid';
 
-    const DEFAULT_GRID_SIZE = [10, 10];
-
     export default {
         data() {
             let domainObject = JSON.parse(JSON.stringify(this.domainObject));
@@ -103,10 +101,10 @@
         },
         computed: {
             gridSize() {
-                return this.internalDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;
+                return this.internalDomainObject.configuration.layoutGrid;
             },
             layoutItems() {
-                return this.domainObject.configuration.items || []
+                return this.internalDomainObject.configuration.items;
             }
         },
         inject: ['openmct'],
@@ -115,20 +113,6 @@
             LayoutItem
         },
         methods: {
-            getAlphanumerics() {
-                let alphanumerics = this.internalDomainObject.configuration.alphanumerics || [];
-                alphanumerics.forEach((alphanumeric, index) => {
-                    alphanumeric.index = index;
-                    this.makeTelemetryItem(alphanumeric, false);
-                });
-            },
-            getElements() {
-                let elements = this.internalDomainObject.configuration.elements || [];
-                elements.forEach((element, index) => {
-                    element.index = index;
-                    this.makeElementItem(element, false);
-                });
-            },
             makeSubobjectItem(panel, initSelect) {
                 let id = this.openmct.objects.makeKeyString(panel.domainObject.identifier);
                 let config = new SubobjectViewConfiguration({
@@ -220,23 +204,27 @@
                 this.openmct.objects.mutate(this.internalDomainObject, path, value);
             },
             handleDrop($event) {
+                console.log('handle drop');
                 if (!$event.dataTransfer.types.includes('domainObject')) {
                     return;
                 }
                 $event.preventDefault();
 
-                let domainObject = JSON.parse($event.dataTransfer.getData('domainObject'));
+                let domainObject = JSON.parse($event.dataTransfer.getData('domainobject'));
 
                 let elementRect = this.$el.getBoundingClientRect();
                 let droppedObjectPosition = [
                     Math.floor(($event.pageX - elementRect.left) / this.gridSize[0]),
                     Math.floor(($event.pageY - elementRect.top) / this.gridSize[1])
                 ];
+
                 if (this.isTelemetry(domainObject)) {
                     this.addItem('telemetry-view', domainObject, this.droppedObjectPosition, true);
                 } else {
+                    console.log("it's subobject");
                     let identifier = this.openmct.objects.makeKeyString(domainObject.identifier);
                     if (!this.objectViewMap[identifier]) {
+                        console.log("add subobject item");
                         this.addItem('subobject-view', domainObject, this.droppedObjectPosition, true);
                     }
                 }
@@ -259,14 +247,7 @@
                         ]
                     });
                 }
-            },/*
-            addAlphanumeric(domainObject, position) {
-                let alphanumerics = this.internalDomainObject.configuration.alphanumerics || [];
-                let alphanumeric = TelemetryViewConfiguration.create(domainObject, position, this.openmct);
-                alphanumeric.index = alphanumerics.push(alphanumeric) - 1;
-                this.mutate("configuration.alphanumerics", alphanumerics);
-                this.makeTelemetryItem(alphanumeric, true);
-            },*/
+            },
             handleDragOver($event){
                 $event.preventDefault();
             },
@@ -306,6 +287,7 @@
                 if (this.isTelemetry(child) && !this.telemetryViewMap[identifier]) {
                     this.addItem('telemetry-view', child);
                 } else if (!this.objectViewMap[identifier]) {
+                    console.log('add child');
                     this.addItem('subobject-view', child);
                 }
             },
