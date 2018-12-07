@@ -60,6 +60,9 @@ export default {
         },
         updateName(name){
             this.name = name;
+        },
+        updateTimeSystem(timeSystem) {
+            this.timestampKey = timeSystem.key;
         }
     },
     mounted() {
@@ -78,7 +81,7 @@ export default {
                 this.updateName
             );
 
-        this.openmct.time.on('timeSystem', this.updateTimeSystem, this);
+        this.openmct.time.on('timeSystem', this.updateTimeSystem);
 
         this.timestampKey = this.openmct.time.timeSystem().key;
 
@@ -98,6 +101,7 @@ export default {
     destroyed() {
         this.stopWatchingMutation();
         this.unsubscribe();
+        this.openmct.off('timeSystem', this.updateTimeSystem);
     }
 }
 </script>

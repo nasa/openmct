@@ -74,7 +74,6 @@
             let item = {};
             item.domainObject = domainObject;
             item.key = this.openmct.objects.makeKeyString(domainObject.identifier);
-            console.log(item);
 
             this.items.push(item);
         },
