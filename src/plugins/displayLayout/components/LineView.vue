@@ -20,20 +20,33 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
- <template>
-  <div :style="style">
-    <svg width="100%"
-         height="100%">
-        <line x1="0%"
-              y1="0%"
-              x2="100%"
-              y2="100%"
-              :stroke="item.stroke"
-              stroke-width="2">
-        </line>
-    </svg>
-  </div>
- </template>
+<template>
+    <div class="l-layout__frame c-frame has-local-controls no-frame"
+         :class="{
+            'u-inspectable': item.inspectable
+         }"
+         :style="style">
+        <svg width="100%"
+             height="100%">
+            <line x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="100%"
+                  :stroke="item.stroke"
+                  stroke-width="2">
+            </line>
+        </svg>
+
+        <div class="c-frame-edit">
+            <div class="c-frame-edit__move"
+                 @mousedown="startDrag($event)"></div>
+            <div class="c-frame-edit__handle c-frame-edit__handle--nw"
+                 @mousedown="startDrag($event)"></div>
+            <div class="c-frame-edit__handle c-frame-edit__handle--se"
+                 @mousedown="startDrag($event)"></div>
+        </div>
+    </div>
+</template>
 
  <script>
     export default {
@@ -69,12 +82,17 @@
                     position: 'absolute'
                 };
             },
-            width() {
-                return this.gridSize[0] * Math.abs(this.item.x - this.item.x2);
-            },
-            height() {
-                return
-            },
+            // width() {
+            //     return this.gridSize[0] * Math.abs(this.item.x - this.item.x2);
+            // },
+            // height() {
+            //     return
+            // },
+        },
+        methods: {
+            startDrag(event) {
+
+            }
         },
         mounted() {
             let context = {

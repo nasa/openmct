@@ -308,8 +308,31 @@ define([], function () {
                             url
                         ];
                     } else if (layoutItem.type === 'line-view') {
-                        // TODO: Add "remove", "order", "useGrid", "x1", "y1", x2", "y2"
-                        toolbar = [stroke];
+                        // TODO: Add "remove", "order", "useGrid"
+                        let x2 = {
+                            control: "input",
+                            type: "number",
+                            domainObject: selectedParent,
+                            property: path + ".x2",
+                            label: "X2:",
+                            title: "X2 position"
+                        },
+                        y2 = {
+                            control: "input",
+                            type: "number",
+                            domainObject: selectedParent,
+                            property: path + ".y2",
+                            label: "Y2:",
+                            title: "Y2 position",
+                        };
+                        toolbar = [
+                            stroke,
+                            separator,
+                            x,
+                            y,
+                            x2,
+                            y2
+                        ];
                     }
                 }
 
