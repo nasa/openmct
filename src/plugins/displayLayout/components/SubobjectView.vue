@@ -21,7 +21,8 @@
  *****************************************************************************/
 <template>
     <layout-frame :item="item"
-                  :grid-size="gridSize">
+                  :grid-size="gridSize"
+                  @endDrag="(item, updates) => $emit('endDrag', item, updates)">
         <div class="u-contents">
             <div class="c-so-view__header">
                 <div class="c-so-view__header__start">

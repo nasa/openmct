@@ -37,15 +37,15 @@
                      v-if="gridSize[1] >= 3"
                      :style="[{ backgroundSize: '100%' + gridSize[1] + 'px' }]"></div>
             </div>
-            <layout-item v-for="(item, index) in layoutItems"
-                          class="l-layout__frame"
-                          :key="index"
-                          :item="item"
-                          :gridSize="gridSize"
-                          @drilledIn="updateDrilledInState"
-                          @dragInProgress="updatePosition"
-                          @endDrag="endDrag">
-            </layout-item>
+            <component v-for="(item, index) in layoutItems"
+                :is="item.type"
+                :item="item"
+                :key="index"
+                :gridSize="gridSize"
+                @drilledIn="updateDrilledInState"
+                @endDrag="endDrag"
+                >
+            </component>
         </div>
     </div>
 </template>
@@ -85,11 +85,36 @@
 
 
 <script>
-    import LayoutItem from './LayoutItem.vue';
     import TelemetryViewConfiguration from './../TelemetryViewConfiguration.js';
     import SubobjectViewConfiguration from './../SubobjectViewConfiguration.js';
     import ElementViewConfiguration from './../ElementViewConfiguration.js';
     import uuid from 'uuid';
+
+    import SubobjectView from './SubobjectView.vue'
+    import TelemetryView from './TelemetryView.vue'
+    import BoxView from './BoxView.vue'
+    import TextView from './TextView.vue'
+    import LineView from './LineView.vue'
+    import ImageView from './ImageView.vue'
+
+    const ITEM_TYPE_VIEW_MAP = {
+        'subobject-view': SubobjectView,
+        'telemetry-view': TelemetryView,
+        'box-view': BoxView,
+        'line-view': TextView,
+        'text-view': LineView,
+        'image-view': ImageView
+    };
+
+    function getItemDefinition(itemType, ...options) {
+        let itemView = ITEM_TYPE_VIEW_MAP[itemType];
+        if (!itemType) {
+            throw `Invalid itemType: ${itemType}`;
+        }
+        let itemDefinition = itemView.makeDefinition(...options);
+        itemDefinition.type = itemType;
+        return itemDefinition;
+    }
 
     export default {
         data() {
@@ -109,9 +134,7 @@
         },
         inject: ['openmct'],
         props: ['domainObject'],
-        components: {
-            LayoutItem
-        },
+        components: ITEM_TYPE_VIEW_MAP,
         methods: {
             makeSubobjectItem(panel, initSelect) {
                 let id = this.openmct.objects.makeKeyString(panel.domainObject.identifier);
@@ -192,13 +215,16 @@
                     return;
                 }
             },
-            endDrag(item) {
+            endDrag(item, updates) {
+                console.log('applying results', item, updates);
                 this.dragInProgress = true;
                 setTimeout(function () {
                     this.dragInProgress = false;
                 }.bind(this), 0);
-                // TODO: emit "finishResizing" for view components to mutate position?
-                item.config.mutatePosition();
+
+                let index = this.layoutItems.indexOf(item);
+                Object.assign(item, updates);
+                this.mutate(`configuration.items[${index}]`, item);
             },
             mutate(path, value) {
                 this.openmct.objects.mutate(this.internalDomainObject, path, value);
@@ -218,14 +244,17 @@
                 ];
 
                 if (this.isTelemetry(domainObject)) {
-                    this.addItem('telemetry-view', domainObject, this.droppedObjectPosition, true);
+                    this.addItem('telemetry-view', domainObject, droppedObjectPosition);
                 } else {
                     let identifier = this.openmct.objects.makeKeyString(domainObject.identifier);
                     if (!this.objectViewMap[identifier]) {
                         console.log("add subobject item");
-                        this.addItem('subobject-view', domainObject, this.droppedObjectPosition, true);
+                        this.addItem('subobject-view', domainObject, droppedObjectPosition);
+                    } else {
+                        // TODO: show prompt "can't add item twice".
                     }
                 }
+                // TODO: select newly added item.
             },
             checkForDuplicatePanel(domainObject) {
                 let id = this.openmct.objects.makeKeyString(domainObject.identifier);
@@ -258,7 +287,8 @@
                 }
             },
             addItem(itemType, ...options) {
-                let item = LayoutItem.getItemDefinition(itemType, this.openmct, this.gridSize, ...options);
+                console.log('adding item', itemType, options);
+                let item = getItemDefinition(itemType, this.openmct, this.gridSize, ...options);
                 this.trackItem(item);
                 this.layoutItems.push(item);
                 this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
@@ -282,10 +312,11 @@
             },
             addChild(child) {
                 let identifier = this.openmct.objects.makeKeyString(child.identifier);
-                if (this.isTelemetry(child) && !this.telemetryViewMap[identifier]) {
-                    this.addItem('telemetry-view', child);
+                if (this.isTelemetry(child)) {
+                    if (!this.telemetryViewMap[identifier]) {
+                        this.addItem('telemetry-view', child);
+                    }
                 } else if (!this.objectViewMap[identifier]) {
-                    console.log('add child');
                     this.addItem('subobject-view', child);
                 }
             },
@@ -294,7 +325,6 @@
             }
         },
         mounted() {
-            console.log('LayoutItem', LayoutItem);
             this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', function (obj) {
                 this.internalDomainObject = JSON.parse(JSON.stringify(obj));
             }.bind(this));

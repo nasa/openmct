@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-    <div class="c-frame has-local-controls"
+    <div class="l-layout__frame c-frame has-local-controls"
          :class="{
              'no-frame': !item.hasFrame,
              'u-inspectable': item.inspectable
@@ -73,60 +73,34 @@
 
 
 <script>
-    import SubobjectView from './SubobjectView.vue'
-    import TelemetryView from './TelemetryView.vue'
-    import BoxView from './BoxView.vue'
-    import TextView from './TextView.vue'
-    import LineView from './LineView.vue'
-    import ImageView from './ImageView.vue'
     import LayoutDrag from './../LayoutDrag'
 
-    const ITEM_TYPE_VIEW_MAP = {
-        'subobject-view': SubobjectView,
-        'telemetry-view': TelemetryView,
-        'box': BoxView,
-        'line': TextView,
-        'text': LineView,
-        'image': ImageView
-    };
-
     export default {
-        getItemDefinition(itemType, ...options) {
-            let itemView = ITEM_TYPE_VIEW_MAP[itemType];
-            if (!itemType) {
-                throw `Invalid itemType: ${itemType}`;
-            }
-            return itemView.makeDefinition(...options);
-        },
         inject: ['openmct'],
         props: {
             item: Object,
-            gridSize: Array,
-            customStyle: {
-                type: Object,
-                required: false
-            }
+            gridSize: Array
         },
-        components: {
-            SubobjectView,
-            TelemetryView,
-            BoxView,
-            TextView,
-            LineView,
-            ImageView
+        data() {
+            return {
+                dragPosition: undefined
+            }
         },
         computed: {
             style() {
-                if (this.customStyle) {
-                    return this.customStyle;
+                let {x,y,width,height} = this.item;
+                if (this.dragPosition) {
+                    [x,y] = this.dragPosition.position;
+                    [width,height] = this.dragPosition.dimensions;
                 }
+
                 return {
-                    left: (this.gridSize[0] * this.item.x) + 'px',
-                    top: (this.gridSize[1] * this.item.y) + 'px',
-                    width: (this.gridSize[0] * this.item.width) + 'px',
-                    height: (this.gridSize[1] * this.item.height) + 'px',
-                    minWidth: (this.gridSize[0] * this.item.width) + 'px',
-                    minHeight: (this.gridSize[1] * this.item.height) + 'px'
+                    left: (this.gridSize[0] * x) + 'px',
+                    top: (this.gridSize[1] * y) + 'px',
+                    width: (this.gridSize[0] * width) + 'px',
+                    height: (this.gridSize[1] * height) + 'px',
+                    minWidth: (this.gridSize[0] * width) + 'px',
+                    minHeight: (this.gridSize[1] * height) + 'px'
                 };
             }
         },
@@ -166,32 +140,29 @@
                 document.body.addEventListener('mousemove', this.continueDrag);
                 document.body.addEventListener('mouseup', this.endDrag);
 
-                let rawPosition = {
+                this.dragPosition = {
                     position: [this.item.x, this.item.y],
                     dimensions: [this.item.width, this.item.height]
                 };
                 this.updatePosition(event);
-                this.activeDrag = new LayoutDrag(rawPosition, posFactor, dimFactor, this.gridSize);
+                this.activeDrag = new LayoutDrag(this.dragPosition, posFactor, dimFactor, this.gridSize);
                 event.preventDefault();
             },
             continueDrag(event) {
                 event.preventDefault();
                 this.updatePosition(event);
-
-                if (this.activeDrag) {
-                    this.$emit(
-                        'dragInProgress',
-                        this.item,
-                        this.activeDrag.getAdjustedPosition(this.delta)
-                    );
-                }
+                this.dragPosition = this.activeDrag.getAdjustedPosition(this.delta);
             },
             endDrag(event) {
                 document.body.removeEventListener('mousemove', this.continueDrag);
                 document.body.removeEventListener('mouseup', this.endDrag);
                 this.continueDrag(event);
-                this.$emit('endDrag', this.item);
+                let [x, y] = this.dragPosition.position;
+                let [width, height] = this.dragPosition.dimensions;
+                this.$emit('endDrag', this.item, {x, y, width, height});
+                this.dragPosition = undefined;
                 this.initialPosition = undefined;
+                this.delta = undefined;
                 event.preventDefault();
             }
         },

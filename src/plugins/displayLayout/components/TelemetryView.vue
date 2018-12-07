@@ -21,20 +21,25 @@
  *****************************************************************************/
 
  <template>
-    <div class="c-telemetry-view"
-         :style="styleObject">
-        <div v-if="showLabel"
-              class="c-telemetry-view__label">
-            <div class="c-telemetry-view__label-text">{{ item.domainObject.name }}</div>
-        </div>
+     <layout-frame :item="item"
+                   :grid-size="gridSize"
+                   @endDrag="(item, updates) => $emit('endDrag', item, updates)">
+        <div class="c-telemetry-view"
+             :style="styleObject"
+             v-if="domainObject">
+            <div v-if="showLabel"
+                  class="c-telemetry-view__label">
+                <div class="c-telemetry-view__label-text">{{ item.domainObject.name }}</div>
+            </div>
 
-        <div v-if="showValue"
-              :title="fieldName"
-              class="c-telemetry-view__value"
-              :class="[telemetryClass]">
-            <div class="c-telemetry-view__value-text">{{ telemetryValue }}</div>
+            <div v-if="showValue"
+                  :title="fieldName"
+                  class="c-telemetry-view__value"
+                  :class="[telemetryClass]">
+                <div class="c-telemetry-view__value-text">{{ telemetryValue }}</div>
+            </div>
         </div>
-    </div>    
+    </layout-frame>
  </template>
 
 <style lang="scss">
@@ -72,37 +77,60 @@
 </style>
 
  <script>
+    import LayoutFrame from './LayoutFrame.vue'
+
+    const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
     export default {
+        makeDefinition(openmct, gridSize, domainObject, position) {
+            let metadata = openmct.telemetry.getMetadata(domainObject);
+
+            return {
+                identifier: domainObject.identifier,
+                x: position[0],
+                y: position[1],
+                width: DEFAULT_TELEMETRY_DIMENSIONS[0],
+                height: DEFAULT_TELEMETRY_DIMENSIONS[1],
+                displayMode: 'all',
+                value: metadata.getDefaultDisplayValue(),
+                stroke: "transparent",
+                fill: "",
+                color: "",
+                size: "13px",
+            };
+        },
         inject: ['openmct'],
         props: {
-            item: Object
+            item: Object,
+            gridSize: Array
+        },
+        components: {
+            LayoutFrame
         },
         computed: {
             showLabel() {
-                let displayMode = this.item.config.alphanumeric.displayMode;
+                let displayMode = this.item.displayMode;
                 return displayMode === 'all' || displayMode === 'label';
             },
             showValue() {
-                let displayMode = this.item.config.alphanumeric.displayMode;
+                let displayMode = this.item.displayMode;
                 return displayMode === 'all' || displayMode === 'value';
             },
             styleObject() {
-                let alphanumeric = this.item.config.alphanumeric;
                 return {
-                    backgroundColor: alphanumeric.fill,
-                    borderColor: alphanumeric.stroke,
-                    color: alphanumeric.color,
-                    fontSize: alphanumeric.size
+                    backgroundColor: this.item.fill,
+                    borderColor: this.item.stroke,
+                    color: this.item.color,
+                    fontSize: this.item.size
                 }
             },
             fieldName() {
-                return this.valueMetadata.name;
+                return this.valueMetadata && this.valueMetadata.name;
             },
             valueMetadata() {
-                return this.metadata.value(this.item.config.alphanumeric.value);
+                return this.datum && this.metadata.value(this.item.value);
             },
             valueFormatter() {
-                return this.formats[this.item.config.alphanumeric.value];
+                return this.formats[this.item.value];
             },
             telemetryValue() {
                 if (!this.datum) {
@@ -122,8 +150,9 @@
         },
         data() {
             return {
-                datum: {},
-                formats: {}
+                datum: undefined,
+                formats: undefined,
+                domainObject: undefined
             }
         },
         methods: {
@@ -162,22 +191,23 @@
                     this.datum = undefined;
                     this.requestHistoricalData(this.item.domainObject);
                 }
+            },
+            setObject(domainObject) {
+                this.domainObject = domainObject;
+                this.metadata = this.openmct.telemetry.getMetadata(this.item.domainObject);
+                this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
+                this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
+                this.requestHistoricalData();
+                this.subscribeToObject();
             }
         },
         mounted() {
-            this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.item.domainObject);
-            this.metadata = this.openmct.telemetry.getMetadata(this.item.domainObject);
-            this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
-
-            this.requestHistoricalData();
-            this.subscribeToObject();
-
-            this.item.config.attachListeners();
+            this.openmct.objects.get(this.item.identifier)
+                .then(this.setObject);
             this.openmct.time.on("bounds", this.refreshData);
         },
         destroyed() {
             this.removeSubscription();
-            this.item.config.removeListeners();
             this.openmct.time.off("bounds", this.refreshData);
         }
     }
