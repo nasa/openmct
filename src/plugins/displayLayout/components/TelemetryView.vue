@@ -29,6 +29,7 @@
         </div>
 
         <div v-if="showValue"
+              :title="fieldName"
               class="c-telemetry-view__value"
               :class="[telemetryClass]">
             <div class="c-telemetry-view__value-text">{{ telemetryValue }}</div>
@@ -93,6 +94,9 @@
                     color: alphanumeric.color,
                     fontSize: alphanumeric.size
                 }
+            },
+            fieldName() {
+                return this.valueMetadata.name;
             },
             valueMetadata() {
                 return this.metadata.value(this.item.config.alphanumeric.value);
@@ -160,9 +164,11 @@
                 }
             }
         },
+        created() {
+            this.metadata = this.openmct.telemetry.getMetadata(this.item.domainObject);
+        },
         mounted() {
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.item.domainObject);
-            this.metadata = this.openmct.telemetry.getMetadata(this.item.domainObject);
             this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
 
             this.requestHistoricalData();

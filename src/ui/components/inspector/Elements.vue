@@ -11,7 +11,7 @@
                           draggable="true"
                           @dragstart="moveFrom(index)">
                     </span>
-                    <object-label :domainObject="element"></object-label>
+                    <object-label :domainObject="element" :objectPath="[element, parentObject]"></object-label>
                 </span>
             </li>
             <li class="js-last-place" @drop="moveToIndex(elements.length)"></li>
@@ -47,7 +47,8 @@ export default {
     data() {
         return {
             elements: [],
-            isEditing: this.openmct.editor.isEditing()
+            isEditing: this.openmct.editor.isEditing(),
+            parentObject: undefined
         }
     },
     mounted() {
@@ -69,11 +70,14 @@ export default {
             if (this.mutationUnobserver) {
                 this.mutationUnobserver();
             }
-            this.mutationUnobserver = this.openmct.objects.observe(this.parentObject, '*', (updatedModel) => {
-                this.parentObject = updatedModel;
+
+            if (this.parentObject) {
+                this.mutationUnobserver = this.openmct.objects.observe(this.parentObject, '*', (updatedModel) => {
+                    this.parentObject = updatedModel;
+                    this.refreshComposition();
+                });
                 this.refreshComposition();
-            });
-            this.refreshComposition();
+            }
         },
         refreshComposition() {
             let composition = this.openmct.composition.get(this.parentObject);

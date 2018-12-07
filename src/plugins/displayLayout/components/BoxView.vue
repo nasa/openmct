@@ -20,32 +20,44 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+<template>
+    <div class="c-box-view"
+         :style="styleObject">
+    </div>
+ </template>
 
-    /**
-     * Policy suppressing links when the linked-to domain object is in
-     * edit mode. Domain objects being edited may not have been persisted,
-     * so creating links to these can result in inconsistent state.
-     *
-     * @memberof platform/commonUI/edit
-     * @constructor
-     * @implements {Policy.<View, DomainObject>}
-     */
-    function EditableLinkPolicy() {
-    }
+<style lang="scss">
+    @import '~styles/sass-base';
 
-    EditableLinkPolicy.prototype.allow = function (action, context) {
-        var key = action.getMetadata().key,
-            object;
+    .c-box-view {
+        display: flex;
+        align-items: stretch;
 
-        if (key === 'link') {
-            object = context.selectedObject || context.domainObject;
-            return !(object.hasCapability("editor") && object.getCapability("editor").inEditContext());
+        .c-frame & {
+            @include abs();
         }
+    }
+</style>
 
-        // Like all policies, allow by default.
-        return true;
-    };
-
-    return EditableLinkPolicy;
-});
+ <script>
+    export default {
+        props: {
+            item: Object
+        },
+        computed: {
+            styleObject() {                
+                let element = this.item.config.element;
+                return {
+                    backgroundColor: element.fill,
+                    border: '1px solid ' + element.stroke
+                }
+            }
+        },
+        mounted() {
+            this.item.config.attachListeners();
+        },
+        destroyed() {
+            this.item.config.removeListeners();
+        }
+    }
+ </script>

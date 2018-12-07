@@ -11,7 +11,7 @@
                     {{ domainObject.name }}
                 </span>
             </div>
-            <div class="l-browse-bar__context-actions c-disclosure-button"></div>
+            <div class="l-browse-bar__context-actions c-disclosure-button" @click="showContextMenu"></div>
         </div>
 
         <div class="l-browse-bar__end">
@@ -81,6 +81,11 @@
                     this.openmct.notifications.error('Error saving objects');
                     console.error(error);
                 });
+            },
+            showContextMenu(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                this.openmct.contextMenu._showContextMenuForObjectPath(this.openmct.router.path, event.clientX, event.clientY);
             }
         },
         data: function () {
@@ -178,7 +183,7 @@
             align-items: center;
             display: flex;
             flex: 0 1 auto;
-            font-size: 1.4em;
+            @include headerFont(1.4em);
             min-width: 0;
 
             &:before {

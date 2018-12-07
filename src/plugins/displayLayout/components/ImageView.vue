@@ -20,41 +20,46 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['zepto'], function ($) {
-    function SelectGesture(selection, contextManager) {
-        this.selection = selection;
-        this.contextManager = contextManager;
+<template>
+    <div class="c-image-view"
+         :style="styleObject">
+    </div>
+ </template>
+
+<style lang="scss">
+    @import '~styles/sass-base';
+
+    .c-image-view {
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+
+        .c-frame & {
+            @include abs();
+            border: 1px solid transparent;
+        }
     }
+</style>
 
-    SelectGesture.prototype.apply = function (htmlElement, item) {
-        var $element = $(htmlElement);
-        var contextManager = this.contextManager;
-        var selection = this.selection;
-        var path = contextManager.path(item, htmlElement);
-
-        function select() {
-            selection.add(path);
+ <script>
+    export default {
+        props: {
+            item: Object
+        },
+        computed: {
+            styleObject() {                
+                let element = this.item.config.element;
+                return {
+                    backgroundImage: 'url(' + element.url + ')',
+                    border: '1px solid ' + element.stroke
+                }
+            }
+        },
+        mounted() {
+            this.item.config.attachListeners();
+        },
+        destroyed() {
+            this.item.config.removeListeners();
         }
-
-        function change() {
-            var selected = selection.primary();
-            $element.toggleClass(
-                'selected',
-                selected && path.matches(selected)
-            );
-        }
-
-        $element.addClass('selectable');
-        $element.on('click', select);
-        selection.on('change', change);
-        change(); // Initialize
-
-        return function () {
-            contextManager.release(htmlElement);
-            $element.off('click', select);
-            selection.off('change', change);
-        };
-    };
-
-    return SelectGesture;
-});
+    }
+ </script>

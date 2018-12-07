@@ -22,7 +22,25 @@
 
 /****************************************************** SNOW THEME CONSTANTS */
 
-@import "constants";
+// Fonts
+$heroFont: "Helvetica Neue", Helvetica, Arial, sans-serif;
+$headerFont: $heroFont;
+$bodyFont: $heroFont;
+
+@mixin heroFont($size: 1em) {
+    font-family: $heroFont;
+    font-size: $size;
+}
+
+@mixin headerFont($size: 1em) {
+    font-family: $headerFont;
+    font-size: $size;
+}
+
+@mixin bodyFont($size: 1em) {
+    font-family: $bodyFont;
+    font-size: $size;
+}
 
 // Functions
 @function buttonBg($c: $colorBtnBg) {
@@ -92,6 +110,7 @@ $colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
 // Base Colors
 $dlSpread: 20%;
 $editColor: #00c7c3;
+$editColorBgBase: darken($editColor, $dlSpread);
 $editColorBg: darken($editColor, $dlSpread);
 $editColorFg: lighten($editColor, $dlSpread);
 $editColorHov: lighten($editColor, 20%);
@@ -99,9 +118,9 @@ $editColorHov: lighten($editColor, 20%);
 $editCanvasColorBg: #e6ffff;
 $editCanvasColorGrid: darken($editCanvasColorBg, 10%);
 // Selectable
-$editSelectableColor: darken($colorBodyBg, 10%);
+$editSelectableColor: #acdad6;
 $editSelectableColorFg: darken($editSelectableColor, 20%);
-$editSelectableColorHov: darken($editSelectableColor, 10%); //darken($colorBodyBg, 20%);
+$editSelectableColorHov: darken($editSelectableColor, 10%);
 // Selectable selected
 $editSelectableColorSelected: $editColor; //$editSelectableColorHov;
 $editSelectableColorSelectedFg: lighten($editSelectableColorSelected, 50%);
@@ -111,6 +130,7 @@ $editSelectableBorderHov: 1px dotted $editColor;
 $editSelectableBorderSelected: 1px solid $editColor;
 $editMoveableSelectedShdw: rgba($editColor, 0.5) 0 0 10px;
 $editBorderDrilledIn: 1px dashed #9971ff;
+$colorGridLines: rgba($editColor, 0.2);
 
 /************************************************** BROWSING */
 $browseBorderSelectableHov: 1px dotted rgba($colorBodyFg, 0.2);
@@ -255,7 +275,7 @@ $colorItemTreeSelectedBg: lighten($colorKey, 15%);
 $colorItemTreeSelectedFg: $colorBodyBg;
 $colorItemTreeEditingBg: $editColor;
 $colorItemTreeEditingFg: $editColorFg;
-$colorItemTreeVC: $colorBodyFg;
+$colorItemTreeVC: rgba($colorBodyFg, 0.5);
 $colorItemTreeVCHover: $colorKey;
 $shdwItemTreeIcon: none;
 

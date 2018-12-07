@@ -46,18 +46,33 @@
                 }
 
                 let structure = this.openmct.toolbars.get(selection) || [];
-                this.structure = structure.map(function (item) {
+                this.structure = structure.map(item => {
                     let toolbarItem = {...item};
                     let domainObject = toolbarItem.domainObject;
+                    let formKeys = [];
                     toolbarItem.control = "toolbar-" + toolbarItem.control;
 
+                    if (toolbarItem.dialog) {
+                        toolbarItem.dialog.sections.forEach(section => {
+                            section.rows.forEach(row => {
+                                formKeys.push(row.key);
+                            })
+                        });
+                        toolbarItem.formKeys = formKeys;
+                    }
+
                     if (domainObject) {
-                        toolbarItem.value = _.get(domainObject, item.property);
+                        if (formKeys.length > 0) {
+                            toolbarItem.value = this.getFormValue(domainObject, toolbarItem);
+                        } else {
+                            toolbarItem.value = _.get(domainObject, item.property);
+                        }
+
                         this.registerListener(domainObject);
                     }
 
                     return toolbarItem;
-                }.bind(this));
+                });
             },
             registerListener(domainObject) {
                 let id = this.openmct.objects.makeKeyString(domainObject.identifier);
@@ -85,7 +100,7 @@
                 setTimeout(this.updateToolbarAfterMutation.bind(this));
             },
             updateToolbarAfterMutation() {
-                this.structure = this.structure.map((item) => {
+                this.structure = this.structure.map(item => {
                     let toolbarItem = {...item};
                     let domainObject = toolbarItem.domainObject;
 
@@ -95,10 +110,11 @@
 
                         if (newObject) {
                             toolbarItem.domainObject = newObject;
-                            let newValue = _.get(newObject, item.property);
 
-                            if (toolbarItem.value !== newValue) {
-                                toolbarItem.value = newValue;
+                            if (toolbarItem.formKeys) {
+                                toolbarItem.value = this.getFormValue(newObject, toolbarItem);
+                            } else {
+                                toolbarItem.value = _.get(newObject, item.property);
                             }
                         }
                     }
@@ -113,6 +129,13 @@
                     }
                 });
                 this.toolbarUpdateScheduled = false;
+            },
+            getFormValue(domainObject, toolbarItem) {
+                let value = {};
+                toolbarItem.formKeys.map(key => {
+                    value[key] = _.get(domainObject, toolbarItem.property + "." + key);
+                });
+                return value;
             },
             removeListeners() {
                 if (this.unObserveObjects) {
@@ -138,7 +161,20 @@
 
                     return toolbarItem;
                 });
-                this.openmct.objects.mutate(item.domainObject, item.property, value);
+
+                // If value is an object, iterate the toolbar structure and mutate all keys in form.
+                // Otherwise, mutate the property.
+                if (value === Object(value)) {
+                    this.structure.map(s => {
+                        if (s.formKeys) {
+                            s.formKeys.forEach(key => {
+                                this.openmct.objects.mutate(item.domainObject, item.property + "." + key, value[key]);
+                            });
+                        }
+                    });
+                } else {
+                    this.openmct.objects.mutate(item.domainObject, item.property, value);
+                }
             },
             triggerMethod(item, event) {
                 if (item.method) {

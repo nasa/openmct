@@ -18,13 +18,18 @@
 
 <script>
 export default {
+    inject: ['openmct'],
     props: {
         options: Object
     },
     methods: {
         onClick(event) {
             if (this.options.dialog) {
-                // TODO: display a dialog
+                this.openmct.$injector.get('dialogService')
+                .getUserInput(this.options.dialog, this.options.value)
+                .then(value => {
+                    this.$emit('change', {...value}, this.options);
+                });
             }
             this.$emit('click', this.options);
         }

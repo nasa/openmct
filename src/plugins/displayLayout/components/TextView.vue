@@ -20,32 +20,48 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/**
- * Module defining ContextMenuController. Created by vwoeltje on 11/17/14.
- */
-define(
-    [],
-    function () {
+ <template>
+    <div class="c-text-view"
+         :style="styleObject">
+        {{ item.config.element.text }}
+    </div>
+ </template>
 
-        /**
-         * Controller for the context menu. Maintains an up-to-date
-         * list of applicable actions (those from category "contextual")
-         *
-         * @memberof platform/commonUI/general
-         * @constructor
-         */
-        function ContextMenuController($scope) {
-            // Refresh variable "menuActions" in the scope
-            function updateActions() {
-                $scope.menuActions = $scope.action ?
-                    $scope.action.getActions({ category: 'contextual' }) :
-                    [];
-            }
+<style lang="scss">
+    @import '~styles/sass-base';
 
-            // Update using the action capability
-            $scope.$watch("action", updateActions);
+    .c-text-view {
+        display: flex;
+        align-items: stretch;
+
+        .c-frame & {
+            @include abs();
+            border: 1px solid transparent;
         }
-
-        return ContextMenuController;
     }
-);
+</style>
+
+ <script>
+    export default {
+        props: {
+            item: Object
+        },
+        computed: {
+            styleObject() {
+                let element = this.item.config.element;
+                return {
+                    backgroundColor: element.fill,
+                    borderColor: element.stroke,
+                    color: element.color,
+                    fontSize: element.size
+                }
+            }
+        },
+        mounted() {
+            this.item.config.attachListeners();
+        },
+        destroyed() {
+            this.item.config.removeListeners();
+        }
+    }
+ </script>

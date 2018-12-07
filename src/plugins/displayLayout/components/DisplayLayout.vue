@@ -88,15 +88,9 @@
     import LayoutItem from './LayoutItem.vue';
     import TelemetryViewConfiguration from './../TelemetryViewConfiguration.js'
     import SubobjectViewConfiguration from './../SubobjectViewConfiguration.js'
+    import ElementViewConfiguration from './../ElementViewConfiguration.js'
 
-    const DEFAULT_GRID_SIZE = [32, 32],
-          DEFAULT_DIMENSIONS = [12, 8],
-          DEFAULT_TELEMETRY_DIMENSIONS = [2, 1],
-          DEFAULT_POSITION = [0, 0],
-          MINIMUM_FRAME_SIZE = [320, 180],
-          DEFAULT_HIDDEN_FRAME_TYPES = [
-            'hyperlink'
-          ];
+    const DEFAULT_GRID_SIZE = [10, 10];
 
     export default {
         data() {
@@ -119,25 +113,25 @@
                     this.makeTelemetryItem(alphanumeric, false);
                 });
             },
-            makeFrameItem(panel, initSelect) {
-                let rawPosition = {
-                    position: panel.position,
-                    dimensions: panel.dimensions
-                };
-                let style = this.convertPosition(rawPosition);
+            getElements() {
+                let elements = this.newDomainObject.configuration.elements || [];
+                elements.forEach((element, index) => {
+                    element.index = index;
+                    this.makeElementItem(element, false);
+                });
+            },
+            makeSubobjectItem(panel, initSelect) {
                 let id = this.openmct.objects.makeKeyString(panel.domainObject.identifier);
                 let config = new SubobjectViewConfiguration({
                     domainObject: this.newDomainObject,
+                    panel: panel,
                     id: id,
-                    hasFrame: panel.hasFrame,
-                    rawPosition: rawPosition,
-                    openmct: openmct
+                    openmct: openmct,
+                    gridSize: this.gridSize
                 });
-
                 this.layoutItems.push({
                     id: id,
                     domainObject: panel.domainObject,
-                    style: style,
                     drilledIn: this.isItemDrilledIn(id),
                     initSelect: initSelect,
                     type: 'subobject-view',
@@ -145,60 +139,35 @@
                 });
             },
             makeTelemetryItem(alphanumeric, initSelect) {
-                let rawPosition = {
-                    position: alphanumeric.position,
-                    dimensions: alphanumeric.dimensions
-                };
-                let style = this.convertPosition(rawPosition);
                 let id = this.openmct.objects.makeKeyString(alphanumeric.identifier);
-
                 this.openmct.objects.get(id).then(domainObject => {
                     let config = new TelemetryViewConfiguration({
                         domainObject: this.newDomainObject,
                         alphanumeric: alphanumeric,
-                        rawPosition: rawPosition,
-                        openmct: openmct
+                        openmct: openmct,
+                        gridSize: this.gridSize
                     });
-
                     this.layoutItems.push({
                         id: id,
                         domainObject: domainObject,
-                        style: style,
                         initSelect: initSelect,
-                        alphanumeric: alphanumeric,
                         type: 'telemetry-view',
                         config: config
                     });
                 });
             },
-            getSubobjectDefaultDimensions() {
-                let gridSize = this.gridSize;
-                return MINIMUM_FRAME_SIZE.map(function (min, i) {
-                    return Math.max(
-                        Math.ceil(min / gridSize[i]),
-                        DEFAULT_DIMENSIONS[i]
-                    );
+            makeElementItem(element, initSelect) {
+                let config = new ElementViewConfiguration({
+                    domainObject: this.newDomainObject,
+                    element: element,
+                    openmct: openmct,
+                    gridSize: this.gridSize
                 });
-            },
-            convertPosition(raw) {
-                return {
-                    left: (this.gridSize[0] * raw.position[0]) + 'px',
-                    top: (this.gridSize[1] * raw.position[1]) + 'px',
-                    width: (this.gridSize[0] * raw.dimensions[0]) + 'px',
-                    height: (this.gridSize[1] * raw.dimensions[1]) + 'px',
-                    minWidth: (this.gridSize[0] * raw.dimensions[0]) + 'px',
-                    minHeight: (this.gridSize[1] * raw.dimensions[1]) + 'px'
-                };
-            },
-            /**
-             * Checks if the frame should be hidden or not.
-             *
-             * @param type the domain object type
-             * @return {boolean} true if the object should have
-             *         frame by default, false, otherwise
-             */
-            hasFrameByDefault(type) {
-                return DEFAULT_HIDDEN_FRAME_TYPES.indexOf(type) === -1;
+                this.layoutItems.push({
+                    initSelect: initSelect,
+                    type: element.type + '-view',
+                    config: config
+                });
             },
             setSelection(selection) {
                 if (selection.length === 0) {
@@ -219,9 +188,8 @@
                 return this.drilledIn === id;
             },
             updatePosition(item, newPosition) {
-                let newStyle = this.convertPosition(newPosition);
-                item.config.rawPosition = newPosition;
-                item.style = newStyle;
+                item.config.newPosition = newPosition;
+                item.config.updateStyle(newPosition);
             },
             bypassSelection($event) {
                 if (this.dragInProgress) {
@@ -236,7 +204,7 @@
                 setTimeout(function () {
                     this.dragInProgress = false;
                 }.bind(this), 0);
-
+                // TODO: emit "finishResizing" for view components to mutate position?
                 item.config.mutatePosition();
             },
             mutate(path, value) {
@@ -278,38 +246,11 @@
                 }
             },
             addAlphanumeric(domainObject, position) {
-                let alphanumeric = {
-                    identifier: domainObject.identifier,
-                    position: position,
-                    dimensions: DEFAULT_TELEMETRY_DIMENSIONS,
-                    displayMode: 'all',
-                    value: this.getDefaultTelemetryValue(domainObject),
-                    stroke: "transparent",
-                    fill: "",
-                    color: "",
-                    size: "13px",
-                };
                 let alphanumerics = this.newDomainObject.configuration.alphanumerics || [];
+                let alphanumeric = TelemetryViewConfiguration.create(domainObject, position, this.openmct);
                 alphanumeric.index = alphanumerics.push(alphanumeric) - 1;
-
                 this.mutate("configuration.alphanumerics", alphanumerics);
                 this.makeTelemetryItem(alphanumeric, true);
-            },
-            getDefaultTelemetryValue(domainObject) {
-                let metadata = this.openmct.telemetry.getMetadata(domainObject);
-                let valueMetadata = metadata.valuesForHints(['range'])[0];
-
-                if (valueMetadata === undefined) {
-                    valueMetadata = metadata.values().filter(values => {
-                        return !(values.hints.domain);
-                    })[0];
-                }
-
-                if (valueMetadata === undefined) {
-                    valueMetadata = metadata.values()[0];
-                }
-
-                return valueMetadata.key;
             },
             handleDragOver($event){
                 $event.preventDefault();
@@ -322,7 +263,7 @@
                     return false;
                 }
             },
-            addObject(domainObject) {
+            addSubobject(domainObject) {
                 if (!this.isTelemetry(domainObject)) {
                     let panels = this.newDomainObject.configuration.panels,
                         id = this.openmct.objects.makeKeyString(domainObject.identifier),
@@ -330,35 +271,29 @@
                         mutateObject = false,
                         initSelect = false;
 
-                    // If this is a new panel, select it and save the configuration.
+                    // If the panel doesn't exist, create one and mutate the configuration
                     if (!panel) {
-                        panel = {};
-                        mutateObject = true;
+                        panel = SubobjectViewConfiguration.create(domainObject, this.gridSize, this.droppedObjectPosition);
                         initSelect = true;
-                    }
-
-                    panel.dimensions = panel.dimensions || this.getSubobjectDefaultDimensions();
-                    panel.hasFrame = panel.hasOwnProperty('hasFrame') ?
-                        panel.hasFrame :
-                        this.hasFrameByDefault(domainObject.type);
-
-                    if (this.droppedObjectPosition) {
-                        panel.position = this.droppedObjectPosition;
-                        this.droppedObjectPosition = undefined;
-                    } else {
-                        panel.position = panel.position || DEFAULT_POSITION;
-                    }
-
-                    if (mutateObject) {
                         this.mutate("configuration.panels[" + id + "]", panel);
+                        delete this.droppedObjectPosition;
                     }
 
                     panel.domainObject = domainObject;
-                    this.makeFrameItem(panel, initSelect);
+                    this.makeSubobjectItem(panel, initSelect);
                 }
             },
-            removeObject() {
-
+            removeSubobject() {
+                // Not yet implemented
+            },
+            addElement(type) {
+                let elements = this.newDomainObject.configuration.elements || [];
+                Promise.resolve(ElementViewConfiguration.create(type, this.openmct))
+                    .then(element => {
+                        element.index = elements.push(element) - 1;
+                        this.mutate("configuration.elements", elements);
+                        this.makeElementItem(element, true);
+                    });
             }
         },
         mounted() {
@@ -373,15 +308,16 @@
             this.openmct.selection.on('change', this.setSelection);
 
             this.composition = this.openmct.composition.get(this.newDomainObject);
-            this.composition.on('add', this.addObject);
-            this.composition.on('remove', this.removeObject);
+            this.composition.on('add', this.addSubobject);
+            this.composition.on('remove', this.removeSubobject);
             this.composition.load();
             this.getAlphanumerics();
+            this.getElements();
         },
         destroyed: function () {
             this.openmct.off('change', this.setSelection);
-            this.composition.off('add', this.addObject);
-            this.composition.off('remove', this.removeObject);
+            this.composition.off('add', this.addSubobject);
+            this.composition.off('remove', this.removeSubobject);
             this.unlisten();
         }
     }

@@ -21,12 +21,14 @@
  *****************************************************************************/
 
 <template>
-    <div class="c-frame has-local-controls is-selectable is-moveable"
-         :style="item.style"
-         :class="classObject"
+    <div class="c-frame has-local-controls"
+         :style="item.config.style"
+         :class="[classObject, {
+            'u-inspectable': item.config.inspectable()
+         }]"
          @dblclick="drill(item.id, $event)">
 
-        <component :is="item.type" :item="item"></component>
+        <component :is="item.type" :item="item" :gridSize="gridSize"></component>
 
         <!-- Drag handles -->
         <div class="c-frame-edit">
@@ -72,6 +74,10 @@
 <script>
     import SubobjectView from './SubobjectView.vue'
     import TelemetryView from './TelemetryView.vue'
+    import BoxView from './BoxView.vue'
+    import TextView from './TextView.vue'
+    import LineView from './LineView.vue'
+    import ImageView from './ImageView.vue'
     import LayoutDrag from './../LayoutDrag'
 
     export default {
@@ -82,13 +88,17 @@
         },
         components: {
             SubobjectView,
-            TelemetryView
+            TelemetryView,
+            BoxView,
+            TextView,
+            LineView,
+            ImageView
         },
         computed: {
             classObject: function () {
                 return {
                     'is-drilled-in': this.item.drilledIn,
-                    'no-frame': !this.item.config.hasFrame
+                    'no-frame': !this.item.config.hasFrame()
                 }
             }
         },
@@ -99,6 +109,10 @@
                 }
 
                 if (!this.openmct.editor.isEditing()) {
+                    return;
+                }
+
+                if (!this.item.domainObject) {
                     return;
                 }
 
@@ -126,7 +140,7 @@
 
                 this.updatePosition(event);
                 this.activeDrag = new LayoutDrag(
-                    this.item.config.rawPosition,
+                    this.item.config.position(),
                     posFactor,
                     dimFactor,
                     this.gridSize
@@ -157,7 +171,8 @@
         mounted() {
             let context = {
                 item: this.item.domainObject,
-                layoutItem: this.item
+                layoutItem: this.item,
+                addElement: this.$parent.addElement
             };
 
             this.removeSelectable = this.openmct.selection.selectable(

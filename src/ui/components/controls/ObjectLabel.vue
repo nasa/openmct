@@ -11,11 +11,11 @@
 
 <script>
 
-import ContextMenu from '../mixins/context-menu';
 import ObjectLink from '../mixins/object-link';
+import ContextMenuGesture from '../mixins/context-menu-gesture';
 
 export default {
-    mixins: [ContextMenu, ObjectLink],
+    mixins: [ObjectLink, ContextMenuGesture],
     inject: ['openmct'],
     props: {
         domainObject: Object

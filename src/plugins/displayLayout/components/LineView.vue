@@ -20,40 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/**
- * MCTRepresentationSpec. Created by vwoeltje on 11/6/14.
- */
-define(
-    ["../../src/windowing/FullscreenAction", "screenfull"],
-    function (FullscreenAction, screenfull) {
+ <template>
+  <div>
+    <svg :width="gridSize[0] * element.width"
+         :height=" gridSize[1] * element.height">
+        <line :x1=" gridSize[0] * element.x1 + 1"
+              :y1="gridSize[1] * element.y1 + 1 "
+              :x2="gridSize[0] * element.x2 + 1"
+              :y2=" gridSize[1] * element.y2 + 1 "
+              :stroke="element.stroke"
+              stroke-width="2">
+        </line>
+    </svg>
+  </div>
+ </template>
 
-        describe("The fullscreen action", function () {
-            var action,
-                oldToggle;
-
-            beforeEach(function () {
-                // Screenfull is not shimmed or injected, so
-                // we need to spy on it in the global scope.
-                oldToggle = screenfull.toggle;
-
-                screenfull.toggle = jasmine.createSpy("toggle");
-
-                action = new FullscreenAction({});
-            });
-
-            afterEach(function () {
-                screenfull.toggle = oldToggle;
-            });
-
-            it("toggles fullscreen mode when performed", function () {
-                action.perform();
-                expect(screenfull.toggle).toHaveBeenCalled();
-            });
-
-            it("provides displayable metadata", function () {
-                expect(action.getMetadata().cssClass).toBeDefined();
-            });
-
-        });
+ <script>
+    export default {
+        props: {
+            item: Object,
+            gridSize: Array
+        },
+        computed: {
+            element() {
+                return this.item.config.element;
+            }
+        },
+        mounted() {
+            this.item.config.attachListeners();
+        },
+        destroyed() {
+            this.item.config.removeListeners();
+        }
     }
-);
+ </script>

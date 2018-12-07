@@ -22,8 +22,25 @@
 
 /************************** PATHS */
 // Paths need to be relative to /platform/commonUI/theme/<theme-name>/css/ directory
-$dirFonts: 'fonts/';
 $dirImgs: 'images/';
+
+@font-face {
+    // Use https://icomoon.io/app with `Icomoon.Open MCT Symbols 2018.json` to generate font files
+    font-family: 'symbolsfont';
+    src: url('fonts/Open-MCT-Symbols-16px.woff') format('woff'),
+    url('fonts/Open-MCT-Symbols-16px.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    // Use https://icomoon.io/app with icomoon-project-openmct-symbols-12px.json to generate font files
+    font-family: 'symbolsfont-12px';
+    src: url('fonts/openmct-symbols-12px.woff') format('woff'),
+    url('fonts/openmct-symbols-12px.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
 
 /************************** TIMINGS */
 $controlFadeMs: 100ms;

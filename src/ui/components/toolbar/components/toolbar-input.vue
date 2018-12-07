@@ -33,7 +33,13 @@ export default {
     },
     methods: {
         onChange(event) {
-            this.$emit('change', event.target.value, this.options);
+            let value = event.target.value;
+
+            if (this.options.type === 'number') {
+                value = event.target.valueAsNumber;
+            }
+
+            this.$emit('change', value, this.options);
         }
     }
 }

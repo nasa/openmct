@@ -239,7 +239,6 @@
     import MctTree from './mct-tree.vue';
     import ObjectView from './ObjectView.vue';
     import MctTemplate from '../legacy/mct-template.vue';
-    import ContextMenu from '../controls/ContextMenu.vue';
     import CreateButton from '../controls/CreateButton.vue';
     import search from '../controls/search.vue';
     import multipane from '../controls/multipane.vue';
@@ -283,7 +282,6 @@
             MctTree,
             ObjectView,
             'mct-template': MctTemplate,
-            ContextMenu,
             CreateButton,
             search,
             multipane,
