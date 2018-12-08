@@ -22,7 +22,8 @@
 <template>
     <layout-frame :item="item"
                   :grid-size="gridSize"
-                  @endDrag="(item, updates) => $emit('endDrag', item, updates)">
+                  @endDrag="(item, updates) => $emit('endDrag', item, updates)"
+                  @drilledIn="item => $emit('drilledIn', item)">
         <div class="u-contents">
             <div class="c-so-view__header">
                 <div class="c-so-view__header__start">
@@ -107,7 +108,7 @@
 
     const MINIMUM_FRAME_SIZE = [320, 180],
           DEFAULT_DIMENSIONS = [10, 10],
-          DEFAULT_POSITION = [0, 0],
+          DEFAULT_POSITION = [1, 1],
           DEFAULT_HIDDEN_FRAME_TYPES = ['hyperlink', 'summary-widget'];
 
     function getDefaultDimensions(gridSize) {

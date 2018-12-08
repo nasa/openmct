@@ -24,10 +24,11 @@
     <div class="l-layout__frame c-frame has-local-controls"
          :class="{
              'no-frame': !item.hasFrame,
-             'u-inspectable': item.inspectable
+             'u-inspectable': item.inspectable,
+             'is-drilled-in': item.drilledIn
          }"
          :style="style"
-         @dblclick="drill(item.id, $event)">
+         @dblclick="drill($event)">
 
         <slot></slot>
 
@@ -88,10 +89,11 @@
         },
         computed: {
             style() {
-                let {x,y,width,height} = this.item;
+                let {x, y, width, height} = this.item;
+
                 if (this.dragPosition) {
-                    [x,y] = this.dragPosition.position;
-                    [width,height] = this.dragPosition.dimensions;
+                    [x, y] = this.dragPosition.position;
+                    [width, height] = this.dragPosition.dimensions;
                 }
 
                 return {
@@ -105,29 +107,23 @@
             }
         },
         methods: {
-            drill(id, $event) {
+            drill($event) {
                 if ($event) {
                     $event.stopPropagation();
                 }
 
-                if (!this.openmct.editor.isEditing()) {
+                if (!this.openmct.editor.isEditing() || !this.item.identifier) {
                     return;
                 }
 
-                if (!this.item.domainObject) {
-                    return;
-                }
+                this.openmct.objects.get(this.item.identifier)
+                    .then(domainObject => {
+                        if (this.openmct.composition.get(domainObject) === undefined) {
+                            return;
+                        }
 
-                if (this.openmct.composition.get(this.item.domainObject) === undefined) {
-                    return;
-                }
-
-                // Disable for fixed position.
-                if (this.item.domainObject.type === 'telemetry.fixed') {
-                    return;
-                }
-
-                this.$emit('drilledIn', id);
+                        this.$emit('drilledIn', this.item);
+                    });
             },
             updatePosition(event) {
                 let currentPosition = [event.pageX, event.pageY];

@@ -43,7 +43,7 @@
                 :gridSize="gridSize"
                 :initSelect="initSelectIndex === index"
                 :index="index"
-                @drilledIn="updateDrilledInState"
+                @drilledIn="updateDrilledIn"
                 @endDrag="endDrag"
                 >
             </component>
@@ -146,18 +146,16 @@
                     return;
                 }
 
-                this.updateDrilledInState();
+                this.updateDrilledIn();
             },
-            updateDrilledInState(id) {
-                this.drilledIn = id;
-                this.layoutItems.forEach(function (item) {
+            updateDrilledIn(drilledInItem) {
+                let identifier = drilledInItem && this.openmct.objects.makeKeyString(drilledInItem.identifier);
+                this.drilledIn = identifier;
+                this.layoutItems.forEach(item => {
                     if (item.type === 'subobject-view') {
-                        item.drilledIn = item.id === id;
+                        item.drilledIn = this.openmct.objects.makeKeyString(item.identifier) === identifier;
                     }
                 });
-            },
-            isItemDrilledIn(id) {
-                return this.drilledIn === id;
             },
             bypassSelection($event) {
                 if (this.dragInProgress) {
