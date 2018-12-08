@@ -109,12 +109,12 @@
 
     function getItemDefinition(itemType, ...options) {
         let itemView = ITEM_TYPE_VIEW_MAP[itemType];
-        if (!itemType) {
+
+        if (!itemView) {
             throw `Invalid itemType: ${itemType}`;
         }
-        let itemDefinition = itemView.makeDefinition(...options);
-        itemDefinition.type = itemType;
-        return itemDefinition;
+
+        return itemView.makeDefinition(...options);
     }
 
     export default {
@@ -140,19 +140,6 @@
         methods: {
             addElement(itemType) {
                 this.addItem(itemType + '-view');
-            },
-            makeElementItem(element, initSelect) {
-                let config = new ElementViewConfiguration({
-                    domainObject: this.internalDomainObject,
-                    element: element,
-                    openmct: openmct,
-                    gridSize: this.gridSize
-                });
-                this.layoutItems.push({
-                    initSelect: initSelect,
-                    type: element.type + '-view',
-                    config: config
-                });
             },
             setSelection(selection) {
                 if (selection.length === 0) {
@@ -211,30 +198,23 @@
                     this.addItem('telemetry-view', domainObject, droppedObjectPosition);
                 } else {
                     let identifier = this.openmct.objects.makeKeyString(domainObject.identifier);
+
                     if (!this.objectViewMap[identifier]) {
                         this.addItem('subobject-view', domainObject, droppedObjectPosition);
                     } else {
-                        this.checkForDuplicatePanel(domainObject);
-                    }
-                }
-            },
-            checkForDuplicatePanel(domainObject) {
-                let id = this.openmct.objects.makeKeyString(domainObject.identifier);
-                let panels = this.internalDomainObject.configuration.panels;
-
-                if (panels && panels[id]) {
-                    let prompt = this.openmct.overlays.dialog({
-                        iconClass: 'alert',
-                        message: "This item is already in layout and will not be added again.",
-                        buttons: [
-                            {
-                                label: 'OK',
-                                callback: function () {
-                                    prompt.dismiss();
+                        let prompt = this.openmct.overlays.dialog({
+                            iconClass: 'alert',
+                            message: "This item is already in layout and will not be added again.",
+                            buttons: [
+                                {
+                                    label: 'OK',
+                                    callback: function () {
+                                        prompt.dismiss();
+                                    }
                                 }
-                            }
-                        ]
-                    });
+                            ]
+                        });
+                    }
                 }
             },
             handleDragOver($event){
@@ -249,11 +229,14 @@
                 }
             },
             addItem(itemType, ...options) {
-                let item = getItemDefinition(itemType, this.openmct, this.gridSize, ...options);
-                this.trackItem(item);
-                this.layoutItems.push(item);
-                this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
-                this.initSelectIndex = this.layoutItems.length - 1;
+                Promise.resolve(getItemDefinition(itemType, this.openmct, this.gridSize, ...options))
+                    .then(item => {
+                        item.type = itemType;
+                        this.trackItem(item);
+                        this.layoutItems.push(item);
+                        this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
+                        this.initSelectIndex = this.layoutItems.length - 1;
+                    });
             },
             trackItem(item) {
                 if (!item.id) {

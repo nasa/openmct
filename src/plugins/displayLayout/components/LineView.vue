@@ -46,28 +46,28 @@
 
  <script>
 
- const START_HANDLE_QUADRANTS = {
-     1: 'c-frame-edit__handle--sw',
-     2: 'c-frame-edit__handle--se',
-     3: 'c-frame-edit__handle--ne',
-     4: 'c-frame-edit__handle--nw'
- };
+    const START_HANDLE_QUADRANTS = {
+        1: 'c-frame-edit__handle--sw',
+        2: 'c-frame-edit__handle--se',
+        3: 'c-frame-edit__handle--ne',
+        4: 'c-frame-edit__handle--nw'
+    };
 
- const END_HANDLE_QUADRANTS = {
-     1: 'c-frame-edit__handle--ne',
-     2: 'c-frame-edit__handle--nw',
-     3: 'c-frame-edit__handle--sw',
-     4: 'c-frame-edit__handle--se'
- };
+    const END_HANDLE_QUADRANTS = {
+        1: 'c-frame-edit__handle--ne',
+        2: 'c-frame-edit__handle--nw',
+        3: 'c-frame-edit__handle--sw',
+        4: 'c-frame-edit__handle--se'
+    };
 
     export default {
         makeDefinition() {
             return {
                 x: 5,
-                y: 3,
-                x2: 6,
-                y2: 6,
-                stroke: "#717171"
+                y: 10,
+                x2: 10,
+                y2: 5,
+                stroke: '#717171'
             };
         },
         inject: ['openmct'],
@@ -191,7 +191,7 @@
             },
             calculateDragPosition(pxDeltaX, pxDeltaY) {
                 let gridDeltaX = Math.round(pxDeltaX / this.gridSize[0]);
-                let gridDeltaY = Math.round(pxDeltaY / this.gridSize[0]);
+                let gridDeltaY = Math.round(pxDeltaY / this.gridSize[0]); // TODO: should this be gridSize[1]?
                 let {x, y, x2, y2} = this.item;
                 let dragPosition = {x, y, x2, y2};
                 if (this.dragging === 'start') {

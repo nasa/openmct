@@ -79,10 +79,13 @@
  <script>
     import LayoutFrame from './LayoutFrame.vue'
 
-    const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
+    const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5],
+          DEFAULT_POSITION = [1, 1];
+
     export default {
         makeDefinition(openmct, gridSize, domainObject, position) {
             let metadata = openmct.telemetry.getMetadata(domainObject);
+            position = position || DEFAULT_POSITION;
 
             return {
                 identifier: domainObject.identifier,
