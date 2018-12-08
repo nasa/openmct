@@ -181,7 +181,6 @@
                 }
             },
             endDrag(item, updates) {
-                console.log('applying results', item, updates);
                 this.dragInProgress = true;
                 setTimeout(function () {
                     this.dragInProgress = false;
@@ -250,7 +249,6 @@
                 }
             },
             addItem(itemType, ...options) {
-                console.log('adding item', itemType, options);
                 let item = getItemDefinition(itemType, this.openmct, this.gridSize, ...options);
                 this.trackItem(item);
                 this.layoutItems.push(item);

@@ -25,10 +25,7 @@
          :style="style">
         <svg width="100%"
              height="100%">
-            <line x1="0%"
-                  y1="0%"
-                  x2="100%"
-                  y2="100%"
+            <line v-bind="linePosition"
                   :stroke="item.stroke"
                   stroke-width="2">
             </line>
@@ -37,15 +34,32 @@
         <div class="c-frame-edit">
             <div class="c-frame-edit__move"
                  @mousedown="startDrag($event)"></div>
-            <div class="c-frame-edit__handle c-frame-edit__handle--nw"
-                 @mousedown="startDrag($event)"></div>
-            <div class="c-frame-edit__handle c-frame-edit__handle--se"
-                 @mousedown="startDrag($event)"></div>
+            <div class="c-frame-edit__handle"
+                 :class="startHandleClass"
+                 @mousedown="startDrag($event, 'start')"></div>
+            <div class="c-frame-edit__handle"
+                 :class="endHandleClass"
+                 @mousedown="startDrag($event, 'end')"></div>
         </div>
     </div>
 </template>
 
  <script>
+
+ const START_HANDLE_QUADRANTS = {
+     1: 'c-frame-edit__handle--sw',
+     2: 'c-frame-edit__handle--se',
+     3: 'c-frame-edit__handle--ne',
+     4: 'c-frame-edit__handle--nw'
+ };
+
+ const END_HANDLE_QUADRANTS = {
+     1: 'c-frame-edit__handle--ne',
+     2: 'c-frame-edit__handle--nw',
+     3: 'c-frame-edit__handle--sw',
+     4: 'c-frame-edit__handle--se'
+ };
+
     export default {
         makeDefinition() {
             return {
@@ -61,14 +75,27 @@
             item: Object,
             gridSize: Array,
             initSelect: Boolean,
-            index: Number
+            index: Number,
+        },
+        data() {
+            return {
+                dragPosition: undefined
+            };
         },
         computed: {
+            position() {
+                let {x, y, x2, y2} = this.item;
+                if (this.dragPosition) {
+                    ({x, y, x2, y2} = this.dragPosition);
+                }
+                return {x, y, x2, y2};
+            },
             style() {
-                let width = this.gridSize[0] * Math.abs(this.item.x - this.item.x2);
-                let height = this.gridSize[1] * Math.abs(this.item.y - this.item.y2);
-                let left = this.gridSize[0] * Math.min(this.item.x, this.item.x2);
-                let top = this.gridSize[1] * Math.min(this.item.y, this.item.y2);
+                let {x, y, x2, y2} = this.position;
+                let width = this.gridSize[0] * Math.abs(x - x2);
+                let height = this.gridSize[1] * Math.abs(y - y2);
+                let left = this.gridSize[0] * Math.min(x, x2);
+                let top = this.gridSize[1] * Math.min(y, y2);
                 return {
                     left: `${left}px`,
                     top: `${top}px`,
@@ -78,60 +105,109 @@
                     minHeight: `${height}px`,
                     position: 'absolute'
                 };
+            },
+            startHandleClass() {
+                return START_HANDLE_QUADRANTS[this.vectorQuadrant];
+            },
+            endHandleClass() {
+                return END_HANDLE_QUADRANTS[this.vectorQuadrant];
+            },
+            vectorQuadrant() {
+                let {x, y, x2, y2} = this.position;
+                if (x2 > x) {
+                    if (y2 < y) {
+                        return 1;
+                    }
+                    return 4;
+                }
+                if (y2 < y) {
+                    return 2;
+                }
+                return 3;
+            },
+            linePosition() {
+                if (this.vectorQuadrant === 1) {
+                    return {
+                        x1: '0%',
+                        y1: '100%',
+                        x2: '100%',
+                        y2: '0%'
+                    };
+                }
+                if (this.vectorQuadrant === 4) {
+                    return {
+                        x1: '0%',
+                        y1: '0%',
+                        x2: '100%',
+                        y2: '100%'
+                    };
+                }
+                if (this.vectorQuadrant === 2) {
+                    return {
+                        x1: '0%',
+                        y1: '0%',
+                        x2: '100%',
+                        y2: '100%'
+                    };
+                }
+                if (this.vectorQuadrant === 3) {
+                    return {
+                        x1: '100%',
+                        y1: '0%',
+                        x2: '0%',
+                        y2: '100%'
+                    };
+                }
             }
         },
         methods: {
-            startDrag(event) {
+            startDrag(event, position) {
+                this.dragging = position;
                 document.body.addEventListener('mousemove', this.continueDrag);
                 document.body.addEventListener('mouseup', this.endDrag);
+                this.startPosition = [event.pageX, event.pageY];
                 this.dragPosition = {
                     x: this.item.x,
                     y: this.item.y,
                     x2: this.item.x2,
                     y2: this.item.y2
                 };
-                this.updatePosition(event);
                 event.preventDefault();
             },
             continueDrag(event) {
                 event.preventDefault();
-                this.updatePosition(event);
-                this.dragPosition = this.getAdjustedPosition(this.delta);
-                console.log('adjusted position');
+                let pxDeltaX = this.startPosition[0] - event.pageX;
+                let pxDeltaY = this.startPosition[1] - event.pageY;
+                this.dragPosition = this.calculateDragPosition(pxDeltaX, pxDeltaY);
             },
             endDrag(event) {
                 document.body.removeEventListener('mousemove', this.continueDrag);
                 document.body.removeEventListener('mouseup', this.endDrag);
-                this.continueDrag(event);
                 let {x, y, x2, y2} = this.dragPosition;
-                // this.$emit('endDrag', this.item, {x, y, x2, y2});
+                this.$emit('endDrag', this.item, {x, y, x2, y2});
                 this.dragPosition = undefined;
-                this.initialPosition = undefined;
-                this.delta = undefined;
+                this.dragging = undefined;
                 event.preventDefault();
             },
-            updatePosition(event) {
-                let currentPosition = [event.pageX, event.pageY];
-                this.initialPosition = this.initialPosition || currentPosition;
-                console.log('initial position', this.initialPosition);
-                this.delta = currentPosition.map(function (value, index) {
-                    return value - this.initialPosition[index];
-                }.bind(this));
-            },
-            getAdjustedPosition(delta) {
-                console.log("delta", delta);
-                // TODO: calculate the new position
-                let newX = this.dragPosition.x + Math.round(delta[0] / this.gridSize[0]);
-                let newY = this.dragPosition.y + Math.round(delta[1] / this.gridSize[1]);
-                let newX2;
-                let newY2;
-
-                return {
-                    x: newX,
-                    y: newY,
-                    x2: newX2,
-                    y2: newY2
-                };
+            calculateDragPosition(pxDeltaX, pxDeltaY) {
+                let gridDeltaX = Math.round(pxDeltaX / this.gridSize[0]);
+                let gridDeltaY = Math.round(pxDeltaY / this.gridSize[0]);
+                let {x, y, x2, y2} = this.item;
+                let dragPosition = {x, y, x2, y2};
+                if (this.dragging === 'start') {
+                    dragPosition.x -= gridDeltaX;
+                    dragPosition.y -= gridDeltaY;
+                } else if (this.dragging === 'end') {
+                    dragPosition.x2 -= gridDeltaX;
+                    dragPosition.y2 -= gridDeltaY;
+                } else {
+                    // dragging entire line.
+                    dragPosition.x -= gridDeltaX;
+                    dragPosition.y -= gridDeltaY;
+                    dragPosition.x2 -= gridDeltaX;
+                    dragPosition.y2 -= gridDeltaY;
+                }
+                return dragPosition;
             }
         },
         mounted() {
