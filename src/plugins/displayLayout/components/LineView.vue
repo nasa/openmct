@@ -22,9 +22,6 @@
 
 <template>
     <div class="l-layout__frame c-frame has-local-controls no-frame"
-         :class="{
-            'u-inspectable': item.inspectable
-         }"
          :style="style">
         <svg width="100%"
              height="100%">
@@ -81,17 +78,60 @@
                     minHeight: `${height}px`,
                     position: 'absolute'
                 };
-            },
-            // width() {
-            //     return this.gridSize[0] * Math.abs(this.item.x - this.item.x2);
-            // },
-            // height() {
-            //     return
-            // },
+            }
         },
         methods: {
             startDrag(event) {
+                document.body.addEventListener('mousemove', this.continueDrag);
+                document.body.addEventListener('mouseup', this.endDrag);
+                this.dragPosition = {
+                    x: this.item.x,
+                    y: this.item.y,
+                    x2: this.item.x2,
+                    y2: this.item.y2
+                };
+                this.updatePosition(event);
+                event.preventDefault();
+            },
+            continueDrag(event) {
+                event.preventDefault();
+                this.updatePosition(event);
+                this.dragPosition = this.getAdjustedPosition(this.delta);
+                console.log('adjusted position');
+            },
+            endDrag(event) {
+                document.body.removeEventListener('mousemove', this.continueDrag);
+                document.body.removeEventListener('mouseup', this.endDrag);
+                this.continueDrag(event);
+                let {x, y, x2, y2} = this.dragPosition;
+                // this.$emit('endDrag', this.item, {x, y, x2, y2});
+                this.dragPosition = undefined;
+                this.initialPosition = undefined;
+                this.delta = undefined;
+                event.preventDefault();
+            },
+            updatePosition(event) {
+                let currentPosition = [event.pageX, event.pageY];
+                this.initialPosition = this.initialPosition || currentPosition;
+                console.log('initial position', this.initialPosition);
+                this.delta = currentPosition.map(function (value, index) {
+                    return value - this.initialPosition[index];
+                }.bind(this));
+            },
+            getAdjustedPosition(delta) {
+                console.log("delta", delta);
+                // TODO: calculate the new position
+                let newX = this.dragPosition.x + Math.round(delta[0] / this.gridSize[0]);
+                let newY = this.dragPosition.y + Math.round(delta[1] / this.gridSize[1]);
+                let newX2;
+                let newY2;
 
+                return {
+                    x: newX,
+                    y: newY,
+                    x2: newX2,
+                    y2: newY2
+                };
             }
         },
         mounted() {
