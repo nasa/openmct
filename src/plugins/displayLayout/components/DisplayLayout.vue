@@ -198,10 +198,10 @@
                 if (!$event.dataTransfer.types.includes('domainobject')) {
                     return;
                 }
+
                 $event.preventDefault();
 
                 let domainObject = JSON.parse($event.dataTransfer.getData('domainobject'));
-
                 let elementRect = this.$el.getBoundingClientRect();
                 let droppedObjectPosition = [
                     Math.floor(($event.pageX - elementRect.left) / this.gridSize[0]),
@@ -213,13 +213,11 @@
                 } else {
                     let identifier = this.openmct.objects.makeKeyString(domainObject.identifier);
                     if (!this.objectViewMap[identifier]) {
-                        console.log("add subobject item");
                         this.addItem('subobject-view', domainObject, droppedObjectPosition);
                     } else {
-                        // TODO: show prompt "can't add item twice".
+                        this.checkForDuplicatePanel(domainObject);
                     }
                 }
-                // TODO: select newly added item.
             },
             checkForDuplicatePanel(domainObject) {
                 let id = this.openmct.objects.makeKeyString(domainObject.identifier);
