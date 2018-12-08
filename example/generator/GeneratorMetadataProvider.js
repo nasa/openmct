@@ -72,6 +72,10 @@ define([
                         {
                             value: 1,
                             string: "ON"
+                        },
+                        {
+                            value: 2,
+                            string: "FAULT"
                         }
                     ],
                     hints: {

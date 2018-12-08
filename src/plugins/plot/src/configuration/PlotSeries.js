@@ -204,6 +204,13 @@ define([
          */
         resetStats: function () {
             this.unset('stats');
+            let yMetadata = this.metadata.value(this.get('yKey'));
+            if (yMetadata.hasOwnProperty('min') && yMetadata.hasOwnProperty('max')) {
+                this.set('stats', {
+                    minValue: yMetadata.min,
+                    maxValue: yMetadata.max
+                });
+            }
             this.data.forEach(this.updateStats, this);
         },
 

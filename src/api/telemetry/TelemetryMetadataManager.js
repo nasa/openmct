@@ -60,10 +60,10 @@ define([
                 valueMetadata.values = _.pluck(valueMetadata.enumerations, 'value');
             }
             if (!valueMetadata.hasOwnProperty('max')) {
-                valueMetadata.max = _.max(valueMetadata.values) + 1;
+                valueMetadata.max = _.max(valueMetadata.values);
             }
             if (!valueMetadata.hasOwnProperty('min')) {
-                valueMetadata.min = _.min(valueMetadata.values) - 1;
+                valueMetadata.min = _.min(valueMetadata.values);
             }
         }
 
