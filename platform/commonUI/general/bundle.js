@@ -392,24 +392,24 @@ define([
                     ]
                 }
             ],
-            "actions": [
-                {
-                    "key": "mct-preview-action",
-                    "implementation": MCTPreviewAction,
-                    "name": "Preview",
-                    "cssClass": "hide-in-t-main-view icon-eye-open",
-                    "description": "Preview in large dialog",
-                    "category": [
-                        "contextual",
-                        "view-control"
-                    ],
-                    "depends": [
-                        "$compile",
-                        "$rootScope"
-                    ],
-                    "priority": "preferred"
-                }
-            ],
+            // "actions": [
+            //     {
+            //         "key": "mct-preview-action",
+            //         "implementation": MCTPreviewAction,
+            //         "name": "Preview",
+            //         "cssClass": "hide-in-t-main-view icon-eye-open",
+            //         "description": "Preview in large dialog",
+            //         "category": [
+            //             "contextual",
+            //             "view-control"
+            //         ],
+            //         "depends": [
+            //             "$compile",
+            //             "$rootScope"
+            //         ],
+            //         "priority": "preferred"
+            //     }
+            // ],
             "constants": [
                 {
                     "key": "MCT_SCROLL_X_PROPERTY",
