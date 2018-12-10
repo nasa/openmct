@@ -149,12 +149,12 @@
             index: Number
         },
         data() {
-            let type = this.openmct.types.get(this.domainObject.type);
+            let type = this.domainObject && this.openmct.types.get(this.domainObject.type);
 
             return {
                 domainObject: undefined,
-                cssClass: type.definition.cssClass,
-                objectPath: [this.item.domainObject].concat(this.openmct.router.path)
+                cssClass: type && type.definition.cssClass,
+                objectPath: []
             }
         },
         components: {
@@ -162,21 +162,25 @@
             ContextMenuDropDown,
             LayoutFrame
         },
+        methods: {
+            setObject(domainObject) {
+                this.domainObject = domainObject;
+                this.objectPath = [this.domainObject].concat(this.openmct.router.path);
+                let context = {
+                    item: domainObject,
+                    layoutItem: this.item,
+                    index: this.index
+                };
+                this.removeSelectable = this.openmct.selection.selectable(
+                    this.$el,
+                    context,
+                    this.initSelect
+                );
+            }
+        },
         mounted() {
             this.openmct.objects.get(this.item.identifier)
-                .then(domainObject => {
-                    this.domainObject = domainObject;
-                    let context = {
-                        item: domainObject,
-                        layoutItem: this.item,
-                        index: this.index
-                    };
-                    this.removeSelectable = this.openmct.selection.selectable(
-                        this.$el,
-                        context,
-                        this.initSelect
-                    );
-                });
+                .then(this.setObject);
         },
         destroyed() {
             if (this.removeSelectable) {
