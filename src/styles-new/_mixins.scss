@@ -96,6 +96,12 @@
     background-size: $bgsize $bgsize;
 }
 
+@mixin disabled() {
+    opacity: $controlDisabledOpacity;
+    pointer-events: none !important;
+    cursor: default !important;
+}
+
 @mixin noColor() {
     // A "no fill/stroke" selection option. Used in palettes.
     $c: red;
