@@ -24,7 +24,7 @@
     <div class="l-layout__frame c-frame has-local-controls"
          :class="{
              'no-frame': !item.hasFrame,
-             'u-inspectable': item.inspectable,
+             'u-inspectable': inspectable,
              'is-drilled-in': item.drilledIn
          }"
          :style="style"
@@ -104,6 +104,9 @@
                     minWidth: (this.gridSize[0] * width) + 'px',
                     minHeight: (this.gridSize[1] * height) + 'px'
                 };
+            },
+            inspectable() {
+                return this.item.type === 'subobject-view' || this.item.type === 'telemetry-view';
             }
         },
         methods: {
