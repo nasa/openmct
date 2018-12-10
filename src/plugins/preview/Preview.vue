@@ -21,23 +21,42 @@
  *****************************************************************************/
  <template>
  <div class="l-preview-window">
-    <div class="l-browse-bar__object-name--w" :class="type.cssClass">
+    <div class="l-preview-window__object-name l-browse-bar__object-name--w" :class="type.cssClass">
         <span class="l-browse-bar__object-name">
             {{ domainObject.name }}
         </span>
         <span class="l-browse-bar__context-actions c-disclosure-button" @click="showContextMenu"></span>
     </div>
-    <div class="l-preview-window__object-view" ref="objectView">
+    <div class="l-preview-window__object-view">
+        <div ref="objectView">
+    </div>
     </div>
 </div>
  </template>
 <style lang="scss">
+    @import '~styles/sass-base';
+
     .l-preview-window {
         display: flex;
-        flex-flow: column nowrap;
+        flex-direction: column;
+        position: absolute;
+        top: 0; right: 0; bottom: 0; left: 0;
+
+        > * + * {
+            margin-top: $interiorMargin;
+        }
+
+        &__object-name {
+            flex: 0 0 auto;
+        }
 
         &__object-view {
             flex: 1 1 auto;
+
+            > div:not([class]) {
+                // Target an immediate child div without a class and make it display: contents
+                display: contents;
+            }
         }
     }
 </style>
