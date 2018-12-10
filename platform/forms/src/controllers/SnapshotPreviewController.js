@@ -28,7 +28,19 @@ define(
 
         function SnapshotPreviewController($scope, openmct) {
 
-            $scope.previewImage = function (ngModel, field, imageUrl) {
+            $scope.previewImage = function (imageUrl) {
+                var image = document.createElement('img');
+                image.src = imageUrl;
+
+                openmct.overlays.overlay(
+                    {
+                        element: image,
+                        size: 'large'
+                    }
+                );
+            };
+
+            $scope.annotateImage = function (ngModel, field, imageUrl) {
                 $scope.imageUrl = imageUrl;
 
                 var div = document.createElement('div'),

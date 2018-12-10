@@ -25,10 +25,11 @@
         <image 
                class="c-ne__embed__snap-thumb"
                src="{{imageUrl || structure.src}}"
+               ng-click="previewImage(imageUrl || structure.src)"
                name="mctControl">
         </image>
         <br>
-        <a title="Annotate" class="s-button icon-pencil" ng-click="previewImage(ngModel, field, imageUrl || structure.src)">
+        <a title="Annotate" class="s-button icon-pencil" ng-click="annotateImage(ngModel, field, imageUrl || structure.src)">
             <span class="title-label">Annotate</span>
         </a>
     </span>
