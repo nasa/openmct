@@ -107,7 +107,7 @@
 
 <script>
     import ObjectView from '../../../ui/components/layout/ObjectView.vue'
-    import contextMenuDropDown from './contextMenuDropDown.vue';
+    import ContextMenuDropDown from './contextMenuDropDown.vue';
     import LayoutFrame from './LayoutFrame.vue'
 
     const MINIMUM_FRAME_SIZE = [320, 180],
@@ -149,7 +149,7 @@
             index: Number
         },
         data() {
-            let type = this.openmct.types.get(this.item.domainObject.type);
+            let type = this.openmct.types.get(this.domainObject.type);
 
             return {
                 domainObject: undefined,
