@@ -14,17 +14,17 @@ function generateTaskForm(url) {
                     cssClass: "l-textarea-sm"
                 },
                 {
-                    name: 'Save in Notebook',
-                    key: 'notebook',
-                    control: 'locator',
-                    validate: validateLocation
-                },
-                {
                     name: 'Snap Preview',
                     key:"snapPreview",
                     control: "snap-view",
                     cssClass: "l-textarea-sm",
                     src: url
+                },
+                {
+                    name: 'Save in Notebook',
+                    key: 'notebook',
+                    control: 'locator',
+                    validate: validateLocation
                 }
             ]
         }]
