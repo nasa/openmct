@@ -86,9 +86,6 @@
 
 
 <script>
-    import TelemetryViewConfiguration from './../TelemetryViewConfiguration.js';
-    import SubobjectViewConfiguration from './../SubobjectViewConfiguration.js';
-    import ElementViewConfiguration from './../ElementViewConfiguration.js';
     import uuid from 'uuid';
 
     import SubobjectView from './SubobjectView.vue'
