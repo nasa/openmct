@@ -20,24 +20,57 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
  <template>
- <div class="l-pane__contents">
-    <browse-bar class="l-shell__main-view-browse-bar"
-            preview="true"
-            ref="browseBar">
-    </browse-bar>
-    <object-view class="l-shell__main-container"
-            ref="browseObject">
-    </object-view>
+ <div class="l-preview-window">
+    <div class="l-browse-bar__object-name--w" :class="type.cssClass">
+        <span class="l-browse-bar__object-name">
+            {{ domainObject.name }}
+        </span>
+        <span class="l-browse-bar__context-actions c-disclosure-button" @click="showContextMenu"></span>
+    </div>
+    <div class="l-preview-window__object-view" ref="objectView">
+    </div>
 </div>
  </template>
- <script>
-    import ObjectView from '../../ui/components/layout/ObjectView.vue';
-    import BrowseBar from '../../ui/components/layout/BrowseBar.vue';
+<style lang="scss">
+    .l-preview-window {
+        display: flex;
+        flex-flow: column nowrap;
 
+        &__object-view {
+            flex: 1 1 auto;
+        }
+    }
+</style>
+
+ <script>
     export default {
-        components: {
-            ObjectView,
-            BrowseBar
+        data() {
+            let domainObject = this.objectPath[0]; 
+            let type = this.openmct.types.get(domainObject.type);
+
+            return {
+                domainObject: domainObject,
+                type: type
+            };
+        },
+        inject: [
+            'openmct',
+            'objectPath'
+        ],
+        mounted() {
+            let viewProvider = this.openmct.objectViews.get(this.domainObject)[0];
+            this.view = viewProvider.view(this.domainObject);
+            this.view.show(this.$refs.objectView);
+        },
+        methods: {
+            showContextMenu(event){
+                event.preventDefault();
+                event.stopPropagation();
+                this.openmct.contextMenu._showContextMenuForObjectPath(this.objectPath, event.clientX, event.clientY);
+            }
+        },
+        destroy() {
+            this.view.destroy();
         }
     }
  </script>

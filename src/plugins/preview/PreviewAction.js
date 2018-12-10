@@ -34,17 +34,16 @@ export default class PreviewAction {
         this._openmct = openmct;
     }
     invoke(objectPath) {
-        let objectToView = objectPath[0];
-
-        let viewProvider = this._openmct.objectViews.get(objectToView)[0];
-        let openmct = this._openmct;
-
-        Preview.provide = function () {
-            return {
-                openmct: openmct
-            };
-        };
-        let preview = new Vue(Preview);
+        let preview = new Vue({
+            components: {
+                Preview
+            },
+            provide: {
+                openmct: this._openmct,
+                objectPath: objectPath
+            },
+            template: '<Preview></Preview>'
+        });
         preview.$mount();
 
         this._openmct.overlays.overlay({
@@ -52,9 +51,5 @@ export default class PreviewAction {
             size: 'large',
             onDestroy: () => preview.$destroy()
         });
-
-        preview.$refs.browseObject.show(objectToView, viewProvider.key, true);
-        preview.$refs.browseBar.domainObject = objectToView;
-        preview.$refs.browseBar.viewKey = viewProvider.key;
     }
 }
