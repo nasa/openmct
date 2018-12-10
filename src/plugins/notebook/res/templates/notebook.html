@@ -1,9 +1,10 @@
 <div class="c-notebook">
     <div class="c-notebook__head">
         <search class="c-notebook__search"
-                v-model="entrySearch"
-                v-on:input="search($event)"
-                v-on:clear="entrySearch = ''; search($event)"></search>
+                :value="entrySearch"
+                @input="search"
+                @clear="search">
+            </search>
         <div class="c-notebook__controls">
             <div class="select c-notebook__controls__time">
                 <select v-model="showTime">
@@ -15,23 +16,24 @@
             </div>
             <div class="select c-notebook__controls__sort">
                 <select v-model="sortEntries">
-                    <option value="-createdOn" selected="selected">Newest first</option>
-                    <option value="createdOn">Oldest first</option>
+                    <option value="newest" :selected="sortEntries === 'newest'">Newest first</option>
+                    <option value="oldest" :selected="sortEntries === 'oldest'">Oldest first</option>
                 </select>
             </div>
         </div>
     </div>
     <div class="c-notebook__drag-area icon-plus"
-         v-on:click="newEntry($event)"
-         id="newEntry" mct-entry-dnd>
+         @click="newEntry($event)"
+         @drop="newEntry($event)"
+         id="newEntry">
         <span class="c-notebook__drag-area__label">To start a new entry, click here or drag and drop any object</span>
     </div>
     <div class="c-notebook__entries" ng-mouseover="handleActive()">
         <ul>
-           <notebook-entry
-                v-for="entry in filterBySearch(entries, entrySearch)"
-                v-bind:entry="entry"
-           ></notebook-entry>
+            <notebook-entry
+                v-for="entry in filteredAndSortedEntries"
+                v-bind:entry="entry">
+            </notebook-entry>
         </ul>
     </div>
 </div>

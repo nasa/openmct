@@ -36,8 +36,8 @@ define([], function () {
      * @memberof platform/commonUI/edit
      * @constructor
      */
-    function RemoveDialog(dialogService, domainObject, removeCallback) {
-        this.dialogService = dialogService;
+    function RemoveDialog(openmct, domainObject, removeCallback) {
+        this.openmct = openmct;
         this.domainObject = domainObject;
         this.removeCallback = removeCallback;
     }
@@ -46,31 +46,26 @@ define([], function () {
      * Display a dialog to confirm the removal of a domain object.
      */
     RemoveDialog.prototype.show = function () {
-        var dialog,
-            domainObject = this.domainObject,
-            removeCallback = this.removeCallback,
-            model = {
-                title: 'Remove ' + domainObject.getModel().name,
-                actionText: 'Warning! This action will permanently remove this object. Are you sure you want to continue?',
-                severity: 'alert',
-                primaryOption: {
+        let dialog = this.openmct.overlays.dialog({
+            title: 'Remove ' + this.domainObject.getModel().name,
+            iconClass: 'alert',
+            message: 'Warning! This action will permanently remove this object. Are you sure you want to continue?',
+            buttons: [
+                {
                     label: 'OK',
-                    callback: function () {
-                        removeCallback(domainObject);
+                    callback: () => {
+                        this.removeCallback();
                         dialog.dismiss();
                     }
                 },
-                options: [
-                    {
-                        label: 'Cancel',
-                        callback: function () {
-                            dialog.dismiss();
-                        }
+                {
+                    label: 'Cancel',
+                    callback: () => {
+                        dialog.dismiss();
                     }
-                ]
-            };
-        setTimeout(() => this.removeCallback(domainObject));
-
+                }
+            ]
+        });
     };
 
     return RemoveDialog;

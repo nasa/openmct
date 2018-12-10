@@ -27,8 +27,13 @@
         <div class="u-contents">
             <div class="c-so-view__header">
                 <div class="c-so-view__header__start">
-                    <div class="c-so-view__name icon-object">{{ domainObject && domainObject.name }}</div>
-                    <div class="c-so-view__context-actions c-disclosure-button"></div>
+                    <div class="c-so-view__header__name"
+                         :class="cssClass">
+                        {{ domainObject && domainObject.name }}
+                    </div>
+                    <context-menu-drop-down
+                        :object-path="objectPath">
+                    </context-menu-drop-down>
                 </div>
                 <div class="c-so-view__header__end">
                     <div class="c-button icon-expand local-controls--hidden"></div>
@@ -48,42 +53,40 @@
         &__header {
             display: flex;
             align-items: center;
-            flex: 0 0 auto;
-            margin-bottom: $interiorMargin;
 
-            > [class*="__"] {
+            &__start,
+            &__end {
                 display: flex;
-                align-items: center;
-            }
-
-            > * + * {
-                margin-left: $interiorMargin;
-            }
-
-            [class*="__start"] {
                 flex: 1 1 auto;
-                overflow: hidden;
             }
 
-            [class*="__end"] {
-                //justify-content: flex-end;
-                flex: 0 0 auto;
+            &__end {
+                justify-content: flex-end;
+            }
 
-                [class*="button"] {
-                    font-size: 0.7em;
+            &__name {
+                @include headerFont(1em);
+                display: flex;
+                &:before {
+                    margin-right: $interiorMarginSm;
                 }
+            }
+
+            .no-frame & {
+                display: none;
             }
         }
 
         &__name {
             @include ellipsize();
+            @include headerFont(1.2em);
             flex: 0 1 auto;
-            font-size: 1.2em;
 
             &:before {
                 // Object type icon
                 flex: 0 0 auto;
                 margin-right: $interiorMarginSm;
+                opacity: 0.5;
             }
         }
 
@@ -104,6 +107,7 @@
 
 <script>
     import ObjectView from '../../../ui/components/layout/ObjectView.vue'
+    import contextMenuDropDown from './contextMenuDropDown.vue';
     import LayoutFrame from './LayoutFrame.vue'
 
     const MINIMUM_FRAME_SIZE = [320, 180],
@@ -128,16 +132,14 @@
         makeDefinition(openmct, gridSize, domainObject, position) {
             position = position || DEFAULT_POSITION;
             let defaultDimensions = getDefaultDimensions(gridSize);
-            let definition = {
+            return {
                 width: defaultDimensions[0],
                 height: defaultDimensions[1],
                 x: position[0],
                 y: position[1],
                 identifier: domainObject.identifier,
-                hasFrame: hasFrameByDefault(domainObject.type),
-                // inspectable: true
+                hasFrame: hasFrameByDefault(domainObject.type)
             };
-            return definition;
         },
         inject: ['openmct'],
         props: {
@@ -146,15 +148,18 @@
             initSelect: Boolean,
             index: Number
         },
-        computed: {
-        },
         data() {
+            let type = this.openmct.types.get(this.item.domainObject.type);
+
             return {
-                domainObject: undefined
+                domainObject: undefined,
+                cssClass: type.definition.cssClass,
+                objectPath: [this.item.domainObject].concat(this.openmct.router.path)
             }
         },
         components: {
             ObjectView,
+            ContextMenuDropDown,
             LayoutFrame
         },
         mounted() {
@@ -166,7 +171,6 @@
                         layoutItem: this.item,
                         index: this.index
                     };
-
                     this.removeSelectable = this.openmct.selection.selectable(
                         this.$el,
                         context,

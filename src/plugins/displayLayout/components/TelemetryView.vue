@@ -224,9 +224,11 @@
         },
         destroyed() {
             this.removeSubscription();
+
             if (this.removeSelectable) {
                 this.removeSelectable();
             }
+
             this.openmct.time.off("bounds", this.refreshData);
         }
     }

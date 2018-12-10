@@ -1,5 +1,3 @@
-import { timingSafeEqual } from "crypto";
-
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -21,6 +19,9 @@ import { timingSafeEqual } from "crypto";
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import _ from 'lodash';
+const INSIDE_EDIT_PATH_BLACKLIST = ["copy", "follow", "link", "locate", "move", "link"];
+const OUTSIDE_EDIT_PATH_BLACKLIST = ["copy", "follow", "properties", "move", "link", "remove", "locate"];
 
 export default class LegacyContextMenuAction {
     constructor(openmct, LegacyAction) {
@@ -33,9 +34,34 @@ export default class LegacyContextMenuAction {
 
     appliesTo(objectPath) {
         let legacyObject = this.openmct.legacyObject(objectPath);
-        return this.LegacyAction.appliesTo({
-            domainObject: legacyObject
-        });
+
+        return (this.LegacyAction.appliesTo === undefined ||
+                this.LegacyAction.appliesTo({domainObject: legacyObject})) &&
+                !this.isBlacklisted(objectPath);
+    }
+
+    /**
+     * @private
+     */
+    isBlacklisted(objectPath) {
+        let navigatedObject = this.openmct.router.path[0];
+        let isEditing = this.openmct.editor.isEditing();
+
+        /**
+         * Is the object being edited, or a child of the object being edited?
+         */
+        function isInsideEditPath() {
+            return objectPath.some((object) => _.eq(object.identifier, navigatedObject.identifier));
+        }
+
+        if (isEditing) {
+            if (isInsideEditPath()) {
+                return INSIDE_EDIT_PATH_BLACKLIST.some(actionKey => this.LegacyAction.key === actionKey);
+            } else {
+                return OUTSIDE_EDIT_PATH_BLACKLIST.some(actionKey => this.LegacyAction.key === actionKey);
+            }
+        }
+        return false;
     }
 
     invoke(objectPath) {

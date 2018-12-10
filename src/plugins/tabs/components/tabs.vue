@@ -66,6 +66,7 @@
 
         &__object-name {
             flex: 0 0 auto;
+            @include headerFont();
             font-size: 1.2em !important;
             margin: $interiorMargin 0 $interiorMarginLg 0;
         }
