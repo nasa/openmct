@@ -1,23 +1,32 @@
 import $ from 'zepto';
 
-function generateTaskForm() {
+function generateTaskForm(url) {
     var taskForm = {
         name: "Create a Notebook Entry",
         hint: "Please select a Notebook",
         sections: [{
-            rows: [{
-                name: 'Entry',
-                key: 'entry',
-                control: 'textarea',
-                required: false,
-                cssClass: "l-textarea-sm"
-            },
-            {
-                name: 'Save in Notebook',
-                key: 'notebook',
-                control: 'locator',
-                validate: validateLocation
-            }]
+            rows: [
+                {
+                    name: 'Entry',
+                    key: 'entry',
+                    control: 'textarea',
+                    required: false,
+                    cssClass: "l-textarea-sm"
+                },
+                {
+                    name: 'Save in Notebook',
+                    key: 'notebook',
+                    control: 'locator',
+                    validate: validateLocation
+                },
+                {
+                    name: 'Snap Preview',
+                    key:"snapPreview",
+                    control: "snap-view",
+                    cssClass: "l-textarea-sm",
+                    src: url
+                }
+            ]
         }]
     };
 
@@ -36,7 +45,7 @@ function generateTaskForm() {
 }
 
 function saveSnapShot(dialogService, imageUrl, imageType, imageSize, embedObject) {
-    let taskForm = generateTaskForm();
+    let taskForm = generateTaskForm(imageUrl);
 
     dialogService.getDialogResponse(
         'overlay-dialog',
@@ -44,7 +53,7 @@ function saveSnapShot(dialogService, imageUrl, imageType, imageSize, embedObject
         () => taskForm.value
     ).then(options => {
         let snapshotObject = {
-            src: imageUrl,
+            src: options.snapPreview || imageUrl,
             type: imageType,
             size: imageSize
         };
