@@ -149,11 +149,9 @@
             index: Number
         },
         data() {
-            let type = this.domainObject && this.openmct.types.get(this.domainObject.type);
-
             return {
                 domainObject: undefined,
-                cssClass: type && type.definition.cssClass,
+                cssClass: undefined,
                 objectPath: []
             }
         },
@@ -166,6 +164,7 @@
             setObject(domainObject) {
                 this.domainObject = domainObject;
                 this.objectPath = [this.domainObject].concat(this.openmct.router.path);
+                this.cssClass = this.openmct.types.get(this.domainObject.type).definition.cssClass;
                 let context = {
                     item: domainObject,
                     layoutItem: this.item,
