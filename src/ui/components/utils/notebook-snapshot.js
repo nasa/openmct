@@ -98,33 +98,38 @@ function saveSnapShot(dialogService, imageUrl, imageType, imageSize, embedObject
     });
 }
 
-export default {
-    inject: ['openmct', 'domainObject'],
-    methods: {
-        takeSnapshot(DOMElement) {
-            let exportImageService = this.openmct.$injector.get('exportImageService'),
-                dialogService = this.openmct.$injector.get('dialogService');
+class NotebookSnapshot {
+    constructor(openmct) {
+        this.openmct = openmct;
 
-            let type = this.openmct.types.get(this.domainObject.type),
-                embedObject = {
-                    id: this.domainObject.identifier.key,
-                    cssClass: type.cssClass,
-                    name: this.domainObject.name
-                };
-
-            DOMElement.classList.add('s-status-taking-snapshot');
-
-            exportImageService.exportPNGtoSRC(DOMElement).then(function (blob) {
-                DOMElement.classList.remove('s-status-taking-snapshot');
-
-                if (blob) {
-                    var reader = new window.FileReader();
-                    reader.readAsDataURL(blob);
-                    reader.onloadend = function () {
-                        saveSnapShot(dialogService, reader.result, blob.type, blob.size, embedObject);
-                    };
-                }
-            });
-        }
+        this.capture = this.capture.bind(this);
     }
-};
+
+    capture(domainObject, DomElement) {
+        let exportImageService = this.openmct.$injector.get('exportImageService'),
+            dialogService = this.openmct.$injector.get('dialogService');
+
+        let type = this.openmct.types.get(domainObject.type),
+            embedObject = {
+                id: domainObject.identifier.key,
+                cssClass: type.cssClass,
+                name: domainObject.name
+            };
+
+        DomElement.classList.add('s-status-taking-snapshot');
+
+        exportImageService.exportPNGtoSRC(DomElement).then(function (blob) {
+            DomElement.classList.remove('s-status-taking-snapshot');
+
+            if (blob) {
+                var reader = new window.FileReader();
+                reader.readAsDataURL(blob);
+                reader.onloadend = function () {
+                    saveSnapShot(dialogService, reader.result, blob.type, blob.size, embedObject);
+                };
+            }
+        });
+    }
+}
+
+export default NotebookSnapshot;

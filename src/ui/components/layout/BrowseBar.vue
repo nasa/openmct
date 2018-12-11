@@ -52,11 +52,10 @@
 </template>
 
 <script>
-import snapshotMixin from '../mixins/notebook-snapshot';
+import NotebookSnapshot from '../utils/notebook-snapshot';
 
     export default {
-        inject: ['openmct'],
-        mixins: [snapshotMixin],
+        inject: ['openmct', 'domainObject'],
         methods: {
             toggleViewMenu: function (event) {
                 event.stopPropagation();
@@ -95,7 +94,7 @@ import snapshotMixin from '../mixins/notebook-snapshot';
             },
             snapshot() {
                 let element = document.getElementsByClassName("l-shell__main-container")[0];
-                this.takeSnapshot(element);
+                this.notebookSnapshot.capture(this.domainObject, element);
             }
         },
         data: function () {
@@ -132,6 +131,8 @@ import snapshotMixin from '../mixins/notebook-snapshot';
             }
         },
         mounted: function () {
+            this.notebookSnapshot = new NotebookSnapshot(this.openmct);
+
             document.addEventListener('click', () => {
                 if (this.showViewMenu) {
                     this.showViewMenu = false;
