@@ -1,7 +1,7 @@
 <template>
     <li class="c-tree__item-h">
         <div class="c-tree__item"
-            :class="{ 'is-alias' : isAlias }">
+            :class="{ 'is-alias': isAlias }">
             <view-control class="c-tree__item__view-control"
                           :enabled="hasChildren"
                           v-model="expanded">
@@ -36,8 +36,17 @@
                 isLoading: false,
                 loaded: false,
                 children: [],
-                expanded: false,
-                isAlias: false
+                expanded: false
+            }
+        },
+        computed: {
+            isAlias() {
+                let parent = this.node.objectPath[1];
+                if (!parent) {
+                    return false;
+                }
+                let parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
+                return parentKeyString !== this.node.object.location;
             }
         },
         mounted() {
