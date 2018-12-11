@@ -9,7 +9,7 @@
                     @click="openInNewTab"
                     target="_blank">
                 </button>
-                <button v-bind:class="['c-click-icon', fullScreen ? 'icon-fullscreen-expand' : 'icon-fullscreen-collapse']"
+                <button v-bind:class="['c-click-icon', fullScreen ? 'icon-fullscreen-collapse' : 'icon-fullscreen-expand']"
                     v-bind:title="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
                     @click="fullScreenToggle">
                 </button>
