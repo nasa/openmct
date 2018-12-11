@@ -1,18 +1,18 @@
 <template>
-<div class="c-elements-pool xflex-elem xl-flex-col xholder xgrows">
+<div class="c-elements-pool">
     <Search class="c-elements-pool__search" @input="applySearch"></Search>
-    <div class="c-elements-pool__elements xflex-elem xgrows xvscroll xscroll-pad">
-        <ul class="tree c-elements-pool__tree" id="inspector-elements-tree"
+    <div class="c-elements-pool__elements">
+        <ul class="tree c-tree c-elements-pool__tree" id="inspector-elements-tree"
             v-if="elements.length > 0">
             <li :key="element.identifier.key" v-for="(element, index) in elements" @drop="moveTo(index)" @dragover="allowDrop">
-                <span class="c-elements-pool__item tree-item">
+                <div class="c-tree__item c-elements-pool__item">
                     <span class="icon-grippy"
                           v-if="elements.length > 1 && isEditing"
                           draggable="true"
                           @dragstart="moveFrom(index)">
                     </span>
                     <object-label :domainObject="element" :objectPath="[element, parentObject]"></object-label>
-                </span>
+                </div>
             </li>
             <li class="js-last-place" @drop="moveToIndex(elements.length)"></li>
         </ul>
@@ -27,7 +27,7 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        flex: 1 1 auto;
+        flex: 1 1 auto !important;
 
         > * + * {
             margin-top: $interiorMargin;
@@ -49,7 +49,6 @@
         }
 
     }
-
 
     .js-last-place{
         height: 10px;

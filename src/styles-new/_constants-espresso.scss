@@ -267,7 +267,7 @@ $legendHoverValueBg: rgba($colorBodyFg, 0.2);
 // Tree
 $colorTreeBg: transparent;
 $colorItemTreeHoverBg: lighten($colorBodyBg, 10%);
-$colorItemTreeHoverFg: lighten($colorBodyFg, 10%);
+$colorItemTreeHoverFg: lighten($colorBodyFg, 20%);
 $colorItemTreeIcon: $colorKey; // Used
 $colorItemTreeIconHover: $colorItemTreeIcon; // Used
 $colorItemTreeFg: $colorBodyFg;

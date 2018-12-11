@@ -31,16 +31,20 @@
             $aPad: $interiorMarginSm;
             border-radius: $controlCr;
             display: flex;
-            align-items: stretch;
+            align-items: center;
             cursor: pointer;
             padding: $interiorMargin - $aPad;
             transition: background 150ms ease;
 
-            &:hover {
+            &:hover,
+            &.is-selected {
                 background: $colorItemTreeHoverBg;
                 .c-tree__item__type-icon {
-                    // Type icon
                     color: $colorItemTreeIconHover;
+                }
+
+                .c-tree__item__name {
+                    color: $colorItemTreeHoverFg;
                 }
             }
 
