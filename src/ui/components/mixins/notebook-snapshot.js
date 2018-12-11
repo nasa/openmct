@@ -1,4 +1,3 @@
-import $ from 'zepto';
 
 function generateTaskForm(url) {
     var taskForm = {
@@ -81,7 +80,7 @@ function saveSnapShot(dialogService, imageUrl, imageType, imageSize, embedObject
 export default {
     inject: ['openmct', 'domainObject'],
     methods: {
-        takeSnapshot() {
+        takeSnapshot(DOMElement) {
             let exportImageService = this.openmct.$injector.get('exportImageService'),
                 dialogService = this.openmct.$injector.get('dialogService');
 
@@ -92,14 +91,10 @@ export default {
                     name: this.domainObject.name
                 };
 
-            let elementToSnap =
-                $(document.body).find('.overlay .object-holder')[0] ||
-                $(document.body).find(".l-shell__main-container")[0];
+            DOMElement.classList.add('s-status-taking-snapshot');
 
-            $(elementToSnap).addClass('s-status-taking-snapshot');
-
-            exportImageService.exportPNGtoSRC(elementToSnap).then(function (blob) {
-                $(elementToSnap).removeClass("s-status-taking-snapshot");
+            exportImageService.exportPNGtoSRC(DOMElement).then(function (blob) {
+                DOMElement.classList.remove('s-status-taking-snapshot');
 
                 if (blob) {
                     var reader = new window.FileReader();

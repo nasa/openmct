@@ -39,7 +39,10 @@
             </div>
             <!-- Action buttons -->
             <div class="l-browse-bar__actions">
-                <button class="l-browse-bar__actions__edit c-button icon-notebook" title="New Notebook entry" @click="takeSnapshot()"></button>
+                <button class="l-browse-bar__actions__edit c-button icon-notebook" 
+                    title="New Notebook entry" 
+                    @click="snapshot()">
+                </button>
                 <button class="l-browse-bar__actions__notebook-entry c-button c-button--major icon-pencil" title="Edit" v-if="!isEditing" @click="edit()"></button>
                 <button class="l-browse-bar__actions c-button c-button--major icon-save" title="Save and Finish Editing" v-if="isEditing" @click="saveAndFinishEditing()"></button>
                 <button class="l-browse-bar__actions c-button icon-x" title="Cancel Editing" v-if="isEditing" @click="cancelEditing()"></button>
@@ -89,6 +92,10 @@ import snapshotMixin from '../mixins/notebook-snapshot';
                 event.preventDefault();
                 event.stopPropagation();
                 this.openmct.contextMenu._showContextMenuForObjectPath(this.openmct.router.path, event.clientX, event.clientY);
+            },
+            snapshot() {
+                let element = document.getElementsByClassName("l-shell__main-container")[0];
+                this.takeSnapshot(element);
             }
         },
         data: function () {
