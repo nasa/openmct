@@ -1,30 +1,24 @@
 <template>
     <span class="c-disclosure-triangle"
     :class="{
-        'c-disclosure-triangle--expanded' : expanded,
+        'c-disclosure-triangle--expanded' : value,
         'is-enabled' : enabled
     }"
-    @click="toggle"></span>
+    @click="$emit('input', !value)"></span>
 </template>
 
 <script>
     export default {
         props: {
-            expanded:  {
+            value:  {
                 type: Boolean,
-                value: false
+                default: false
             },
             enabled: {
                 // Provided to allow the view-control to still occupy space without displaying a control icon.
                 // Used as such in the tree - when a node doesn't have children, set disabled to true.
                 type: Boolean,
-                value: false
-            }
-        },
-        methods: {
-            toggle(event) {
-                this.expanded = !this.expanded;
-                this.$emit('click', event);
+                default: false
             }
         }
     }

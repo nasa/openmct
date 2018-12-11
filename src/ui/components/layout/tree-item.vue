@@ -4,8 +4,7 @@
             :class="{ 'is-alias' : isAlias }">
             <view-control class="c-tree__item__view-control"
                           :enabled="hasChildren"
-                          :expanded="expanded"
-                          @click="toggleChildren">
+                          v-model="expanded">
             </view-control>
             <object-label :domainObject="node.object"
                           :objectPath="node.objectPath">
@@ -65,19 +64,20 @@
                 delete this.composition;
             }
         },
-        methods: {
-            toggleChildren: function () {
+        watch: {
+            expanded(isExpanded) {
                 if (!this.hasChildren) {
                     return;
                 }
-                this.expanded = !this.expanded;
                 if (!this.loaded && !this.isLoading) {
                     this.composition = this.openmct.composition.get(this.domainObject);
                     this.composition.on('add', this.addChild);
                     this.composition.on('remove', this.removeChild);
                     this.composition.load().then(this.finishLoading());
                 }
-            },
+            }
+        },
+        methods: {
             addChild (child) {
                 this.children.push({
                     id: this.openmct.objects.makeKeyString(child.identifier),
