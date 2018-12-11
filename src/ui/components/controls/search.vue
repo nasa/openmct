@@ -67,7 +67,6 @@
         methods: {
             clearInput() {
                 // Clear the user's input and set 'active' to false
-                this.value = '';
                 this.$emit('clear','');
                 this.active = false;
             }

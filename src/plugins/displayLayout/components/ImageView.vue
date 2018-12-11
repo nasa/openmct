@@ -21,9 +21,13 @@
  *****************************************************************************/
 
 <template>
-    <div class="c-image-view"
-         :style="styleObject">
-    </div>
+    <layout-frame :item="item"
+                  :grid-size="gridSize"
+                  @endDrag="(item, updates) => $emit('endDrag', item, updates)">
+        <div class="c-image-view"
+             :style="style">
+        </div>
+    </layout-frame>
  </template>
 
 <style lang="scss">
@@ -42,24 +46,49 @@
 </style>
 
  <script>
+    import LayoutFrame from './LayoutFrame.vue'
+
     export default {
+        makeDefinition(openmct, gridSize, element) {
+            return {
+                stroke: 'transparent',
+                x: 1,
+                y: 1,
+                width: 10,
+                height: 5,
+                url: element.url
+            };
+        },
+        inject: ['openmct'],
         props: {
-            item: Object
+            item: Object,
+            gridSize: Array,
+            index: Number,
+            initSelect: Boolean
+        },
+        components: {
+            LayoutFrame
         },
         computed: {
-            styleObject() {                
-                let element = this.item.config.element;
+            style() {
                 return {
-                    backgroundImage: 'url(' + element.url + ')',
-                    border: '1px solid ' + element.stroke
+                    backgroundImage: 'url(' + this.item.url + ')',
+                    border: '1px solid ' + this.item.stroke
                 }
             }
         },
         mounted() {
-            this.item.config.attachListeners();
+            let context = {
+                layoutItem: this.item,
+                index: this.index
+            };
+            this.removeSelectable = this.openmct.selection.selectable(
+                this.$el, context, this.initSelect);
         },
         destroyed() {
-            this.item.config.removeListeners();
+            if (this.removeSelectable) {
+                this.removeSelectable();
+            }
         }
     }
  </script>

@@ -1,5 +1,5 @@
 <li class="c-notebook__entry c-ne has-local-controls"
-    v-on:drop="dropOnEntry(entry.id)"
+    v-on:drop="dropOnEntry(entry.id, $event)"
     v-on:dragover="dragoverOnEntry"
     >
     <div class="c-ne__time-and-content">
@@ -19,8 +19,9 @@
             <div class="c-ne__embeds">
                 <notebook-embed
                     v-for="(embed, index) in entry.embeds"
-                    v-bind:embed="embed"
-                    v-bind:entry="entry"
+                    :key="index"
+                    :embed="embed"
+                    :entry="entry"
                 ></notebook-embed>
             </div>
         </div>

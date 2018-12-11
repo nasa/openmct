@@ -22,7 +22,25 @@
 
 /****************************************************** SNOW THEME CONSTANTS */
 
-@import "constants";
+// Fonts
+$heroFont: "Helvetica Neue", Helvetica, Arial, sans-serif;
+$headerFont: $heroFont;
+$bodyFont: $heroFont;
+
+@mixin heroFont($size: 1em) {
+    font-family: $heroFont;
+    font-size: $size;
+}
+
+@mixin headerFont($size: 1em) {
+    font-family: $headerFont;
+    font-size: $size;
+}
+
+@mixin bodyFont($size: 1em) {
+    font-family: $bodyFont;
+    font-size: $size;
+}
 
 // Functions
 @function buttonBg($c: $colorBtnBg) {
@@ -257,7 +275,7 @@ $colorItemTreeSelectedBg: lighten($colorKey, 15%);
 $colorItemTreeSelectedFg: $colorBodyBg;
 $colorItemTreeEditingBg: $editColor;
 $colorItemTreeEditingFg: $editColorFg;
-$colorItemTreeVC: $colorBodyFg;
+$colorItemTreeVC: rgba($colorBodyFg, 0.5);
 $colorItemTreeVCHover: $colorKey;
 $shdwItemTreeIcon: none;
 
