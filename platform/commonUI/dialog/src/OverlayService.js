@@ -95,7 +95,10 @@ define(
 
             // Create the overlay element and add it to the document's body
             element = this.$compile(TEMPLATE)(scope);
-            this.findBody().prepend(element);
+            
+            // Append so that most recent dialog is last in DOM. This means the most recent dialog will be on top when
+            // multiple overlays with the same z-index are active.
+            this.findBody().append(element);
 
             return {
                 dismiss: dismiss

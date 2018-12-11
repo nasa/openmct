@@ -31,6 +31,9 @@ export default class PreviewAction {
         this.description = 'Preview in large dialog';
         this.cssClass = 'icon-eye-open';
 
+        /**
+         * Dependencies
+         */
         this._openmct = openmct;
     }
     invoke(objectPath) {
@@ -46,9 +49,15 @@ export default class PreviewAction {
         });
         preview.$mount();
 
-        this._openmct.overlays.overlay({
+        let overlay = this._openmct.overlays.overlay({
             element: preview.$el,
             size: 'large',
+            buttons: [
+                {
+                    label: 'Done',
+                    callback: () => overlay.dismiss()
+                }
+            ],
             onDestroy: () => preview.$destroy()
         });
     }
