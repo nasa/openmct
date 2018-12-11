@@ -1,12 +1,12 @@
 <template>
-<div class="flex-elem l-flex-col holder grows">
-    <Search @input="applySearch"></Search>
-    <div class="flex-elem grows vscroll scroll-pad">
-        <ul class="tree" id="inspector-elements-tree"
+<div class="c-elements-pool xflex-elem xl-flex-col xholder xgrows">
+    <Search class="c-elements-pool__search" @input="applySearch"></Search>
+    <div class="c-elements-pool__elements xflex-elem xgrows xvscroll xscroll-pad">
+        <ul class="tree c-elements-pool__tree" id="inspector-elements-tree"
             v-if="elements.length > 0">
             <li :key="element.identifier.key" v-for="(element, index) in elements" @drop="moveTo(index)" @dragover="allowDrop">
-                <span class="tree-item">
-                    <span class="grippy-sm"
+                <span class="c-elements-pool__item tree-item">
+                    <span class="icon-grippy"
                           v-if="elements.length > 1 && isEditing"
                           draggable="true"
                           @dragstart="moveFrom(index)">
@@ -22,13 +22,34 @@
 </template>
 <style lang="scss">
     @import "~styles/sass-base";
-    @import "~styles/glyphs";
 
-    .grippy-sm {
-        // Used in editor Elements pool
-        @extend .icon-grippy-12px;
-        cursor: move;
+    .c-elements-pool {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        flex: 1 1 auto;
+
+        > * + * {
+            margin-top: $interiorMargin;
+        }
+
+        &__search {
+            flex: 0 0 auto;
+        }
+
+        &__elements {
+            flex: 1 1 auto;
+            overflow: auto;
+        }
+
+        &__item {
+            .icon-grippy {
+                font-size: 0.8em;
+            }
+        }
+
     }
+
 
     .js-last-place{
         height: 10px;
