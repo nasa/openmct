@@ -130,8 +130,9 @@
 
     export default {
         makeDefinition(openmct, gridSize, domainObject, position) {
-            position = position || DEFAULT_POSITION;
             let defaultDimensions = getDefaultDimensions(gridSize);
+            position = position || DEFAULT_POSITION;
+
             return {
                 width: defaultDimensions[0],
                 height: defaultDimensions[1],
@@ -171,10 +172,7 @@
                     index: this.index
                 };
                 this.removeSelectable = this.openmct.selection.selectable(
-                    this.$el,
-                    context,
-                    this.initSelect
-                );
+                    this.$el, context, this.initSelect);
             }
         },
         mounted() {

@@ -135,8 +135,8 @@
         props: ['domainObject'],
         components: ITEM_TYPE_VIEW_MAP,
         methods: {
-            addElement(itemType) {
-                this.addItem(itemType + '-view');
+            addElement(itemType, element) {
+                this.addItem(itemType + '-view', element);
             },
             setSelection(selection) {
                 if (selection.length === 0) {
@@ -224,20 +224,14 @@
                 }
             },
             addItem(itemType, ...options) {
-                Promise.resolve(getItemDefinition(itemType, this.openmct, this.gridSize, ...options))
-                    .then(item => {
-                        item.type = itemType;
-                        this.trackItem(item);
-                        this.layoutItems.push(item);
-                        this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
-                        this.initSelectIndex = this.layoutItems.length - 1;
-                    });
+                let item = getItemDefinition(itemType, this.openmct, this.gridSize, ...options);
+                item.type = itemType;
+                this.trackItem(item);
+                this.layoutItems.push(item);
+                this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
+                this.initSelectIndex = this.layoutItems.length - 1;
             },
             trackItem(item) {
-                if (!item.id) {
-                    item.id = uuid();
-                }
-                this.itemMap[item.id] = item;
                 if (item.type === "telemetry-view") {
                     this.telemetryViewMap[this.openmct.objects.makeKeyString(item.identifier)] = true;
                 } else if (item.type === "subobject-view") {
@@ -245,7 +239,6 @@
                 }
             },
             initializeItems() {
-                this.itemMap = {};
                 this.telemetryViewMap = {};
                 this.objectViewMap = {};
                 this.layoutItems.forEach(this.trackItem);

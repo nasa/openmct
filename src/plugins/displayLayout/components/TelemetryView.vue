@@ -204,17 +204,14 @@
                 this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
                 this.requestHistoricalData();
                 this.subscribeToObject();
+
                 let context = {
                     item: domainObject,
                     layoutItem: this.item,
                     index: this.index
                 };
-
                 this.removeSelectable = this.openmct.selection.selectable(
-                    this.$el,
-                    context,
-                    this.initSelect
-                );
+                    this.$el, context, this.initSelect);
             }
         },
         mounted() {

@@ -35,6 +35,44 @@ define([], function () {
                     (selection[0].context.item && selection[0].context.item.type === 'layout')));
             },
             toolbar: function (selection) {
+                const DIALOG_FORM = {
+                    'text': {
+                        name: "Text Element Properties",
+                        sections: [
+                            {
+                                rows: [
+                                    {
+                                        key: "text",
+                                        control: "textfield",
+                                        name: "Text",
+                                        required: true
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    'image': {
+                        name: "Image Properties",
+                        sections: [
+                            {
+                                rows: [
+                                    {
+                                        key: "url",
+                                        control: "textfield",
+                                        name: "Image URL",
+                                        "cssClass": "l-input-lg",
+                                        required: true
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                };
+
+                function getUserInput(form) {
+                    return openmct.$injector.get('dialogService').getUserInput(form, {});
+                }
+
                 let selectedParent = selection[1] && selection[1].context.item,
                     selectedObject = selection[0].context.item,
                     layoutItem = selection[0].context.layoutItem,
@@ -46,7 +84,14 @@ define([], function () {
                         control: "menu",
                         domainObject: selectedObject,
                         method: function (option) {
-                            selection[0].context.addElement(option.name.toLowerCase());
+                            let name = option.name.toLowerCase();
+                            let form = DIALOG_FORM[name];
+                            if (form) {
+                                getUserInput(form)
+                                    .then(element => selection[0].context.addElement(name, element));
+                            } else {
+                                selection[0].context.addElement(name);
+                            }
                         },
                         key: "add",
                         icon: "icon-plus",
@@ -77,12 +122,13 @@ define([], function () {
                 }
 
                 let path = `configuration.items[${layoutItemIndex}]`;
+                let separator = {
+                    control: "separator"
+                };
 
                 if (layoutItem.type === 'subobject-view') {
                     if (toolbar.length > 0) {
-                        toolbar.push({
-                            control: "separator"
-                        });
+                        toolbar.push(separator);
                     }
                     toolbar.push({
                         control: "toggle-button",
@@ -103,10 +149,7 @@ define([], function () {
                     });
                 } else {
                     const TEXT_SIZE = [9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96];
-                    let separator = {
-                            control: "separator"
-                        },
-                        fill = {
+                    let fill = {
                             control: "color-picker",
                             domainObject: selectedParent,
                             property: path + ".fill",
@@ -174,7 +217,6 @@ define([], function () {
                         };
 
                     if (layoutItem.type === 'telemetry-view') {
-                        // TODO: add "remove", "order", "useGrid"
                         let displayMode = {
                                 control: "select-menu",
                                 domainObject: selectedParent,
@@ -224,28 +266,13 @@ define([], function () {
                             width
                         ];
                     } else if (layoutItem.type === 'text-view' ) {
-                        // TODO: Add "remove", "order", "useGrid"
                         let text = {
                             control: "button",
                             domainObject: selectedParent,
                             property: path,
                             icon: "icon-gear",
                             title: "Edit text properties",
-                            dialog: {
-                                name: "Text Element Properties",
-                                sections: [
-                                    {
-                                        rows: [
-                                            {
-                                                key: "text",
-                                                control: "textfield",
-                                                name: "Text",
-                                                required: true
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
+                            dialog: DIALOG_FORM['text']
                         };
                         toolbar = [
                             fill,
@@ -262,7 +289,6 @@ define([], function () {
                             text
                         ];
                     } else if (layoutItem.type === 'box-view') {
-                        // TODO: Add "remove", "order", "useGrid"
                         toolbar = [
                             fill,
                             stroke,
@@ -273,29 +299,13 @@ define([], function () {
                             width
                         ];
                     } else if (layoutItem.type === 'image-view') {
-                        // TODO: Add "remove", "order", "useGrid"
                         let url = {
                             control: "button",
                             domainObject: selectedParent,
                             property: path,
                             icon: "icon-image",
                             title: "Edit image properties",
-                            dialog: {
-                                name: "Image Properties",
-                                sections: [
-                                    {
-                                        rows: [
-                                            {
-                                                key: "url",
-                                                control: "textfield",
-                                                name: "Image URL",
-                                                "cssClass": "l-input-lg",
-                                                required: true
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
+                            dialog: DIALOG_FORM['image']
                         };
                         toolbar = [
                             stroke,
@@ -308,7 +318,6 @@ define([], function () {
                             url
                         ];
                     } else if (layoutItem.type === 'line-view') {
-                        // TODO: Add "remove", "order", "useGrid"
                         let x2 = {
                             control: "input",
                             type: "number",

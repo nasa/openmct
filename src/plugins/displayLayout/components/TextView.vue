@@ -48,25 +48,9 @@
  <script>
     import LayoutFrame from './LayoutFrame.vue'
 
-    const TEXT_DIALOG = {
-        name: "Text Element Properties",
-        sections: [
-            {
-                rows: [
-                    {
-                        key: "text",
-                        control: "textfield",
-                        name: "Text",
-                        required: true
-                    }
-                ]
-            }
-        ]
-    };
-
     export default {
-        makeDefinition() {
-            let text = {
+        makeDefinition(openmct, gridSize, element) {
+            return {
                 fill: 'transparent',
                 stroke: 'transparent',
                 size: '13px',
@@ -74,10 +58,9 @@
                 x: 1,
                 y: 1,
                 width: 10,
-                height: 5
+                height: 5,
+                text: element.text
             };
-
-            return openmct.$injector.get('dialogService').getUserInput(TEXT_DIALOG, text);
         },
         inject: ['openmct'],
         props: {
@@ -105,10 +88,7 @@
                 index: this.index
             };
             this.removeSelectable = this.openmct.selection.selectable(
-                this.$el,
-                context,
-                this.initSelect
-            );
+                this.$el, context, this.initSelect);
         },
         destroyed() {
             if (this.removeSelectable) {

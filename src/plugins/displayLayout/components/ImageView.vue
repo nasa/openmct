@@ -48,34 +48,16 @@
  <script>
     import LayoutFrame from './LayoutFrame.vue'
 
-    const IMAGE_DIALOG = {
-        name: "Image Properties",
-        sections: [
-            {
-                rows: [
-                    {
-                        key: "url",
-                        control: "textfield",
-                        name: "Image URL",
-                        "cssClass": "l-input-lg",
-                        required: true
-                    }
-                ]
-            }
-        ]
-    };
-
     export default {
-        makeDefinition() {
-            let image = {
+        makeDefinition(openmct, gridSize, element) {
+            return {
                 stroke: 'transparent',
                 x: 1,
                 y: 1,
                 width: 10,
-                height: 5
+                height: 5,
+                url: element.url
             };
-
-            return openmct.$injector.get('dialogService').getUserInput(IMAGE_DIALOG, image);
         },
         inject: ['openmct'],
         props: {
@@ -101,10 +83,7 @@
                 index: this.index
             };
             this.removeSelectable = this.openmct.selection.selectable(
-                this.$el,
-                context,
-                this.initSelect
-            );
+                this.$el, context, this.initSelect);
         },
         destroyed() {
             if (this.removeSelectable) {
