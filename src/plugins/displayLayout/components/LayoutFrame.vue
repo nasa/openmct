@@ -21,14 +21,16 @@
  *****************************************************************************/
 
 <template>
-    <div class="c-frame has-local-controls"
-         :style="item.config.style"
-         :class="[classObject, {
-            'u-inspectable': item.config.inspectable()
-         }]"
-         @dblclick="drill(item.id, $event)">
+    <div class="l-layout__frame c-frame has-local-controls"
+         :class="{
+             'no-frame': !item.hasFrame,
+             'u-inspectable': inspectable,
+             'is-drilled-in': item.drilledIn
+         }"
+         :style="style"
+         @dblclick="drill($event)">
 
-        <component :is="item.type" :item="item" :gridSize="gridSize"></component>
+        <slot></slot>
 
         <!-- Drag handles -->
         <div class="c-frame-edit">
@@ -72,12 +74,6 @@
 
 
 <script>
-    import SubobjectView from './SubobjectView.vue'
-    import TelemetryView from './TelemetryView.vue'
-    import BoxView from './BoxView.vue'
-    import TextView from './TextView.vue'
-    import LineView from './LineView.vue'
-    import ImageView from './ImageView.vue'
     import LayoutDrag from './../LayoutDrag'
 
     export default {
@@ -86,46 +82,51 @@
             item: Object,
             gridSize: Array
         },
-        components: {
-            SubobjectView,
-            TelemetryView,
-            BoxView,
-            TextView,
-            LineView,
-            ImageView
+        data() {
+            return {
+                dragPosition: undefined
+            }
         },
         computed: {
-            classObject: function () {
-                return {
-                    'is-drilled-in': this.item.drilledIn,
-                    'no-frame': !this.item.config.hasFrame()
+            style() {
+                let {x, y, width, height} = this.item;
+
+                if (this.dragPosition) {
+                    [x, y] = this.dragPosition.position;
+                    [width, height] = this.dragPosition.dimensions;
                 }
+
+                return {
+                    left: (this.gridSize[0] * x) + 'px',
+                    top: (this.gridSize[1] * y) + 'px',
+                    width: (this.gridSize[0] * width) + 'px',
+                    height: (this.gridSize[1] * height) + 'px',
+                    minWidth: (this.gridSize[0] * width) + 'px',
+                    minHeight: (this.gridSize[1] * height) + 'px'
+                };
+            },
+            inspectable() {
+                return this.item.type === 'subobject-view' || this.item.type === 'telemetry-view';
             }
         },
         methods: {
-            drill(id, $event) {
+            drill($event) {
                 if ($event) {
                     $event.stopPropagation();
                 }
 
-                if (!this.openmct.editor.isEditing()) {
+                if (!this.openmct.editor.isEditing() || !this.item.identifier) {
                     return;
                 }
 
-                if (!this.item.domainObject) {
-                    return;
-                }
+                this.openmct.objects.get(this.item.identifier)
+                    .then(domainObject => {
+                        if (this.openmct.composition.get(domainObject) === undefined) {
+                            return;
+                        }
 
-                if (this.openmct.composition.get(this.item.domainObject) === undefined) {
-                    return;
-                }
-
-                // Disable for fixed position.
-                if (this.item.domainObject.type === 'telemetry.fixed') {
-                    return;
-                }
-
-                this.$emit('drilledIn', id);
+                        this.$emit('drilledIn', this.item);
+                    });
             },
             updatePosition(event) {
                 let currentPosition = [event.pageX, event.pageY];
@@ -138,51 +139,31 @@
                 document.body.addEventListener('mousemove', this.continueDrag);
                 document.body.addEventListener('mouseup', this.endDrag);
 
+                this.dragPosition = {
+                    position: [this.item.x, this.item.y],
+                    dimensions: [this.item.width, this.item.height]
+                };
                 this.updatePosition(event);
-                this.activeDrag = new LayoutDrag(
-                    this.item.config.position(),
-                    posFactor,
-                    dimFactor,
-                    this.gridSize
-                );
+                this.activeDrag = new LayoutDrag(this.dragPosition, posFactor, dimFactor, this.gridSize);
                 event.preventDefault();
             },
             continueDrag(event) {
                 event.preventDefault();
                 this.updatePosition(event);
-
-                if (this.activeDrag) {
-                    this.$emit(
-                        'dragInProgress',
-                        this.item,
-                        this.activeDrag.getAdjustedPosition(this.delta)
-                    );
-                }
+                this.dragPosition = this.activeDrag.getAdjustedPosition(this.delta);
             },
             endDrag(event) {
                 document.body.removeEventListener('mousemove', this.continueDrag);
                 document.body.removeEventListener('mouseup', this.endDrag);
                 this.continueDrag(event);
-                this.$emit('endDrag', this.item);
+                let [x, y] = this.dragPosition.position;
+                let [width, height] = this.dragPosition.dimensions;
+                this.$emit('endDrag', this.item, {x, y, width, height});
+                this.dragPosition = undefined;
                 this.initialPosition = undefined;
+                this.delta = undefined;
                 event.preventDefault();
             }
-        },
-        mounted() {
-            let context = {
-                item: this.item.domainObject,
-                layoutItem: this.item,
-                addElement: this.$parent.addElement
-            };
-
-            this.removeSelectable = this.openmct.selection.selectable(
-                this.$el,
-                context,
-                this.item.initSelect
-            );
-        },
-        destroyed() {
-            this.removeSelectable();
         }
     }
 </script>

@@ -14,7 +14,7 @@ export default {
                 return;
             }
             return '#/browse/' + this.objectPath
-                .map(o => this.openmct.objects.makeKeyString(o.identifier))
+                .map(o => o && this.openmct.objects.makeKeyString(o.identifier))
                 .reverse()
                 .join('/');
         }
