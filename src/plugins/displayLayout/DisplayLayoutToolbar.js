@@ -35,9 +35,48 @@ define([], function () {
                     (selection[0].context.item && selection[0].context.item.type === 'layout')));
             },
             toolbar: function (selection) {
+                const DIALOG_FORM = {
+                    'text': {
+                        name: "Text Element Properties",
+                        sections: [
+                            {
+                                rows: [
+                                    {
+                                        key: "text",
+                                        control: "textfield",
+                                        name: "Text",
+                                        required: true
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    'image': {
+                        name: "Image Properties",
+                        sections: [
+                            {
+                                rows: [
+                                    {
+                                        key: "url",
+                                        control: "textfield",
+                                        name: "Image URL",
+                                        "cssClass": "l-input-lg",
+                                        required: true
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                };
+
+                function getUserInput(form) {
+                    return openmct.$injector.get('dialogService').getUserInput(form, {});
+                }
+
                 let selectedParent = selection[1] && selection[1].context.item,
                     selectedObject = selection[0].context.item,
                     layoutItem = selection[0].context.layoutItem,
+                    layoutItemIndex = selection[0].context.index,
                     toolbar = [];
 
                 if (selectedObject && selectedObject.type === 'layout') {
@@ -45,7 +84,14 @@ define([], function () {
                         control: "menu",
                         domainObject: selectedObject,
                         method: function (option) {
-                            selection[0].context.addElement(option.name.toLowerCase());
+                            let name = option.name.toLowerCase();
+                            let form = DIALOG_FORM[name];
+                            if (form) {
+                                getUserInput(form)
+                                    .then(element => selection[0].context.addElement(name, element));
+                            } else {
+                                selection[0].context.addElement(name);
+                            }
                         },
                         key: "add",
                         icon: "icon-plus",
@@ -75,16 +121,19 @@ define([], function () {
                     return toolbar;
                 }
 
+                let path = `configuration.items[${layoutItemIndex}]`;
+                let separator = {
+                    control: "separator"
+                };
+
                 if (layoutItem.type === 'subobject-view') {
                     if (toolbar.length > 0) {
-                        toolbar.push({
-                            control: "separator"
-                        });
+                        toolbar.push(separator);
                     }
                     toolbar.push({
                         control: "toggle-button",
                         domainObject: selectedParent,
-                        property: "configuration.panels[" + layoutItem.id + "].hasFrame",
+                        property: path + ".hasFrame",
                         options: [
                             {
                                 value: false,
@@ -100,19 +149,7 @@ define([], function () {
                     });
                 } else {
                     const TEXT_SIZE = [9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96];
-                    let path;
-                    // TODO: get the path from the view configuration
-                    // let path = layoutItem.config.path();
-                    if (layoutItem.type === 'telemetry-view') {
-                        path = "configuration.alphanumerics[" + layoutItem.config.alphanumeric.index + "]";
-                    } else {
-                        path = "configuration.elements[" + layoutItem.config.element.index + "]";
-                    }
-
-                    let separator = {
-                            control: "separator"
-                        },
-                        fill = {
+                    let fill = {
                             control: "color-picker",
                             domainObject: selectedParent,
                             property: path + ".fill",
@@ -180,9 +217,7 @@ define([], function () {
                         };
 
                     if (layoutItem.type === 'telemetry-view') {
-                        // TODO: add "remove", "order", "useGrid"
-                        let metadata = openmct.telemetry.getMetadata(layoutItem.domainObject),
-                            displayMode = {
+                        let displayMode = {
                                 control: "select-menu",
                                 domainObject: selectedParent,
                                 property: path + ".displayMode",
@@ -207,7 +242,7 @@ define([], function () {
                                 domainObject: selectedParent,
                                 property: path + ".value",
                                 title: "Set value",
-                                options: metadata.values().map(value => {
+                                options: openmct.telemetry.getMetadata(selectedObject).values().map(value => {
                                     return {
                                         name: value.name,
                                         value: value.key
@@ -231,28 +266,13 @@ define([], function () {
                             width
                         ];
                     } else if (layoutItem.type === 'text-view' ) {
-                        // TODO: Add "remove", "order", "useGrid"
                         let text = {
                             control: "button",
                             domainObject: selectedParent,
                             property: path,
                             icon: "icon-gear",
                             title: "Edit text properties",
-                            dialog: {
-                                name: "Text Element Properties",
-                                sections: [
-                                    {
-                                        rows: [
-                                            {
-                                                key: "text",
-                                                control: "textfield",
-                                                name: "Text",
-                                                required: true
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
+                            dialog: DIALOG_FORM['text']
                         };
                         toolbar = [
                             fill,
@@ -269,7 +289,6 @@ define([], function () {
                             text
                         ];
                     } else if (layoutItem.type === 'box-view') {
-                        // TODO: Add "remove", "order", "useGrid"
                         toolbar = [
                             fill,
                             stroke,
@@ -280,30 +299,14 @@ define([], function () {
                             width
                         ];
                     } else if (layoutItem.type === 'image-view') {
-                        // TODO: Add "remove", "order", "useGrid"
                         let url = {
                             control: "button",
                             domainObject: selectedParent,
                             property: path,
                             icon: "icon-image",
                             title: "Edit image properties",
-                            dialog: {
-                                name: "Image Properties",
-                                sections: [
-                                    {
-                                        rows: [
-                                            {
-                                                key: "url",
-                                                control: "textfield",
-                                                name: "Image URL",
-                                                "cssClass": "l-input-lg",
-                                                required: true
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        };                        
+                            dialog: DIALOG_FORM['image']
+                        };
                         toolbar = [
                             stroke,
                             separator,
@@ -315,8 +318,30 @@ define([], function () {
                             url
                         ];
                     } else if (layoutItem.type === 'line-view') {
-                        // TODO: Add "remove", "order", "useGrid", "x1", "y1", x2", "y2"
-                        toolbar = [stroke];
+                        let x2 = {
+                            control: "input",
+                            type: "number",
+                            domainObject: selectedParent,
+                            property: path + ".x2",
+                            label: "X2:",
+                            title: "X2 position"
+                        },
+                        y2 = {
+                            control: "input",
+                            type: "number",
+                            domainObject: selectedParent,
+                            property: path + ".y2",
+                            label: "Y2:",
+                            title: "Y2 position",
+                        };
+                        toolbar = [
+                            stroke,
+                            separator,
+                            x,
+                            y,
+                            x2,
+                            y2
+                        ];
                     }
                 }
 

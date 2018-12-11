@@ -21,10 +21,14 @@
  *****************************************************************************/
 
  <template>
-    <div class="c-text-view"
-         :style="styleObject">
-        {{ item.config.element.text }}
-    </div>
+    <layout-frame :item="item"
+                  :grid-size="gridSize"
+                  @endDrag="(item, updates) => $emit('endDrag', item, updates)">
+        <div class="c-text-view"
+             :style="style">
+            {{ item.text }}
+        </div>
+    </layout-frame>
  </template>
 
 <style lang="scss">
@@ -42,26 +46,55 @@
 </style>
 
  <script>
+    import LayoutFrame from './LayoutFrame.vue'
+
     export default {
+        makeDefinition(openmct, gridSize, element) {
+            return {
+                fill: 'transparent',
+                stroke: 'transparent',
+                size: '13px',
+                color: '',
+                x: 1,
+                y: 1,
+                width: 10,
+                height: 5,
+                text: element.text
+            };
+        },
+        inject: ['openmct'],
         props: {
-            item: Object
+            item: Object,
+            gridSize: Array,
+            index: Number,
+            initSelect: Boolean
+        },
+        components: {
+            LayoutFrame
         },
         computed: {
-            styleObject() {
-                let element = this.item.config.element;
+            style() {
                 return {
-                    backgroundColor: element.fill,
-                    borderColor: element.stroke,
-                    color: element.color,
-                    fontSize: element.size
-                }
+                    backgroundColor: this.item.fill,
+                    borderColor: this.item.stroke,
+                    color: this.item.color,
+                    fontSize: this.item.size
+                };
             }
         },
         mounted() {
-            this.item.config.attachListeners();
+            let context = {
+                layoutItem: this.item,
+                index: this.index
+            };
+            this.removeSelectable = this.openmct.selection.selectable(
+                this.$el, context, this.initSelect);
         },
         destroyed() {
-            this.item.config.removeListeners();
+            if (this.removeSelectable) {
+                this.removeSelectable();
+            }
         }
     }
  </script>
+ 

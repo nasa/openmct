@@ -20,24 +20,29 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="u-contents">
-        <div class="c-so-view__header">
-            <div class="c-so-view__header__start">
-                <div class="c-so-view__header__name"
-                     :class="cssClass">
-                    {{ item.domainObject.name }}
+    <layout-frame :item="item"
+                  :grid-size="gridSize"
+                  @endDrag="(item, updates) => $emit('endDrag', item, updates)"
+                  @drilledIn="item => $emit('drilledIn', item)">
+        <div class="u-contents">
+            <div class="c-so-view__header">
+                <div class="c-so-view__header__start">
+                    <div class="c-so-view__header__name"
+                         :class="cssClass">
+                        {{ domainObject && domainObject.name }}
+                    </div>
+                    <context-menu-drop-down
+                        :object-path="objectPath">
+                    </context-menu-drop-down>
                 </div>
-                <context-menu-drop-down
-                    :object-path="objectPath">
-                </context-menu-drop-down>
+                <div class="c-so-view__header__end">
+                    <div class="c-button icon-expand local-controls--hidden"></div>
+                </div>
             </div>
-            <div class="c-so-view__header__end">
-                <div class="c-button icon-expand local-controls--hidden"></div>
-            </div>
+            <object-view class="c-so-view__object-view"
+                         :object="domainObject"></object-view>
         </div>
-        <object-view class="c-so-view__object-view"
-                     :object="item.domainObject"></object-view>
-    </div>
+    </layout-frame>
 </template>
 
 <style lang="scss">
@@ -101,34 +106,82 @@
 </style>
 
 <script>
-    import ObjectView from '../../../ui/components/layout/ObjectView.vue';
-    import contextMenuDropDown from './contextMenuDropDown.vue';
+    import ObjectView from '../../../ui/components/layout/ObjectView.vue'
+    import ContextMenuDropDown from './contextMenuDropDown.vue';
+    import LayoutFrame from './LayoutFrame.vue'
+
+    const MINIMUM_FRAME_SIZE = [320, 180],
+          DEFAULT_DIMENSIONS = [10, 10],
+          DEFAULT_POSITION = [1, 1],
+          DEFAULT_HIDDEN_FRAME_TYPES = ['hyperlink', 'summary-widget'];
+
+    function getDefaultDimensions(gridSize) {
+        return MINIMUM_FRAME_SIZE.map((min, index) => {
+            return Math.max(
+                Math.ceil(min / gridSize[index]),
+                DEFAULT_DIMENSIONS[index]
+            );
+        });
+    }
+
+    function hasFrameByDefault(type) {
+        return DEFAULT_HIDDEN_FRAME_TYPES.indexOf(type) === -1;
+    }
 
     export default {
+        makeDefinition(openmct, gridSize, domainObject, position) {
+            let defaultDimensions = getDefaultDimensions(gridSize);
+            position = position || DEFAULT_POSITION;
+
+            return {
+                width: defaultDimensions[0],
+                height: defaultDimensions[1],
+                x: position[0],
+                y: position[1],
+                identifier: domainObject.identifier,
+                hasFrame: hasFrameByDefault(domainObject.type)
+            };
+        },
         inject: ['openmct'],
         props: {
-            item: Object
+            item: Object,
+            gridSize: Array,
+            initSelect: Boolean,
+            index: Number
+        },
+        data() {
+            return {
+                domainObject: undefined,
+                cssClass: undefined,
+                objectPath: []
+            }
         },
         components: {
             ObjectView,
-            contextMenuDropDown
+            ContextMenuDropDown,
+            LayoutFrame
         },
-        data() {
-            let type = this.openmct.types.get(this.item.domainObject.type);
-
-            return {
-                cssClass: type.definition.cssClass,
-                objectPath: [this.item.domainObject].concat(this.openmct.router.path)
+        methods: {
+            setObject(domainObject) {
+                this.domainObject = domainObject;
+                this.objectPath = [this.domainObject].concat(this.openmct.router.path);
+                this.cssClass = this.openmct.types.get(this.domainObject.type).definition.cssClass;
+                let context = {
+                    item: domainObject,
+                    layoutItem: this.item,
+                    index: this.index
+                };
+                this.removeSelectable = this.openmct.selection.selectable(
+                    this.$el, context, this.initSelect);
             }
         },
         mounted() {
-            if (this.item.config) {
-                this.item.config.attachListeners();
-            }
+            this.openmct.objects.get(this.item.identifier)
+                .then(this.setObject);
         },
         destroyed() {
-            if (this.item.config) {
-                this.item.config.removeListeners();
+            if (this.removeSelectable) {
+                this.removeSelectable();
             }
         }
     }

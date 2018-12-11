@@ -20,37 +20,212 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
- <template>
-  <div>
-    <svg :width="gridSize[0] * element.width"
-         :height=" gridSize[1] * element.height">
-        <line :x1=" gridSize[0] * element.x1 + 1"
-              :y1="gridSize[1] * element.y1 + 1 "
-              :x2="gridSize[0] * element.x2 + 1"
-              :y2=" gridSize[1] * element.y2 + 1 "
-              :stroke="element.stroke"
-              stroke-width="2">
-        </line>
-    </svg>
-  </div>
- </template>
+<template>
+    <div class="l-layout__frame c-frame has-local-controls no-frame"
+         :style="style">
+        <svg width="100%"
+             height="100%">
+            <line v-bind="linePosition"
+                  :stroke="item.stroke"
+                  stroke-width="2">
+            </line>
+        </svg>
+
+        <div class="c-frame-edit">
+            <div class="c-frame-edit__move"
+                 @mousedown="startDrag($event)"></div>
+            <div class="c-frame-edit__handle"
+                 :class="startHandleClass"
+                 @mousedown="startDrag($event, 'start')"></div>
+            <div class="c-frame-edit__handle"
+                 :class="endHandleClass"
+                 @mousedown="startDrag($event, 'end')"></div>
+        </div>
+    </div>
+</template>
 
  <script>
+
+    const START_HANDLE_QUADRANTS = {
+        1: 'c-frame-edit__handle--sw',
+        2: 'c-frame-edit__handle--se',
+        3: 'c-frame-edit__handle--ne',
+        4: 'c-frame-edit__handle--nw'
+    };
+
+    const END_HANDLE_QUADRANTS = {
+        1: 'c-frame-edit__handle--ne',
+        2: 'c-frame-edit__handle--nw',
+        3: 'c-frame-edit__handle--sw',
+        4: 'c-frame-edit__handle--se'
+    };
+
     export default {
+        makeDefinition() {
+            return {
+                x: 5,
+                y: 10,
+                x2: 10,
+                y2: 5,
+                stroke: '#717171'
+            };
+        },
+        inject: ['openmct'],
         props: {
             item: Object,
-            gridSize: Array
+            gridSize: Array,
+            initSelect: Boolean,
+            index: Number,
+        },
+        data() {
+            return {
+                dragPosition: undefined
+            };
         },
         computed: {
-            element() {
-                return this.item.config.element;
+            position() {
+                let {x, y, x2, y2} = this.item;
+                if (this.dragPosition) {
+                    ({x, y, x2, y2} = this.dragPosition);
+                }
+                return {x, y, x2, y2};
+            },
+            style() {
+                let {x, y, x2, y2} = this.position;
+                let width = this.gridSize[0] * Math.abs(x - x2);
+                let height = this.gridSize[1] * Math.abs(y - y2);
+                let left = this.gridSize[0] * Math.min(x, x2);
+                let top = this.gridSize[1] * Math.min(y, y2);
+                return {
+                    left: `${left}px`,
+                    top: `${top}px`,
+                    width: `${width}px`,
+                    height: `${height}px`,
+                    minWidth: `${width}px`,
+                    minHeight: `${height}px`,
+                    position: 'absolute'
+                };
+            },
+            startHandleClass() {
+                return START_HANDLE_QUADRANTS[this.vectorQuadrant];
+            },
+            endHandleClass() {
+                return END_HANDLE_QUADRANTS[this.vectorQuadrant];
+            },
+            vectorQuadrant() {
+                let {x, y, x2, y2} = this.position;
+                if (x2 > x) {
+                    if (y2 < y) {
+                        return 1;
+                    }
+                    return 4;
+                }
+                if (y2 < y) {
+                    return 2;
+                }
+                return 3;
+            },
+            linePosition() {
+                if (this.vectorQuadrant === 1) {
+                    return {
+                        x1: '0%',
+                        y1: '100%',
+                        x2: '100%',
+                        y2: '0%'
+                    };
+                }
+                if (this.vectorQuadrant === 4) {
+                    return {
+                        x1: '0%',
+                        y1: '0%',
+                        x2: '100%',
+                        y2: '100%'
+                    };
+                }
+                if (this.vectorQuadrant === 2) {
+                    return {
+                        x1: '0%',
+                        y1: '0%',
+                        x2: '100%',
+                        y2: '100%'
+                    };
+                }
+                if (this.vectorQuadrant === 3) {
+                    return {
+                        x1: '100%',
+                        y1: '0%',
+                        x2: '0%',
+                        y2: '100%'
+                    };
+                }
+            }
+        },
+        methods: {
+            startDrag(event, position) {
+                this.dragging = position;
+                document.body.addEventListener('mousemove', this.continueDrag);
+                document.body.addEventListener('mouseup', this.endDrag);
+                this.startPosition = [event.pageX, event.pageY];
+                this.dragPosition = {
+                    x: this.item.x,
+                    y: this.item.y,
+                    x2: this.item.x2,
+                    y2: this.item.y2
+                };
+                event.preventDefault();
+            },
+            continueDrag(event) {
+                event.preventDefault();
+                let pxDeltaX = this.startPosition[0] - event.pageX;
+                let pxDeltaY = this.startPosition[1] - event.pageY;
+                this.dragPosition = this.calculateDragPosition(pxDeltaX, pxDeltaY);
+            },
+            endDrag(event) {
+                document.body.removeEventListener('mousemove', this.continueDrag);
+                document.body.removeEventListener('mouseup', this.endDrag);
+                let {x, y, x2, y2} = this.dragPosition;
+                this.$emit('endDrag', this.item, {x, y, x2, y2});
+                this.dragPosition = undefined;
+                this.dragging = undefined;
+                event.preventDefault();
+            },
+            calculateDragPosition(pxDeltaX, pxDeltaY) {
+                let gridDeltaX = Math.round(pxDeltaX / this.gridSize[0]);
+                let gridDeltaY = Math.round(pxDeltaY / this.gridSize[0]); // TODO: should this be gridSize[1]?
+                let {x, y, x2, y2} = this.item;
+                let dragPosition = {x, y, x2, y2};
+                if (this.dragging === 'start') {
+                    dragPosition.x -= gridDeltaX;
+                    dragPosition.y -= gridDeltaY;
+                } else if (this.dragging === 'end') {
+                    dragPosition.x2 -= gridDeltaX;
+                    dragPosition.y2 -= gridDeltaY;
+                } else {
+                    // dragging entire line.
+                    dragPosition.x -= gridDeltaX;
+                    dragPosition.y -= gridDeltaY;
+                    dragPosition.x2 -= gridDeltaX;
+                    dragPosition.y2 -= gridDeltaY;
+                }
+                return dragPosition;
             }
         },
         mounted() {
-            this.item.config.attachListeners();
+            let context = {
+                layoutItem: this.item,
+                index: this.index
+            };
+
+            this.removeSelectable = this.openmct.selection.selectable(
+                this.$el,
+                context,
+                this.initSelect
+            );
         },
         destroyed() {
-            this.item.config.removeListeners();
+            if (this.removeSelectable) {
+                this.removeSelectable();
+            }
         }
     }
  </script>
