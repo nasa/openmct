@@ -51,6 +51,7 @@
 </style>
 
 <script>
+    import lodash from 'lodash';
     import LadRow from './LadRow.vue';
 
     export default {
@@ -66,18 +67,6 @@
         }
     },
     methods: {
-        indexOf(object, array) {
-            let index = -1;
-
-            array.forEach((o,i) => {
-                if(o.domainObject.identifier.key === object.key) {
-                    index = i;
-                    return;
-                }
-            });
-
-            return index;
-        },
         addPrimary(domainObject) {
             let primary = {};
             primary.domainObject = domainObject;
@@ -97,7 +86,7 @@
             this.compositions.push({composition, addCallback, removeCallback});
         },
         removePrimary(identifier) {
-            let index = this.indexOf(identifier, this.primaryTelemetryObjects),
+            let index = _.findIndex(this.primaryTelemetryObjects, (primary) => this.openmct.objects.makeKeyString(identifier) === primary.key),
                 primary = this.primaryTelemetryObjects[index];
             
             this.$set(this.secondaryTelemetryObjects, primary.key, undefined);
@@ -119,7 +108,7 @@
         removeSecondary(primary) {
             return (identifier) => {
                 let array = this.secondaryTelemetryObjects[primary.key],
-                    index = this.indexOf(identifier, array);
+                    index = _.findIndex(array, (secondary) => this.openmct.objects.makeKeyString(identifier) === secondary.key);
 
                 array.splice(index, 1);
 

@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import lodash from 'lodash';
 import LadRow from './LadRow.vue';
 
 export default {
@@ -53,18 +54,6 @@ export default {
         }
     },
     methods: {
-        indexOf(object, array) {
-            let index = -1;
-
-            array.forEach((o,i) => {
-                if(o.domainObject.identifier.key === object.key) {
-                    index = i;
-                    return;
-                }
-            });
-
-            return index;
-        },
         addItem(domainObject) {
             let item = {};
             item.domainObject = domainObject;
@@ -73,7 +62,7 @@ export default {
             this.items.push(item);
         },
         removeItem(identifier) {
-            let index = this.indexOf(identifier, this.items);
+            let index = _.findIndex(this.items, (item) => this.openmct.objects.makeKeyString(identifier) === item.key);
 
             this.items.splice(index, 1);
         }
