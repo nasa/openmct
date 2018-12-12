@@ -32,12 +32,17 @@
 
     .c-create-button,
     .c-create-menu {
-
         font-size: 1.1em;
     }
 
-    .c-create-button .c-button__label {
-        text-transform: $createBtnTextTransform;
+    .c-create-button {
+        .is-editing & {
+            @include disabled();
+        }
+
+        .c-button__label {
+            text-transform: $createBtnTextTransform;
+        }
     }
 
     .c-create-menu {
