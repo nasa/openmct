@@ -39,18 +39,13 @@ class NotebookSnapshot {
                 name: domainObject.name
             };
 
-        domElement.classList.add('s-status-taking-snapshot');
+        this.exportImageService.exportPNGtoSRC(domElement, 's-status-taking-snapshot').then(function (blob) {
 
-        this.exportImageService.exportPNGtoSRC(domElement).then(function (blob) {
-            domElement.classList.remove('s-status-taking-snapshot');
-
-            if (blob) {
-                var reader = new window.FileReader();
-                reader.readAsDataURL(blob);
-                reader.onloadend = function () {
-                    this._saveSnapShot(reader.result, blob.type, blob.size, embedObject);
-                }.bind(this);
-            }
+            var reader = new window.FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = function () {
+                this._saveSnapShot(reader.result, embedObject);
+            }.bind(this);
         }.bind(this));
     }
 
@@ -104,7 +99,7 @@ class NotebookSnapshot {
     /**
      * @private
      */
-    _saveSnapShot(imageUrl, imageType, imageSize, embedObject) {
+    _saveSnapShot(imageUrl, embedObject) {
         let taskForm = this._generateTaskForm(imageUrl);
 
         this.dialogService.getDialogResponse(
@@ -113,9 +108,7 @@ class NotebookSnapshot {
             () => taskForm.value
         ).then(options => {
             let snapshotObject = {
-                src: options.snapPreview || imageUrl,
-                type: imageType,
-                size: imageSize
+                src: options.snapPreview || imageUrl
             };
 
             options.notebook.useCapability('mutation', function (model) {
