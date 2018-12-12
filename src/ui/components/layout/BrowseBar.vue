@@ -131,7 +131,6 @@ import NotebookSnapshot from '../utils/notebook-snapshot';
             }
         },
         mounted: function () {
-            console.log(this.domainObject);
             this.notebookSnapshot = new NotebookSnapshot(this.openmct);
 
             document.addEventListener('click', () => {
