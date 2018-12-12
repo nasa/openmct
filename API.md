@@ -428,7 +428,7 @@ attribute      | type   | flags    | notes
 
 ###### Value Hints
 
-Each telemetry value description has an object defining hints.  Keys in this this object represent the hint itself, and the value represents the weight of that hint.  A lower weight means the hint has a higher priority.  For example, multiple values could be hinted for use as the y axis of a plot (raw, engineering), but the highest priority would be the default choice.  Likewise, a table will use hints to determine the default order of columns.
+Each telemetry value description has an object defining hints.  Keys in this this object represent the hint itself, and the value represents the weight of that hint.  A lower weight means the hint has a higher priority.  For example, multiple values could be hinted for use as the y-axis of a plot (raw, engineering), but the highest priority would be the default choice.  Likewise, a table will use hints to determine the default order of columns.
 
 Known hints:
 
@@ -510,7 +510,7 @@ example:
 }
 ```
 
-This strategy says "I want the lastest data point in this time range".  A provider which recognizes this request should return only one value-- the latest-- in the requested time range.  Depending on your back-end implementation, performing these queries in bulk can be a large performance increase.  These are generally issued by views that are only capable of displaying a single value and only need to show the latest value.
+This strategy says "I want the latest data point in this time range".  A provider which recognizes this request should return only one value-- the latest-- in the requested time range.  Depending on your back-end implementation, performing these queries in bulk can be a large performance increase.  These are generally issued by views that are only capable of displaying a single value and only need to show the latest value.
 
 ##### `minmax` request strategy
 
@@ -605,7 +605,7 @@ evaluator, take a look at `examples/generator/SinewaveLimitProvider.js`.
 
 ### Telemetry Consumer APIs **draft**
 
-The APIs for requesting telemetry from Open MCT -- e.g. for use in custom views -- are currently in draft state and are being revised.  If you'd like to experiement with them before they are finalized, please contact the team via the contact-us link on our website.
+The APIs for requesting telemetry from Open MCT -- e.g. for use in custom views -- are currently in draft state and are being revised.  If you'd like to experiment with them before they are finalized, please contact the team via the contact-us link on our website.
 
 
 ## Time API
@@ -1032,7 +1032,7 @@ different colors to indicate status.
 
 ### Custom Indicators
 
-A completely custom indicator can be added by simple providing a DOM element to place alongside other indicators.
+A completely custom indicator can be added by simply providing a DOM element to place alongside other indicators.
 
 ``` javascript
     var domNode = document.createElement('div');
