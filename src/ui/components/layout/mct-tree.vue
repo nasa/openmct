@@ -71,7 +71,7 @@
             }
 
             &__view-control {
-                color: $colorItemTreeVC;
+                // color: $colorItemTreeVC;
                 margin-right: $interiorMarginSm;
             }
 

@@ -20,13 +20,13 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="gl-plot plot-legend-{{legend.get('position')}} {{legend.get('expanded')? 'plot-legend-expanded' : 'plot-legend-collapsed'}}">
-    <div class="gl-plot-legend flex-elem l-flex-row"
+    <div class="gl-plot-legend"
          ng-class="{ 'hover-on-plot': !!highlights.length }"
          ng-show="legend.get('position') !== 'hidden'">
-        <span class="view-control flex-elem"
-            ng-class="{ expanded: legend.get('expanded') }"
+        <div class="gl-plot-legend__view-control c-disclosure-triangle is-enabled"
+            ng-class="{ 'c-disclosure-triangle--expanded': legend.get('expanded') }"
             ng-click="legend.set('expanded', !legend.get('expanded'));">
-        </span>
+        </div>
 
         <!-- COLLAPSED PLOT LEGEND -->
         <div class="plot-wrapper-collapsed-legend">
@@ -52,7 +52,7 @@
         </div>
 
         <!-- EXPANDED PLOT LEGEND -->
-        <div class="plot-wrapper-expanded-legend flex-elem grows">
+        <div class="plot-wrapper-expanded-legend">
             <table>
                 <thead>
                     <tr>
