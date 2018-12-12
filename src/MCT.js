@@ -230,6 +230,7 @@ define([
         this.install(this.plugins.Plot());
         this.install(this.plugins.TelemetryTable());
         this.install(this.plugins.DisplayLayout());
+        this.install(this.plugins.Preview());
 
         if (typeof BUILD_CONSTANTS !== 'undefined') {
             this.install(buildInfoPlugin(BUILD_CONSTANTS));
