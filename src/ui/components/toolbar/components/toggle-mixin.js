@@ -9,7 +9,7 @@ export default {
             if (this.open) {
                 if (this.isOpening) {
                     // Prevent document event handler from closing immediately
-                    // after opening.  Can't use prevent default because that
+                    // after opening.  Can't use stopPropagation because that
                     // would break other menus with similar behavior.
                     this.isOpening = false;
                     return;
