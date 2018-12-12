@@ -27,8 +27,6 @@ define([
     "./src/actions/NewEntryContextual",
     "./src/actions/AnnotateSnapshot",
     "./src/directives/MCTSnapshot",
-    "./res/templates/controls/snapSelect.html",
-    "./res/templates/controls/embedControl.html",
     "./res/templates/annotation.html",
     "./res/templates/draggedEntry.html"
 ], function (
@@ -38,8 +36,6 @@ define([
     newEntryAction,
     AnnotateSnapshotAction,
     MCTSnapshotDirective,
-    snapSelectTemplate,
-    embedControlTemplate,
     annotationTemplate,
     draggedEntryTemplate
 ) {
@@ -135,16 +131,6 @@ define([
                             "depends": ["$scope",
                                 "$rootScope"
                             ]
-                        }
-                    ],
-                    controls: [
-                        {
-                            "key": "snapshot-select",
-                            "template":  snapSelectTemplate
-                        },
-                        {
-                            "key": "embed-control",
-                            "template": embedControlTemplate
                         }
                     ],
                     templates: [
