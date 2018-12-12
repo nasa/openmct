@@ -20,29 +20,29 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
- <template>
-    <table class="c-table c-lad-table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Timestamp</th>
-                <th>Value</th>
-            </tr>
-        </thead>
-        <tbody>
-            <lad-row 
-                v-for="item in items"
-                :key="item.key"
-                :domainObject="item.domainObject">
-            </lad-row>
-        </tbody>
-    </table>
- </template>
+<template>
+<table class="c-table c-lad-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Timestamp</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <lad-row 
+            v-for="item in items"
+            :key="item.key"
+            :domainObject="item.domainObject">
+        </lad-row>
+    </tbody>
+</table>
+</template>
 
- <script>
- import LadRow from './LadRow.vue';
+<script>
+import LadRow from './LadRow.vue';
 
- export default {
+export default {
     inject: ['openmct', 'domainObject'],
     components: {
         LadRow
@@ -88,7 +88,6 @@
         this.composition.off('add', this.addItem);
         this.composition.off('remove', this.removeItem);
     }
- }
- </script>
- 
- 
+}
+</script>
+

@@ -31,13 +31,13 @@
         </thead>
         <tbody>
             <template
-                v-for="primary in primaryCollection">
+                v-for="primary in primaryTelemetryObjects">
                 <tr class="c-table__group-header"
                     :key="primary.key">
                     <td colspan="10">{{primary.domainObject.name}}</td>
                 </tr>
                 <lad-row
-                    v-for="secondary in secondaryCollection[primary.key]"
+                    v-for="secondary in secondaryTelemetryObjects[primary.key]"
                     :key="secondary.key"
                     :domainObject="secondary.domainObject">
                 </lad-row>
@@ -60,8 +60,8 @@
     },
     data() {
         return {
-            primaryCollection: [],
-            secondaryCollection: {},
+            primaryTelemetryObjects: [],
+            secondaryTelemetryObjects: {},
             compositions: []
         }
     },
@@ -83,8 +83,8 @@
             primary.domainObject = domainObject;
             primary.key = this.openmct.objects.makeKeyString(domainObject.identifier);
 
-            this.$set(this.secondaryCollection, primary.key, []);
-            this.primaryCollection.push(primary);
+            this.$set(this.secondaryTelemetryObjects, primary.key, []);
+            this.primaryTelemetryObjects.push(primary);
 
             let composition = openmct.composition.get(primary.domainObject),
                 addCallback = this.addSecondary(primary),
@@ -97,11 +97,11 @@
             this.compositions.push({composition, addCallback, removeCallback});
         },
         removePrimary(identifier) {
-            let index = this.indexOf(identifier, this.primaryCollection),
-                primary = this.primaryCollection[index];
+            let index = this.indexOf(identifier, this.primaryTelemetryObjects),
+                primary = this.primaryTelemetryObjects[index];
             
-            this.$set(this.secondaryCollection, primary.key, undefined);
-            this.primaryCollection.splice(index,1);
+            this.$set(this.secondaryTelemetryObjects, primary.key, undefined);
+            this.primaryTelemetryObjects.splice(index,1);
             primary = undefined;
         },
         addSecondary(primary) {
@@ -110,20 +110,20 @@
                 secondary.key = this.openmct.objects.makeKeyString(domainObject.identifier);
                 secondary.domainObject = domainObject;
 
-                let array = this.secondaryCollection[primary.key];
+                let array = this.secondaryTelemetryObjects[primary.key];
                 array.push(secondary);
     
-                this.$set(this.secondaryCollection, primary.key, array);
+                this.$set(this.secondaryTelemetryObjects, primary.key, array);
             }
         },
         removeSecondary(primary) {
             return (identifier) => {
-                let array = this.secondaryCollection[primary.key],
+                let array = this.secondaryTelemetryObjects[primary.key],
                     index = this.indexOf(identifier, array);
 
                 array.splice(index, 1);
 
-                this.$set(this.secondaryCollection, primary.key, array);
+                this.$set(this.secondaryTelemetryObjects, primary.key, array);
             }
         }
     },

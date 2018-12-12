@@ -32,7 +32,7 @@ define([
             openmct.objectViews.addProvider(new LADTableViewProvider(openmct));
             openmct.objectViews.addProvider(new LADTableSetViewProvider(openmct));
 
-            openmct.types.addType('LADTable', {
+            openmct.types.addType('LadTable', {
                 name: "LAD Table",
                 creatable: true,
                 description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",

@@ -24,7 +24,7 @@
     <tr>
         <td>{{name}}</td>
         <td>{{timestamp}}</td>
-        <td :class="[valueClass]">
+        <td :class="valueClass">
             {{value}}
         </td>
     </tr>
@@ -63,7 +63,16 @@ export default {
             this.name = name;
         },
         updateTimeSystem(timeSystem) {
+            this.value = '---';
+            this.timestamp = '---';
+            this.valueClass = '';
             this.timestampKey = timeSystem.key;
+
+            this.openmct
+                .telemetry
+                .request(this.domainObject, {strategy: 'latest'})
+                .then((array) => this.updateValues(array[array.length - 1]));
+
         }
     },
     mounted() {
@@ -99,7 +108,7 @@ export default {
         this.openmct
             .telemetry
             .request(this.domainObject, {strategy: 'latest'})
-            .then((values) => values.forEach(this.updateValues));
+            .then((array) => this.updateValues(array[array.length - 1]));
     },
     destroyed() {
         this.stopWatchingMutation();

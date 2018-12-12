@@ -27,7 +27,7 @@ define([
     LadTableSet,
     Vue
 ) {
-    function LADTableSummaryView(openmct) {
+    function LADTableSetViewProvider(openmct) {
         return {
             key: 'LadTableSet',
             name: 'LAD Table Set',
@@ -63,5 +63,5 @@ define([
             }
         };
     }
-    return LADTableSummaryView;
+    return LADTableSetViewProvider;
 });

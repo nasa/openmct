@@ -27,13 +27,13 @@ define([
     LadTableComponent,
     Vue
 ) {
-    function LADTableView(openmct) {
+    function LADTableViewProvider(openmct) {
         return {
-            key: 'LADTable',
+            key: 'LadTable',
             name: 'LAD Table',
             cssClass: 'icon-tabular-lad',
             canView: function (domainObject) {
-                return domainObject.type === 'LADTable';
+                return domainObject.type === 'LadTable';
             },
             view: function (domainObject) {
                 let component;
@@ -63,5 +63,5 @@ define([
             }
         };
     }
-    return LADTableView;
+    return LADTableViewProvider;
 });
