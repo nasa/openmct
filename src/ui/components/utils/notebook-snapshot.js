@@ -20,94 +20,17 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-function generateTaskForm(url) {
-    var taskForm = {
-        name: "Create a Notebook Entry",
-        hint: "Please select a Notebook",
-        sections: [{
-            rows: [
-                {
-                    name: 'Entry',
-                    key: 'entry',
-                    control: 'textarea',
-                    required: false,
-                    cssClass: "l-textarea-sm"
-                },
-                {
-                    name: 'Snap Preview',
-                    key:"snapPreview",
-                    control: "snap-view",
-                    cssClass: "l-textarea-sm",
-                    src: url
-                },
-                {
-                    name: 'Save in Notebook',
-                    key: 'notebook',
-                    control: 'locator',
-                    validate: validateLocation
-                }
-            ]
-        }]
-    };
-
-    var overlayModel = {
-        title: taskForm.name,
-        message: 'Notebook Snapshot',
-        structure: taskForm,
-        value: {'entry': ""}
-    };
-
-    function validateLocation(newParentObj) {
-        return newParentObj.model.type === 'notebook';
-    }
-
-    return overlayModel;
-}
-
-function saveSnapShot(dialogService, imageUrl, imageType, imageSize, embedObject) {
-    let taskForm = generateTaskForm(imageUrl);
-
-    dialogService.getDialogResponse(
-        'overlay-dialog',
-        taskForm,
-        () => taskForm.value
-    ).then(options => {
-        let snapshotObject = {
-            src: options.snapPreview || imageUrl,
-            type: imageType,
-            size: imageSize
-        };
-
-        options.notebook.useCapability('mutation', function (model) {
-            var date = Date.now();
-
-            model.entries.push({
-                id: 'entry-' + date,
-                createdOn: date,
-                text: options.entry,
-                embeds: [{
-                    name: embedObject.name,
-                    cssClass: embedObject.cssClass,
-                    type: embedObject.id,
-                    id: 'embed-' + date,
-                    createdOn: date,
-                    snapshot: snapshotObject
-                }]
-            });
-        });
-    });
-}
-
 class NotebookSnapshot {
     constructor(openmct) {
         this.openmct = openmct;
+        this.exportImageService = openmct.$injector.get('exportImageService');
+        this.dialogService = openmct.$injector.get('dialogService');
 
         this.capture = this.capture.bind(this);
+        this._saveSnapShot = this._saveSnapShot.bind(this);
     }
 
-    capture(domainObject, DomElement) {
-        let exportImageService = this.openmct.$injector.get('exportImageService'),
-            dialogService = this.openmct.$injector.get('dialogService');
+    capture(domainObject, domElement) {
 
         let type = this.openmct.types.get(domainObject.type),
             embedObject = {
@@ -116,18 +39,102 @@ class NotebookSnapshot {
                 name: domainObject.name
             };
 
-        DomElement.classList.add('s-status-taking-snapshot');
+        domElement.classList.add('s-status-taking-snapshot');
 
-        exportImageService.exportPNGtoSRC(DomElement).then(function (blob) {
-            DomElement.classList.remove('s-status-taking-snapshot');
+        this.exportImageService.exportPNGtoSRC(domElement).then(function (blob) {
+            domElement.classList.remove('s-status-taking-snapshot');
 
             if (blob) {
                 var reader = new window.FileReader();
                 reader.readAsDataURL(blob);
                 reader.onloadend = function () {
-                    saveSnapShot(dialogService, reader.result, blob.type, blob.size, embedObject);
-                };
+                    this._saveSnapShot(reader.result, blob.type, blob.size, embedObject);
+                }.bind(this);
             }
+        }.bind(this));
+    }
+
+    /**
+     * @private
+     */
+    _generateTaskForm(url) {
+        var taskForm = {
+            name: "Create a Notebook Entry",
+            hint: "Please select a Notebook",
+            sections: [{
+                rows: [
+                    {
+                        name: 'Entry',
+                        key: 'entry',
+                        control: 'textarea',
+                        required: false,
+                        cssClass: "l-textarea-sm"
+                    },
+                    {
+                        name: 'Snap Preview',
+                        key:"snapPreview",
+                        control: "snap-view",
+                        cssClass: "l-textarea-sm",
+                        src: url
+                    },
+                    {
+                        name: 'Save in Notebook',
+                        key: 'notebook',
+                        control: 'locator',
+                        validate: validateLocation
+                    }
+                ]
+            }]
+        };
+
+        var overlayModel = {
+            title: taskForm.name,
+            message: 'Notebook Snapshot',
+            structure: taskForm,
+            value: {'entry': ""}
+        };
+
+        function validateLocation(newParentObj) {
+            return newParentObj.model.type === 'notebook';
+        }
+
+        return overlayModel;
+    }
+
+    /**
+     * @private
+     */
+    _saveSnapShot(imageUrl, imageType, imageSize, embedObject) {
+        let taskForm = this._generateTaskForm(imageUrl);
+
+        this.dialogService.getDialogResponse(
+            'overlay-dialog',
+            taskForm,
+            () => taskForm.value
+        ).then(options => {
+            let snapshotObject = {
+                src: options.snapPreview || imageUrl,
+                type: imageType,
+                size: imageSize
+            };
+
+            options.notebook.useCapability('mutation', function (model) {
+                var date = Date.now();
+
+                model.entries.push({
+                    id: 'entry-' + date,
+                    createdOn: date,
+                    text: options.entry,
+                    embeds: [{
+                        name: embedObject.name,
+                        cssClass: embedObject.cssClass,
+                        type: embedObject.id,
+                        id: 'embed-' + date,
+                        createdOn: date,
+                        snapshot: snapshotObject
+                    }]
+                });
+            });
         });
     }
 }
