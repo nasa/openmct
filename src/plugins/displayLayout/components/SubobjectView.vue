@@ -107,7 +107,7 @@
 
 <script>
     import ObjectView from '../../../ui/components/layout/ObjectView.vue'
-    import ContextMenuDropDown from './contextMenuDropDown.vue';
+    import ContextMenuDropDown from '../../../ui/components/controls/contextMenuDropDown.vue';
     import LayoutFrame from './LayoutFrame.vue'
 
     const MINIMUM_FRAME_SIZE = [320, 180],

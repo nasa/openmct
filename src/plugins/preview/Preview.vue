@@ -25,7 +25,7 @@
         <span class="l-browse-bar__object-name">
             {{ domainObject.name }}
         </span>
-        <span class="l-browse-bar__context-actions c-disclosure-button" @click="showContextMenu"></span>
+        <context-menu-drop-down :object-path="objectPath"></context-menu-drop-down>
     </div>
     <div class="l-preview-window__object-view">
         <div ref="objectView">
@@ -62,7 +62,16 @@
 </style>
 
  <script>
+    import ContextMenuDropDown from '../../ui/components/controls/contextMenuDropDown.vue';
+
     export default {
+        components: {
+            ContextMenuDropDown
+        },
+        inject: [
+            'openmct',
+            'objectPath'
+        ],
         data() {
             let domainObject = this.objectPath[0]; 
             let type = this.openmct.types.get(domainObject.type);
@@ -72,21 +81,10 @@
                 type: type
             };
         },
-        inject: [
-            'openmct',
-            'objectPath'
-        ],
         mounted() {
             let viewProvider = this.openmct.objectViews.get(this.domainObject)[0];
             this.view = viewProvider.view(this.domainObject);
             this.view.show(this.$refs.objectView);
-        },
-        methods: {
-            showContextMenu(event){
-                event.preventDefault();
-                event.stopPropagation();
-                this.openmct.contextMenu._showContextMenuForObjectPath(this.objectPath, event.clientX, event.clientY);
-            }
         },
         destroy() {
             this.view.destroy();
