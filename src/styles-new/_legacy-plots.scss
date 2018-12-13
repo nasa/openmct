@@ -385,18 +385,6 @@ mct-plot {
             background-color: $legendHoverValueBg;
             border-radius: $smallCr;
             padding: 0 $interiorMarginSm;
-            &:before {
-                opacity: 0.5;
-            }
-            &.cursor-hover,
-            .value-to-display-nearestTimestamp,
-            .value-to-display-nearestValue
-            {
-                @extend .icon-crosshair-12px;
-                &:before {
-                    font-size: 9px;
-                }
-            }
 
             &.value-to-display-min:before {
                 content: 'MIN ';
@@ -446,6 +434,7 @@ mct-plot {
         .plot-legend-item {
             display: flex;
             align-items: center;
+            justify-content: stretch;
             &:not(:first-child) {
                 margin-left: $interiorMarginLg;
             }
@@ -461,7 +450,6 @@ mct-plot {
 
             .plot-series-value {
                 text-align: left;
-                width: 170px;
             }
         }
     }
