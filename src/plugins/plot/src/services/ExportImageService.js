@@ -137,8 +137,8 @@ define(
          * @returns {promise}
          */
 
-        ExportImageService.prototype.exportPNGtoSRC = function (element) {
-            return this.renderElement(element, "png");
+        ExportImageService.prototype.exportPNGtoSRC = function (element, className) {
+            return this.renderElement(element, "png", className);
         };
 
         /**
