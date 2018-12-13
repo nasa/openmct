@@ -21,8 +21,8 @@
 </template>
 
 <script>
-    import viewControl from '../controls/viewControl.vue';
-    import ObjectLabel from '../controls/ObjectLabel.vue';
+    import viewControl from '../components/viewControl.vue';
+    import ObjectLabel from '../components/ObjectLabel.vue';
 
     export default {
         name: 'tree-item',

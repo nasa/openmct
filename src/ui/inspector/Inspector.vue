@@ -179,8 +179,8 @@
 </style>
 
 <script>
-    import multipane from '../controls/multipane.vue';
-    import pane from '../controls/pane.vue';
+    import multipane from '../layout/multipane.vue';
+    import pane from '../layout/pane.vue';
     import Elements from './Elements.vue';
     import Location from './Location.vue';
     import Properties from './Properties.vue';
