@@ -62,7 +62,7 @@
 </style>
 
  <script>
-    import ContextMenuDropDown from '../../ui/components/controls/contextMenuDropDown.vue';
+    import ContextMenuDropDown from '../../ui/components/contextMenuDropDown.vue';
 
     export default {
         components: {
@@ -73,7 +73,7 @@
             'objectPath'
         ],
         data() {
-            let domainObject = this.objectPath[0]; 
+            let domainObject = this.objectPath[0];
             let type = this.openmct.types.get(domainObject.type);
 
             return {
