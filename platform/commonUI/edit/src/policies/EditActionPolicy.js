@@ -41,6 +41,7 @@ define(
          * @private
          */
         EditActionPolicy.prototype.countEditableViews = function (context) {
+            console.trace('countEditableViews');
             var domainObject = context.domainObject,
                 count = 0,
                 type, views;
@@ -65,10 +66,10 @@ define(
             });
 
             function isEditable(view) {
-                if (typeof view.editable === Function) {
-                    return view.editable(domainObject.useCapability('adapter'));
+                if (typeof view.canEdit === Function) {
+                    return view.canEdit(domainObject.useCapability('adapter'));
                 } else {
-                    return view.editable === true;
+                    return view.canEdit === true;
                 }
             }
 

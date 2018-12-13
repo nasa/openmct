@@ -20,6 +20,9 @@ define([
             canView: function (domainObject) {
                 return domainObject.type === 'summary-widget';
             },
+            canEdit: function (domainObject) {
+                return domainObject.type === 'summary-widget';
+            },
             view: function (domainObject) {
                 var statusService = openmct.$injector.get('statusService');
                 var objectId = objectUtils.makeKeyString(domainObject.identifier);
@@ -32,7 +35,6 @@ define([
                     return new SummaryWidgetView(domainObject, openmct);
                 }
             },
-            editable: true,
             priority: function (domainObject) {
                 if (domainObject.type === 'summary-widget') {
                     return Number.MAX_VALUE;

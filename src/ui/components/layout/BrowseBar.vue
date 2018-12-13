@@ -40,7 +40,7 @@
             <!-- Action buttons -->
             <div class="l-browse-bar__actions">
                 <button class="l-browse-bar__actions__edit c-button icon-notebook" title="New Notebook entry"></button>
-                <button class="l-browse-bar__actions__notebook-entry c-button c-button--major icon-pencil" title="Edit" v-if="!isEditing" @click="edit()"></button>
+                <button class="l-browse-bar__actions__notebook-entry c-button c-button--major icon-pencil" title="Edit" v-if="!isEditing && isViewEditable" @click="edit()"></button>
                 <button class="l-browse-bar__actions c-button c-button--major icon-save" title="Save and Finish Editing" v-if="isEditing" @click="saveAndFinishEditing()"></button>
                 <button class="l-browse-bar__actions c-button icon-x" title="Cancel Editing" v-if="isEditing" @click="cancelEditing()"></button>
             </div>
@@ -119,6 +119,14 @@
                     return {}
                 }
                 return objectType.definition;
+            },
+            isViewEditable() {
+                let currentViewKey = this.currentView.key;
+                if (currentViewKey !== undefined) {
+                    let currentViewProvider = this.openmct.objectViews.getByProviderKey(currentViewKey);
+                    return currentViewProvider.canEdit && currentViewProvider.canEdit(this.domainObject);
+                }
+                return false;
             }
         },
         mounted: function () {
