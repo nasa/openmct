@@ -32,7 +32,7 @@
         <ul>
             <notebook-entry
                 v-for="(entry,index) in filteredAndSortedEntries"
-                :key="index"
+                :key="entry.key"
                 :entry="entry">
             </notebook-entry>
         </ul>
