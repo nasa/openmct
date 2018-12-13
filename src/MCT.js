@@ -40,7 +40,7 @@ define([
     '../platform/framework/src/Main',
     './styles-new/core.scss',
     './styles-new/notebook.scss',
-    './ui/components/layout/Layout.vue',
+    './ui/layout/Layout.vue',
     '../platform/core/src/objects/DomainObjectImpl',
     '../platform/core/src/capabilities/ContextualDomainObject',
     'vue'
@@ -230,6 +230,7 @@ define([
         this.install(this.plugins.Plot());
         this.install(this.plugins.TelemetryTable());
         this.install(this.plugins.DisplayLayout());
+        this.install(this.plugins.Preview());
 
         if (typeof BUILD_CONSTANTS !== 'undefined') {
             this.install(buildInfoPlugin(BUILD_CONSTANTS));

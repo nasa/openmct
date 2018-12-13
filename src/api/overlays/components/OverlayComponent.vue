@@ -40,7 +40,7 @@
 
     .c-overlay {
         @include abs();
-        z-index: 100;
+        z-index: 70;
 
         &__blocker {
             display: none; // Mobile-first

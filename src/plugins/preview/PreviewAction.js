@@ -19,48 +19,46 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import Preview from './Preview.vue';
+import Vue from 'vue';
 
+export default class PreviewAction {
+    constructor(openmct) {
+        /**
+         * Metadata
+         */
+        this.name = 'Preview';
+        this.description = 'Preview in large dialog';
+        this.cssClass = 'icon-eye-open';
 
-define([
-    'vue',
-    '../../res/templates/viewSnapshot.html'
-], function (
-    Vue,
-    snapshotOverlayTemplate
-) {
-    function SnapshotOverlay (embedObject, formatTime) {
-        this.embedObject = embedObject;
-
-        this.snapshotOverlayVue = new Vue({
-            template: snapshotOverlayTemplate,
-            data: function () {
-                return {
-                    embed: embedObject
-                };
-            },
-            methods: {
-                close: this.close.bind(this),
-                formatTime: formatTime
-            }
-        });
-
-        this.open();
+        /**
+         * Dependencies
+         */
+        this._openmct = openmct;
     }
+    invoke(objectPath) {
+        let preview = new Vue({
+            components: {
+                Preview
+            },
+            provide: {
+                openmct: this._openmct,
+                objectPath: objectPath
+            },
+            template: '<Preview></Preview>'
+        });
+        preview.$mount();
 
-    SnapshotOverlay.prototype.open = function () {
-        this.overlay = document.createElement('div');
-        this.overlay.classList.add('abs');
-
-        document.body.appendChild(this.overlay);
-
-        this.overlay.appendChild(this.snapshotOverlayVue.$mount().$el);
-    };
-
-    SnapshotOverlay.prototype.close = function (event) {
-        event.stopPropagation();
-        this.snapshotOverlayVue.$destroy();
-        this.overlay.parentNode.removeChild(this.overlay);
-    };
-
-    return SnapshotOverlay;
-});
+        let overlay = this._openmct.overlays.overlay({
+            element: preview.$el,
+            size: 'large',
+            buttons: [
+                {
+                    label: 'Done',
+                    callback: () => overlay.dismiss()
+                }
+            ],
+            onDestroy: () => preview.$destroy()
+        });
+    }
+}

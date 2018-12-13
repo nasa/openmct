@@ -77,7 +77,7 @@ define([
                                 openmct.$angular.element(container),
                                 legacyView
                             );
-                            container.style.height = '100%';
+                            container.classList.add('u-contents');
                         }
 
                         if (promises.length) {

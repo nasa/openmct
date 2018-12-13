@@ -27,7 +27,7 @@ define([
     '../../res/templates/notebook.html',
     '../../res/templates/entry.html',
     '../../res/templates/embed.html',
-    '../../../../ui/components/controls/search.vue'
+    '../../../../ui/components/search.vue'
 ],
 function (
     Vue,

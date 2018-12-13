@@ -82,7 +82,7 @@ define(
             }
             var searchPath = "?" + arr.join('&'),
                 newTabPath =
-                    "index.html#" + this.urlForLocation(mode, domainObject) +
+                    "#" + this.urlForLocation(mode, domainObject) +
                             searchPath;
             return newTabPath;
         };

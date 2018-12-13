@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,26 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import PreviewAction from './PreviewAction.js';
 
-/**
- * Module defining SelectSnapshotController. */
-define(
-    [],
-    function () {
-
-        function SelectSnapshotController($scope,$rootScope) {
-
-            $scope.selectModel = true;
-
-            function selectprint(value) {
-                $rootScope.selValue = value;
-                $scope.$parent.$parent.ngModel[$scope.$parent.$parent.field] = value;
-            }
-
-            $scope.$watch("selectModel", selectprint);
-
-        }
-
-        return SelectSnapshotController;
+export default function () {
+    return function (openmct) {
+        openmct.contextMenu.registerAction(new PreviewAction(openmct));
     }
-);
+}

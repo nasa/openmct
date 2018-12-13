@@ -27,15 +27,16 @@
         }">
 
         <div class="c-frame c-fl-frame__drag-wrapper is-selectable is-moveable"
-             :class="{'no-frame': noFrame}"
              draggable="true"
              @dragstart="initDrag"
              ref="frame">
 
-            <subobject-view
-                v-if="item.domainObject.identifier"
-                :item="item">
-            </subobject-view>
+            <object-frame
+                v-if="domainObject"
+                :domain-object="domainObject"
+                :object-path="objectPath"
+                :has-frame="hasFrame">
+            </object-frame>
 
             <div class="c-fl-frame__size-indicator"
                  v-if="isEditing"
@@ -48,7 +49,7 @@
 
 <script>
 import ResizeHandle from './resizeHandle.vue';
-import SubobjectView from '../../displayLayout/components/SubobjectView.vue';
+import ObjectFrame from '../../../ui/components/ObjectFrame.vue';
 import isEditingMixin from '../mixins/isEditing';
 
 export default {
@@ -57,26 +58,29 @@ export default {
     mixins: [isEditingMixin],
     data() {
         return {
-            item: {domainObject: {}}
+            domainObject: undefined,
+            objectPath: undefined
         }
     },
     components: {
         ResizeHandle,
-        SubobjectView
+        ObjectFrame
     },
     computed: {
-        noFrame() {
-            return this.frame.noFrame;
+        hasFrame() {
+            return !this.frame.noFrame;
         }
     },
     methods: {
         setDomainObject(object) {
-            this.item.domainObject = object;
+            console.log('setting object!');
+            this.domainObject = object;
+            this.objectPath = [object];
             this.setSelection();
         },
         setSelection() {
             let context = {
-                item: this.item.domainObject,
+                item: this.domainObject,
                 addContainer: this.addContainer,
                 type: 'frame',
                 frameId: this.frame.id

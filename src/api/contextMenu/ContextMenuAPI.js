@@ -73,8 +73,12 @@ class ContextMenuAPI {
      * @private
      */
     _showContextMenuForObjectPath(objectPath, x, y) {
-        let applicableActions = this._allActions.filter(
-            (action) => action.appliesTo(objectPath));
+        let applicableActions = this._allActions.filter((action) => {
+            if (action.appliesTo === undefined) {
+                return true;
+            }
+            return action.appliesTo(objectPath);
+        });
 
         if (this._activeContextMenu) {
             this._hideActiveContextMenu();
