@@ -49,9 +49,6 @@ table {
     }
 }
 
-
-
-
 .c-table {
     // Can be used by any type of table, scrolling, LAD, etc.
     //$min-w: 50px;
@@ -72,24 +69,6 @@ table {
     &__control-bar {
         margin-bottom: $interiorMarginSm;
     }
-
-    /*    [class*="__header"] {
-            background: $colorTabHeaderBg;
-
-            th {
-                &:not(:first-child) {
-                    border-left: 1px solid $colorTabHeaderBorder;
-                }
-            }
-        }
-
-        &__body {
-            tr {
-                &:not(:first-child) {
-                    border-top: 1px solid $colorTabBorder;
-                }
-            }
-        }*/
 
     &--sortable {
         .is-sorting {
