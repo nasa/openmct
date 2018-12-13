@@ -32,7 +32,7 @@ define([
     function FolderListView(openmct) {
         return {
             key: 'list-view',
-            name: 'List Vue',
+            name: 'List View',
             cssClass: 'icon-list-view',
             canView: function (domainObject) {
                 return domainObject.type === 'folder';
