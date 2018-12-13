@@ -43,6 +43,7 @@
             </thead>
             <tbody>
                 <list-item v-for="(item,index) in sortedItems"
+                    :key="index"
                     :item="item"
                     :object-path="item.objectPath">
                 </list-item>
@@ -99,9 +100,17 @@ export default {
     mixins: [compositionLoader],
     inject: ['domainObject', 'openmct'],
     data() {
+        let sortBy = 'model.name',
+            ascending = true;
+        
+        if (this.domainObject.configuration) {
+            sortBy = this.domainObject.configuration.sortBy;
+            ascending = this.domainObject.configuration.ascending;
+        }
+
         return {
-            sortBy: 'model.name',
-            ascending: true
+            sortBy,
+            ascending
         };
     },
     computed: {
@@ -121,6 +130,17 @@ export default {
                 this.sortBy = field;
                 this.ascending = defaultDirection;
             }
+
+            this.openmct
+                .objects
+                .mutate(
+                    this.domainObject,
+                    'configuration',
+                    {
+                        sortBy: this.sortBy,
+                        ascending: this.ascending
+                    }
+                );
         }
     }
 }

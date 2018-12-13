@@ -42,6 +42,10 @@ define([
                         "name": "My Items",
                         "type": "folder",
                         "composition": [],
+                        "configuration": {
+                            "sortBy": "model.name",
+                            "ascending": true
+                        },
                         "location": "ROOT"
                     }
                 }

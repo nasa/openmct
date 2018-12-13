@@ -239,6 +239,10 @@ define([
                     "description": "Create folders to organize other objects or links to objects.",
                     "priority": 1000,
                     "model": {
+                        "configuration": {
+                            "sortBy": "model.name",
+                            "ascending": true
+                        },
                         "composition": []
                     }
                 },
