@@ -16,9 +16,12 @@ export default {
             Object.assign(oldObject, newObject);
         }
 
-        this.objectPath.forEach(object => this.$once('hook:destroy',
-            this.openmct.objects.observe(object, '*', updateObject.bind(this, object)))
-        );
+        this.objectPath.forEach(object => {
+            if (object) {
+                this.$once('hook:destroy',
+                    this.openmct.objects.observe(object, '*', updateObject.bind(this, object)))
+            }
+        });
     },
     destroyed() {
         this.$el.removeEventListener('contextMenu', this.showContextMenu);
@@ -26,6 +29,7 @@ export default {
     methods: {
         showContextMenu(event) {
             event.preventDefault();
+            event.stopPropagation();
             this.openmct.contextMenu._showContextMenuForObjectPath(this.objectPath, event.clientX, event.clientY);
         }
     }

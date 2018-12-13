@@ -1,18 +1,18 @@
 <template>
-<div class="flex-elem l-flex-col holder grows">
-    <Search @input="applySearch"></Search>
-    <div class="flex-elem grows vscroll scroll-pad">
-        <ul class="tree" id="inspector-elements-tree"
+<div class="c-elements-pool">
+    <Search class="c-elements-pool__search" @input="applySearch"></Search>
+    <div class="c-elements-pool__elements">
+        <ul class="tree c-tree c-elements-pool__tree" id="inspector-elements-tree"
             v-if="elements.length > 0">
             <li :key="element.identifier.key" v-for="(element, index) in elements" @drop="moveTo(index)" @dragover="allowDrop">
-                <span class="tree-item">
-                    <span class="grippy-sm"
+                <div class="c-tree__item c-elements-pool__item">
+                    <span class="icon-grippy"
                           v-if="elements.length > 1 && isEditing"
                           draggable="true"
                           @dragstart="moveFrom(index)">
                     </span>
                     <object-label :domainObject="element" :objectPath="[element, parentObject]"></object-label>
-                </span>
+                </div>
             </li>
             <li class="js-last-place" @drop="moveToIndex(elements.length)"></li>
         </ul>
@@ -22,12 +22,32 @@
 </template>
 <style lang="scss">
     @import "~styles/sass-base";
-    @import "~styles/glyphs";
 
-    .grippy-sm {
-        // Used in editor Elements pool
-        @extend .icon-grippy-12px;
-        cursor: move;
+    .c-elements-pool {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        flex: 1 1 auto !important;
+
+        > * + * {
+            margin-top: $interiorMargin;
+        }
+
+        &__search {
+            flex: 0 0 auto;
+        }
+
+        &__elements {
+            flex: 1 1 auto;
+            overflow: auto;
+        }
+
+        &__item {
+            .icon-grippy {
+                font-size: 0.8em;
+            }
+        }
+
     }
 
     .js-last-place{

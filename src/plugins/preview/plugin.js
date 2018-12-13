@@ -19,22 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import PreviewAction from './PreviewAction.js';
 
-define(function () {
-    function DisplayLayoutType() {
-        return {
-            name: "Display Layout",
-            creatable: true,
-            cssClass: 'icon-layout',
-            initialize(domainObject) {
-                domainObject.composition = [];
-                domainObject.configuration = {
-                    items: [],
-                    layoutGrid: [10, 10],
-                };
-            }
-        }
+export default function () {
+    return function (openmct) {
+        openmct.contextMenu.registerAction(new PreviewAction(openmct));
     }
-
-    return DisplayLayoutType;
-});
+}

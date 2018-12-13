@@ -31,16 +31,42 @@
             $aPad: $interiorMarginSm;
             border-radius: $controlCr;
             display: flex;
-            align-items: stretch;
+            align-items: center;
             cursor: pointer;
             padding: $interiorMargin - $aPad;
             transition: background 150ms ease;
 
             &:hover {
                 background: $colorItemTreeHoverBg;
-                .c-tree__item__type-icon {
-                    // Type icon
+                .c-tree__item__type-icon:before {
                     color: $colorItemTreeIconHover;
+                }
+
+                .c-tree__item__name {
+                    color: $colorItemTreeHoverFg;
+                }
+            }
+
+            &.is-selected {
+                background: $colorItemTreeSelectedBg;
+                .c-tree__item__type-icon:before {
+                    color: $colorItemTreeIconHover;
+                }
+
+                .c-tree__item__name {
+                    color: $colorItemTreeSelectedFg;
+                }
+            }
+
+            &.is-being-edited {
+                background: $colorItemTreeEditingBg;
+                .c-tree__item__type-icon:before {
+                    color: $colorItemTreeEditingIcon;
+                }
+
+                .c-tree__item__name {
+                    color: $colorItemTreeEditingFg;
+                    font-style: italic;
                 }
             }
 

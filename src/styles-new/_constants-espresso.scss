@@ -267,14 +267,16 @@ $legendHoverValueBg: rgba($colorBodyFg, 0.2);
 // Tree
 $colorTreeBg: transparent;
 $colorItemTreeHoverBg: lighten($colorBodyBg, 10%);
-$colorItemTreeHoverFg: lighten($colorBodyFg, 10%);
+$colorItemTreeHoverFg: lighten($colorBodyFg, 20%);
 $colorItemTreeIcon: $colorKey; // Used
 $colorItemTreeIconHover: $colorItemTreeIcon; // Used
 $colorItemTreeFg: $colorBodyFg;
 $colorItemTreeSelectedBg: darken($colorKey, 15%);
-$colorItemTreeSelectedFg: $colorBodyBg;
-$colorItemTreeEditingBg: $editColor;
+$colorItemTreeSelectedFg: $colorItemTreeHoverFg;
+$colorItemTreeSelectedIcon: $colorItemTreeSelectedFg;
+$colorItemTreeEditingBg: darken($editColor, 20%);
 $colorItemTreeEditingFg: $editColorFg;
+$colorItemTreeEditingIcon: $editColorFg;
 $colorItemTreeVC: rgba($colorBodyFg, 0.5);
 $colorItemTreeVCHover: $colorKey;
 $shdwItemTreeIcon: none;

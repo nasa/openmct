@@ -19,22 +19,46 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import Preview from './Preview.vue';
+import Vue from 'vue';
 
-define(function () {
-    function DisplayLayoutType() {
-        return {
-            name: "Display Layout",
-            creatable: true,
-            cssClass: 'icon-layout',
-            initialize(domainObject) {
-                domainObject.composition = [];
-                domainObject.configuration = {
-                    items: [],
-                    layoutGrid: [10, 10],
-                };
-            }
-        }
+export default class PreviewAction {
+    constructor(openmct) {
+        /**
+         * Metadata
+         */
+        this.name = 'Preview';
+        this.description = 'Preview in large dialog';
+        this.cssClass = 'icon-eye-open';
+
+        /**
+         * Dependencies
+         */
+        this._openmct = openmct;
     }
+    invoke(objectPath) {
+        let preview = new Vue({
+            components: {
+                Preview
+            },
+            provide: {
+                openmct: this._openmct,
+                objectPath: objectPath
+            },
+            template: '<Preview></Preview>'
+        });
+        preview.$mount();
 
-    return DisplayLayoutType;
-});
+        let overlay = this._openmct.overlays.overlay({
+            element: preview.$el,
+            size: 'large',
+            buttons: [
+                {
+                    label: 'Done',
+                    callback: () => overlay.dismiss()
+                }
+            ],
+            onDestroy: () => preview.$destroy()
+        });
+    }
+}

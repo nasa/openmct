@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import contextMenu from '../../../ui/components/mixins/context-menu-gesture'
+import contextMenu from '../mixins/context-menu-gesture'
 
 export default {
     props: ['objectPath'],

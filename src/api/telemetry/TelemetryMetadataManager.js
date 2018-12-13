@@ -124,6 +124,22 @@ define([
         return sortedMetadata;
     };
 
+    TelemetryMetadataManager.prototype.getDefaultDisplayValue = function () {
+        let valueMetadata = this.valuesForHints(['range'])[0];
+
+        if (valueMetadata === undefined) {
+            valueMetadata = this.values().filter(values => {
+                return !(values.hints.domain);
+            })[0];
+        }
+
+        if (valueMetadata === undefined) {
+            valueMetadata = this.values()[0];
+        }
+
+        return valueMetadata.key;
+    };
+
 
     return TelemetryMetadataManager;
 
