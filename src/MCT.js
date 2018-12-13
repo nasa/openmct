@@ -40,7 +40,7 @@ define([
     '../platform/framework/src/Main',
     './styles-new/core.scss',
     './styles-new/notebook.scss',
-    './ui/components/layout/Layout.vue',
+    './ui/layout/Layout.vue',
     '../platform/core/src/objects/DomainObjectImpl',
     '../platform/core/src/capabilities/ContextualDomainObject',
     'vue'

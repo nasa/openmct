@@ -24,90 +24,16 @@
                   :grid-size="gridSize"
                   @endDrag="(item, updates) => $emit('endDrag', item, updates)"
                   @drilledIn="item => $emit('drilledIn', item)">
-        <div class="u-contents">
-            <div class="c-so-view__header">
-                <div class="c-so-view__header__start">
-                    <div class="c-so-view__header__name"
-                         :class="cssClass">
-                        {{ domainObject && domainObject.name }}
-                    </div>
-                    <context-menu-drop-down
-                        :object-path="objectPath">
-                    </context-menu-drop-down>
-                </div>
-                <div class="c-so-view__header__end">
-                    <div class="c-button icon-expand local-controls--hidden"></div>
-                </div>
-            </div>
-            <object-view class="c-so-view__object-view"
-                         :object="domainObject"></object-view>
-        </div>
+        <object-frame v-if="domainObject"
+                      :domain-object="domainObject"
+                      :object-path="objectPath"
+                      :has-frame="item.hasFrame">
+        </object-frame>
     </layout-frame>
 </template>
 
-<style lang="scss">
-    @import "~styles/sass-base";
-
-    .c-so-view {
-        /*************************** HEADER */
-        &__header {
-            display: flex;
-            align-items: center;
-
-            &__start,
-            &__end {
-                display: flex;
-                flex: 1 1 auto;
-            }
-
-            &__end {
-                justify-content: flex-end;
-            }
-
-            &__name {
-                @include headerFont(1em);
-                display: flex;
-                &:before {
-                    margin-right: $interiorMarginSm;
-                }
-            }
-
-            .no-frame & {
-                display: none;
-            }
-        }
-
-        &__name {
-            @include ellipsize();
-            @include headerFont(1.2em);
-            flex: 0 1 auto;
-
-            &:before {
-                // Object type icon
-                flex: 0 0 auto;
-                margin-right: $interiorMarginSm;
-                opacity: 0.5;
-            }
-        }
-
-        /*************************** OBJECT VIEW */
-        &__object-view {
-            flex: 1 1 auto;
-            overflow: auto;
-
-            .c-object-view {
-                .u-fills-container {
-                    // Expand component types that fill a container
-                    @include abs();
-                }
-            }
-        }
-    }
-</style>
-
 <script>
-    import ObjectView from '../../../ui/components/layout/ObjectView.vue'
-    import ContextMenuDropDown from '../../../ui/components/controls/contextMenuDropDown.vue';
+    import ObjectFrame from '../../../ui/components/ObjectFrame.vue'
     import LayoutFrame from './LayoutFrame.vue'
 
     const MINIMUM_FRAME_SIZE = [320, 180],
@@ -152,20 +78,17 @@
         data() {
             return {
                 domainObject: undefined,
-                cssClass: undefined,
                 objectPath: []
             }
         },
         components: {
-            ObjectView,
-            ContextMenuDropDown,
+            ObjectFrame,
             LayoutFrame
         },
         methods: {
             setObject(domainObject) {
                 this.domainObject = domainObject;
                 this.objectPath = [this.domainObject].concat(this.openmct.router.path);
-                this.cssClass = this.openmct.types.get(this.domainObject.type).definition.cssClass;
                 let context = {
                     item: domainObject,
                     layoutItem: this.item,
@@ -176,6 +99,7 @@
             }
         },
         mounted() {
+            console.log(this.item);
             this.openmct.objects.get(this.item.identifier)
                 .then(this.setObject);
         },

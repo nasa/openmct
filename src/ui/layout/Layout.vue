@@ -237,12 +237,12 @@
 <script>
     import Inspector from '../inspector/Inspector.vue';
     import MctTree from './mct-tree.vue';
-    import ObjectView from './ObjectView.vue';
+    import ObjectView from '../components/ObjectView.vue';
     import MctTemplate from '../legacy/mct-template.vue';
-    import CreateButton from '../controls/CreateButton.vue';
-    import search from '../controls/search.vue';
-    import multipane from '../controls/multipane.vue';
-    import pane from '../controls/pane.vue';
+    import CreateButton from './CreateButton.vue';
+    import search from '../components/search.vue';
+    import multipane from './multipane.vue';
+    import pane from './pane.vue';
     import BrowseBar from './BrowseBar.vue';
     import StatusBar from './status-bar/StatusBar.vue';
     import Toolbar from '../toolbar/Toolbar.vue';

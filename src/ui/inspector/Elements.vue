@@ -16,7 +16,7 @@
             </li>
             <li class="js-last-place" @drop="moveToIndex(elements.length)"></li>
         </ul>
-        <div v-if="elements.length === 0">No contained elements</div>    
+        <div v-if="elements.length === 0">No contained elements</div>
     </div>
 </div>
 </template>
@@ -55,8 +55,8 @@
     }
 </style>
 <script>
-import Search from '../controls/search.vue';
-import ObjectLabel from '../controls/ObjectLabel.vue';
+import Search from '../components/search.vue';
+import ObjectLabel from '../components/ObjectLabel.vue';
 
 export default {
     inject: ['openmct'],
@@ -147,7 +147,7 @@ export default {
                 composition.splice(deleteIndex, 1);
                 composition.splice(moveToIndex, 0, moveFromId);
             }
-            
+
             this.openmct.objects.mutate(this.parentObject, 'composition', composition);
         },
         moveFrom(index){
