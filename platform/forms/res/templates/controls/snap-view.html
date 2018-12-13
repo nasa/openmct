@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2017, United States Government
+ Open MCT, Copyright (c) 2014-2018, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -19,11 +19,18 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class='form-control select' ng-controller="selectSnapshotController">
-    <select
-            ng-model="selectModel"
-            ng-options="opt.value as opt.name for opt in options"
-            ng-required="ngRequired"
-            name="mctControl">
-    </select>
-</div>
+<span ng-controller="SnapshotPreviewController" 
+    class='form-control shell'>
+    <span class='field control {{structure.cssClass}}'>
+        <image 
+               class="c-ne__embed__snap-thumb"
+               src="{{imageUrl || structure.src}}"
+               ng-click="previewImage(imageUrl || structure.src)"
+               name="mctControl">
+        </image>
+        <br>
+        <a title="Annotate" class="s-button icon-pencil" ng-click="annotateImage(ngModel, field, imageUrl || structure.src)">
+            <span class="title-label">Annotate</span>
+        </a>
+    </span>
+</span>

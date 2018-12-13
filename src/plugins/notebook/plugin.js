@@ -21,27 +21,9 @@
  *****************************************************************************/
 
 define([
-    "./src/controllers/NotebookController",
-    "./src/controllers/NewEntryController",
-    "./src/controllers/SelectSnapshotController",
-    "./src/actions/NewEntryContextual",
-    "./src/actions/AnnotateSnapshot",
-    "./src/directives/MCTSnapshot",
-    "./res/templates/controls/snapSelect.html",
-    "./res/templates/controls/embedControl.html",
-    "./res/templates/annotation.html",
-    "./res/templates/draggedEntry.html"
+    "./src/controllers/NotebookController"
 ], function (
-    NotebookController,
-    NewEntryController,
-    SelectSnapshotController,
-    newEntryAction,
-    AnnotateSnapshotAction,
-    MCTSnapshotDirective,
-    snapSelectTemplate,
-    embedControlTemplate,
-    annotationTemplate,
-    draggedEntryTemplate
+    NotebookController
 ) {
     var installed  = false;
 
@@ -86,90 +68,6 @@ define([
                                     cssClass: 'l-inline'
                                 }
                             ]
-                        }
-                    ],
-                    actions: [
-                        {
-                            "key": "notebook-new-entry",
-                            "implementation": newEntryAction,
-                            "name": "New Notebook Entry",
-                            "cssClass": "icon-notebook labeled",
-                            "description": "Add a new Notebook entry",
-                            "category": [
-                                "view-control"
-                            ],
-                            "depends": [
-                                "$compile",
-                                "$rootScope",
-                                "dialogService",
-                                "notificationService",
-                                "linkService"
-                            ],
-                            "priority": "preferred"
-                        },
-                        {
-                            "key": "annotate-snapshot",
-                            "implementation": AnnotateSnapshotAction,
-                            "name": "Annotate Snapshot",
-                            "cssClass": "icon-pencil labeled",
-                            "description": "Annotate embed's snapshot",
-                            "category": "embed",
-                            "depends": [
-                                "dialogService",
-                                "dndService",
-                                "$rootScope"
-                            ]
-                        }
-                    ],
-                    controllers: [
-                        {
-                            "key": "NewEntryController",
-                            "implementation": NewEntryController,
-                            "depends": ["$scope",
-                                "$rootScope"
-                            ]
-                        },
-                        {
-                            "key": "selectSnapshotController",
-                            "implementation": SelectSnapshotController,
-                            "depends": ["$scope",
-                                "$rootScope"
-                            ]
-                        }
-                    ],
-                    controls: [
-                        {
-                            "key": "snapshot-select",
-                            "template":  snapSelectTemplate
-                        },
-                        {
-                            "key": "embed-control",
-                            "template": embedControlTemplate
-                        }
-                    ],
-                    templates: [
-                        {
-                            "key": "annotate-snapshot",
-                            "template": annotationTemplate
-                        }
-                    ],
-                    directives: [
-                        {
-                            "key": "mctSnapshot",
-                            "implementation": MCTSnapshotDirective,
-                            "depends": [
-                                "$rootScope",
-                                "$document",
-                                "exportImageService",
-                                "dialogService",
-                                "notificationService"
-                            ]
-                        }
-                    ],
-                    representations: [
-                        {
-                            "key": "draggedEntry",
-                            "template": draggedEntryTemplate
                         }
                     ]
                 }

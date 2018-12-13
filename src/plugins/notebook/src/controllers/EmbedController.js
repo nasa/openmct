@@ -275,7 +275,6 @@ function (
 
         function menuClickHandler(e) {
             e.stopPropagation();
-            window.setTimeout(dismiss, 300);
         }
 
         // Dismiss any menu which was already showing
