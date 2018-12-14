@@ -42,8 +42,8 @@
                 </tr>
             </thead>
             <tbody>
-                <list-item v-for="(item,index) in sortedItems"
-                    :key="index"
+                <list-item v-for="item in sortedItems"
+                    :key="item.key"
                     :item="item"
                     :object-path="item.objectPath">
                 </list-item>
