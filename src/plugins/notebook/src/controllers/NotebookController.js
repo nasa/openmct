@@ -65,7 +65,7 @@ function (
             template: EmbedTemplate,
             data: embedController.exposedData,
             methods: embedController.exposedMethods(),
-            beforeMount: embedController.populateActionMenu(self.objectService, self.actionService)
+            beforeMount: embedController.populateActionMenu(embedController.openmct, [embedController.previewAction])
         };
 
         var entryComponent = {

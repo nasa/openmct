@@ -24,6 +24,7 @@ define([
     'moment',
     'zepto',
     '../../res/templates/snapshotTemplate.html',
+    '../../../preview/PreviewAction',
     'vue',
     'painterro'
 ],
@@ -31,6 +32,7 @@ function (
     Moment,
     $,
     SnapshotTemplate,
+    PreviewAction,
     Vue,
     Painterro
 ) {
@@ -42,7 +44,7 @@ function (
         this.popupService = openmct.$injector.get('popupService');
         this.agentService = openmct.$injector.get('agentService');
         this.dialogService = openmct.$injector.get('dialogService');
-
+        this.previewAction = new PreviewAction.default(openmct);
 
         this.navigate = this.navigate.bind(this);
         this.exposedData = this.exposedData.bind(this);
@@ -199,23 +201,20 @@ function (
         return foundId;
     };
 
-    EmbedController.prototype.actionToMenuDecorator = function (action) {
-        return {
-            name: action.getMetadata().name,
-            cssClass: action.getMetadata().cssClass,
-            perform: action.perform
-        };
-    };
-
-    EmbedController.prototype.populateActionMenu = function (objectService, actionService) {
+    EmbedController.prototype.populateActionMenu = function (openmct, actions) {
         return function () {
             var self = this;
 
-            objectService.getObjects([self.embed.type]).then(function (resp) {
-                var domainObject = resp[self.embed.type],
-                    previewAction = actionService.getActions({key: 'mct-preview-action', domainObject: domainObject})[0];
-
-                self.actions.push(self.actionToMenuDecorator(previewAction));
+            openmct.objects.get(self.embed.type).then(function (domainObject) {
+                actions.forEach((action) => {
+                    self.actions.push({
+                        cssClass: action.cssClass,
+                        name: action.name,
+                        perform: () => {
+                            action.invoke([domainObject].concat(openmct.router.path));
+                        }
+                    });
+                });
             });
         };
     };
@@ -312,7 +311,6 @@ function (
             openSnapshot: self.openSnapshot,
             formatTime: self.formatTime,
             toggleActionMenu: self.toggleActionMenu,
-            actionToMenuDecorator: self.actionToMenuDecorator,
             findInArray: self.findInArray
         };
     };
