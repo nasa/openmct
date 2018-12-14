@@ -24,7 +24,6 @@ define([
     'moment',
     'zepto',
     '../../res/templates/snapshotTemplate.html',
-    '../../../preview/PreviewAction',
     'vue',
     'painterro'
 ],
@@ -32,19 +31,14 @@ function (
     Moment,
     $,
     SnapshotTemplate,
-    PreviewAction,
     Vue,
     Painterro
 ) {
-    function EmbedController (openmct, domainObject) {
+    function EmbedController(openmct, domainObject) {
         this.openmct = openmct;
         this.domainObject = domainObject;
-        this.objectService = openmct.$injector.get('objectService');
-        this.navigationService = openmct.$injector.get('navigationService');
         this.popupService = openmct.$injector.get('popupService');
         this.agentService = openmct.$injector.get('agentService');
-        this.dialogService = openmct.$injector.get('dialogService');
-        this.previewAction = new PreviewAction.default(openmct);
 
         this.navigate = this.navigate.bind(this);
         this.exposedData = this.exposedData.bind(this);
@@ -53,9 +47,7 @@ function (
     }
 
     EmbedController.prototype.navigate = function (embedType) {
-        this.objectService.getObjects([embedType]).then(function (objects) {
-            this.navigationService.setNavigation(objects[embedType]);
-        }.bind(this));
+        console.log('navigation - to do still!');
     };
 
     EmbedController.prototype.openSnapshot = function (domainObject, entry, embed) {

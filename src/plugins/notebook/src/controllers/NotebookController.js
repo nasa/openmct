@@ -27,7 +27,8 @@ define([
     '../../res/templates/notebook.html',
     '../../res/templates/entry.html',
     '../../res/templates/embed.html',
-    '../../../../ui/components/search.vue'
+    '../../../../ui/components/search.vue',
+    '../../../preview/PreviewAction'
 ],
 function (
     Vue,
@@ -36,7 +37,8 @@ function (
     NotebookTemplate,
     EntryTemplate,
     EmbedTemplate,
-    search
+    search,
+    PreviewAction
 ) {
 
     function NotebookController(openmct, domainObject) {
@@ -45,6 +47,7 @@ function (
         this.entrySearch = '';
         this.objectService = openmct.$injector.get('objectService');
         this.actionService = openmct.$injector.get('actionService');
+        this.previewAction = new PreviewAction.default(openmct);
 
         this.show = this.show.bind(this);
         this.destroy = this.destroy.bind(this);
@@ -65,7 +68,7 @@ function (
             template: EmbedTemplate,
             data: embedController.exposedData,
             methods: embedController.exposedMethods(),
-            beforeMount: embedController.populateActionMenu(embedController.openmct, [embedController.previewAction])
+            beforeMount: embedController.populateActionMenu(self.openmct, [self.previewAction])
         };
 
         var entryComponent = {
