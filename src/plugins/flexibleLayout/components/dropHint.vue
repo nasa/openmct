@@ -47,9 +47,10 @@ export default {
             required: true
         }
     },
-    mixins: [isEditingMixin],
+    //mixins: [isEditingMixin],
     data() {
         return {
+            isEditing: true,
             isMouseOver: false,
             isValidTarget: false
         }

@@ -107,7 +107,7 @@ function (
 
     EntryController.prototype.dropOnEntry = function (entryid, event) {
 
-        var data = event.dataTransfer.getData('domainObject');
+        var data = event.dataTransfer.getData('openmct/domain-object');
 
         if (data) {
             var selectedObject = JSON.parse(data),

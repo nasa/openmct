@@ -44,7 +44,11 @@ export default {
     },
     methods: {
         dragStart(event) {
-            event.dataTransfer.setData("domainObject", JSON.stringify(this.observedObject));
+            let navigatedObject = this.openmct.router.path[0];
+            if (this.openmct.composition.checkPolicy(navigatedObject, this.observedObject)) {
+                event.dataTransfer.setData("openmct/composable-domain-object", JSON.stringify(this.observedObject));
+            }
+            event.dataTransfer.setData("openmct/domain-object", JSON.stringify(this.observedObject));
         }
     }
 }
