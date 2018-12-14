@@ -39,7 +39,8 @@ define([
     './folderView/plugin',
     './flexibleLayout/plugin',
     './tabs/plugin',
-    '../../platform/features/fixed/plugin'
+    '../../platform/features/fixed/plugin',
+    './preview/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -59,7 +60,8 @@ define([
     FolderView,
     FlexibleLayout,
     Tabs,
-    FixedView
+    FixedView,
+    PreviewPlugin
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -174,6 +176,7 @@ define([
     plugins.Tabs = Tabs;
     plugins.FixedView = FixedView;
     plugins.FlexibleLayout = FlexibleLayout;
+    plugins.Preview = PreviewPlugin.default;
 
     return plugins;
 });

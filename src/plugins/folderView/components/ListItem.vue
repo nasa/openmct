@@ -54,11 +54,11 @@
 <script>
 
 import moment from 'moment';
-import contextMenu from '../../../ui/components/mixins/context-menu';
-import objectLink from '../../../ui/components/mixins/object-link';
+import contextMenuGesture from '../../../ui/mixins/context-menu-gesture';
+import objectLink from '../../../ui/mixins/object-link';
 
 export default {
-    mixins: [contextMenu, objectLink],
+    mixins: [contextMenuGesture, objectLink],
     props: ['item'],
     methods: {
         formatTime(timestamp, format) {

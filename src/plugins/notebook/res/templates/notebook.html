@@ -31,8 +31,9 @@
     <div class="c-notebook__entries" ng-mouseover="handleActive()">
         <ul>
             <notebook-entry
-                v-for="entry in filteredAndSortedEntries"
-                v-bind:entry="entry">
+                v-for="(entry,index) in filteredAndSortedEntries"
+                :key="entry.key"
+                :entry="entry">
             </notebook-entry>
         </ul>
     </div>

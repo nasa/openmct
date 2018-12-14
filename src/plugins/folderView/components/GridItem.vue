@@ -57,8 +57,7 @@
         &__name {
             @include ellipsize();
             color: $colorItemFg;
-            font-size: 1.2em;
-            font-weight: 400;
+            @include headerFont(1.2em);
             margin-bottom: $interiorMarginSm;
         }
 
@@ -150,11 +149,11 @@
 </style>
 
 <script>
-import contextMenu from '../../../ui/components/mixins/context-menu';
-import objectLink from '../../../ui/components/mixins/object-link';
+import contextMenuGesture from '../../../ui/mixins/context-menu-gesture';
+import objectLink from '../../../ui/mixins/object-link';
 
 export default {
-    mixins: [contextMenu, objectLink],
+    mixins: [contextMenuGesture, objectLink],
     props: ['item']
 }
 </script>

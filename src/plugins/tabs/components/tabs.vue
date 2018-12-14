@@ -15,14 +15,14 @@
                 v-for="(tab,index) in tabsList"
                 :key="index"
                 :class="[
-                    {'is-current': tab=== currentTab}, 
+                    {'is-current': tab=== currentTab},
                     tab.type.definition.cssClass
                 ]"
                 @click="showTab(tab)">
                 <span class="c-button__label">{{tab.model.name}}</span>
             </button>
         </div>
-        <div class="c-tabs-view__object-holder" 
+        <div class="c-tabs-view__object-holder"
             v-for="(object, index) in tabsList"
             :key="index"
             :class="{'invisible': object !== currentTab}">
@@ -66,6 +66,7 @@
 
         &__object-name {
             flex: 0 0 auto;
+            @include headerFont();
             font-size: 1.2em !important;
             margin: $interiorMargin 0 $interiorMarginLg 0;
         }
@@ -85,7 +86,7 @@
 </style>
 
 <script>
-import ObjectView from '../../../ui/components/layout/ObjectView.vue';
+import ObjectView from '../../../ui/components/ObjectView.vue';
 
 var unknownObjectType = {
     definition: {

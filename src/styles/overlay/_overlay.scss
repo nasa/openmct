@@ -37,7 +37,7 @@
     }
     .blocker {
         background: $colorOvrBlocker;
-        z-index: 100;
+        z-index: 70;
     }
     .close {
         $d: $interiorMargin;
@@ -53,7 +53,7 @@
     }
 
     > .abs.outer-holder {
-        z-index: 102;
+        z-index: 72;
         > .abs.inner-holder {
             $m: $overlayMargin;
             top: $m;
@@ -196,7 +196,7 @@
 
             @include animToParams(overlayIn, $dur: $durLargeViewExpand, $delay: 0);
             background: $colorBodyBg;
-            z-index: 101;
+            z-index: 71;
 
             .abs.inner-holder {
                 opacity: 0;

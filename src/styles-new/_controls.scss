@@ -231,7 +231,7 @@ input[type=number]::-webkit-outer-spin-button {
     box-shadow: $shdwMenu;
     display: block;
     position: absolute;
-    z-index: 70;
+    z-index: 100;
 }
 
 @mixin menuInner() {

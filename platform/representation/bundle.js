@@ -25,12 +25,10 @@ define([
     "./src/MCTRepresentation",
     "./src/gestures/DragGesture",
     "./src/gestures/DropGesture",
-    "./src/gestures/ContextMenuGesture",
     "./src/gestures/GestureProvider",
     "./src/gestures/GestureRepresenter",
     "./src/services/DndService",
     "./src/TemplateLinker",
-    "./src/actions/ContextMenuAction",
     "./src/TemplatePrefetcher",
     'legacyRegistry'
 ], function (
@@ -38,12 +36,10 @@ define([
     MCTRepresentation,
     DragGesture,
     DropGesture,
-    ContextMenuGesture,
     GestureProvider,
     GestureRepresenter,
     DndService,
     TemplateLinker,
-    ContextMenuAction,
     TemplatePrefetcher,
     legacyRegistry
 ) {
@@ -88,14 +84,6 @@ define([
                         "dndService",
                         "$q"
                     ]
-                },
-                {
-                    "key": "menu",
-                    "implementation": ContextMenuGesture,
-                    "depends": [
-                        "$timeout",
-                        "agentService"
-                    ]
                 }
             ],
             "components": [
@@ -134,19 +122,6 @@ define([
                         "$log"
                     ],
                     "comment": "For internal use by mct-include and mct-representation."
-                }
-            ],
-            "actions": [
-                {
-                    "key": "menu",
-                    "implementation": ContextMenuAction,
-                    "depends": [
-                        "$compile",
-                        "$document",
-                        "$rootScope",
-                        "popupService",
-                        "agentService"
-                    ]
                 }
             ],
             "runs": [
