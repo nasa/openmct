@@ -43,7 +43,7 @@
             </thead>
             <tbody>
                 <list-item v-for="item in sortedItems"
-                    :key="item.key"
+                    :key="item.objectKeyString"
                     :item="item"
                     :object-path="item.objectPath">
                 </list-item>
@@ -102,7 +102,7 @@ export default {
     data() {
         let sortBy = 'model.name',
             ascending = true,
-            persistedSortOrder = window.localStorage.getItem('list-sort-order');
+            persistedSortOrder = window.localStorage.getItem('openmct-listview-sort-order');
 
         if (persistedSortOrder) {
             let parsed = JSON.parse(persistedSortOrder);
@@ -136,7 +136,7 @@ export default {
 
             window.localStorage
                 .setItem(
-                    'list-sort-order',
+                    'openmct-listview-sort-order',
                     JSON.stringify(
                         {
                             sortBy: this.sortBy,
