@@ -206,9 +206,11 @@
         },
         methods: {
             refreshComposition(selection) {
-                let parentObject = selection[0].context.item;
+                if (selection[0]) {
+                    let parentObject = selection[0].context.item;
 
-                this.composition = this.openmct.composition.get(parentObject);
+                    this.composition = this.openmct.composition.get(parentObject);
+                }
             }
         },
         mounted() {
