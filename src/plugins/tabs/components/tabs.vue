@@ -15,7 +15,7 @@
                 v-for="(tab,index) in tabsList"
                 :key="index"
                 :class="[
-                    {'is-current': tab=== currentTab},
+                    {'is-current': isCurrent(tab)},
                     tab.type.definition.cssClass
                 ]"
                 @click="showTab(tab)">
@@ -23,9 +23,9 @@
             </button>
         </div>
         <div class="c-tabs-view__object-holder"
-            v-for="(object, index) in tabsList"
+            v-for="(tab, index) in tabsList"
             :key="index"
-            :class="{'invisible': object !== currentTab}">
+            :class="{'invisible': !isCurrent(tab)}">
             <div class="c-tabs-view__object-name l-browse-bar__object-name--w"
                  :class="currentTab.type.definition.cssClass">
                 <div class="l-browse-bar__object-name">
@@ -33,7 +33,7 @@
                 </div>
             </div>
             <object-view class="c-tabs-view__object"
-                :object="object.model">
+                :object="tab.model">
             </object-view>
         </div>
     </div>
@@ -87,6 +87,7 @@
 
 <script>
 import ObjectView from '../../../ui/components/ObjectView.vue';
+import _ from 'lodash';
 
 var unknownObjectType = {
     definition: {
@@ -99,22 +100,6 @@ export default {
     inject: ['openmct','domainObject', 'composition'],
     components: {
         ObjectView
-    },
-    mounted () {
-        if (this.composition) {
-            this.composition.on('add', this.addItem, this);
-            this.composition.load();
-        }
-
-        document.addEventListener('dragstart', this.dragstart);
-        document.addEventListener('dragend', this.dragend);
-
-        let dropHint = this.$refs.dropHint;
-
-        if (dropHint) {
-            dropHint.addEventListener('dragenter', this.dragenter);
-            dropHint.addEventListener('dragleave', this.dragleave);
-        }
     },
     data: function () {
         return {
@@ -143,6 +128,17 @@ export default {
                 this.setCurrentTab = false;
             }
         },
+        removeItem (identifier) {
+            let pos = _.findIndex(this.tabsList, (tab) => 
+                this.openmct.objects.makeKeyString(tab.model.identifier) === this.openmct.objects.makeKeyString(identifier)
+            );
+
+            if (isCurrent(tab)) {
+                this.showTab(this.tabsList[this.tabsList.length - 1]);
+            }
+
+            this.tabsList.splice(pos, 1);
+        },
         onDrop (e) {
             this.setCurrentTab = true;
         },
@@ -160,10 +156,31 @@ export default {
         },
         dragleave() {
             this.allowDrop = false;
+        },
+        isCurrent(tab) {
+            return _.isEqual(this.currentTab, tab)
+        }
+    },
+    mounted () {
+        if (this.composition) {
+            this.composition.on('add', this.addItem);
+            this.composition.on('remove', this.removeItem);
+            this.composition.load();
+        }
+
+        document.addEventListener('dragstart', this.dragstart);
+        document.addEventListener('dragend', this.dragend);
+
+        let dropHint = this.$refs.dropHint;
+
+        if (dropHint) {
+            dropHint.addEventListener('dragenter', this.dragenter);
+            dropHint.addEventListener('dragleave', this.dragleave);
         }
     },
     destroyed() {
-        this.composition.off('add', this.addItem, this);
+        this.composition.off('add', this.addItem);
+        this.composition.off('remove', this.removeItem);
 
         document.removeEventListener('dragstart', this.dragstart);
         document.removeEventListener('dragend', this.dragend);
