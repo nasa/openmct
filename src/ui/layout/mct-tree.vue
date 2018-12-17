@@ -47,7 +47,7 @@
                 }
             }
 
-            &.is-selected {
+            &.is-navigated-object {
                 background: $colorItemTreeSelectedBg;
                 .c-tree__item__type-icon:before {
                     color: $colorItemTreeIconHover;
@@ -133,6 +133,27 @@
             };
         },
         inject: ['openmct'],
+        methods: {
+            treeElementsForObjectPath(navigationPath) {
+                let idClass = '.js-object-' + navigationPath[navigationPath.length - 1];
+                return this.$el.querySelectorAll(idClass);
+            },
+            applyNavigationStyles(newPath, oldPath) {
+                let tokenizedNewPath = newPath.split('/');
+                let tokenizedOldPath = (oldPath || '').split('/');
+
+                if (tokenizedNewPath.length > 0) {
+                    this.treeElementsForObjectPath(tokenizedNewPath).forEach((element) =>
+                        element.classList.add('is-navigated-object')
+                    );
+                }
+                if (tokenizedOldPath.length > 0) {
+                    this.treeElementsForObjectPath(tokenizedOldPath).forEach((element) =>
+                        element.classList.remove('is-navigated-object')
+                    );
+                }
+            }
+        },
         mounted: function () {
             this.openmct.objects.get('ROOT')
                 .then(root => this.openmct.composition.get(root).load())
@@ -142,7 +163,9 @@
                         object: c,
                         objectPath: [c]
                     };
-                }))
+                }));
+
+            this.openmct.router.on('change:path', this.applyNavigationStyles);
         },
         name: 'mct-tree',
         components: {

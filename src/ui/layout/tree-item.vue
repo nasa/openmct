@@ -1,7 +1,7 @@
 <template>
     <li class="c-tree__item-h">
         <div class="c-tree__item"
-            :class="{ 'is-alias': isAlias }">
+            :class="[{ 'is-alias': isAlias, 'is-navigated-object': isNavigated }, objectSelectorClass]">
             <view-control class="c-tree__item__view-control"
                           :enabled="hasChildren"
                           v-model="expanded">
@@ -31,12 +31,18 @@
             node: Object
         },
         data() {
+            let objectSelectorClass = 'js-object-' + this.node.id;
+            // Calculated once on load. Changes to navigation are detected in mct-tree.
+            let isNavigated = this.openmct.objects.makeKeyString(this.openmct.router.path[0].identifier) === this.node.id;
+
             return {
                 hasChildren: false,
                 isLoading: false,
+                isNavigated: isNavigated,
                 loaded: false,
                 children: [],
-                expanded: false
+                expanded: false,
+                objectSelectorClass: objectSelectorClass
             }
         },
         computed: {
@@ -47,7 +53,7 @@
                 }
                 let parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
                 return parentKeyString !== this.node.object.location;
-            }
+            },
         },
         mounted() {
             // TODO: should update on mutation.
