@@ -22,7 +22,7 @@
 
 /******************************************************** TABLE */
 table {
-    $min-w: 50px;
+    $minW: 50px;
     width: 100%;
 
     thead {
@@ -40,7 +40,7 @@ table {
 
     th, td {
         white-space: nowrap;
-        min-width: $min-w;
+        min-width: $minW;
         padding: $tabularTdPadTB $tabularTdPadLR;
     }
 
@@ -51,8 +51,6 @@ table {
 
 .c-table {
     // Can be used by any type of table, scrolling, LAD, etc.
-    //$min-w: 50px;
-
     display: flex;
     flex-flow: column nowrap;
     justify-content: flex-start;
