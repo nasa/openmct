@@ -272,12 +272,12 @@
                 composition = composition.filter(identifier => !this.matches(identifier, keyString));
                 this.mutate("composition", composition);
             },
-            matches(identifier, keyStringToCompare) {
-                if (this.telemetryViewMap[keyStringToCompare]) {
+            matches(identifier, keyString) {
+                if (this.telemetryViewMap[keyString]) {
                     return false;
                 }
 
-                return this.openmct.objects.makeKeyString(identifier) === keyStringToCompare;
+                return this.openmct.objects.makeKeyString(identifier) === keyString;
             },
             initializeItems() {
                 this.telemetryViewMap = {};

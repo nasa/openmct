@@ -103,7 +103,7 @@
                 .then(this.setObject);
         },
         destroyed() {
-            console.log("destroyed: index", this.index, this.domainObject.name);
+            console.log("destroyed: index", this.index, this.domainObject.name, this.item.id);            
             if (this.removeSelectable) {
                 this.removeSelectable();
             }

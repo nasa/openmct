@@ -79,8 +79,6 @@ define([], function () {
                     layoutItemIndex = selection[0].context.index,
                     toolbar = [];
 
-                console.log("toolbar: layoutItemIndex", layoutItemIndex);
-
                 if (selectedObject && selectedObject.type === 'layout') {
                     toolbar.push({
                         control: "menu",
@@ -133,7 +131,7 @@ define([], function () {
                     icon: "icon-trash",
                     title: "Delete the selected object",
                     method: function () {
-                        console.log("toolbar-remove: layoutItemIndex", layoutItemIndex)
+                        console.log("toolbar: layoutItemIndex", layoutItemIndex, "id", layoutItem.id);
                         let removeItem = selection[1].context.removeItem;
                         let prompt = openmct.overlays.dialog({
                             iconClass: 'alert',
