@@ -59,7 +59,9 @@ export default {
             }
         },
         preview() {
-            this.previewAction.invoke(this.objectPath);
+            if (this.previewAction.appliesTo(this.objectPath)){
+                this.previewAction.invoke(this.objectPath);
+            }
         },
         dragStart(event) {
             event.dataTransfer.setData("domainObject", JSON.stringify(this.observedObject));
