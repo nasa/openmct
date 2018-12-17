@@ -37,7 +37,7 @@
                      v-if="gridSize[1] >= 3"
                      :style="[{ backgroundSize: '100%' + gridSize[1] + 'px' }]"></div>
             </div>
-            <component v-for="(item, index) in layoutItems"            
+            <component v-for="(item, index) in layoutItems"
                 :is="item.type"
                 :item="item"
                 :key="item.id"
@@ -236,8 +236,8 @@
             trackItem(item) {
                 if (item.type === "telemetry-view") {
                     let keyString = this.openmct.objects.makeKeyString(item.identifier);
-                    let count = this.telemetryViewMap[keyString];
-                    this.telemetryViewMap[keyString] = !count ? 1 : ++count;
+                    let count = this.telemetryViewMap[keyString] || 0;
+                    this.telemetryViewMap[keyString] = ++count;
                 } else if (item.type === "subobject-view") {
                     this.objectViewMap[this.openmct.objects.makeKeyString(item.identifier)] = true;
                 }
@@ -313,6 +313,7 @@
                     }
                 });
                 this.mutate("configuration.items", layoutItems);
+                this.$el.click();
             }
         },
         mounted() {
