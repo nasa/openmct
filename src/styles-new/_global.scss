@@ -244,7 +244,7 @@ body.desktop .has-local-controls {
         border: $editBorderDrilledIn;
     }
 
-    *[s-selected] {
+    .is-moveable {
         cursor: move;
     }
 
