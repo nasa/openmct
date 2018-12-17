@@ -99,11 +99,11 @@
             }
         },
         mounted() {
-            console.log(this.item);
             this.openmct.objects.get(this.item.identifier)
                 .then(this.setObject);
         },
         destroyed() {
+            console.log("destroyed: index", this.index, this.domainObject.name);
             if (this.removeSelectable) {
                 this.removeSelectable();
             }

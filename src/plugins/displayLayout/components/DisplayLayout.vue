@@ -37,9 +37,10 @@
                      v-if="gridSize[1] >= 3"
                      :style="[{ backgroundSize: '100%' + gridSize[1] + 'px' }]"></div>
             </div>
-            <component v-for="(item, index) in layoutItems"
+            <component v-for="(item, index) in layoutItems"            
                 :is="item.type"
                 :item="item"
+                :key="item.id"
                 :gridSize="gridSize"
                 :initSelect="initSelectIndex === index"
                 :index="index"
@@ -226,6 +227,7 @@
             addItem(itemType, ...options) {
                 let item = getItemDefinition(itemType, this.openmct, this.gridSize, ...options);
                 item.type = itemType;
+                item.id = uuid();
                 this.trackItem(item);
                 this.layoutItems.push(item);
                 this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
@@ -233,10 +235,49 @@
             },
             trackItem(item) {
                 if (item.type === "telemetry-view") {
-                    this.telemetryViewMap[this.openmct.objects.makeKeyString(item.identifier)] = true;
+                    let keyString = this.openmct.objects.makeKeyString(item.identifier);
+                    let count = this.telemetryViewMap[keyString];
+                    this.telemetryViewMap[keyString] = !count ? 1 : ++count;
                 } else if (item.type === "subobject-view") {
                     this.objectViewMap[this.openmct.objects.makeKeyString(item.identifier)] = true;
                 }
+            },
+            removeItem(item, index) {
+                console.log("index", index);
+                this.initSelectIndex = -1;
+                // this.layoutItems.splice(index, 1);
+                this.$delete(this.layoutItems, 0);
+                this.mutate("configuration.items", this.layoutItems);
+                this.untrackItem(item);
+                // TODO: select the parent layout
+            },
+            untrackItem(item) {
+                if (item.type === 'telemetry-view' || item.type === 'subobject-view') {
+                    let keyString = this.openmct.objects.makeKeyString(item.identifier);
+
+                    if (this.objectViewMap[keyString]) {
+                        delete this.objectViewMap[keyString];
+                    } else if (this.telemetryViewMap[keyString]) {
+                        let count = --this.telemetryViewMap[keyString];
+
+                        if (count === 0) {
+                            delete this.telemetryViewMap[keyString];
+                        } else {
+                            this.telemetryViewMap[keyString] = count;
+                        }
+                    }
+
+                    let composition = _.get(this.internalDomainObject, 'composition');
+                    composition = composition.filter(identifier => !this.matches(identifier, keyString));
+                    this.mutate("composition", composition);
+                }
+            },
+            matches(identifier, keyStringToCompare) {
+                if (this.telemetryViewMap[keyStringToCompare]) {
+                    return false;
+                }
+
+                return this.openmct.objects.makeKeyString(identifier) === keyStringToCompare;
             },
             initializeItems() {
                 this.telemetryViewMap = {};
@@ -254,7 +295,22 @@
                 }
             },
             removeChild(identifier) {
-                // TODO: implement
+                console.log('remove child');
+                let keyString = this.openmct.objects.makeKeyString(identifier);
+
+                if (this.objectViewMap[keyString]) {
+                    delete this.objectViewMap[keyString];
+                    this.removeItemFromConfiguration(keyString);
+                } else if (this.telemetryViewMap[keyString]) {
+                    // delete this.telemetryViewMap[keyString];
+                    // this.removeItemFromConfiguration(keyString);
+                }
+            },
+            removeItemFromConfiguration(keyString) {
+                let layoutItems = this.layoutItems.filter(item => {
+                    return this.openmct.objects.makeKeyString(item.identifier) !== keyString;
+                });
+                this.mutate("configuration.items", layoutItems);
             }
         },
         mounted() {

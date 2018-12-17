@@ -79,6 +79,8 @@ define([], function () {
                     layoutItemIndex = selection[0].context.index,
                     toolbar = [];
 
+                console.log("toolbar: layoutItemIndex", layoutItemIndex);
+
                 if (selectedObject && selectedObject.type === 'layout') {
                     toolbar.push({
                         control: "menu",
@@ -125,11 +127,42 @@ define([], function () {
                 let separator = {
                     control: "separator"
                 };
+                let remove = {
+                    control: "button",
+                    domainObject: selectedParent,
+                    icon: "icon-trash",
+                    title: "Delete the selected object",
+                    method: function () {
+                        console.log("toolbar-remove: layoutItemIndex", layoutItemIndex)
+                        let removeItem = selection[1].context.removeItem;
+                        let prompt = openmct.overlays.dialog({
+                            iconClass: 'alert',
+                            message: `Warning! This action will remove this item from the Display Layout. Do you want to continue?`,
+                            buttons: [
+                                {
+                                    label: 'Ok',
+                                    emphasis: 'true',
+                                    callback: function () {
+                                        removeItem(layoutItem, layoutItemIndex);
+                                        prompt.dismiss();
+                                    }
+                                },
+                                {
+                                    label: 'Cancel',
+                                    callback: function () {
+                                        prompt.dismiss();
+                                    }
+                                }
+                            ]
+                        });
+                    }
+                };
 
                 if (layoutItem.type === 'subobject-view') {
                     if (toolbar.length > 0) {
                         toolbar.push(separator);
                     }
+
                     toolbar.push({
                         control: "toggle-button",
                         domainObject: selectedParent,
@@ -147,6 +180,8 @@ define([], function () {
                             }
                         ]
                     });
+                    toolbar.push(separator);
+                    toolbar.push(remove);
                 } else {
                     const TEXT_SIZE = [9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96];
                     let fill = {
@@ -263,7 +298,9 @@ define([], function () {
                             x,
                             y,
                             height,
-                            width
+                            width,
+                            separator,
+                            remove
                         ];
                     } else if (layoutItem.type === 'text-view' ) {
                         let text = {
@@ -286,7 +323,9 @@ define([], function () {
                             height,
                             width,
                             separator,
-                            text
+                            text,
+                            separator,
+                            remove
                         ];
                     } else if (layoutItem.type === 'box-view') {
                         toolbar = [
@@ -296,7 +335,9 @@ define([], function () {
                             x,
                             y,
                             height,
-                            width
+                            width,
+                            separator,
+                            remove
                         ];
                     } else if (layoutItem.type === 'image-view') {
                         let url = {
@@ -315,7 +356,9 @@ define([], function () {
                             height,
                             width,
                             separator,
-                            url
+                            url,
+                            separator,
+                            remove
                         ];
                     } else if (layoutItem.type === 'line-view') {
                         let x2 = {
@@ -340,7 +383,9 @@ define([], function () {
                             x,
                             y,
                             x2,
-                            y2
+                            y2,
+                            separator,
+                            remove
                         ];
                     }
                 }

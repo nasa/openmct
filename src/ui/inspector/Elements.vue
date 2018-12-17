@@ -155,6 +155,7 @@ export default {
         }
     },
     destroyed() {
+        this.openmct.selection.off('change', this.showSelection);
     }
 }
 </script>
