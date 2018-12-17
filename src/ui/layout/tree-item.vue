@@ -53,7 +53,7 @@
                 }
                 let parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
                 return parentKeyString !== this.node.object.location;
-            },
+            }
         },
         mounted() {
             // TODO: should update on mutation.
