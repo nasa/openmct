@@ -131,7 +131,6 @@ define([], function () {
                     icon: "icon-trash",
                     title: "Delete the selected object",
                     method: function () {
-                        console.log("toolbar: layoutItemIndex", layoutItemIndex, "id", layoutItem.id);
                         let removeItem = selection[1].context.removeItem;
                         let prompt = openmct.overlays.dialog({
                             iconClass: 'alert',

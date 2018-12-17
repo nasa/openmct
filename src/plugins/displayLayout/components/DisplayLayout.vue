@@ -243,7 +243,6 @@
                 }
             },
             removeItem(item, index) {
-                console.log("removeItem: index", index, "id", item.id);
                 this.initSelectIndex = -1;
                 this.layoutItems.splice(index, 1);
                 this.mutate("configuration.items", this.layoutItems);
@@ -307,7 +306,11 @@
             },
             removeItemFromConfiguration(keyString) {
                 let layoutItems = this.layoutItems.filter(item => {
-                    return this.openmct.objects.makeKeyString(item.identifier) !== keyString;
+                    if (!item.identifier) {
+                        return true;
+                    } else {
+                        return this.openmct.objects.makeKeyString(item.identifier) !== keyString;
+                    }
                 });
                 this.mutate("configuration.items", layoutItems);
             }
