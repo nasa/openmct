@@ -243,13 +243,12 @@
                 }
             },
             removeItem(item, index) {
-                console.log("index", index);
+                console.log("removeItem: index", index, "id", item.id);
                 this.initSelectIndex = -1;
-                // this.layoutItems.splice(index, 1);
-                this.$delete(this.layoutItems, 0);
+                this.layoutItems.splice(index, 1);
                 this.mutate("configuration.items", this.layoutItems);
                 this.untrackItem(item);
-                // TODO: select the parent layout
+                this.$el.click();
             },
             untrackItem(item) {
                 if (item.type === 'telemetry-view' || item.type === 'subobject-view') {
@@ -257,20 +256,21 @@
 
                     if (this.objectViewMap[keyString]) {
                         delete this.objectViewMap[keyString];
+                        this.mutateComposition(keyString);
                     } else if (this.telemetryViewMap[keyString]) {
                         let count = --this.telemetryViewMap[keyString];
 
                         if (count === 0) {
                             delete this.telemetryViewMap[keyString];
-                        } else {
-                            this.telemetryViewMap[keyString] = count;
+                            this.mutateComposition(keyString);
                         }
                     }
-
-                    let composition = _.get(this.internalDomainObject, 'composition');
-                    composition = composition.filter(identifier => !this.matches(identifier, keyString));
-                    this.mutate("composition", composition);
                 }
+            },
+            mutateComposition(keyString) {
+                let composition = _.get(this.internalDomainObject, 'composition');
+                composition = composition.filter(identifier => !this.matches(identifier, keyString));
+                this.mutate("composition", composition);
             },
             matches(identifier, keyStringToCompare) {
                 if (this.telemetryViewMap[keyStringToCompare]) {
@@ -295,15 +295,14 @@
                 }
             },
             removeChild(identifier) {
-                console.log('remove child');
                 let keyString = this.openmct.objects.makeKeyString(identifier);
 
                 if (this.objectViewMap[keyString]) {
                     delete this.objectViewMap[keyString];
                     this.removeItemFromConfiguration(keyString);
                 } else if (this.telemetryViewMap[keyString]) {
-                    // delete this.telemetryViewMap[keyString];
-                    // this.removeItemFromConfiguration(keyString);
+                    delete this.telemetryViewMap[keyString];
+                    this.removeItemFromConfiguration(keyString);
                 }
             },
             removeItemFromConfiguration(keyString) {
