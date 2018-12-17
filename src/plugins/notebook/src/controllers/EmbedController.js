@@ -40,15 +40,10 @@ function (
         this.popupService = openmct.$injector.get('popupService');
         this.agentService = openmct.$injector.get('agentService');
 
-        this.navigate = this.navigate.bind(this);
         this.exposedData = this.exposedData.bind(this);
         this.exposedMethods = this.exposedMethods.bind(this);
         this.toggleActionMenu = this.toggleActionMenu.bind(this);
     }
-
-    EmbedController.prototype.navigate = function (embedType) {
-        console.log('navigation - to do still!');
-    };
 
     EmbedController.prototype.openSnapshot = function (domainObject, entry, embed) {
 
@@ -299,7 +294,6 @@ function (
         var self = this;
 
         return {
-            navigate: self.navigate,
             openSnapshot: self.openSnapshot,
             formatTime: self.formatTime,
             toggleActionMenu: self.toggleActionMenu,

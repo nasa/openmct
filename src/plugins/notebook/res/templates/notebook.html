@@ -24,11 +24,10 @@
     </div>
     <div class="c-notebook__drag-area icon-plus"
          @click="newEntry($event)"
-         @drop="newEntry($event)"
-         id="newEntry">
+         @drop="newEntry($event)">
         <span class="c-notebook__drag-area__label">To start a new entry, click here or drag and drop any object</span>
     </div>
-    <div class="c-notebook__entries" ng-mouseover="handleActive()">
+    <div class="c-notebook__entries">
         <ul>
             <notebook-entry
                 v-for="(entry,index) in filteredAndSortedEntries"

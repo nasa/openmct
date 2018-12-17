@@ -30,8 +30,6 @@ function (
     function EntryController (openmct, domainObject) {
         this.openmct = openmct;
         this.domainObject = domainObject;
-        this.dndService = this.openmct.$injector.get('dndService');
-        this.dialogService = this.openmct.$injector.get('dialogService');
 
         this.currentEntryValue = '';
 
@@ -128,15 +126,10 @@ function (
         }
     };
 
-    EntryController.prototype.dragoverOnEntry = function () {
-
-    };
-
     EntryController.prototype.exposedData = function () {
         return {
             openmct: this.openmct,
             domainObject: this.domainObject,
-            dialogService: this.dialogService,
             currentEntryValue: this.currentEntryValue
         };
     };
@@ -148,8 +141,7 @@ function (
             textBlur: this.textBlur,
             formatTime: this.formatTime,
             deleteEntry: this.deleteEntry,
-            dropOnEntry: this.dropOnEntry,
-            dragoverOnEntry: this.dragoverOnEntry
+            dropOnEntry: this.dropOnEntry
         };
     };
     return EntryController;
