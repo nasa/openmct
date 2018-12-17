@@ -52,13 +52,13 @@ function (
 
                 var save = false,
                     painterroInstance = {},
-                    annotateOverlay = new Vue({
+                    annotateVue = new Vue({
                         template: '<div id="snap-annotation"></div>'
                     }),
                     self = this;
 
-                openmct.overlays.overlay({
-                    element: annotateOverlay.$mount().$el,
+                let annotateOverlay = openmct.overlays.overlay({
+                    element: annotateVue.$mount().$el,
                     size: 'large',
                     buttons: [
                         {
@@ -66,6 +66,7 @@ function (
                             callback: function () {
                                 save = false;
                                 painterroInstance.save();
+                                annotateOverlay.dismiss();
                             }
                         },
                         {
@@ -73,11 +74,12 @@ function (
                             callback: function () {
                                 save = true;
                                 painterroInstance.save();
+                                annotateOverlay.dismiss();
                             }
                         }
                     ],
                     onDestroy: function () {
-                        annotateOverlay.$destroy(true);
+                        annotateVue.$destroy(true);
                     }
                 });
 
@@ -151,13 +153,9 @@ function (
                 }
             });
 
-        function onDestroyCallback() {
-            snapshot.$destroy(true);
-        }
-
         var snapshotOverlay = this.openmct.overlays.overlay({
             element: snapshot.$mount().$el,
-            onDestroy: onDestroyCallback,
+            onDestroy: () => {snapshot.$destroy(true)},
             size: 'large',
             buttons: [
                 {

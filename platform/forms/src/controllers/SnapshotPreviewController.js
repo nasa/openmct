@@ -32,10 +32,18 @@ define(
                 var image = document.createElement('img');
                 image.src = imageUrl;
 
-                openmct.overlays.overlay(
+                var previewImageOverlay = openmct.overlays.overlay(
                     {
                         element: image,
-                        size: 'large'
+                        size: 'large',
+                        buttons: [
+                            {
+                                label: 'Done',
+                                callback: function () {
+                                    previewImageOverlay.dismiss();
+                                }
+                            }
+                        ]
                     }
                 );
             };
@@ -49,7 +57,7 @@ define(
 
                 div.id = 'snap-annotation';
 
-                openmct.overlays.overlay(
+                var annotateImageOverlay = openmct.overlays.overlay(
                     {
                         element: div,
                         size: 'large',
@@ -59,6 +67,7 @@ define(
                                 callback: function () {
                                     save = false;
                                     painterroInstance.save();
+                                    annotateImageOverlay.dismiss();
                                 }
                             },
                             {
@@ -66,6 +75,7 @@ define(
                                 callback: function () {
                                     save = true;
                                     painterroInstance.save();
+                                    annotateImageOverlay.dismiss();
                                 }
                             }
                         ]
