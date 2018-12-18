@@ -29,10 +29,10 @@ define(
         function SnapshotPreviewController($scope, openmct) {
 
             $scope.previewImage = function (imageUrl) {
-                var image = document.createElement('img');
+                let image = document.createElement('img');
                 image.src = imageUrl;
 
-                var previewImageOverlay = openmct.overlays.overlay(
+                let previewImageOverlay = openmct.overlays.overlay(
                     {
                         element: image,
                         size: 'large',
@@ -51,13 +51,13 @@ define(
             $scope.annotateImage = function (ngModel, field, imageUrl) {
                 $scope.imageUrl = imageUrl;
 
-                var div = document.createElement('div'),
+                let div = document.createElement('div'),
                     painterroInstance = {},
                     save = false;
 
                 div.id = 'snap-annotation';
 
-                var annotateImageOverlay = openmct.overlays.overlay(
+                let annotateImageOverlay = openmct.overlays.overlay(
                     {
                         element: div,
                         size: 'large',
@@ -107,7 +107,7 @@ define(
                     },
                     saveHandler: function (image, done) {
                         if (save) {
-                            var url = image.asBlob(),
+                            let url = image.asBlob(),
                                 reader = new window.FileReader();
 
                             reader.readAsDataURL(url);

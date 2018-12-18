@@ -16,8 +16,8 @@
             <div class="menu-element context-menu-wrapper mobile-disable-select">
                 <div class="menu context-menu">
                     <ul>
-                        <li v-for="(action,index) in actions"
-                            :key="embed.id + '-' + action.name" 
+                        <li v-for="action in actions"
+                            :key="action.name" 
                             :class="[action.cssClass]"
                             @click="action.perform(embed, entry)">
                             {{ action.name }}

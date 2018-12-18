@@ -111,10 +111,10 @@ export default {
         };
     },
     methods:{
-        showTab (tab) {
+        showTab(tab) {
             this.currentTab = tab;
         },
-        addItem (model) {
+        addItem(model) {
             let type = this.openmct.types.get(model.type) || unknownObjectType,
                 tabItem = {
                     model,
@@ -128,30 +128,30 @@ export default {
                 this.setCurrentTab = false;
             }
         },
-        removeItem (identifier) {
+        removeItem(identifier) {
             let pos = _.findIndex(this.tabsList, (tab) => 
-                this.openmct.objects.makeKeyString(tab.model.identifier) === this.openmct.objects.makeKeyString(identifier)
+                tab.model.identifier.namespace === identifier.namespace && tab.model.identifier.key === identifier.key
             );
-
-            if (isCurrent(tab)) {
+            
+            if (this.isCurrent(this.tabsList[pos])) {
                 this.showTab(this.tabsList[this.tabsList.length - 1]);
             }
 
             this.tabsList.splice(pos, 1);
         },
-        onDrop (e) {
+        onDrop(e) {
             this.setCurrentTab = true;
         },
-        dragstart (e) {
+        dragstart(e) {
             if (e.dataTransfer.getData('domainObject')) {
                 this.isDragging = true;
             }
         },
-        dragend (e) {
+        dragend(e) {
             this.isDragging = false;
             this.allowDrop = false;
         },
-        dragenter () {
+        dragenter() {
             this.allowDrop = true;
         },
         dragleave() {

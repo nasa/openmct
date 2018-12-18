@@ -8,7 +8,7 @@
         </pane>
         <pane class="c-inspector__elements"
               handle="before"
-              label="Elements" v-if="isEditing && composition">
+              label="Elements" v-if="isEditing && hasComposition">
             <elements></elements>
         </pane>
     </multipane>
@@ -201,7 +201,7 @@
         },
         data() {
             return {
-                composition: undefined
+                hasComposition: false
             }
         },
         methods: {
@@ -209,7 +209,7 @@
                 if (selection[0]) {
                     let parentObject = selection[0].context.item;
 
-                    this.composition = this.openmct.composition.get(parentObject);
+                    this.hasComposition = !!this.openmct.composition.get(parentObject);
                 }
             }
         },
