@@ -193,7 +193,7 @@ body.desktop .has-local-controls {
 /*************************** SELECTION */
 .u-inspectable {
     &:hover {
-        box-shadow: $browseShdwSelectableHov;
+        box-shadow: $browseSelectableShdwHov;
     }
 }
 
@@ -202,13 +202,14 @@ body.desktop .has-local-controls {
     *:not(.is-drilled-in).c-frame {
         border: $editSelectableBorder;
 
-        &:hover {
-            border: $editSelectableBorderHov;
+        &:not([s-selected]) {
+            &:hover {
+                border: $editSelectableBorderHov;
+            }
         }
 
-        &[s-selected],
-        &.is-selected {
-            border: $editSelectableBorderSelected;
+        &[s-selected] {
+            box-shadow: $editSelectableShdwSelected;
 
             > .c-frame-edit {
                 display: block; // Show the editing rect and handles
