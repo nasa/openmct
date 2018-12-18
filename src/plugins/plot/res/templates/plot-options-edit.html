@@ -20,21 +20,21 @@
  at runtime from the About dialog for additional information.
 -->
 <div ng-controller="PlotOptionsController">
-    <ul class="tree l-inspector-part">
-        <h2 title="Display properties for this object">Plot Series Options</h2>
+    <ul class="tree c-tree">
+        <h2 title="Display properties for this object">Plot Series</h2>
         <li ng-repeat="series in plotSeries"
             ng-controller="PlotSeriesFormController"
             form-model="series">
-            <span class="tree-item menus-to-left">
-                <span class='ui-symbol view-control flex-elem'
-                      ng-class="{ expanded: expanded }"
+            <div class="c-tree__item menus-to-left">
+                <span class='c-disclosure-triangle is-enabled flex-elem'
+                      ng-class="{ 'c-disclosure-triangle--expanded': expanded }"
                       ng-click="expanded = !expanded">
                 </span>
-                <mct-representation class="rep-object-label"
+                <mct-representation class="rep-object-label c-tree__item__label"
                                     key="'label'"
                                     mct-object="series.oldObject">
                 </mct-representation>
-            </span>
+            </div>
             <ul class="grid-properties" ng-show="expanded">
                 <li class="grid-row">
                 <!-- Value to be displayed -->

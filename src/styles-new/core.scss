@@ -28,6 +28,8 @@
 @import "global";
 @import "status";
 @import "controls";
+@import "table";
+@import "legacy-plots";
 
 /******************** LEGACY CSS */
 $output-bourbon-deprecation-warnings: false;
