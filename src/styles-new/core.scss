@@ -27,6 +27,8 @@
 @import "glyphs";
 @import "global";
 @import "controls";
+@import "table";
+@import "legacy-plots";
 
 /******************** LEGACY CSS */
 $output-bourbon-deprecation-warnings: false;

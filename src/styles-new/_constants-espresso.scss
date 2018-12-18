@@ -165,6 +165,8 @@ $colorDropHint: $colorKey;
 $colorDropHintBg: darken($colorDropHint, 10%);
 $colorDropHintBgHov: $colorDropHint;
 $colorDropHintFg: lighten($colorDropHint, 40%);
+$colorDisclosureCtrl: rgba($colorBodyFg, 0.5);
+$colorDisclosureCtrlHov: rgba($colorBodyFg, 0.7);
 
 // Menus
 $colorMenuBg: lighten($colorBodyBg, 15%);
@@ -261,7 +263,6 @@ $opacityPlotHash: 0.2;
 $stylePlotHash: dashed;
 $colorPlotAreaBorder: $colorInteriorBorder;
 $colorPlotLabelFg: darken($colorPlotFg, 20%);
-$legendCollapsedNameMaxW: 50%;
 $legendHoverValueBg: rgba($colorBodyFg, 0.2);
 
 // Tree
@@ -277,8 +278,8 @@ $colorItemTreeSelectedIcon: $colorItemTreeSelectedFg;
 $colorItemTreeEditingBg: darken($editColor, 20%);
 $colorItemTreeEditingFg: $editColorFg;
 $colorItemTreeEditingIcon: $editColorFg;
-$colorItemTreeVC: rgba($colorBodyFg, 0.5);
-$colorItemTreeVCHover: $colorKey;
+$colorItemTreeVC: $colorDisclosureCtrl;
+$colorItemTreeVCHover: $colorDisclosureCtrlHov;
 $shdwItemTreeIcon: none;
 
 // Images
@@ -353,19 +354,6 @@ $createBtnTextTransform: uppercase;
 }
 
 /**************************************************** NOT USED, LEAVE FOR NOW */
-// Slider controls, not in use
-/*
-$sliderColorBase: $colorKey;
-$sliderColorRangeHolder: rgba(black, 0.07);
-$sliderColorRange: rgba($sliderColorBase, 0.2);
-$sliderColorRangeHov: rgba($sliderColorBase, 0.4);
-$sliderColorKnob: darken($sliderColorBase, 20%);
-$sliderColorKnobHov: rgba($sliderColorBase, 0.7);
-$sliderColorRangeValHovBg: $sliderColorRange;
-$sliderColorRangeValHovFg: $colorBodyFg;
-$sliderKnobW: 15px;
-$sliderKnobR: 2px;
-*/
 
 // Content status
 /*
