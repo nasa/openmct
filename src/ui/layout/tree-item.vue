@@ -1,7 +1,7 @@
 <template>
     <li class="c-tree__item-h">
         <div class="c-tree__item"
-            :class="[{ 'is-alias': isAlias, 'is-navigated-object': isNavigated }, objectSelectorClass]">
+            :class="{ 'is-alias': isAlias, 'is-navigated-object': isNavigated }">
             <view-control class="c-tree__item__view-control"
                           :enabled="hasChildren"
                           v-model="expanded">
@@ -32,14 +32,13 @@
         },
         data() {
             let objectSelectorClass = 'js-object-' + this.node.id;
-            // Calculated once on load. Changes to navigation are detected in mct-tree.
-            let isNavigated = this.openmct.objects.makeKeyString(this.openmct.router.path[0].identifier) === this.node.id;
+            this.pathToObject = this.buildPathString(this.node.objectPath);
 
             return {
                 hasChildren: false,
                 isLoading: false,
-                isNavigated: isNavigated,
                 loaded: false,
+                isNavigated: this.pathToObject === this.openmct.router.currentLocation.path,
                 children: [],
                 expanded: false,
                 objectSelectorClass: objectSelectorClass
@@ -53,7 +52,7 @@
                 }
                 let parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
                 return parentKeyString !== this.node.object.location;
-            }
+            },
         },
         mounted() {
             // TODO: should update on mutation.
@@ -71,11 +70,14 @@
             if (this.openmct.composition.get(this.node.object)) {
                 this.hasChildren = true;
             }
+
+            this.openmct.router.on('change:path', this.highlightIfNavigated);
         },
         destroy() {
             if (this.composition) {
                 this.composition.off('add', this.addChild);
                 this.composition.off('remove', this.removeChild);
+                this.openmct.router.off('change:path', this.highlightIfNavigated);
                 delete this.composition;
             }
         },
@@ -108,6 +110,18 @@
             finishLoading () {
                 this.isLoading = false;
                 this.loaded = true;
+            },
+            buildPathString(path) {
+                return '/browse/' + path.map(o => o && this.openmct.objects.makeKeyString(o.identifier))
+                    .reverse()
+                    .join('/');
+            },
+            highlightIfNavigated(newPath, oldPath){
+                if (newPath === this.pathToObject) {
+                    this.isNavigated = true;
+                } else if (oldPath === this.pathToObject) {
+                    this.isNavigated = false;
+                }
             }
         },
         components: {
