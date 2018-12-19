@@ -294,7 +294,7 @@
     padding: $interiorMargin floor($interiorMargin * 1.25);
 
     &:after,
-    > * {
+    > * + * {
         margin-left: $interiorMarginSm;
     }
 
