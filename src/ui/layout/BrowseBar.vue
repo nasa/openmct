@@ -1,7 +1,7 @@
 <template>
     <div class="l-browse-bar">
         <div class="l-browse-bar__start">
-            <button class="l-browse-bar__nav-to-parent-button c-click-icon icon-pointer-left"></button>
+            <button class="l-browse-bar__nav-to-parent-button c-click-icon c-click-icon--major icon-pointer-left"></button>
             <div class="l-browse-bar__object-name--w"
                  :class="type.cssClass">
                 <span

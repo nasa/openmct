@@ -333,7 +333,6 @@
     background: none;
     box-shadow: none;
     border-radius: $controlCr;
-    color: $colorKey;
     cursor: pointer;
     padding: $pTB $pLR ;
 
@@ -347,6 +346,10 @@
         // *:before handles any nested containers that may contain glyph elements
         // Needed for c-togglebutton.
         font-size: 1.25em;
+    }
+
+    &[class*="--major"] {
+        color: $colorKey;
     }
 }
 

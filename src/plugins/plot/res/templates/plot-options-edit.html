@@ -86,8 +86,9 @@
                     <div class="grid-cell label"
                          title="Manually set the plot line and marker color for this series.">Color</div>
                     <div class="grid-cell value">
-                        <div class="c-button--menu c-button--swatched" ng-click="toggle.toggle()">
-                            <span class="color-swatch" ng-style="{ background: series.get('color').asHexString() }">
+                        <div class="c-click-swatch c-click-swatch--menu" ng-click="toggle.toggle()">
+                            <span class="c-color-swatch"
+                                  ng-style="{ background: series.get('color').asHexString() }">
                             </span>
                         </div>
                         <div class="c-palette--inline c-palette__items" ng-show="toggle.isActive()">
