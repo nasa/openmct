@@ -140,10 +140,8 @@
                 }
             },
             buttonClickHandler: function (method) {
-                if (method && typeof method === 'function') {
-                    method();
-                    this.$emit('destroy');
-                }
+                method();
+                this.$emit('destroy');
             }
         }
     }

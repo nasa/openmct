@@ -129,15 +129,16 @@ export default {
             }
         },
         removeItem(identifier) {
-            let pos = _.findIndex(this.tabsList, (tab) => 
-                tab.model.identifier.namespace === identifier.namespace && tab.model.identifier.key === identifier.key
-            );
-            
-            if (this.isCurrent(this.tabsList[pos])) {
-                this.showTab(this.tabsList[this.tabsList.length - 1]);
-            }
+            let pos = this.tabsList.findIndex(tab => 
+                    tab.model.identifier.namespace === identifier.namespace && tab.model.identifier.key === identifier.key
+                ),
+                tabToBeRemoved = this.tabsList[pos];
 
             this.tabsList.splice(pos, 1);
+
+            if (this.isCurrent(tabToBeRemoved)) {
+                this.showTab(this.tabsList[this.tabsList.length - 1]);
+            }
         },
         onDrop(e) {
             this.setCurrentTab = true;
