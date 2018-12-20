@@ -21,21 +21,19 @@
  *****************************************************************************/
 
 define([
-    './components/ListView.vue',
-    'vue',
-    'moment'
+    './components/LadTable.vue',
+    'vue'
 ], function (
-    ListViewComponent,
-    Vue,
-    Moment
+    LadTableComponent,
+    Vue
 ) {
-    function FolderListView(openmct) {
+    function LADTableViewProvider(openmct) {
         return {
-            key: 'list-view',
-            name: 'List View',
-            cssClass: 'icon-list-view',
+            key: 'LadTable',
+            name: 'LAD Table',
+            cssClass: 'icon-tabular-lad',
             canView: function (domainObject) {
-                return domainObject.type === 'folder';
+                return domainObject.type === 'LadTable';
             },
             view: function (domainObject) {
                 let component;
@@ -44,15 +42,14 @@ define([
                     show: function (element) {
                         component =  new Vue({
                             components: {
-                                listViewComponent: ListViewComponent.default
+                                LadTableComponent: LadTableComponent.default
                             },
                             provide: {
                                 openmct,
-                                domainObject,
-                                Moment
+                                domainObject
                             },
                             el: element,
-                            template: '<list-view-component></list-view-component>'
+                            template: '<lad-table-component></lad-table-component>'
                         });
                     },
                     destroy: function (element) {
@@ -66,5 +63,5 @@ define([
             }
         };
     }
-    return FolderListView;
+    return LADTableViewProvider;
 });

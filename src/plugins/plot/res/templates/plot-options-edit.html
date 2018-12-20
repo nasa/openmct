@@ -78,7 +78,7 @@
                 <li class="grid-row" ng-show="form.markers || form.alarmMarkers">
                     <div class="grid-cell label"
                          title="The size of regular and alarm markers for this series.">Marker Size:</div>
-                    <div class="grid-cell value"><input class="sm" type="text" ng-model="form.markerSize"/></div>
+                    <div class="grid-cell value"><input class="c-input--flex" type="text" ng-model="form.markerSize"/></div>
                 </li>
                 <li class="grid-row"
                     ng-controller="ClickAwayController as toggle"
@@ -86,14 +86,14 @@
                     <div class="grid-cell label"
                          title="Manually set the plot line and marker color for this series.">Color</div>
                     <div class="grid-cell value">
-                        <div class="s-menu-button" ng-click="toggle.toggle()">
-                            <span class="color-swatch" ng-style="{ background: series.get('color').asHexString() }">
+                        <div class="c-click-swatch c-click-swatch--menu" ng-click="toggle.toggle()">
+                            <span class="c-color-swatch"
+                                  ng-style="{ background: series.get('color').asHexString() }">
                             </span>
                         </div>
-                        <div class="l-inline-palette" ng-show="toggle.isActive()">
-                            <!-- TODO: redo this as a grid -->
-                            <div class="l-palette-row" ng-repeat="group in config.series.palette.groups()">
-                                <div class="l-palette-item s-palette-item"
+                        <div class="c-palette--inline c-palette__items" ng-show="toggle.isActive()">
+                            <div class="u-contents" ng-repeat="group in config.series.palette.groups()">
+                                <div class="c-palette__item"
                                      ng-repeat="color in group"
                                      ng-class="{ 'selected': series.get('color').equalTo(color) }"
                                      ng-style="{ background: color.asHexString() }"
@@ -115,7 +115,7 @@
             <li class="grid-row">
                 <div class="grid-cell label"
                      title="Manually override how the Y axis is labeled.">Label</div>
-                <div class="grid-cell value"><input class="control" type="text" ng-model="form.label"/></div>
+                <div class="grid-cell value"><input class="c-input--flex" type="text" ng-model="form.label"/></div>
             </li>
         </ul>
         <ul class="l-inspector-part">
@@ -130,7 +130,7 @@
                      title="Percentage of padding above and below plotted min and max values. 0.1, 1.0, etc.">
                     Padding</div>
                 <div class="grid-cell value">
-                    <input class="sm" type="text" ng-model="form.autoscalePadding"/>
+                    <input class="c-input--flex" type="text" ng-model="form.autoscalePadding"/>
                 </div>
             </li>
         </ul>
@@ -143,13 +143,13 @@
                 <div class="grid-cell label"
                      title="Minimum Y axis value.">Minimum Value</div>
                 <div class="grid-cell value">
-                    <input class="sm" type="number" ng-model="form.range.min"/>
+                    <input class="c-input--flex" type="number" ng-model="form.range.min"/>
                 </div>
             </li>
             <li class="grid-row">
                 <div class="grid-cell label"
                      title="Maximum Y axis value.">Maximum Value</div>
-                <div class="grid-cell value"><input class="sm" type="number" ng-model="form.range.max"/></div>
+                <div class="grid-cell value"><input class="c-input--flex" type="number" ng-model="form.range.max"/></div>
             </li>
         </ul>
     </div>

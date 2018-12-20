@@ -40,6 +40,7 @@ define([
     './flexibleLayout/plugin',
     './tabs/plugin',
     '../../platform/features/fixed/plugin',
+    './LADTable/plugin',
     './preview/plugin'
 ], function (
     _,
@@ -61,6 +62,7 @@ define([
     FlexibleLayout,
     Tabs,
     FixedView,
+    LADTable,
     PreviewPlugin
 ) {
     var bundleMap = {
@@ -176,6 +178,7 @@ define([
     plugins.Tabs = Tabs;
     plugins.FixedView = FixedView;
     plugins.FlexibleLayout = FlexibleLayout;
+    plugins.LADTable = LADTable;
     plugins.Preview = PreviewPlugin.default;
 
     return plugins;

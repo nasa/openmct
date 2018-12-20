@@ -75,16 +75,22 @@
                 };
             }
         },
+        watch: {
+            index(newIndex) {
+                if (!this.context) {
+                    return;
+                }
+
+                this.context.index = newIndex;
+            }
+        },
         mounted() {
-            let context = {
+            this.context = {
                 layoutItem: this.item,
                 index: this.index
             };
             this.removeSelectable = this.openmct.selection.selectable(
-                this.$el,
-                context,
-                this.initSelect
-            );
+                this.$el, this.context, this.initSelect);
         },
         destroyed() {
             if (this.removeSelectable) {
