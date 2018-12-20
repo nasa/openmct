@@ -32,7 +32,6 @@ define([
     "./src/actions/SaveAndStopEditingAction",
     "./src/actions/SaveAsAction",
     "./src/actions/CancelAction",
-    "./src/policies/EditActionPolicy",
     "./src/policies/EditPersistableObjectsPolicy",
     "./src/representers/EditRepresenter",
     "./src/capabilities/EditorCapability",
@@ -64,7 +63,6 @@ define([
     SaveAndStopEditingAction,
     SaveAsAction,
     CancelAction,
-    EditActionPolicy,
     EditPersistableObjectsPolicy,
     EditRepresenter,
     EditorCapability,
@@ -225,10 +223,6 @@ define([
                 }
             ],
             "policies": [
-                {
-                    "category": "action",
-                    "implementation": EditActionPolicy
-                },
                 {
                     "category": "action",
                     "implementation": EditPersistableObjectsPolicy,

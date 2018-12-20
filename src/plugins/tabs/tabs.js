@@ -35,6 +35,9 @@ define([
             canView: function (domainObject) {
                 return domainObject.type === 'tabs';
             },
+            canEdit: function (domainObject) {
+                return domainObject.type === 'tabs';
+            },
             view: function (domainObject) {
                 let component;
 
