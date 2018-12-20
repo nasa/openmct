@@ -250,35 +250,28 @@
                 this.$el.click();
             },
             untrackItem(item) {
+                if (!item.identifier) {
+                    return;
+                }
+
+                let keyString = this.openmct.objects.makeKeyString(item.identifier);
+
                 if (item.type === 'telemetry-view') {
-                    let keyString = this.openmct.objects.makeKeyString(item.identifier);
+                    let count = --this.telemetryViewMap[keyString];
 
-                    if (this.telemetryViewMap[keyString]) {
-                        let count = --this.telemetryViewMap[keyString];
-
-                        if (count === 0) {
-                            delete this.telemetryViewMap[keyString];
-                            this.removeFromComposition(keyString);
-                        }
-                    }
-                } else if (item.type === 'subobject-view') {
-                    let keyString = this.openmct.objects.makeKeyString(item.identifier);
-
-                    if (this.objectViewMap[keyString]) {
-                        delete this.objectViewMap[keyString];
+                    if (count === 0) {
+                        delete this.telemetryViewMap[keyString];
                         this.removeFromComposition(keyString);
                     }
+                } else if (item.type === 'subobject-view') {
+                    delete this.objectViewMap[keyString];
+                    this.removeFromComposition(keyString);
                 }
             },
             removeFromComposition(keyString) {
                 let composition = _.get(this.internalDomainObject, 'composition');
                 composition = composition.filter(identifier => {
-                    let childKeyString = this.openmct.objects.makeKeyString(identifier);
-                    if (childKeyString === keyString && this.telemetryViewMap[keyString]) {
-                        return true;
-                    }
-
-                    return childKeyString !== keyString;
+                    return this.openmct.objects.makeKeyString(identifier) !== keyString;
                 });
                 this.mutate("composition", composition);
             },
@@ -302,13 +295,13 @@
 
                 if (this.objectViewMap[keyString]) {
                     delete this.objectViewMap[keyString];
-                    this.removeItemFromConfiguration(keyString);
+                    this.removeFromConfiguration(keyString);
                 } else if (this.telemetryViewMap[keyString]) {
                     delete this.telemetryViewMap[keyString];
-                    this.removeItemFromConfiguration(keyString);
+                    this.removeFromConfiguration(keyString);
                 }
             },
-            removeItemFromConfiguration(keyString) {
+            removeFromConfiguration(keyString) {
                 let layoutItems = this.layoutItems.filter(item => {
                     if (!item.identifier) {
                         return true;
