@@ -171,6 +171,18 @@ define([], function () {
      */
 
     /**
+     * An optional function that defines whether or not this view can be used to edit a given object.
+     * If not provided, will default to `false` and the view will not support editing.
+     *
+     * @method canEdit
+     * @memberof module:openmct.ViewProvider#
+     * @param {module:openmct.DomainObject} domainObject the domain object
+     *        to be edited
+     * @returns {boolean} 'true' if the view can be used to edit the provided object,
+     *          otherwise 'false'.
+     */
+
+    /**
      * Optional method determining the priority of a given view. If this
      * function is not defined on a view provider, then a default priority
      * of 100 will be applicable for all objects supported by this view.

@@ -40,7 +40,8 @@ define([
     './flexibleLayout/plugin',
     './tabs/plugin',
     '../../platform/features/fixed/plugin',
-    './LADTable/plugin'
+    './LADTable/plugin',
+    './preview/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -61,7 +62,8 @@ define([
     FlexibleLayout,
     Tabs,
     FixedView,
-    LADTable
+    LADTable,
+    PreviewPlugin
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -177,6 +179,7 @@ define([
     plugins.FixedView = FixedView;
     plugins.FlexibleLayout = FlexibleLayout;
     plugins.LADTable = LADTable;
+    plugins.Preview = PreviewPlugin.default;
 
     return plugins;
 });

@@ -21,7 +21,9 @@ define([
             name: legacyView.name,
             cssClass: legacyView.cssClass,
             description: legacyView.description,
-            editable: legacyView.editable,
+            canEdit: function () {
+                return legacyView.editable === true;
+            },
             canView: function (domainObject) {
                 if (!domainObject || !domainObject.identifier) {
                     return false;
@@ -77,7 +79,7 @@ define([
                                 openmct.$angular.element(container),
                                 legacyView
                             );
-                            container.style.height = '100%';
+                            container.classList.add('u-contents');
                         }
 
                         if (promises.length) {

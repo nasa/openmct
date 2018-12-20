@@ -20,6 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+@font-face {
+    // Use https://icomoon.io/app with `Icomoon.Open MCT Symbols 2018.json` to generate font files
+    font-family: 'symbolsfont';
+    src: url('./fonts/Open-MCT-Symbols-16px.woff') format('woff'),
+    url('./fonts/Open-MCT-Symbols-16px.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    // Use https://icomoon.io/app with icomoon-project-openmct-symbols-12px.json to generate font files
+    font-family: 'symbolsfont-12px';
+    src: url('./fonts/openmct-symbols-12px.woff') format('woff'),
+    url('./fonts/openmct-symbols-12px.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 /************************** 16 PX CLASSES */
 .icon-alert-rect {  @include glyphBefore($glyph-icon-alert-rect); }
 .icon-alert-triangle {  @include glyphBefore($glyph-icon-alert-triangle); }

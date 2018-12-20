@@ -174,30 +174,6 @@ body.desktop .has-local-controls {
     }
 }
 
-//[class*="local-controls"] {
-//    // An explicit outer holder for controls. Typically placed in upper right.
-//    //font-size: 0.7rem;
-//    display: flex;
-//    align-items: center;
-//    justify-content: flex-end;
-//
-//
-//    &.h-local-controls-overlay-content {
-//        // Imagery controls
-//        $p: $interiorMargin;
-//        position: absolute;
-//        top: $p; right: $p;
-//        z-index: 2;
-//    }
-
-    //.l-btn-set,
-    //.s-button {
-    //    &:not(:first-child) {
-    //        margin-left: $interiorMargin;
-    //    }
-    //}
-//}
-
 /******************************************************** SELECTION AND EDITING */
 // Provides supporting styles for Display Layouts and augmented legacy Fixed Position view
 

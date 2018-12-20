@@ -35,7 +35,7 @@
         <table class="c-table__headers c-telemetry-table__headers">
             <thead>
                 <tr>
-                    <table-column-header 
+                    <table-column-header
                         v-for="(title, key, headerIndex) in headers"
                         :key="key"
                         :headerKey="key"
@@ -106,7 +106,6 @@
 
 <style lang="scss">
     @import "~styles/sass-base";
-    @import "~styles/table";
 
     .c-telemetry-table__drop-target {
         position: absolute;
@@ -129,6 +128,10 @@
             flex: 1 0 auto;
             width: 100px;
             vertical-align: middle; // This is crucial to hiding f**king 4px height injected by browser by default
+        }
+
+        td {
+            color: $colorTelemFresh;
         }
 
         /******************************* WRAPPERS */
@@ -222,7 +225,7 @@
 
 <script>
 import TelemetryTableRow from './table-row.vue';
-import search from '../../../ui/components/controls/search.vue';
+import search from '../../../ui/components/search.vue';
 import TableColumnHeader from './table-column-header.vue';
 import _ from 'lodash';
 
@@ -465,7 +468,7 @@ export default {
         },
         updateConfiguration(configuration) {
             this.isAutosizeEnabled = configuration.autosize;
-            
+
             this.updateHeaders();
             this.$nextTick().then(this.calculateColumnWidths);
         },
@@ -542,7 +545,7 @@ export default {
         this.filterChanged = _.debounce(this.filterChanged, 500);
     },
     mounted() {
-        
+
         this.table.on('object-added', this.addObject);
         this.table.on('object-removed', this.removeObject);
         this.table.on('outstanding-requests', this.outstandingRequests);

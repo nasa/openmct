@@ -21,29 +21,9 @@
  *****************************************************************************/
 
 define([
-    "./src/controllers/NotebookController",
-    "./src/controllers/NewEntryController",
-    "./src/controllers/SelectSnapshotController",
-    "./src/actions/NewEntryContextual",
-    "./src/actions/AnnotateSnapshot",
-    "./src/directives/MCTSnapshot",
-    "./src/directives/EntryDnd",
-    "./res/templates/controls/snapSelect.html",
-    "./res/templates/controls/embedControl.html",
-    "./res/templates/annotation.html",
-    "./res/templates/draggedEntry.html"
+    "./src/controllers/NotebookController"
 ], function (
-    NotebookController,
-    NewEntryController,
-    SelectSnapshotController,
-    newEntryAction,
-    AnnotateSnapshotAction,
-    MCTSnapshotDirective,
-    EntryDndDirective,
-    snapSelectTemplate,
-    embedControlTemplate,
-    annotationTemplate,
-    draggedEntryTemplate
+    NotebookController
 ) {
     var installed  = false;
 
@@ -67,9 +47,8 @@ define([
                             features: 'creation',
                             model: {
                                 entries: [],
-                                composition: [],
                                 entryTypes: [],
-                                defaultSort: '-createdOn'
+                                defaultSort: 'oldest'
                             },
                             properties: [
                                 {
@@ -79,111 +58,16 @@ define([
                                     options: [
                                         {
                                             name: 'Newest First',
-                                            value: "-createdOn",
+                                            value: "newest"
                                         },
                                         {
                                             name: 'Oldest First',
-                                            value: "createdOn"
+                                            value: "oldest"
                                         }
                                     ],
                                     cssClass: 'l-inline'
                                 }
                             ]
-                        }
-                    ],
-                    actions: [
-                        {
-                            "key": "notebook-new-entry",
-                            "implementation": newEntryAction,
-                            "name": "New Notebook Entry",
-                            "cssClass": "icon-notebook labeled",
-                            "description": "Add a new Notebook entry",
-                            "category": [
-                                "view-control"
-                            ],
-                            "depends": [
-                                "$compile",
-                                "$rootScope",
-                                "dialogService",
-                                "notificationService",
-                                "linkService"
-                            ],
-                            "priority": "preferred"
-                        },
-                        {
-                            "key": "annotate-snapshot",
-                            "implementation": AnnotateSnapshotAction,
-                            "name": "Annotate Snapshot",
-                            "cssClass": "icon-pencil labeled",
-                            "description": "Annotate embed's snapshot",
-                            "category": "embed",
-                            "depends": [
-                                "dialogService",
-                                "dndService",
-                                "$rootScope"
-                            ]
-                        }
-                    ],
-                    controllers: [
-                        {
-                            "key": "NewEntryController",
-                            "implementation": NewEntryController,
-                            "depends": ["$scope",
-                                "$rootScope"
-                            ]
-                        },
-                        {
-                            "key": "selectSnapshotController",
-                            "implementation": SelectSnapshotController,
-                            "depends": ["$scope",
-                                "$rootScope"
-                            ]
-                        }
-                    ],
-                    controls: [
-                        {
-                            "key": "snapshot-select",
-                            "template":  snapSelectTemplate
-                        },
-                        {
-                            "key": "embed-control",
-                            "template": embedControlTemplate
-                        }
-                    ],
-                    templates: [
-                        {
-                            "key": "annotate-snapshot",
-                            "template": annotationTemplate
-                        }
-                    ],
-                    directives: [
-                        {
-                            "key": "mctSnapshot",
-                            "implementation": MCTSnapshotDirective,
-                            "depends": [
-                                "$rootScope",
-                                "$document",
-                                "exportImageService",
-                                "dialogService",
-                                "notificationService"
-                            ]
-                        },
-                        {
-                            "key": "mctEntryDnd",
-                            "implementation": EntryDndDirective,
-                            "depends": [
-                                "$rootScope",
-                                "$compile",
-                                "dndService",
-                                "typeService",
-                                "notificationService"
-                            ]
-                        }
-                    ],
-                    representations: [
-                        {
-                            "key": "draggedEntry",
-                            "template": draggedEntryTemplate
                         }
                     ]
                 }

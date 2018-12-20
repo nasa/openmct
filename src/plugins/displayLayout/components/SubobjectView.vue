@@ -20,115 +20,92 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="u-contents">
-        <div class="c-so-view__header">
-            <div class="c-so-view__header__start">
-                <div class="c-so-view__header__name"
-                     :class="cssClass">
-                    {{ item.domainObject.name }}
-                </div>
-                <context-menu-drop-down
-                    :object-path="objectPath">
-                </context-menu-drop-down>
-            </div>
-            <div class="c-so-view__header__end">
-                <div class="c-button icon-expand local-controls--hidden"></div>
-            </div>
-        </div>
-        <object-view class="c-so-view__object-view"
-                     :object="item.domainObject"></object-view>
-    </div>
+    <layout-frame :item="item"
+                  :grid-size="gridSize"
+                  @endDrag="(item, updates) => $emit('endDrag', item, updates)"
+                  @drilledIn="item => $emit('drilledIn', item)">
+        <object-frame v-if="domainObject"
+                      :domain-object="domainObject"
+                      :object-path="objectPath"
+                      :has-frame="item.hasFrame">
+        </object-frame>
+    </layout-frame>
 </template>
 
-<style lang="scss">
-    @import "~styles/sass-base";
-
-    .c-so-view {
-        /*************************** HEADER */
-        &__header {
-            display: flex;
-            align-items: center;
-
-            &__start,
-            &__end {
-                display: flex;
-                flex: 1 1 auto;
-            }
-
-            &__end {
-                justify-content: flex-end;
-            }
-
-            &__name {
-                @include headerFont(1em);
-                display: flex;
-                &:before {
-                    margin-right: $interiorMarginSm;
-                }
-            }
-
-            .no-frame & {
-                display: none;
-            }
-        }
-
-        &__name {
-            @include ellipsize();
-            @include headerFont(1.2em);
-            flex: 0 1 auto;
-
-            &:before {
-                // Object type icon
-                flex: 0 0 auto;
-                margin-right: $interiorMarginSm;
-                opacity: 0.5;
-            }
-        }
-
-        /*************************** OBJECT VIEW */
-        &__object-view {
-            flex: 1 1 auto;
-            overflow: auto;
-
-            .c-object-view {
-                .u-fills-container {
-                    // Expand component types that fill a container
-                    @include abs();
-                }
-            }
-        }
-    }
-</style>
-
 <script>
-    import ObjectView from '../../../ui/components/layout/ObjectView.vue';
-    import contextMenuDropDown from './contextMenuDropDown.vue';
+    import ObjectFrame from '../../../ui/components/ObjectFrame.vue'
+    import LayoutFrame from './LayoutFrame.vue'
+
+    const MINIMUM_FRAME_SIZE = [320, 180],
+          DEFAULT_DIMENSIONS = [10, 10],
+          DEFAULT_POSITION = [1, 1],
+          DEFAULT_HIDDEN_FRAME_TYPES = ['hyperlink', 'summary-widget'];
+
+    function getDefaultDimensions(gridSize) {
+        return MINIMUM_FRAME_SIZE.map((min, index) => {
+            return Math.max(
+                Math.ceil(min / gridSize[index]),
+                DEFAULT_DIMENSIONS[index]
+            );
+        });
+    }
+
+    function hasFrameByDefault(type) {
+        return DEFAULT_HIDDEN_FRAME_TYPES.indexOf(type) === -1;
+    }
 
     export default {
-        inject: ['openmct'],
-        props: {
-            item: Object
-        },
-        components: {
-            ObjectView,
-            contextMenuDropDown
-        },
-        data() {
-            let type = this.openmct.types.get(this.item.domainObject.type);
+        makeDefinition(openmct, gridSize, domainObject, position) {
+            let defaultDimensions = getDefaultDimensions(gridSize);
+            position = position || DEFAULT_POSITION;
 
             return {
-                cssClass: type.definition.cssClass,
-                objectPath: [this.item.domainObject].concat(this.openmct.router.path)
+                width: defaultDimensions[0],
+                height: defaultDimensions[1],
+                x: position[0],
+                y: position[1],
+                identifier: domainObject.identifier,
+                hasFrame: hasFrameByDefault(domainObject.type)
+            };
+        },
+        inject: ['openmct'],
+        props: {
+            item: Object,
+            gridSize: Array,
+            initSelect: Boolean,
+            index: Number
+        },
+        data() {
+            return {
+                domainObject: undefined,
+                objectPath: []
+            }
+        },
+        components: {
+            ObjectFrame,
+            LayoutFrame
+        },
+        methods: {
+            setObject(domainObject) {
+                this.domainObject = domainObject;
+                this.objectPath = [this.domainObject].concat(this.openmct.router.path);
+                let context = {
+                    item: domainObject,
+                    layoutItem: this.item,
+                    index: this.index
+                };
+                this.removeSelectable = this.openmct.selection.selectable(
+                    this.$el, context, this.initSelect);
             }
         },
         mounted() {
-            if (this.item.config) {
-                this.item.config.attachListeners();
-            }
+            console.log(this.item);
+            this.openmct.objects.get(this.item.identifier)
+                .then(this.setObject);
         },
         destroyed() {
-            if (this.item.config) {
-                this.item.config.removeListeners();
+            if (this.removeSelectable) {
+                this.removeSelectable();
             }
         }
     }

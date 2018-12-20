@@ -96,6 +96,12 @@
     background-size: $bgsize $bgsize;
 }
 
+@mixin disabled() {
+    opacity: $controlDisabledOpacity;
+    pointer-events: none !important;
+    cursor: default !important;
+}
+
 @mixin noColor() {
     // A "no fill/stroke" selection option. Used in palettes.
     $c: red;
@@ -125,6 +131,12 @@
             transparent 100%
     );
     background-repeat: $repeatDir;
+}
+
+@mixin sliderTrack($bg: $scrollbarTrackColorBg) {
+    border-radius: 2px;
+    box-sizing: border-box;
+    background-color: $bg;
 }
 
 @mixin bgVertStripes($c: yellow, $a: 0.1, $d: 40px) {
