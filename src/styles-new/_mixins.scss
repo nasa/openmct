@@ -294,7 +294,7 @@
     padding: $interiorMargin floor($interiorMargin * 1.25);
 
     &:after,
-    > * {
+    > * + * {
         margin-left: $interiorMarginSm;
     }
 
@@ -333,7 +333,6 @@
     background: none;
     box-shadow: none;
     border-radius: $controlCr;
-    color: $colorKey;
     cursor: pointer;
     padding: $pTB $pLR ;
 
@@ -347,6 +346,10 @@
         // *:before handles any nested containers that may contain glyph elements
         // Needed for c-togglebutton.
         font-size: 1.25em;
+    }
+
+    &[class*="--major"] {
+        color: $colorKey;
     }
 }
 
@@ -506,5 +509,7 @@
 }
 
 @mixin test($c: deeppink, $a: 0.3) {
+    background: rgba($c, $a) !important;
     background-color: rgba($c, $a) !important;
+    box-shadow: deeppink 0 0 10px 1px !important;
 }

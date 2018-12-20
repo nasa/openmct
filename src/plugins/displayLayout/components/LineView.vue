@@ -21,10 +21,9 @@
  *****************************************************************************/
 
 <template>
-    <div class="l-layout__frame c-frame has-local-controls no-frame"
+    <div class="l-layout__frame c-frame no-frame"
          :style="style">
-        <svg width="100%"
-             height="100%">
+        <svg width="100%" height="100%">
             <line v-bind="linePosition"
                   :stroke="item.stroke"
                   stroke-width="2">
@@ -101,9 +100,6 @@
                     top: `${top}px`,
                     width: `${width}px`,
                     height: `${height}px`,
-                    minWidth: `${width}px`,
-                    minHeight: `${height}px`,
-                    position: 'absolute'
                 };
             },
             startHandleClass() {

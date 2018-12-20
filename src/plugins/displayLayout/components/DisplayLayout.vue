@@ -77,7 +77,7 @@
     .l-shell__main-container {
         > .l-layout {
             [s-selected] {
-                border: $browseBorderSelected;
+                border: $browseSelectedBorder;
             }
         }
     }

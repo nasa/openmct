@@ -110,6 +110,7 @@ $colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
 // Base Colors
 $dlSpread: 20%;
 $editColor: #00c7c3;
+$editColorAlt: #9971ff;
 $editColorBgBase: darken($editColor, $dlSpread);
 $editColorBg: darken($editColor, $dlSpread);
 $editColorFg: lighten($editColor, $dlSpread);
@@ -122,20 +123,21 @@ $editSelectableColor: #acdad6;
 $editSelectableColorFg: darken($editSelectableColor, 20%);
 $editSelectableColorHov: darken($editSelectableColor, 10%);
 // Selectable selected
-$editSelectableColorSelected: $editColor; //$editSelectableColorHov;
+$editSelectableColorSelected: $editColor;
 $editSelectableColorSelectedFg: lighten($editSelectableColorSelected, 50%);
 $editSelectableColorFg: darken($editSelectableColor, 40%);
 $editSelectableBorder: 1px dotted $editSelectableColor;
-$editSelectableBorderHov: 1px dotted $editColor;
+$editSelectableBorderHov: 1px dotted $editColorAlt;
 $editSelectableBorderSelected: 1px solid $editColor;
+$editSelectableShdwSelected: rgba($editColor, 0.75) 0 0 0 1px;
 $editMoveableSelectedShdw: rgba($editColor, 0.5) 0 0 10px;
-$editBorderDrilledIn: 1px dashed #9971ff;
+$editBorderDrilledIn: 1px dashed $editColorAlt;
 $colorGridLines: rgba($editColor, 0.2);
 
 /************************************************** BROWSING */
-$browseBorderSelectableHov: 1px dotted rgba($colorBodyFg, 0.2);
-$browseShdwSelectableHov: rgba($colorBodyFg, 0.2) 0 0 3px;
-$browseBorderSelected: 1px solid rgba($colorBodyFg, 0.6);
+$browseSelectableBorderHov: 1px dotted rgba($colorBodyFg, 0.2);
+$browseSelectableShdwHov: rgba($colorBodyFg, 0.2) 0 0 3px;
+$browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.6);
 
 // Icons
 $colorIconAlias: #4af6f3;
@@ -225,14 +227,27 @@ $colorIndicatorDisabled: #444;
 $colorIndicatorOn: $colorOk;
 $colorIndicatorOff: #666;
 
-// Limits and staleness colors//
+// Staleness
 $colorTelemFresh: darken($colorBodyFg, 20%);
 $colorTelemStale: lighten($colorBodyFg, 20%);
 $styleTelemStale: italic;
-$colorLimitYellowBg: rgba(#ffaa00, 0.3);
-$colorLimitYellowIc: #ffaa00;
-$colorLimitRedBg: rgba(red, 0.3);
-$colorLimitRedIc: red;
+
+// Limits
+$colorLimitYellowBg: #ffe64d;
+$colorLimitYellowFg: #7f4f20;
+$colorLimitYellowIc: #e7a115;
+$colorLimitRedBg: #ff0000;
+$colorLimitRedFg: #fff;
+$colorLimitRedIc: #ffa99a;
+
+// Status
+$colorAlert: #ff3c00;
+$colorWarningHi: #990000;
+$colorWarningLo: #ff9900;
+$colorDiagnostic: #a4b442;
+$colorCommand: #3693bd;
+$colorInfo: #2294a2;
+$colorOk: #33cc33;
 
 // Bubble colors
 $colorInfoBubbleBg: $colorMenuBg;

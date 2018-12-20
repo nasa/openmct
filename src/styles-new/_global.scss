@@ -141,16 +141,21 @@ li {
 // Local Controls: Controls placed in proximity to or overlaid on components and views
 body.desktop .has-local-controls {
     // Provides hover ability to show local controls
-    &:hover [class*="local-controls--hidden"] {
-        transition: opacity 50ms ease-in-out;
-        opacity: 1;
-        pointer-events: inherit;
-    }
-
-    [class*="local-controls--hidden"] {
+    [class*='local-controls--hidden'] {
         transition: opacity 500ms ease-in-out;
         opacity: 0;
         pointer-events: none;
+    }
+
+    // Look down up to two levels and display hidden LC's on hover
+    &:hover {
+        > [class*='local-controls--hidden'],
+        > * > [class*='local-controls--hidden'],
+        > * > * > [class*='local-controls--hidden'] {
+            transition: opacity 50ms ease-in-out;
+            opacity: 1;
+            pointer-events: inherit;
+        }
     }
 }
 
@@ -193,7 +198,7 @@ body.desktop .has-local-controls {
 /*************************** SELECTION */
 .u-inspectable {
     &:hover {
-        box-shadow: $browseShdwSelectableHov;
+        box-shadow: $browseSelectableShdwHov;
     }
 }
 
@@ -202,13 +207,14 @@ body.desktop .has-local-controls {
     *:not(.is-drilled-in).c-frame {
         border: $editSelectableBorder;
 
-        &:hover {
-            border: $editSelectableBorderHov;
+        &:not([s-selected]) {
+            &:hover {
+                border: $editSelectableBorderHov;
+            }
         }
 
-        &[s-selected],
-        &.is-selected {
-            border: $editSelectableBorderSelected;
+        &[s-selected] {
+            box-shadow: $editSelectableShdwSelected;
 
             > .c-frame-edit {
                 display: block; // Show the editing rect and handles
@@ -220,7 +226,7 @@ body.desktop .has-local-controls {
         border: $editBorderDrilledIn;
     }
 
-    *[s-selected] {
+    .is-moveable {
         cursor: move;
     }
 

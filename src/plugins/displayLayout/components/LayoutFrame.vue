@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-    <div class="l-layout__frame c-frame has-local-controls"
+    <div class="l-layout__frame c-frame"
          :class="{
              'no-frame': !item.hasFrame,
              'u-inspectable': inspectable,
