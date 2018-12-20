@@ -33,6 +33,9 @@ export default function () {
             canView: function (domainObject) {
                 return domainObject.type === 'layout';
             },
+            canEdit: function (domainObject) {
+                return domainObject.type === 'layout';
+            },
             view: function (domainObject) {
                 let component;
                 return {

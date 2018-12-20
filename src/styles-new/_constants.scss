@@ -50,6 +50,15 @@ $gridItemMobile: 32px;
 $tabularHeaderH: 22px;
 $tabularTdPadLR: $itemPadLR;
 $tabularTdPadTB: 2px;
+/*************** Plots */
+$plotYBarW: 60px;
+$plotYLabelMinH: 20px;
+$plotYLabelW: 10px;
+$plotXBarH: 20px;
+$plotLegendH: 20px;
+$plotSwatchD: 8px;
+$plotDisplayArea: (0, 0, $plotXBarH, $plotYBarW); // 1: Top, 2: right, 3: bottom, 4: left
+$plotMinH: 95px;
 
 /************************** MOBILE */
 $mobileMenuIconD: 24px; // Used

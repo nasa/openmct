@@ -35,6 +35,9 @@ define([
             canView: function (domainObject) {
                 return domainObject.type === 'flexible-layout';
             },
+            canEdit: function (domainObject) {
+                return domainObject.type === 'flexible-layout';
+            },
             view: function (domainObject) {
                 let component;
 

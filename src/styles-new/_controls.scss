@@ -101,9 +101,10 @@ button {
 }
 /********* Disclosure Triangle */
 // Provides an arrow icon that when clicked expands an element to reveal its contents.
-// Used in tree items. Always placed BEFORE an element.
+// Used in tree items, plot legends. Always placed BEFORE an element.
 .c-disclosure-triangle {
     $d: 12px;
+    color: $colorDisclosureCtrl;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -111,15 +112,22 @@ button {
     width: $d;
     position: relative;
 
-    &.is-enabled:before {
-        $s: .65;
-        content: $glyph-icon-arrow-right-equilateral;
-        display: block;
-        font-family: symbolsfont;
-        font-size: 1rem * $s;
-        position: absolute;
-        transform-origin: floor(($d / 2) * $s); // This is slightly better than 'center'
-        transition: transform 100ms ease-in-out;
+    &.is-enabled {
+        cursor: pointer;
+
+        &:hover {
+            color: $colorDisclosureCtrlHov;
+        }
+
+        &:before {
+            $s: .65;
+            content: $glyph-icon-arrow-right-equilateral;
+            display: block;
+            font-family: symbolsfont;
+            font-size: 1rem * $s;
+            transform-origin: center;
+            transition: transform 100ms ease-in-out;
+        }
     }
 
     &--expanded {
@@ -497,6 +505,54 @@ input[type=number]::-webkit-outer-spin-button {
     > * + * { margin-left: $interiorMargin; }
 }
 
+
+/******************************************************** SLIDERS AND RANGE */
+@mixin sliderKnobRound() {
+    $h: 12px;
+    @include themedButton();
+    cursor: pointer;
+    width: $h;
+    height: $h;
+    border-radius: 50% !important;
+    transform: translateY(-42%);
+}
+
+input[type="range"] {
+    // HTML5 range inputs
+    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+    background: transparent; /* Otherwise white in Chrome */
+    &:focus {
+        outline: none; /* Removes the blue border. */
+    }
+
+    // Thumb
+    &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        @include sliderKnobRound();
+    }
+    &::-moz-range-thumb {
+        border: none;
+        @include sliderKnobRound();
+    }
+    &::-ms-thumb {
+        border: none;
+        @include sliderKnobRound();
+    }
+
+    // Track
+    &::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 3px;
+        @include sliderTrack();
+    }
+
+    &::-moz-range-track {
+        width: 100%;
+        height: 3px;
+        @include sliderTrack();
+    }
+}
+
 /***************************************************** DRAG AND DROP */
 .c-drop-hint {
     // Used in Tabs View, Flexible Grid Layouts
@@ -543,5 +599,29 @@ input[type=number]::-webkit-outer-spin-button {
         transition: $transIn;
         background-color: $colorDropHintBgHov;
         opacity: 0.9;
+    }
+}
+
+/***************************************************** LEGACY */
+
+.l-btn-set {
+    // Fixes
+    display: flex;
+    align-items: center;
+}
+
+.h-local-controls {
+    &-overlay-content {
+        box-shadow: $colorBodyBg 0 0 0 2px;
+        display: inline-block;
+        position: absolute;
+        right: $interiorMargin; top: $interiorMargin;
+        z-index: 2;
+    }
+
+    &-trans {
+        // Has a translucent background plate
+        background: rgba($colorBodyBg, 0.8);
+        border-radius: $controlCr;
     }
 }

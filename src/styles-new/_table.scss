@@ -21,10 +21,36 @@
  *****************************************************************************/
 
 /******************************************************** TABLE */
+table {
+    $minW: 50px;
+    width: 100%;
+
+    thead {
+        background: $colorTabHeaderBg;
+        th + th {
+            border-left: 1px solid $colorTabHeaderBorder;
+        }
+    }
+
+    tbody {
+        tr + tr {
+            border-top: 1px solid $colorTabBorder;
+        }
+    }
+
+    th, td {
+        white-space: nowrap;
+        min-width: $minW;
+        padding: $tabularTdPadTB $tabularTdPadLR;
+    }
+
+    td {
+        vertical-align: top;
+    }
+}
+
 .c-table {
     // Can be used by any type of table, scrolling, LAD, etc.
-    $min-w: 50px;
-
     display: flex;
     flex-flow: column nowrap;
     justify-content: flex-start;
@@ -37,37 +63,9 @@
     }
 
     /******************************* ELEMENTS */
-    th, td {
-        white-space: nowrap;
-        min-width: $min-w;
-        padding: $tabularTdPadTB $tabularTdPadLR;
-    }
-
-    td {
-        color: $colorTelemFresh;
-        vertical-align: top;
-    }
 
     &__control-bar {
         margin-bottom: $interiorMarginSm;
-    }
-
-    [class*="__header"] {
-        background: $colorTabHeaderBg;
-
-        th {
-            &:not(:first-child) {
-                border-left: 1px solid $colorTabHeaderBorder;
-            }
-        }
-    }
-
-    &__body {
-        tr {
-            &:not(:first-child) {
-                border-top: 1px solid $colorTabBorder;
-            }
-        }
     }
 
     &--sortable {
