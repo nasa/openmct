@@ -21,7 +21,9 @@ define([
             name: legacyView.name,
             cssClass: legacyView.cssClass,
             description: legacyView.description,
-            editable: legacyView.editable,
+            canEdit: function () {
+                return legacyView.editable === true;
+            },
             canView: function (domainObject) {
                 if (!domainObject || !domainObject.identifier) {
                     return false;
