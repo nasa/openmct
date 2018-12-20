@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-    <div class="l-layout__frame c-frame has-local-controls no-frame"
+    <div class="l-layout__frame c-frame no-frame"
          :style="style">
         <svg width="100%" height="100%">
             <line v-bind="linePosition"
