@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/********************************************************************* PLOTS */
 mct-plot {
     display: contents;
 }
@@ -501,4 +502,24 @@ mct-plot {
             order: 1;
         }
     }
+}
+/********************************************************* CLOCKS AND TIMERS */
+.c-clock,
+.c-timer {
+    display: flex;
+    align-items: center;
+    font-size: 1.25em;
+
+    > * + * { margin-left: $interiorMargin; }
+
+    &__value {
+        color: $colorBodyFgEm;
+    }
+}
+
+.c-clock {
+}
+
+.c-timer {
+
 }
