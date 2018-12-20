@@ -267,8 +267,10 @@ $colorTabBorder: lighten($colorBodyBg, 10%);
 $colorTabBodyBg: $colorBodyBg;
 $colorTabBodyFg: lighten($colorBodyFg, 20%);
 $colorTabHeaderBg: lighten($colorBodyBg, 10%);
-$colorTabHeaderFg: lighten($colorBodyFg, 20%);
+$colorTabHeaderFg: $colorBodyFg;
 $colorTabHeaderBorder: $colorBodyBg;
+$colorTabGroupHeaderBg: lighten($colorBodyBg, 5%);
+$colorTabGroupHeaderFg: darken($colorTabHeaderFg, 10%);
 
 // Plot
 $colorPlotBg: rgba(black, 0.05);

@@ -51,11 +51,11 @@ table {
 
 .c-table {
     // Can be used by any type of table, scrolling, LAD, etc.
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: flex-start;
+    $min-w: 50px;
+
     position: absolute;
     top: 0; right: 0; bottom: 0; left: 0;
+    width: 100%;
 
     &__control-bar,
     &__headers-w {
@@ -66,6 +66,31 @@ table {
 
     &__control-bar {
         margin-bottom: $interiorMarginSm;
+    }
+
+    thead tr,
+    [class*="__header"] {
+        background: $colorTabHeaderBg;
+
+        th {
+            &:not(:first-child) {
+                border-left: 1px solid $colorTabHeaderBorder;
+            }
+        }
+    }
+
+    tbody,
+    &__body {
+        tr:not(.c-table__group-header) + tr:not(.c-table__group-header) {
+            border-top: 1px solid $colorTabBorder;
+        }
+    }
+
+    &__group-header {
+        // tr element found in LAD Table Sets
+        border-top: 1px solid $colorTabHeaderBorder;
+        background: $colorTabGroupHeaderBg;
+        td { color: $colorTabGroupHeaderFg; }
     }
 
     &--sortable {
@@ -85,5 +110,11 @@ table {
         .is-sortable {
             cursor: pointer;
         }
+    }
+}
+
+.c-lad-table {
+    th, td {
+        width: 33%; // Needed to prevent size jumping as values dynamically update
     }
 }

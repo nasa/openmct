@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/************************************************** MAELSTROM2 THEME CONSTANTS */
+/************************************************** MAELSTROM THEME CONSTANTS */
 
 // Fonts
 @import url('https://fonts.googleapis.com/css?family=Chakra+Petch:400,600,700|Michroma|Teko:400,700');
@@ -271,8 +271,10 @@ $colorTabBorder: lighten($colorBodyBg, 10%);
 $colorTabBodyBg: $colorBodyBg;
 $colorTabBodyFg: lighten($colorBodyFg, 20%);
 $colorTabHeaderBg: lighten($colorBodyBg, 10%);
-$colorTabHeaderFg: lighten($colorBodyFg, 20%);
+$colorTabHeaderFg: $colorBodyFg;
 $colorTabHeaderBorder: $colorBodyBg;
+$colorTabGroupHeaderBg: lighten($colorBodyBg, 5%);
+$colorTabGroupHeaderFg: darken($colorTabHeaderFg, 10%);
 
 // Plot
 $colorPlotBg: rgba(black, 0.05);

@@ -269,6 +269,8 @@ $colorTabBodyFg: darken($colorBodyFg, 20%);
 $colorTabHeaderBg: darken($colorBodyBg, 10%);
 $colorTabHeaderFg: darken($colorBodyFg, 20%);
 $colorTabHeaderBorder: $colorBodyBg;
+$colorTabGroupHeaderBg: darken($colorBodyBg, 5%);
+$colorTabGroupHeaderFg: darken($colorTabGroupHeaderBg, 40%);
 
 // Plot
 $colorPlotBg: rgba(black, 0.05);
