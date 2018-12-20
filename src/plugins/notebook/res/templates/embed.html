@@ -8,7 +8,7 @@
         <div class="c-ne__embed__name">
             <a class="c-ne__embed__link"
                :href="objectLink"
-               :class="[embed.cssClass]">{{embed.name}}</a>
+               :class="embed.cssClass">{{embed.name}}</a>
             <a class="c-ne__embed__context-available icon-arrow-down"
                @click="toggleActionMenu"></a>
         </div>
@@ -18,7 +18,7 @@
                     <ul>
                         <li v-for="action in actions"
                             :key="action.name" 
-                            :class="[action.cssClass]"
+                            :class="action.cssClass"
                             @click="action.perform(embed, entry)">
                             {{ action.name }}
                         </li> 
