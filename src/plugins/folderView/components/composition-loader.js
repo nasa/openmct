@@ -35,7 +35,8 @@ export default {
                 model: child,
                 type: type.definition,
                 isAlias: this.domainObject.identifier.key !== child.location,
-                objectPath: [child].concat(openmct.router.path)
+                objectPath: [child].concat(this.openmct.router.path),
+                objectKeyString: this.openmct.objects.makeKeyString(child.identifier)
             });
         },
         remove(identifier) {
