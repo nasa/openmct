@@ -250,33 +250,37 @@
                 this.$el.click();
             },
             untrackItem(item) {
-                if (item.type === 'telemetry-view' || item.type === 'subobject-view') {
+                if (item.type === 'telemetry-view') {
                     let keyString = this.openmct.objects.makeKeyString(item.identifier);
 
-                    if (this.objectViewMap[keyString]) {
-                        delete this.objectViewMap[keyString];
-                        this.mutateComposition(keyString);
-                    } else if (this.telemetryViewMap[keyString]) {
+                    if (this.telemetryViewMap[keyString]) {
                         let count = --this.telemetryViewMap[keyString];
 
                         if (count === 0) {
                             delete this.telemetryViewMap[keyString];
-                            this.mutateComposition(keyString);
+                            this.removeFromComposition(keyString);
                         }
+                    }
+                } else if (item.type === 'subobject-view') {
+                    let keyString = this.openmct.objects.makeKeyString(item.identifier);
+
+                    if (this.objectViewMap[keyString]) {
+                        delete this.objectViewMap[keyString];
+                        this.removeFromComposition(keyString);
                     }
                 }
             },
-            mutateComposition(keyString) {
+            removeFromComposition(keyString) {
                 let composition = _.get(this.internalDomainObject, 'composition');
-                composition = composition.filter(identifier => !this.matches(identifier, keyString));
-                this.mutate("composition", composition);
-            },
-            matches(identifier, keyString) {
-                if (this.telemetryViewMap[keyString]) {
-                    return false;
-                }
+                composition = composition.filter(identifier => {
+                    let childKeyString = this.openmct.objects.makeKeyString(identifier);
+                    if (childKeyString === keyString && this.telemetryViewMap[keyString]) {
+                        return true;
+                    }
 
-                return this.openmct.objects.makeKeyString(identifier) === keyString;
+                    return childKeyString !== keyString;
+                });
+                this.mutate("composition", composition);
             },
             initializeItems() {
                 this.telemetryViewMap = {};
