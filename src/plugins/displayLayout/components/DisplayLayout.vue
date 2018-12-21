@@ -27,8 +27,7 @@
          @drop="handleDrop">
         <div class="l-layout__object">
             <!-- Background grid -->
-            <div class="l-layout__grid-holder c-grid"
-                 v-if="!drilledIn">
+            <div class="l-layout__grid-holder c-grid">
                 <div class="c-grid__x l-grid l-grid-x"
                      v-if="gridSize[0] >= 3"
                      :style="[{ backgroundSize: gridSize[0] + 'px 100%' }]">
@@ -44,7 +43,6 @@
                 :gridSize="gridSize"
                 :initSelect="initSelectIndex === index"
                 :index="index"
-                @drilledIn="updateDrilledIn"
                 @endDrag="endDrag"
                 >
             </component>
@@ -119,7 +117,6 @@
         data() {
             let domainObject = JSON.parse(JSON.stringify(this.domainObject));
             return {
-                drilledIn: undefined,
                 internalDomainObject: domainObject,
                 initSelectIndex: undefined
             };
@@ -138,22 +135,6 @@
         methods: {
             addElement(itemType, element) {
                 this.addItem(itemType + '-view', element);
-            },
-            setSelection(selection) {
-                if (selection.length === 0) {
-                    return;
-                }
-
-                this.updateDrilledIn();
-            },
-            updateDrilledIn(drilledInItem) {
-                let identifier = drilledInItem && this.openmct.objects.makeKeyString(drilledInItem.identifier);
-                this.drilledIn = identifier;
-                this.layoutItems.forEach(item => {
-                    if (item.type === 'subobject-view') {
-                        item.drilledIn = this.openmct.objects.makeKeyString(item.identifier) === identifier;
-                    }
-                });
             },
             bypassSelection($event) {
                 if (this.dragInProgress) {
@@ -234,12 +215,17 @@
                 this.initSelectIndex = this.layoutItems.length - 1;
             },
             trackItem(item) {
+                if (!item.identifier) {
+                    return;
+                }
+
+                let keyString = this.openmct.objects.makeKeyString(item.identifier);
+
                 if (item.type === "telemetry-view") {
-                    let keyString = this.openmct.objects.makeKeyString(item.identifier);
                     let count = this.telemetryViewMap[keyString] || 0;
                     this.telemetryViewMap[keyString] = ++count;
                 } else if (item.type === "subobject-view") {
-                    this.objectViewMap[this.openmct.objects.makeKeyString(item.identifier)] = true;
+                    this.objectViewMap[keyString] = true;
                 }
             },
             removeItem(item, index) {
@@ -317,8 +303,6 @@
             this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', function (obj) {
                 this.internalDomainObject = JSON.parse(JSON.stringify(obj));
             }.bind(this));
-
-            this.openmct.selection.on('change', this.setSelection);
             this.initializeItems();
             this.composition = this.openmct.composition.get(this.internalDomainObject);
             this.composition.on('add', this.addChild);
@@ -326,7 +310,6 @@
             this.composition.load();
         },
         destroyed: function () {
-            this.openmct.off('change', this.setSelection);
             this.composition.off('add', this.addChild);
             this.composition.off('remove', this.removeChild);
             this.unlisten();
