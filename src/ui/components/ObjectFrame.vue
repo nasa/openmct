@@ -22,7 +22,8 @@
 <template>
     <div class="u-contents c-so-view has-local-controls"
         :class="{
-            'c-so-view--no-frame': !hasFrame
+            'c-so-view--no-frame': !hasFrame,
+            'complex-content': complexContent
         }">
         <div class="c-so-view__header">
             <div class="c-so-view__header__start">
@@ -124,6 +125,17 @@
                     return; // TODO: return unknown icon type.
                 }
                 return objectType.definition.cssClass;
+            },
+            complexContent() {
+                if (!this.domainObject || !this.domainObject.type) {
+                    return;
+                }
+                let objectType = this.openmct.types.get(this.domainObject.type);
+                if (!objectType || !objectType.definition) {
+                    return; // TODO: return unknown icon type.
+                }
+
+                return objectType.definition.complexContent;
             }
         },
         components: {

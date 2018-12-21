@@ -53,6 +53,7 @@ define(['./Type'], function (Type) {
      * @memberof module:openmct.TypeRegistry#
      */
     TypeRegistry.prototype.addType = function (typeKey, typeDef) {
+        typeDef.complexContent = this.isTypeComplex(typeKey);
         this.standardizeType(typeDef);
         this.types[typeKey] = new Type(typeDef);
     };
@@ -75,6 +76,27 @@ define(['./Type'], function (Type) {
             }
             delete typeDef.label;
         }
+    };
+
+    /**
+     * Check if type is included in complex types.
+     * @private
+     */
+    TypeRegistry.prototype.isTypeComplex = function (key) {
+        var complexTypes = [
+            'table',
+            'layout',
+            'flexible-layout',
+            'tabs',
+            'LadTable',
+            'LadTableSet',
+            'telemetry.fixed',
+            'telemetry.plot.overlay',
+            'telemetry.plot.stacked',
+            'notebook'
+        ];
+
+        return complexTypes.includes(key);
     };
 
     /**
