@@ -20,12 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <layout-frame :item="item"
+    <layout-frame v-if="domainObject"
+                  :item="item"
                   :grid-size="gridSize"
-                  :title="objectName"
+                  :title="domainObject.name"
                   @endDrag="(item, updates) => $emit('endDrag', item, updates)">
-        <object-frame v-if="domainObject"
-                      :domain-object="domainObject"
+        <object-frame :domain-object="domainObject"
                       :object-path="objectPath"
                       :has-frame="item.hasFrame">
         </object-frame>
@@ -73,8 +73,7 @@
             item: Object,
             gridSize: Array,
             initSelect: Boolean,
-            index: Number,
-            objectName: String
+            index: Number
         },
         data() {
             return {
@@ -99,7 +98,6 @@
             setObject(domainObject) {
                 this.domainObject = domainObject;
                 this.objectPath = [this.domainObject].concat(this.openmct.router.path);
-                this.objectName = (this.domainObject.name != null)? this.domainObject.name : '';
                 this.context = {
                     item: domainObject,
                     layoutItem: this.item,
