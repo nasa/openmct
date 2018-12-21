@@ -20,12 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <layout-frame v-if="domainObject"
-                  :item="item"
+    <layout-frame :item="item"
                   :grid-size="gridSize"
-                  :title="domainObject.name"
                   @endDrag="(item, updates) => $emit('endDrag', item, updates)">
-        <object-frame :domain-object="domainObject"
+        <object-frame v-if="domainObject"
+                      :domain-object="domainObject"
                       :object-path="objectPath"
                       :has-frame="item.hasFrame">
         </object-frame>
