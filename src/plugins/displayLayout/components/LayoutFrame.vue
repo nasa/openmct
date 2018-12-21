@@ -24,11 +24,9 @@
     <div class="l-layout__frame c-frame"
          :class="{
              'no-frame': !item.hasFrame,
-             'u-inspectable': inspectable,
-             'is-drilled-in': item.drilledIn
+             'u-inspectable': inspectable
          }"
-         :style="style"
-         @dblclick="drill($event)">
+         :style="style">
 
         <slot></slot>
 
@@ -110,24 +108,6 @@
             }
         },
         methods: {
-            drill($event) {
-                if ($event) {
-                    $event.stopPropagation();
-                }
-
-                if (!this.openmct.editor.isEditing() || !this.item.identifier) {
-                    return;
-                }
-
-                this.openmct.objects.get(this.item.identifier)
-                    .then(domainObject => {
-                        if (this.openmct.composition.get(domainObject) === undefined) {
-                            return;
-                        }
-
-                        this.$emit('drilledIn', this.item);
-                    });
-            },
             updatePosition(event) {
                 let currentPosition = [event.pageX, event.pageY];
                 this.initialPosition = this.initialPosition || currentPosition;
