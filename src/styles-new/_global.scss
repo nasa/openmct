@@ -300,6 +300,42 @@ body.desktop .has-local-controls {
         }
     }
 
+    .c-so-view + .c-frame-edit {
+        // Target frames that hold domain objects that include header elements, as opposed to drawing and alpha objects
+        // Make the __move element a more affordable drag UI element
+        $h: 20px;
+        .c-frame-edit__move {
+            @include userSelectNone();
+            background: rgba($editColor, 0.2);
+            box-shadow: none;
+            bottom: auto;
+            height: 0;
+            max-height: 100%;
+            overflow: hidden;
+            text-align: center;
+            transition: $transOut;
+
+            &:before {
+                // Grippy
+                content: $glyph-icon-grippy;
+                color: $editColor;
+                font-family: symbolsfont;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform-origin: center;
+                transform: translate(-50%,-50%) rotate(90deg);
+            }
+        }
+
+        &:hover {
+            .c-frame-edit__move {
+                transition: $transIn;
+                height: $h;
+            }
+        }
+    }
+
     // TODO: move this into DisplayLayout and Fixed Position vue files respectively
     .l-shell__main-container > .l-layout,
     .l-shell__main-container > .c-object-view .l-fixed-position {

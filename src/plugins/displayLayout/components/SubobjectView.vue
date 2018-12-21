@@ -22,6 +22,7 @@
 <template>
     <layout-frame :item="item"
                   :grid-size="gridSize"
+                  :title="objectName"
                   @endDrag="(item, updates) => $emit('endDrag', item, updates)"
                   @drilledIn="item => $emit('drilledIn', item)">
         <object-frame v-if="domainObject"
@@ -73,7 +74,8 @@
             item: Object,
             gridSize: Array,
             initSelect: Boolean,
-            index: Number
+            index: Number,
+            objectName: String
         },
         data() {
             return {
@@ -98,6 +100,7 @@
             setObject(domainObject) {
                 this.domainObject = domainObject;
                 this.objectPath = [this.domainObject].concat(this.openmct.router.path);
+                this.objectName = (this.domainObject.name != null)? this.domainObject.name : '';
                 this.context = {
                     item: domainObject,
                     layoutItem: this.item,
