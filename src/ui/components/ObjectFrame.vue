@@ -36,6 +36,7 @@
             </div>
             <div class="c-so-view__header__end">
                 <div class="c-button icon-expand local-controls--hidden"
+                    title="View Large"
                     @click="expand">
                 </div>
             </div>
