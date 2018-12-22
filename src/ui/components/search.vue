@@ -18,9 +18,6 @@
     .c-search {
         @include wrappedInput();
 
-        padding-top: 2px;
-        padding-bottom: 2px;
-
         &:before {
             // Mag glass icon
             content: $glyph-icon-magnify;

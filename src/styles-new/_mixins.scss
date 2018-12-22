@@ -263,6 +263,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    line-height: $fs; // Remove effect on top and bottom padding
     overflow: hidden;
 
     &:before,
@@ -272,6 +273,10 @@
         flex: 0 0 auto;
     }
 
+    &:before {
+        font-size: 0.9em;
+    }
+
     &:after {
         font-size: 0.8em;
     }
@@ -279,15 +284,18 @@
     [class*="__label"] {
         @include ellipsize();
         display: block;
-        line-height: $fs; // Remove effect on top and bottom padding
         font-size: $fs;
+    }
+
+    &[class*='icon'] > [class*="__label"] {
+        // When button holds both an icon and a label, provide margin between them.
+        margin-left: $interiorMarginSm;
     }
 }
 
 @mixin cButton() {
     @include cControl();
     @include themedButton();
-    //@include buttonBehavior();
     border-radius: $controlCr;
     color: $colorBtnFg;
     cursor: pointer;
