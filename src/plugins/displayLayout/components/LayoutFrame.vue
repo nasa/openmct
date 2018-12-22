@@ -55,9 +55,14 @@
         flex-direction: column;
         border: 1px solid transparent;
 
+        // Whatever is placed into the slot, make it fill the entirety of the space, obeying padding
+        > *:first-child {
+            flex: 1 1 auto;
+        }
+
         /*************************** NO-FRAME */
         &.no-frame {
-            > [class*="contents"] > [class*="__header"] {
+            > * > [class*="__header"] {
                 display: none;
             }
         }

@@ -204,7 +204,7 @@ body.desktop .has-local-controls {
 
 /**************************** EDITING */
 .is-editing {
-    *:not(.is-drilled-in).c-frame {
+    .c-frame {
         border: $editSelectableBorder;
 
         &:not([s-selected]) {
@@ -217,13 +217,16 @@ body.desktop .has-local-controls {
             box-shadow: $editSelectableShdwSelected;
 
             > .c-frame-edit {
-                display: block; // Show the editing rect and handles
+                display: contents; // Show the editing rect and handles
+            }
+
+            &:hover {
+                > .c-so-view.has-complex-content + .c-frame-edit .c-frame-edit__move {
+                    height: 15px;
+                }
+
             }
         }
-    }
-
-    *.is-drilled-in {
-        border: $editBorderDrilledIn;
     }
 
     .is-moveable {
@@ -242,12 +245,11 @@ body.desktop .has-local-controls {
 
         @include abs();
         display: none;
+        z-index: $z;
 
         &__move {
             @include abs();
-            box-shadow: $editMoveableSelectedShdw;
             cursor: move;
-            z-index: $z;
         }
 
         &__handle {
@@ -258,15 +260,12 @@ body.desktop .has-local-controls {
             position: absolute;
             width: $d; height: $d;
             top: auto; right: auto; bottom: auto; left: auto;
-            z-index: $z + 1;
 
             &:before {
                 // Extended hit area
-                $m: -5px;
+                @include abs(-5px);
                 content: '';
                 display: block;
-                position: absolute;
-                top: $m; right: $m; bottom: $m; left: $m;
                 z-index: -1;
             }
 
@@ -300,16 +299,16 @@ body.desktop .has-local-controls {
         }
     }
 
-    .c-so-view + .c-frame-edit {
+    .c-so-view.has-complex-content + .c-frame-edit {
         // Target frames that hold domain objects that include header elements, as opposed to drawing and alpha objects
         // Make the __move element a more affordable drag UI element
-        $h: 20px;
         .c-frame-edit__move {
             @include userSelectNone();
-            background: rgba($editColor, 0.2);
-            box-shadow: none;
+            background: $editColorBgBase; // rgba($editColor, 0.7);
+            box-shadow: rgba(black, 0.7) 0 1px 2px;
             bottom: auto;
-            height: 0;
+            height: 0; // Height is set on hover on s-selected.c-frame
+            opacity: 0.8;
             max-height: 100%;
             overflow: hidden;
             text-align: center;
@@ -325,13 +324,6 @@ body.desktop .has-local-controls {
                 left: 50%;
                 transform-origin: center;
                 transform: translate(-50%,-50%) rotate(90deg);
-            }
-        }
-
-        &:hover {
-            .c-frame-edit__move {
-                transition: $transIn;
-                height: $h;
             }
         }
     }

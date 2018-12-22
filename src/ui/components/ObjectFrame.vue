@@ -20,10 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="u-contents c-so-view has-local-controls"
+    <div class="c-so-view has-local-controls"
         :class="{
             'c-so-view--no-frame': !hasFrame,
-            'complex-content': complexContent
+            'has-complex-content': complexContent
         }">
         <div class="c-so-view__header">
             <div class="c-so-view__header__start">
@@ -48,10 +48,15 @@
     @import "~styles/sass-base";
 
     .c-so-view {
+        display: flex;
+        flex-direction: column;
+
         /*************************** HEADER */
         &__header {
+            flex: 0 0 auto;
             display: flex;
             align-items: center;
+            margin-bottom: $interiorMargin;
 
             &__start,
             &__end {

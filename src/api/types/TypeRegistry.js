@@ -84,6 +84,7 @@ define(['./Type'], function (Type) {
      */
     TypeRegistry.prototype.isTypeComplex = function (key) {
         var complexTypes = [
+            'folder',
             'table',
             'layout',
             'flexible-layout',
