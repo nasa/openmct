@@ -343,22 +343,6 @@ body.desktop .has-local-controls {
         }
     }
 
-    // Layouts
-    [s-selected],
-    [s-selected-parent] {
-        .l-layout {
-            // Show the layout grid for the top-most child of the current selection,
-            // and hide the grid for deeper nested levels.
-            [class*="__grid-holder"] {
-                display: block;
-            }
-
-            .l-layout [class*="__grid-holder"] {
-                display: none;
-            }
-        }
-    }
-
     // Fixed position
     .l-fixed-position {
         &__grid-holder {
@@ -370,7 +354,6 @@ body.desktop .has-local-controls {
         }
     }
 }
-
 
 /************************** LEGACY */
 

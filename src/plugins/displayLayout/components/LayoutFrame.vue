@@ -60,13 +60,6 @@
             flex: 1 1 auto;
         }
 
-        /*************************** NO-FRAME */
-        &.no-frame {
-            > * > [class*="__header"] {
-                display: none;
-            }
-        }
-
         &:not(.no-frame) {
             background: $colorBodyBg;
             border: 1px solid $colorInteriorBorder;

@@ -77,7 +77,7 @@
             }
         }
 
-        &--no-frame .c-so-view__header {
+        &--no-frame > .c-so-view__header {
             display: none;
         }
 
