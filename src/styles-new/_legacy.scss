@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/********************************************************************* PLOTS */
 mct-plot {
     display: contents;
 }
@@ -502,3 +503,112 @@ mct-plot {
         }
     }
 }
+/********************************************************* CLOCKS AND TIMERS */
+.c-clock,
+.c-timer {
+    display: flex;
+    align-items: center;
+    font-size: 1.25em;
+
+    > * {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+    }
+
+    &__value {
+        color: $colorBodyFgEm;
+    }
+}
+
+.c-clock {
+    > * + * { margin-left: $interiorMargin; }
+}
+
+.c-timer {
+    $ctrlW: 22px;
+
+    &__controls {
+        margin-right: 0;
+        min-width: 0;
+        overflow: hidden;
+        transition: $transOut;
+        width: 0;
+
+        .c-click-icon:before { font-size: 1em; }
+    }
+
+    &__direction {
+        font-size: 0.9em;
+        margin-right: $interiorMargin;
+    }
+
+    &__ng-controller {
+        font-size: 0;
+        width: 0;
+    }
+
+    &:hover {
+        .c-timer__controls {
+            transition: $transOut; // On purpose: want this to take a bit longer
+            margin-right: $interiorMargin;
+            width: $ctrlW * 2;
+        }
+
+        &.is-stopped .c-timer__controls { width: $ctrlW; }
+    }
+
+    &__direction,
+    &__value {
+        opacity: 0.5;
+    }
+
+    &.is-started {
+        .c-timer {
+            &__direction,
+            &__value {
+                opacity: 1;
+            }
+        }
+    }
+}
+
+/******************************************************************* VARIOUS */
+.overlay {
+    .outer-holder {
+        background: $colorMenuBg;
+        color: $colorMenuFg !important;
+    }
+}
+
+.form .form-row {
+    .label {
+        color: $colorMenuFg !important;
+    }
+    .selector-list {
+        @include reactive-input();
+        background: $colorInputBg !important;
+        color: $colorInputFg !important;
+    }
+}
+
+.ui-symbol.view-control {
+    display: block;
+    transform-origin: center center;
+
+    &:before { content: $glyph-icon-arrow-right-equilateral; }
+
+    &.expanded {
+        transform: rotate(90deg);
+    }
+}
+
+.t-imagery {
+    display: contents;
+}
+
+.t-frame-outer {
+    min-width: 200px;
+    min-height: 200px;
+}
+
