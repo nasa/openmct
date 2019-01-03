@@ -6,7 +6,9 @@
                  :class="type.cssClass">
                 <span
                     class="l-browse-bar__object-name c-input-inline"
-                    v-on:blur="updateName"
+                    @blur="updateName"
+                    @keydown="preventDefault"
+                    @keyup="updateNameOnEnterKeyPress"
                     contenteditable>
                     {{ domainObject.name }}
                 </span>
@@ -57,17 +59,34 @@ import NotebookSnapshot from '../utils/notebook-snapshot';
     export default {
         inject: ['openmct'],
         methods: {
-            toggleViewMenu: function (event) {
+            toggleViewMenu(event) {
                 event.stopPropagation();
                 this.showViewMenu = !this.showViewMenu;
             },
-            updateName: function (event) {
+            updateName(event) {
                 // TODO: handle isssues with contenteditable text escaping.
                 if (event.target.innerText !== this.domainObject.name) {
                     this.openmct.objects.mutate(this.domainObject, 'name', event.target.innerText);
                 }
             },
-            setView: function (view) {
+            updateNameOnEnterKeyPress (event) {
+                let keyCode  = event.which || event.keyCode;
+
+                if (keyCode === 13 && !event.shiftKey) {
+                    event.preventDefault();
+
+                    this.updateName(event);
+                    event.target.blur();
+                }
+            },
+            preventDefault(event) {
+                let keyCode = event.which || event.keyCode;
+
+                if (keyCode === 13 && !event.shiftKey) {
+                    event.preventDefault();
+                }
+            },
+            setView(view) {
                 this.viewKey = view.key;
                 this.openmct.router.updateParams({
                     view: this.viewKey
