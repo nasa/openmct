@@ -60,6 +60,16 @@
     width: $d;
 }
 
+@mixin appearanceNone() {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+
+    &:focus {
+        outline: none;
+    }
+}
+
 @mixin isAlias() {
     &:after {
         color:$colorIconAlias;
@@ -194,7 +204,7 @@
 }
 
 @mixin htmlInputReset() {
-    appearance: none;
+    @include appearanceNone();
     background: transparent;
     border: none;
     border-radius: 0;
@@ -427,6 +437,13 @@
         color: $colorBtnReverseFg;
         pointer-events: none;
     }
+}
+
+@mixin cSelect($bg, $fg, $arwClr, $shdw) {
+    $svgArwClr: str-slice(inspect($arwClr), 2, str-length(inspect($arwClr))); // Remove initial # in color value
+    background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3e%3cpath fill='%23#{$svgArwClr}' d='M5 5l5-5H0z'/%3e%3c/svg%3e"), $bg;
+    color: $fg;
+    box-shadow: $shdw;
 }
 
 @mixin wrappedInput() {
