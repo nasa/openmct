@@ -214,7 +214,7 @@ body.desktop .has-local-controls {
         }
 
         &[s-selected] {
-            box-shadow: $editSelectableShdwSelected;
+            border: $editSelectableBorderSelected;
 
             > .c-frame-edit {
                 display: contents; // Show the editing rect and handles
