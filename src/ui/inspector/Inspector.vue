@@ -49,6 +49,14 @@
             }
         }
 
+        .c-color-swatch {
+            $d: 12px;
+            display: block;
+            flex: 0 0 auto;
+            width: $d;
+            height: $d;
+        }
+
         /************************************************************** LEGACY */
         // TODO: refactor when legacy properties markup can be converted
         .inspector-location {
@@ -127,9 +135,6 @@
         [class*="header"] {
             grid-column: 1 / 3;
         }
-
-
-
 
         + .c-properties {
             // Margin between components

@@ -30,7 +30,7 @@ define([
     function FolderGridView(openmct) {
         return {
             key: 'grid',
-            name: 'Grid Vue',
+            name: 'Grid View',
             cssClass: 'icon-thumbs-strip',
             canView: function (domainObject) {
                 return domainObject.type === 'folder';

@@ -21,10 +21,9 @@
  *****************************************************************************/
 
 <template>
-    <div class="l-layout__frame c-frame has-local-controls no-frame"
+    <div class="l-layout__frame c-frame no-frame"
          :style="style">
-        <svg width="100%"
-             height="100%">
+        <svg width="100%" height="100%">
             <line v-bind="linePosition"
                   :stroke="item.stroke"
                   stroke-width="2">
@@ -101,9 +100,6 @@
                     top: `${top}px`,
                     width: `${width}px`,
                     height: `${height}px`,
-                    minWidth: `${width}px`,
-                    minHeight: `${height}px`,
-                    position: 'absolute'
                 };
             },
             startHandleClass() {
@@ -210,17 +206,22 @@
                 return dragPosition;
             }
         },
+        watch: {
+            index(newIndex) {
+                if (!this.context) {
+                    return;
+                }
+
+                this.context.index = newIndex;
+            }
+        },
         mounted() {
-            let context = {
+            this.context = {
                 layoutItem: this.item,
                 index: this.index
             };
-
             this.removeSelectable = this.openmct.selection.selectable(
-                this.$el,
-                context,
-                this.initSelect
-            );
+                this.$el, this.context, this.initSelect);
         },
         destroyed() {
             if (this.removeSelectable) {

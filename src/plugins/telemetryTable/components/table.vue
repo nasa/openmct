@@ -118,6 +118,9 @@
 
     .c-telemetry-table {
         // Table that displays telemetry in a scrolling body area
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: flex-start;
         overflow: hidden;
 
         th, td {

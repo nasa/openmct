@@ -31,11 +31,13 @@ button {
     @include cButton();
 }
 
-.c-button--menu {
-    &:after {
-        content: $glyph-icon-arrow-down;
-        font-family: symbolsfont;
-        opacity: 0.5;
+.c-button {
+    &--menu {
+        &:after {
+            content: $glyph-icon-arrow-down;
+            font-family: symbolsfont;
+            opacity: 0.5;
+        }
     }
 }
 
@@ -44,22 +46,24 @@ button {
 }
 
 /********* Icon Buttons */
-.c-click-icon {
+.c-click-icon,
+.c-click-swatch {
     @include cClickIcon();
 
-    .c-click-icon__label {
-        margin-left: $interiorMargin;
-    }
-
     &--menu {
-
         &:after {
             content: $glyph-icon-arrow-down;
             font-family: symbolsfont;
-            font-size: 0.6em;
+            font-size: 0.7em;
             margin-left: floor($interiorMarginSm * 0.8);
             opacity: 0.5;
         }
+    }
+}
+
+.c-click-icon {
+    .c-click-icon__label {
+        margin-left: $interiorMargin;
     }
 
     &--swatched {
@@ -162,6 +166,11 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .c-input {
+    &--flex {
+        width: 100%;
+        min-width: 20px;
+    }
+
     &--datetime {
         // Sized for values such as 2018-09-28 22:32:33.468Z
         width: 160px;
@@ -260,6 +269,7 @@ input[type=number]::-webkit-outer-spin-button {
                 color: $colorMenuHovIc;
             }
         }
+
         &:before {
             color: $colorMenuIc;
             font-size: 1em;
@@ -343,16 +353,16 @@ input[type=number]::-webkit-outer-spin-button {
     &__items {
         flex: 1 1 auto;
         display: grid;
-        grid-template-columns: repeat(10, [col] auto );
+        grid-template-columns: repeat(auto-fill, 12px);
         grid-gap: 1px;
     }
 
     &__item {
-        $d: 16px;
+        $d: 12px;
 
         border: 1px solid transparent;
         cursor: pointer;
-        width: 16px; height: 16px;
+        min-width: $d; min-height: $d;
         transition: $transOut;
 
         &:hover {
@@ -381,6 +391,12 @@ input[type=number]::-webkit-outer-spin-button {
             margin-right: $interiorMarginSm;
         }
     }
+}
+
+/******************************************************** SWATCHES */
+.c-color-swatch {
+    border: 1px solid rgba(#fff, 0.2);
+    box-shadow: rgba(#000, 0.2) 0 0 0 1px;
 }
 
 /******************************************************** TOOLBAR */
@@ -449,6 +465,10 @@ input[type=number]::-webkit-outer-spin-button {
             margin-left: $interiorMargin;
         }
     }
+
+    .c-palette {
+        min-width: 136px;
+    }
 }
 
 /********* Button Sets */
@@ -461,10 +481,6 @@ input[type=number]::-webkit-outer-spin-button {
     > * {
         // Assume buttons are immediate descendants
         flex: 0 0 auto;
-
-        + * {
-            // margin-left: $interiorMarginSm;
-        }
     }
 
     + .c-button-set {

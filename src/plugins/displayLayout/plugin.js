@@ -33,6 +33,9 @@ export default function () {
             canView: function (domainObject) {
                 return domainObject.type === 'layout';
             },
+            canEdit: function (domainObject) {
+                return domainObject.type === 'layout';
+            },
             view: function (domainObject) {
                 let component;
                 return {
@@ -57,7 +60,8 @@ export default function () {
                     getSelectionContext() {
                         return {
                             item: domainObject,
-                            addElement: component && component.$refs.displayLayout.addElement
+                            addElement: component && component.$refs.displayLayout.addElement,
+                            removeItem: component && component.$refs.displayLayout.removeItem
                         }
                     },
                     destroy() {

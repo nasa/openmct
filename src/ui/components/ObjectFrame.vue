@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="u-contents c-so-view"
+    <div class="u-contents c-so-view has-local-controls"
         :class="{
             'c-so-view--no-frame': !hasFrame
         }">
