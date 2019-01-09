@@ -47,7 +47,7 @@
                 }
             }
 
-            &.is-selected {
+            &.is-navigated-object {
                 background: $colorItemTreeSelectedBg;
                 .c-tree__item__type-icon:before {
                     color: $colorItemTreeIconHover;
