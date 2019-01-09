@@ -50,7 +50,6 @@
     .c-so-view {
         display: flex;
         flex-direction: column;
-        transition: $transOut;
 
         /*************************** HEADER */
         &__header {

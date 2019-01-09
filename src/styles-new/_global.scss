@@ -213,11 +213,16 @@ body.desktop .has-local-controls {
 /**************************** EDITING */
 .is-editing {
     .c-frame {
+        $moveBarOutDelay: 500ms;
         border: $editSelectableBorder;
 
-        &:not([s-selected]) {
-            > .c-frame-edit [class*='__handle'] { display: none; }
+        &-edit__move,
+        .c-so-view {
+            transition: $transOut;
+            transition-delay: $moveBarOutDelay;
+        }
 
+        &:not([s-selected]) {
             &:hover {
                 border: $editSelectableBorderHov;
             }
@@ -227,25 +232,29 @@ body.desktop .has-local-controls {
             border: $editSelectableBorderSelected;
 
             > .c-frame-edit {
-                display: contents; // Show the editing rect and handles
                 [class*='__handle'] { display: block; }
             }
         }
 
-
         &:not(.is-resizing) {
+            // Show and animate the __move bar for sub-object views with complex content
             &:hover {
-                > .c-so-view--no-frame {
-                    padding-top: 20px;
-                    transition: $transIn;
-                }
-
                 > .c-so-view.has-complex-content {
-                    + .c-frame-edit {
-                        display: contents;
-                        .c-frame-edit__move {
-                            // TODO: figure out why transition is only enabled when s-selected is applied to holder
-                            height: 15px;
+                    &.c-so-view--no-frame {
+                        // If the object's frame is hidden, move content down so the __move bar doesn't cover it.
+                        padding-top: 20px;
+                        transition: $transIn;
+                    }
+
+                    // If object frame is visible, overlap the __move bar over the header
+                    + .c-frame-edit .c-frame-edit__move {
+                        height: 15px;
+                        transition: $transIn;
+                        &:hover {
+                            background: $editSelectableColorSelected;
+                            &:before {
+                                color: $editSelectableColorSelectedFg;
+                            }
                         }
                     }
                 }
@@ -268,8 +277,8 @@ body.desktop .has-local-controls {
         $z: 10;
 
         @include abs();
-        display: none;
-        z-index: $z;
+        display: contents;
+        z-index: $z; // Not sure this is doing anything...
 
         &__move {
             @include abs();
@@ -281,6 +290,7 @@ body.desktop .has-local-controls {
             $o: floor($d * -0.5);
             background: rgba($editColor, 0.3);
             border: 1px solid $editColor;
+            display: none; // Set to block via s-selected selector
             position: absolute;
             width: $d; height: $d;
             top: auto; right: auto; bottom: auto; left: auto;
@@ -336,7 +346,6 @@ body.desktop .has-local-controls {
             max-height: 100%;
             overflow: hidden;
             text-align: center;
-            transition: $transOut;
 
             &:before {
                 // Grippy
