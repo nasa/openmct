@@ -24,7 +24,8 @@
     <div class="l-layout__frame c-frame"
          :class="{
              'no-frame': !item.hasFrame,
-             'u-inspectable': inspectable
+             'u-inspectable': inspectable,
+             'is-resizing': isResizing
          }"
          :style="style">
 
@@ -33,15 +34,15 @@
         <!-- Drag handles -->
         <div class="c-frame-edit">
             <div class="c-frame-edit__move"
-                 @mousedown="startDrag([1,1], [0,0], $event)"></div>
+                 @mousedown="startDrag([1,1], [0,0], $event, 'move')"></div>
             <div class="c-frame-edit__handle c-frame-edit__handle--nw"
-                 @mousedown="startDrag([1,1], [-1,-1], $event)"></div>
+                 @mousedown="startDrag([1,1], [-1,-1], $event, 'resize')"></div>
             <div class="c-frame-edit__handle c-frame-edit__handle--ne"
-                 @mousedown="startDrag([0,1], [1,-1], $event)"></div>
+                 @mousedown="startDrag([0,1], [1,-1], $event, 'resize')"></div>
             <div class="c-frame-edit__handle c-frame-edit__handle--sw"
-                 @mousedown="startDrag([1,0], [-1,1], $event)"></div>
+                 @mousedown="startDrag([1,0], [-1,1], $event, 'resize')"></div>
             <div class="c-frame-edit__handle c-frame-edit__handle--se"
-                 @mousedown="startDrag([0,0], [1,1], $event)"></div>
+                 @mousedown="startDrag([0,0], [1,1], $event, 'resize')"></div>
         </div>
     </div>
 </template>
@@ -80,7 +81,8 @@
         },
         data() {
             return {
-                dragPosition: undefined
+                dragPosition: undefined,
+                isResizing: undefined
             }
         },
         computed: {
@@ -113,7 +115,7 @@
                     return value - this.initialPosition[index];
                 }.bind(this));
             },
-            startDrag(posFactor, dimFactor, event) {
+            startDrag(posFactor, dimFactor, event, type) {
                 document.body.addEventListener('mousemove', this.continueDrag);
                 document.body.addEventListener('mouseup', this.endDrag);
 
@@ -123,6 +125,7 @@
                 };
                 this.updatePosition(event);
                 this.activeDrag = new LayoutDrag(this.dragPosition, posFactor, dimFactor, this.gridSize);
+                this.isResizing = type === 'resize';
                 event.preventDefault();
             },
             continueDrag(event) {
@@ -140,6 +143,7 @@
                 this.dragPosition = undefined;
                 this.initialPosition = undefined;
                 this.delta = undefined;
+                this.isResizing = undefined;
                 event.preventDefault();
             }
         }

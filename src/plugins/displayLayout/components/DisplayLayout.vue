@@ -66,23 +66,7 @@
         }
     }
 
-    .l-shell__main-container {
-        > .l-layout {
-            [s-selected] {
-                border: $browseSelectedBorder;
-            }
-        }
-    }
-
     .is-editing {
-        .l-shell__main-container {
-            // Layouts
-            &[s-selected],
-            &[s-selected-parent] {
-                > .l-layout > [class*="__grid-holder"] { display: block; }
-            }
-        }
-
         .l-layout__frame {
             &[s-selected],
             &[s-selected-parent] {

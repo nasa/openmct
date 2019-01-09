@@ -138,7 +138,7 @@
         flex-shrink: 1;
 
         &__header {
-            // Only displayed when editing
+            // Only displayed when editing, controlled via JS
             background: $editSelectableColor;
             color: $editSelectableColorFg;
             cursor: move;
@@ -173,7 +173,6 @@
         }
 
         .is-editing & {
-            //background: $editCanvasColorBg;
             border-color: $editSelectableColor;
 
             &:hover {
@@ -181,7 +180,7 @@
             }
 
             &[s-selected] {
-                border-color: $editSelectableColorSelected;
+                border-color: $editSelectableColorSelected !important;
 
                 .c-fl-container__header {
                     background: $editSelectableColorSelected;

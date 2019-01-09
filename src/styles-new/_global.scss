@@ -202,12 +202,22 @@ body.desktop .has-local-controls {
     }
 }
 
+.l-shell__main-container {
+    > .l-layout {
+        [s-selected] {
+            border: $browseSelectedBorder;
+        }
+    }
+}
+
 /**************************** EDITING */
 .is-editing {
     .c-frame {
         border: $editSelectableBorder;
 
         &:not([s-selected]) {
+            > .c-frame-edit [class*='__handle'] { display: none; }
+
             &:hover {
                 border: $editSelectableBorderHov;
             }
@@ -218,13 +228,27 @@ body.desktop .has-local-controls {
 
             > .c-frame-edit {
                 display: contents; // Show the editing rect and handles
+                [class*='__handle'] { display: block; }
             }
+        }
 
+
+        &:not(.is-resizing) {
             &:hover {
-                > .c-so-view.has-complex-content + .c-frame-edit .c-frame-edit__move {
-                    height: 15px;
+                > .c-so-view--no-frame {
+                    padding-top: 20px;
+                    transition: $transIn;
                 }
 
+                > .c-so-view.has-complex-content {
+                    + .c-frame-edit {
+                        display: contents;
+                        .c-frame-edit__move {
+                            // TODO: figure out why transition is only enabled when s-selected is applied to holder
+                            height: 15px;
+                        }
+                    }
+                }
             }
         }
     }
@@ -328,18 +352,25 @@ body.desktop .has-local-controls {
         }
     }
 
-    // TODO: move this into DisplayLayout and Fixed Position vue files respectively
-    .l-shell__main-container > .l-layout,
-    .l-shell__main-container > .c-object-view .l-fixed-position {
-        // Target the top-most layout container and color its background
-        background: $editCanvasColorBg;
-    }
-
     .l-shell__main-container {
         box-shadow: $colorBodyBg 0 0 0 1px, rgba($editColor, 0.7) 0 0 0 2px;
+
+        // Layouts
+        > .l-layout,
+        > .c-object-view .l-fixed-position {
+            // Target the top-most layout container and color its background
+            background: $editCanvasColorBg;
+
+        }
+
         &[s-selected] {
-            // Provide a clearer selection context articulation
+            // Provide a clearer selection context articulation for the main edit area
             box-shadow: $colorBodyBg 0 0 0 1px, $editColor 0 0 0px 3px;
+        }
+
+        &[s-selected],
+        &[s-selected-parent] {
+            > .l-layout > [class*="__grid-holder"] { display: block; }
         }
     }
 
