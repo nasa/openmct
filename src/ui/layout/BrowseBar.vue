@@ -1,7 +1,7 @@
 <template>
     <div class="l-browse-bar">
         <div class="l-browse-bar__start">
-            <button class="l-browse-bar__nav-to-parent-button c-click-icon icon-pointer-left"></button>
+            <button class="l-browse-bar__nav-to-parent-button c-click-icon c-click-icon--major icon-pointer-left"></button>
             <div class="l-browse-bar__object-name--w"
                  :class="type.cssClass">
                 <span
@@ -43,7 +43,7 @@
                     title="New Notebook entry" 
                     @click="snapshot()">
                 </button>
-                <button class="l-browse-bar__actions__notebook-entry c-button c-button--major icon-pencil" title="Edit" v-if="!isEditing" @click="edit()"></button>
+                <button class="l-browse-bar__actions__notebook-entry c-button c-button--major icon-pencil" title="Edit" v-if="isViewEditable & !isEditing" @click="edit()"></button>
                 <button class="l-browse-bar__actions c-button c-button--major icon-save" title="Save and Finish Editing" v-if="isEditing" @click="saveAndFinishEditing()"></button>
                 <button class="l-browse-bar__actions c-button icon-x" title="Cancel Editing" v-if="isEditing" @click="cancelEditing()"></button>
             </div>
@@ -128,6 +128,14 @@ import NotebookSnapshot from '../utils/notebook-snapshot';
                     return {}
                 }
                 return objectType.definition;
+            },
+            isViewEditable() {
+                let currentViewKey = this.currentView.key;
+                if (currentViewKey !== undefined) {
+                    let currentViewProvider = this.openmct.objectViews.getByProviderKey(currentViewKey);
+                    return currentViewProvider.canEdit && currentViewProvider.canEdit(this.domainObject);
+                }
+                return false;
             }
         },
         mounted: function () {

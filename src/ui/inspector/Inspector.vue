@@ -49,6 +49,14 @@
             }
         }
 
+        .c-color-swatch {
+            $d: 12px;
+            display: block;
+            flex: 0 0 auto;
+            width: $d;
+            height: $d;
+        }
+
         /************************************************************** LEGACY */
         // TODO: refactor when legacy properties markup can be converted
         .inspector-location {
@@ -128,9 +136,6 @@
             grid-column: 1 / 3;
         }
 
-
-
-
         + .c-properties {
             // Margin between components
             margin-top: $interiorMarginLg;
@@ -168,6 +173,27 @@
         }
 
         &__value {
+            color: $colorInspectorPropVal;
+            word-break: break-all;
+            &:first-child {
+                // If there is no preceding .label element, make value span columns
+                grid-column: 1 / 3;
+            }
+        }
+    }
+    /********************************************* LEGACY SUPPORT */
+    .c-inspector {
+        li.grid-row + li.grid-row {
+            > * {
+                border-top: 1px solid $colorInspectorSectionHeaderBg;
+            }
+        }
+
+        li.grid-row .label {
+            color: $colorInspectorPropName;
+        }
+
+        li.grid-row .value {
             color: $colorInspectorPropVal;
             word-break: break-all;
             &:first-child {
