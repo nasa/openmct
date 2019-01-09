@@ -21,7 +21,7 @@ export default {
     inject: ['openmct'],
     props: {
         domainObject: Object,
-        'objectPath': {
+        objectPath: {
             type: Array,
             default() {
                 return [];

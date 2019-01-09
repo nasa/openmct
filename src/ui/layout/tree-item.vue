@@ -31,7 +31,6 @@
             node: Object
         },
         data() {
-            let objectSelectorClass = 'js-object-' + this.node.id;
             this.pathToObject = this.buildPathString(this.node.objectPath);
 
             return {
@@ -40,8 +39,7 @@
                 loaded: false,
                 isNavigated: this.pathToObject === this.openmct.router.currentLocation.path,
                 children: [],
-                expanded: false,
-                objectSelectorClass: objectSelectorClass
+                expanded: false
             }
         },
         computed: {
