@@ -67,9 +67,20 @@
     }
 
     .is-editing {
+        .l-shell__main-container {
+            &[s-selected],
+            &[s-selected-parent] {
+                // Display grid in main layout holder when editing
+                > .l-layout > [class*="__grid-holder"] {
+                    display: block;
+                }
+            }
+        }
+
         .l-layout__frame {
             &[s-selected],
             &[s-selected-parent] {
+                // Display grid in nested layouts when editing
                 > * > * > .l-layout > [class*='grid-holder'] {
                     display: block;
                 }

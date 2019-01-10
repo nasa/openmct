@@ -612,3 +612,16 @@ mct-plot {
     min-height: 200px;
 }
 
+/******************************************************************* EDITING */
+.is-editing {
+    // Fixed position
+    .l-fixed-position {
+        &__grid-holder {
+            display: block;
+        }
+
+        .c-frame-edit {
+            display: block;
+        }
+    }
+}

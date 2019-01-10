@@ -54,7 +54,6 @@
     .c-frame {
         display: flex;
         flex-direction: column;
-        border: 1px solid transparent;
 
         // Whatever is placed into the slot, make it fill the entirety of the space, obeying padding
         > *:first-child {
@@ -65,6 +64,146 @@
             background: $colorBodyBg;
             border: 1px solid $colorInteriorBorder;
             padding: $interiorMargin;
+        }
+    }
+
+    .is-editing {
+        .c-frame {
+            $moveBarOutDelay: 500ms;
+            border: $editSelectableBorder;
+
+            &-edit__move,
+            .c-so-view {
+                transition: $transOut;
+                transition-delay: $moveBarOutDelay;
+            }
+
+            &:not([s-selected]) {
+                &:hover {
+                    border: $editSelectableBorderHov;
+                }
+            }
+
+            &[s-selected] {
+                border: $editSelectableBorderSelected;
+
+                > .c-frame-edit {
+                    [class*='__handle'] { display: block; }
+                }
+            }
+
+            &:not(.is-resizing) {
+                // Show and animate the __move bar for sub-object views with complex content
+                &:hover {
+                    > .c-so-view.has-complex-content {
+                        &.c-so-view--no-frame {
+                            // If the object's frame is hidden, move content down so the __move bar doesn't cover it.
+                            padding-top: 20px;
+                            transition: $transIn;
+                        }
+
+                        // If object frame is visible, overlap the __move bar over the header
+                        + .c-frame-edit .c-frame-edit__move {
+                            height: 15px;
+                            transition: $transIn;
+                            &:hover {
+                                background: $editSelectableColorSelected;
+                                &:before {
+                                    color: $editSelectableColorSelectedFg;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .c-frame-edit {
+            // In Layouts, this is the editing rect and handles
+            // In Fixed Position, this is a wrapper element
+            $z: 10;
+
+            @include abs();
+            display: contents;
+            z-index: $z; // Not sure this is doing anything...
+
+            &__move {
+                @include abs();
+                cursor: move;
+            }
+
+            &__handle {
+                $d: 8px;
+                $o: floor($d * -0.5);
+                background: rgba($editColor, 0.3);
+                border: 1px solid $editColor;
+                display: none; // Set to block via s-selected selector
+                position: absolute;
+                width: $d; height: $d;
+                top: auto; right: auto; bottom: auto; left: auto;
+
+                &:before {
+                    // Extended hit area
+                    @include abs(-5px);
+                    content: '';
+                    display: block;
+                    z-index: -1;
+                }
+
+                &:hover {
+                    background: $editColor;
+                }
+
+                &--nwse {
+                    cursor: nwse-resize;
+                }
+
+                &--nw {
+                    cursor: nw-resize;
+                    left: $o; top: $o;
+                }
+
+                &--ne {
+                    cursor: ne-resize;
+                    right: $o; top: $o;
+                }
+
+                &--se {
+                    cursor: se-resize;
+                    right: $o; bottom: $o;
+                }
+
+                &--sw {
+                    cursor: sw-resize;
+                    left: $o; bottom: $o;
+                }
+            }
+        }
+        .c-so-view.has-complex-content + .c-frame-edit {
+            // Target frames that hold domain objects that include header elements, as opposed to drawing and alpha objects
+            // Make the __move element a more affordable drag UI element
+            .c-frame-edit__move {
+                @include userSelectNone();
+                background: $editColorBgBase; // rgba($editColor, 0.7);
+                box-shadow: rgba(black, 0.7) 0 1px 2px;
+                bottom: auto;
+                height: 0; // Height is set on hover on s-selected.c-frame
+                opacity: 0.8;
+                max-height: 100%;
+                overflow: hidden;
+                text-align: center;
+
+                &:before {
+                    // Grippy
+                    content: $glyph-icon-grippy;
+                    color: $editColor;
+                    font-family: symbolsfont;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform-origin: center;
+                    transform: translate(-50%,-50%) rotate(90deg);
+                }
+            }
         }
     }
 </style>

@@ -128,7 +128,6 @@
         /***************************************************** CONTAINERS */
         $headerSize: 16px;
 
-        border: 1px solid transparent;
         display: flex;
         flex-direction: column;
         overflow: auto;
@@ -173,7 +172,7 @@
         }
 
         .is-editing & {
-            border-color: $editSelectableColor;
+            border: 1px solid $editSelectableColor;
 
             &:hover {
                 border-color: $editSelectableColorHov;
@@ -193,11 +192,12 @@
         // Frames get styled here because this is particular to their presence in this layout type
         .c-fl-frame {
             @include browserPrefix(margin-collapse, collapse);
-            margin: 1px;
+        }
 
-            //&__drag-wrapper {
-                // border: 1px solid $colorInteriorBorder; // Now handled by is-selectable
-            //}
+        .is-editing & {
+            .c-fl-frame {
+                margin: 1px;
+            }
         }
 
         /****** ROWS LAYOUT */
