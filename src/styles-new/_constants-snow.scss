@@ -110,26 +110,29 @@ $colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
 /************************************************** EDITING */
 // Base Colors
 $dlSpread: 20%;
-$editColor: #00c7c3;
+$editColor: #6afdff;
 $editColorAlt: #9971ff;
-$editColorBgBase: darken($editColor, $dlSpread);
-$editColorBg: darken($editColor, $dlSpread);
-$editColorFg: lighten($editColor, $dlSpread);
+$editColorBgBase: lighten($editColor, 20%);
+$editColorBg: $editColor;
+$editColorFg: darken($editColor, $dlSpread);
 $editColorHov: lighten($editColor, 20%);
+
 // Canvas
-$editCanvasColorBg: #e6ffff;
-$editCanvasColorGrid: darken($editCanvasColorBg, 10%);
+$editCanvasColorBg: lighten($editColorBgBase, 5%);
+$editCanvasColorGrid: $editColorBgBase;
+
 // Selectable
-$editSelectableColor: #acdad6;
+$editSelectableColor: #00b3b1;
 $editSelectableColorFg: darken($editSelectableColor, 20%);
-$editSelectableColorHov: darken($editSelectableColor, 10%);
+$editSelectableColorHov: darken($editSelectableColor, 20%);
+
 // Selectable selected
-$editSelectableColorSelected: $editColor;
+$editSelectableColorSelected: #c60; //$editSelectableColorHov;
 $editSelectableColorSelectedFg: lighten($editSelectableColorSelected, 50%);
 $editSelectableColorFg: darken($editSelectableColor, 40%);
 $editSelectableBorder: 1px dotted $editSelectableColor;
 $editSelectableBorderHov: 1px dotted $editColorAlt;
-$editSelectableBorderSelected: 1px solid $editColor;
+$editSelectableBorderSelected: 1px solid $editSelectableColorSelected;
 $editSelectableShdwSelected: rgba($editColor, 0.75) 0 0 0 1px;
 $editMoveableSelectedShdw: rgba($editColor, 0.5) 0 0 10px;
 $editBorderDrilledIn: 1px dashed $editColorAlt;
@@ -138,7 +141,7 @@ $colorGridLines: rgba($editColor, 0.2);
 /************************************************** BROWSING */
 $browseSelectableBorderHov: 1px dotted rgba($colorBodyFg, 0.2);
 $browseSelectableShdwHov: rgba($colorBodyFg, 0.2) 0 0 3px;
-$browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.6);
+$browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.5);
 
 // Icons
 $colorIconAlias: #4af6f3;
@@ -221,6 +224,13 @@ $overlayColorBg: $colorMenuBg;
 $overlayColorFg: $colorMenuFg;
 $overlayCr: $interiorMarginLg;
 $overlayBrightnessAdjust: brightness(1);
+
+// Toolbar
+$toolBarEditColorBg: darken($editColorBgBase, 5%);
+$toolBarEditColorFg: rgba(black, 0.7);
+$toolBarEditColorBtnFg: $toolBarEditColorFg;
+$toolBarEditColorBtnBgHover: lighten($toolBarEditColorBg, 10%);
+$toolBarEditColorBtnFgHover: rgba(black, 0.9);
 
 // Indicator colors
 $colorIndicatorAvailable: $colorKey;

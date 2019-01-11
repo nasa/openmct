@@ -432,20 +432,30 @@ select {
 
 .c-toolbar {
     $p: $interiorMargin;
-    border-top: 1px solid $colorInteriorBorder;
+    background: $toolBarEditColorBg;
+    border-radius: $basicCr;
     height: $p + 24px; // Need to standardize the height
-    padding-top: $p;
+    padding: $p;
 
     &__separator {
         @include cToolbarSeparator();
+    }
+
+    .c-click-icon,
+    .c-labeled-input {
+        color: $toolBarEditColorBtnFg;
     }
 
     .c-click-icon {
         @include cControl();
         $pLR: $interiorMargin - 1;
         $pTB: 2px;
-        color: $colorBodyFg;
         padding: $pTB $pLR;
+
+        &:hover {
+            background: $toolBarEditColorBtnBgHover !important;
+            color: $toolBarEditColorBtnFgHover !important;
+        }
 
         &--swatched {
             padding-bottom: floor($pTB / 2);

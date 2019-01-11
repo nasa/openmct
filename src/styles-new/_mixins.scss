@@ -347,12 +347,12 @@
     // Make the icon bigger relative to its container
     @include cControl();
     $pLR: 4px;
-    $pTB: 3px;
+    $pTB: 4px;
     background: none;
     box-shadow: none;
     border-radius: $controlCr;
     cursor: pointer;
-    padding: $pTB $pLR ;
+    padding: $pTB $pLR;
 
     @include hover() {
         background: $colorClickIconBgHov;
