@@ -100,7 +100,7 @@ export default {
     },
     methods: {
         allowDrop(event, index) {
-            if (event.dataTransfer.getData('domainObject')) {
+            if (event.dataTransfer.getData('openmct/domain-object')) {
                 return true;
             }
             let frameId = event.dataTransfer.getData('frameid'),
@@ -124,9 +124,9 @@ export default {
             }
         },
         moveOrCreateFrame(insertIndex, event) {
-            if (event.dataTransfer.types.includes('domainobject')) {
+            if (event.dataTransfer.types.includes('openmct/domain-object')) {
                 // create frame using domain object
-                let domainObject = JSON.parse(event.dataTransfer.getData('domainObject'));
+                let domainObject = JSON.parse(event.dataTransfer.getData('openmct/domain-object'));
                 this.$emit(
                     'create-frame',
                     this.index,
