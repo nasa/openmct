@@ -177,13 +177,13 @@
                 this.openmct.objects.mutate(this.internalDomainObject, path, value);
             },
             handleDrop($event) {
-                if (!$event.dataTransfer.types.includes('domainobject')) {
+                if (!$event.dataTransfer.types.includes('openmct/domain-object')) {
                     return;
                 }
 
                 $event.preventDefault();
 
-                let domainObject = JSON.parse($event.dataTransfer.getData('domainobject'));
+                let domainObject = JSON.parse($event.dataTransfer.getData('openmct/domain-object'));
                 let elementRect = this.$el.getBoundingClientRect();
                 let droppedObjectPosition = [
                     Math.floor(($event.pageX - elementRect.left) / this.gridSize[0]),
