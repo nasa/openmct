@@ -58,12 +58,8 @@ define([
 
         handleLegacyMutation = function (legacyObject) {
             var newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId());
-
-            //Don't trigger self
-            this.eventEmitter.off('mutation', handleMutation);
             this.eventEmitter.emit(newStyleObject.identifier.key + ":*", newStyleObject);
             this.eventEmitter.emit('mutation', newStyleObject);
-            this.eventEmitter.on('mutation', handleMutation);
         }.bind(this);
 
         this.eventEmitter.on('mutation', handleMutation);
