@@ -2,6 +2,7 @@
 <a class="c-tree__item__label"
     draggable="true"
     @dragstart="dragStart"
+    @click="navigateOrPreview"
     :href="objectLink">
     <div class="c-tree__item__type-icon"
         :class="typeClass"></div>
@@ -13,12 +14,19 @@
 
 import ObjectLink from '../mixins/object-link';
 import ContextMenuGesture from '../mixins/context-menu-gesture';
+import PreviewAction from '../preview/PreviewAction.js';
 
 export default {
     mixins: [ObjectLink, ContextMenuGesture],
     inject: ['openmct'],
     props: {
-        domainObject: Object
+        domainObject: Object,
+        objectPath: {
+            type: Array,
+            default() {
+                return [];
+            }
+        }
     },
     data() {
         return {
@@ -32,6 +40,7 @@ export default {
             });
             this.$once('hook:destroyed', removeListener);
         }
+        this.previewAction = new PreviewAction(this.openmct);
     },
     computed: {
         typeClass() {
@@ -43,6 +52,17 @@ export default {
         }
     },
     methods: {
+        navigateOrPreview(event) {
+            if (this.openmct.editor.isEditing()){
+                event.preventDefault();
+                this.preview();
+            }
+        },
+        preview() {
+            if (this.previewAction.appliesTo(this.objectPath)){
+                this.previewAction.invoke(this.objectPath);
+            }
+        },
         dragStart(event) {
             let navigatedObject = this.openmct.router.path[0];
             let serializedObject = JSON.stringify(this.observedObject);

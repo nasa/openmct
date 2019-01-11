@@ -43,6 +43,7 @@ define([
     './ui/layout/Layout.vue',
     '../platform/core/src/objects/DomainObjectImpl',
     '../platform/core/src/capabilities/ContextualDomainObject',
+    './ui/preview/plugin',
     'vue'
 ], function (
     EventEmitter,
@@ -67,6 +68,7 @@ define([
     Layout,
     DomainObjectImpl,
     ContextualDomainObject,
+    PreviewPlugin,
     Vue
 ) {
     /**
@@ -230,7 +232,7 @@ define([
         this.install(this.plugins.Plot());
         this.install(this.plugins.TelemetryTable());
         this.install(this.plugins.DisplayLayout());
-        this.install(this.plugins.Preview());
+        this.install(PreviewPlugin.default());
 
         if (typeof BUILD_CONSTANTS !== 'undefined') {
             this.install(buildInfoPlugin(BUILD_CONSTANTS));
