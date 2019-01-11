@@ -184,7 +184,6 @@
         }
 
         /******************************* MAIN AREA */
-
         &__main-container {
             // Wrapper for main views
             flex: 1 1 auto !important;
