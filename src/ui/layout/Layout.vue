@@ -234,18 +234,18 @@
 
     .is-editing {
         .l-shell__main-container {
-            box-shadow: $colorBodyBg 0 0 0 1px, rgba($editColor, 0.7) 0 0 0 2px;
+            box-shadow: $colorBodyBg 0 0 0 1px, $editUIAreaShdw;
 
             > .l-layout,
             > .c-object-view .l-fixed-position {
                 // Target the top-most layout container and color its background
                 // .c-object-view .l-fixed-position is legacy support
-                background: $editCanvasColorBg;
+                background: $editUIGridColorBg;
             }
 
             &[s-selected] {
                 // Provide a clearer selection context articulation for the main edit area
-                box-shadow: $colorBodyBg 0 0 0 1px, $editColor 0 0 0px 3px;
+                box-shadow: $colorBodyBg 0 0 0 1px, $editUIAreaShdwSelected;
             }
         }
     }

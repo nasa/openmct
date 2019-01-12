@@ -62,7 +62,7 @@
 
         &:not(.no-frame) {
             background: $colorBodyBg;
-            border: 1px solid $colorInteriorBorder;
+            border: $browseFrameBorder;
             padding: $interiorMargin;
         }
     }
@@ -70,7 +70,9 @@
     .is-editing {
         .c-frame {
             $moveBarOutDelay: 500ms;
-            border: $editSelectableBorder;
+            &.no-frame {
+                border: $editFrameBorder; // Base border style for a frame element while editing.
+            }
 
             &-edit__move,
             .c-so-view {
@@ -80,43 +82,48 @@
 
             &:not([s-selected]) {
                 &:hover {
-                    border: $editSelectableBorderHov;
+                    border: $editFrameBorderHov;
+                   // box-shadow: $editFrameColorHov 0 0 0 1px;
                 }
             }
 
             &[s-selected] {
-                border: $editSelectableBorderSelected;
+                // All frames selected while editing
+                border: $editFrameSelectedBorder; //$editSelectableBorderSelected;
+                box-shadow: $editFrameSelectedShdw;
 
                 > .c-frame-edit {
-                    [class*='__handle'] { display: block; }
+                    [class*='__handle'] {
+                        display: block;
+                    }
                 }
             }
 
             &:not(.is-resizing) {
                 // Show and animate the __move bar for sub-object views with complex content
                 &:hover {
-                    > .c-so-view.has-complex-content {
-                        &.c-so-view--no-frame {
-                            // If the object's frame is hidden, move content down so the __move bar doesn't cover it.
-                            padding-top: 20px;
+                    > .c-so-view {
+                        &.has-complex-content {
+                            // Move content down so the __move bar doesn't cover it.
+                            padding-top: $editFrameMovebarH;
                             transition: $transIn;
-                        }
 
-                        // If object frame is visible, overlap the __move bar over the header
-                        + .c-frame-edit .c-frame-edit__move {
-                            height: 15px;
-                            transition: $transIn;
-                            &:hover {
-                                background: $editSelectableColorSelected;
-                                &:before {
-                                    color: $editSelectableColorSelectedFg;
-                                }
+                            &.c-so-view--no-frame {
+                                // Move content down with a bit more space
+                                padding-top: $editFrameMovebarH + $interiorMarginSm;
+                            }
+
+                            // Show the move bar
+                            + .c-frame-edit .c-frame-edit__move {
+                                height: $editFrameMovebarH;
+                                transition: $transIn;
                             }
                         }
                     }
                 }
             }
         }
+
         .c-frame-edit {
             // In Layouts, this is the editing rect and handles
             // In Fixed Position, this is a wrapper element
@@ -135,7 +142,8 @@
                 $d: 8px;
                 $o: floor($d * -0.5);
                 background: rgba($editColor, 0.3);
-                border: 1px solid $editColor;
+                border: 2px solid $editFrameColorHov;
+                box-shadow: rgba(black, 0.3) 0 0 2px 1px;
                 display: none; // Set to block via s-selected selector
                 position: absolute;
                 width: $d; height: $d;
@@ -183,8 +191,8 @@
             // Make the __move element a more affordable drag UI element
             .c-frame-edit__move {
                 @include userSelectNone();
-                background: $editColorBgBase; // rgba($editColor, 0.7);
-                box-shadow: rgba(black, 0.7) 0 1px 2px;
+                background: $editFrameMovebarColorBg; //$editFrameColorHov;
+                box-shadow: rgba(black, 0.5) 0 1px 1px;
                 bottom: auto;
                 height: 0; // Height is set on hover on s-selected.c-frame
                 opacity: 0.8;
@@ -194,14 +202,14 @@
 
                 &:before {
                     // Grippy
-                    content: $glyph-icon-grippy;
-                    color: $editColor;
-                    font-family: symbolsfont;
+                    $h: 4px;
+                    $tbOffset: ($editFrameMovebarH - $h) / 2;
+                    $lrOffset: 25%;
+                    @include grippy($editFrameMovebarColorFg);
+                    content: '';
+                    display: block;
                     position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform-origin: center;
-                    transform: translate(-50%,-50%) rotate(90deg);
+                    top: $tbOffset; right: $lrOffset; bottom: $tbOffset; left: $lrOffset;
                 }
             }
         }

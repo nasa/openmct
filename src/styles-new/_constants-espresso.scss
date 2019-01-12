@@ -69,6 +69,7 @@ $colorKeyHov: #26d8ff;
 $colorKeyFilter: invert(36%) sepia(76%) saturate(2514%) hue-rotate(170deg) brightness(99%) contrast(101%);
 $colorKeyFilterHov: invert(63%) sepia(88%) saturate(3029%) hue-rotate(154deg) brightness(101%) contrast(100%);
 $colorKeySelectedBg: $colorKey;
+$uiColor: #00b2ff; // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: #ccc;
 $colorAHov: #fff;
@@ -107,8 +108,20 @@ $colorTimeSubtle: darken($colorTime, 20%);
 $colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
 $colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
 
+/************************************************** BROWSING */
+$browseSelectableBorderHov: 1px dotted rgba($colorBodyFg, 0.2);
+$browseSelectableShdwHov: rgba($colorBodyFg, 0.2) 0 0 3px;
+$browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.6);
+
+
+// NEW BROWSE FRAME-RELATED COLORS
+$browseFrameColor: lighten($colorBodyBg, 10%);
+$browseFrameBorder: 1px solid $browseFrameColor; // Frames in Disp and Flex Layouts when frame is showing
+$browseFrameBorderColorHov: lighten($browseFrameColor, 10%);
+
 /************************************************** EDITING */
 // Base Colors
+// OLDER COLORS
 $dlSpread: 20%;
 $editColor: #00c7c3;
 $editColorAlt: #9971ff;
@@ -116,10 +129,6 @@ $editColorBgBase: darken($editColor, $dlSpread);
 $editColorBg: rgba($editColorBgBase, 0.2);
 $editColorFg: lighten($editColor, $dlSpread);
 $editColorHov: lighten($editColor, 20%);
-
-// Canvas
-$editCanvasColorBg: $editColorBg;
-$editCanvasColorGrid: rgba($editColorBgBase, 0.4);
 
 // Selectable
 $editSelectableColor: #006563;
@@ -138,10 +147,36 @@ $editMoveableSelectedShdw: rgba($editColor, 0.5) 0 0 10px;
 $editBorderDrilledIn: 1px dashed $editColorAlt;
 $colorGridLines: rgba($editColor, 0.2);
 
-/************************************************** BROWSING */
-$browseSelectableBorderHov: 1px dotted rgba($colorBodyFg, 0.2);
-$browseSelectableShdwHov: rgba($colorBodyFg, 0.2) 0 0 3px;
-$browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.6);
+
+
+
+
+// NEW EDIT-RELATED
+$editUIColor: $uiColor; // Base color
+$editUIBaseColor: #344b8d; // Base color, toolbar bg
+$editUIBaseColorHov: lighten($editUIBaseColor, 20%);
+$editUIBaseColorFg: #ffffff; // Toolbar button icon colors, etc.
+$editUIAreaBaseColor: lighten(saturate($editUIBaseColor, 30%), 20%);
+$editUIAreaShdw: $editUIAreaBaseColor 0 0 0 2px; // Edit area s-selected-parent
+$editUIAreaShdwSelected: $editUIAreaBaseColor 0 0 0 3px; // Edit area s-selected
+$editUIGridColorBg: rgba($editUIBaseColor, 0.2); // Background of layout editing area
+$editUIGridColorFg: rgba(#000, 0.1); // Grid lines in layout editing area
+$editFrameColor: $browseFrameColor; // Solid or dotted border applied to non-selected frames in a layout; move-bar on frame hover
+
+$editFrameBorder: 1px dotted $editFrameColor;
+$editFrameColorHov: $editUIColor; // Solid border hover on frames; hover should not be applied to selected objects
+$editFrameBorderHov: 1px solid $editFrameColorHov; // Hover on selectable frames
+$editFrameColorSelected: #ccc; //lighten($editFrameColor, 20%);
+$editFrameSelectedShdw: rgba(black, 0.5) 0 1px 10px 1px;
+$editFrameSelectedBorder: 1px dashed $editFrameColorSelected; // Selected frame element
+$editFrameMovebarColorBg: lighten($editFrameColor, 10%);
+$editFrameMovebarColorFg: darken($editFrameMovebarColorBg, 20%);
+$editFrameMovebarH: 10px;
+
+
+
+
+
 
 // Icons
 $colorIconAlias: #4af6f3;
@@ -325,10 +360,9 @@ $scrollbarThumbColorMenuHov: lighten($scrollbarThumbColorMenu, 2%);
 // Splitter
 $splitterHandleD: 2px;
 $splitterHandleHitMargin: 4px;
-$colorSplitterBaseBg: $colorBodyBg;
-$colorSplitterBg: lighten($colorSplitterBaseBg, 10%);
+$colorSplitterBg: lighten($colorBodyBg, 10%);
 $colorSplitterFg: $colorBodyBg;
-$colorSplitterHover: $colorKey;
+$colorSplitterHover: $uiColor;
 $colorSplitterActive: $colorKey;
 $splitterBtnD: (16px, 35px); // height, width
 $splitterBtnColorBg: $colorBtnBg;

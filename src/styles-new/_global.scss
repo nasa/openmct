@@ -191,8 +191,8 @@ body.desktop .has-local-controls {
 .c-grid {
     pointer-events: none;
 
-    &__x  { @include bgTicks($editCanvasColorGrid, 'x'); }
-    &__y  { @include bgTicks($editCanvasColorGrid, 'y'); }
+    &__x  { @include bgTicks($editUIGridColorFg, 'x'); }
+    &__y  { @include bgTicks($editUIGridColorFg, 'y'); }
 }
 
 /*************************** SELECTION */
