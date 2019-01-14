@@ -151,7 +151,7 @@ function ToolbarProvider(openmct) {
 
                         let prompt = openmct.overlays.dialog({
                             iconClass: 'alert',
-                            message: `This action will permanently delete container ${containerIndex + 1} from this Flexible Layout`,
+                            message: 'This action will permanently delete this container from this Flexible Layout',
                             buttons: [
                                 {
                                     label: 'Ok',

@@ -601,6 +601,26 @@ export default {
                 this.containers.splice(toIndex, 0, container);
             }
             this.persist();
+        },
+        removeChildObject(identifier) {
+            let matchingObjects = [];
+
+            this.containers.forEach((container,i) => {
+                container.frames.forEach((frame, j) => {
+                    let frameIdentifier = this.openmct.objects.makeKeyString(frame.domainObjectIdentifier),
+                        removeIdentifier = this.openmct.objects.makeKeyString(identifier);
+                    
+                    if (frameIdentifier === removeIdentifier) {
+                        matchingObjects.push([i,j]);
+                    }
+                });
+            });
+
+            matchingObjects.forEach(matchArray => {
+                this.containers[matchArray[0]].frames.splice(matchArray[1], 1);
+            });
+
+            this.persist();
         }
     },
     mounted() {
@@ -613,10 +633,14 @@ export default {
             type: 'flexible-layout'
         }
 
+        this.composition = this.openmct.composition.get(this.domainObject);
+        this.composition.on('remove', this.removeChildObject);
+
         this.unsubscribeSelection = this.openmct.selection.selectable(this.$el, context, true);
         this.unobserve = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
     },
     beforeDestroy() {
+        this.composition.off('remove', this.removeChildObject);
         this.unsubscribeSelection();
         this.unobserve();
     }
