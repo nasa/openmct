@@ -603,24 +603,21 @@ export default {
             this.persist();
         },
         removeChildObject(identifier) {
-            let matchingObjects = [];
+            let removeIdentifier = this.openmct.objects.makeKeyString(identifier);
 
-            this.containers.forEach((container,i) => {
-                container.frames.forEach((frame, j) => {
-                    let frameIdentifier = this.openmct.objects.makeKeyString(frame.domainObjectIdentifier),
-                        removeIdentifier = this.openmct.objects.makeKeyString(identifier);
-                    
-                    if (frameIdentifier === removeIdentifier) {
-                        matchingObjects.push([i,j]);
-                    }
+            this.openmct.objects.get(this.domainObject.identifier).then((domainObject) => {
+                this.domainObject = domainObject;
+
+                this.containers.forEach(container => {
+                    container.frames = container.frames.filter(frame => {
+                        let frameIdentifier = this.openmct.objects.makeKeyString(frame.domainObjectIdentifier);
+                        
+                        return removeIdentifier !== frameIdentifier;
+                    });
                 });
-            });
 
-            matchingObjects.forEach(matchArray => {
-                this.containers[matchArray[0]].frames.splice(matchArray[1], 1);
+                this.persist();
             });
-
-            this.persist();
         }
     },
     mounted() {

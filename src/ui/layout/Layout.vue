@@ -314,10 +314,7 @@
                 }
             },
             openInNewTab(event) {
-                let url = this.openmct.router.currentLocation.url,
-                    path = `${url.origin}/#/browse/${url.pathname}${url.search}`;
-                
-                window.open(path);
+                window.open(window.location.href);
             }
         }
     }

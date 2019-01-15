@@ -7,8 +7,8 @@
                 <span
                     class="l-browse-bar__object-name c-input-inline"
                     @blur="updateName"
-                    @keydown="preventDefault"
-                    @keyup="updateNameOnEnterKeyPress"
+                    @keydown.enter.prevent
+                    @keyup.enter.prevent="updateNameOnEnterKeyPress"
                     contenteditable>
                     {{ domainObject.name }}
                 </span>
@@ -70,21 +70,7 @@ import NotebookSnapshot from '../utils/notebook-snapshot';
                 }
             },
             updateNameOnEnterKeyPress (event) {
-                let keyCode  = event.which || event.keyCode;
-
-                if (keyCode === 13 && !event.shiftKey) {
-                    event.preventDefault();
-
-                    this.updateName(event);
-                    event.target.blur();
-                }
-            },
-            preventDefault(event) {
-                let keyCode = event.which || event.keyCode;
-
-                if (keyCode === 13 && !event.shiftKey) {
-                    event.preventDefault();
-                }
+                event.target.blur();
             },
             setView(view) {
                 this.viewKey = view.key;
