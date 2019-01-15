@@ -79,6 +79,22 @@
 
 <style lang="scss">
     @import '~styles/sass-base';
+    
+    @mixin containerGrippy($headerSize, $dir) {
+        position: absolute;
+        $h: 6px;
+        $minorOffset: ($headerSize - $h) / 2;
+        $majorOffset: 35%;
+        content: '';
+        display: block;
+        position: absolute;
+        @include grippy($c: $editFrameMovebarColorFg, $dir: $dir);
+        @if $dir == 'x' {
+            top: $minorOffset; right: $majorOffset; bottom: $minorOffset; left: $majorOffset;
+        } @else {
+            top: $majorOffset; right: $minorOffset; bottom: $majorOffset; left: $minorOffset;
+        }
+    }
 
     .c-fl {
         @include abs();
@@ -138,8 +154,8 @@
 
         &__header {
             // Only displayed when editing, controlled via JS
-            background: $editSelectableColor;
-            color: $editSelectableColorFg;
+            background: $editFrameMovebarColorBg; //$editSelectableColor;
+            color: $editFrameMovebarColorFg;
             cursor: move;
             display: flex;
             align-items: center;
@@ -147,12 +163,7 @@
 
             &:before {
                 // Drag grippy
-                font-size: 0.8em;
-                opacity: 0.5;
-                position: absolute;
-                left: 50%; top: 50%;
-                transform-origin: center;
-                transform: translate(-50%, -50%);
+                @include containerGrippy($headerSize, 'x');
             }
         }
 
@@ -172,18 +183,19 @@
         }
 
         .is-editing & {
-            border: 1px solid $editSelectableColor;
+            //border: 1px solid $editFrameBorder; //$editSelectableColor;
 
             &:hover {
-                border-color: $editSelectableColorHov;
+                border-color: $editFrameColorHov; //$editSelectableColorHov;
             }
 
             &[s-selected] {
-                border-color: $editSelectableColorSelected !important;
+                border: $editFrameSelectedBorder;
+//                border-color: $editFrameSelectedMovebarColorBg; //$editSelectableColorSelected !important;
 
                 .c-fl-container__header {
-                    background: $editSelectableColorSelected;
-                    color: $editSelectableColorSelectedFg;
+                    background:$editFrameSelectedMovebarColorBg; //$editSelectableColorSelected;
+                    color: $editFrameSelectedMovebarColorFg;
                 }
             }
         }
@@ -211,7 +223,7 @@
 
                 &:before {
                     // Drag grippy
-                    transform: rotate(90deg) translate(-50%, 50%);
+                    @include containerGrippy($headerSize, 'y');
                 }
             }
 
@@ -303,37 +315,16 @@
 
             &:before {
                 // The visible resize line
-                background: $editColor;
+                background: $editUIColor;
                 content: '';
                 display: block;
                 flex: 1 1 auto;
                 min-height: $size; min-width: $size;
             }
 
-            &__grippy {
-                // Grippy element
-                $d: 4px;
-                $c: black;
-                $a: 0.9;
-                $d: 5px;
-                background: $editColor;
-                color: $editColorBg;
-                border-radius: $smallCr;
-                font-size: 0.8em;
-                height: $d;
-                width: $d * 10;
-                position: absolute;
-                left: 50%; top: 50%;
-                text-align: center;
-                transform-origin: center center;
-                transform: translate(-50%, -50%);
-                z-index: 10;
-            }
-
             &.vertical {
                 padding: $margin $size;
                 &:hover{
-                  //  padding: $marginHov 0;
                     cursor: row-resize;
                 }
             }
@@ -341,12 +332,7 @@
             &.horizontal {
                 padding: $size $margin;
                 &:hover{
-                 //   padding: 0 $marginHov;
                     cursor: col-resize;
-                }
-
-                [class*='grippy'] {
-                    transform: translate(-50%) rotate(90deg);
                 }
             }
 
@@ -354,7 +340,7 @@
                 transition: $transOut;
                 &:before {
                     // The visible resize line
-                    background: $editColorHov;
+                    background: $editUIColorHov;
                 }
             }
         }

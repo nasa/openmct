@@ -71,8 +71,12 @@
             &[s-selected],
             &[s-selected-parent] {
                 // Display grid in main layout holder when editing
-                > .l-layout > [class*="__grid-holder"] {
-                    display: block;
+                > .l-layout {
+                    background: $editUIGridColorBg;
+
+                    > [class*="__grid-holder"] {
+                        display: block;
+                    }
                 }
             }
         }
@@ -81,8 +85,13 @@
             &[s-selected],
             &[s-selected-parent] {
                 // Display grid in nested layouts when editing
-                > * > * > .l-layout > [class*='grid-holder'] {
-                    display: block;
+                > * > * > .l-layout {
+                    background: $editUIGridColorBg;
+                    box-shadow: inset $editUIGridColorFg 0 0 2px 1px; //
+
+                    > [class*='grid-holder'] {
+                        display: block;
+                    }
                 }
             }
         }

@@ -83,7 +83,6 @@
             &:not([s-selected]) {
                 &:hover {
                     border: $editFrameBorderHov;
-                   // box-shadow: $editFrameColorHov 0 0 0 1px;
                 }
             }
 
@@ -98,26 +97,26 @@
                     }
                 }
             }
+        }
 
-            &:not(.is-resizing) {
-                // Show and animate the __move bar for sub-object views with complex content
-                &:hover {
-                    > .c-so-view {
-                        &.has-complex-content {
-                            // Move content down so the __move bar doesn't cover it.
-                            padding-top: $editFrameMovebarH;
+        .l-layout__frame:not(.is-resizing) {
+            // Show and animate the __move bar for sub-object views with complex content
+            &:hover {
+                > .c-so-view {
+                    &.has-complex-content {
+                        // Move content down so the __move bar doesn't cover it.
+                        padding-top: $editFrameMovebarH;
+                        transition: $transIn;
+
+                        &.c-so-view--no-frame {
+                            // Move content down with a bit more space
+                            padding-top: $editFrameMovebarH + $interiorMarginSm;
+                        }
+
+                        // Show the move bar
+                        + .c-frame-edit .c-frame-edit__move {
+                            height: $editFrameMovebarH;
                             transition: $transIn;
-
-                            &.c-so-view--no-frame {
-                                // Move content down with a bit more space
-                                padding-top: $editFrameMovebarH + $interiorMarginSm;
-                            }
-
-                            // Show the move bar
-                            + .c-frame-edit .c-frame-edit__move {
-                                height: $editFrameMovebarH;
-                                transition: $transIn;
-                            }
                         }
                     }
                 }
@@ -139,11 +138,10 @@
             }
 
             &__handle {
-                $d: 8px;
+                $d: 6px;
                 $o: floor($d * -0.5);
-                background: rgba($editColor, 0.3);
-                border: 2px solid $editFrameColorHov;
-                box-shadow: rgba(black, 0.3) 0 0 2px 1px;
+                background: $editFrameColorHandleFg;
+                box-shadow: $editFrameColorHandleBg 0 0 0 2px;
                 display: none; // Set to block via s-selected selector
                 position: absolute;
                 width: $d; height: $d;
@@ -151,14 +149,15 @@
 
                 &:before {
                     // Extended hit area
-                    @include abs(-5px);
+                    @include abs(-10px);
                     content: '';
+                    //background: deeppink;
                     display: block;
-                    z-index: -1;
+                    z-index: 0;
                 }
 
                 &:hover {
-                    background: $editColor;
+                    background: $editUIColor;
                 }
 
                 &--nwse {
