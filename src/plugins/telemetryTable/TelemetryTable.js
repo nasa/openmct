@@ -79,8 +79,8 @@ define([
 
         loadComposition() {
             this.tableComposition = this.openmct.composition.get(this.domainObject);
-            if (this.tableComposition !== undefined){
-                this.tableComposition.load().then((composition)=>{
+            if (this.tableComposition !== undefined) {
+                this.tableComposition.load().then((composition) => {
                     composition = composition.filter(this.isTelemetryObject);
 
                     this.configuration.addColumnsForAllObjects(composition);
@@ -122,7 +122,6 @@ define([
 
                     let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
                     this.boundedRows.add(telemetryRows);
-                    console.log('Loaded %i rows', telemetryRows.length);
                     this.decrementOutstandingRequests();
                 });
         }
@@ -131,7 +130,7 @@ define([
          * @private
          */
         incrementOutstandingRequests() {
-            if (this.outstandingRequests === 0){
+            if (this.outstandingRequests === 0) {
                 this.emit('outstanding-requests', true);
             }
             this.outstandingRequests++;
@@ -143,7 +142,7 @@ define([
         decrementOutstandingRequests() {
             this.outstandingRequests--;
 
-            if (this.outstandingRequests === 0){
+            if (this.outstandingRequests === 0) {
                 this.emit('outstanding-requests', false);
             }
         }
