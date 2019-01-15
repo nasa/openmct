@@ -19,7 +19,7 @@
                     tab.type.definition.cssClass
                 ]"
                 @click="showTab(tab)">
-                <span class="c-button__label">{{tab.model.name}}</span>
+                <span class="c-button__label">{{tab.domainObject.name}}</span>
             </button>
         </div>
         <div class="c-tabs-view__object-holder"
@@ -29,11 +29,11 @@
             <div class="c-tabs-view__object-name l-browse-bar__object-name--w"
                  :class="currentTab.type.definition.cssClass">
                 <div class="l-browse-bar__object-name">
-                    {{currentTab.model.name}}
+                    {{currentTab.domainObject.name}}
                 </div>
             </div>
             <object-view class="c-tabs-view__object"
-                :object="tab.model">
+                :object="tab.domainObject">
             </object-view>
         </div>
     </div>
@@ -114,10 +114,10 @@ export default {
         showTab(tab) {
             this.currentTab = tab;
         },
-        addItem(model) {
-            let type = this.openmct.types.get(model.type) || unknownObjectType,
+        addItem(domainObject) {
+            let type = this.openmct.types.get(domainObject.type) || unknownObjectType,
                 tabItem = {
-                    model,
+                    domainObject,
                     type: type
                 };
 
@@ -130,7 +130,7 @@ export default {
         },
         removeItem(identifier) {
             let pos = this.tabsList.findIndex(tab => 
-                    tab.model.identifier.namespace === identifier.namespace && tab.model.identifier.key === identifier.key
+                    tab.domainObject.identifier.namespace === identifier.namespace && tab.domainObject.identifier.key === identifier.key
                 ),
                 tabToBeRemoved = this.tabsList[pos];
 
