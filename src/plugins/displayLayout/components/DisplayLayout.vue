@@ -87,7 +87,7 @@
                 // Display grid in nested layouts when editing
                 > * > * > .l-layout {
                     background: $editUIGridColorBg;
-                    box-shadow: inset $editUIGridColorFg 0 0 2px 1px; //
+                    box-shadow: inset $editUIGridColorFg 0 0 2px 1px;
 
                     > [class*='grid-holder'] {
                         display: block;
@@ -96,8 +96,6 @@
             }
         }
     }
-
-    // Styles moved to _global.scss;
 </style>
 
 

@@ -136,8 +136,10 @@ $editFrameSelectedShdw: rgba(black, 0.5) 0 1px 10px 1px;
 $editFrameSelectedBorder: 1px dashed $editFrameColorSelected; // Selected frame element
 $editFrameMovebarColorBg: $editFrameColor; // Movebar bg color
 $editFrameMovebarColorFg: lighten($editFrameMovebarColorBg, 20%);  // Grippy lines, container size text
-$editFrameSelectedMovebarColorBg: lighten($editFrameColor, 10%);
-$editFrameSelectedMovebarColorFg: lighten($editFrameMovebarColorBg, 40%);
+$editFrameHovMovebarColorBg: lighten($editFrameMovebarColorBg, 10%); // Hover style
+$editFrameHovMovebarColorFg: lighten($editFrameMovebarColorFg, 10%);
+$editFrameSelectedMovebarColorBg: lighten($editFrameMovebarColorBg, 15%); // Selected style
+$editFrameSelectedMovebarColorFg: lighten($editFrameMovebarColorFg, 15%);
 $editFrameMovebarH: 10px; // Height of move bar in layout frame
 
 // Icons

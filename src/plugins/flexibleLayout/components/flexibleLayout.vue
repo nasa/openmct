@@ -88,7 +88,7 @@
         content: '';
         display: block;
         position: absolute;
-        @include grippy($c: $editFrameMovebarColorFg, $dir: $dir);
+        @include grippy($c: $editFrameSelectedMovebarColorFg, $dir: $dir);
         @if $dir == 'x' {
             top: $minorOffset; right: $majorOffset; bottom: $minorOffset; left: $majorOffset;
         } @else {
@@ -116,7 +116,6 @@
             > * + * { margin-left: 1px; }
 
             &[class*='--rows'] {
-                //@include test(blue, 0.1);
                 flex-direction: column;
                 > * + * {
                     margin-left: 0;
@@ -154,7 +153,7 @@
 
         &__header {
             // Only displayed when editing, controlled via JS
-            background: $editFrameMovebarColorBg; //$editSelectableColor;
+            background: $editFrameMovebarColorBg;
             color: $editFrameMovebarColorFg;
             cursor: move;
             display: flex;
@@ -164,6 +163,7 @@
             &:before {
                 // Drag grippy
                 @include containerGrippy($headerSize, 'x');
+                opacity: 0.5;
             }
         }
 
@@ -183,19 +183,27 @@
         }
 
         .is-editing & {
-            //border: 1px solid $editFrameBorder; //$editSelectableColor;
-
             &:hover {
-                border-color: $editFrameColorHov; //$editSelectableColorHov;
+                .c-fl-container__header {
+                    background: $editFrameHovMovebarColorBg;
+                    color: $editFrameHovMovebarColorFg;
+
+                    &:before {
+                        opacity: .75;
+                    }
+                }
             }
 
             &[s-selected] {
                 border: $editFrameSelectedBorder;
-//                border-color: $editFrameSelectedMovebarColorBg; //$editSelectableColorSelected !important;
 
                 .c-fl-container__header {
-                    background:$editFrameSelectedMovebarColorBg; //$editSelectableColorSelected;
+                    background:$editFrameSelectedMovebarColorBg;
                     color: $editFrameSelectedMovebarColorFg;
+                    &:before {
+                        // Grippy
+                        opacity: 1;
+                    }
                 }
             }
         }
@@ -204,12 +212,6 @@
         // Frames get styled here because this is particular to their presence in this layout type
         .c-fl-frame {
             @include browserPrefix(margin-collapse, collapse);
-        }
-
-        .is-editing & {
-            .c-fl-frame {
-                margin: 1px;
-            }
         }
 
         /****** ROWS LAYOUT */
@@ -222,7 +224,7 @@
                 overflow: hidden;
 
                 &:before {
-                    // Drag grippy
+                    // Grippy
                     @include containerGrippy($headerSize, 'y');
                 }
             }
@@ -246,8 +248,6 @@
         $dropHintSize: 15px;
 
         display: flex;
-      //  justify-content: stretch;
-      //  align-items: stretch;
         flex: 1 1;
         flex-direction: column;
         overflow: hidden; // Needed to allow frames to collapse when sized down
@@ -286,7 +286,6 @@
             pointer-events: none;
             text-align: center;
             width: $size;
-            z-index: 2;
 
             // Changed when layout is different, see below
             border-top-right-radius: $controlCr;
