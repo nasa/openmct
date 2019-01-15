@@ -33,6 +33,7 @@
             display: flex;
             align-items: center;
             cursor: pointer;
+            line-height: 110%;
             padding: $interiorMargin - $aPad;
             transition: background 150ms ease;
 
