@@ -65,11 +65,19 @@ export default {
         },
         dragStart(event) {
             let navigatedObject = this.openmct.router.path[0];
-            let serializedObject = JSON.stringify(this.observedObject);
+            let serializedPath = JSON.stringify(this.objectPath);
+
+            /*
+             * Cannot inspect data transfer objects on dragover/dragenter so impossible to determine composability at
+             * that point. If dragged object can be composed by navigated object, then indicate with presence of 
+             * 'composable-domain-object' in data transfer
+             */
             if (this.openmct.composition.checkPolicy(navigatedObject, this.observedObject)) {
-                event.dataTransfer.setData("openmct/composable-domain-object", serializedObject);
+                event.dataTransfer.setData("openmct/composable-domain-object", JSON.stringify(this.domainObject));
             }
-            event.dataTransfer.setData("openmct/domain-object", serializedObject);
+            // serialize domain object anyway, because some views can drag-and-drop objects without composition 
+            // (eg. notabook.)
+            event.dataTransfer.setData("openmct/domain-object-path", serializedPath);
         }
     }
 }
