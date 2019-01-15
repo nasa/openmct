@@ -160,6 +160,15 @@
                 domainObject: undefined
             }
         },
+        watch: {
+            index(newIndex) {
+                if (!this.context) {
+                    return;
+                }
+
+                this.context.index = newIndex;
+            }
+        },
         methods: {
             requestHistoricalData() {
                 let bounds = this.openmct.time.bounds();
@@ -205,13 +214,13 @@
                 this.requestHistoricalData();
                 this.subscribeToObject();
 
-                let context = {
+                this.context = {
                     item: domainObject,
                     layoutItem: this.item,
                     index: this.index
                 };
                 this.removeSelectable = this.openmct.selection.selectable(
-                    this.$el, context, this.initSelect);
+                    this.$el, this.context, this.initSelect);
             }
         },
         mounted() {

@@ -85,21 +85,29 @@
             ObjectFrame,
             LayoutFrame
         },
+        watch: {
+            index(newIndex) {
+                if (!this.context) {
+                    return;
+                }
+
+                this.context.index = newIndex;
+            }
+        },
         methods: {
             setObject(domainObject) {
                 this.domainObject = domainObject;
                 this.objectPath = [this.domainObject].concat(this.openmct.router.path);
-                let context = {
+                this.context = {
                     item: domainObject,
                     layoutItem: this.item,
                     index: this.index
                 };
                 this.removeSelectable = this.openmct.selection.selectable(
-                    this.$el, context, this.initSelect);
+                    this.$el, this.context, this.initSelect);
             }
         },
         mounted() {
-            console.log(this.item);
             this.openmct.objects.get(this.item.identifier)
                 .then(this.setObject);
         },

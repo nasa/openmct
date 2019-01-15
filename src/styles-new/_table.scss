@@ -21,15 +21,41 @@
  *****************************************************************************/
 
 /******************************************************** TABLE */
+table {
+    $minW: 50px;
+    width: 100%;
+
+    thead {
+        background: $colorTabHeaderBg;
+        th + th {
+            border-left: 1px solid $colorTabHeaderBorder;
+        }
+    }
+
+    tbody {
+        tr + tr {
+            border-top: 1px solid $colorTabBorder;
+        }
+    }
+
+    th, td {
+        white-space: nowrap;
+        min-width: $minW;
+        padding: $tabularTdPadTB $tabularTdPadLR;
+    }
+
+    td {
+        vertical-align: top;
+    }
+}
+
 .c-table {
     // Can be used by any type of table, scrolling, LAD, etc.
     $min-w: 50px;
 
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: flex-start;
     position: absolute;
     top: 0; right: 0; bottom: 0; left: 0;
+    width: 100%;
 
     &__control-bar,
     &__headers-w {
@@ -37,21 +63,12 @@
     }
 
     /******************************* ELEMENTS */
-    th, td {
-        white-space: nowrap;
-        min-width: $min-w;
-        padding: $tabularTdPadTB $tabularTdPadLR;
-    }
-
-    td {
-        color: $colorTelemFresh;
-        vertical-align: top;
-    }
 
     &__control-bar {
         margin-bottom: $interiorMarginSm;
     }
 
+    thead tr,
     [class*="__header"] {
         background: $colorTabHeaderBg;
 
@@ -62,12 +79,18 @@
         }
     }
 
+    tbody,
     &__body {
-        tr {
-            &:not(:first-child) {
-                border-top: 1px solid $colorTabBorder;
-            }
+        tr:not(.c-table__group-header) + tr:not(.c-table__group-header) {
+            border-top: 1px solid $colorTabBorder;
         }
+    }
+
+    &__group-header {
+        // tr element found in LAD Table Sets
+        border-top: 1px solid $colorTabHeaderBorder;
+        background: $colorTabGroupHeaderBg;
+        td { color: $colorTabGroupHeaderFg; }
     }
 
     &--sortable {
@@ -87,5 +110,11 @@
         .is-sortable {
             cursor: pointer;
         }
+    }
+}
+
+.c-lad-table {
+    th, td {
+        width: 33%; // Needed to prevent size jumping as values dynamically update
     }
 }

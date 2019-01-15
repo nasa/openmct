@@ -1,5 +1,5 @@
 <li class="c-notebook__entry c-ne has-local-controls"
-    @drop="dropOnEntry(entry.id, $event)">
+    @drop.prevent="dropOnEntry(entry.id, $event)">
     <div class="c-ne__time-and-content">
         <div class="c-ne__time">
             <span>{{formatTime(entry.createdOn, 'YYYY-MM-DD')}}</span>
@@ -18,7 +18,7 @@
                     v-for="embed in entry.embeds"
                     :key="embed.id"
                     :embed="embed"
-                    :objectPath="[{identifier: embed.type}]"
+                    :objectPath="[embed.domainObject]"
                     :entry="entry">
                 </notebook-embed>
             </div>
@@ -26,7 +26,7 @@
     </div>
 
     <div class="c-ne__local-controls--hidden">
-        <button class="c-click-icon icon-trash"
+        <button class="c-click-icon c-click-icon--major icon-trash"
            title="Delete this entry"
            @click="deleteEntry">
         </button>

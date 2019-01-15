@@ -40,6 +40,7 @@
             <component v-for="(item, index) in layoutItems"
                 :is="item.type"
                 :item="item"
+                :key="item.id"
                 :gridSize="gridSize"
                 :initSelect="initSelectIndex === index"
                 :index="index"
@@ -76,7 +77,7 @@
     .l-shell__main-container {
         > .l-layout {
             [s-selected] {
-                border: $browseBorderSelected;
+                border: $browseSelectedBorder;
             }
         }
     }
@@ -176,13 +177,13 @@
                 this.openmct.objects.mutate(this.internalDomainObject, path, value);
             },
             handleDrop($event) {
-                if (!$event.dataTransfer.types.includes('domainobject')) {
+                if (!$event.dataTransfer.types.includes('openmct/domain-object-path')) {
                     return;
                 }
 
                 $event.preventDefault();
 
-                let domainObject = JSON.parse($event.dataTransfer.getData('domainobject'));
+                let domainObject = JSON.parse($event.dataTransfer.getData('openmct/domain-object-path'))[0];
                 let elementRect = this.$el.getBoundingClientRect();
                 let droppedObjectPosition = [
                     Math.floor(($event.pageX - elementRect.left) / this.gridSize[0]),
@@ -226,6 +227,7 @@
             addItem(itemType, ...options) {
                 let item = getItemDefinition(itemType, this.openmct, this.gridSize, ...options);
                 item.type = itemType;
+                item.id = uuid();
                 this.trackItem(item);
                 this.layoutItems.push(item);
                 this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
@@ -233,10 +235,45 @@
             },
             trackItem(item) {
                 if (item.type === "telemetry-view") {
-                    this.telemetryViewMap[this.openmct.objects.makeKeyString(item.identifier)] = true;
+                    let keyString = this.openmct.objects.makeKeyString(item.identifier);
+                    let count = this.telemetryViewMap[keyString] || 0;
+                    this.telemetryViewMap[keyString] = ++count;
                 } else if (item.type === "subobject-view") {
                     this.objectViewMap[this.openmct.objects.makeKeyString(item.identifier)] = true;
                 }
+            },
+            removeItem(item, index) {
+                this.initSelectIndex = -1;
+                this.layoutItems.splice(index, 1);
+                this.mutate("configuration.items", this.layoutItems);
+                this.untrackItem(item);
+                this.$el.click();
+            },
+            untrackItem(item) {
+                if (!item.identifier) {
+                    return;
+                }
+
+                let keyString = this.openmct.objects.makeKeyString(item.identifier);
+
+                if (item.type === 'telemetry-view') {
+                    let count = --this.telemetryViewMap[keyString];
+
+                    if (count === 0) {
+                        delete this.telemetryViewMap[keyString];
+                        this.removeFromComposition(keyString);
+                    }
+                } else if (item.type === 'subobject-view') {
+                    delete this.objectViewMap[keyString];
+                    this.removeFromComposition(keyString);
+                }
+            },
+            removeFromComposition(keyString) {
+                let composition = _.get(this.internalDomainObject, 'composition');
+                composition = composition.filter(identifier => {
+                    return this.openmct.objects.makeKeyString(identifier) !== keyString;
+                });
+                this.mutate("composition", composition);
             },
             initializeItems() {
                 this.telemetryViewMap = {};
@@ -254,7 +291,26 @@
                 }
             },
             removeChild(identifier) {
-                // TODO: implement
+                let keyString = this.openmct.objects.makeKeyString(identifier);
+
+                if (this.objectViewMap[keyString]) {
+                    delete this.objectViewMap[keyString];
+                    this.removeFromConfiguration(keyString);
+                } else if (this.telemetryViewMap[keyString]) {
+                    delete this.telemetryViewMap[keyString];
+                    this.removeFromConfiguration(keyString);
+                }
+            },
+            removeFromConfiguration(keyString) {
+                let layoutItems = this.layoutItems.filter(item => {
+                    if (!item.identifier) {
+                        return true;
+                    } else {
+                        return this.openmct.objects.makeKeyString(item.identifier) !== keyString;
+                    }
+                });
+                this.mutate("configuration.items", layoutItems);
+                this.$el.click();
             }
         },
         mounted() {

@@ -21,60 +21,62 @@
  *****************************************************************************/
 
 <template>
-    <div v-show="isValidTarget">
-        <div class="c-drop-hint c-drop-hint--always-show"
-             :class="{'is-mouse-over': isMouseOver}"
-             @dragenter="dragenter"
-             @dragleave="dragleave"
-             @drop="dropHandler">
-        </div>
-    </div>
+<table class="c-table c-lad-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Timestamp</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <lad-row 
+            v-for="item in items"
+            :key="item.key"
+            :domainObject="item.domainObject">
+        </lad-row>
+    </tbody>
+</table>
 </template>
 
-<style lang="scss">
-
-</style>
-
 <script>
+import lodash from 'lodash';
+import LadRow from './LadRow.vue';
+
 export default {
-    props:{
-        index: Number,
-        allowDrop: {
-            type: Function,
-            required: true
-        }
+    inject: ['openmct', 'domainObject'],
+    components: {
+        LadRow
     },
     data() {
         return {
-            isMouseOver: false,
-            isValidTarget: false
+            items: []
         }
     },
     methods: {
-        dragenter() {
-            this.isMouseOver = true;
+        addItem(domainObject) {
+            let item = {};
+            item.domainObject = domainObject;
+            item.key = this.openmct.objects.makeKeyString(domainObject.identifier);
+
+            this.items.push(item);
         },
-        dragleave() {
-            this.isMouseOver = false;
-        },
-        dropHandler(event) {
-            this.$emit('object-drop-to', this.index, event);
-            this.isValidTarget = false;
-        },
-        dragstart(event) {
-            this.isValidTarget = this.allowDrop(event, this.index);
-        },
-        dragend() {
-            this.isValidTarget = false;
+        removeItem(identifier) {
+            let index = _.findIndex(this.items, (item) => this.openmct.objects.makeKeyString(identifier) === item.key);
+
+            this.items.splice(index, 1);
         }
     },
     mounted() {
-        document.addEventListener('dragstart', this.dragstart);
-        document.addEventListener('dragend', this.dragend);
+        this.composition = this.openmct.composition.get(this.domainObject);
+        this.composition.on('add', this.addItem);
+        this.composition.on('remove', this.removeItem);
+        this.composition.load();
     },
     destroyed() {
-        document.removeEventListener('dragstart', this.dragstart);
-        document.removeEventListener('dragend', this.dragend);
+        this.composition.off('add', this.addItem);
+        this.composition.off('remove', this.removeItem);
     }
 }
 </script>
+

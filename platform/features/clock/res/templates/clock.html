@@ -19,16 +19,14 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="l-time-display l-digital l-clock s-clock" ng-controller="ClockController as clock">
-	<div class="l-elem-wrapper">
-	    <span class="l-elem timezone">
-	        {{clock.zone()}}
-	    </span>
-	    <span class="l-elem value active">
-	        {{clock.text()}}
-	    </span>
-	    <span class="l-elem ampm">
-	        {{clock.ampm()}}
-	    </span>
+<div class="c-clock l-time-display" ng-controller="ClockController as clock">
+	<div class="c-clock__timezone">
+		{{clock.zone()}}
+	</div>
+	<div class="c-clock__value">
+		{{clock.text()}}
+	</div>
+	<div class="c-clock__ampm">
+		{{clock.ampm()}}
 	</div>
 </div>

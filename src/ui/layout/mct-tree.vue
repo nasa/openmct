@@ -47,7 +47,7 @@
                 }
             }
 
-            &.is-selected {
+            &.is-navigated-object {
                 background: $colorItemTreeSelectedBg;
                 .c-tree__item__type-icon:before {
                     color: $colorItemTreeIconHover;
@@ -71,7 +71,6 @@
             }
 
             &__view-control {
-                color: $colorItemTreeVC;
                 margin-right: $interiorMarginSm;
             }
 

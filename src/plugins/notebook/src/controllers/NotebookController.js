@@ -28,7 +28,7 @@ define([
     '../../res/templates/entry.html',
     '../../res/templates/embed.html',
     '../../../../ui/components/search.vue',
-    '../../../preview/PreviewAction',
+    '../../../../ui/preview/PreviewAction',
     '../../../../ui/mixins/object-link'
 ],
 function (
@@ -124,8 +124,8 @@ function (
         var date = Date.now(),
             embed;
 
-        if (event.dataTransfer && event.dataTransfer.getData('domainObject')) {
-            var selectedObject = JSON.parse(event.dataTransfer.getData('domainObject')),
+        if (event.dataTransfer && event.dataTransfer.getData('openmct/domain-object-path')) {
+            var selectedObject = JSON.parse(event.dataTransfer.getData('openmct/domain-object-path'))[0],
                 selectedObjectId = selectedObject.identifier.key,
                 cssClass = this.openmct.types.get(selectedObject.type);
 

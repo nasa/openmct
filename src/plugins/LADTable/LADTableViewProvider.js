@@ -21,22 +21,19 @@
  *****************************************************************************/
 
 define([
-    './components/tabs.vue',
+    './components/LadTable.vue',
     'vue'
 ], function (
-    TabsComponent,
+    LadTableComponent,
     Vue
 ) {
-    function Tabs(openmct) {
+    function LADTableViewProvider(openmct) {
         return {
-            key: 'tabs',
-            name: 'Tabs',
-            cssClass: 'icon-list-view',
+            key: 'LadTable',
+            name: 'LAD Table',
+            cssClass: 'icon-tabular-lad',
             canView: function (domainObject) {
-                return domainObject.type === 'tabs';
-            },
-            canEdit: function (domainObject) {
-                return domainObject.type === 'tabs';
+                return domainObject.type === 'LadTable';
             },
             view: function (domainObject) {
                 let component;
@@ -45,15 +42,14 @@ define([
                     show: function (element) {
                         component =  new Vue({
                             components: {
-                                TabsComponent: TabsComponent.default
+                                LadTableComponent: LadTableComponent.default
                             },
                             provide: {
                                 openmct,
-                                domainObject,
-                                composition: openmct.composition.get(domainObject)
+                                domainObject
                             },
                             el: element,
-                            template: '<tabs-component></tabs-component>'
+                            template: '<lad-table-component></lad-table-component>'
                         });
                     },
                     destroy: function (element) {
@@ -67,5 +63,5 @@ define([
             }
         };
     }
-    return Tabs;
+    return LADTableViewProvider;
 });

@@ -106,7 +106,6 @@
 
 <style lang="scss">
     @import "~styles/sass-base";
-    @import "~styles/table";
 
     .c-telemetry-table__drop-target {
         position: absolute;
@@ -119,6 +118,9 @@
 
     .c-telemetry-table {
         // Table that displays telemetry in a scrolling body area
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: flex-start;
         overflow: hidden;
 
         th, td {
@@ -126,6 +128,10 @@
             flex: 1 0 auto;
             width: 100px;
             vertical-align: middle; // This is crucial to hiding f**king 4px height injected by browser by default
+        }
+
+        td {
+            color: $colorTelemFresh;
         }
 
         /******************************* WRAPPERS */

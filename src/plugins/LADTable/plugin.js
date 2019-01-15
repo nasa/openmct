@@ -21,36 +21,36 @@
  *****************************************************************************/
 
 define([
-    './flexibleLayoutViewProvider',
-    './utils/container',
-    './toolbarProvider'
+    './LADTableViewProvider',
+    './LADTableSetViewProvider'
 ], function (
-    FlexibleLayoutViewProvider,
-    Container,
-    ToolBarProvider
+    LADTableViewProvider,
+    LADTableSetViewProvider
 ) {
     return function plugin() {
-
         return function install(openmct) {
-            openmct.objectViews.addProvider(new FlexibleLayoutViewProvider(openmct));
+            openmct.objectViews.addProvider(new LADTableViewProvider(openmct));
+            openmct.objectViews.addProvider(new LADTableSetViewProvider(openmct));
 
-            openmct.types.addType('flexible-layout', {
-                name: "Flexible Layout",
+            openmct.types.addType('LadTable', {
+                name: "LAD Table",
                 creatable: true,
-                description: "A fluid, flexible layout canvas that can display multiple objects in rows or columns.",
-                cssClass: 'icon-flexible-layout',
-                initialize: function (domainObject) {
-                    domainObject.configuration = {
-                        containers: [new Container.default(50), new Container.default(50)],
-                        rowsLayout: false
-                    };
+                description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
+                cssClass: 'icon-tabular-lad',
+                initialize(domainObject) {
                     domainObject.composition = [];
                 }
             });
 
-            let toolbar = ToolBarProvider.default(openmct);
-
-            openmct.toolbars.addProvider(toolbar);
+            openmct.types.addType('LadTableSet', {
+                name: "LAD Table Set",
+                creatable: true,
+                description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
+                cssClass: 'icon-tabular-lad-set',
+                initialize(domainObject) {
+                    domainObject.composition = [];
+                }
+            });
         };
     };
 });

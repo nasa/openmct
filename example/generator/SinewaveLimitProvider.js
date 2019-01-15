@@ -37,25 +37,25 @@ define([
         },
         LIMITS = {
             rh: {
-                cssClass: "s-limit-upr s-limit-red",
+                cssClass: "is-limit--upr is-limit--red",
                 low: RED,
                 high: Number.POSITIVE_INFINITY,
                 name: "Red High"
             },
             rl: {
-                cssClass: "s-limit-lwr s-limit-red",
+                cssClass: "is-limit--lwr is-limit--red",
                 high: -RED,
                 low: Number.NEGATIVE_INFINITY,
                 name: "Red Low"
             },
             yh: {
-                cssClass: "s-limit-upr s-limit-yellow",
+                cssClass: "is-limit--upr is-limit--yellow",
                 low: YELLOW,
                 high: RED,
                 name: "Yellow High"
             },
             yl: {
-                cssClass: "s-limit-lwr s-limit-yellow",
+                cssClass: "is-limit--lwr is-limit--yellow",
                 low: -RED,
                 high: -YELLOW,
                 name: "Yellow Low"
