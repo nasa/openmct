@@ -46,6 +46,7 @@ define([
     function DefaultCompositionProvider(publicAPI, compositionAPI) {
         this.publicAPI = publicAPI;
         this.listeningTo = {};
+        this.onMutation = this.onMutation.bind(this);
 
         this.cannotContainDuplicates = this.cannotContainDuplicates.bind(this);
         this.cannotContainItself = this.cannotContainItself.bind(this);
@@ -208,9 +209,10 @@ define([
         if (this.topicListener) {
             return;
         }
-        var topic = this.publicAPI.$injector.get('topic');
-        var mutation = topic('mutation');
-        this.topicListener = mutation.listen(this.onMutation.bind(this));
+        this.publicAPI.objects.eventEmitter.on('mutation', this.onMutation);
+        this.topicListener = () => {
+            this.publicAPI.objects.eventEmitter.off('mutation', this.onMutation)
+        };
     };
 
     /**
@@ -220,7 +222,7 @@ define([
      * @private
      */
     DefaultCompositionProvider.prototype.onMutation = function (oldDomainObject) {
-        var id = oldDomainObject.getId();
+        var id = objectUtils.makeKeyString(oldDomainObject.identifier);
         var listeners = this.listeningTo[id];
 
         if (!listeners) {
@@ -228,7 +230,7 @@ define([
         }
 
         var oldComposition = listeners.composition.map(objectUtils.makeKeyString);
-        var newComposition = oldDomainObject.getModel().composition.map(objectUtils.makeKeyString);
+        var newComposition = oldDomainObject.composition.map(objectUtils.makeKeyString);
 
         var added = _.difference(newComposition, oldComposition).map(objectUtils.parseKeyString);
         var removed = _.difference(oldComposition, newComposition).map(objectUtils.parseKeyString);
