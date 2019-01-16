@@ -147,7 +147,7 @@ export default {
             this.setCurrentTab = true;
         },
         dragstart (e) {
-            if (e.dataTransfer.getData('openmct/domain-object')) {
+            if (e.dataTransfer.types.includes('openmct/domain-object-path')) {
                 this.isDragging = true;
             }
         },
