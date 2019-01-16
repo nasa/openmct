@@ -144,15 +144,15 @@
                     return;
                 }
 
-                if (this.selectionListener) {
-                    this.selectionListener();
+                if (this.removeSelectionListener) {
+                    this.removeSelectionListener();
                 }
 
                 let itemIndex = selection[0].context.index;
 
                 if (itemIndex !== undefined) {
                     let path = `configuration.items[${itemIndex}]`;
-                    this.selectionListener = this.openmct.objects.observe(this.internalDomainObject, path + ".useGrid", function (value) {
+                    this.removeSelectionListener = this.openmct.objects.observe(this.internalDomainObject, path + ".useGrid", function (value) {
                         let item = this.layoutItems[itemIndex];
 
                         if (value) {
@@ -371,8 +371,8 @@
             this.composition.off('remove', this.removeChild);
             this.unlisten();
 
-            if (this.selectionListener) {
-                this.selectionListener();
+            if (this.removeSelectionListener) {
+                this.removeSelectionListener();
             }
         }
     }
