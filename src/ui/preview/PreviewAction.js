@@ -61,4 +61,13 @@ export default class PreviewAction {
             onDestroy: () => preview.$destroy()
         });
     }
+    appliesTo(objectPath) {
+        return !this._isNavigatedObject(objectPath)
+    }
+    _isNavigatedObject(objectPath) {
+        let targetObject = objectPath[0];
+        let navigatedObject = this._openmct.router.path[0];
+        return targetObject.identifier.namespace === navigatedObject.identifier.namespace &&
+            targetObject.identifier.key === navigatedObject.identifier.key;
+    }
 }

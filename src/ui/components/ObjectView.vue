@@ -88,26 +88,25 @@ export default {
             this.updateView(immediatelySelect);
         },
         onDragOver(event) {
-            event.preventDefault();
+            if (this.hasComposableDomainObject(event)) {
+                event.preventDefault();
+            }
         },
         onDrop(event) {
-            let parentObject = this.currentObject;
-            let d = event.dataTransfer.getData("domainObject");
-
-            if (d) {
-                let childObject = JSON.parse(d);
-
-                if (this.openmct.composition.checkPolicy(parentObject, childObject)){
-                    if (!this.openmct.editor.isEditing() && parentObject.type !== 'folder'){
-                        this.openmct.editor.edit();
-                    }
-                    parentObject.composition.push(childObject.identifier);
-                    this.openmct.objects.mutate(parentObject, 'composition', parentObject.composition);
-                }
-
+            if (this.hasComposableDomainObject(event)) {
+                let composableDomainObject = this.getComposableDomainObject(event);
+                this.currentObject.composition.push(composableDomainObject.identifier);
+                this.openmct.objects.mutate(this.currentObject, 'composition', this.currentObject.composition);
                 event.preventDefault();
                 event.stopPropagation();
             }
+        },
+        hasComposableDomainObject(event) {
+            return event.dataTransfer.types.includes('openmct/composable-domain-object')
+        },
+        getComposableDomainObject(event) {
+            let serializedDomainObject = event.dataTransfer.getData('openmct/composable-domain-object');
+            return JSON.parse(serializedDomainObject);
         }
     }
 }

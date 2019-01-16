@@ -44,6 +44,7 @@ define([
                         containers: [new Container.default(50), new Container.default(50)],
                         rowsLayout: false
                     };
+                    domainObject.composition = [];
                 }
             });
 

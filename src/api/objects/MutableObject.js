@@ -83,18 +83,15 @@ define([
             this.object = newObject;
         }.bind(this);
 
-        this.eventEmitter.on(qualifiedEventName(this.object, '*'), handleRecursiveMutation);
-
-        //Emit event specific to property
-        this.eventEmitter.emit(qualifiedEventName(this.object, path), value);
-
-        this.eventEmitter.off(qualifiedEventName(this.object, '*'), handleRecursiveMutation);
-
-        //Emit wildcare event
+        //Emit wildcard event
         this.eventEmitter.emit(qualifiedEventName(this.object, '*'), this.object);
-
         //Emit a general "any object" event
         this.eventEmitter.emit(ANY_OBJECT_EVENT, this.object);
+
+        this.eventEmitter.on(qualifiedEventName(this.object, '*'), handleRecursiveMutation);
+        //Emit event specific to property
+        this.eventEmitter.emit(qualifiedEventName(this.object, path), value);
+        this.eventEmitter.off(qualifiedEventName(this.object, '*'), handleRecursiveMutation);
     };
 
     return MutableObject;
