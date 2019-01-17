@@ -154,6 +154,23 @@ define([], function () {
                         });
                     }
                 };
+                let useGrid = {
+                    control: "toggle-button",
+                    domainObject: selectedParent,
+                    property: path + ".useGrid",
+                    options: [
+                        {
+                            value: false,
+                            icon: "icon-grid-snap-no",
+                            title: "Do not snap to grid"
+                        },
+                        {
+                            value: true,
+                            icon: "icon-grid-snap-to",
+                            title: "Snap to grid"
+                        }
+                    ]
+                };
 
                 if (layoutItem.type === 'subobject-view') {
                     if (toolbar.length > 0) {
@@ -177,6 +194,7 @@ define([], function () {
                             }
                         ]
                     });
+                    toolbar.push(useGrid);
                     toolbar.push(separator);
                     toolbar.push(remove);
                 } else {
@@ -297,6 +315,8 @@ define([], function () {
                             height,
                             width,
                             separator,
+                            useGrid,
+                            separator,
                             remove
                         ];
                     } else if (layoutItem.type === 'text-view' ) {
@@ -321,6 +341,7 @@ define([], function () {
                             width,
                             separator,
                             text,
+                            useGrid,
                             separator,
                             remove
                         ];
@@ -333,6 +354,8 @@ define([], function () {
                             y,
                             height,
                             width,
+                            separator,
+                            useGrid,
                             separator,
                             remove
                         ];
@@ -354,6 +377,7 @@ define([], function () {
                             width,
                             separator,
                             url,
+                            useGrid,
                             separator,
                             remove
                         ];
@@ -381,6 +405,8 @@ define([], function () {
                             y,
                             x2,
                             y2,
+                            separator,
+                            useGrid,
                             separator,
                             remove
                         ];

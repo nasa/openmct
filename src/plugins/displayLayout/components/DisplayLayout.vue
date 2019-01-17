@@ -41,7 +41,7 @@
                 :is="item.type"
                 :item="item"
                 :key="item.id"
-                :gridSize="gridSize"
+                :gridSize="item.useGrid ? gridSize : [1, 1]"
                 :initSelect="initSelectIndex === index"
                 :index="index"
                 @drilledIn="updateDrilledIn"
@@ -142,6 +142,47 @@
             setSelection(selection) {
                 if (selection.length === 0) {
                     return;
+                }
+
+                if (this.removeSelectionListener) {
+                    this.removeSelectionListener();
+                }
+
+                let itemIndex = selection[0].context.index;
+
+                if (itemIndex !== undefined) {
+                    let path = `configuration.items[${itemIndex}]`;
+                    this.removeSelectionListener = this.openmct.objects.observe(this.internalDomainObject, path + ".useGrid", function (value) {
+                        let item = this.layoutItems[itemIndex];
+
+                        if (value) {
+                            item.x = Math.round(item.x / this.gridSize[0]);
+                            item.y = Math.round(item.y / this.gridSize[1]);
+                            item.width = Math.round(item.width / this.gridSize[0]);
+                            item.height = Math.round(item.height / this.gridSize[1]);
+
+                            if (item.x2) {
+                                item.x2 = Math.round(item.x2 / this.gridSize[0]);
+                            }
+                            if (item.y2) {
+                                item.y2 = Math.round(item.y2 / this.gridSize[1]);
+                            }
+                        } else {
+                            item.x = this.gridSize[0] * item.x;
+                            item.y = this.gridSize[1] * item.y;
+                            item.width = this.gridSize[0] * item.width;
+                            item.height = this.gridSize[1] * item.height;
+
+                            if (item.x2) {
+                                item.x2 = this.gridSize[0] * item.x2;
+                            }
+                            if (item.y2) {
+                                item.y2 = this.gridSize[1] * item.y2;
+                            }
+                        }
+                        item.useGrid = value;
+                        this.mutate(`configuration.items[${itemIndex}]`, item);
+                    }.bind(this));
                 }
 
                 this.updateDrilledIn();
@@ -317,7 +358,6 @@
             this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', function (obj) {
                 this.internalDomainObject = JSON.parse(JSON.stringify(obj));
             }.bind(this));
-
             this.openmct.selection.on('change', this.setSelection);
             this.initializeItems();
             this.composition = this.openmct.composition.get(this.internalDomainObject);
@@ -330,6 +370,10 @@
             this.composition.off('add', this.addChild);
             this.composition.off('remove', this.removeChild);
             this.unlisten();
+
+            if (this.removeSelectionListener) {
+                this.removeSelectionListener();
+            }
         }
     }
 
