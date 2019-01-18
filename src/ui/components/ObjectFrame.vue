@@ -127,7 +127,7 @@
                 }
                 let objectType = this.openmct.types.get(this.domainObject.type);
                 if (!objectType || !objectType.definition) {
-                    return; // TODO: return unknown icon type.
+                    return 'icon-object-unknown';
                 }
                 return objectType.definition.cssClass;
             },
@@ -137,7 +137,7 @@
                 }
                 let objectType = this.openmct.types.get(this.domainObject.type);
                 if (!objectType || !objectType.definition) {
-                    return; // TODO: return unknown icon type.
+                    return false;
                 }
 
                 return objectType.definition.complexContent;
