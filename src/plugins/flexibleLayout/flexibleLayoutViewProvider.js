@@ -42,8 +42,13 @@ define([
                 let component;
 
                 return {
-                    show: function (element) {
+                    show: function (element, isEditing) {
                         component =  new Vue({
+                            data() {
+                                return {
+                                    isEditing: isEditing
+                                }
+                            },
                             components: {
                                 FlexibleLayoutComponent: FlexibleLayoutComponent.default
                             },
@@ -63,6 +68,9 @@ define([
                             deleteFrame: component.$refs.flexibleLayout.deleteFrame,
                             type: 'flexible-layout'
                         };
+                    },
+                    onEditModeChange: function (isEditing) {
+                        component.isEditing = isEditing;
                     },
                     destroy: function (element) {
                         component.$destroy();

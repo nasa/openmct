@@ -49,6 +49,7 @@
                     :index="index"
                     :container="container"
                     :rowsLayout="rowsLayout"
+                    :isEditing="isEditing"
                     @move-frame="moveFrame"
                     @create-frame="createFrame"
                     @persist="persist">
@@ -59,6 +60,7 @@
                     :key="index"
                     :index="index"
                     :orientation="rowsLayout ? 'vertical' : 'horizontal'"
+                    :isEditing="isEditing"
                     @init-move="startContainerResizing"
                     @move="containerResizing"
                     @end-move="endContainerResizing">
@@ -398,7 +400,6 @@ import Container from '../utils/container';
 import Frame from '../utils/frame';
 import ResizeHandle from  './resizeHandle.vue';
 import DropHint from './dropHint.vue';
-import isEditingMixin from '../mixins/isEditing';
 
 const MIN_CONTAINER_SIZE = 5;
 
@@ -443,7 +444,6 @@ function sizeToFill(items) {
 
 export default {
     inject: ['openmct', 'layoutObject'],
-    mixins: [isEditingMixin],
     components: {
         ContainerComponent,
         ResizeHandle,
@@ -453,6 +453,9 @@ export default {
         return {
             domainObject: this.layoutObject
         }
+    },
+    props: {
+        isEditing: Boolean
     },
     computed: {
         layoutDirectionStr() {
