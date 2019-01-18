@@ -113,6 +113,11 @@
     import ObjectView from './ObjectView.vue'
     import ContextMenuDropDown from './contextMenuDropDown.vue';
 
+    const SIMPLE_CONTENT_TYPES = [
+        'clock',
+        'summary-widget'
+    ];
+
     export default {
         inject: ['openmct'],
         props: {
@@ -120,32 +125,19 @@
             objectPath: Array,
             hasFrame: Boolean,
         },
-        computed: {
-            cssClass() {
-                if (!this.domainObject || !this.domainObject.type) {
-                    return;
-                }
-                let objectType = this.openmct.types.get(this.domainObject.type);
-                if (!objectType || !objectType.definition) {
-                    return 'icon-object-unknown';
-                }
-                return objectType.definition.cssClass;
-            },
-            complexContent() {
-                if (!this.domainObject || !this.domainObject.type) {
-                    return;
-                }
-                let objectType = this.openmct.types.get(this.domainObject.type);
-                if (!objectType || !objectType.definition) {
-                    return false;
-                }
-
-                return objectType.definition.complexContent;
-            }
-        },
         components: {
             ObjectView,
             ContextMenuDropDown,
+        },
+        data() {
+            let objectType = this.openmct.types.get(this.domainObject.type),
+                cssClass = objectType && objectType.definition ? objectType.definition.cssClass : 'icon-object-unknown',
+                complexContent = !SIMPLE_CONTENT_TYPES.includes(this.domainObject.type);
+
+            return {
+                cssClass,
+                complexContent    
+            }
         }
     }
 </script>
