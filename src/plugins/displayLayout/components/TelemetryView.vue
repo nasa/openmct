@@ -99,6 +99,7 @@
                 fill: "",
                 color: "",
                 size: "13px",
+                useGrid: true
             };
         },
         inject: ['openmct'],

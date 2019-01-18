@@ -64,7 +64,8 @@
                 x: position[0],
                 y: position[1],
                 identifier: domainObject.identifier,
-                hasFrame: hasFrameByDefault(domainObject.type)
+                hasFrame: hasFrameByDefault(domainObject.type),
+                useGrid: true
             };
         },
         inject: ['openmct'],
