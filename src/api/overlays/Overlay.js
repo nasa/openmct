@@ -28,6 +28,8 @@ class Overlay extends EventEmitter {
             template: '<overlay-component></overlay-component>'
         });
 
+        this.notDismissable = options.notDismissable;
+
         if (options.onDestroy) {
             this.once('destroy', options.onDestroy);
         }

@@ -14,6 +14,14 @@ import ProgressDialog from './ProgressDialog';
 class OverlayAPI {
     constructor() {
         this.activeOverlays = [];
+
+        this.dismissLastOverlay = this.dismissLastOverlay.bind(this);
+
+        document.addEventListener('keyup', (event) => {
+            if (event.key === 'Escape') {
+                this.dismissLastOverlay();
+            }
+        });
     }
 
     /**
@@ -38,8 +46,19 @@ class OverlayAPI {
     }
 
     /**
-]   * A description of option properties that can be passed into the overlay
-    * @typedef options
+     * private
+     */
+    dismissLastOverlay() {
+        let lastOverlay = this.activeOverlays[this.activeOverlays.length - 1];
+
+        if (lastOverlay && !lastOverlay.notDismissable) {
+            lastOverlay.dismiss();
+        }
+    }
+
+    /**
+     * A description of option properties that can be passed into the overlay
+     * @typedef options
         * @property {object} element DOMElement that is to be inserted/shown on the overlay
         * @property {string} size prefered size of the overlay (large, small, fit)
         * @property {array} buttons optional button objects with label and callback properties
