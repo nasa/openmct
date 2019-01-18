@@ -352,6 +352,10 @@
                 });
                 this.mutate("configuration.items", layoutItems);
                 this.$el.click();
+            },
+            orderItem(position, item, index) {
+                // move the item in the array based on the position
+                // mutate object
             }
         },
         mounted() {

@@ -154,6 +154,37 @@ define([], function () {
                         });
                     }
                 };
+                let stackOrder = {
+                    control: "menu",
+                    domainObject: selectedParent,
+                    icon: "icon-layers",
+                    title: "Move the selected object above or below other objects",
+                    options: [
+                        {
+                            name: "Move to Top",
+                            value: "top",
+                            class: "icon-arrow-double-up"
+                        },
+                        {
+                            name: "Move Up",
+                            value: "up",
+                            class: "icon-arrow-up"
+                        },
+                        {
+                            name: "Move Down",
+                            value: "down",
+                            class: "icon-arrow-down"
+                        },
+                        {
+                            name: "Move to Bottom",
+                            value: "bottom",
+                            class: "icon-arrow-double-down"
+                        }
+                    ],
+                    method: function (option) {
+                        selection[1].context.orderItem(option.value, layoutItem, layoutItemIndex);
+                    }
+                };
                 let useGrid = {
                     control: "toggle-button",
                     domainObject: selectedParent,
@@ -177,6 +208,8 @@ define([], function () {
                         toolbar.push(separator);
                     }
 
+                    toolbar.push(stackOrder);
+                    toolbar.push(separator);
                     toolbar.push({
                         control: "toggle-button",
                         domainObject: selectedParent,
@@ -194,6 +227,7 @@ define([], function () {
                             }
                         ]
                     });
+                    toolbar.push(separator);
                     toolbar.push(useGrid);
                     toolbar.push(separator);
                     toolbar.push(remove);
@@ -304,6 +338,7 @@ define([], function () {
                             separator,
                             value,
                             separator,
+                            stackOrder,
                             fill,
                             stroke,
                             color,
@@ -314,7 +349,6 @@ define([], function () {
                             y,
                             height,
                             width,
-                            separator,
                             useGrid,
                             separator,
                             remove
@@ -329,24 +363,26 @@ define([], function () {
                             dialog: DIALOG_FORM['text']
                         };
                         toolbar = [
+                            stackOrder,
                             fill,
                             stroke,
-                            color,
                             separator,
+                            color,
                             size,
                             separator,
                             x,
                             y,
                             height,
                             width,
+                            useGrid,
                             separator,
                             text,
-                            useGrid,
                             separator,
                             remove
                         ];
                     } else if (layoutItem.type === 'box-view') {
                         toolbar = [
+                            stackOrder,
                             fill,
                             stroke,
                             separator,
@@ -354,7 +390,6 @@ define([], function () {
                             y,
                             height,
                             width,
-                            separator,
                             useGrid,
                             separator,
                             remove
@@ -369,15 +404,16 @@ define([], function () {
                             dialog: DIALOG_FORM['image']
                         };
                         toolbar = [
+                            stackOrder,
                             stroke,
                             separator,
                             x,
                             y,
                             height,
                             width,
+                            useGrid,
                             separator,
                             url,
-                            useGrid,
                             separator,
                             remove
                         ];
@@ -399,13 +435,13 @@ define([], function () {
                             title: "Y2 position",
                         };
                         toolbar = [
+                            stackOrder,
                             stroke,
                             separator,
                             x,
                             y,
                             x2,
                             y2,
-                            separator,
                             useGrid,
                             separator,
                             remove
