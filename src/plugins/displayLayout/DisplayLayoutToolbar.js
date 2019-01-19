@@ -73,10 +73,13 @@ define([], function () {
                     return openmct.$injector.get('dialogService').getUserInput(form, {});
                 }
 
+                function getPath() {
+                    return `configuration.items[${selection[0].context.index}]`;
+                }
+
                 let selectedParent = selection[1] && selection[1].context.item,
                     selectedObject = selection[0].context.item,
                     layoutItem = selection[0].context.layoutItem,
-                    layoutItemIndex = selection[0].context.index,
                     toolbar = [];
 
                 if (selectedObject && selectedObject.type === 'layout') {
@@ -121,7 +124,6 @@ define([], function () {
                     return toolbar;
                 }
 
-                let path = `configuration.items[${layoutItemIndex}]`;
                 let separator = {
                     control: "separator"
                 };
@@ -140,7 +142,7 @@ define([], function () {
                                     label: 'Ok',
                                     emphasis: 'true',
                                     callback: function () {
-                                        removeItem(layoutItem, layoutItemIndex);
+                                        removeItem(layoutItem, selection[0].context.index);
                                         prompt.dismiss();
                                     }
                                 },
@@ -182,13 +184,15 @@ define([], function () {
                         }
                     ],
                     method: function (option) {
-                        selection[1].context.orderItem(option.value, layoutItem, layoutItemIndex);
+                        selection[1].context.orderItem(option.value, selection[0].context.index);
                     }
                 };
                 let useGrid = {
                     control: "toggle-button",
                     domainObject: selectedParent,
-                    property: path + ".useGrid",
+                    property: function () {
+                        return getPath() + ".useGrid";
+                    },
                     options: [
                         {
                             value: false,
@@ -213,7 +217,9 @@ define([], function () {
                     toolbar.push({
                         control: "toggle-button",
                         domainObject: selectedParent,
-                        property: path + ".hasFrame",
+                        property: function () {
+                            return getPath() + ".hasFrame";
+                        },
                         options: [
                             {
                                 value: false,
@@ -236,21 +242,27 @@ define([], function () {
                     let fill = {
                             control: "color-picker",
                             domainObject: selectedParent,
-                            property: path + ".fill",
+                            property: function () {
+                                return getPath() + ".fill";
+                            },
                             icon: "icon-paint-bucket",
                             title: "Set fill color"
                         },
                         stroke = {
                             control: "color-picker",
                             domainObject: selectedParent,
-                            property: path + ".stroke",
+                            property: function () {
+                                return getPath() + ".stroke";
+                            },
                             icon: "icon-line-horz",
                             title: "Set border color"
                         },
                         color = {
                             control: "color-picker",
                             domainObject: selectedParent,
-                            property: path + ".color",
+                            property: function () {
+                                return getPath() + ".color";
+                            },
                             icon: "icon-font",
                             mandatory: true,
                             title: "Set text color",
@@ -259,7 +271,9 @@ define([], function () {
                         size = {
                             control: "select-menu",
                             domainObject: selectedParent,
-                            property: path + ".size",
+                            property: function () {
+                                return getPath() + ".size";
+                            },
                             title: "Set text size",
                             options: TEXT_SIZE.map(size => {
                                 return {
@@ -271,7 +285,9 @@ define([], function () {
                             control: "input",
                             type: "number",
                             domainObject: selectedParent,
-                            property: path + ".x",
+                            property: function () {
+                                return getPath() + ".x";
+                            },
                             label: "X:",
                             title: "X position"
                         },
@@ -279,7 +295,9 @@ define([], function () {
                             control: "input",
                             type: "number",
                             domainObject: selectedParent,
-                            property: path + ".y",
+                            property: function () {
+                                return getPath() + ".y";
+                            },
                             label: "Y:",
                             title: "Y position",
                         },
@@ -287,7 +305,9 @@ define([], function () {
                             control: 'input',
                             type: 'number',
                             domainObject: selectedParent,
-                            property: path + ".width",
+                            property: function () {
+                                return getPath() + ".width";
+                            },
                             label: 'W:',
                             title: 'Resize object width'
                         },
@@ -295,7 +315,9 @@ define([], function () {
                             control: 'input',
                             type: 'number',
                             domainObject: selectedParent,
-                            property: path + ".height",
+                            property: function () {
+                                return getPath() + ".height";
+                            },
                             label: 'H:',
                             title: 'Resize object height'
                         };
@@ -304,7 +326,9 @@ define([], function () {
                         let displayMode = {
                                 control: "select-menu",
                                 domainObject: selectedParent,
-                                property: path + ".displayMode",
+                                property: function () {
+                                    return getPath() + ".displayMode";
+                                },
                                 title: "Set display mode",
                                 options: [
                                     {
@@ -324,7 +348,9 @@ define([], function () {
                             value = {
                                 control: "select-menu",
                                 domainObject: selectedParent,
-                                property: path + ".value",
+                                property: function () {
+                                    return getPath() + ".value";
+                                },
                                 title: "Set value",
                                 options: openmct.telemetry.getMetadata(selectedObject).values().map(value => {
                                     return {
@@ -357,7 +383,9 @@ define([], function () {
                         let text = {
                             control: "button",
                             domainObject: selectedParent,
-                            property: path,
+                            property: function () {
+                                return getPath();
+                            },
                             icon: "icon-gear",
                             title: "Edit text properties",
                             dialog: DIALOG_FORM['text']
@@ -398,7 +426,9 @@ define([], function () {
                         let url = {
                             control: "button",
                             domainObject: selectedParent,
-                            property: path,
+                            property: function () {
+                                return getPath();
+                            },
                             icon: "icon-image",
                             title: "Edit image properties",
                             dialog: DIALOG_FORM['image']
@@ -422,7 +452,9 @@ define([], function () {
                             control: "input",
                             type: "number",
                             domainObject: selectedParent,
-                            property: path + ".x2",
+                            property: function () {
+                                return getPath() + ".x2";
+                            },
                             label: "X2:",
                             title: "X2 position"
                         },
@@ -430,7 +462,9 @@ define([], function () {
                             control: "input",
                             type: "number",
                             domainObject: selectedParent,
-                            property: path + ".y2",
+                            property: function () {
+                                return getPath() + ".y2";
+                            },
                             label: "Y2:",
                             title: "Y2 position",
                         };
