@@ -89,7 +89,6 @@ export default {
             this.unsubscribeSelection = this.openmct.selection.selectable(this.$refs.frame, context, false);
         },
         initDrag(event) {
-            console.log(this.dragGhost);
             if(this.dragGhost) {
                 this.dragGhost.innerHTML = this.domainObject.name;
                 event.dataTransfer.setDragImage(this.dragGhost, 0, 0);
