@@ -157,6 +157,7 @@ function (
             element: snapshot.$mount().$el,
             onDestroy: () => {snapshot.$destroy(true)},
             size: 'large',
+            dismissable: true,
             buttons: [
                 {
                     label: 'Done',

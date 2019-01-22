@@ -36,6 +36,7 @@ define(
                     {
                         element: image,
                         size: 'large',
+                        dismissable: true,
                         buttons: [
                             {
                                 label: 'Done',
@@ -61,6 +62,7 @@ define(
                     {
                         element: div,
                         size: 'large',
+                        dismissable: true,
                         buttons: [
                             {
                                 label: 'Cancel',

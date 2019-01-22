@@ -20,7 +20,7 @@ class Overlay extends EventEmitter {
                 dismiss: this.dismiss.bind(this),
                 element: options.element,
                 buttons: options.buttons,
-                notDismissable: options.notDismissable ? true : false
+                dismissable: options.dismissable ? true : false
             },
             components: {
                 OverlayComponent: OverlayComponent
@@ -28,7 +28,7 @@ class Overlay extends EventEmitter {
             template: '<overlay-component></overlay-component>'
         });
 
-        this.notDismissable = options.notDismissable;
+        this.dismissable = options.dismissable;
 
         if (options.onDestroy) {
             this.once('destroy', options.onDestroy);

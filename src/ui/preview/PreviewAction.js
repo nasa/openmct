@@ -52,6 +52,7 @@ export default class PreviewAction {
         let overlay = this._openmct.overlays.overlay({
             element: preview.$el,
             size: 'large',
+            dismissable: true,
             buttons: [
                 {
                     label: 'Done',
