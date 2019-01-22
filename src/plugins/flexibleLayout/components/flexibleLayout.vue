@@ -22,6 +22,11 @@
 
 <template>
     <div class="c-fl">
+        <div 
+            id="drag-ghost"
+            class="drag-ghost">
+        </div>
+
         <div class="c-fl__empty"
              v-if="areAllContainersEmpty()">
             <span class="c-fl__empty-message">This Flexible Layout is currently empty</span>
@@ -121,6 +126,16 @@
                 font-style: italic;
                 opacity: 0.5;
             }
+        }
+
+        .drag-ghost{
+            z-index: 1000;
+            padding: 20px;
+            border-radius: 5px;
+            position: absolute;
+            top: -150px;
+            background: gray;
+            color: white;
         }
     }
 

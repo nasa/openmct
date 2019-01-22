@@ -89,6 +89,12 @@ export default {
             this.unsubscribeSelection = this.openmct.selection.selectable(this.$refs.frame, context, false);
         },
         initDrag(event) {
+            console.log(this.dragGhost);
+            if(this.dragGhost) {
+                this.dragGhost.innerHTML = this.domainObject.name;
+                event.dataTransfer.setDragImage(this.dragGhost, 0, 0);
+            }
+
             event.dataTransfer.setData('frameid', this.frame.id);
             event.dataTransfer.setData('containerIndex', this.containerIndex);
         }
@@ -99,6 +105,8 @@ export default {
                 this.setDomainObject(object);
             });
         }
+
+        this.dragGhost = document.getElementById('drag-ghost');
     },
     beforeDestroy() {
         if (this.unsubscribeSelection) {
