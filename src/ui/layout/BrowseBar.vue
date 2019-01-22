@@ -1,7 +1,9 @@
 <template>
     <div class="l-browse-bar">
         <div class="l-browse-bar__start">
-            <button class="l-browse-bar__nav-to-parent-button c-click-icon c-click-icon--major icon-pointer-left"></button>
+            <button v-if="hasParent"
+                class="l-browse-bar__nav-to-parent-button c-click-icon c-click-icon--major icon-pointer-left" 
+                @click="goToParent"></button>
             <div class="l-browse-bar__object-name--w"
                  :class="type.cssClass">
                 <span
@@ -53,6 +55,7 @@
 
 <script>
 import NotebookSnapshot from '../utils/notebook-snapshot';
+const PLACEHOLDER_OBJECT = {};
 
     export default {
         inject: ['openmct'],
@@ -95,12 +98,15 @@ import NotebookSnapshot from '../utils/notebook-snapshot';
             snapshot() {
                 let element = document.getElementsByClassName("l-shell__main-container")[0];
                 this.notebookSnapshot.capture(this.domainObject, element);
+            },
+            goToParent(){
+                window.location.hash = this.parentUrl;
             }
         },
         data: function () {
             return {
                 showViewMenu: false,
-                domainObject: {},
+                domainObject: PLACEHOLDER_OBJECT,
                 viewKey: undefined,
                 isEditing: this.openmct.editor.isEditing()
             }
@@ -121,6 +127,15 @@ import NotebookSnapshot from '../utils/notebook-snapshot';
                             name: p.name
                         };
                     });
+            },
+            hasParent() {
+                return this.domainObject !== PLACEHOLDER_OBJECT &&
+                    this.parentUrl !== '#/browse'
+            },
+            parentUrl() {
+                let objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+                let hash = window.location.hash;
+                return hash.slice(0, hash.lastIndexOf('/' + objectKeyString));
             },
             type() {
                 let objectType = this.openmct.types.get(this.domainObject.type);

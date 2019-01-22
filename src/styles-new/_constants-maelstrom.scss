@@ -51,6 +51,14 @@ $bodyFont: 'Chakra Petch', sans-serif;
     @return linear-gradient(lighten($c, 5%), $c);
 }
 
+@function pullForward($val, $amt) {
+    @return lighten($val, $amt);
+}
+
+@function pushBack($val, $amt) {
+    @return darken($val, $amt);
+}
+
 // Constants
 $fontBaseSize: 12px;
 $smallCr: 2px;
@@ -69,10 +77,11 @@ $colorStatusBarFg: $colorBodyFg;
 $colorStatusBarFgHov: #aaa;
 $colorKey: #0099cc;
 $colorKeyFg: #fff;
-$colorKeyHov: #00c0f6;
+$colorKeyHov: #26d8ff;
 $colorKeyFilter: invert(36%) sepia(76%) saturate(2514%) hue-rotate(170deg) brightness(99%) contrast(101%);
 $colorKeyFilterHov: invert(63%) sepia(88%) saturate(3029%) hue-rotate(154deg) brightness(101%) contrast(100%);
 $colorKeySelectedBg: $colorKey;
+$uiColor: #00b2ff; // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: #ccc;
 $colorAHov: #fff;
@@ -98,51 +107,52 @@ $colorPausedFg: #fff;
 $colorOk: #33cc33;
 
 // Base variations
-$colorBodyBgSubtle: lighten($colorBodyBg, 5%);
-$colorBodyBgSubtleHov: darken($colorKey, 50%);
-$colorKeySubtle: darken($colorKey, 10%);
+$colorBodyBgSubtle: pullForward($colorBodyBg, 5%);
+$colorBodyBgSubtleHov: pushBack($colorKey, 50%);
+$colorKeySubtle: pushBack($colorKey, 10%);
 
 // Time Colors
 $colorTime: #618cff;
 $colorTimeBg: $colorTime;
-$colorTimeFg: lighten($colorTimeBg, 30%);
-$colorTimeHov: lighten($colorTime, 10%);
-$colorTimeSubtle: darken($colorTime, 20%);
+$colorTimeFg: pullForward($colorTimeBg, 30%);
+$colorTimeHov: pullForward($colorTime, 10%);
+$colorTimeSubtle: pushBack($colorTime, 20%);
 $colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
 $colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
 
-/************************************************** EDITING */
-// Base Colors
-$dlSpread: 20%;
-$editColor: #00c7c3;
-$editColorAlt: #9971ff;
-$editColorBgBase: darken($editColor, $dlSpread);
-$editColorBg: rgba($editColorBgBase, 0.2);
-$editColorFg: lighten($editColor, $dlSpread);
-$editColorHov: lighten($editColor, 20%);
-// Canvas
-$editCanvasColorBg: $editColorBg; //#002524;
-$editCanvasColorGrid: rgba($editColorBgBase, 0.4); //lighten($editCanvasColorBg, 3%);
-// Selectable
-$editSelectableColor: #006563;
-$editSelectableColorFg: lighten($editSelectableColor, 20%);
-$editSelectableColorHov: lighten($editSelectableColor, 10%);
-// Selectable selected
-$editSelectableColorSelected: $editSelectableColorHov;
-$editSelectableColorSelectedFg: lighten($editSelectableColorSelected, 30%);
-$editSelectableColorFg: darken($editSelectableColor, 40%);
-$editSelectableBorder: 1px dotted $editSelectableColor;
-$editSelectableBorderHov: 1px dotted $editColorAlt;
-$editSelectableBorderSelected: 1px solid $editColor;
-$editSelectableShdwSelected: rgba($editColor, 0.75) 0 0 0 1px;
-$editMoveableSelectedShdw: rgba($editColor, 0.5) 0 0 10px;
-$editBorderDrilledIn: 1px dashed $editColorAlt;
-$colorGridLines: rgba($editColor, 0.2);
-
 /************************************************** BROWSING */
-$browseSelectableBorderHov: 1px dotted rgba($colorBodyFg, 0.2);
-$browseSelectableShdwHov: rgba($colorBodyFg, 0.2) 0 0 3px;
-$browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.6);
+$browseFrameColor: pullForward($colorBodyBg, 10%);
+$browseFrameBorder: 1px solid $browseFrameColor; // Frames in Disp and Flex Layouts when frame is showing
+$browseSelectableShdwHov: rgba($colorBodyFg, 0.3) 0 0 3px;
+$browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.4);
+
+/************************************************** EDITING */
+$editUIColor: $uiColor; // Base color
+$editUIColorHov: pullForward(saturate($uiColor, 10%), 20%); // Hover color when $editUIColor is applied as a base color
+$editUIBaseColor: #344b8d; // Base color, toolbar bg
+$editUIBaseColorHov: pullForward($editUIBaseColor, 20%);
+$editUIBaseColorFg: #ffffff; // Toolbar button icon colors, etc.
+$editUIAreaBaseColor: pullForward(saturate($editUIBaseColor, 30%), 20%);
+$editUIAreaShdw: $editUIAreaBaseColor 0 0 0 2px; // Edit area s-selected-parent
+$editUIAreaShdwSelected: $editUIAreaBaseColor 0 0 0 3px; // Edit area s-selected
+$editUIGridColorBg: rgba($editUIBaseColor, 0.2); // Background of layout editing area
+$editUIGridColorFg: rgba(#000, 0.1); // Grid lines in layout editing area
+$editFrameColor: $browseFrameColor; // Solid or dotted border applied to non-selected frames in a layout; move-bar on frame hover
+$editFrameBorder: 1px dotted $editFrameColor;
+$editFrameColorHov: $editUIColor; // Solid border hover on frames; hover should not be applied to selected objects
+$editFrameBorderHov: 1px solid $editFrameColorHov; // Hover on selectable frames
+$editFrameColorSelected: #ccc; // Border of selected frames
+$editFrameColorHandleBg: $colorBodyBg; // Resize handle 'offset' color to make handle standout
+$editFrameColorHandleFg: $editFrameColorSelected; // Resize handle main color
+$editFrameSelectedShdw: rgba(black, 0.5) 0 1px 10px 1px;
+$editFrameSelectedBorder: 1px dashed $editFrameColorSelected; // Selected frame element
+$editFrameMovebarColorBg: $editFrameColor; // Movebar bg color
+$editFrameMovebarColorFg: pullForward($editFrameMovebarColorBg, 20%);  // Grippy lines, container size text
+$editFrameHovMovebarColorBg: pullForward($editFrameMovebarColorBg, 10%); // Hover style
+$editFrameHovMovebarColorFg: pullForward($editFrameMovebarColorFg, 10%);
+$editFrameSelectedMovebarColorBg: pullForward($editFrameMovebarColorBg, 15%); // Selected style
+$editFrameSelectedMovebarColorFg: pullForward($editFrameMovebarColorFg, 15%);
+$editFrameMovebarH: 10px; // Height of move bar in layout frame
 
 // Icons
 $colorIconAlias: #4af6f3;
@@ -152,16 +162,16 @@ $colorIconAliasForKeyFilter: #aaa;
 $colorTabsHolderBg: rgba(black, 0.2);
 
 // Buttons and Controls
-$colorBtnBg: lighten($colorBodyBg, 10%);
-$colorBtnBgHov: lighten($colorBtnBg, 10%);
-$colorBtnFg: lighten($colorBodyFg, 10%);
-$colorBtnReverseFg: lighten($colorBtnFg, 10%);
-$colorBtnReverseBg: lighten($colorBtnBg, 10%);
+$colorBtnBg: pullForward($colorBodyBg, 10%);
+$colorBtnBgHov: pullForward($colorBtnBg, 10%);
+$colorBtnFg: pullForward($colorBodyFg, 10%);
+$colorBtnReverseFg: pullForward($colorBtnFg, 10%);
+$colorBtnReverseBg: pullForward($colorBtnBg, 10%);
 $colorBtnFgHov: $colorBtnFg;
 $colorBtnMajorBg: $colorKey;
 $colorBtnMajorBgHov: $colorKeyHov;
 $colorBtnMajorFg: $colorKeyFg;
-$colorBtnMajorFgHov: darken($colorBtnMajorFg, 10%);
+$colorBtnMajorFgHov: pushBack($colorBtnMajorFg, 10%);
 $colorBtnCautionBg: #f16f6f;
 $colorBtnCautionBgHov: #f1504e;
 $colorBtnCautionFg: $colorBtnFg;
@@ -169,20 +179,20 @@ $colorClickIcon: $colorKey;
 $colorClickIconBgHov: rgba($colorKey, 0.6);
 $colorClickIconFgHov: $colorKeyHov;
 $colorDropHint: $colorKey;
-$colorDropHintBg: darken($colorDropHint, 10%);
+$colorDropHintBg: pushBack($colorDropHint, 10%);
 $colorDropHintBgHov: $colorDropHint;
-$colorDropHintFg: lighten($colorDropHint, 40%);
+$colorDropHintFg: pullForward($colorDropHint, 40%);
 $colorDisclosureCtrl: rgba($colorBodyFg, 0.5);
 $colorDisclosureCtrlHov: rgba($colorBodyFg, 0.7);
 
 // Menus
-$colorMenuBg: lighten($colorBodyBg, 15%);
-$colorMenuFg: lighten($colorBodyFg, 30%);
-$colorMenuIc: lighten($colorKey, 15%);
+$colorMenuBg: pullForward($colorBodyBg, 15%);
+$colorMenuFg: pullForward($colorBodyFg, 30%);
+$colorMenuIc: pullForward($colorKey, 15%);
 $colorMenuHovBg: $colorMenuIc;
-$colorMenuHovFg: lighten($colorMenuFg, 10%);
+$colorMenuHovFg: pullForward($colorMenuFg, 10%);
 $colorMenuHovIc: $colorMenuHovFg;
-$colorMenuElementHilite: lighten($colorMenuBg, 10%);
+$colorMenuElementHilite: pullForward($colorMenuBg, 10%);
 $shdwMenu: rgba(black, 0.5) 0 1px 5px;
 $shdwMenuText: none;
 $menuItemPad: $interiorMargin, floor($interiorMargin * 1.25);
@@ -204,21 +214,21 @@ $colorFormLines: rgba(#000, 0.1);
 $colorFormSectionHeader: rgba(#000, 0.05);
 $colorInputBg: rgba(black, 0.2);
 $colorInputFg: $colorBodyFg;
-$colorInputPlaceholder: darken($colorBodyFg, 20%);
-$colorFormText: darken($colorBodyFg, 10%);
-$colorInputIcon: darken($colorBodyFg, 25%);
-$colorFieldHint: lighten($colorBodyFg, 40%);
+$colorInputPlaceholder: pushBack($colorBodyFg, 20%);
+$colorFormText: pushBack($colorBodyFg, 10%);
+$colorInputIcon: pushBack($colorBodyFg, 25%);
+$colorFieldHint: pullForward($colorBodyFg, 40%);
 $shdwInput: inset rgba(black, 0.4) 0 0 1px;
 $shdwInputHov: inset rgba(black, 0.7) 0 0 2px;
 $shdwInputFoc: inset rgba(black, 0.8) 0 0.25px 3px;
 
 // Inspector
-$colorInspectorBg: lighten($colorBodyBg, 5%);
+$colorInspectorBg: pullForward($colorBodyBg, 5%);
 $colorInspectorFg: $colorBodyFg;
-$colorInspectorPropName: darken($colorBodyFg, 20%);
-$colorInspectorPropVal: lighten($colorInspectorFg, 15%);
-$colorInspectorSectionHeaderBg: lighten($colorInspectorBg, 5%);
-$colorInspectorSectionHeaderFg: lighten($colorInspectorBg, 40%);
+$colorInspectorPropName: pushBack($colorBodyFg, 20%);
+$colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
+$colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
+$colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
 // Overlay
 $overlayColorBg: $colorMenuBg;
@@ -233,8 +243,8 @@ $colorIndicatorOn: $colorOk;
 $colorIndicatorOff: #777777;
 
 // Staleness
-$colorTelemFresh: lighten($colorBodyFg, 20%);
-$colorTelemStale: darken($colorBodyFg, 20%);
+$colorTelemFresh: pullForward($colorBodyFg, 20%);
+$colorTelemStale: pushBack($colorBodyFg, 20%);
 $styleTelemStale: italic;
 
 // Limits
@@ -260,22 +270,22 @@ $colorInfoBubbleFg: #666;
 
 // Items
 $colorItemBg: buttonBg($colorBtnBg);
-$colorItemBgHov: buttonBg(lighten($colorBtnBg, 5%));
+$colorItemBgHov: buttonBg(pullForward($colorBtnBg, 5%));
 $colorListItemBg: transparent;
 $colorListItemBgHov: rgba($colorKey, 0.1);
 $colorItemFg: $colorBtnFg;
-$colorItemFgDetails: darken($colorItemFg, 20%);
+$colorItemFgDetails: pushBack($colorItemFg, 20%);
 $shdwItemText: none;
 
 // Tabular
-$colorTabBorder: lighten($colorBodyBg, 10%);
+$colorTabBorder: pullForward($colorBodyBg, 10%);
 $colorTabBodyBg: $colorBodyBg;
-$colorTabBodyFg: lighten($colorBodyFg, 20%);
-$colorTabHeaderBg: lighten($colorBodyBg, 10%);
+$colorTabBodyFg: pullForward($colorBodyFg, 20%);
+$colorTabHeaderBg: pullForward($colorBodyBg, 10%);
 $colorTabHeaderFg: $colorBodyFg;
 $colorTabHeaderBorder: $colorBodyBg;
-$colorTabGroupHeaderBg: lighten($colorBodyBg, 5%);
-$colorTabGroupHeaderFg: darken($colorTabHeaderFg, 10%);
+$colorTabGroupHeaderBg: pullForward($colorBodyBg, 5%);
+$colorTabGroupHeaderFg: pushBack($colorTabHeaderFg, 10%);
 
 // Plot
 $colorPlotBg: rgba(black, 0.05);
@@ -284,22 +294,22 @@ $colorPlotHash: black;
 $opacityPlotHash: 0.2;
 $stylePlotHash: dashed;
 $colorPlotAreaBorder: $colorInteriorBorder;
-$colorPlotLabelFg: darken($colorPlotFg, 20%);
+$colorPlotLabelFg: pushBack($colorPlotFg, 20%);
 $legendHoverValueBg: rgba($colorBodyFg, 0.2);
 
 // Tree
 $colorTreeBg: transparent;
-$colorItemTreeHoverBg: lighten($colorBodyBg, 10%);
-$colorItemTreeHoverFg: lighten($colorBodyFg, 20%);
+$colorItemTreeHoverBg: pullForward($colorBodyBg, 10%);
+$colorItemTreeHoverFg: pullForward($colorBodyFg, 20%);
 $colorItemTreeIcon: $colorKey; // Used
 $colorItemTreeIconHover: $colorItemTreeIcon; // Used
 $colorItemTreeFg: $colorBodyFg;
-$colorItemTreeSelectedBg: darken($colorKey, 15%);
+$colorItemTreeSelectedBg: pushBack($colorKey, 15%);
 $colorItemTreeSelectedFg: $colorItemTreeHoverFg;
 $colorItemTreeSelectedIcon: $colorItemTreeSelectedFg;
-$colorItemTreeEditingBg: darken($editColor, 20%);
-$colorItemTreeEditingFg: $editColorFg;
-$colorItemTreeEditingIcon: $editColorFg;
+$colorItemTreeEditingBg: pushBack($editUIColor, 20%);
+$colorItemTreeEditingFg: $editUIColor;
+$colorItemTreeEditingIcon: $editUIColor;
 $colorItemTreeVC: $colorDisclosureCtrl;
 $colorItemTreeVCHover: $colorDisclosureCtrlHov;
 $shdwItemTreeIcon: none;
@@ -311,18 +321,18 @@ $colorThumbHoverBg: $colorItemTreeHoverBg;
 $scrollbarTrackSize: 7px;
 $scrollbarTrackShdw: rgba(#000, 0.2) 0 1px 2px;
 $scrollbarTrackColorBg: rgba(#000, 0.2);
-$scrollbarThumbColor: darken($colorBodyBg, 50%);
+$scrollbarThumbColor: pushBack($colorBodyBg, 50%);
 $scrollbarThumbColorHov: $colorKey;
-$scrollbarThumbColorMenu: lighten($colorMenuBg, 10%);
-$scrollbarThumbColorMenuHov: lighten($scrollbarThumbColorMenu, 2%);
+$scrollbarThumbColorMenu: pullForward($colorMenuBg, 10%);
+$scrollbarThumbColorMenuHov: pullForward($scrollbarThumbColorMenu, 2%);
 
 // Splitter
 $splitterHandleD: 2px;
 $splitterHandleHitMargin: 4px;
 $colorSplitterBaseBg: $colorBodyBg;
-$colorSplitterBg: lighten($colorSplitterBaseBg, 10%);
+$colorSplitterBg: pullForward($colorBodyBg, 10%);
 $colorSplitterFg: $colorBodyBg;
-$colorSplitterHover: $colorKey;
+$colorSplitterHover: $uiColor;
 $colorSplitterActive: $colorKey;
 $splitterBtnD: (16px, 35px); // height, width
 $splitterBtnColorBg: $colorBtnBg;
@@ -334,7 +344,7 @@ $splitterCollapsedBtnColorBgHov: $colorKey;
 $splitterCollapsedBtnColorFgHov: $colorKeyFg;
 
 // Mobile
-$colorMobilePaneLeft: darken($colorBodyBg, 2%);
+$colorMobilePaneLeft: pushBack($colorBodyBg, 2%);
 $colorMobilePaneLeftTreeItemBg: rgba($colorBodyFg, 0.1);
 $colorMobilePaneLeftTreeItemFg: $colorItemTreeFg;
 $colorMobileSelectListTreeItemBg: rgba(#000, 0.05);
@@ -371,7 +381,7 @@ $createBtnTextTransform: uppercase;
 }
 
 @mixin themedButton($c: $colorBtnBg) {
-    background: linear-gradient(lighten($c, 5%), $c);
+    background: linear-gradient(pullForward($c, 5%), $c);
     box-shadow: rgba(black, 0.5) 0 0.5px 2px;
 }
 

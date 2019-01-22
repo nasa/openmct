@@ -80,8 +80,7 @@
         transparent 50%, rgba($c, $a) 50%,
         rgba($c, $a) 75%, transparent 75%,
         transparent 100%
-    );
-    background-repeat: repeat;
+    ) repeat;
     background-size: $d $d;
 }
 
@@ -91,8 +90,7 @@
         transparent 50%, rgba($c, $a) 50%,
         rgba($c, $a) 75%, transparent 75%,
         transparent 100%
-    );
-    background-repeat: repeat;
+    ) repeat;
     background-size: $bgsize $bgsize;
 }
 
@@ -100,6 +98,23 @@
     opacity: $controlDisabledOpacity;
     pointer-events: none !important;
     cursor: default !important;
+}
+
+@mixin grippy($c: rgba(black, 0.5), $dir: 'x') {
+    $deg: 90deg;
+    $bgSize: 2px 100%;
+
+    @if $dir != 'x' {
+        // Grippy texture runs 'vertically'
+        $deg: 0deg;
+        $bgSize: 100% 2px;
+    }
+
+    background: linear-gradient($deg,
+            $c 1px, transparent 1px,
+            transparent 100%
+    ) repeat;
+    background-size: $bgSize;
 }
 
 @mixin noColor() {
@@ -329,12 +344,12 @@
     // Make the icon bigger relative to its container
     @include cControl();
     $pLR: 4px;
-    $pTB: 3px;
+    $pTB: 4px;
     background: none;
     box-shadow: none;
     border-radius: $controlCr;
     cursor: pointer;
-    padding: $pTB $pLR ;
+    padding: $pTB $pLR;
 
     @include hover() {
         background: $colorClickIconBgHov;

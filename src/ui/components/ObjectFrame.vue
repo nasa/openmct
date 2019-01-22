@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="u-contents c-so-view has-local-controls"
+    <div class="c-so-view has-local-controls"
         :class="{
-            'c-so-view--no-frame': !hasFrame
+            'c-so-view--no-frame': !hasFrame,
+            'has-complex-content': complexContent
         }">
         <div class="c-so-view__header">
             <div class="c-so-view__header__start">
@@ -51,10 +52,15 @@
     @import "~styles/sass-base";
 
     .c-so-view {
+        display: flex;
+        flex-direction: column;
+
         /*************************** HEADER */
         &__header {
+            flex: 0 0 auto;
             display: flex;
             align-items: center;
+            margin-bottom: $interiorMargin;
 
             &__start,
             &__end {
@@ -75,7 +81,7 @@
             }
         }
 
-        &--no-frame .c-so-view__header {
+        &--no-frame > .c-so-view__header {
             display: none;
         }
 
@@ -111,24 +117,17 @@
     import ObjectView from './ObjectView.vue'
     import ContextMenuDropDown from './contextMenuDropDown.vue';
 
+    const SIMPLE_CONTENT_TYPES = [
+        'clock',
+        'summary-widget'
+    ];
+
     export default {
         inject: ['openmct'],
         props: {
             domainObject: Object,
             objectPath: Array,
             hasFrame: Boolean,
-        },
-        computed: {
-            cssClass() {
-                if (!this.domainObject || !this.domainObject.type) {
-                    return;
-                }
-                let objectType = this.openmct.types.get(this.domainObject.type);
-                if (!objectType || !objectType.definition) {
-                    return; // TODO: return unknown icon type.
-                }
-                return objectType.definition.cssClass;
-            }
         },
         methods: {
             expand() {
@@ -149,6 +148,16 @@
         components: {
             ObjectView,
             ContextMenuDropDown,
+        },
+        data() {
+            let objectType = this.openmct.types.get(this.domainObject.type),
+                cssClass = objectType && objectType.definition ? objectType.definition.cssClass : 'icon-object-unknown',
+                complexContent = !SIMPLE_CONTENT_TYPES.includes(this.domainObject.type);
+
+            return {
+                cssClass,
+                complexContent    
+            }
         }
     }
 </script>

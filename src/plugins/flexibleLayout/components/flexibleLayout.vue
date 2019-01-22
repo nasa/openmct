@@ -79,6 +79,22 @@
 
 <style lang="scss">
     @import '~styles/sass-base';
+    
+    @mixin containerGrippy($headerSize, $dir) {
+        position: absolute;
+        $h: 6px;
+        $minorOffset: ($headerSize - $h) / 2;
+        $majorOffset: 35%;
+        content: '';
+        display: block;
+        position: absolute;
+        @include grippy($c: $editFrameSelectedMovebarColorFg, $dir: $dir);
+        @if $dir == 'x' {
+            top: $minorOffset; right: $majorOffset; bottom: $minorOffset; left: $majorOffset;
+        } @else {
+            top: $majorOffset; right: $minorOffset; bottom: $majorOffset; left: $minorOffset;
+        }
+    }
 
     .c-fl {
         @include abs();
@@ -100,7 +116,6 @@
             > * + * { margin-left: 1px; }
 
             &[class*='--rows'] {
-                //@include test(blue, 0.1);
                 flex-direction: column;
                 > * + * {
                     margin-left: 0;
@@ -128,7 +143,6 @@
         /***************************************************** CONTAINERS */
         $headerSize: 16px;
 
-        border: 1px solid transparent;
         display: flex;
         flex-direction: column;
         overflow: auto;
@@ -138,9 +152,9 @@
         flex-shrink: 1;
 
         &__header {
-            // Only displayed when editing
-            background: $editSelectableColor;
-            color: $editSelectableColorFg;
+            // Only displayed when editing, controlled via JS
+            background: $editFrameMovebarColorBg;
+            color: $editFrameMovebarColorFg;
             cursor: move;
             display: flex;
             align-items: center;
@@ -148,12 +162,8 @@
 
             &:before {
                 // Drag grippy
-                font-size: 0.8em;
+                @include containerGrippy($headerSize, 'x');
                 opacity: 0.5;
-                position: absolute;
-                left: 50%; top: 50%;
-                transform-origin: center;
-                transform: translate(-50%, -50%);
             }
         }
 
@@ -173,19 +183,27 @@
         }
 
         .is-editing & {
-            //background: $editCanvasColorBg;
-            border-color: $editSelectableColor;
-
             &:hover {
-                border-color: $editSelectableColorHov;
+                .c-fl-container__header {
+                    background: $editFrameHovMovebarColorBg;
+                    color: $editFrameHovMovebarColorFg;
+
+                    &:before {
+                        opacity: .75;
+                    }
+                }
             }
 
             &[s-selected] {
-                border-color: $editSelectableColorSelected;
+                border: $editFrameSelectedBorder;
 
                 .c-fl-container__header {
-                    background: $editSelectableColorSelected;
-                    color: $editSelectableColorSelectedFg;
+                    background:$editFrameSelectedMovebarColorBg;
+                    color: $editFrameSelectedMovebarColorFg;
+                    &:before {
+                        // Grippy
+                        opacity: 1;
+                    }
                 }
             }
         }
@@ -194,11 +212,6 @@
         // Frames get styled here because this is particular to their presence in this layout type
         .c-fl-frame {
             @include browserPrefix(margin-collapse, collapse);
-            margin: 1px;
-
-            //&__drag-wrapper {
-                // border: 1px solid $colorInteriorBorder; // Now handled by is-selectable
-            //}
         }
 
         /****** ROWS LAYOUT */
@@ -211,8 +224,8 @@
                 overflow: hidden;
 
                 &:before {
-                    // Drag grippy
-                    transform: rotate(90deg) translate(-50%, 50%);
+                    // Grippy
+                    @include containerGrippy($headerSize, 'y');
                 }
             }
 
@@ -235,8 +248,6 @@
         $dropHintSize: 15px;
 
         display: flex;
-      //  justify-content: stretch;
-      //  align-items: stretch;
         flex: 1 1;
         flex-direction: column;
         overflow: hidden; // Needed to allow frames to collapse when sized down
@@ -275,7 +286,6 @@
             pointer-events: none;
             text-align: center;
             width: $size;
-            z-index: 2;
 
             // Changed when layout is different, see below
             border-top-right-radius: $controlCr;
@@ -304,37 +314,16 @@
 
             &:before {
                 // The visible resize line
-                background: $editColor;
+                background: $editUIColor;
                 content: '';
                 display: block;
                 flex: 1 1 auto;
                 min-height: $size; min-width: $size;
             }
 
-            &__grippy {
-                // Grippy element
-                $d: 4px;
-                $c: black;
-                $a: 0.9;
-                $d: 5px;
-                background: $editColor;
-                color: $editColorBg;
-                border-radius: $smallCr;
-                font-size: 0.8em;
-                height: $d;
-                width: $d * 10;
-                position: absolute;
-                left: 50%; top: 50%;
-                text-align: center;
-                transform-origin: center center;
-                transform: translate(-50%, -50%);
-                z-index: 10;
-            }
-
             &.vertical {
                 padding: $margin $size;
                 &:hover{
-                  //  padding: $marginHov 0;
                     cursor: row-resize;
                 }
             }
@@ -342,12 +331,7 @@
             &.horizontal {
                 padding: $size $margin;
                 &:hover{
-                 //   padding: 0 $marginHov;
                     cursor: col-resize;
-                }
-
-                [class*='grippy'] {
-                    transform: translate(-50%) rotate(90deg);
                 }
             }
 
@@ -355,7 +339,7 @@
                 transition: $transOut;
                 &:before {
                     // The visible resize line
-                    background: $editColorHov;
+                    background: $editUIColorHov;
                 }
             }
         }

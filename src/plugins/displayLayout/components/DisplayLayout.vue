@@ -25,30 +25,26 @@
          @dragover="handleDragOver"
          @click="bypassSelection"
          @drop="handleDrop">
-        <div class="l-layout__object">
-            <!-- Background grid -->
-            <div class="l-layout__grid-holder c-grid"
-                 v-if="!drilledIn">
-                <div class="c-grid__x l-grid l-grid-x"
-                     v-if="gridSize[0] >= 3"
-                     :style="[{ backgroundSize: gridSize[0] + 'px 100%' }]">
-                </div>
-                <div class="c-grid__y l-grid l-grid-y"
-                     v-if="gridSize[1] >= 3"
-                     :style="[{ backgroundSize: '100%' + gridSize[1] + 'px' }]"></div>
+        <!-- Background grid -->
+        <div class="l-layout__grid-holder c-grid">
+            <div class="c-grid__x l-grid l-grid-x"
+                 v-if="gridSize[0] >= 3"
+                 :style="[{ backgroundSize: gridSize[0] + 'px 100%' }]">
             </div>
-            <component v-for="(item, index) in layoutItems"
-                :is="item.type"
-                :item="item"
-                :key="item.id"
-                :gridSize="gridSize"
-                :initSelect="initSelectIndex === index"
-                :index="index"
-                @drilledIn="updateDrilledIn"
-                @endDrag="endDrag"
-                >
-            </component>
+            <div class="c-grid__y l-grid l-grid-y"
+                 v-if="gridSize[1] >= 3"
+                 :style="[{ backgroundSize: '100%' + gridSize[1] + 'px' }]"></div>
         </div>
+        <component v-for="(item, index) in layoutItems"
+                   :is="item.type"
+                   :item="item"
+                   :key="item.id"
+                   :gridSize="item.useGrid ? gridSize : [1, 1]"
+                   :initSelect="initSelectIndex === index"
+                   :index="index"
+                   @endDrag="endDrag"
+        >
+        </component>
     </div>
 </template>
 
@@ -59,14 +55,10 @@
         @include abs();
         display: flex;
         flex-direction: column;
+        overflow: auto;
 
         &__grid-holder {
             display: none;
-        }
-
-        &__object {
-            flex: 1 1 auto;
-            overflow: auto;
         }
 
         &__frame {
@@ -74,15 +66,36 @@
         }
     }
 
-    .l-shell__main-container {
-        > .l-layout {
-            [s-selected] {
-                border: $browseSelectedBorder;
+    .is-editing {
+        .l-shell__main-container {
+            &[s-selected],
+            &[s-selected-parent] {
+                // Display grid in main layout holder when editing
+                > .l-layout {
+                    background: $editUIGridColorBg;
+
+                    > [class*="__grid-holder"] {
+                        display: block;
+                    }
+                }
+            }
+        }
+
+        .l-layout__frame {
+            &[s-selected],
+            &[s-selected-parent] {
+                // Display grid in nested layouts when editing
+                > * > * > .l-layout {
+                    background: $editUIGridColorBg;
+                    box-shadow: inset $editUIGridColorFg 0 0 2px 1px;
+
+                    > [class*='grid-holder'] {
+                        display: block;
+                    }
+                }
             }
         }
     }
-
-    // Styles moved to _global.scss;
 </style>
 
 
@@ -119,7 +132,6 @@
         data() {
             let domainObject = JSON.parse(JSON.stringify(this.domainObject));
             return {
-                drilledIn: undefined,
                 internalDomainObject: domainObject,
                 initSelectIndex: undefined
             };
@@ -142,6 +154,47 @@
             setSelection(selection) {
                 if (selection.length === 0) {
                     return;
+                }
+
+                if (this.removeSelectionListener) {
+                    this.removeSelectionListener();
+                }
+
+                let itemIndex = selection[0].context.index;
+
+                if (itemIndex !== undefined) {
+                    let path = `configuration.items[${itemIndex}]`;
+                    this.removeSelectionListener = this.openmct.objects.observe(this.internalDomainObject, path + ".useGrid", function (value) {
+                        let item = this.layoutItems[itemIndex];
+
+                        if (value) {
+                            item.x = Math.round(item.x / this.gridSize[0]);
+                            item.y = Math.round(item.y / this.gridSize[1]);
+                            item.width = Math.round(item.width / this.gridSize[0]);
+                            item.height = Math.round(item.height / this.gridSize[1]);
+
+                            if (item.x2) {
+                                item.x2 = Math.round(item.x2 / this.gridSize[0]);
+                            }
+                            if (item.y2) {
+                                item.y2 = Math.round(item.y2 / this.gridSize[1]);
+                            }
+                        } else {
+                            item.x = this.gridSize[0] * item.x;
+                            item.y = this.gridSize[1] * item.y;
+                            item.width = this.gridSize[0] * item.width;
+                            item.height = this.gridSize[1] * item.height;
+
+                            if (item.x2) {
+                                item.x2 = this.gridSize[0] * item.x2;
+                            }
+                            if (item.y2) {
+                                item.y2 = this.gridSize[1] * item.y2;
+                            }
+                        }
+                        item.useGrid = value;
+                        this.mutate(`configuration.items[${itemIndex}]`, item);
+                    }.bind(this));
                 }
 
                 this.updateDrilledIn();
@@ -234,12 +287,17 @@
                 this.initSelectIndex = this.layoutItems.length - 1;
             },
             trackItem(item) {
+                if (!item.identifier) {
+                    return;
+                }
+
+                let keyString = this.openmct.objects.makeKeyString(item.identifier);
+
                 if (item.type === "telemetry-view") {
-                    let keyString = this.openmct.objects.makeKeyString(item.identifier);
                     let count = this.telemetryViewMap[keyString] || 0;
                     this.telemetryViewMap[keyString] = ++count;
                 } else if (item.type === "subobject-view") {
-                    this.objectViewMap[this.openmct.objects.makeKeyString(item.identifier)] = true;
+                    this.objectViewMap[keyString] = true;
                 }
             },
             removeItem(item, index) {
@@ -317,7 +375,6 @@
             this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', function (obj) {
                 this.internalDomainObject = JSON.parse(JSON.stringify(obj));
             }.bind(this));
-
             this.openmct.selection.on('change', this.setSelection);
             this.initializeItems();
             this.composition = this.openmct.composition.get(this.internalDomainObject);
@@ -330,7 +387,10 @@
             this.composition.off('add', this.addChild);
             this.composition.off('remove', this.removeChild);
             this.unlisten();
+
+            if (this.removeSelectionListener) {
+                this.removeSelectionListener();
+            }
         }
     }
-
 </script>
