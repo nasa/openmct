@@ -73,7 +73,6 @@ export default {
     },
     methods: {
         setDomainObject(object) {
-            console.log('setting object!');
             this.domainObject = object;
             this.objectPath = [object];
             this.setSelection();
@@ -89,8 +88,11 @@ export default {
             this.unsubscribeSelection = this.openmct.selection.selectable(this.$refs.frame, context, false);
         },
         initDrag(event) {
+            let type = this.openmct.types.get(this.domainObject.type),
+                cssClass = type.definition ? type.definition.cssClass : 'icon-object-unknown';
+ 
             if(this.dragGhost) {
-                this.dragGhost.innerHTML = this.domainObject.name;
+                this.dragGhost.innerHTML = `<div class="${cssClass}">${this.domainObject.name}</div>`;
                 event.dataTransfer.setDragImage(this.dragGhost, 0, 0);
             }
 
