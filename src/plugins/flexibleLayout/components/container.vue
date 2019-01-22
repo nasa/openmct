@@ -24,7 +24,7 @@
     <div class="c-fl-container"
          :style="[{'flex-basis': sizeString}]"
          :class="{'is-empty': !frames.length}">
-        <div class="c-fl-container__header icon-grippy-ew"
+        <div class="c-fl-container__header"
             v-show="isEditing"
             draggable="true"
             @dragstart="startContainerDrag">

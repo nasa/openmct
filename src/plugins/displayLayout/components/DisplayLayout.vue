@@ -25,30 +25,26 @@
          @dragover="handleDragOver"
          @click="bypassSelection"
          @drop="handleDrop">
-        <div class="l-layout__object">
-            <!-- Background grid -->
-            <div class="l-layout__grid-holder c-grid"
-                 v-if="!drilledIn">
-                <div class="c-grid__x l-grid l-grid-x"
-                     v-if="gridSize[0] >= 3"
-                     :style="[{ backgroundSize: gridSize[0] + 'px 100%' }]">
-                </div>
-                <div class="c-grid__y l-grid l-grid-y"
-                     v-if="gridSize[1] >= 3"
-                     :style="[{ backgroundSize: '100%' + gridSize[1] + 'px' }]"></div>
+        <!-- Background grid -->
+        <div class="l-layout__grid-holder c-grid">
+            <div class="c-grid__x l-grid l-grid-x"
+                 v-if="gridSize[0] >= 3"
+                 :style="[{ backgroundSize: gridSize[0] + 'px 100%' }]">
             </div>
-            <component v-for="(item, index) in layoutItems"
-                :is="item.type"
-                :item="item"
-                :key="item.id"
-                :gridSize="item.useGrid ? gridSize : [1, 1]"
-                :initSelect="initSelectIndex === index"
-                :index="index"
-                @drilledIn="updateDrilledIn"
-                @endDrag="endDrag"
-                >
-            </component>
+            <div class="c-grid__y l-grid l-grid-y"
+                 v-if="gridSize[1] >= 3"
+                 :style="[{ backgroundSize: '100%' + gridSize[1] + 'px' }]"></div>
         </div>
+        <component v-for="(item, index) in layoutItems"
+                   :is="item.type"
+                   :item="item"
+                   :key="item.id"
+                   :gridSize="item.useGrid ? gridSize : [1, 1]"
+                   :initSelect="initSelectIndex === index"
+                   :index="index"
+                   @endDrag="endDrag"
+        >
+        </component>
     </div>
 </template>
 
@@ -59,14 +55,10 @@
         @include abs();
         display: flex;
         flex-direction: column;
+        overflow: auto;
 
         &__grid-holder {
             display: none;
-        }
-
-        &__object {
-            flex: 1 1 auto;
-            overflow: auto;
         }
 
         &__frame {
@@ -74,15 +66,36 @@
         }
     }
 
-    .l-shell__main-container {
-        > .l-layout {
-            [s-selected] {
-                border: $browseSelectedBorder;
+    .is-editing {
+        .l-shell__main-container {
+            &[s-selected],
+            &[s-selected-parent] {
+                // Display grid in main layout holder when editing
+                > .l-layout {
+                    background: $editUIGridColorBg;
+
+                    > [class*="__grid-holder"] {
+                        display: block;
+                    }
+                }
+            }
+        }
+
+        .l-layout__frame {
+            &[s-selected],
+            &[s-selected-parent] {
+                // Display grid in nested layouts when editing
+                > * > * > .l-layout {
+                    background: $editUIGridColorBg;
+                    box-shadow: inset $editUIGridColorFg 0 0 2px 1px;
+
+                    > [class*='grid-holder'] {
+                        display: block;
+                    }
+                }
             }
         }
     }
-
-    // Styles moved to _global.scss;
 </style>
 
 
@@ -119,7 +132,6 @@
         data() {
             let domainObject = JSON.parse(JSON.stringify(this.domainObject));
             return {
-                drilledIn: undefined,
                 internalDomainObject: domainObject,
                 initSelectIndex: undefined
             };
@@ -275,12 +287,17 @@
                 this.initSelectIndex = this.layoutItems.length - 1;
             },
             trackItem(item) {
+                if (!item.identifier) {
+                    return;
+                }
+
+                let keyString = this.openmct.objects.makeKeyString(item.identifier);
+
                 if (item.type === "telemetry-view") {
-                    let keyString = this.openmct.objects.makeKeyString(item.identifier);
                     let count = this.telemetryViewMap[keyString] || 0;
                     this.telemetryViewMap[keyString] = ++count;
                 } else if (item.type === "subobject-view") {
-                    this.objectViewMap[this.openmct.objects.makeKeyString(item.identifier)] = true;
+                    this.objectViewMap[keyString] = true;
                 }
             },
             removeItem(item, index) {
@@ -376,5 +393,4 @@
             }
         }
     }
-
 </script>

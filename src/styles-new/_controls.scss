@@ -421,20 +421,30 @@ input[type=number]::-webkit-outer-spin-button {
 
 .c-toolbar {
     $p: $interiorMargin;
-    border-top: 1px solid $colorInteriorBorder;
+    background: $editUIBaseColor;
+    border-radius: $basicCr;
     height: $p + 24px; // Need to standardize the height
-    padding-top: $p;
+    padding: $p;
 
     &__separator {
         @include cToolbarSeparator();
+    }
+
+    .c-click-icon,
+    .c-labeled-input {
+        color: $editUIBaseColorFg;
     }
 
     .c-click-icon {
         @include cControl();
         $pLR: $interiorMargin - 1;
         $pTB: 2px;
-        color: $colorBodyFg;
         padding: $pTB $pLR;
+
+        &:hover {
+            background: $editUIBaseColorHov !important;
+            color: $editUIBaseColorFg !important;
+        }
 
         &--swatched {
             padding-bottom: floor($pTB / 2);

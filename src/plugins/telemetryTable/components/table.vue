@@ -110,8 +110,8 @@
     .c-telemetry-table__drop-target {
         position: absolute;
         width: 2px;
-        background-color: $editColor;
-        box-shadow: rgba($editColor, 0.5) 0 0 10px;
+        background-color: $editUIColor;
+        box-shadow: rgba($editUIColor, 0.5) 0 0 10px;
         z-index: 1;
         pointer-events: none;
     }
