@@ -107,20 +107,23 @@ function (
         var data = event.dataTransfer.getData('openmct/domain-object-path');
 
         if (data) {
-            var selectedObject = JSON.parse(data)[0],
-                selectedObjectId = selectedObject.identifier.key,
-                cssClass = this.openmct.types.get(selectedObject.type),
+            var objectPath = JSON.parse(data),
+                domainObject = objectPath[0],
+                domainObjectKey = domainObject.identifier.key,
+                domainObjectType = this.openmct.types.get(domainObject.type),
+                cssClass = domainObjectType && domainObjectType.definition ? 
+                    domainObjectType.definition.cssClass : 'icon-object-unknown',
                 entryPos = this.entryPosById(entryid),
                 currentEntryEmbeds = this.domainObject.entries[entryPos].embeds,
                 newEmbed = {
                     id: '' + Date.now(),
-                    domainObject: selectedObject,
-                    type: selectedObjectId,
+                    domainObject: domainObject,
+                    objectPath: objectPath,
+                    type: domainObjectKey,
                     cssClass: cssClass,
-                    name: selectedObject.name,
+                    name: domainObject.name,
                     snapshot: ''
                 };
-
             currentEntryEmbeds.push(newEmbed);
             this.openmct.objects.mutate(this.domainObject, 'entries[' + entryPos + '].embeds', currentEntryEmbeds);
         }

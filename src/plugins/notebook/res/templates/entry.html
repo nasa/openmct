@@ -18,7 +18,7 @@
                     v-for="embed in entry.embeds"
                     :key="embed.id"
                     :embed="embed"
-                    :objectPath="[embed.domainObject]"
+                    :objectPath="embed.objectPath"
                     :entry="entry">
                 </notebook-embed>
             </div>
