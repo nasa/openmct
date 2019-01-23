@@ -206,6 +206,46 @@ define([], function () {
                         }
                     ]
                 };
+               let x = {
+                        control: "input",
+                        type: "number",
+                        domainObject: selectedParent,
+                        property: function () {
+                            return getPath() + ".x";
+                        },
+                        label: "X:",
+                        title: "X position"
+                    },
+                    y = {
+                        control: "input",
+                        type: "number",
+                        domainObject: selectedParent,
+                        property: function () {
+                            return getPath() + ".y";
+                        },
+                        label: "Y:",
+                        title: "Y position",
+                    },
+                    width = {
+                        control: 'input',
+                        type: 'number',
+                        domainObject: selectedParent,
+                        property: function () {
+                            return getPath() + ".width";
+                        },
+                        label: 'W:',
+                        title: 'Resize object width'
+                    },
+                    height = {
+                        control: 'input',
+                        type: 'number',
+                        domainObject: selectedParent,
+                        property: function () {
+                            return getPath() + ".height";
+                        },
+                        label: 'H:',
+                        title: 'Resize object height'
+                    };
 
                 if (layoutItem.type === 'subobject-view') {
                     if (toolbar.length > 0) {
@@ -234,11 +274,15 @@ define([], function () {
                         ]
                     });
                     toolbar.push(separator);
+                    toolbar.push(x);
+                    toolbar.push(y);
+                    toolbar.push(width);
+                    toolbar.push(height);
                     toolbar.push(useGrid);
                     toolbar.push(separator);
                     toolbar.push(remove);
                 } else {
-                    const TEXT_SIZE = [9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96];
+                    const TEXT_SIZE = [8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96, 128];
                     let fill = {
                             control: "color-picker",
                             domainObject: selectedParent,
@@ -280,46 +324,6 @@ define([], function () {
                                     value: size + "px"
                                 };
                             })
-                        },
-                        x = {
-                            control: "input",
-                            type: "number",
-                            domainObject: selectedParent,
-                            property: function () {
-                                return getPath() + ".x";
-                            },
-                            label: "X:",
-                            title: "X position"
-                        },
-                        y = {
-                            control: "input",
-                            type: "number",
-                            domainObject: selectedParent,
-                            property: function () {
-                                return getPath() + ".y";
-                            },
-                            label: "Y:",
-                            title: "Y position",
-                        },
-                        width = {
-                            control: 'input',
-                            type: 'number',
-                            domainObject: selectedParent,
-                            property: function () {
-                                return getPath() + ".width";
-                            },
-                            label: 'W:',
-                            title: 'Resize object width'
-                        },
-                        height = {
-                            control: 'input',
-                            type: 'number',
-                            domainObject: selectedParent,
-                            property: function () {
-                                return getPath() + ".height";
-                            },
-                            label: 'H:',
-                            title: 'Resize object height'
                         };
 
                     if (layoutItem.type === 'telemetry-view') {
