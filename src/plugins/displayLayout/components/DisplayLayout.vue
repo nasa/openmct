@@ -117,6 +117,12 @@
         'text-view': TextView,
         'image-view': ImageView
     };
+    const ORDERS = {
+        top: Number.POSITIVE_INFINITY,
+        up: 1,
+        down: -1,
+        bottom: Number.NEGATIVE_INFINITY
+    };
 
     function getItemDefinition(itemType, ...options) {
         let itemView = ITEM_TYPE_VIEW_MAP[itemType];
@@ -163,41 +169,44 @@
                 let itemIndex = selection[0].context.index;
 
                 if (itemIndex !== undefined) {
-                    let path = `configuration.items[${itemIndex}]`;
-                    this.removeSelectionListener = this.openmct.objects.observe(this.internalDomainObject, path + ".useGrid", function (value) {
-                        let item = this.layoutItems[itemIndex];
-
-                        if (value) {
-                            item.x = Math.round(item.x / this.gridSize[0]);
-                            item.y = Math.round(item.y / this.gridSize[1]);
-                            item.width = Math.round(item.width / this.gridSize[0]);
-                            item.height = Math.round(item.height / this.gridSize[1]);
-
-                            if (item.x2) {
-                                item.x2 = Math.round(item.x2 / this.gridSize[0]);
-                            }
-                            if (item.y2) {
-                                item.y2 = Math.round(item.y2 / this.gridSize[1]);
-                            }
-                        } else {
-                            item.x = this.gridSize[0] * item.x;
-                            item.y = this.gridSize[1] * item.y;
-                            item.width = this.gridSize[0] * item.width;
-                            item.height = this.gridSize[1] * item.height;
-
-                            if (item.x2) {
-                                item.x2 = this.gridSize[0] * item.x2;
-                            }
-                            if (item.y2) {
-                                item.y2 = this.gridSize[1] * item.y2;
-                            }
-                        }
-                        item.useGrid = value;
-                        this.mutate(`configuration.items[${itemIndex}]`, item);
-                    }.bind(this));
+                    this.attachSelectionListener(itemIndex);
                 }
 
                 this.updateDrilledIn();
+            },
+            attachSelectionListener(index) {
+                let path = `configuration.items[${index}].useGrid`;
+                this.removeSelectionListener = this.openmct.objects.observe(this.internalDomainObject, path, function (value) {
+                    let item = this.layoutItems[index];
+
+                    if (value) {
+                        item.x = Math.round(item.x / this.gridSize[0]);
+                        item.y = Math.round(item.y / this.gridSize[1]);
+                        item.width = Math.round(item.width / this.gridSize[0]);
+                        item.height = Math.round(item.height / this.gridSize[1]);
+
+                        if (item.x2) {
+                            item.x2 = Math.round(item.x2 / this.gridSize[0]);
+                        }
+                        if (item.y2) {
+                            item.y2 = Math.round(item.y2 / this.gridSize[1]);
+                        }
+                    } else {
+                        item.x = this.gridSize[0] * item.x;
+                        item.y = this.gridSize[1] * item.y;
+                        item.width = this.gridSize[0] * item.width;
+                        item.height = this.gridSize[1] * item.height;
+
+                        if (item.x2) {
+                            item.x2 = this.gridSize[0] * item.x2;
+                        }
+                        if (item.y2) {
+                            item.y2 = this.gridSize[1] * item.y2;
+                        }
+                    }
+                    item.useGrid = value;
+                    this.mutate(`configuration.items[${index}]`, item);
+                }.bind(this));
             },
             updateDrilledIn(drilledInItem) {
                 let identifier = drilledInItem && this.openmct.objects.makeKeyString(drilledInItem.identifier);
@@ -369,6 +378,22 @@
                 });
                 this.mutate("configuration.items", layoutItems);
                 this.$el.click();
+            },
+            orderItem(position, index) {
+                let delta = ORDERS[position];
+                let newIndex = Math.max(Math.min(index + delta, this.layoutItems.length - 1), 0);
+                let item = this.layoutItems[index];
+
+                if (newIndex !== index) {
+                    this.layoutItems.splice(index, 1);
+                    this.layoutItems.splice(newIndex, 0, item);
+                    this.mutate('configuration.items', this.layoutItems);
+
+                    if (this.removeSelectionListener) {
+                        this.removeSelectionListener();
+                        this.attachSelectionListener(newIndex);
+                    }
+                }
             }
         },
         mounted() {
