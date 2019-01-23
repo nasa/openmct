@@ -40,6 +40,7 @@
             </div>
         </div>
         <object-view class="c-so-view__object-view"
+                     ref="objectView"
                      :object="domainObject"></object-view>
     </div>
 </template>
@@ -128,6 +129,11 @@
         components: {
             ObjectView,
             ContextMenuDropDown,
+        },
+        methods: {
+            getSelectionContext() {
+                return this.$refs.objectView.getSelectionContext();
+            }
         },
         data() {
             let objectType = this.openmct.types.get(this.domainObject.type),
