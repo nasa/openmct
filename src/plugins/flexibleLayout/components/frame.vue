@@ -89,10 +89,13 @@ export default {
         },
         initDrag(event) {
             let type = this.openmct.types.get(this.domainObject.type),
-                cssClass = type.definition ? type.definition.cssClass : 'icon-object-unknown';
+                iconClass = type.definition ? type.definition.cssClass : 'icon-object-unknown';
  
-            if(this.dragGhost) {
-                this.dragGhost.classList.add(cssClass);
+            if (this.dragGhost) {
+                let originalClassName = this.dragGhost.classList[0];
+                this.dragGhost.className = '';
+                this.dragGhost.classList.add(originalClassName, iconClass);
+
                 this.dragGhost.innerHTML = `<span>${this.domainObject.name}</span>`;
                 event.dataTransfer.setDragImage(this.dragGhost, 0, 0);
             }
