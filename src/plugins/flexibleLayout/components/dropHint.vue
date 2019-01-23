@@ -75,10 +75,12 @@ export default {
     mounted() {
         document.addEventListener('dragstart', this.dragstart);
         document.addEventListener('dragend', this.dragend);
+        document.addEventListener('drop', this.dragend);
     },
     destroyed() {
         document.removeEventListener('dragstart', this.dragstart);
-        document.removeEventListener('dragend', this.dragend);
+        document.removeEventListener('dragend', this.dragstart);
+        document.removeEventListener('drop', this.dragend);
     }
 }
 </script>
