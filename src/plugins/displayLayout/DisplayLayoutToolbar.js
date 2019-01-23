@@ -196,13 +196,13 @@ define([], function () {
                     options: [
                         {
                             value: false,
-                            icon: "icon-grid-snap-no",
-                            title: "Do not snap to grid"
+                            icon: "icon-grid-snap-to",
+                            title: "Grid snapping enabled"
                         },
                         {
                             value: true,
-                            icon: "icon-grid-snap-to",
-                            title: "Snap to grid"
+                            icon: "icon-grid-snap-no",
+                            title: "Grid snapping disabled"
                         }
                     ]
                 };
@@ -223,13 +223,13 @@ define([], function () {
                         options: [
                             {
                                 value: false,
-                                icon: 'icon-frame-hide',
-                                title: "Hide frame"
+                                icon: 'icon-frame-show',
+                                title: "Frame visible"
                             },
                             {
                                 value: true,
-                                icon: 'icon-frame-show',
-                                title: "Show frame"
+                                icon: 'icon-frame-hide',
+                                title: "Frame hidden"
                             }
                         ]
                     });
