@@ -228,6 +228,17 @@ input[type=number]::-webkit-outer-spin-button {
     }
 }
 
+// SELECTS
+select {
+    @include appearanceNone();
+    @include themedSelect();
+    background-repeat: no-repeat, no-repeat;
+    background-position: right .4em top 80%, 0 0;
+    border: none;
+    border-radius: $controlCr;
+    padding: 1px 20px 1px $interiorMargin;
+}
+
 /******************************************************** HYPERLINKS AND HYPERLINK BUTTONS */
 .c-hyperlink {
     &--link {

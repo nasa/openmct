@@ -41,28 +41,24 @@
                     <div class="grid-cell label"
                          title="The field to be plotted as a value for this series.">Value</div>
                     <div class="grid-cell value">
-                        <div class="select">
-                            <select ng-model="form.yKey">
-                                <option ng-repeat="option in yKeyOptions"
-                                        value="{{option.value}}"
-                                        ng-selected="option.value == form.yKey">
-                                    {{option.name}}
-                                </option>
-                            </select>
-                        </div>
+                        <select ng-model="form.yKey">
+                            <option ng-repeat="option in yKeyOptions"
+                                    value="{{option.value}}"
+                                    ng-selected="option.value == form.yKey">
+                                {{option.name}}
+                            </option>
+                        </select>
                     </div>
                 </li>
                 <li class="grid-row">
                     <div class="grid-cell label"
                          title="The line rendering style for this series.">Line Style</div>
                     <div class="grid-cell value">
-                        <div class="select">
-                            <select ng-model="form.interpolate">
-                                <option value="none">None</option>
-                                <option value="linear">Linear interpolate</option>
-                                <option value="stepAfter">Step after</option>
-                            </select>
-                        </div>
+                        <select ng-model="form.interpolate">
+                            <option value="none">None</option>
+                            <option value="linear">Linear interpolate</option>
+                            <option value="stepAfter">Step after</option>
+                        </select>
                     </div>
                 </li>
                 <li class="grid-row">
@@ -160,15 +156,13 @@
                 <div class="grid-cell label"
                      title="The position of the legend relative to the plot display area.">Position</div>
                 <div class="grid-cell value">
-                    <div class="select">
-                        <select ng-model="form.position">
-                            <option value="hidden">Hidden</option>
-                            <option value="top">Top</option>
-                            <option value="right">Right</option>
-                            <option value="bottom">Bottom</option>
-                            <option value="left">Left</option>
-                        </select>
-                    </div>
+                    <select ng-model="form.position">
+                        <option value="hidden">Hidden</option>
+                        <option value="top">Top</option>
+                        <option value="right">Right</option>
+                        <option value="bottom">Bottom</option>
+                        <option value="left">Left</option>
+                    </select>
                 </div>
             </li>
             <li class="grid-row">
@@ -180,15 +174,13 @@
                 <div class="grid-cell label"
                      title="What to display in the legend when it's collapsed.">When collapsed show</div>
                 <div class="grid-cell value">
-                    <div class="select">
-                        <select ng-model="form.valueToShowWhenCollapsed">
-                            <option value="none">nothing</option>
-                            <option value="nearestTimestamp">nearest timestamp</option>
-                            <option value="nearestValue">nearest Value</option>
-                            <option value="min">minimum value</option>
-                            <option value="max">maximum value</option>
-                        </select>
-                    </div>
+                    <select ng-model="form.valueToShowWhenCollapsed">
+                        <option value="none">Nothing</option>
+                        <option value="nearestTimestamp">Nearest timestamp</option>
+                        <option value="nearestValue">Nearest value</option>
+                        <option value="min">Minimum value</option>
+                        <option value="max">Maximum value</option>
+                    </select>
                 </div>
             </li>
             <li class="grid-row">
