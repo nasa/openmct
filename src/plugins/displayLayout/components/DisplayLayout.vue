@@ -196,17 +196,6 @@
                         this.mutate(`configuration.items[${itemIndex}]`, item);
                     }.bind(this));
                 }
-
-                this.updateDrilledIn();
-            },
-            updateDrilledIn(drilledInItem) {
-                let identifier = drilledInItem && this.openmct.objects.makeKeyString(drilledInItem.identifier);
-                this.drilledIn = identifier;
-                this.layoutItems.forEach(item => {
-                    if (item.type === 'subobject-view') {
-                        item.drilledIn = this.openmct.objects.makeKeyString(item.identifier) === identifier;
-                    }
-                });
             },
             bypassSelection($event) {
                 if (this.dragInProgress) {
