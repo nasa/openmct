@@ -24,7 +24,7 @@
     <div class="c-fl">
         <div 
             id="drag-ghost"
-            class="drag-ghost">
+            class="c-fl__drag-ghost">
         </div>
 
         <div class="c-fl__empty"
@@ -128,14 +128,21 @@
             }
         }
 
-        .drag-ghost{
-            z-index: 1000;
-            padding: 20px;
-            border-radius: 5px;
+        &__drag-ghost{
+            background: $colorItemTreeHoverBg;
+            color: $colorItemTreeHoverFg;
+            border-radius: $basicCr;
+            display: flex;
+            align-items: center;
+            padding: $interiorMarginLg $interiorMarginLg * 2;
             position: absolute;
-            top: -150px;
-            background: gray;
-            color: white;
+            top: -10000px;
+            z-index: 2;
+
+            &:before {
+                color: $colorKey;
+                margin-right: $interiorMarginSm;
+            }
         }
     }
 

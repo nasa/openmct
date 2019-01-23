@@ -92,7 +92,8 @@ export default {
                 cssClass = type.definition ? type.definition.cssClass : 'icon-object-unknown';
  
             if(this.dragGhost) {
-                this.dragGhost.innerHTML = `<div class="${cssClass}">${this.domainObject.name}</div>`;
+                this.dragGhost.classList.add(cssClass);
+                this.dragGhost.innerHTML = `<span>${this.domainObject.name}</span>`;
                 event.dataTransfer.setDragImage(this.dragGhost, 0, 0);
             }
 
