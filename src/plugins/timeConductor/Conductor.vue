@@ -50,7 +50,7 @@
                        ref="startOffset"
                        spellcheck="false"
                        v-model="offsets.start"
-                       @change="submitForm()">
+                       @change="validateAllOffsets(); submitForm()">
             </div>
 
             <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
@@ -82,7 +82,7 @@
                        spellcheck="false"
                        ref="endOffset"
                        v-model="offsets.end"
-                       @change="submitForm()">
+                       @change="validateAllOffsets(); submitForm()">
             </div>
 
             <conductor-axis
@@ -428,7 +428,7 @@ export default {
                 }
 
                 if (!this.durationFormatter.validate(formattedOffset)) {
-                    validationResult = 'Invalid offset';
+                    validationResult = 'Offsets must be in the format hh:mm:ss and less than 24 hours in duration';
                 } else {
                     let offsetValues = {
                         start: 0 - this.durationFormatter.parse(this.offsets.start),
