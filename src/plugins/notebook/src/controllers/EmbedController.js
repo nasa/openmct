@@ -60,6 +60,7 @@ function (
                 let annotateOverlay = openmct.overlays.overlay({
                     element: annotateVue.$mount().$el,
                     size: 'large',
+                    dismissable: false,
                     buttons: [
                         {
                             label: 'Cancel',

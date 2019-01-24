@@ -50,7 +50,6 @@ class OverlayAPI {
      */
     dismissLastOverlay() {
         let lastOverlay = this.activeOverlays[this.activeOverlays.length - 1];
-
         if (lastOverlay && lastOverlay.dismissable) {
             lastOverlay.dismiss();
         }
@@ -63,8 +62,8 @@ class OverlayAPI {
         * @property {string} size prefered size of the overlay (large, small, fit)
         * @property {array} buttons optional button objects with label and callback properties
         * @property {function} onDestroy callback to be called when overlay is destroyed
-        * @property {boolean} notDismissable to prevent user from dismissing the overlay, calling code
-        * will need to explicitly dismiss the overlay.
+        * @property {boolean} dismissable allow user to dismiss overlay by using esc, and clicking away
+        * from overlay. Unless set to false, all overlays will be dismissable by default.
     */
     overlay(options) {
         let overlay = new Overlay(options);

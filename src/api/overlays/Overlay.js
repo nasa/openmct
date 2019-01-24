@@ -12,6 +12,7 @@ class Overlay extends EventEmitter {
     constructor(options) {
         super();
 
+        this.dismissable = options.dismissable !== false ? true : false;
         this.container = document.createElement('div');
         this.container.classList.add('l-overlay-wrapper', cssClasses[options.size]);
 
@@ -20,15 +21,13 @@ class Overlay extends EventEmitter {
                 dismiss: this.dismiss.bind(this),
                 element: options.element,
                 buttons: options.buttons,
-                dismissable: options.dismissable ? true : false
+                dismissable: this.dismissable
             },
             components: {
                 OverlayComponent: OverlayComponent
             },
             template: '<overlay-component></overlay-component>'
         });
-
-        this.dismissable = options.dismissable;
 
         if (options.onDestroy) {
             this.once('destroy', options.onDestroy);

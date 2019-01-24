@@ -22,6 +22,7 @@ class Dialog extends Overlay {
         super({
             element: component.$el,
             size: 'fit',
+            dismissable: false,
             ...options
         });
 

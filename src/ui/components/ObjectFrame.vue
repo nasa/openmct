@@ -138,7 +138,6 @@
                 this.openmct.overlays.overlay({
                     element: childElement,
                     size: 'large',
-                    dismissable: true,
                     onDestroy() {
                         parentElement.append(childElement);
                     }
