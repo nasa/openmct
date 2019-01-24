@@ -95,12 +95,16 @@ export default {
         },
 
         toggleMenu(event) {
+            event.preventDefault();
             this.showMenu = !this.showMenu;
 
             if (this.showMenu) {
-                document.addEventListener('click', this.toggleMenu, true);
+                // Use setTimeout to defer attaching listener until after 
+                // event propagation has finished. Prevents the listener 
+                // triggering immediately.
+                setTimeout(() => document.addEventListener('click', this.toggleMenu));
             } else {
-                document.removeEventListener('click', this.toggleMenu, true);
+                document.removeEventListener('click', this.toggleMenu);
             }
         },
 

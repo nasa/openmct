@@ -180,12 +180,13 @@ export default {
         },
 
         toggleMenu(event) {
+            event.preventDefault();
             this.showMenu = !this.showMenu;
 
             if (this.showMenu) {
-                document.addEventListener('click', this.toggleMenu, true);
+                setTimeout(() => document.addEventListener('click', this.toggleMenu));
             } else {
-                document.removeEventListener('click', this.toggleMenu, true);
+                document.removeEventListener('click', this.toggleMenu);
             }
         },
     },
