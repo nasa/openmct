@@ -366,6 +366,7 @@ export default {
         },
         setViewFromClock(clock) {
             this.isFixed = clock === undefined;
+            this.clearAllValidation();
         },
         setViewFromBounds(bounds) {
             this.formattedBounds.start = this.timeFormatter.format(bounds.start);
@@ -383,6 +384,12 @@ export default {
             } else {
                 this.setOffsetsFromView();
             }
+        },
+        clearAllValidation() {
+            [this.$refs.startDate, this.$refs.endDate, this.$refs.startOffset, this.$refs.endOffset].forEach((input) => {
+                input.setCustomValidity('');
+                input.title = '';
+            });
         },
         validateAllBounds() {
             return [this.$refs.startDate, this.$refs.endDate].every((input) => {
