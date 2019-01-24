@@ -252,8 +252,6 @@ define([], function () {
                         toolbar.push(separator);
                     }
 
-                    toolbar.push(stackOrder);
-                    toolbar.push(separator);
                     toolbar.push({
                         control: "toggle-button",
                         domainObject: selectedParent,
@@ -274,6 +272,7 @@ define([], function () {
                         ]
                     });
                     toolbar.push(separator);
+                    toolbar.push(stackOrder);
                     toolbar.push(x);
                     toolbar.push(y);
                     toolbar.push(width);
@@ -368,13 +367,13 @@ define([], function () {
                             separator,
                             value,
                             separator,
-                            stackOrder,
                             fill,
                             stroke,
                             color,
                             separator,
                             size,
                             separator,
+                            stackOrder,
                             x,
                             y,
                             height,
@@ -395,13 +394,13 @@ define([], function () {
                             dialog: DIALOG_FORM['text']
                         };
                         toolbar = [
-                            stackOrder,
                             fill,
                             stroke,
                             separator,
                             color,
                             size,
                             separator,
+                            stackOrder,
                             x,
                             y,
                             height,
@@ -414,10 +413,10 @@ define([], function () {
                         ];
                     } else if (layoutItem.type === 'box-view') {
                         toolbar = [
-                            stackOrder,
                             fill,
                             stroke,
                             separator,
+                            stackOrder,
                             x,
                             y,
                             height,
@@ -438,9 +437,9 @@ define([], function () {
                             dialog: DIALOG_FORM['image']
                         };
                         toolbar = [
-                            stackOrder,
                             stroke,
                             separator,
+                            stackOrder,
                             x,
                             y,
                             height,
@@ -473,9 +472,9 @@ define([], function () {
                             title: "Y2 position",
                         };
                         toolbar = [
-                            stackOrder,
                             stroke,
                             separator,
+                            stackOrder,
                             x,
                             y,
                             x2,

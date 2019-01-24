@@ -422,7 +422,7 @@ select {
 }
 
 @mixin cToolbarSeparator() {
-    $m: $interiorMargin;
+    $m: 1px;
     $b: 1px;
     display: block;
     width: $m + $b; // Allow for border
@@ -436,6 +436,10 @@ select {
     border-radius: $basicCr;
     height: $p + 24px; // Need to standardize the height
     padding: $p;
+
+    > * + * {
+        margin-left: 2px;
+    }
 
     &__separator {
         @include cToolbarSeparator();
