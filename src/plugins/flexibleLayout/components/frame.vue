@@ -35,8 +35,7 @@
                 v-if="domainObject"
                 :domain-object="domainObject"
                 :object-path="objectPath"
-                :has-frame="hasFrame"
-                ref="objectFrame">
+                :has-frame="hasFrame">
             </object-frame>
 
             <div class="c-fl-frame__size-indicator"
@@ -79,14 +78,14 @@ export default {
             this.setSelection();
         },
         setSelection() {
-            this.$nextTick(function () {
-                let childContext = this.$refs.objectFrame.getSelectionContext();
-                childContext.item = this.domainObject;
-                childContext.type = 'frame';
-                childContext.frameId = this.frame.id;
-                childContext.addContainer = this.addContainer;
-                this.unsubscribeSelection = this.openmct.selection.selectable(this.$refs.frame, childContext, false);
-            });
+            let context = {
+                item: this.domainObject,
+                addContainer: this.addContainer,
+                type: 'frame',
+                frameId: this.frame.id
+            };
+
+            this.unsubscribeSelection = this.openmct.selection.selectable(this.$refs.frame, context, false);
         },
         initDrag(event) {
             event.dataTransfer.setData('frameid', this.frame.id);
