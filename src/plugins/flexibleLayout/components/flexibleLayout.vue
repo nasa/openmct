@@ -588,20 +588,9 @@ export default {
         }
     },
     mounted() {
-
-        let context = {
-            item: this.domainObject,
-            addContainer: this.addContainer,
-            deleteContainer: this.deleteContainer,
-            deleteFrame: this.deleteFrame,
-            type: 'flexible-layout'
-        }
-
-        this.unsubscribeSelection = this.openmct.selection.selectable(this.$el, context, true);
         this.unobserve = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
     },
     beforeDestroy() {
-        this.unsubscribeSelection();
         this.unobserve();
     }
 }
