@@ -73,7 +73,6 @@ export default {
     },
     methods: {
         setDomainObject(object) {
-            console.log('setting object!');
             this.domainObject = object;
             this.objectPath = [object];
             this.setSelection();

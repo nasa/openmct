@@ -24,6 +24,7 @@
     <div v-show="isValidTarget">
         <div class="c-drop-hint c-drop-hint--always-show"
              :class="{'is-mouse-over': isMouseOver}"
+             @dragover.prevent
              @dragenter="dragenter"
              @dragleave="dragleave"
              @drop="dropHandler">
