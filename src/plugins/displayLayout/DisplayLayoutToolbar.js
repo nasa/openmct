@@ -32,7 +32,7 @@ define([], function () {
                 // is inside a layout, or the main layout is selected.
                 return (openmct.editor.isEditing() && selection &&
                     ((selection[1] && selection[1].context.item && selection[1].context.item.type === 'layout') ||
-                    (selection[0].context.item && selection[0].context.item.type === 'layout')));
+                        (selection[0].context.item && selection[0].context.item.type === 'layout')));
             },
             toolbar: function (selection) {
                 const DIALOG_FORM = {
@@ -206,7 +206,7 @@ define([], function () {
                         }
                     ]
                 };
-               let x = {
+                let x = {
                         control: "input",
                         type: "number",
                         domainObject: selectedParent,
@@ -246,6 +246,7 @@ define([], function () {
                         label: 'H:',
                         title: 'Resize object height'
                     };
+
 
                 if (layoutItem.type === 'subobject-view') {
                     if (toolbar.length > 0) {
@@ -382,7 +383,7 @@ define([], function () {
                             separator,
                             remove
                         ];
-                    } else if (layoutItem.type === 'text-view' ) {
+                    } else if (layoutItem.type === 'text-view') {
                         let text = {
                             control: "button",
                             domainObject: selectedParent,
@@ -452,25 +453,25 @@ define([], function () {
                         ];
                     } else if (layoutItem.type === 'line-view') {
                         let x2 = {
-                            control: "input",
-                            type: "number",
-                            domainObject: selectedParent,
-                            property: function () {
-                                return getPath() + ".x2";
+                                control: "input",
+                                type: "number",
+                                domainObject: selectedParent,
+                                property: function () {
+                                    return getPath() + ".x2";
+                                },
+                                label: "X2:",
+                                title: "X2 position"
                             },
-                            label: "X2:",
-                            title: "X2 position"
-                        },
-                        y2 = {
-                            control: "input",
-                            type: "number",
-                            domainObject: selectedParent,
-                            property: function () {
-                                return getPath() + ".y2";
-                            },
-                            label: "Y2:",
-                            title: "Y2 position",
-                        };
+                            y2 = {
+                                control: "input",
+                                type: "number",
+                                domainObject: selectedParent,
+                                property: function () {
+                                    return getPath() + ".y2";
+                                },
+                                label: "Y2:",
+                                title: "Y2 position",
+                            };
                         toolbar = [
                             stroke,
                             separator,
