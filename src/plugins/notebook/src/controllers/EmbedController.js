@@ -34,27 +34,16 @@ function (
     Vue,
     Painterro
 ) {
-    function EmbedController (openmct, domainObject) {
+    function EmbedController(openmct, domainObject) {
         this.openmct = openmct;
         this.domainObject = domainObject;
-        this.objectService = openmct.$injector.get('objectService');
-        this.navigationService = openmct.$injector.get('navigationService');
         this.popupService = openmct.$injector.get('popupService');
         this.agentService = openmct.$injector.get('agentService');
-        this.dialogService = openmct.$injector.get('dialogService');
 
-
-        this.navigate = this.navigate.bind(this);
         this.exposedData = this.exposedData.bind(this);
         this.exposedMethods = this.exposedMethods.bind(this);
         this.toggleActionMenu = this.toggleActionMenu.bind(this);
     }
-
-    EmbedController.prototype.navigate = function (embedType) {
-        this.objectService.getObjects([embedType]).then(function (objects) {
-            this.navigationService.setNavigation(objects[embedType]);
-        }.bind(this));
-    };
 
     EmbedController.prototype.openSnapshot = function (domainObject, entry, embed) {
 
@@ -63,20 +52,22 @@ function (
 
                 var save = false,
                     painterroInstance = {},
-                    annotateOverlay = new Vue({
+                    annotateVue = new Vue({
                         template: '<div id="snap-annotation"></div>'
                     }),
                     self = this;
 
-                openmct.overlays.overlay({
-                    element: annotateOverlay.$mount().$el,
+                let annotateOverlay = openmct.overlays.overlay({
+                    element: annotateVue.$mount().$el,
                     size: 'large',
+                    dismissable: false,
                     buttons: [
                         {
                             label: 'Cancel',
                             callback: function () {
                                 save = false;
                                 painterroInstance.save();
+                                annotateOverlay.dismiss();
                             }
                         },
                         {
@@ -84,11 +75,12 @@ function (
                             callback: function () {
                                 save = true;
                                 painterroInstance.save();
+                                annotateOverlay.dismiss();
                             }
                         }
                     ],
                     onDestroy: function () {
-                        annotateOverlay.$destroy(true);
+                        annotateVue.$destroy(true);
                     }
                 });
 
@@ -162,14 +154,11 @@ function (
                 }
             });
 
-        function onDestroyCallback() {
-            snapshot.$destroy(true);
-        }
-
         var snapshotOverlay = this.openmct.overlays.overlay({
             element: snapshot.$mount().$el,
-            onDestroy: onDestroyCallback,
+            onDestroy: () => {snapshot.$destroy(true)},
             size: 'large',
+            dismissable: true,
             buttons: [
                 {
                     label: 'Done',
@@ -199,23 +188,20 @@ function (
         return foundId;
     };
 
-    EmbedController.prototype.actionToMenuDecorator = function (action) {
-        return {
-            name: action.getMetadata().name,
-            cssClass: action.getMetadata().cssClass,
-            perform: action.perform
-        };
-    };
-
-    EmbedController.prototype.populateActionMenu = function (objectService, actionService) {
+    EmbedController.prototype.populateActionMenu = function (openmct, actions) {
         return function () {
             var self = this;
 
-            objectService.getObjects([self.embed.type]).then(function (resp) {
-                var domainObject = resp[self.embed.type],
-                    previewAction = actionService.getActions({key: 'mct-preview-action', domainObject: domainObject})[0];
-
-                self.actions.push(self.actionToMenuDecorator(previewAction));
+            openmct.objects.get(self.embed.type).then(function (domainObject) {
+                actions.forEach((action) => {
+                    self.actions.push({
+                        cssClass: action.cssClass,
+                        name: action.name,
+                        perform: () => {
+                            action.invoke([domainObject].concat(openmct.router.path));
+                        }
+                    });
+                });
             });
         };
     };
@@ -308,11 +294,9 @@ function (
         var self = this;
 
         return {
-            navigate: self.navigate,
             openSnapshot: self.openSnapshot,
             formatTime: self.formatTime,
             toggleActionMenu: self.toggleActionMenu,
-            actionToMenuDecorator: self.actionToMenuDecorator,
             findInArray: self.findInArray
         };
     };

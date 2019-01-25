@@ -381,17 +381,6 @@ $createBtnTextTransform: uppercase;
     box-shadow: rgba(black, 0.5) 0 0.5px 2px;
 }
 
-/**************************************************** NOT USED, LEAVE FOR NOW */
-// Slider controls, not in use
-/*
-$sliderColorBase: $colorKey;
-$sliderColorRangeHolder: rgba(black, 0.07);
-$sliderColorRange: rgba($sliderColorBase, 0.2);
-$sliderColorRangeHov: rgba($sliderColorBase, 0.4);
-$sliderColorKnob: pushBack($sliderColorBase, 20%);
-$sliderColorKnobHov: rgba($sliderColorBase, 0.7);
-$sliderColorRangeValHovBg: $sliderColorRange;
-$sliderColorRangeValHovFg: $colorBodyFg;
-$sliderKnobW: 15px;
-$sliderKnobR: 2px;
-*/
+@mixin themedSelect($bg: $colorBtnBg, $fg: $colorBtnFg) {
+    @include cSelect(linear-gradient(lighten($bg, 5%), $bg), $fg, lighten($bg, 20%), rgba(black, 0.5) 0 0.5px 3px);
+}

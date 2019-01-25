@@ -5,30 +5,25 @@
                 @input="search"
                 @clear="search">
             </search>
-        <div class="c-notebook__controls">
-            <div class="select c-notebook__controls__time">
-                <select v-model="showTime">
-                    <option value="0" selected="selected">Show all</option>
-                    <option value="1">Last hour</option>
-                    <option value="8">Last 8 hours</option>
-                    <option value="24">Last 24 hours</option>
-                </select>
-            </div>
-            <div class="select c-notebook__controls__sort">
-                <select v-model="sortEntries">
-                    <option value="newest" :selected="sortEntries === 'newest'">Newest first</option>
-                    <option value="oldest" :selected="sortEntries === 'oldest'">Oldest first</option>
-                </select>
-            </div>
+        <div class="c-notebook__controls ">
+            <select class="c-notebook__controls__time" v-model="showTime">
+                <option value="0" selected="selected">Show all</option>
+                <option value="1">Last hour</option>
+                <option value="8">Last 8 hours</option>
+                <option value="24">Last 24 hours</option>
+            </select>
+            <select class="c-notebook__controls__time" v-model="sortEntries">
+                <option value="newest" :selected="sortEntries === 'newest'">Newest first</option>
+                <option value="oldest" :selected="sortEntries === 'oldest'">Oldest first</option>
+            </select>
         </div>
     </div>
     <div class="c-notebook__drag-area icon-plus"
          @click="newEntry($event)"
-         @drop="newEntry($event)"
-         id="newEntry">
+         @drop="newEntry($event)">
         <span class="c-notebook__drag-area__label">To start a new entry, click here or drag and drop any object</span>
     </div>
-    <div class="c-notebook__entries" ng-mouseover="handleActive()">
+    <div class="c-notebook__entries">
         <ul>
             <notebook-entry
                 v-for="(entry,index) in filteredAndSortedEntries"

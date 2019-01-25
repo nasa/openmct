@@ -30,8 +30,6 @@ function (
     function EntryController (openmct, domainObject) {
         this.openmct = openmct;
         this.domainObject = domainObject;
-        this.dndService = this.openmct.$injector.get('dndService');
-        this.dialogService = this.openmct.$injector.get('dialogService');
 
         this.currentEntryValue = '';
 
@@ -106,37 +104,35 @@ function (
     };
 
     EntryController.prototype.dropOnEntry = function (entryid, event) {
-
         var data = event.dataTransfer.getData('openmct/domain-object-path');
 
         if (data) {
-            var selectedObject = JSON.parse(data)[0],
-                selectedObjectId = selectedObject.identifier.key,
-                cssClass = this.openmct.types.get(selectedObject.type),
+            var objectPath = JSON.parse(data),
+                domainObject = objectPath[0],
+                domainObjectKey = domainObject.identifier.key,
+                domainObjectType = this.openmct.types.get(domainObject.type),
+                cssClass = domainObjectType && domainObjectType.definition ? 
+                    domainObjectType.definition.cssClass : 'icon-object-unknown',
                 entryPos = this.entryPosById(entryid),
                 currentEntryEmbeds = this.domainObject.entries[entryPos].embeds,
                 newEmbed = {
-                    type: selectedObjectId,
                     id: '' + Date.now(),
+                    domainObject: domainObject,
+                    objectPath: objectPath,
+                    type: domainObjectKey,
                     cssClass: cssClass,
-                    name: selectedObject.name,
+                    name: domainObject.name,
                     snapshot: ''
                 };
-
             currentEntryEmbeds.push(newEmbed);
             this.openmct.objects.mutate(this.domainObject, 'entries[' + entryPos + '].embeds', currentEntryEmbeds);
         }
-    };
-
-    EntryController.prototype.dragoverOnEntry = function () {
-
     };
 
     EntryController.prototype.exposedData = function () {
         return {
             openmct: this.openmct,
             domainObject: this.domainObject,
-            dialogService: this.dialogService,
             currentEntryValue: this.currentEntryValue
         };
     };
@@ -148,8 +144,7 @@ function (
             textBlur: this.textBlur,
             formatTime: this.formatTime,
             deleteEntry: this.deleteEntry,
-            dropOnEntry: this.dropOnEntry,
-            dragoverOnEntry: this.dragoverOnEntry
+            dropOnEntry: this.dropOnEntry
         };
     };
     return EntryController;

@@ -33,7 +33,31 @@ define(function () {
                     items: [],
                     layoutGrid: [10, 10],
                 };
-            }
+            },
+            form: [
+                {
+                    name: "Horizontal grid (px)",
+                    control: "numberfield",
+                    cssClass: "l-input-sm l-numeric",
+                    property: [
+                        "configuration",
+                        "layoutGrid",
+                        0
+                    ],
+                    required: true
+                },
+                {
+                    name: "Vertical grid (px)",
+                    control: "numberfield",
+                    cssClass: "l-input-sm l-numeric",
+                    property: [
+                        "configuration",
+                        "layoutGrid",
+                        1
+                    ],
+                    required: true
+                }
+            ]
         }
     }
 
