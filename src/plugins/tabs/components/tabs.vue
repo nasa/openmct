@@ -15,25 +15,25 @@
                 v-for="(tab,index) in tabsList"
                 :key="index"
                 :class="[
-                    {'is-current': tab=== currentTab},
+                    {'is-current': isCurrent(tab)},
                     tab.type.definition.cssClass
                 ]"
                 @click="showTab(tab)">
-                <span class="c-button__label">{{tab.model.name}}</span>
+                <span class="c-button__label">{{tab.domainObject.name}}</span>
             </button>
         </div>
         <div class="c-tabs-view__object-holder"
-            v-for="(object, index) in tabsList"
+            v-for="(tab, index) in tabsList"
             :key="index"
-            :class="{'invisible': object !== currentTab}">
+            :class="{'invisible': !isCurrent(tab)}">
             <div class="c-tabs-view__object-name l-browse-bar__object-name--w"
                  :class="currentTab.type.definition.cssClass">
                 <div class="l-browse-bar__object-name">
-                    {{currentTab.model.name}}
+                    {{currentTab.domainObject.name}}
                 </div>
             </div>
             <object-view class="c-tabs-view__object"
-                :object="object.model">
+                :object="tab.domainObject">
             </object-view>
         </div>
     </div>
@@ -87,6 +87,7 @@
 
 <script>
 import ObjectView from '../../../ui/components/ObjectView.vue';
+import _ from 'lodash';
 
 var unknownObjectType = {
     definition: {
@@ -100,9 +101,71 @@ export default {
     components: {
         ObjectView
     },
+    data: function () {
+        return {
+            currentTab: {},
+            tabsList: [],
+            setCurrentTab: true,
+            isDragging: false,
+            allowDrop: false
+        };
+    },
+    methods:{
+        showTab(tab) {
+            this.currentTab = tab;
+        },
+        addItem(domainObject) {
+            let type = this.openmct.types.get(domainObject.type) || unknownObjectType,
+                tabItem = {
+                    domainObject,
+                    type: type
+                };
+
+            this.tabsList.push(tabItem);
+
+            if (this.setCurrentTab) {
+                this.currentTab = tabItem;
+                this.setCurrentTab = false;
+            }
+        },
+        removeItem(identifier) {
+            let pos = this.tabsList.findIndex(tab => 
+                    tab.domainObject.identifier.namespace === identifier.namespace && tab.domainObject.identifier.key === identifier.key
+                ),
+                tabToBeRemoved = this.tabsList[pos];
+
+            this.tabsList.splice(pos, 1);
+
+            if (this.isCurrent(tabToBeRemoved)) {
+                this.showTab(this.tabsList[this.tabsList.length - 1]);
+            }
+        },
+        onDrop(e) {
+            this.setCurrentTab = true;
+        },
+        dragstart (e) {
+            if (e.dataTransfer.types.includes('openmct/domain-object-path')) {
+                this.isDragging = true;
+            }
+        },
+        dragend(e) {
+            this.isDragging = false;
+            this.allowDrop = false;
+        },
+        dragenter() {
+            this.allowDrop = true;
+        },
+        dragleave() {
+            this.allowDrop = false;
+        },
+        isCurrent(tab) {
+            return _.isEqual(this.currentTab, tab)
+        }
+    },
     mounted () {
         if (this.composition) {
-            this.composition.on('add', this.addItem, this);
+            this.composition.on('add', this.addItem);
+            this.composition.on('remove', this.removeItem);
             this.composition.load();
         }
 
@@ -116,54 +179,9 @@ export default {
             dropHint.addEventListener('dragleave', this.dragleave);
         }
     },
-    data: function () {
-        return {
-            currentTab: {},
-            tabsList: [],
-            setCurrentTab: true,
-            isDragging: false,
-            allowDrop: false
-        };
-    },
-    methods:{
-        showTab (tab) {
-            this.currentTab = tab;
-        },
-        addItem (model) {
-            let type = this.openmct.types.get(model.type) || unknownObjectType,
-                tabItem = {
-                    model,
-                    type: type
-                };
-
-            this.tabsList.push(tabItem);
-
-            if (this.setCurrentTab) {
-                this.currentTab = tabItem;
-                this.setCurrentTab = false;
-            }
-        },
-        onDrop (e) {
-            this.setCurrentTab = true;
-        },
-        dragstart (e) {
-            if (e.dataTransfer.types.includes('openmct/domain-object-path')) {
-                this.isDragging = true;
-            }
-        },
-        dragend (e) {
-            this.isDragging = false;
-            this.allowDrop = false;
-        },
-        dragenter () {
-            this.allowDrop = true;
-        },
-        dragleave() {
-            this.allowDrop = false;
-        }
-    },
     destroyed() {
-        this.composition.off('add', this.addItem, this);
+        this.composition.off('add', this.addItem);
+        this.composition.off('remove', this.removeItem);
 
         document.removeEventListener('dragstart', this.dragstart);
         document.removeEventListener('dragend', this.dragend);
