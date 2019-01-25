@@ -207,46 +207,45 @@ define([], function () {
                     ]
                 };
                 let x = {
-                        control: "input",
-                        type: "number",
-                        domainObject: selectedParent,
-                        property: function () {
-                            return getPath() + ".x";
-                        },
-                        label: "X:",
-                        title: "X position"
+                    control: "input",
+                    type: "number",
+                    domainObject: selectedParent,
+                    property: function () {
+                        return getPath() + ".x";
                     },
-                    y = {
-                        control: "input",
-                        type: "number",
-                        domainObject: selectedParent,
-                        property: function () {
-                            return getPath() + ".y";
-                        },
-                        label: "Y:",
-                        title: "Y position",
+                    label: "X:",
+                    title: "X position"
+                },
+                y = {
+                    control: "input",
+                    type: "number",
+                    domainObject: selectedParent,
+                    property: function () {
+                        return getPath() + ".y";
                     },
-                    width = {
-                        control: 'input',
-                        type: 'number',
-                        domainObject: selectedParent,
-                        property: function () {
-                            return getPath() + ".width";
-                        },
-                        label: 'W:',
-                        title: 'Resize object width'
+                    label: "Y:",
+                    title: "Y position",
+                },
+                width = {
+                    control: 'input',
+                    type: 'number',
+                    domainObject: selectedParent,
+                    property: function () {
+                        return getPath() + ".width";
                     },
-                    height = {
-                        control: 'input',
-                        type: 'number',
-                        domainObject: selectedParent,
-                        property: function () {
-                            return getPath() + ".height";
-                        },
-                        label: 'H:',
-                        title: 'Resize object height'
-                    };
-
+                    label: 'W:',
+                    title: 'Resize object width'
+                },
+                height = {
+                    control: 'input',
+                    type: 'number',
+                    domainObject: selectedParent,
+                    property: function () {
+                        return getPath() + ".height";
+                    },
+                    label: 'H:',
+                    title: 'Resize object height'
+                };
 
                 if (layoutItem.type === 'subobject-view') {
                     if (toolbar.length > 0) {
@@ -284,85 +283,85 @@ define([], function () {
                 } else {
                     const TEXT_SIZE = [8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96, 128];
                     let fill = {
-                            control: "color-picker",
-                            domainObject: selectedParent,
-                            property: function () {
-                                return getPath() + ".fill";
-                            },
-                            icon: "icon-paint-bucket",
-                            title: "Set fill color"
+                        control: "color-picker",
+                        domainObject: selectedParent,
+                        property: function () {
+                            return getPath() + ".fill";
                         },
-                        stroke = {
-                            control: "color-picker",
-                            domainObject: selectedParent,
-                            property: function () {
-                                return getPath() + ".stroke";
-                            },
-                            icon: "icon-line-horz",
-                            title: "Set border color"
+                        icon: "icon-paint-bucket",
+                        title: "Set fill color"
+                    },
+                    stroke = {
+                        control: "color-picker",
+                        domainObject: selectedParent,
+                        property: function () {
+                            return getPath() + ".stroke";
                         },
-                        color = {
-                            control: "color-picker",
-                            domainObject: selectedParent,
-                            property: function () {
-                                return getPath() + ".color";
-                            },
-                            icon: "icon-font",
-                            mandatory: true,
-                            title: "Set text color",
-                            preventNone: true
+                        icon: "icon-line-horz",
+                        title: "Set border color"
+                    },
+                    color = {
+                        control: "color-picker",
+                        domainObject: selectedParent,
+                        property: function () {
+                            return getPath() + ".color";
                         },
-                        size = {
-                            control: "select-menu",
-                            domainObject: selectedParent,
-                            property: function () {
-                                return getPath() + ".size";
-                            },
-                            title: "Set text size",
-                            options: TEXT_SIZE.map(size => {
-                                return {
-                                    value: size + "px"
-                                };
-                            })
-                        };
+                        icon: "icon-font",
+                        mandatory: true,
+                        title: "Set text color",
+                        preventNone: true
+                    },
+                    size = {
+                        control: "select-menu",
+                        domainObject: selectedParent,
+                        property: function () {
+                            return getPath() + ".size";
+                        },
+                        title: "Set text size",
+                        options: TEXT_SIZE.map(size => {
+                            return {
+                                value: size + "px"
+                            };
+                        })
+                    };
 
                     if (layoutItem.type === 'telemetry-view') {
                         let displayMode = {
-                                control: "select-menu",
-                                domainObject: selectedParent,
-                                property: function () {
-                                    return getPath() + ".displayMode";
-                                },
-                                title: "Set display mode",
-                                options: [
-                                    {
-                                        name: 'Label + Value',
-                                        value: 'all'
-                                    },
-                                    {
-                                        name: "Label only",
-                                        value: "label"
-                                    },
-                                    {
-                                        name: "Value only",
-                                        value: "value"
-                                    }
-                                ]
+                            control: "select-menu",
+                            domainObject: selectedParent,
+                            property: function () {
+                                return getPath() + ".displayMode";
                             },
-                            value = {
-                                control: "select-menu",
-                                domainObject: selectedParent,
-                                property: function () {
-                                    return getPath() + ".value";
+                            title: "Set display mode",
+                            options: [
+                                {
+                                    name: 'Label + Value',
+                                    value: 'all'
                                 },
-                                title: "Set value",
-                                options: openmct.telemetry.getMetadata(selectedObject).values().map(value => {
-                                    return {
-                                        name: value.name,
-                                        value: value.key
-                                    }
-                                })
-                            };
+                                {
+                                    name: "Label only",
+                                    value: "label"
+                                },
+                                {
+                                    name: "Value only",
+                                    value: "value"
+                                }
+                            ]
+                        },
+                        value = {
+                            control: "select-menu",
+                            domainObject: selectedParent,
+                            property: function () {
+                                return getPath() + ".value";
+                            },
+                            title: "Set value",
+                            options: openmct.telemetry.getMetadata(selectedObject).values().map(value => {
+                                return {
+                                    name: value.name,
+                                    value: value.key
+                                }
+                            })
+                        };
                         toolbar = [
                             displayMode,
                             separator,
@@ -453,25 +452,25 @@ define([], function () {
                         ];
                     } else if (layoutItem.type === 'line-view') {
                         let x2 = {
-                                control: "input",
-                                type: "number",
-                                domainObject: selectedParent,
-                                property: function () {
-                                    return getPath() + ".x2";
-                                },
-                                label: "X2:",
-                                title: "X2 position"
+                            control: "input",
+                            type: "number",
+                            domainObject: selectedParent,
+                            property: function () {
+                                return getPath() + ".x2";
                             },
-                            y2 = {
-                                control: "input",
-                                type: "number",
-                                domainObject: selectedParent,
-                                property: function () {
-                                    return getPath() + ".y2";
-                                },
-                                label: "Y2:",
-                                title: "Y2 position",
-                            };
+                            label: "X2:",
+                            title: "X2 position"
+                        },
+                        y2 = {
+                            control: "input",
+                            type: "number",
+                            domainObject: selectedParent,
+                            property: function () {
+                                return getPath() + ".y2";
+                            },
+                            label: "Y2:",
+                            title: "Y2 position",
+                        };
                         toolbar = [
                             stroke,
                             separator,
