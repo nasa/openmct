@@ -43,15 +43,14 @@ define([
             form: [
                 {
                     name: "State Duration (seconds)",
-                    control: "textfield",
+                    control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
                     key: "duration",
                     required: true,
                     property: [
                         "telemetry",
                         "duration"
-                    ],
-                    pattern: "^\\d*(\\.\\d*)?$"
+                    ]
                 }
             ],
             initialize: function (object) {
