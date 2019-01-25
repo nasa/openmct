@@ -78,9 +78,12 @@
 
         td {
             $p: floor($interiorMargin * 1.5);
-            font-size: 1.1em;
+            @include ellipsize();
+            line-height: 120%; // Needed for icon alignment
+            max-width: 0;
             padding-top: $p;
             padding-bottom: $p;
+            width: 25%;
 
             &:not(.c-list-item__name) {
                 color: $colorItemFgDetails;
