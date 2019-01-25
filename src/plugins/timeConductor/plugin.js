@@ -101,27 +101,25 @@ function mountComponent(openmct, configuration) {
     });
 }
 
-export default function (config){
-
+export default function (config) {
     let configResult = validateConfiguration(config);
     throwIfError(configResult);
 
     return function (openmct) {
 
+        configResult = validateRuntimeConfiguration(config, openmct);
+        throwIfError(configResult);
+
+        var defaults = config.menuOptions[0];
+        if (defaults.clock) {
+            openmct.time.clock(defaults.clock, defaults.clockOffsets);
+            openmct.time.timeSystem(defaults.timeSystem, openmct.time.bounds());
+        } else {
+            openmct.time.timeSystem(defaults.timeSystem, defaults.bounds);
+        }
+
         openmct.on('start', function () {
-            configResult = validateRuntimeConfiguration(config, openmct);
-            throwIfError(configResult);
-
-            var defaults = config.menuOptions[0];
-            if (defaults.clock) {
-                openmct.time.clock(defaults.clock, defaults.clockOffsets);
-                openmct.time.timeSystem(defaults.timeSystem, openmct.time.bounds());
-            } else {
-                openmct.time.timeSystem(defaults.timeSystem, defaults.bounds);
-            }
-
             mountComponent(openmct, config);
-
         });
     };
-};
+}
