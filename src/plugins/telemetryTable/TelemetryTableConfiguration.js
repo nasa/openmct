@@ -64,6 +64,7 @@ define([
         objectMutated(object) {
             //Synchronize domain object reference. Duplicate object otherwise change detection becomes impossible.
             this.domainObject = object;
+            //Was it the configuration that changed?
             if (!_.eq(object.configuration, this.oldConfiguration)) {
                 //Make copy of configuration, otherwise change detection is impossible if shared instance is being modified.
                 this.oldConfiguration = JSON.parse(JSON.stringify(this.getConfiguration()));
@@ -91,16 +92,19 @@ define([
             let columnsToRemove = this.columns[objectKeyString];
 
             delete this.columns[objectKeyString];
+
+            let configuration = this.domainObject.configuration;
+            let configurationChanged = false;
             columnsToRemove.forEach((column) => {
                 //There may be more than one column with the same key (eg. time system columns)
                 if (!this.hasColumnWithKey(column.getKey())) {
-                    let configuration = this.domainObject.configuration;
                     delete configuration.hiddenColumns[column.getKey()];
-                    // If there are no more columns with this key, delete any configuration, and trigger
-                    // a column refresh.
-                    this.openmct.objects.mutate(this.domainObject, 'configuration', configuration);
+                    configurationChanged = true;
                 }
             });
+            if (configurationChanged) {
+                this.updateConfiguration(configuration);
+            }
         }
 
         hasColumnWithKey(columnKey) {

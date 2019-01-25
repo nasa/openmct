@@ -184,7 +184,6 @@
         }
 
         /******************************* MAIN AREA */
-
         &__main-container {
             // Wrapper for main views
             flex: 1 1 auto !important;
@@ -229,6 +228,17 @@
 
             &__pane-inspector {
                 width: 200px;
+            }
+        }
+    }
+
+    .is-editing {
+        .l-shell__main-container {
+            box-shadow: $colorBodyBg 0 0 0 1px, $editUIAreaShdw;
+
+            &[s-selected] {
+                // Provide a clearer selection context articulation for the main edit area
+                box-shadow: $colorBodyBg 0 0 0 1px, $editUIAreaShdwSelected;
             }
         }
     }

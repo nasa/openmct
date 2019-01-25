@@ -67,7 +67,7 @@
                         if (formKeys.length > 0) {
                             toolbarItem.value = this.getFormValue(domainObject, toolbarItem);
                         } else {
-                            toolbarItem.value = _.get(domainObject, item.property);
+                            toolbarItem.value = _.get(domainObject, this.getItemProperty(item));
                         }
 
                         this.registerListener(domainObject);
@@ -116,7 +116,7 @@
                             if (toolbarItem.formKeys) {
                                 toolbarItem.value = this.getFormValue(newObject, toolbarItem);
                             } else {
-                                toolbarItem.value = _.get(newObject, item.property);
+                                toolbarItem.value = _.get(newObject, this.getItemProperty(item));
                             }
                         }
                     }
@@ -135,9 +135,12 @@
             getFormValue(domainObject, toolbarItem) {
                 let value = {};
                 toolbarItem.formKeys.map(key => {
-                    value[key] = _.get(domainObject, toolbarItem.property + "." + key);
+                    value[key] = _.get(domainObject, this.getItemProperty(toolbarItem) + "." + key);
                 });
                 return value;
+            },
+            getItemProperty(item) {
+                return (typeof item.property === "function") ? item.property() : item.property;
             },
             removeListeners() {
                 if (this.unObserveObjects) {
@@ -156,7 +159,7 @@
                     if (domainObject) {
                         let id = this.openmct.objects.makeKeyString(domainObject.identifier);
 
-                        if (changedItemId === id && item.property === s.property) {
+                        if (changedItemId === id && this.getItemProperty(item) === this.getItemProperty(s)) {
                             toolbarItem.value = value;
                         }
                     }
@@ -170,12 +173,12 @@
                     this.structure.map(s => {
                         if (s.formKeys) {
                             s.formKeys.forEach(key => {
-                                this.openmct.objects.mutate(item.domainObject, item.property + "." + key, value[key]);
+                                this.openmct.objects.mutate(item.domainObject, this.getItemProperty(item) + "." + key, value[key]);
                             });
                         }
                     });
                 } else {
-                    this.openmct.objects.mutate(item.domainObject, item.property, value);
+                    this.openmct.objects.mutate(item.domainObject, this.getItemProperty(item), value);
                 }
             },
             triggerMethod(item, event) {

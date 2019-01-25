@@ -8,7 +8,7 @@
         </pane>
         <pane class="c-inspector__elements"
               handle="before"
-              label="Elements" v-if="isEditing">
+              label="Elements" v-if="isEditing && hasComposition">
             <elements></elements>
         </pane>
     </multipane>
@@ -224,6 +224,27 @@
             Properties,
             Location,
             InspectorView
+        },
+        data() {
+            return {
+                hasComposition: false
+            }
+        },
+        methods: {
+            refreshComposition(selection) {
+                if (selection[0]) {
+                    let parentObject = selection[0].context.item;
+
+                    this.hasComposition = !!this.openmct.composition.get(parentObject);
+                }
+            }
+        },
+        mounted() {
+            this.openmct.selection.on('change', this.refreshComposition);
+            this.refreshComposition(this.openmct.selection.get());
+        },
+        destroyed() {
+            this.openmct.selection.off('change', this.refreshComposition);
         }
     }
 </script>

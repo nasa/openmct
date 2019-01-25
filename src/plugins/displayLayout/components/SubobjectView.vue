@@ -22,8 +22,7 @@
 <template>
     <layout-frame :item="item"
                   :grid-size="gridSize"
-                  @endDrag="(item, updates) => $emit('endDrag', item, updates)"
-                  @drilledIn="item => $emit('drilledIn', item)">
+                  @endDrag="(item, updates) => $emit('endDrag', item, updates)">
         <object-frame v-if="domainObject"
                       :domain-object="domainObject"
                       :object-path="objectPath"
@@ -65,7 +64,8 @@
                 x: position[0],
                 y: position[1],
                 identifier: domainObject.identifier,
-                hasFrame: hasFrameByDefault(domainObject.type)
+                hasFrame: hasFrameByDefault(domainObject.type),
+                useGrid: true
             };
         },
         inject: ['openmct'],

@@ -24,7 +24,7 @@
     <div class="c-fl-container"
          :style="[{'flex-basis': sizeString}]"
          :class="{'is-empty': !frames.length}">
-        <div class="c-fl-container__header icon-grippy-ew"
+        <div class="c-fl-container__header"
             v-show="isEditing"
             draggable="true"
             @dragstart="startContainerDrag">
@@ -100,7 +100,7 @@ export default {
     },
     methods: {
         allowDrop(event, index) {
-            if (event.dataTransfer.getData('domainObject')) {
+            if (event.dataTransfer.types.includes('openmct/domain-object-path')) {
                 return true;
             }
             let frameId = event.dataTransfer.getData('frameid'),
@@ -124,9 +124,9 @@ export default {
             }
         },
         moveOrCreateFrame(insertIndex, event) {
-            if (event.dataTransfer.types.includes('domainobject')) {
+            if (event.dataTransfer.types.includes('openmct/domain-object-path')) {
                 // create frame using domain object
-                let domainObject = JSON.parse(event.dataTransfer.getData('domainObject'));
+                let domainObject = JSON.parse(event.dataTransfer.getData('openmct/domain-object-path'))[0];
                 this.$emit(
                     'create-frame',
                     this.index,

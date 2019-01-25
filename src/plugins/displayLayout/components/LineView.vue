@@ -66,7 +66,8 @@
                 y: 10,
                 x2: 10,
                 y2: 5,
-                stroke: '#717171'
+                stroke: '#717171',
+                useGrid: true
             };
         },
         inject: ['openmct'],

@@ -6,7 +6,7 @@
             v-if="elements.length > 0">
             <li :key="element.identifier.key" v-for="(element, index) in elements" @drop="moveTo(index)" @dragover="allowDrop">
                 <div class="c-tree__item c-elements-pool__item">
-                    <span class="icon-grippy"
+                    <span class="c-elements-pool__grippy"
                           v-if="elements.length > 1 && isEditing"
                           draggable="true"
                           @dragstart="moveFrom(index)">
@@ -42,12 +42,13 @@
             overflow: auto;
         }
 
-        &__item {
-            .icon-grippy {
-                font-size: 0.8em;
-            }
+        &__grippy {
+            $d: 8px;
+            @include grippy($c: $colorItemTreeVC, $dir: 'y');
+            margin-right: $interiorMarginSm;
+            transform: translateY(-2px);
+            width: $d; height: $d;
         }
-
     }
 
     .js-last-place{

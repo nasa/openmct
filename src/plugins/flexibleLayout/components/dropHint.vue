@@ -21,8 +21,7 @@
  *****************************************************************************/
 
 <template>
-    <div v-if="isEditing"
-         v-show="isValidTarget">
+    <div v-show="isValidTarget">
         <div class="c-drop-hint c-drop-hint--always-show"
              :class="{'is-mouse-over': isMouseOver}"
              @dragenter="dragenter"
@@ -37,8 +36,6 @@
 </style>
 
 <script>
-import isEditingMixin from '../mixins/isEditing';
-
 export default {
     props:{
         index: Number,
@@ -47,7 +44,6 @@ export default {
             required: true
         }
     },
-    mixins: [isEditingMixin],
     data() {
         return {
             isMouseOver: false,

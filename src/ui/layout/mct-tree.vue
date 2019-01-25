@@ -33,6 +33,7 @@
             display: flex;
             align-items: center;
             cursor: pointer;
+            line-height: 110%;
             padding: $interiorMargin - $aPad;
             transition: background 150ms ease;
 
@@ -47,7 +48,7 @@
                 }
             }
 
-            &.is-selected {
+            &.is-navigated-object {
                 background: $colorItemTreeSelectedBg;
                 .c-tree__item__type-icon:before {
                     color: $colorItemTreeIconHover;
