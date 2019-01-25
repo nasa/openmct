@@ -75,7 +75,7 @@ export default {
     },
     destroyed() {
         document.removeEventListener('dragstart', this.dragstart);
-        document.removeEventListener('dragend', this.dragstart);
+        document.removeEventListener('dragend', this.dragend);
         document.removeEventListener('drop', this.dragend);
     }
 }

@@ -111,7 +111,7 @@ export default {
             });
         }
 
-        this.dragGhost = document.getElementById('drag-ghost');
+        this.dragGhost = document.getElementById('js-fl-drag-ghost');
     },
     beforeDestroy() {
         if (this.unsubscribeSelection) {

@@ -254,13 +254,11 @@ function (
         // Remove the context menu
         function dismiss() {
             container.find('.hide-menu').append(menu);
-            body.off(initiatingEvent, dismiss);
-            menu.off(initiatingEvent, menuClickHandler);
+            body.off(initiatingEvent, menuClickHandler);
             dismissExistingMenu = undefined;
         }
 
         function menuClickHandler(e) {
-            e.stopPropagation();
             window.setTimeout(() => {
                 dismiss();
             }, 100);
@@ -279,11 +277,7 @@ function (
             marginY: -50
         });
 
-        // Stop propagation and set timeout to register click and close menu
-        menu.on(initiatingEvent, menuClickHandler);
-
-        body.on(initiatingEvent, dismiss);
-
+        body.on(initiatingEvent, menuClickHandler);
     };
 
     EmbedController.prototype.exposedData = function () {

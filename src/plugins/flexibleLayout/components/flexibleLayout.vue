@@ -23,7 +23,7 @@
 <template>
     <div class="c-fl">
         <div 
-            id="drag-ghost"
+            id="js-fl-drag-ghost"
             class="c-fl__drag-ghost">
         </div>
 
@@ -611,19 +611,15 @@ export default {
         removeChildObject(identifier) {
             let removeIdentifier = this.openmct.objects.makeKeyString(identifier);
 
-            this.openmct.objects.get(this.domainObject.identifier).then((domainObject) => {
-                this.domainObject = domainObject;
-
-                this.containers.forEach(container => {
-                    container.frames = container.frames.filter(frame => {
-                        let frameIdentifier = this.openmct.objects.makeKeyString(frame.domainObjectIdentifier);
-                        
-                        return removeIdentifier !== frameIdentifier;
-                    });
+            this.containers.forEach(container => {
+                container.frames = container.frames.filter(frame => {
+                    let frameIdentifier = this.openmct.objects.makeKeyString(frame.domainObjectIdentifier);
+                    
+                    return removeIdentifier !== frameIdentifier;
                 });
-
-                this.persist();
             });
+
+            this.persist();
         }
     },
     mounted() {
