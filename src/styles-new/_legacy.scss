@@ -607,6 +607,133 @@ mct-plot {
     }
 }
 
+/******************************************************************* INDICATORS */
+/* Indicators are generally only displayed in the ue-bottom-bar element of the main interface */
+
+.h-indicator,
+mct-indicators mct-include {
+    display: inline; // Fallback for display: contents
+    display: contents;
+}
+
+.ls-indicator {
+    $bg: rgba(white, 0.2) !important;
+    $hbg: $colorStatusBarBg;
+    $hshdw: rgba(white, 0.4) 0 0 3px;
+    $br: $controlCr;
+    $hoverYOffset: -35px;
+    background: transparent !important;
+    border-radius: $br;
+    display: inline-block;
+    position: relative;
+    padding: 1px $interiorMarginSm; // Use padding instead of margin to keep hover chatter to a minimum
+
+    &:before {
+        display: inline-block;
+    }
+
+    .label {
+        display: inline-block;
+        a,
+        button,
+        .s-button {
+            // Make <a> in label look like buttons
+            transition: $transIn;
+            background: transparent;
+            border: 1px solid rgba($colorStatusBarFg, 0.5);
+            border-radius: $br;
+            box-sizing: border-box;
+            color: inherit;
+            font-size: inherit;
+            height: auto;
+            line-height: normal;
+            padding: 0 2px;
+            &:hover {
+                background: $bg;
+                color: #fff;
+            }
+        }
+
+        [class*='icon-'] {
+            // If any elements within label include the class 'icon-*' then deal with their :before's
+            &:before {
+                font-size: 0.8em;
+                margin-right: $interiorMarginSm;
+            }
+        }
+
+        button { text-transform: uppercase !important; }
+    }
+
+    &.no-collapse {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+
+        > *,
+        &:before {
+            flex: 1 1 auto;
+        }
+
+        &:before {
+            margin-right: $interiorMarginSm;
+        }
+    }
+
+    &:not(.no-collapse) {
+        z-index: 0;
+
+        &:before {
+            margin-right: 0 !important;
+        }
+
+        .label {
+            transition: all 250ms ease-in 100ms;
+            background: $hbg;
+            border-radius: $br;
+            font-size: .6rem;
+            left: 0;
+            bottom: 140%;
+            opacity: 0;
+            padding: $interiorMarginSm $interiorMargin;
+            position: absolute;
+            transform-origin: 10px 100%;
+            transform: scale(0.0);
+            white-space: nowrap;
+            &:before {
+                // Infobubble-style arrow element
+                content: '';
+                display: block;
+                position: absolute;
+                top: 100%;
+                @include triangle('down', $size: 4px, $ratio: 1, $color: $hbg);
+            }
+        }
+
+        &:hover {
+            background: $bg;
+            z-index: 1;
+            .label {
+                opacity: 1;
+                transform: scale(1.0);
+                transition: all 100ms ease-out 0s;
+            }
+        }
+    }
+
+    &.float-right {
+        float: right;
+    }
+}
+
+/* Mobile */
+// Hide the clock indicator when we're phone portrait
+body.phone.portrait {
+    .ls-indicator.t-indicator-clock {
+        display: none;
+    }
+}
+
 /******************************************************************* VARIOUS */
 .overlay {
     .outer-holder {
