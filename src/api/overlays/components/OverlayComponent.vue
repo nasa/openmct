@@ -5,7 +5,7 @@
         </div>
         <div class="c-overlay__outer">
             <button class="c-click-icon c-overlay__close-button icon-x-in-circle"
-                v-if="!notDismissable"
+                v-if="dismissable"
                 @click="destroy">
             </button>
             <div class="c-overlay__contents" ref="element"></div>
@@ -129,19 +129,19 @@
 
 <script>
     export default {
-        inject: ['dismiss', 'element', 'buttons', 'notDismissable'],
+        inject: ['dismiss', 'element', 'buttons', 'dismissable'],
         mounted() {
             this.$refs.element.appendChild(this.element);
         },
         methods: {
             destroy: function () {
-                if (!this.notDismissable) {
+                if (this.dismissable) {
                     this.dismiss();
                 }
             },
             buttonClickHandler: function (method) {
                 method();
-                this.destroy();
+                this.$emit('destroy');
             }
         }
     }
