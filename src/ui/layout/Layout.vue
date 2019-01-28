@@ -31,7 +31,7 @@
                 <browse-bar class="l-shell__main-view-browse-bar"
                             ref="browseBar">
                 </browse-bar>
-                <toolbar class="l-shell__toolbar"></toolbar>
+                <toolbar v-if="toolbar" class="l-shell__toolbar"></toolbar>
                 <object-view class="l-shell__main-container"
                              ref="browseObject">
                 </object-view>
@@ -310,6 +310,20 @@
                 fullScreen: false,
                 conductorComponent: {},
                 isEditing: false
+            }
+        },
+        computed: {
+            toolbar() {
+                let selection = this.openmct.selection.get();
+                let structure = undefined;
+
+                if (!selection[0]) {
+                    structure = [];
+                } else {
+                    structure = this.openmct.toolbars.get(selection);
+                }
+
+                return this.isEditing && structure.length > 0;
             }
         },
         methods: {
