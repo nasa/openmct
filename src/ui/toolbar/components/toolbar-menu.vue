@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import toggle from './toggle-mixin';
+import toggle from '../../mixins/toggle-mixin';
 export default {
     mixins: [toggle],
     props: {

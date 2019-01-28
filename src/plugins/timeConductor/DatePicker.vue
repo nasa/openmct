@@ -22,12 +22,12 @@
 <template>
     <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up c-datetime-picker__wrapper" ref="calendarHolder">
         <a class="c-click-icon icon-calendar"
-           @click="togglePicker()"></a>
+           @click="toggle"></a>
         <div class="c-menu c-menu--mobile-modal c-datetime-picker"
-             v-if="showPicker">
+             v-if="open">
             <div class="c-datetime-picker__close-button">
                 <button class="c-click-icon icon-x-in-circle"
-                        @click="togglePicker()"></button>
+                        @click="toggle"></button>
             </div>
             <div class="c-datetime-picker__pager c-pager l-month-year-pager">
                 <div class="c-pager__prev c-click-icon icon-arrow-left"
@@ -160,6 +160,7 @@
 
 <script>
 import moment from 'moment';
+import toggleMixin from '../../ui/mixins/toggle-mixin';
 
 const TIME_NAMES = {
         'hours': "Hour",
@@ -181,13 +182,13 @@ const TIME_OPTIONS = (function makeRanges() {
 
 export default {
     inject: ['openmct'],
+    mixins: [toggleMixin],
     props: {
         defaultDateTime: String,
         formatter: Object
     },
     data: function () {
         return {
-            showPicker: false,
             picker: {
                 year: undefined,
                 month: undefined,
@@ -285,7 +286,6 @@ export default {
             this.date.year = cell.year;
             this.date.day = cell.day;
             this.updateFromView();
-            this.showPicker = false;
         },
 
         dateEquals(d1, d2) {
@@ -315,23 +315,6 @@ export default {
         optionsFor(key) {
             return TIME_OPTIONS[key];
         },
-
-        hidePicker(event) {
-            let path = event.composedPath();
-            if (path.indexOf(this.$refs.calendarHolder) === -1) {
-                this.showPicker = false;
-            }
-        },
-        
-        togglePicker() {
-            this.showPicker = !this.showPicker;
-
-            if (this.showPicker) {
-                document.addEventListener('click', this.hidePicker, {
-                    capture: true
-                });
-            }
-        }
     },
     mounted: function () {
         this.updateFromModel(this.defaultDateTime);

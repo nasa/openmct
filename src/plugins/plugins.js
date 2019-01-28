@@ -39,7 +39,6 @@ define([
     './folderView/plugin',
     './flexibleLayout/plugin',
     './tabs/plugin',
-    '../../platform/features/fixed/plugin',
     './LADTable/plugin'
 ], function (
     _,
@@ -60,7 +59,6 @@ define([
     FolderView,
     FlexibleLayout,
     Tabs,
-    FixedView,
     LADTable
 ) {
     var bundleMap = {
@@ -174,7 +172,6 @@ define([
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
-    plugins.FixedView = FixedView;
     plugins.FlexibleLayout = FlexibleLayout;
     plugins.LADTable = LADTable;
 
