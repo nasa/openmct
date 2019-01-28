@@ -537,6 +537,24 @@ mct-plot {
     }
 }
 
+/******************************************************************* IMAGERY */
+.t-imagery {
+    display: contents;
+}
+
+.c-button.pause-play {
+    // Pause icon set by default in markup
+
+    &.is-paused {
+        background: $colorPausedBg !important;
+        color: $colorPausedFg;
+
+        &:before {
+            content: $glyph-icon-play;
+        }
+    }
+}
+
 /********************************************************* CLOCKS AND TIMERS */
 .c-clock,
 .c-timer {
@@ -764,10 +782,6 @@ body.phone.portrait {
     }
 }
 
-.t-imagery {
-    display: contents;
-}
-
 .t-frame-outer {
     min-width: 200px;
     min-height: 200px;
@@ -779,5 +793,24 @@ body.phone.portrait {
         height: 100%;
         width: 100%;
         border: none;
+    }
+}
+
+// Alert elements in views
+.s-unsynced {
+    @include sUnsynced();
+}
+
+.s-status-timeconductor-unsynced {
+    // Plot areas
+    .gl-plot .gl-plot-display-area {
+        @include sUnsynced();
+    }
+
+    // Object headers
+    .object-header {
+        .t-object-alert {
+            display: inline;
+        }
     }
 }

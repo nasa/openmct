@@ -577,3 +577,9 @@
     background-color: rgba($c, $a) !important;
     box-shadow: deeppink 0 0 10px 1px !important;
 }
+
+
+@mixin sUnsynced() {
+    $c: $colorPausedBg;
+    border: 1px solid $c;
+}

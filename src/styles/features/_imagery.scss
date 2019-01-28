@@ -78,7 +78,7 @@
     background-color: $colorPlotBg;
 	border: 1px solid transparent;
 	&.paused {
-		@extend .s-unsynced;
+		//@include sUnsynced();
 	}
 }
 

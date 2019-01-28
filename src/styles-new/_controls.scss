@@ -519,7 +519,7 @@ select {
         // Buttons are smashed together with minimal margin
         // c-buttons don't have border-radius between buttons, creates a tool-button-strip look
         // c-click-icons get grouped more closely together
-        &[class^="c-button"] {
+        [class^="c-button"] {
             // Only apply the following to buttons that have background, eg. c-button
             border-radius: 0;
 
@@ -646,7 +646,6 @@ input[type="range"] {
 /***************************************************** LEGACY */
 
 .l-btn-set {
-    // Fixes
     display: flex;
     align-items: center;
 }
