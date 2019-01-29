@@ -36,7 +36,10 @@
                 </context-menu-drop-down>
             </div>
             <div class="c-so-view__header__end">
-                <div class="c-button icon-expand local-controls--hidden"></div>
+                <div class="c-button icon-expand local-controls--hidden"
+                    title="View Large"
+                    @click="expand">
+                </div>
             </div>
         </div>
         <object-view class="c-so-view__object-view"
@@ -125,6 +128,21 @@
             domainObject: Object,
             objectPath: Array,
             hasFrame: Boolean,
+        },
+        methods: {
+            expand() {
+                let objectView = this.$refs.objectView,
+                    parentElement = objectView.$el,
+                    childElement = parentElement.children[0];
+
+                this.openmct.overlays.overlay({
+                    element: childElement,
+                    size: 'large',
+                    onDestroy() {
+                        parentElement.append(childElement);
+                    }
+                });
+            }
         },
         components: {
             ObjectView,

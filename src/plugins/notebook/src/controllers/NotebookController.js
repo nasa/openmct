@@ -27,7 +27,9 @@ define([
     '../../res/templates/notebook.html',
     '../../res/templates/entry.html',
     '../../res/templates/embed.html',
-    '../../../../ui/components/search.vue'
+    '../../../../ui/components/search.vue',
+    '../../../../ui/preview/PreviewAction',
+    '../../../../ui/mixins/object-link'
 ],
 function (
     Vue,
@@ -36,15 +38,16 @@ function (
     NotebookTemplate,
     EntryTemplate,
     EmbedTemplate,
-    search
+    search,
+    PreviewAction,
+    objectLinkMixin
 ) {
 
     function NotebookController(openmct, domainObject) {
         this.openmct = openmct;
         this.domainObject = domainObject;
         this.entrySearch = '';
-        this.objectService = openmct.$injector.get('objectService');
-        this.actionService = openmct.$injector.get('actionService');
+        this.previewAction = new PreviewAction.default(openmct);
 
         this.show = this.show.bind(this);
         this.destroy = this.destroy.bind(this);
@@ -61,11 +64,12 @@ function (
 
         var notebookEmbed = {
             inject:['openmct', 'domainObject'],
+            mixins:[objectLinkMixin.default],
             props:['embed', 'entry'],
             template: EmbedTemplate,
             data: embedController.exposedData,
             methods: embedController.exposedMethods(),
-            beforeMount: embedController.populateActionMenu(self.objectService, self.actionService)
+            beforeMount: embedController.populateActionMenu(self.openmct, [self.previewAction])
         };
 
         var entryComponent = {
