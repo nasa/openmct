@@ -12,7 +12,9 @@ export default {
     },
     destroyed() {
         this.clear();
-        this.openmct.editor.off('isEditing', this.setEditMode);
+        if (this.releaseEditModeHandler) {
+            this.releaseEditModeHandler();
+        }
     },
     watch: {
         view(newView, oldView) {
