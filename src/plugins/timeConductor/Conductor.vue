@@ -22,9 +22,8 @@
 <template>
     <div class="c-conductor"
          :class="[isFixed ? 'is-fixed-mode' : 'is-realtime-mode']">
-        <form class="u-contents" ref="conductorForm"
-              @submit="isFixed ? setBoundsFromView($event) : setOffsetsFromView($event)">
-
+        <form class="u-contents" ref="conductorForm" @submit.prevent="updateTimeFromConductor">
+            <button class="c-input--submit" type="submit" ref="submitButton"></button>
             <ConductorModeIcon class="c-conductor__mode-icon"></ConductorModeIcon>
 
             <div class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
@@ -35,7 +34,7 @@
                        type="text" autocorrect="off" spellcheck="false"
                        ref="startDate"
                        v-model="formattedBounds.start"
-                       @change="validateBounds('start', $event.target); setBoundsFromView()" />
+                       @change="validateAllBounds(); submitForm()" />
                 <date-picker
                         :default-date-time="formattedBounds.start"
                         :formatter="timeFormatter"
@@ -48,9 +47,10 @@
                 <div class="c-direction-indicator icon-minus"></div>
                 <input class="c-input--hrs-min-sec"
                        type="text" autocorrect="off"
+                       ref="startOffset"
                        spellcheck="false"
                        v-model="offsets.start"
-                       @change="validateOffsets($event); setOffsetsFromView()">
+                       @change="validateAllOffsets(); submitForm()">
             </div>
 
             <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
@@ -63,7 +63,7 @@
                        v-model="formattedBounds.end"
                        :disabled="!isFixed"
                        ref="endDate"
-                       @change="validateBounds('end', $event.target); setBoundsFromView()">
+                       @change="validateAllBounds(); submitForm()">
                 <date-picker
                         class="c-ctrl-wrapper--menus-left"
                         :default-date-time="formattedBounds.end"
@@ -80,8 +80,9 @@
                        type="text"
                        autocorrect="off"
                        spellcheck="false"
+                       ref="endOffset"
                        v-model="offsets.end"
-                       @change="validateOffsets($event); setOffsetsFromView()">
+                       @change="validateAllOffsets(); submitForm()">
             </div>
 
             <conductor-axis
@@ -100,6 +101,14 @@
 
 <style lang="scss">
     @import "~styles/sass-base";
+
+    .c-input--submit {
+        // Can't use display: none because some browsers will pretend the input doesn't exist, and enter won't work
+        visibility: none;
+        height: 0;
+        width: 0;
+        padding: 0;
+    }
 
     /*********************************************** CONDUCTOR LAYOUT */
     .c-conductor {
@@ -357,6 +366,7 @@ export default {
         },
         setViewFromClock(clock) {
             this.isFixed = clock === undefined;
+            this.clearAllValidation();
         },
         setViewFromBounds(bounds) {
             this.formattedBounds.start = this.timeFormatter.format(bounds.start);
@@ -368,45 +378,87 @@ export default {
             this.offsets.start = this.durationFormatter.format(Math.abs(offsets.start));
             this.offsets.end = this.durationFormatter.format(Math.abs(offsets.end));
         },
-        validateBounds(startOrEnd, input) {
-            let validationResult = true;
-
-            if (!this.timeFormatter.validate(input.value)){
-                validationResult = 'Invalid date value';
+        updateTimeFromConductor() {
+            if (this.isFixed) {
+                this.setBoundsFromView();
             } else {
-                let boundsValues = {
-                    start: this.timeFormatter.parse(this.formattedBounds.start),
-                    end: this.timeFormatter.parse(this.formattedBounds.end)
-                };
-                validationResult = this.openmct.time.validateBounds(boundsValues);
-            }
-            
-            if (validationResult !== true){
-                input.setCustomValidity(validationResult);
-            } else {
-                input.setCustomValidity('');
+                this.setOffsetsFromView();
             }
         },
-        validateOffsets(event) {
-            let input = event.target;
-            let validationResult = true;
-
-            if (!this.durationFormatter.validate(input.value)) {
-                validationResult = 'Invalid offset value';
-            } else {
-                let offsetValues = {
-                    start: 0 - this.durationFormatter.parse(this.offsets.start),
-                    end: this.durationFormatter.parse(this.offsets.end)
-                };
-                validationResult = this.openmct.time.validateOffsets(offsetValues);
-            }
-
-            if (validationResult !== true){
-                input.setCustomValidity(validationResult);
-            } else {
+        clearAllValidation() {
+            [this.$refs.startDate, this.$refs.endDate, this.$refs.startOffset, this.$refs.endOffset].forEach((input) => {
                 input.setCustomValidity('');
-            }
+                input.title = '';
+            });
+        },
+        validateAllBounds() {
+            return [this.$refs.startDate, this.$refs.endDate].every((input) => {
+                let validationResult = true;
+                let formattedDate;
 
+                if (input === this.$refs.startDate) {
+                    formattedDate = this.formattedBounds.start;
+                } else {
+                    formattedDate = this.formattedBounds.end;
+                }
+
+                if (!this.timeFormatter.validate(formattedDate)){
+                    validationResult = 'Invalid date';
+                } else {
+                    let boundsValues = {
+                        start: this.timeFormatter.parse(this.formattedBounds.start),
+                        end: this.timeFormatter.parse(this.formattedBounds.end)
+                    };
+                    validationResult = this.openmct.time.validateBounds(boundsValues);
+                }
+                
+                if (validationResult !== true){
+                    input.setCustomValidity(validationResult);
+                    input.title = validationResult;
+                    return false;
+                } else {
+                    input.setCustomValidity('');
+                    input.title = '';
+                    return true;
+                }
+            });
+        },
+        validateAllOffsets(event) {
+            return [this.$refs.startOffset, this.$refs.endOffset].every((input) => {
+                let validationResult = true;
+                let formattedOffset;
+
+                if (input === this.$refs.startOffset) {
+                    formattedOffset = this.offsets.start;
+                } else {
+                    formattedOffset = this.offsets.end;
+                }
+
+                if (!this.durationFormatter.validate(formattedOffset)) {
+                    validationResult = 'Offsets must be in the format hh:mm:ss and less than 24 hours in duration';
+                } else {
+                    let offsetValues = {
+                        start: 0 - this.durationFormatter.parse(this.offsets.start),
+                        end: this.durationFormatter.parse(this.offsets.end)
+                    };
+                    validationResult = this.openmct.time.validateOffsets(offsetValues);
+                }
+
+                if (validationResult !== true){
+                    input.setCustomValidity(validationResult);
+                    input.title = validationResult;
+                    return false;
+                } else {
+                    input.setCustomValidity('');
+                    input.title = '';
+                    return true;
+                }
+            });
+        },
+        submitForm() {
+            // Allow Vue model to catch up to user input.
+            // Submitting form will cause validation messages to display (but only if triggered by button click)
+            this.$nextTick(() => this.$refs.submitButton.click());
         },
         getFormatter(key) {
             return this.openmct.telemetry.getValueFormatter({
@@ -415,13 +467,13 @@ export default {
         },
         startDateSelected(date){
             this.formattedBounds.start = this.timeFormatter.format(date);
-            this.validateBounds('start', this.$refs.startDate);
-            this.setBoundsFromView();
+            this.validateAllBounds();
+            this.submitForm();
         },
         endDateSelected(date){
             this.formattedBounds.end = this.timeFormatter.format(date);
-            this.validateBounds('end', this.$refs.endDate);
-            this.setBoundsFromView();
+            this.validateAllBounds();
+            this.submitForm();
         },
     },
     mounted() {

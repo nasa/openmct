@@ -24,10 +24,10 @@
          v-if="selectedTimeSystem.name">
         <button class="c-button--menu c-time-system-button"
             :class="selectedTimeSystem.cssClass"
-             @click="toggleMenu($event)">
+             @click.prevent="toggle">
             <span class="c-button__label">{{selectedTimeSystem.name}}</span>
         </button>
-        <div class="c-menu" v-if="showMenu">
+        <div class="c-menu" v-if="open">
             <ul>
                 <li @click="setTimeSystemFromView(timeSystem)"
                     v-for="timeSystem in timeSystems"
@@ -41,15 +41,17 @@
 </template>
 
 <script>
+import toggleMixin from '../../ui/mixins/toggle-mixin';
+
 export default {
     inject: ['openmct', 'configuration'],
+    mixins: [toggleMixin],
     data: function () {
         let activeClock = this.openmct.time.clock();
 
         return {
             selectedTimeSystem: JSON.parse(JSON.stringify(this.openmct.time.timeSystem())),
-            timeSystems: this.getValidTimesystemsForClock(activeClock),
-            showMenu: false
+            timeSystems: this.getValidTimesystemsForClock(activeClock)
         };
     },
     methods: {
@@ -92,16 +94,6 @@ export default {
             }
 
             return this.configuration.menuOptions.filter(configMatches)[0];
-        },
-
-        toggleMenu(event) {
-            this.showMenu = !this.showMenu;
-
-            if (this.showMenu) {
-                document.addEventListener('click', this.toggleMenu, true);
-            } else {
-                document.removeEventListener('click', this.toggleMenu, true);
-            }
         },
 
         setViewFromTimeSystem(timeSystem) {

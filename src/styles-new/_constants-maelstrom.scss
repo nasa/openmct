@@ -385,6 +385,10 @@ $createBtnTextTransform: uppercase;
     box-shadow: rgba(black, 0.5) 0 0.5px 2px;
 }
 
+@mixin themedSelect($bg: $colorBtnBg, $fg: $colorBtnFg) {
+    @include cSelect(linear-gradient(lighten($bg, 5%), $bg), $fg, lighten($bg, 20%), rgba(black, 0.5) 0 0.5px 3px);
+}
+
 /**************************************************** OVERRIDES */
 .c-frame {
     &:not(.no-frame) {

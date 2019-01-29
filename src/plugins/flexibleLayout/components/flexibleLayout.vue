@@ -623,24 +623,9 @@ export default {
         }
     },
     mounted() {
-
-        let context = {
-            item: this.domainObject,
-            addContainer: this.addContainer,
-            deleteContainer: this.deleteContainer,
-            deleteFrame: this.deleteFrame,
-            type: 'flexible-layout'
-        }
-
-        this.composition = this.openmct.composition.get(this.domainObject);
-        this.composition.on('remove', this.removeChildObject);
-
-        this.unsubscribeSelection = this.openmct.selection.selectable(this.$el, context, true);
         this.unobserve = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
     },
     beforeDestroy() {
-        this.composition.off('remove', this.removeChildObject);
-        this.unsubscribeSelection();
         this.unobserve();
     }
 }

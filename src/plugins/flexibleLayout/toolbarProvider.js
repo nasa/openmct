@@ -57,14 +57,14 @@ function ToolbarProvider(openmct) {
                 property: 'configuration.rowsLayout',
                 options: [
                     {
-                        value: false,
+                        value: true,
                         icon: 'icon-columns',
-                        title: 'Columns'
+                        title: 'Columns layout'
                     },
                     {
-                        value: true,
+                        value: false,
                         icon: 'icon-rows',
-                        title: 'Rows'
+                        title: 'Rows layout'
                     }
                 ]
             };
@@ -120,14 +120,14 @@ function ToolbarProvider(openmct) {
                     property: `configuration.containers[${containerIndex}].frames[${frameIndex}].noFrame`,
                     options: [
                         {
-                            value: true,
+                            value: false,
                             icon: 'icon-frame-hide',
-                            title: "Hide frame"
+                            title: "Frame hidden"
                         },
                         {
-                            value: false,
+                            value: true,
                             icon: 'icon-frame-show',
-                            title: "Show frame"
+                            title: "Frame visible"
                         }
                     ]
                 };

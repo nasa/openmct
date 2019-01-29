@@ -171,8 +171,6 @@
                 if (itemIndex !== undefined) {
                     this.attachSelectionListener(itemIndex);
                 }
-
-                this.updateDrilledIn();
             },
             attachSelectionListener(index) {
                 let path = `configuration.items[${index}].useGrid`;
@@ -207,15 +205,6 @@
                     item.useGrid = value;
                     this.mutate(`configuration.items[${index}]`, item);
                 }.bind(this));
-            },
-            updateDrilledIn(drilledInItem) {
-                let identifier = drilledInItem && this.openmct.objects.makeKeyString(drilledInItem.identifier);
-                this.drilledIn = identifier;
-                this.layoutItems.forEach(item => {
-                    if (item.type === 'subobject-view') {
-                        item.drilledIn = this.openmct.objects.makeKeyString(item.identifier) === identifier;
-                    }
-                });
             },
             bypassSelection($event) {
                 if (this.dragInProgress) {

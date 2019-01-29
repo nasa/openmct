@@ -5,21 +5,17 @@
                 @input="search"
                 @clear="search">
             </search>
-        <div class="c-notebook__controls">
-            <div class="select c-notebook__controls__time">
-                <select v-model="showTime">
-                    <option value="0" selected="selected">Show all</option>
-                    <option value="1">Last hour</option>
-                    <option value="8">Last 8 hours</option>
-                    <option value="24">Last 24 hours</option>
-                </select>
-            </div>
-            <div class="select c-notebook__controls__sort">
-                <select v-model="sortEntries">
-                    <option value="newest" :selected="sortEntries === 'newest'">Newest first</option>
-                    <option value="oldest" :selected="sortEntries === 'oldest'">Oldest first</option>
-                </select>
-            </div>
+        <div class="c-notebook__controls ">
+            <select class="c-notebook__controls__time" v-model="showTime">
+                <option value="0" selected="selected">Show all</option>
+                <option value="1">Last hour</option>
+                <option value="8">Last 8 hours</option>
+                <option value="24">Last 24 hours</option>
+            </select>
+            <select class="c-notebook__controls__time" v-model="sortEntries">
+                <option value="newest" :selected="sortEntries === 'newest'">Newest first</option>
+                <option value="oldest" :selected="sortEntries === 'oldest'">Oldest first</option>
+            </select>
         </div>
     </div>
     <div class="c-notebook__drag-area icon-plus"
