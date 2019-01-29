@@ -123,7 +123,7 @@
 }
 
 /********************************************************** EDITING A WIDGET */
-.s-status-editing > mct-view > .w-summary-widget {
+.is-editing .w-summary-widget {
     // Classes for editor layout while editing a widget
     // This selector is ugly and brittle, but needed to prevent interface from showing when widget is in a layout
     // being edited.
