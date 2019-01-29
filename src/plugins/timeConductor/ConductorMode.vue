@@ -22,11 +22,11 @@
 <template>
     <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up">
         <button class="c-button--menu c-mode-button"
-             @click="toggleMenu($event)">
+             @click.prevent="toggle">
             <span class="c-button__label">{{selectedMode.name}}</span>
         </button>
         <div class="c-menu c-super-menu c-conductor__mode-menu"
-             v-if="showMenu">
+             v-if="open">
             <div class="c-super-menu__menu">
                 <ul>
                     <li v-for="mode in modes"
@@ -69,8 +69,11 @@
 </style>
 
 <script>
+import toggleMixin from '../../ui/mixins/toggle-mixin';
+
 export default {
     inject: ['openmct', 'configuration'],
+    mixins: [toggleMixin],
     data: function () {
         let activeClock = this.openmct.time.clock();
         if (activeClock !== undefined) {
@@ -81,8 +84,7 @@ export default {
             selectedMode: this.getModeOptionForClock(activeClock),
             selectedTimeSystem: JSON.parse(JSON.stringify(this.openmct.time.timeSystem())),
             modes: [],
-            hoveredMode: {},
-            showMenu: false
+            hoveredMode: {}
         };
     },
     methods: {
@@ -177,17 +179,7 @@ export default {
 
         setViewFromClock(clock) {
             this.selectedMode = this.getModeOptionForClock(clock);
-        },
-
-        toggleMenu(event) {
-            this.showMenu = !this.showMenu;
-
-            if (this.showMenu) {
-                document.addEventListener('click', this.toggleMenu, true);
-            } else {
-                document.removeEventListener('click', this.toggleMenu, true);
-            }
-        },
+        }
     },
     mounted: function () {
         this.loadClocksFromConfiguration();

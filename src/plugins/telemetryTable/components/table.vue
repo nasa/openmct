@@ -34,7 +34,7 @@
     <div class="c-telemetry-table__headers-w js-table__headers-w" ref="headersTable" :style="{ 'max-width': widthWithScroll}">
         <table class="c-table__headers c-telemetry-table__headers">
             <thead>
-                <tr>
+                <tr class="c-telemetry-table__headers__name">
                     <table-column-header
                         v-for="(title, key, headerIndex) in headers"
                         :key="key"
@@ -51,7 +51,7 @@
                         :isEditing="isEditing"
                         >{{title}}</table-column-header>
                 </tr>
-                <tr>
+                <tr class="c-telemetry-table__headers__filter">
                     <table-column-header
                         v-for="(title, key, headerIndex) in headers"
                         :key="key"
@@ -113,8 +113,8 @@
     .c-telemetry-table__drop-target {
         position: absolute;
         width: 2px;
-        background-color: $editColor;
-        box-shadow: rgba($editColor, 0.5) 0 0 10px;
+        background-color: $editUIColor;
+        box-shadow: rgba($editUIColor, 0.5) 0 0 10px;
         z-index: 1;
         pointer-events: none;
     }
@@ -213,6 +213,22 @@
                 padding-right: 10px;
                 padding-left: 10px;
                 white-space: nowrap;
+            }
+        }
+    }
+
+    /******************************* EDITING */
+    .is-editing {
+        .c-telemetry-table__headers__name {
+            th[draggable],
+            th[draggable] > * {
+                cursor: move;
+            }
+
+            th[draggable]:hover {
+                $b: $editFrameHovMovebarColorBg;
+                background: $b;
+                > * { background: $b; }
             }
         }
     }

@@ -25,7 +25,7 @@ class ProgressDialog extends Overlay {
         super({
             element: component.$el,
             size: 'fit',
-            notDismissable: true,
+            dismissable: false,
             ...options
         });
 

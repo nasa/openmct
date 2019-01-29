@@ -31,7 +31,7 @@
                 <browse-bar class="l-shell__main-view-browse-bar"
                             ref="browseBar">
                 </browse-bar>
-                <toolbar class="l-shell__toolbar"></toolbar>
+                <toolbar v-if="toolbar" class="l-shell__toolbar"></toolbar>
                 <object-view class="l-shell__main-container"
                              ref="browseObject">
                 </object-view>
@@ -184,7 +184,6 @@
         }
 
         /******************************* MAIN AREA */
-
         &__main-container {
             // Wrapper for main views
             flex: 1 1 auto !important;
@@ -229,6 +228,17 @@
 
             &__pane-inspector {
                 width: 200px;
+            }
+        }
+    }
+
+    .is-editing {
+        .l-shell__main-container {
+            box-shadow: $colorBodyBg 0 0 0 1px, $editUIAreaShdw;
+
+            &[s-selected] {
+                // Provide a clearer selection context articulation for the main edit area
+                box-shadow: $colorBodyBg 0 0 0 1px, $editUIAreaShdwSelected;
             }
         }
     }
@@ -300,6 +310,20 @@
                 fullScreen: false,
                 conductorComponent: {},
                 isEditing: false
+            }
+        },
+        computed: {
+            toolbar() {
+                let selection = this.openmct.selection.get();
+                let structure = undefined;
+
+                if (!selection[0]) {
+                    structure = [];
+                } else {
+                    structure = this.openmct.toolbars.get(selection);
+                }
+
+                return this.isEditing && structure.length > 0;
             }
         },
         methods: {

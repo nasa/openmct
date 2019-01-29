@@ -61,7 +61,8 @@ export default function () {
                         return {
                             item: domainObject,
                             addElement: component && component.$refs.displayLayout.addElement,
-                            removeItem: component && component.$refs.displayLayout.removeItem
+                            removeItem: component && component.$refs.displayLayout.removeItem,
+                            orderItem: component && component.$refs.displayLayout.orderItem
                         }
                     },
                     destroy() {

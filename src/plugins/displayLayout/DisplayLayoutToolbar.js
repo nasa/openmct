@@ -32,7 +32,7 @@ define([], function () {
                 // is inside a layout, or the main layout is selected.
                 return (openmct.editor.isEditing() && selection &&
                     ((selection[1] && selection[1].context.item && selection[1].context.item.type === 'layout') ||
-                    (selection[0].context.item && selection[0].context.item.type === 'layout')));
+                        (selection[0].context.item && selection[0].context.item.type === 'layout')));
             },
             toolbar: function (selection) {
                 const DIALOG_FORM = {
@@ -73,10 +73,13 @@ define([], function () {
                     return openmct.$injector.get('dialogService').getUserInput(form, {});
                 }
 
+                function getPath() {
+                    return `configuration.items[${selection[0].context.index}]`;
+                }
+
                 let selectedParent = selection[1] && selection[1].context.item,
                     selectedObject = selection[0].context.item,
                     layoutItem = selection[0].context.layoutItem,
-                    layoutItemIndex = selection[0].context.index,
                     toolbar = [];
 
                 if (selectedObject && selectedObject.type === 'layout') {
@@ -121,7 +124,6 @@ define([], function () {
                     return toolbar;
                 }
 
-                let path = `configuration.items[${layoutItemIndex}]`;
                 let separator = {
                     control: "separator"
                 };
@@ -140,7 +142,7 @@ define([], function () {
                                     label: 'Ok',
                                     emphasis: 'true',
                                     callback: function () {
-                                        removeItem(layoutItem, layoutItemIndex);
+                                        removeItem(layoutItem, selection[0].context.index);
                                         prompt.dismiss();
                                     }
                                 },
@@ -154,22 +156,95 @@ define([], function () {
                         });
                     }
                 };
+                let stackOrder = {
+                    control: "menu",
+                    domainObject: selectedParent,
+                    icon: "icon-layers",
+                    title: "Move the selected object above or below other objects",
+                    options: [
+                        {
+                            name: "Move to Top",
+                            value: "top",
+                            class: "icon-arrow-double-up"
+                        },
+                        {
+                            name: "Move Up",
+                            value: "up",
+                            class: "icon-arrow-up"
+                        },
+                        {
+                            name: "Move Down",
+                            value: "down",
+                            class: "icon-arrow-down"
+                        },
+                        {
+                            name: "Move to Bottom",
+                            value: "bottom",
+                            class: "icon-arrow-double-down"
+                        }
+                    ],
+                    method: function (option) {
+                        selection[1].context.orderItem(option.value, selection[0].context.index);
+                    }
+                };
                 let useGrid = {
                     control: "toggle-button",
                     domainObject: selectedParent,
-                    property: path + ".useGrid",
+                    property: function () {
+                        return getPath() + ".useGrid";
+                    },
                     options: [
                         {
                             value: false,
-                            icon: "icon-grid-snap-no",
-                            title: "Do not snap to grid"
+                            icon: "icon-grid-snap-to",
+                            title: "Grid snapping enabled"
                         },
                         {
                             value: true,
-                            icon: "icon-grid-snap-to",
-                            title: "Snap to grid"
+                            icon: "icon-grid-snap-no",
+                            title: "Grid snapping disabled"
                         }
                     ]
+                };
+                let x = {
+                    control: "input",
+                    type: "number",
+                    domainObject: selectedParent,
+                    property: function () {
+                        return getPath() + ".x";
+                    },
+                    label: "X:",
+                    title: "X position"
+                },
+                y = {
+                    control: "input",
+                    type: "number",
+                    domainObject: selectedParent,
+                    property: function () {
+                        return getPath() + ".y";
+                    },
+                    label: "Y:",
+                    title: "Y position",
+                },
+                width = {
+                    control: 'input',
+                    type: 'number',
+                    domainObject: selectedParent,
+                    property: function () {
+                        return getPath() + ".width";
+                    },
+                    label: 'W:',
+                    title: 'Resize object width'
+                },
+                height = {
+                    control: 'input',
+                    type: 'number',
+                    domainObject: selectedParent,
+                    property: function () {
+                        return getPath() + ".height";
+                    },
+                    label: 'H:',
+                    title: 'Resize object height'
                 };
 
                 if (layoutItem.type === 'subobject-view') {
@@ -180,125 +255,113 @@ define([], function () {
                     toolbar.push({
                         control: "toggle-button",
                         domainObject: selectedParent,
-                        property: path + ".hasFrame",
+                        property: function () {
+                            return getPath() + ".hasFrame";
+                        },
                         options: [
                             {
                                 value: false,
-                                icon: 'icon-frame-hide',
-                                title: "Hide frame"
+                                icon: 'icon-frame-show',
+                                title: "Frame visible"
                             },
                             {
                                 value: true,
-                                icon: 'icon-frame-show',
-                                title: "Show frame"
+                                icon: 'icon-frame-hide',
+                                title: "Frame hidden"
                             }
                         ]
                     });
+                    toolbar.push(separator);
+                    toolbar.push(stackOrder);
+                    toolbar.push(x);
+                    toolbar.push(y);
+                    toolbar.push(width);
+                    toolbar.push(height);
                     toolbar.push(useGrid);
                     toolbar.push(separator);
                     toolbar.push(remove);
                 } else {
-                    const TEXT_SIZE = [9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96];
+                    const TEXT_SIZE = [8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96, 128];
                     let fill = {
-                            control: "color-picker",
-                            domainObject: selectedParent,
-                            property: path + ".fill",
-                            icon: "icon-paint-bucket",
-                            title: "Set fill color"
+                        control: "color-picker",
+                        domainObject: selectedParent,
+                        property: function () {
+                            return getPath() + ".fill";
                         },
-                        stroke = {
-                            control: "color-picker",
-                            domainObject: selectedParent,
-                            property: path + ".stroke",
-                            icon: "icon-line-horz",
-                            title: "Set border color"
+                        icon: "icon-paint-bucket",
+                        title: "Set fill color"
+                    },
+                    stroke = {
+                        control: "color-picker",
+                        domainObject: selectedParent,
+                        property: function () {
+                            return getPath() + ".stroke";
                         },
-                        color = {
-                            control: "color-picker",
-                            domainObject: selectedParent,
-                            property: path + ".color",
-                            icon: "icon-font",
-                            mandatory: true,
-                            title: "Set text color",
-                            preventNone: true
+                        icon: "icon-line-horz",
+                        title: "Set border color"
+                    },
+                    color = {
+                        control: "color-picker",
+                        domainObject: selectedParent,
+                        property: function () {
+                            return getPath() + ".color";
                         },
-                        size = {
-                            control: "select-menu",
-                            domainObject: selectedParent,
-                            property: path + ".size",
-                            title: "Set text size",
-                            options: TEXT_SIZE.map(size => {
-                                return {
-                                    value: size + "px"
-                                };
-                            })
+                        icon: "icon-font",
+                        mandatory: true,
+                        title: "Set text color",
+                        preventNone: true
+                    },
+                    size = {
+                        control: "select-menu",
+                        domainObject: selectedParent,
+                        property: function () {
+                            return getPath() + ".size";
                         },
-                        x = {
-                            control: "input",
-                            type: "number",
-                            domainObject: selectedParent,
-                            property: path + ".x",
-                            label: "X:",
-                            title: "X position"
-                        },
-                        y = {
-                            control: "input",
-                            type: "number",
-                            domainObject: selectedParent,
-                            property: path + ".y",
-                            label: "Y:",
-                            title: "Y position",
-                        },
-                        width = {
-                            control: 'input',
-                            type: 'number',
-                            domainObject: selectedParent,
-                            property: path + ".width",
-                            label: 'W:',
-                            title: 'Resize object width'
-                        },
-                        height = {
-                            control: 'input',
-                            type: 'number',
-                            domainObject: selectedParent,
-                            property: path + ".height",
-                            label: 'H:',
-                            title: 'Resize object height'
-                        };
+                        title: "Set text size",
+                        options: TEXT_SIZE.map(size => {
+                            return {
+                                value: size + "px"
+                            };
+                        })
+                    };
 
                     if (layoutItem.type === 'telemetry-view') {
                         let displayMode = {
-                                control: "select-menu",
-                                domainObject: selectedParent,
-                                property: path + ".displayMode",
-                                title: "Set display mode",
-                                options: [
-                                    {
-                                        name: 'Label + Value',
-                                        value: 'all'
-                                    },
-                                    {
-                                        name: "Label only",
-                                        value: "label"
-                                    },
-                                    {
-                                        name: "Value only",
-                                        value: "value"
-                                    }
-                                ]
+                            control: "select-menu",
+                            domainObject: selectedParent,
+                            property: function () {
+                                return getPath() + ".displayMode";
                             },
-                            value = {
-                                control: "select-menu",
-                                domainObject: selectedParent,
-                                property: path + ".value",
-                                title: "Set value",
-                                options: openmct.telemetry.getMetadata(selectedObject).values().map(value => {
-                                    return {
-                                        name: value.name,
-                                        value: value.key
-                                    }
-                                })
-                            };
+                            title: "Set display mode",
+                            options: [
+                                {
+                                    name: 'Label + Value',
+                                    value: 'all'
+                                },
+                                {
+                                    name: "Label only",
+                                    value: "label"
+                                },
+                                {
+                                    name: "Value only",
+                                    value: "value"
+                                }
+                            ]
+                        },
+                        value = {
+                            control: "select-menu",
+                            domainObject: selectedParent,
+                            property: function () {
+                                return getPath() + ".value";
+                            },
+                            title: "Set value",
+                            options: openmct.telemetry.getMetadata(selectedObject).values().map(value => {
+                                return {
+                                    name: value.name,
+                                    value: value.key
+                                }
+                            })
+                        };
                         toolbar = [
                             displayMode,
                             separator,
@@ -310,20 +373,22 @@ define([], function () {
                             separator,
                             size,
                             separator,
+                            stackOrder,
                             x,
                             y,
                             height,
                             width,
-                            separator,
                             useGrid,
                             separator,
                             remove
                         ];
-                    } else if (layoutItem.type === 'text-view' ) {
+                    } else if (layoutItem.type === 'text-view') {
                         let text = {
                             control: "button",
                             domainObject: selectedParent,
-                            property: path,
+                            property: function () {
+                                return getPath();
+                            },
                             icon: "icon-gear",
                             title: "Edit text properties",
                             dialog: DIALOG_FORM['text']
@@ -331,17 +396,18 @@ define([], function () {
                         toolbar = [
                             fill,
                             stroke,
-                            color,
                             separator,
+                            color,
                             size,
                             separator,
+                            stackOrder,
                             x,
                             y,
                             height,
                             width,
+                            useGrid,
                             separator,
                             text,
-                            useGrid,
                             separator,
                             remove
                         ];
@@ -350,11 +416,11 @@ define([], function () {
                             fill,
                             stroke,
                             separator,
+                            stackOrder,
                             x,
                             y,
                             height,
                             width,
-                            separator,
                             useGrid,
                             separator,
                             remove
@@ -363,7 +429,9 @@ define([], function () {
                         let url = {
                             control: "button",
                             domainObject: selectedParent,
-                            property: path,
+                            property: function () {
+                                return getPath();
+                            },
                             icon: "icon-image",
                             title: "Edit image properties",
                             dialog: DIALOG_FORM['image']
@@ -371,13 +439,14 @@ define([], function () {
                         toolbar = [
                             stroke,
                             separator,
+                            stackOrder,
                             x,
                             y,
                             height,
                             width,
+                            useGrid,
                             separator,
                             url,
-                            useGrid,
                             separator,
                             remove
                         ];
@@ -386,7 +455,9 @@ define([], function () {
                             control: "input",
                             type: "number",
                             domainObject: selectedParent,
-                            property: path + ".x2",
+                            property: function () {
+                                return getPath() + ".x2";
+                            },
                             label: "X2:",
                             title: "X2 position"
                         },
@@ -394,18 +465,20 @@ define([], function () {
                             control: "input",
                             type: "number",
                             domainObject: selectedParent,
-                            property: path + ".y2",
+                            property: function () {
+                                return getPath() + ".y2";
+                            },
                             label: "Y2:",
                             title: "Y2 position",
                         };
                         toolbar = [
                             stroke,
                             separator,
+                            stackOrder,
                             x,
                             y,
                             x2,
                             y2,
-                            separator,
                             useGrid,
                             separator,
                             remove

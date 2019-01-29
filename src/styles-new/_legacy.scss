@@ -80,7 +80,7 @@ mct-plot {
         // Holds the plot area and the X-axis only
         position: absolute;
         top: nth($plotDisplayArea, 1);
-        right:0; //nth($plotDisplayArea, 2);
+        right:0;
         bottom: 0;
         left: nth($plotDisplayArea, 4);
 
@@ -612,3 +612,16 @@ mct-plot {
     min-height: 200px;
 }
 
+/******************************************************************* EDITING */
+.is-editing {
+    // Fixed position
+    .l-fixed-position {
+        &__grid-holder {
+            display: block;
+        }
+
+        .c-frame-edit {
+            display: block;
+        }
+    }
+}

@@ -63,6 +63,15 @@ define([
                     onEditModeChange(isEditing) {
                         component.isEditing = isEditing;
                     },
+                    getSelectionContext: function () {
+                        return {
+                            item: domainObject,
+                            addContainer: component.$refs.flexibleLayout.addContainer,
+                            deleteContainer: component.$refs.flexibleLayout.deleteContainer,
+                            deleteFrame: component.$refs.flexibleLayout.deleteFrame,
+                            type: 'flexible-layout'
+                        };
+                    },
                     destroy: function (element) {
                         component.$destroy();
                         component = undefined;

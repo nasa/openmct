@@ -26,7 +26,7 @@
             'flex-basis': `${frame.size}%`
         }">
 
-        <div class="c-frame c-fl-frame__drag-wrapper is-selectable is-moveable"
+        <div class="c-frame c-fl-frame__drag-wrapper is-selectable u-inspectable is-moveable"
              draggable="true"
              @dragstart="initDrag"
              ref="frame">

@@ -228,6 +228,17 @@ input[type=number]::-webkit-outer-spin-button {
     }
 }
 
+// SELECTS
+select {
+    @include appearanceNone();
+    @include themedSelect();
+    background-repeat: no-repeat, no-repeat;
+    background-position: right .4em top 80%, 0 0;
+    border: none;
+    border-radius: $controlCr;
+    padding: 1px 20px 1px $interiorMargin;
+}
+
 /******************************************************** HYPERLINKS AND HYPERLINK BUTTONS */
 .c-hyperlink {
     &--link {
@@ -411,7 +422,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 @mixin cToolbarSeparator() {
-    $m: $interiorMargin;
+    $m: 1px;
     $b: 1px;
     display: block;
     width: $m + $b; // Allow for border
@@ -421,20 +432,34 @@ input[type=number]::-webkit-outer-spin-button {
 
 .c-toolbar {
     $p: $interiorMargin;
-    border-top: 1px solid $colorInteriorBorder;
+    background: $editUIBaseColor;
+    border-radius: $basicCr;
     height: $p + 24px; // Need to standardize the height
-    padding-top: $p;
+    padding: $p;
+
+    > * + * {
+        margin-left: 2px;
+    }
 
     &__separator {
         @include cToolbarSeparator();
+    }
+
+    .c-click-icon,
+    .c-labeled-input {
+        color: $editUIBaseColorFg;
     }
 
     .c-click-icon {
         @include cControl();
         $pLR: $interiorMargin - 1;
         $pTB: 2px;
-        color: $colorBodyFg;
         padding: $pTB $pLR;
+
+        &:hover {
+            background: $editUIBaseColorHov !important;
+            color: $editUIBaseColorFg !important;
+        }
 
         &--swatched {
             padding-bottom: floor($pTB / 2);

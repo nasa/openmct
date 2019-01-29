@@ -4,9 +4,8 @@
         @click="navigate">
         <td class="c-list-item__name">
             <a :href="objectLink" ref="objectLink">
-                <div class="c-list-item__type-icon"
-                     :class="item.type.cssClass"></div>
-                {{item.model.name}}
+                <div class="c-list-item__type-icon" :class="item.type.cssClass"></div>
+                <div class="c-list-item__name-value">{{item.model.name}}</div>
             </a>
         </td>
         <td class="c-list-item__type">{{ item.type.name }}</td>
@@ -20,15 +19,22 @@
 
     /******************************* LIST ITEM */
     .c-list-item {
-        &__name {
-            @include ellipsize();
+        &__name a {
+            display: flex;
+
+            > * + * { margin-left: $interiorMarginSm; }
         }
 
         &__type-icon {
+            // Have to do it this way instead of using icon-* class, due to need to apply alias to the icon
             color: $colorKey;
             display: inline-block;
             width: 1em;
             margin-right:$interiorMarginSm;
+        }
+
+        &__name-value {
+            @include ellipsize();
         }
 
         &.is-alias {
@@ -48,7 +54,6 @@
             }
         }
     }
-
 </style>
 
 <script>

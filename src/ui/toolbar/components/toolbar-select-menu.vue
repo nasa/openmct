@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import toggleMixin from './toggle-mixin';
+import toggleMixin from '../../mixins/toggle-mixin';
 
 export default {
     mixins: [toggleMixin],

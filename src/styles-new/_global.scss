@@ -191,8 +191,8 @@ body.desktop .has-local-controls {
 .c-grid {
     pointer-events: none;
 
-    &__x  { @include bgTicks($editCanvasColorGrid, 'x'); }
-    &__y  { @include bgTicks($editCanvasColorGrid, 'y'); }
+    &__x  { @include bgTicks($editUIGridColorFg, 'x'); }
+    &__y  { @include bgTicks($editUIGridColorFg, 'y'); }
 }
 
 /*************************** SELECTION */
@@ -200,32 +200,14 @@ body.desktop .has-local-controls {
     &:hover {
         box-shadow: $browseSelectableShdwHov;
     }
+
+    &[s-selected] {
+        border: $browseSelectedBorder;
+    }
 }
 
 /**************************** EDITING */
 .is-editing {
-    *:not(.is-drilled-in).c-frame {
-        border: $editSelectableBorder;
-
-        &:not([s-selected]) {
-            &:hover {
-                border: $editSelectableBorderHov;
-            }
-        }
-
-        &[s-selected] {
-            box-shadow: $editSelectableShdwSelected;
-
-            > .c-frame-edit {
-                display: block; // Show the editing rect and handles
-            }
-        }
-    }
-
-    *.is-drilled-in {
-        border: $editBorderDrilledIn;
-    }
-
     .is-moveable {
         cursor: move;
     }
@@ -234,115 +216,7 @@ body.desktop .has-local-controls {
         // Applied in markup to objects that provide links. Disable while editing.
         pointer-events: none;
     }
-
-    .c-frame-edit {
-        // In Layouts, this is the editing rect and handles
-        // In Fixed Position, this is a wrapper element
-        $z: 10;
-
-        @include abs();
-        display: none;
-
-        &__move {
-            @include abs();
-            box-shadow: $editMoveableSelectedShdw;
-            cursor: move;
-            z-index: $z;
-        }
-
-        &__handle {
-            $d: 8px;
-            $o: floor($d * -0.5);
-            background: rgba($editColor, 0.3);
-            border: 1px solid $editColor;
-            position: absolute;
-            width: $d; height: $d;
-            top: auto; right: auto; bottom: auto; left: auto;
-            z-index: $z + 1;
-
-            &:before {
-                // Extended hit area
-                $m: -5px;
-                content: '';
-                display: block;
-                position: absolute;
-                top: $m; right: $m; bottom: $m; left: $m;
-                z-index: -1;
-            }
-
-            &:hover {
-                background: $editColor;
-            }
-
-            &--nwse {
-                cursor: nwse-resize;
-            }
-
-            &--nw {
-                cursor: nw-resize;
-                left: $o; top: $o;
-            }
-
-            &--ne {
-                cursor: ne-resize;
-                right: $o; top: $o;
-            }
-
-            &--se {
-                cursor: se-resize;
-                right: $o; bottom: $o;
-            }
-
-            &--sw {
-                cursor: sw-resize;
-                left: $o; bottom: $o;
-            }
-        }
-    }
-
-    // TODO: move this into DisplayLayout and Fixed Position vue files respectively
-    .l-shell__main-container > .l-layout,
-    .l-shell__main-container > .c-object-view .l-fixed-position {
-        // Target the top-most layout container and color its background
-        background: $editCanvasColorBg;
-    }
-
-    .l-shell__main-container {
-        box-shadow: $colorBodyBg 0 0 0 1px, rgba($editColor, 0.7) 0 0 0 2px;
-        &[s-selected] {
-            // Provide a clearer selection context articulation
-            box-shadow: $colorBodyBg 0 0 0 1px, $editColor 0 0 0px 3px;
-        }
-    }
-
-    // Layouts
-    [s-selected],
-    [s-selected-parent] {
-        .l-layout {
-            // Show the layout grid for the top-most child of the current selection,
-            // and hide the grid for deeper nested levels.
-            [class*="__grid-holder"] {
-                display: block;
-            }
-
-            .l-layout [class*="__grid-holder"] {
-                display: none;
-            }
-        }
-    }
-
-    // Fixed position
-    .l-fixed-position {
-        &__grid-holder {
-            display: block;
-        }
-
-        .c-frame-edit {
-            display: block;
-        }
-    }
 }
-
 
 /************************** LEGACY */
 
