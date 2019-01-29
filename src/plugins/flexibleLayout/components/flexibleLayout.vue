@@ -22,6 +22,11 @@
 
 <template>
     <div class="c-fl">
+        <div 
+            id="js-fl-drag-ghost"
+            class="c-fl__drag-ghost">
+        </div>
+
         <div class="c-fl__empty"
              v-if="areAllContainersEmpty()">
             <span class="c-fl__empty-message">This Flexible Layout is currently empty</span>
@@ -50,7 +55,7 @@
                     :container="container"
                     :rowsLayout="rowsLayout"
                     @move-frame="moveFrame"
-                    @create-frame="createFrame"
+                    @new-frame="setFrameLocation"
                     @persist="persist">
                 </container-component>
 
@@ -135,6 +140,23 @@
             > * {
                 font-style: italic;
                 opacity: 0.5;
+            }
+        }
+
+        &__drag-ghost{
+            background: $colorItemTreeHoverBg;
+            color: $colorItemTreeHoverFg;
+            border-radius: $basicCr;
+            display: flex;
+            align-items: center;
+            padding: $interiorMarginLg $interiorMarginLg * 2;
+            position: absolute;
+            top: -10000px;
+            z-index: 2;
+
+            &:before {
+                color: $colorKey;
+                margin-right: $interiorMarginSm;
             }
         }
     }
@@ -451,7 +473,8 @@ export default {
     },
     data() {
         return {
-            domainObject: this.layoutObject
+            domainObject: this.layoutObject,
+            newFrameLocation: []
         }
     },
     computed: {
@@ -497,12 +520,22 @@ export default {
             sizeItems(toContainer.frames, frame);
             this.persist();
         },
-        createFrame(containerIndex, insertFrameIndex, objectIdentifier) {
-            let frame = new Frame(objectIdentifier);
-            let container = this.containers[containerIndex];
-            container.frames.splice(insertFrameIndex + 1, 0, frame);
-            sizeItems(container.frames, frame);
-            this.persist();
+        setFrameLocation(containerIndex, insertFrameIndex) {
+            this.newFrameLocation = [containerIndex, insertFrameIndex];
+        },
+        addFrame(domainObject) {
+            if (this.newFrameLocation.length) {
+                let containerIndex = this.newFrameLocation[0],
+                    frameIndex = this.newFrameLocation[1],
+                    frame = new Frame(domainObject.identifier),
+                    container = this.containers[containerIndex];
+
+                container.frames.splice(frameIndex + 1, 0, frame);
+                sizeItems(container.frames, frame);
+
+                this.newFrameLocation = [];
+                this.persist(containerIndex);
+            }
         },
         deleteFrame(frameId) {
             let container = this.containers
@@ -584,13 +617,33 @@ export default {
             } else {
                 this.containers.splice(toIndex, 0, container);
             }
+            this.persist(index);
+        },
+        removeChildObject(identifier) {
+            let removeIdentifier = this.openmct.objects.makeKeyString(identifier);
+
+            this.containers.forEach(container => {
+                container.frames = container.frames.filter(frame => {
+                    let frameIdentifier = this.openmct.objects.makeKeyString(frame.domainObjectIdentifier);
+                    
+                    return removeIdentifier !== frameIdentifier;
+                });
+            });
+
             this.persist();
         }
     },
     mounted() {
+        this.composition = this.openmct.composition.get(this.domainObject);
+        this.composition.on('remove', this.removeChildObject);
+        this.composition.on('add', this.addFrame);
+
         this.unobserve = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
     },
     beforeDestroy() {
+        this.composition.off('remove', this.removeChildObject);
+        this.composition.off('add', this.addFrame);
+
         this.unobserve();
     }
 }

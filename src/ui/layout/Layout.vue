@@ -338,7 +338,7 @@
                 }
             },
             openInNewTab(event) {
-                event.target.href = window.location.href;
+                window.open(window.location.href);
             }
         }
     }

@@ -8,7 +8,9 @@
                  :class="type.cssClass">
                 <span
                     class="l-browse-bar__object-name c-input-inline"
-                    v-on:blur="updateName"
+                    @blur="updateName"
+                    @keydown.enter.prevent
+                    @keyup.enter.prevent="updateNameOnEnterKeyPress"
                     contenteditable>
                     {{ domainObject.name }}
                 </span>
@@ -60,17 +62,20 @@ const PLACEHOLDER_OBJECT = {};
     export default {
         inject: ['openmct'],
         methods: {
-            toggleViewMenu: function (event) {
+            toggleViewMenu(event) {
                 event.stopPropagation();
                 this.showViewMenu = !this.showViewMenu;
             },
-            updateName: function (event) {
+            updateName(event) {
                 // TODO: handle isssues with contenteditable text escaping.
                 if (event.target.innerText !== this.domainObject.name) {
                     this.openmct.objects.mutate(this.domainObject, 'name', event.target.innerText);
                 }
             },
-            setView: function (view) {
+            updateNameOnEnterKeyPress (event) {
+                event.target.blur();
+            },
+            setView(view) {
                 this.viewKey = view.key;
                 this.openmct.router.updateParams({
                     view: this.viewKey

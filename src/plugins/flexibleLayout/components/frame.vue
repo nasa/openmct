@@ -73,7 +73,6 @@ export default {
     },
     methods: {
         setDomainObject(object) {
-            console.log('setting object!');
             this.domainObject = object;
             this.objectPath = [object];
             this.setSelection();
@@ -89,6 +88,18 @@ export default {
             this.unsubscribeSelection = this.openmct.selection.selectable(this.$refs.frame, context, false);
         },
         initDrag(event) {
+            let type = this.openmct.types.get(this.domainObject.type),
+                iconClass = type.definition ? type.definition.cssClass : 'icon-object-unknown';
+ 
+            if (this.dragGhost) {
+                let originalClassName = this.dragGhost.classList[0];
+                this.dragGhost.className = '';
+                this.dragGhost.classList.add(originalClassName, iconClass);
+
+                this.dragGhost.innerHTML = `<span>${this.domainObject.name}</span>`;
+                event.dataTransfer.setDragImage(this.dragGhost, 0, 0);
+            }
+
             event.dataTransfer.setData('frameid', this.frame.id);
             event.dataTransfer.setData('containerIndex', this.containerIndex);
         }
@@ -99,6 +110,8 @@ export default {
                 this.setDomainObject(object);
             });
         }
+
+        this.dragGhost = document.getElementById('js-fl-drag-ghost');
     },
     beforeDestroy() {
         if (this.unsubscribeSelection) {
