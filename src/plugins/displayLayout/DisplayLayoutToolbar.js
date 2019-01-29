@@ -80,14 +80,9 @@ define([], function () {
                 let selectedParent = selection[1] && selection[1].context.item,
                     selectedObject = selection[0].context.item,
                     layoutItem = selection[0].context.layoutItem,
-                    toolbar = [],
-                    isFlexibleLayout = undefined;
+                    toolbar = [];
 
-                if (selectedParent) {
-                    isFlexibleLayout = selectedParent.type === 'flexible-layout';
-                }
-
-                if (selectedObject && selectedObject.type === 'layout' && !isFlexibleLayout) {
+                if (selectedObject && selectedObject.type === 'layout') {
                     toolbar.push({
                         control: "menu",
                         domainObject: selectedObject,
