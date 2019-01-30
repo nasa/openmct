@@ -1,5 +1,9 @@
 <template>
     <div class="c-tree__wrapper">
+        <div
+            v-if="decoratedTreeItems.length === 0">
+            No results found
+        </div>
         <ul class="c-tree">
             <tree-item v-for="treeItem in decoratedTreeItems"
                        :key="treeItem.id"
