@@ -35,7 +35,7 @@
             class="c-fl-frame__drop-hint"
             :index="-1"
             :allow-drop="allowDrop"
-            @object-drop-to="moveOrCreateFrame">
+            @object-drop-to="moveOrCreateNewFrame">
         </drop-hint>
 
         <div class="c-fl-container__frames-holder">
@@ -55,7 +55,7 @@
                     :key="i"
                     :index="i"
                     :allowDrop="allowDrop"
-                    @object-drop-to="moveOrCreateFrame">
+                    @object-drop-to="moveOrCreateNewFrame">
                 </drop-hint>
 
                 <resize-handle
@@ -123,15 +123,12 @@ export default {
                 return true;
             }
         },
-        moveOrCreateFrame(insertIndex, event) {
+        moveOrCreateNewFrame(insertIndex, event) {
             if (event.dataTransfer.types.includes('openmct/domain-object-path')) {
-                // create frame using domain object
-                let domainObject = JSON.parse(event.dataTransfer.getData('openmct/domain-object-path'))[0];
                 this.$emit(
-                    'create-frame',
+                    'new-frame',
                     this.index,
-                    insertIndex,
-                    domainObject.identifier
+                    insertIndex
                 );
                 return;
             };
