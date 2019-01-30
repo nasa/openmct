@@ -23,9 +23,15 @@
                   label="Browse"
                   collapsable>
                 <div class="l-shell__search">
-                    <search class="c-search--major" ref="shell-search"></search>
+                    <search class="c-search--major" ref="shell-search"
+                        :value="searchValue"
+                        @input="searchTree"
+                        @clear="searchTree">
+                    </search>
                 </div>
-                <mct-tree class="l-shell__tree"></mct-tree>
+                <mct-tree class="l-shell__tree"
+                    :treeItems="treeItems">
+                </mct-tree>
             </pane>
             <pane class="l-shell__pane-main">
                 <browse-bar class="l-shell__main-view-browse-bar"
@@ -304,12 +310,21 @@
             this.openmct.editor.on('isEditing', (isEditing)=>{
                 this.isEditing = isEditing;
             });
+
+            this.openmct.objects.get('ROOT')
+                .then(root => this.openmct.composition.get(root).load())
+                .then(children => {this.allChildren = children});
+
+            this.searchService = this.openmct.$injector.get('searchService');
         },
         data: function () {
             return {
                 fullScreen: false,
                 conductorComponent: {},
-                isEditing: false
+                isEditing: false,
+                searchValue:'',
+                allChildren: [],
+                filteredChildren: []
             }
         },
         computed: {
@@ -324,6 +339,13 @@
                 }
 
                 return this.isEditing && structure.length > 0;
+            },
+            treeItems() {
+                if (this.searchValue === '') {
+                    return this.allChildren;
+                } else {
+                    return this.filteredChildren;
+                }
             }
         },
         methods: {
@@ -339,6 +361,22 @@
             },
             openInNewTab(event) {
                 window.open(window.location.href);
+            },
+            treeItemDecorator(domainObject) {
+                return {
+                    id: this.openmct.objects.makeKeyString(domainObject.identifier),
+                    object: domainObject.identifier,
+                    objectPath: [domainObject]
+                }
+            },
+            searchTree(value) {
+                this.searchValue = value;
+                
+                if (this.searchValue !== '') {
+                    this.searchService.query(value).then(children => {
+                        this.filteredChildren = children.hits.map(child => child.object.useCapability('adapter'));
+                    });
+                }
             }
         }
     }

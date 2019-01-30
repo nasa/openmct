@@ -1,9 +1,9 @@
 <template>
     <div class="c-tree__wrapper">
         <ul class="c-tree">
-            <tree-item v-for="child in children"
-                       :key="child.id"
-                       :node="child">
+            <tree-item v-for="treeItem in decoratedTreeItems"
+                       :key="treeItem.id"
+                       :node="treeItem">
             </tree-item>
         </ul>
     </div>
@@ -127,22 +127,18 @@
     import treeItem from './tree-item.vue'
 
     export default {
-        data() {
-            return {
-                children: []
-            };
-        },
         inject: ['openmct'],
-        mounted: function () {
-            this.openmct.objects.get('ROOT')
-                .then(root => this.openmct.composition.get(root).load())
-                .then(children => this.children = children.map((c) => {
+        props: ['treeItems'],
+        computed: {
+            decoratedTreeItems() {
+                return this.treeItems.map(c => {
                     return {
                         id: this.openmct.objects.makeKeyString(c.identifier),
                         object: c,
                         objectPath: [c]
                     };
-                }))
+                })
+            }
         },
         name: 'mct-tree',
         components: {
