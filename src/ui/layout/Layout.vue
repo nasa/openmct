@@ -362,13 +362,6 @@
             openInNewTab(event) {
                 window.open(window.location.href);
             },
-            treeItemDecorator(domainObject) {
-                return {
-                    id: this.openmct.objects.makeKeyString(domainObject.identifier),
-                    object: domainObject.identifier,
-                    objectPath: [domainObject]
-                }
-            },
             searchTree(value) {
                 this.searchValue = value;
                 
