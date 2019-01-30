@@ -19,31 +19,18 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-<template>
-    <div class="l-shell__app-logo" :class="aboutLogo" @click="launchAbout"></div>
-</template>
-<style lang="scss">
-.l-shell__app-logo {
-    width: 50px;
-    height: 20px;
-    background-color: white;
-}
-</style>
-<script>
-export default {
-    inject: ['openmct'],
-    data() {
-        return {
-            aboutLogo: this.openmct.about().buttonCssClass
-        }
-    },
-    methods: {
-        launchAbout(){
-            this.openmct.overlays.overlay({
-                element: this.openmct.about().content,
-                size: 'large'
-            });
-        }
+
+let aboutOptions;
+/**
+ * openmct.about({
+ *  buttonCssClass: '',
+ *  content: {}});
+ *
+ * @param {*} options 
+ */
+export default function About(options) {
+    if (arguments.length === 1) {
+        aboutOptions = options;
     }
+    return aboutOptions;
 }
-</script>

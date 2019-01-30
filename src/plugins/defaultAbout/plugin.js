@@ -19,31 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-<template>
-    <div class="l-shell__app-logo" :class="aboutLogo" @click="launchAbout"></div>
-</template>
-<style lang="scss">
-.l-shell__app-logo {
-    width: 50px;
-    height: 20px;
-    background-color: white;
-}
-</style>
-<script>
-export default {
-    inject: ['openmct'],
-    data() {
-        return {
-            aboutLogo: this.openmct.about().buttonCssClass
-        }
-    },
-    methods: {
-        launchAbout(){
-            this.openmct.overlays.overlay({
-                element: this.openmct.about().content,
-                size: 'large'
-            });
-        }
+import DefaultAboutDialog from './DefaultAboutDialog.vue';
+import Vue from 'vue';
+
+export default function () {
+    return function install(openmct) {
+        let vm = new Vue(DefaultAboutDialog).$mount();
+        vm.buildInfo = JSON.parse(JSON.stringify(openmct.buildInfo));
+
+        openmct.about({
+            buttonCssClass: 'l-about-button',
+            content: vm.$el
+        });
     }
 }
-</script>
