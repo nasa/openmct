@@ -44,8 +44,7 @@ define([
     '../platform/core/src/objects/DomainObjectImpl',
     '../platform/core/src/capabilities/ContextualDomainObject',
     './ui/preview/plugin',
-    './api/About',
-    './plugins/defaultAbout/plugin',
+    './api/Branding',
     './plugins/licenses/plugin',
     'vue'
 ], function (
@@ -72,8 +71,7 @@ define([
     DomainObjectImpl,
     ContextualDomainObject,
     PreviewPlugin,
-    AboutAPI,
-    DefaultAboutPlugin,
+    BrandingAPI,
     LicensesPlugin,
     Vue
 ) {
@@ -243,7 +241,7 @@ define([
 
         this.router = new ApplicationRouter();
 
-        this.about = AboutAPI.default;
+        this.branding = BrandingAPI.default;
 
         this.legacyRegistry = defaultRegistry;
         this.install(this.plugins.Plot());
@@ -251,7 +249,6 @@ define([
         this.install(this.plugins.DisplayLayout());
         this.install(PreviewPlugin.default());
         this.install(LegacyIndicatorsPlugin());
-        this.install(DefaultAboutPlugin.default());
         this.install(LicensesPlugin.default());
     }
 

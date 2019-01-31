@@ -1,6 +1,8 @@
 <template>
 <div class="abs t-about l-about t-about-openmctweb s-about">
-    <div class="l-splash s-splash"></div>
+    <div v-if="branding.aboutHtml" class="s-text l-content" v-html="branding.aboutHtml"></div>
+    <div v-else class="l-splash"></div>
+
     <div class="s-text l-content">
         <h1 class="l-title s-title">Open MCT</h1>
         <div class="l-description s-description">
@@ -20,12 +22,63 @@
 </div>
 </template>
 <style lang="scss">
+.l-splash {
+    position: relative;
+    height: 45%;
+}
+.l-splash,
+.l-splash:before,
+.l-splash:after {
+    background-position: center;
+    background-repeat: no-repeat;
+    position: absolute;
+}
+.l-splash {
+    background-size: cover;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: url('assets/images/bg-splash.jpg');
+
+    &:before,
+    &:after {
+        background-image: url('assets/images/logo-app-shdw.svg');
+        background-size: contain;
+        content: '';
+    }
+
+    &:before {
+        // NASA logo, dude
+        $w: 5%;
+        $m: 10px;
+        background-image: url('assets/images/logo-nasa.svg');
+        top: $m;
+        right: auto;
+        bottom: auto;
+        left: $m;
+        height: auto;
+        width: $w * 2;
+        padding-bottom: $w;
+        padding-top: $w;
+    }
+
+    &:after {
+        // App logo
+        top: 0;
+        right: 15%;
+        bottom: 0;
+        left: 15%;
+    }
+}
 </style>
 <script>
 export default {
+    inject: ['openmct'],
     data() {
         return {
-            buildInfo: {}
+            branding: JSON.parse(JSON.stringify(this.openmct.branding())),
+            buildInfo: JSON.parse(JSON.stringify(this.openmct.buildInfo))
         }
     },
     methods: {

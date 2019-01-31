@@ -19,17 +19,27 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import DefaultAboutDialog from './DefaultAboutDialog.vue';
-import Vue from 'vue';
 
-export default function () {
-    return function install(openmct) {
-        let vm = new Vue(DefaultAboutDialog).$mount();
-        vm.buildInfo = JSON.parse(JSON.stringify(openmct.buildInfo));
+let brandingOptions = {};
 
-        openmct.about({
-            buttonCssClass: 'l-about-button',
-            content: vm.$el
-        });
+/**
+ * @typedef {Object} BrandingOptions
+ * @memberOf openmct/branding
+ * @property {string} smallLogoImage URL to the image to use as the applications logo.
+ * This logo will appear on every screen and when clicked will launch the about dialog.
+ * @property {string} aboutHtml Custom content for the about screen. When defined the
+ * supplied content will be inserted at the start of the about dialog, and the default
+ * Open MCT splash logo will be suppressed.
+ */
+
+/**
+ * Set branding options for the application. These will override certain visual elements 
+ * of the application and allow for customization of the application.
+ * @param {BrandingOptions} options
+ */
+export default function Branding(options) {
+    if (arguments.length === 1) {
+        brandingOptions = options;
     }
+    return brandingOptions;
 }
