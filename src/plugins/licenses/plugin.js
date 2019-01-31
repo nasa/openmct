@@ -29,7 +29,7 @@ export default function () {
 
             openmct.overlays.overlay({
                 element: licensesVm.$el,
-                size: 'large',
+                size: 'fullscreen',
                 dismissable: false,
                 onDestroy: () => licensesVm.$destroy()
             });

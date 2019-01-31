@@ -20,7 +20,7 @@
 * at runtime from the About dialog for additional information.
 *****************************************************************************/
 <template>
-    <div>
+    <div class="l-overlay-licenses">
         <h1>Open MCT Third Party Licenses</h1>
         <p>This software includes components released under the following licenses:</p>
         <div v-for="(pkg, key) in packages" :key="key" class="l-license">

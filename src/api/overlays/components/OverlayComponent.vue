@@ -108,6 +108,13 @@
             }
         }
 
+        .l-overlay-fullscreen {
+            // Default
+            .c-overlay__outer {
+                @include overlaySizing($overlayOuterMarginFullscreen);
+            }
+        }
+
         .l-overlay-small {
             .c-overlay__outer {
                 @include overlaySizing($overlayOuterMarginDialog);
