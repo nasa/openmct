@@ -31,7 +31,7 @@ define([
                     parser = new DsnParser();
 
                 dsn = parser.parseXml(resp.request.responseXML);
-                return dsn[domainObject.identifier.key];
+                return dsn.data[domainObject.identifier.key];
             });
     }
 
