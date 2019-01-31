@@ -311,11 +311,8 @@
                 this.isEditing = isEditing;
             });
 
-            this.openmct.objects.get('ROOT')
-                .then(root => this.openmct.composition.get(root).load())
-                .then(children => {this.allChildren = children});
-
             this.searchService = this.openmct.$injector.get('searchService');
+            this.getAllChildren();
         },
         data: function () {
             return {
@@ -362,13 +359,39 @@
             openInNewTab(event) {
                 window.open(window.location.href);
             },
+            getAllChildren() {
+                this.openmct.objects.get('ROOT')
+                    .then(root => this.openmct.composition.get(root).load())
+                    .then(children => {
+                        this.allChildren = children.map(c => {
+                                return {
+                                    id: this.openmct.objects.makeKeyString(c.identifier),
+                                    object: c,
+                                    objectPath: [c]
+                            };
+                        });
+                    });
+            },
+            getFilteredChildren() {
+                this.searchService.query(this.searchValue).then(children => {
+                    this.filteredChildren = children.hits.map(child => {
+                        let objectPath = child.object.getCapability('context')
+                                .getPath().map(oldObject => oldObject.useCapability('adapter')).reverse(),
+                            object = child.object.useCapability('adapter');
+
+                        return {
+                            id: this.openmct.objects.makeKeyString(object.identifier),
+                            object,
+                            objectPath 
+                        }
+                    });
+                });
+            },
             searchTree(value) {
                 this.searchValue = value;
                 
                 if (this.searchValue !== '') {
-                    this.searchService.query(value).then(children => {
-                        this.filteredChildren = children.hits.map(child => child.object.useCapability('adapter'));
-                    });
+                    this.getFilteredChildren();
                 }
             }
         }

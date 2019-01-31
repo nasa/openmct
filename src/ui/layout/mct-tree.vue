@@ -1,11 +1,11 @@
 <template>
     <div class="c-tree__wrapper">
         <div
-            v-if="decoratedTreeItems.length === 0">
+            v-if="treeItems.length === 0">
             No results found
         </div>
         <ul class="c-tree">
-            <tree-item v-for="treeItem in decoratedTreeItems"
+            <tree-item v-for="treeItem in treeItems"
                        :key="treeItem.id"
                        :node="treeItem">
             </tree-item>
@@ -133,17 +133,6 @@
     export default {
         inject: ['openmct'],
         props: ['treeItems'],
-        computed: {
-            decoratedTreeItems() {
-                return this.treeItems.map(c => {
-                    return {
-                        id: this.openmct.objects.makeKeyString(c.identifier),
-                        object: c,
-                        objectPath: [c]
-                    };
-                })
-            }
-        },
         name: 'mct-tree',
         components: {
             treeItem
