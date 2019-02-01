@@ -129,6 +129,10 @@
             objectPath: Array,
             hasFrame: Boolean,
         },
+        components: {
+            ObjectView,
+            ContextMenuDropDown,
+        },
         methods: {
             expand() {
                 let objectView = this.$refs.objectView,
@@ -142,13 +146,7 @@
                         parentElement.append(childElement);
                     }
                 });
-            }
-        },
-        components: {
-            ObjectView,
-            ContextMenuDropDown,
-        },
-        methods: {
+            },
             getSelectionContext() {
                 return this.$refs.objectView.getSelectionContext();
             }
