@@ -66,6 +66,7 @@
         &__contents {
             flex: 1 1 auto;
             overflow: auto;
+            padding-right: $interiorMargin;
         }
 
         &__button-bar {
@@ -93,25 +94,29 @@
                 cursor: pointer;
                 display: block;
             }
+        }
 
-            &__outer {
+        // Overlay types, styling for desktop. Appended to .l-overlay-wrapper element.
+        .l-overlay-large,
+        .l-overlay-small,
+        .l-overlay-fit {
+            .c-overlay__outer {
                 border-radius: $overlayCr;
                 box-shadow: rgba(black, 0.5) 0 2px 25px;
             }
         }
+        
+        .l-overlay-fullscreen {
+            // Used by About > Licenses display
+            .c-overlay__outer {
+                @include overlaySizing($overlayOuterMarginFullscreen);
+            }
+        }
 
-        // Overlay types, styling for desktop. Appended to .l-overlay-wrapper element.
         .l-overlay-large {
             // Default
             .c-overlay__outer {
                 @include overlaySizing($overlayOuterMarginLg);
-            }
-        }
-
-        .l-overlay-fullscreen {
-            // Default
-            .c-overlay__outer {
-                @include overlaySizing($overlayOuterMarginFullscreen);
             }
         }
 

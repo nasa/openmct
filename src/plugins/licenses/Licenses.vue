@@ -20,20 +20,17 @@
 * at runtime from the About dialog for additional information.
 *****************************************************************************/
 <template>
-    <div class="l-overlay-licenses">
+    <div class="c-about c-about--licenses">
         <h1>Open MCT Third Party Licenses</h1>
         <p>This software includes components released under the following licenses:</p>
-        <div v-for="(pkg, key) in packages" :key="key" class="l-license">
-            <h2 class="l-license-name">{{key}}</h2>
-            <div class="l-license-details">
-                <span class="l-license-title">Author</span>
-                <span class="l-license-author">{{pkg.publisher}}</span> | 
-                <span class="l-license-title">License(s)</span>
-                <span class="l-license-description">{{pkg.licenses}}</span> | 
-                <span class="l-license-title">Repository</span>
-                <span class="l-license-url"><a :href="pkg.repository" target="_blank">{{pkg.repository}}</a></span>
+        <div v-for="(pkg, key) in packages" :key="key" class="c-license">
+            <h2 class="c-license__name">{{key}}</h2>
+            <div class="c-license__details">
+                <span class="c-license__author"><em>Author</em> {{pkg.publisher}}</span> |
+                <span class="c-license__license"><em>License(s)</em> {{pkg.licenses}}</span> |
+                <span class="c-license__repo"><em>Repository</em> <a :href="pkg.repository" target="_blank">{{pkg.repository}}</a></span>
             </div>
-            <div class="l-license-text">
+            <div class="c-license__text">
                 <p>{{pkg.licenseText}}</p>
             </div>
         </div>

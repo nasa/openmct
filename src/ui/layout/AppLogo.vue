@@ -24,9 +24,10 @@
 </template>
 <style lang="scss">
 .l-shell__app-logo {
-    width: 50px;
+    cursor: pointer;
+    width: 70px;
     height: 20px;
-    background-image: url('assets/images/logo-app.svg')
+    background: url('assets/images/logo-app.svg') center no-repeat;
 }
 </style>
 <script>
