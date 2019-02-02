@@ -40,6 +40,11 @@ export default {
             }
             delete this.viewContainer;
             delete this.currentView;
+
+            if (this.removeSelectable) {
+                this.removeSelectable();
+                delete this.removeSelectable;
+            }
         },
         updateView(immediatelySelect) {
             this.clear();
@@ -61,12 +66,7 @@ export default {
 
             if (immediatelySelect) {
                 this.removeSelectable = openmct.selection.selectable(
-                    this.$el,
-                    this.currentView.getSelectionContext ?
-                        this.currentView.getSelectionContext() :
-                        { item: this.currentObject },
-                    true
-                );
+                    this.$el, this.getSelectionContext(), true);
             }
         },
         show(object, viewKey, immediatelySelect) {
@@ -86,6 +86,13 @@ export default {
 
             this.viewKey = viewKey;
             this.updateView(immediatelySelect);
+        },
+        getSelectionContext() {
+            if (this.currentView.getSelectionContext) {
+                return this.currentView.getSelectionContext();
+            } else {
+                return { item: this.currentObject };
+            }
         },
         onDragOver(event) {
             if (this.hasComposableDomainObject(event)) {
