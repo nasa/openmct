@@ -56,6 +56,7 @@ define([], function () {
         dish[key + '.ddor'] = dishElement.getAttribute('isDDOR');
         dish[key + '.created'] = dishElement.getAttribute('created');
         dish[key + '.updated'] = dishElement.getAttribute('updated');
+        dish[key + '.antenna'] = Object.assign({}, dish);
         dish[key + '.downSignals'] = [];
         dish[key + '.upSignals'] = [];
         dish[key + '.targets'] = [];

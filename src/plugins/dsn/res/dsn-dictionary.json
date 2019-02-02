@@ -175,7 +175,77 @@
                 "deep.space.network:dss34.ddor",
                 "deep.space.network:dss34.created",
                 "deep.space.network:dss34.updated"
-            ]
+            ],
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "dss34.name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Azimuth",
+                        "key": "dss34.azimuth.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Elevation",
+                        "key": "dss34.elevation.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Wind Speed",
+                        "key": "dss34.wind.speed",
+                        "units": "km/hr",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "MSPA",
+                        "key": "dss34.mspa",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Array",
+                        "key": "dss34.array",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "DDOR",
+                        "key": "dss34.ddor",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Created",
+                        "key": "dss34.created",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Updated",
+                        "key": "dss34.updated",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
         },
         "deep.space.network:dss34.name" : {
             "identifier": {
