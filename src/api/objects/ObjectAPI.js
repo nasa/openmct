@@ -26,14 +26,16 @@ define([
     './MutableObject',
     './RootRegistry',
     './RootObjectProvider',
-    'EventEmitter'
+    'EventEmitter',
+    'uuid'
 ], function (
     _,
     utils,
     MutableObject,
     RootRegistry,
     RootObjectProvider,
-    EventEmitter
+    EventEmitter,
+    uuid
 ) {
 
 
@@ -154,7 +156,15 @@ define([
             throw new Error('Provider does not support get!');
         }
 
-        return provider.get(identifier);
+        return provider.get(identifier)
+            .then((object) => {
+                if (needsMigration(object)) {
+                    let newObject = migrateObject(object);
+                    openmct.objects.mutate(object, '*', newObject);
+                    return newObject;
+                }
+                return object;
+            });
     };
 
     ObjectAPI.prototype.delete = function () {
@@ -214,6 +224,60 @@ define([
     ObjectAPI.prototype.makeKeyString = function (identifier) {
         return utils.makeKeyString(identifier);
     };
+
+    let migrations = [
+        {
+            check(domainObject) {
+                console.log('check migration for', domainObject.type);
+                return domainObject.type === 'layout' && domainObject.configuration.layout;
+            },
+            migrate(domainObject) {
+                console.log("migrate Display Layout", domainObject);
+                let migratedObject = {...domainObject};
+                let panels = migratedObject.configuration.layout.panels;
+                migratedObject.configuration.items = [];
+
+                Object.keys(panels).forEach(key => {
+                    let panel = panels[key];
+                    migratedObject.configuration.items.push({
+                        width: panel.dimensions[0],
+                        height: panel.dimensions[1],
+                        x: panel.position[0],
+                        y: panel.position[1],
+                        hasFrame: panel.hasFrame,
+                        useGrid: true,
+                        identifier: {
+                            namespace: "",
+                            key: key
+                        },
+                        type: 'subobject-view',
+                        id: uuid()
+                    });
+                });
+                migratedObject.configuration.layoutGrid = migratedObject.layoutGrid;
+                delete migratedObject.layoutGrid;
+                delete migratedObject.configuration.layout;
+                return migratedObject;
+            },
+        },
+        // {
+        //     check(domainObject) {
+        //         return domainObject.type === 'telemetry.fixed' && domainObject.configuration['fixed-display'];
+        //     },
+        //     migrate(domainObject) {
+        //         // TODO: return migrated object
+        //     }
+        // }
+    ];
+
+    function needsMigration(domainObject) {
+        return migrations.some(m => m.check(domainObject));
+    }
+
+    function migrateObject(domainObject) {
+        return migrations.filter(m => m.check(domainObject))
+            .reduce((o, m) => "").migrate(domainObject);
+    }
 
     /**
      * Uniquely identifies a domain object.
