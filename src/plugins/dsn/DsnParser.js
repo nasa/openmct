@@ -78,13 +78,13 @@ define([], function () {
                     dish[key + '.signals'].push(signal);
                     break;
                 case 'target':
-                    dish[key + '.targets'].push({
-                        'name':          child.getAttribute('name'),
-                        'id':            child.getAttribute('id'),
-                        'upleg.range':   child.getAttribute('uplegRange'),
-                        'downleg.range': child.getAttribute('downlegRange'),
-                        'rtlt':          child.getAttribute('rtlt')
-                    });
+                    var target = {};
+                    target[key + '.target.name'] = child.getAttribute('name');
+                    target[key + '.target.id'] = child.getAttribute('id');
+                    target[key + '.target.upleg.range'] = child.getAttribute('uplegRange');
+                    target[key + '.target.downleg.range'] = child.getAttribute('downlegRange');
+                    target[key + '.target.rtlt'] = child.getAttribute('rtlt');
+                    dish[key + '.targets'].push(target);
                     break;
             }
         }

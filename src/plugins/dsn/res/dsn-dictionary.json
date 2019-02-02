@@ -156,7 +156,8 @@
             "type": "folder",
             "composition": [
                 "deep.space.network:dss34.antenna",
-                "deep.space.network:dss34.signals"
+                "deep.space.network:dss34.signals",
+                "deep.space.network:dss34.targets"
             ]
         },
         "deep.space.network:dss34.antenna" : {
@@ -635,6 +636,53 @@
                     {
                         "name": "Spacecraft ID",
                         "key": "dss34.signal.spacecraft.id",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss34.targets" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss34.targets"
+            },
+            "name": "Targets",
+            "type": "table",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "dss34.target.name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "ID",
+                        "key": "dss34.target.id",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Upleg range",
+                        "key": "dss34.target.upleg.range",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Downleg range",
+                        "key": "dss34.target.downleg.range",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "RTLT",
+                        "key": "dss34.target.rtlt",
                         "hints": {
                             "domain": 1
                         }
