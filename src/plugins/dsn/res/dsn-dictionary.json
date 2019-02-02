@@ -17,10 +17,10 @@
             "location": "deep.space.network:dsn",
             "composition":[
                 "deep.space.network:cdscc.station",
-                "deep.space.network:canberra.dss34",
-                "deep.space.network:canberra.dss35",
-                "deep.space.network:canberra.dss36",
-                "deep.space.network:canberra.dss43"
+                "deep.space.network:cdscc.dss34",
+                "deep.space.network:cdscc.dss35",
+                "deep.space.network:cdscc.dss36",
+                "deep.space.network:cdscc.dss43"
             ]
         },
         "deep.space.network:cdscc.station" : {
@@ -147,10 +147,10 @@
                 ]
             }
         },
-        "deep.space.network:canberra.dss34" : {
+        "deep.space.network:cdscc.dss34" : {
             "identifier": {
                 "namespace": "deep.space.network",
-                "key": "canberra.dss34"
+                "key": "cdscc.dss34"
             },
             "name": "DSS 34",
             "type": "folder",
@@ -538,10 +538,10 @@
                 ]
             }
         },
-        "deep.space.network:canberra.dss35" : {
+        "deep.space.network:cdscc.dss35" : {
             "identifier": {
                 "namespace": "deep.space.network",
-                "key": "canberra.dss35"
+                "key": "cdscc.dss35"
             },
             "name": "DSS 35",
             "type": "folder",
@@ -929,10 +929,10 @@
                 ]
             }
         },
-        "deep.space.network:canberra.dss36" : {
+        "deep.space.network:cdscc.dss36" : {
             "identifier": {
                 "namespace": "deep.space.network",
-                "key": "canberra.dss36"
+                "key": "cdscc.dss36"
             },
             "name": "DSS 36",
             "type": "folder",
@@ -1320,10 +1320,10 @@
                 ]
             }
         },
-        "deep.space.network:canberra.dss43" : {
+        "deep.space.network:cdscc.dss43" : {
             "identifier": {
                 "namespace": "deep.space.network",
-                "key": "canberra.dss43"
+                "key": "cdscc.dss43"
             },
             "name": "DSS 43",
             "type": "folder",
@@ -1721,10 +1721,10 @@
             "location": "deep.space.network:dsn",
             "composition":[
                 "deep.space.network:gdscc.station",
-                "deep.space.network:goldstone.dss14",
-                "deep.space.network:goldstone.dss24",
-                "deep.space.network:goldstone.dss25",
-                "deep.space.network:goldstone.dss26"
+                "deep.space.network:gdscc.dss14",
+                "deep.space.network:gdscc.dss24",
+                "deep.space.network:gdscc.dss25",
+                "deep.space.network:gdscc.dss26"
             ]
         },
         "deep.space.network:gdscc.station" : {
@@ -1851,10 +1851,10 @@
                 ]
             }
         },
-        "deep.space.network:goldstone.dss14" : {
+        "deep.space.network:gdscc.dss14" : {
             "identifier": {
                 "namespace": "deep.space.network",
-                "key": "goldstone.dss14"
+                "key": "gdscc.dss14"
             },
             "name": "DSS 14",
             "type": "folder",
@@ -2242,10 +2242,10 @@
                 ]
             }
         },
-        "deep.space.network:goldstone.dss24" : {
+        "deep.space.network:gdscc.dss24" : {
             "identifier": {
                 "namespace": "deep.space.network",
-                "key": "goldstone.dss24"
+                "key": "gdscc.dss24"
             },
             "name": "DSS 24",
             "type": "folder",
@@ -2633,10 +2633,10 @@
                 ]
             }
         },
-        "deep.space.network:goldstone.dss25" : {
+        "deep.space.network:gdscc.dss25" : {
             "identifier": {
                 "namespace": "deep.space.network",
-                "key": "goldstone.dss25"
+                "key": "gdscc.dss25"
             },
             "name": "DSS 25",
             "type": "folder",
@@ -3024,10 +3024,10 @@
                 ]
             }
         },
-        "deep.space.network:goldstone.dss26" : {
+        "deep.space.network:gdscc.dss26" : {
             "identifier": {
                 "namespace": "deep.space.network",
-                "key": "goldstone.dss26"
+                "key": "gdscc.dss26"
             },
             "name": "DSS 26",
             "type": "folder",
@@ -3425,10 +3425,10 @@
             "location": "deep.space.network:dsn",
             "composition":[
                 "deep.space.network:mdscc.station",
-                "deep.space.network:madrid.dss54",
-                "deep.space.network:madrid.dss55",
-                "deep.space.network:madrid.dss63",
-                "deep.space.network:madrid.dss65"
+                "deep.space.network:mdscc.dss54",
+                "deep.space.network:mdscc.dss55",
+                "deep.space.network:mdscc.dss63",
+                "deep.space.network:mdscc.dss65"
             ]
         },
         "deep.space.network:mdscc.station" : {
@@ -3555,10 +3555,10 @@
                 ]
             }
         },
-        "deep.space.network:madrid.dss54" : {
+        "deep.space.network:mdscc.dss54" : {
             "identifier": {
                 "namespace": "deep.space.network",
-                "key": "madrid.dss54"
+                "key": "mdscc.dss54"
             },
             "name": "DSS 54",
             "type": "folder",
@@ -3946,10 +3946,10 @@
                 ]
             }
         },
-        "deep.space.network:madrid.dss55" : {
+        "deep.space.network:mdscc.dss55" : {
             "identifier": {
                 "namespace": "deep.space.network",
-                "key": "madrid.dss55"
+                "key": "mdscc.dss55"
             },
             "name": "DSS 55",
             "type": "folder",
@@ -4337,10 +4337,10 @@
                 ]
             }
         },
-        "deep.space.network:madrid.dss63" : {
+        "deep.space.network:mdscc.dss63" : {
             "identifier": {
                 "namespace": "deep.space.network",
-                "key": "madrid.dss63"
+                "key": "mdscc.dss63"
             },
             "name": "DSS 63",
             "type": "folder",
@@ -4728,10 +4728,10 @@
                 ]
             }
         },
-        "deep.space.network:madrid.dss65" : {
+        "deep.space.network:mdscc.dss65" : {
             "identifier": {
                 "namespace": "deep.space.network",
-                "key": "madrid.dss65"
+                "key": "mdscc.dss65"
             },
             "name": "DSS 65",
             "type": "folder",
