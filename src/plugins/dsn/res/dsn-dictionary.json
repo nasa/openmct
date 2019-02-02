@@ -1855,7 +1855,133 @@
             "name": "Madrid",
             "type": "folder",
             "location": "deep.space.network:dsn",
-            "composition":[]
+            "composition":[
+                "deep.space.network:mdscc.station"
+            ]
+        },
+        "deep.space.network:mdscc.station" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "mdscc.station"
+            },
+            "name": "Station",
+            "type": "table",
+            "composition":[
+                "deep.space.network:mdscc.name",
+                "deep.space.network:mdscc.friendly.name",
+                "deep.space.network:mdscc.utc.time",
+                "deep.space.network:mdscc.time.zone.offset"
+            ],
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "mdscc.name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Friendly Name",
+                        "key": "mdscc.friendly.name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "UTC Time",
+                        "key": "mdscc.utc.time",
+                        "format": "utc",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Time Zone Offset",
+                        "key": "mdscc.time.zone.offset",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:mdscc.name" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "mdscc.name"
+            },
+            "name": "Name",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:mdscc.friendly.name" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "mdscc.friendly.name"
+            },
+            "name": "Friendly Name",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Friendly Name",
+                        "key": "friendly.name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:mdscc.utc.time" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "mdscc.utc.time"
+            },
+            "name": "UTC Time",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "UTC Time",
+                        "key": "utc.time",
+                        "format": "utc",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:mdscc.time.zone.offset" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "mdscc.time.zone.offset"
+            },
+            "name": "Time Zone Offset",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Time Zone Offset",
+                        "key": "time.zone.offset",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
         }
     }
 }
