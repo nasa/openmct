@@ -529,7 +529,7 @@
                         }
                     },
                     {
-                        "name": "RTLT",
+                        "name": "Round-trip light time",
                         "key": "dss34.target.rtlt",
                         "hints": {
                             "domain": 1
@@ -920,7 +920,7 @@
                         }
                     },
                     {
-                        "name": "RTLT",
+                        "name": "Round-trip light time",
                         "key": "dss35.target.rtlt",
                         "hints": {
                             "domain": 1
@@ -1311,7 +1311,7 @@
                         }
                     },
                     {
-                        "name": "RTLT",
+                        "name": "Round-trip light time",
                         "key": "dss36.target.rtlt",
                         "hints": {
                             "domain": 1
@@ -1702,7 +1702,7 @@
                         }
                     },
                     {
-                        "name": "RTLT",
+                        "name": "Round-trip light time",
                         "key": "dss43.target.rtlt",
                         "hints": {
                             "domain": 1
@@ -2233,7 +2233,7 @@
                         }
                     },
                     {
-                        "name": "RTLT",
+                        "name": "Round-trip light time",
                         "key": "dss14.target.rtlt",
                         "hints": {
                             "domain": 1
@@ -2624,7 +2624,7 @@
                         }
                     },
                     {
-                        "name": "RTLT",
+                        "name": "Round-trip light time",
                         "key": "dss24.target.rtlt",
                         "hints": {
                             "domain": 1
@@ -3015,7 +3015,7 @@
                         }
                     },
                     {
-                        "name": "RTLT",
+                        "name": "Round-trip light time",
                         "key": "dss25.target.rtlt",
                         "hints": {
                             "domain": 1
@@ -3406,7 +3406,7 @@
                         }
                     },
                     {
-                        "name": "RTLT",
+                        "name": "Round-trip light time",
                         "key": "dss26.target.rtlt",
                         "hints": {
                             "domain": 1
@@ -3937,7 +3937,7 @@
                         }
                     },
                     {
-                        "name": "RTLT",
+                        "name": "Round-trip light time",
                         "key": "dss54.target.rtlt",
                         "hints": {
                             "domain": 1
@@ -4328,7 +4328,7 @@
                         }
                     },
                     {
-                        "name": "RTLT",
+                        "name": "Round-trip light time",
                         "key": "dss55.target.rtlt",
                         "hints": {
                             "domain": 1
@@ -4719,7 +4719,7 @@
                         }
                     },
                     {
-                        "name": "RTLT",
+                        "name": "Round-trip light time",
                         "key": "dss63.target.rtlt",
                         "hints": {
                             "domain": 1
@@ -5110,7 +5110,7 @@
                         }
                     },
                     {
-                        "name": "RTLT",
+                        "name": "Round-trip light time",
                         "key": "dss65.target.rtlt",
                         "hints": {
                             "domain": 1
