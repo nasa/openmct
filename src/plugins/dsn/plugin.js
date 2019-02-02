@@ -102,7 +102,13 @@ define([
             var interval = setInterval(function () {
                 getDsnData(domainObject).then(function (datum) {
                     // Invoke the callback with the updated datum
-                    callback(datum);
+                    if (Array.isArray(datum)) {
+                        datum.forEach(function (value) {
+                            callback(value);
+                        });
+                    } else {
+                        callback(datum);
+                    }
                 });
             }, 5000);
 
