@@ -1720,6 +1720,16 @@
             "type": "folder",
             "location": "deep.space.network:dsn",
             "composition":[]
+        },
+        "deep.space.network:madrid" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "madrid"
+            },
+            "name": "Madrid",
+            "type": "folder",
+            "location": "deep.space.network:dsn",
+            "composition":[]
         }
     }
 }
