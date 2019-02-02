@@ -57,6 +57,7 @@ define([], function () {
         dish[key + '.created'] = dishElement.getAttribute('created');
         dish[key + '.updated'] = dishElement.getAttribute('updated');
         dish[key + '.antenna'] = Object.assign({}, dish);
+        dish[key + '.signals'] = [];
         dish[key + '.downSignals'] = [];
         dish[key + '.upSignals'] = [];
         dish[key + '.targets'] = [];
@@ -66,26 +67,17 @@ define([], function () {
 
             switch (child.tagName) {
                 case 'downSignal':
-                    dish[key + '.downSignals'].push({
-                        'signal.type':       child.getAttribute('signalType'),
-                        'signal.type.debug': child.getAttribute('signalTypeDebug'),
-                        'data.rate':         child.getAttribute('dataRate'),
-                        'frequency':         child.getAttribute('frequency'),
-                        'power':             child.getAttribute('power'),
-                        'spacecraft':        child.getAttribute('spacecraft'),
-                        'spacecraft.id':     child.getAttribute('spacecraftId')
-                    });
-                    break;
                 case 'upSignal':
-                    dish[key + '.upSignals'].push({
-                        'signal.type':       child.getAttribute('signalType'),
-                        'signal.type.debug': child.getAttribute('signalTypeDebug'),
-                        'data.rate':         child.getAttribute('dataRate'),
-                        'frequency':         child.getAttribute('frequency'),
-                        'power':             child.getAttribute('power'),
-                        'spacecraft':        child.getAttribute('spacecraft'),
-                        'spacecraft.id':     child.getAttribute('spacecraftId')
-                    });
+                    var signal = {};
+                    signal[key + '.signal.direction'] = child.tagName.substring(0, child.tagName.length - 6);
+                    signal[key + '.signal.type'] = child.getAttribute('signalType');
+                    signal[key + '.signal.type.debug'] = child.getAttribute('signalTypeDebug');
+                    signal[key + '.signal.data.rate'] = child.getAttribute('dataRate');
+                    signal[key + '.signal.frequency'] = child.getAttribute('frequency');
+                    signal[key + '.signal.power'] = child.getAttribute('power');
+                    signal[key + '.signal.spacecraft'] = child.getAttribute('spacecraft');
+                    signal[key + '.signal.spacecraft.id'] = child.getAttribute('spacecraftId');
+                    dish[key + '.signals'].push(signal);
                     break;
                 case 'target':
                     dish[key + '.targets'].push({

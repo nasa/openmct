@@ -155,7 +155,8 @@
             "name": "DSS 34",
             "type": "folder",
             "composition": [
-                "deep.space.network:dss34.antenna"
+                "deep.space.network:dss34.antenna",
+                "deep.space.network:dss34.signals"
             ]
         },
         "deep.space.network:dss34.antenna" : {
@@ -414,6 +415,226 @@
                     {
                         "name": "Updated",
                         "key": "updated",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss34.signals" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss34.signals"
+            },
+            "name": "Signals",
+            "type": "table",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Direction",
+                        "key": "dss34.signal.direction",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Type",
+                        "key": "dss34.signal.type",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Debug",
+                        "key": "dss34.signal.type.debug",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Data rate",
+                        "key": "dss34.signal.data.rate",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Frequency",
+                        "key": "dss34.signal.frequency",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Power",
+                        "key": "dss34.signal.power",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Spacecraft",
+                        "key": "dss34.signal.spacecraft",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Spacecraft ID",
+                        "key": "dss34.signal.spacecraft.id",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss34.signal.direction" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss34.signal.direction"
+            },
+            "name": "Direction",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Direction",
+                        "key": "dss34.signal.direction",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss34.signal.type" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss34.signal.type"
+            },
+            "name": "Type",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Type",
+                        "key": "dss34.signal.type",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss34.signal.type.debug" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss34.signal.type.debug"
+            },
+            "name": "Debug",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Debug",
+                        "key": "dss34.signal.type.debug",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss34.signal.data.rate" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss34.signal.data.rate"
+            },
+            "name": "Data rate",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Data rate",
+                        "key": "dss34.signal.data.rate",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss34.signal.frequency" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss34.signal.frequency"
+            },
+            "name": "Frequency",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Frequency",
+                        "key": "dss34.signal.frequency",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss34.signal.power" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss34.signal.power"
+            },
+            "name": "Power",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Power",
+                        "key": "dss34.signal.power",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss34.signal.spacecraft" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss34.signal.spacecraft"
+            },
+            "name": "Spacecraft",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Spacecraft",
+                        "key": "dss34.signal.spacecraft",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss34.signal.spacecraft.id" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss34.signal.spacecraft.id"
+            },
+            "name": "Spacecraft ID",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Spacecraft ID",
+                        "key": "dss34.signal.spacecraft.id",
                         "hints": {
                             "domain": 1
                         }
