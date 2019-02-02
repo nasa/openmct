@@ -58,8 +58,6 @@ define([], function () {
         dish[key + '.updated'] = dishElement.getAttribute('updated');
         dish[key + '.antenna'] = Object.assign({}, dish);
         dish[key + '.signals'] = [];
-        dish[key + '.downSignals'] = [];
-        dish[key + '.upSignals'] = [];
         dish[key + '.targets'] = [];
 
         for (var i = 0; i < children.length; i++) {
