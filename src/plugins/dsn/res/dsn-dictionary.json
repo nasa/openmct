@@ -1710,6 +1710,16 @@
                     }
                 ]
             }
+        },
+        "deep.space.network:goldstone" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "goldstone"
+            },
+            "name": "Goldstone",
+            "type": "folder",
+            "location": "deep.space.network:dsn",
+            "composition":[]
         }
     }
 }
