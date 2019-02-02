@@ -235,7 +235,7 @@
                 if (selection[0]) {
                     let parentObject = selection[0].context.item;
 
-                    this.hasComposition = !!this.openmct.composition.get(parentObject);
+                    this.hasComposition = !!(parentObject && this.openmct.composition.get(parentObject));
                 }
             }
         },
