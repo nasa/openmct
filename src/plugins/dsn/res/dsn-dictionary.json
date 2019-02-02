@@ -46,14 +46,14 @@
                         }
                     },
                     {
-                        "name": "Friendly Name",
+                        "name": "Friendly name",
                         "key": "cdscc.friendly.name",
                         "hints": {
                             "domain": 1
                         }
                     },
                     {
-                        "name": "UTC Time",
+                        "name": "UTC time",
                         "key": "cdscc.utc.time",
                         "format": "utc",
                         "hints": {
@@ -61,7 +61,7 @@
                         }
                     },
                     {
-                        "name": "Time Zone Offset",
+                        "name": "Time zone offset",
                         "key": "cdscc.time.zone.offset",
                         "hints": {
                             "domain": 1
@@ -94,12 +94,12 @@
                 "namespace": "deep.space.network",
                 "key": "cdscc.friendly.name"
             },
-            "name": "Friendly Name",
+            "name": "Friendly name",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "Friendly Name",
+                        "name": "Friendly name",
                         "key": "friendly.name",
                         "hints": {
                             "domain": 1
@@ -113,12 +113,12 @@
                 "namespace": "deep.space.network",
                 "key": "cdscc.utc.time"
             },
-            "name": "UTC Time",
+            "name": "UTC time",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "UTC Time",
+                        "name": "UTC time",
                         "key": "utc.time",
                         "format": "utc",
                         "hints": {
@@ -133,12 +133,12 @@
                 "namespace": "deep.space.network",
                 "key": "cdscc.time.zone.offset"
             },
-            "name": "Time Zone Offset",
+            "name": "Time zone offset",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "Time Zone Offset",
+                        "name": "Time zone offset",
                         "key": "time.zone.offset",
                         "hints": {
                             "domain": 1
@@ -204,7 +204,7 @@
                         }
                     },
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "dss34.wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -313,12 +313,12 @@
                 "namespace": "deep.space.network",
                 "key": "dss34.wind.speed"
             },
-            "name": "Wind Speed",
+            "name": "Wind speed",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -595,7 +595,7 @@
                         }
                     },
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "dss35.wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -704,12 +704,12 @@
                 "namespace": "deep.space.network",
                 "key": "dss35.wind.speed"
             },
-            "name": "Wind Speed",
+            "name": "Wind speed",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -986,7 +986,7 @@
                         }
                     },
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "dss36.wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -1095,12 +1095,12 @@
                 "namespace": "deep.space.network",
                 "key": "dss36.wind.speed"
             },
-            "name": "Wind Speed",
+            "name": "Wind speed",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -1377,7 +1377,7 @@
                         }
                     },
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "dss43.wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -1486,12 +1486,12 @@
                 "namespace": "deep.space.network",
                 "key": "dss43.wind.speed"
             },
-            "name": "Wind Speed",
+            "name": "Wind speed",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -1750,14 +1750,14 @@
                         }
                     },
                     {
-                        "name": "Friendly Name",
+                        "name": "Friendly name",
                         "key": "gdscc.friendly.name",
                         "hints": {
                             "domain": 1
                         }
                     },
                     {
-                        "name": "UTC Time",
+                        "name": "UTC time",
                         "key": "gdscc.utc.time",
                         "format": "utc",
                         "hints": {
@@ -1765,7 +1765,7 @@
                         }
                     },
                     {
-                        "name": "Time Zone Offset",
+                        "name": "Time zone offset",
                         "key": "gdscc.time.zone.offset",
                         "hints": {
                             "domain": 1
@@ -1798,12 +1798,12 @@
                 "namespace": "deep.space.network",
                 "key": "gdscc.friendly.name"
             },
-            "name": "Friendly Name",
+            "name": "Friendly name",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "Friendly Name",
+                        "name": "Friendly name",
                         "key": "friendly.name",
                         "hints": {
                             "domain": 1
@@ -1817,12 +1817,12 @@
                 "namespace": "deep.space.network",
                 "key": "gdscc.utc.time"
             },
-            "name": "UTC Time",
+            "name": "UTC time",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "UTC Time",
+                        "name": "UTC time",
                         "key": "utc.time",
                         "format": "utc",
                         "hints": {
@@ -1837,12 +1837,12 @@
                 "namespace": "deep.space.network",
                 "key": "gdscc.time.zone.offset"
             },
-            "name": "Time Zone Offset",
+            "name": "Time zone offset",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "Time Zone Offset",
+                        "name": "Time zone offset",
                         "key": "time.zone.offset",
                         "hints": {
                             "domain": 1
@@ -1908,7 +1908,7 @@
                         }
                     },
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "dss14.wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -2017,12 +2017,12 @@
                 "namespace": "deep.space.network",
                 "key": "dss14.wind.speed"
             },
-            "name": "Wind Speed",
+            "name": "Wind speed",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -2299,7 +2299,7 @@
                         }
                     },
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "dss24.wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -2408,12 +2408,12 @@
                 "namespace": "deep.space.network",
                 "key": "dss24.wind.speed"
             },
-            "name": "Wind Speed",
+            "name": "Wind speed",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -2690,7 +2690,7 @@
                         }
                     },
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "dss25.wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -2799,12 +2799,12 @@
                 "namespace": "deep.space.network",
                 "key": "dss25.wind.speed"
             },
-            "name": "Wind Speed",
+            "name": "Wind speed",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -3081,7 +3081,7 @@
                         }
                     },
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "dss26.wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -3190,12 +3190,12 @@
                 "namespace": "deep.space.network",
                 "key": "dss26.wind.speed"
             },
-            "name": "Wind Speed",
+            "name": "Wind speed",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -3454,14 +3454,14 @@
                         }
                     },
                     {
-                        "name": "Friendly Name",
+                        "name": "Friendly name",
                         "key": "mdscc.friendly.name",
                         "hints": {
                             "domain": 1
                         }
                     },
                     {
-                        "name": "UTC Time",
+                        "name": "UTC time",
                         "key": "mdscc.utc.time",
                         "format": "utc",
                         "hints": {
@@ -3469,7 +3469,7 @@
                         }
                     },
                     {
-                        "name": "Time Zone Offset",
+                        "name": "Time zone offset",
                         "key": "mdscc.time.zone.offset",
                         "hints": {
                             "domain": 1
@@ -3502,12 +3502,12 @@
                 "namespace": "deep.space.network",
                 "key": "mdscc.friendly.name"
             },
-            "name": "Friendly Name",
+            "name": "Friendly name",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "Friendly Name",
+                        "name": "Friendly name",
                         "key": "friendly.name",
                         "hints": {
                             "domain": 1
@@ -3521,12 +3521,12 @@
                 "namespace": "deep.space.network",
                 "key": "mdscc.utc.time"
             },
-            "name": "UTC Time",
+            "name": "UTC time",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "UTC Time",
+                        "name": "UTC time",
                         "key": "utc.time",
                         "format": "utc",
                         "hints": {
@@ -3541,12 +3541,12 @@
                 "namespace": "deep.space.network",
                 "key": "mdscc.time.zone.offset"
             },
-            "name": "Time Zone Offset",
+            "name": "Time zone offset",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "Time Zone Offset",
+                        "name": "Time zone offset",
                         "key": "time.zone.offset",
                         "hints": {
                             "domain": 1
@@ -3612,7 +3612,7 @@
                         }
                     },
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "dss54.wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -3721,12 +3721,12 @@
                 "namespace": "deep.space.network",
                 "key": "dss54.wind.speed"
             },
-            "name": "Wind Speed",
+            "name": "Wind speed",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -4003,7 +4003,7 @@
                         }
                     },
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "dss55.wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -4112,12 +4112,12 @@
                 "namespace": "deep.space.network",
                 "key": "dss55.wind.speed"
             },
-            "name": "Wind Speed",
+            "name": "Wind speed",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -4394,7 +4394,7 @@
                         }
                     },
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "dss63.wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -4503,12 +4503,12 @@
                 "namespace": "deep.space.network",
                 "key": "dss63.wind.speed"
             },
-            "name": "Wind Speed",
+            "name": "Wind speed",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -4785,7 +4785,7 @@
                         }
                     },
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "dss65.wind.speed",
                         "units": "km/hr",
                         "hints": {
@@ -4894,12 +4894,12 @@
                 "namespace": "deep.space.network",
                 "key": "dss65.wind.speed"
             },
-            "name": "Wind Speed",
+            "name": "Wind speed",
             "type": "dsn.telemetry",
             "telemetry": {
                 "values": [
                     {
-                        "name": "Wind Speed",
+                        "name": "Wind speed",
                         "key": "wind.speed",
                         "units": "km/hr",
                         "hints": {
