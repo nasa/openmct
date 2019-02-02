@@ -159,9 +159,11 @@ define([
         return provider.get(identifier)
             .then((object) => {
                 if (needsMigration(object)) {
-                    let newObject = migrateObject(object);
-                    openmct.objects.mutate(object, '*', newObject);
-                    return newObject;
+                    migrateObject(object)
+                        .then(newObject => {
+                            openmct.objects.mutate(object, '*', newObject);
+                            return newObject;
+                        });
                 }
                 return object;
             });
@@ -235,29 +237,57 @@ define([
                 console.log("migrate Display Layout", domainObject);
                 let migratedObject = {...domainObject};
                 let panels = migratedObject.configuration.layout.panels;
+                let domainObjects = {};
+                let promises = Object.keys(panels).map(key => {
+                    return openmct.objects.get(key)
+                        .then(object => {
+                            domainObjects[key] = object;
+                        });
+                });
                 migratedObject.configuration.items = [];
 
-                Object.keys(panels).forEach(key => {
-                    let panel = panels[key];
-                    migratedObject.configuration.items.push({
-                        width: panel.dimensions[0],
-                        height: panel.dimensions[1],
-                        x: panel.position[0],
-                        y: panel.position[1],
-                        hasFrame: panel.hasFrame,
-                        useGrid: true,
-                        identifier: {
-                            namespace: "",
-                            key: key
-                        },
-                        type: 'subobject-view',
-                        id: uuid()
+                return Promise.all(promises)
+                    .then(function () {
+                        Object.keys(panels).forEach(key => {
+                            let panel = panels[key];
+                            let domainObject = domainObjects[key];
+
+                            if (isTelemetry(domainObject)) {
+                                migratedObject.configuration.items.push({
+                                    width: panel.dimensions[0],
+                                    height: panel.dimensions[1],
+                                    x: panel.position[0],
+                                    y: panel.position[1],
+                                    useGrid: true,
+                                    identifier: domainObject.identifier,
+                                    id: uuid(),
+                                    type: 'telemetry-view',
+                                    displayMode: 'all',
+                                    value: openmct.telemetry.getMetadata(domainObject).getDefaultDisplayValue(),
+                                    stroke: "transparent",
+                                    fill: "",
+                                    color: "",
+                                    size: "13px"
+                                });
+                            } else {
+                                migratedObject.configuration.items.push({
+                                    width: panel.dimensions[0],
+                                    height: panel.dimensions[1],
+                                    x: panel.position[0],
+                                    y: panel.position[1],
+                                    useGrid: true,
+                                    identifier: domainObject.identifier,
+                                    id: uuid(),
+                                    type: 'subobject-view',
+                                    hasFrame: panel.hasFrame
+                                });
+                            }
+                        });
+                        migratedObject.configuration.layoutGrid = migratedObject.layoutGrid;
+                        delete migratedObject.layoutGrid;
+                        delete migratedObject.configuration.layout;
+                        return migratedObject;
                     });
-                });
-                migratedObject.configuration.layoutGrid = migratedObject.layoutGrid;
-                delete migratedObject.layoutGrid;
-                delete migratedObject.configuration.layout;
-                return migratedObject;
             },
         },
         // {
@@ -277,6 +307,14 @@ define([
     function migrateObject(domainObject) {
         return migrations.filter(m => m.check(domainObject))
             .reduce((o, m) => "").migrate(domainObject);
+    }
+
+    function isTelemetry(domainObject) {
+        if (openmct.telemetry.isTelemetryObject(domainObject) && domainObject.type !== 'summary-widget') {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
