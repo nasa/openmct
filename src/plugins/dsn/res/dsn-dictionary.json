@@ -3424,7 +3424,8 @@
             "type": "folder",
             "location": "deep.space.network:dsn",
             "composition":[
-                "deep.space.network:mdscc.station"
+                "deep.space.network:mdscc.station",
+                "deep.space.network:madrid.dss54"
             ]
         },
         "deep.space.network:mdscc.station" : {
@@ -3544,6 +3545,397 @@
                     {
                         "name": "Time Zone Offset",
                         "key": "time.zone.offset",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:madrid.dss54" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "madrid.dss54"
+            },
+            "name": "DSS 54",
+            "type": "folder",
+            "composition": [
+                "deep.space.network:dss54.antenna",
+                "deep.space.network:dss54.signals",
+                "deep.space.network:dss54.targets"
+            ]
+        },
+        "deep.space.network:dss54.antenna" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss54.antenna"
+            },
+            "name": "Antenna",
+            "type": "table",
+            "composition": [
+                "deep.space.network:dss54.name",
+                "deep.space.network:dss54.azimuth.angle",
+                "deep.space.network:dss54.elevation.angle",
+                "deep.space.network:dss54.wind.speed",
+                "deep.space.network:dss54.mspa",
+                "deep.space.network:dss54.array",
+                "deep.space.network:dss54.ddor",
+                "deep.space.network:dss54.created",
+                "deep.space.network:dss54.updated"
+            ],
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "dss54.name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Azimuth",
+                        "key": "dss54.azimuth.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Elevation",
+                        "key": "dss54.elevation.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Wind Speed",
+                        "key": "dss54.wind.speed",
+                        "units": "km/hr",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "MSPA",
+                        "key": "dss54.mspa",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Array",
+                        "key": "dss54.array",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "DDOR",
+                        "key": "dss54.ddor",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Created",
+                        "key": "dss54.created",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Updated",
+                        "key": "dss54.updated",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss54.name" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss54.name"
+            },
+            "name": "Name",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss54.azimuth.angle" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss54.azimuth.angle"
+            },
+            "name": "Azimuth",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Azimuth",
+                        "key": "azimuth.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss54.elevation.angle" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss54.elevation.angle"
+            },
+            "name": "Elevation",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Elevation",
+                        "key": "elevation.angle",
+                        "units": "deg",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss54.wind.speed" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss54.wind.speed"
+            },
+            "name": "Wind Speed",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Wind Speed",
+                        "key": "wind.speed",
+                        "units": "km/hr",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss54.mspa" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss54.mspa"
+            },
+            "name": "MSPA",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "MSPA",
+                        "key": "mspa",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss54.array" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss54.array"
+            },
+            "name": "Array",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Array",
+                        "key": "array",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss54.ddor" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss54.ddor"
+            },
+            "name": "DDOR",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "DDOR",
+                        "key": "ddor",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss54.created" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss54.created"
+            },
+            "name": "Created",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Created",
+                        "key": "created",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss54.updated" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss54.updated"
+            },
+            "name": "Updated",
+            "type": "dsn.telemetry",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Updated",
+                        "key": "updated",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss54.signals" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss54.signals"
+            },
+            "name": "Signals",
+            "type": "table",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Direction",
+                        "key": "dss54.signal.direction",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Type",
+                        "key": "dss54.signal.type",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Debug",
+                        "key": "dss54.signal.type.debug",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Data rate",
+                        "key": "dss54.signal.data.rate",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Frequency",
+                        "key": "dss54.signal.frequency",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Power",
+                        "key": "dss54.signal.power",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Spacecraft",
+                        "key": "dss54.signal.spacecraft",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Spacecraft ID",
+                        "key": "dss54.signal.spacecraft.id",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "deep.space.network:dss54.targets" : {
+            "identifier": {
+                "namespace": "deep.space.network",
+                "key": "dss54.targets"
+            },
+            "name": "Targets",
+            "type": "table",
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "dss54.target.name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "ID",
+                        "key": "dss54.target.id",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Upleg range",
+                        "key": "dss54.target.upleg.range",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Downleg range",
+                        "key": "dss54.target.downleg.range",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "RTLT",
+                        "key": "dss54.target.rtlt",
                         "hints": {
                             "domain": 1
                         }
