@@ -248,6 +248,8 @@ define([
 
                 return Promise.all(promises)
                     .then(function () {
+                        const DEFAULT_GRID_SIZE = [32, 32];
+
                         Object.keys(panels).forEach(key => {
                             let panel = panels[key];
                             let domainObject = domainObjects[key];
@@ -283,7 +285,7 @@ define([
                                 });
                             }
                         });
-                        migratedObject.configuration.layoutGrid = migratedObject.layoutGrid;
+                        migratedObject.configuration.layoutGrid = migratedObject.layoutGrid || DEFAULT_GRID_SIZE;
                         delete migratedObject.layoutGrid;
                         delete migratedObject.configuration.layout;
                         return migratedObject;
