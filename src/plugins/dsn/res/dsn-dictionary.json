@@ -16,17 +16,17 @@
             "type": "folder",
             "location": "deep.space.network:dsn",
             "composition":[
-                "deep.space.network:canberra.station",
+                "deep.space.network:cdscc.station",
                 "deep.space.network:canberra.dss34",
                 "deep.space.network:canberra.dss35",
                 "deep.space.network:canberra.dss36",
                 "deep.space.network:canberra.dss43"
             ]
         },
-        "deep.space.network:canberra.station" : {
+        "deep.space.network:cdscc.station" : {
             "identifier": {
                 "namespace": "deep.space.network",
-                "key": "canberra.station"
+                "key": "cdscc.station"
             },
             "name": "Station",
             "type": "table",
@@ -35,7 +35,40 @@
                 "deep.space.network:cdscc.friendly.name",
                 "deep.space.network:cdscc.utc.time",
                 "deep.space.network:cdscc.time.zone.offset"
-            ]
+            ],
+            "telemetry": {
+                "values": [
+                    {
+                        "name": "Name",
+                        "key": "cdscc.name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Friendly Name",
+                        "key": "cdscc.friendly.name",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "UTC Time",
+                        "key": "cdscc.utc.time",
+                        "format": "utc",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Time Zone Offset",
+                        "key": "cdscc.time.zone.offset",
+                        "hints": {
+                            "domain": 1
+                        }
+                    }
+                ]
+            }
         },
         "deep.space.network:cdscc.name" : {
             "identifier": {

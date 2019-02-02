@@ -27,6 +27,7 @@ define([], function () {
         station[key + '.friendly.name'] = stationElement.getAttribute('friendlyName');
         station[key + '.utc.time'] = parseInt(stationElement.getAttribute('timeUTC'), 10);
         station[key + '.time.zone.offset'] = parseInt(stationElement.getAttribute('timeZoneOffset'), 10);
+        station[key + '.station'] = Object.assign({}, station);
 
         return station;
     };

@@ -88,7 +88,7 @@ define([
 
     realTimeProvider = {
         supportsSubscribe: function (domainObject) {
-            return domainObject.type === DSN_TELEMETRY_TYPE;
+            return domainObject.type === DSN_TELEMETRY_TYPE || domainObject.type === 'table';
         },
         subscribe: function (domainObject, callback, options) {
             // Keep track of the domain objects subscribed
