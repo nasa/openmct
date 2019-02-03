@@ -141,7 +141,7 @@
                 rangeLow,
                 rangeHigh,
                 limit1: limit,
-                curVal: 79.09
+                curVal: 0
             }
         },
         methods: {
