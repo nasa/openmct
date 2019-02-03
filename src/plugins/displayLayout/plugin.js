@@ -33,6 +33,9 @@ export default function () {
             canView: function (domainObject) {
                 return domainObject.type === 'layout';
             },
+            canEdit: function (domainObject) {
+                return domainObject.type === 'layout';
+            },
             view: function (domainObject) {
                 let component;
                 return {
@@ -41,7 +44,7 @@ export default function () {
                             components: {
                                 Layout
                             },
-                            template: '<layout :domain-object="domainObject"></layout>',
+                            template: '<layout ref="displayLayout" :domain-object="domainObject"></layout>',
                             provide: {
                                 openmct,
                                 objectUtils
@@ -53,6 +56,14 @@ export default function () {
                                 }
                             }
                         });
+                    },
+                    getSelectionContext() {
+                        return {
+                            item: domainObject,
+                            addElement: component && component.$refs.displayLayout.addElement,
+                            removeItem: component && component.$refs.displayLayout.removeItem,
+                            orderItem: component && component.$refs.displayLayout.orderItem
+                        }
                     },
                     destroy() {
                         component.$destroy();

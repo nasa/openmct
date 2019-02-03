@@ -32,11 +32,7 @@ define([
     "./src/actions/SaveAndStopEditingAction",
     "./src/actions/SaveAsAction",
     "./src/actions/CancelAction",
-    "./src/policies/EditActionPolicy",
     "./src/policies/EditPersistableObjectsPolicy",
-    "./src/policies/EditableLinkPolicy",
-    "./src/policies/EditableMovePolicy",
-    "./src/policies/EditContextualActionPolicy",
     "./src/representers/EditRepresenter",
     "./src/capabilities/EditorCapability",
     "./src/capabilities/TransactionCapabilityDecorator",
@@ -67,11 +63,7 @@ define([
     SaveAndStopEditingAction,
     SaveAsAction,
     CancelAction,
-    EditActionPolicy,
     EditPersistableObjectsPolicy,
-    EditableLinkPolicy,
-    EditableMovePolicy,
-    EditContextualActionPolicy,
     EditRepresenter,
     EditorCapability,
     TransactionCapabilityDecorator,
@@ -174,7 +166,7 @@ define([
                     "name": "Remove",
                     "description": "Remove this object from its containing object.",
                     "depends": [
-                        "dialogService",
+                        "openmct",
                         "navigationService"
                     ]
                 },
@@ -233,25 +225,8 @@ define([
             "policies": [
                 {
                     "category": "action",
-                    "implementation": EditActionPolicy
-                },
-                {
-                    "category": "action",
                     "implementation": EditPersistableObjectsPolicy,
                     "depends": ["openmct"]
-                },
-                {
-                    "category": "action",
-                    "implementation": EditContextualActionPolicy,
-                    "depends": ["navigationService", "editModeBlacklist", "nonEditContextBlacklist"]
-                },
-                {
-                    "category": "action",
-                    "implementation": EditableMovePolicy
-                },
-                {
-                    "category": "action",
-                    "implementation": EditableLinkPolicy
                 },
                 {
                     "implementation": CreationPolicy,
@@ -347,16 +322,6 @@ define([
                     "depends": [
                         "$log"
                     ]
-                }
-            ],
-            "constants": [
-                {
-                    "key": "editModeBlacklist",
-                    "value": ["copy", "follow", "link", "locate"]
-                },
-                {
-                    "key": "nonEditContextBlacklist",
-                    "value": ["copy", "follow", "properties", "move", "link", "remove", "locate"]
                 }
             ],
             "capabilities": [

@@ -20,99 +20,104 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="u-contents">
-        <div class="c-so-view__header">
-            <div class="c-so-view__header__start">
-                <div class="c-so-view__name icon-object">{{ item.domainObject.name }}</div>
-                <div class="c-so-view__context-actions c-disclosure-button"></div>
-            </div>
-            <div class="c-so-view__header__end">
-                <div class="c-button icon-expand local-controls--hidden"></div>
-            </div>
-        </div>
-        <object-view class="c-so-view__object-view"
-                     :object="item.domainObject"></object-view>
-    </div>
+    <layout-frame :item="item"
+                  :grid-size="gridSize"
+                  @endDrag="(item, updates) => $emit('endDrag', item, updates)">
+        <object-frame v-if="domainObject"
+                      :domain-object="domainObject"
+                      :object-path="objectPath"
+                      :has-frame="item.hasFrame"
+                      ref="objectFrame">
+        </object-frame>
+    </layout-frame>
 </template>
 
-<style lang="scss">
-    @import "~styles/sass-base";
-
-    .c-so-view {
-        /*************************** HEADER */
-        &__header {
-            display: flex;
-            align-items: center;
-            flex: 0 0 auto;
-            margin-bottom: $interiorMargin;
-
-            > [class*="__"] {
-                display: flex;
-                align-items: center;
-            }
-
-            > * + * {
-                margin-left: $interiorMargin;
-            }
-
-            [class*="__start"] {
-                flex: 1 1 auto;
-                overflow: hidden;
-            }
-
-            [class*="__end"] {
-                //justify-content: flex-end;
-                flex: 0 0 auto;
-
-                [class*="button"] {
-                    font-size: 0.7em;
-                }
-            }
-        }
-
-        &__name {
-            @include ellipsize();
-            flex: 0 1 auto;
-            font-size: 1.2em;
-
-            &:before {
-                // Object type icon
-                flex: 0 0 auto;
-                margin-right: $interiorMarginSm;
-            }
-        }
-
-        /*************************** OBJECT VIEW */
-        &__object-view {
-            flex: 1 1 auto;
-            overflow: auto;
-
-            .c-object-view {
-                .u-fills-container {
-                    // Expand component types that fill a container
-                    @include abs();
-                }
-            }
-        }
-    }
-</style>
-
 <script>
-    import ObjectView from '../../../ui/components/layout/ObjectView.vue'
+    import ObjectFrame from '../../../ui/components/ObjectFrame.vue'
+    import LayoutFrame from './LayoutFrame.vue'
+
+    const MINIMUM_FRAME_SIZE = [320, 180],
+          DEFAULT_DIMENSIONS = [10, 10],
+          DEFAULT_POSITION = [1, 1],
+          DEFAULT_HIDDEN_FRAME_TYPES = ['hyperlink', 'summary-widget'];
+
+    function getDefaultDimensions(gridSize) {
+        return MINIMUM_FRAME_SIZE.map((min, index) => {
+            return Math.max(
+                Math.ceil(min / gridSize[index]),
+                DEFAULT_DIMENSIONS[index]
+            );
+        });
+    }
+
+    function hasFrameByDefault(type) {
+        return DEFAULT_HIDDEN_FRAME_TYPES.indexOf(type) === -1;
+    }
 
     export default {
+        makeDefinition(openmct, gridSize, domainObject, position) {
+            let defaultDimensions = getDefaultDimensions(gridSize);
+            position = position || DEFAULT_POSITION;
+
+            return {
+                width: defaultDimensions[0],
+                height: defaultDimensions[1],
+                x: position[0],
+                y: position[1],
+                identifier: domainObject.identifier,
+                hasFrame: hasFrameByDefault(domainObject.type),
+                useGrid: true
+            };
+        },
         inject: ['openmct'],
         props: {
-            item: Object
+            item: Object,
+            gridSize: Array,
+            initSelect: Boolean,
+            index: Number
+        },
+        data() {
+            return {
+                domainObject: undefined,
+                objectPath: []
+            }
         },
         components: {
-            ObjectView,
+            ObjectFrame,
+            LayoutFrame
+        },
+        watch: {
+            index(newIndex) {
+                if (!this.context) {
+                    return;
+                }
+
+                this.context.index = newIndex;
+            }
+        },
+        methods: {
+            setObject(domainObject) {
+                this.domainObject = domainObject;
+                this.objectPath = [this.domainObject].concat(this.openmct.router.path);
+                this.$nextTick(function () {
+                    let childContext = this.$refs.objectFrame.getSelectionContext();
+                    childContext.item = domainObject;
+                    childContext.layoutItem = this.item;
+                    childContext.index = this.index;
+                    this.context = childContext;
+                    this.removeSelectable = this.openmct.selection.selectable(
+                        this.$el, this.context, this.initSelect);
+                });
+            }
         },
         mounted() {
-            this.item.config.attachListeners();
+            this.openmct.objects.get(this.item.identifier)
+                .then(this.setObject);
         },
         destroyed() {
-            this.item.config.removeListeners();
+            if (this.removeSelectable) {
+                this.removeSelectable();
+            }
         }
     }
 </script>

@@ -34,8 +34,8 @@
     <div class="c-telemetry-table__headers-w js-table__headers-w" ref="headersTable" :style="{ 'max-width': widthWithScroll}">
         <table class="c-table__headers c-telemetry-table__headers">
             <thead>
-                <tr>
-                    <table-column-header 
+                <tr class="c-telemetry-table__headers__name">
+                    <table-column-header
                         v-for="(title, key, headerIndex) in headers"
                         :key="key"
                         :headerKey="key"
@@ -50,7 +50,7 @@
                         :sortOptions="sortOptions"
                         >{{title}}</table-column-header>
                 </tr>
-                <tr>
+                <tr class="c-telemetry-table__headers__filter">
                     <table-column-header
                         v-for="(title, key, headerIndex) in headers"
                         :key="key"
@@ -106,19 +106,21 @@
 
 <style lang="scss">
     @import "~styles/sass-base";
-    @import "~styles/table";
 
     .c-telemetry-table__drop-target {
         position: absolute;
         width: 2px;
-        background-color: $editColor;
-        box-shadow: rgba($editColor, 0.5) 0 0 10px;
+        background-color: $editUIColor;
+        box-shadow: rgba($editUIColor, 0.5) 0 0 10px;
         z-index: 1;
         pointer-events: none;
     }
 
     .c-telemetry-table {
         // Table that displays telemetry in a scrolling body area
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: flex-start;
         overflow: hidden;
 
         th, td {
@@ -126,6 +128,10 @@
             flex: 1 0 auto;
             width: 100px;
             vertical-align: middle; // This is crucial to hiding f**king 4px height injected by browser by default
+        }
+
+        td {
+            color: $colorTelemFresh;
         }
 
         /******************************* WRAPPERS */
@@ -208,6 +214,22 @@
         }
     }
 
+    /******************************* EDITING */
+    .is-editing {
+        .c-telemetry-table__headers__name {
+            th[draggable],
+            th[draggable] > * {
+                cursor: move;
+            }
+
+            th[draggable]:hover {
+                $b: $editFrameHovMovebarColorBg;
+                background: $b;
+                > * { background: $b; }
+            }
+        }
+    }
+
     /******************************* LEGACY */
     .s-status-taking-snapshot,
     .overlay.snapshot {
@@ -219,7 +241,7 @@
 
 <script>
 import TelemetryTableRow from './table-row.vue';
-import search from '../../../ui/components/controls/search.vue';
+import search from '../../../ui/components/search.vue';
 import TableColumnHeader from './table-column-header.vue';
 import _ from 'lodash';
 
@@ -462,7 +484,7 @@ export default {
         },
         updateConfiguration(configuration) {
             this.isAutosizeEnabled = configuration.autosize;
-            
+
             this.updateHeaders();
             this.$nextTick().then(this.calculateColumnWidths);
         },
@@ -539,7 +561,7 @@ export default {
         this.filterChanged = _.debounce(this.filterChanged, 500);
     },
     mounted() {
-        
+
         this.table.on('object-added', this.addObject);
         this.table.on('object-removed', this.removeObject);
         this.table.on('outstanding-requests', this.outstandingRequests);

@@ -132,6 +132,16 @@ define([], function () {
      */
 
     /**
+     * Returns the selection context.
+     *
+     * View implementations should use this method to customize
+     * the selection context.
+     *
+     * @method getSelectionContext
+     * @memberof module:openmct.View#
+     */
+
+    /**
      * Exposes types of views in Open MCT.
      *
      * @interface ViewProvider
@@ -157,6 +167,18 @@ define([], function () {
      * @param {module:openmct.DomainObject} domainObject the domain object
      *        to be viewed
      * @returns {boolean} 'true' if the view applies to the provided object,
+     *          otherwise 'false'.
+     */
+
+    /**
+     * An optional function that defines whether or not this view can be used to edit a given object.
+     * If not provided, will default to `false` and the view will not support editing.
+     *
+     * @method canEdit
+     * @memberof module:openmct.ViewProvider#
+     * @param {module:openmct.DomainObject} domainObject the domain object
+     *        to be edited
+     * @returns {boolean} 'true' if the view can be used to edit the provided object,
      *          otherwise 'false'.
      */
 

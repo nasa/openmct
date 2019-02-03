@@ -1,4 +1,4 @@
-import ProgressComponent from '../../ui/components/layout/ProgressBar.vue';
+import ProgressComponent from '../../ui/components/ProgressBar.vue';
 import Overlay from './Overlay';
 import Vue from 'vue';
 
@@ -25,7 +25,7 @@ class ProgressDialog extends Overlay {
         super({
             element: component.$el,
             size: 'fit',
-            notDismissable: true,
+            dismissable: false,
             ...options
         });
 

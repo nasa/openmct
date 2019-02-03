@@ -42,7 +42,8 @@
                 </tr>
             </thead>
             <tbody>
-                <list-item v-for="(item,index) in sortedItems"
+                <list-item v-for="item in sortedItems"
+                    :key="item.objectKeyString"
                     :item="item"
                     :object-path="item.objectPath">
                 </list-item>
@@ -77,9 +78,12 @@
 
         td {
             $p: floor($interiorMargin * 1.5);
-            font-size: 1.1em;
+            @include ellipsize();
+            line-height: 120%; // Needed for icon alignment
+            max-width: 0;
             padding-top: $p;
             padding-bottom: $p;
+            width: 25%;
 
             &:not(.c-list-item__name) {
                 color: $colorItemFgDetails;
@@ -99,9 +103,20 @@ export default {
     mixins: [compositionLoader],
     inject: ['domainObject', 'openmct'],
     data() {
+        let sortBy = 'model.name',
+            ascending = true,
+            persistedSortOrder = window.localStorage.getItem('openmct-listview-sort-order');
+
+        if (persistedSortOrder) {
+            let parsed = JSON.parse(persistedSortOrder);
+
+            sortBy = parsed.sortBy;
+            ascending = parsed.ascending;
+        }
+
         return {
-            sortBy: 'model.name',
-            ascending: true
+            sortBy,
+            ascending
         };
     },
     computed: {
@@ -121,6 +136,17 @@ export default {
                 this.sortBy = field;
                 this.ascending = defaultDirection;
             }
+
+            window.localStorage
+                .setItem(
+                    'openmct-listview-sort-order',
+                    JSON.stringify(
+                        {
+                            sortBy: this.sortBy,
+                            ascending: this.ascending
+                        }
+                    )
+                );
         }
     }
 }

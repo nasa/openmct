@@ -14,7 +14,7 @@
 //@import "../styles/about";
 //@import "../styles/text";
 @import "../styles/icons";
-@import "../styles/status";
+//@import "../styles/status";
 @import "../styles/data-status";
 @import "../styles/helpers/bubbles";
 @import "../styles/helpers/splitter";
@@ -55,10 +55,9 @@
 @import "../styles/user-environ/selecting";
 //
 //!********************************* VIEWS *!
-@import "../styles/fixed-position";
 //@import "../styles/lists/tabular";
-@import "../styles/plots/plots-main";
-@import "../styles/plots/legend";
+//@import "../styles/plots/plots-main";
+//@import "../styles/plots/legend";
 @import "../styles/iframe";
 @import "../styles/views";
 @import "../styles/items/item";
@@ -69,11 +68,9 @@
 //!********************************* TO BE MOVED *!
 @import "../styles/autoflow";
 @import "../styles/features/imagery";
-@import "../styles/features/time-display";
+//@import "../styles/features/time-display";
 @import "../styles/widgets";
 //
 //!********************************* APP STARTUP *!
 //@import "../styles/app-start";
 
-@import "../styles/conductor/time-conductor-snow";
-//@import "../styles/notebook/notebook-snow";

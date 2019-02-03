@@ -27,7 +27,9 @@ define([
     '../../res/templates/notebook.html',
     '../../res/templates/entry.html',
     '../../res/templates/embed.html',
-    '../../../../ui/components/controls/search.vue'
+    '../../../../ui/components/search.vue',
+    '../../../../ui/preview/PreviewAction',
+    '../../../../ui/mixins/object-link'
 ],
 function (
     Vue,
@@ -36,15 +38,16 @@ function (
     NotebookTemplate,
     EntryTemplate,
     EmbedTemplate,
-    search
+    search,
+    PreviewAction,
+    objectLinkMixin
 ) {
 
     function NotebookController(openmct, domainObject) {
         this.openmct = openmct;
         this.domainObject = domainObject;
         this.entrySearch = '';
-        this.objectService = openmct.$injector.get('objectService');
-        this.actionService = openmct.$injector.get('actionService');
+        this.previewAction = new PreviewAction.default(openmct);
 
         this.show = this.show.bind(this);
         this.destroy = this.destroy.bind(this);
@@ -61,11 +64,12 @@ function (
 
         var notebookEmbed = {
             inject:['openmct', 'domainObject'],
+            mixins:[objectLinkMixin.default],
             props:['embed', 'entry'],
             template: EmbedTemplate,
             data: embedController.exposedData,
             methods: embedController.exposedMethods(),
-            beforeMount: embedController.populateActionMenu(self.objectService, self.actionService)
+            beforeMount: embedController.populateActionMenu(self.openmct, [self.previewAction])
         };
 
         var entryComponent = {
@@ -90,19 +94,23 @@ function (
                 return {
                     entrySearch: self.entrySearch,
                     showTime: '0',
-                    sortEntries: '-createdOn',
+                    sortEntries: self.domainObject.defaultSort,
                     entries: self.domainObject.entries,
                     currentEntryValue: ''
                 };
             },
+            computed: {
+                filteredAndSortedEntries() {
+                    return this.sort(this.filterBySearch(this.entries, this.entrySearch), this.sortEntries);
+                }
+            },
             methods: {
-                search: function (event) {
-                    if (event.target.value) {
-                        this.entrySearch = event.target.value;
-                    }
+                search(value) {
+                    this.entrySearch = value;
                 },
                 newEntry: self.newEntry,
-                filterBySearch: self.filterBySearch
+                filterBySearch: self.filterBySearch,
+                sort: self.sort
             }
         });
 
@@ -111,25 +119,48 @@ function (
     };
 
     NotebookController.prototype.newEntry = function (event) {
+        this.NotebookVue.search('');
+
+        var date = Date.now(),
+            embed;
+
+        if (event.dataTransfer && event.dataTransfer.getData('openmct/domain-object-path')) {
+            var selectedObject = JSON.parse(event.dataTransfer.getData('openmct/domain-object-path'))[0],
+                selectedObjectId = selectedObject.identifier.key,
+                cssClass = this.openmct.types.get(selectedObject.type);
+
+            embed = {
+                type: selectedObjectId,
+                id: '' + date,
+                cssClass: cssClass,
+                name: selectedObject.name,
+                snapshot: ''
+            };
+        }
 
         var entries = this.domainObject.entries,
-            lastEntryIndex = entries.length - 1,
-            lastEntry = entries[lastEntryIndex],
-            date = Date.now();
+            lastEntryIndex = this.NotebookVue.sortEntries === 'newest' ? 0 : entries.length - 1,
+            lastEntry = entries[lastEntryIndex];
 
         if (lastEntry === undefined || lastEntry.text || lastEntry.embeds.length) {
             var createdEntry = {'id': 'entry-' + date, 'createdOn': date, 'embeds':[]};
+
+            if (embed) {
+                createdEntry.embeds.push(embed);
+            }
 
             entries.push(createdEntry);
             this.openmct.objects.mutate(this.domainObject, 'entries', entries);
         } else {
             lastEntry.createdOn = date;
 
-            this.openmct.objects.mutate(this.domainObject, 'entries[entries.length-1]', lastEntry);
-            this.focusOnEntry.bind(this.NotebookVue.$children[lastEntryIndex])();
-        }
+            if(embed) {
+                lastEntry.embeds.push(embed);
+            }
 
-        this.entrySearch = '';
+            this.openmct.objects.mutate(this.domainObject, 'entries[entries.length-1]', lastEntry);
+            this.focusOnEntry.bind(this.NotebookVue.$children[lastEntryIndex+1])();
+        }
     };
 
     NotebookController.prototype.entryPosById = function (entryId) {
@@ -164,6 +195,33 @@ function (
             });
         } else {
             return entryArray;
+        }
+    };
+
+    NotebookController.prototype.sort = function (array, sortDirection) {
+        let oldest = (a,b) => {
+                if (a.createdOn < b.createdOn) {
+                    return -1;
+                } else if (a.createdOn > b.createdOn) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            },
+            newest = (a,b) => {
+                if (a.createdOn < b.createdOn) {
+                    return 1;
+                } else if (a.createdOn > b.createdOn) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            };
+
+        if (sortDirection === 'newest') {
+            return array.sort(newest);
+        } else {
+            return array.sort(oldest);
         }
     };
 

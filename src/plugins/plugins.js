@@ -39,9 +39,9 @@ define([
     './folderView/plugin',
     './flexibleLayout/plugin',
     './tabs/plugin',
+    './LADTable/plugin',
     './gauge/plugin',
-    './bignumbers/plugin',
-    '../../platform/features/fixed/plugin'
+    './bignumbers/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -63,7 +63,7 @@ define([
     Tabs,
     Gauge,
     Bignumbers,
-    FixedView
+    LADTable
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -178,8 +178,8 @@ define([
     plugins.Tabs = Tabs;
     plugins.Gauge = Gauge;
     plugins.Bignumbers = Bignumbers;
-    plugins.FixedView = FixedView;
     plugins.FlexibleLayout = FlexibleLayout;
+    plugins.LADTable = LADTable;
 
     return plugins;
 });

@@ -40,8 +40,10 @@ define([
     '../platform/framework/src/Main',
     './styles-new/core.scss',
     './styles-new/notebook.scss',
-    './ui/components/layout/Layout.vue',
+    './ui/layout/Layout.vue',
+    '../platform/core/src/objects/DomainObjectImpl',
     '../platform/core/src/capabilities/ContextualDomainObject',
+    './ui/preview/plugin',
     'vue'
 ], function (
     EventEmitter,
@@ -64,7 +66,9 @@ define([
     coreStyles,
     NotebookStyles,
     Layout,
+    DomainObjectImpl,
     ContextualDomainObject,
+    PreviewPlugin,
     Vue
 ) {
     /**
@@ -222,10 +226,13 @@ define([
 
         this.overlays = new OverlayAPI.default();
 
+        this.contextMenu = new api.ContextMenuRegistry();
+
         this.legacyRegistry = defaultRegistry;
         this.install(this.plugins.Plot());
         this.install(this.plugins.TelemetryTable());
         this.install(this.plugins.DisplayLayout());
+        this.install(PreviewPlugin.default());
 
         if (typeof BUILD_CONSTANTS !== 'undefined') {
             this.install(buildInfoPlugin(BUILD_CONSTANTS));
@@ -249,6 +256,14 @@ define([
      * @private
      */
     MCT.prototype.legacyObject = function (domainObject) {
+        let capabilityService = this.$injector.get('capabilityService');
+
+        function instantiate(model, keyString) {
+            var capabilities = capabilityService.getCapabilities(model, keyString);
+            model.id = keyString;
+            return new DomainObjectImpl(keyString, model, capabilities);
+        }
+
         if (Array.isArray(domainObject)) {
             // an array of domain objects. [object, ...ancestors] representing
             // a single object with a given chain of ancestors.  We instantiate
@@ -257,7 +272,7 @@ define([
                 .map((o) => {
                     let keyString = objectUtils.makeKeyString(o.identifier);
                     let oldModel = objectUtils.toOldFormat(o);
-                    return this.$injector.get('instantiate')(oldModel, keyString);
+                    return instantiate(oldModel, keyString);
                 })
                 .reverse()
                 .reduce((parent, child) => {
@@ -267,7 +282,7 @@ define([
         } else {
             let keyString = objectUtils.makeKeyString(domainObject.identifier);
             let oldModel = objectUtils.toOldFormat(domainObject);
-            return this.$injector.get('instantiate')(oldModel, keyString);
+            return instantiate(oldModel, keyString);
         }
     };
 

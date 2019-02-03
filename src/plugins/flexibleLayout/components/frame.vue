@@ -22,103 +22,97 @@
 
 <template>
     <div class="c-fl-frame"
-        :class="{
-            'is-dragging': isDragging,
-            [frame.cssClass]: true
-        }"
-        @dragstart="initDrag"
-        @drag="continueDrag">
+        :style="{
+            'flex-basis': `${frame.size}%`
+        }">
 
-        <div class="c-frame c-fl-frame__drag-wrapper is-selectable is-moveable"
-             :class="{'no-frame': noFrame}"
+        <div class="c-frame c-fl-frame__drag-wrapper is-selectable u-inspectable is-moveable"
              draggable="true"
-             ref="frame"
-             v-if="frame.domainObject">
+             @dragstart="initDrag"
+             ref="frame">
 
-             <frame-header 
-                v-if="index !== 0"
-                ref="dragObject"
-                :domainObject="frame.domainObject">
-            </frame-header>
-
-            <object-view
-                class="c-object-view"
-                :object="frame.domainObject">
-            </object-view>
+            <object-frame
+                v-if="domainObject"
+                :domain-object="domainObject"
+                :object-path="objectPath"
+                :has-frame="hasFrame"
+                ref="objectFrame">
+            </object-frame>
 
             <div class="c-fl-frame__size-indicator"
                  v-if="isEditing"
-                 v-show="frame.height && frame.height < 100">
-                {{frame.height}}%
+                 v-show="frame.size && frame.size < 100">
+                {{frame.size}}%
             </div>
         </div>
-
-        <drop-hint
-             v-show="isEditing && isDragging"
-             class="c-fl-frame__drop-hint"
-             :class="{'is-dragging': isDragging}"
-             @object-drop-to="dropHandler">
-        </drop-hint>
     </div>
 </template>
 
 <script>
-import ObjectView from '../../../ui/components/layout/ObjectView.vue';
-import DropHint from './dropHint.vue';
 import ResizeHandle from './resizeHandle.vue';
-import FrameHeader from '../../../ui/components/utils/frameHeader.vue';
+import ObjectFrame from '../../../ui/components/ObjectFrame.vue';
+import isEditingMixin from '../mixins/isEditing';
 
 export default {
-    inject: ['openmct', 'domainObject'],
-    props: ['frame', 'index', 'containerIndex', 'isEditing', 'isDragging'],
+    inject: ['openmct'],
+    props: ['frame', 'index', 'containerIndex'],
+    mixins: [isEditingMixin],
     data() {
         return {
-            noFrame: this.frame.noFrame
+            domainObject: undefined,
+            objectPath: undefined
         }
     },
     components: {
-        ObjectView,
-        DropHint,
         ResizeHandle,
-        FrameHeader
+        ObjectFrame
+    },
+    computed: {
+        hasFrame() {
+            return !this.frame.noFrame;
+        }
     },
     methods: {
+        setDomainObject(object) {
+            this.domainObject = object;
+            this.objectPath = [object];
+            this.setSelection();
+        },
+        setSelection() {
+            this.$nextTick(function () {
+                let childContext = this.$refs.objectFrame.getSelectionContext();
+                childContext.item = this.domainObject;
+                childContext.type = 'frame';
+                childContext.frameId = this.frame.id;
+                this.unsubscribeSelection = this.openmct.selection.selectable(
+                    this.$refs.frame, childContext, false);
+            });
+        },
         initDrag(event) {
-            this.$emit('frame-drag-from', this.index);
-        },
-        dropHandler(event) {
-            this.$emit('frame-drop-to', this.index, event);
-        },
-        continueDrag(event) {
-            if (!this.isDragging) {
-                this.isDragging = true;
+            let type = this.openmct.types.get(this.domainObject.type),
+                iconClass = type.definition ? type.definition.cssClass : 'icon-object-unknown';
+ 
+            if (this.dragGhost) {
+                let originalClassName = this.dragGhost.classList[0];
+                this.dragGhost.className = '';
+                this.dragGhost.classList.add(originalClassName, iconClass);
+
+                this.dragGhost.innerHTML = `<span>${this.domainObject.name}</span>`;
+                event.dataTransfer.setDragImage(this.dragGhost, 0, 0);
             }
-        },
-        deleteFrame() {
-            this.$emit('delete-frame', this.index);
-        },
-        addContainer() {
-            this.$emit('add-container');
-        },
-        toggleFrame(v) {
-            this.noFrame = v;
+
+            event.dataTransfer.setData('frameid', this.frame.id);
+            event.dataTransfer.setData('containerIndex', this.containerIndex);
         }
     },
     mounted() {
-
-        if (this.frame.domainObject.identifier) {
-                let context = {
-                item: this.frame.domainObject,
-                method: this.deleteFrame,
-                addContainer: this.addContainer,
-                type: 'frame',
-                index: this.index
-            }
-
-            this.unsubscribeSelection = this.openmct.selection.selectable(this.$refs.frame, context, false);
-            
-            this.openmct.objects.observe(this.domainObject, `configuration.containers[${this.containerIndex}].frames[${this.index}].noFrame`, this.toggleFrame);
+        if (this.frame.domainObjectIdentifier) {
+            this.openmct.objects.get(this.frame.domainObjectIdentifier).then((object)=>{
+                this.setDomainObject(object);
+            });
         }
+
+        this.dragGhost = document.getElementById('js-fl-drag-ghost');
     },
     beforeDestroy() {
         if (this.unsubscribeSelection) {

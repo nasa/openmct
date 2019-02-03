@@ -36,7 +36,8 @@ define([
     './runs/RegisterLegacyTypes',
     './services/LegacyObjectAPIInterceptor',
     './views/installLegacyViews',
-    './policies/legacyCompositionPolicyAdapter'
+    './policies/legacyCompositionPolicyAdapter',
+    './actions/LegacyActionAdapter'
 ], function (
     legacyRegistry,
     ActionDialogDecorator,
@@ -53,7 +54,8 @@ define([
     RegisterLegacyTypes,
     LegacyObjectAPIInterceptor,
     installLegacyViews,
-    legacyCompositionPolicyAdapter
+    legacyCompositionPolicyAdapter,
+    LegacyActionAdapter
 ) {
     legacyRegistry.register('src/adapter', {
         "extensions": {
@@ -168,6 +170,13 @@ define([
                     implementation: legacyCompositionPolicyAdapter.default,
                     depends: [
                         "openmct"
+                    ]
+                },
+                {
+                    implementation: LegacyActionAdapter.default,
+                    depends: [
+                        "openmct",
+                        "actions[]"
                     ]
                 }
             ],

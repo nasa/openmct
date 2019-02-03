@@ -31,7 +31,6 @@ define([
     "./src/navigation/NavigateAction",
     "./src/navigation/OrphanNavigationHandler",
     "./src/windowing/NewTabAction",
-    "./src/windowing/FullscreenAction",
     "./src/windowing/WindowTitler",
     "./res/templates/browse.html",
     "./res/templates/browse-object.html",
@@ -53,7 +52,6 @@ define([
     NavigateAction,
     OrphanNavigationHandler,
     NewTabAction,
-    FullscreenAction,
     WindowTitler,
     browseTemplate,
     browseObjectTemplate,
@@ -225,13 +223,6 @@ define([
                     "group": "windowing",
                     "cssClass": "icon-new-window",
                     "priority": "preferred"
-                },
-                {
-                    "key": "fullscreen",
-                    "implementation": FullscreenAction,
-                    "category": "view-control",
-                    "group": "windowing",
-                    "priority": "default"
                 }
             ],
             "runs": [
@@ -264,18 +255,6 @@ define([
                 {
                     key: "inspectorRegion",
                     template: inspectorRegionTemplate
-                }
-            ],
-            "licenses": [
-                {
-                    "name": "screenfull.js",
-                    "version": "1.2.0",
-                    "description": "Wrapper for cross-browser usage of fullscreen API",
-                    "author": "Sindre Sorhus",
-                    "website": "https://github.com/sindresorhus/screenfull.js/",
-                    "copyright": "Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)",
-                    "license": "license-mit",
-                    "link": "https://github.com/sindresorhus/screenfull.js/blob/gh-pages/license"
                 }
             ]
         }

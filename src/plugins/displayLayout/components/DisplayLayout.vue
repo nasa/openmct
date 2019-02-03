@@ -25,28 +25,26 @@
          @dragover="handleDragOver"
          @click="bypassSelection"
          @drop="handleDrop">
-        <div class="l-layout__object">
-            <!-- Background grid -->
-            <div class="l-layout__grid-holder c-grid"
-                 v-if="!drilledIn">
-                <div class="c-grid__x l-grid l-grid-x"
-                     v-if="gridSize[0] >= 3"
-                     :style="[{ backgroundSize: gridSize[0] + 'px 100%' }]">
-                </div>
-                <div class="c-grid__y l-grid l-grid-y"
-                     v-if="gridSize[1] >= 3"
-                     :style="[{ backgroundSize: '100%' + gridSize[1] + 'px' }]"></div>
+        <!-- Background grid -->
+        <div class="l-layout__grid-holder c-grid">
+            <div class="c-grid__x l-grid l-grid-x"
+                 v-if="gridSize[0] >= 3"
+                 :style="[{ backgroundSize: gridSize[0] + 'px 100%' }]">
             </div>
-            <layout-item v-for="(item, index) in layoutItems"
-                          class="l-layout__frame"
-                          :key="index"
-                          :item="item"
-                          :gridSize="gridSize"
-                          @drilledIn="updateDrilledInState"
-                          @dragInProgress="updatePosition"
-                          @endDrag="endDrag">
-            </layout-item>
+            <div class="c-grid__y l-grid l-grid-y"
+                 v-if="gridSize[1] >= 3"
+                 :style="[{ backgroundSize: '100%' + gridSize[1] + 'px' }]"></div>
         </div>
+        <component v-for="(item, index) in layoutItems"
+                   :is="item.type"
+                   :item="item"
+                   :key="item.id"
+                   :gridSize="item.useGrid ? gridSize : [1, 1]"
+                   :initSelect="initSelectIndex === index"
+                   :index="index"
+                   @endDrag="endDrag"
+        >
+        </component>
     </div>
 </template>
 
@@ -57,14 +55,10 @@
         @include abs();
         display: flex;
         flex-direction: column;
+        overflow: auto;
 
         &__grid-holder {
             display: none;
-        }
-
-        &__object {
-            flex: 1 1 auto;
-            overflow: auto;
         }
 
         &__frame {
@@ -72,147 +66,145 @@
         }
     }
 
-    .l-shell__main-container {
-        > .l-layout {
-            [s-selected] {
-                border: $browseBorderSelected;
+    .is-editing {
+        .l-shell__main-container {
+            &[s-selected],
+            &[s-selected-parent] {
+                // Display grid in main layout holder when editing
+                > .l-layout {
+                    background: $editUIGridColorBg;
+
+                    > [class*="__grid-holder"] {
+                        display: block;
+                    }
+                }
+            }
+        }
+
+        .l-layout__frame {
+            &[s-selected],
+            &[s-selected-parent] {
+                // Display grid in nested layouts when editing
+                > * > * > .l-layout {
+                    background: $editUIGridColorBg;
+                    box-shadow: inset $editUIGridColorFg 0 0 2px 1px;
+
+                    > [class*='grid-holder'] {
+                        display: block;
+                    }
+                }
             }
         }
     }
-
-    // Styles moved to _global.scss;
 </style>
 
 
 <script>
-    import LayoutItem from './LayoutItem.vue';
-    import TelemetryViewConfiguration from './../TelemetryViewConfiguration.js'
-    import SubobjectViewConfiguration from './../SubobjectViewConfiguration.js'
+    import uuid from 'uuid';
 
-    const DEFAULT_GRID_SIZE = [32, 32],
-          DEFAULT_DIMENSIONS = [12, 8],
-          DEFAULT_TELEMETRY_DIMENSIONS = [2, 1],
-          DEFAULT_POSITION = [0, 0],
-          MINIMUM_FRAME_SIZE = [320, 180],
-          DEFAULT_HIDDEN_FRAME_TYPES = [
-            'hyperlink'
-          ];
+    import SubobjectView from './SubobjectView.vue'
+    import TelemetryView from './TelemetryView.vue'
+    import BoxView from './BoxView.vue'
+    import TextView from './TextView.vue'
+    import LineView from './LineView.vue'
+    import ImageView from './ImageView.vue'
+
+    const ITEM_TYPE_VIEW_MAP = {
+        'subobject-view': SubobjectView,
+        'telemetry-view': TelemetryView,
+        'box-view': BoxView,
+        'line-view': LineView,
+        'text-view': TextView,
+        'image-view': ImageView
+    };
+    const ORDERS = {
+        top: Number.POSITIVE_INFINITY,
+        up: 1,
+        down: -1,
+        bottom: Number.NEGATIVE_INFINITY
+    };
+
+    function getItemDefinition(itemType, ...options) {
+        let itemView = ITEM_TYPE_VIEW_MAP[itemType];
+
+        if (!itemView) {
+            throw `Invalid itemType: ${itemType}`;
+        }
+
+        return itemView.makeDefinition(...options);
+    }
 
     export default {
         data() {
+            let domainObject = JSON.parse(JSON.stringify(this.domainObject));
             return {
-                gridSize: [],
-                layoutItems: [],
-                drilledIn: undefined
+                internalDomainObject: domainObject,
+                initSelectIndex: undefined
+            };
+        },
+        computed: {
+            gridSize() {
+                return this.internalDomainObject.configuration.layoutGrid;
+            },
+            layoutItems() {
+                return this.internalDomainObject.configuration.items;
             }
-        },          
+        },
         inject: ['openmct'],
         props: ['domainObject'],
-        components: {
-            LayoutItem
-        },
+        components: ITEM_TYPE_VIEW_MAP,
         methods: {
-            getAlphanumerics() {
-                let alphanumerics = this.newDomainObject.configuration.alphanumerics || [];
-                alphanumerics.forEach((alphanumeric, index) => {
-                    alphanumeric.index = index;
-                    this.makeTelemetryItem(alphanumeric, false);
-                });
-            },
-            makeFrameItem(panel, initSelect) {
-                let rawPosition = {
-                    position: panel.position,
-                    dimensions: panel.dimensions
-                };
-                let style = this.convertPosition(rawPosition);
-                let id = this.openmct.objects.makeKeyString(panel.domainObject.identifier);
-                let config = new SubobjectViewConfiguration(
-                    this.newDomainObject, id, panel.hasFrame, rawPosition, openmct);
-
-                this.layoutItems.push({
-                    id: id,
-                    domainObject: panel.domainObject,
-                    style: style,
-                    drilledIn: this.isItemDrilledIn(id),
-                    initSelect: initSelect,
-                    type: 'subobject-view',
-                    config: config
-                });
-            },
-            makeTelemetryItem(alphanumeric, initSelect) {
-                let rawPosition = {
-                    position: alphanumeric.position,
-                    dimensions: alphanumeric.dimensions
-                };
-                let style = this.convertPosition(rawPosition);
-                let id = this.openmct.objects.makeKeyString(alphanumeric.identifier);
-
-                this.openmct.objects.get(id).then(domainObject => {
-                    let config = new TelemetryViewConfiguration(
-                        this.newDomainObject, alphanumeric, rawPosition, openmct);
-
-                    this.layoutItems.push({
-                        id: id,
-                        domainObject: domainObject,
-                        style: style,
-                        initSelect: initSelect,
-                        alphanumeric: alphanumeric,
-                        type: 'telemetry-view',
-                        config: config
-                    });
-                });
-            },
-            getSubobjectDefaultDimensions() {
-                let gridSize = this.gridSize;
-                return MINIMUM_FRAME_SIZE.map(function (min, i) {
-                    return Math.max(
-                        Math.ceil(min / gridSize[i]),
-                        DEFAULT_DIMENSIONS[i]
-                    );
-                });
-            },
-            convertPosition(raw) {
-                return {
-                    left: (this.gridSize[0] * raw.position[0]) + 'px',
-                    top: (this.gridSize[1] * raw.position[1]) + 'px',
-                    width: (this.gridSize[0] * raw.dimensions[0]) + 'px',
-                    height: (this.gridSize[1] * raw.dimensions[1]) + 'px',
-                    minWidth: (this.gridSize[0] * raw.dimensions[0]) + 'px',
-                    minHeight: (this.gridSize[1] * raw.dimensions[1]) + 'px'
-                };
-            },
-            /**
-             * Checks if the frame should be hidden or not.
-             *
-             * @param type the domain object type
-             * @return {boolean} true if the object should have
-             *         frame by default, false, otherwise
-             */
-            hasFrameByDefault(type) {
-                return DEFAULT_HIDDEN_FRAME_TYPES.indexOf(type) === -1;
+            addElement(itemType, element) {
+                this.addItem(itemType + '-view', element);
             },
             setSelection(selection) {
                 if (selection.length === 0) {
                     return;
                 }
 
-                this.updateDrilledInState();
+                if (this.removeSelectionListener) {
+                    this.removeSelectionListener();
+                }
+
+                let itemIndex = selection[0].context.index;
+
+                if (itemIndex !== undefined) {
+                    this.attachSelectionListener(itemIndex);
+                }
             },
-            updateDrilledInState(id) {
-                this.drilledIn = id;
-                this.layoutItems.forEach(function (item) {
-                    if (item.type === 'subobject-view') {
-                        item.drilledIn = item.id === id;
+            attachSelectionListener(index) {
+                let path = `configuration.items[${index}].useGrid`;
+                this.removeSelectionListener = this.openmct.objects.observe(this.internalDomainObject, path, function (value) {
+                    let item = this.layoutItems[index];
+
+                    if (value) {
+                        item.x = Math.round(item.x / this.gridSize[0]);
+                        item.y = Math.round(item.y / this.gridSize[1]);
+                        item.width = Math.round(item.width / this.gridSize[0]);
+                        item.height = Math.round(item.height / this.gridSize[1]);
+
+                        if (item.x2) {
+                            item.x2 = Math.round(item.x2 / this.gridSize[0]);
+                        }
+                        if (item.y2) {
+                            item.y2 = Math.round(item.y2 / this.gridSize[1]);
+                        }
+                    } else {
+                        item.x = this.gridSize[0] * item.x;
+                        item.y = this.gridSize[1] * item.y;
+                        item.width = this.gridSize[0] * item.width;
+                        item.height = this.gridSize[1] * item.height;
+
+                        if (item.x2) {
+                            item.x2 = this.gridSize[0] * item.x2;
+                        }
+                        if (item.y2) {
+                            item.y2 = this.gridSize[1] * item.y2;
+                        }
                     }
-                });
-            },
-            isItemDrilledIn(id) {
-                return this.drilledIn === id;
-            },
-            updatePosition(item, newPosition) {
-                let newStyle = this.convertPosition(newPosition);
-                item.config.rawPosition = newPosition;
-                item.style = newStyle;
+                    item.useGrid = value;
+                    this.mutate(`configuration.items[${index}]`, item);
+                }.bind(this));
             },
             bypassSelection($event) {
                 if (this.dragInProgress) {
@@ -222,85 +214,55 @@
                     return;
                 }
             },
-            endDrag(item) {
+            endDrag(item, updates) {
                 this.dragInProgress = true;
                 setTimeout(function () {
                     this.dragInProgress = false;
                 }.bind(this), 0);
 
-                item.config.mutatePosition();
+                let index = this.layoutItems.indexOf(item);
+                Object.assign(item, updates);
+                this.mutate(`configuration.items[${index}]`, item);
             },
             mutate(path, value) {
-                this.openmct.objects.mutate(this.newDomainObject, path, value);
+                this.openmct.objects.mutate(this.internalDomainObject, path, value);
             },
             handleDrop($event) {
+                if (!$event.dataTransfer.types.includes('openmct/domain-object-path')) {
+                    return;
+                }
+
                 $event.preventDefault();
 
-                let domainObject = JSON.parse($event.dataTransfer.getData('domainObject'));
+                let domainObject = JSON.parse($event.dataTransfer.getData('openmct/domain-object-path'))[0];
                 let elementRect = this.$el.getBoundingClientRect();
-                this.droppedObjectPosition = [
+                let droppedObjectPosition = [
                     Math.floor(($event.pageX - elementRect.left) / this.gridSize[0]),
                     Math.floor(($event.pageY - elementRect.top) / this.gridSize[1])
                 ];
 
                 if (this.isTelemetry(domainObject)) {
-                    this.addAlphanumeric(domainObject, this.droppedObjectPosition);
+                    this.addItem('telemetry-view', domainObject, droppedObjectPosition);
                 } else {
-                    this.checkForDuplicatePanel(domainObject);
-                }
-            },
-            checkForDuplicatePanel(domainObject) {
-                let id = this.openmct.objects.makeKeyString(domainObject.identifier);
-                let panels = this.newDomainObject.configuration.panels;
+                    let identifier = this.openmct.objects.makeKeyString(domainObject.identifier);
 
-                if (panels && panels[id]) {
-                    let prompt = this.openmct.overlays.dialog({
-                        iconClass: 'alert',
-                        message: "This item is already in layout and will not be added again.",
-                        buttons: [
-                            {
-                                label: 'OK',
-                                callback: function () {
-                                    prompt.dismiss();
+                    if (!this.objectViewMap[identifier]) {
+                        this.addItem('subobject-view', domainObject, droppedObjectPosition);
+                    } else {
+                        let prompt = this.openmct.overlays.dialog({
+                            iconClass: 'alert',
+                            message: "This item is already in layout and will not be added again.",
+                            buttons: [
+                                {
+                                    label: 'OK',
+                                    callback: function () {
+                                        prompt.dismiss();
+                                    }
                                 }
-                            }
-                        ]
-                    });
+                            ]
+                        });
+                    }
                 }
-            },
-            addAlphanumeric(domainObject, position) {
-                let alphanumeric = {
-                    identifier: domainObject.identifier,
-                    position: position,
-                    dimensions: DEFAULT_TELEMETRY_DIMENSIONS,
-                    displayMode: 'all',
-                    value: this.getDefaultTelemetryValue(domainObject),
-                    stroke: "transparent",
-                    fill: "",
-                    color: "",
-                    size: "13px",
-                };
-                let alphanumerics = this.newDomainObject.configuration.alphanumerics || [];
-                alphanumeric.index = alphanumerics.push(alphanumeric) - 1;
-
-                this.mutate("configuration.alphanumerics", alphanumerics);
-                this.makeTelemetryItem(alphanumeric, true);
-            },
-            getDefaultTelemetryValue(domainObject) {
-                let metadata = this.openmct.telemetry.getMetadata(domainObject);
-                let valueMetadata = metadata.valuesForHints(['range'])[0];
-
-                if (valueMetadata === undefined) {
-                    valueMetadata = metadata.values().filter(values => {
-                        return !(values.hints.domain);
-                    })[0];
-                }
-
-                if (valueMetadata === undefined) {
-                    valueMetadata = metadata.values()[0];
-                }
-
-                return valueMetadata.key;
             },
             handleDragOver($event){
                 $event.preventDefault();
@@ -313,68 +275,136 @@
                     return false;
                 }
             },
-            addObject(domainObject) {
-                if (!this.isTelemetry(domainObject)) {
-                    let panels = this.newDomainObject.configuration.panels,
-                        id = this.openmct.objects.makeKeyString(domainObject.identifier),
-                        panel = panels[id],
-                        mutateObject = false,
-                        initSelect = false;
+            addItem(itemType, ...options) {
+                let item = getItemDefinition(itemType, this.openmct, this.gridSize, ...options);
+                item.type = itemType;
+                item.id = uuid();
+                this.trackItem(item);
+                this.layoutItems.push(item);
+                this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
+                this.initSelectIndex = this.layoutItems.length - 1;
+            },
+            trackItem(item) {
+                if (!item.identifier) {
+                    return;
+                }
 
-                    // If this is a new panel, select it and save the configuration.
-                    if (!panel) {
-                        panel = {};
-                        mutateObject = true;
-                        initSelect = true;
-                    }
+                let keyString = this.openmct.objects.makeKeyString(item.identifier);
 
-                    panel.dimensions = panel.dimensions || this.getSubobjectDefaultDimensions();
-                    panel.hasFrame = panel.hasOwnProperty('hasFrame') ?
-                        panel.hasFrame :
-                        this.hasFrameByDefault(domainObject.type);
-
-                    if (this.droppedObjectPosition) {
-                        panel.position = this.droppedObjectPosition;
-                        this.droppedObjectPosition = undefined;
-                    } else {
-                        panel.position = panel.position || DEFAULT_POSITION;
-                    }
-
-                    if (mutateObject) {
-                        this.mutate("configuration.panels[" + id + "]", panel);
-                    }
-
-                    panel.domainObject = domainObject;
-                    this.makeFrameItem(panel, initSelect);
+                if (item.type === "telemetry-view") {
+                    let count = this.telemetryViewMap[keyString] || 0;
+                    this.telemetryViewMap[keyString] = ++count;
+                } else if (item.type === "subobject-view") {
+                    this.objectViewMap[keyString] = true;
                 }
             },
-            removeObject() {
+            removeItem(item, index) {
+                this.initSelectIndex = -1;
+                this.layoutItems.splice(index, 1);
+                this.mutate("configuration.items", this.layoutItems);
+                this.untrackItem(item);
+                this.$el.click();
+            },
+            untrackItem(item) {
+                if (!item.identifier) {
+                    return;
+                }
 
+                let keyString = this.openmct.objects.makeKeyString(item.identifier);
+
+                if (item.type === 'telemetry-view') {
+                    let count = --this.telemetryViewMap[keyString];
+
+                    if (count === 0) {
+                        delete this.telemetryViewMap[keyString];
+                        this.removeFromComposition(keyString);
+                    }
+                } else if (item.type === 'subobject-view') {
+                    delete this.objectViewMap[keyString];
+                    this.removeFromComposition(keyString);
+                }
+            },
+            removeFromComposition(keyString) {
+                let composition = _.get(this.internalDomainObject, 'composition');
+                composition = composition.filter(identifier => {
+                    return this.openmct.objects.makeKeyString(identifier) !== keyString;
+                });
+                this.mutate("composition", composition);
+            },
+            initializeItems() {
+                this.telemetryViewMap = {};
+                this.objectViewMap = {};
+                this.layoutItems.forEach(this.trackItem);
+            },
+            addChild(child) {
+                let identifier = this.openmct.objects.makeKeyString(child.identifier);
+                if (this.isTelemetry(child)) {
+                    if (!this.telemetryViewMap[identifier]) {
+                        this.addItem('telemetry-view', child);
+                    }
+                } else if (!this.objectViewMap[identifier]) {
+                    this.addItem('subobject-view', child);
+                }
+            },
+            removeChild(identifier) {
+                let keyString = this.openmct.objects.makeKeyString(identifier);
+
+                if (this.objectViewMap[keyString]) {
+                    delete this.objectViewMap[keyString];
+                    this.removeFromConfiguration(keyString);
+                } else if (this.telemetryViewMap[keyString]) {
+                    delete this.telemetryViewMap[keyString];
+                    this.removeFromConfiguration(keyString);
+                }
+            },
+            removeFromConfiguration(keyString) {
+                let layoutItems = this.layoutItems.filter(item => {
+                    if (!item.identifier) {
+                        return true;
+                    } else {
+                        return this.openmct.objects.makeKeyString(item.identifier) !== keyString;
+                    }
+                });
+                this.mutate("configuration.items", layoutItems);
+                this.$el.click();
+            },
+            orderItem(position, index) {
+                let delta = ORDERS[position];
+                let newIndex = Math.max(Math.min(index + delta, this.layoutItems.length - 1), 0);
+                let item = this.layoutItems[index];
+
+                if (newIndex !== index) {
+                    this.layoutItems.splice(index, 1);
+                    this.layoutItems.splice(newIndex, 0, item);
+                    this.mutate('configuration.items', this.layoutItems);
+
+                    if (this.removeSelectionListener) {
+                        this.removeSelectionListener();
+                        this.attachSelectionListener(newIndex);
+                    }
+                }
             }
         },
         mounted() {
-            this.newDomainObject = this.domainObject;
-            this.gridSize = this.newDomainObject.layoutGrid ||  DEFAULT_GRID_SIZE;
-
-            this.unlisten = this.openmct.objects.observe(this.newDomainObject, '*', function (obj) {
-                this.newDomainObject = JSON.parse(JSON.stringify(obj));
-                this.gridSize = this.newDomainObject.layoutGrid || DEFAULT_GRID_SIZE;;
+            this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', function (obj) {
+                this.internalDomainObject = JSON.parse(JSON.stringify(obj));
             }.bind(this));
-
             this.openmct.selection.on('change', this.setSelection);
-
-            this.composition = this.openmct.composition.get(this.newDomainObject);
-            this.composition.on('add', this.addObject);
-            this.composition.on('remove', this.removeObject);
+            this.initializeItems();
+            this.composition = this.openmct.composition.get(this.internalDomainObject);
+            this.composition.on('add', this.addChild);
+            this.composition.on('remove', this.removeChild);
             this.composition.load();
-            this.getAlphanumerics();
         },
         destroyed: function () {
             this.openmct.off('change', this.setSelection);
-            this.composition.off('add', this.addObject);
-            this.composition.off('remove', this.removeObject);
+            this.composition.off('add', this.addChild);
+            this.composition.off('remove', this.removeChild);
             this.unlisten();
+
+            if (this.removeSelectionListener) {
+                this.removeSelectionListener();
+            }
         }
     }
-    
 </script>

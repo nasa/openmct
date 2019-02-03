@@ -1,5 +1,32 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2018, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 <template>
     <div class="c-fl">
+        <div 
+            id="js-fl-drag-ghost"
+            class="c-fl__drag-ghost">
+        </div>
+
         <div class="c-fl__empty"
              v-if="areAllContainersEmpty()">
             <span class="c-fl__empty-message">This Flexible Layout is currently empty</span>
@@ -10,40 +37,31 @@
                 'c-fl--rows': rowsLayout === true
             }">
 
-            <div class="u-contents"
-                 v-for="(container, index) in containers"
-                 :key="index">
-                
+            <template v-for="(container, index) in containers">
+
                 <drop-hint
-                    style="flex-basis: 15px;"
+                    class="c-fl-frame__drop-hint"
                     v-if="index === 0 && containers.length > 1"
-                    v-show="isContainerDragging"
+                    :key="index"
                     :index="-1"
-                    @object-drop-to="containerDropTo">
+                    :allow-drop="allowContainerDrop"
+                    @object-drop-to="moveContainer">
                 </drop-hint>
 
                 <container-component
                     class="c-fl__container"
-                    ref="containerComponent"
+                    :key="container.id"
                     :index="index"
-                    :size="`${Math.round(container.width)}%`"
-                    :frames="container.frames"
-                    :isEditing="isEditing"
-                    :isDragging="isDragging"
+                    :container="container"
                     :rowsLayout="rowsLayout"
-                    @addFrame="addFrame"
-                    @frame-drag-from="frameDragFromHandler"
-                    @frame-drop-to="frameDropToHandler"
-                    @persist="persist"
-                    @delete-container="promptBeforeDeletingContainer"
-                    @add-container="addContainer"
-                    @start-container-drag="startContainerDrag"
-                    @stop-container-drag="stopContainerDrag">
+                    @move-frame="moveFrame"
+                    @new-frame="setFrameLocation"
+                    @persist="persist">
                 </container-component>
 
                 <resize-handle
                     v-if="index !== (containers.length - 1)"
-                    v-show="isEditing"
+                    :key="index"
                     :index="index"
                     :orientation="rowsLayout ? 'vertical' : 'horizontal'"
                     @init-move="startContainerResizing"
@@ -52,19 +70,36 @@
                 </resize-handle>
 
                 <drop-hint
-                    style="flex-basis: 15px;"
+                    class="c-fl-frame__drop-hint"
                     v-if="containers.length > 1"
-                    v-show="isContainerDragging"
+                    :key="index"
                     :index="index"
-                    @object-drop-to="containerDropTo">
+                    :allowDrop="allowContainerDrop"
+                    @object-drop-to="moveContainer">
                 </drop-hint>
-            </div>
-        </div> 
+            </template>
+        </div>
     </div>
 </template>
 
 <style lang="scss">
     @import '~styles/sass-base';
+    
+    @mixin containerGrippy($headerSize, $dir) {
+        position: absolute;
+        $h: 6px;
+        $minorOffset: ($headerSize - $h) / 2;
+        $majorOffset: 35%;
+        content: '';
+        display: block;
+        position: absolute;
+        @include grippy($c: $editFrameSelectedMovebarColorFg, $dir: $dir);
+        @if $dir == 'x' {
+            top: $minorOffset; right: $majorOffset; bottom: $minorOffset; left: $majorOffset;
+        } @else {
+            top: $majorOffset; right: $minorOffset; bottom: $majorOffset; left: $minorOffset;
+        }
+    }
 
     .c-fl {
         @include abs();
@@ -86,7 +121,6 @@
             > * + * { margin-left: 1px; }
 
             &[class*='--rows'] {
-                //@include test(blue, 0.1);
                 flex-direction: column;
                 > * + * {
                     margin-left: 0;
@@ -108,13 +142,29 @@
                 opacity: 0.5;
             }
         }
+
+        &__drag-ghost{
+            background: $colorItemTreeHoverBg;
+            color: $colorItemTreeHoverFg;
+            border-radius: $basicCr;
+            display: flex;
+            align-items: center;
+            padding: $interiorMarginLg $interiorMarginLg * 2;
+            position: absolute;
+            top: -10000px;
+            z-index: 2;
+
+            &:before {
+                color: $colorKey;
+                margin-right: $interiorMarginSm;
+            }
+        }
     }
 
     .c-fl-container {
         /***************************************************** CONTAINERS */
         $headerSize: 16px;
 
-        border: 1px solid transparent;
         display: flex;
         flex-direction: column;
         overflow: auto;
@@ -124,9 +174,9 @@
         flex-shrink: 1;
 
         &__header {
-            // Only displayed when editing
-            background: $editSelectableColor;
-            color: $editSelectableColorFg;
+            // Only displayed when editing, controlled via JS
+            background: $editFrameMovebarColorBg;
+            color: $editFrameMovebarColorFg;
             cursor: move;
             display: flex;
             align-items: center;
@@ -134,12 +184,8 @@
 
             &:before {
                 // Drag grippy
-                font-size: 0.8em;
+                @include containerGrippy($headerSize, 'x');
                 opacity: 0.5;
-                position: absolute;
-                left: 50%; top: 50%;
-                transform-origin: center;
-                transform: translate(-50%, -50%);
             }
         }
 
@@ -159,19 +205,27 @@
         }
 
         .is-editing & {
-            //background: $editCanvasColorBg;
-            border-color: $editSelectableColor;
-
             &:hover {
-                border-color: $editSelectableColorHov;
+                .c-fl-container__header {
+                    background: $editFrameHovMovebarColorBg;
+                    color: $editFrameHovMovebarColorFg;
+
+                    &:before {
+                        opacity: .75;
+                    }
+                }
             }
 
             &[s-selected] {
-                border-color: $editSelectableColorSelected;
+                border: $editFrameSelectedBorder;
 
                 .c-fl-container__header {
-                    background: $editSelectableColorSelected;
-                    color: $editSelectableColorSelectedFg;
+                    background:$editFrameSelectedMovebarColorBg;
+                    color: $editFrameSelectedMovebarColorFg;
+                    &:before {
+                        // Grippy
+                        opacity: 1;
+                    }
                 }
             }
         }
@@ -180,11 +234,6 @@
         // Frames get styled here because this is particular to their presence in this layout type
         .c-fl-frame {
             @include browserPrefix(margin-collapse, collapse);
-            margin: 1px;
-
-            //&__drag-wrapper {
-                // border: 1px solid $colorInteriorBorder; // Now handled by is-selectable
-            //}
         }
 
         /****** ROWS LAYOUT */
@@ -197,8 +246,8 @@
                 overflow: hidden;
 
                 &:before {
-                    // Drag grippy
-                    transform: rotate(90deg) translate(-50%, 50%);
+                    // Grippy
+                    @include containerGrippy($headerSize, 'y');
                 }
             }
 
@@ -216,12 +265,11 @@
     }
 
     .c-fl-frame {
+        /***************************************************** CONTAINER FRAMES */
         $sizeIndicatorM: 16px;
         $dropHintSize: 15px;
 
         display: flex;
-        justify-content: stretch;
-        align-items: stretch;
         flex: 1 1;
         flex-direction: column;
         overflow: hidden; // Needed to allow frames to collapse when sized down
@@ -237,6 +285,16 @@
             }
         }
 
+        &__header {
+            flex: 0 0 auto;
+            margin-bottom: $interiorMargin;
+        }
+
+        &__object-view {
+            flex: 1 1 auto;
+            overflow: auto;
+        }
+
         &__size-indicator {
             $size: 35px;
 
@@ -250,7 +308,6 @@
             pointer-events: none;
             text-align: center;
             width: $size;
-            z-index: 2;
 
             // Changed when layout is different, see below
             border-top-right-radius: $controlCr;
@@ -279,65 +336,24 @@
 
             &:before {
                 // The visible resize line
-                background: $editColor;
+                background: $editUIColor;
                 content: '';
                 display: block;
                 flex: 1 1 auto;
                 min-height: $size; min-width: $size;
             }
 
-            &:after {
-                // Grippy element
-                /*background: deeppink;*/
-                $c: black;
-                $a: 0.9;
-                $d: 5px;
-                background: $editColor;
-                color: $editColorBg;
-                border-radius: $smallCr;
-                content: $glyph-icon-grippy-ew;
-                font-family: symbolsfont;
-                font-size: 0.8em;
-                display: inline-block;
-                padding: 10px 0;
-                position: absolute;
-                left: 50%; top: 50%;
-                text-align: center;
-                transform-origin: center center;
-                transform: translate(-50%, -50%);
-                z-index: 10;
-            }
-
             &.vertical {
                 padding: $margin $size;
                 &:hover{
-                  //  padding: $marginHov 0;
                     cursor: row-resize;
-                }
-
-                &:after {
-                    transform: rotate(90deg) translate(-50%, -50%);
-                    //top: $margin + $size - 2px;
-                    //left: 50%;
-                   // transform: translateX(-50%);
-                    /*width: $grippyLen;
-                    height: $grippyThickness;*/
                 }
             }
 
             &.horizontal {
                 padding: $size $margin;
                 &:hover{
-                 //   padding: 0 $marginHov;
                     cursor: col-resize;
-                }
-
-                &:after {
-                    //left: $margin + $size - 2px;
-                    //top: 50%;
-                    //transform: translateY(-50%);
-                   /* height: $grippyLen;
-                    width: $grippyThickness;*/
                 }
             }
 
@@ -345,7 +361,7 @@
                 transition: $transOut;
                 &:before {
                     // The visible resize line
-                    background: $editColorHov;
+                    background: $editUIColorHov;
                 }
             }
         }
@@ -387,9 +403,13 @@
             }
 
             &__drop-hint {
-                flex: 1 1 100%;
+                flex: 1 0 100%;
                 margin: 0;
             }
+        }
+
+        .c-object-view {
+            display: contents;
         }
     }
 </style>
@@ -397,31 +417,64 @@
 <script>
 import ContainerComponent  from './container.vue';
 import Container from '../utils/container';
+import Frame from '../utils/frame';
 import ResizeHandle from  './resizeHandle.vue';
 import DropHint from './dropHint.vue';
+import isEditingMixin from '../mixins/isEditing';
 
-const SNAP_TO_PERCENTAGE = 1,
-      MIN_CONTAINER_SIZE = 5;
+const MIN_CONTAINER_SIZE = 5;
+
+// Resize items so that newItem fits proportionally (newItem must be an element
+// of items).  If newItem does not have a size or is sized at 100%, newItem will
+// have size set to 1/n * 100, where n is the total number of items.
+function sizeItems(items, newItem) {
+    if (items.length === 1) {
+        newItem.size = 100;
+    } else {
+        if (!newItem.size || newItem.size === 100) {
+            newItem.size = Math.round(100 / items.length);
+        }
+        let oldItems = items.filter(item => item !== newItem);
+        // Resize oldItems to fit inside remaining space;
+        let remainder = 100 - newItem.size;
+        oldItems.forEach((item) => {
+            item.size = Math.round(item.size * remainder / 100);
+        });
+        // Ensure items add up to 100 in case of rounding error.
+        let total = items.reduce((t, item) => t + item.size, 0);
+        let excess = Math.round(100 - total);
+        oldItems[oldItems.length - 1].size += excess;
+    }
+}
+
+// Scales items proportionally so total is equal to 100.  Assumes that an item
+// was removed from array.
+function sizeToFill(items) {
+    if (items.length === 0) {
+        return;
+    }
+    let oldTotal = items.reduce((total, item) => total + item.size, 0);
+    items.forEach((item) => {
+        item.size = Math.round(item.size * 100 / oldTotal);
+    });
+    // Ensure items add up to 100 in case of rounding error.
+    let total = items.reduce((t, item) => t + item.size, 0);
+    let excess = Math.round(100 - total);
+    items[items.length - 1].size += excess;
+}
 
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'layoutObject'],
+    mixins: [isEditingMixin],
     components: {
         ContainerComponent,
         ResizeHandle,
         DropHint
     },
     data() {
-        let containers = this.domainObject.configuration.containers,
-            rowsLayout = this.domainObject.configuration.rowsLayout;
-
         return {
-            containers: containers,
-            dragFrom: [],
-            isEditing: false,
-            isDragging: false,
-            isContainerDragging: false,
-            rowsLayout: rowsLayout,
-            maxMoveSize: 0
+            domainObject: this.layoutObject,
+            newFrameLocation: []
         }
     },
     computed: {
@@ -431,144 +484,115 @@ export default {
             } else {
                 return 'Columns'
             }
+        },
+        containers() {
+            return this.domainObject.configuration.containers;
+        },
+        rowsLayout() {
+            return this.domainObject.configuration.rowsLayout;
         }
     },
     methods: {
         areAllContainersEmpty() {
-            return !!!this.containers.filter(container => container.frames.length > 1).length;
+            return !!!this.containers.filter(container => container.frames.length).length;
         },
         addContainer() {
-            let newSize = 100/(this.containers.length+1);
-
-            let container = new Container(newSize)
-
-            this.recalculateContainerSize(newSize);
-
+            let container = new Container();
             this.containers.push(container);
-        },
-        recalculateContainerSize(newSize) {
-            this.containers.forEach((container) => {
-                container.width = newSize;
-            });
-        },
-        recalculateNewFrameSize(multFactor, framesArray){
-            framesArray.forEach((frame, index) => {
-                if (index === 0) {
-                    return;
-                }
-                let frameSize = frame.height
-                frame.height = this.snapToPercentage(multFactor * frameSize);
-            });
-        },
-        recalculateOldFrameSize(framesArray) {
-            let totalRemainingSum = framesArray.map((frame,i) => {
-                if (i !== 0) {
-                    return frame.height
-                } else {
-                    return 0;
-                }
-            }).reduce((a, c) => a + c);
-
-            framesArray.forEach((frame, index) => {
-
-                if (index === 0) {
-                    return;
-                }
-                if (framesArray.length === 2) {
-
-                    frame.height = 100;
-                } else {
-
-                    let newSize = frame.height + ((frame.height / totalRemainingSum) * (100 - totalRemainingSum));
-                    frame.height = this.snapToPercentage(newSize);
-                }
-            });
-        },
-        addFrame(frame, index) {
-            this.containers[index].addFrame(frame);
-        },
-        frameDragFromHandler(containerIndex, frameIndex) {
-            this.dragFrom = [containerIndex, frameIndex];
-        },
-        frameDropToHandler(containerIndex, frameIndex, frameObject) {
-            let newContainer = this.containers[containerIndex];
-
-            this.isDragging = false;
-
-            if (!frameObject) {
-                frameObject = this.containers[this.dragFrom[0]].frames.splice(this.dragFrom[1], 1)[0];
-                this.recalculateOldFrameSize(this.containers[this.dragFrom[0]].frames);
-            }
-
-            if (!frameObject.height) {
-                frameObject.height = 100 / Math.max(newContainer.frames.length - 1, 1);
-            }
-
-            newContainer.frames.splice((frameIndex + 1), 0, frameObject);
-
-            let newTotalHeight = newContainer.frames.reduce((total, frame) => {
-                        let num = Number(frame.height);
-
-                        if(isNaN(num)) {
-                            return total;
-                        } else {
-                            return total + num;
-                        }
-                    },0);
-            let newMultFactor = 100 / newTotalHeight;
-
-            this.recalculateNewFrameSize(newMultFactor, newContainer.frames);
-
+            sizeItems(this.containers, container);
             this.persist();
+        },
+        deleteContainer(containerId) {
+            let container = this.containers.filter(c => c.id === containerId)[0];
+            let containerIndex = this.containers.indexOf(container);
+            this.containers.splice(containerIndex, 1);
+            sizeToFill(this.containers);
+            this.persist();
+        },
+        moveFrame(toContainerIndex, toFrameIndex, frameId, fromContainerIndex) {
+            let toContainer = this.containers[toContainerIndex];
+            let fromContainer = this.containers[fromContainerIndex];
+            let frame = fromContainer.frames.filter(f => f.id === frameId)[0];
+            let fromIndex = fromContainer.frames.indexOf(frame);
+            fromContainer.frames.splice(fromIndex, 1);
+            sizeToFill(fromContainer.frames);
+            toContainer.frames.splice(toFrameIndex + 1, 0, frame);
+            sizeItems(toContainer.frames, frame);
+            this.persist();
+        },
+        setFrameLocation(containerIndex, insertFrameIndex) {
+            this.newFrameLocation = [containerIndex, insertFrameIndex];
+        },
+        addFrame(domainObject) {
+            if (this.newFrameLocation.length) {
+                let containerIndex = this.newFrameLocation[0],
+                    frameIndex = this.newFrameLocation[1],
+                    frame = new Frame(domainObject.identifier),
+                    container = this.containers[containerIndex];
+
+                container.frames.splice(frameIndex + 1, 0, frame);
+                sizeItems(container.frames, frame);
+
+                this.newFrameLocation = [];
+                this.persist(containerIndex);
+            }
+        },
+        deleteFrame(frameId) {
+            let container = this.containers
+                .filter(c => c.frames.some(f => f.id === frameId))[0];
+            let containerIndex = this.containers.indexOf(container);
+            let frame = container
+                .frames
+                .filter((f => f.id === frameId))[0];
+            let frameIndex = container.frames.indexOf(frame);
+            container.frames.splice(frameIndex, 1);
+            sizeToFill(container.frames);
+            this.persist(containerIndex);
+        },
+        allowContainerDrop(event, index) {
+            if (!event.dataTransfer.types.includes('containerid')) {
+                return false;
+            }
+
+            let containerId = event.dataTransfer.getData('containerid'),
+                container = this.containers.filter((c) => c.id === containerId)[0],
+                containerPos = this.containers.indexOf(container);
+
+            if (index === -1) {
+                return containerPos !== 0;
+            } else {
+                return containerPos !== index && (containerPos - 1) !== index
+            }
         },
         persist(index){
             if (index) {
-                this.openmct.objects.mutate(this.domainObject, `.configuration.containers[${index}]`, this.containers[index]);
+                this.openmct.objects.mutate(this.domainObject, `configuration.containers[${index}]`, this.containers[index]);
             } else {
-                this.openmct.objects.mutate(this.domainObject, '.configuration.containers', this.containers);
+                this.openmct.objects.mutate(this.domainObject, 'configuration.containers', this.containers);
             }
-        },
-        isEditingHandler(isEditing) {
-            this.isEditing = isEditing;
-
-            if (this.isEditing) {
-                this.$el.click(); //force selection of flexible-layout for toolbar
-            }
-
-            if (this.isDragging && isEditing === false) {
-                this.isDragging = false;
-            }
-        },
-        dragstartHandler() {
-            if (this.isEditing) {
-                this.isDragging = true;
-            }
-        },
-        dragendHandler() {
-            this.isDragging = false;
         },
         startContainerResizing(index) {
             let beforeContainer = this.containers[index],
                 afterContainer = this.containers[index + 1];
 
-            this.maxMoveSize = beforeContainer.width + afterContainer.width;
+            this.maxMoveSize = beforeContainer.size + afterContainer.size;
         },
         containerResizing(index, delta, event) {
-            let percentageMoved = (delta/this.getElSize(this.$el))*100,
+            let percentageMoved = Math.round(delta / this.getElSize() * 100),
                 beforeContainer = this.containers[index],
                 afterContainer = this.containers[index + 1];
 
-                beforeContainer.width = this.getContainerSize(this.snapToPercentage(beforeContainer.width + percentageMoved));
-                afterContainer.width = this.getContainerSize(this.snapToPercentage(afterContainer.width - percentageMoved));
+            beforeContainer.size = this.getContainerSize(beforeContainer.size + percentageMoved);
+            afterContainer.size = this.getContainerSize(afterContainer.size - percentageMoved);
         },
         endContainerResizing(event) {
             this.persist();
         },
-        getElSize(el) {
+        getElSize() {
             if (this.rowsLayout) {
-                return el.offsetHeight;
+                return this.$el.offsetHeight;
             } else {
-                return el.offsetWidth;
+                return this.$el.offsetWidth;
             }
         },
         getContainerSize(size) {
@@ -580,105 +604,47 @@ export default {
                 return size;
             }
         },
-        snapToPercentage(value) {
-            let rem = value % SNAP_TO_PERCENTAGE,
-                roundedValue;
-            
-            if (rem < 0.5) {
-                 roundedValue = Math.floor(value/SNAP_TO_PERCENTAGE)*SNAP_TO_PERCENTAGE;
+        updateDomainObject(newDomainObject) {
+            this.domainObject = newDomainObject;
+        },
+        moveContainer(toIndex, event) {
+            let containerId = event.dataTransfer.getData('containerid');
+            let container = this.containers.filter(c => c.id === containerId)[0];
+            let fromIndex = this.containers.indexOf(container);
+            this.containers.splice(fromIndex, 1);
+            if (fromIndex > toIndex) {
+                this.containers.splice(toIndex + 1, 0, container);
             } else {
-                roundedValue = Math.ceil(value/SNAP_TO_PERCENTAGE)*SNAP_TO_PERCENTAGE;
+                this.containers.splice(toIndex, 0, container);
             }
-
-            return roundedValue;
+            this.persist(index);
         },
-        toggleLayoutDirection(v) {
-            this.rowsLayout = v;
-        },
-        promptBeforeDeletingContainer(containerIndex) {
-            let deleteContainer = this.deleteContainer;
+        removeChildObject(identifier) {
+            let removeIdentifier = this.openmct.objects.makeKeyString(identifier);
 
-            let prompt = this.openmct.overlays.dialog({
-                iconClass: 'alert',
-                message: `This action will permanently delete container ${containerIndex + 1} from this Flexible Layout`,
-                buttons: [
-                    {
-                        label: 'Ok',
-                        emphasis: 'true',
-                        callback: function () {
-                            deleteContainer(containerIndex);
-                            prompt.dismiss();
-                        },
-                    },
-                    {
-                        label: 'Cancel',
-                        callback: function () {
-                            prompt.dismiss();
-                        }
-                    }
-                ]
+            this.containers.forEach(container => {
+                container.frames = container.frames.filter(frame => {
+                    let frameIdentifier = this.openmct.objects.makeKeyString(frame.domainObjectIdentifier);
+                    
+                    return removeIdentifier !== frameIdentifier;
+                });
             });
-        },
-        deleteContainer(containerIndex) {
-            this.containers.splice(containerIndex, 1);
-
-            this.recalculateContainerSize(100/this.containers.length);
-            this.persist();
-        },
-        addContainer(containerIndex) {
-            let newContainer = new Container();
-
-            if (typeof containerIndex === 'number') {
-                this.containers.splice(containerIndex+1, 0, newContainer);
-            } else {
-
-                this.containers.push(newContainer);
-            }
-
-            this.recalculateContainerSize(100/this.containers.length);
-            this.persist();
-        },
-        startContainerDrag(index) {
-            this.isContainerDragging = true;
-            this.containerDragFrom = index;
-        },
-        stopContainerDrag() {
-            this.isContainerDragging = false;
-        },
-        containerDropTo(event, index) {
-            let fromContainer = this.containers.splice(this.containerDragFrom, 1)[0];
-
-            if (index === -1) {
-                this.containers.unshift(fromContainer);
-            } else {
-                this.containers.splice(index, 0, fromContainer);
-            }
 
             this.persist();
         }
     },
     mounted() {
+        this.composition = this.openmct.composition.get(this.domainObject);
+        this.composition.on('remove', this.removeChildObject);
+        this.composition.on('add', this.addFrame);
 
-        let context = {
-            item: this.domainObject,
-            addContainer: this.addContainer,
-            type: 'flexible-layout'
-        }
-
-        this.unsubscribeSelection = this.openmct.selection.selectable(this.$el, context, true);
-
-        this.openmct.objects.observe(this.domainObject, 'configuration.rowsLayout', this.toggleLayoutDirection);
-        this.openmct.editor.on('isEditing', this.isEditingHandler);
-
-        document.addEventListener('dragstart', this.dragstartHandler);
-        document.addEventListener('dragend', this.dragendHandler);
+        this.unobserve = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
     },
     beforeDestroy() {
-        this.unsubscribeSelection();
+        this.composition.off('remove', this.removeChildObject);
+        this.composition.off('add', this.addFrame);
 
-        this.openmct.editor.off('isEditing', this.isEditingHandler);
-        document.removeEventListener('dragstart', this.dragstartHandler);
-        document.removeEventListener('dragend', this.dragendHandler);
+        this.unobserve();
     }
 }
 </script>

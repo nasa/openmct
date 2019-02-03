@@ -21,9 +21,10 @@
  *****************************************************************************/
 
 <template>
-    <div>
+    <div v-show="isValidTarget">
         <div class="c-drop-hint c-drop-hint--always-show"
              :class="{'is-mouse-over': isMouseOver}"
+             @dragover.prevent
              @dragenter="dragenter"
              @dragleave="dragleave"
              @drop="dropHandler">
@@ -37,10 +38,17 @@
 
 <script>
 export default {
-    props:['index'],
+    props:{
+        index: Number,
+        allowDrop: {
+            type: Function,
+            required: true
+        }
+    },
     data() {
         return {
-            isMouseOver: false
+            isMouseOver: false,
+            isValidTarget: false
         }
     },
     methods: {
@@ -51,8 +59,25 @@ export default {
             this.isMouseOver = false;
         },
         dropHandler(event) {
-            this.$emit('object-drop-to', event, this.index);
+            this.$emit('object-drop-to', this.index, event);
+            this.isValidTarget = false;
+        },
+        dragstart(event) {
+            this.isValidTarget = this.allowDrop(event, this.index);
+        },
+        dragend() {
+            this.isValidTarget = false;
         }
+    },
+    mounted() {
+        document.addEventListener('dragstart', this.dragstart);
+        document.addEventListener('dragend', this.dragend);
+        document.addEventListener('drop', this.dragend);
+    },
+    destroyed() {
+        document.removeEventListener('dragstart', this.dragstart);
+        document.removeEventListener('dragend', this.dragend);
+        document.removeEventListener('drop', this.dragend);
     }
 }
 </script>

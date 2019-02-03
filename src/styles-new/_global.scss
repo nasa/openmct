@@ -20,29 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/************************** FONTS */
-@font-face {
-    // Use https://icomoon.io/app with `Icomoon.Open MCT Symbols 2018.json` to generate font files
-    font-family: 'symbolsfont';
-    src: url($dirFonts + 'Open-MCT-Symbols-16px.woff') format('woff'),
-    url($dirFonts + 'Open-MCT-Symbols-16px.ttf') format('truetype'),
-    url($dirFonts + 'Open-MCT-Symbols-16px.svg') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    // Use https://icomoon.io/app with icomoon-project-openmct-symbols-12px.json to generate font files
-    font-family: 'symbolsfont-12px';
-    src: url($dirFonts + 'openmct-symbols-12px.eot');
-    src: url($dirFonts + 'openmct-symbols-12px.eot?#iefix') format('embedded-opentype'),
-    url($dirFonts + 'openmct-symbols-12px.woff') format('woff'),
-    url($dirFonts + 'openmct-symbols-12px.ttf') format('truetype'),
-    url($dirFonts + 'openmct-symbols-12px.svg') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
 /******************************* RESETS */
 *,
 :before,
@@ -116,8 +93,7 @@ body, html {
 body {
     -webkit-font-smoothing: subpixel-antialiased;
     -moz-osx-font-smoothing: grayscale;
-    @include bodyFont($size: $fontBaseSize);
-    font-weight: normal;
+    @include bodyFont($fontBaseSize);
     background-color: $colorBodyBg;
     color: $colorBodyFg;
 }
@@ -165,16 +141,21 @@ li {
 // Local Controls: Controls placed in proximity to or overlaid on components and views
 body.desktop .has-local-controls {
     // Provides hover ability to show local controls
-    &:hover [class*="local-controls--hidden"] {
-        transition: opacity 50ms ease-in-out;
-        opacity: 1;
-        pointer-events: inherit;
-    }
-
-    [class*="local-controls--hidden"] {
+    [class*='local-controls--hidden'] {
         transition: opacity 500ms ease-in-out;
         opacity: 0;
         pointer-events: none;
+    }
+
+    // Look down up to two levels and display hidden LC's on hover
+    &:hover {
+        > [class*='local-controls--hidden'],
+        > * > [class*='local-controls--hidden'],
+        > * > * > [class*='local-controls--hidden'] {
+            transition: opacity 50ms ease-in-out;
+            opacity: 1;
+            pointer-events: inherit;
+        }
     }
 }
 
@@ -198,30 +179,6 @@ body.desktop .has-local-controls {
     }
 }
 
-//[class*="local-controls"] {
-//    // An explicit outer holder for controls. Typically placed in upper right.
-//    //font-size: 0.7rem;
-//    display: flex;
-//    align-items: center;
-//    justify-content: flex-end;
-//
-//
-//    &.h-local-controls-overlay-content {
-//        // Imagery controls
-//        $p: $interiorMargin;
-//        position: absolute;
-//        top: $p; right: $p;
-//        z-index: 2;
-//    }
-
-    //.l-btn-set,
-    //.s-button {
-    //    &:not(:first-child) {
-    //        margin-left: $interiorMargin;
-    //    }
-    //}
-//}
-
 /******************************************************** SELECTION AND EDITING */
 // Provides supporting styles for Display Layouts and augmented legacy Fixed Position view
 
@@ -234,41 +191,24 @@ body.desktop .has-local-controls {
 .c-grid {
     pointer-events: none;
 
-    &__x  { @include bgTicks($editCanvasColorGrid, 'x'); }
-    &__y  { @include bgTicks($editCanvasColorGrid, 'y'); }
+    &__x  { @include bgTicks($editUIGridColorFg, 'x'); }
+    &__y  { @include bgTicks($editUIGridColorFg, 'y'); }
 }
 
 /*************************** SELECTION */
-.is-selectable {
+.u-inspectable {
     &:hover {
-        box-shadow: $browseShdwSelectableHov;
+        box-shadow: $browseSelectableShdwHov;
+    }
+
+    &[s-selected] {
+        border: $browseSelectedBorder;
     }
 }
 
 /**************************** EDITING */
 .is-editing {
-    *:not(.is-drilled-in).is-selectable {
-        border: $editSelectableBorder;
-
-        &:hover {
-            border: $editSelectableBorderHov;
-        }
-
-        &[s-selected],
-        &.is-selected {
-            border: $editSelectableBorderSelected;
-
-            > .c-frame-edit {
-                display: block; // Show the editing rect and handles
-            }
-        }
-    }
-
-    *.is-drilled-in {
-        border: $editBorderDrilledIn;
-    }
-
-    *[s-selected] .is-moveable {
+    .is-moveable {
         cursor: move;
     }
 
@@ -276,107 +216,7 @@ body.desktop .has-local-controls {
         // Applied in markup to objects that provide links. Disable while editing.
         pointer-events: none;
     }
-
-    .c-frame-edit {
-        // In Layouts, this is the editing rect and handles
-        // In Fixed Position, this is a wrapper element
-        $z: 10;
-
-        @include abs();
-        display: none;
-
-        &__move {
-            @include abs();
-            box-shadow: $editMoveableSelectedShdw;
-            cursor: move;
-            z-index: $z;
-        }
-
-        &__handle {
-            $d: 8px;
-            $o: floor($d * -0.5);
-            background: rgba($editColor, 0.3);
-            border: 1px solid $editColor;
-            position: absolute;
-            width: $d; height: $d;
-            top: auto; right: auto; bottom: auto; left: auto;
-            z-index: $z + 1;
-
-            &:before {
-                // Extended hit area
-                $m: -5px;
-                content: '';
-                display: block;
-                position: absolute;
-                top: $m; right: $m; bottom: $m; left: $m;
-                z-index: -1;
-            }
-
-            &:hover {
-                background: $editColor;
-            }
-
-            &--nwse {
-                cursor: nwse-resize;
-            }
-
-            &--nw {
-                cursor: nw-resize;
-                left: $o; top: $o;
-            }
-
-            &--ne {
-                cursor: ne-resize;
-                right: $o; top: $o;
-            }
-
-            &--se {
-                cursor: se-resize;
-                right: $o; bottom: $o;
-            }
-
-            &--sw {
-                cursor: sw-resize;
-                left: $o; bottom: $o;
-            }
-        }
-    }
-
-    // TODO: move this into DisplayLayout and Fixed Position vue files respectively
-    .l-shell__main-container > .l-layout,
-    .l-shell__main-container > .c-object-view .l-fixed-position {
-        // Target the top-most layout container and color its background
-        background: $editCanvasColorBg;
-    }
-
-    // Layouts
-    [s-selected],
-    [s-selected-parent] {
-        .l-layout {
-            // Show the layout grid for the top-most child of the current selection,
-            // and hide the grid for deeper nested levels.
-            [class*="__grid-holder"] {
-                display: block;
-            }
-
-            .l-layout [class*="__grid-holder"] {
-                display: none;
-            }
-        }
-    }
-
-    // Fixed position
-    .l-fixed-position {
-        &__grid-holder {
-            display: block;
-        }
-
-        .c-frame-edit {
-            display: block;
-        }
-    }
 }
-
 
 /************************** LEGACY */
 
@@ -541,43 +381,4 @@ a.disabled {
             content: ', ';
         }
     }
-}
-
-/************************** TEMP LEGACY FIXES */
-.overlay {
-    .outer-holder {
-        background: $colorMenuBg;
-        color: $colorMenuFg !important;
-    }
-}
-
-.form .form-row {
-    .label {
-        color: $colorMenuFg !important;
-    }
-    .selector-list {
-        @include reactive-input();
-        background: $colorInputBg !important;
-        color: $colorInputFg !important;
-    }
-}
-
-.ui-symbol.view-control {
-    display: block;
-    transform-origin: center center;
-
-    &:before { content: $glyph-icon-arrow-right-equilateral; }
-
-    &.expanded {
-        transform: rotate(90deg);
-    }
-}
-
-.t-imagery {
-    display: contents;
-}
-
-.t-frame-outer {
-    min-width: 200px;
-    min-height: 200px;
 }

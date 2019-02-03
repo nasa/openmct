@@ -36,13 +36,13 @@ define([
             key: 'table',
             name: 'Telemetry Table',
             cssClass: 'icon-tabular-realtime',
-            editable: function(domainObject) {
-                return domainObject.type === 'table';
-            },
-            canView: function (domainObject) {
+            canView(domainObject) {
                 return domainObject.type === 'table' || domainObject.hasOwnProperty('telemetry');
             },
-            view: function (domainObject) {
+            canEdit(domainObject) {
+                return domainObject.type === 'table';
+            },
+            view(domainObject) {
                 let csvExporter = new CSVExporter.default();
                 let table = new TelemetryTable(domainObject, openmct);
                 let component;
@@ -67,7 +67,7 @@ define([
                     }
                 }
             },
-            priority: function () {
+            priority() {
                 return 1;
             }
         }

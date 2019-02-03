@@ -31,7 +31,6 @@ define([
     "./src/controllers/TreeNodeController",
     "./src/controllers/ActionGroupController",
     "./src/controllers/ToggleController",
-    "./src/controllers/ContextMenuController",
     "./src/controllers/ClickAwayController",
     "./src/controllers/ViewSwitcherController",
     "./src/controllers/GetterSetterController",
@@ -49,8 +48,6 @@ define([
     "./src/directives/MCTSplitter",
     "./src/directives/MCTTree",
     "./src/directives/MCTIndicators",
-    "./src/directives/MCTPreview",
-    "./src/actions/MCTPreviewAction",
     "./src/filters/ReverseFilter",
     "./res/templates/bottombar.html",
     "./res/templates/controls/action-button.html",
@@ -65,13 +62,11 @@ define([
     "./res/templates/tree-node.html",
     "./res/templates/label.html",
     "./res/templates/controls/action-group.html",
-    "./res/templates/menu/context-menu.html",
     "./res/templates/controls/switcher.html",
     "./res/templates/object-inspector.html",
     "./res/templates/controls/selector.html",
     "./res/templates/controls/datetime-picker.html",
     "./res/templates/controls/datetime-field.html",
-    "./res/templates/preview.html",
     'legacyRegistry'
 ], function (
     UrlService,
@@ -84,7 +79,6 @@ define([
     TreeNodeController,
     ActionGroupController,
     ToggleController,
-    ContextMenuController,
     ClickAwayController,
     ViewSwitcherController,
     GetterSetterController,
@@ -102,8 +96,6 @@ define([
     MCTSplitter,
     MCTTree,
     MCTIndicators,
-    MCTPreview,
-    MCTPreviewAction,
     ReverseFilter,
     bottombarTemplate,
     actionButtonTemplate,
@@ -118,13 +110,11 @@ define([
     treeNodeTemplate,
     labelTemplate,
     actionGroupTemplate,
-    contextMenuTemplate,
     switcherTemplate,
     objectInspectorTemplate,
     selectorTemplate,
     datetimePickerTemplate,
     datetimeFieldTemplate,
-    previewTemplate,
     legacyRegistry
 ) {
 
@@ -251,13 +241,6 @@ define([
                 {
                     "key": "ToggleController",
                     "implementation": ToggleController
-                },
-                {
-                    "key": "ContextMenuController",
-                    "implementation": ContextMenuController,
-                    "depends": [
-                        "$scope"
-                    ]
                 },
                 {
                     "key": "ClickAwayController",
@@ -394,31 +377,6 @@ define([
                     "key": "mctIndicators",
                     "implementation": MCTIndicators,
                     "depends": ['openmct']
-                },
-                {
-                    "key": "mctPreview",
-                    "implementation": MCTPreview,
-                    "depends": [
-                        "$document"
-                    ]
-                }
-            ],
-            "actions": [
-                {
-                    "key": "mct-preview-action",
-                    "implementation": MCTPreviewAction,
-                    "name": "Preview",
-                    "cssClass": "hide-in-t-main-view icon-eye-open",
-                    "description": "Preview in large dialog",
-                    "category": [
-                        "contextual",
-                        "view-control"
-                    ],
-                    "depends": [
-                        "$compile",
-                        "$rootScope"
-                    ],
-                    "priority": "preferred"
                 }
             ],
             "constants": [
@@ -518,13 +476,6 @@ define([
                     ]
                 },
                 {
-                    "key": "context-menu",
-                    "template": contextMenuTemplate,
-                    "uses": [
-                        "action"
-                    ]
-                },
-                {
                     "key": "switcher",
                     "template": switcherTemplate,
                     "uses": [
@@ -534,10 +485,6 @@ define([
                 {
                     "key": "object-inspector",
                     "template": objectInspectorTemplate
-                },
-                {
-                    "key": "mct-preview",
-                    "template": previewTemplate
                 }
             ],
             "controls": [

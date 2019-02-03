@@ -32,7 +32,7 @@ define([
                 {
                     key: "exportService",
                     implementation: function () {
-                        return new ExportService(saveAs);
+                        return new ExportService(saveAs.saveAs);
                     }
                 }
             ],
