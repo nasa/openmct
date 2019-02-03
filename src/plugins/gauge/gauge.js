@@ -35,6 +35,9 @@ define([
             canView: function (domainObject) {
                 return domainObject.type === 'gauge';
             },
+            canEdit: function (domainObject) {
+                return domainObject.type === 'gauge';
+            },
             view: function (domainObject) {
                 let component;
 
