@@ -35,6 +35,9 @@ define([
             canView: function (domainObject) {
                 return domainObject.type === 'bignumbers';
             },
+            canEdit: function (domainObject) {
+                return domainObject.type === 'bignumbers';
+            },
             view: function (domainObject) {
                 let component;
 
