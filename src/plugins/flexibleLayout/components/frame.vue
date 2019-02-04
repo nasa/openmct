@@ -35,7 +35,8 @@
                 v-if="domainObject"
                 :domain-object="domainObject"
                 :object-path="objectPath"
-                :has-frame="hasFrame">
+                :has-frame="hasFrame"
+                ref="objectFrame">
             </object-frame>
 
             <div class="c-fl-frame__size-indicator"
@@ -78,16 +79,28 @@ export default {
             this.setSelection();
         },
         setSelection() {
-            let context = {
-                item: this.domainObject,
-                addContainer: this.addContainer,
-                type: 'frame',
-                frameId: this.frame.id
-            };
-
-            this.unsubscribeSelection = this.openmct.selection.selectable(this.$refs.frame, context, false);
+            this.$nextTick(function () {
+                let childContext = this.$refs.objectFrame.getSelectionContext();
+                childContext.item = this.domainObject;
+                childContext.type = 'frame';
+                childContext.frameId = this.frame.id;
+                this.unsubscribeSelection = this.openmct.selection.selectable(
+                    this.$refs.frame, childContext, false);
+            });
         },
         initDrag(event) {
+            let type = this.openmct.types.get(this.domainObject.type),
+                iconClass = type.definition ? type.definition.cssClass : 'icon-object-unknown';
+ 
+            if (this.dragGhost) {
+                let originalClassName = this.dragGhost.classList[0];
+                this.dragGhost.className = '';
+                this.dragGhost.classList.add(originalClassName, iconClass);
+
+                this.dragGhost.innerHTML = `<span>${this.domainObject.name}</span>`;
+                event.dataTransfer.setDragImage(this.dragGhost, 0, 0);
+            }
+
             event.dataTransfer.setData('frameid', this.frame.id);
             event.dataTransfer.setData('containerIndex', this.containerIndex);
         }
@@ -98,6 +111,8 @@ export default {
                 this.setDomainObject(object);
             });
         }
+
+        this.dragGhost = document.getElementById('js-fl-drag-ghost');
     },
     beforeDestroy() {
         if (this.unsubscribeSelection) {
