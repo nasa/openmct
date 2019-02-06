@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -42,6 +42,8 @@ define(
                 mockOpenMCT,
                 mockSelection,
                 mockDomainObjectCapability,
+                mockObjects,
+                unlistenFunc,
                 $element = [],
                 selectable = [];
 
@@ -77,14 +79,15 @@ define(
                         if (param === 'composition') {
                             return id !== 'b';
                         }
-                    }
+                    },
+                    type: "testType"
                 };
             }
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    ["$watch", "$watchCollection", "$on", "commit"]
+                    ["$watch", "$watchCollection", "$on"]
                 );
                 mockEvent = jasmine.createSpyObj(
                     'event',
@@ -104,9 +107,13 @@ define(
                         }
                     }
                 };
+
+                unlistenFunc = jasmine.createSpy("unlisten");
                 mockDomainObjectCapability = jasmine.createSpyObj('capability',
-                    ['inEditContext']
+                    ['inEditContext', 'listen']
                 );
+                mockDomainObjectCapability.listen.and.returnValue(unlistenFunc);
+
                 mockCompositionCapability = mockPromise(mockCompositionObjects);
 
                 mockScope.domainObject = mockDomainObject("mockDomainObject");
@@ -125,25 +132,33 @@ define(
                     'off',
                     'get'
                 ]);
-                mockSelection.get.andReturn(selectable);
+                mockSelection.get.and.returnValue(selectable);
+
+                mockObjects = jasmine.createSpyObj('objects', [
+                    'get'
+                ]);
+                mockObjects.get.and.returnValue(mockPromise(mockDomainObject("mockObject")));
                 mockOpenMCT = {
-                    selection: mockSelection
+                    selection: mockSelection,
+                    objects: mockObjects
                 };
 
                 $element = $('<div></div>');
                 $(document).find('body').append($element);
                 spyOn($element[0], 'click');
 
-                spyOn(mockScope.domainObject, "useCapability").andCallThrough();
+                spyOn(mockScope.domainObject, "useCapability").and.callThrough();
 
                 controller = new LayoutController(mockScope, $element, mockOpenMCT);
-                spyOn(controller, "layoutPanels").andCallThrough();
+                spyOn(controller, "layoutPanels").and.callThrough();
+                spyOn(controller, "commit");
 
-                jasmine.Clock.useMock();
+                jasmine.clock().install();
             });
 
             afterEach(function () {
                 $element.remove();
+                jasmine.clock().uninstall();
             });
 
 
@@ -160,7 +175,7 @@ define(
                     jasmine.any(Function)
                 );
 
-                mockScope.$on.calls[0].args[1]();
+                mockScope.$on.calls.all()[0].args[1]();
 
                 expect(mockOpenMCT.selection.off).toHaveBeenCalledWith(
                     'change',
@@ -178,7 +193,7 @@ define(
             });
 
             it("Retrieves updated composition from composition capability", function () {
-                mockScope.$watchCollection.mostRecentCall.args[1]();
+                mockScope.$watchCollection.calls.mostRecent().args[1]();
                 expect(mockScope.domainObject.useCapability).toHaveBeenCalledWith(
                     "composition"
                 );
@@ -194,11 +209,11 @@ define(
                     secondCompositionCB;
 
                 spyOn(mockCompositionCapability, "then");
-                mockScope.$watchCollection.mostRecentCall.args[1]();
-                mockScope.$watchCollection.mostRecentCall.args[1]();
+                mockScope.$watchCollection.calls.mostRecent().args[1]();
+                mockScope.$watchCollection.calls.mostRecent().args[1]();
 
-                firstCompositionCB = mockCompositionCapability.then.calls[0].args[0];
-                secondCompositionCB = mockCompositionCapability.then.calls[1].args[0];
+                firstCompositionCB = mockCompositionCapability.then.calls.all()[0].args[0];
+                secondCompositionCB = mockCompositionCapability.then.calls.all()[1].args[0];
 
                 //Resolve promises in reverse order
                 secondCompositionCB(secondMockCompositionObjects);
@@ -212,12 +227,14 @@ define(
 
 
             it("provides styles for frames, from configuration", function () {
-                mockScope.$watchCollection.mostRecentCall.args[1]();
+                mockScope.$watchCollection.calls.mostRecent().args[1]();
                 expect(controller.getFrameStyle("a")).toEqual({
                     top: "320px",
                     left: "640px",
                     width: "160px",
-                    height: "160px"
+                    height: "160px",
+                    minWidth : '160px',
+                    minHeight : '160px'
                 });
             });
 
@@ -225,7 +242,7 @@ define(
                 var styleB, styleC;
 
                 // b and c do not have configured positions
-                mockScope.$watchCollection.mostRecentCall.args[1]();
+                mockScope.$watchCollection.calls.mostRecent().args[1]();
 
                 styleB = controller.getFrameStyle("b");
                 styleC = controller.getFrameStyle("c");
@@ -242,7 +259,7 @@ define(
 
             it("allows panels to be dragged", function () {
                 // Populate scope
-                mockScope.$watchCollection.mostRecentCall.args[1]();
+                mockScope.$watchCollection.calls.mostRecent().args[1]();
 
                 // Verify precondition
                 expect(testConfiguration.panels.b).not.toBeDefined();
@@ -261,17 +278,14 @@ define(
 
             it("invokes commit after drag", function () {
                 // Populate scope
-                mockScope.$watchCollection.mostRecentCall.args[1]();
+                mockScope.$watchCollection.calls.mostRecent().args[1]();
 
                 // Do a drag
                 controller.startDrag("b", [1, 1], [0, 0]);
                 controller.continueDrag([100, 100]);
                 controller.endDrag();
 
-                // Should have triggered commit (provided by
-                // EditRepresenter) with some message.
-                expect(mockScope.commit)
-                    .toHaveBeenCalledWith(jasmine.any(String));
+                expect(controller.commit).toHaveBeenCalled();
             });
 
             it("listens for drop events", function () {
@@ -287,18 +301,14 @@ define(
                 expect(testConfiguration.panels.d).not.toBeDefined();
 
                 // Notify that a drop occurred
-                mockScope.$on.mostRecentCall.args[1](
+                mockScope.$on.calls.mostRecent().args[1](
                     mockEvent,
                     'd',
                     { x: 300, y: 100 }
                 );
                 expect(testConfiguration.panels.d).toBeDefined();
                 expect(mockEvent.preventDefault).toHaveBeenCalled();
-
-                // Should have triggered commit (provided by
-                // EditRepresenter) with some message.
-                expect(mockScope.commit)
-                    .toHaveBeenCalledWith(jasmine.any(String));
+                expect(controller.commit).toHaveBeenCalled();
             });
 
             it("ignores drops when default has been prevented", function () {
@@ -306,7 +316,7 @@ define(
                 mockEvent.defaultPrevented = true;
 
                 // Notify that a drop occurred
-                mockScope.$on.mostRecentCall.args[1](
+                mockScope.$on.calls.mostRecent().args[1](
                     mockEvent,
                     'd',
                     { x: 300, y: 100 }
@@ -321,8 +331,8 @@ define(
                 testModel.layoutGrid = [1, 1];
 
                 // White-boxy; we know which watch is which
-                mockScope.$watch.calls[0].args[1](testModel.layoutGrid);
-                mockScope.$watchCollection.calls[0].args[1](testModel.composition);
+                mockScope.$watch.calls.all()[0].args[1](testModel.layoutGrid);
+                mockScope.$watchCollection.calls.all()[0].args[1](testModel.composition);
 
                 styleB = controller.getFrameStyle("b");
 
@@ -336,15 +346,19 @@ define(
 
                 // Start with a very small frame size
                 testModel.layoutGrid = [1, 1];
-                mockScope.$watch.calls[0].args[1](testModel.layoutGrid);
+                mockScope.$watch.calls.all()[0].args[1](testModel.layoutGrid);
+
+                // Add a new object to the composition
+                mockComposition = ["a", "b", "c", "d"];
+                mockCompositionObjects = mockComposition.map(mockDomainObject);
+                mockCompositionCapability = mockPromise(mockCompositionObjects);
 
                 // Notify that a drop occurred
-                mockScope.$on.mostRecentCall.args[1](
+                mockScope.$on.calls.mostRecent().args[1](
                     mockEvent,
                     'd',
                     { x: 300, y: 100 }
                 );
-                mockScope.$watch.calls[0].args[1](['d']);
 
                 style = controller.getFrameStyle("d");
 
@@ -356,14 +370,14 @@ define(
             it("updates positions of existing objects on a drop", function () {
                 var oldStyle;
 
-                mockScope.$watchCollection.mostRecentCall.args[1]();
+                mockScope.$watchCollection.calls.mostRecent().args[1]();
 
                 oldStyle = controller.getFrameStyle("b");
 
                 expect(oldStyle).toBeDefined();
 
                 // ...drop event...
-                mockScope.$on.mostRecentCall
+                mockScope.$on.calls.mostRecent()
                     .args[1](mockEvent, 'b', { x: 300, y: 100 });
 
                 expect(controller.getFrameStyle("b"))
@@ -371,16 +385,16 @@ define(
             });
 
             it("allows objects to be selected", function () {
-                mockScope.$watchCollection.mostRecentCall.args[1]();
+                mockScope.$watchCollection.calls.mostRecent().args[1]();
                 var childObj = mockCompositionObjects[0];
                 selectable[0].context.oldItem = childObj;
-                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+                mockOpenMCT.selection.on.calls.mostRecent().args[1](selectable);
 
                 expect(controller.selected(childObj)).toBe(true);
             });
 
             it("prevents event bubbling while drag is in progress", function () {
-                mockScope.$watchCollection.mostRecentCall.args[1]();
+                mockScope.$watchCollection.calls.mostRecent().args[1]();
                 var childObj = mockCompositionObjects[0];
 
                 // Do a drag
@@ -394,81 +408,57 @@ define(
                 expect(mockEvent.stopPropagation).toHaveBeenCalled();
 
                 // Shoud be able to select another object when dragging is done.
-                jasmine.Clock.tick(0);
-                mockEvent.stopPropagation.reset();
+                jasmine.clock().tick(0);
+                mockEvent.stopPropagation.calls.reset();
                 controller.bypassSelection(mockEvent);
 
                 expect(mockEvent.stopPropagation).not.toHaveBeenCalled();
             });
 
             it("shows frames by default", function () {
-                mockScope.$watchCollection.mostRecentCall.args[1]();
+                mockScope.$watchCollection.calls.mostRecent().args[1]();
 
                 expect(controller.hasFrame(mockCompositionObjects[0])).toBe(true);
             });
 
             it("hyperlinks hide frame by default", function () {
-                mockScope.$watchCollection.mostRecentCall.args[1]();
+                mockScope.$watchCollection.calls.mostRecent().args[1]();
 
                 expect(controller.hasFrame(mockCompositionObjects[1])).toBe(false);
             });
 
-            it("hides frame when selected object has frame ", function () {
-                mockScope.$watchCollection.mostRecentCall.args[1]();
-                var childObj = mockCompositionObjects[0];
-                selectable[0].context.oldItem = childObj;
-                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
-                var toolbarObj = controller.getToolbar(childObj.getId(), childObj);
-
-                expect(controller.hasFrame(childObj)).toBe(true);
-                expect(toolbarObj.hideFrame).toBeDefined();
-                expect(toolbarObj.hideFrame).toEqual(jasmine.any(Function));
-            });
-
-            it("shows frame when selected object has no frame", function () {
-                mockScope.$watchCollection.mostRecentCall.args[1]();
-                var childObj = mockCompositionObjects[1];
-                selectable[0].context.oldItem = childObj;
-                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
-                var toolbarObj = controller.getToolbar(childObj.getId(), childObj);
-
-                expect(controller.hasFrame(childObj)).toBe(false);
-                expect(toolbarObj.showFrame).toBeDefined();
-                expect(toolbarObj.showFrame).toEqual(jasmine.any(Function));
-            });
-
             it("selects the parent object when selected object is removed", function () {
-                mockScope.$watchCollection.mostRecentCall.args[1]();
+                mockScope.$watchCollection.calls.mostRecent().args[1]();
                 var childObj = mockCompositionObjects[0];
                 selectable[0].context.oldItem = childObj;
-                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+                mockOpenMCT.selection.on.calls.mostRecent().args[1](selectable);
 
                 var composition = ["b", "c"];
-                mockScope.$watchCollection.mostRecentCall.args[1](composition);
+                mockScope.$watchCollection.calls.mostRecent().args[1](composition);
 
                 expect($element[0].click).toHaveBeenCalled();
             });
 
             it("allows objects to be drilled-in only when editing", function () {
-                mockScope.$watchCollection.mostRecentCall.args[1]();
+                mockScope.$watchCollection.calls.mostRecent().args[1]();
                 var childObj = mockCompositionObjects[0];
-                childObj.getCapability().inEditContext.andReturn(false);
+                childObj.getCapability().inEditContext.and.returnValue(false);
                 controller.drill(mockEvent, childObj);
 
                 expect(controller.isDrilledIn(childObj)).toBe(false);
             });
 
             it("allows objects to be drilled-in only if it has sub objects", function () {
-                mockScope.$watchCollection.mostRecentCall.args[1]();
+                mockScope.$watchCollection.calls.mostRecent().args[1]();
                 var childObj = mockCompositionObjects[1];
-                childObj.getCapability().inEditContext.andReturn(true);
+                childObj.getCapability().inEditContext.and.returnValue(true);
                 controller.drill(mockEvent, childObj);
 
                 expect(controller.isDrilledIn(childObj)).toBe(false);
             });
 
             it("selects a newly-dropped object", function () {
-                mockScope.$on.mostRecentCall.args[1](
+                mockScope.$on.calls.mostRecent().args[1](
                     mockEvent,
                     'd',
                     { x: 300, y: 100 }
@@ -480,7 +470,7 @@ define(
                 spyOn(testElement[0], 'click');
 
                 controller.selectIfNew('some-id', childObj);
-                jasmine.Clock.tick(0);
+                jasmine.clock().tick(0);
 
                 expect(testElement[0].click).toHaveBeenCalled();
             });

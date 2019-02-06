@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -45,8 +45,8 @@ define(
                 mockCallback = jasmine.createSpy("callback");
                 mockPromise = jasmine.createSpyObj("promise", ["then"]);
 
-                mockQ.when.andReturn(mockPromise);
-                mockPromise.then.andReturn(mockPromise);
+                mockQ.when.and.returnValue(mockPromise);
+                mockPromise.then.and.returnValue(mockPromise);
 
                 subscriber = new TelemetrySubscriber(mockQ, mockTimeout);
             });

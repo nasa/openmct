@@ -23,10 +23,11 @@ define(
             this.$window = $window;
             this.maxDisplayRows = 100;
 
-            this.scrollable = this.element.find('.l-view-section.scrolling').first();
+            this.scrollable = this.element.find('.t-scrolling').first();
             this.resultsHeader = this.element.find('.mct-table>thead').first();
-            this.sizingTableBody = this.element.find('.sizing-table>tbody').first();
+            this.sizingTableBody = this.element.find('.t-sizing-table>tbody').first();
             this.$scope.sizingRow = {};
+            this.$scope.calcTableWidthPx = '100%';
             this.timeApi = openmct.time;
             this.toiFormatter = undefined;
             this.formatService = formatService;
@@ -88,13 +89,18 @@ define(
             setDefaults($scope);
 
             $scope.exportAsCSV = function () {
-                var headers = $scope.displayHeaders;
+                var headers = $scope.displayHeaders,
+                    filename = $(element[0]).attr('export-as');
+
                 exportService.exportCSV($scope.displayRows.map(function (row) {
                     return headers.reduce(function (r, header) {
                         r[header] = row[header].text;
                         return r;
                     }, {});
-                }), { headers: headers });
+                }), {
+                    headers: headers,
+                    filename: filename
+                });
             };
 
             $scope.toggleSort = function (key) {
@@ -174,10 +180,6 @@ define(
             $scope.$on('$destroy', function () {
                 this.scrollable.off('scroll', this.onScroll);
                 this.destroyConductorListeners();
-
-                // In case for some reason this controller instance lingers around,
-                // destroy scope as it can be extremely large for large tables.
-                delete this.$scope;
 
             }.bind(this));
         }
@@ -260,19 +262,26 @@ define(
          * @private
          */
         MCTTableController.prototype.onScroll = function (event) {
+            this.scrollWindow = {
+                top: this.scrollable[0].scrollTop,
+                bottom: this.scrollable[0].scrollTop + this.scrollable[0].offsetHeight,
+                offsetHeight: this.scrollable[0].offsetHeight,
+                height: this.scrollable[0].scrollHeight
+            };
             this.$window.requestAnimationFrame(function () {
                 this.setVisibleRows();
                 this.digest();
 
                 // If user scrolls away from bottom, disable auto-scroll.
                 // Auto-scroll will be re-enabled if user scrolls to bottom again.
-                if (this.scrollable[0].scrollTop <
-                    (this.scrollable[0].scrollHeight - this.scrollable[0].offsetHeight) - 20) {
+                if (this.scrollWindow.top <
+                    (this.scrollWindow.height - this.scrollWindow.offsetHeight) - 20) {
                     this.$scope.autoScroll = false;
                 } else {
                     this.$scope.autoScroll = true;
                 }
                 this.scrolling = false;
+                delete this.scrollWindow;
             }.bind(this));
         };
 
@@ -281,20 +290,14 @@ define(
          * @private
          */
         MCTTableController.prototype.firstVisible = function () {
-            var target = this.scrollable[0],
-                topScroll = target.scrollTop,
-                firstVisible;
+            var topScroll = this.scrollWindow ?
+                this.scrollWindow.top :
+                this.scrollable[0].scrollTop;
 
-            if (topScroll < this.$scope.headerHeight) {
-                firstVisible = 0;
-            } else {
-                firstVisible = Math.floor(
-                    (topScroll - this.$scope.headerHeight) /
-                    this.$scope.rowHeight
-                );
-            }
+            return Math.floor(
+                (topScroll) / this.$scope.rowHeight
+            );
 
-            return firstVisible;
         };
 
         /**
@@ -302,16 +305,14 @@ define(
          * @private
          */
         MCTTableController.prototype.lastVisible = function () {
-            var target = this.scrollable[0],
-                topScroll = target.scrollTop,
-                bottomScroll = topScroll + target.offsetHeight,
-                lastVisible;
+            var bottomScroll = this.scrollWindow ?
+                this.scrollWindow.bottom :
+                this.scrollable[0].scrollTop + this.scrollable[0].offsetHeight;
 
-            lastVisible = Math.ceil(
-                (bottomScroll - this.$scope.headerHeight) /
+            return Math.ceil(
+                (bottomScroll) /
                 this.$scope.rowHeight
             );
-            return lastVisible;
         };
 
         /**
@@ -359,8 +360,7 @@ define(
                 .map(function (row, i) {
                     return {
                         rowIndex: start + i,
-                        offsetY: ((start + i) * self.$scope.rowHeight) +
-                        self.$scope.headerHeight,
+                        offsetY: ((start + i) * self.$scope.rowHeight),
                         contents: row
                     };
                 });
@@ -396,15 +396,13 @@ define(
          * for individual rows.
          */
         MCTTableController.prototype.setElementSizes = function () {
-            var thead = this.resultsHeader,
-                tbody = this.sizingTableBody,
+            var tbody = this.sizingTableBody,
                 firstRow = tbody.find('tr'),
                 column = firstRow.find('td'),
-                headerHeight = thead.prop('offsetHeight'),
                 rowHeight = firstRow.prop('offsetHeight'),
                 columnWidth,
                 tableWidth = 0,
-                overallHeight = headerHeight + (rowHeight *
+                overallHeight = (rowHeight *
                     (this.$scope.displayRows ? this.$scope.displayRows.length - 1  : 0));
 
             this.$scope.columnWidths = [];
@@ -415,9 +413,13 @@ define(
                 tableWidth += columnWidth;
                 column = column.next();
             }
-            this.$scope.headerHeight = headerHeight;
             this.$scope.rowHeight = rowHeight;
             this.$scope.totalHeight = overallHeight;
+
+            var scrollW = this.scrollable[0].offsetWidth - this.scrollable[0].clientWidth;
+            if (scrollW && scrollW > 0) {
+                this.$scope.calcTableWidthPx = 'calc(100% - ' + scrollW + 'px)';
+            }
 
             if (tableWidth > 0) {
                 this.$scope.totalWidth = tableWidth + 'px';
@@ -760,7 +762,6 @@ define(
 
             if (!visible) {
                 var scrollTop = displayRowIndex * this.$scope.rowHeight +
-                    this.$scope.headerHeight -
                     (this.scrollable[0].offsetHeight / 2);
                 this.scrollable[0].scrollTop = scrollTop;
                 this.setVisibleRows();

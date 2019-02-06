@@ -38,7 +38,7 @@ define(
                 mockTicker = jasmine.createSpyObj('ticker', ['listen']);
                 mockUnticker = jasmine.createSpy('unticker');
 
-                mockTicker.listen.andReturn(mockUnticker);
+                mockTicker.listen.and.returnValue(mockUnticker);
 
                 controller = new ClockController(mockScope, mockTicker);
             });
@@ -57,17 +57,17 @@ define(
 
             it("unsubscribes to ticks when destroyed", function () {
                 // Make sure $destroy is being listened for...
-                expect(mockScope.$on.mostRecentCall.args[0]).toEqual('$destroy');
+                expect(mockScope.$on.calls.mostRecent().args[0]).toEqual('$destroy');
                 expect(mockUnticker).not.toHaveBeenCalled();
 
                 // ...and makes sure that its listener unsubscribes from ticker
-                mockScope.$on.mostRecentCall.args[1]();
+                mockScope.$on.calls.mostRecent().args[1]();
                 expect(mockUnticker).toHaveBeenCalled();
             });
 
             it("formats using the format string from the model", function () {
-                mockTicker.listen.mostRecentCall.args[0](TEST_TIMESTAMP);
-                mockScope.$watch.mostRecentCall.args[1]({
+                mockTicker.listen.calls.mostRecent().args[0](TEST_TIMESTAMP);
+                mockScope.$watch.calls.mostRecent().args[1]({
                     "clockFormat": [
                         "YYYY-DDD hh:mm:ss",
                         "clock24"
@@ -81,8 +81,8 @@ define(
             });
 
             it("formats 12-hour time", function () {
-                mockTicker.listen.mostRecentCall.args[0](TEST_TIMESTAMP);
-                mockScope.$watch.mostRecentCall.args[1]({
+                mockTicker.listen.calls.mostRecent().args[0](TEST_TIMESTAMP);
+                mockScope.$watch.calls.mostRecent().args[1]({
                     "clockFormat": [
                         "YYYY-DDD hh:mm:ss",
                         "clock12"
@@ -96,9 +96,9 @@ define(
             });
 
             it("does not throw exceptions when model is undefined", function () {
-                mockTicker.listen.mostRecentCall.args[0](TEST_TIMESTAMP);
+                mockTicker.listen.calls.mostRecent().args[0](TEST_TIMESTAMP);
                 expect(function () {
-                    mockScope.$watch.mostRecentCall.args[1](undefined);
+                    mockScope.$watch.calls.mostRecent().args[1](undefined);
                 }).not.toThrow();
             });
 

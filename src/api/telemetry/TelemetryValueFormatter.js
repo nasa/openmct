@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,9 +21,11 @@
  *****************************************************************************/
 
 define([
-    'lodash'
+    'lodash',
+    'printj'
 ], function (
-    _
+    _,
+    printj
 ) {
 
     // TODO: needs reference to formatService;
@@ -57,8 +59,8 @@ define([
                 return vm;
             }, {byValue: {}, byString: {}});
             this.formatter.format = function (value) {
-                if (typeof value === "number") {
-                    return this.enumerations.byValue[value] || value;
+                if (this.enumerations.byValue.hasOwnProperty(value)) {
+                    return this.enumerations.byValue[value];
                 }
                 return value;
             }.bind(this);
@@ -70,6 +72,14 @@ define([
                 }
                 return Number(string);
             }.bind(this);
+        }
+        // Check for formatString support once instead of per format call.
+        if (valueMetadata.formatString) {
+            var baseFormat = this.formatter.format;
+            var formatString = valueMetadata.formatString;
+            this.formatter.format = function (value) {
+                return printj.sprintf(formatString, baseFormat.call(this, value));
+            };
         }
     }
 

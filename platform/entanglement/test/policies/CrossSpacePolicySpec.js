@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -39,7 +39,7 @@ define(
                     'persistence',
                     ['getSpace']
                 );
-                mockPersistence.getSpace.andReturn(space);
+                mockPersistence.getSpace.and.returnValue(space);
                 return domainObjectFactory({
                     id: space + ":foo",
                     model: {},
@@ -56,7 +56,7 @@ define(
                     'action',
                     ['getMetadata']
                 );
-                mockAction.getMetadata.andReturn(testActionMetadata);
+                mockAction.getMetadata.and.returnValue(testActionMetadata);
 
                 sameSpaceContext = {
                     domainObject: makeObject('a'),

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,7 +31,10 @@ define([
     './policies/AdapterCompositionPolicy',
     './policies/AdaptedViewPolicy',
     './runs/AlternateCompositionInitializer',
-    './runs/TimeSettingsURLHandler'
+    './runs/TimeSettingsURLHandler',
+    './runs/TypeDeprecationChecker',
+    './runs/LegacyTelemetryProvider',
+    './services/LegacyObjectAPIInterceptor'
 ], function (
     legacyRegistry,
     ActionDialogDecorator,
@@ -43,7 +46,10 @@ define([
     AdapterCompositionPolicy,
     AdaptedViewPolicy,
     AlternateCompositionInitializer,
-    TimeSettingsURLHandler
+    TimeSettingsURLHandler,
+    TypeDeprecationChecker,
+    LegacyTelemetryProvider,
+    LegacyObjectAPIInterceptor
 ) {
     legacyRegistry.register('src/adapter', {
         "extensions": {
@@ -92,6 +98,18 @@ define([
                     provides: "modelService",
                     implementation: MissingModelCompatibilityDecorator,
                     depends: ["openmct"]
+                },
+                {
+                    provides: "objectService",
+                    type: "decorator",
+                    priority: "mandatory",
+                    implementation: LegacyObjectAPIInterceptor,
+                    depends: [
+                        "openmct",
+                        "roots[]",
+                        "instantiate",
+                        "topic"
+                    ]
                 }
             ],
             policies: [
@@ -108,6 +126,10 @@ define([
             ],
             runs: [
                 {
+                    implementation: TypeDeprecationChecker,
+                    depends: ["types[]"]
+                },
+                {
                     implementation: AlternateCompositionInitializer,
                     depends: ["openmct"]
                 },
@@ -120,6 +142,13 @@ define([
                         );
                     },
                     depends: ["openmct", "$location", "$rootScope"]
+                },
+                {
+                    implementation: LegacyTelemetryProvider,
+                    depends: [
+                        "openmct",
+                        "instantiate"
+                    ]
                 }
             ],
             licenses: [

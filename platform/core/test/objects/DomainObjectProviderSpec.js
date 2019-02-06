@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -53,7 +53,7 @@ define(
                 );
                 mockInstantiate = jasmine.createSpy("instantiate");
 
-                mockInstantiate.andCallFake(function (model, id) {
+                mockInstantiate.and.callFake(function (model, id) {
                     return new DomainObjectImpl(id, model, {});
                 });
 
@@ -65,7 +65,7 @@ define(
 
             it("requests models from the model service", function () {
                 var ids = ["a", "b", "c"];
-                mockModelService.getModels.andReturn(mockPromise({}));
+                mockModelService.getModels.and.returnValue(mockPromise({}));
                 provider.getObjects(ids);
                 expect(mockModelService.getModels).toHaveBeenCalledWith(ids);
             });
@@ -75,7 +75,7 @@ define(
                 var ids = ["a", "b", "c"],
                     model = { someKey: "some value"},
                     result;
-                mockModelService.getModels.andReturn(mockPromise({ a: model }));
+                mockModelService.getModels.and.returnValue(mockPromise({ a: model }));
                 result = provider.getObjects(ids).testValue;
                 expect(mockInstantiate).toHaveBeenCalledWith(model, 'a');
                 expect(result.a.getId()).toEqual("a");

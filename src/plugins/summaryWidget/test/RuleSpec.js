@@ -52,7 +52,7 @@ define(['../src/Rule', 'zepto'], function (Rule, $) {
 
             mockEvaluator = {};
             mockEvaluator.getOperationDescription = jasmine.createSpy('evaluator')
-                                                        .andReturn('Operation Description');
+                                                        .and.returnValue('Operation Description');
 
             mockConditionManager = jasmine.createSpyObj('mockConditionManager', [
                 'on',
@@ -64,13 +64,13 @@ define(['../src/Rule', 'zepto'], function (Rule, $) {
                 'getObjectName',
                 'getTelemetryPropertyName'
             ]);
-            mockConditionManager.loadCompleted.andReturn(false);
-            mockConditionManager.metadataLoadCompleted.andReturn(false);
-            mockConditionManager.getEvaluator.andReturn(mockEvaluator);
-            mockConditionManager.getComposition.andReturn({});
-            mockConditionManager.getTelemetryMetadata.andReturn({});
-            mockConditionManager.getObjectName.andReturn('Object Name');
-            mockConditionManager.getTelemetryPropertyName.andReturn('Property Name');
+            mockConditionManager.loadCompleted.and.returnValue(false);
+            mockConditionManager.metadataLoadCompleted.and.returnValue(false);
+            mockConditionManager.getEvaluator.and.returnValue(mockEvaluator);
+            mockConditionManager.getComposition.and.returnValue({});
+            mockConditionManager.getTelemetryMetadata.and.returnValue({});
+            mockConditionManager.getObjectName.and.returnValue('Object Name');
+            mockConditionManager.getTelemetryPropertyName.and.returnValue('Property Name');
 
             mockWidgetDnD = jasmine.createSpyObj('dnd', [
                 'on',

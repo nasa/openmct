@@ -54,11 +54,11 @@ define(
                 mockPropertiesAction = jasmine.createSpyObj('properties', ['getMetadata']);
                 mockOtherAction = jasmine.createSpyObj('other', ['getMetadata']);
 
-                mockEditAction.getMetadata.andReturn({ key: 'edit' });
-                mockPropertiesAction.getMetadata.andReturn({ key: 'properties' });
-                mockOtherAction.getMetadata.andReturn({key: 'other'});
+                mockEditAction.getMetadata.and.returnValue({ key: 'edit' });
+                mockPropertiesAction.getMetadata.and.returnValue({ key: 'properties' });
+                mockOtherAction.getMetadata.and.returnValue({key: 'other'});
 
-                mockDomainObject.getId.andReturn('test:testId');
+                mockDomainObject.getId.and.returnValue('test:testId');
 
                 testContext = {
                     domainObject: mockDomainObject,
@@ -69,7 +69,7 @@ define(
             });
 
             it("Applies to edit action", function () {
-                mockObjectAPI.getProvider.andReturn({});
+                mockObjectAPI.getProvider.and.returnValue({});
                 expect(mockObjectAPI.getProvider).not.toHaveBeenCalled();
 
                 policy.allow(mockEditAction, testContext);
@@ -77,7 +77,7 @@ define(
             });
 
             it("Applies to properties action", function () {
-                mockObjectAPI.getProvider.andReturn({});
+                mockObjectAPI.getProvider.and.returnValue({});
                 expect(mockObjectAPI.getProvider).not.toHaveBeenCalled();
 
                 policy.allow(mockPropertiesAction, testContext);
@@ -85,7 +85,7 @@ define(
             });
 
             it("does not apply to other actions", function () {
-                mockObjectAPI.getProvider.andReturn({});
+                mockObjectAPI.getProvider.and.returnValue({});
                 expect(mockObjectAPI.getProvider).not.toHaveBeenCalled();
 
                 policy.allow(mockOtherAction, testContext);
@@ -93,10 +93,10 @@ define(
             });
 
             it("Tests object provider for editability", function () {
-                mockObjectAPI.getProvider.andReturn({});
+                mockObjectAPI.getProvider.and.returnValue({});
                 expect(policy.allow(mockEditAction, testContext)).toBe(false);
                 expect(mockObjectAPI.getProvider).toHaveBeenCalled();
-                mockObjectAPI.getProvider.andReturn({save: function () {}});
+                mockObjectAPI.getProvider.and.returnValue({save: function () {}});
                 expect(policy.allow(mockEditAction, testContext)).toBe(true);
             });
         });

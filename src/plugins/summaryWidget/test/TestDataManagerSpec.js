@@ -91,18 +91,18 @@ define(['../src/TestDataManager', 'zepto'], function (TestDataManager, $) {
                 'getTelemetryPropertyName',
                 'triggerTelemetryCallback'
             ]);
-            mockConditionManager.loadCompleted.andReturn(false);
-            mockConditionManager.metadataLoadCompleted.andReturn(false);
-            mockConditionManager.getEvaluator.andReturn(mockEvaluator);
-            mockConditionManager.getComposition.andReturn({
+            mockConditionManager.loadCompleted.and.returnValue(false);
+            mockConditionManager.metadataLoadCompleted.and.returnValue(false);
+            mockConditionManager.getEvaluator.and.returnValue(mockEvaluator);
+            mockConditionManager.getComposition.and.returnValue({
                 object1: mockCompObject1,
                 object2: mockCompObject2
             });
-            mockConditionManager.getTelemetryMetadata.andCallFake(function (id) {
+            mockConditionManager.getTelemetryMetadata.and.callFake(function (id) {
                 return mockTelemetryMetadata[id];
             });
-            mockConditionManager.getObjectName.andReturn('Object Name');
-            mockConditionManager.getTelemetryPropertyName.andReturn('Property Name');
+            mockConditionManager.getObjectName.and.returnValue('Object Name');
+            mockConditionManager.getTelemetryPropertyName.and.returnValue('Property Name');
 
             mockContainer = $(document.createElement('div'));
 

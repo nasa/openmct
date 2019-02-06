@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -42,16 +42,22 @@ define(
                     "domainObject",
                     ["getId", "getModel", "getCapability"]
                 );
-                mockType = { someKey: "some value" };
+                mockType = {
+                    someKey: "some value",
+                    someOtherProperty: "some other property",
+                    aThirdProperty: "a third property"
+                };
 
-                mockTypeService.getType.andReturn(mockType);
-                mockDomainObject.getModel.andReturn({type: "mockType"});
+                mockTypeService.getType.and.returnValue(mockType);
+                mockDomainObject.getModel.and.returnValue({type: "mockType"});
 
                 type = new TypeCapability(mockTypeService, mockDomainObject);
             });
 
             it("looks up an object's type from type service", function () {
-                expect(type).toEqual(mockType);
+                expect(type.someKey).toEqual(mockType.someKey);
+                expect(type.someOtherProperty).toEqual(mockType.someOtherProperty);
+                expect(type.aThirdProperty).toEqual(mockType.aThirdProperty);
                 expect(mockTypeService.getType).toHaveBeenCalledWith("mockType");
             });
 

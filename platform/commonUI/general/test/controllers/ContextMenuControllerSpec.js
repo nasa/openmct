@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -47,10 +47,10 @@ define(
                 mockScope.action = mockActions;
                 mockScope.parameters = { category: "test" };
 
-                mockActions.getActions.andReturn(["a", "b", "c"]);
+                mockActions.getActions.and.returnValue(["a", "b", "c"]);
 
                 // Call the watch
-                mockScope.$watch.mostRecentCall.args[1]();
+                mockScope.$watch.calls.mostRecent().args[1]();
 
                 // Should have grouped and ungrouped actions in scope now
                 expect(mockScope.menuActions.length).toEqual(3);

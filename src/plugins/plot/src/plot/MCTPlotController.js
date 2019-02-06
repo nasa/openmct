@@ -59,6 +59,19 @@ define([
 
     eventHelpers.extend(MCTPlotController.prototype);
 
+    MCTPlotController.prototype.initCanvas = function () {
+        if (this.$canvas) {
+            this.stopListening(this.$canvas);
+        }
+        this.$canvas = this.$element.find('canvas');
+
+        this.listenTo(this.$canvas, 'mousemove', this.trackMousePosition, this);
+        this.listenTo(this.$canvas, 'mouseleave', this.untrackMousePosition, this);
+        this.listenTo(this.$canvas, 'mousedown', this.onMouseDown, this);
+
+        this.watchForMarquee();
+    };
+
     MCTPlotController.prototype.initialize = function () {
         this.$canvas = this.$element.find('canvas');
 
@@ -82,6 +95,7 @@ define([
         this.listenTo(this.$scope, '$destroy', this.destroy, this);
         this.listenTo(this.$scope, 'plot:tickWidth', this.onTickWidthChange, this);
         this.listenTo(this.$scope, 'plot:highlight:set', this.onPlotHighlightSet, this);
+        this.listenTo(this.$scope, 'plot:reinitializeCanvas', this.initCanvas, this);
 
         this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
         this.listenTo(this.config.yAxis, 'change:displayRange', this.onYAxisChange, this);
@@ -206,6 +220,7 @@ define([
             return;
         }
         this.marquee.end = this.positionOverPlot;
+        this.marquee.endPixels = this.positionOverElement;
     };
 
     MCTPlotController.prototype.startMarquee = function ($event) {
@@ -213,6 +228,8 @@ define([
         if (this.positionOverPlot) {
             this.freeze();
             this.marquee = {
+                startPixels: this.positionOverElement,
+                endPixels: this.positionOverElement,
                 start: this.positionOverPlot,
                 end: this.positionOverPlot,
                 color: [1, 1, 1, 0.5]
@@ -223,8 +240,14 @@ define([
     };
 
     MCTPlotController.prototype.endMarquee = function () {
-        if (this.marquee.start.x !== this.marquee.end.x &&
-            this.marquee.start.y !== this.marquee.end.y) {
+        var startPixels = this.marquee.startPixels;
+        var endPixels = this.marquee.endPixels;
+        var marqueeDistance = Math.sqrt(
+            Math.pow(startPixels.x - endPixels.x, 2) +
+            Math.pow(startPixels.y - endPixels.y, 2)
+        );
+        // Don't zoom if mouse moved less than 7.5 pixels.
+        if (marqueeDistance > 7.5) {
             this.$scope.xAxis.set('displayRange', {
                 min: Math.min(this.marquee.start.x, this.marquee.end.x),
                 max: Math.max(this.marquee.start.x, this.marquee.end.x)
@@ -234,6 +257,10 @@ define([
                 max: Math.max(this.marquee.start.y, this.marquee.end.y)
             });
             this.$scope.$emit('user:viewport:change:end');
+        } else {
+            // A history entry is created by startMarquee, need to remove
+            // if marquee zoom doesn't occur.
+            this.back();
         }
         this.$scope.rectangles = [];
         this.marquee = undefined;

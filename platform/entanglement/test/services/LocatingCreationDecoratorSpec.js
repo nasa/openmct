@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -46,8 +46,8 @@ define(
                     'domainObject',
                     ['getCapability', 'getId', 'getModel', 'hasCapability', 'useCapability']
                 );
-                mockCreationService.createObject.andReturn(mockPromise);
-                mockParent.getId.andReturn('test-id');
+                mockCreationService.createObject.and.returnValue(mockPromise);
+                mockParent.getId.and.returnValue('test-id');
                 decorator = new LocatingCreationDecorator(mockCreationService);
             });
 

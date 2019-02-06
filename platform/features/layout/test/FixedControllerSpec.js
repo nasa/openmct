@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -34,14 +34,11 @@ define(
             var mockScope,
                 mockQ,
                 mockDialogService,
-                mockHandler,
                 mockFormatter,
                 mockDomainObject,
-                mockHandle,
                 mockEvent,
                 testGrid,
                 testModel,
-                testValues,
                 testConfiguration,
                 mockOpenMCT,
                 mockTelemetryAPI,
@@ -53,25 +50,17 @@ define(
                 mockTimeSystem,
                 mockLimitEvaluator,
                 mockSelection,
+                mockObjects,
+                mockNewDomainObject,
+                unlistenFunc,
                 $element = [],
                 selectable = [],
                 controller;
 
-            // Utility function; find a watch for a given expression
-            function findWatch(expr) {
-                var watch;
-                mockScope.$watch.calls.forEach(function (call) {
-                    if (call.args[0] === expr) {
-                        watch = call.args[1];
-                    }
-                });
-                return watch;
-            }
-
-            // As above, but for $on calls
+            // Utility function; find a $on calls for a given expression.
             function findOn(expr) {
                 var on;
-                mockScope.$on.calls.forEach(function (call) {
+                mockScope.$on.calls.all().forEach(function (call) {
                     if (call.args[0] === expr) {
                         on = call.args[1];
                     }
@@ -82,7 +71,8 @@ define(
             function makeMockDomainObject(id) {
                 return {
                     identifier: {
-                        key: "domainObject-" + id
+                        key: "domainObject-" + id,
+                        namespace: ""
                     },
                     name: "Point " + id
                 };
@@ -93,10 +83,6 @@ define(
                     '$scope',
                     ["$on", "$watch", "$digest", "commit"]
                 );
-                mockHandler = jasmine.createSpyObj(
-                    'telemetryHandler',
-                    ['handle']
-                );
                 mockQ = jasmine.createSpyObj('$q', ['when']);
                 mockDialogService = jasmine.createSpyObj(
                     'dialogService',
@@ -106,26 +92,10 @@ define(
                     'telemetryFormatter',
                     ['format']
                 );
-                mockFormatter.format.andCallFake(function (valueMetadata) {
+                mockFormatter.format.and.callFake(function (valueMetadata) {
                     return "Formatted " + valueMetadata.value;
                 });
 
-                mockDomainObject = jasmine.createSpyObj(
-                    'domainObject',
-                    ['getId', 'getModel', 'getCapability', 'useCapability']
-                );
-
-                mockHandle = jasmine.createSpyObj(
-                    'subscription',
-                    [
-                        'unsubscribe',
-                        'getDomainValue',
-                        'getTelemetryObjects',
-                        'getRangeValue',
-                        'getDatum',
-                        'request'
-                    ]
-                );
                 mockConductor = jasmine.createSpyObj('conductor', [
                     'on',
                     'off',
@@ -133,13 +103,13 @@ define(
                     'timeSystem',
                     'clock'
                 ]);
-                mockConductor.bounds.andReturn({});
+                mockConductor.bounds.and.returnValue({});
                 mockTimeSystem = {
                     metadata: {
                         key: 'key'
                     }
                 };
-                mockConductor.timeSystem.andReturn(mockTimeSystem);
+                mockConductor.timeSystem.and.returnValue(mockTimeSystem);
 
                 mockEvent = jasmine.createSpyObj(
                     'event',
@@ -150,21 +120,20 @@ define(
                     [
                         'subscribe',
                         'request',
-                        'canProvideTelemetry',
+                        'isTelemetryObject',
                         'getMetadata',
                         'limitEvaluator',
                         'getValueFormatter'
                     ]
                 );
-                mockTelemetryAPI.canProvideTelemetry.andReturn(true);
-                mockTelemetryAPI.request.andReturn(Promise.resolve([]));
+                mockTelemetryAPI.isTelemetryObject.and.returnValue(true);
+                mockTelemetryAPI.request.and.returnValue(Promise.resolve([]));
 
                 testGrid = [123, 456];
                 testModel = {
                     composition: ['a', 'b', 'c'],
                     layoutGrid: testGrid
                 };
-                testValues = { a: 10, b: 42, c: 31.42 };
                 testConfiguration = { elements: [
                     { type: "fixed.telemetry", id: 'a', x: 1, y: 1, useGrid: true},
                     { type: "fixed.telemetry", id: 'b', x: 1, y: 1, useGrid: true},
@@ -172,23 +141,39 @@ define(
                 ]};
 
                 mockChildren = testModel.composition.map(makeMockDomainObject);
-                mockCompositionCollection = jasmine.createSpyObj('compositionCollection',
-                    [
-                        'load'
-                    ]
-                );
-                mockCompositionAPI = jasmine.createSpyObj('composition',
-                    [
-                        'get'
-                    ]
-                );
-                mockCompositionAPI.get.andReturn(mockCompositionCollection);
-                mockCompositionCollection.load.andReturn(
+                mockCompositionCollection = jasmine.createSpyObj('compositionCollection', [
+                    'load',
+                    'on',
+                    'off'
+                ]);
+                mockCompositionAPI = jasmine.createSpyObj('composition', [
+                    'get'
+                ]);
+                mockCompositionAPI.get.and.returnValue(mockCompositionCollection);
+                mockCompositionCollection.load.and.returnValue(
                     Promise.resolve(mockChildren)
                 );
 
                 mockScope.model = testModel;
                 mockScope.configuration = testConfiguration;
+
+                mockNewDomainObject = jasmine.createSpyObj("newDomainObject", [
+                    'layoutGrid',
+                    'configuration',
+                    'composition'
+                ]);
+                mockNewDomainObject.layoutGrid = testGrid;
+                mockNewDomainObject.configuration = {
+                    'fixed-display': testConfiguration
+                };
+                mockNewDomainObject.composition = ['a', 'b', 'c'];
+
+                mockDomainObject = jasmine.createSpyObj(
+                    'domainObject',
+                    ['getId', 'getModel', 'getCapability', 'useCapability']
+                );
+                mockDomainObject.useCapability.and.returnValue(mockNewDomainObject);
+                mockScope.domainObject = mockDomainObject;
 
                 selectable[0] = {
                     context: {
@@ -201,13 +186,21 @@ define(
                     'off',
                     'get'
                 ]);
-                mockSelection.get.andCallThrough();
+                mockSelection.get.and.returnValue([]);
+
+                unlistenFunc = jasmine.createSpy("unlisten");
+                mockObjects = jasmine.createSpyObj('objects', [
+                    'observe',
+                    'get'
+                ]);
+                mockObjects.observe.and.returnValue(unlistenFunc);
 
                 mockOpenMCT = {
                     time: mockConductor,
                     telemetry: mockTelemetryAPI,
                     composition: mockCompositionAPI,
-                    selection: mockSelection
+                    selection: mockSelection,
+                    objects: mockObjects
                 };
 
                 $element = $('<div></div>');
@@ -218,11 +211,11 @@ define(
                     'value',
                     'values'
                 ]);
-                mockMetadata.value.andReturn({
+                mockMetadata.value.and.returnValue({
                     key: 'value'
                 });
 
-                mockMetadata.valuesForHints.andCallFake(function (hints) {
+                mockMetadata.valuesForHints.and.callFake(function (hints) {
                     if (hints === ['domain']) {
                         return [{
                             key: 'time'
@@ -238,11 +231,11 @@ define(
                     'evaluate'
                 ]);
 
-                mockLimitEvaluator.evaluate.andReturn({});
+                mockLimitEvaluator.evaluate.and.returnValue({});
 
-                mockTelemetryAPI.getMetadata.andReturn(mockMetadata);
-                mockTelemetryAPI.limitEvaluator.andReturn(mockLimitEvaluator);
-                mockTelemetryAPI.getValueFormatter.andReturn(mockFormatter);
+                mockTelemetryAPI.getMetadata.and.returnValue(mockMetadata);
+                mockTelemetryAPI.limitEvaluator.and.returnValue(mockLimitEvaluator);
+                mockTelemetryAPI.getValueFormatter.and.returnValue(mockFormatter);
 
                 controller = new FixedController(
                     mockScope,
@@ -251,76 +244,40 @@ define(
                     mockOpenMCT,
                     $element
                 );
-
-                findWatch("model.layoutGrid")(testModel.layoutGrid);
+                spyOn(controller, "mutate");
             });
 
-            it("subscribes when a domain object is available", function () {
-                var dunzo = false;
+            it("subscribes a domain object", function () {
+                var object = makeMockDomainObject("mock");
 
-                mockScope.domainObject = mockDomainObject;
-                findWatch("domainObject")(mockDomainObject).then(function () {
-                    dunzo = true;
-                });
-
-                waitsFor(function () {
-                    return dunzo;
-                }, "Telemetry fetched", 200);
-
-                runs(function () {
-                    mockChildren.forEach(function (child) {
-                        expect(mockTelemetryAPI.subscribe).toHaveBeenCalledWith(
-                            child,
-                            jasmine.any(Function),
-                            jasmine.any(Object)
-                        );
-                    });
+                return controller.getTelemetry(object).then(function () {
+                    expect(mockTelemetryAPI.subscribe).toHaveBeenCalledWith(
+                        object,
+                        jasmine.any(Function),
+                        jasmine.any(Object)
+                    );
                 });
             });
 
-            it("releases subscriptions when domain objects change", function () {
-                var dunzo = false;
+            it("releases subscription when a domain objects is removed", function () {
                 var unsubscribe = jasmine.createSpy('unsubscribe');
-
-                mockTelemetryAPI.subscribe.andReturn(unsubscribe);
-
-                mockScope.domainObject = mockDomainObject;
-                findWatch("domainObject")(mockDomainObject).then(function () {
-                    dunzo = true;
+                var unsubscribePromise = new Promise(function (resolve) {
+                    unsubscribe.and.callFake(resolve);
                 });
+                var object = makeMockDomainObject("mock");
 
-                waitsFor(function () {
-                    return dunzo;
-                }, "Telemetry fetched", 200);
-
-                runs(function () {
-                    expect(unsubscribe).not.toHaveBeenCalled();
-
-                    dunzo = false;
-
-                    findWatch("domainObject")(mockDomainObject).then(function () {
-                        dunzo = true;
-                    });
-
-                    waitsFor(function () {
-                        return dunzo;
-                    }, "Telemetry fetched", 200);
-
-                    runs(function () {
-                        expect(unsubscribe.calls.length).toBe(mockChildren.length);
-                    });
-
+                mockTelemetryAPI.subscribe.and.returnValue(unsubscribe);
+                return controller.getTelemetry(object).then(function () {
+                    controller.onCompositionRemove(object.identifier);
+                    return unsubscribePromise;
+                }).then(function () {
+                    expect(unsubscribe).toHaveBeenCalled();
                 });
             });
 
             it("exposes visible elements based on configuration", function () {
-                var elements;
+                var elements = controller.getElements();
 
-                mockScope.model = testModel;
-                testModel.modified = 1;
-                findWatch("model.modified")(testModel.modified);
-
-                elements = controller.getElements();
                 expect(elements.length).toEqual(3);
                 expect(elements[0].id).toEqual('a');
                 expect(elements[1].id).toEqual('b');
@@ -328,39 +285,25 @@ define(
             });
 
             it("allows elements to be selected", function () {
-                testModel.modified = 1;
-                findWatch("model.modified")(testModel.modified);
-
                 selectable[0].context.elementProxy = controller.getElements()[1];
-                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+                mockOpenMCT.selection.on.calls.mostRecent().args[1](selectable);
 
                 expect(controller.isElementSelected()).toBe(true);
             });
 
             it("allows selection retrieval", function () {
-                var elements;
-
-                testModel.modified = 1;
-                findWatch("model.modified")(testModel.modified);
-
-                elements = controller.getElements();
+                var elements = controller.getElements();
                 selectable[0].context.elementProxy = elements[1];
-                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+                mockOpenMCT.selection.on.calls.mostRecent().args[1](selectable);
 
                 expect(controller.getSelectedElement()).toEqual(elements[1]);
             });
 
             it("selects the parent view when selected element is removed", function () {
-                testModel.modified = 1;
-                findWatch("model.modified")(testModel.modified);
-
                 var elements = controller.getElements();
                 selectable[0].context.elementProxy = elements[1];
-                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
-
-                elements[1].remove();
-                testModel.modified = 2;
-                findWatch("model.modified")(testModel.modified);
+                mockOpenMCT.selection.on.calls.mostRecent().args[1](selectable);
+                controller.remove(elements[1]);
 
                 expect($element[0].click).toHaveBeenCalled();
             });
@@ -368,21 +311,13 @@ define(
             it("retains selections during refresh", function () {
                 // Get elements; remove one of them; trigger refresh.
                 // Same element (at least by index) should still be selected.
-                var elements;
-
-                testModel.modified = 1;
-                findWatch("model.modified")(testModel.modified);
-
-                elements = controller.getElements();
+                var elements = controller.getElements();
                 selectable[0].context.elementProxy = elements[1];
-                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+                mockOpenMCT.selection.on.calls.mostRecent().args[1](selectable);
 
                 expect(controller.getSelectedElement()).toEqual(elements[1]);
 
-                elements[2].remove();
-                testModel.modified = 2;
-                findWatch("model.modified")(testModel.modified);
-
+                controller.remove(elements[2]);
                 elements = controller.getElements();
 
                 // Verify removal, as test assumes this
@@ -403,41 +338,33 @@ define(
                         key: '12345'
                     }
                 };
-                mockConductor.clock.andReturn({});
+                mockConductor.clock.and.returnValue({});
                 controller.elementProxiesById = {};
                 controller.elementProxiesById['12345'] = [testElement];
                 controller.elementProxies = [testElement];
 
-                controller.subscribeToObjects([telemetryObject]);
-                mockTelemetryAPI.subscribe.mostRecentCall.args[1](mockTelemetry);
+                controller.subscribeToObject(telemetryObject);
+                mockTelemetryAPI.subscribe.calls.mostRecent().args[1](mockTelemetry);
 
-                waitsFor(function () {
-                    return controller.digesting === false;
-                }, "digest to complete", 100);
-
-                runs(function () {
+                return new Promise(function (resolve) {
+                    mockScope.$digest.and.callFake(resolve);
+                }).then(function () {
                     // Get elements that controller is now exposing
                     elements = controller.getElements();
 
                     // Formatted values should be available
                     expect(elements[0].value).toEqual("Formatted 200");
                 });
-
             });
 
             it("updates elements styles when grid size changes", function () {
-                var originalLeft;
+                // Grid size is initially set to testGrid which is [123, 456]
+                var originalLeft = controller.getElements()[0].style.left;
 
-                mockScope.domainObject = mockDomainObject;
-                mockScope.model = testModel;
-                findWatch("domainObject")(mockDomainObject);
-                findWatch("model.modified")(1);
-                findWatch("model.composition")(mockScope.model.composition);
-                findWatch("model.layoutGrid")([10, 10]);
-                originalLeft = controller.getElements()[0].style.left;
-                findWatch("model.layoutGrid")([20, 20]);
-                expect(controller.getElements()[0].style.left)
-                    .not.toEqual(originalLeft);
+                // Change the grid size
+                controller.updateElementPositions([20, 20]);
+
+                expect(controller.getElements()[0].style.left).not.toEqual(originalLeft);
             });
 
             it("listens for drop events", function () {
@@ -457,6 +384,9 @@ define(
 
                 // Notify that a drop occurred
                 testModel.composition.push('d');
+
+                mockObjects.get.and.returnValue(Promise.resolve([]));
+
                 findOn('mctDrop')(
                     mockEvent,
                     'd',
@@ -468,11 +398,6 @@ define(
 
                 // ...and prevented default...
                 expect(mockEvent.preventDefault).toHaveBeenCalled();
-
-                // Should have triggered commit (provided by
-                // EditRepresenter) with some message.
-                expect(mockScope.commit)
-                    .toHaveBeenCalledWith(jasmine.any(String));
             });
 
             it("ignores drops when default has been prevented", function () {
@@ -492,54 +417,28 @@ define(
             });
 
             it("unsubscribes when destroyed", function () {
-
-                var dunzo = false;
                 var unsubscribe = jasmine.createSpy('unsubscribe');
+                var object = makeMockDomainObject("mock");
 
-                mockTelemetryAPI.subscribe.andReturn(unsubscribe);
+                mockTelemetryAPI.subscribe.and.returnValue(unsubscribe);
 
-                mockScope.domainObject = mockDomainObject;
-                findWatch("domainObject")(mockDomainObject).then(function () {
-                    dunzo = true;
-                });
-
-                waitsFor(function () {
-                    return dunzo;
-                }, "Telemetry fetched", 200);
-
-                runs(function () {
+                return controller.getTelemetry(object).then(function () {
                     expect(unsubscribe).not.toHaveBeenCalled();
                     // Destroy the scope
                     findOn('$destroy')();
 
-                    //Check that the same unsubscribe function returned by the
-                    expect(unsubscribe.calls.length).toBe(mockChildren.length);
+                    expect(unsubscribe).toHaveBeenCalled();
                 });
             });
 
             it("exposes its grid size", function () {
-                findWatch('model.layoutGrid')(testGrid);
-                // Template needs to be able to pass this into line
-                // elements to size SVGs appropriately
                 expect(controller.getGridSize()).toEqual(testGrid);
-            });
-
-            it("exposes a view-level selection proxy", function () {
-                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
-                var selection = mockOpenMCT.selection.select.mostRecentCall.args[0];
-
-                expect(mockOpenMCT.selection.select).toHaveBeenCalled();
-                expect(selection.context.viewProxy).toBeDefined();
             });
 
             it("exposes drag handles", function () {
                 var handles;
-
-                testModel.modified = 1;
-                findWatch("model.modified")(testModel.modified);
-
                 selectable[0].context.elementProxy = controller.getElements()[1];
-                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+                mockOpenMCT.selection.on.calls.mostRecent().args[1](selectable);
 
                 // Should have a non-empty array of handles
                 handles = controller.handles();
@@ -556,11 +455,8 @@ define(
             });
 
             it("exposes a move handle", function () {
-                testModel.modified = 1;
-                findWatch("model.modified")(testModel.modified);
-
                 selectable[0].context.elementProxy = controller.getElements()[1];
-                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+                mockOpenMCT.selection.on.calls.mostRecent().args[1](selectable);
 
                 // Should have a move handle
                 var handle = controller.moveHandle();
@@ -573,12 +469,8 @@ define(
 
             it("updates selection style during drag", function () {
                 var oldStyle;
-
-                testModel.modified = 1;
-                findWatch("model.modified")(testModel.modified);
-
                 selectable[0].context.elementProxy = controller.getElements()[1];
-                mockOpenMCT.selection.on.mostRecentCall.args[1](selectable);
+                mockOpenMCT.selection.on.calls.mostRecent().args[1](selectable);
 
                 // Get style
                 oldStyle = controller.getSelectedElementStyle();
@@ -596,13 +488,13 @@ define(
                 expect(controller.getSelectedElementStyle()).not.toEqual(oldStyle);
             });
 
-            it("cleans up slection on scope destroy", function () {
+            it("cleans up selection on scope destroy", function () {
                 expect(mockScope.$on).toHaveBeenCalledWith(
                     '$destroy',
                     jasmine.any(Function)
                 );
 
-                mockScope.$on.mostRecentCall.args[1]();
+                mockScope.$on.calls.mostRecent().args[1]();
 
                 expect(mockOpenMCT.selection.off).toHaveBeenCalledWith(
                     'change',
@@ -618,7 +510,7 @@ define(
 
                 beforeEach(function () {
                     testBounds = { start: 123, end: 321 };
-                    boundsChangeCallback = mockConductor.on.mostRecentCall.args[1];
+                    boundsChangeCallback = mockConductor.on.calls.mostRecent().args[1];
                     objectOne = {};
                     objectTwo = {};
                     controller.telemetryObjects = [
@@ -626,7 +518,7 @@ define(
                         objectTwo
                     ];
                     spyOn(controller, "fetchHistoricalData");
-                    controller.fetchHistoricalData.andCallThrough();
+                    controller.fetchHistoricalData.and.callThrough();
                 });
 
                 it("registers a bounds change listener", function () {
@@ -634,18 +526,18 @@ define(
                 });
 
                 it("requests only a single point", function () {
-                    mockConductor.clock.andReturn(undefined);
+                    mockConductor.clock.and.returnValue(undefined);
                     boundsChangeCallback(testBounds);
-                    expect(mockTelemetryAPI.request.calls.length).toBe(2);
+                    expect(mockTelemetryAPI.request.calls.count()).toBe(2);
 
-                    mockTelemetryAPI.request.calls.forEach(function (call) {
+                    mockTelemetryAPI.request.calls.all().forEach(function (call) {
                         expect(call.args[1].size).toBe(1);
                     });
                 });
 
                 it("Does not fetch historical data on tick", function () {
                     boundsChangeCallback(testBounds, true);
-                    expect(mockTelemetryAPI.request.calls.length).toBe(0);
+                    expect(mockTelemetryAPI.request.calls.count()).toBe(0);
                 });
             });
 
@@ -670,20 +562,18 @@ define(
 
                 it("updates displayed values from historical telemetry", function () {
                     spyOn(controller, "updateView");
-                    controller.updateView.andCallThrough();
+                    controller.updateView.and.callThrough();
 
-                    mockTelemetryAPI.request.andReturn(Promise.resolve([{
+                    mockTelemetryAPI.request.and.returnValue(Promise.resolve([{
                         time: 100,
                         value: testValue
                     }]));
 
-                    controller.fetchHistoricalData([mockTelemetryObject]);
+                    controller.fetchHistoricalData(mockTelemetryObject);
 
-                    waitsFor(function () {
-                        return controller.digesting === false;
-                    });
-
-                    runs(function () {
+                    return new Promise(function (resolve) {
+                        mockScope.$digest.and.callFake(resolve);
+                    }).then(function () {
                         expect(controller.updateView).toHaveBeenCalled();
                         expect(controller.getElements()[0].value)
                             .toEqual("Formatted " + testValue);
@@ -691,7 +581,7 @@ define(
                 });
 
                 it("selects an range value to display, if available", function () {
-                    mockMetadata.valuesForHints.andReturn([
+                    mockMetadata.valuesForHints.and.returnValue([
                         {
                             key: 'range',
                             source: 'range'
@@ -702,8 +592,8 @@ define(
                 });
 
                 it("selects the first non-domain value to display, if no range available", function () {
-                    mockMetadata.valuesForHints.andReturn([]);
-                    mockMetadata.values.andReturn([
+                    mockMetadata.valuesForHints.and.returnValue([]);
+                    mockMetadata.values.and.returnValue([
                         {
                             key: 'domain',
                             source: 'domain',
@@ -724,17 +614,15 @@ define(
                 });
 
                 it("reflects limit status", function () {
-                    mockLimitEvaluator.evaluate.andReturn({cssClass: "alarm-a"});
+                    mockLimitEvaluator.evaluate.and.returnValue({cssClass: "alarm-a"});
                     controller.updateView(mockTelemetryObject, [{
                         time: 100,
                         value: testValue
                     }]);
 
-                    waitsFor(function () {
-                        return controller.digesting === false;
-                    });
-
-                    runs(function () {
+                    return new Promise(function (resolve) {
+                        mockScope.$digest.and.callFake(resolve);
+                    }).then(function () {
                         // Limit-based CSS classes should be available
                         expect(controller.getElements()[0].cssClass).toEqual("alarm-a");
                     });

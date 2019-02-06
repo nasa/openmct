@@ -3,12 +3,13 @@
     <mct-table
         headers="headers"
         rows="rows"
-        time-columns="tableController.timeColumns"
+        time-columns="[tableController.table.timeSystemColumnTitle]"
         format-cell="formatCell"
         enableFilter="true"
         enableSort="true"
         auto-scroll="autoScroll"
         default-sort="defaultSort"
-        class="tabular-holder has-control-bar">
+        export-as="{{ exportAs }}"
+        class="tabular-holder l-sticky-headers has-control-bar">
     </mct-table>
 </div>

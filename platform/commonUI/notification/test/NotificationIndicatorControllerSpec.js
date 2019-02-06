@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -52,8 +52,8 @@ define(
                 expect(mockScope.showNotificationsList).toBeDefined();
                 mockScope.showNotificationsList();
                 expect(mockDialogService.getDialogResponse).toHaveBeenCalled();
-                expect(mockDialogService.getDialogResponse.mostRecentCall.args[0]).toBe('overlay-message-list');
-                expect(mockDialogService.getDialogResponse.mostRecentCall.args[1].dialog).toBeDefined();
+                expect(mockDialogService.getDialogResponse.calls.mostRecent().args[0]).toBe('overlay-message-list');
+                expect(mockDialogService.getDialogResponse.calls.mostRecent().args[1].dialog).toBeDefined();
             });
         });
     }

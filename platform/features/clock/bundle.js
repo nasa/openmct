@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -55,7 +55,6 @@ define([
     timerTemplate,
     legacyRegistry
 ) {
-
     legacyRegistry.register("platform/features/clock", {
         "name": "Clocks/Timers",
         "descriptions": "Domain objects for displaying current & relative times.",
@@ -86,11 +85,6 @@ define([
                         "CLOCK_INDICATOR_FORMAT"
                     ],
                     "priority": "preferred"
-                },
-                {
-                    "implementation": FollowIndicator,
-                    "depends": ["timerService"],
-                    "priority": "fallback"
                 }
             ],
             "services": [
@@ -305,6 +299,10 @@ define([
                     }
                 }
             ],
+            "runs": [{
+                "implementation": FollowIndicator,
+                "depends": ["openmct", "timerService"]
+            }],
             "licenses": [
                 {
                     "name": "moment-duration-format",

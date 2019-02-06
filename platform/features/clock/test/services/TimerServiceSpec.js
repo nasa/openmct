@@ -69,7 +69,7 @@ define([
                     '*',
                     jasmine.any(Function)
                 );
-                mockmct.objects.observe.mostRecentCall.args[2](newTimer);
+                mockmct.objects.observe.calls.mostRecent().args[2](newTimer);
                 expect(timerService.getTimer()).toBe(newTimer);
             });
         });

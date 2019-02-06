@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -62,8 +62,10 @@ define(
                     scope.key && templateMap[scope.key]
                 );
 
-                scope.$watch('key', function (key) {
-                    changeTemplate(key && templateMap[key]);
+                scope.$watch('key', function (newKey, oldKey) {
+                    if (newKey !== oldKey) {
+                        changeTemplate(newKey && templateMap[newKey]);
+                    }
                 });
             }
 

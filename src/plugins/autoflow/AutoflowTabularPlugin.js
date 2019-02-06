@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,15 +25,6 @@ define([
 ], function (
     AutoflowTabularView
 ) {
-    /**
-     * This plugin provides an Autoflow Tabular View for domain objects
-     * in Open MCT.
-     *
-     * @param {Object} options
-     * @param {String} [options.type] the domain object type for which
-     *        this view should be available; if omitted, this view will
-     *        be available for all objects
-     */
     return function (options) {
         return function (openmct) {
             var views = (openmct.mainViews || openmct.objectViews);

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,22 +24,27 @@ define(
     ["../../src/runs/TransactingMutationListener"],
     function (TransactingMutationListener) {
 
-        xdescribe("TransactingMutationListener", function () {
+        describe("TransactingMutationListener", function () {
             var mockTopic,
                 mockMutationTopic,
+                mockCacheService,
                 mockTransactionService,
                 mockDomainObject,
+                mockModel,
                 mockPersistence;
 
             beforeEach(function () {
                 mockTopic = jasmine.createSpy('topic');
                 mockMutationTopic =
                     jasmine.createSpyObj('mutation', ['listen']);
+                mockCacheService =
+                    jasmine.createSpyObj('cacheService', [
+                        'put'
+                    ]);
                 mockTransactionService =
                     jasmine.createSpyObj('transactionService', [
                         'isActive',
                         'startTransaction',
-                        'addToTransaction',
                         'commit'
                     ]);
                 mockDomainObject = jasmine.createSpyObj(
@@ -51,19 +56,25 @@ define(
                     ['persist', 'refresh', 'persisted']
                 );
 
-                mockTopic.andCallFake(function (t) {
-                    return (t === 'mutation') && mockMutationTopic;
+                mockTopic.and.callFake(function (t) {
+                    expect(t).toBe('mutation');
+                    return mockMutationTopic;
                 });
 
-                mockDomainObject.getCapability.andCallFake(function (c) {
-                    return (c === 'persistence') && mockPersistence;
+                mockDomainObject.getId.and.returnValue('mockId');
+                mockDomainObject.getCapability.and.callFake(function (c) {
+                    expect(c).toBe('persistence');
+                    return mockPersistence;
                 });
+                mockModel = {};
+                mockDomainObject.getModel.and.returnValue(mockModel);
 
-                mockPersistence.persisted.andReturn(true);
+                mockPersistence.persisted.and.returnValue(true);
 
                 return new TransactingMutationListener(
                     mockTopic,
-                    mockTransactionService
+                    mockTransactionService,
+                    mockCacheService
                 );
             });
 
@@ -83,12 +94,12 @@ define(
                     var innerVerb = isActive ? "does" : "doesn't";
 
                     beforeEach(function () {
-                        mockTransactionService.isActive.andReturn(isActive);
+                        mockTransactionService.isActive.and.returnValue(isActive);
                     });
 
                     describe("and mutation occurs", function () {
                         beforeEach(function () {
-                            mockMutationTopic.listen.mostRecentCall
+                            mockMutationTopic.listen.calls.mostRecent()
                                 .args[0](mockDomainObject);
                         });
 
@@ -99,12 +110,8 @@ define(
                             ).toHaveBeenCalled();
                         });
 
-                        it("adds to the active transaction", function () {
-                            expect(mockTransactionService.addToTransaction)
-                                .toHaveBeenCalledWith(
-                                jasmine.any(Function),
-                                jasmine.any(Function)
-                            );
+                        it("calls persist", function () {
+                            expect(mockPersistence.persist).toHaveBeenCalled();
                         });
 
                         it(innerVerb + " immediately commit", function () {

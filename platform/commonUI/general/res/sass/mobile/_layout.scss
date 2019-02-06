@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,8 +26,8 @@ body.mobile {
     }
 
     .pane.right.items {
-        //@include test();
         @include slMenuTransitions;
+        left: 0 !important;
         margin-left: 0 !important;
         .holder-object-and-inspector {
             @include slMenuTransitions;
@@ -47,12 +47,10 @@ body.mobile {
         right: $bodyMargin !important;
     }
 
-// When the tree is hidden, these are the
-    // classes used for the left menu and the
-    // right representation.
+    // Assume landscape layout or either orientation for tablet
+    // Phone portrait overrides below via media query
     .pane-tree-hidden {
-        // Sets the left tree menu when the tree
-        // is hidden.
+        // Sets the left tree menu when the tree is hidden.
         .pane.left.treeview {
             @include trans-prop-nice(opacity, 150ms);
             opacity: 0 !important;
@@ -78,7 +76,7 @@ body.mobile {
         }
         // Sets the right representation when the tree is shown.
         .pane.right.items {
-            left: $proporMenuWithView !important;
+            transform: translateX($proporMenuWithView);
         }
     }
 
@@ -92,12 +90,19 @@ body.mobile {
     }
 
     .object-browse-bar {
-        &.t-primary { margin-left: 45px; }
+        &.t-primary {
+            margin-left: 30px;
+
+            .title-label {
+                // Prevent inline editing of the object title in the main view in mobile
+                pointer-events: none;
+            }
+        }
         .context-available {
+            font-size: 0.9em;
             opacity: 1 !important;
         }
         .view-switcher {
-            margin-right: 0 !important;
             .title-label {
                 // Hide the name in mobile
                 display: none;
@@ -138,7 +143,7 @@ body.phone.portrait {
         }
         .pane.right.items {
             left: 0 !important;
-            @include transform(translateX($proporMenuOnly));
+            transform: translateX($proporMenuOnly);
             .holder-object-and-inspector {
                 opacity: 0;
             }

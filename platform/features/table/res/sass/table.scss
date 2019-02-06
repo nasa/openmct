@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,43 +20,57 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-.sizing-table {
-    min-width: 100%;
-    z-index: -1;
-    visibility: hidden;
-    position: absolute;
+mct-table {
+    .mct-sizing-table {
+        z-index: -1;
+        visibility: hidden;
+        position: absolute !important;
 
-    //Add some padding to allow for decorations such as limits indicator
-    td {
-        padding-right: 15px;
-        padding-left: 10px;
-        white-space: nowrap;
-    }
-}
-.mct-table {
-    table-layout: fixed;
-    thead {
-        display: block;
-        tr {
-            display: block;
+        //Add some padding to allow for decorations such as limits indicator
+        td {
+            padding-right: 15px;
+            padding-left: 10px;
             white-space: nowrap;
-            th {
-                display: inline-block;
-                box-sizing: border-box;
+        }
+    }
+
+    .mct-table {
+        tr {
+            display: flex; // flex-flow defaults to row nowrap (which is what we want) so no need to define
+            height: 18px; // Needed when a row has empty values in its cells
+            align-items: stretch;
+        }
+
+        td, th {
+            box-sizing: border-box;
+            display: block;
+            flex: 1 0 auto;
+            white-space: nowrap;
+        }
+
+        thead {
+            display: block;
+        }
+
+        tbody {
+            tr {
+                position: absolute;
+            }
+
+            td {
+                overflow: hidden;
             }
         }
     }
-    tbody {
-        tr {
-            position: absolute;
-            white-space: nowrap;
-            display: block;
-        }
-        td {
-            white-space: nowrap;
-            overflow: hidden;
-            box-sizing: border-box;
-            display: inline-block;
-        }
+
+    .l-control-bar {
+        margin-bottom: 3px;
     }
+}
+
+.mct-table-scroll-forcer {
+    // Force horz scroll when needed; width set via JS
+    font-size: 0;
+    height: 1px; // Height 0 won't force scroll properly
+    position: relative;
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -66,7 +66,7 @@ define(
                     id: 'b'
                 });
 
-                objectContextCapability.getParent.andReturn(currentParent);
+                objectContextCapability.getParent.and.returnValue(currentParent);
 
                 parentCandidate = domainObjectFactory({
                     name: 'parentCandidate',
@@ -81,7 +81,7 @@ define(
                     ['allow']
                 );
                 linkService = new MockLinkService();
-                policyService.allow.andReturn(true);
+                policyService.allow.and.returnValue(true);
                 moveService = new MoveService(policyService, linkService);
             });
 
@@ -129,12 +129,12 @@ define(
                     });
 
                     it("and returns false", function () {
-                        policyService.allow.andReturn(false);
+                        policyService.allow.and.returnValue(false);
                         expect(validate()).toBe(false);
                     });
 
                     it("and returns true", function () {
-                        policyService.allow.andReturn(true);
+                        policyService.allow.and.returnValue(true);
                         expect(validate()).toBe(true);
                     });
                 });
@@ -167,7 +167,7 @@ define(
 
                     locationPromise = new ControlledPromise();
                     locationCapability.setPrimaryLocation
-                        .andReturn(locationPromise);
+                        .and.returnValue(locationPromise);
 
                     object = domainObjectFactory({
                         name: 'object',
@@ -190,7 +190,7 @@ define(
                 });
 
                 it("waits for result of link", function () {
-                    expect(linkService.perform.mostRecentCall.promise.then)
+                    expect(linkService.perform.calls.mostRecent().promise.then)
                         .toHaveBeenCalledWith(jasmine.any(Function));
                 });
 
@@ -200,18 +200,18 @@ define(
                     }
 
                     spyOn(moveService, "validate");
-                    moveService.validate.andReturn(true);
+                    moveService.validate.and.returnValue(true);
                     expect(perform).not.toThrow();
-                    moveService.validate.andReturn(false);
+                    moveService.validate.and.returnValue(false);
                     expect(perform).toThrow();
                 });
 
                 describe("when moving an original", function () {
                     beforeEach(function () {
                         locationCapability.getContextualLocation
-                            .andReturn('new-location');
-                        locationCapability.isOriginal.andReturn(true);
-                        linkService.perform.mostRecentCall.promise.resolve();
+                            .and.returnValue('new-location');
+                        locationCapability.isOriginal.and.returnValue(true);
+                        linkService.perform.calls.mostRecent().promise.resolve();
                     });
 
                     it("updates location", function () {
@@ -224,18 +224,19 @@ define(
                             locationPromise.resolve();
                         });
 
-                        it("removes object from parent", function () {
+                        it("removes object from parent without user warning dialog", function () {
                             expect(actionCapability.perform)
-                                .toHaveBeenCalledWith('remove');
+                                .toHaveBeenCalledWith('remove', true);
                         });
+
                     });
 
                 });
 
                 describe("when moving a link", function () {
                     beforeEach(function () {
-                        locationCapability.isOriginal.andReturn(false);
-                        linkService.perform.mostRecentCall.promise.resolve();
+                        locationCapability.isOriginal.and.returnValue(false);
+                        linkService.perform.calls.mostRecent().promise.resolve();
                     });
 
                     it("does not update location", function () {
@@ -244,9 +245,9 @@ define(
                             .toHaveBeenCalled();
                     });
 
-                    it("removes object from parent", function () {
+                    it("removes object from parent without user warning dialog", function () {
                         expect(actionCapability.perform)
-                            .toHaveBeenCalledWith('remove');
+                            .toHaveBeenCalledWith('remove', true);
                     });
                 });
 

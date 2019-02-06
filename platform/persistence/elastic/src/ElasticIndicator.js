@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -32,11 +32,13 @@ define(
         var CONNECTED = {
                 text: "Connected",
                 glyphClass: "ok",
+                statusClass: "s-status-ok",
                 description: "Connected to the domain object database."
             },
             DISCONNECTED = {
                 text: "Disconnected",
                 glyphClass: "err",
+                statusClass: "s-status-caution",
                 description: "Unable to connect to the domain object database."
             },
             PENDING = {

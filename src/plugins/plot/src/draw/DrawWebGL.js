@@ -22,9 +22,13 @@
 
 
 define([
-
+    'lodash',
+    'EventEmitter',
+    '../lib/eventHelpers'
 ], function (
-
+    _,
+    EventEmitter,
+    eventHelpers
 ) {
 
     // WebGL shader sources (for drawing plain colors)
@@ -69,6 +73,21 @@ define([
             throw new Error("WebGL unavailable.");
         }
 
+        this.initContext();
+
+        this.listenTo(this.canvas, "webglcontextlost", this.onContextLost, this);
+    }
+
+    _.extend(DrawWebGL.prototype, EventEmitter.prototype);
+    eventHelpers.extend(DrawWebGL.prototype);
+
+    DrawWebGL.prototype.onContextLost = function (event) {
+        this.emit('error');
+        this.isContextLost = true;
+        this.destroy();
+    };
+
+    DrawWebGL.prototype.initContext = function () {
         // Initialize shaders
         this.vertexShader = this.gl.createShader(this.gl.VERTEX_SHADER);
         this.gl.shaderSource(this.vertexShader, VERTEX_SHADER);
@@ -103,7 +122,12 @@ define([
         // Enable blending, for smoothness
         this.gl.enable(this.gl.BLEND);
         this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
-    }
+
+    };
+
+    DrawWebGL.prototype.destroy = function () {
+        this.stopListening();
+    };
 
     // Convert from logical to physical x coordinates
     DrawWebGL.prototype.x = function (v) {
@@ -117,6 +141,9 @@ define([
     };
 
     DrawWebGL.prototype.doDraw = function (drawType, buf, color, points) {
+        if (this.isContextLost) {
+            return;
+        }
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, buf, this.gl.DYNAMIC_DRAW);
         this.gl.vertexAttribPointer(this.aVertexPosition, 2, this.gl.FLOAT, false, 0, 0);
@@ -125,6 +152,9 @@ define([
     };
 
     DrawWebGL.prototype.clear = function () {
+        if (this.isContextLost) {
+            return;
+        }
         this.height = this.canvas.height = this.canvas.offsetHeight;
         this.width = this.canvas.width = this.canvas.offsetWidth;
         this.overlay.height = this.overlay.offsetHeight;
@@ -151,6 +181,9 @@ define([
     DrawWebGL.prototype.setDimensions = function (dimensions, origin) {
         this.dimensions = dimensions;
         this.origin = origin;
+        if (this.isContextLost) {
+            return;
+        }
         if (dimensions && dimensions.length > 0 &&
                 origin && origin.length > 0) {
             this.gl.uniform2fv(this.uDimensions, dimensions);
@@ -169,6 +202,9 @@ define([
      * @param {number} points the number of points to draw
      */
     DrawWebGL.prototype.drawLine = function (buf, color, points) {
+        if (this.isContextLost) {
+            return;
+        }
         this.doDraw(this.gl.LINE_STRIP, buf, color, points);
     };
 
@@ -177,6 +213,9 @@ define([
      *
      */
     DrawWebGL.prototype.drawPoints = function (buf, color, points, pointSize) {
+        if (this.isContextLost) {
+            return;
+        }
         this.gl.uniform1f(this.uPointSize, pointSize);
         this.doDraw(this.gl.POINTS, buf, color, points);
     };
@@ -191,6 +230,9 @@ define([
      *        is in the range of 0.0-1.0
      */
     DrawWebGL.prototype.drawSquare = function (min, max, color) {
+        if (this.isContextLost) {
+            return;
+        }
         this.doDraw(this.gl.TRIANGLE_FAN, new Float32Array(
             min.concat([min[0], max[1]]).concat(max).concat([max[0], min[1]])
         ), color, 4);

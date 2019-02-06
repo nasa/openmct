@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,7 +27,8 @@ define([
     './types/TypeRegistry',
     './ui/Dialog',
     './ui/GestureAPI',
-    './telemetry/TelemetryAPI'
+    './telemetry/TelemetryAPI',
+    './indicators/IndicatorAPI'
 ], function (
     TimeAPI,
     ObjectAPI,
@@ -35,7 +36,8 @@ define([
     TypeRegistry,
     Dialog,
     GestureAPI,
-    TelemetryAPI
+    TelemetryAPI,
+    IndicatorAPI
 ) {
     return {
         TimeAPI: TimeAPI,
@@ -44,6 +46,7 @@ define([
         Dialog: Dialog,
         TypeRegistry: TypeRegistry,
         GestureAPI: GestureAPI,
-        TelemetryAPI: TelemetryAPI
+        TelemetryAPI: TelemetryAPI,
+        IndicatorAPI: IndicatorAPI
     };
 });

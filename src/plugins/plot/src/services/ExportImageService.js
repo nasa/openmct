@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/* global console*/
 /**
  * Module defining ExportImageService. Created by hudsonfoo on 09/02/16
  */
@@ -36,95 +36,83 @@ define(
         /**
          * The export image service will export any HTML node to
          * JPG, or PNG.
-         * @param {object} $q
-         * @param {object} $timeout
-         * @param {object} $log
-         * @param {constant} EXPORT_IMAGE_TIMEOUT time in milliseconds before a timeout error is returned
+         * @param {object} dialogService
          * @constructor
          */
-        function ExportImageService($q, $timeout, $log) {
-            this.$q = $q;
-            this.$timeout = $timeout;
-            this.$log = $log;
-            this.EXPORT_IMAGE_TIMEOUT = 1000;
-        }
-
-        function changeBackgroundColor(element, color) {
-            element.style.backgroundColor = color;
+        function ExportImageService(dialogService) {
+            this.dialogService = dialogService;
+            this.exportCount = 0;
         }
 
         /**
-         * Renders an HTML element into a base64 encoded image
-         * as a BLOB, PNG, or JPG.
+         * Converts an HTML element into a PNG or JPG Blob.
+         * @private
          * @param {node} element that will be converted to an image
-         * @param {string} type of image to convert the element to
+         * @param {string} type of image to convert the element to.
          * @returns {promise}
          */
-        ExportImageService.prototype.renderElement = function (element, type, color) {
-            var defer = this.$q.defer(),
-                validTypes = ["png", "jpg", "jpeg"],
-                renderTimeout,
-                originalColor;
+        ExportImageService.prototype.renderElement = function (element, imageType, className) {
 
-            if (validTypes.indexOf(type) === -1) {
-                this.$log.error("Invalid type requested. Try: (" + validTypes.join(",") + ")");
-                return;
-            }
-
-            if (color) {
-                // Save color to be restored later
-                originalColor = element.style.backgroundColor || '';
-                // Defaulting to white so we can see the chart when printed
-                changeBackgroundColor(element, color);
-            }
-
-            renderTimeout = this.$timeout(function () {
-                defer.reject("html2canvas timed out");
-                this.$log.warn("html2canvas timed out");
-            }.bind(this), this.EXPORT_IMAGE_TIMEOUT);
-
-            try {
-                html2canvas(element, {
-                    onrendered: function (canvas) {
-                        if (color) {
-                            changeBackgroundColor(element, originalColor);
-                        }
-                        switch (type.toLowerCase()) {
-                            case "png":
-                                canvas.toBlob(defer.resolve, "image/png");
-                                break;
-
-                            default:
-                            case "jpg":
-                            case "jpeg":
-                                canvas.toBlob(defer.resolve, "image/jpeg");
-                                break;
-                        }
-                    }
+            var dialogService = this.dialogService,
+                dialog = dialogService.showBlockingMessage({
+                    title: "Capturing...",
+                    hint: "Capturing an image",
+                    unknownProgress: true,
+                    severity: "info",
+                    delay: true
                 });
-            } catch (e) {
-                defer.reject(e);
-                this.$log.warn("html2canvas failed with error: " + e);
+
+            var mimeType = "image/png";
+            if (imageType === "jpg") {
+                mimeType = "image/jpeg";
             }
 
-            defer.promise.finally(function () {
-                renderTimeout.cancel();
-                if (color) {
-                    changeBackgroundColor(element, originalColor);
-                }
-            });
+            if (className) {
+                var exportId = 'export-element-' + this.exportCount;
+                this.exportCount++;
+                var oldId = element.id;
+                element.id = exportId;
+            }
 
-            return defer.promise;
+            return html2canvas(element, {
+                onclone: function (document) {
+                    if (className) {
+                        var clonedElement = document.getElementById(exportId);
+                        clonedElement.classList.add(className);
+                    }
+                    element.id = oldId;
+                }
+            }).then(function (canvas) {
+                dialog.dismiss();
+                return new Promise(function (resolve, reject) {
+                    return canvas.toBlob(resolve, mimeType);
+                });
+            }, function (error) {
+                console.log('error capturing image', error);
+                dialog.dismiss();
+                var errorDialog = dialogService.showBlockingMessage({
+                        title: "Error capturing image",
+                        severity: "error",
+                        hint: "Image was not captured successfully!",
+                        options: [{
+                            label: "OK",
+                            callback: function () {
+                                errorDialog.dismiss();
+                            }
+                        }]
+                    });
+            });
         };
 
         /**
          * Takes a screenshot of a DOM node and exports to JPG.
          * @param {node} element to be exported
          * @param {string} filename the exported image
+         * @param {string} className to be added to element before capturing (optional)
          * @returns {promise}
          */
-        ExportImageService.prototype.exportJPG = function (element, filename, color) {
-            return this.renderElement(element, "jpeg", color).then(function (img) {
+        ExportImageService.prototype.exportJPG = function (element, filename, className) {
+            return this.renderElement(element, "jpg", className).then(function (img) {
                 saveAs(img, filename);
             });
         };
@@ -133,12 +121,24 @@ define(
          * Takes a screenshot of a DOM node and exports to PNG.
          * @param {node} element to be exported
          * @param {string} filename the exported image
+         * @param {string} className to be added to element before capturing (optional)
          * @returns {promise}
          */
-        ExportImageService.prototype.exportPNG = function (element, filename, color) {
-            return this.renderElement(element, "png", color).then(function (img) {
+        ExportImageService.prototype.exportPNG = function (element, filename, className) {
+            return this.renderElement(element, "png", className).then(function (img) {
                 saveAs(img, filename);
             });
+        };
+
+        /**
+         * Takes a screenshot of a DOM node in PNG format.
+         * @param {node} element to be exported
+         * @param {string} filename the exported image
+         * @returns {promise}
+         */
+
+        ExportImageService.prototype.exportPNGtoSRC = function (element) {
+            return this.renderElement(element, "png");
         };
 
         /**
@@ -149,9 +149,9 @@ define(
         function polyfillToBlob() {
             if (!HTMLCanvasElement.prototype.toBlob) {
                 Object.defineProperty(HTMLCanvasElement.prototype, "toBlob", {
-                    value: function (callback, type, quality) {
+                    value: function (callback, mimeType, quality) {
 
-                        var binStr = atob(this.toDataURL(type, quality).split(',')[1]),
+                        var binStr = atob(this.toDataURL(mimeType, quality).split(',')[1]),
                             len = binStr.length,
                             arr = new Uint8Array(len);
 
@@ -159,7 +159,7 @@ define(
                             arr[i] = binStr.charCodeAt(i);
                         }
 
-                        callback(new Blob([arr], {type: type || "image/png"}));
+                        callback(new Blob([arr], {type: mimeType || "image/png"}));
                     }
                 });
             }

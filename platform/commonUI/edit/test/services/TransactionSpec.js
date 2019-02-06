@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -92,7 +92,7 @@ define(
 
                 describe("and an exception is encountered during commit", function () {
                     beforeEach(function () {
-                        mockCommit.andCallFake(function () {
+                        mockCommit.and.callFake(function () {
                             throw new Error("test error");
                         });
                         transaction.commit();

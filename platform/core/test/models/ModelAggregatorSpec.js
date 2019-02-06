@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -43,11 +43,11 @@ define(
                         "mockProvider" + i,
                         ["getModels"]
                     );
-                    mockProvider.getModels.andReturn(models);
+                    mockProvider.getModels.and.returnValue(models);
                     return mockProvider;
                 });
 
-                mockQ.all.andReturn({
+                mockQ.all.and.returnValue({
                     then: function (c) {
                         return c(modelList);
                     }

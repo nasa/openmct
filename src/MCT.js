@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -29,7 +29,9 @@ define([
     './api/objects/object-utils',
     './plugins/plugins',
     './ui/ViewRegistry',
-    './ui/InspectorViewRegistry'
+    './ui/InspectorViewRegistry',
+    './ui/ToolbarRegistry',
+    './adapter/indicators/legacy-indicators-plugin'
 ], function (
     EventEmitter,
     legacyRegistry,
@@ -39,7 +41,9 @@ define([
     objectUtils,
     plugins,
     ViewRegistry,
-    InspectorViewRegistry
+    InspectorViewRegistry,
+    ToolbarRegistry,
+    LegacyIndicatorsPlugin
 ) {
     /**
      * Open MCT is an extensible web application for building mission
@@ -76,7 +80,7 @@ define([
          * Tracks current selection state of the application.
          * @private
          */
-        this.selection = new Selection();
+        this.selection = new Selection(this);
 
         /**
          * MCT's time conductor, which may be used to synchronize view contents
@@ -143,17 +147,13 @@ define([
 
         /**
          * Registry for views which should appear in the toolbar area while
-         * editing.
+         * editing. These views will be chosen based on the selection state.
          *
-         * These views will be chosen based on selection state, so
-         * providers should be prepared to test arbitrary objects for
-         * viewability.
-         *
-         * @type {module:openmct.ViewRegistry}
+         * @type {module:openmct.ToolbarRegistry}
          * @memberof module:openmct.MCT#
          * @name toolbars
          */
-        this.toolbars = new ViewRegistry();
+        this.toolbars = new ToolbarRegistry();
 
         /**
          * Registry for domain object types which may exist within this
@@ -193,6 +193,15 @@ define([
          * @name telemetry
          */
         this.telemetry = new api.TelemetryAPI(this);
+
+        /**
+         * An interface for creating new indicators and changing them dynamically.
+         *
+         * @type {module:openmct.IndicatorAPI}
+         * @memberof module:openmct.MCT#
+         * @name indicators
+         */
+        this.indicators = new api.IndicatorAPI(this);
 
         this.Dialog = api.Dialog;
 
@@ -268,6 +277,9 @@ define([
 
         legacyRegistry.register('adapter', this.legacyBundle);
         legacyRegistry.enable('adapter');
+
+        this.install(LegacyIndicatorsPlugin());
+
         /**
          * Fired by [MCT]{@link module:openmct.MCT} when the application
          * is started.

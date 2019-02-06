@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -34,11 +34,6 @@ $pad: $interiorMargin * $baseRatio;
     line-height: $btnStdH;
     padding: 0 $pad;
 
-    &.labeled:before {
-        // Icon when it's included
-        margin-right: $interiorMarginSm;
-    }
-
 	&.lg {
 		font-size: 1rem;
 	}
@@ -57,6 +52,10 @@ $pad: $interiorMargin * $baseRatio;
 
     &.no-label {
         .label, .title-label { display: none; }
+    }
+
+    &[disabled="true"] {
+        opacity: 0.3;
     }
 
     &.pause-play {
@@ -114,10 +113,11 @@ body.desktop .mini-tab-icon {
 .l-btn-set {
     // Buttons that have a very tight conceptual grouping - no internal space between them.
     font-size: 0; // Remove space between s-button elements due to white space in markup
+    white-space: nowrap;
 
     .s-button {
         border-radius: 0;
-        margin-left: 1px;
+        margin-left: 1px !important;
     }
 
     > .s-button {

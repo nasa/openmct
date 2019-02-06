@@ -33,14 +33,14 @@ define(['../src/TestDataItem', 'zepto'], function (TestDataItem, $) {
                 'getTelemetryPropertyName',
                 'getTelemetryPropertyType'
             ]);
-            mockConditionManager.loadCompleted.andReturn(false);
-            mockConditionManager.metadataLoadCompleted.andReturn(false);
-            mockConditionManager.getEvaluator.andReturn(mockEvaluator);
-            mockConditionManager.getComposition.andReturn({});
-            mockConditionManager.getTelemetryMetadata.andReturn({});
-            mockConditionManager.getObjectName.andReturn('Object Name');
-            mockConditionManager.getTelemetryPropertyName.andReturn('Property Name');
-            mockConditionManager.getTelemetryPropertyType.andReturn('');
+            mockConditionManager.loadCompleted.and.returnValue(false);
+            mockConditionManager.metadataLoadCompleted.and.returnValue(false);
+            mockConditionManager.getEvaluator.and.returnValue(mockEvaluator);
+            mockConditionManager.getComposition.and.returnValue({});
+            mockConditionManager.getTelemetryMetadata.and.returnValue({});
+            mockConditionManager.getObjectName.and.returnValue('Object Name');
+            mockConditionManager.getTelemetryPropertyName.and.returnValue('Property Name');
+            mockConditionManager.getTelemetryPropertyType.and.returnValue('');
 
             duplicateSpy = jasmine.createSpy('duplicate');
             removeSpy = jasmine.createSpy('remove');
@@ -81,12 +81,12 @@ define(['../src/TestDataItem', 'zepto'], function (TestDataItem, $) {
 
         it('generates a value input of the appropriate type', function () {
             mockContainer.append(testDataItem.getDOM());
-            mockEvaluator.getInputTypeById.andReturn('number');
+            mockEvaluator.getInputTypeById.and.returnValue('number');
             testDataItem.generateValueInput('');
             expect($('input', mockContainer).filter('[type=number]').get().length).toEqual(1);
             expect($('input', mockContainer).prop('valueAsNumber')).toEqual(1);
 
-            mockEvaluator.getInputTypeById.andReturn('text');
+            mockEvaluator.getInputTypeById.and.returnValue('text');
             testDataItem.config.value = 'Text I Am';
             testDataItem.generateValueInput('');
             expect($('input', mockContainer).filter('[type=text]').get().length).toEqual(1);
@@ -96,14 +96,14 @@ define(['../src/TestDataItem', 'zepto'], function (TestDataItem, $) {
         it('ensures reasonable defaults on values if none are provided', function () {
             mockContainer.append(testDataItem.getDOM());
 
-            mockEvaluator.getInputTypeById.andReturn('number');
+            mockEvaluator.getInputTypeById.and.returnValue('number');
             testDataItem.config.value = undefined;
             testDataItem.generateValueInput('');
             expect($('input', mockContainer).filter('[type=number]').get().length).toEqual(1);
             expect($('input', mockContainer).prop('valueAsNumber')).toEqual(0);
             expect(testDataItem.config.value).toEqual(0);
 
-            mockEvaluator.getInputTypeById.andReturn('text');
+            mockEvaluator.getInputTypeById.and.returnValue('text');
             testDataItem.config.value = undefined;
             testDataItem.generateValueInput('');
             expect($('input', mockContainer).filter('[type=text]').get().length).toEqual(1);
@@ -113,7 +113,7 @@ define(['../src/TestDataItem', 'zepto'], function (TestDataItem, $) {
 
         it('responds to a change in its value inputs', function () {
             mockContainer.append(testDataItem.getDOM());
-            mockEvaluator.getInputTypeById.andReturn('number');
+            mockEvaluator.getInputTypeById.and.returnValue('number');
             testDataItem.generateValueInput('');
             $('input', mockContainer).prop('value', 9001);
             $('input', mockContainer).trigger('input');

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -63,13 +63,13 @@ define(
             it("adjusts both ends when mutating x", function () {
                 var proxy = new LineProxy(diagonal);
                 proxy.x(6);
-                expect(diagonal).toEqual({ x: 6, y: 8, x2: 8, y2: 11, useGrid: true });
+                expect(diagonal).toEqual({ x: 6, y: 8, x2: 8, y2: 11});
             });
 
             it("adjusts both ends when mutating y", function () {
                 var proxy = new LineProxy(diagonal);
                 proxy.y(6);
-                expect(diagonal).toEqual({ x: 3, y: 6, x2: 5, y2: 9, useGrid: true });
+                expect(diagonal).toEqual({ x: 3, y: 6, x2: 5, y2: 9});
             });
 
             it("provides internal positions for SVG lines", function () {

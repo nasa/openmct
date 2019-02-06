@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -47,9 +47,9 @@ define(
                     ['perform', 'getActions']
                 );
                 originalPromise = new ControlledPromise();
-                mockLocationCapability.getOriginal.andReturn(originalPromise);
-                mockLocationCapability.isLink.andReturn(true);
-                mockLocationCapability.isOriginal.andCallFake(function () {
+                mockLocationCapability.getOriginal.and.returnValue(originalPromise);
+                mockLocationCapability.isLink.and.returnValue(true);
+                mockLocationCapability.isOriginal.and.callFake(function () {
                     return !mockLocationCapability.isLink();
                 });
                 testContext = {
@@ -74,7 +74,7 @@ define(
             });
 
             it("is not applicable to originals", function () {
-                mockLocationCapability.isLink.andReturn(false);
+                mockLocationCapability.isLink.and.returnValue(false);
                 expect(GoToOriginalAction.appliesTo(testContext))
                     .toBeFalsy();
             });

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2017, United States Government
+ Open MCT, Copyright (c) 2014-2018, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 
-<div class="abs l-layout"
+<div class="abs l-layout {{ domainObject.getModel().layoutAdvancedCss }}"
      ng-controller="LayoutController as controller"
      ng-click="controller.bypassSelection($event)">
 
@@ -36,12 +36,12 @@
              ng-style="{ 'background-size': '100% ' + controller.getGridSize() [1] + 'px' }"></div>
     </div>
 
-    <div class="abs frame t-frame-outer child-frame panel s-selectable s-moveable s-hover-border t-object-type-{{ childObject.getModel().type }}"
+    <div class="frame t-frame-outer child-frame panel s-selectable s-moveable s-hover-border t-object-type-{{ childObject.getModel().type }}"
          data-layout-id="{{childObject.getId() + '-' + $id}}"
          ng-class="{ 'no-frame': !controller.hasFrame(childObject), 's-drilled-in': controller.isDrilledIn(childObject) }"
          ng-repeat="childObject in composition"
          ng-init="controller.selectIfNew(childObject.getId() + '-' + $id, childObject)"
-         mct-selectable="controller.getContext(childObject, true)"
+         mct-selectable="controller.getContext(childObject)"
          ng-dblclick="controller.drill($event, childObject)"
          ng-style="controller.getFrameStyle(childObject.getId())">
 

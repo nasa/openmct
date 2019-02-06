@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,9 +27,9 @@ define([
     './TreeLabelView'
 ], function ($, nodeTemplate, ToggleView, TreeLabelView) {
 
-    function TreeNodeView(gestureService, subtreeFactory, selectFn) {
+    function TreeNodeView(gestureService, subtreeFactory, selectFn, openmct) {
         this.li = $('<li>');
-
+        this.openmct = openmct;
         this.statusClasses = [];
 
         this.toggleView = new ToggleView(false);
@@ -81,11 +81,14 @@ define([
         }
 
         this.activeObject = domainObject;
-
-        if (domainObject && domainObject.hasCapability('composition')) {
-            $(this.toggleView.elements()).removeClass('no-children');
-        } else {
-            $(this.toggleView.elements()).addClass('no-children');
+        if (domainObject && domainObject.hasCapability('adapter')) {
+            var obj = domainObject.useCapability('adapter');
+            var hasComposition =  this.openmct.composition.get(obj) !== undefined;
+            if (hasComposition) {
+                $(this.toggleView.elements()).removeClass('no-children');
+            } else {
+                $(this.toggleView.elements()).addClass('no-children');
+            }
         }
 
         if (domainObject && domainObject.hasCapability('status')) {
@@ -149,7 +152,6 @@ define([
     TreeNodeView.prototype.elements = function () {
         return this.li;
     };
-
 
     return TreeNodeView;
 });

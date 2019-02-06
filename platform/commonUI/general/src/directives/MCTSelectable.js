@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,6 +27,16 @@ define(
         /**
          * The mct-selectable directive allows selection functionality
          * (click) to be attached to specific elements.
+         *
+         * Example of how to use the directive:
+         *
+         *   mct-selectable="{
+         *       // item is an optional domain object.
+         *       item: domainObject,
+         *       // Can define other arbitrary properties.
+         *       elementProxy: element,
+         *       controller: fixedController
+         *  }"
          *
          * @memberof platform/commonUI/general
          * @constructor

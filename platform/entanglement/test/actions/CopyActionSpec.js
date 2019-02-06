@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -47,6 +47,7 @@ define(
                 mockDialog,
                 mockLog,
                 abstractComposePromise,
+                domainObject = {model: {name: "mockObject"}},
                 progress = {phase: "copying", totalObjects: 10, processed: 1};
 
             beforeEach(function () {
@@ -54,7 +55,7 @@ define(
                     'policyService',
                     ['allow']
                 );
-                policyService.allow.andReturn(true);
+                policyService.allow.and.returnValue(true);
 
                 selectedObjectContextCapability = jasmine.createSpyObj(
                     'selectedObjectContextCapability',
@@ -79,7 +80,7 @@ define(
 
                 selectedObjectContextCapability
                     .getParent
-                    .andReturn(currentParent);
+                    .and.returnValue(currentParent);
 
                 newParent = domainObjectFactory({
                     name: 'newParent'
@@ -106,26 +107,26 @@ define(
                     ]
                 );
 
-                abstractComposePromise.then.andCallFake(function (success, error, notify) {
+                abstractComposePromise.then.and.callFake(function (success, error, notify) {
                     notify(progress);
-                    success();
+                    success(domainObject);
                 });
 
-                locationServicePromise.then.andCallFake(function (callback) {
+                locationServicePromise.then.and.callFake(function (callback) {
                     callback(newParent);
                     return abstractComposePromise;
                 });
 
                 locationService
                     .getLocationFromUser
-                    .andReturn(locationServicePromise);
+                    .and.returnValue(locationServicePromise);
 
                 dialogService = jasmine.createSpyObj('dialogService',
                     ['showBlockingMessage']
                 );
 
                 mockDialog = jasmine.createSpyObj("dialog", ["dismiss"]);
-                dialogService.showBlockingMessage.andReturn(mockDialog);
+                dialogService.showBlockingMessage.and.returnValue(mockDialog);
 
                 notification = jasmine.createSpyObj('notification',
                     ['dismiss', 'model']
@@ -135,7 +136,7 @@ define(
                     ['notify', 'info']
                 );
 
-                notificationService.notify.andReturn(notification);
+                notificationService.notify.and.returnValue(notification);
 
                 mockLog = jasmine.createSpyObj('log', ['error']);
 
@@ -166,7 +167,7 @@ define(
 
                 describe("when performed it", function () {
                     beforeEach(function () {
-                        spyOn(copyAction, 'progress').andCallThrough();
+                        spyOn(copyAction, 'progress').and.callThrough();
                         copyAction.perform();
                     });
 
@@ -188,7 +189,7 @@ define(
                     it("copies object to selected location", function () {
                         locationServicePromise
                             .then
-                            .mostRecentCall
+                            .calls.mostRecent()
                             .args[0](newParent);
 
                         expect(copyService.perform)
@@ -199,6 +200,10 @@ define(
                         expect(notificationService.info).toHaveBeenCalled();
                     });
 
+                    it("notifies the user with name of object copied", function () {
+                        expect(notificationService.info)
+                            .toHaveBeenCalledWith("mockObject copied successfully.");
+                    });
                 });
             });
 

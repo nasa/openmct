@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -72,7 +72,7 @@ define(
                 var mockBadCallback = jasmine.createSpy("bad-callback"),
                     t = topic();
 
-                mockBadCallback.andCallFake(function () {
+                mockBadCallback.and.callFake(function () {
                     throw new Error("I'm afraid I can't do that.");
                 });
 

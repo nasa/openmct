@@ -22,9 +22,13 @@
 
 
 define([
-
+    'lodash',
+    'EventEmitter',
+    '../lib/eventHelpers'
 ], function (
-
+    _,
+    EventEmitter,
+    eventHelpers
 ) {
 
     /**
@@ -46,6 +50,9 @@ define([
             throw new Error("Canvas 2d API unavailable.");
         }
     }
+
+    _.extend(Draw2D.prototype, EventEmitter.prototype);
+    eventHelpers.extend(Draw2D.prototype);
 
     // Convert from logical to physical x coordinates
     Draw2D.prototype.x = function (v) {

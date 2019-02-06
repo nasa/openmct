@@ -1,9 +1,9 @@
-<span class="status block" ng-controller="DialogLaunchController">
+<span class="h-indicator" ng-controller="DialogLaunchController">
     <!-- DO NOT ADD SPACES BETWEEN THE SPANS - IT ADDS WHITE SPACE!! -->
-    <span class="status-indicator icon-box-with-arrow"></span><span class="label">
-        <a ng-click="launchProgress(true)">Known</a> |
-        <a ng-click="launchProgress(false)">Unknown</a> |
-        <a ng-click="launchError()">Error</a> |
+    <div class="ls-indicator icon-box-with-arrow s-status-available"><span class="label">
+        <a ng-click="launchProgress(true)">Known</a>
+        <a ng-click="launchProgress(false)">Unknown</a>
+        <a ng-click="launchError()">Error</a>
         <a ng-click="launchInfo()">Info</a>
-    </span><span class="count"></span>
+    </span></div>
 </span>

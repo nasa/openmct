@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -45,14 +45,14 @@ define(
                 mockCandidateObj = jasmine.createSpyObj('domainObj', [
                     'getCapability'
                 ]);
-                mockCandidateObj.getCapability.andReturn(mockCandidate);
+                mockCandidateObj.getCapability.and.returnValue(mockCandidate);
 
-                mockChild.getCapability.andReturn(mockContext);
+                mockChild.getCapability.and.returnValue(mockContext);
 
-                mockCandidate.instanceOf.andCallFake(function (t) {
+                mockCandidate.instanceOf.and.callFake(function (t) {
                     return t === candidateType;
                 });
-                mockContext.instanceOf.andCallFake(function (t) {
+                mockContext.instanceOf.and.callFake(function (t) {
                     return t === contextType;
                 });
 

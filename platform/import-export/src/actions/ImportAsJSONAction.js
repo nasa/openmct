@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -79,16 +79,18 @@ define(['zepto'], function ($) {
             var parentModel = parent.getModel();
             var newObj;
 
-            seen.push(parent.getId());
+            seen.push(this.getKeyString(parent.getId()));
             parentModel.composition.forEach(function (childId, index) {
-                if (!tree[childId] || seen.includes(childId)) {
+                var childIdString = this.getKeyString(childId);
+                if (!tree[childIdString] || seen.includes(childIdString)) {
                     return;
                 }
 
-                newObj = this.instantiate(tree[childId], childId);
-                parent.getCapability("composition").add(newObj);
-                newObj.getCapability("location")
-                    .setPrimaryLocation(tree[childId].location);
+                newObj = this.instantiate(tree[childIdString], childIdString);
+                // New object has not been persisted yet so clear persisted
+                // timestamp from copied model.
+                delete newObj.getModel().persisted;
+                newObj.getCapability('persistence').persist();
                 this.deepInstantiate(newObj, tree, seen);
             }, this);
         }
@@ -101,6 +103,10 @@ define(['zepto'], function ($) {
             tree = this.rewriteId(domainObjectId, newId, tree);
         }, this);
         return tree;
+    };
+
+    ImportAsJSONAction.prototype.getKeyString = function (identifier) {
+        return this.openmct.objects.makeKeyString(identifier);
     };
 
     /**

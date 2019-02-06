@@ -66,7 +66,7 @@ define([
             if (request && request.hasOwnProperty(prop)) {
                 workerRequest[prop] = request[prop];
             }
-            if (!workerRequest[prop]) {
+            if (!workerRequest.hasOwnProperty(prop)) {
                 workerRequest[prop] = REQUEST_DEFAULTS[prop];
             }
             workerRequest[prop] = Number(workerRequest[prop]);

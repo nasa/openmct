@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -72,11 +72,11 @@ define(
                 uAM = new UnitAccessorMutator(mockElementProxy);
                 uAMLine = new UnitAccessorMutator(mockLineProxy);
 
-                mockElementProxy.getMinWidth.andReturn(1);
-                mockElementProxy.getMinHeight.andReturn(1);
+                mockElementProxy.getMinWidth.and.returnValue(1);
+                mockElementProxy.getMinHeight.and.returnValue(1);
 
-                mockLineProxy.getMinWidth.andReturn(1);
-                mockLineProxy.getMinHeight.andReturn(1);
+                mockLineProxy.getMinWidth.and.returnValue(1);
+                mockLineProxy.getMinHeight.and.returnValue(1);
             });
 
             it("allows access to useGrid", function () {

@@ -127,6 +127,13 @@ define([
     };
 
     /**
+     * Implement "off" to complete event emitter interface.
+     */
+    TestDataItem.prototype.off = function (event, callback, context) {
+        this.eventEmitter.off(event, callback, context);
+    };
+
+    /**
      * Hide the appropriate inputs when this is the only item
      */
     TestDataItem.prototype.hideButtons = function () {

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -45,13 +45,13 @@ define(
                     'telemetry',
                     ['getMetadata']
                 );
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObject.getCapability.and.callFake(function (c) {
                     return c === 'telemetry' ? mockTelemetry : undefined;
                 });
-                mockDomainObject.getId.andReturn("some-id");
-                mockDomainObject.getModel.andReturn({ name: "foo" });
-                mockTelemetry.getMetadata.andReturn(mockMetadata);
-                mockMetadata.valuesForHints.andReturn(["bar"]);
+                mockDomainObject.getId.and.returnValue("some-id");
+                mockDomainObject.getModel.and.returnValue({ name: "foo" });
+                mockTelemetry.getMetadata.and.returnValue(mockMetadata);
+                mockMetadata.valuesForHints.and.returnValue(["bar"]);
 
                 openmct = { telemetry: mockTelemetry };
 
@@ -69,7 +69,7 @@ define(
             });
 
             it("disallows the imagery view for domain objects without image telemetry", function () {
-                mockMetadata.valuesForHints.andReturn([]);
+                mockMetadata.valuesForHints.and.returnValue([]);
                 expect(policy.allow(testView, mockDomainObject)).toBeFalsy();
             });
 

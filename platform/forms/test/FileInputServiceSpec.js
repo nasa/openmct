@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -37,10 +37,10 @@ define(
                         'remove'
                     ]
                 );
-                mockInput.on.andCallFake(function (event, changeHandler) {
+                mockInput.on.and.callFake(function (event, changeHandler) {
                     changeHandler.apply(mockInput);
                 });
-                spyOn(fileInputService, "newInput").andReturn(
+                spyOn(fileInputService, "newInput").and.returnValue(
                     mockInput
                 );
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -54,9 +54,9 @@ define(
                     { someKey: "c" }
                 ];
 
-                mockDomainObject.getId.andReturn('xyz');
-                mockViewService.getViews.andReturn(testViews);
-                mockPolicyService.allow.andReturn(true);
+                mockDomainObject.getId.and.returnValue('xyz');
+                mockViewService.getViews.and.returnValue(testViews);
+                mockPolicyService.allow.and.returnValue(true);
 
                 decorator = new PolicyViewDecorator(
                     mockPolicyService,
@@ -90,7 +90,7 @@ define(
 
             it("filters out policy-disallowed views", function () {
                 // Disallow the second action
-                mockPolicyService.allow.andCallFake(function (cat, candidate) {
+                mockPolicyService.allow.and.callFake(function (cat, candidate) {
                     return candidate.someKey !== 'b';
                 });
                 expect(decorator.getViews(mockDomainObject))
