@@ -183,6 +183,12 @@
                 + .l-pane {
                     @include userSelectNone();
                 }
+
+                .l-pane {
+                    &__handle {
+                        background: $colorSplitterHover;
+                    }
+                }
             }
 
             &[class*="--collapsed"] {
@@ -368,12 +374,12 @@ export default {
             type: Boolean,
             default: false
         },
-        label: String,
-        resizing: Boolean
+        label: String
     },
     data() {
         return {
-            collapsed: false
+            collapsed: false,
+            resizing: false
         }
     },
     beforeMount() {

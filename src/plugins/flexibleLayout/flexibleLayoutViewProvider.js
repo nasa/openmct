@@ -52,8 +52,17 @@ define([
                                 layoutObject: domainObject
                             },
                             el: element,
-                            template: '<flexible-layout-component></flexible-layout-component>'
+                            template: '<flexible-layout-component ref="flexibleLayout"></flexible-layout-component>'
                         });
+                    },
+                    getSelectionContext: function () {
+                        return {
+                            item: domainObject,
+                            addContainer: component.$refs.flexibleLayout.addContainer,
+                            deleteContainer: component.$refs.flexibleLayout.deleteContainer,
+                            deleteFrame: component.$refs.flexibleLayout.deleteFrame,
+                            type: 'flexible-layout'
+                        };
                     },
                     destroy: function (element) {
                         component.$destroy();

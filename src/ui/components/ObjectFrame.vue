@@ -129,6 +129,10 @@
             objectPath: Array,
             hasFrame: Boolean,
         },
+        components: {
+            ObjectView,
+            ContextMenuDropDown,
+        },
         methods: {
             expand() {
                 let objectView = this.$refs.objectView,
@@ -142,11 +146,10 @@
                         parentElement.append(childElement);
                     }
                 });
+            },
+            getSelectionContext() {
+                return this.$refs.objectView.getSelectionContext();
             }
-        },
-        components: {
-            ObjectView,
-            ContextMenuDropDown,
         },
         data() {
             let objectType = this.openmct.types.get(this.domainObject.type),

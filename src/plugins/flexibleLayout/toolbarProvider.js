@@ -53,7 +53,7 @@ function ToolbarProvider(openmct) {
             toggleContainer = {
                 control: 'toggle-button',
                 key: 'toggle-layout',
-                domainObject: secondary ? secondary.context.item : primary.context.item,
+                domainObject: primary.context.item,
                 property: 'configuration.rowsLayout',
                 options: [
                     {
@@ -140,6 +140,8 @@ function ToolbarProvider(openmct) {
                     title: 'Add Container'
                 };
 
+                toggleContainer.domainObject = secondary.context.item;
+
             } else if (primary.context.type === 'container') {
 
                 deleteContainer = {
@@ -151,7 +153,7 @@ function ToolbarProvider(openmct) {
 
                         let prompt = openmct.overlays.dialog({
                             iconClass: 'alert',
-                            message: `This action will permanently delete container ${containerIndex + 1} from this Flexible Layout`,
+                            message: 'This action will permanently delete this container from this Flexible Layout',
                             buttons: [
                                 {
                                     label: 'Ok',
