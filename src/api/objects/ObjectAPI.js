@@ -161,6 +161,7 @@ define([
                 if (needsMigration(object)) {
                     migrateObject(object)
                         .then(newObject => {
+                            console.log("mutate new object", newObject, "object", object);
                             openmct.objects.mutate(object, '*', newObject);
                             return newObject;
                         });
@@ -254,11 +255,13 @@ define([
             },
             migrate(domainObject) {
                 console.log("Migrating Fixed Position", domainObject);
-                const DEFAULT_GRID_SIZE = [64, 64]; // TODO: check this number
+                const DEFAULT_GRID_SIZE = [64, 16];
                 let newLayoutObject = {
                     identifier: domainObject.identifier,
+                    location: domainObject.location,
+                    name: domainObject.name,
                     type: "layout"
-                }
+                };
                 let layoutType = openmct.types.get('layout');
                 layoutType.definition.initialize(newLayoutObject);
                 newLayoutObject.composition = domainObject.composition;
@@ -375,7 +378,6 @@ define([
                 item.fill = element.fill || "";
                 item.color = element.color || "";
                 item.size = element.size || "13px";
-                console.log("color", element.color, "size", element.size);
                 item.identifier = telemetryObjects[element.id].identifier;
                 item.displayMode = 'all'; // TODO: What about element.titled?
                 item.value = openmct.telemetry.getMetadata(telemetryObjects[element.id]).getDefaultDisplayValue();
