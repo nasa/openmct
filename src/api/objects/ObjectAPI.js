@@ -162,7 +162,7 @@ define([
                     migrateObject(object)
                         .then(newObject => {
                             console.log("mutate new object", newObject, "object", object);
-                            openmct.objects.mutate(object, '*', newObject);
+                            openmct.objects.mutate(newObject, 'persisted', Date.now());
                             return newObject;
                         });
                 }
@@ -282,8 +282,6 @@ define([
                     .then(function () {
                         newLayoutObject.configuration.items =
                             migrateFixedPositionConfigurataion(elements, telemetryObjects);
-                        // TODO: delete domainObject
-                        // TODO: add newLayoutObject to the path   
                         console.log("Migrated FP", newLayoutObject);
                         return newLayoutObject;
                     });
