@@ -538,9 +538,227 @@ mct-plot {
 }
 
 /******************************************************************* IMAGERY */
+
+
+// PASTE BEGIN
+.l-image-main-wrapper,
+.l-image-thumbs-wrapper,
+.image-main {
+    @include abs(0);
+    overflow: hidden;
+}
+
+/*************************************** MAIN LAYOUT */
+.l-image-main-wrapper {
+    // Imagery thumbs
+    bottom: $interiorMargin*2 +  $imageThumbsWrapperH;
+
+    min-width: 150px;
+    .l-image-main {
+        margin-bottom: $interiorMargin;
+    }
+    .l-image-main-controlbar {
+        &.l-flex-row { align-items: center; }
+    }
+}
+
+.l-image-thumbs-wrapper {
+    top: auto;
+    min-height: $imageThumbsWrapperH;
+    max-height: 60%;
+    box-sizing: border-box;
+}
+
+.l-date,
+.l-time,
+.l-timezone {
+    display: inline-block;
+}
+
+/*************************************** MAIN IMAGE */
+
+.image-main,
+.l-image-thumb-item .l-thumb {
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.l-image-main-controlbar {
+    font-size: 0.8em;
+    line-height: inherit;
+    .l-datetime-w, .l-controls-w {
+        direction: rtl;
+        overflow: hidden;
+    }
+    .l-datetime-w {
+        @include ellipsize();
+        margin-right: $interiorMarginSm;
+        text-align: left;
+    }
+    .l-controls-w {
+        z-index: 2;
+    }
+    .l-date,
+    .l-time {
+        color: pullForward($colorBodyFg, 20%); // TODO: do this as a theme constant
+    }
+    .l-mag {
+        direction: ltr;
+        display: inline-block;
+        &:before {
+            content: "\000049";
+        }
+    }
+    .s-mag {
+        color: pushBack($colorBodyFg, 20%); // TODO: do this as a theme constant
+    }
+    .l-btn.show-thumbs {
+        display: none;
+    }
+}
+
+.s-image-main {
+    background-color: $colorPlotBg;
+    border: 1px solid transparent;
+    &.paused {
+        //@include sUnsynced();
+    }
+}
+
+/*************************************** THUMBS */
+
+.l-image-thumbs-wrapper {
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-bottom: $interiorMargin;
+    white-space: nowrap;
+}
+
+.l-image-thumb-item {
+    transition: background-color 0.25s;
+    box-sizing: border-box;
+    cursor: pointer;
+    direction: ltr;
+    display: inline-block;
+    float: left;
+    font-size: 0.8em;
+    padding: 1px;
+    margin-left: $interiorMarginSm;
+    position: relative;
+    text-align: left;
+    width: $imageThumbsD + $imageThumbPad*2;
+    white-space: normal;
+    .l-thumb,
+    .l-date,
+    .l-time {
+        display: inline-block;
+    }
+    .l-date,
+    .l-time {
+        padding: 2px 3px;
+    }
+
+    &:hover {
+        background: $colorThumbHoverBg;
+        .l-date,
+        .l-time {
+            color: #fff;
+        }
+    }
+    &.selected {
+        background: $colorKeySelectedBg;
+        .l-date,
+        .l-time {
+            color: #fff;
+        }
+    }
+    .l-thumb {
+        background-color: rgba(#fff, 0.1);
+        height: $imageThumbsD;
+        width: $imageThumbsD;
+        margin-top: 0;
+    }
+}
+
+/*************************************** LOCAL CONTROLS */
 .t-imagery {
     display: contents;
+    .h-local-controls.h-local-controls-overlay-content {
+        max-width: 200px;
+        min-width: 100px;
+        width: 35%;
+        align-items: center;
+        padding: $interiorMargin $interiorMarginLg;
+
+        input[type="range"] {
+            display: block;
+            width: 100%;
+            &:not(:first-child) {
+                margin-top: $interiorMarginLg;
+            }
+
+            &:before {
+                margin-right: $interiorMarginSm;
+            }
+        }
+
+        .t-reset-btn-holder {
+            $bc: $scrollbarTrackColorBg;
+            &:before,
+            &:after {
+                border-right: 1px solid $bc;
+                content:'';
+                display: block;
+                width: 5px;
+                height: 4px;
+            }
+
+            &:before {
+                border-top: 1px solid $bc;
+                margin-bottom: 2px;
+            }
+
+            &:after {
+                border-bottom: 1px solid $bc;
+                margin-top: 2px;
+            }
+        }
+    }
 }
+
+
+/*************************************** WHEN IN FRAME */
+.c-frame .t-imagery {
+    .l-image-main-wrapper {
+        bottom: 0 !important;
+        height: 100% !important;
+        .l-image-main-controlbar {
+            font-size: 0.7em;
+        }
+    }
+    .l-image-thumbs-wrapper,
+    mct-splitter {
+        display: none;
+    }
+}
+
+/*************************************** MOBILE */
+body.mobile.phone {
+    .t-imagery {
+        .l-image-main-wrapper,
+        .l-image-thumbs-wrapper {
+            min-height: 10px !important;
+        }
+    }
+}
+// PASTE END
+
+
+
+
+
+
 
 .c-button.pause-play {
     // Pause icon set by default in markup
@@ -752,7 +970,254 @@ body.phone.portrait {
     }
 }
 
+//************************************************* INFO BUBBLES
+.l-infobubble-wrapper {
+    $arwSize: 5px;
+    box-shadow: rgba(black, 0.4) 0 1px 5px;
+    position: relative;
+    z-index: 50;
+    .l-infobubble {
+        display: inline-block;
+        min-width: $bubbleMinW;
+        max-width: $bubbleMaxW;
+        padding: 5px 10px;
+        &:before {
+            content:"";
+            position: absolute;
+            width: 0;
+            height: 0;
+        }
+        table {
+            width: 100%;
+            tr {
+                td {
+                    padding: 2px 0;
+                    vertical-align: top;
+                    &.label {
+                        padding-right: $interiorMargin * 2;
+                        white-space: nowrap;
+                    }
+                    &.value {
+                        //word-wrap: break-word; // Doesn't work in <td>?
+                        word-break: break-all;
+                    }
+                    &.align-wrap {
+                        white-space: normal;
+                    }
+                }
+            }
+        }
+        .title {
+            @include ellipsize();
+            margin-bottom: $interiorMargin;
+        }
+    }
+
+    &.arw-down {
+        margin-bottom: $arwSize*2;
+        .l-infobubble::before {
+            left: 50%;
+            top: 100%;
+            margin-left: -1 * $arwSize;
+            border-left: $arwSize solid transparent;
+            border-right: $arwSize solid transparent;
+            border-top: ($arwSize * 1.5) solid $colorInfoBubbleBg;
+        }
+    }
+    .arw {
+        z-index: 2;
+    }
+    &.arw-up .arw.arw-down,
+    &.arw-down .arw.arw-up {
+        display: none;
+    }
+}
+
+body.desktop {
+    .l-infobubble {
+        &.arw-left {
+            margin-left: $bubbleArwSize*2;
+            &:before {
+                @include triangle('left', $bubbleArwSize, 1.5, $colorInfoBubbleBg);
+                right: 100%;
+            }
+        }
+
+        &.arw-right {
+            margin-right: $bubbleArwSize*2;
+            &:before {
+                @include triangle('right', $bubbleArwSize, 1.5, $colorInfoBubbleBg);
+                left: 100%;
+            }
+        }
+
+        &.arw-top {
+            &:before {
+                top: $bubbleArwSize * 2;
+            }
+        }
+
+        &.arw-btm {
+            &:before {
+                bottom: $bubbleArwSize * 2;
+            }
+        }
+    }
+}
+
+.l-thumbsbubble-wrapper {
+    .arw-up {
+        @include triangle('up', $bubbleArwSize, 1.5, $colorThumbsBubbleBg);
+    }
+    .arw-down {
+        @include triangle('down', $bubbleArwSize, 1.5, $colorThumbsBubbleBg);
+    }
+}
+
+.s-infobubble {
+    $emFg: darken($colorInfoBubbleFg, 20%);
+    border-radius: $basicCr;
+    box-shadow: rgba(black, 0.4) 0 1px 5px;
+    background: $colorInfoBubbleBg;
+    color: $colorInfoBubbleFg;
+    font-size: 0.8rem;
+    .title {
+        color: $emFg;
+        font-weight: bold;
+    }
+    table {
+        tr {
+            td {
+                border: none;
+                border-top: 1px solid darken($colorInfoBubbleBg, 10%) !important;
+                font-size: 0.9em;
+            }
+
+            &:first-child td {
+                border-top: none !important;
+            }
+        }
+    }
+    &:first-child td {
+        border-top: none;
+    }
+
+    .label {
+        color: lighten($emFg, 30%);
+    }
+
+    .value {
+        color: $emFg;
+    }
+
+}
+
+.s-thumbsbubble {
+    background: $colorThumbsBubbleBg;
+    color: $colorThumbsBubbleFg;
+}
+
+/***************************************************************** SPLITTERS */
+
+.splitter {
+    display: block;
+    position: absolute;
+    z-index: 3;
+    &:after {
+        // The handle
+        content:"";
+        pointer-events: none;
+        @include abs(0);
+        background: $colorSplitterBg;
+        display: block;
+        z-index: 4;
+    }
+    &:active {
+        &:after {
+            background-color: $colorSplitterActive !important;
+        }
+    }
+
+    @if $colorSplitterHover != 'none' {
+        &:not(:active) {
+            &:hover {
+                &:after {
+                    background-color: $colorSplitterHover !important;
+                    transiiton: background-color, 150ms;
+                }
+            }
+        }
+    }
+}
+
+.split-layout {
+    $inset: $splitterHandleHitMargin;
+    &.horizontal {
+        // Slides vertically up and down, splitting the element horizontally
+        overflow: hidden; // Suppress overall scroll; each internal pane handles its own overflow
+        .pane {
+            left: 0;
+            right: 0;
+            &.top {
+                bottom: auto;
+            }
+            &.bottom {
+                top: auto;
+            }
+        }
+        >.splitter {
+            cursor: row-resize;
+            left: 0;
+            right: 0;
+            height: $splitterHandleD;
+            &:after {
+                top: $inset; bottom: $inset;
+            }
+        }
+    }
+
+    &.vertical {
+        // Slides horizontally left to right, splitting the element vertically
+        .pane {
+            top: 0;
+            bottom: 0;
+            &.left {
+                right: auto;
+            }
+            &.right {
+                left: auto;
+            }
+        }
+        >.splitter {
+            cursor: col-resize;
+            top: 0;
+            bottom: 0;
+            width: $splitterHandleD;
+            &:after {
+                left: $inset; right: $inset;
+                //width: $splitterHandleD;
+            }
+            &.flush-right {
+                width: ceil($splitterHandleD / 2);
+                &:after {
+                    width: $splitterHandleD;
+                    left: auto; right: 0;
+                }
+                &.edge-shdw {
+                    background-image: linear-gradient(90deg, rgba(black, 0) 40%, rgba(black, 0.05) 70%, rgba(black, 0.2) 100%);
+                }
+            }
+        }
+    }
+}
+
+
 /******************************************************************* VARIOUS */
+.c-overlay mct-include {
+    display: inline; // Fallback for display: contents
+    display: contents;
+}
+
 .overlay {
     .outer-holder {
         background: $colorMenuBg;

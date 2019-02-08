@@ -84,7 +84,7 @@ ul.tree {
         background: $colorItemTreeSelectedBg !important;
         color: $colorItemTreeSelectedFg !important;
         .view-control {
-            color: $colorItemTreeSelectedVC;
+            color: red; //TEMP $colorItemTreeSelectedVC;
         }
         .t-object-label .t-item-icon {
             color: $colorItemTreeSelectedFg;

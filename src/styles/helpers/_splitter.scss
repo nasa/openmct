@@ -37,10 +37,6 @@
         background: $colorSplitterBg;
         display: block;
         z-index: 4;
-
-        @if $splitterEndCr != 'none' {
-            border-radius: $splitterEndCr;
-        }
     }
     &:active {
         &:after {

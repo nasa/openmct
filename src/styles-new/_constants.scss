@@ -60,6 +60,16 @@ $plotSwatchD: 8px;
 $plotDisplayArea: (0, 0, $plotXBarH, $plotYBarW); // 1: Top, 2: right, 3: bottom, 4: left
 $plotMinH: 95px;
 $controlBarH: 25px;
+/*************** Imagery */
+$imageMainControlBarH: 25px;
+$imageThumbsD: 100px;
+$imageThumbsWrapperH: 155px;
+$imageThumbPad: 1px;
+/*************** Bubbles */
+$bubbleArwSize: 10px;
+$bubblePad: $interiorMargin;
+$bubbleMinW: 100px;
+$bubbleMaxW: 300px;
 
 /************************** MOBILE */
 $mobileMenuIconD: 24px; // Used
