@@ -161,7 +161,6 @@ define([
                 if (needsMigration(object)) {
                     migrateObject(object)
                         .then(newObject => {
-                            console.log("mutate new object", newObject, "object", object);
                             openmct.objects.mutate(newObject, 'persisted', Date.now());
                             return newObject;
                         });
@@ -234,7 +233,6 @@ define([
                 return domainObject.type === 'layout' && domainObject.configuration.layout;
             },
             migrate(domainObject) {
-                console.log("Migrating Display Layout", domainObject);
                 let childObjects = {};
                 let promises = Object.keys(domainObject.configuration.layout.panels).map(key => {
                     return openmct.objects.get(key)
@@ -254,7 +252,6 @@ define([
                 return domainObject.type === 'telemetry.fixed' && domainObject.configuration['fixed-display'];
             },
             migrate(domainObject) {
-                console.log("Migrating Fixed Position", domainObject);
                 const DEFAULT_GRID_SIZE = [64, 16];
                 let newLayoutObject = {
                     identifier: domainObject.identifier,
@@ -282,7 +279,6 @@ define([
                     .then(function () {
                         newLayoutObject.configuration.items =
                             migrateFixedPositionConfigurataion(elements, telemetryObjects);
-                        console.log("Migrated FP", newLayoutObject);
                         return newLayoutObject;
                     });
             }
@@ -352,7 +348,6 @@ define([
         migratedObject.configuration.layoutGrid = migratedObject.layoutGrid || DEFAULT_GRID_SIZE;
         delete migratedObject.layoutGrid;
         delete migratedObject.configuration.layout;
-        console.log("Migrated layout", migratedObject);
         return migratedObject;
     }
 
@@ -380,7 +375,7 @@ define([
                 item.color = element.color || DEFAULT_COLOR;
                 item.size = element.size || DEFAULT_SIZE;
                 item.identifier = telemetryObjects[element.id].identifier;
-                item.displayMode = element.titled ? 'label' : 'all';
+                item.displayMode = element.titled ? 'all' : 'value';
                 item.value = openmct.telemetry.getMetadata(telemetryObjects[element.id]).getDefaultDisplayValue();
             } else if (element.type === 'fixed.box') {
                 item.type = "box-view";
