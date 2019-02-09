@@ -36,6 +36,7 @@
                        v-model="formattedBounds.start"
                        @change="validateAllBounds(); submitForm()" />
                 <date-picker
+                        v-if="isFixed && isUTCBased"
                         :default-date-time="formattedBounds.start"
                         :formatter="timeFormatter"
                         @date-selected="startDateSelected"></date-picker>
@@ -65,11 +66,11 @@
                        ref="endDate"
                        @change="validateAllBounds(); submitForm()">
                 <date-picker
+                        v-if="isFixed && isUTCBased"
                         class="c-ctrl-wrapper--menus-left"
                         :default-date-time="formattedBounds.end"
                         :formatter="timeFormatter"
-                        @date-selected="endDateSelected"
-                        v-if="isFixed"></date-picker>
+                        @date-selected="endDateSelected"></date-picker>
             </div>
 
             <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-delta"

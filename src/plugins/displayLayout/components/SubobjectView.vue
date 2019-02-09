@@ -26,7 +26,8 @@
         <object-frame v-if="domainObject"
                       :domain-object="domainObject"
                       :object-path="objectPath"
-                      :has-frame="item.hasFrame">
+                      :has-frame="item.hasFrame"
+                      ref="objectFrame">
         </object-frame>
     </layout-frame>
 </template>
@@ -98,13 +99,15 @@
             setObject(domainObject) {
                 this.domainObject = domainObject;
                 this.objectPath = [this.domainObject].concat(this.openmct.router.path);
-                this.context = {
-                    item: domainObject,
-                    layoutItem: this.item,
-                    index: this.index
-                };
-                this.removeSelectable = this.openmct.selection.selectable(
-                    this.$el, this.context, this.initSelect);
+                this.$nextTick(function () {
+                    let childContext = this.$refs.objectFrame.getSelectionContext();
+                    childContext.item = domainObject;
+                    childContext.layoutItem = this.item;
+                    childContext.index = this.index;
+                    this.context = childContext;
+                    this.removeSelectable = this.openmct.selection.selectable(
+                        this.$el, this.context, this.initSelect);
+                });
             }
         },
         mounted() {

@@ -53,7 +53,7 @@ function ToolbarProvider(openmct) {
             toggleContainer = {
                 control: 'toggle-button',
                 key: 'toggle-layout',
-                domainObject: secondary ? secondary.context.item : primary.context.item,
+                domainObject: primary.context.item,
                 property: 'configuration.rowsLayout',
                 options: [
                     {
@@ -139,6 +139,8 @@ function ToolbarProvider(openmct) {
                     icon: "icon-plus-in-rect",
                     title: 'Add Container'
                 };
+
+                toggleContainer.domainObject = secondary.context.item;
 
             } else if (primary.context.type === 'container') {
 
