@@ -346,7 +346,6 @@ define([
                     hasFrame: panel.hasFrame
                 });
             }
-            // TODO: check for fixed position and nested layout?
         });
 
         migratedObject.configuration.items = items;
@@ -358,6 +357,10 @@ define([
     }
 
     function migrateFixedPositionConfigurataion(elements, telemetryObjects) {
+        const DEFAULT_STROKE = "transparent";
+        const DEFAULT_SIZE = "13px";
+        const DEFAULT_COLOR = "";
+        const DEFAULT_FILL = "";
         let items = [];
 
         elements.forEach(element => {
@@ -372,35 +375,35 @@ define([
 
             if (element.type === "fixed.telemetry") {
                 item.type = "telemetry-view";
-                item.stroke = element.stroke || "transparent";
-                item.fill = element.fill || "";
-                item.color = element.color || "";
-                item.size = element.size || "13px";
+                item.stroke = element.stroke || DEFAULT_STROKE;
+                item.fill = element.fill || DEFAULT_FILL;
+                item.color = element.color || DEFAULT_COLOR;
+                item.size = element.size || DEFAULT_SIZE;
                 item.identifier = telemetryObjects[element.id].identifier;
-                item.displayMode = 'all'; // TODO: What about element.titled?
+                item.displayMode = element.titled ? 'label' : 'all';
                 item.value = openmct.telemetry.getMetadata(telemetryObjects[element.id]).getDefaultDisplayValue();
             } else if (element.type === 'fixed.box') {
                 item.type = "box-view";
-                item.stroke = element.stroke || "transparent";
-                item.fill = element.fill || "";
+                item.stroke = element.stroke || DEFAULT_STROKE;
+                item.fill = element.fill || DEFAULT_FILL;
             } else if (element.type === 'fixed.line') {
                 item.type = "line-view";
                 item.x2 = element.x2;
                 item.y2 = element.y2;
-                item.stroke = element.stroke || "transparent";
+                item.stroke = element.stroke || DEFAULT_STROKE;
                 delete item.height;
                 delete item.width;
             } else if (element.type === 'fixed.text') {
                 item.type = "text-view";
                 item.text = element.text;
-                item.stroke = element.stroke || "transparent";
-                item.fill = element.fill || "";
-                item.color = element.color || "";
-                item.size = element.size || "13px";
+                item.stroke = element.stroke || DEFAULT_STROKE;
+                item.fill = element.fill || DEFAULT_FILL;
+                item.color = element.color || DEFAULT_COLOR;
+                item.size = element.size || DEFAULT_SIZE;
             } else if (element.type === 'fixed.image') {
                 item.type = "image-view";
                 item.url =element.url;
-                item.stroke = element.stroke || "transparent";
+                item.stroke = element.stroke || DEFAULT_STROKE;
             }
 
             items.push(item);
