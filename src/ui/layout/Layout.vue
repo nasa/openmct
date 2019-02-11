@@ -308,7 +308,7 @@
         data: function () {
             return {
                 fullScreen: false,
-                conductorComponent: {},
+                conductorComponent: undefined,
                 isEditing: false
             }
         },
