@@ -73,7 +73,8 @@ export default {
         return {
             elements: [],
             isEditing: this.openmct.editor.isEditing(),
-            parentObject: undefined
+            parentObject: undefined,
+            currentSearch: ''
         }
     },
     mounted() {
