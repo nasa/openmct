@@ -1,5 +1,12 @@
 <template>
     <div class="c-tree__wrapper">
+        <div class="l-shell__search">
+            <search class="c-search--major" ref="shell-search"
+                :value="searchValue"
+                @input="searchTree"
+                @clear="searchTree">
+            </search>
+        </div>
         <div
             v-if="treeItems.length === 0">
             No results found
@@ -129,13 +136,71 @@
 
 <script>
     import treeItem from './tree-item.vue'
+    import search from '../components/search.vue';
 
     export default {
         inject: ['openmct'],
-        props: ['treeItems'],
         name: 'mct-tree',
         components: {
+            search,
             treeItem
+        },
+        data() {
+            return {
+                searchValue: '',
+                allTreeItems: [],
+                filteredTreeItems: []
+            }
+        },
+        computed: {
+            treeItems() {
+                if (this.searchValue === '') {
+                    return this.allTreeItems;
+                } else {
+                    return this.filteredTreeItems;
+                }
+            }
+        },
+        methods: {
+            getAllChildren() {
+                this.openmct.objects.get('ROOT')
+                    .then(root => this.openmct.composition.get(root).load())
+                    .then(children => {
+                        this.allTreeItems = children.map(c => {
+                                return {
+                                    id: this.openmct.objects.makeKeyString(c.identifier),
+                                    object: c,
+                                    objectPath: [c]
+                            };
+                        });
+                    });
+            },
+            getFilteredChildren() {
+                this.searchService.query(this.searchValue).then(children => {
+                    this.filteredTreeItems = children.hits.map(child => {
+                        let objectPath = child.object.getCapability('context')
+                                .getPath().map(oldObject => oldObject.useCapability('adapter')).reverse(),
+                            object = child.object.useCapability('adapter');
+
+                        return {
+                            id: this.openmct.objects.makeKeyString(object.identifier),
+                            object,
+                            objectPath 
+                        }
+                    });
+                });
+            },
+            searchTree(value) {
+                this.searchValue = value;
+                
+                if (this.searchValue !== '') {
+                    this.getFilteredChildren();
+                }
+            }
+        },
+        mounted() {
+            this.searchService = this.openmct.$injector.get('searchService');
+            this.getAllChildren();
         }
     }
 </script>

@@ -22,16 +22,7 @@
                   handle="after"
                   label="Browse"
                   collapsable>
-                <div class="l-shell__search">
-                    <search class="c-search--major" ref="shell-search"
-                        :value="searchValue"
-                        @input="searchTree"
-                        @clear="searchTree">
-                    </search>
-                </div>
-                <mct-tree class="l-shell__tree"
-                    :treeItems="treeItems">
-                </mct-tree>
+                <mct-tree class="l-shell__tree"></mct-tree>
             </pane>
             <pane class="l-shell__pane-main">
                 <browse-bar class="l-shell__main-view-browse-bar"
@@ -256,7 +247,6 @@
     import ObjectView from '../components/ObjectView.vue';
     import MctTemplate from '../legacy/mct-template.vue';
     import CreateButton from './CreateButton.vue';
-    import search from '../components/search.vue';
     import multipane from './multipane.vue';
     import pane from './pane.vue';
     import BrowseBar from './BrowseBar.vue';
@@ -299,7 +289,6 @@
             ObjectView,
             'mct-template': MctTemplate,
             CreateButton,
-            search,
             multipane,
             pane,
             BrowseBar,
@@ -310,18 +299,12 @@
             this.openmct.editor.on('isEditing', (isEditing)=>{
                 this.isEditing = isEditing;
             });
-
-            this.searchService = this.openmct.$injector.get('searchService');
-            this.getAllChildren();
         },
         data: function () {
             return {
                 fullScreen: false,
                 conductorComponent: {},
-                isEditing: false,
-                searchValue:'',
-                allChildren: [],
-                filteredChildren: []
+                isEditing: false
             }
         },
         computed: {
@@ -336,18 +319,10 @@
                 }
 
                 return this.isEditing && structure.length > 0;
-            },
-            treeItems() {
-                if (this.searchValue === '') {
-                    return this.allChildren;
-                } else {
-                    return this.filteredChildren;
-                }
             }
         },
         methods: {
             fullScreenToggle() {
-
                 if (this.fullScreen) {
                     this.fullScreen = false;
                     exitFullScreen();
@@ -358,41 +333,6 @@
             },
             openInNewTab(event) {
                 window.open(window.location.href);
-            },
-            getAllChildren() {
-                this.openmct.objects.get('ROOT')
-                    .then(root => this.openmct.composition.get(root).load())
-                    .then(children => {
-                        this.allChildren = children.map(c => {
-                                return {
-                                    id: this.openmct.objects.makeKeyString(c.identifier),
-                                    object: c,
-                                    objectPath: [c]
-                            };
-                        });
-                    });
-            },
-            getFilteredChildren() {
-                this.searchService.query(this.searchValue).then(children => {
-                    this.filteredChildren = children.hits.map(child => {
-                        let objectPath = child.object.getCapability('context')
-                                .getPath().map(oldObject => oldObject.useCapability('adapter')).reverse(),
-                            object = child.object.useCapability('adapter');
-
-                        return {
-                            id: this.openmct.objects.makeKeyString(object.identifier),
-                            object,
-                            objectPath 
-                        }
-                    });
-                });
-            },
-            searchTree(value) {
-                this.searchValue = value;
-                
-                if (this.searchValue !== '') {
-                    this.getFilteredChildren();
-                }
             }
         }
     }
