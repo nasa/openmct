@@ -269,7 +269,8 @@
             },
             isTelemetry(domainObject) {
                 if (this.openmct.telemetry.isTelemetryObject(domainObject)
-                    && domainObject.type !== 'summary-widget') {
+                    && domainObject.type !== 'summary-widget'
+                    && domainObject.type !== 'example.imagery') {
                     return true;
                 } else {
                     return false;
