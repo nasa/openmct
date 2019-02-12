@@ -503,9 +503,27 @@ export default {
             this.persist();
         },
         deleteContainer(containerId) {
-            let container = this.containers.filter(c => c.id === containerId)[0];
-            let containerIndex = this.containers.indexOf(container);
+            let container = this.containers.filter(c => c.id === containerId)[0],
+                containerIndex = this.containers.indexOf(container);
+
+            /*
+                remove associated domainObjects from composition
+            */
+            container.frames.forEach(f => {
+                this.composition.remove({identifier: f.domainObjectIdentifier});
+            });
+
             this.containers.splice(containerIndex, 1);
+
+            /*
+                add a container when there are no containers in the FL,
+                to prevent user from not being able to add a frame via
+                drag and drop. 
+            */
+            if (this.containers.length === 0) {
+                this.containers.push(new Container(100));
+            }
+
             sizeToFill(this.containers);
             this.persist();
         },
@@ -545,6 +563,12 @@ export default {
                 .frames
                 .filter((f => f.id === frameId))[0];
             let frameIndex = container.frames.indexOf(frame);
+
+            /*
+                remove associated domainObject from composition
+            */
+            this.composition.remove({identifier: frame.domainObjectIdentifier});
+
             container.frames.splice(frameIndex, 1);
             sizeToFill(container.frames);
             this.persist(containerIndex);
