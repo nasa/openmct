@@ -641,7 +641,7 @@ export default {
             } else {
                 this.containers.splice(toIndex, 0, container);
             }
-            this.persist(index);
+            this.persist();
         },
         removeChildObject(identifier) {
             let removeIdentifier = this.openmct.objects.makeKeyString(identifier);
