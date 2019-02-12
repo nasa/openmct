@@ -295,7 +295,9 @@ define([
     }
 
     function isTelemetry(domainObject) {
-        if (openmct.telemetry.isTelemetryObject(domainObject) && domainObject.type !== 'summary-widget') {
+        if (openmct.telemetry.isTelemetryObject(domainObject)
+            && domainObject.type !== 'summary-widget'
+            && domainObject.type !== 'example.imagery') {
             return true;
         } else {
             return false;
