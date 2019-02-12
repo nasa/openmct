@@ -7,8 +7,7 @@
         <input :id="uid"
                :type="options.type"
                :value="options.value"
-               v-bind="options.attrs"
-               @change="onChange"/>
+               v-bind="options.attrs"/>
     </div>
 </template>
 
@@ -31,15 +30,32 @@ export default {
             uid: `mct-input-id-${inputUniqueId}`
         };
     },
+    mounted() {
+        if (this.options.type === 'number') {
+            this.$el.addEventListener('input', this.onInput);
+        } else {
+            this.$el.addEventListener('change', this.onChange);
+        }
+    },
+    beforeDestroy() {
+        if (this.options.type === 'number') {
+            this.$el.removeEventListener('input', this.onInput);
+        } else {
+            this.$el.removeEventListener('change', this.onChange);
+        }
+    },
     methods: {
         onChange(event) {
-            let value = event.target.value;
-
-            if (this.options.type === 'number') {
-                value = event.target.valueAsNumber;
+            console.log('onChange');
+            if (this.options.type === 'text') {
+                this.$emit('change', event.target.value, this.options);
             }
-
-            this.$emit('change', value, this.options);
+        },
+        onInput(event) {
+            console.log('onInput');
+            if (this.options.type === 'number') {
+                this.$emit('change', event.target.valueAsNumber, this.options);
+            }
         }
     }
 }
