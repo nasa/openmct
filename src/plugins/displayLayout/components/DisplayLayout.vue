@@ -124,6 +124,8 @@
         bottom: Number.NEGATIVE_INFINITY
     };
 
+    const DRAG_OBJECT_TRANSFER_PREFIX = 'openmct/domain-object/';
+
     function getItemDefinition(itemType, ...options) {
         let itemView = ITEM_TYPE_VIEW_MAP[itemType];
 
@@ -246,7 +248,7 @@
                 } else {
                     let identifier = this.openmct.objects.makeKeyString(domainObject.identifier);
 
-                    if (!this.objectViewMap[identifier]) {
+                    if (!this.containsObject(identifier)) {
                         this.addItem('subobject-view', domainObject, droppedObjectPosition);
                     } else {
                         let prompt = this.openmct.overlays.dialog({
@@ -264,8 +266,21 @@
                     }
                 }
             },
-            handleDragOver($event){
-                $event.preventDefault();
+            containsObject(identifier) {
+                return _.get(this.internalDomainObject, 'composition')
+                    .some(childId => this.openmct.objects.areIdsEqual(childId, identifier));
+            },
+            handleDragOver($event) {
+                // Get the ID of the dragged object
+                let draggedKeyString = $event.dataTransfer.types
+                    .filter(type => type.startsWith(DRAG_OBJECT_TRANSFER_PREFIX))
+                    .map(type => type.substring(DRAG_OBJECT_TRANSFER_PREFIX.length))[0];
+                
+                // If the layout already contains the given object, then shortcut the default dragover behavior and 
+                // potentially allow drop. Display layouts allow drag drop of duplicate telemetry objects.
+                if (this.containsObject(draggedKeyString)){
+                    $event.preventDefault();
+                }
             },
             isTelemetry(domainObject) {
                 if (this.openmct.telemetry.isTelemetryObject(domainObject)
