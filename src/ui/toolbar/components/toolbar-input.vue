@@ -46,16 +46,10 @@ export default {
     },
     methods: {
         onChange(event) {
-            console.log('onChange');
-            if (this.options.type === 'text') {
-                this.$emit('change', event.target.value, this.options);
-            }
+            this.$emit('change', event.target.value, this.options);
         },
         onInput(event) {
-            console.log('onInput');
-            if (this.options.type === 'number') {
-                this.$emit('change', event.target.valueAsNumber, this.options);
-            }
+            this.$emit('change', event.target.valueAsNumber, this.options);
         }
     }
 }
