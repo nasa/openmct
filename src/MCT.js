@@ -44,6 +44,7 @@ define([
     '../platform/core/src/objects/DomainObjectImpl',
     '../platform/core/src/capabilities/ContextualDomainObject',
     './ui/preview/plugin',
+    './plugins/remove/plugin',
     'vue'
 ], function (
     EventEmitter,
@@ -69,6 +70,7 @@ define([
     DomainObjectImpl,
     ContextualDomainObject,
     PreviewPlugin,
+    RemoveActionPlugin,
     Vue
 ) {
     /**
@@ -233,6 +235,7 @@ define([
         this.install(this.plugins.TelemetryTable());
         this.install(this.plugins.DisplayLayout());
         this.install(PreviewPlugin.default());
+        this.install(RemoveActionPlugin.default());
 
         if (typeof BUILD_CONSTANTS !== 'undefined') {
             this.install(buildInfoPlugin(BUILD_CONSTANTS));
