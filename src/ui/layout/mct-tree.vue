@@ -179,7 +179,8 @@
                 this.searchService.query(this.searchValue).then(children => {
                     this.filteredTreeItems = children.hits.map(child => {
                         let objectPath = child.object.getCapability('context')
-                                .getPath().map(oldObject => oldObject.useCapability('adapter')).reverse(),
+                                .getPath().slice(1).map(oldObject => oldObject.useCapability('adapter'))
+                                .reverse(),
                             object = child.object.useCapability('adapter');
 
                         return {
