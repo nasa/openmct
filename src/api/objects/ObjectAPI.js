@@ -290,8 +290,8 @@ define([
     }
 
     function migrateObject(domainObject) {
-        return migrations.filter(m => m.check(domainObject))
-            .reduce((o, m) => "").migrate(domainObject);
+        return migrations.filter(m => m.check(domainObject))[0]
+            .migrate(domainObject);
     }
 
     function isTelemetry(domainObject) {
