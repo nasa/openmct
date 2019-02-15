@@ -48,6 +48,7 @@
                         @resizeColumnEnd="updateConfiguredColumnWidths"
                         :columnWidth="columnWidths[key]"
                         :sortOptions="sortOptions"
+                        :isEditing="isEditing"
                         >{{title}}</table-column-header>
                 </tr>
                 <tr class="c-telemetry-table__headers__filter">
@@ -61,7 +62,9 @@
                         @dropTargetActive="dropTargetActive"
                         @reorderColumn="reorderColumn"
                         @resizeColumnEnd="updateConfiguredColumnWidths"
-                        :columnWidth="columnWidths[key]">
+                        :columnWidth="columnWidths[key]"
+                        :isEditing="isEditing"
+                        >
                         <search class="c-table__search"
                             v-model="filters[key]"
                             v-on:input="filterChanged(key)"
@@ -260,6 +263,12 @@ export default {
         search
     },
     inject: ['table', 'openmct', 'csvExporter'],
+    props: {
+        isEditing: {
+            type: Boolean,
+            default: false
+        }
+    },
     data() {
         let configuration = this.table.configuration.getConfiguration();
 
