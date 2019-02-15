@@ -278,7 +278,7 @@ define([
                 return Promise.all(promises)
                     .then(function () {
                         newLayoutObject.configuration.items =
-                            migrateFixedPositionConfigurataion(elements, telemetryObjects);
+                            migrateFixedPositionConfiguration(elements, telemetryObjects);
                         return newLayoutObject;
                     });
             }
@@ -306,7 +306,7 @@ define([
 
     function migrateDisplayLayout(domainObject, childObjects) {
         const DEFAULT_GRID_SIZE = [32, 32];
-        let migratedObject = {...domainObject};
+        let migratedObject = Object.assign({}, domainObject);
         let panels = migratedObject.configuration.layout.panels;
         let items = [];
 
@@ -353,7 +353,7 @@ define([
         return migratedObject;
     }
 
-    function migrateFixedPositionConfigurataion(elements, telemetryObjects) {
+    function migrateFixedPositionConfiguration(elements, telemetryObjects) {
         const DEFAULT_STROKE = "transparent";
         const DEFAULT_SIZE = "13px";
         const DEFAULT_COLOR = "";
