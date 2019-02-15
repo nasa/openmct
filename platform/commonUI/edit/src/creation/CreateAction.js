@@ -65,11 +65,10 @@ define(
         CreateAction.prototype.perform = function () {
             var newModel = this.type.getInitialModel(),
                 openmct = this.openmct,
-                newObject,
-                editAction;
+                newObject;
 
             function onSave() {
-                openmct.editor.save();
+                // openmct.editor.save();
             }
 
             function onCancel() {
@@ -81,7 +80,6 @@ define(
             newObject = this.parent.useCapability('instantiation', newModel);
 
             openmct.editor.edit();
-            editAction = newObject.getCapability("action").getActions("edit")[0];
             newObject.getCapability("action").perform("save-as").then(onSave, onCancel);
             // TODO: support editing object without saving object first.
             // Which means we have to toggle createwizard afterwards.  For now,
