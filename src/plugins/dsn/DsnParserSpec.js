@@ -16,6 +16,9 @@ define([
 
         describe('parses a response', function () {
             beforeEach(function () {
+                dsn = {};
+                dsnXml = {};
+
                 dsnXml = domParser.parseFromString(testXmlResponse, 'application/xml');
                 dsn = dsnParser.parseXml(dsnXml);
             });
@@ -29,9 +32,9 @@ define([
             });
 
             it('with a dish element', function () {
-                var downSignal,
-                    upSignal,
-                    target;
+                var downSignal = {},
+                    upSignal = {},
+                    target = {};
 
                 expect(dsn.data['dss14.antenna']).toBeDefined();
                 expect(dsn.data['dss14.name']).toBe('DSS14');
@@ -88,6 +91,9 @@ define([
                 xml;
 
             beforeEach(function () {
+                dsn = {};
+                dsnXml = {};
+
                 xml = '<dsn><spacecraft id="1" name="VGR1" friendlyName="Voyager 1" /></dsn>';
                 dsnXml = domParser.parseFromString(xml, 'application/xml');
                 dsn = dsnParser.parseXml(dsnXml);
@@ -104,6 +110,9 @@ define([
                 dsnXml;
 
             beforeEach(function () {
+                dsn = {};
+                dsnXml = {};
+
                 dsnXml = domParser.parseFromString('<dsn></dsn>', 'application/xml');
                 dsn = dsnParser.parseXml(dsnXml);
             });
