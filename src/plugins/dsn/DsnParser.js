@@ -97,10 +97,10 @@ define([], function () {
      *
      * @private
      * @param {Element} timestampElement - The timestamp to parse.
-     * @returns {string} The time in milliseconds since the UNIX epoch.
+     * @returns {integer} The time in milliseconds since the UNIX epoch.
      */
     DsnParser.prototype.parseTimestampTag = function (timestampElement) {
-        return timestampElement.textContent;
+        return parseInt(timestampElement.textContent, 10);
     };
 
     /**
@@ -108,7 +108,7 @@ define([], function () {
      * @type {object}
      * @property {object} data - An object containing properties that match the values of domain
      * object identifier keys and their corresponding telemetry values.
-     * @property {string} timestamp - The time in milliseconds since the UNIX epoch.
+     * @property {integer} timestamp - The time in milliseconds since the UNIX epoch.
      */
 
     /**
