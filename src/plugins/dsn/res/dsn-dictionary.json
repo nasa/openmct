@@ -5159,6 +5159,26 @@
                 ]
             },
             "type": "dsn.telemetry"
+        },
+        "deep.space.network:timestamp": {
+            "identifier": {
+                "key": "timestamp",
+                "namespace": "deep.space.network"
+            },
+            "location": "deep.space.network:dsn",
+            "name": "Timestamp",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "timestamp",
+                        "name": "Timestamp"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
         }
     },
     "identifier": {
