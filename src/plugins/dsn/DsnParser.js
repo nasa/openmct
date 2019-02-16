@@ -119,8 +119,7 @@ define([], function () {
      * values of domain object identifier keys.
      */
     DsnParser.prototype.parseXml = function (xmlDocument) {
-        var dsn = {},
-            dsnElements = xmlDocument.documentElement.children;
+        var dsnElements = xmlDocument.documentElement.children;
 
         for (var i = 0; i < dsnElements.length; i++) {
             var element = dsnElements[i];
