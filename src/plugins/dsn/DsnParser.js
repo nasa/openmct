@@ -132,7 +132,7 @@ define([], function () {
                     Object.assign(this.dsn.data, this.parseDishTag(element));
                     break;
                 case 'timestamp':
-                    this.dsn.timestamp = this.parseTimestampTag(element);
+                    this.dsn.data.timestamp = this.parseTimestampTag(element);
             }
         }
 
