@@ -78,7 +78,7 @@ define([], function () {
             };
         }
         /**
-         * Clear any existing persistence calls for object with given ID. This ensures only the most recent persistence 
+         * Clear any existing persistence calls for object with given ID. This ensures only the most recent persistence
          * call is executed. This should prevent stale objects being persisted and overwriting fresh ones.
          */
         if (this.isScheduled(id)) {

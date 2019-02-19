@@ -101,8 +101,8 @@ define(
                 mockModel.modified = mockModel.persisted;
 
                 mockMutationTopic.listen.calls.mostRecent()
-                    .args[0](mockDomainObject);                    
-                
+                    .args[0](mockDomainObject);
+
                 expect(mockPersistence.persist).not.toHaveBeenCalled();
             });
         });

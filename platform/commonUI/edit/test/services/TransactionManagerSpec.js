@@ -97,7 +97,8 @@ define(
                     beforeEach(function () {
                         spyOn(manager, 'clearTransactionsFor');
                         manager.clearTransactionsFor.and.callThrough();
-                    })
+                    });
+
                     it("and clears pending calls if same object", function () {
                         manager.addToTransaction(
                             testId,
@@ -106,7 +107,7 @@ define(
                         );
                         expect(manager.clearTransactionsFor).toHaveBeenCalledWith(testId);
                     });
-    
+
                     it("and does not clear pending calls if different object", function () {
                         manager.addToTransaction(
                             'other-id',
@@ -118,8 +119,8 @@ define(
 
                     afterEach(function () {
                         expect(mockTransactionService.addToTransaction.calls.count()).toEqual(2);
-                    })
-                })
+                    });
+                });
 
                 it("does not remove callbacks from the transaction", function () {
                     expect(mockRemoves[0]).not.toHaveBeenCalled();
