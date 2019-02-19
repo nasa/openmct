@@ -22,9 +22,6 @@
                   handle="after"
                   label="Browse"
                   collapsable>
-                <div class="l-shell__search">
-                    <search class="c-search--major" ref="shell-search"></search>
-                </div>
                 <mct-tree class="l-shell__tree"></mct-tree>
             </pane>
             <pane class="l-shell__pane-main">
@@ -250,7 +247,6 @@
     import ObjectView from '../components/ObjectView.vue';
     import MctTemplate from '../legacy/mct-template.vue';
     import CreateButton from './CreateButton.vue';
-    import search from '../components/search.vue';
     import multipane from './multipane.vue';
     import pane from './pane.vue';
     import BrowseBar from './BrowseBar.vue';
@@ -293,7 +289,6 @@
             ObjectView,
             'mct-template': MctTemplate,
             CreateButton,
-            search,
             multipane,
             pane,
             BrowseBar,
@@ -328,7 +323,6 @@
         },
         methods: {
             fullScreenToggle() {
-
                 if (this.fullScreen) {
                     this.fullScreen = false;
                     exitFullScreen();

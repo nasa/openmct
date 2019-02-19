@@ -169,15 +169,17 @@ function (
         }
 
         function saveAfterClone(clonedObject) {
-            return domainObject.getCapability("editor").save()
-                .then(resolveWith(clonedObject));
+            return this.openmct.editor.save().then(() => {
+                // Force mutation for search indexing
+                clonedObject.useCapability('mutation', (model) => {
+                    return model;
+                });
+                return clonedObject;
+            })
         }
 
         function finishEditing(clonedObject) {
-            return domainObject.getCapability("editor").finish()
-                .then(function () {
-                    return fetchObject(clonedObject.getId());
-                });
+            return fetchObject(clonedObject.getId())
         }
 
         function onSuccess(object) {
