@@ -93,25 +93,33 @@ define(
                     expect(mockOnCancel).toHaveBeenCalled();
                 });
 
-                it("ignores subsequent calls for the same object", function () {
-                    manager.addToTransaction(
-                        testId,
-                        jasmine.createSpy(),
-                        jasmine.createSpy()
-                    );
-                    expect(mockTransactionService.addToTransaction.calls.count())
-                        .toEqual(1);
-                });
+                describe("Adds callbacks to transaction", function () {
+                    beforeEach(function () {
+                        spyOn(manager, 'clearTransactionsFor');
+                        manager.clearTransactionsFor.and.callThrough();
+                    })
+                    it("and clears pending calls if same object", function () {
+                        manager.addToTransaction(
+                            testId,
+                            jasmine.createSpy(),
+                            jasmine.createSpy()
+                        );
+                        expect(manager.clearTransactionsFor).toHaveBeenCalledWith(testId);
+                    });
+    
+                    it("and does not clear pending calls if different object", function () {
+                        manager.addToTransaction(
+                            'other-id',
+                            jasmine.createSpy(),
+                            jasmine.createSpy()
+                        );
+                        expect(manager.clearTransactionsFor).not.toHaveBeenCalled();
+                    });
 
-                it("accepts subsequent calls for other objects", function () {
-                    manager.addToTransaction(
-                        'other-id',
-                        jasmine.createSpy(),
-                        jasmine.createSpy()
-                    );
-                    expect(mockTransactionService.addToTransaction.calls.count())
-                        .toEqual(2);
-                });
+                    afterEach(function () {
+                        expect(mockTransactionService.addToTransaction.calls.count()).toEqual(2);
+                    })
+                })
 
                 it("does not remove callbacks from the transaction", function () {
                     expect(mockRemoves[0]).not.toHaveBeenCalled();
