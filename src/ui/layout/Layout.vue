@@ -304,26 +304,20 @@
             this.openmct.editor.on('isEditing', (isEditing)=>{
                 this.isEditing = isEditing;
             });
+
+            this.openmct.selection.on('change', this.toggleHasToolbar);
         },
         data: function () {
             return {
                 fullScreen: false,
                 conductorComponent: undefined,
-                isEditing: false
+                isEditing: false,
+                hasToolbar: false
             }
         },
         computed: {
             toolbar() {
-                let selection = this.openmct.selection.get();
-                let structure = undefined;
-
-                if (!selection[0]) {
-                    structure = [];
-                } else {
-                    structure = this.openmct.toolbars.get(selection);
-                }
-
-                return this.isEditing && structure.length > 0;
+                return this.hasToolbar && this.isEditing;
             }
         },
         methods: {
@@ -339,6 +333,17 @@
             },
             openInNewTab(event) {
                 window.open(window.location.href);
+            },
+            toggleHasToolbar(selection) {
+                let structure = undefined;
+
+                if (!selection[0]) {
+                    structure = [];
+                } else {
+                    structure = this.openmct.toolbars.get(selection);
+                }
+
+                this.hasToolbar = structure.length > 0;
             }
         }
     }
