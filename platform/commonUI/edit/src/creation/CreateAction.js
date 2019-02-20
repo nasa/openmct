@@ -67,17 +67,12 @@ define(
                 openmct = this.openmct,
                 newObject;
 
-            function onSave() {
-                return openmct.editor.save();
-            }
-
             function onCancel() {
                 openmct.editor.cancel();
-                throw "Creation of object cancelled";
             }
 
-            function navigateAndEdit() {
-                let objectPath = newObject.getCapability('context').getPath(),
+            function navigateAndEdit(object) {
+                let objectPath = object.getCapability('context').getPath(),
                     url = '#/browse/' + objectPath
                         .map(function (o) {
                             return o && openmct.objects.makeKeyString(o.getId())
@@ -94,10 +89,7 @@ define(
             newObject = this.parent.useCapability('instantiation', newModel);
 
             openmct.editor.edit();
-            newObject.getCapability("action").perform("save-as")
-                .then(onSave, onCancel)
-                .then(navigateAndEdit);
-
+            newObject.getCapability("action").perform("save-as").then(navigateAndEdit, onCancel);
             // TODO: support editing object without saving object first.
             // Which means we have to toggle createwizard afterwards.  For now,
             // We will disable this.
