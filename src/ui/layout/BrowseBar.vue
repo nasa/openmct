@@ -85,26 +85,31 @@ const PLACEHOLDER_OBJECT = {};
                 this.openmct.editor.edit();
             },
             promptUserandCancelEditing() {
-                let dialog = this.openmct.overlays.dialog({
-                    iconClass: 'alert',
-                    message: 'Are you sure you want to continue? All unsaved changes will be lost!',
-                    buttons: [
-                        {
-                            label: 'Ok',
-                            emphasis: true,
-                            callback: () => {
-                                this.openmct.editor.cancel();
-                                dialog.dismiss();
+                if (this.transactionService.transactions.length) {
+                    let dialog = this.openmct.overlays.dialog({
+                        iconClass: 'alert',
+                        message: 'Are you sure you want to continue? All unsaved changes will be lost!',
+                        buttons: [
+                            {
+                                label: 'Ok',
+                                emphasis: true,
+                                callback: () => {
+                                    this.openmct.editor.cancel();
+                                    dialog.dismiss();
+                                }
+                            },
+                            {
+                                label: 'Cancel',
+                                callback: () => {
+                                    dialog.dismiss();
+                                }
                             }
-                        },
-                        {
-                            label: 'Cancel',
-                            callback: () => {
-                                dialog.dismiss();
-                            }
-                        }
-                    ]
-                });
+                        ]
+                    });
+
+                } else {
+                    this.openmct.editor.cancel();
+                }
             },
             saveAndFinishEditing() {
                 this.openmct.editor.save().then(()=> {
@@ -179,7 +184,8 @@ const PLACEHOLDER_OBJECT = {};
         },
         mounted: function () {
             this.notebookSnapshot = new NotebookSnapshot(this.openmct);
-
+            this.transactionService = this.openmct.editor.getTransactionService();
+            console.log(this.transactionService.transactions);
             document.addEventListener('click', () => {
                 if (this.showViewMenu) {
                     this.showViewMenu = false;
