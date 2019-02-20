@@ -178,15 +178,21 @@
             getFilteredChildren() {
                 this.searchService.query(this.searchValue).then(children => {
                     this.filteredTreeItems = children.hits.map(child => {
-                        let objectPath = child.object.getCapability('context')
-                                .getPath().slice(1).map(oldObject => oldObject.useCapability('adapter'))
-                                .reverse(),
-                            object = child.object.useCapability('adapter');
+                        
+                        let context = child.object.getCapability('context'),
+                            object = child.object.useCapability('adapter'),
+                            objectPath = [];
+
+                        if (context) {
+                            objectPath = context.getPath().slice(1)
+                                .map(oldObject => oldObject.useCapability('adapter'))
+                                .reverse();  
+                        }
 
                         return {
                             id: this.openmct.objects.makeKeyString(object.identifier),
                             object,
-                            objectPath 
+                            objectPath
                         }
                     });
                 });
