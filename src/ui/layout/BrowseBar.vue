@@ -15,7 +15,7 @@
                     {{ domainObject.name }}
                 </span>
             </div>
-            <div class="l-browse-bar__context-actions c-disclosure-button" @click="showContextMenu"></div>
+            <div class="l-browse-bar__context-actions c-disclosure-button" @click.prevent.stop="showContextMenu"></div>
         </div>
 
         <div class="l-browse-bar__end">
@@ -87,6 +87,10 @@ const PLACEHOLDER_OBJECT = {};
             toggleSaveMenu() {
                 this.showSaveMenu = !this.showSaveMenu;
             },
+            closeViewAndSaveMenu() {
+                this.showViewMenu = false;
+                this.showSaveMenu = false;
+            },
             updateName(event) {
                 // TODO: handle isssues with contenteditable text escaping.
                 if (event.target.innerText !== this.domainObject.name) {
@@ -106,30 +110,31 @@ const PLACEHOLDER_OBJECT = {};
                 this.openmct.editor.edit();
             },
             promptUserandCancelEditing() {
-                if (this.transactionService.transactions.length) {
-                    let dialog = this.openmct.overlays.dialog({
-                        iconClass: 'alert',
-                        message: 'Are you sure you want to continue? All unsaved changes will be lost!',
-                        buttons: [
-                            {
-                                label: 'Ok',
-                                emphasis: true,
-                                callback: () => {
-                                    this.openmct.editor.cancel();
-                                    dialog.dismiss();
-                                }
-                            },
-                            {
-                                label: 'Cancel',
-                                callback: () => {
-                                    dialog.dismiss();
-                                }
+                let dialog = this.openmct.overlays.dialog({
+                    iconClass: 'alert',
+                    message: 'Are you sure you want to continue? All unsaved changes will be lost!',
+                    buttons: [
+                        {
+                            label: 'Ok',
+                            emphasis: true,
+                            callback: () => {
+                                this.openmct.editor.cancel();
+                                dialog.dismiss();
                             }
-                        ]
-                    });
-
-                } else {
-                    this.openmct.editor.cancel();
+                        },
+                        {
+                            label: 'Cancel',
+                            callback: () => {
+                                dialog.dismiss();
+                            }
+                        }
+                    ]
+                });
+            },
+            promptUserbeforeNavigatingAway(event) {
+                if(this.openmct.editor.isEditing()) {
+                    event.preventDefault();
+                    event.returnValue = '';
                 }
             },
             saveAndFinishEditing() {
@@ -146,8 +151,6 @@ const PLACEHOLDER_OBJECT = {};
                 });
             },
             showContextMenu(event) {
-                event.preventDefault();
-                event.stopPropagation();
                 this.openmct.contextMenu._showContextMenuForObjectPath(this.openmct.router.path, event.clientX, event.clientY);
             },
             snapshot() {
@@ -211,20 +214,17 @@ const PLACEHOLDER_OBJECT = {};
         },
         mounted: function () {
             this.notebookSnapshot = new NotebookSnapshot(this.openmct);
-            this.transactionService = this.openmct.editor.getTransactionService();
 
-            document.addEventListener('click', () => {
-                if (this.showViewMenu) {
-                    this.showViewMenu = false;
-                }
-                if (this.showSaveMenu) {
-                    this.showSaveMenu = false;
-                }
-            });
+            document.addEventListener('click', this.closeViewAndSaveMenu);
+            window.addEventListener('beforeunload', this.promptUserbeforeNavigatingAway);
 
             this.openmct.editor.on('isEditing', (isEditing) => {
                 this.isEditing = isEditing;
             });
+        },
+        beforeDestroy: function () {
+            document.removeEventListener('click', this.closeViewAndSaveMenu);
+            window.removeEventListener('click', this.promptUserbeforeNavigatingAway);
         }
     }
 </script>
