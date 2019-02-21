@@ -75,7 +75,8 @@ define([
             if (!navigatePath) {
                 navigatePath = 'mine';
             }
-            navigateToPath(navigatePath, params.view, params.edit);
+
+            navigateToPath(navigatePath, params.view, params.edit === 'true');
         });
 
         openmct.router.on('change:params', function (newParams, oldParams, changed) {
@@ -83,11 +84,17 @@ define([
                 let provider = openmct
                         .objectViews
                         .getByProviderKey(changed.view),
-                    edit = newParams.edit;
+                    edit = newParams.edit === 'true';
 
                 viewObject(browseObject, provider, edit);
             }
         });
+
+        openmct.editor.on('isEditing', function (isEditing) {
+            openmct.router.updateParams({
+                edit: isEditing
+            });
+        })
 
     }
 
