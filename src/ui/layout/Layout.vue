@@ -296,11 +296,8 @@
             Toolbar
         },
         mounted() {
-            this.openmct.editor.on('isEditing', (isEditing)=>{
-                this.isEditing = isEditing;
-            });
-
             this.openmct.selection.on('change', this.toggleHasToolbar);
+            this.openmct.editor.on('isEditing', this.toggleIsEditing);
         },
         data: function () {
             return {
@@ -312,7 +309,7 @@
         },
         computed: {
             toolbar() {
-                return this.hasToolbar && this.isEditing;
+                return this.isEditing && this.hasToolbar;
             }
         },
         methods: {
@@ -338,7 +335,14 @@
                 }
 
                 this.hasToolbar = structure.length > 0;
+            },
+            toggleIsEditing(isEditing) {
+                this.isEditing = isEditing;
             }
+        },
+        beforeDestroy() {
+            this.openmct.selection.off('change', this.toggleHasToolbar);
+            this.openmct.editor.off('isEditing', this.toggleIsEditing);
         }
     }
 </script>
