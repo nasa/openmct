@@ -77,11 +77,9 @@ define(
                         .map(function (o) {
                             return o && openmct.objects.makeKeyString(o.getId())
                         })
-                        .join('/');
+                        .join('/') + '?edit=true';
 
                 window.location.href = url;
-
-                openmct.editor.edit();
             }
 
             newModel.type = this.type.getKey();

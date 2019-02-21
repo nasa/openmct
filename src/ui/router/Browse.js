@@ -8,13 +8,17 @@ define([
         let navigateCall = 0;
         let browseObject;
 
-        function viewObject(object, viewProvider) {
+        function viewObject(object, viewProvider, edit) {
             openmct.layout.$refs.browseObject.show(object, viewProvider.key, true);
             openmct.layout.$refs.browseBar.domainObject = object;
             openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
-        };
 
-        function navigateToPath(path, currentViewKey) {
+            if (edit && viewProvider.canEdit && viewProvider.canEdit(object)) {
+                openmct.editor.edit();
+            }
+        }
+
+        function navigateToPath(path, currentViewKey, edit) {
             navigateCall++;
             let currentNavigation = navigateCall;
 
@@ -48,7 +52,7 @@ define([
                     .getByProviderKey(currentViewKey)
 
                 if (currentProvider && currentProvider.canView(navigatedObject)) {
-                    viewObject(navigatedObject,  currentProvider);
+                    viewObject(navigatedObject,  currentProvider, edit);
                     return;
                 }
 
@@ -71,15 +75,17 @@ define([
             if (!navigatePath) {
                 navigatePath = 'mine';
             }
-            navigateToPath(navigatePath, params.view);
+            navigateToPath(navigatePath, params.view, params.edit);
         });
 
         openmct.router.on('change:params', function (newParams, oldParams, changed) {
             if (changed.view && browseObject) {
                 let provider = openmct
-                    .objectViews
-                    .getByProviderKey(changed.view);
-                viewObject(browseObject, provider);
+                        .objectViews
+                        .getByProviderKey(changed.view),
+                    edit = newParams.edit;
+
+                viewObject(browseObject, provider, edit);
             }
         });
 
