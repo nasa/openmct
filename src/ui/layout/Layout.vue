@@ -312,7 +312,7 @@
                 let selection = this.openmct.selection.get();
                 let structure = undefined;
 
-                if (!selection[0]) {
+                if (!selection || !selection[0]) {
                     structure = [];
                 } else {
                     structure = this.openmct.toolbars.get(selection);

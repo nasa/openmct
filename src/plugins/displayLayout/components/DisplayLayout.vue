@@ -168,7 +168,7 @@
                     this.removeSelectionListener();
                 }
 
-                let itemIndex = selection[0].context.index;
+                let itemIndex = selection[0][0].context.index;
 
                 if (itemIndex !== undefined) {
                     this.attachSelectionListener(itemIndex);

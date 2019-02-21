@@ -30,9 +30,17 @@ define([], function () {
             forSelection: function (selection) {
                 // Apply the layout toolbar if the edit mode is on, and the selected object
                 // is inside a layout, or the main layout is selected.
-                return (openmct.editor.isEditing() && selection &&
-                    ((selection[1] && selection[1].context.item && selection[1].context.item.type === 'layout') ||
-                        (selection[0].context.item && selection[0].context.item.type === 'layout')));
+                if (!selection || selection.length === 0) {
+                    return false;
+                }
+
+                let selectionPath = selection[0];
+                let selectedObject = selectionPath[0];
+                let selectedParent = selectionPath[1];
+
+                return (openmct.editor.isEditing() &&
+                    ((selectedParent && selectedParent.context.item && selectedParent.context.item.type === 'layout') ||
+                    (selectedObject.context.item && selectedObject.context.item.type === 'layout')));
             },
             toolbar: function (selection) {
                 const DIALOG_FORM = {
@@ -74,12 +82,13 @@ define([], function () {
                 }
 
                 function getPath() {
-                    return `configuration.items[${selection[0].context.index}]`;
+                    return `configuration.items[${selection[0][0].context.index}]`;
                 }
 
-                let selectedParent = selection[1] && selection[1].context.item,
-                    selectedObject = selection[0].context.item,
-                    layoutItem = selection[0].context.layoutItem,
+                let selectionPath = selection[0];
+                    selectedParent = selectionPath[1] && selectionPath[1].context.item,
+                    selectedObject = selectionPath[0].context.item,
+                    layoutItem = selectionPath[0].context.layoutItem,
                     toolbar = [];
 
                 if (selectedObject && selectedObject.type === 'layout') {
@@ -91,9 +100,9 @@ define([], function () {
                             let form = DIALOG_FORM[name];
                             if (form) {
                                 getUserInput(form)
-                                    .then(element => selection[0].context.addElement(name, element));
+                                    .then(element => selectionPath[0].context.addElement(name, element));
                             } else {
-                                selection[0].context.addElement(name);
+                                selectionPath[0].context.addElement(name);
                             }
                         },
                         key: "add",
@@ -133,7 +142,7 @@ define([], function () {
                     icon: "icon-trash",
                     title: "Delete the selected object",
                     method: function () {
-                        let removeItem = selection[1].context.removeItem;
+                        let removeItem = selectionPath[1].context.removeItem;
                         let prompt = openmct.overlays.dialog({
                             iconClass: 'alert',
                             message: `Warning! This action will remove this item from the Display Layout. Do you want to continue?`,
@@ -142,7 +151,7 @@ define([], function () {
                                     label: 'Ok',
                                     emphasis: 'true',
                                     callback: function () {
-                                        removeItem(layoutItem, selection[0].context.index);
+                                        removeItem(layoutItem, selectionPath[0].context.index);
                                         prompt.dismiss();
                                     }
                                 },
@@ -184,7 +193,7 @@ define([], function () {
                         }
                     ],
                     method: function (option) {
-                        selection[1].context.orderItem(option.value, selection[0].context.index);
+                        selectionPath[1].context.orderItem(option.value, selectionPath[0].context.index);
                     }
                 };
                 let useGrid = {

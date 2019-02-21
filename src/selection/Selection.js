@@ -49,19 +49,45 @@ define(['EventEmitter'], function (EventEmitter) {
      * @param {object} selectable an object with element and context properties
      * @private
      */
-    Selection.prototype.select = function (selectable) {
+    Selection.prototype.select = function (selectable, isMultiSelectEvent) {
         if (!Array.isArray(selectable)) {
             selectable = [selectable];
         }
 
-        if (this.selected[0] && this.selected[0].element) {
-            this.selected[0].element.removeAttribute('s-selected');
+        let multiSelect = isMultiSelectEvent &&
+            this.parentSupportsMultiSelect(selectable) &&            
+            !this.selectionContainsParent(selectable);
+
+        if (multiSelect) {
+            this.setSelectionStyles(selectable, true);
+            this.selected.push(selectable);
+        } else {
+            this.setSelectionStyles(selectable);
+            this.selected = [selectable];
         }
 
-        if (this.selected[1] && this.selected[1].element) {
-            this.selected[1].element.removeAttribute('s-selected-parent');
+        this.emit('change', this.selected);
+    };
+
+    /**
+     * @private
+     */
+     Selection.prototype.setSelectionStyles = function (selectable, multiSelect) {
+        // Remove selection attributes from previously selected elements
+        // and their parents if it's not a multi select.
+        if (!multiSelect) {
+            this.selected.map(selectionPath => {
+                if (selectionPath[0] && selectionPath[0].element) {
+                    selectionPath[0].element.removeAttribute('s-selected');
+                }
+
+                if (selectionPath[1] && selectionPath[1].element) {
+                    selectionPath[1].element.removeAttribute('s-selected-parent');
+                }
+            });
         }
 
+        // Add selection attributes to the selected element and its parent.
         if (selectable[0] && selectable[0].element) {
             selectable[0].element.setAttribute('s-selected', "");
         }
@@ -69,9 +95,20 @@ define(['EventEmitter'], function (EventEmitter) {
         if (selectable[1] && selectable[1].element) {
             selectable[1].element.setAttribute('s-selected-parent', "");
         }
+     };
 
-        this.selected = selectable;
-        this.emit('change', this.selected);
+    /**
+     * @private
+     */
+    Selection.prototype.parentSupportsMultiSelect = function (selectable) {
+        return selectable[1] && selectable[1].context.supportsMultiSelect;
+    };
+
+    /**
+     * @private
+     */
+    Selection.prototype.selectionContainsParent = function (selectable) {
+        return this.selected.some(selectionPath => selectionPath[0] === selectable[1]);
     };
 
     /**
@@ -88,12 +125,12 @@ define(['EventEmitter'], function (EventEmitter) {
     /**
      * @private
      */
-    Selection.prototype.selectCapture = function (selectable) {
+    Selection.prototype.selectCapture = function (selectable, event) {
         if (!this.capturing) {
             return;
         }
 
-        this.select(this.capturing.reverse());
+        this.select(this.capturing.reverse(), event.shiftKey);
         delete this.capturing;
     };
 
@@ -112,7 +149,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * @public
      */
     Selection.prototype.selectable = function (element, context, select) {
-        var selectable = {
+        let selectable = {
             context: context,
             element: element
         };

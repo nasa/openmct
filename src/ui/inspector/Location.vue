@@ -31,11 +31,11 @@ export default {
     },
     methods: {
         updateSelection(selection) {
-            if (selection.length === 0) {
+            if (selection.length === 0 || selection[0].length === 0) {
                 this.domainObject = {};
                 return;
             }
-            this.domainObject = selection[0].context.item;
+            this.domainObject = selection[0][0].context.item;
         }
     }
 }

@@ -42,7 +42,7 @@
                 this.removeListeners();
                 this.domainObjectsById = {};
 
-                if (!selection[0]) {
+                if (selection.length === 0 || !selection[0][0]) {
                     this.structure = [];
                     return;
                 }
