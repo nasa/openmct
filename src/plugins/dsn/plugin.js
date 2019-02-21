@@ -11,15 +11,30 @@ define([
     'use strict';
 
     var compositionProvider,
+        config,
         dictionary,
         listeners = {},
         objectProvider,
         realTimeProvider;
 
-    var DSN_KEY = 'dsn',
+    var DSN_CONFIG_SOURCE = 'https://eyes.nasa.gov/dsn/config.xml',
+        DSN_KEY = 'dsn',
         DSN_NAMESPACE = 'deep.space.network',
         DSN_TELEMETRY_SOURCE = 'https://eyes.nasa.gov/dsn/data/dsn.xml',
         DSN_TELEMETRY_TYPE = 'dsn.telemetry';
+
+    function getDsnConfiguration() {
+        var url = '/proxyUrl?url=' + encodeURIComponent(DSN_CONFIG_SOURCE);
+
+        return http.get(url)
+            .then(function (resp) {
+                var dsn,
+                    parser = new DsnParser();
+
+                dsn = parser.parseXml(resp.request.responseXML);
+                config = dsn.config;
+            });
+    }
 
     function getDsnData(domainObject) {
         // Add the same query string parameter the DSN site sends with each request
@@ -28,7 +43,7 @@ define([
         return http.get(url)
             .then(function (resp) {
                 var dsn,
-                    parser = new DsnParser();
+                    parser = new DsnParser(config);
 
                 dsn = parser.parseXml(resp.request.responseXML);
                 return dsn.data.hasOwnProperty(domainObject.identifier.key)
@@ -135,6 +150,8 @@ define([
             });
 
             dictionary = JSON.parse(baseDictionary);
+
+            getDsnConfiguration();
 
             openmct.objects.addProvider(DSN_NAMESPACE, objectProvider);
             openmct.composition.addProvider(compositionProvider);

@@ -8,9 +8,75 @@ define([], function () {
      * @memberof plugins/dsn
      * @constructor
      */
-    function DsnParser() {
-        this.dsn = { data: {} };
+    function DsnParser(config) {
+        this.dsn = {
+            config: config ? config : {},
+            data: {}
+        };
     }
+
+    DsnParser.prototype.parseSitesTag = function (sitesElement) {
+        var dishElement,
+            dishKey,
+            siteElement,
+            siteKey,
+            sites = {};
+
+        for (var i = 0; i < sitesElement.children.length; i++) {
+            siteElement = sitesElement.children[i];
+            siteKey = siteElement.getAttribute('name');
+
+            sites[siteKey + '.name'] = siteElement.getAttribute('name');
+            sites[siteKey + '.friendly.name'] = siteElement.getAttribute('friendlyName');
+            sites[siteKey + '.longitude'] = siteElement.getAttribute('longitude');
+            sites[siteKey + '.latitude'] = siteElement.getAttribute('latitude');
+
+            for (var j = 0; j < siteElement.children.length; j++) {
+                dishElement = siteElement.children[j];
+                dishKey = dishElement.getAttribute('name');
+
+                sites[dishKey + '.name'] = dishElement.getAttribute('name');
+                sites[dishKey + '.friendly.name'] = dishElement.getAttribute('friendlyName');
+                sites[dishKey + '.type'] = dishElement.getAttribute('type');
+            }
+        }
+
+        return sites;
+    };
+
+    DsnParser.prototype.parseSpacecraftMapTag = function (spacecraftMapElement) {
+        var key,
+            spacecraftElement,
+            spacecrafts = {};
+
+        for (var i = 0; i < spacecraftMapElement.children.length; i++) {
+            spacecraftElement = spacecraftMapElement.children[i];
+            key = spacecraftElement.getAttribute('name');
+
+            spacecrafts[key + '.name'] = spacecraftElement.getAttribute('name');
+            spacecrafts[key + '.explorer.name'] = spacecraftElement.getAttribute('explorerName');
+            spacecrafts[key + '.friendly.name'] = spacecraftElement.getAttribute('friendlyName');
+            spacecrafts[key + '.thumbnail'] = spacecraftElement.getAttribute('thumbnail') === 'true';
+        }
+
+        return spacecrafts;
+    };
+
+    DsnParser.prototype.parseDsnConfig = function (xmlDocument) {
+        var configElements = xmlDocument.documentElement.children;
+
+        for (var i = 0; i < configElements.length; i++) {
+            var element = configElements[i];
+
+            switch (element.tagName) {
+                case 'sites':
+                    Object.assign(this.dsn.config, this.parseSitesTag(element));
+                    break;
+                case 'spacecraftMap':
+                    Object.assign(this.dsn.config, this.parseSpacecraftMapTag(element));
+            }
+        }
+    };
 
     /**
      * Parses a station tag contained in the Deep Space Network's XML.
@@ -103,6 +169,25 @@ define([], function () {
         return parseInt(timestampElement.textContent, 10);
     };
 
+    DsnParser.prototype.parseDsnData = function (xmlDocument) {
+        var dsnElements = xmlDocument.documentElement.children;
+
+        for (var i = 0; i < dsnElements.length; i++) {
+            var element = dsnElements[i];
+
+            switch (element.tagName) {
+                case 'station':
+                    Object.assign(this.dsn.data, this.parseStationTag(element));
+                    break;
+                case 'dish':
+                    Object.assign(this.dsn.data, this.parseDishTag(element));
+                    break;
+                case 'timestamp':
+                    this.dsn.data.timestamp = this.parseTimestampTag(element);
+            }
+        }
+    };
+
     /**
      * @typedef DsnData
      * @type {object}
@@ -119,21 +204,10 @@ define([], function () {
      * values of domain object identifier keys.
      */
     DsnParser.prototype.parseXml = function (xmlDocument) {
-        var dsnElements = xmlDocument.documentElement.children;
-
-        for (var i = 0; i < dsnElements.length; i++) {
-            var element = dsnElements[i];
-
-            switch (element.tagName) {
-                case 'station':
-                    Object.assign(this.dsn.data, this.parseStationTag(element));
-                    break;
-                case 'dish':
-                    Object.assign(this.dsn.data, this.parseDishTag(element));
-                    break;
-                case 'timestamp':
-                    this.dsn.data.timestamp = this.parseTimestampTag(element);
-            }
+        if (xmlDocument.documentElement.tagName === 'config') {
+            this.parseDsnConfig(xmlDocument);
+        } else {
+            this.parseDsnData(xmlDocument);
         }
 
         return this.dsn;
