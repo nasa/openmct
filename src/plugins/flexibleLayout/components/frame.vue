@@ -51,12 +51,10 @@
 <script>
 import ResizeHandle from './resizeHandle.vue';
 import ObjectFrame from '../../../ui/components/ObjectFrame.vue';
-import isEditingMixin from '../mixins/isEditing';
 
 export default {
     inject: ['openmct'],
-    props: ['frame', 'index', 'containerIndex'],
-    mixins: [isEditingMixin],
+    props: ['frame', 'index', 'containerIndex', 'isEditing'],
     data() {
         return {
             domainObject: undefined,

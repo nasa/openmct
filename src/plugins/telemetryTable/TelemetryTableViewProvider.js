@@ -47,8 +47,13 @@ define([
                 let table = new TelemetryTable(domainObject, openmct);
                 let component;
                 return {
-                    show: function (element) {
+                    show: function (element, isEditing) {
                         component = new Vue({
+                            data() {
+                                return {
+                                    isEditing: false
+                                }
+                            },
                             components: {
                                 TableComponent: TableComponent.default,
                             },
@@ -58,8 +63,11 @@ define([
                                 table
                             },
                             el: element,
-                            template: '<table-component></table-component>'
+                            template: '<table-component :isEditing="isEditing"></table-component>'
                         });
+                    },
+                    onEditModeChange(isEditing) {
+                        component.isEditing = isEditing;
                     },
                     destroy: function (element) {
                         component.$destroy();

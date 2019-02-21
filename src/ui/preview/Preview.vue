@@ -84,7 +84,7 @@
         mounted() {
             let viewProvider = this.openmct.objectViews.get(this.domainObject)[0];
             this.view = viewProvider.view(this.domainObject);
-            this.view.show(this.$refs.objectView);
+            this.view.show(this.$refs.objectView, false);
         },
         destroy() {
             this.view.destroy();

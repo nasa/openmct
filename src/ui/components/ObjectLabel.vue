@@ -66,6 +66,7 @@ export default {
         dragStart(event) {
             let navigatedObject = this.openmct.router.path[0];
             let serializedPath = JSON.stringify(this.objectPath);
+            let keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
             /*
              * Cannot inspect data transfer objects on dragover/dragenter so impossible to determine composability at
@@ -78,6 +79,7 @@ export default {
             // serialize domain object anyway, because some views can drag-and-drop objects without composition 
             // (eg. notabook.)
             event.dataTransfer.setData("openmct/domain-object-path", serializedPath);
+            event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.domainObject);
         }
     }
 }

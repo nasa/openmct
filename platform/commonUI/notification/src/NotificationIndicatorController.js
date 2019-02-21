@@ -43,12 +43,25 @@ define(
              * Launch a dialog showing a list of current notifications.
              */
             $scope.showNotificationsList = function () {
+                let notificationsList = openmct.notifications.notifications.map(notification => {
+                    if (notification.model.severity === 'alert' || notification.model.severity === 'info') {
+                        notification.model.primaryOption = {
+                            label: 'Dismiss',
+                            callback: () => {
+                                let currentIndex = notificationsList.indexOf(notification);
+                                notification.dismiss();
+                                notificationsList.splice(currentIndex, 1);
+                            }
+                        }
+                    }
+                    return notification;
+                })
                 dialogService.getDialogResponse('overlay-message-list', {
                     dialog: {
                         title: "Messages",
                         //Launch the message list dialog with the models
                         // from the notifications
-                        messages: openmct.notifications.notifications
+                        messages: notificationsList
                     }
                 });
 
