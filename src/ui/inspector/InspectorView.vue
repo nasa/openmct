@@ -19,18 +19,21 @@
         methods: {
             updateSelection() {
                 let selection = this.openmct.selection.get();
-                if (this.selectedView && this.selectedView.destroy) {
-                    this.selectedView.destroy();
-                    delete this.viewContainer;
+                if (this.selectedViews) {
+                    this.selectedViews.forEach(selectedView => {
+                        selectedView.destroy();
+                    });
                     this.$el.innerHTML = '';
                 }
-                this.selectedView = this.openmct.inspectorViews.get(selection);
-                if (!this.selectedView) {
-                    return;
-                }
-                this.viewContainer = document.createElement('div');
-                this.$el.append(this.viewContainer)
-                this.selectedView.show(this.viewContainer);
+                this.viewContainers = [];
+                this.selectedViews = this.openmct.inspectorViews.get(selection);
+                this.selectedViews.forEach(selectedView => {
+                    let viewContainer = document.createElement('div');
+                    this.viewContainers.push(viewContainer);
+
+                    this.$el.append(viewContainer)
+                    selectedView.show(viewContainer);
+                });
             }
         }
     }
