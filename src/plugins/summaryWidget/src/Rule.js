@@ -54,7 +54,7 @@ define([
         this.title = $('.rule-title', this.domElement);
         this.description = $('.rule-description', this.domElement);
         this.trigger = $('.t-trigger', this.domElement);
-        this.toggleConfigButton = $('.view-control', this.domElement);
+        this.toggleConfigButton = $('.js-disclosure', this.domElement);
         this.configArea = $('.widget-rule-content', this.domElement);
         this.grippy = $('.t-grippy', this.domElement);
         this.conditionArea = $('.t-widget-rule-config', this.domElement);
@@ -79,7 +79,7 @@ define([
         this.colorInputs = {
             'background-color': new ColorPalette('icon-paint-bucket', container),
             'border-color': new ColorPalette('icon-line-horz', container),
-            'color': new ColorPalette('icon-T', container)
+            'color': new ColorPalette('icon-font', container)
         };
 
         this.colorInputs.color.toggleNullOption();
@@ -168,7 +168,7 @@ define([
          */
         function toggleConfig() {
             self.configArea.toggleClass('expanded');
-            self.toggleConfigButton.toggleClass('expanded');
+            self.toggleConfigButton.toggleClass('c-disclosure-triangle--expanded');
             self.config.expanded = !self.config.expanded;
         }
 
@@ -227,7 +227,7 @@ define([
 
         if (!this.config.expanded) {
             this.configArea.removeClass('expanded');
-            this.toggleConfigButton.removeClass('expanded');
+            this.toggleConfigButton.removeClass('c-disclosure-triangle--expanded');
         }
 
         if (this.domainObject.configuration.ruleOrder.length === 2) {

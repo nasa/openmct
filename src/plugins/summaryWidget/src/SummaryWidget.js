@@ -87,7 +87,7 @@ define([
          */
         function toggleTestData() {
             self.outerWrapper.toggleClass('expanded-widget-test-data');
-            self.toggleTestDataControl.toggleClass('expanded');
+            self.toggleTestDataControl.toggleClass('c-disclosure-triangle--expanded');
         }
         this.listenTo(this.toggleTestDataControl, 'click', toggleTestData);
 
@@ -97,7 +97,7 @@ define([
          */
         function toggleRules() {
             self.outerWrapper.toggleClass('expanded-widget-rules');
-            self.toggleRulesControl.toggleClass('expanded');
+            self.toggleRulesControl.toggleClass('c-disclosure-triangle--expanded');
         }
         this.listenTo(this.toggleRulesControl, 'click', toggleRules);
 
