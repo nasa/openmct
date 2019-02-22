@@ -83,44 +83,27 @@ define(
                     .toHaveBeenCalledWith(jasmine.any(Function));
             });
 
-            [false, true].forEach(function (isActive) {
-                var verb = isActive ? "is" : "isn't";
+            it("calls persist if the model has changed", function () {
+                mockModel.persisted = Date.now();
 
-                function onlyWhenInactive(expectation) {
-                    return isActive ? expectation.not : expectation;
-                }
+                //Mark the model dirty by setting the mutated date later than the last persisted date.
+                mockModel.modified = mockModel.persisted + 1;
 
-                describe("when a transaction " + verb + " active", function () {
-                    var innerVerb = isActive ? "does" : "doesn't";
+                mockMutationTopic.listen.calls.mostRecent()
+                    .args[0](mockDomainObject);
 
-                    beforeEach(function () {
-                        mockTransactionService.isActive.and.returnValue(isActive);
-                    });
+                expect(mockPersistence.persist).toHaveBeenCalled();
+            });
 
-                    describe("and mutation occurs", function () {
-                        beforeEach(function () {
-                            mockMutationTopic.listen.calls.mostRecent()
-                                .args[0](mockDomainObject);
-                        });
+            it("does not call persist if the model has not changed", function () {
+                mockModel.persisted = Date.now();
 
+                mockModel.modified = mockModel.persisted;
 
-                        it(innerVerb + " start a new transaction", function () {
-                            onlyWhenInactive(
-                                expect(mockTransactionService.startTransaction)
-                            ).toHaveBeenCalled();
-                        });
+                mockMutationTopic.listen.calls.mostRecent()
+                    .args[0](mockDomainObject);
 
-                        it("calls persist", function () {
-                            expect(mockPersistence.persist).toHaveBeenCalled();
-                        });
-
-                        it(innerVerb + " immediately commit", function () {
-                            onlyWhenInactive(
-                                expect(mockTransactionService.commit)
-                            ).toHaveBeenCalled();
-                        });
-                    });
-                });
+                expect(mockPersistence.persist).not.toHaveBeenCalled();
             });
         });
     }
