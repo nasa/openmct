@@ -1,4 +1,4 @@
-<div class="c-summary-widget w-summary-widget s-status-no-data">
+<div class="c-sw-edit w-summary-widget s-status-no-data">
     <a id="widget" class="t-summary-widget l-summary-widget s-summary-widget labeled">
         <span id="widgetLabel" class="label widget-label">Default Static Name</span>
     </a>
@@ -9,20 +9,22 @@
             </div>
         </div>
     </div>
-    <div class="c-summary-widget__editor holder l-flex-col l-flex-accordion flex-elem grows widget-edit-holder expanded-widget-test-data expanded-widget-rules">
-        <div class="c-sw-editor__header section-header">
+    <div class="c-sw-edit__ui holder l-flex-accordion flex-elem grows widget-edit-holder expanded-widget-test-data expanded-widget-rules">
+        <div class="c-sw-edit__ui__header section-header">
             <span class="c-disclosure-triangle c-disclosure-triangle--expanded is-enabled t-view-control-test-data"></span>
-            <span class="c-sw-editor__header-label">Test Data Values</span>
+            <span class="c-sw-edit__ui__header-label">Test Data Values</span>
         </div>
-        <div class="c-sw-editor__test-data widget-test-data flex-accordion-holder"></div>
-        <div class="c-sw-editor__header section-header">
+        <div class="c-sw-edit__ui__test-data widget-test-data flex-accordion-holder"></div>
+        <div class="c-sw-edit__ui__header section-header">
             <span class="c-disclosure-triangle c-disclosure-triangle--expanded is-enabled t-view-control-rules"></span>
-            <span class="c-sw-editor__header-label">Rules</span>
+            <span class="c-sw-edit__ui__header-label">Rules</span>
         </div>
-        <div class="c-sw-editor__rules-wrapper holder widget-rules-wrapper flex-elem expanded">
-            <div id="ruleArea" class="c-sw-editor__rules widget-rules"></div>
+        <div class="c-sw-editui__rules-wrapper holder widget-rules-wrapper flex-elem expanded">
+            <div id="ruleArea" class="c-sw-editui__rules widget-rules"></div>
             <div class="holder add-rule-button-wrapper align-right">
-                <a id="addRule" class="c-button c-button--major labeled add-rule-button icon-plus">Add Rule</a>
+                <button id="addRule" class="c-button c-button--major add-rule-button icon-plus">
+                    <span class="c-button__label">Add Rule</span>
+                </button>
             </div>
         </div>
     </div>

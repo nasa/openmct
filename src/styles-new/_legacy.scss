@@ -1105,7 +1105,10 @@ body.mobile.phone {
     padding: $interiorMarginSm $interiorMargin;
 }
 
-.c-sw-editor {
+.c-sw-edit__ui {
+    display: flex;
+    flex-direction: column;
+
     &__header {
         display: flex;
         > * + * { margin-left: $interiorMarginSm; }
@@ -1113,12 +1116,15 @@ body.mobile.phone {
 }
 
 .c-sw-rule {
-    &__grippy {
+    &__grippy-wrapper {
         $d: 8px;
-        @include grippy($c: $colorItemTreeVC, $dir: 'y');
-        //margin-right: $interiorMarginSm;
-        //transform: translateY(-2px);
         width: $d; height: $d;
+        transform: translateY(-1px);
+    }
+
+    &__grippy {
+        @include grippy($c: $colorItemTreeVC, $dir: 'y');
+        @include abs();
     }
 }
 
