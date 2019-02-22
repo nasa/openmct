@@ -1,7 +1,7 @@
 <template>
 <div class="c-properties c-properties--properties">
     <div class="c-properties__header">Properties</div>
-    <ul class="c-properties__section">
+    <ul class="c-properties__section" v-if="!multiSelect">
         <li class="c-properties__row">
             <div class="c-properties__label">Title</div>
             <div class="c-properties__value">{{ item.name }}</div>
@@ -25,6 +25,7 @@
             <div class="c-properties__value">{{ prop.value }}</div>
         </li>
     </ul>
+    <div v-if="multiSelect">No properties to display for multiple items</div>
 </div>
 </template>
 
@@ -33,7 +34,8 @@ export default {
     inject: ['openmct'],
     data() {
         return {
-            domainObject: {}
+            domainObject: {},
+            multiSelect: false
         }
     },
     computed: {
@@ -92,7 +94,14 @@ export default {
                 this.domainObject = {};
                 return;
             }
-            this.domainObject = selection[0][0].context.item;
+
+            if (selection.length > 1) {
+                this.multiSelect = true;
+                return;
+            } else {
+                this.multiSelect = false;
+                this.domainObject = selection[0][0].context.item;
+            }
         }
     }
 }
