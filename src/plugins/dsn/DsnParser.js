@@ -6,6 +6,7 @@ define([], function () {
      * Construct a new Deep Space Network parser.
      *
      * @memberof plugins/dsn
+     * @param {object} config - The parsed configuration of the Deep Space Network.
      * @constructor
      */
     function DsnParser(config) {
@@ -15,6 +16,13 @@ define([], function () {
         };
     }
 
+    /**
+     * Parses a sites tag contained in the Deep Space Network's configuration XML.
+     *
+     * @private
+     * @param {Element} sitesElement - The sites to parse.
+     * @returns {object} An object containing information about each site and its dishes.
+     */
     DsnParser.prototype.parseSitesTag = function (sitesElement) {
         var dishElement,
             dishKey,
@@ -44,6 +52,13 @@ define([], function () {
         return sites;
     };
 
+    /**
+     * Parses a spacecraftMap tag contained in the Deep Space Network's configuration XML.
+     *
+     * @private
+     * @param {Element} spacecraftMapElement - The spacecraftMap to parse.
+     * @returns {object} An object containing information about each spacecraft that is being tracked.
+     */
     DsnParser.prototype.parseSpacecraftMapTag = function (spacecraftMapElement) {
         var key,
             spacecraftElement,
@@ -62,6 +77,14 @@ define([], function () {
         return spacecrafts;
     };
 
+    /**
+     * Parses the sites and spacecraftMap tags contained in the Deep Space Network's
+     * configuration XML.
+     *
+     * @private
+     * @param {Document} xmlDocument - The XML document representing the configuration of the
+     * Deep Space Network.
+     */
     DsnParser.prototype.parseDsnConfig = function (xmlDocument) {
         var configElements = xmlDocument.documentElement.children;
 
@@ -169,6 +192,12 @@ define([], function () {
         return parseInt(timestampElement.textContent, 10);
     };
 
+    /**
+     * Parses the station, dish and timestamp tags contained in the Deep Space Network's XML.
+     *
+     * @private
+     * @param {Document} xmlDocument - The XML document representing the Deep Space Network's data.
+     */
     DsnParser.prototype.parseDsnData = function (xmlDocument) {
         var dsnElements = xmlDocument.documentElement.children;
 
@@ -191,17 +220,20 @@ define([], function () {
     /**
      * @typedef DsnData
      * @type {object}
+     * @property {object} config - An object containing properties that match the values of domain
+     * object identifier keys and their corresponding telemetry values.
      * @property {object} data - An object containing properties that match the values of domain
      * object identifier keys and their corresponding telemetry values.
      * @property {integer} timestamp - The time in milliseconds since the UNIX epoch.
      */
 
     /**
-     * Parses the station, dish and timestamp tags contained in the Deep Space Network's XML.
+     * Parses the Deep Space Network's configuration or data.
      *
-     * @param {Document} xmlDocument - The XML document representing the Deep Space Network's data.
-     * @returns {DsnData} The parsed XML as an object with properties that match the
-     * values of domain object identifier keys.
+     * @param {Document} xmlDocument - The XML document representing the Deep Space Network's
+     * configuration or data.
+     * @returns {DsnData} The parsed XML as an object with configuration data and properties that
+     * match the values of domain object identifier keys.
      */
     DsnParser.prototype.parseXml = function (xmlDocument) {
         if (xmlDocument.documentElement.tagName === 'config') {
