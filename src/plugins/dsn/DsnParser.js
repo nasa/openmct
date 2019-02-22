@@ -32,7 +32,7 @@ define([], function () {
 
         for (var i = 0; i < sitesElement.children.length; i++) {
             siteElement = sitesElement.children[i];
-            siteKey = siteElement.getAttribute('name');
+            siteKey = siteElement.getAttribute('name').toLowerCase();
 
             sites[siteKey + '.name'] = siteElement.getAttribute('name');
             sites[siteKey + '.friendly.name'] = siteElement.getAttribute('friendlyName');
@@ -41,7 +41,7 @@ define([], function () {
 
             for (var j = 0; j < siteElement.children.length; j++) {
                 dishElement = siteElement.children[j];
-                dishKey = dishElement.getAttribute('name');
+                dishKey = dishElement.getAttribute('name').toLowerCase();
 
                 sites[dishKey + '.name'] = dishElement.getAttribute('name');
                 sites[dishKey + '.friendly.name'] = dishElement.getAttribute('friendlyName');
@@ -66,7 +66,7 @@ define([], function () {
 
         for (var i = 0; i < spacecraftMapElement.children.length; i++) {
             spacecraftElement = spacecraftMapElement.children[i];
-            key = spacecraftElement.getAttribute('name');
+            key = spacecraftElement.getAttribute('name').toLowerCase();
 
             spacecrafts[key + '.name'] = spacecraftElement.getAttribute('name');
             spacecrafts[key + '.explorer.name'] = spacecraftElement.getAttribute('explorerName');
@@ -109,7 +109,7 @@ define([], function () {
      * @returns {object} An object containing the station's data.
      */
     DsnParser.prototype.parseStationTag = function (stationElement) {
-        var key = stationElement.getAttribute('name'),
+        var key = stationElement.getAttribute('name').toLowerCase(),
             station = {};
 
         station[key + '.name'] = stationElement.getAttribute('name');
