@@ -87,7 +87,7 @@ export default {
         showSelection(selection) {
             this.elements = [];
             this.elementsCache = [];
-            this.parentObject = selection[0][0].context.item;
+            this.parentObject = selection && selection[0] && selection[0][0].context.item;
             if (this.mutationUnobserver) {
                 this.mutationUnobserver();
             }

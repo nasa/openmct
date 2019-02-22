@@ -20,7 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['EventEmitter'], function (EventEmitter) {
+define(
+    [
+        'EventEmitter',
+        'lodash'
+    ],
+    function (
+        EventEmitter,
+        _
+) {
 
     /**
      * Manages selection state for Open MCT
@@ -47,6 +55,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * Selects the selectable object and emits the 'change' event.
      *
      * @param {object} selectable an object with element and context properties
+     * @param {Boolean} isMultiSelectEvent flag indication shift key is pressed or not
      * @private
      */
     Selection.prototype.select = function (selectable, isMultiSelectEvent) {
@@ -55,12 +64,12 @@ define(['EventEmitter'], function (EventEmitter) {
         }
 
         let multiSelect = isMultiSelectEvent &&
-            this.parentSupportsMultiSelect(selectable) &&            
+            this.parentSupportsMultiSelect(selectable) &&
+            this.peerSelection(selectable) &&
             !this.selectionContainsParent(selectable);
 
         if (multiSelect) {
-            this.setSelectionStyles(selectable, true);
-            this.selected.push(selectable);
+            this.handleMultiSelect(selectable);
         } else {
             this.setSelectionStyles(selectable);
             this.selected = [selectable];
@@ -72,22 +81,61 @@ define(['EventEmitter'], function (EventEmitter) {
     /**
      * @private
      */
-     Selection.prototype.setSelectionStyles = function (selectable, multiSelect) {
-        // Remove selection attributes from previously selected elements
-        // and their parents if it's not a multi select.
-        if (!multiSelect) {
-            this.selected.map(selectionPath => {
-                if (selectionPath[0] && selectionPath[0].element) {
-                    selectionPath[0].element.removeAttribute('s-selected');
-                }
+    Selection.prototype.handleMultiSelect = function (selectable) {
+        if (this.elementSelected(selectable)) {
+            this.remove(selectable);
+        } else {
+            this.addSelectionAttributes(selectable);
+            this.selected.push(selectable);
+        }
+    };
 
-                if (selectionPath[1] && selectionPath[1].element) {
-                    selectionPath[1].element.removeAttribute('s-selected-parent');
-                }
-            });
+    /**
+     * @private
+     */
+    Selection.prototype.elementSelected = function (selectable) {
+        return this.selected.some(selectionPath => _.isEqual(selectionPath, selectable));
+    };
+
+    /**
+     * @private
+     */
+    Selection.prototype.remove = function (selectable) {
+        this.selected = this.selected.filter(selectionPath => !_.isEqual(selectionPath, selectable));
+
+        if (this.selected.length === 0) {
+            this.removeSelectionAttributes(selectable);
+            selectable[1].element.click(); // Select the parent if there is no selection.
+        } else {
+            this.removeSelectionAttributes(selectable, true);
+        }
+    };
+
+    /**
+     * @private
+     */
+     Selection.prototype.setSelectionStyles = function (selectable) {
+        this.selected.map(selectionPath => {
+            this.removeSelectionAttributes(selectionPath);
+        });
+        this.addSelectionAttributes(selectable);
+     };
+
+    Selection.prototype.removeSelectionAttributes = function (selectionPath, keepParentStyle) {
+        if (selectionPath[0] && selectionPath[0].element) {
+            selectionPath[0].element.removeAttribute('s-selected');
         }
 
-        // Add selection attributes to the selected element and its parent.
+        if (selectionPath[1] && selectionPath[1].element && !keepParentStyle) {
+            selectionPath[1].element.removeAttribute('s-selected-parent');
+        }
+    };
+
+    /*
+     * Adds selection attributes to the selected element and its parent.
+     * @private
+     */
+    Selection.prototype.addSelectionAttributes = function (selectable) {
         if (selectable[0] && selectable[0].element) {
             selectable[0].element.setAttribute('s-selected', "");
         }
@@ -95,7 +143,7 @@ define(['EventEmitter'], function (EventEmitter) {
         if (selectable[1] && selectable[1].element) {
             selectable[1].element.setAttribute('s-selected-parent', "");
         }
-     };
+    };
 
     /**
      * @private
@@ -108,7 +156,14 @@ define(['EventEmitter'], function (EventEmitter) {
      * @private
      */
     Selection.prototype.selectionContainsParent = function (selectable) {
-        return this.selected.some(selectionPath => selectionPath[0] === selectable[1]);
+        return this.selected.some(selectionPath => _.isEqual(selectionPath[0], selectable[1]));
+    };
+
+    /**
+     * @private
+     */
+    Selection.prototype.peerSelection = function (selectable) {
+        return this.selected.some(selectionPath => _.isEqual(selectionPath[1], selectable[1]));
     };
 
     /**
