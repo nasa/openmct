@@ -74,15 +74,12 @@ define([
         this.show = this.show.bind(this);
         this.destroy = this.destroy.bind(this);
         this.addRule = this.addRule.bind(this);
-        this.onEdit = this.onEdit.bind(this);
 
         this.addHyperlink(domainObject.url, domainObject.openNewTab);
         this.watchForChanges(openmct, domainObject);
 
         var id = objectUtils.makeKeyString(this.domainObject.identifier),
-            self = this,
-            oldDomainObject,
-            statusCapability;
+            self = this;
 
         /**
          * Toggles the configuration area for test data in the view
@@ -105,17 +102,7 @@ define([
         this.listenTo(this.toggleRulesControl, 'click', toggleRules);
 
         openmct.$injector.get('objectService')
-            .getObjects([id])
-            .then(function (objs) {
-                oldDomainObject = objs[id];
-                statusCapability = oldDomainObject.getCapability('status');
-                self.editListenerUnsubscribe = statusCapability.listen(self.onEdit);
-                if (statusCapability.get('editing')) {
-                    self.onEdit(['editing']);
-                } else {
-                    self.onEdit([]);
-                }
-            });
+            .getObjects([id]);
     }
 
     /**
@@ -172,7 +159,6 @@ define([
         });
         this.refreshRules();
         this.updateWidget();
-        this.updateView();
 
         this.listenTo(this.addRuleButton, 'click', this.addRule);
         this.conditionManager.on('receiveTelemetry', this.executeRules, this);
@@ -194,37 +180,6 @@ define([
         });
 
         this.stopListening();
-    };
-
-    /**
-     * A callback function for the Open MCT status capability listener. If the
-     * view representing the domain object is in edit mode, update the internal
-     * state and widget view accordingly.
-     * @param {string[]} status an array containing the domain object's current status
-     */
-    SummaryWidget.prototype.onEdit = function (status) {
-        if (status && status.includes('editing')) {
-            this.editing = true;
-        } else {
-            this.editing = false;
-        }
-        this.updateView();
-    };
-
-    /**
-     * If this view is currently in edit mode, show all rule configuration interfaces.
-     * Otherwise, hide them.
-     */
-    SummaryWidget.prototype.updateView = function () {
-        if (this.editing) {
-            this.ruleArea.show();
-            this.testDataArea.show();
-            this.addRuleButton.show();
-        } else {
-            this.ruleArea.hide();
-            this.testDataArea.hide();
-            this.addRuleButton.hide();
-        }
     };
 
     /**
