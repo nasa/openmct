@@ -36,11 +36,11 @@ function (
         var domElement = $(this.palette.getDOM()),
             self = this;
 
-        $('.s-menu-button', domElement).addClass('t-color-palette-menu-button');
+        $('.c-click-icon', domElement).addClass('t-color-palette-menu-button'); // 2/22/19 Not sure if this is used...
         $('.t-swatch', domElement).addClass('color-swatch');
         $('.l-palette', domElement).addClass('l-color-palette');
 
-        $('.s-palette-item', domElement).each(function () {
+        $('.c-palette__item', domElement).each(function () {
             var elem = this;
             $(elem).css('background-color', elem.dataset.item);
         });

@@ -227,6 +227,14 @@
                 width: 200px;
             }
         }
+
+        &__toolbar {
+            $p: $interiorMargin;
+            background: $editUIBaseColor;
+            border-radius: $basicCr;
+            height: $p + 24px; // Need to standardize the height
+            padding: $p;
+        }
     }
 
     .is-editing {
@@ -239,6 +247,7 @@
             }
         }
     }
+
 </style>
 
 <script>
