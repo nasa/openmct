@@ -17,6 +17,48 @@ define([
                 dsnXml;
 
             beforeEach(function () {
+                dsnXml = domParser.parseFromString('<dsn></dsn>', 'application/xml');
+                dsn = dsnParser.parseXml(dsnXml);
+            });
+
+            afterEach(function () {
+                dsn = {};
+                dsnXml = {};
+            });
+
+            it('with no child elements', function () {
+                expect(dsn.data).toBeDefined();
+                expect(Object.keys(dsn.data).length).toBe(0);
+            });
+        });
+
+        describe('parses a response', function () {
+            var dsn,
+                dsnXml,
+                xml;
+
+            beforeEach(function () {
+                xml = '<dsn><spacecraft id="1" name="VGR1" friendlyName="Voyager 1" /></dsn>';
+                dsnXml = domParser.parseFromString(xml, 'application/xml');
+                dsn = dsnParser.parseXml(dsnXml);
+            });
+
+            afterEach(function () {
+                dsn = {};
+                dsnXml = {};
+            });
+
+            it('with an unknown element', function () {
+                expect(dsn.data).toBeDefined();
+                expect(Object.keys(dsn.data).length).toBe(0);
+            });
+        });
+
+        describe('parses a response', function () {
+            var dsn,
+                dsnXml;
+
+            beforeEach(function () {
                 dsnXml = domParser.parseFromString(testXmlResponse, 'application/xml');
                 dsn = dsnParser.parseXml(dsnXml);
             });
@@ -85,48 +127,6 @@ define([
 
             it('with a timestamp element', function () {
                expect(dsn.data.timestamp).toBe(1549708172928);
-            });
-        });
-
-        describe('parses a response', function () {
-            var dsn,
-                dsnXml,
-                xml;
-
-            beforeEach(function () {
-                xml = '<dsn><spacecraft id="1" name="VGR1" friendlyName="Voyager 1" /></dsn>';
-                dsnXml = domParser.parseFromString(xml, 'application/xml');
-                dsn = dsnParser.parseXml(dsnXml);
-            });
-
-            afterEach(function () {
-                dsn = {};
-                dsnXml = {};
-            });
-
-            it('with an unknown element', function () {
-                expect(dsn.data).toBeDefined();
-                expect(Object.keys(dsn.data).length).toBe(0);
-            });
-        });
-
-        describe('parses an empty response', function () {
-            var dsn,
-                dsnXml;
-
-            beforeEach(function () {
-                dsnXml = domParser.parseFromString('<dsn></dsn>', 'application/xml');
-                dsn = dsnParser.parseXml(dsnXml);
-            });
-
-            afterEach(function () {
-                dsn = {};
-                dsnXml = {};
-            });
-
-            it('with no child elements', function () {
-                expect(dsn.data).toBeDefined();
-                expect(Object.keys(dsn.data).length).toBe(0);
             });
         });
     });
