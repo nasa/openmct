@@ -141,9 +141,9 @@ define([], function () {
         dish[key + '.azimuth.angle'] = parseFloat(dishElement.getAttribute('azimuthAngle'));
         dish[key + '.elevation.angle'] = parseFloat(dishElement.getAttribute('elevationAngle'));
         dish[key + '.wind.speed'] = parseFloat(dishElement.getAttribute('windSpeed'));
-        dish[key + '.mspa'] = dishElement.getAttribute('isMSPA');
-        dish[key + '.array'] = dishElement.getAttribute('isArray');
-        dish[key + '.ddor'] = dishElement.getAttribute('isDDOR');
+        dish[key + '.mspa'] = dishElement.getAttribute('isMSPA') === 'true';
+        dish[key + '.array'] = dishElement.getAttribute('isArray') === 'true';
+        dish[key + '.ddor'] = dishElement.getAttribute('isDDOR') === 'true';
         dish[key + '.created'] = dishElement.getAttribute('created');
         dish[key + '.updated'] = dishElement.getAttribute('updated');
         dish[key + '.antenna'] = Object.assign({}, dish);

@@ -117,9 +117,9 @@ define([
                 expect(dsn.data['dss14.azimuth.angle']).toBe(86.24);
                 expect(dsn.data['dss14.elevation.angle']).toBe(15.91);
                 expect(dsn.data['dss14.wind.speed']).toBe(12.35);
-                expect(dsn.data['dss14.mspa']).toBe('false');
-                expect(dsn.data['dss14.array']).toBe('false');
-                expect(dsn.data['dss14.ddor']).toBe('false');
+                expect(dsn.data['dss14.mspa']).toBe(false);
+                expect(dsn.data['dss14.array']).toBe(false);
+                expect(dsn.data['dss14.ddor']).toBe(false);
                 expect(dsn.data['dss14.created']).toBe('2019-02-09T09:35:17.496Z');
                 expect(dsn.data['dss14.updated']).toBe('2019-02-09T09:35:20.154Z');
 
