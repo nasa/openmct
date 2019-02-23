@@ -138,9 +138,9 @@ define([], function () {
         key = dishElement.getAttribute('name').toLowerCase();
 
         dish[key + '.name'] = dishElement.getAttribute('name');
-        dish[key + '.azimuth.angle'] = dishElement.getAttribute('azimuthAngle');
-        dish[key + '.elevation.angle'] = dishElement.getAttribute('elevationAngle');
-        dish[key + '.wind.speed'] = dishElement.getAttribute('windSpeed');
+        dish[key + '.azimuth.angle'] = parseFloat(dishElement.getAttribute('azimuthAngle'));
+        dish[key + '.elevation.angle'] = parseFloat(dishElement.getAttribute('elevationAngle'));
+        dish[key + '.wind.speed'] = parseFloat(dishElement.getAttribute('windSpeed'));
         dish[key + '.mspa'] = dishElement.getAttribute('isMSPA');
         dish[key + '.array'] = dishElement.getAttribute('isArray');
         dish[key + '.ddor'] = dishElement.getAttribute('isDDOR');
