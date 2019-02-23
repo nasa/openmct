@@ -11,8 +11,7 @@ define([], function () {
      */
     function DsnParser(config) {
         this.dsn = {
-            config: config ? config : {},
-            data: {}
+            data: config ? config : {}
         };
     }
 
@@ -36,8 +35,8 @@ define([], function () {
 
             sites[siteKey + '.name'] = siteElement.getAttribute('name');
             sites[siteKey + '.friendly.name'] = siteElement.getAttribute('friendlyName');
-            sites[siteKey + '.longitude'] = siteElement.getAttribute('longitude');
-            sites[siteKey + '.latitude'] = siteElement.getAttribute('latitude');
+            sites[siteKey + '.longitude'] = parseFloat(siteElement.getAttribute('longitude'));
+            sites[siteKey + '.latitude'] = parseFloat(siteElement.getAttribute('latitude'));
 
             for (var j = 0; j < siteElement.children.length; j++) {
                 dishElement = siteElement.children[j];
@@ -93,10 +92,10 @@ define([], function () {
 
             switch (element.tagName) {
                 case 'sites':
-                    Object.assign(this.dsn.config, this.parseSitesTag(element));
+                    Object.assign(this.dsn.data, this.parseSitesTag(element));
                     break;
                 case 'spacecraftMap':
-                    Object.assign(this.dsn.config, this.parseSpacecraftMapTag(element));
+                    Object.assign(this.dsn.data, this.parseSpacecraftMapTag(element));
             }
         }
     };
@@ -116,6 +115,8 @@ define([], function () {
         station[key + '.friendly.name'] = stationElement.getAttribute('friendlyName');
         station[key + '.utc.time'] = parseInt(stationElement.getAttribute('timeUTC'), 10);
         station[key + '.time.zone.offset'] = parseInt(stationElement.getAttribute('timeZoneOffset'), 10);
+        station[key + '.longitude'] = this.dsn.data[key + '.longitude'];
+        station[key + '.latitude'] = this.dsn.data[key + '.latitude'];
         station[key + '.station'] = Object.assign({}, station);
 
         return station;

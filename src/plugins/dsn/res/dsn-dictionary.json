@@ -87,6 +87,44 @@
             },
             "type": "dsn.telemetry"
         },
+        "deep.space.network:cdscc.latitude": {
+            "identifier": {
+                "key": "cdscc.latitude",
+                "namespace": "deep.space.network"
+            },
+            "name": "Latitude",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "latitude",
+                        "name": "Latitude"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
+        "deep.space.network:cdscc.longitude": {
+            "identifier": {
+                "key": "cdscc.longitude",
+                "namespace": "deep.space.network"
+            },
+            "name": "Longitude",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "longitude",
+                        "name": "Longitude"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:cdscc.name": {
             "identifier": {
                 "key": "cdscc.name",
@@ -110,6 +148,8 @@
             "composition": [
                 "deep.space.network:cdscc.name",
                 "deep.space.network:cdscc.friendly.name",
+                "deep.space.network:cdscc.longitude",
+                "deep.space.network:cdscc.latitude",
                 "deep.space.network:cdscc.utc.time",
                 "deep.space.network:cdscc.time.zone.offset"
             ],
@@ -133,6 +173,20 @@
                         },
                         "key": "cdscc.friendly.name",
                         "name": "Friendly name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "cdscc.longitude",
+                        "name": "Longitude"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "cdscc.latitude",
+                        "name": "Latitude"
                     },
                     {
                         "format": "utc",
@@ -4847,6 +4901,44 @@
             },
             "type": "dsn.telemetry"
         },
+        "deep.space.network:gdscc.latitude": {
+            "identifier": {
+                "key": "gdscc.latitude",
+                "namespace": "deep.space.network"
+            },
+            "name": "Latitude",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "latitude",
+                        "name": "Latitude"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
+        "deep.space.network:gdscc.longitude": {
+            "identifier": {
+                "key": "gdscc.longitude",
+                "namespace": "deep.space.network"
+            },
+            "name": "Longitude",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "longitude",
+                        "name": "Longitude"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:gdscc.name": {
             "identifier": {
                 "key": "gdscc.name",
@@ -4870,6 +4962,8 @@
             "composition": [
                 "deep.space.network:gdscc.name",
                 "deep.space.network:gdscc.friendly.name",
+                "deep.space.network:gdscc.longitude",
+                "deep.space.network:gdscc.latitude",
                 "deep.space.network:gdscc.utc.time",
                 "deep.space.network:gdscc.time.zone.offset"
             ],
@@ -4893,6 +4987,20 @@
                         },
                         "key": "gdscc.friendly.name",
                         "name": "Friendly name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "gdscc.longitude",
+                        "name": "Longitude"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "gdscc.latitude",
+                        "name": "Latitude"
                     },
                     {
                         "format": "utc",
@@ -5055,6 +5163,44 @@
             },
             "type": "dsn.telemetry"
         },
+        "deep.space.network:mdscc.latitude": {
+            "identifier": {
+                "key": "mdscc.latitude",
+                "namespace": "deep.space.network"
+            },
+            "name": "Latitude",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "latitude",
+                        "name": "Latitude"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
+        "deep.space.network:mdscc.longitude": {
+            "identifier": {
+                "key": "mdscc.longitude",
+                "namespace": "deep.space.network"
+            },
+            "name": "Longitude",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "longitude",
+                        "name": "Longitude"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:mdscc.name": {
             "identifier": {
                 "key": "mdscc.name",
@@ -5078,6 +5224,8 @@
             "composition": [
                 "deep.space.network:mdscc.name",
                 "deep.space.network:mdscc.friendly.name",
+                "deep.space.network:mdscc.longitude",
+                "deep.space.network:mdscc.latitude",
                 "deep.space.network:mdscc.utc.time",
                 "deep.space.network:mdscc.time.zone.offset"
             ],
@@ -5101,6 +5249,20 @@
                         },
                         "key": "mdscc.friendly.name",
                         "name": "Friendly name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "mdscc.longitude",
+                        "name": "Longitude"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "mdscc.latitude",
+                        "name": "Latitude"
                     },
                     {
                         "format": "utc",

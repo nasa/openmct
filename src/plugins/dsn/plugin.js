@@ -32,7 +32,7 @@ define([
                     parser = new DsnParser();
 
                 dsn = parser.parseXml(resp.request.responseXML);
-                config = dsn.config;
+                config = dsn.data;
             });
     }
 
