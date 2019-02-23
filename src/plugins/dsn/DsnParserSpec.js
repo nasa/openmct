@@ -10,17 +10,20 @@ define([
 
     describe('DsnParser', function () {
         var domParser = new DOMParser(),
-            dsn,
-            dsnXml,
             dsnParser = new DsnParser();
 
         describe('parses a response', function () {
-            beforeEach(function () {
-                dsn = {};
-                dsnXml = {};
+            var dsn,
+                dsnXml;
 
+            beforeEach(function () {
                 dsnXml = domParser.parseFromString(testXmlResponse, 'application/xml');
                 dsn = dsnParser.parseXml(dsnXml);
+            });
+
+            afterEach(function () {
+                dsn = {};
+                dsnXml = {};
             });
 
             it('with a station element', function () {
@@ -91,12 +94,14 @@ define([
                 xml;
 
             beforeEach(function () {
-                dsn = {};
-                dsnXml = {};
-
                 xml = '<dsn><spacecraft id="1" name="VGR1" friendlyName="Voyager 1" /></dsn>';
                 dsnXml = domParser.parseFromString(xml, 'application/xml');
                 dsn = dsnParser.parseXml(dsnXml);
+            });
+
+            afterEach(function () {
+                dsn = {};
+                dsnXml = {};
             });
 
             it('with an unknown element', function () {
@@ -110,11 +115,13 @@ define([
                 dsnXml;
 
             beforeEach(function () {
-                dsn = {};
-                dsnXml = {};
-
                 dsnXml = domParser.parseFromString('<dsn></dsn>', 'application/xml');
                 dsn = dsnParser.parseXml(dsnXml);
+            });
+
+            afterEach(function () {
+                dsn = {};
+                dsnXml = {};
             });
 
             it('with no child elements', function () {
