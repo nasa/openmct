@@ -39,6 +39,15 @@ button {
             opacity: 0.5;
         }
     }
+
+    &--swatched {
+        // Used with c-button--menu: a visual button with a larger swatch element adjacent to an icon
+        .c-swatch {
+            $d: 12px;
+            margin-left: $interiorMarginSm;
+            height: $d; width: $d;
+        }
+    }
 }
 
 .c-compact-button {
@@ -360,6 +369,7 @@ select {
 .c-palette {
     display: flex;
     flex-flow: column nowrap;
+    min-width: 136px;
 
     &__items {
         flex: 1 1 auto;
@@ -489,10 +499,6 @@ select {
         + .c-labeled-input {
             margin-left: $interiorMargin;
         }
-    }
-
-    .c-palette {
-        min-width: 136px;
     }
 }
 

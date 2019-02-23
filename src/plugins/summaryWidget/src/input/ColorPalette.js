@@ -36,9 +36,9 @@ function (
         var domElement = $(this.palette.getDOM()),
             self = this;
 
-        $('.c-click-icon', domElement).addClass('t-color-palette-menu-button'); // 2/22/19 Not sure if this is used...
+        $('.c-button--menu', domElement).addClass('c-button--swatched');
         $('.t-swatch', domElement).addClass('color-swatch');
-        $('.l-palette', domElement).addClass('l-color-palette');
+        $('.c-palette', domElement).addClass('c-palette--color-palette');
 
         $('.c-palette__item', domElement).each(function () {
             var elem = this;

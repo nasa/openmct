@@ -301,6 +301,7 @@ a.disabled {
             $c $e,
             transparent $e + 5%
     );
+    box-shadow:inset rgba(black, 0.3) 0 0 0 1px;
     background-repeat: no-repeat;
     background-size: contain;
 }

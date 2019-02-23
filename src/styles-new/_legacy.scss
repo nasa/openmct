@@ -1027,6 +1027,26 @@ body.mobile.phone {
                 > label {
                     display: block; // Needed to align text to right
                     text-align: right;
+                    width: 90px;
+                    flex: 0 0 auto;
+                }
+
+                .controls {
+                    display: flex;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    align-content: stretch;
+                    > * + * { margin-left: $interiorMarginSm; }
+
+                    .t-condition & {
+                        background: deeppink;
+                    }
+
+                    //.t-configuration,
+                    //.t-value-inputs {
+                    //    display: contents;
+                    //    > * + * { margin-left: $interiorMarginSm; }
+                    //}
                 }
             }
         }
