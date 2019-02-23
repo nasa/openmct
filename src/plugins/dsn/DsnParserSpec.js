@@ -1,9 +1,11 @@
 
 define([
     './DsnParser',
+    'text!./res/test-dsn-config-response.xml',
     'text!./res/test-dsn-response.xml'
 ], function (
     DsnParser,
+    testXmlConfigResponse,
     testXmlResponse
 ) {
     'use strict';
@@ -51,6 +53,35 @@ define([
             it('with an unknown element', function () {
                 expect(dsn.data).toBeDefined();
                 expect(Object.keys(dsn.data).length).toBe(0);
+            });
+        });
+
+        describe('parses a config response', function () {
+            var dsn,
+                dsnXml;
+
+            beforeEach(function () {
+                dsnXml = domParser.parseFromString(testXmlConfigResponse, 'application/xml');
+                dsn = dsnParser.parseXml(dsnXml);
+            });
+
+            afterEach(function () {
+                dsn = {};
+                dsnXml = {};
+            });
+
+            it('with a sites element', function () {
+                expect(dsn.data['mdscc.name']).toBe('mdscc');
+                expect(dsn.data['mdscc.friendly.name']).toBe('Madrid');
+                expect(dsn.data['mdscc.longitude']).toBe(-4.2480085);
+                expect(dsn.data['mdscc.latitude']).toBe(40.2413554);
+            });
+
+            it('with a spacecraftMap element', function () {
+                expect(dsn.data['vgr2.name']).toBe('vgr2');
+                expect(dsn.data['vgr2.explorer.name']).toBe('sc_voyager_2');
+                expect(dsn.data['vgr2.friendly.name']).toBe('Voyager 2');
+                expect(dsn.data['vgr2.thumbnail']).toBe(true);
             });
         });
 
