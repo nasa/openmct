@@ -134,7 +134,7 @@ define([
                     expect(downSignal['dss14.signal.frequency']).toBe(8420585323.254991);
                     expect(downSignal['dss14.signal.power']).toBe(-155.647873);
                     expect(downSignal['dss14.signal.spacecraft']).toBe('VGR1');
-                    expect(downSignal['dss14.signal.spacecraft.id']).toBe('31');
+                    expect(downSignal['dss14.signal.spacecraft.id']).toBe(31);
 
                     upSignal = dsn.data['dss14.signals'][1];
                     expect(upSignal['dss14.signal.direction']).toBe('up');
@@ -151,7 +151,7 @@ define([
 
                     target = dsn.data['dss14.targets'][0];
                     expect(target['dss14.target.name']).toBe('VGR1');
-                    expect(target['dss14.target.id']).toBe('31');
+                    expect(target['dss14.target.id']).toBe(31);
                     expect(target['dss14.target.upleg.range']).toBe('2.1700581860317E10');
                     expect(target['dss14.target.downleg.range']).toBe('2.1698131625495E10');
                     expect(target['dss14.target.rtlt']).toBe('144764.894661');

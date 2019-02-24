@@ -173,13 +173,19 @@ define([], function () {
                             ? child.getAttribute('power')
                             : parseFloat(child.getAttribute('power'));
                     signal[key + '.signal.spacecraft'] = child.getAttribute('spacecraft');
-                    signal[key + '.signal.spacecraft.id'] = child.getAttribute('spacecraftId');
+                    signal[key + '.signal.spacecraft.id'] =
+                        isNaN(parseInt(child.getAttribute('spacecraftId')))
+                            ? child.getAttribute('spacecraftId')
+                            : parseInt(child.getAttribute('spacecraftId'));
                     dish[key + '.signals'].push(signal);
                     break;
                 case 'target':
                     var target = {};
                     target[key + '.target.name'] = child.getAttribute('name');
-                    target[key + '.target.id'] = child.getAttribute('id');
+                    target[key + '.target.id'] =
+                        isNaN(parseInt(child.getAttribute('id')))
+                            ? child.getAttribute('id')
+                            : parseInt(child.getAttribute('id'));
                     target[key + '.target.upleg.range'] = child.getAttribute('uplegRange');
                     target[key + '.target.downleg.range'] = child.getAttribute('downlegRange');
                     target[key + '.target.rtlt'] = child.getAttribute('rtlt');
