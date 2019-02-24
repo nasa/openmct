@@ -39,7 +39,8 @@ define([
                     filters: [{
                         comparator: 'equals',
                         possibleValues: [1,2,3,4]
-                    }]*/
+                    }]
+                    */
                 },
                 {
                     key: "cos",

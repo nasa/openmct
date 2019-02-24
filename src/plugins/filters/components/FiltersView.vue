@@ -1,24 +1,13 @@
 <template>
     <div class="c-properties">
-        <template v-if="isEditing">
+        <template v-if="isEditing && Object.keys(children).length">
             <div class="c-properties__header">Filters</div>
             <ul class="c-properties__section">
-                <li class="c-properties__row"
+                <filter-object 
                     v-for="(child, key) in children"
-                    :key="key">
-                    <div v-if="child">
-                        <div class="c-properties__label" title="name">Name</div>
-                        <div class="c-properties__value">{{child.name}}</div>
-                        <ul class="c-properties__section">
-                            <li class="c-properties__row"
-                                v-for="value in child.valuesWithFilters"
-                                :key="value.key">
-                                <div class="c-properties__label" title="name">Value</div>
-                                <div class="c-properties__value">{{value.name}}</div>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+                    :key="key"
+                    :filterObject="child">
+                </filter-object>
             </ul>
         </template>
     </div>
@@ -29,7 +18,12 @@
 </style>
 
 <script>
+import FilterObject from './FilterObject.vue';
+
 export default {
+    components: {
+        FilterObject
+    },
     inject: [
         'openmct',
         'providedObject'
@@ -47,14 +41,14 @@ export default {
         addChildren(child) {
             let keyString = this.openmct.objects.makeKeyString(child.identifier),
                 metadata = this.openmct.telemetry.getMetadata(child),
-                valuesWithFilters = metadata.valueMetadatas.filter((value) => value.filters),
+                columnsWithFilters = metadata.valueMetadatas.filter((value) => value.filters),
                 childObject = {
                     name: child.name,
                     domainObject: child,
-                    valuesWithFilters
+                    columnsWithFilters
                 };
 
-            if (childObject.valuesWithFilters.length) {
+            if (childObject.columnsWithFilters.length) {
                 this.$set(this.children, keyString, childObject);
             } else {
                 return;
@@ -62,7 +56,7 @@ export default {
         },
         removeChildren(identifier) {
             let keyString = this.openmct.objects.makeKeyString(identifier);
-            this.$set(this.children, keyString, undefined);
+            this.$delete(this.children, keyString);
         }
     },
     mounted(){
