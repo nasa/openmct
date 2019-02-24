@@ -22,6 +22,34 @@ define([
     }
 
     /**
+     * Parses an element's attribute as a float.  If it's not a number, it will return
+     * the attribute value as is.
+     * 
+     * @param {Element} element - The element to parse.
+     * @param {string} attribute - The name of the attribute to parse.
+     * @returns {(number|string)} The parsed attribute as a floating point number or a string.
+     */
+    function parseTelemetryAsFloat(element, attribute) {
+        return isNaN(parseFloat(element.getAttribute(attribute)))
+            ? element.getAttribute(attribute)
+            : parseFloat(element.getAttribute(attribute));
+    }
+
+    /**
+     * Parses an element's attribute as an integer.  If it's not a number, it will return
+     * the attribute value as is.
+     * 
+     * @param {Element} element - The element to parse.
+     * @param {string} attribute - The name of the attribute to parse.
+     * @returns {(number|string)} The parsed attribute as an integer or a string.
+     */
+    function parseTelemetryAsInteger(element, attribute) {
+        return isNaN(parseInt(element.getAttribute(attribute)))
+            ? element.getAttribute(attribute)
+            : parseInt(element.getAttribute(attribute), 10);
+    }
+
+    /**
      * Converts a domain object's identifier to a string, separating the namespace and
      * key with a colon.
      *
@@ -34,6 +62,8 @@ define([
 
     return {
         deserializeIdentifier: deserializeIdentifier,
+        parseTelemetryAsFloat: parseTelemetryAsFloat,
+        parseTelemetryAsInteger: parseTelemetryAsInteger,
         serializeIdentifier: serializeIdentifier
     };
 });
