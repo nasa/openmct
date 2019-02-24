@@ -18,12 +18,12 @@ define([
             var dsn,
                 dsnXml;
 
-            beforeEach(function () {
+            beforeAll(function () {
                 dsnXml = domParser.parseFromString('<dsn></dsn>', 'application/xml');
                 dsn = dsnParser.parseXml(dsnXml);
             });
 
-            afterEach(function () {
+            afterAll(function () {
                 dsn = {};
                 dsnXml = {};
             });
@@ -39,13 +39,13 @@ define([
                 dsnXml,
                 xml;
 
-            beforeEach(function () {
+            beforeAll(function () {
                 xml = '<dsn><spacecraft id="1" name="VGR1" friendlyName="Voyager 1" /></dsn>';
                 dsnXml = domParser.parseFromString(xml, 'application/xml');
                 dsn = dsnParser.parseXml(dsnXml);
             });
 
-            afterEach(function () {
+            afterAll(function () {
                 dsn = {};
                 dsnXml = {};
             });
@@ -60,12 +60,12 @@ define([
             var dsn,
                 dsnXml;
 
-            beforeEach(function () {
+            beforeAll(function () {
                 dsnXml = domParser.parseFromString(testXmlConfigResponse, 'application/xml');
                 dsn = dsnParser.parseXml(dsnXml);
             });
 
-            afterEach(function () {
+            afterAll(function () {
                 dsn = {};
                 dsnXml = {};
             });
@@ -89,12 +89,12 @@ define([
             var dsn,
                 dsnXml;
 
-            beforeEach(function () {
+            beforeAll(function () {
                 dsnXml = domParser.parseFromString(testXmlResponse, 'application/xml');
                 dsn = dsnParser.parseXml(dsnXml);
             });
 
-            afterEach(function () {
+            afterAll(function () {
                 dsn = {};
                 dsnXml = {};
             });
