@@ -26,9 +26,9 @@
 		<upSignal
 			signalType="none"
 			signalTypeDebug="none"
-			power="0"
-			frequency="none"
-			dataRate="0"
+			power="-155.647873"
+			frequency="8420585323.254991"
+			dataRate="160.002853"
 			spacecraft=""
 			spacecraftId=""/>
 		<target name="VGR1" id="31" uplegRange="2.1700581860317E10" downlegRange="2.1698131625495E10" rtlt="144764.894661"/>
@@ -194,9 +194,9 @@
 		<downSignal
 			signalType="none"
 			signalTypeDebug="  -1 "
-			dataRate=""
-			frequency=""
-			power=""
+			dataRate="none"
+			frequency="none"
+			power="none"
 			spacecraft="TGO"
 			spacecraftId="143"/>
 		<downSignal

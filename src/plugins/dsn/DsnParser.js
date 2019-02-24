@@ -160,9 +160,18 @@ define([], function () {
                     signal[key + '.signal.direction'] = child.tagName.substring(0, child.tagName.length - 6);
                     signal[key + '.signal.type'] = child.getAttribute('signalType');
                     signal[key + '.signal.type.debug'] = child.getAttribute('signalTypeDebug');
-                    signal[key + '.signal.data.rate'] = child.getAttribute('dataRate');
-                    signal[key + '.signal.frequency'] = child.getAttribute('frequency');
-                    signal[key + '.signal.power'] = child.getAttribute('power');
+                    signal[key + '.signal.data.rate'] =
+                        isNaN(parseFloat(child.getAttribute('dataRate')))
+                            ? child.getAttribute('dataRate')
+                            : parseFloat(child.getAttribute('dataRate'));
+                    signal[key + '.signal.frequency'] =
+                        isNaN(parseFloat(child.getAttribute('frequency')))
+                            ? child.getAttribute('frequency')
+                            : parseFloat(child.getAttribute('frequency'));
+                    signal[key + '.signal.power'] =
+                        isNaN(parseFloat(child.getAttribute('power')))
+                            ? child.getAttribute('power')
+                            : parseFloat(child.getAttribute('power'));
                     signal[key + '.signal.spacecraft'] = child.getAttribute('spacecraft');
                     signal[key + '.signal.spacecraft.id'] = child.getAttribute('spacecraftId');
                     dish[key + '.signals'].push(signal);

@@ -107,53 +107,68 @@ define([
                 expect(dsn.data['cdscc.time.zone.offset']).toBe(39600000);
             });
 
-            it('with a dish element', function () {
-                var downSignal = {},
-                    upSignal = {},
-                    target = {};
+            describe('with a dish element', function () {
+                it('containing signals and targets', function () {
+                    var downSignal = {},
+                        upSignal = {},
+                        target = {};
 
-                expect(dsn.data['dss14.antenna']).toBeDefined();
-                expect(dsn.data['dss14.name']).toBe('DSS14');
-                expect(dsn.data['dss14.azimuth.angle']).toBe(86.24);
-                expect(dsn.data['dss14.elevation.angle']).toBe(15.91);
-                expect(dsn.data['dss14.wind.speed']).toBe(12.35);
-                expect(dsn.data['dss14.mspa']).toBe(false);
-                expect(dsn.data['dss14.array']).toBe(false);
-                expect(dsn.data['dss14.ddor']).toBe(false);
-                expect(dsn.data['dss14.created']).toBe('2019-02-09T09:35:17.496Z');
-                expect(dsn.data['dss14.updated']).toBe('2019-02-09T09:35:20.154Z');
+                    expect(dsn.data['dss14.antenna']).toBeDefined();
+                    expect(dsn.data['dss14.name']).toBe('DSS14');
+                    expect(dsn.data['dss14.azimuth.angle']).toBe(86.24);
+                    expect(dsn.data['dss14.elevation.angle']).toBe(15.91);
+                    expect(dsn.data['dss14.wind.speed']).toBe(12.35);
+                    expect(dsn.data['dss14.mspa']).toBe(false);
+                    expect(dsn.data['dss14.array']).toBe(false);
+                    expect(dsn.data['dss14.ddor']).toBe(false);
+                    expect(dsn.data['dss14.created']).toBe('2019-02-09T09:35:17.496Z');
+                    expect(dsn.data['dss14.updated']).toBe('2019-02-09T09:35:20.154Z');
 
-                expect(dsn.data['dss14.signals']).toBeDefined();
+                    expect(dsn.data['dss14.signals']).toBeDefined();
 
-                downSignal = dsn.data['dss14.signals'][0];
-                expect(downSignal['dss14.signal.direction']).toBe('down');
-                expect(downSignal['dss14.signal.type']).toBe('data');
-                expect(downSignal['dss14.signal.type.debug']).toBe('IN LOCK OFF 1 MCD2');
-                expect(downSignal['dss14.signal.data.rate']).toBe('160.002853');
-                expect(downSignal['dss14.signal.frequency']).toBe('8420585323.254991');
-                expect(downSignal['dss14.signal.power']).toBe('-155.647873');
-                expect(downSignal['dss14.signal.spacecraft']).toBe('VGR1');
-                expect(downSignal['dss14.signal.spacecraft.id']).toBe('31');
+                    downSignal = dsn.data['dss14.signals'][0];
+                    expect(downSignal['dss14.signal.direction']).toBe('down');
+                    expect(downSignal['dss14.signal.type']).toBe('data');
+                    expect(downSignal['dss14.signal.type.debug']).toBe('IN LOCK OFF 1 MCD2');
+                    expect(downSignal['dss14.signal.data.rate']).toBe(160.002853);
+                    expect(downSignal['dss14.signal.frequency']).toBe(8420585323.254991);
+                    expect(downSignal['dss14.signal.power']).toBe(-155.647873);
+                    expect(downSignal['dss14.signal.spacecraft']).toBe('VGR1');
+                    expect(downSignal['dss14.signal.spacecraft.id']).toBe('31');
 
-                upSignal = dsn.data['dss14.signals'][1];
-                expect(upSignal['dss14.signal.direction']).toBe('up');
-                expect(upSignal['dss14.signal.type']).toBe('none');
-                expect(upSignal['dss14.signal.type.debug']).toBe('none');
-                expect(upSignal['dss14.signal.data.rate']).toBe('0');
-                expect(upSignal['dss14.signal.frequency']).toBe('none');
-                expect(upSignal['dss14.signal.power']).toBe('0');
-                expect(upSignal['dss14.signal.spacecraft']).toBe('');
-                expect(upSignal['dss14.signal.spacecraft.id']).toBe('');
-                expect(dsn.data['dss14.targets']).toBeDefined();
+                    upSignal = dsn.data['dss14.signals'][1];
+                    expect(upSignal['dss14.signal.direction']).toBe('up');
+                    expect(upSignal['dss14.signal.type']).toBe('none');
+                    expect(upSignal['dss14.signal.type.debug']).toBe('none');
+                    expect(upSignal['dss14.signal.data.rate']).toBe(160.002853);
+                    expect(upSignal['dss14.signal.frequency']).toBe(8420585323.254991);
+                    expect(upSignal['dss14.signal.power']).toBe(-155.647873);
+                    expect(upSignal['dss14.signal.spacecraft']).toBe('');
+                    expect(upSignal['dss14.signal.spacecraft.id']).toBe('');
+                    expect(dsn.data['dss14.targets']).toBeDefined();
 
-                expect(dsn.data['dss14.targets']).toBeDefined();
+                    expect(dsn.data['dss14.targets']).toBeDefined();
 
-                target = dsn.data['dss14.targets'][0];
-                expect(target['dss14.target.name']).toBe('VGR1');
-                expect(target['dss14.target.id']).toBe('31');
-                expect(target['dss14.target.upleg.range']).toBe('2.1700581860317E10');
-                expect(target['dss14.target.downleg.range']).toBe('2.1698131625495E10');
-                expect(target['dss14.target.rtlt']).toBe('144764.894661');
+                    target = dsn.data['dss14.targets'][0];
+                    expect(target['dss14.target.name']).toBe('VGR1');
+                    expect(target['dss14.target.id']).toBe('31');
+                    expect(target['dss14.target.upleg.range']).toBe('2.1700581860317E10');
+                    expect(target['dss14.target.downleg.range']).toBe('2.1698131625495E10');
+                    expect(target['dss14.target.rtlt']).toBe('144764.894661');
+                });
+
+                it('containing signals with no data rate, frequency or power', function () {
+                    var mroDownSignal = dsn.data['dss35.signals'][1],
+                        tgoDownSignal = dsn.data['dss35.signals'][0];
+
+                    expect(mroDownSignal['dss35.signal.data.rate']).toBe('');
+                    expect(mroDownSignal['dss35.signal.frequency']).toBe('');
+                    expect(mroDownSignal['dss35.signal.power']).toBe('');
+
+                    expect(tgoDownSignal['dss35.signal.data.rate']).toBe('none');
+                    expect(tgoDownSignal['dss35.signal.frequency']).toBe('none');
+                    expect(tgoDownSignal['dss35.signal.power']).toBe('none');
+                });
             });
 
             it('with a timestamp element', function () {
