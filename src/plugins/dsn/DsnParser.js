@@ -142,9 +142,9 @@ define([
         key = dishElement.getAttribute('name').toLowerCase();
 
         dish[key + '.name'] = dishElement.getAttribute('name');
-        dish[key + '.azimuth.angle'] = parseFloat(dishElement.getAttribute('azimuthAngle'));
-        dish[key + '.elevation.angle'] = parseFloat(dishElement.getAttribute('elevationAngle'));
-        dish[key + '.wind.speed'] = parseFloat(dishElement.getAttribute('windSpeed'));
+        dish[key + '.azimuth.angle'] = DsnUtils.parseTelemetryAsFloat(dishElement, 'azimuthAngle');
+        dish[key + '.elevation.angle'] = DsnUtils.parseTelemetryAsFloat(dishElement, 'elevationAngle');
+        dish[key + '.wind.speed'] = DsnUtils.parseTelemetryAsFloat(dishElement, 'windSpeed');
         dish[key + '.mspa'] = dishElement.getAttribute('isMSPA') === 'true';
         dish[key + '.array'] = dishElement.getAttribute('isArray') === 'true';
         dish[key + '.ddor'] = dishElement.getAttribute('isDDOR') === 'true';
