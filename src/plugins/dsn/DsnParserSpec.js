@@ -152,9 +152,9 @@ define([
                     target = dsn.data['dss14.targets'][0];
                     expect(target['dss14.target.name']).toBe('VGR1');
                     expect(target['dss14.target.id']).toBe(31);
-                    expect(target['dss14.target.upleg.range']).toBe('2.1700581860317E10');
-                    expect(target['dss14.target.downleg.range']).toBe('2.1698131625495E10');
-                    expect(target['dss14.target.rtlt']).toBe('144764.894661');
+                    expect(target['dss14.target.upleg.range']).toBe(21700581860.317);
+                    expect(target['dss14.target.downleg.range']).toBe(21698131625.495);
+                    expect(target['dss14.target.rtlt']).toBe(144764.894661);
                 });
 
                 it('containing signals with no data rate, frequency or power', function () {

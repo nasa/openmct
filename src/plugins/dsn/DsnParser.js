@@ -175,9 +175,9 @@ define([
                     var target = {};
                     target[key + '.target.name'] = child.getAttribute('name');
                     target[key + '.target.id'] = DsnUtils.parseTelemetryAsInteger(child, 'id');
-                    target[key + '.target.upleg.range'] = child.getAttribute('uplegRange');
-                    target[key + '.target.downleg.range'] = child.getAttribute('downlegRange');
-                    target[key + '.target.rtlt'] = child.getAttribute('rtlt');
+                    target[key + '.target.upleg.range'] = DsnUtils.parseTelemetryAsFloat(child, 'uplegRange');
+                    target[key + '.target.downleg.range'] = DsnUtils.parseTelemetryAsFloat(child, 'downlegRange');
+                    target[key + '.target.rtlt'] = DsnUtils.parseTelemetryAsFloat(child, 'rtlt');
                     dish[key + '.targets'].push(target);
                     break;
             }
