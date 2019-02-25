@@ -271,13 +271,6 @@
                         "hints": {
                             "domain": 1
                         },
-                        "key": "dss14.name",
-                        "name": "Name"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
                         "key": "dss14.friendly.name",
                         "name": "Friendly name"
                     },
@@ -703,13 +696,6 @@
             "name": "Antenna",
             "telemetry": {
                 "values": [
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss24.name",
-                        "name": "Name"
-                    },
                     {
                         "hints": {
                             "domain": 1
@@ -1143,13 +1129,6 @@
                         "hints": {
                             "domain": 1
                         },
-                        "key": "dss25.name",
-                        "name": "Name"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
                         "key": "dss25.friendly.name",
                         "name": "Friendly name"
                     },
@@ -1575,13 +1554,6 @@
             "name": "Antenna",
             "telemetry": {
                 "values": [
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss26.name",
-                        "name": "Name"
-                    },
                     {
                         "hints": {
                             "domain": 1
@@ -2015,13 +1987,6 @@
                         "hints": {
                             "domain": 1
                         },
-                        "key": "dss34.name",
-                        "name": "Name"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
                         "key": "dss34.friendly.name",
                         "name": "Friendly name"
                     },
@@ -2447,13 +2412,6 @@
             "name": "Antenna",
             "telemetry": {
                 "values": [
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss35.name",
-                        "name": "Name"
-                    },
                     {
                         "hints": {
                             "domain": 1
@@ -2887,13 +2845,6 @@
                         "hints": {
                             "domain": 1
                         },
-                        "key": "dss36.name",
-                        "name": "Name"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
                         "key": "dss36.friendly.name",
                         "name": "Friendly name"
                     },
@@ -3319,13 +3270,6 @@
             "name": "Antenna",
             "telemetry": {
                 "values": [
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss43.name",
-                        "name": "Name"
-                    },
                     {
                         "hints": {
                             "domain": 1
@@ -3759,13 +3703,6 @@
                         "hints": {
                             "domain": 1
                         },
-                        "key": "dss54.name",
-                        "name": "Name"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
                         "key": "dss54.friendly.name",
                         "name": "Friendly name"
                     },
@@ -4191,13 +4128,6 @@
             "name": "Antenna",
             "telemetry": {
                 "values": [
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss55.name",
-                        "name": "Name"
-                    },
                     {
                         "hints": {
                             "domain": 1
@@ -4631,13 +4561,6 @@
                         "hints": {
                             "domain": 1
                         },
-                        "key": "dss63.name",
-                        "name": "Name"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
                         "key": "dss63.friendly.name",
                         "name": "Friendly name"
                     },
@@ -5063,13 +4986,6 @@
             "name": "Antenna",
             "telemetry": {
                 "values": [
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss65.name",
-                        "name": "Name"
-                    },
                     {
                         "hints": {
                             "domain": 1
