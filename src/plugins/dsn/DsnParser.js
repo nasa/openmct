@@ -142,6 +142,8 @@ define([
         key = dishElement.getAttribute('name').toLowerCase();
 
         dish[key + '.name'] = dishElement.getAttribute('name');
+        dish[key + '.friendly.name'] = this.dsn.data[key + '.friendly.name'];
+        dish[key + '.type'] = this.dsn.data[key + '.type'];
         dish[key + '.azimuth.angle'] = DsnUtils.parseTelemetryAsFloat(dishElement, 'azimuthAngle');
         dish[key + '.elevation.angle'] = DsnUtils.parseTelemetryAsFloat(dishElement, 'elevationAngle');
         dish[key + '.wind.speed'] = DsnUtils.parseTelemetryAsFloat(dishElement, 'windSpeed');

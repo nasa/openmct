@@ -249,6 +249,8 @@
         "deep.space.network:dss14.antenna": {
             "composition": [
                 "deep.space.network:dss14.name",
+                "deep.space.network:dss14.friendly.name",
+                "deep.space.network:dss14.type",
                 "deep.space.network:dss14.azimuth.angle",
                 "deep.space.network:dss14.elevation.angle",
                 "deep.space.network:dss14.wind.speed",
@@ -271,6 +273,20 @@
                         },
                         "key": "dss14.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss14.friendly.name",
+                        "name": "Friendly name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss14.type",
+                        "name": "Type"
                     },
                     {
                         "hints": {
@@ -435,6 +451,25 @@
             },
             "type": "dsn.telemetry"
         },
+        "deep.space.network:dss14.friendly.name": {
+            "identifier": {
+                "key": "dss14.friendly.name",
+                "namespace": "deep.space.network"
+            },
+            "name": "Friendly name",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "friendly.name",
+                        "name": "Friendly name"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss14.mspa": {
             "identifier": {
                 "key": "dss14.mspa",
@@ -588,6 +623,25 @@
             },
             "type": "table"
         },
+        "deep.space.network:dss14.type": {
+            "identifier": {
+                "key": "dss14.type",
+                "namespace": "deep.space.network"
+            },
+            "name": "Type",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "type",
+                        "name": "Type"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss14.updated": {
             "identifier": {
                 "key": "dss14.updated",
@@ -631,6 +685,8 @@
         "deep.space.network:dss24.antenna": {
             "composition": [
                 "deep.space.network:dss24.name",
+                "deep.space.network:dss24.friendly.name",
+                "deep.space.network:dss24.type",
                 "deep.space.network:dss24.azimuth.angle",
                 "deep.space.network:dss24.elevation.angle",
                 "deep.space.network:dss24.wind.speed",
@@ -653,6 +709,20 @@
                         },
                         "key": "dss24.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss24.friendly.name",
+                        "name": "Friendly name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss24.type",
+                        "name": "Type"
                     },
                     {
                         "hints": {
@@ -817,6 +887,25 @@
             },
             "type": "dsn.telemetry"
         },
+        "deep.space.network:dss24.friendly.name": {
+            "identifier": {
+                "key": "dss24.friendly.name",
+                "namespace": "deep.space.network"
+            },
+            "name": "Friendly name",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "friendly.name",
+                        "name": "Friendly name"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss24.mspa": {
             "identifier": {
                 "key": "dss24.mspa",
@@ -970,6 +1059,25 @@
             },
             "type": "table"
         },
+        "deep.space.network:dss24.type": {
+            "identifier": {
+                "key": "dss24.type",
+                "namespace": "deep.space.network"
+            },
+            "name": "Type",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "type",
+                        "name": "Type"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss24.updated": {
             "identifier": {
                 "key": "dss24.updated",
@@ -1013,6 +1121,8 @@
         "deep.space.network:dss25.antenna": {
             "composition": [
                 "deep.space.network:dss25.name",
+                "deep.space.network:dss25.friendly.name",
+                "deep.space.network:dss25.type",
                 "deep.space.network:dss25.azimuth.angle",
                 "deep.space.network:dss25.elevation.angle",
                 "deep.space.network:dss25.wind.speed",
@@ -1035,6 +1145,20 @@
                         },
                         "key": "dss25.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss25.friendly.name",
+                        "name": "Friendly name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss25.type",
+                        "name": "Type"
                     },
                     {
                         "hints": {
@@ -1199,6 +1323,25 @@
             },
             "type": "dsn.telemetry"
         },
+        "deep.space.network:dss25.friendly.name": {
+            "identifier": {
+                "key": "dss25.friendly.name",
+                "namespace": "deep.space.network"
+            },
+            "name": "Friendly name",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "friendly.name",
+                        "name": "Friendly name"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss25.mspa": {
             "identifier": {
                 "key": "dss25.mspa",
@@ -1352,6 +1495,25 @@
             },
             "type": "table"
         },
+        "deep.space.network:dss25.type": {
+            "identifier": {
+                "key": "dss25.type",
+                "namespace": "deep.space.network"
+            },
+            "name": "Type",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "type",
+                        "name": "Type"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss25.updated": {
             "identifier": {
                 "key": "dss25.updated",
@@ -1395,6 +1557,8 @@
         "deep.space.network:dss26.antenna": {
             "composition": [
                 "deep.space.network:dss26.name",
+                "deep.space.network:dss26.friendly.name",
+                "deep.space.network:dss26.type",
                 "deep.space.network:dss26.azimuth.angle",
                 "deep.space.network:dss26.elevation.angle",
                 "deep.space.network:dss26.wind.speed",
@@ -1417,6 +1581,20 @@
                         },
                         "key": "dss26.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss26.friendly.name",
+                        "name": "Friendly name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss26.type",
+                        "name": "Type"
                     },
                     {
                         "hints": {
@@ -1581,6 +1759,25 @@
             },
             "type": "dsn.telemetry"
         },
+        "deep.space.network:dss26.friendly.name": {
+            "identifier": {
+                "key": "dss26.friendly.name",
+                "namespace": "deep.space.network"
+            },
+            "name": "Friendly name",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "friendly.name",
+                        "name": "Friendly name"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss26.mspa": {
             "identifier": {
                 "key": "dss26.mspa",
@@ -1734,6 +1931,25 @@
             },
             "type": "table"
         },
+        "deep.space.network:dss26.type": {
+            "identifier": {
+                "key": "dss26.type",
+                "namespace": "deep.space.network"
+            },
+            "name": "Type",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "type",
+                        "name": "Type"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss26.updated": {
             "identifier": {
                 "key": "dss26.updated",
@@ -1777,6 +1993,8 @@
         "deep.space.network:dss34.antenna": {
             "composition": [
                 "deep.space.network:dss34.name",
+                "deep.space.network:dss34.friendly.name",
+                "deep.space.network:dss34.type",
                 "deep.space.network:dss34.azimuth.angle",
                 "deep.space.network:dss34.elevation.angle",
                 "deep.space.network:dss34.wind.speed",
@@ -1799,6 +2017,20 @@
                         },
                         "key": "dss34.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss34.friendly.name",
+                        "name": "Friendly name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss34.type",
+                        "name": "Type"
                     },
                     {
                         "hints": {
@@ -1963,6 +2195,25 @@
             },
             "type": "dsn.telemetry"
         },
+        "deep.space.network:dss34.friendly.name": {
+            "identifier": {
+                "key": "dss34.friendly.name",
+                "namespace": "deep.space.network"
+            },
+            "name": "Friendly name",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "friendly.name",
+                        "name": "Friendly name"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss34.mspa": {
             "identifier": {
                 "key": "dss34.mspa",
@@ -2116,6 +2367,25 @@
             },
             "type": "table"
         },
+        "deep.space.network:dss34.type": {
+            "identifier": {
+                "key": "dss34.type",
+                "namespace": "deep.space.network"
+            },
+            "name": "Type",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "type",
+                        "name": "Type"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss34.updated": {
             "identifier": {
                 "key": "dss34.updated",
@@ -2159,6 +2429,8 @@
         "deep.space.network:dss35.antenna": {
             "composition": [
                 "deep.space.network:dss35.name",
+                "deep.space.network:dss35.friendly.name",
+                "deep.space.network:dss35.type",
                 "deep.space.network:dss35.azimuth.angle",
                 "deep.space.network:dss35.elevation.angle",
                 "deep.space.network:dss35.wind.speed",
@@ -2181,6 +2453,20 @@
                         },
                         "key": "dss35.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss35.friendly.name",
+                        "name": "Friendly name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss35.type",
+                        "name": "Type"
                     },
                     {
                         "hints": {
@@ -2345,6 +2631,25 @@
             },
             "type": "dsn.telemetry"
         },
+        "deep.space.network:dss35.friendly.name": {
+            "identifier": {
+                "key": "dss35.friendly.name",
+                "namespace": "deep.space.network"
+            },
+            "name": "Friendly name",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "friendly.name",
+                        "name": "Friendly name"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss35.mspa": {
             "identifier": {
                 "key": "dss35.mspa",
@@ -2498,6 +2803,25 @@
             },
             "type": "table"
         },
+        "deep.space.network:dss35.type": {
+            "identifier": {
+                "key": "dss35.type",
+                "namespace": "deep.space.network"
+            },
+            "name": "Type",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "type",
+                        "name": "Type"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss35.updated": {
             "identifier": {
                 "key": "dss35.updated",
@@ -2541,6 +2865,8 @@
         "deep.space.network:dss36.antenna": {
             "composition": [
                 "deep.space.network:dss36.name",
+                "deep.space.network:dss36.friendly.name",
+                "deep.space.network:dss36.type",
                 "deep.space.network:dss36.azimuth.angle",
                 "deep.space.network:dss36.elevation.angle",
                 "deep.space.network:dss36.wind.speed",
@@ -2563,6 +2889,20 @@
                         },
                         "key": "dss36.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss36.friendly.name",
+                        "name": "Friendly name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss36.type",
+                        "name": "Type"
                     },
                     {
                         "hints": {
@@ -2727,6 +3067,25 @@
             },
             "type": "dsn.telemetry"
         },
+        "deep.space.network:dss36.friendly.name": {
+            "identifier": {
+                "key": "dss36.friendly.name",
+                "namespace": "deep.space.network"
+            },
+            "name": "Friendly name",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "friendly.name",
+                        "name": "Friendly name"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss36.mspa": {
             "identifier": {
                 "key": "dss36.mspa",
@@ -2880,6 +3239,25 @@
             },
             "type": "table"
         },
+        "deep.space.network:dss36.type": {
+            "identifier": {
+                "key": "dss36.type",
+                "namespace": "deep.space.network"
+            },
+            "name": "Type",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "type",
+                        "name": "Type"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss36.updated": {
             "identifier": {
                 "key": "dss36.updated",
@@ -2923,6 +3301,8 @@
         "deep.space.network:dss43.antenna": {
             "composition": [
                 "deep.space.network:dss43.name",
+                "deep.space.network:dss43.friendly.name",
+                "deep.space.network:dss43.type",
                 "deep.space.network:dss43.azimuth.angle",
                 "deep.space.network:dss43.elevation.angle",
                 "deep.space.network:dss43.wind.speed",
@@ -2945,6 +3325,20 @@
                         },
                         "key": "dss43.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss43.friendly.name",
+                        "name": "Friendly name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss43.type",
+                        "name": "Type"
                     },
                     {
                         "hints": {
@@ -3109,6 +3503,25 @@
             },
             "type": "dsn.telemetry"
         },
+        "deep.space.network:dss43.friendly.name": {
+            "identifier": {
+                "key": "dss43.friendly.name",
+                "namespace": "deep.space.network"
+            },
+            "name": "Friendly name",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "friendly.name",
+                        "name": "Friendly name"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss43.mspa": {
             "identifier": {
                 "key": "dss43.mspa",
@@ -3262,6 +3675,25 @@
             },
             "type": "table"
         },
+        "deep.space.network:dss43.type": {
+            "identifier": {
+                "key": "dss43.type",
+                "namespace": "deep.space.network"
+            },
+            "name": "Type",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "type",
+                        "name": "Type"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss43.updated": {
             "identifier": {
                 "key": "dss43.updated",
@@ -3305,6 +3737,8 @@
         "deep.space.network:dss54.antenna": {
             "composition": [
                 "deep.space.network:dss54.name",
+                "deep.space.network:dss54.friendly.name",
+                "deep.space.network:dss54.type",
                 "deep.space.network:dss54.azimuth.angle",
                 "deep.space.network:dss54.elevation.angle",
                 "deep.space.network:dss54.wind.speed",
@@ -3327,6 +3761,20 @@
                         },
                         "key": "dss54.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss54.friendly.name",
+                        "name": "Friendly name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss54.type",
+                        "name": "Type"
                     },
                     {
                         "hints": {
@@ -3491,6 +3939,25 @@
             },
             "type": "dsn.telemetry"
         },
+        "deep.space.network:dss54.friendly.name": {
+            "identifier": {
+                "key": "dss54.friendly.name",
+                "namespace": "deep.space.network"
+            },
+            "name": "Friendly name",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "friendly.name",
+                        "name": "Friendly name"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss54.mspa": {
             "identifier": {
                 "key": "dss54.mspa",
@@ -3644,6 +4111,25 @@
             },
             "type": "table"
         },
+        "deep.space.network:dss54.type": {
+            "identifier": {
+                "key": "dss54.type",
+                "namespace": "deep.space.network"
+            },
+            "name": "Type",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "type",
+                        "name": "Type"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss54.updated": {
             "identifier": {
                 "key": "dss54.updated",
@@ -3687,6 +4173,8 @@
         "deep.space.network:dss55.antenna": {
             "composition": [
                 "deep.space.network:dss55.name",
+                "deep.space.network:dss55.friendly.name",
+                "deep.space.network:dss55.type",
                 "deep.space.network:dss55.azimuth.angle",
                 "deep.space.network:dss55.elevation.angle",
                 "deep.space.network:dss55.wind.speed",
@@ -3709,6 +4197,20 @@
                         },
                         "key": "dss55.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss55.friendly.name",
+                        "name": "Friendly name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss55.type",
+                        "name": "Type"
                     },
                     {
                         "hints": {
@@ -3873,6 +4375,25 @@
             },
             "type": "dsn.telemetry"
         },
+        "deep.space.network:dss55.friendly.name": {
+            "identifier": {
+                "key": "dss55.friendly.name",
+                "namespace": "deep.space.network"
+            },
+            "name": "Friendly name",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "friendly.name",
+                        "name": "Friendly name"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss55.mspa": {
             "identifier": {
                 "key": "dss55.mspa",
@@ -4026,6 +4547,25 @@
             },
             "type": "table"
         },
+        "deep.space.network:dss55.type": {
+            "identifier": {
+                "key": "dss55.type",
+                "namespace": "deep.space.network"
+            },
+            "name": "Type",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "type",
+                        "name": "Type"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss55.updated": {
             "identifier": {
                 "key": "dss55.updated",
@@ -4069,6 +4609,8 @@
         "deep.space.network:dss63.antenna": {
             "composition": [
                 "deep.space.network:dss63.name",
+                "deep.space.network:dss63.friendly.name",
+                "deep.space.network:dss63.type",
                 "deep.space.network:dss63.azimuth.angle",
                 "deep.space.network:dss63.elevation.angle",
                 "deep.space.network:dss63.wind.speed",
@@ -4091,6 +4633,20 @@
                         },
                         "key": "dss63.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss63.friendly.name",
+                        "name": "Friendly name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss63.type",
+                        "name": "Type"
                     },
                     {
                         "hints": {
@@ -4255,6 +4811,25 @@
             },
             "type": "dsn.telemetry"
         },
+        "deep.space.network:dss63.friendly.name": {
+            "identifier": {
+                "key": "dss63.friendly.name",
+                "namespace": "deep.space.network"
+            },
+            "name": "Friendly name",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "friendly.name",
+                        "name": "Friendly name"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss63.mspa": {
             "identifier": {
                 "key": "dss63.mspa",
@@ -4408,6 +4983,25 @@
             },
             "type": "table"
         },
+        "deep.space.network:dss63.type": {
+            "identifier": {
+                "key": "dss63.type",
+                "namespace": "deep.space.network"
+            },
+            "name": "Type",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "type",
+                        "name": "Type"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss63.updated": {
             "identifier": {
                 "key": "dss63.updated",
@@ -4451,6 +5045,8 @@
         "deep.space.network:dss65.antenna": {
             "composition": [
                 "deep.space.network:dss65.name",
+                "deep.space.network:dss65.friendly.name",
+                "deep.space.network:dss65.type",
                 "deep.space.network:dss65.azimuth.angle",
                 "deep.space.network:dss65.elevation.angle",
                 "deep.space.network:dss65.wind.speed",
@@ -4473,6 +5069,20 @@
                         },
                         "key": "dss65.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss65.friendly.name",
+                        "name": "Friendly name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss65.type",
+                        "name": "Type"
                     },
                     {
                         "hints": {
@@ -4637,6 +5247,25 @@
             },
             "type": "dsn.telemetry"
         },
+        "deep.space.network:dss65.friendly.name": {
+            "identifier": {
+                "key": "dss65.friendly.name",
+                "namespace": "deep.space.network"
+            },
+            "name": "Friendly name",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "friendly.name",
+                        "name": "Friendly name"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
+        },
         "deep.space.network:dss65.mspa": {
             "identifier": {
                 "key": "dss65.mspa",
@@ -4789,6 +5418,25 @@
                 ]
             },
             "type": "table"
+        },
+        "deep.space.network:dss65.type": {
+            "identifier": {
+                "key": "dss65.type",
+                "namespace": "deep.space.network"
+            },
+            "name": "Type",
+            "telemetry": {
+                "values": [
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "type",
+                        "name": "Type"
+                    }
+                ]
+            },
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss65.updated": {
             "identifier": {
