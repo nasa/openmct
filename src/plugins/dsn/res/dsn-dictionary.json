@@ -555,15 +555,8 @@
                         "hints": {
                             "domain": 1
                         },
-                        "key": "dss14.signal.spacecraft",
+                        "key": "dss14.signal.spacecraft.friendly.name",
                         "name": "Spacecraft"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss14.signal.spacecraft.id",
-                        "name": "Spacecraft ID"
                     }
                 ]
             },
@@ -583,6 +576,13 @@
                         },
                         "key": "dss14.target.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss14.target.friendly.name",
+                        "name": "Friendly name"
                     },
                     {
                         "hints": {
@@ -984,15 +984,8 @@
                         "hints": {
                             "domain": 1
                         },
-                        "key": "dss24.signal.spacecraft",
+                        "key": "dss24.signal.spacecraft.friendly.name",
                         "name": "Spacecraft"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss24.signal.spacecraft.id",
-                        "name": "Spacecraft ID"
                     }
                 ]
             },
@@ -1012,6 +1005,13 @@
                         },
                         "key": "dss24.target.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss24.target.friendly.name",
+                        "name": "Friendly name"
                     },
                     {
                         "hints": {
@@ -1413,15 +1413,8 @@
                         "hints": {
                             "domain": 1
                         },
-                        "key": "dss25.signal.spacecraft",
+                        "key": "dss25.signal.spacecraft.friendly.name",
                         "name": "Spacecraft"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss25.signal.spacecraft.id",
-                        "name": "Spacecraft ID"
                     }
                 ]
             },
@@ -1441,6 +1434,13 @@
                         },
                         "key": "dss25.target.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss25.target.friendly.name",
+                        "name": "Friendly name"
                     },
                     {
                         "hints": {
@@ -1842,15 +1842,8 @@
                         "hints": {
                             "domain": 1
                         },
-                        "key": "dss26.signal.spacecraft",
+                        "key": "dss26.signal.spacecraft.friendly.name",
                         "name": "Spacecraft"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss26.signal.spacecraft.id",
-                        "name": "Spacecraft ID"
                     }
                 ]
             },
@@ -1870,6 +1863,13 @@
                         },
                         "key": "dss26.target.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss26.target.friendly.name",
+                        "name": "Friendly name"
                     },
                     {
                         "hints": {
@@ -2271,15 +2271,8 @@
                         "hints": {
                             "domain": 1
                         },
-                        "key": "dss34.signal.spacecraft",
+                        "key": "dss34.signal.spacecraft.friendly.name",
                         "name": "Spacecraft"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss34.signal.spacecraft.id",
-                        "name": "Spacecraft ID"
                     }
                 ]
             },
@@ -2299,6 +2292,13 @@
                         },
                         "key": "dss34.target.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss34.target.friendly.name",
+                        "name": "Friendly name"
                     },
                     {
                         "hints": {
@@ -2700,15 +2700,8 @@
                         "hints": {
                             "domain": 1
                         },
-                        "key": "dss35.signal.spacecraft",
+                        "key": "dss35.signal.spacecraft.friendly.name",
                         "name": "Spacecraft"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss35.signal.spacecraft.id",
-                        "name": "Spacecraft ID"
                     }
                 ]
             },
@@ -2728,6 +2721,13 @@
                         },
                         "key": "dss35.target.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss35.target.friendly.name",
+                        "name": "Friendly name"
                     },
                     {
                         "hints": {
@@ -3129,15 +3129,8 @@
                         "hints": {
                             "domain": 1
                         },
-                        "key": "dss36.signal.spacecraft",
+                        "key": "dss36.signal.spacecraft.friendly.name",
                         "name": "Spacecraft"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss36.signal.spacecraft.id",
-                        "name": "Spacecraft ID"
                     }
                 ]
             },
@@ -3157,6 +3150,13 @@
                         },
                         "key": "dss36.target.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss36.target.friendly.name",
+                        "name": "Friendly name"
                     },
                     {
                         "hints": {
@@ -3558,15 +3558,8 @@
                         "hints": {
                             "domain": 1
                         },
-                        "key": "dss43.signal.spacecraft",
+                        "key": "dss43.signal.spacecraft.friendly.name",
                         "name": "Spacecraft"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss43.signal.spacecraft.id",
-                        "name": "Spacecraft ID"
                     }
                 ]
             },
@@ -3586,6 +3579,13 @@
                         },
                         "key": "dss43.target.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss43.target.friendly.name",
+                        "name": "Friendly name"
                     },
                     {
                         "hints": {
@@ -3987,15 +3987,8 @@
                         "hints": {
                             "domain": 1
                         },
-                        "key": "dss54.signal.spacecraft",
+                        "key": "dss54.signal.spacecraft.friendly.name",
                         "name": "Spacecraft"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss54.signal.spacecraft.id",
-                        "name": "Spacecraft ID"
                     }
                 ]
             },
@@ -4015,6 +4008,13 @@
                         },
                         "key": "dss54.target.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss54.target.friendly.name",
+                        "name": "Friendly name"
                     },
                     {
                         "hints": {
@@ -4416,15 +4416,8 @@
                         "hints": {
                             "domain": 1
                         },
-                        "key": "dss55.signal.spacecraft",
+                        "key": "dss55.signal.spacecraft.friendly.name",
                         "name": "Spacecraft"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss55.signal.spacecraft.id",
-                        "name": "Spacecraft ID"
                     }
                 ]
             },
@@ -4444,6 +4437,13 @@
                         },
                         "key": "dss55.target.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss55.target.friendly.name",
+                        "name": "Friendly name"
                     },
                     {
                         "hints": {
@@ -4845,15 +4845,8 @@
                         "hints": {
                             "domain": 1
                         },
-                        "key": "dss63.signal.spacecraft",
+                        "key": "dss63.signal.spacecraft.friendly.name",
                         "name": "Spacecraft"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss63.signal.spacecraft.id",
-                        "name": "Spacecraft ID"
                     }
                 ]
             },
@@ -4873,6 +4866,13 @@
                         },
                         "key": "dss63.target.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss63.target.friendly.name",
+                        "name": "Friendly name"
                     },
                     {
                         "hints": {
@@ -5274,15 +5274,8 @@
                         "hints": {
                             "domain": 1
                         },
-                        "key": "dss65.signal.spacecraft",
+                        "key": "dss65.signal.spacecraft.friendly.name",
                         "name": "Spacecraft"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss65.signal.spacecraft.id",
-                        "name": "Spacecraft ID"
                     }
                 ]
             },
@@ -5302,6 +5295,13 @@
                         },
                         "key": "dss65.target.name",
                         "name": "Name"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
+                        "key": "dss65.target.friendly.name",
+                        "name": "Friendly name"
                     },
                     {
                         "hints": {

@@ -162,7 +162,9 @@ define([
             switch (child.tagName) {
                 case 'downSignal':
                 case 'upSignal':
-                    var signal = {};
+                    var signal = {},
+                        spacecraftName = child.getAttribute('spacecraft').toLowerCase();
+
                     signal[key + '.signal.direction'] = child.tagName.substring(0, child.tagName.length - 6);
                     signal[key + '.signal.type'] = child.getAttribute('signalType');
                     signal[key + '.signal.type.debug'] = child.getAttribute('signalTypeDebug');
@@ -171,15 +173,19 @@ define([
                     signal[key + '.signal.power'] = DsnUtils.parseTelemetryAsFloat(child, 'power');
                     signal[key + '.signal.spacecraft'] = child.getAttribute('spacecraft');
                     signal[key + '.signal.spacecraft.id'] = DsnUtils.parseTelemetryAsInteger(child, 'spacecraftId');
+                    signal[key + '.signal.spacecraft.friendly.name'] = this.dsn.data[spacecraftName + '.friendly.name'];
                     dish[key + '.signals'].push(signal);
                     break;
                 case 'target':
-                    var target = {};
+                    var target = {},
+                        targetName = child.getAttribute('name').toLowerCase();
+
                     target[key + '.target.name'] = child.getAttribute('name');
                     target[key + '.target.id'] = DsnUtils.parseTelemetryAsInteger(child, 'id');
                     target[key + '.target.upleg.range'] = DsnUtils.parseTelemetryAsFloat(child, 'uplegRange');
                     target[key + '.target.downleg.range'] = DsnUtils.parseTelemetryAsFloat(child, 'downlegRange');
                     target[key + '.target.rtlt'] = DsnUtils.parseTelemetryAsFloat(child, 'rtlt');
+                    target[key + '.target.friendly.name'] = targetName ? this.dsn.data[targetName + '.friendly.name'] : '';
                     dish[key + '.targets'].push(target);
                     break;
             }
