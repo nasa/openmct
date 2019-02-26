@@ -34,6 +34,7 @@
 
 <script>
 export default {
+    inject: ['table'],
     data: function () {
         return {
             rowTop: (this.rowOffset + this.rowIndex) * this.rowHeight + 'px',
@@ -47,10 +48,6 @@ export default {
             type: Object,
             required: true
         },
-        row: {
-            type: Object,
-            required: true
-        },
         columnWidths: {
             type: Object,
             required: true
@@ -58,7 +55,7 @@ export default {
         rowIndex: {
             type: Number,
             required: false,
-            default: undefined
+            default: 0
         },
         rowOffset: {
             type: Number,
@@ -71,11 +68,14 @@ export default {
             default: 0
         }
     },
+    computed: {
+        rowTop() {
+            return (this.rowOffset + this.rowIndex) * this.rowHeight + 'px';
+        }
+    },
     methods: {
-        calculateRowTop: function (rowOffset) {
-            this.rowTop = (rowOffset + this.rowIndex) * this.rowHeight + 'px';
-        },
-        formatRow: function (row) {
+        renderRowContent: function () {
+            let row = this.table.filteredRows[this.rowOffset + this.rowIndex];
             this.formattedRow = row.getFormattedDatum(this.headers);
             this.rowLimitClass = row.getRowLimitClass();
             this.cellLimitClasses = row.getCellLimitClasses();
@@ -83,11 +83,7 @@ export default {
     },
     // TODO: use computed properties
     watch: {
-        rowOffset: 'calculateRowTop',
-        row: {
-            handler: 'formatRow',
-            deep: false
-        }
+        rowOffset: 'renderRowContent'
     }
 }
 </script>

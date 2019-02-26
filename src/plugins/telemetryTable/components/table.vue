@@ -80,13 +80,13 @@
         <table class="c-table__body c-telemetry-table__body"
                :style="{ height: totalHeight + 'px'}">
             <tbody>
-                <telemetry-table-row v-for="(row, rowIndex) in visibleRows"
+                <telemetry-table-row v-for="rowIndex in (rowEnd - rowOffset)"
                     :headers="headers"
                     :columnWidths="columnWidths"
                     :rowIndex="rowIndex"
                     :rowOffset="rowOffset"
                     :rowHeight="rowHeight"
-                    :row="row">
+                    :rowEnd="rowEnd">
                 </telemetry-table-row>
             </tbody>
         </table>
@@ -295,7 +295,8 @@ export default {
             dropOffsetLeft: undefined,
             isDropTargetActive: false,
             isAutosizeEnabled: configuration.autosize,
-            scrollW: 0
+            scrollW: 0,
+            rowEnd: 0
         }
     },
     computed: {
@@ -359,7 +360,7 @@ export default {
                 }
             }
             this.rowOffset = start;
-            this.visibleRows = filteredRows.slice(start, end);
+            this.rowEnd = end;
         },
         calculateFirstVisibleRow() {
             return Math.floor(this.scrollable.scrollTop / this.rowHeight);
