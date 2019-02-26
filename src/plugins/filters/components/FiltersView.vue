@@ -5,7 +5,8 @@
             <filter-object 
                 v-for="(child, key) in children"
                 :key="key"
-                :filterObject="child">
+                :filterObject="child"
+                @userSelects="persistFilters">
             </filter-object>
         </template>
     </div>
@@ -28,7 +29,8 @@ export default {
     ],
     data() {
         return {
-            isEditing: openmct.editor.isEditing(),
+            isEditing: this.openmct.editor.isEditing(),
+            persistedFilters: this.providedObject.configuration.filters || {},
             children: {}
         }
     },
@@ -39,14 +41,15 @@ export default {
         addChildren(child) {
             let keyString = this.openmct.objects.makeKeyString(child.identifier),
                 metadata = this.openmct.telemetry.getMetadata(child),
-                columnsWithFilters = metadata.valueMetadatas.filter((value) => value.filters),
+                valuesWithFilters = metadata.valueMetadatas.filter((value) => value.filters),
                 childObject = {
                     name: child.name,
                     domainObject: child,
-                    columnsWithFilters
+                    valuesWithFilters
                 };
 
-            if (childObject.columnsWithFilters.length) {
+            if (childObject.valuesWithFilters.length) {
+                childObject.persistedFilters = this.persistedFilters[keyString] || {};
                 this.$set(this.children, keyString, childObject);
             } else {
                 return;
@@ -55,6 +58,13 @@ export default {
         removeChildren(identifier) {
             let keyString = this.openmct.objects.makeKeyString(identifier);
             this.$delete(this.children, keyString);
+        },
+        persistFilters(keyString, userSelects) {
+            this.persistedFilters[keyString] = userSelects;
+
+            this.openmct.objects.mutate(this.providedObject, 'configuration.filters', this.currentFilters);
+
+            this.openmct.objects.get(this.providedObject.identifier).then(object => {console.log(object)});
         }
     },
     mounted(){

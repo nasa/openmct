@@ -15,9 +15,11 @@
     </div>
     <ul class="c-properties__section" v-if="expanded">
         <filter-value
-            v-for="column in filterObject.columnsWithFilters"
+            v-for="column in filterObject.valuesWithFilters"
             :key="column.key"
-            :filterValue="column">
+            :filterValue="column"
+            :persistedFilter="filterObject.persistedFilters[column.key]"
+            @onUserSelect="collectUserSelects">
         </filter-value>
     </ul>
 </div>
@@ -39,17 +41,36 @@ export default {
     data() {
         return {
             expanded: false,
-            objectCssClass: undefined
+            objectCssClass: undefined,
+            userSelects: {}
         }
     },
     methods: {
         toggleExpanded() {
             this.expanded = !this.expanded;
+        },
+        collectUserSelects(key, comparator, valueName, value) {
+            let filterValue = this.userSelects[key];
+
+            if (filterValue && filterValue.comparator === comparator) {
+                if (value === false) {
+                    filterValue.values = filterValue.values.filter(v => v !== valueName);
+                } else {
+                    filterValue.values.push(valueName);
+                }
+            } else {
+                this.userSelects[key] = {
+                    comparator,
+                    values: [value ? valueName : undefined]
+                }
+            }
+
+            this.$emit('userSelects', this.keyString, this.userSelects);
         }
     },
     mounted() {
         let type = this.openmct.types.get(this.filterObject.domainObject.type) || {};
-
+        this.keyString = this.openmct.objects.makeKeyString(this.filterObject.domainObject.identifier);
         this.objectCssClass = type.definition.cssClass;
     }
 }
