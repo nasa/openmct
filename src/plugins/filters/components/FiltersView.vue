@@ -1,14 +1,12 @@
 <template>
-    <div class="c-properties">
+    <div>
         <template v-if="isEditing && Object.keys(children).length">
-            <div class="c-properties__header">Filters</div>
-            <ul class="c-properties__section">
-                <filter-object 
-                    v-for="(child, key) in children"
-                    :key="key"
-                    :filterObject="child">
-                </filter-object>
-            </ul>
+            <h2 class="c-properties__header">Filters</h2>
+            <filter-object 
+                v-for="(child, key) in children"
+                :key="key"
+                :filterObject="child">
+            </filter-object>
         </template>
     </div>
 </template>

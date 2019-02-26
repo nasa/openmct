@@ -34,18 +34,22 @@ define([
                     hints: {
                         range: 1
                     },
-                    filters: ['equals']
-                    /*
-                    filters: [{
-                        comparator: 'equals',
-                        possibleValues: [1,2,3,4]
-                    }]
-                    */
+                    filters: [
+                        {
+                            comparator: 'equals',
+                            possibleValues: [1,2,3,4]
+                        },
+                        {
+                            comparator: 'not-equals',
+                            possibleValues: [1,2,3,4]
+                        }
+                    ]
                 },
                 {
                     key: "cos",
                     name: "Cosine",
                     formatString: '%0.2f',
+                    filters: ['equals', 'not-equals'],
                     hints: {
                         range: 2
                     }
