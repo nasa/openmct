@@ -62,9 +62,7 @@ export default {
         persistFilters(keyString, userSelects) {
             this.persistedFilters[keyString] = userSelects;
 
-            this.openmct.objects.mutate(this.providedObject, 'configuration.filters', this.currentFilters);
-
-            this.openmct.objects.get(this.providedObject.identifier).then(object => {console.log(object)});
+            this.openmct.objects.mutate(this.providedObject, 'configuration.filters', this.persistedFilters);
         }
     },
     mounted(){

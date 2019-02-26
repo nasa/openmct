@@ -43,7 +43,7 @@ export default {
             this.$emit('onUserSelect', this.filterValue.key, comparator, value, event.target.checked);
         },
         isChecked(key, value) {
-            if (this.persistedFilter.comparator === key && this.persistedFilter.values.includes(value)) {
+            if (this.persistedFilter && this.persistedFilter.comparator === key && this.persistedFilter.values.includes(value)) {
                 return true;
             } else {
                 return false;
