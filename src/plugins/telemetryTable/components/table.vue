@@ -83,7 +83,7 @@
                 <telemetry-table-row v-for="rowIndex in (rowEnd - rowOffset)"
                     :headers="headers"
                     :columnWidths="columnWidths"
-                    :rowIndex="rowIndex"
+                    :rowIndex="rowIndex - 1"
                     :rowOffset="rowOffset"
                     :rowHeight="rowHeight"
                     :rowEnd="rowEnd">
@@ -452,10 +452,10 @@ export default {
             } else {
                 sizingRow = rows;
             }
-            if (!this.sizingRows[sizingRow.objectKeyString]) {
+            /*if (!this.sizingRows[sizingRow.objectKeyString]) {
                 this.sizingRows[sizingRow.objectKeyString] = sizingRow;
                 this.$nextTick().then(this.calculateColumnWidths);
-            }
+            }*/
 
             if (!this.updatingView) {
                 this.updatingView = true;

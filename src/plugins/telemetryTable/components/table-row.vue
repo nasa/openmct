@@ -36,11 +36,11 @@
 export default {
     inject: ['table'],
     data: function () {
+        let row = this.table.filteredRows.rows[this.rowOffset + this.rowIndex];
         return {
-            rowTop: (this.rowOffset + this.rowIndex) * this.rowHeight + 'px',
-            formattedRow: this.row.getFormattedDatum(this.headers),
-            rowLimitClass: this.row.getRowLimitClass(),
-            cellLimitClasses: this.row.getCellLimitClasses()
+            formattedRow: row.getFormattedDatum(this.headers),
+            rowLimitClass: row.getRowLimitClass(),
+            cellLimitClasses: row.getCellLimitClasses()
         }
     },
     props: {
@@ -68,6 +68,12 @@ export default {
             default: 0
         }
     },
+    mounted() {
+        this.table.filteredRows.on('sort', this.renderRowContent);
+    },
+    destroy() {
+        this.table.filteredRows.off('sort', this.renderRowContent);
+    },
     computed: {
         rowTop() {
             return (this.rowOffset + this.rowIndex) * this.rowHeight + 'px';
@@ -75,7 +81,7 @@ export default {
     },
     methods: {
         renderRowContent: function () {
-            let row = this.table.filteredRows[this.rowOffset + this.rowIndex];
+            let row = this.table.filteredRows.rows[this.rowOffset + this.rowIndex];
             this.formattedRow = row.getFormattedDatum(this.headers);
             this.rowLimitClass = row.getRowLimitClass();
             this.cellLimitClasses = row.getCellLimitClasses();
