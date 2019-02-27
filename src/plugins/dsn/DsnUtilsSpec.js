@@ -21,5 +21,39 @@ define([
 
             expect(identifer).toBe('deep.space.network:madrid');
         });
+
+        describe('parses telemetry', function () {
+            var downSignal;
+
+            beforeEach(function () {
+                downSignal = document.createElement('downSignal');
+            });
+
+            it('as a float', function () {
+                var dataRate;
+
+                downSignal.setAttribute('dataRate', '160.002853');
+                dataRate = DsnUtils.parseTelemetryAsFloatOrString(downSignal, 'dataRate');
+                expect(dataRate).toBe(160.002853);
+            });
+
+            it('as a string when a float can not be parsed', function () {
+                var dataRate,
+                    frequency,
+                    power;
+
+                downSignal.setAttribute('dataRate', '');
+                downSignal.setAttribute('frequency', ' ');
+                downSignal.setAttribute('power', 'none');
+
+                dataRate = DsnUtils.parseTelemetryAsFloatOrString(downSignal, 'dataRate');
+                frequency = DsnUtils.parseTelemetryAsFloatOrString(downSignal, 'frequency');
+                power = DsnUtils.parseTelemetryAsFloatOrString(downSignal, 'power');
+
+                expect(dataRate).toBe('');
+                expect(frequency).toBe(' ');
+                expect(power).toBe('none');
+            });
+        });
     });
 });
