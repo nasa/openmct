@@ -24,7 +24,7 @@ define([
     /**
      * Parses an element's attribute as a float.  If it's not a number, it will return
      * the attribute value as is.
-     * 
+     *
      * @param {Element} element - The element to parse.
      * @param {string} attribute - The name of the attribute to parse.
      * @returns {(number|string)} The parsed attribute as a floating point number or a string.
@@ -38,7 +38,7 @@ define([
     /**
      * Parses an element's attribute as an integer.  If it's not a number, it will return
      * the attribute value as is.
-     * 
+     *
      * @param {Element} element - The element to parse.
      * @param {string} attribute - The name of the attribute to parse.
      * @returns {(number|string)} The parsed attribute as an integer or a string.
