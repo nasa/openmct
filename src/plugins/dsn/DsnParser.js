@@ -144,9 +144,9 @@ define([
         dish[key + '.name'] = dishElement.getAttribute('name');
         dish[key + '.friendly.name'] = this.dsn.data[key + '.friendly.name'];
         dish[key + '.type'] = this.dsn.data[key + '.type'];
-        dish[key + '.azimuth.angle'] = DsnUtils.parseTelemetryAsFloat(dishElement, 'azimuthAngle');
-        dish[key + '.elevation.angle'] = DsnUtils.parseTelemetryAsFloat(dishElement, 'elevationAngle');
-        dish[key + '.wind.speed'] = DsnUtils.parseTelemetryAsFloat(dishElement, 'windSpeed');
+        dish[key + '.azimuth.angle'] = DsnUtils.parseTelemetryAsFloatOrString(dishElement, 'azimuthAngle');
+        dish[key + '.elevation.angle'] = DsnUtils.parseTelemetryAsFloatOrString(dishElement, 'elevationAngle');
+        dish[key + '.wind.speed'] = DsnUtils.parseTelemetryAsFloatOrString(dishElement, 'windSpeed');
         dish[key + '.mspa'] = dishElement.getAttribute('isMSPA') === 'true';
         dish[key + '.array'] = dishElement.getAttribute('isArray') === 'true';
         dish[key + '.ddor'] = dishElement.getAttribute('isDDOR') === 'true';
@@ -168,11 +168,11 @@ define([
                     signal[key + '.signal.direction'] = child.tagName.substring(0, child.tagName.length - 6);
                     signal[key + '.signal.type'] = child.getAttribute('signalType');
                     signal[key + '.signal.type.debug'] = child.getAttribute('signalTypeDebug');
-                    signal[key + '.signal.data.rate'] = DsnUtils.parseTelemetryAsFloat(child, 'dataRate');
-                    signal[key + '.signal.frequency'] = DsnUtils.parseTelemetryAsFloat(child, 'frequency');
-                    signal[key + '.signal.power'] = DsnUtils.parseTelemetryAsFloat(child, 'power');
+                    signal[key + '.signal.data.rate'] = DsnUtils.parseTelemetryAsFloatOrString(child, 'dataRate');
+                    signal[key + '.signal.frequency'] = DsnUtils.parseTelemetryAsFloatOrString(child, 'frequency');
+                    signal[key + '.signal.power'] = DsnUtils.parseTelemetryAsFloatOrString(child, 'power');
                     signal[key + '.signal.spacecraft'] = child.getAttribute('spacecraft');
-                    signal[key + '.signal.spacecraft.id'] = DsnUtils.parseTelemetryAsInteger(child, 'spacecraftId');
+                    signal[key + '.signal.spacecraft.id'] = DsnUtils.parseTelemetryAsIntegerOrString(child, 'spacecraftId');
                     signal[key + '.signal.spacecraft.friendly.name'] = this.dsn.data[spacecraftName + '.friendly.name'];
                     dish[key + '.signals'].push(signal);
                     break;
@@ -181,10 +181,10 @@ define([
                         targetName = child.getAttribute('name').toLowerCase();
 
                     target[key + '.target.name'] = child.getAttribute('name');
-                    target[key + '.target.id'] = DsnUtils.parseTelemetryAsInteger(child, 'id');
-                    target[key + '.target.upleg.range'] = DsnUtils.parseTelemetryAsFloat(child, 'uplegRange');
-                    target[key + '.target.downleg.range'] = DsnUtils.parseTelemetryAsFloat(child, 'downlegRange');
-                    target[key + '.target.rtlt'] = DsnUtils.parseTelemetryAsFloat(child, 'rtlt');
+                    target[key + '.target.id'] = DsnUtils.parseTelemetryAsIntegerOrString(child, 'id');
+                    target[key + '.target.upleg.range'] = DsnUtils.parseTelemetryAsFloatOrString(child, 'uplegRange');
+                    target[key + '.target.downleg.range'] = DsnUtils.parseTelemetryAsFloatOrString(child, 'downlegRange');
+                    target[key + '.target.rtlt'] = DsnUtils.parseTelemetryAsFloatOrString(child, 'rtlt');
                     target[key + '.target.friendly.name'] = targetName ? this.dsn.data[targetName + '.friendly.name'] : '';
                     dish[key + '.targets'].push(target);
                     break;

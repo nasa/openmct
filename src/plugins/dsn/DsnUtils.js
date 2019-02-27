@@ -29,7 +29,7 @@ define([
      * @param {string} attribute - The name of the attribute to parse.
      * @returns {(number|string)} The parsed attribute as a floating point number or a string.
      */
-    function parseTelemetryAsFloat(element, attribute) {
+    function parseTelemetryAsFloatOrString(element, attribute) {
         return isNaN(parseFloat(element.getAttribute(attribute)))
             ? element.getAttribute(attribute)
             : parseFloat(element.getAttribute(attribute));
@@ -43,7 +43,7 @@ define([
      * @param {string} attribute - The name of the attribute to parse.
      * @returns {(number|string)} The parsed attribute as an integer or a string.
      */
-    function parseTelemetryAsInteger(element, attribute) {
+    function parseTelemetryAsIntegerOrString(element, attribute) {
         return isNaN(parseInt(element.getAttribute(attribute)))
             ? element.getAttribute(attribute)
             : parseInt(element.getAttribute(attribute), 10);
@@ -62,8 +62,8 @@ define([
 
     return {
         deserializeIdentifier: deserializeIdentifier,
-        parseTelemetryAsFloat: parseTelemetryAsFloat,
-        parseTelemetryAsInteger: parseTelemetryAsInteger,
+        parseTelemetryAsFloatOrString: parseTelemetryAsFloatOrString,
+        parseTelemetryAsIntegerOrString: parseTelemetryAsIntegerOrString,
         serializeIdentifier: serializeIdentifier
     };
 });
