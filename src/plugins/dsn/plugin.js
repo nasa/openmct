@@ -149,6 +149,25 @@ define([
                 key: DSN_KEY
             });
 
+            // Antenna formatters
+            openmct.telemetry.addFormat({
+                key: 'angle-to-string',
+                format: function (angle) {
+                    // Assumes angle is in degrees
+                    return typeof angle === 'number'
+                        ? angle.toFixed(2) + ' deg'
+                        : angle;
+                },
+                parse: function (angle) {
+                    return typeof angle === 'string'
+                        ? parseFloat(angle.slice(0, -4))
+                        : angle;
+                },
+                validate: function (angle) {
+                    return !isNaN(parseFloat(angle.slice(0, -4)));
+                }
+            });
+
             dictionary = JSON.parse(baseDictionary);
 
             getDsnConfiguration();

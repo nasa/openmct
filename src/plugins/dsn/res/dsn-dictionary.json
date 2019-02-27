@@ -282,6 +282,7 @@
                         "name": "Type"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -290,6 +291,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -374,6 +376,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -433,6 +436,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -711,6 +715,7 @@
                         "name": "Type"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -719,6 +724,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -803,6 +809,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -862,6 +869,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1140,6 +1148,7 @@
                         "name": "Type"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1148,6 +1157,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1232,6 +1242,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1291,6 +1302,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1569,6 +1581,7 @@
                         "name": "Type"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1577,6 +1590,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1661,6 +1675,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1720,6 +1735,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1998,6 +2014,7 @@
                         "name": "Type"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2006,6 +2023,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2090,6 +2108,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2149,6 +2168,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2427,6 +2447,7 @@
                         "name": "Type"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2435,6 +2456,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2519,6 +2541,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2578,6 +2601,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2856,6 +2880,7 @@
                         "name": "Type"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2864,6 +2889,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2948,6 +2974,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3007,6 +3034,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3285,6 +3313,7 @@
                         "name": "Type"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3293,6 +3322,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3377,6 +3407,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3436,6 +3467,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3714,6 +3746,7 @@
                         "name": "Type"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3722,6 +3755,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3806,6 +3840,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3865,6 +3900,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4143,6 +4179,7 @@
                         "name": "Type"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4151,6 +4188,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4235,6 +4273,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4294,6 +4333,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4572,6 +4612,7 @@
                         "name": "Type"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4580,6 +4621,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4664,6 +4706,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4723,6 +4766,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -5001,6 +5045,7 @@
                         "name": "Type"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -5009,6 +5054,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -5093,6 +5139,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -5152,6 +5199,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "angle-to-string",
                         "hints": {
                             "domain": 1
                         },
