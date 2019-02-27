@@ -36,18 +36,24 @@
 </template>
 <script>
 export default {
-    props: ["filterValue", 'persistedFilters'],
+    props: {
+        filterValue: Object, 
+        persistedFilters: {
+            type: Object,
+            default: () => {
+                return {
+                    value: '',
+                    values: []
+                }
+            }
+        }
+    },
     data() {
-        let persistedFilters = this.persistedFilters || {
-            value: '',
-            values: []
-        };
-
         return {
             expanded: false,
-            comparator: persistedFilters.comparator,
-            value: persistedFilters.value,
-            values: persistedFilters.values
+            comparator: this.persistedFilters.comparator,
+            value: this.persistedFilters.value,
+            values: this.persistedFilters.values
         }
     },
     methods: {

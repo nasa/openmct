@@ -38,7 +38,15 @@ export default {
     components: {
         FilterValue
     },
-    props: ["filterObject", "persistedFilters"],
+    props: {
+        filterObject: Object, 
+        persistedFilters: {
+            type: Object,
+            default: () => {
+                return {};
+            }
+        }
+    },
     data() {
         return {
             expanded: false,
