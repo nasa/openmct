@@ -300,6 +300,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -668,6 +669,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -733,6 +735,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1101,6 +1104,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1166,6 +1170,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1534,6 +1539,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1599,6 +1605,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1967,6 +1974,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2032,6 +2040,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2400,6 +2409,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2465,6 +2475,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2833,6 +2844,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2898,6 +2910,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3266,6 +3279,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3331,6 +3345,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3699,6 +3714,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3764,6 +3780,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4132,6 +4149,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4197,6 +4215,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4565,6 +4584,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4630,6 +4650,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4998,6 +5019,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -5063,6 +5085,7 @@
                         "units": "deg"
                     },
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -5431,6 +5454,7 @@
             "telemetry": {
                 "values": [
                     {
+                        "format": "wind-speed-to-string",
                         "hints": {
                             "domain": 1
                         },

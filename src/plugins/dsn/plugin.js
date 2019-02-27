@@ -168,6 +168,24 @@ define([
                 }
             });
 
+            openmct.telemetry.addFormat({
+                key: 'wind-speed-to-string',
+                format: function (windSpeed) {
+                    // Assumes wind speed is in km/hr
+                    return typeof windSpeed === 'number'
+                        ? windSpeed.toFixed(2) + ' km/hr'
+                        : windSpeed;
+                },
+                parse: function (windSpeed) {
+                    return typeof windSpeed === 'string'
+                        ? parseFloat(windSpeed.slice(0, -6))
+                        : windSpeed;
+                },
+                validate: function (windSpeed) {
+                    return !isNaN(parseFloat(windSpeed.slice(0, -6)));
+                }
+            });
+
             dictionary = JSON.parse(baseDictionary);
 
             getDsnConfiguration();
