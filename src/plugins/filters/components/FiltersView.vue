@@ -6,7 +6,8 @@
                 v-for="(child, key) in children"
                 :key="key"
                 :filterObject="child"
-                @userSelects="persistFilters">
+                :persistedFilters="persistedFilters[key]"
+                @updateFilters="persistFilters">
             </filter-object>
         </template>
     </div>
@@ -49,7 +50,6 @@ export default {
                 };
 
             if (childObject.valuesWithFilters.length) {
-                childObject.persistedFilters = this.persistedFilters[keyString] || {};
                 this.$set(this.children, keyString, childObject);
             } else {
                 return;
@@ -61,21 +61,27 @@ export default {
         },
         persistFilters(keyString, userSelects) {
             this.persistedFilters[keyString] = userSelects;
-
             this.openmct.objects.mutate(this.providedObject, 'configuration.filters', this.persistedFilters);
+        },
+        updatePersistedFilters(filters) {
+            this.persistedFilters = filters;
         }
     },
     mounted(){
         this.openmct.editor.on('isEditing', this.toggleIsEditing);
+
         this.composition = this.openmct.composition.get(this.providedObject);
         this.composition.on('add', this.addChildren);
         this.composition.on('remove', this.removeChildren);
         this.composition.load();
+
+        this.unobserve = this.openmct.objects.observe(this.providedObject, 'configuration.filters', this.updatePersistedFilters);
     },
     beforeDestroy() {
         this.openmct.editor.off('isEditing', this.toggleIsEditing);
         this.composition.off('add', this.addChildren);
         this.composition.off('remove', this.removeChildren);
+        this.unobserve();
     }
 }
 </script>

@@ -18,8 +18,9 @@
             v-for="column in filterObject.valuesWithFilters"
             :key="column.key"
             :filterValue="column"
-            :persistedFilter="filterObject.persistedFilters[column.key]"
-            @onUserSelect="collectUserSelects">
+            :persistedFilters="persistedFilters[column.key]"
+            @onUserSelect="collectUserSelects"
+            @onTextEnter="updateTextFilter">
         </filter-value>
     </ul>
 </div>
@@ -37,12 +38,12 @@ export default {
     components: {
         FilterValue
     },
-    props: ["filterObject"],
+    props: ["filterObject", "persistedFilters"],
     data() {
         return {
             expanded: false,
             objectCssClass: undefined,
-            userSelects: {}
+            updatedFilters: this.persistedFilters
         }
     },
     methods: {
@@ -50,7 +51,7 @@ export default {
             this.expanded = !this.expanded;
         },
         collectUserSelects(key, comparator, valueName, value) {
-            let filterValue = this.userSelects[key];
+            let filterValue = this.updatedFilters[key];
 
             if (filterValue && filterValue.comparator === comparator) {
                 if (value === false) {
@@ -59,13 +60,21 @@ export default {
                     filterValue.values.push(valueName);
                 }
             } else {
-                this.userSelects[key] = {
+                this.updatedFilters[key] = {
                     comparator,
                     values: [value ? valueName : undefined]
                 }
             }
 
-            this.$emit('userSelects', this.keyString, this.userSelects);
+            this.$emit('updateFilters', this.keyString, this.updatedFilters);
+        },
+        updateTextFilter(key, comparator, value) {
+            this.updatedFilters[key] = {
+                comparator,
+                value
+            };
+
+            this.$emit('updateFilters', this.keyString, this.updatedFilters);
         }
     },
     mounted() {

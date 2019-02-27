@@ -8,7 +8,11 @@
                 :key="index">
 
                 <template v-if="!filter.possibleValues">
-                    <input type="text" :id="`${filter}filterControl`" placeholder="Enter Value">
+                    <input type="text" 
+                        :id="`${filter}filterControl`"  
+                        placeholder="Enter Value"
+                        :value="persistedValue(filter)"
+                        @blur="updateFilterValue($event, filter)">
                 </template>
                 
                 <template v-if="filter.possibleValues">
@@ -32,22 +36,39 @@
 </template>
 <script>
 export default {
-    props: ["filterValue", 'persistedFilter'],
+    props: ["filterValue", 'persistedFilters'],
     data() {
+        let persistedFilters = this.persistedFilters || {
+            value: '',
+            values: []
+        };
+
         return {
-            expanded: false
+            expanded: false,
+            comparator: persistedFilters.comparator,
+            value: persistedFilters.value,
+            values: persistedFilters.values
         }
     },
     methods: {
         onUserSelect(event, comparator, value){
             this.$emit('onUserSelect', this.filterValue.key, comparator, value, event.target.checked);
         },
-        isChecked(key, value) {
-            if (this.persistedFilter && this.persistedFilter.comparator === key && this.persistedFilter.values.includes(value)) {
+        isChecked(comparator, value) {
+            if (this.comparator === comparator && this.values.includes(value)) {
                 return true;
             } else {
                 return false;
             }
+        },
+        persistedValue(comparator) {
+            if (this.comparator === comparator) {
+                return this.value;
+            }
+        },
+        updateFilterValue(event, comparator) {
+            this.value = event.target.value;
+            this.$emit('onTextEnter', this.filterValue.key, comparator, this.value);
         }
     }
 }
