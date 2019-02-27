@@ -54,6 +54,32 @@ define([
                 expect(frequency).toBe(' ');
                 expect(power).toBe('none');
             });
+
+            it('as an integer', function () {
+                var dataRate;
+
+                downSignal.setAttribute('dataRate', '160');
+                dataRate = DsnUtils.parseTelemetryAsIntegerOrString(downSignal, 'dataRate');
+                expect(dataRate).toBe(160);
+            });
+
+            it('as a string when an integer can not be parsed', function () {
+                var dataRate,
+                    frequency,
+                    power;
+
+                downSignal.setAttribute('dataRate', '');
+                downSignal.setAttribute('frequency', ' ');
+                downSignal.setAttribute('power', 'none');
+
+                dataRate = DsnUtils.parseTelemetryAsIntegerOrString(downSignal, 'dataRate');
+                frequency = DsnUtils.parseTelemetryAsIntegerOrString(downSignal, 'frequency');
+                power = DsnUtils.parseTelemetryAsIntegerOrString(downSignal, 'power');
+
+                expect(dataRate).toBe('');
+                expect(frequency).toBe(' ');
+                expect(power).toBe('none');
+            });
         });
     });
 });
