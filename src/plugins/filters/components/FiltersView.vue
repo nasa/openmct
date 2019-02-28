@@ -31,7 +31,7 @@ export default {
     data() {
         return {
             isEditing: this.openmct.editor.isEditing(),
-            persistedFilters: this.providedObject.configuration.filters || {},
+            persistedFilters: this.providedObject.configuration ? this.providedObject.configuration.filters : {},
             children: {}
         }
     },
@@ -58,6 +58,7 @@ export default {
         removeChildren(identifier) {
             let keyString = this.openmct.objects.makeKeyString(identifier);
             this.$delete(this.children, keyString);
+            this.persistFilters(keyString);
         },
         persistFilters(keyString, userSelects) {
             this.persistedFilters[keyString] = userSelects;
