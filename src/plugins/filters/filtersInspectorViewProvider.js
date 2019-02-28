@@ -38,7 +38,11 @@ define([
                 }
                 let object = selection[0].context.item;
 
-                return object && (object.type === 'table' || object.type === 'plot');
+                return object && (
+                    object.type === 'table' ||
+                    object.type === 'telemetry.plot.stacked' ||
+                    object.type === 'telemetry.plot.overlay'
+                );
             },
             view: function (selection) {
                 let component;
