@@ -49,7 +49,7 @@ define(function () {
 
         getFormattedValue(telemetryDatum) {
             let formattedValue = this.formatter.format(telemetryDatum);
-            if (typeof formattedValue !== 'string') {
+            if (formattedValue !== undefined && typeof formattedValue !== 'string') {
                 return formattedValue.toString();
             } else {
                 return formattedValue;
