@@ -64,12 +64,7 @@
                     }
 
                     if (domainObject) {
-                        if (formKeys.length > 0) {
-                            toolbarItem.value = this.getFormValue(domainObject, toolbarItem);
-                        } else {
-                            toolbarItem.value = _.get(domainObject, this.getItemProperty(item));
-                        }
-
+                        toolbarItem.value = this.getValue(domainObject, toolbarItem);
                         this.registerListener(domainObject);
                     }
 
@@ -112,12 +107,7 @@
 
                         if (newObject) {
                             toolbarItem.domainObject = newObject;
-
-                            if (toolbarItem.formKeys) {
-                                toolbarItem.value = this.getFormValue(newObject, toolbarItem);
-                            } else {
-                                toolbarItem.value = _.get(newObject, this.getItemProperty(item));
-                            }
+                            toolbarItem.value = this.getValue(newObject, toolbarItem);
                         }
                     }
 
@@ -132,15 +122,43 @@
                 });
                 this.toolbarUpdateScheduled = false;
             },
+            getValue(domainObject, toolbarItem) {
+                let value = undefined;
+
+                if (toolbarItem.formKeys) {
+                    value = this.getFormValue(domainObject, toolbarItem);
+                } else {
+                    let applicableSelectedItems = toolbarItem.applicableSelectedItems;
+
+                    if (!applicableSelectedItems) {
+                        value = _.get(domainObject, this.getItemProperty(toolbarItem));
+                    } else {
+                        let values = [];
+                        applicableSelectedItems.forEach(selectionPath => {
+                            values.push(_.get(domainObject, this.getItemProperty(toolbarItem, selectionPath)));
+                        });
+
+                        // If all values are the same, use the value, otherwise show a 'not-specific' icon.
+                        if (values.every(value => value === values[0])) {
+                            value = values[0];
+                        } else {
+                            toolbarItem.icon = 'icon-non-specific';
+                        }
+                    }
+                }
+
+                return value;
+            },
             getFormValue(domainObject, toolbarItem) {
                 let value = {};
                 toolbarItem.formKeys.map(key => {
+                    // TODO:
                     value[key] = _.get(domainObject, this.getItemProperty(toolbarItem) + "." + key);
                 });
                 return value;
             },
-            getItemProperty(item) {
-                return (typeof item.property === "function") ? item.property() : item.property;
+            getItemProperty(item, selectionPath) {
+                return (typeof item.property === "function") ? item.property(selectionPath) : item.property;
             },
             removeListeners() {
                 if (this.unObserveObjects) {
@@ -159,6 +177,7 @@
                     if (domainObject) {
                         let id = this.openmct.objects.makeKeyString(domainObject.identifier);
 
+                        // TODO:
                         if (changedItemId === id && this.getItemProperty(item) === this.getItemProperty(s)) {
                             toolbarItem.value = value;
                         }
@@ -173,12 +192,17 @@
                     this.structure.map(s => {
                         if (s.formKeys) {
                             s.formKeys.forEach(key => {
-                                this.openmct.objects.mutate(item.domainObject, this.getItemProperty(item) + "." + key, value[key]);
+                                item.applicableSelectedItems.forEach(selectionPath => {
+                                    this.openmct.objects.mutate(item.domainObject,
+                                        this.getItemProperty(item, selectionPath) + "." + key, value[key]);
+                                });   
                             });
                         }
                     });
                 } else {
-                    this.openmct.objects.mutate(item.domainObject, this.getItemProperty(item), value);
+                    item.applicableSelectedItems.forEach(selectionPath => {
+                        this.openmct.objects.mutate(item.domainObject, this.getItemProperty(item, selectionPath), value);    
+                    });
                 }
             },
             triggerMethod(item, event) {
