@@ -250,91 +250,103 @@ define([], function () {
                 }
 
                 function getXInput(selectedParent, selection) {
-                    return {
-                        control: "input",
-                        type: "number",
-                        domainObject: selectedParent,
-                        applicableSelectedItems: getAllTypes(selection),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath) + ".x";
-                        },
-                        label: "X:",
-                        title: "X position"
-                    };
+                    if (selection.length === 1) {
+                        return {
+                            control: "input",
+                            type: "number",
+                            domainObject: selectedParent,
+                            applicableSelectedItems: getAllTypes(selection),
+                            property: function (selectionPath) {
+                                return getPath(selectionPath) + ".x";
+                            },
+                            label: "X:",
+                            title: "X position"
+                        };
+                    }
                 }
 
                 function getYInput(selectedParent, selection) {
-                    return {
-                        control: "input",
-                        type: "number",
-                        domainObject: selectedParent,
-                        applicableSelectedItems: getAllTypes(selection),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath) + ".y";
-                        },
-                        label: "Y:",
-                        title: "Y position",
-                    };
+                    if (selection.length === 1) {
+                        return {
+                            control: "input",
+                            type: "number",
+                            domainObject: selectedParent,
+                            applicableSelectedItems: getAllTypes(selection),
+                            property: function (selectionPath) {
+                                return getPath(selectionPath) + ".y";
+                            },
+                            label: "Y:",
+                            title: "Y position",
+                        };
+                    }
                 }
 
                 function getWidthInput(selectedParent, selection) {
-                    return {
-                        control: 'input',
-                        type: 'number',
-                        domainObject: selectedParent,
-                        applicableSelectedItems: getAllTypes(selection),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath) + ".width";
-                        },
-                        label: 'W:',
-                        title: 'Resize object width'
-                    };
+                    if (selection.length === 1) {
+                        return {
+                            control: 'input',
+                            type: 'number',
+                            domainObject: selectedParent,
+                            applicableSelectedItems: getAllTypes(selection),
+                            property: function (selectionPath) {
+                                return getPath(selectionPath) + ".width";
+                            },
+                            label: 'W:',
+                            title: 'Resize object width'
+                        };
+                    }
                 }
 
                 function getHeightInput(selectedParent, selection) {
-                    return {
-                        control: 'input',
-                        type: 'number',
-                        domainObject: selectedParent,
-                        applicableSelectedItems: getAllTypes(selection),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath) + ".width";
-                        },
-                        label: 'W:',
-                        title: 'Resize object width'
-                    };
+                    if (selection.length === 1) {
+                        return {
+                            control: 'input',
+                            type: 'number',
+                            domainObject: selectedParent,
+                            applicableSelectedItems: getAllTypes(selection),
+                            property: function (selectionPath) {
+                                return getPath(selectionPath) + ".width";
+                            },
+                            label: 'W:',
+                            title: 'Resize object width'
+                        };
+                    }
                 }
 
                 function getX2Input(selectedParent, selection) {
-                    return {
-                        control: "input",
-                        type: "number",
-                        domainObject: selectedParent,
-                        applicableSelectedItems: selection.filter(selectionPath => {
-                            return selectionPath[0].context.layoutItem.type === 'line-view';
-                        }),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath) + ".x2";
-                        },
-                        label: "X2:",
-                        title: "X2 position"
-                    };
+                    if (selection.length === 1) {
+                        return {
+                            control: "input",
+                            type: "number",
+                            domainObject: selectedParent,
+                            applicableSelectedItems: selection.filter(selectionPath => {
+                                return selectionPath[0].context.layoutItem.type === 'line-view';
+                            }),
+                            property: function (selectionPath) {
+                                return getPath(selectionPath) + ".x2";
+                            },
+                            label: "X2:",
+                            title: "X2 position"
+                        };
+                    }
                 }
 
                 function getY2Input(selectedParent, selection) {
-                    return {
-                        control: "input",
-                        type: "number",
-                        domainObject: selectedParent,
-                        applicableSelectedItems: selection.filter(selectionPath => {
-                            return selectionPath[0].context.layoutItem.type === 'line-view';
-                        }),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath) + ".y2";
-                        },
-                        label: "Y2:",
-                        title: "Y2 position",
-                    };
+                    if (selection.length === 1) {
+                        return {
+                            control: "input",
+                            type: "number",
+                            domainObject: selectedParent,
+                            applicableSelectedItems: selection.filter(selectionPath => {
+                                return selectionPath[0].context.layoutItem.type === 'line-view';
+                            }),
+                            property: function (selectionPath) {
+                                return getPath(selectionPath) + ".y2";
+                            },
+                            label: "Y2:",
+                            title: "Y2 position",
+                        };
+                    }
                 }
 
                 function getSizeMenu(selectedParent, selection) {
@@ -622,7 +634,7 @@ define([], function () {
                     }
                 }
 
-                return toolbar;
+                return toolbar.filter(control => control !== undefined);
             }
         }
     }

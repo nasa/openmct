@@ -20,6 +20,8 @@
 
     import _ from 'lodash';
 
+    const ICON_NON_SPECIFIC = 'icon-object-unknown';
+
     export default {
         inject: ['openmct'],
         components: {
@@ -142,7 +144,7 @@
                         if (values.every(value => value === values[0])) {
                             value = values[0];
                         } else {
-                            toolbarItem.icon = 'icon-non-specific';
+                            toolbarItem.icon = toolbarItem.icon + ' ' + ICON_NON_SPECIFIC;
                         }
                     }
                 }
