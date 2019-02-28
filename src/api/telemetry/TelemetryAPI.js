@@ -297,7 +297,7 @@ define([
      * @returns {Function} a function which may be called to terminate
      *          the subscription
      */
-    TelemetryAPI.prototype.subscribe = function (domainObject, callback) {
+    TelemetryAPI.prototype.subscribe = function (domainObject, callback, options) {
         var provider = this.findSubscriptionProvider(domainObject);
 
         if (!this.subscribeCache) {
@@ -315,7 +315,7 @@ define([
                     .subscribe(domainObject, function (value) {
                         subscriber.callbacks.forEach(function (cb) {
                             cb(value);
-                        });
+                        }, options);
                     });
             } else {
                 subscriber.unsubscribe = function () {};
