@@ -53,6 +53,8 @@ define([
             this.isTelemetryObject = this.isTelemetryObject.bind(this);
             this.refreshData = this.refreshData.bind(this);
             this.requestDataFor = this.requestDataFor.bind(this);
+            this.updateFilters = this.updateFilters.bind(this);
+            this.buildOptionsFromConfiguration = this.buildOptionsFromConfiguration.bind(this);
 
             this.filterObserver = undefined;
 
@@ -106,12 +108,12 @@ define([
         }
 
         updateFilters() {
-            let keyString = this.openmct.objects.makeKeyString(this.domainObject);
-            this.telemetryObjects.forEach(this.boundedRows.removeAllRowsForObject);
-            this.boundedRows.removeAllRowsForObject(keyString);
-            this.unsubscribe(keyString);
-            this.telemetryObjects.forEach(this.requestDataFor);
-            this.telemetryObjects.forEach(this.subscribeTo);
+            this.filteredRows.clear();
+            this.boundedRows.clear();
+            Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
+
+            this.telemetryObjects.forEach(this.requestDataFor.bind(this));
+            this.telemetryObjects.forEach(this.subscribeTo.bind(this));
         }
 
         removeTelemetryObject(objectIdentifier) {
@@ -190,6 +192,13 @@ define([
 
         isTelemetryObject(domainObject) {
             return domainObject.hasOwnProperty('telemetry');
+        }
+
+        buildOptionsFromConfiguration(telemetryObject) {
+            let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier),
+                filters = this.domainObject.configuration.filters && this.domainObject.configuration.filters[keyString];
+
+            return {filters} || {};
         }
 
         unsubscribe(keyString) {
