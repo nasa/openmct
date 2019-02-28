@@ -1,15 +1,13 @@
 <template>
-    <div>
-        <template v-if="isEditing && Object.keys(children).length">
-            <h2 class="c-properties__header">Filters</h2>
-            <filter-object 
-                v-for="(child, key) in children"
-                :key="key"
-                :filterObject="child"
-                :persistedFilters="persistedFilters[key]"
-                @updateFilters="persistFilters">
-            </filter-object>
-        </template>
+    <div v-if="isEditing && Object.keys(children).length">
+        <h2 class="c-properties__header">Filters</h2>
+        <filter-object 
+            v-for="(child, key) in children"
+            :key="key"
+            :filterObject="child"
+            :persistedFilters="persistedFilters[key]"
+            @updateFilters="persistFilters">
+        </filter-object>
     </div>
 </template>
 

@@ -1,10 +1,10 @@
 <template>
     <li>
-        <h2 style="margin-left: 15px;">{{ filterValue.name }} - Equals</h2>
+        <h2 style="margin-left: 15px;">{{ filterField.name }} - Equals</h2>
         <ul class="grid-properties"
             style="margin-left: 15px">
             <li class="grid-row"
-                v-for="(filter, index) in filterValue.filters"
+                v-for="(filter, index) in filterField.filters"
                 :key="index">
 
                 <template v-if="!filter.possibleValues">
@@ -37,7 +37,7 @@
 <script>
 export default {
     props: {
-        filterValue: Object, 
+        filterField: Object, 
         persistedFilters: {
             type: Object,
             default: () => {
@@ -58,7 +58,7 @@ export default {
     },
     methods: {
         onUserSelect(event, comparator, value){
-            this.$emit('onUserSelect', this.filterValue.key, comparator, value, event.target.checked);
+            this.$emit('onUserSelect', this.filterField.key, comparator, value, event.target.checked);
         },
         isChecked(comparator, value) {
             if (this.comparator === comparator && this.values.includes(value)) {
@@ -74,7 +74,7 @@ export default {
         },
         updateFilterValue(event, comparator) {
             this.value = event.target.value;
-            this.$emit('onTextEnter', this.filterValue.key, comparator, this.value);
+            this.$emit('onTextEnter', this.filterField.key, comparator, this.value);
         }
     }
 }

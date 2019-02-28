@@ -14,14 +14,14 @@
         </div>
     </div>
     <ul class="c-properties__section" v-if="expanded">
-        <filter-value
-            v-for="column in filterObject.valuesWithFilters"
-            :key="column.key"
-            :filterValue="column"
-            :persistedFilters="persistedFilters[column.key]"
+        <filter-field
+            v-for="field in filterObject.valuesWithFilters"
+            :key="field.key"
+            :filterField="field"
+            :persistedFilters="persistedFilters[field.key]"
             @onUserSelect="collectUserSelects"
             @onTextEnter="updateTextFilter">
-        </filter-value>
+        </filter-field>
     </ul>
 </div>
 </template>
@@ -31,12 +31,12 @@
 </style>
 
 <script>
-import FilterValue from './FilterValue.vue';
+import FilterField from './FilterField.vue';
 
 export default {
     inject: ['openmct'],
     components: {
-        FilterValue
+        FilterField
     },
     props: {
         filterObject: Object, 
