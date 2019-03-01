@@ -27,9 +27,15 @@ export default {
         'providedObject'
     ],
     data() {
+        let persistedFilters = {};
+
+        if (this.providedObject.configuration && this.providedObject.configuration.filters) {
+            persistedFilters = this.providedObject.configuration.filters;
+        }
+
         return {
+            persistedFilters,
             isEditing: this.openmct.editor.isEditing(),
-            persistedFilters: this.providedObject.configuration ? this.providedObject.configuration.filters : {},
             children: {}
         }
     },
@@ -68,7 +74,6 @@ export default {
     },
     mounted(){
         this.openmct.editor.on('isEditing', this.toggleIsEditing);
-
         this.composition = this.openmct.composition.get(this.providedObject);
         this.composition.on('add', this.addChildren);
         this.composition.on('remove', this.removeChildren);
