@@ -219,6 +219,36 @@ define([
                 }
             });
 
+            openmct.telemetry.addFormat({
+                key: 'frequency-to-string',
+                format: function (frequency) {
+                    // Assumes frequency is in Hz
+                    if (typeof frequency === 'number') {
+                        if (frequency < 1000) {
+                            return frequency.toFixed(2) + ' Hz';
+                        } else if (frequency < 1000000) {
+                            return (frequency / 1000).toFixed(2) + ' kHz';
+                        } else if (frequency < 1000000000) {
+                            return (frequency / 1000000).toFixed(2) + ' MHz';
+                        } else if (frequency < 1000000000000) {
+                            return (frequency / 1000000000).toFixed(2) + ' GHz';
+                        } else {
+                            return (frequency / 1000000000000) + ' THz';
+                        }
+                    } else {
+                        return frequency;
+                    }
+                },
+                parse: function (frequency) {
+                    return typeof frequency === 'string'
+                        ? parseFloat(frequency.slice(0, -3).trim())
+                        : frequency;
+                },
+                validate: function (frequency) {
+                    return !isNaN(parseFloat(frequency.slice(0, -3).trim()));
+                }
+            });
+
             dictionary = JSON.parse(baseDictionary);
 
             getDsnConfiguration();

@@ -544,6 +544,7 @@
                         "name": "Data rate"
                     },
                     {
+                        "format": "frequency-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -980,6 +981,7 @@
                         "name": "Data rate"
                     },
                     {
+                        "format": "frequency-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1416,6 +1418,7 @@
                         "name": "Data rate"
                     },
                     {
+                        "format": "frequency-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1852,6 +1855,7 @@
                         "name": "Data rate"
                     },
                     {
+                        "format": "frequency-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2288,6 +2292,7 @@
                         "name": "Data rate"
                     },
                     {
+                        "format": "frequency-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2724,6 +2729,7 @@
                         "name": "Data rate"
                     },
                     {
+                        "format": "frequency-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3160,6 +3166,7 @@
                         "name": "Data rate"
                     },
                     {
+                        "format": "frequency-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3596,6 +3603,7 @@
                         "name": "Data rate"
                     },
                     {
+                        "format": "frequency-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4032,6 +4040,7 @@
                         "name": "Data rate"
                     },
                     {
+                        "format": "frequency-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4468,6 +4477,7 @@
                         "name": "Data rate"
                     },
                     {
+                        "format": "frequency-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4904,6 +4914,7 @@
                         "name": "Data rate"
                     },
                     {
+                        "format": "frequency-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -5340,6 +5351,7 @@
                         "name": "Data rate"
                     },
                     {
+                        "format": "frequency-to-string",
                         "hints": {
                             "domain": 1
                         },
