@@ -186,6 +186,39 @@ define([
                 }
             });
 
+            // Signal formatters
+            openmct.telemetry.addFormat({
+                key: 'data-rate-to-string',
+                format: function (dataRate) {
+                    // Assumes data rate is in b/sec
+                    if (typeof dataRate === 'number') {
+                        if (dataRate < 1000) {
+                            return dataRate.toFixed(2) + ' b/sec';
+                        } else if (dataRate < 1000000) {
+                            return (dataRate / 1000).toFixed(2) + ' kb/sec';
+                        } else if (dataRate < 1000000000) {
+                            return (dataRate / 1000000).toFixed(2) + ' Mb/sec';
+                        } else if (dataRate < 1000000000000) {
+                            return (dataRate / 1000000000).toFixed(2) + ' Gb/sec';
+                        } else if (dataRate < 1000000000000000) {
+                            return (dataRate / 1000000000000).toFixed(2) + ' Tb/sec';
+                        } else {
+                            return (dataRate / 1000000000000000).toFixed(2) + ' Pb/sec';
+                        }
+                    } else {
+                        return dataRate;
+                    }
+                },
+                parse: function (dataRate) {
+                    return typeof dataRate === 'string'
+                        ? parseFloat(dataRate.slice(0, -6).trim())
+                        : dataRate;
+                },
+                validate: function (dataRate) {
+                    return !isNaN(parseFloat(dataRate.slice(0, -6).trim()));
+                }
+            });
+
             dictionary = JSON.parse(baseDictionary);
 
             getDsnConfiguration();

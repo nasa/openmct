@@ -536,6 +536,7 @@
                         "name": "Debug"
                     },
                     {
+                        "format": "data-rate-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -971,6 +972,7 @@
                         "name": "Debug"
                     },
                     {
+                        "format": "data-rate-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1406,6 +1408,7 @@
                         "name": "Debug"
                     },
                     {
+                        "format": "data-rate-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1841,6 +1844,7 @@
                         "name": "Debug"
                     },
                     {
+                        "format": "data-rate-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2276,6 +2280,7 @@
                         "name": "Debug"
                     },
                     {
+                        "format": "data-rate-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2711,6 +2716,7 @@
                         "name": "Debug"
                     },
                     {
+                        "format": "data-rate-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3146,6 +3152,7 @@
                         "name": "Debug"
                     },
                     {
+                        "format": "data-rate-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3581,6 +3588,7 @@
                         "name": "Debug"
                     },
                     {
+                        "format": "data-rate-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4016,6 +4024,7 @@
                         "name": "Debug"
                     },
                     {
+                        "format": "data-rate-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4451,6 +4460,7 @@
                         "name": "Debug"
                     },
                     {
+                        "format": "data-rate-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4886,6 +4896,7 @@
                         "name": "Debug"
                     },
                     {
+                        "format": "data-rate-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -5321,6 +5332,7 @@
                         "name": "Debug"
                     },
                     {
+                        "format": "data-rate-to-string",
                         "hints": {
                             "domain": 1
                         },
