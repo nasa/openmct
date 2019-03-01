@@ -1,12 +1,17 @@
 <template>
     <div class="c-ctrl-wrapper">
-        <div class="c-click-icon c-click-icon--swatched"
+        <div v-if="!nonSpecific"
+             class="c-click-icon c-click-icon--swatched"
              :class="options.icon"
              :title="options.title"
              @click="toggle">
             <div class="c-swatch" :style="{
                 background: options.value
             }"></div>
+        </div>
+        <div v-if="nonSpecific"
+            class="c-click-icon icon-object-unknown"
+            :class="options.icon">
         </div>
         <div class="c-menu c-palette c-palette--color"
             v-if="open">
@@ -36,8 +41,15 @@ export default {
     props: {
         options: Object
     },
+    computed: {
+        nonSpecific() {
+            return this.options.nonSpecific === true;
+        }
+    },
     methods: {
         select(color) {
+            console.log('color.value', color.value);
+            console.log('options.value', this.options.value);
             if (color.value !== this.options.value) {
                 this.$emit('change', color.value, this.options);
             }

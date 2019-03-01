@@ -96,8 +96,8 @@
                 displayMode: 'all',
                 value: metadata.getDefaultDisplayValue(),
                 stroke: "transparent",
-                fill: "",
-                color: "",
+                fill: "transparent",
+                color: "transparent",
                 size: "13px",
                 useGrid: true
             };

@@ -97,42 +97,45 @@ define([], function () {
                     });
                 }
 
-                function getAddButton(selectedObject, selectionPath) {
-                    return {
-                        control: "menu",
-                        domainObject: selectedObject,
-                        method: function (option) {
-                            let name = option.name.toLowerCase();
-                            let form = DIALOG_FORM[name];
-                            if (form) {
-                                getUserInput(form)
-                                    .then(element => selectionPath[0].context.addElement(name, element));
-                            } else {
-                                selectionPath[0].context.addElement(name);
-                            }
-                        },
-                        key: "add",
-                        icon: "icon-plus",
-                        label: "Add",
-                        options: [
-                            {
-                                "name": "Box",
-                                "class": "icon-box-round-corners"
+                function getAddButton(selection, selectionPath) {
+                    if (selection.length === 1) {
+                        selectionPath = selectionPath || selection[0];
+                        return {
+                            control: "menu",
+                            domainObject: selectionPath[0].context.item,
+                            method: function (option) {
+                                let name = option.name.toLowerCase();
+                                let form = DIALOG_FORM[name];
+                                if (form) {
+                                    getUserInput(form)
+                                        .then(element => selectionPath[0].context.addElement(name, element));
+                                } else {
+                                    selectionPath[0].context.addElement(name);
+                                }
                             },
-                            {
-                                "name": "Line",
-                                "class": "icon-line-horz"
-                            },
-                            {
-                                "name": "Text",
-                                "class": "icon-font"
-                            },
-                            {
-                                "name": "Image",
-                                "class": "icon-image"
-                            }
-                        ]
-                    };
+                            key: "add",
+                            icon: "icon-plus",
+                            label: "Add",
+                            options: [
+                                {
+                                    "name": "Box",
+                                    "class": "icon-box-round-corners"
+                                },
+                                {
+                                    "name": "Line",
+                                    "class": "icon-line-horz"
+                                },
+                                {
+                                    "name": "Text",
+                                    "class": "icon-font"
+                                },
+                                {
+                                    "name": "Image",
+                                    "class": "icon-image"
+                                }
+                            ]
+                        };
+                    }
                 }
 
                 function getToggleFrameButton(selectedParent, selection) {
@@ -349,7 +352,7 @@ define([], function () {
                     }
                 }
 
-                function getSizeMenu(selectedParent, selection) {
+                function getTextSizeMenu(selectedParent, selection) {
                     const TEXT_SIZE = [8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96, 128];
                     return {
                         control: "select-menu",
@@ -408,7 +411,7 @@ define([], function () {
                     };
                 }
 
-                function getFontColorMenu(selectedParent, selection) {
+                function getTextColorMenu(selectedParent, selection) {
                     return {
                         control: "color-picker",
                         domainObject: selectedParent,
@@ -443,66 +446,72 @@ define([], function () {
                 }
 
                 function getTextButton(selectedParent, selection) {
-                    return {
-                        control: "button",
-                        domainObject: selectedParent,
-                        applicableSelectedItems: selection.filter(selectionPath => {
-                            return selectionPath[0].context.layoutItem.type === 'text-view';
-                        }),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath);
-                        },
-                        icon: "icon-gear",
-                        title: "Edit text properties",
-                        dialog: DIALOG_FORM['text']
-                    };
+                    if (selection.length === 1) {
+                        return {
+                            control: "button",
+                            domainObject: selectedParent,
+                            applicableSelectedItems: selection.filter(selectionPath => {
+                                return selectionPath[0].context.layoutItem.type === 'text-view';
+                            }),
+                            property: function (selectionPath) {
+                                return getPath(selectionPath);
+                            },
+                            icon: "icon-gear",
+                            title: "Edit text properties",
+                            dialog: DIALOG_FORM['text']
+                        };
+                    }
                 }
 
-                function getTelemtryValueMenu(selectedParent, selection) {
-                    return {
-                        control: "select-menu",
-                        domainObject: selectedParent,
-                        applicableSelectedItems: selection.filter(selectionPath => {
-                            return selectionPath[0].context.layoutItem.type === 'telemetry-view';
-                        }),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath) + ".value";
-                        },
-                        title: "Set value",
-                        options: openmct.telemetry.getMetadata(selection[0][0].context.item).values().map(value => {
-                            return {
-                                name: value.name,
-                                value: value.key
-                            }
-                        })
-                    };
+                function getTelemetryValueMenu(selectionPath, selection) {
+                    if (selection.length === 1) {
+                        return {
+                            control: "select-menu",
+                            domainObject: selectionPath[1].context.item,
+                            applicableSelectedItems: selection.filter(selectionPath => {
+                                return selectionPath[0].context.layoutItem.type === 'telemetry-view';
+                            }),
+                            property: function (selectionPath) {
+                                return getPath(selectionPath) + ".value";
+                            },
+                            title: "Set value",
+                            options: openmct.telemetry.getMetadata(selectionPath[0].context.item).values().map(value => {
+                                return {
+                                    name: value.name,
+                                    value: value.key
+                                }
+                            })
+                        };
+                    }
                 }
 
                 function getDisplayModeMenu(selectedParent, selection) {
-                    return {
-                        control: "select-menu",
-                        domainObject: selectedParent,
-                        applicableSelectedItems: selection.filter(selectionPath => {
-                            return selectionPath[0].context.layoutItem.type === 'telemetry-view';
-                        }),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath) + ".displayMode";
-                        },
-                        title: "Set display mode",
-                        options: [
-                            {
-                                name: 'Label + Value',
-                                value: 'all'
+                    if (selection.length === 1) {
+                        return {
+                            control: "select-menu",
+                            domainObject: selectedParent,
+                            applicableSelectedItems: selection.filter(selectionPath => {
+                                return selectionPath[0].context.layoutItem.type === 'telemetry-view';
+                            }),
+                            property: function (selectionPath) {
+                                return getPath(selectionPath) + ".displayMode";
                             },
-                            {
-                                name: "Label only",
-                                value: "label"
-                            },
-                            {
-                                name: "Value only",
-                                value: "value"
-                            }
-                        ]
+                            title: "Set display mode",
+                            options: [
+                                {
+                                    name: 'Label + Value',
+                                    value: 'all'
+                                },
+                                {
+                                    name: "Label only",
+                                    value: "label"
+                                },
+                                {
+                                    name: "Value only",
+                                    value: "value"
+                                }
+                            ]
+                        };
                     }
                 }
 
@@ -512,129 +521,193 @@ define([], function () {
                     };
                 }
 
-                let selectionPath = selection[0];
-                    selectedParent = selectionPath[1] && selectionPath[1].context.item,
-                    selectedObject = selectionPath[0].context.item,
-                    layoutItem = selectionPath[0].context.layoutItem,
-                    toolbar = [];
-
-                if (selectedObject && selectedObject.type === 'layout') {
-                    toolbar.push(getAddButton(selectedObject, selectionPath));
+                function isMainLayoutSelected(selectionPath) {
+                    let selectedObject = selectionPath[0].context.item;
+                    return selectedObject && selectedObject.type === 'layout' &&
+                        !selectionPath[0].context.layoutItem;
                 }
 
-                if (!layoutItem) {
-                    return toolbar;
+                if (isMainLayoutSelected(selection[0])) {
+                    return [getAddButton(selection)];
                 }
 
-                let separator = getSeparator(),
-                    stackOrder = getStackOrder(selectedParent, selectionPath),
-                    x = getXInput(selectedParent, selection),
-                    y = getYInput(selectedParent, selection),
-                    useGrid = getSnapToGridButton(selectedParent, selection),
-                    remove = getRemoveButton(selectedParent, selectionPath);
+                let separator = getSeparator();
+                let toolbar = {
+                    'add-menu': [],
+                    'toggle-frame': [],
+                    'display-mode': [],
+                    'telemetry-value': [],
+                    'style': [],
+                    'text-style': [],
+                    'position': [],
+                    'text': [],
+                    'url': [],
+                    'remove': [],
+                };
 
-                if (layoutItem.type === 'subobject-view') {
-                    if (toolbar.length > 0) {
-                        toolbar.push(separator);
-                    }
+                selection.forEach(selectionPath => {
+                    let selectedParent = selectionPath[1].context.item;
+                    let layoutItem = selectionPath[0].context.layoutItem;
 
-                    toolbar.push(getToggleFrameButton(selectedParent, selection));
-                    toolbar.push(separator);
-                    toolbar.push(stackOrder,);
-                    toolbar.push(x);
-                    toolbar.push(y);
-                    toolbar.push(getWidthInput(selectedParent, selection));
-                    toolbar.push(getHeightInput(selectedParent, selection));
-                    toolbar.push(useGrid);
-                    toolbar.push(separator);
-                    toolbar.push(remove);
-                } else {
-                    if (layoutItem.type === 'telemetry-view') {
-                        toolbar = [
-                            getDisplayModeMenu(selectedParent, selectio),
-                            separator,
-                            getTelemtryValueMenu(selectedParent, selection),
-                            separator,
-                            getFillMenu(selectedParent, selection),
-                            getStrokeMenu(selectedParent, selection),
-                            getFontColorMenu(selectedParent, selection),
-                            separator,
-                            getSizeMenu(selectedParent, selection),
-                            separator,
-                            stackOrder,
-                            x,
-                            y,
-                            getHeightInput(selectedParent, selection),
-                            getWidthInput(selectedParent, selection),
-                            useGrid,
-                            separator,
-                            remove
-                        ];
+                    if (layoutItem.type === 'subobject-view') {
+                        if (toolbar['add-menu'].length === 0 && selectionPath[0].context.item.type === 'layout') {
+                            toolbar['add-menu'] = [getAddButton(selection, selectionPath)];
+                        }
+                        if (toolbar['toggle-frame'].length === 0) {
+                            toolbar['toggle-frame'] = [getToggleFrameButton(selectedParent, selection)];
+                        }
+                        if (toolbar['position'].length === 0) {
+                            toolbar['position'] = [
+                                getStackOrder(selectedParent, selectionPath),
+                                getXInput(selectedParent, selection),
+                                getYInput(selectedParent, selection),
+                                getHeightInput(selectedParent, selection),
+                                getWidthInput(selectedParent, selection),
+                                getSnapToGridButton(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['remove'].length === 0) {
+                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath)];
+                        }
+                    } else if (layoutItem.type === 'telemetry-view') {
+                        if (toolbar['display-mode'].length === 0) {
+                            toolbar['display-mode'] = [getDisplayModeMenu(selectedParent, selection)];
+                        }
+                        if (toolbar['telemetry-value'].length === 0) {
+                            toolbar['telemetry-value'] = [getTelemetryValueMenu(selectionPath, selection)];
+                        }
+                        if (toolbar['style'].length < 2) {
+                            toolbar['style'] = [
+                                getFillMenu(selectedParent, selection),
+                                getStrokeMenu(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['text-style'].length === 0) {
+                            toolbar['text-style'] = [
+                                getTextColorMenu(selectedParent, selection),
+                                getTextSizeMenu(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['position'].length === 0) {
+                            toolbar['position'] = [
+                                getStackOrder(selectedParent, selectionPath),
+                                getXInput(selectedParent, selection),
+                                getYInput(selectedParent, selection),
+                                getHeightInput(selectedParent, selection),
+                                getWidthInput(selectedParent, selection),
+                                getSnapToGridButton(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['remove'].length === 0) {
+                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath)];
+                        }
                     } else if (layoutItem.type === 'text-view') {
-                        toolbar = [
-                            getFillMenu(selectedParent, selection),
-                            getStrokeMenu(selectedParent, selection),
-                            separator,
-                            getFontColorMenu(selectedParent, selection),
-                            getSizeMenu(selectedParent, selection),
-                            separator,
-                            stackOrder,
-                            x,
-                            y,
-                            getHeightInput(selectedParent, selection),
-                            getWidthInput(selectedParent, selection),
-                            useGrid,
-                            separator,
-                            getTextButton(selectedParent, selection),,
-                            separator,
-                            remove
-                        ];
+                        if (toolbar['style'].length < 2) {
+                            toolbar['style'] = [
+                                getFillMenu(selectedParent, selection),
+                                getStrokeMenu(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['text-style'].length === 0) {
+                            toolbar['text-style'] = [
+                                getTextColorMenu(selectedParent, selection),
+                                getTextSizeMenu(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['position'].length === 0) {
+                            toolbar['position'] = [
+                                getStackOrder(selectedParent, selectionPath),
+                                getXInput(selectedParent, selection),
+                                getYInput(selectedParent, selection),
+                                getHeightInput(selectedParent, selection),
+                                getWidthInput(selectedParent, selection),
+                                getSnapToGridButton(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['text'].length === 0) {
+                            toolbar['text'] = [getTextButton(selectedParent, selection)];
+                        }
+                        if (toolbar['remove'].length === 0) {
+                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath)];
+                        }
                     } else if (layoutItem.type === 'box-view') {
-                        toolbar = [
-                            getFillMenu(selectedParent, selection),
-                            getStrokeMenu(selectedParent, selection),
-                            separator,
-                            stackOrder,
-                            x,
-                            y,
-                            getHeightInput(selectedParent, selection),
-                            getWidthInput(selectedParent, selection),
-                            useGrid,
-                            separator,
-                            remove
-                        ];
+                        if (toolbar['style'].length < 2) {
+                            toolbar['style'] = [
+                                getFillMenu(selectedParent, selection),
+                                getStrokeMenu(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['position'].length === 0) {
+                            toolbar['position'] = [
+                                getStackOrder(selectedParent, selectionPath),
+                                getXInput(selectedParent, selection),
+                                getYInput(selectedParent, selection),
+                                getHeightInput(selectedParent, selection),
+                                getWidthInput(selectedParent, selection),
+                                getSnapToGridButton(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['remove'].length === 0) {
+                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath)];
+                        }
                     } else if (layoutItem.type === 'image-view') {
-                        toolbar = [
-                            getStrokeMenu(selectedParent, selection),
-                            separator,
-                            stackOrder,
-                            x,
-                            y,
-                            getHeightInput(selectedParent, selection),
-                            getWidthInput(selectedParent, selection),
-                            useGrid,
-                            separator,
-                            getURLButton(selectedParent, selection),
-                            separator,
-                            remove
-                        ];
+                        if (toolbar['style'].length === 0) {
+                            toolbar['style'] = [
+                                getStrokeMenu(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['position'].length === 0) {
+                            toolbar['position'] = [
+                                getStackOrder(selectedParent, selectionPath),
+                                getXInput(selectedParent, selection),
+                                getYInput(selectedParent, selection),
+                                getHeightInput(selectedParent, selection),
+                                getWidthInput(selectedParent, selection),
+                                getSnapToGridButton(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['url'].length === 0) {
+                            toolbar['url'] = [getURLButton(selectedParent, selection)];
+                        }
+                        if (toolbar['remove'].length === 0) {
+                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath)];
+                        }
                     } else if (layoutItem.type === 'line-view') {
-                        toolbar = [
-                            getStrokeMenu(selectedParent, selection),
-                            separator,
-                            stackOrder,
-                            x,
-                            y,
-                            getX2Input(selectedParent, selection),
-                            getY2Input(selectedParent, selection),
-                            useGrid,
-                            separator,
-                            remove
-                        ];
+                        if (toolbar['style'].length === 0) {
+                            toolbar['style'] = [
+                                getStrokeMenu(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['position'].length === 0) {
+                            toolbar['position'] = [
+                                getStackOrder(selectedParent, selectionPath),
+                                getXInput(selectedParent, selection),
+                                getYInput(selectedParent, selection),
+                                getX2Input(selectedParent, selection),
+                                getY2Input(selectedParent, selection),
+                                getSnapToGridButton(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['remove'].length === 0) {
+                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath)];
+                        }
                     }
-                }
+                });
 
-                return toolbar.filter(control => control !== undefined);
+                let toolbarArray = Object.values(toolbar);
+                return _.flatten(toolbarArray.reduce((accumulator, group, index) => {
+                    group = group.filter(control => control !== undefined);
+
+                    if (group.length > 0) {
+                        accumulator.push(group);
+
+                        if (index < toolbarArray.length - 1) {
+                            accumulator.push(separator);
+                        }
+                    }
+
+                    return accumulator;
+                }, []));
             }
         }
     }

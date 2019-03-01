@@ -20,8 +20,6 @@
 
     import _ from 'lodash';
 
-    const ICON_NON_SPECIFIC = 'icon-object-unknown';
-
     export default {
         inject: ['openmct'],
         components: {
@@ -140,11 +138,11 @@
                             values.push(_.get(domainObject, this.getItemProperty(toolbarItem, selectionPath)));
                         });
 
-                        // If all values are the same, use the value, otherwise show a 'not-specific' icon.
+                        // If all values are the same, use it, otherwise mark the item as non-specific.
                         if (values.every(value => value === values[0])) {
                             value = values[0];
                         } else {
-                            toolbarItem.icon = toolbarItem.icon + ' ' + ICON_NON_SPECIFIC;
+                            toolbarItem.nonSpecific = true;
                         }
                     }
                 }

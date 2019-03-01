@@ -1,10 +1,15 @@
 <template>
     <div class="c-ctrl-wrapper">
-        <div class="c-click-icon c-click-icon--menu"
+        <div v-if="!nonSpecific"
+             class="c-click-icon c-click-icon--menu"
              :class="options.icon"
              :title="options.title"
              @click="toggle">
             <div class="c-button__label">{{ selectedName }}</div>
+        </div>
+        <div v-if="nonSpecific"
+            class="c-click-icon icon-object-unknown"
+            :class="options.icon">
         </div>
         <div class="c-menu" v-if="open">
             <ul>
@@ -48,6 +53,9 @@ export default {
                 return selectedOption.name || selectedOption.value
             }
             return '';
+        },
+        nonSpecific() {
+            return this.options.nonSpecific === true;
         }
     }
 }

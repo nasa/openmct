@@ -54,7 +54,7 @@
                 fill: 'transparent',
                 stroke: 'transparent',
                 size: '13px',
-                color: '',
+                color: 'transparent',
                 x: 1,
                 y: 1,
                 width: 10,

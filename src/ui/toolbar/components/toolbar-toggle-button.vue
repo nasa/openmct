@@ -1,9 +1,14 @@
 <template>
     <div class="c-ctrl-wrapper">
-        <div class="c-click-icon"
+        <div v-if="!nonSpecific"
+             class="c-click-icon"
              :title="nextValue.title"
              :class="nextValue.icon"
              @click="cycle">
+        </div>
+        <div v-if="nonSpecific"
+             class="c-click-icon icon-object-unknown"
+             :class="nextValue.icon">
         </div>
     </div>
 </template>
@@ -23,6 +28,9 @@ export default {
                 nextIndex = 0;
             }
             return this.options.options[nextIndex];
+        },
+        nonSpecific() {
+            return this.options.nonSpecific === true;
         }
     },
     methods: {
