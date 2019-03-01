@@ -66,6 +66,10 @@
     "docs": "npm run jsdoc ; npm run otherdoc",
     "prepare": "node ./node_modules/bower/bin/bower install && node ./node_modules/gulp/bin/gulp.js install"
   },
+  "engines": {
+    "node": "8.11.2",
+    "npm": "6.4.1"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/nasa/openmct.git"
