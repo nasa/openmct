@@ -149,6 +149,8 @@ define([
                 key: DSN_KEY
             });
 
+            // Original formatter calculations: https://eyes.nasa.gov/dsn/javascripts/main.js
+
             // Antenna formatters
             openmct.telemetry.addFormat({
                 key: 'angle-to-string',
