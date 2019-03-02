@@ -518,6 +518,13 @@
                         "hints": {
                             "domain": 1
                         },
+                        "key": "dss14.signal.spacecraft.friendly.name",
+                        "name": "Spacecraft"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
                         "key": "dss14.signal.direction",
                         "name": "Direction"
                     },
@@ -558,13 +565,6 @@
                         },
                         "key": "dss14.signal.power",
                         "name": "Power"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss14.signal.spacecraft.friendly.name",
-                        "name": "Spacecraft"
                     }
                 ]
             },
@@ -956,6 +956,13 @@
                         "hints": {
                             "domain": 1
                         },
+                        "key": "dss24.signal.spacecraft.friendly.name",
+                        "name": "Spacecraft"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
                         "key": "dss24.signal.direction",
                         "name": "Direction"
                     },
@@ -996,13 +1003,6 @@
                         },
                         "key": "dss24.signal.power",
                         "name": "Power"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss24.signal.spacecraft.friendly.name",
-                        "name": "Spacecraft"
                     }
                 ]
             },
@@ -1394,6 +1394,13 @@
                         "hints": {
                             "domain": 1
                         },
+                        "key": "dss25.signal.spacecraft.friendly.name",
+                        "name": "Spacecraft"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
                         "key": "dss25.signal.direction",
                         "name": "Direction"
                     },
@@ -1434,13 +1441,6 @@
                         },
                         "key": "dss25.signal.power",
                         "name": "Power"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss25.signal.spacecraft.friendly.name",
-                        "name": "Spacecraft"
                     }
                 ]
             },
@@ -1832,6 +1832,13 @@
                         "hints": {
                             "domain": 1
                         },
+                        "key": "dss26.signal.spacecraft.friendly.name",
+                        "name": "Spacecraft"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
                         "key": "dss26.signal.direction",
                         "name": "Direction"
                     },
@@ -1872,13 +1879,6 @@
                         },
                         "key": "dss26.signal.power",
                         "name": "Power"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss26.signal.spacecraft.friendly.name",
-                        "name": "Spacecraft"
                     }
                 ]
             },
@@ -2270,6 +2270,13 @@
                         "hints": {
                             "domain": 1
                         },
+                        "key": "dss34.signal.spacecraft.friendly.name",
+                        "name": "Spacecraft"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
                         "key": "dss34.signal.direction",
                         "name": "Direction"
                     },
@@ -2310,13 +2317,6 @@
                         },
                         "key": "dss34.signal.power",
                         "name": "Power"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss34.signal.spacecraft.friendly.name",
-                        "name": "Spacecraft"
                     }
                 ]
             },
@@ -2708,6 +2708,13 @@
                         "hints": {
                             "domain": 1
                         },
+                        "key": "dss35.signal.spacecraft.friendly.name",
+                        "name": "Spacecraft"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
                         "key": "dss35.signal.direction",
                         "name": "Direction"
                     },
@@ -2748,13 +2755,6 @@
                         },
                         "key": "dss35.signal.power",
                         "name": "Power"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss35.signal.spacecraft.friendly.name",
-                        "name": "Spacecraft"
                     }
                 ]
             },
@@ -3146,6 +3146,13 @@
                         "hints": {
                             "domain": 1
                         },
+                        "key": "dss36.signal.spacecraft.friendly.name",
+                        "name": "Spacecraft"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
                         "key": "dss36.signal.direction",
                         "name": "Direction"
                     },
@@ -3186,13 +3193,6 @@
                         },
                         "key": "dss36.signal.power",
                         "name": "Power"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss36.signal.spacecraft.friendly.name",
-                        "name": "Spacecraft"
                     }
                 ]
             },
@@ -3584,6 +3584,13 @@
                         "hints": {
                             "domain": 1
                         },
+                        "key": "dss43.signal.spacecraft.friendly.name",
+                        "name": "Spacecraft"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
                         "key": "dss43.signal.direction",
                         "name": "Direction"
                     },
@@ -3624,13 +3631,6 @@
                         },
                         "key": "dss43.signal.power",
                         "name": "Power"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss43.signal.spacecraft.friendly.name",
-                        "name": "Spacecraft"
                     }
                 ]
             },
@@ -4022,6 +4022,13 @@
                         "hints": {
                             "domain": 1
                         },
+                        "key": "dss54.signal.spacecraft.friendly.name",
+                        "name": "Spacecraft"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
                         "key": "dss54.signal.direction",
                         "name": "Direction"
                     },
@@ -4062,13 +4069,6 @@
                         },
                         "key": "dss54.signal.power",
                         "name": "Power"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss54.signal.spacecraft.friendly.name",
-                        "name": "Spacecraft"
                     }
                 ]
             },
@@ -4460,6 +4460,13 @@
                         "hints": {
                             "domain": 1
                         },
+                        "key": "dss55.signal.spacecraft.friendly.name",
+                        "name": "Spacecraft"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
                         "key": "dss55.signal.direction",
                         "name": "Direction"
                     },
@@ -4500,13 +4507,6 @@
                         },
                         "key": "dss55.signal.power",
                         "name": "Power"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss55.signal.spacecraft.friendly.name",
-                        "name": "Spacecraft"
                     }
                 ]
             },
@@ -4898,6 +4898,13 @@
                         "hints": {
                             "domain": 1
                         },
+                        "key": "dss63.signal.spacecraft.friendly.name",
+                        "name": "Spacecraft"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
                         "key": "dss63.signal.direction",
                         "name": "Direction"
                     },
@@ -4938,13 +4945,6 @@
                         },
                         "key": "dss63.signal.power",
                         "name": "Power"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss63.signal.spacecraft.friendly.name",
-                        "name": "Spacecraft"
                     }
                 ]
             },
@@ -5336,6 +5336,13 @@
                         "hints": {
                             "domain": 1
                         },
+                        "key": "dss65.signal.spacecraft.friendly.name",
+                        "name": "Spacecraft"
+                    },
+                    {
+                        "hints": {
+                            "domain": 1
+                        },
                         "key": "dss65.signal.direction",
                         "name": "Direction"
                     },
@@ -5376,13 +5383,6 @@
                         },
                         "key": "dss65.signal.power",
                         "name": "Power"
-                    },
-                    {
-                        "hints": {
-                            "domain": 1
-                        },
-                        "key": "dss65.signal.spacecraft.friendly.name",
-                        "name": "Spacecraft"
                     }
                 ]
             },
