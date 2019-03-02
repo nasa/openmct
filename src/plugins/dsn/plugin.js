@@ -310,6 +310,40 @@ define([
                 }
             });
 
+            openmct.telemetry.addFormat({
+                key: 'light-time-to-string',
+                format: function (lightTime) {
+                    // Assumes light time is in seconds
+                    if (typeof lightTime === 'number') {
+                        if (lightTime >= 0) {
+                            if (lightTime < 60) {
+                                return lightTime.toFixed(2) + ' sec';
+                            } else if (lightTime < 3600) {
+                                return (lightTime / 60).toFixed(2) + ' minutes';
+                            } else if (lightTime < 86400) {
+                                return (lightTime / 3600).toFixed(2) + ' hours';
+                            } else if (lightTime < 604800) {
+                                return (lightTime / 86400).toFixed(2) + ' days';
+                            } else {
+                                return (lightTime / 604800).toFixed(2) + ' weeks';
+                            }
+                        } else {
+                            return lightTime;
+                        }
+                    } else {
+                        return lightTime;
+                    }
+                },
+                parse: function (lightTime) {
+                    return typeof lightTime === 'string'
+                        ? parseFloat(lightTime)
+                        : lightTime;
+                },
+                validate: function (lightTime) {
+                    return !isNaN(parseFloat(lightTime));
+                }
+            });
+
             dictionary = JSON.parse(baseDictionary);
 
             getDsnConfiguration();

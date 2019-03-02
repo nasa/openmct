@@ -616,6 +616,7 @@
                         "name": "Downleg range"
                     },
                     {
+                        "format": "light-time-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1056,6 +1057,7 @@
                         "name": "Downleg range"
                     },
                     {
+                        "format": "light-time-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1496,6 +1498,7 @@
                         "name": "Downleg range"
                     },
                     {
+                        "format": "light-time-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1936,6 +1939,7 @@
                         "name": "Downleg range"
                     },
                     {
+                        "format": "light-time-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2376,6 +2380,7 @@
                         "name": "Downleg range"
                     },
                     {
+                        "format": "light-time-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2816,6 +2821,7 @@
                         "name": "Downleg range"
                     },
                     {
+                        "format": "light-time-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3256,6 +3262,7 @@
                         "name": "Downleg range"
                     },
                     {
+                        "format": "light-time-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3696,6 +3703,7 @@
                         "name": "Downleg range"
                     },
                     {
+                        "format": "light-time-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4136,6 +4144,7 @@
                         "name": "Downleg range"
                     },
                     {
+                        "format": "light-time-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4576,6 +4585,7 @@
                         "name": "Downleg range"
                     },
                     {
+                        "format": "light-time-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -5016,6 +5026,7 @@
                         "name": "Downleg range"
                     },
                     {
+                        "format": "light-time-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -5456,6 +5467,7 @@
                         "name": "Downleg range"
                     },
                     {
+                        "format": "light-time-to-string",
                         "hints": {
                             "domain": 1
                         },
