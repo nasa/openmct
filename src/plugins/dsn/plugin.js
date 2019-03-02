@@ -249,6 +249,30 @@ define([
                 }
             });
 
+            openmct.telemetry.addFormat({
+                key: 'power-to-string',
+                format: function (power) {
+                    // Assumes power is in kW or dBm (if negative)
+                    if (typeof power === 'number') {
+                        if (power >= 0) {
+                            return power.toFixed(2) + ' kW';
+                        } else {
+                            return power.toFixed(2) + ' dBm';
+                        }
+                    } else {
+                        return power;
+                    }
+                },
+                parse: function (power) {
+                    return typeof power === 'string'
+                        ? parseFloat(power.slice(0, -3).trim())
+                        : power;
+                },
+                validate: function (power) {
+                    return !isNaN(parseFloat(power.slice(0, -3).trim()));
+                }
+            });
+
             dictionary = JSON.parse(baseDictionary);
 
             getDsnConfiguration();

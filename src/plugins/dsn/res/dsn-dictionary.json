@@ -552,6 +552,7 @@
                         "name": "Frequency"
                     },
                     {
+                        "format": "power-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -989,6 +990,7 @@
                         "name": "Frequency"
                     },
                     {
+                        "format": "power-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1426,6 +1428,7 @@
                         "name": "Frequency"
                     },
                     {
+                        "format": "power-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1863,6 +1866,7 @@
                         "name": "Frequency"
                     },
                     {
+                        "format": "power-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2300,6 +2304,7 @@
                         "name": "Frequency"
                     },
                     {
+                        "format": "power-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2737,6 +2742,7 @@
                         "name": "Frequency"
                     },
                     {
+                        "format": "power-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3174,6 +3180,7 @@
                         "name": "Frequency"
                     },
                     {
+                        "format": "power-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3611,6 +3618,7 @@
                         "name": "Frequency"
                     },
                     {
+                        "format": "power-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4048,6 +4056,7 @@
                         "name": "Frequency"
                     },
                     {
+                        "format": "power-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4485,6 +4494,7 @@
                         "name": "Frequency"
                     },
                     {
+                        "format": "power-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4922,6 +4932,7 @@
                         "name": "Frequency"
                     },
                     {
+                        "format": "power-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -5359,6 +5370,7 @@
                         "name": "Frequency"
                     },
                     {
+                        "format": "power-to-string",
                         "hints": {
                             "domain": 1
                         },
