@@ -600,6 +600,7 @@
                         "name": "Friendly name"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -607,6 +608,7 @@
                         "name": "Upleg range"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1038,6 +1040,7 @@
                         "name": "Friendly name"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1045,6 +1048,7 @@
                         "name": "Upleg range"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1476,6 +1480,7 @@
                         "name": "Friendly name"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1483,6 +1488,7 @@
                         "name": "Upleg range"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1914,6 +1920,7 @@
                         "name": "Friendly name"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -1921,6 +1928,7 @@
                         "name": "Upleg range"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2352,6 +2360,7 @@
                         "name": "Friendly name"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2359,6 +2368,7 @@
                         "name": "Upleg range"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2790,6 +2800,7 @@
                         "name": "Friendly name"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -2797,6 +2808,7 @@
                         "name": "Upleg range"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3228,6 +3240,7 @@
                         "name": "Friendly name"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3235,6 +3248,7 @@
                         "name": "Upleg range"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3666,6 +3680,7 @@
                         "name": "Friendly name"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -3673,6 +3688,7 @@
                         "name": "Upleg range"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4104,6 +4120,7 @@
                         "name": "Friendly name"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4111,6 +4128,7 @@
                         "name": "Upleg range"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4542,6 +4560,7 @@
                         "name": "Friendly name"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4549,6 +4568,7 @@
                         "name": "Upleg range"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4980,6 +5000,7 @@
                         "name": "Friendly name"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -4987,6 +5008,7 @@
                         "name": "Upleg range"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -5418,6 +5440,7 @@
                         "name": "Friendly name"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },
@@ -5425,6 +5448,7 @@
                         "name": "Upleg range"
                     },
                     {
+                        "format": "range-to-string",
                         "hints": {
                             "domain": 1
                         },

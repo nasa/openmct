@@ -273,6 +273,43 @@ define([
                 }
             });
 
+            // Target formatters
+            openmct.telemetry.addFormat({
+                key: 'range-to-string',
+                format: function (distance) {
+                    // Assumes distance is in km
+                    if (typeof distance === 'number') {
+                        if (distance >= 0) {
+                            if (distance < 1000) {
+                                return distance.toFixed(2) + ' km';
+                            } else if (distance < 1000000) {
+                                return (distance / 1000).toFixed(2) + ' thousand km';
+                            } else if (distance < 1000000000) {
+                                return (distance / 1000000).toFixed(2) + ' million km';
+                            } else if (distance < 1000000000000) {
+                                return (distance / 1000000000).toFixed(2) + ' billion km';
+                            } else if (distance < 1000000000000000) {
+                                return (distance / 1000000000000).toFixed(2) + ' trillion km';
+                            } else {
+                                return (distance / 1000000000000000).toFixed(2) + ' quadrillion km';
+                            }
+                        } else {
+                            return distance;
+                        }
+                    } else {
+                        return distance;
+                    }
+                },
+                parse: function (distance) {
+                    return typeof distance === 'string'
+                        ? parseFloat(distance)
+                        : distance;
+                },
+                validate: function (distance) {
+                    return !isNaN(parseFloat(distance));
+                }
+            });
+
             dictionary = JSON.parse(baseDictionary);
 
             getDsnConfiguration();
