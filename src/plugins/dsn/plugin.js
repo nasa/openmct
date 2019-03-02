@@ -160,11 +160,11 @@ define([
                 },
                 parse: function (angle) {
                     return typeof angle === 'string'
-                        ? parseFloat(angle.slice(0, -4))
+                        ? parseFloat(angle)
                         : angle;
                 },
                 validate: function (angle) {
-                    return !isNaN(parseFloat(angle.slice(0, -4)));
+                    return !isNaN(parseFloat(angle));
                 }
             });
 
@@ -178,11 +178,11 @@ define([
                 },
                 parse: function (windSpeed) {
                     return typeof windSpeed === 'string'
-                        ? parseFloat(windSpeed.slice(0, -6))
+                        ? parseFloat(windSpeed)
                         : windSpeed;
                 },
                 validate: function (windSpeed) {
-                    return !isNaN(parseFloat(windSpeed.slice(0, -6)));
+                    return !isNaN(parseFloat(windSpeed));
                 }
             });
 
@@ -211,11 +211,11 @@ define([
                 },
                 parse: function (dataRate) {
                     return typeof dataRate === 'string'
-                        ? parseFloat(dataRate.slice(0, -6).trim())
+                        ? parseFloat(dataRate)
                         : dataRate;
                 },
                 validate: function (dataRate) {
-                    return !isNaN(parseFloat(dataRate.slice(0, -6).trim()));
+                    return !isNaN(parseFloat(dataRate));
                 }
             });
 
@@ -241,11 +241,11 @@ define([
                 },
                 parse: function (frequency) {
                     return typeof frequency === 'string'
-                        ? parseFloat(frequency.slice(0, -3).trim())
+                        ? parseFloat(frequency)
                         : frequency;
                 },
                 validate: function (frequency) {
-                    return !isNaN(parseFloat(frequency.slice(0, -3).trim()));
+                    return !isNaN(parseFloat(frequency));
                 }
             });
 
@@ -265,11 +265,11 @@ define([
                 },
                 parse: function (power) {
                     return typeof power === 'string'
-                        ? parseFloat(power.slice(0, -3).trim())
+                        ? parseFloat(power)
                         : power;
                 },
                 validate: function (power) {
-                    return !isNaN(parseFloat(power.slice(0, -3).trim()));
+                    return !isNaN(parseFloat(power));
                 }
             });
 
