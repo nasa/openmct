@@ -18,8 +18,8 @@
                 <template v-if="filter.possibleValues">
                     <ul class="grid-properties">
                         <li class="grid-row"
-                            v-for="(value, index) in filter.possibleValues"
-                            :key="index">
+                            v-for="value in filter.possibleValues"
+                            :key="value">
                             <div class="grid-cell label">{{ value }}</div>
                             <div class="grid-cell value">
                                 <input type="checkbox" 
@@ -41,19 +41,13 @@ export default {
         persistedFilters: {
             type: Object,
             default: () => {
-                return {
-                    value: '',
-                    values: []
-                }
+                return {}
             }
         }
     },
     data() {
         return {
-            expanded: false,
-            comparator: this.persistedFilters.comparator,
-            value: this.persistedFilters.value,
-            values: this.persistedFilters.values
+            expanded: false
         }
     },
     methods: {
@@ -61,20 +55,17 @@ export default {
             this.$emit('onUserSelect', this.filterField.key, comparator, value, event.target.checked);
         },
         isChecked(comparator, value) {
-            if (this.comparator === comparator && this.values.includes(value)) {
+            if (this.persistedFilters[comparator] && this.persistedFilters[comparator].includes(value)) {
                 return true;
             } else {
                 return false;
             }
         },
         persistedValue(comparator) {
-            if (this.comparator === comparator) {
-                return this.value;
-            }
+            return this.persistedFilters && this.persistedFilters[comparator];
         },
         updateFilterValue(event, comparator) {
-            this.value = event.target.value;
-            this.$emit('onTextEnter', this.filterField.key, comparator, this.value);
+            this.$emit('onTextEnter', this.filterField.key, comparator, event.target.value);
         }
     }
 }

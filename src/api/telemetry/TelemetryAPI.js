@@ -315,8 +315,8 @@ define([
                     .subscribe(domainObject, function (value) {
                         subscriber.callbacks.forEach(function (cb) {
                             cb(value);
-                        }, options);
-                    });
+                        });
+                    }, options);
             } else {
                 subscriber.unsubscribe = function () {};
             }

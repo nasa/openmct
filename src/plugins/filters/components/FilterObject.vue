@@ -61,27 +61,26 @@ export default {
         collectUserSelects(key, comparator, valueName, value) {
             let filterValue = this.updatedFilters[key];
 
-            if (filterValue && filterValue.comparator === comparator) {
+            if (filterValue && filterValue[comparator]) {
                 if (value === false) {
-                    filterValue.values = filterValue.values.filter(v => v !== valueName);
+                    filterValue[comparator] = filterValue[comparator].filter(v => v !== valueName);
                 } else {
-                    filterValue.values.push(valueName);
+                    filterValue[comparator].push(valueName);
                 }
             } else {
-                this.updatedFilters[key] = {
-                    comparator,
-                    values: [value ? valueName : undefined]
+                if (!this.updatedFilters[key]) {
+                    this.updatedFilters[key] = {};
                 }
+                this.updatedFilters[key][comparator] = [value ? valueName : undefined];
             }
 
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
         },
         updateTextFilter(key, comparator, value) {
-            this.updatedFilters[key] = {
-                comparator,
-                value
-            };
-
+            if (!this.updatedFilters[key]) {
+                this.updatedFilters[key] = {};
+            }
+            this.updatedFilters[key][comparator] = value;
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
         }
     },

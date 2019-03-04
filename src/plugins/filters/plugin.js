@@ -25,9 +25,9 @@ define([
 ], function (
     FiltersInspectorViewProvider
 ) {
-    return function plugin() {
+    return function plugin(supportedObjectTypesArray) {
         return function install(openmct) {
-            openmct.inspectorViews.addProvider(new FiltersInspectorViewProvider(openmct));
+            openmct.inspectorViews.addProvider(new FiltersInspectorViewProvider(openmct, supportedObjectTypesArray));
         };
     };
 });

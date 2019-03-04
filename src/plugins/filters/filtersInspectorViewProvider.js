@@ -28,7 +28,7 @@ define([
     Vue
 ) {
 
-    function FiltersInspectorViewProvider(openmct) {
+    function FiltersInspectorViewProvider(openmct, supportedObjectTypesArray) {
         return {
             key: 'filters-inspector',
             name: 'Filters Inspector View',
@@ -38,11 +38,7 @@ define([
                 }
                 let object = selection[0].context.item;
 
-                return object && (
-                    object.type === 'table' ||
-                    object.type === 'telemetry.plot.stacked' ||
-                    object.type === 'telemetry.plot.overlay'
-                );
+                return object && supportedObjectTypesArray.some(type => object.type === type);
             },
             view: function (selection) {
                 let component;
