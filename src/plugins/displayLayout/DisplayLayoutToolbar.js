@@ -446,7 +446,6 @@ define([], function () {
                 }
 
                 function getTextButton(selectedParent, selection) {
-                    if (selection.length === 1) {
                         return {
                             control: "button",
                             domainObject: selectedParent,
@@ -460,7 +459,6 @@ define([], function () {
                             title: "Edit text properties",
                             dialog: DIALOG_FORM['text']
                         };
-                    }
                 }
 
                 function getTelemetryValueMenu(selectionPath, selection) {

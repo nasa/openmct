@@ -124,26 +124,25 @@
             },
             getValue(domainObject, toolbarItem) {
                 let value = undefined;
+                let applicableSelectedItems = toolbarItem.applicableSelectedItems;
+
+                if (!applicableSelectedItems) {
+                    return value;
+                }
 
                 if (toolbarItem.formKeys) {
                     value = this.getFormValue(domainObject, toolbarItem);
                 } else {
-                    let applicableSelectedItems = toolbarItem.applicableSelectedItems;
+                    let values = [];
+                    applicableSelectedItems.forEach(selectionPath => {
+                        values.push(_.get(domainObject, this.getItemProperty(toolbarItem, selectionPath)));
+                    });
 
-                    if (!applicableSelectedItems) {
-                        value = _.get(domainObject, this.getItemProperty(toolbarItem));
+                    // If all values are the same, use it, otherwise mark the item as non-specific.
+                    if (values.every(value => value === values[0])) {
+                        value = values[0];
                     } else {
-                        let values = [];
-                        applicableSelectedItems.forEach(selectionPath => {
-                            values.push(_.get(domainObject, this.getItemProperty(toolbarItem, selectionPath)));
-                        });
-
-                        // If all values are the same, use it, otherwise mark the item as non-specific.
-                        if (values.every(value => value === values[0])) {
-                            value = values[0];
-                        } else {
-                            toolbarItem.nonSpecific = true;
-                        }
+                        toolbarItem.nonSpecific = true;
                     }
                 }
 
@@ -151,10 +150,22 @@
             },
             getFormValue(domainObject, toolbarItem) {
                 let value = {};
+                let values = {};
                 toolbarItem.formKeys.map(key => {
-                    // TODO:
-                    value[key] = _.get(domainObject, this.getItemProperty(toolbarItem) + "." + key);
+                    values[key] = [];
+                    toolbarItem.applicableSelectedItems.forEach(selectionPath => {
+                        values[key].push(_.get(domainObject, this.getItemProperty(toolbarItem, selectionPath) + "." + key));
+                    });
                 });
+
+                for (key in values) {
+                    if (values[key].every(value => value === values[key][0])) {
+                        value[key] = values[key][0];
+                    } else {
+                        toolbarItem.nonSpecific = true;
+                        return {};
+                    }
+                }
                 return value;
             },
             getItemProperty(item, selectionPath) {
@@ -170,16 +181,23 @@
             },
             updateObjectValue(value, item) {
                 let changedItemId = this.openmct.objects.makeKeyString(item.domainObject.identifier);
-                this.structure = this.structure.map((s) => {
-                    let toolbarItem = {...s};
-                    let domainObject = toolbarItem.domainObject;
 
-                    if (domainObject) {
-                        let id = this.openmct.objects.makeKeyString(domainObject.identifier);
+                this.structure = this.structure.map(toolbarItem => {
+                    if (toolbarItem.domainObject) {
+                        let id = this.openmct.objects.makeKeyString(toolbarItem.domainObject.identifier);
 
-                        // TODO:
-                        if (changedItemId === id && this.getItemProperty(item) === this.getItemProperty(s)) {
-                            toolbarItem.value = value;
+                        if (changedItemId === id) {
+                            let applicableSelectedItems = toolbarItem.applicableSelectedItems;
+                            if (applicableSelectedItems) {
+                                applicableSelectedItems.forEach(selectionPath => {
+                                    console.log('item', this.getItemProperty(item, selectionPath));
+                                    console.log('toolbarItem', this.getItemProperty(toolbarItem, selectionPath));
+                                    if (this.getItemProperty(item, selectionPath) === this.getItemProperty(toolbarItem, selectionPath)) {
+                                        // TODO: make sure all selectedItems have the same property before setting the value
+                                        toolbarItem.value = value;
+                                    }
+                                });
+                            }
                         }
                     }
 
@@ -195,7 +213,7 @@
                                 item.applicableSelectedItems.forEach(selectionPath => {
                                     this.openmct.objects.mutate(item.domainObject,
                                         this.getItemProperty(item, selectionPath) + "." + key, value[key]);
-                                });   
+                                });
                             });
                         }
                     });

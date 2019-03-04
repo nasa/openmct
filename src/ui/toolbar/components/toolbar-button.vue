@@ -1,6 +1,7 @@
 <template>
     <div class="c-ctrl-wrapper">
-        <div class="c-click-icon"
+        <div v-if="!nonSpecific"
+            class="c-click-icon"
             :title="options.title"
             :class="{
                 [options.icon]: true,
@@ -11,7 +12,10 @@
                  v-if="options.label">
                 {{ options.label }}
             </div>
-
+        </div>
+        <div v-if="nonSpecific"
+            class="c-click-icon icon-object-unknown"
+            :class="options.icon">
         </div>
     </div>
 </template>
@@ -21,6 +25,11 @@ export default {
     inject: ['openmct'],
     props: {
         options: Object
+    },
+    computed: {
+        nonSpecific() {
+            return this.options.nonSpecific === true;
+        }
     },
     methods: {
         onClick(event) {
