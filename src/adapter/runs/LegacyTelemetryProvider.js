@@ -158,7 +158,7 @@ define([
 
         return {
             evaluate: function (datum, property) {
-                return limitEvaluator.evaluate(datum, property.key);
+                return limitEvaluator.evaluate(datum, property && property.key);
             }
         };
     };
