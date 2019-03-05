@@ -146,8 +146,9 @@ define([
                     .telemetry
                     .subscribe(
                         this.domainObject,
-                        this.add.bind(this),
-                        this.filters
+                        this.add.bind(this),{
+                            filters: this.filters
+                        }
                     );
             }
 
