@@ -239,6 +239,18 @@ select {
     padding: 1px 20px 1px $interiorMargin;
 }
 
+// CHECKBOX LISTS
+// __input followed by __label
+.c-checkbox-list {
+    // Rows
+    &__row + &__row { margin-top: $interiorMarginSm; }
+
+    // input and label in each __row
+    &__row {
+        > * + * { margin-left: $interiorMargin; }
+    }
+}
+
 /******************************************************** HYPERLINKS AND HYPERLINK BUTTONS */
 .c-hyperlink {
     &--link {

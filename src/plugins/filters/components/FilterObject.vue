@@ -1,29 +1,29 @@
 <template>
-<div>
-    <div class="c-tree__item menus-to-left"
-        @click="toggleExpanded">
-        <span class="c-disclosure-triangle is-enabled flex-elem"
-            :class="{'c-disclosure-triangle--expanded': expanded}"></span>
-        <div class="c-tree__item__label">
-            <div class="t-object-label l-flex-row flex-elem grows">
-                <div class="t-item-icon flex-elem"
-                    :class="objectCssClass">
+    <li>
+        <div class="c-tree__item menus-to-left"
+             @click="toggleExpanded">
+            <span class="c-disclosure-triangle is-enabled flex-elem"
+              :class="{'c-disclosure-triangle--expanded': expanded}"></span>
+            <div class="c-tree__item__label">
+                <div class="t-object-label l-flex-row flex-elem grows">
+                    <div class="t-item-icon flex-elem"
+                         :class="objectCssClass">
+                    </div>
+                    <div class="t-title-label flex-elem grows">{{ filterObject.name }}</div>
                 </div>
-                <div class="t-title-label flex-elem grows">{{ filterObject.name }}</div>
             </div>
         </div>
-    </div>
-    <ul class="c-properties__section" v-if="expanded">
-        <filter-field
-            v-for="field in filterObject.valuesWithFilters"
-            :key="field.key"
-            :filterField="field"
-            :persistedFilters="persistedFilters[field.key]"
-            @onUserSelect="collectUserSelects"
-            @onTextEnter="updateTextFilter">
-        </filter-field>
-    </ul>
-</div>
+        <ul class="grid-properties" v-if="expanded">
+            <filter-field
+                    v-for="field in filterObject.valuesWithFilters"
+                    :key="field.key"
+                    :filterField="field"
+                    :persistedFilters="persistedFilters[field.key]"
+                    @onUserSelect="collectUserSelects"
+                    @onTextEnter="updateTextFilter">
+            </filter-field>
+        </ul>
+    </li>
 </template>
 
 <style lang="scss">
