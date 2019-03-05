@@ -1,41 +1,72 @@
 <template>
-    <li>
-        <h2 style="margin-left: 15px;">{{ filterField.name }} - Equals</h2>
-        <ul class="grid-properties"
-            style="margin-left: 15px">
-            <li class="grid-row"
-                v-for="(filter, index) in filterField.filters"
-                :key="index">
+    <div class="u-contents c-filter-settings">
+        <li class="grid-row c-filter-settings__setting"
+            v-for="(filter, index) in filterField.filters"
+            :key="index">
+            <div class="grid-cell label">
+                {{ filterField.name }} =
+            </div>
+            <div class="grid-cell value">
+                <!-- EDITING -->
+                <!-- String input, editing -->
+                <template v-if="!filter.possibleValues && isEditing">
+                    <input class="c-input--flex"
+                           type="text"
+                           :id="`${filter}filterControl`"
+                           placeholder="Enter Value"
+                           :value="persistedValue(filter)"
+                           @blur="updateFilterValue($event, filter)">
+                </template>
 
-                <template v-if="!filter.possibleValues">
-                    <input type="text" 
-                        :id="`${filter}filterControl`"  
-                        placeholder="Enter Value"
-                        :value="persistedValue(filter)"
-                        @blur="updateFilterValue($event, filter)">
+                <!-- Checkbox list, editing -->
+                <template v-if="filter.possibleValues && isEditing">
+                    <div class="c-checkbox-list__row"
+                         v-for="value in filter.possibleValues"
+                         :key="value">
+                        <input class="c-checkbox-list__input"
+                               type="checkbox"
+                               :id="`${value}filterControl`"
+                               @change="onUserSelect($event, filter.comparator, value)"
+                               :checked="isChecked(filter.comparator, value)">
+                        <span class="c-checkbox-list__value">
+                            {{ value }}
+                        </span>
+                    </div>
                 </template>
-                
-                <template v-if="filter.possibleValues">
-                    <ul class="grid-properties">
-                        <li class="grid-row"
-                            v-for="value in filter.possibleValues"
-                            :key="value">
-                            <div class="grid-cell label">{{ value }}</div>
-                            <div class="grid-cell value">
-                                <input type="checkbox" 
-                                    :id="`${value}filterControl`" 
-                                    @change="onUserSelect($event, filter.comparator, value)"
-                                    :checked="isChecked(filter.comparator, value)">
-                            </div>
-                        </li>
-                    </ul>
+
+                <!-- BROWSING -->
+                <!-- String input, NOT editing -->
+                <template v-if="!filter.possibleValues && !isEditing">
+                    {{ persistedValue(filter) }}
                 </template>
-            </li>
-        </ul>
-    </li>
+
+                <!-- Checkbox list, NOT editing -->
+                <template v-if="filter.possibleValues && !isEditing">
+                    <span>{{persistedFilters[filter.comparator].join(', ')}}</span>
+                </template>
+            </div>
+        </li>
+    </div>
 </template>
+
+<style lang="scss">
+    @import "~styles/sass-base";
+
+    .c-filter-settings {
+        &__setting {
+            .grid-cell.label {
+                white-space: nowrap;
+            }
+        }
+    }
+</style>
+
+
 <script>
 export default {
+    inject: [
+        'openmct'
+    ],
     props: {
         filterField: Object, 
         persistedFilters: {
@@ -47,10 +78,14 @@ export default {
     },
     data() {
         return {
-            expanded: false
+            expanded: false,
+            isEditing: this.openmct.editor.isEditing()
         }
     },
     methods: {
+        toggleIsEditing(isEditing) {
+            this.isEditing = isEditing;
+        },
         onUserSelect(event, comparator, value){
             this.$emit('onUserSelect', this.filterField.key, comparator, value, event.target.checked);
         },
@@ -67,6 +102,12 @@ export default {
         updateFilterValue(event, comparator) {
             this.$emit('onTextEnter', this.filterField.key, comparator, event.target.value);
         }
+    },
+    mounted() {
+        this.openmct.editor.on('isEditing', this.toggleIsEditing);
+    },
+    beforeDestroy() {
+        this.openmct.editor.off('isEditing', this.toggleIsEditing);
     }
 }
 </script>

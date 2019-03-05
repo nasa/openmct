@@ -183,6 +183,13 @@
     }
     /********************************************* LEGACY SUPPORT */
     .c-inspector {
+        // FilterField.vue
+        .u-contents + .u-contents {
+            li.grid-row > * {
+                border-top: 1px solid $colorInspectorSectionHeaderBg;
+            }
+        }
+
         li.grid-row + li.grid-row {
             > * {
                 border-top: 1px solid $colorInspectorSectionHeaderBg;
