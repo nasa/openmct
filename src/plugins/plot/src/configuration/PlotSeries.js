@@ -146,7 +146,8 @@ define([
                     .telemetry
                     .subscribe(
                         this.domainObject,
-                        this.add.bind(this),{
+                        this.add.bind(this),
+                        {
                             filters: this.filters
                         }
                     );
@@ -365,10 +366,12 @@ define([
 
         },
         /**
-         * Clears the plot series, unsubscribes and resubscribes
+         * Updates filters, clears the plot series, unsubscribes and resubscribes
          * @public
          */
-        clearAndRefetch: function () {
+        updateFiltersAndRefresh: function (updatedFilters) {
+            this.filters = updatedFilters;
+            this.reset();
             if (this.unsubscribe) {
                 this.unsubscribe();
                 delete this.unsubscribe;

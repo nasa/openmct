@@ -255,9 +255,9 @@ define([
                           xRange.max === xDisplayRange.max);
     };
 
-    PlotController.prototype.updateFiltersAndResubscribe = function () {
+    PlotController.prototype.updateFiltersAndResubscribe = function (updatedFilters) {
         this.config.series.forEach(function (series) {
-            series.clearAndRefetch();
+            series.updateFiltersAndRefresh(updatedFilters[series.keyString]);
         })
     }
 
