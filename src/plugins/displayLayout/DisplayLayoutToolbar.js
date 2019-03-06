@@ -163,7 +163,7 @@ define([], function () {
                     };
                 }
 
-                function getRemoveButton(selectedParent, selectionPath) {
+                function getRemoveButton(selectedParent, selectionPath, selection) {
                     return {
                         control: "button",
                         domainObject: selectedParent,
@@ -171,6 +171,7 @@ define([], function () {
                         title: "Delete the selected object",
                         method: function () {
                             let removeItem = selectionPath[1].context.removeItem;
+                            let selectedItems = getAllTypes(selection);
                             let prompt = openmct.overlays.dialog({
                                 iconClass: 'alert',
                                 message: `Warning! This action will remove this item from the Display Layout. Do you want to continue?`,
@@ -179,7 +180,7 @@ define([], function () {
                                         label: 'Ok',
                                         emphasis: 'true',
                                         callback: function () {
-                                            removeItem(layoutItem, selectionPath[0].context.index);
+                                            removeItem(selectedItems);
                                             prompt.dismiss();
                                         }
                                     },
@@ -565,7 +566,7 @@ define([], function () {
                             ];
                         }
                         if (toolbar['remove'].length === 0) {
-                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath)];
+                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath, selection)];
                         }
                     } else if (layoutItem.type === 'telemetry-view') {
                         if (toolbar['display-mode'].length === 0) {
@@ -597,7 +598,7 @@ define([], function () {
                             ];
                         }
                         if (toolbar['remove'].length === 0) {
-                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath)];
+                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath, selection)];
                         }
                     } else if (layoutItem.type === 'text-view') {
                         if (toolbar['style'].length < 2) {
@@ -626,7 +627,7 @@ define([], function () {
                             toolbar['text'] = [getTextButton(selectedParent, selection)];
                         }
                         if (toolbar['remove'].length === 0) {
-                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath)];
+                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath, selection)];
                         }
                     } else if (layoutItem.type === 'box-view') {
                         if (toolbar['style'].length < 2) {
@@ -646,7 +647,7 @@ define([], function () {
                             ];
                         }
                         if (toolbar['remove'].length === 0) {
-                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath)];
+                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath, selection)];
                         }
                     } else if (layoutItem.type === 'image-view') {
                         if (toolbar['style'].length === 0) {
@@ -668,7 +669,7 @@ define([], function () {
                             toolbar['url'] = [getURLButton(selectedParent, selection)];
                         }
                         if (toolbar['remove'].length === 0) {
-                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath)];
+                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath, selection)];
                         }
                     } else if (layoutItem.type === 'line-view') {
                         if (toolbar['style'].length === 0) {
@@ -687,7 +688,7 @@ define([], function () {
                             ];
                         }
                         if (toolbar['remove'].length === 0) {
-                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath)];
+                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath, selection)];
                         }
                     }
                 });

@@ -314,11 +314,15 @@
                     this.objectViewMap[keyString] = true;
                 }
             },
-            removeItem(item, index) {
+            removeItem(selectedItems) {
+                let indices = [];
                 this.initSelectIndex = -1;
-                this.layoutItems.splice(index, 1);
+                selectedItems.forEach(selectedItem => {
+                    indices.push(selectedItem[0].context.index);
+                    this.untrackItem(selectedItem[0].context.layoutItem);
+                });
+                _.pullAt(this.layoutItems, indices);
                 this.mutate("configuration.items", this.layoutItems);
-                this.untrackItem(item);
                 this.$el.click();
             },
             untrackItem(item) {
