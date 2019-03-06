@@ -83,8 +83,19 @@ const webpackConfig = {
                 loader: 'file-loader',
                 options: {
                     name: '[name].[ext]',
-                    useRelativePath: true,
-                    outputPath: 'assets/'
+                    outputPath(url, resourcePath, context) {
+                        if (/\.(jpg|jpeg|png|svg)$/.test(url)) {
+                            return `images/${url}`
+                        }
+                        if (/\.ico$/.test(url)) {
+                            return `icons/${url}`
+                        }
+                        if (/\.(woff2?|eot|ttf)$/.test(url)) {
+                            return `fonts/${url}`
+                        } else {
+                            return `${url}`;
+                        }
+                    }
                 }
             },
             {
