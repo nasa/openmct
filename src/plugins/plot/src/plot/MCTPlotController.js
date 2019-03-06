@@ -53,6 +53,9 @@ define([
         this.listenTo(this.$scope, 'plot:clearHistory', this.clear, this);
 
         this.initialize();
+
+        this.crosshairVertical = document.getElementById('crosshair-vertical');
+        this.crosshairHorizontal = document.getElementById('crosshair-horizontal');
     }
 
     MCTPlotController.$inject = ['$scope', '$element', '$window'];
@@ -143,11 +146,17 @@ define([
             y: this.yScale.invert(this.positionOverElement.y)
         };
 
+        this.updateCrosshairs($event);
         this.highlightValues(this.positionOverPlot.x);
         this.updateMarquee();
         this.updatePan();
         this.$scope.$digest();
         $event.preventDefault();
+    };
+
+    MCTPlotController.prototype.updateCrosshairs = function ($event) {
+        this.crosshairVertical.style.left = ($event.clientX - this.chartElementBounds.x) + 'px';
+        this.crosshairHorizontal.style.top = ($event.clientY - this.chartElementBounds.y) + 'px';
     };
 
     MCTPlotController.prototype.trackChartElementBounds = function ($event) {

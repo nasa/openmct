@@ -181,6 +181,13 @@
                 <span class="t-wait-spinner loading" ng-show="plot.isRequestPending()">
                 </span>
 
+                <div style="width:2px; top:0; bottom:0; position:absolute; background-color:red; pointer-events: none;"
+                    id="crosshair-vertical">
+                </div>
+                <div style="height:2px; left:0; right:0; position:absolute; background-color:red; pointer-events: none"
+                    id="crosshair-horizontal">
+                </div>
+
             </div>
 
             <div class="gl-plot-axis-area gl-plot-x"
