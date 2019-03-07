@@ -1,15 +1,10 @@
 <template>
     <div class="c-ctrl-wrapper">
-        <div v-if="!nonSpecific"
-             class="c-click-icon c-click-icon--menu"
-             :class="options.icon"
+        <div class="c-click-icon c-click-icon--menu"
+             :class="[options.icon, {'icon-object-unknown': nonSpecific}]"
              :title="options.title"
              @click="toggle">
             <div class="c-button__label">{{ selectedName }}</div>
-        </div>
-        <div v-if="nonSpecific"
-            class="c-click-icon icon-object-unknown"
-            :class="options.icon">
         </div>
         <div class="c-menu" v-if="open">
             <ul>

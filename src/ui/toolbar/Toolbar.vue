@@ -141,6 +141,7 @@
                     // If all values are the same, use it, otherwise mark the item as non-specific.
                     if (values.every(value => value === values[0])) {
                         value = values[0];
+                        toolbarItem.nonSpecific = false;
                     } else {
                         toolbarItem.nonSpecific = true;
                     }
@@ -161,6 +162,7 @@
                 for (key in values) {
                     if (values[key].every(value => value === values[key][0])) {
                         value[key] = values[key][0];
+                        toolbarItem.nonSpecific = false;
                     } else {
                         toolbarItem.nonSpecific = true;
                         return {};

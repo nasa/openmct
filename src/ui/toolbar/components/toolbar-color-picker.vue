@@ -1,17 +1,12 @@
 <template>
     <div class="c-ctrl-wrapper">
-        <div v-if="!nonSpecific"
-             class="c-click-icon c-click-icon--swatched"
-             :class="options.icon"
+        <div class="c-click-icon c-click-icon--swatched"
+             :class="[options.icon, {'icon-object-unknown': nonSpecific}]"
              :title="options.title"
              @click="toggle">
             <div class="c-swatch" :style="{
                 background: options.value
             }"></div>
-        </div>
-        <div v-if="nonSpecific"
-            class="c-click-icon icon-object-unknown"
-            :class="options.icon">
         </div>
         <div class="c-menu c-palette c-palette--color"
             v-if="open">

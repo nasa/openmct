@@ -1,14 +1,9 @@
 <template>
     <div class="c-ctrl-wrapper">
-        <div v-if="!nonSpecific"
-             class="c-click-icon"
+        <div class="c-click-icon"
              :title="nextValue.title"
-             :class="nextValue.icon"
+             :class="[nextValue.icon, {'icon-object-unknown': nonSpecific}]"
              @click="cycle">
-        </div>
-        <div v-if="nonSpecific"
-             class="c-click-icon icon-object-unknown"
-             :class="nextValue.icon">
         </div>
     </div>
 </template>

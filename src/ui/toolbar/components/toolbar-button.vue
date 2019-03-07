@@ -1,21 +1,17 @@
 <template>
     <div class="c-ctrl-wrapper">
-        <div v-if="!nonSpecific"
-            class="c-click-icon"
+        <div class="c-click-icon"
             :title="options.title"
             :class="{
                 [options.icon]: true,
-                'c-click-icon--caution': options.modifier === 'caution'
+                'c-click-icon--caution': options.modifier === 'caution',
+                'icon-object-unknown': nonSpecific
             }"
             @click="onClick">
             <div class="c-click-icon__label"
                  v-if="options.label">
                 {{ options.label }}
             </div>
-        </div>
-        <div v-if="nonSpecific"
-            class="c-click-icon icon-object-unknown"
-            :class="options.icon">
         </div>
     </div>
 </template>
