@@ -1,17 +1,16 @@
 <template>
-    <div class="c-tree__wrapper">
-        <div class="l-shell__search">
-            <search class="c-search--major" ref="shell-search"
+    <div class="c-tree-and-search">
+        <div class="c-tree-and-search__search">
+            <search class="c-search" ref="shell-search"
                 :value="searchValue"
                 @input="searchTree"
                 @clear="searchTree">
             </search>
         </div>
-        <div
-            v-if="treeItems.length === 0">
+        <div class="c-tree-and-search__no-results" v-if="treeItems.length === 0">
             No results found
         </div>
-        <ul class="c-tree">
+        <ul class="c-tree-and-search__tree c-tree">
             <tree-item v-for="treeItem in treeItems"
                        :key="treeItem.id"
                        :node="treeItem">
@@ -23,16 +22,34 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
+    .c-tree-and-search {
+        display: flex;
+        flex-direction: column;
+        padding-right: $interiorMarginSm;
+        overflow: auto;
+
+        > * + * { margin-top: $interiorMargin; }
+
+        &__search {
+            flex: 0 0 auto;
+        }
+
+        &__no-results {
+            font-style: italic;
+            opacity: 0.6;
+        }
+
+        &__tree {
+            flex: 1 1 auto;
+            height: 100%;
+        }
+    }
+
     .c-tree {
         @include userSelectNone();
         overflow-x: hidden;
         overflow-y: auto;
-        height: 100%;
-
-        &__wrapper {
-            overflow-y: auto;
-            padding-right: $interiorMarginSm;
-        }
+        padding-right: $interiorMargin;
 
         .c-tree {
             margin-left: 15px;
