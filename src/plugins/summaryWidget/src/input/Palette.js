@@ -47,7 +47,7 @@ define([
 
         //$('.l-palette-row', self.domElement).after('<div class = "l-palette-row"> </div>');
         self.items.forEach(function (item) {
-            var itemElement = $('<div class = "c-palette__item"' +
+            var itemElement = $('<div class = "c-palette__item ' + item + '"' +
                                 ' data-item = ' + item + '></div>');
             $('.c-palette__items', self.domElement).append(itemElement);
             self.itemElements[item] = itemElement;

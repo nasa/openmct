@@ -366,37 +366,44 @@ select {
 }
 
 /******************************************************** PALETTES */
+@mixin cPaletteGrid($itemD, $gapD) {
+    .c-palette__items {
+        grid-gap: $gapD;
+        grid-template-columns: repeat(auto-fill, $itemD);
+    }
+
+    .c-palette__item {
+        width: $itemD;
+        height: $itemD;
+    }
+}
+
 .c-palette {
     display: flex;
     flex-flow: column nowrap;
-    min-width: 136px;
+    line-height: normal;
 
     &__items {
-        flex: 1 1 auto;
         display: grid;
-        grid-template-columns: repeat(auto-fill, 12px);
-        grid-gap: 1px;
+        flex: 1 1 auto;
+        min-width: 128px;
     }
 
     &__item {
-        $d: 12px;
-
         border: 1px solid transparent;
         cursor: pointer;
-        min-width: $d; min-height: $d;
+        display: flex;
+        align-items: center;
+        align-content: center;
+        text-align: center;
         transition: $transOut;
 
         &:hover {
             transition: $transIn;
-            $o: 0.7;
-            border-color: rgba($paletteItemBorderOuterColorSelected, $o);
-            box-shadow: inset rgba($paletteItemBorderInnerColorSelected, $o) 0 0 0 1px;
         }
 
         &.is-selected {
-            border-color: $paletteItemBorderOuterColorSelected !important;
-            border-width: 2px;
-            box-shadow: inset rgba($paletteItemBorderInnerColorSelected, 1) 0 0 0 1px;
+            border-width: 1px;
         }
     }
 
@@ -410,6 +417,44 @@ select {
             @include noColor();
             border-color: $paletteItemBorderInnerColor;
             margin-right: $interiorMarginSm;
+        }
+    }
+
+    &--color {
+        @include cPaletteGrid(12px, 1px);
+
+        .c-palette__item {
+            &:hover {
+                border-color: rgba($paletteItemBorderOuterColorSelected, 0.7);
+                box-shadow: inset rgba($paletteItemBorderInnerColorSelected, 0.7) 0 0 0 1px;
+            }
+
+            &.is-selected {
+                border-color: $paletteItemBorderOuterColorSelected !important;
+                box-shadow: inset rgba($paletteItemBorderInnerColorSelected, 1) 0 0 0 1px;
+            }
+        }
+    }
+
+    &--icon {
+        @include cPaletteGrid(12px, 3px);
+
+        .c-palette__item {
+            border-radius: $smallCr;
+            font-size: 0.6rem;
+
+            &:before {
+                display: block;
+                width: 100%;
+            }
+
+            &:hover {
+                box-shadow: rgba($paletteItemBorderInnerColorSelected, 0.3) 0 0 0 1px;
+            }
+
+            &.is-selected {
+                box-shadow: rgba($paletteItemBorderInnerColorSelected, 0.6) 0 0 0 1px;
+            }
         }
     }
 }

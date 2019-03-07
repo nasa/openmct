@@ -38,7 +38,7 @@ function (
 
         $('.c-button--menu', domElement).addClass('c-button--swatched');
         $('.t-swatch', domElement).addClass('color-swatch');
-        $('.c-palette', domElement).addClass('c-palette--color-palette');
+        $('.c-palette', domElement).addClass('c-palette--color');
 
         $('.c-palette__item', domElement).each(function () {
             var elem = this;
