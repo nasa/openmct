@@ -833,15 +833,6 @@ body.mobile.phone {
     }
 }
 
-
-
-
-
-
-
-
-
-
 /*********************************************************************** SUMMARY WIDGETS */
 /************************* WIDGET OBJECT */
 @mixin cSummaryWidget() {
@@ -850,35 +841,41 @@ body.mobile.phone {
     border-style: solid;
     border-width: 1px;
     cursor: default;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
     &[href] {
         cursor: pointer;
     }
 
-    &__label {
-        &:before {
-            // Widget icon
-            font-size: 0.9em;
-            margin-right: $interiorMarginSm;
-        }
+    &__icon {
+        // Hide the icon holder element. Selector below shows this once 'icon-*' is added.
+        display: none;
+        font-size: 0.9em;
     }
 
-}
+    &__label {
+        @include ellipsize();
+    }
 
-.l-summary-widget {
-    // Widget layout classes here
-    @include ellipsize();
-    display: inline-block;
-    text-align: center;
-    .widget-label:before {
-        // Widget icon
-        font-size: 0.9em;
+    [class*='icon-'] {
+        // When 'icon-*' is added, show this element and add margin
+        display: block;
         margin-right: $interiorMarginSm;
     }
+
 }
 
-.c-summary-widget {
+.c-summary-widget,
+.c-sw {
     @include cSummaryWidget();
     padding: $interiorMarginLg $interiorMarginLg * 2;
+
+    &--thumb {
+        max-width: 30%;
+        padding: $interiorMarginSm $interiorMargin;
+    }
 }
 
 .widget-edit-holder {
@@ -890,15 +887,19 @@ body.mobile.phone {
     display: flex;
     align-items: center;
     margin-bottom: $interiorMargin;
+
     > * + * {
         margin-left: $interiorMargin;
     }
 }
 
+.l-rule-action-buttons-wrapper {
+    white-space: nowrap;
+}
+
 .widget-rules-wrapper,
 .widget-rule-content,
 .w-widget-test-data-content {
-    //@include trans-prop-nice($props: (height, min-height, opacity), $dur: 250ms);
     transition: $transIn;
     min-height: 0;
     height: 0;
@@ -952,7 +953,6 @@ body.mobile.phone {
     @include abs();
     display: flex;
     flex-direction: column;
-    //@extend .l-flex-col;
 
     > .l-summary-widget {
         // Main view of the summary widget
@@ -1078,23 +1078,6 @@ body.mobile.phone {
     padding: $interiorMargin $interiorMarginLg;
 }
 
-.l-widget-thumb-wrapper {
-    @extend .l-flex-row;
-    align-items: center;
-    > span { display: block; }
-    .grippy-holder,
-    .view-control {
-        margin-right: $interiorMargin;
-        width: 1em;
-        height: 1em;
-    }
-
-    .widget-thumb {
-        flex: 1 1 auto;
-        width: 100%;
-    }
-}
-
 .rule-title {
     flex: 0 1 auto;
     color: pullForward($colorBodyFg, 50%);
@@ -1110,12 +1093,6 @@ body.mobile.phone {
 .s-widget-test-data-item {
     background-color: rgba($colorBodyFg, 0.1);
     border-radius: $basicCr;
-}
-
-.widget-thumb {
-    @include ellipsize();
-    @include cSummaryWidget();
-    padding: $interiorMarginSm $interiorMargin;
 }
 
 .c-sw-edit__ui {
@@ -1140,22 +1117,6 @@ body.mobile.phone {
         @include abs();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /******************************************************************* INDICATORS */
 /* Indicators are generally only displayed in the ue-bottom-bar element of the main interface */

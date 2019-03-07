@@ -32,6 +32,7 @@ define([
     function Rule(ruleConfig, domainObject, openmct, conditionManager, widgetDnD, container) {
         eventHelpers.extend(this);
         var self = this;
+        const THUMB_ICON_CLASS = 'c-sw__icon js-sw__icon';
 
         this.config = ruleConfig;
         this.domainObject = domainObject;
@@ -50,7 +51,8 @@ define([
         this.duplicate = this.duplicate.bind(this);
 
         this.thumbnail = $('.t-widget-thumb', this.domElement);
-        this.thumbnailLabel = $('.widget-label', this.domElement);
+        this.thumbnailIcon = $('.js-sw__icon', this.domElement);
+        this.thumbnailLabel = $('.c-sw__label', this.domElement);
         this.title = $('.rule-title', this.domElement);
         this.description = $('.rule-description', this.domElement);
         this.trigger = $('.t-trigger', this.domElement);
@@ -92,7 +94,7 @@ define([
         function onIconInput(icon) {
             self.config.icon = icon;
             self.updateDomainObject('icon', icon);
-            self.thumbnailLabel.removeClass().addClass('label widget-label ' + icon);
+            self.thumbnailIcon.removeClass().addClass(THUMB_ICON_CLASS + ' ' + icon);
             self.eventEmitter.emit('change');
         }
 
@@ -179,7 +181,7 @@ define([
         });
 
         // Initialize thumbs when first loading
-        this.thumbnailLabel.removeClass().addClass('label widget-label ' + self.config.icon);
+        this.thumbnailIcon.removeClass().addClass(THUMB_ICON_CLASS + ' ' + self.config.icon);
         this.thumbnailLabel.html(self.config.label);
 
         Object.keys(this.colorInputs).forEach(function (inputKey) {

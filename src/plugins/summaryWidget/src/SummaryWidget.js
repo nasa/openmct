@@ -22,8 +22,8 @@ define([
 
     //default css configuration for new rules
     var DEFAULT_PROPS = {
-        'color': '#ffffff',
-        'background-color': '#38761d',
+        'color': '#cccccc',
+        'background-color': '#666666',
         'border-color': 'rgba(0,0,0,0)'
     };
 
@@ -215,11 +215,14 @@ define([
      * Update the widget's appearance from the configuration of the active rule
      */
     SummaryWidget.prototype.updateWidget = function () {
+        const WIDGET_CLASS = 'c-sw js-sw',
+            WIDGET_LABEL_CLASS = 'c-sw__label js-sw__label',
+            WIDGET_ICON_CLASS = 'c-sw__icon js-sw__icon';
         var activeRule = this.rulesById[this.activeId];
         this.applyStyle($('#widget', this.domElement), activeRule.getProperty('style'));
         $('#widget', this.domElement).prop('title', activeRule.getProperty('message'));
         $('#widgetLabel', this.domElement).html(activeRule.getProperty('label'));
-        $('#widgetLabel', this.domElement).removeClass().addClass('label widget-label c-summary-widget__label ' + activeRule.getProperty('icon'));
+        $('#widgetIcon', this.domElement).removeClass().addClass(WIDGET_ICON_CLASS + ' ' + activeRule.getProperty('icon'));
     };
 
     /**
