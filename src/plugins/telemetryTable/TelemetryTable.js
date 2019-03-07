@@ -213,7 +213,9 @@ define([
             this.filteredRows.destroy();
             Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
             this.openmct.time.off('bounds', this.refreshData);
-            this.filterObserver();
+            if (this.filterObserver) {
+                this.filterObserver();
+            }
 
             if (this.tableComposition !== undefined) {
                 this.tableComposition.off('add', this.addTelemetryObject);
