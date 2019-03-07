@@ -76,7 +76,8 @@
                 }
             }
 
-            &.is-navigated-object {
+            &.is-navigated-object,
+            &.is-selected {
                 background: $colorItemTreeSelectedBg;
                 .c-tree__item__type-icon:before {
                     color: $colorItemTreeIconHover;
