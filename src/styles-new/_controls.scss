@@ -237,6 +237,10 @@ select {
     border: none;
     border-radius: $controlCr;
     padding: 1px 20px 1px $interiorMargin;
+    *,
+    option {
+        color: #000 !important; // Fix fg color of option elements for Windows
+    }
 }
 
 /******************************************************** HYPERLINKS AND HYPERLINK BUTTONS */
