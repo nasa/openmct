@@ -104,33 +104,34 @@
                 margin-right: $interiorMarginSm;
             }
 
+            // Object labels in trees
             &__label {
                 // <a> tag that holds type icon and name.
                 // Draggable element.
-                border-radius: $controlCr;
+                /*border-radius: $controlCr;
                 display: flex;
                 align-items: center;
                 flex: 1 1 auto;
                 overflow: hidden;
                 padding: $aPad;
-                white-space: nowrap;
+                white-space: nowrap;*/
             }
 
             &__name {
-                @include ellipsize();
-                display: inline;
+               // @include ellipsize();
+               // display: inline;
                 color: $colorItemTreeFg;
-                width: 100%;
+              //  width: 100%;
             }
 
             &__type-icon {
-                // Type icon. Must be HTML entity to allow inclusion of alias indicator.
-                display: block;
-                flex: 0 0 auto;
-                font-size: 1.3em;
-                margin-right: $interiorMarginSm;
+                // Type icon. Must be an HTML entity to allow inclusion of alias indicator.
+               // display: block;
+             //   flex: 0 0 auto;
+              //  font-size: 1.3em;
+              //  margin-right: $interiorMarginSm;
                 color: $colorItemTreeIcon;
-                width: $treeTypeIconW;
+              //  width: $treeTypeIconW;
             }
 
             &.is-alias {

@@ -1,14 +1,47 @@
 <template>
-<a class="c-tree__item__label"
+<a class="c-tree__item__label c-object-label"
     draggable="true"
     @dragstart="dragStart"
     @click="navigateOrPreview"
     :href="objectLink">
-    <div class="c-tree__item__type-icon"
+    <div class="c-tree__item__type-icon c-object-label__type-icon"
         :class="typeClass"></div>
-    <div class="c-tree__item__name">{{ observedObject.name }}</div>
+    <div class="c-tree__item__name c-object-label__name">{{ observedObject.name }}</div>
 </a>
 </template>
+
+<style lang="scss">
+    @import "~styles/sass-base";
+    .c-object-label {
+        // <a> tag and draggable element that holds type icon and name.
+        // Used mostly in trees and lists
+        border-radius: $controlCr;
+        display: flex;
+        align-items: center;
+        flex: 1 1 auto;
+        overflow: hidden;
+        padding: $interiorMarginSm;
+        white-space: nowrap;
+
+        &__name {
+            @include ellipsize();
+            display: inline;
+            color: $colorItemTreeFg;
+            width: 100%;
+        }
+
+        &__type-icon {
+            // Type icon. Must be an HTML entity to allow inclusion of alias indicator.
+            display: block;
+            flex: 0 0 auto;
+            font-size: 1.3em;
+            margin-right: $interiorMarginSm;
+            color: $colorItemTreeIcon;
+            width: $treeTypeIconW;
+        }
+    }
+</style>
+
 
 <script>
 

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/********* Buttons */
+/******************************************************** BUTTONS */
 // Optionally can include icon in :before via markup
 button {
     @include htmlInputReset();
@@ -695,7 +695,6 @@ input[type="range"] {
 }
 
 /***************************************************** LEGACY */
-
 .l-btn-set {
     display: flex;
     align-items: center;

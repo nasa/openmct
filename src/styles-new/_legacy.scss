@@ -1486,6 +1486,112 @@ body.desktop {
     }
 }
 
+/******************************************************************* FLEX STYLES */
+.l-flex-row,
+.l-flex-col {
+    display: flex;
+    flex-wrap: nowrap;
+    .flex-elem {
+        min-height: 0; // Needed to allow element to shrink within parent
+        position: relative;
+        &:not(.grows) {
+            flex: 0 0 auto;
+            &.flex-can-shrink {
+                flex: 0 1 auto;
+            }
+        }
+        &.grows {
+            flex: 1 1 auto;
+        }
+        &.contents-align-right {
+            text-align: right;
+        }
+    }
+    .flex-container {
+        // Apply to wrapping elements, mct-includes, etc.
+        display: flex;
+        flex-wrap: nowrap;
+        flex: 1 1 auto;
+        min-height:0;
+    }
+}
+
+.l-flex-row {
+    flex-direction: row;
+    &.flex-elem { flex: 1 1 auto; }
+    > .flex-elem {
+        min-width: 0;
+        &.holder:not(:last-child) { margin-right: $interiorMargin; }
+    }
+    .flex-container { flex-direction: row; }
+}
+
+.l-flex-col {
+    flex-direction: column;
+    > .flex-elem {
+        min-height: 0;
+        &.holder:not(:last-child) { margin-bottom: $interiorMarginLg; }
+    }
+    &.l-flex-accordion .flex-accordion-holder {
+        display: flex;
+        flex-direction: column;
+    }
+    .flex-container { flex-direction: column; }
+}
+
+.flex-fixed {
+    flex: 0 0 auto;
+}
+
+.flex-justify-end {
+    justify-content: flex-end;
+}
+
+/******************************************************************* GRID STYLES */
+.grid-two-column,
+.grid-properties {
+    display: grid;
+    grid-row-gap: 0;
+    grid-template-columns: 1fr 1fr;
+}
+
+.grid-span-all,
+.grid-two-column-span-cols {
+    grid-column: 1 / 3;
+}
+
+.grid-elem {
+    &:not(:first-child) {
+        border-top: 1px solid $colorInteriorBorder;
+    }
+    &.label {
+        background-color: rgba(0,0,128,0.2);
+    }
+    &.value {
+        background-color: rgba(0,128,0,0.2);
+    }
+}
+
+.grid-row {
+    display: contents;
+}
+
+.grid-row {
+    .grid-cell {
+        padding: 3px $interiorMarginLg 3px 0;
+        &[title] {
+            // When a cell has a title, assume it's helpful text
+            cursor: help;
+        }
+    }
+    &.force-border,
+    &:not(:first-of-type) {
+        // Row borders, effected via border-top on child elements of the row
+        .grid-cell {
+            border-top: 1px solid $colorInspectorSectionHeaderBg;
+        }
+    }
+}
 
 /******************************************************************* VARIOUS */
 .c-overlay mct-include {
@@ -1498,6 +1604,10 @@ body.desktop {
         background: $colorMenuBg;
         color: $colorMenuFg !important;
     }
+}
+
+.t-popup {
+    z-index: 75;
 }
 
 .form .form-row {
