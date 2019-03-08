@@ -166,11 +166,6 @@
 
                 <div class="h-local-controls h-local-controls-overlay-content">
                     <div class="l-btn-set">
-                        <a class="s-button"
-                           ng-class="{ 'icon-grid-snap-to': plot.crosshair, 'icon-grid-snap-no': !plot.crosshair }"
-                           ng-click="plot.toggleCrosshair($event)"
-                           title="Toggle Crosshair">
-                        </a>
                         <a class="s-button icon-arrow-left"
                            ng-show="plotHistory.length"
                            ng-click="plot.back()"
@@ -180,6 +175,15 @@
                            ng-show="plotHistory.length"
                            ng-click="plot.clear()"
                            title="Reset pan/zoom">
+                        </a>
+                        <a class="s-button"
+                           ng-class="{ 'icon-grid-snap-to': plot.crosshair, 'icon-grid-snap-no': !plot.crosshair }"
+                           ng-click="plot.toggleCrosshair($event)"
+                           title="Toggle Crosshair">
+                        </a>
+                        <a class="s-button icon-magnify-in"
+                           ng-click="plot.zoomIn($event)"
+                           title="Zoom In">
                         </a>
                     </div>
                 </div>

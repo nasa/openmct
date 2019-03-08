@@ -96,6 +96,8 @@ define([
         this.crosshairHorizontal = this.$element[0].querySelector('.crosshair-horizontal');
         this.crosshair = false;
 
+        this.ZOOM_FACTOR = 0.2; //zoom percentage
+
         this.listenTo(this.$scope, '$destroy', this.destroy, this);
         this.listenTo(this.$scope, 'plot:tickWidth', this.onTickWidthChange, this);
         this.listenTo(this.$scope, 'plot:highlight:set', this.onPlotHighlightSet, this);
@@ -278,6 +280,29 @@ define([
         }
         this.$scope.rectangles = [];
         this.marquee = undefined;
+    };
+
+    MCTPlotController.prototype.zoomIn = function ($event) {
+        this.freeze();
+
+        var currentXaxis = this.$scope.xAxis.get('displayRange'),
+            currentYaxis = this.$scope.yAxis.get('displayRange'),
+            xAxisDist = (currentXaxis.max - currentXaxis.min) * this.ZOOM_FACTOR,
+            yAxisDist = (currentYaxis.max - currentYaxis.min) * this.ZOOM_FACTOR;
+
+        this.$scope.xAxis.set('displayRange', {
+            min: currentXaxis.min + xAxisDist,
+            max: currentXaxis.max - xAxisDist
+        });
+
+        this.$scope.yAxis.set('displayRange', {
+            min: currentYaxis.min + yAxisDist,
+            max: currentYaxis.max - yAxisDist
+        });
+
+        this.$scope.$emit('user:viewport:change:end');
+
+        this.trackHistory();
     };
 
     MCTPlotController.prototype.startPan = function ($event) {
