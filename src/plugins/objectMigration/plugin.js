@@ -20,11 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Migrations from './Migrations.js'
+import migrations from './Migrations.js'
 
 export default function () {
-    let migrations = Migrations();
-
     function needsMigration(domainObject) {        
         return migrations.some(m => m.check(domainObject));
     }
