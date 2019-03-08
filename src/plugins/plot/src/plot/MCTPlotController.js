@@ -53,9 +53,6 @@ define([
         this.listenTo(this.$scope, 'plot:clearHistory', this.clear, this);
 
         this.initialize();
-
-        this.crosshairVertical = document.getElementById('crosshair-vertical');
-        this.crosshairHorizontal = document.getElementById('crosshair-horizontal');
     }
 
     MCTPlotController.$inject = ['$scope', '$element', '$window'];
@@ -94,6 +91,10 @@ define([
         this.$scope.yAxis = this.config.yAxis;
         this.$scope.series = this.config.series.models;
         this.$scope.legend = this.config.legend;
+
+        this.crosshairVertical = this.$element[0].querySelector('.crosshair-vertical');
+        this.crosshairHorizontal = this.$element[0].querySelector('.crosshair-horizontal');
+        this.crosshair = false;
 
         this.listenTo(this.$scope, '$destroy', this.destroy, this);
         this.listenTo(this.$scope, 'plot:tickWidth', this.onTickWidthChange, this);
@@ -155,6 +156,10 @@ define([
     };
 
     MCTPlotController.prototype.updateCrosshairs = function ($event) {
+        if (!this.crosshairHorizontal || !this.crosshairVertical) {
+            return;
+        }
+
         this.crosshairVertical.style.left = ($event.clientX - this.chartElementBounds.x) + 'px';
         this.crosshairHorizontal.style.top = ($event.clientY - this.chartElementBounds.y) + 'px';
     };
@@ -369,6 +374,13 @@ define([
 
     MCTPlotController.prototype.destroy = function () {
         this.stopListening();
+    };
+
+    MCTPlotController.prototype.toggleCrosshair = function ($event) {
+        $event.stopPropagation();
+        $event.preventDefault();
+
+        this.crosshair = !this.crosshair;
     };
 
     return MCTPlotController;

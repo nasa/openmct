@@ -164,14 +164,20 @@
                            the-y-axis="yAxis">
                 </mct-chart>
 
-                <div class="h-local-controls h-local-controls-overlay-content"
-                     ng-show="plotHistory.length">
+                <div class="h-local-controls h-local-controls-overlay-content">
                     <div class="l-btn-set">
+                        <a class="s-button"
+                           ng-class="{ 'icon-grid-snap-to': plot.crosshair, 'icon-grid-snap-no': !plot.crosshair }"
+                           ng-click="plot.toggleCrosshair($event)"
+                           title="Toggle Crosshair">
+                        </a>
                         <a class="s-button icon-arrow-left"
+                           ng-show="plotHistory.length"
                            ng-click="plot.back()"
                            title="Restore previous pan/zoom">
                         </a>
                         <a class="s-button icon-reset"
+                           ng-show="plotHistory.length"
                            ng-click="plot.clear()"
                            title="Reset pan/zoom">
                         </a>
@@ -181,11 +187,14 @@
                 <span class="t-wait-spinner loading" ng-show="plot.isRequestPending()">
                 </span>
 
+                <!--Elements for crosshairs-->
                 <div style="width:2px; top:0; bottom:0; position:absolute; background-color:red; pointer-events: none;"
-                    id="crosshair-vertical">
+                    class="crosshair-vertical"
+                    ng-show="plot.crosshair">
                 </div>
                 <div style="height:2px; left:0; right:0; position:absolute; background-color:red; pointer-events: none"
-                    id="crosshair-horizontal">
+                    class="crosshair-horizontal"
+                    ng-show="plot.crosshair">
                 </div>
 
             </div>
