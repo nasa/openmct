@@ -44,7 +44,7 @@ define([], function () {
 
         getRowLimitClass() {
             if (!this.rowLimitClass) {
-                let limitEvaluation = this.limitEvaluator.evaluate(this.datum); 
+                let limitEvaluation = this.limitEvaluator.evaluate(this.datum);
                 this.rowLimitClass = limitEvaluation && limitEvaluation.cssClass;
             }
             return this.rowLimitClass;
