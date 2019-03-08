@@ -239,7 +239,7 @@
     background-color: $colorInspectorSectionHeaderBg;
     color: $colorInspectorSectionHeaderFg;
     font-weight: normal;
-    margin: 0 0 $interiorMarginSm 0;
+    margin: $interiorMarginSm 0;
     padding: $interiorMarginSm $interiorMargin;
     text-transform: uppercase;
 }
