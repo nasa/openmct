@@ -366,18 +366,6 @@ select {
 }
 
 /******************************************************** PALETTES */
-@mixin cPaletteGrid($itemD, $gapD) {
-    .c-palette__items {
-        grid-gap: $gapD;
-        grid-template-columns: repeat(auto-fill, $itemD);
-    }
-
-    .c-palette__item {
-        width: $itemD;
-        height: $itemD;
-    }
-}
-
 .c-palette {
     display: flex;
     flex-flow: column nowrap;
@@ -385,16 +373,24 @@ select {
 
     &__items {
         display: grid;
+        grid-gap: 1px;
+        grid-template-columns: repeat(auto-fill, 12px);
         flex: 1 1 auto;
-        min-width: 128px;
+
+        .c-menu & {
+            min-width: $paletteMenuMinW;
+        }
     }
 
     &__item {
+        $d: 12px;
         border: 1px solid transparent;
         cursor: pointer;
         display: flex;
         align-items: center;
         align-content: center;
+        width: $d;
+        height: $d;
         text-align: center;
         transition: $transOut;
 
@@ -421,8 +417,6 @@ select {
     }
 
     &--color {
-        @include cPaletteGrid(12px, 1px);
-
         .c-palette__item {
             &:hover {
                 border-color: rgba($paletteItemBorderOuterColorSelected, 0.7);
@@ -437,7 +431,9 @@ select {
     }
 
     &--icon {
-        @include cPaletteGrid(12px, 3px);
+        .c-palette__items {
+            grid-gap: 3px;
+        }
 
         .c-palette__item {
             border-radius: $smallCr;
