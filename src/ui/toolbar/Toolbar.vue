@@ -159,7 +159,7 @@
                     });
                 });
 
-                for (key in values) {
+                for (const key in values) {
                     if (values[key].every(value => value === values[key][0])) {
                         value[key] = values[key][0];
                         toolbarItem.nonSpecific = false;

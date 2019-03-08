@@ -97,7 +97,7 @@
                 value: metadata.getDefaultDisplayValue(),
                 stroke: "transparent",
                 fill: "transparent",
-                color: "transparent",
+                color: "",
                 size: "13px",
                 useGrid: true
             };
