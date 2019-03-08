@@ -26,7 +26,6 @@
 define(
     [],
     function () {
-
         /**
          * Provides definitions for views that are available for specific
          * domain objects.
@@ -75,86 +74,86 @@ define(
          * @param $log Angular's logging service
          * @implements {ViewService}
          */
-        function ViewProvider(views, $log) {
+        class ViewProvider {
+            constructor(views, $log) {
 
-            // Views without defined keys cannot be used in the user
-            // interface, and can result in unexpected behavior. These
-            // are filtered out using this function.
-            function validate(view) {
-                var key = view.key;
+                // Views without defined keys cannot be used in the user
+                // interface, and can result in unexpected behavior. These
+                // are filtered out using this function.
+                function validate(view) {
+                    const key = view.key;
 
-                // Leave a log message to support detection of this issue.
-                if (!key) {
-                    $log.warn([
-                        "No key specified for view in ",
-                        (view.bundle || {}).path,
-                        "; omitting this view."
-                    ].join(""));
+                    // Leave a log message to support detection of this issue.
+                    if (!key) {
+                        $log.warn([
+                            "No key specified for view in ",
+                            (view.bundle || {}).path,
+                            "; omitting this view."
+                        ].join(""));
+                    }
+
+                    return key;
                 }
 
-                return key;
+                // Filter out any key-less views
+                this.views = views.filter(validate);
             }
 
-            // Filter out any key-less views
-            this.views = views.filter(validate);
-        }
+            getViews(domainObject) {
+                const type = domainObject.useCapability("type");
 
-        ViewProvider.prototype.getViews = function (domainObject) {
-            var type = domainObject.useCapability("type");
+                // Check if an object has all capabilities designated as `needs`
+                // for a view. Exposing a capability via delegation is taken to
+                // satisfy this filter if `allowDelegation` is true.
+                function capabilitiesMatch(domainObj, capabilities, allowDelegation) {
+                    const delegation = domainObj.getCapability("delegation");
 
-            // Check if an object has all capabilities designated as `needs`
-            // for a view. Exposing a capability via delegation is taken to
-            // satisfy this filter if `allowDelegation` is true.
-            function capabilitiesMatch(domainObj, capabilities, allowDelegation) {
-                var delegation = domainObj.getCapability("delegation");
+                    allowDelegation = allowDelegation && (delegation !== undefined);
 
-                allowDelegation = allowDelegation && (delegation !== undefined);
+                    // Check if an object has (or delegates, if allowed) a
+                    // capability.
+                    function hasCapability(c) {
+                        return domainObj.hasCapability(c) ||
+                            (allowDelegation && delegation.doesDelegateCapability(c));
+                    }
 
-                // Check if an object has (or delegates, if allowed) a
-                // capability.
-                function hasCapability(c) {
-                    return domainObj.hasCapability(c) ||
-                        (allowDelegation && delegation.doesDelegateCapability(c));
+                    // For the reduce step below.
+                    function and(a, b) {
+                        return a && b;
+                    }
+
+                    // Do a bulk `and` operation over all needed capabilities.
+                    return capabilities.map(hasCapability).reduce(and, true);
                 }
 
-                // For the reduce step below.
-                function and(a, b) {
-                    return a && b;
+                // Check if a view and domain object type can be paired;
+                // both can restrict the others they accept.
+                function viewMatchesType(view, objType) {
+                    const views = objType && (objType.getDefinition() || {}).views;
+                    let matches = true;
+
+                    // View is restricted to a certain type
+                    if (view.type) {
+                        matches = matches && objType && objType.instanceOf(view.type);
+                    }
+
+                    // Type wishes to restrict its specific views
+                    if (Array.isArray(views)) {
+                        matches = matches && (views.includes(view.key));
+                    }
+
+                    return matches;
                 }
 
-                // Do a bulk `and` operation over all needed capabilities.
-                return capabilities.map(hasCapability).reduce(and, true);
-            }
-
-            // Check if a view and domain object type can be paired;
-            // both can restrict the others they accept.
-            function viewMatchesType(view, objType) {
-                var views = objType && (objType.getDefinition() || {}).views,
-                    matches = true;
-
-                // View is restricted to a certain type
-                if (view.type) {
-                    matches = matches && objType && objType.instanceOf(view.type);
-                }
-
-                // Type wishes to restrict its specific views
-                if (Array.isArray(views)) {
-                    matches = matches && (views.indexOf(view.key) > -1);
-                }
-
-                return matches;
-            }
-
-            // First, filter views by type (matched to domain object type.)
-            // Second, filter by matching capabilities.
-            return this.views.filter(function (view) {
-                return viewMatchesType(view, type) && capabilitiesMatch(
+                // First, filter views by type (matched to domain object type.)
+                // Second, filter by matching capabilities.
+                return this.views.filter(view => viewMatchesType(view, type) && capabilitiesMatch(
                         domainObject,
                         view.needs || [],
                         view.delegation || false
-                    );
-            });
-        };
+                    ));
+            }
+        }
 
         return ViewProvider;
     }
