@@ -74,14 +74,13 @@ define(
          * @param $log Angular's logging service
          * @implements {ViewService}
          */
-        class ViewProvider {
-            constructor(views, $log) {
+        function ViewProvider(views, $log) {
 
                 // Views without defined keys cannot be used in the user
                 // interface, and can result in unexpected behavior. These
                 // are filtered out using this function.
                 function validate(view) {
-                    const key = view.key;
+                    var key = view.key;
 
                     // Leave a log message to support detection of this issue.
                     if (!key) {
@@ -98,17 +97,16 @@ define(
                 // Filter out any key-less views
                 this.views = views.filter(validate);
             }
-
             getViews(domainObject) {
-                const type = domainObject.useCapability("type");
+
 
                 // Check if an object has all capabilities designated as `needs`
                 // for a view. Exposing a capability via delegation is taken to
                 // satisfy this filter if `allowDelegation` is true.
                 function capabilitiesMatch(domainObj, capabilities, allowDelegation) {
-                    const delegation = domainObj.getCapability("delegation");
-
-                    allowDelegation = allowDelegation && (delegation !== undefined);
+                    var delegation = domainObj.getCapability("delegation");
+                  
+                  allowDelegation = allowDelegation && (delegation !== undefined);
 
                     // Check if an object has (or delegates, if allowed) a
                     // capability.
@@ -129,8 +127,8 @@ define(
                 // Check if a view and domain object type can be paired;
                 // both can restrict the others they accept.
                 function viewMatchesType(view, objType) {
-                    const views = objType && (objType.getDefinition() || {}).views;
-                    let matches = true;
+                      var views = objType && (objType.getDefinition() || {}).views,
+                          matches = true;
 
                     // View is restricted to a certain type
                     if (view.type) {
@@ -145,16 +143,18 @@ define(
                     return matches;
                 }
 
-                // First, filter views by type (matched to domain object type.)
-                // Second, filter by matching capabilities.
-                return this.views.filter(view => viewMatchesType(view, type) && capabilitiesMatch(
+            // First, filter views by type (matched to domain object type.)
+            // Second, filter by matching capabilities.
+            return this.views.filter(function (view) {
+                return viewMatchesType(view, type) && capabilitiesMatch(
                         domainObject,
                         view.needs || [],
                         view.delegation || false
-                    ));
-            }
+                    );
+            });
         }
 
         return ViewProvider;
+  
     }
 );
