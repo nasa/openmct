@@ -248,7 +248,7 @@
                 } else {
                     let identifier = this.openmct.objects.makeKeyString(domainObject.identifier);
 
-                    if (!this.containsObject(identifier)) {
+                    if (!this.objectViewMap[identifier]) {
                         this.addItem('subobject-view', domainObject, droppedObjectPosition);
                     } else {
                         let prompt = this.openmct.overlays.dialog({
