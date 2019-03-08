@@ -282,27 +282,37 @@ define([
         this.marquee = undefined;
     };
 
-    MCTPlotController.prototype.zoomIn = function ($event) {
+    MCTPlotController.prototype.zoom = function (zoomDirection) {
         this.freeze();
-
+        this.trackHistory();
         var currentXaxis = this.$scope.xAxis.get('displayRange'),
             currentYaxis = this.$scope.yAxis.get('displayRange'),
             xAxisDist = (currentXaxis.max - currentXaxis.min) * this.ZOOM_FACTOR,
             yAxisDist = (currentYaxis.max - currentYaxis.min) * this.ZOOM_FACTOR;
 
-        this.$scope.xAxis.set('displayRange', {
-            min: currentXaxis.min + xAxisDist,
-            max: currentXaxis.max - xAxisDist
-        });
+        if (zoomDirection === 'in') {
+            this.$scope.xAxis.set('displayRange', {
+                min: currentXaxis.min + xAxisDist,
+                max: currentXaxis.max - xAxisDist
+            });
 
-        this.$scope.yAxis.set('displayRange', {
-            min: currentYaxis.min + yAxisDist,
-            max: currentYaxis.max - yAxisDist
-        });
+            this.$scope.yAxis.set('displayRange', {
+                min: currentYaxis.min + yAxisDist,
+                max: currentYaxis.max - yAxisDist
+            });
+        } else if (zoomDirection === 'out') {
+            this.$scope.xAxis.set('displayRange', {
+                min: currentXaxis.min - xAxisDist,
+                max: currentXaxis.max + xAxisDist
+            });
+
+            this.$scope.yAxis.set('displayRange', {
+                min: currentYaxis.min - yAxisDist,
+                max: currentYaxis.max + yAxisDist
+            });
+        }
 
         this.$scope.$emit('user:viewport:change:end');
-
-        this.trackHistory();
     };
 
     MCTPlotController.prototype.startPan = function ($event) {
