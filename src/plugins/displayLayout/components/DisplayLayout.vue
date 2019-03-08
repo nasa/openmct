@@ -164,19 +164,22 @@
                     return;
                 }
 
-                if (this.removeSelectionListener) {
-                    this.removeSelectionListener();
-                }
+                this.unsubscribeSelectionListeners();
+                selection.forEach(selectionPath => {
+                    let itemIndex = selectionPath[0].context.index;
 
-                let itemIndex = selection[0][0].context.index;
-
-                if (itemIndex !== undefined) {
-                    this.attachSelectionListener(itemIndex);
-                }
+                    if (itemIndex !== undefined) {
+                        this.attachSelectionListener(itemIndex);
+                    }
+                });
             },
             attachSelectionListener(index) {
+                if (!this.removeSelectionListeners) {
+                    this.removeSelectionListeners = [];
+                }
+
                 let path = `configuration.items[${index}].useGrid`;
-                this.removeSelectionListener = this.openmct.objects.observe(this.internalDomainObject, path, function (value) {
+                this.removeSelectionListeners.push(this.openmct.objects.observe(this.internalDomainObject, path, function (value) {
                     let item = this.layoutItems[index];
 
                     if (value) {
@@ -206,7 +209,7 @@
                     }
                     item.useGrid = value;
                     this.mutate(`configuration.items[${index}]`, item);
-                }.bind(this));
+                }.bind(this)));
             },
             bypassSelection($event) {
                 if (this.dragInProgress) {
@@ -227,6 +230,7 @@
                 this.mutate(`configuration.items[${index}]`, item);
             },
             mutate(path, value) {
+                console.log("DisplayLayout--mutate", path, value);
                 this.openmct.objects.mutate(this.internalDomainObject, path, value);
             },
             handleDrop($event) {
@@ -397,16 +401,24 @@
                     this.layoutItems.splice(index, 1);
                     this.layoutItems.splice(newIndex, 0, item);
                     this.mutate('configuration.items', this.layoutItems);
-
-                    if (this.removeSelectionListener) {
-                        this.removeSelectionListener();
-                        this.attachSelectionListener(newIndex);
-                    }
+                    this.unsubscribeSelectionListeners();
+                    // TODO:
+                    this.attachSelectionListener(newIndex);
                 }
+            },
+            unsubscribeSelectionListeners() {
+                if (this.removeSelectionListeners) {
+                    this.removeSelectionListeners.forEach(listener => {
+                        listener();
+                    });
+                }
+
+                delete this.removeSelectionListeners;
             }
         },
         mounted() {
             this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', function (obj) {
+                console.log("obj", {...JSON.parse(JSON.stringify(obj))});
                 this.internalDomainObject = JSON.parse(JSON.stringify(obj));
             }.bind(this));
             this.openmct.selection.on('change', this.setSelection);
@@ -421,10 +433,7 @@
             this.composition.off('add', this.addChild);
             this.composition.off('remove', this.removeChild);
             this.unlisten();
-
-            if (this.removeSelectionListener) {
-                this.removeSelectionListener();
-            }
+            this.unsubscribeSelectionListeners();
         }
     }
 </script>

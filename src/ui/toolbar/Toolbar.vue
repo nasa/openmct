@@ -83,12 +83,14 @@
             },
             observeObject(domainObject, id) {
                 let unobserveObject = this.openmct.objects.observe(domainObject, '*', function(newObject) {
+                    console.log("newObject", {...JSON.parse(JSON.stringify(newObject))});
                     this.domainObjectsById[id].newObject = JSON.parse(JSON.stringify(newObject));
                     this.scheduleToolbarUpdate();
                 }.bind(this));
                 this.unObserveObjects.push(unobserveObject);
             },
             scheduleToolbarUpdate() {
+                console.log("scheduleToolbarUpdate");
                 if (this.toolbarUpdateScheduled) {
                     return;
                 }
@@ -97,6 +99,7 @@
                 setTimeout(this.updateToolbarAfterMutation.bind(this));
             },
             updateToolbarAfterMutation() {
+                console.log("updateToolbarAfterMutation");
                 this.structure = this.structure.map(item => {
                     let toolbarItem = {...item};
                     let domainObject = toolbarItem.domainObject;
@@ -168,6 +171,7 @@
                         return {};
                     }
                 }
+
                 return value;
             },
             getItemProperty(item, selectionPath) {
@@ -188,18 +192,8 @@
                     if (toolbarItem.domainObject) {
                         let id = this.openmct.objects.makeKeyString(toolbarItem.domainObject.identifier);
 
-                        if (changedItemId === id) {
-                            let applicableSelectedItems = toolbarItem.applicableSelectedItems;
-                            if (applicableSelectedItems) {
-                                applicableSelectedItems.forEach(selectionPath => {
-                                    console.log('item', this.getItemProperty(item, selectionPath));
-                                    console.log('toolbarItem', this.getItemProperty(toolbarItem, selectionPath));
-                                    if (this.getItemProperty(item, selectionPath) === this.getItemProperty(toolbarItem, selectionPath)) {
-                                        // TODO: make sure all selectedItems have the same property before setting the value
-                                        toolbarItem.value = value;
-                                    }
-                                });
-                            }
+                        if (changedItemId === id && _.isEqual(toolbarItem, item)) {
+                            toolbarItem.value = value;
                         }
                     }
 
@@ -221,6 +215,7 @@
                     });
                 } else {
                     item.applicableSelectedItems.forEach(selectionPath => {
+                        console.log("Toolbar-mutate", this.getItemProperty(item, selectionPath), value);
                         this.openmct.objects.mutate(item.domainObject, this.getItemProperty(item, selectionPath), value);    
                     });
                 }
