@@ -305,7 +305,7 @@ $legendHoverValueBg: rgba($colorBodyFg, 0.2);
 
 // Tree
 $colorTreeBg: transparent;
-$colorItemTreeHoverBg: pullForward($colorBodyBg, 7%);
+$colorItemTreeHoverBg: rgba(white, 0.07);
 $colorItemTreeHoverFg: pullForward($colorBodyFg, 20%);
 $colorItemTreeIcon: $colorKey; // Used
 $colorItemTreeIconHover: $colorItemTreeIcon; // Used

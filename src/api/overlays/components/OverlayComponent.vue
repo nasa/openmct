@@ -115,7 +115,7 @@
         .c-overlay {
             &__blocker {
                 @include abs();
-                background: rgba(red, 0.7); // TEMP
+                background: $colorOvrBlocker;
                 cursor: pointer;
                 display: block;
             }
