@@ -126,6 +126,7 @@ define([
             objectListeners = this.listeningTo[keyString] = {
                 add: [],
                 remove: [],
+                reorder: [],
                 composition: [].slice.apply(domainObject.composition)
             };
         }
@@ -197,6 +198,30 @@ define([
     DefaultCompositionProvider.prototype.add = function (domainObject, child) {
         throw new Error('Default Provider does not implement adding.');
         // TODO: this needs to be synchronized via mutation
+    };
+
+    DefaultCompositionProvider.prototype.reorder = function (domainObject, oldIndex, newIndex) {
+        let newComposition = domainObject.composition.slice();
+        newComposition[newIndex] = domainObject.composition[oldIndex];
+        newComposition[oldIndex] = domainObject.composition[newIndex];
+        this.publicAPI.objects.mutate(domainObject, 'composition', newComposition);
+
+        let id = objectUtils.makeKeyString(domainObject.identifier);
+        var listeners = this.listeningTo[id];
+
+        if (!listeners) {
+            return;
+        }
+
+        listeners.reorder.forEach(notify);
+
+        function notify(listener) {
+            if (listener.context) {
+                listener.callback.call(listener.context, oldIndex, newIndex);
+            } else {
+                listener.callback(oldIndex, newIndex);
+            }
+        }
     };
 
     /**
