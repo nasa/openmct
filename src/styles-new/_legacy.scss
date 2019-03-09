@@ -886,15 +886,15 @@ body.mobile.phone {
 .widget-rule-header {
     display: flex;
     align-items: center;
-    margin-bottom: $interiorMargin;
 
     > * + * {
         margin-left: $interiorMargin;
     }
 }
 
-.l-rule-action-buttons-wrapper {
+[class*='action-buttons-wrapper'] {
     white-space: nowrap;
+    line-height: $btnStdH;
 }
 
 .widget-rules-wrapper,
@@ -916,6 +916,7 @@ body.mobile.phone {
     overflow: visible !important;
     min-height: 50px;
     height: auto;
+    margin-top: $interiorMargin;
     opacity: 1;
     pointer-events: inherit;
 }
@@ -1009,11 +1010,8 @@ body.mobile.phone {
         // Overrides on .l-compact-form
         ul {
             &:last-child { margin: 0; }
+
             li {
-                align-items: flex-start;
-                flex-wrap: nowrap;
-                line-height: 230%; // Provide enough space when controls wrap
-                padding: 2px 0;
                 &:not(.widget-rule-header) {
                     &:not(.connects-to-previous) {
                         border-top: 1px solid $colorFormLines;
@@ -1036,10 +1034,6 @@ body.mobile.phone {
                     align-items: center;
                     align-content: stretch;
                     > * + * { margin-left: $interiorMarginSm; }
-
-                    .t-condition & {
-                        background: deeppink;
-                    }
                 }
             }
         }
@@ -1057,6 +1051,10 @@ body.mobile.phone {
                 }
             }
         }
+    }
+
+    .t-condition .controls {
+        > * { margin-bottom: $interiorMargin; }
     }
 }
 
@@ -1095,13 +1093,22 @@ body.mobile.phone {
     border-radius: $basicCr;
 }
 
-.c-sw-edit__ui {
-    display: flex;
-    flex-direction: column;
+.c-sw-edit {
+    padding: $interiorMargin;
 
-    &__header {
+    &__ui {
         display: flex;
-        > * + * { margin-left: $interiorMarginSm; }
+        flex-direction: column;
+
+        &__header {
+            border-top: 1px solid $colorInteriorBorder;
+            display: flex;
+            align-items: center;
+            margin: $interiorMargin 0;
+            padding: $interiorMargin 0;
+            text-transform: uppercase;
+            > * + * { margin-left: $interiorMarginSm; }
+        }
     }
 }
 

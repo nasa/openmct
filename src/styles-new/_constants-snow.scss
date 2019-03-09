@@ -182,6 +182,7 @@ $colorDropHintBgHov: pushBack($colorDropHint, 40%);
 $colorDropHintFg: pushBack($colorDropHint, 0);
 $colorDisclosureCtrl: rgba($colorBodyFg, 0.5);
 $colorDisclosureCtrlHov: rgba($colorBodyFg, 0.7);
+$btnStdH: 24px;
 
 // Menus
 $colorMenuBg: pushBack($colorBodyBg, 10%);
@@ -200,7 +201,7 @@ $paletteItemBorderOuterColorSelected: black;
 $paletteItemBorderInnerColorSelected: white;
 $paletteItemBorderInnerColor: rgba($paletteItemBorderOuterColorSelected, 0.3);
 
-// Form colors
+// Forms
 $colorCheck: $colorKey;
 $colorFormRequired: $colorKey;
 $colorFormValid: $colorOk;
@@ -209,7 +210,8 @@ $colorFormInvalid: #ff2200;
 $colorFormFieldErrorBg: $colorFormError;
 $colorFormFieldErrorFg: rgba(#fff, 0.6);
 $colorFormLines: rgba(#000, 0.1);
-$colorFormSectionHeader: rgba(#000, 0.05);
+$colorFormSectionHeaderBg: rgba(#000, 0.05);
+$colorFormSectionHeaderFg: rgba($colorBodyFg, 0.5);
 $colorInputBg: $colorGenBg;
 $colorInputFg: $colorBodyFg;
 $colorInputPlaceholder: pushBack($colorBodyFg, 20%);
@@ -219,6 +221,10 @@ $colorFieldHint: pullForward($colorBodyFg, 40%);
 $shdwInput: inset rgba(black, 0.7) 0 0 1px;
 $shdwInputHov: inset rgba(black, 0.7) 0 0 2px;
 $shdwInputFoc: inset rgba(black, 0.8) 0 0.25px 3px;
+$formTBPad: $interiorMargin;
+$formLRPad: $interiorMargin;
+$formInputH: 22px;
+$formRowCtrlsH: 14px;
 
 // Inspector
 $colorInspectorBg: pullForward($colorBodyBg, 5%);
