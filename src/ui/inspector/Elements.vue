@@ -87,29 +87,48 @@ export default {
         showSelection(selection) {
             this.elements = [];
             this.elementsCache = [];
+            this.listeners = [];
             this.parentObject = selection[0].context.item;
             if (this.mutationUnobserver) {
                 this.mutationUnobserver();
+            }
+            if (this.composition) {
+                this.composition.off('add', this.addElement);
+                this.composition.off('remove', this.removeElement);
+                this.composition.off('reorder', this.reorderElements);
             }
 
             if (this.parentObject) {
                 this.mutationUnobserver = this.openmct.objects.observe(this.parentObject, '*', (updatedModel) => {
                     this.parentObject = updatedModel;
-                    this.refreshComposition();
                 });
-                this.refreshComposition();
+                this.composition = this.openmct.composition.get(this.parentObject);
+
+                if (this.composition) {
+                    this.composition.load();
+                    this.composition.on('add', this.addElement);
+                    this.composition.on('remove', this.removeElement);
+                    this.composition.on('reorder', this.reorderElements);
+                }
             }
         },
-        refreshComposition() {
-            let composition = this.openmct.composition.get(this.parentObject);
-
-            if (composition){
-                composition.load().then(this.setElements);
-            }
-
+        addElement(element) {
+            this.elementsCache.push(JSON.parse(JSON.stringify(element)));
+            this.applySearch(this.currentSearch);
         },
-        setElements(elements) {
-            this.elementsCache = elements.map((element)=>JSON.parse(JSON.stringify(element)))
+        reorderElements(oldIndex, newIndex) {
+            let tempElement = this.elementsCache[oldIndex];
+            this.elementsCache[oldIndex] = this.elementsCache[newIndex];
+            this.elementsCache[newIndex] = tempElement;
+
+            this.applySearch(this.currentSearch);
+        },
+        removeElement(element) {
+            let index = this.elementsCache.findIndex(cachedElement => 
+                !this.openmct.objects.areIdsEqual(element.identifier,
+                    cachedElement.identifier));
+            this.elementsCache.splice(index, 1);
+
             this.applySearch(this.currentSearch);
         },
         applySearch(input) {
@@ -137,19 +156,7 @@ export default {
             event.preventDefault();
         },
         moveTo(moveToIndex) {
-            console.log('dropped');
-            let composition = this.parentObject.composition;
-            let moveFromId = composition[this.moveFromIndex];
-            let deleteIndex = this.moveFromIndex;
-            if (moveToIndex < this.moveFromIndex) {
-                composition.splice(deleteIndex, 1);
-                composition.splice(moveToIndex, 0, moveFromId);
-            } else {
-                composition.splice(deleteIndex, 1);
-                composition.splice(moveToIndex, 0, moveFromId);
-            }
-
-            this.openmct.objects.mutate(this.parentObject, 'composition', composition);
+            this.composition.reorder(this.moveFromIndex, moveToIndex);
         },
         moveFrom(index){
             this.moveFromIndex = index;
@@ -157,6 +164,9 @@ export default {
     },
     destroyed() {
         this.openmct.selection.off('change', this.showSelection);
+        this.composition.off('add', this.addElement);
+        this.composition.off('remove', this.removeElement);
+        this.composition.off('reorder', this.reorderElements);
     }
 }
 </script>
