@@ -78,12 +78,13 @@ export default {
             this.showSelection(selection);
         }
         this.openmct.selection.on('change', this.showSelection);
-        this.openmct.editor.on('isEditing', (isEditing)=>{
-            this.isEditing = isEditing;
-            this.showSelection(this.openmct.selection.get());
-        });
+        this.openmct.editor.on('isEditing', this.setEditState);
     },
     methods: {
+        setEditState(isEditing) {
+            this.isEditing = isEditing;
+            this.showSelection(this.openmct.selection.get());
+        },
         showSelection(selection) {
             this.elements = [];
             this.elementsCache = [];
@@ -130,7 +131,7 @@ export default {
         },
         removeElement(identifier) {
             let index = this.elementsCache.findIndex(cachedElement => 
-                !this.openmct.objects.areIdsEqual(identifier,
+                this.openmct.objects.areIdsEqual(identifier,
                     cachedElement.identifier));
             this.elementsCache.splice(index, 1);
 
@@ -168,7 +169,11 @@ export default {
         }
     },
     destroyed() {
+        this.openmct.editor.off('isEditing', this.setEditState);
         this.openmct.selection.off('change', this.showSelection);
+        if (this.mutationUnobserver) {
+            this.mutationUnobserver();
+        }
         if (this.compositionUnlistener) {
             this.compositionUnlistener();
         }
