@@ -87,7 +87,7 @@ export default {
         },
         showSelection(selection) {
             this.elements = [];
-            this.elementsCache = [];
+            this.elementsCache = {};
             this.listeners = [];
             this.parentObject = selection[0].context.item;
             if (this.mutationUnobserver) {
@@ -105,6 +105,7 @@ export default {
 
                 if (this.composition) {
                     this.composition.load();
+
                     this.composition.on('add', this.addElement);
                     this.composition.on('remove', this.removeElement);
                     this.composition.on('reorder', this.reorderElements);
@@ -119,44 +120,27 @@ export default {
             }
         },
         addElement(element) {
-            this.elementsCache.push(JSON.parse(JSON.stringify(element)));
+            let keyString = this.openmct.objects.makeKeyString(element.identifier);
+            this.elementsCache[keyString] = 
+                JSON.parse(JSON.stringify(element));
             this.applySearch(this.currentSearch);
         },
-        reorderElements(oldIndex, newIndex) {
-            let tempElement = this.elementsCache[oldIndex];
-            this.elementsCache[oldIndex] = this.elementsCache[newIndex];
-            this.elementsCache[newIndex] = tempElement;
-
+        reorderElements() {
             this.applySearch(this.currentSearch);
         },
         removeElement(identifier) {
-            let index = this.elementsCache.findIndex(cachedElement => 
-                this.openmct.objects.areIdsEqual(identifier,
-                    cachedElement.identifier));
-            this.elementsCache.splice(index, 1);
-
+            let keyString = this.openmct.objects.makeKeyString(element.identifier);
+            delete this.elementsCache[keyString];
             this.applySearch(this.currentSearch);
         },
         applySearch(input) {
             this.currentSearch = input;
-            this.elements = this.elementsCache.filter((element) => {
-                return element.name.toLowerCase().search(
-                    this.currentSearch) !== -1;
+            this.elements = this.parentObject.composition.map((id) =>
+                this.elementsCache[this.openmct.objects.makeKeyString(id)]
+            ).filter((element) => {
+                return element !== undefined &&
+                    element.name.toLowerCase().search(this.currentSearch) !== -1;
             });
-        },
-        addObject(child){
-            this.elementsCache.push(child);
-            this.applySearch(this.currentSearch);
-        },
-        removeObject(childId){
-            this.elementsCache = this.elementsCache.filter((element) => !matches(element, childId));
-            this.applySearch(this.currentSearch);
-
-            function matches(elementA, elementBId) {
-                return elementA.identifier.namespace === elementBId.namespace &&
-                    elementA.identifier.key === elementBId.key;
-            }
-
         },
         allowDrop(event) {
             event.preventDefault();
