@@ -6,7 +6,7 @@ define([
     CompositionCollection
 ) {
 
-    fdescribe('The Composition API', function () {
+    describe('The Composition API', function () {
         var publicAPI;
         var compositionAPI;
         var topicService;
