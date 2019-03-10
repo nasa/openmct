@@ -149,6 +149,13 @@ define([
                         this.onProviderRemove,
                         this
                     );
+                } else if (event === 'reorder') {
+                    this.provider.off(
+                        this.domainObject,
+                        'reorder',
+                        this.onProviderReorder,
+                        this
+                    );
                 }
             }
         }

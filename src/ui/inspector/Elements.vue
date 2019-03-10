@@ -92,10 +92,8 @@ export default {
             if (this.mutationUnobserver) {
                 this.mutationUnobserver();
             }
-            if (this.composition) {
-                this.composition.off('add', this.addElement);
-                this.composition.off('remove', this.removeElement);
-                this.composition.off('reorder', this.reorderElements);
+            if (this.compositionUnlistener) {
+                this.compositionUnlistener();
             }
 
             if (this.parentObject) {
@@ -109,6 +107,13 @@ export default {
                     this.composition.on('add', this.addElement);
                     this.composition.on('remove', this.removeElement);
                     this.composition.on('reorder', this.reorderElements);
+
+                    this.compositionUnlistener = () => {
+                        this.composition.off('add', this.addElement);
+                        this.composition.off('remove', this.removeElement);
+                        this.composition.off('reorder', this.reorderElements);
+                        delete this.compositionUnlistener;
+                    }
                 }
             }
         },
@@ -123,9 +128,9 @@ export default {
 
             this.applySearch(this.currentSearch);
         },
-        removeElement(element) {
+        removeElement(identifier) {
             let index = this.elementsCache.findIndex(cachedElement => 
-                !this.openmct.objects.areIdsEqual(element.identifier,
+                !this.openmct.objects.areIdsEqual(identifier,
                     cachedElement.identifier));
             this.elementsCache.splice(index, 1);
 
@@ -164,9 +169,9 @@ export default {
     },
     destroyed() {
         this.openmct.selection.off('change', this.showSelection);
-        this.composition.off('add', this.addElement);
-        this.composition.off('remove', this.removeElement);
-        this.composition.off('reorder', this.reorderElements);
+        if (this.compositionUnlistener) {
+            this.compositionUnlistener();
+        }
     }
 }
 </script>
