@@ -161,7 +161,7 @@ define([
         });
 
         objectListeners[event].splice(index, 1);
-        if (!objectListeners.add.length && !objectListeners.remove.length) {
+        if (!objectListeners.add.length && !objectListeners.remove.length && !objectListeners.reorder.length) {
             delete this.listeningTo[keyString];
         }
     };
