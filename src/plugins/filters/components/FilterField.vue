@@ -12,10 +12,10 @@
                 <template v-if="!filter.possibleValues && isEditing">
                     <input class="c-input--flex"
                            type="text"
-                           :id="`${filter}filterControl`"
                            placeholder="Enter Value"
+                           :id="`${filter}filterControl`"
                            :value="persistedValue(filter)"
-                           @blur="updateFilterValue($event, filter)">
+                           @change="updateFilterValue($event, filter)">
                 </template>
 
                 <!-- Checkbox list, editing -->
