@@ -1,6 +1,10 @@
 <template>
 <div class="c-elements-pool">
-    <Search class="c-elements-pool__search" @input="applySearch"></Search>
+    <Search class="c-elements-pool__search"
+        :value="currentSearch"
+        @input="applySearch" 
+        @clear="applySearch">
+    </Search>
     <div class="c-elements-pool__elements">
         <ul class="tree c-tree c-elements-pool__tree" id="inspector-elements-tree"
             v-if="elements.length > 0">
@@ -69,7 +73,8 @@ export default {
         return {
             elements: [],
             isEditing: this.openmct.editor.isEditing(),
-            parentObject: undefined
+            parentObject: undefined,
+            currentSearch: ''
         }
     },
     mounted() {
