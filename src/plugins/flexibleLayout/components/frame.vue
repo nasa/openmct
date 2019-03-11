@@ -36,6 +36,7 @@
                 :domain-object="domainObject"
                 :object-path="objectPath"
                 :has-frame="hasFrame"
+                :showEditView="false"
                 ref="objectFrame">
             </object-frame>
 
