@@ -57,7 +57,7 @@ define([
                                 layoutObject: domainObject
                             },
                             el: element,
-                            template: '<flexible-layout-component ref="flexibleLayout"></flexible-layout-component>'
+                            template: '<flexible-layout-component ref="flexibleLayout" :isEditing="isEditing"></flexible-layout-component>'
                         });
                     },
                     getSelectionContext: function () {

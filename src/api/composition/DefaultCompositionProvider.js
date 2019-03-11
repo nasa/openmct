@@ -178,8 +178,12 @@ define([
      * @method remove
      */
     DefaultCompositionProvider.prototype.remove = function (domainObject, childId) {
-        // TODO: this needs to be synchronized via mutation.
-        throw new Error('Default Provider does not implement removal.');
+        let composition = domainObject.composition.filter(function (child) {
+            return !(childId.namespace === child.namespace &&
+                childId.key === child.key);
+        });
+
+        this.publicAPI.objects.mutate(domainObject, 'composition', composition);
     };
 
     /**

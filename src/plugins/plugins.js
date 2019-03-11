@@ -40,7 +40,8 @@ define([
     './flexibleLayout/plugin',
     './tabs/plugin',
     './LADTable/plugin',
-    './filters/plugin'
+    './filters/plugin',
+    './objectMigration/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -61,7 +62,8 @@ define([
     FlexibleLayout,
     Tabs,
     LADTable,
-    Filters
+    Filters,
+    ObjectMigration
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -177,6 +179,7 @@ define([
     plugins.FlexibleLayout = FlexibleLayout;
     plugins.LADTable = LADTable;
     plugins.Filters = Filters;
+    plugins.ObjectMigration = ObjectMigration.default;
 
     return plugins;
 });
