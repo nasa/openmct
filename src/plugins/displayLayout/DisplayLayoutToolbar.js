@@ -225,7 +225,7 @@ define([], function () {
                             }
                         ],
                         method: function (option) {
-                            selectionPath[1].context.orderItem(option.value, selectionPath[0].context.index);
+                            selectionPath[1].context.orderItem(option.value, getAllTypes(selection));
                         }
                     };
                 }
@@ -530,7 +530,6 @@ define([], function () {
                     return [getAddButton(selection)];
                 }
 
-                let separator = getSeparator();
                 let toolbar = {
                     'add-menu': [],
                     'toggle-frame': [],
@@ -701,7 +700,7 @@ define([], function () {
                         accumulator.push(group);
 
                         if (index < toolbarArray.length - 1) {
-                            accumulator.push(separator);
+                            accumulator.push(getSeparator());
                         }
                     }
 

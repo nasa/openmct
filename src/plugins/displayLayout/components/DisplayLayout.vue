@@ -179,8 +179,16 @@
                 }
 
                 let path = `configuration.items[${index}].useGrid`;
+                let oldValue = _.get(this.internalDomainObject, path);
+
                 this.removeSelectionListeners.push(this.openmct.objects.observe(this.internalDomainObject, path, function (value) {
+                    if (oldValue === value) {
+                        oldValue = value;
+                        return;
+                    }
+
                     let item = this.layoutItems[index];
+                    oldValue = value;
 
                     if (value) {
                         item.x = Math.round(item.x / this.gridSize[0]);

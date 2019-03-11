@@ -48,8 +48,7 @@
                 }
 
                 let structure = this.openmct.toolbars.get(selection) || [];
-                this.structure = structure.map(item => {
-                    let toolbarItem = {...item};
+                this.structure = structure.map(toolbarItem => {
                     let domainObject = toolbarItem.domainObject;
                     let formKeys = [];
                     toolbarItem.control = "toolbar-" + toolbarItem.control;
@@ -83,25 +82,13 @@
             },
             observeObject(domainObject, id) {
                 let unobserveObject = this.openmct.objects.observe(domainObject, '*', function(newObject) {
-                    console.log("newObject", {...JSON.parse(JSON.stringify(newObject))});
                     this.domainObjectsById[id].newObject = JSON.parse(JSON.stringify(newObject));
-                    this.scheduleToolbarUpdate();
+                    this.updateToolbarAfterMutation();
                 }.bind(this));
                 this.unObserveObjects.push(unobserveObject);
             },
-            scheduleToolbarUpdate() {
-                console.log("scheduleToolbarUpdate");
-                if (this.toolbarUpdateScheduled) {
-                    return;
-                }
-
-                this.toolbarUpdateScheduled = true;
-                setTimeout(this.updateToolbarAfterMutation.bind(this));
-            },
             updateToolbarAfterMutation() {
-                console.log("updateToolbarAfterMutation");
-                this.structure = this.structure.map(item => {
-                    let toolbarItem = {...item};
+                this.structure = this.structure.map(toolbarItem => {
                     let domainObject = toolbarItem.domainObject;
 
                     if (domainObject) {
@@ -123,7 +110,6 @@
                         delete tracker.newObject;
                     }
                 });
-                this.toolbarUpdateScheduled = false;
             },
             getValue(domainObject, toolbarItem) {
                 let value = undefined;
@@ -215,7 +201,6 @@
                     });
                 } else {
                     item.applicableSelectedItems.forEach(selectionPath => {
-                        console.log("Toolbar-mutate", this.getItemProperty(item, selectionPath), value);
                         this.openmct.objects.mutate(item.domainObject, this.getItemProperty(item, selectionPath), value);    
                     });
                 }
