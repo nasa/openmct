@@ -124,6 +124,10 @@ define([
         return sortedMetadata;
     };
 
+    TelemetryMetadataManager.prototype.getFilterableValues = function () {
+        return this.valueMetadatas.filter(metadatum => metadatum.filters && metadatum.filters.length > 0);
+    }
+
     TelemetryMetadataManager.prototype.getDefaultDisplayValue = function () {
         let valueMetadata = this.valuesForHints(['range'])[0];
 

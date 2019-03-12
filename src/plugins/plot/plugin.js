@@ -250,7 +250,8 @@ define([
                                 {"has": "telemetry"}
                             ],
                             "model": {
-                                "composition": []
+                                "composition": [],
+                                "configuration": {}
                             },
                             "properties": [],
                             "priority": 890

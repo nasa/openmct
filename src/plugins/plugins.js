@@ -40,6 +40,7 @@ define([
     './flexibleLayout/plugin',
     './tabs/plugin',
     './LADTable/plugin',
+    './filters/plugin',
     './objectMigration/plugin'
 ], function (
     _,
@@ -61,6 +62,7 @@ define([
     FlexibleLayout,
     Tabs,
     LADTable,
+    Filters,
     ObjectMigration
 ) {
     var bundleMap = {
@@ -176,6 +178,7 @@ define([
     plugins.Tabs = Tabs;
     plugins.FlexibleLayout = FlexibleLayout;
     plugins.LADTable = LADTable;
+    plugins.Filters = Filters;
     plugins.ObjectMigration = ObjectMigration.default;
 
     return plugins;

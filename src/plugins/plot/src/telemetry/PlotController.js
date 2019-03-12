@@ -71,6 +71,14 @@ define([
         this.config.series.forEach(this.addSeries, this);
 
         this.followTimeConductor();
+
+        this.newStyleDomainObject = $scope.domainObject.useCapability('adapter');
+
+        this.filterObserver = this.openmct.objects.observe(
+            this.newStyleDomainObject,
+            'configuration.filters',
+            this.updateFiltersAndResubscribe.bind(this)
+        );
     }
 
     eventHelpers.extend(PlotController.prototype);
@@ -153,6 +161,9 @@ define([
         if (this.checkForSize) {
             clearInterval(this.checkForSize);
             delete this.checkForSize;
+        }
+        if (this.filterObserver) {
+            this.filterObserver();
         }
     };
 
@@ -243,6 +254,12 @@ define([
         this.synchronized(xRange.min === xDisplayRange.min &&
                           xRange.max === xDisplayRange.max);
     };
+
+    PlotController.prototype.updateFiltersAndResubscribe = function (updatedFilters) {
+        this.config.series.forEach(function (series) {
+            series.updateFiltersAndRefresh(updatedFilters[series.keyString]);
+        })
+    }
 
     /**
      * Export view as JPG.
