@@ -30,7 +30,6 @@ define([
 
         this.domElement = $(paletteTemplate);
         this.itemElements = {
-            // nullOption: $('.l-option-row .s-palette-item', this.domElement)
             nullOption: $('.c-palette__item-none .c-palette__item', this.domElement)
         };
         this.eventEmitter = new EventEmitter();
