@@ -31,9 +31,3 @@
 @import "forms";
 @import "table";
 @import "legacy";
-
-/******************** LEGACY CSS */
-$output-bourbon-deprecation-warnings: false;
-@import "bourbon";
-@import "legacy-styles";
-

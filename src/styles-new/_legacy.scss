@@ -1564,7 +1564,6 @@ body.desktop {
 }
 
 /***************************************************************** SPLITTERS */
-
 .splitter {
     display: block;
     position: absolute;
@@ -1653,6 +1652,75 @@ body.desktop {
                     background-image: linear-gradient(90deg, rgba(black, 0) 40%, rgba(black, 0.05) 70%, rgba(black, 0.2) 100%);
                 }
             }
+        }
+    }
+}
+
+/******************************************************************* WAIT SPINNERS */
+@mixin  spinner($b: 5px, $c: $colorKey) {
+    animation-name: rotation-centered;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    border-radius: 100%;
+    box-sizing: border-box;
+    border-color: rgba($c, 0.25);
+    border-top-color: rgba($c, 1.0);
+    border-style: solid;
+    border-width: $b;
+    display: block;
+    position: absolute;
+    left: 50%; top: 50%;
+    transform-origin: center;
+    transform: translate(-50%, -50%);
+}
+
+.wait-spinner {
+    @include spinner($waitSpinnerBorderW, $colorKey);
+    pointer-events: none;
+    z-index: 2;
+    &.inline {
+        display: inline-block !important;
+        margin-right: $interiorMargin;
+        position: relative !important;
+        vertical-align: middle;
+    }
+}
+
+.loading {
+    // Can be applied to any block element with height and width
+    pointer-events: none;
+    &:before,
+    &:after {
+        content: '';
+    }
+    &:before {
+        @include spinner($waitSpinnerBorderW, $colorLoadingFg);
+        height: $waitSpinnerD; width: $waitSpinnerD;
+        z-index: 10;
+    }
+    &:after {
+        @include abs();
+        background: $colorLoadingBg;
+        display: block;
+        z-index: 9;
+    }
+    &.tree-item.t-wait-node {
+        $d: $waitSpinnerTreeD;
+        $spinnerL: $interiorMargin + 19px + $d/2;
+        padding-left: $spinnerL + $d/2 + $interiorMargin;
+        .t-title-label {
+            font-style: italic;
+            opacity: 0.6;
+        }
+        &:before {
+            height: $d;
+            width: $d;
+            border-width: 4px;
+            left: $spinnerL;
+        }
+        &:after {
+            display: none;
         }
     }
 }
