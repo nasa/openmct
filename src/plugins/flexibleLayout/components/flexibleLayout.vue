@@ -54,6 +54,7 @@
                     :index="index"
                     :container="container"
                     :rowsLayout="rowsLayout"
+                    :isEditing="isEditing"
                     @move-frame="moveFrame"
                     @new-frame="setFrameLocation"
                     @persist="persist">
@@ -64,6 +65,7 @@
                     :key="index"
                     :index="index"
                     :orientation="rowsLayout ? 'vertical' : 'horizontal'"
+                    :isEditing="isEditing"
                     @init-move="startContainerResizing"
                     @move="containerResizing"
                     @end-move="endContainerResizing">
@@ -420,7 +422,6 @@ import Container from '../utils/container';
 import Frame from '../utils/frame';
 import ResizeHandle from  './resizeHandle.vue';
 import DropHint from './dropHint.vue';
-import isEditingMixin from '../mixins/isEditing';
 
 const MIN_CONTAINER_SIZE = 5;
 
@@ -465,7 +466,6 @@ function sizeToFill(items) {
 
 export default {
     inject: ['openmct', 'layoutObject'],
-    mixins: [isEditingMixin],
     components: {
         ContainerComponent,
         ResizeHandle,
@@ -476,6 +476,9 @@ export default {
             domainObject: this.layoutObject,
             newFrameLocation: []
         }
+    },
+    props: {
+        isEditing: Boolean
     },
     computed: {
         layoutDirectionStr() {
@@ -503,9 +506,27 @@ export default {
             this.persist();
         },
         deleteContainer(containerId) {
-            let container = this.containers.filter(c => c.id === containerId)[0];
-            let containerIndex = this.containers.indexOf(container);
+            let container = this.containers.filter(c => c.id === containerId)[0],
+                containerIndex = this.containers.indexOf(container);
+
+            /*
+                remove associated domainObjects from composition
+            */
+            container.frames.forEach(f => {
+                this.composition.remove({identifier: f.domainObjectIdentifier});
+            });
+
             this.containers.splice(containerIndex, 1);
+
+            /*
+                add a container when there are no containers in the FL,
+                to prevent user from not being able to add a frame via
+                drag and drop. 
+            */
+            if (this.containers.length === 0) {
+                this.containers.push(new Container(100));
+            }
+
             sizeToFill(this.containers);
             this.persist();
         },
@@ -545,6 +566,12 @@ export default {
                 .frames
                 .filter((f => f.id === frameId))[0];
             let frameIndex = container.frames.indexOf(frame);
+
+            /*
+                remove associated domainObject from composition
+            */
+            this.composition.remove({identifier: frame.domainObjectIdentifier});
+
             container.frames.splice(frameIndex, 1);
             sizeToFill(container.frames);
             this.persist(containerIndex);
@@ -617,7 +644,7 @@ export default {
             } else {
                 this.containers.splice(toIndex, 0, container);
             }
-            this.persist(index);
+            this.persist();
         },
         removeChildObject(identifier) {
             let removeIdentifier = this.openmct.objects.makeKeyString(identifier);

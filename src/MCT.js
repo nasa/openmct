@@ -46,6 +46,7 @@ define([
     './ui/preview/plugin',
     './api/Branding',
     './plugins/licenses/plugin',
+    './plugins/remove/plugin',
     'vue'
 ], function (
     EventEmitter,
@@ -73,6 +74,7 @@ define([
     PreviewPlugin,
     BrandingAPI,
     LicensesPlugin,
+    RemoveActionPlugin,
     Vue
 ) {
     /**
@@ -250,6 +252,12 @@ define([
         this.install(PreviewPlugin.default());
         this.install(LegacyIndicatorsPlugin());
         this.install(LicensesPlugin.default());
+        this.install(RemoveActionPlugin.default());
+
+        if (typeof BUILD_CONSTANTS !== 'undefined') {
+            this.install(buildInfoPlugin(BUILD_CONSTANTS));
+        }
+
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);

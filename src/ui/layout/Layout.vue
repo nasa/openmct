@@ -22,9 +22,6 @@
                   handle="after"
                   label="Browse"
                   collapsable>
-                <div class="l-shell__search">
-                    <search class="c-search--major" ref="shell-search"></search>
-                </div>
                 <mct-tree class="l-shell__tree"></mct-tree>
             </pane>
             <pane class="l-shell__pane-main">
@@ -250,7 +247,6 @@
     import ObjectView from '../components/ObjectView.vue';
     import MctTemplate from '../legacy/mct-template.vue';
     import CreateButton from './CreateButton.vue';
-    import search from '../components/search.vue';
     import multipane from './multipane.vue';
     import pane from './pane.vue';
     import BrowseBar from './BrowseBar.vue';
@@ -294,7 +290,6 @@
             ObjectView,
             'mct-template': MctTemplate,
             CreateButton,
-            search,
             multipane,
             pane,
             BrowseBar,
@@ -306,31 +301,24 @@
             this.openmct.editor.on('isEditing', (isEditing)=>{
                 this.isEditing = isEditing;
             });
+
+            this.openmct.selection.on('change', this.toggleHasToolbar);
         },
         data: function () {
             return {
                 fullScreen: false,
-                conductorComponent: {},
-                isEditing: false
+                conductorComponent: undefined,
+                isEditing: false,
+                hasToolbar: false
             }
         },
         computed: {
             toolbar() {
-                let selection = this.openmct.selection.get();
-                let structure = undefined;
-
-                if (!selection[0]) {
-                    structure = [];
-                } else {
-                    structure = this.openmct.toolbars.get(selection);
-                }
-
-                return this.isEditing && structure.length > 0;
+                return this.hasToolbar && this.isEditing;
             }
         },
         methods: {
             fullScreenToggle() {
-
                 if (this.fullScreen) {
                     this.fullScreen = false;
                     exitFullScreen();
@@ -341,6 +329,17 @@
             },
             openInNewTab(event) {
                 window.open(window.location.href);
+            },
+            toggleHasToolbar(selection) {
+                let structure = undefined;
+
+                if (!selection[0]) {
+                    structure = [];
+                } else {
+                    structure = this.openmct.toolbars.get(selection);
+                }
+
+                this.hasToolbar = structure.length > 0;
             }
         }
     }

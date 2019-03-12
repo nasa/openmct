@@ -39,7 +39,8 @@ define([
     './folderView/plugin',
     './flexibleLayout/plugin',
     './tabs/plugin',
-    './LADTable/plugin'
+    './LADTable/plugin',
+    './objectMigration/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -59,7 +60,8 @@ define([
     FolderView,
     FlexibleLayout,
     Tabs,
-    LADTable
+    LADTable,
+    ObjectMigration
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -174,6 +176,7 @@ define([
     plugins.Tabs = Tabs;
     plugins.FlexibleLayout = FlexibleLayout;
     plugins.LADTable = LADTable;
+    plugins.ObjectMigration = ObjectMigration.default;
 
     return plugins;
 });

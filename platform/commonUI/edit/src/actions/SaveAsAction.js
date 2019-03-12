@@ -92,16 +92,7 @@ function (
          * @memberof platform/commonUI/edit.SaveAction#
          */
     SaveAsAction.prototype.perform = function () {
-        // Discard the current root view (which will be the editing
-        // UI, which will have been pushed atop the Browse UI.)
-        function returnToBrowse(object) {
-            if (object) {
-                object.getCapability("action").perform("navigate");
-            }
-            return object;
-        }
-
-        return this.save().then(returnToBrowse);
+        return this.save();
     };
 
     /**
@@ -169,15 +160,17 @@ function (
         }
 
         function saveAfterClone(clonedObject) {
-            return domainObject.getCapability("editor").save()
-                .then(resolveWith(clonedObject));
+            return this.openmct.editor.save().then(() => {
+                // Force mutation for search indexing
+                clonedObject.useCapability('mutation', (model) => {
+                    return model;
+                });
+                return clonedObject;
+            })
         }
 
         function finishEditing(clonedObject) {
-            return domainObject.getCapability("editor").finish()
-                .then(function () {
-                    return fetchObject(clonedObject.getId());
-                });
+            return fetchObject(clonedObject.getId())
         }
 
         function onSuccess(object) {
@@ -190,7 +183,7 @@ function (
             if (reason !== "user canceled") {
                 self.notificationService.error("Save Failed");
             }
-            return false;
+            throw reason;
         }
 
         return getParent(domainObject)

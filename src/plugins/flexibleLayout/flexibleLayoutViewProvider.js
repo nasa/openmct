@@ -42,8 +42,13 @@ define([
                 let component;
 
                 return {
-                    show: function (element) {
+                    show: function (element, isEditing) {
                         component =  new Vue({
+                            data() {
+                                return {
+                                    isEditing: isEditing
+                                }
+                            },
                             components: {
                                 FlexibleLayoutComponent: FlexibleLayoutComponent.default
                             },
@@ -52,7 +57,7 @@ define([
                                 layoutObject: domainObject
                             },
                             el: element,
-                            template: '<flexible-layout-component ref="flexibleLayout"></flexible-layout-component>'
+                            template: '<flexible-layout-component ref="flexibleLayout" :isEditing="isEditing"></flexible-layout-component>'
                         });
                     },
                     getSelectionContext: function () {
@@ -63,6 +68,9 @@ define([
                             deleteFrame: component.$refs.flexibleLayout.deleteFrame,
                             type: 'flexible-layout'
                         };
+                    },
+                    onEditModeChange: function (isEditing) {
+                        component.isEditing = isEditing;
                     },
                     destroy: function (element) {
                         component.$destroy();

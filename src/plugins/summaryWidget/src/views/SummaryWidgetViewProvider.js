@@ -24,16 +24,10 @@ define([
                 return domainObject.type === 'summary-widget';
             },
             view: function (domainObject) {
-                var statusService = openmct.$injector.get('statusService');
-                var objectId = objectUtils.makeKeyString(domainObject.identifier);
-                var statuses = statusService.listStatuses(objectId);
-                var isEditing = statuses.indexOf('editing') !== -1;
-
-                if (isEditing) {
-                    return new SummaryWidgetEditView(domainObject, openmct);
-                } else {
-                    return new SummaryWidgetView(domainObject, openmct);
-                }
+                return new SummaryWidgetView(domainObject, openmct);
+            },
+            edit: function (domainObject) {
+                return new SummaryWidgetEditView(domainObject, openmct);
             },
             priority: function (domainObject) {
                 if (domainObject.type === 'summary-widget') {

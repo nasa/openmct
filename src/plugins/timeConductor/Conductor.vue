@@ -36,6 +36,7 @@
                        v-model="formattedBounds.start"
                        @change="validateAllBounds(); submitForm()" />
                 <date-picker
+                        v-if="isFixed && isUTCBased"
                         :default-date-time="formattedBounds.start"
                         :formatter="timeFormatter"
                         @date-selected="startDateSelected"></date-picker>
@@ -65,11 +66,11 @@
                        ref="endDate"
                        @change="validateAllBounds(); submitForm()">
                 <date-picker
+                        v-if="isFixed && isUTCBased"
                         class="c-ctrl-wrapper--menus-left"
                         :default-date-time="formattedBounds.end"
                         :formatter="timeFormatter"
-                        @date-selected="endDateSelected"
-                        v-if="isFixed"></date-picker>
+                        @date-selected="endDateSelected"></date-picker>
             </div>
 
             <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-delta"
@@ -365,8 +366,8 @@ export default {
             }
         },
         setViewFromClock(clock) {
-            this.isFixed = clock === undefined;
             this.clearAllValidation();
+            this.isFixed = clock === undefined;
         },
         setViewFromBounds(bounds) {
             this.formattedBounds.start = this.timeFormatter.format(bounds.start);
@@ -386,10 +387,15 @@ export default {
             }
         },
         clearAllValidation() {
-            [this.$refs.startDate, this.$refs.endDate, this.$refs.startOffset, this.$refs.endOffset].forEach((input) => {
-                input.setCustomValidity('');
-                input.title = '';
-            });
+            if (this.isFixed) {
+                [this.$refs.startDate, this.$refs.endDate].forEach(this.clearValidationForInput);
+            } else {
+                [this.$refs.startOffset, this.$refs.endOffset].forEach(this.clearValidationForInput);
+            }
+        },
+        clearValidationForInput(input){
+            input.setCustomValidity('');
+            input.title = '';
         },
         validateAllBounds() {
             return [this.$refs.startDate, this.$refs.endDate].every((input) => {

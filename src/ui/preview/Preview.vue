@@ -20,19 +20,31 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
  <template>
- <div class="l-preview-window">
-    <div class="l-preview-window__object-name l-browse-bar__object-name--w" :class="type.cssClass">
-        <span class="l-browse-bar__object-name">
-            {{ domainObject.name }}
-        </span>
-        <context-menu-drop-down :object-path="objectPath"></context-menu-drop-down>
+    <div class="l-preview-window">
+        <div class="l-browse-bar">
+            <div class="l-browse-bar__start">
+                <div class="l-browse-bar__object-name--w"
+                    :class="type.cssClass">
+                    <span class="l-browse-bar__object-name">
+                        {{ domainObject.name }}
+                    </span>
+                    <context-menu-drop-down :object-path="objectPath"></context-menu-drop-down>
+                </div>
+            </div>
+            <div class="l-browse-bar__end">
+                <div class="l-browse-bar__actions">
+                    <button class="l-browse-bar__actions__edit c-button icon-notebook" 
+                        title="New Notebook entry" 
+                        @click="snapshot">
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="l-preview-window__object-view">
+            <div ref="objectView"></div>
+        </div>
     </div>
-    <div class="l-preview-window__object-view">
-        <div ref="objectView">
-    </div>
-    </div>
-</div>
- </template>
+</template>
 <style lang="scss">
     @import '~styles/sass-base';
 
@@ -63,6 +75,7 @@
 
  <script>
     import ContextMenuDropDown from '../../ui/components/contextMenuDropDown.vue';
+    import NotebookSnapshot from '../utils/notebook-snapshot';
 
     export default {
         components: {
@@ -72,6 +85,12 @@
             'openmct',
             'objectPath'
         ],
+        methods: {
+            snapshot() {
+                let element = document.getElementsByClassName("l-preview-window__object-view")[0];
+                this.notebookSnapshot.capture(this.domainObject, element);
+            }
+        },
         data() {
             let domainObject = this.objectPath[0];
             let type = this.openmct.types.get(domainObject.type);
@@ -84,7 +103,8 @@
         mounted() {
             let viewProvider = this.openmct.objectViews.get(this.domainObject)[0];
             this.view = viewProvider.view(this.domainObject);
-            this.view.show(this.$refs.objectView);
+            this.view.show(this.$refs.objectView, false);
+            this.notebookSnapshot = new NotebookSnapshot(this.openmct);
         },
         destroy() {
             this.view.destroy();

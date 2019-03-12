@@ -53,7 +53,7 @@ function ToolbarProvider(openmct) {
             toggleContainer = {
                 control: 'toggle-button',
                 key: 'toggle-layout',
-                domainObject: secondary ? secondary.context.item : primary.context.item,
+                domainObject: primary.context.item,
                 property: 'configuration.rowsLayout',
                 options: [
                     {
@@ -140,6 +140,8 @@ function ToolbarProvider(openmct) {
                     title: 'Add Container'
                 };
 
+                toggleContainer.domainObject = secondary.context.item;
+
             } else if (primary.context.type === 'container') {
 
                 deleteContainer = {
@@ -202,7 +204,7 @@ function ToolbarProvider(openmct) {
                 addContainer,
                 toggleFrame ? separator: undefined,
                 toggleFrame,
-                deleteFrame || deleteContainer ? separator: undefined,
+                deleteFrame || deleteContainer ? separator : undefined,
                 deleteFrame,
                 deleteContainer
             ];

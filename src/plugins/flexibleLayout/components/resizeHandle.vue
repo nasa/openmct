@@ -29,11 +29,8 @@
 </template>
 
 <script>
-import isEditingMixin from '../mixins/isEditing';
-
 export default {
-    props: ['orientation', 'index'],
-    mixins: [isEditingMixin],
+    props: ['orientation', 'index', 'isEditing'],
     data() {
         return {
             initialPos: 0,
