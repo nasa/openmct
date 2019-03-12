@@ -4,11 +4,3 @@
 @import "../styles/constants";
 @import "../styles/mobile/constants";
 @import "../styles/helpers/wait-spinner";
-
-/********************************* FORMS */
-@import "../styles/forms/channel-selector"; // 1/18/19: Unsure, used by VISTA?
-@import "../styles/forms/datetime"; // 1/18/19: Needs migration; used by Timer props menu, other?
-@import "../styles/forms/validation"; // 1/18/19: Needs migration; used by legacy forms;
-
-/********************************* TO BE MOVED */
-@import "../styles/autoflow"; // 1/18/19: Needs to be migrated; cannot unit test locally

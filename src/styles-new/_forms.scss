@@ -312,6 +312,7 @@
     }
 }
 
+/******** VALIDATION */
 .form-error {
     // Block element that visually flags an error and contains a message
     background-color: $colorFormFieldErrorBg;
@@ -324,5 +325,44 @@
         display: inline-block;
         font-family: symbolsfont;
         margin-right: $interiorMarginSm;
+    }
+}
+
+
+@mixin labelValidate($sym, $c) {
+    > .label {
+        @include glyphAfter($sym);
+        &:after {
+            color: $c;
+            margin-left: $interiorMargin;
+        }
+    }
+}
+
+
+mct-form.validates {
+    .form-row.validates {
+        > .label {
+            padding-right: 1em; // Keep room for validation element
+            &:after {
+                font-size: .8em;
+            }
+        }
+        &.invalid,
+        &.invalid.req { @include labelValidate($glyph-icon-x, $colorFormInvalid); }
+
+        &.valid,
+        &.valid.req { @include labelValidate($glyph-icon-check, $colorFormValid); }
+
+        &.req { @include labelValidate($glyph-icon-asterisk, $colorFormRequired); }
+    }
+}
+
+body.desktop .form-row.validates > .label {
+    &:after {
+        position: absolute;
+        right: $interiorMargin;
+        height: 100%;
+        line-height: 200%;
     }
 }
