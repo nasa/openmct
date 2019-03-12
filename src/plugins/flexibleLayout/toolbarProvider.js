@@ -204,7 +204,7 @@ function ToolbarProvider(openmct) {
                 addContainer,
                 toggleFrame ? separator: undefined,
                 toggleFrame,
-                deleteFrame || deleteContainer ? separator: undefined,
+                deleteFrame || deleteContainer ? separator : undefined,
                 deleteFrame,
                 deleteContainer
             ];
