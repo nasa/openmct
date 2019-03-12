@@ -44,7 +44,6 @@ define([
         self.button.addClass(this.cssClass);
         self.setNullOption(this.nullOption);
 
-        //$('.l-palette-row', self.domElement).after('<div class = "l-palette-row"> </div>');
         self.items.forEach(function (item) {
             var itemElement = $('<div class = "c-palette__item ' + item + '"' +
                                 ' data-item = ' + item + '></div>');
