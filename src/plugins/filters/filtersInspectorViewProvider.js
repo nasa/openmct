@@ -21,50 +21,46 @@
  *****************************************************************************/
 
 define([
-    '../../api/objects/object-utils',
-    './components/table-configuration.vue',
-    './TelemetryTableConfiguration',
+    './components/FiltersView.vue',
     'vue'
 ], function (
-    objectUtils,
-    TableConfigurationComponent,
-    TelemetryTableConfiguration,
+    FiltersView,
     Vue
 ) {
 
-    function TableConfigurationViewProvider(openmct) {
+    function FiltersInspectorViewProvider(openmct, supportedObjectTypesArray) {
         return {
-            key: 'table-configuration',
-            name: 'Telemetry Table Configuration',
+            key: 'filters-inspector',
+            name: 'Filters Inspector View',
             canView: function (selection) {
                 if (selection.length === 0) {
                     return false;
                 }
                 let object = selection[0].context.item;
-                return object && object.type === 'table';
+
+                return object && supportedObjectTypesArray.some(type => object.type === type);
             },
             view: function (selection) {
                 let component;
-                let domainObject = selection[0].context.item;
-                let tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
+                let providedObject = selection[0].context.item;
+
                 return {
                     show: function (element) {
                         component = new Vue({
                             provide: {
                                 openmct,
-                                tableConfiguration
+                                providedObject
                             },
                             components: {
-                                TableConfiguration: TableConfigurationComponent.default
+                                FiltersView: FiltersView.default
                             },
-                            template: '<table-configuration></table-configuration>',
+                            template: '<filters-view></filters-view>',
                             el: element
                         });
                     },
                     destroy: function () {
                         component.$destroy();
                         component = undefined;
-                        tableConfiguration = undefined;
                     }
                 }
             },
@@ -73,5 +69,5 @@ define([
             }
         }
     }
-    return TableConfigurationViewProvider;
+    return FiltersInspectorViewProvider;
 });

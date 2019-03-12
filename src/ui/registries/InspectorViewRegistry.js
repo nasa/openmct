@@ -42,13 +42,9 @@ define([], function () {
      * @private for platform-internal use
      */
     InspectorViewRegistry.prototype.get = function (selection) {
-        var providers = this.getAllProviders().filter(function (provider) {
+        return this.getAllProviders().filter(function (provider) {
             return provider.canView(selection);
-        });
-
-        if (providers && providers.length > 0) {
-            return providers[0].view(selection);
-        }
+        }).map(provider => provider.view(selection));
     };
 
     /**
