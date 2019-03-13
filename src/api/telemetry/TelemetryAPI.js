@@ -141,6 +141,10 @@ define([
         this.metadataCache = new WeakMap();
         this.formatMapCache = new WeakMap();
         this.valueFormatterCache = new WeakMap();
+        this.globalOptions = {
+            request: {},
+            subscribe: {}
+        };
     }
 
     /**
@@ -256,6 +260,19 @@ define([
     };
 
     /**
+     * Applies provided options to all requests or subscriptions
+     */
+    TelemetryAPI.prototype.setGlobalOptions = function (options, method) {
+        if (!method) {
+            Object.assign(this.globalOptions.request, options);
+            Object.assign(this.globalOptions.subscribe, options);
+        } else if (method === 'subscribe' || method === 'request') {
+            Object.assign(this.globalOptions[method], options);
+        } else {
+            throw `Unknown telemetry method '${method}' `;
+        }
+    }
+    /**
      * Request historical telemetry for a domain object.
      * The `options` argument allows you to specify filters
      * (start, end, etc.), sort order, and strategies for retrieving
@@ -275,6 +292,8 @@ define([
             arguments.length = 2;
             arguments[1] = {};
         }
+        Object.assign(arguments[1], this.globalOptions.request);
+
         this.standardizeRequestOptions(arguments[1]);
         var provider = this.findRequestProvider.apply(this, arguments);
         if (!provider) {
@@ -305,6 +324,8 @@ define([
         }
         var keyString = objectUtils.makeKeyString(domainObject.identifier);
         var subscriber = this.subscribeCache[keyString];
+        
+        Object.assign(options, this.globalOptions.request);
 
         if (!subscriber) {
             subscriber = this.subscribeCache[keyString] = {
