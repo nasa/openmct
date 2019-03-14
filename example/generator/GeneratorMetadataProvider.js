@@ -33,19 +33,12 @@ define([
                     formatString: '%0.2f',
                     hints: {
                         range: 1
-                    },
-                    filters: [
-                        {
-                            comparator: 'equals',
-                            possibleValues: [1,2,3,4]
-                        }
-                    ]
+                    }
                 },
                 {
                     key: "cos",
                     name: "Cosine",
                     formatString: '%0.2f',
-                    filters: ['equals'],
                     hints: {
                         range: 2
                     }
