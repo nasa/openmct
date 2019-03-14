@@ -236,7 +236,6 @@
         },
         computed: {
             style() {
-                console.log("computed-style", {...this.item});
                 let {x, y, width, height} = this.item;
 
                 if (this.dragPosition) {

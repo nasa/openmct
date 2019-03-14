@@ -171,7 +171,6 @@ define([], function () {
                         title: "Delete the selected object",
                         method: function () {
                             let removeItem = selectionPath[1].context.removeItem;
-                            let selectedItems = getAllTypes(selection);
                             let prompt = openmct.overlays.dialog({
                                 iconClass: 'alert',
                                 message: `Warning! This action will remove this item from the Display Layout. Do you want to continue?`,
@@ -180,7 +179,7 @@ define([], function () {
                                         label: 'Ok',
                                         emphasis: 'true',
                                         callback: function () {
-                                            removeItem(selectedItems);
+                                            removeItem(getAllTypes(selection));
                                             prompt.dismiss();
                                         }
                                     },

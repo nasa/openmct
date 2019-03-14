@@ -183,7 +183,6 @@
 
                 this.removeSelectionListeners.push(this.openmct.objects.observe(this.internalDomainObject, path, function (value) {
                     if (oldValue === value) {
-                        oldValue = value;
                         return;
                     }
 
@@ -238,7 +237,6 @@
                 this.mutate(`configuration.items[${index}]`, item);
             },
             mutate(path, value) {
-                console.log("DisplayLayout--mutate", path, value);
                 this.openmct.objects.mutate(this.internalDomainObject, path, value);
             },
             handleDrop($event) {
@@ -400,19 +398,49 @@
                 this.mutate("configuration.items", layoutItems);
                 this.$el.click();
             },
-            orderItem(position, index) {
+            orderItem(position, selectedItems) {
                 let delta = ORDERS[position];
-                let newIndex = Math.max(Math.min(index + delta, this.layoutItems.length - 1), 0);
-                let item = this.layoutItems[index];
+                let indices = [];
+                let newIndices = [];
+                selectedItems.forEach(selectionPath => {
+                    indices.push(selectionPath[0].context.index);
+                });
+                indices.sort((a, b) => a - b);
 
-                if (newIndex !== index) {
-                    this.layoutItems.splice(index, 1);
-                    this.layoutItems.splice(newIndex, 0, item);
-                    this.mutate('configuration.items', this.layoutItems);
-                    this.unsubscribeSelectionListeners();
-                    // TODO:
-                    this.attachSelectionListener(newIndex);
+                if (position === 'top') {
+                     indices.reverse();
                 }
+
+                console.log("position", position, indices);
+
+                let newIndex = -1;
+                let items = [];
+                Object.assign(items, this.layoutItems);
+
+                indices.forEach((index, currentIndex) => {
+                    if (currentIndex === 0) {
+                        newIndex = Math.max(Math.min(index + delta, this.layoutItems.length - 1), 0);
+                    } else {
+                        if (position === 'top') {
+                            newIndex -= 1;
+                        } else {
+                            newIndex += 1;
+                        }
+                    }
+                    newIndices.push(newIndex);
+
+                    let item = items[index];
+                    if (newIndex !== index) {
+                        this.layoutItems.splice(index, 1);
+                        this.layoutItems.splice(newIndex, 0, item);
+                    }
+                    console.log(newIndex);
+                });
+
+                console.log('this.layoutItems', {...this.layoutItems});
+                this.mutate('configuration.items', this.layoutItems);
+                this.unsubscribeSelectionListeners();
+                newIndices.forEach(newIndex => this.attachSelectionListener(newIndex));
             },
             unsubscribeSelectionListeners() {
                 if (this.removeSelectionListeners) {
@@ -426,7 +454,6 @@
         },
         mounted() {
             this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', function (obj) {
-                console.log("obj", {...JSON.parse(JSON.stringify(obj))});
                 this.internalDomainObject = JSON.parse(JSON.stringify(obj));
             }.bind(this));
             this.openmct.selection.on('change', this.setSelection);
