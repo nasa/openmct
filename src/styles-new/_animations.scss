@@ -1,18 +1,18 @@
-@include keyframes(rotation) {
+@keyframes rotation {
     100% { transform: rotate(360deg); }
 }
 
-@include keyframes(rotation-centered) {
+@keyframes rotation-centered {
     0%   { transform: translate(-50%, -50%) rotate(0deg); }
     100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
-@include keyframes(clock-hands) {
+@keyframes clock-hands {
     0% { transform: translate(-50%, -50%) rotate(0deg); }
     100% { transform: translate(-50%, -50%) rotate(360deg);  }
 }
 
-@include keyframes(clock-hands-sticky) {
+@keyframes clock-hands-sticky {
     0% {
         transform: translate(-50%, -50%) rotate(0deg);
     }

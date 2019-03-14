@@ -1,17 +1,16 @@
 <template>
-    <div class="c-tree__wrapper">
-        <div class="l-shell__search">
-            <search class="c-search--major" ref="shell-search"
+    <div class="c-tree-and-search">
+        <div class="c-tree-and-search__search">
+            <search class="c-search" ref="shell-search"
                 :value="searchValue"
                 @input="searchTree"
                 @clear="searchTree">
             </search>
         </div>
-        <div
-            v-if="treeItems.length === 0">
+        <div class="c-tree-and-search__no-results" v-if="treeItems.length === 0">
             No results found
         </div>
-        <ul class="c-tree">
+        <ul class="c-tree-and-search__tree c-tree">
             <tree-item v-for="treeItem in treeItems"
                        :key="treeItem.id"
                        :node="treeItem">
@@ -23,16 +22,34 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
+    .c-tree-and-search {
+        display: flex;
+        flex-direction: column;
+        padding-right: $interiorMarginSm;
+        overflow: auto;
+
+        > * + * { margin-top: $interiorMargin; }
+
+        &__search {
+            flex: 0 0 auto;
+        }
+
+        &__no-results {
+            font-style: italic;
+            opacity: 0.6;
+        }
+
+        &__tree {
+            flex: 1 1 auto;
+            height: 100%;
+        }
+    }
+
     .c-tree {
         @include userSelectNone();
         overflow-x: hidden;
         overflow-y: auto;
-        height: 100%;
-
-        &__wrapper {
-            overflow-y: auto;
-            padding-right: $interiorMarginSm;
-        }
+        padding-right: $interiorMargin;
 
         .c-tree {
             margin-left: 15px;
@@ -59,7 +76,8 @@
                 }
             }
 
-            &.is-navigated-object {
+            &.is-navigated-object,
+            &.is-selected {
                 background: $colorItemTreeSelectedBg;
                 .c-tree__item__type-icon:before {
                     color: $colorItemTreeIconHover;
@@ -86,33 +104,34 @@
                 margin-right: $interiorMarginSm;
             }
 
+            // Object labels in trees
             &__label {
                 // <a> tag that holds type icon and name.
                 // Draggable element.
-                border-radius: $controlCr;
+                /*border-radius: $controlCr;
                 display: flex;
                 align-items: center;
                 flex: 1 1 auto;
                 overflow: hidden;
                 padding: $aPad;
-                white-space: nowrap;
+                white-space: nowrap;*/
             }
 
             &__name {
-                @include ellipsize();
-                display: inline;
+               // @include ellipsize();
+               // display: inline;
                 color: $colorItemTreeFg;
-                width: 100%;
+              //  width: 100%;
             }
 
             &__type-icon {
-                // Type icon. Must be HTML entity to allow inclusion of alias indicator.
-                display: block;
-                flex: 0 0 auto;
-                font-size: 1.3em;
-                margin-right: $interiorMarginSm;
+                // Type icon. Must be an HTML entity to allow inclusion of alias indicator.
+               // display: block;
+             //   flex: 0 0 auto;
+              //  font-size: 1.3em;
+              //  margin-right: $interiorMarginSm;
                 color: $colorItemTreeIcon;
-                width: $treeTypeIconW;
+              //  width: $treeTypeIconW;
             }
 
             &.is-alias {

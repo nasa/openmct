@@ -6,7 +6,7 @@
         @clear="applySearch">
     </Search>
     <div class="c-elements-pool__elements">
-        <ul class="tree c-tree c-elements-pool__tree" id="inspector-elements-tree"
+        <ul class="c-tree c-elements-pool__tree" id="inspector-elements-tree"
             v-if="elements.length > 0">
             <li :key="element.identifier.key" v-for="(element, index) in elements" @drop="moveTo(index)" @dragover="allowDrop">
                 <div class="c-tree__item c-elements-pool__item">

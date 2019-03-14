@@ -57,6 +57,12 @@
             height: $d;
         }
 
+        .c-tree {
+            // When a tree is in the Inspector, remove scrolling and right pad
+            overflow: visible;
+            padding-right: 0;
+        }
+
         /************************************************************** LEGACY */
         // TODO: refactor when legacy properties markup can be converted
         .inspector-location {

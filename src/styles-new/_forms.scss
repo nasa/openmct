@@ -19,9 +19,34 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+.c-form {
+    display: flex;
+    flex-direction: column;
+
+    &__section {
+        display: inherit;
+        flex-direction: column;
+    }
+
+    &__row {
+        display: flex;
+    }
+
+    &__header {
+        border-radius: $basicCr;
+        background: $colorFormSectionHeaderBg;
+        color: $colorFormSectionHeaderFg;
+        font-size: inherit;
+        font-weight: normal;
+        margin: $interiorMargin 0;
+        padding: $formTBPad $formLRPad;
+        text-transform: uppercase;
+    }
+}
+
+/***************************************************** LEGACY */
 .section-header {
     border-radius: $basicCr;
-    background: $colorFormSectionHeader;
     color: lighten($colorBodyFg, 20%);
     font-size: inherit;
     margin: $interiorMargin 0;
@@ -36,7 +61,7 @@
 }
 
 .form {
-	color: $colorFormText;
+    color: $colorFormText;
     height: 100%;
     width: 100%;
 
@@ -54,69 +79,69 @@
         }
     }
 
-	.form-row {
-		$m: $interiorMargin;
-		box-sizing: border-box;
-		border-top: 1px solid $colorFormLines;
-		padding: $formTBPad 0;
-		position: relative;
+    .form-row {
+        $m: $interiorMargin;
+        box-sizing: border-box;
+        border-top: 1px solid $colorFormLines;
+        padding: $formTBPad 0;
+        position: relative;
 
-		&.first {
-			border-top: none;
-		}
+        &.first {
+            border-top: none;
+        }
 
-		>.label,
-		>.controls {
-			box-sizing: border-box;
-			font-size: 0.8rem;
-		}
+        >.label,
+        >.controls {
+            box-sizing: border-box;
+            font-size: 0.8rem;
+        }
 
-		>.label {
-			// Only style this way for immediate children of .form-row; prevents problems when .label is used in .controls section of a form
-			min-width: 120px;
+        >.label {
+            // Only style this way for immediate children of .form-row; prevents problems when .label is used in .controls section of a form
+            min-width: 120px;
             order: 1;
             position: relative;
-			white-space: nowrap;
-			width: $formLabelW;
-		}
+            white-space: nowrap;
+            width: $formLabelW;
+        }
 
-		.value {
-			color: $colorInputFg;
-		}
+        .value {
+            color: $colorInputFg;
+        }
 
-		.controls {
+        .controls {
             order: 2;
             position: relative;
             flex: 1 1 auto;
 
-			.l-composite-control {
-				&.l-checkbox {
-					display: inline-block;
-					line-height: $formRowCtrlsH;
-					margin-right: 5px;
-				}
-			}
-			.select {
-				margin-right: $interiorMargin;
-			}
-		}
+            .l-composite-control {
+                &.l-checkbox {
+                    display: inline-block;
+                    line-height: $formRowCtrlsH;
+                    margin-right: 5px;
+                }
+            }
+            .select {
+                margin-right: $interiorMargin;
+            }
+        }
 
-		.hint, .field-hints {  color: $colorFieldHint;  }
+        .hint, .field-hints {  color: $colorFieldHint;  }
 
-		.selector-list {
-			// Used in create overlay to display tree view
-			@include nice-input();
+        .selector-list {
+            // Used in create overlay to display tree view
+            @include nice-input();
             padding: $interiorMargin;
-			position: relative;
+            position: relative;
             min-height: 150px;
-			height: 100%;
-			>.wrapper {
-				$p: $interiorMargin;
+            height: 100%;
+            >.wrapper {
+                $p: $interiorMargin;
                 box-sizing: border-box;
-				overflow: auto;
-			}
-		}
-	}
+                overflow: auto;
+            }
+        }
+    }
 }
 
 .l-controls-first .form .form-row,
@@ -148,36 +173,59 @@
     }
 }
 
-.hint,
-.s-hint {
-	font-size: 0.9em;
-    .req {
-        color: $colorFormRequired;
-        font-size: 0.7rem;
+.l-composite-control {
+    vertical-align: middle;
+    &:not(.l-inline) {
+        margin-bottom: $interiorMargin;
+    }
+    &.l-inline {
+        display: inline-block;
+    }
+    &.l-checkbox {
+        .composite-control-label {
+            line-height: 18px;
+        }
     }
 }
 
-.l-result {
-	// Used in /vista/channel-query.html and evr-query.html as of 2/24/15
-	display: inline-block;
-	min-width: 32px; min-height: 32px;
-	position: relative;
-	vertical-align: top;
-
-	div.s-hint {
-		border-radius: $basicCr;
-		background: rgba($colorFormInvalid, 0.8);
-		display: block;
-		color: lighten($colorFormInvalid, 30%);
-		padding: $interiorMargin;
-	}
+.autocomplete {
+    input {
+        width: 226px;
+        padding: 5px 0px 5px 7px;
+    }
+    .icon-arrow-down {
+        position: absolute;
+        top: 8px;
+        left: 210px;
+        font-size: 10px;
+        cursor: pointer;
+    }
+    .autocompleteOptions {
+        border: 1px solid $colorFormLines;
+        border-radius: 5px;
+        width: 224px;
+        max-height: 170px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        li {
+            border: 1px solid $colorFormLines;
+            padding: 8px 0px 8px 5px;
+            .optionText {
+                cursor: pointer;
+            }
+        }
+        .optionPreSelected {
+            background-color: $colorInspectorSectionHeaderBg;
+            color: $colorInspectorSectionHeaderFg;
+        }
+    }
 }
 
-/**************************************************************************** COMPACT FORM */
+/********* COMPACT FORM */
 // ul > li > label, control
 // Make a new UL for each form section
 // Allow control-first, controls-below
-// TO-DO: migrate work in branch ch-plot-styling that users .inspector-config to use classes below instead
+// 3/8/19: Used by Summary Widgets edit UI
 
 .l-compact-form .tree ul li,
 .l-compact-form ul li {
@@ -186,39 +234,41 @@
 
 
 .l-compact-form {
+    $h: $btnStdH;
     $labelW: 40%;
     $minW: $labelW;
     ul {
-        margin-bottom: $interiorMarginLg;
         li {
             display: flex;
-            flex-wrap: wrap;
-            align-items: center;
+            align-items: stretch;
+            padding: $interiorMargin 0;
+
             label,
             .control {
                 display: flex;
             }
             label {
-                line-height: inherit;
+                line-height: $h;
                 width: $labelW;
             }
             .controls {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: flex-start;
                 flex-grow: 1;
                 margin-left: $interiorMargin;
+                min-height: $h;
+                line-height: $h;
                 input[type="text"],
                 input[type="search"],
                 input[type="number"],
-                .select {
-                    height: $btnStdH;
-                    line-height: $btnStdH;
-                    vertical-align: middle;
+                button,
+                select {
+                    min-height: $h;
                 }
 
-                .e-control {
-                    // Individual form controls
-                    &:not(:first-child) {
-                        margin-left: $interiorMarginSm;
-                    }
+                > * + * {
+                    margin-left: $interiorMarginSm;
                 }
             }
 
@@ -261,6 +311,7 @@
     }
 }
 
+/******** VALIDATION */
 .form-error {
     // Block element that visually flags an error and contains a message
     background-color: $colorFormFieldErrorBg;
@@ -273,5 +324,44 @@
         display: inline-block;
         font-family: symbolsfont;
         margin-right: $interiorMarginSm;
+    }
+}
+
+
+@mixin labelValidate($sym, $c) {
+    > .label {
+        @include glyphAfter($sym);
+        &:after {
+            color: $c;
+            margin-left: $interiorMargin;
+        }
+    }
+}
+
+
+mct-form.validates {
+    .form-row.validates {
+        > .label {
+            padding-right: 1em; // Keep room for validation element
+            &:after {
+                font-size: .8em;
+            }
+        }
+        &.invalid,
+        &.invalid.req { @include labelValidate($glyph-icon-x, $colorFormInvalid); }
+
+        &.valid,
+        &.valid.req { @include labelValidate($glyph-icon-check, $colorFormValid); }
+
+        &.req { @include labelValidate($glyph-icon-asterisk, $colorFormRequired); }
+    }
+}
+
+body.desktop .form-row.validates > .label {
+    &:after {
+        position: absolute;
+        right: $interiorMargin;
+        height: 100%;
+        line-height: 200%;
     }
 }

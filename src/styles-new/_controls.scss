@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/********* Buttons */
+/******************************************************** BUTTONS */
 // Optionally can include icon in :before via markup
 button {
     @include htmlInputReset();
@@ -37,6 +37,15 @@ button {
             content: $glyph-icon-arrow-down;
             font-family: symbolsfont;
             opacity: 0.5;
+        }
+    }
+
+    &--swatched {
+        // Used with c-button--menu: a visual button with a larger swatch element adjacent to an icon
+        .c-swatch {
+            $d: 12px;
+            margin-left: $interiorMarginSm;
+            height: $d; width: $d;
         }
     }
 }
@@ -236,7 +245,7 @@ select {
     background-position: right .4em top 80%, 0 0;
     border: none;
     border-radius: $controlCr;
-    padding: 1px 20px 1px $interiorMargin;
+    padding: 4px 20px 4px $interiorMargin;
 }
 
 // CHECKBOX LISTS
@@ -372,33 +381,37 @@ select {
 .c-palette {
     display: flex;
     flex-flow: column nowrap;
+    line-height: normal;
 
     &__items {
-        flex: 1 1 auto;
         display: grid;
-        grid-template-columns: repeat(auto-fill, 12px);
         grid-gap: 1px;
+        grid-template-columns: repeat(auto-fill, 12px);
+        flex: 1 1 auto;
+
+        .c-menu & {
+            min-width: $paletteMenuMinW;
+        }
     }
 
     &__item {
         $d: 12px;
-
         border: 1px solid transparent;
         cursor: pointer;
-        min-width: $d; min-height: $d;
+        display: flex;
+        align-items: center;
+        align-content: center;
+        width: $d;
+        height: $d;
+        text-align: center;
         transition: $transOut;
 
         &:hover {
             transition: $transIn;
-            $o: 0.7;
-            border-color: rgba($paletteItemBorderOuterColorSelected, $o);
-            box-shadow: inset rgba($paletteItemBorderInnerColorSelected, $o) 0 0 0 1px;
         }
 
         &.is-selected {
-            border-color: $paletteItemBorderOuterColorSelected !important;
-            border-width: 2px;
-            box-shadow: inset rgba($paletteItemBorderInnerColorSelected, 1) 0 0 0 1px;
+            border-width: 1px;
         }
     }
 
@@ -412,6 +425,44 @@ select {
             @include noColor();
             border-color: $paletteItemBorderInnerColor;
             margin-right: $interiorMarginSm;
+        }
+    }
+
+    &--color {
+        .c-palette__item {
+            &:hover {
+                border-color: rgba($paletteItemBorderOuterColorSelected, 0.7);
+                box-shadow: inset rgba($paletteItemBorderInnerColorSelected, 0.7) 0 0 0 1px;
+            }
+
+            &.is-selected {
+                border-color: $paletteItemBorderOuterColorSelected !important;
+                box-shadow: inset rgba($paletteItemBorderInnerColorSelected, 1) 0 0 0 1px;
+            }
+        }
+    }
+
+    &--icon {
+        .c-palette__items {
+            grid-gap: 3px;
+        }
+
+        .c-palette__item {
+            border-radius: $smallCr;
+            font-size: 0.6rem;
+
+            &:before {
+                display: block;
+                width: 100%;
+            }
+
+            &:hover {
+                box-shadow: rgba($paletteItemBorderInnerColorSelected, 0.3) 0 0 0 1px;
+            }
+
+            &.is-selected {
+                box-shadow: rgba($paletteItemBorderInnerColorSelected, 0.6) 0 0 0 1px;
+            }
         }
     }
 }
@@ -443,12 +494,6 @@ select {
 }
 
 .c-toolbar {
-    $p: $interiorMargin;
-    background: $editUIBaseColor;
-    border-radius: $basicCr;
-    height: $p + 24px; // Need to standardize the height
-    padding: $p;
-
     > * + * {
         margin-left: 2px;
     }
@@ -502,10 +547,6 @@ select {
             margin-left: $interiorMargin;
         }
     }
-
-    .c-palette {
-        min-width: 136px;
-    }
 }
 
 /********* Button Sets */
@@ -531,7 +572,7 @@ select {
         // Buttons are smashed together with minimal margin
         // c-buttons don't have border-radius between buttons, creates a tool-button-strip look
         // c-click-icons get grouped more closely together
-        &[class^="c-button"] {
+        [class^="c-button"] {
             // Only apply the following to buttons that have background, eg. c-button
             border-radius: 0;
 
@@ -656,9 +697,7 @@ input[type="range"] {
 }
 
 /***************************************************** LEGACY */
-
 .l-btn-set {
-    // Fixes
     display: flex;
     align-items: center;
 }
