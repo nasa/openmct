@@ -402,24 +402,62 @@
                 let delta = ORDERS[position];
                 let indices = [];
                 let newIndices = [];
+                let newIndex = -1;
+                let items = [];
+
+                Object.assign(items, this.layoutItems);
                 selectedItems.forEach(selectionPath => {
                     indices.push(selectionPath[0].context.index);
                 });
                 indices.sort((a, b) => a - b);
 
-                if (position === 'top') {
+                if (position === 'top' || position === 'up') {
                      indices.reverse();
                 }
 
-                console.log("position", position, indices);
+                if (position === 'top' || position === 'bottom') {
+                    newIndices = this.moveToTopOrBottom(position, indices, items, delta);
+                } else {
+                    newIndices = this.moveUpOrDown(position, indices, items, delta);
+                }
 
+                this.mutate('configuration.items', this.layoutItems);
+                this.unsubscribeSelectionListeners();
+                newIndices.forEach(newIndex => this.attachSelectionListener(newIndex));
+            },
+            moveUpOrDown(position, indices, items, delta) {
+                let previousItemIndex = -1;
                 let newIndex = -1;
-                let items = [];
-                Object.assign(items, this.layoutItems);
+                let newIndices = [];
 
-                indices.forEach((index, currentIndex) => {
-                    if (currentIndex === 0) {
-                        newIndex = Math.max(Math.min(index + delta, this.layoutItems.length - 1), 0);
+                indices.forEach((itemIndex, index) => {
+                    let isAdjacentItemSelected = position === 'up' ?
+                        itemIndex + 1 === previousItemIndex :
+                        itemIndex - 1 === previousItemIndex;
+
+                    if (index > 0 && isAdjacentItemSelected) {
+                        if (position === 'up') {
+                            newIndex -= 1;
+                        } else {
+                            newIndex += 1;
+                        }
+                    } else {
+                        newIndex = Math.max(Math.min(itemIndex + delta, this.layoutItems.length - 1), 0);
+                    }
+
+                    previousItemIndex = itemIndex;
+                    newIndices.push(newIndex);
+                    this.updateItemOrder(newIndex, itemIndex, items);
+                });
+                return newIndices;
+            },
+            moveToTopOrBottom(position, indices, items, delta) {
+                let newIndices = [];
+                let newIndex = -1;
+
+                indices.forEach((itemIndex, index) => {
+                    if (index === 0) {
+                        newIndex = Math.max(Math.min(itemIndex + delta, this.layoutItems.length - 1), 0);
                     } else {
                         if (position === 'top') {
                             newIndex -= 1;
@@ -427,20 +465,17 @@
                             newIndex += 1;
                         }
                     }
+
                     newIndices.push(newIndex);
-
-                    let item = items[index];
-                    if (newIndex !== index) {
-                        this.layoutItems.splice(index, 1);
-                        this.layoutItems.splice(newIndex, 0, item);
-                    }
-                    console.log(newIndex);
+                    this.updateItemOrder(newIndex, itemIndex, items);
                 });
-
-                console.log('this.layoutItems', {...this.layoutItems});
-                this.mutate('configuration.items', this.layoutItems);
-                this.unsubscribeSelectionListeners();
-                newIndices.forEach(newIndex => this.attachSelectionListener(newIndex));
+                return newIndices;
+            },
+            updateItemOrder(newIndex, itemIndex, items) {
+                if (newIndex !== itemIndex) {
+                    this.layoutItems.splice(itemIndex, 1);
+                    this.layoutItems.splice(newIndex, 0, items[itemIndex]);
+                }
             },
             unsubscribeSelectionListeners() {
                 if (this.removeSelectionListeners) {
