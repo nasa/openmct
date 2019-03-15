@@ -339,6 +339,15 @@ define([
             yAxisMaxDist = yDistMouseToMax / yAxisDist,
             yAxisMinDist = yDistMouseToMin / yAxisDist;
 
+        let plotHistoryStep;
+
+        if (!plotHistoryStep) {
+            plotHistoryStep = {
+                x: xDisplayRange,
+                y: yDisplayRange
+            };
+        }
+
         if (event.wheelDelta < 0) {
 
             this.$scope.xAxis.set('displayRange', {
@@ -364,7 +373,8 @@ define([
         }
 
         this.stillZooming = window.setTimeout(function () {
-            this.trackHistory();
+            this.plotHistory.push(plotHistoryStep);
+            plotHistoryStep = undefined;
             this.$scope.$emit('user:viewport:change:end');
         }.bind(this), 250);
     };
