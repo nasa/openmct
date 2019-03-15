@@ -2,7 +2,7 @@
     <div class="c-ctrl-wrapper">
         <div class="c-click-icon"
              :title="nextValue.title"
-             :class="[nextValue.icon, {'icon-object-unknown': nonSpecific}]"
+             :class="[nextValue.icon, {'c-click-icon--mixed': nonSpecific}]"
              @click="cycle">
         </div>
     </div>

@@ -66,6 +66,15 @@ button {
         margin-left: $interiorMargin;
     }
 
+    $c1: nth($swatchMixedSettings, 1);
+    $c2: nth($swatchMixedSettings, 2);
+    $mixedBgD: $swatchSize $swatchSize;
+
+    &--mixed {
+        // E.g. click-icons in toolbar that apply to multiple selected items with different settings
+        @include bgStripes2Color($c1, $c2, $bgSize: $mixedBgD);
+    }
+
     &--swatched {
         // Color control, show swatch element
         display: flex;
@@ -76,7 +85,7 @@ button {
         > [class*='swatch'] {
             box-shadow: inset rgba(black, 0.2) 0 0 1px;
             flex: 0 0 auto;
-            height: 4px;
+            height: $swatchSize;
             width: 100%;
             margin-top: 1px;
         }
@@ -85,6 +94,13 @@ button {
             // Reduce size of icon to make a bit of room
             flex: 1 1 auto;
             font-size: 1.1em;
+        }
+
+        &--mixed {
+            // Styling for swatched buttons when settings are mixed
+            > [class*='swatch'] {
+                @include bgStripes2Color($c1, $c2, $bgSize: $mixedBgD);
+            }
         }
     }
 }
@@ -439,6 +455,10 @@ select {
 
     > * + * {
         margin-left: 2px;
+    }
+
+    &__button {
+
     }
 
     &__separator {
