@@ -5,7 +5,7 @@
             :class="{
                 [options.icon]: true,
                 'c-click-icon--caution': options.modifier === 'caution',
-                'icon-object-unknown': nonSpecific
+                'c-click-icon--mixed': nonSpecific
             }"
             @click="onClick">
             <div class="c-click-icon__label"

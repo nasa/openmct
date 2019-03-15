@@ -25,7 +25,7 @@
             <div class="c-properties__value">{{ prop.value }}</div>
         </li>
     </ul>
-    <div v-if="multiSelect">No properties to display for multiple items</div>
+    <div class="c-properties__row--span-all" v-if="multiSelect">No properties to display for multiple items</div>
 </div>
 </template>
 

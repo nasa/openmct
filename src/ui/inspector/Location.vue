@@ -11,7 +11,7 @@
             <div class="c-properties__value">TODO</div>
         </li>
     </ul>
-    <div v-if="multiSelect">No location to display for multiple items</div>
+    <div class="c-properties__row--span-all" v-if="multiSelect">No location to display for multiple items</div>
 </div>
 </template>
 
