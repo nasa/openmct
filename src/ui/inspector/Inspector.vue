@@ -4,7 +4,7 @@
         <pane class="c-inspector__properties">
             <properties></properties>
             <location></location>
-            <inspector-view></inspector-view>
+            <inspector-views></inspector-views>
         </pane>
         <pane class="c-inspector__elements"
               handle="before"
@@ -55,6 +55,12 @@
             flex: 0 0 auto;
             width: $d;
             height: $d;
+        }
+
+        .c-tree {
+            // When a tree is in the Inspector, remove scrolling and right pad
+            overflow: visible;
+            padding-right: 0;
         }
 
         /************************************************************** LEGACY */
@@ -183,6 +189,13 @@
     }
     /********************************************* LEGACY SUPPORT */
     .c-inspector {
+        // FilterField.vue
+        .u-contents + .u-contents {
+            li.grid-row > * {
+                border-top: 1px solid $colorInspectorSectionHeaderBg;
+            }
+        }
+
         li.grid-row + li.grid-row {
             > * {
                 border-top: 1px solid $colorInspectorSectionHeaderBg;
@@ -210,7 +223,7 @@
     import Elements from './Elements.vue';
     import Location from './Location.vue';
     import Properties from './Properties.vue';
-    import InspectorView from './InspectorView.vue';
+    import InspectorViews from './InspectorViews.vue';
 
     export default {
         inject: ['openmct'],
@@ -223,7 +236,7 @@
             Elements,
             Properties,
             Location,
-            InspectorView
+            InspectorViews
         },
         data() {
             return {

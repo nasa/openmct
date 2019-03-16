@@ -227,6 +227,14 @@
                 width: 200px;
             }
         }
+
+        &__toolbar {
+            $p: $interiorMargin;
+            background: $editUIBaseColor;
+            border-radius: $basicCr;
+            height: $p + 24px; // Need to standardize the height
+            padding: $p;
+        }
     }
 
     .is-editing {
@@ -239,6 +247,7 @@
             }
         }
     }
+
 </style>
 
 <script>
@@ -299,26 +308,20 @@
             this.openmct.editor.on('isEditing', (isEditing)=>{
                 this.isEditing = isEditing;
             });
+
+            this.openmct.selection.on('change', this.toggleHasToolbar);
         },
         data: function () {
             return {
                 fullScreen: false,
-                conductorComponent: {},
-                isEditing: false
+                conductorComponent: undefined,
+                isEditing: false,
+                hasToolbar: false
             }
         },
         computed: {
             toolbar() {
-                let selection = this.openmct.selection.get();
-                let structure = undefined;
-
-                if (!selection || !selection[0]) {
-                    structure = [];
-                } else {
-                    structure = this.openmct.toolbars.get(selection);
-                }
-
-                return this.isEditing && structure.length > 0;
+                return this.hasToolbar && this.isEditing;
             }
         },
         methods: {
@@ -333,6 +336,17 @@
             },
             openInNewTab(event) {
                 window.open(window.location.href);
+            },
+            toggleHasToolbar(selection) {
+                let structure = undefined;
+
+                if (!selection || !selection[0]) {
+                    structure = [];
+                } else {
+                    structure = this.openmct.toolbars.get(selection);
+                }
+
+                this.hasToolbar = structure.length > 0;
             }
         }
     }

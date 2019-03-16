@@ -65,7 +65,33 @@
 
         &__contents {
             flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        &__top-bar {
+            flex: 0 0 auto;
+            flex-direction: column;
+            display: flex;
+
+            > * {
+                flex: 0 0 auto;
+                margin-bottom: $interiorMargin;
+            }
+        }
+
+        &__dialog-title {
+            @include ellipsize();
+            font-size: 1.5em;
+            line-height: 120%;
+        }
+
+        &__contents-main {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 auto;
             overflow: auto;
+            padding-right: $interiorMargin; // fend off scroll bar
         }
 
         &__button-bar {
@@ -89,7 +115,7 @@
         .c-overlay {
             &__blocker {
                 @include abs();
-                background: rgba(black, 0.7);
+                background: $colorOvrBlocker;
                 cursor: pointer;
                 display: block;
             }

@@ -28,6 +28,7 @@ define([
     "./res/templates/dialog.html",
     "./res/templates/overlay-blocking-message.html",
     "./res/templates/message.html",
+    "./res/templates/notification-message.html",
     "./res/templates/overlay-message-list.html",
     "./res/templates/overlay.html",
     'legacyRegistry'
@@ -39,6 +40,7 @@ define([
     dialogTemplate,
     overlayBlockingMessageTemplate,
     messageTemplate,
+    notificationMessageTemplate,
     overlayMessageListTemplate,
     overlayTemplate,
     legacyRegistry
@@ -87,6 +89,10 @@ define([
                 {
                     "key": "message",
                     "template": messageTemplate
+                },
+                {
+                    "key": "notification-message",
+                    "template": notificationMessageTemplate
                 },
                 {
                     "key": "overlay-message-list",
