@@ -36,13 +36,13 @@ define([
                 if (selection.length === 0) {
                     return false;
                 }
-                let object = selection[0].context.item;
+                let object = selection[0][0].context.item;
 
                 return object && supportedObjectTypesArray.some(type => object.type === type);
             },
             view: function (selection) {
                 let component;
-                let providedObject = selection[0].context.item;
+                let providedObject = selection[0][0].context.item;
 
                 return {
                     show: function (element) {
