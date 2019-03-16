@@ -1,7 +1,7 @@
 <template>
     <div class="c-ctrl-wrapper">
         <div class="c-click-icon c-click-icon--swatched"
-             :class="[options.icon, {'c-click-icon--swatched--mixed': nonSpecific}]"
+             :class="[options.icon, {'c-click-icon--mixed': nonSpecific}]"
              :title="options.title"
              @click="toggle">
             <div class="c-swatch" :style="{

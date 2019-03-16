@@ -200,8 +200,8 @@ $menuItemPad: $interiorMargin, floor($interiorMargin * 1.25);
 $paletteItemBorderOuterColorSelected: black;
 $paletteItemBorderInnerColorSelected: white;
 $paletteItemBorderInnerColor: rgba($paletteItemBorderOuterColorSelected, 0.3);
-$swatchMixedSettings: (transparent darken($editUIBaseColor, 10%)); // Used in .c-click-icon--mixed
-$swatchSize: 5px;
+$mixedSettingBg: (transparent rgba($editUIBaseColorHov, 0.9)); // Used in .c-click-icon--mixed
+$mixedSettingBgSize: 10px;
 
 // Forms
 $colorCheck: $colorKey;
