@@ -8,7 +8,8 @@ export default {
     inject: ["openmct"],
     props: {
         view: String,
-        object: Object
+        object: Object,
+        showEditView: Boolean
     },
     destroyed() {
         this.clear();
@@ -79,7 +80,7 @@ export default {
             }
 
 
-            if (provider.edit) {
+            if (provider.edit && this.showEditView) {
                 if (this.openmct.editor.isEditing()) {
                     this.currentView = provider.edit(this.currentObject);
                 } else {
