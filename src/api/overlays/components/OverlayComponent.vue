@@ -65,7 +65,33 @@
 
         &__contents {
             flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        &__top-bar {
+            flex: 0 0 auto;
+            flex-direction: column;
+            display: flex;
+
+            > * {
+                flex: 0 0 auto;
+                margin-bottom: $interiorMargin;
+            }
+        }
+
+        &__dialog-title {
+            @include ellipsize();
+            font-size: 1.5em;
+            line-height: 120%;
+        }
+
+        &__contents-main {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 auto;
             overflow: auto;
+            padding-right: $interiorMargin; // fend off scroll bar
         }
 
         &__button-bar {
@@ -89,18 +115,29 @@
         .c-overlay {
             &__blocker {
                 @include abs();
-                background: rgba(black, 0.7);
+                background: $colorOvrBlocker;
                 cursor: pointer;
                 display: block;
-            }
-
-            &__outer {
-                border-radius: $overlayCr;
-                box-shadow: rgba(black, 0.5) 0 2px 25px;
             }
         }
 
         // Overlay types, styling for desktop. Appended to .l-overlay-wrapper element.
+        .l-overlay-large,
+        .l-overlay-small,
+        .l-overlay-fit {
+            .c-overlay__outer {
+                border-radius: $overlayCr;
+                box-shadow: rgba(black, 0.5) 0 2px 25px;
+            }
+        }
+        
+        .l-overlay-fullscreen {
+            // Used by About > Licenses display
+            .c-overlay__outer {
+                @include overlaySizing($overlayOuterMarginFullscreen);
+            }
+        }
+
         .l-overlay-large {
             // Default
             .c-overlay__outer {

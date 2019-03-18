@@ -102,6 +102,19 @@ define([
             })[0];
         },
         /**
+         * Retrieve the persisted filters for a given identifier.
+         */
+        getPersistedFilters: function (identifier) {
+            var domainObject = this.get('domainObject'),
+                keystring = this.openmct.objects.makeKeyString(identifier);
+
+            if (!domainObject.configuration || !domainObject.configuration.filters) {
+                return;
+            }
+
+            return domainObject.configuration.filters[keystring];
+        },
+        /**
          * Update the domain object with the given value.
          */
         updateDomainObject: function (domainObject) {
