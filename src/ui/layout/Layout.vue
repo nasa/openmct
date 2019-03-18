@@ -14,7 +14,7 @@
                     @click="fullScreenToggle">
                 </button>
             </div>
-            <div class="l-shell__app-logo">[ App Logo ]</div>
+            <app-logo></app-logo>
         </div>
         <multipane class="l-shell__main"
                    type="horizontal">
@@ -261,6 +261,7 @@
     import BrowseBar from './BrowseBar.vue';
     import StatusBar from './status-bar/StatusBar.vue';
     import Toolbar from '../toolbar/Toolbar.vue';
+    import AppLogo from './AppLogo.vue';
 
     var enterFullScreen = () => {
         var docElm = document.documentElement;
@@ -302,7 +303,8 @@
             pane,
             BrowseBar,
             StatusBar,
-            Toolbar
+            Toolbar,
+            AppLogo
         },
         mounted() {
             this.openmct.editor.on('isEditing', (isEditing)=>{
