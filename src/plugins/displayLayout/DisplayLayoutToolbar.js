@@ -28,8 +28,6 @@ define([], function () {
             key: "layout",
             description: "A toolbar for objects inside a display layout.",
             forSelection: function (selection) {
-                // Apply the layout toolbar if the edit mode is on, and the selected object
-                // is inside a layout, or the main layout is selected.
                 if (!selection || selection.length === 0) {
                     return false;
                 }
@@ -38,9 +36,9 @@ define([], function () {
                 let selectedObject = selectionPath[0];
                 let selectedParent = selectionPath[1];
 
-                return (openmct.editor.isEditing() &&
-                    ((selectedParent && selectedParent.context.item && selectedParent.context.item.type === 'layout') ||
-                    (selectedObject.context.item && selectedObject.context.item.type === 'layout')));
+                // Apply the layout toolbar if the selected object is inside a layout, or the main layout is selected.
+                return (selectedParent && selectedParent.context.item && selectedParent.context.item.type === 'layout') ||
+                    (selectedObject.context.item && selectedObject.context.item.type === 'layout');
             },
             toolbar: function (selection) {
                 const DIALOG_FORM = {
