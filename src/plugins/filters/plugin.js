@@ -19,44 +19,15 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define(function () {
-    class TelemetryTableColumn {
-        constructor (openmct, metadatum) {
-            this.metadatum = metadatum;
-            this.formatter = openmct.telemetry.getValueFormatter(metadatum);
-            this.titleValue = this.metadatum.name;
-        }
 
-        getKey() {
-            return this.metadatum.key;
-        }
-
-        getTitle() {
-            return this.metadatum.name;
-        }
-
-        getMetadatum() {
-            return this.metadatum;
-        }
-
-        hasValueForDatum(telemetryDatum) {
-            return telemetryDatum.hasOwnProperty(this.metadatum.source);
-        }
-
-        getRawValue(telemetryDatum) {
-            return telemetryDatum[this.metadatum.source];
-        }
-
-        getFormattedValue(telemetryDatum) {
-            let formattedValue = this.formatter.format(telemetryDatum);
-            if (formattedValue !== undefined && typeof formattedValue !== 'string') {
-                return formattedValue.toString();
-            } else {
-                return formattedValue;
-            }
-        }
-
+define([
+    './filtersInspectorViewProvider'
+], function (
+    FiltersInspectorViewProvider
+) {
+    return function plugin(supportedObjectTypesArray) {
+        return function install(openmct) {
+            openmct.inspectorViews.addProvider(new FiltersInspectorViewProvider(openmct, supportedObjectTypesArray));
+        };
     };
-
-    return TelemetryTableColumn;
 });

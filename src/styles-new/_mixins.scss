@@ -49,6 +49,37 @@
     }
 }
 
+/************************** EFFECTS */
+@mixin pulse($animName: pulse, $dur: 500ms, $iteration: infinite, $opacity0: 0.5, $opacity100: 1) {
+    @include keyframes($animName) {
+        0%   { opacity: $opacity0; }
+        100% { opacity: $opacity100; }
+    }
+    @include animation-name($animName);
+    @include animation-duration($dur);
+    @include animation-direction(alternate);
+    @include animation-iteration-count($iteration);
+    @include animation-timing-function(ease-in-out);
+}
+
+@mixin animTo($animName, $propName, $propValStart, $propValEnd, $dur: 500ms, $delay: 0, $dir: normal, $count: 1) {
+    @include keyframes($animName) {
+        from { #{propName}: $propValStart; }
+        to { #{$propName}: $propValEnd; }
+    }
+    @include animToParams($animName, $dur: $dur, $delay: $delay, $dir: $dir, $count: $count)
+}
+
+@mixin animToParams($animName, $dur: 500ms, $delay: 0, $dir: normal, $count: 1) {
+    @include animation-name($animName);
+    @include animation-duration($dur);
+    @include animation-delay($delay);
+    @include animation-fill-mode(both);
+    @include animation-direction($dir);
+    @include animation-iteration-count($count);
+    @include animation-timing-function(ease-in-out);
+}
+
 /************************** VISUALS */
 @mixin ancillaryIcon($d, $c) {
     // Used for small icons used in combination with larger icons,
@@ -164,6 +195,30 @@
     background-color: $bg;
 }
 
+@mixin triangle($dir: "left", $size: 5px, $ratio: 1, $color: red) {
+    width: 0;
+    height: 0;
+    $slopedB: $size/$ratio solid transparent;
+    $straightB: $size solid $color;
+    @if $dir == "up" {
+        border-left: $slopedB;
+        border-right: $slopedB;
+        border-bottom: $straightB;
+    } @else if $dir == "right" {
+        border-top: $slopedB;
+        border-bottom: $slopedB;
+        border-left: $straightB;
+    } @else if $dir == "down" {
+        border-left: $slopedB;
+        border-right: $slopedB;
+        border-top: $straightB;
+    } @else {
+        border-top: $slopedB;
+        border-bottom: $slopedB;
+        border-right: $straightB;
+    }
+}
+
 @mixin bgVertStripes($c: yellow, $a: 0.1, $d: 40px) {
     background-image: linear-gradient(-90deg,
         rgba($c, $a) 0%, rgba($c, $a) 50%,
@@ -184,7 +239,7 @@
     background-color: $colorInspectorSectionHeaderBg;
     color: $colorInspectorSectionHeaderFg;
     font-weight: normal;
-    margin: 0 0 $interiorMarginSm 0;
+    margin: $interiorMarginSm 0;
     padding: $interiorMarginSm $interiorMargin;
     text-transform: uppercase;
 }
@@ -552,4 +607,10 @@
     background: rgba($c, $a) !important;
     background-color: rgba($c, $a) !important;
     box-shadow: deeppink 0 0 10px 1px !important;
+}
+
+
+@mixin sUnsynced() {
+    $c: $colorPausedBg;
+    border: 1px solid $c;
 }

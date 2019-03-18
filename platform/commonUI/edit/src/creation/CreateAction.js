@@ -74,8 +74,9 @@ define(
             function navigateAndEdit(object) {
                 let objectPath = object.getCapability('context').getPath(),
                     url = '#/browse/' + objectPath
+                        .slice(1)
                         .map(function (o) {
-                            return o && openmct.objects.makeKeyString(o.getId())
+                            return o && openmct.objects.makeKeyString(o.getId());
                         })
                         .join('/');
 

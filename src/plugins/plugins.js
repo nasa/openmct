@@ -40,6 +40,7 @@ define([
     './flexibleLayout/plugin',
     './tabs/plugin',
     './LADTable/plugin',
+    './filters/plugin',
     './objectMigration/plugin'
 ], function (
     _,
@@ -61,6 +62,7 @@ define([
     FlexibleLayout,
     Tabs,
     LADTable,
+    Filters,
     ObjectMigration
 ) {
     var bundleMap = {
@@ -75,26 +77,6 @@ define([
             };
         };
     });
-
-    plugins.Snow = function () {
-        return function install(openmct) {
-            openmct.legacyExtension('constants', {
-                key: "THEME",
-                value: "snow"
-            });
-            import('snow' /* webpackChunkName: "theme-snow" */);
-        };
-    };
-
-    plugins.Espresso = function () {
-        return function install(openmct) {
-            openmct.legacyExtension('constants', {
-                key: "THEME",
-                value: "espresso"
-            });
-            import('espresso' /* webpackChunkName: "theme-espresso" */);
-        };
-    };
 
     plugins.UTCTimeSystem = UTCTimeSystem;
 
@@ -176,6 +158,7 @@ define([
     plugins.Tabs = Tabs;
     plugins.FlexibleLayout = FlexibleLayout;
     plugins.LADTable = LADTable;
+    plugins.Filters = Filters;
     plugins.ObjectMigration = ObjectMigration.default;
 
     return plugins;
