@@ -658,12 +658,7 @@ input[type="range"] {
         align-items: center;
     }
 
-    &-overlay-content,
     &--overlay-content {
-        position: absolute;
-        right: $interiorMargin; top: $interiorMargin;
-        z-index: 2;
-
         > .c-button {
             background: $colorLocalControlOvrBg;
             border-radius: $controlCr;
