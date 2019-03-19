@@ -65,17 +65,24 @@ export default {
             let index = _.findIndex(this.items, (item) => this.openmct.objects.makeKeyString(identifier) === item.key);
 
             this.items.splice(index, 1);
+        },
+        reorder(oldIndex, newIndex) {
+            let objectAtOldIndex = this.items[oldIndex];
+            this.$set(this.items, oldIndex, this.items[newIndex]);
+            this.$set(this.items, newIndex, objectAtOldIndex);
         }
     },
     mounted() {
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addItem);
         this.composition.on('remove', this.removeItem);
+        this.composition.on('reorder', this.reorder);
         this.composition.load();
     },
     destroyed() {
         this.composition.off('add', this.addItem);
         this.composition.off('remove', this.removeItem);
+        this.composition.off('reorder', this.reorder);
     }
 }
 </script>
