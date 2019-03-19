@@ -509,6 +509,31 @@ mct-plot {
     }
 }
 
+/***************** CURSOR GUIDES */
+[class*='c-cursor-guide'] {
+    box-shadow: $shdwCursorGuide;
+    background-color: $colorCursorGuide;
+    display: none; // Displayed when an element with has-cursor-guides gets a hover; see below
+    pointer-events: none;
+    position: absolute;
+}
+
+.has-cursor-guides:hover [class*='c-cursor-guide'] {
+    display: block;
+}
+
+.c-cursor-guide {
+    &--h {
+        height: 1px;
+        left: 0; right: 0;
+    }
+
+    &--v {
+        width: 1px;
+        top: 0; bottom: 0;
+    }
+}
+
 /******************************************************************* VIEWS */
 // From _views.scss
 // Legacy overlay and stacked plots depend on this for now

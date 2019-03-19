@@ -93,8 +93,8 @@ define([
         this.$scope.series = this.config.series.models;
         this.$scope.legend = this.config.legend;
 
-        this.crosshairVertical = this.$element[0].querySelector('.crosshair-vertical');
-        this.crosshairHorizontal = this.$element[0].querySelector('.crosshair-horizontal');
+        this.crosshairVertical = this.$element[0].querySelector('.js-cursor-guide--v');
+        this.crosshairHorizontal = this.$element[0].querySelector('.js-cursor-guide--h');
         this.crosshair = false;
 
         this.ZOOM_FACTOR = 0.01; //zoom percentage

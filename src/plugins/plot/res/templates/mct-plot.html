@@ -136,7 +136,7 @@
             <span class="t-object-alert t-alert-unsynced"
                   title="This plot is not currently displaying the latest data.
                 Reset Pan/zoom to return to view latest data."></span>
-            <div class="gl-plot-display-area has-local-controls">
+            <div class="gl-plot-display-area has-local-controls has-cursor-guides">
                 <mct-ticks axis="xAxis">
                     <div class="gl-plot-hash hash-v"
                          ng-repeat="tick in ticks track by tick.value"
@@ -182,7 +182,7 @@
                                 title="Zoom In">
                         </button>
                     </div>
-                    <div class="c-button-set c-button-set--strip-h"
+                    <div class="c-button-set c-button-set--strip-h c-local-controls"
                         ng-show="plotHistory.length">
                         <button class="c-button icon-arrow-left"
                            ng-click="plot.back()"
@@ -198,13 +198,11 @@
                 <span class="t-wait-spinner loading" ng-show="plot.isRequestPending()">
                 </span>
 
-                <!--Elements for crosshairs-->
-                <div style="width:2px; top:0; bottom:0; position:absolute; background-color:red; pointer-events: none;"
-                    class="crosshair-vertical"
+                <!--Cursor guides-->
+                <div class="c-cursor-guide--v js-cursor-guide--v"
                     ng-show="plot.crosshair">
                 </div>
-                <div style="height:2px; left:0; right:0; position:absolute; background-color:red; pointer-events: none"
-                    class="crosshair-horizontal"
+                <div class="c-cursor-guide--h js-cursor-guide--h"
                     ng-show="plot.crosshair">
                 </div>
 

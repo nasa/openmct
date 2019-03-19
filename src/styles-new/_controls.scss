@@ -654,48 +654,39 @@ input[type="range"] {
 .h-local-controls {
     // Holder for local controls
     $o: 0.8;
-    $b: deeppink; //$colorBodyBg
+    $b: $colorBodyBg;
 
     &--horz {
+        // Horizontal layout be
         display: inline-flex;
         align-items: center;
     }
 
     &-overlay-content,
     &--overlay-content {
-        background: rgba($b, $o);
-        border-radius: $controlCr;
-        box-shadow: rgba($b, $o) 0 0 0 2px;
         position: absolute;
         right: $interiorMargin; top: $interiorMargin;
         z-index: 2;
-    }
 
-    &-trans,
-    &--trans-bg {
-        // Has a translucent background plate
-        background: rgba($b, $o);
-        border-radius: $controlCr;
+        > * {
+            background: rgba($b, $o);
+            border-radius: $controlCr;
+            box-shadow: rgba($b, $o) 0 0 0 2px;
+        }
     }
 }
 
 
 .c-local-controls {
     // Controls that are in close proximity to an element they effect
-
     &--show-on-hover {
         // Hidden by default; requires a hover 1 - 3 levels above to display
-        display: none;
-        //transition: $transOut;
-        //min-width: 0;
-        //width: 0;
-        //overflow: hidden;
-        //opacity: 0;
-        //pointer-events: none;
-        //
-        //> * {
-        //    margin: unset !important;
-        //}
+        transition: $transOut;
+        min-width: 0;
+        width: 0;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
     }
 }
 
@@ -705,11 +696,10 @@ input[type="range"] {
     > * > * > .c-local-controls--show-on-hover,
     > * > * > * > .c-local-controls--show-on-hover
     {
-        display: flex;
-        //transition: $transIn;
-        //opacity: 1;
-        //pointer-events: inherit;
-        //width: min-content;
+        transition: $transIn;
+        opacity: 1;
+        pointer-events: inherit;
+        width: min-content;
     }
 }
 
