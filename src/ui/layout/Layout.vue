@@ -30,7 +30,8 @@
                 </browse-bar>
                 <toolbar v-if="toolbar" class="l-shell__toolbar"></toolbar>
                 <object-view class="l-shell__main-container"
-                             ref="browseObject">
+                             ref="browseObject"
+                             :showEditView="true">
                 </object-view>
                 <component class="l-shell__time-conductor"
                     :is="conductorComponent">
