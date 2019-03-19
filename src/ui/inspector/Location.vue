@@ -2,10 +2,6 @@
 <div class="c-properties c-properties--location">
     <div class="c-properties__header" title="The location of this linked object.">Location</div>
     <ul class="c-properties__section">
-        <li class="c-properties__row">
-            <div class="c-properties__label">This Link</div>
-            <div class="c-properties__value">TODO</div>
-        </li>
         <li class="c-properties__row" v-if="originalLocation.length">
             <div class="c-properties__label">Original</div>
             <ul class="c-properties__value">
@@ -36,7 +32,6 @@ export default {
         return {
             domainObject: {},
             originalLocation: [],
-            linkLocation: '',
             keyString: ''
         }
     },
@@ -59,6 +54,20 @@ export default {
 
             return objectPath;
         },
+        itemDecorator(d) {
+            let domainObject = d.useCapability('adapter'),
+                key = this.openmct.objects.makeKeyString(domainObject.identifier),
+                childObjectPath = this.getObjectPath(d)
+                    .slice(1)
+                    .reverse()
+                    .map((dd) => dd.useCapability('adapter'));
+
+            return {
+                domainObject,
+                key,
+                objectPath: childObjectPath 
+            }
+        },
         setLinkAndOriginalLocation(domainObjects) {
             let oldStyleDomainObject = domainObjects[this.keyString],
                 objectPath = this.getObjectPath(oldStyleDomainObject)
@@ -72,33 +81,13 @@ export default {
                 .then((object) => {
                     let objectArray = Object.values(object);
 
-                    this.originalLocation = objectArray.map((d) => {
-                        let domainObject = d.useCapability('adapter'),
-                            key = this.openmct.objects.makeKeyString(domainObject.identifier),
-                            childObjectPath = this.getObjectPath(d)
-                                .slice(1)
-                                .reverse()
-                                .map((dd) => dd.useCapability('adapter'));
-
-                        return {
-                            domainObject,
-                            key,
-                            objectPath: childObjectPath 
-                        }
-                    });
-
-                let parent = this.originalLocation[1];
-
-                if (parent && this.domainObject.location !== this.openmct.objects.makeKeyString(parent.domainObject.identifier)) {
-                    this.linkLocation = this.domainObject.location;
-                }
-            });
+                    this.originalLocation = objectArray.map(this.itemDecorator);
+                });
         },
         updateSelection(selection) {
             if (selection.length === 0) {
                 this.domainObject = {};
                 this.originalLocation = [];
-                this.linkLocation = '';
                 return;
             }
 
