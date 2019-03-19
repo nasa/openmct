@@ -20,11 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <span ng-controller="PlotController as controller"
-    class="abs holder holder-plot has-control-bar"
-    ng-class="{
-        'loading': !!pending
-    }"
-    >
+    class="abs holder holder-plot has-control-bar">
     <div class="l-control-bar" ng-show="!controller.hideExportButtons">
          <span class="c-button-set c-button-set--strip-h">
             <a class="c-button icon-download"
@@ -41,6 +37,8 @@
     </div>
 
     <div class="l-view-section">
+        <div class="c-loading--overlay loading"
+            ng-show="!!pending"></div>
         <mct-plot config="controller.config"
                   series="series"
                   the-y-axis="yAxis"

@@ -147,14 +147,12 @@
                      </div>
                 </mct-ticks>
 
-
                 <mct-ticks axis="yAxis">
                      <div class="gl-plot-hash hash-h"
                           ng-repeat="tick in ticks track by tick.value"
                           ng-style="{ bottom: (100 * (tick.value - min) / interval) + '%', width: '100%' }">
                      </div>
                 </mct-ticks>
-
 
                 <mct-chart config="config"
                            series="series"
@@ -165,38 +163,35 @@
                 </mct-chart>
 
                 <div class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content">
+                    <div class="c-button-set c-button-set--strip-h c-local-controls"
+                         ng-show="plotHistory.length">
+                        <button class="c-button icon-arrow-left"
+                                ng-click="plot.back()"
+                                title="Restore previous pan/zoom">
+                        </button>
+                        <button class="c-button icon-reset"
+                                ng-click="plot.clear()"
+                                title="Reset pan/zoom">
+                        </button>
+                    </div>
                     <div class="c-button-set c-button-set--strip-h c-local-controls c-local-controls--show-on-hover">
                         <button class="c-button icon-crosshair"
                                 ng-class="{ 'is-enabled': plot.crosshair }"
                                 ng-click="plot.toggleCrosshair($event)"
-                                title="Toggle Crosshair">
+                                title="Toggle cursor guides">
                         </button>
                     </div>
                     <div class="c-button-set c-button-set--strip-h c-local-controls c-local-controls--show-on-hover">
                         <button class="c-button icon-magnify-out"
                                 ng-click="plot.zoom('out', 0.2)"
-                                title="Zoom Out">
+                                title="Zoom out">
                         </button>
                         <button class="c-button icon-magnify-in"
                                 ng-click="plot.zoom('in', 0.2)"
-                                title="Zoom In">
-                        </button>
-                    </div>
-                    <div class="c-button-set c-button-set--strip-h c-local-controls"
-                        ng-show="plotHistory.length">
-                        <button class="c-button icon-arrow-left"
-                           ng-click="plot.back()"
-                           title="Restore previous pan/zoom">
-                        </button>
-                        <button class="c-button icon-reset"
-                           ng-click="plot.clear()"
-                           title="Reset pan/zoom">
+                                title="Zoom in">
                         </button>
                     </div>
                 </div>
-
-                <span class="t-wait-spinner loading" ng-show="plot.isRequestPending()">
-                </span>
 
                 <!--Cursor guides-->
                 <div class="c-cursor-guide--v js-cursor-guide--v"
@@ -205,7 +200,6 @@
                 <div class="c-cursor-guide--h js-cursor-guide--h"
                     ng-show="plot.crosshair">
                 </div>
-
             </div>
 
             <div class="gl-plot-axis-area gl-plot-x"

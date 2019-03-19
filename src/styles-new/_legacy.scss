@@ -1754,6 +1754,10 @@ body.desktop {
             display: none;
         }
     }
+
+    &.c-loading--overlay {
+        @include abs();
+    }
 }
 
 /******************************************************************* FLEX STYLES */
