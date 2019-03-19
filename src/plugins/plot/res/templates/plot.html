@@ -23,16 +23,16 @@
     class="abs holder holder-plot has-control-bar">
     <div class="l-control-bar" ng-show="!controller.hideExportButtons">
          <span class="c-button-set c-button-set--strip-h">
-            <a class="c-button icon-download"
+            <button class="c-button icon-download"
                ng-click="controller.exportPNG()"
                title="Export This View's Data as PNG">
                  <span class="c-button__label">PNG</span>
-            </a>
-            <a class="c-button"
+            </button>
+            <button class="c-button"
                ng-click="controller.exportJPG()"
                title="Export This View's Data as JPG">
                  <span class="c-button__label">JPG</span>
-            </a>
+            </button>
         </span>
     </div>
 
