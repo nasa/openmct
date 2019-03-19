@@ -136,7 +136,7 @@
             <span class="t-object-alert t-alert-unsynced"
                   title="This plot is not currently displaying the latest data.
                 Reset Pan/zoom to return to view latest data."></span>
-            <div class="gl-plot-display-area">
+            <div class="gl-plot-display-area has-local-controls">
                 <mct-ticks axis="xAxis">
                     <div class="gl-plot-hash hash-v"
                          ng-repeat="tick in ticks track by tick.value"
@@ -164,31 +164,34 @@
                            the-y-axis="yAxis">
                 </mct-chart>
 
-                <div class="h-local-controls h-local-controls-overlay-content">
-                    <div class="l-btn-set">
-                        <a class="s-button icon-arrow-left"
-                           ng-show="plotHistory.length"
+                <div class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content">
+                    <div class="c-button-set c-button-set--strip-h c-local-controls c-local-controls--show-on-hover">
+                        <button class="c-button icon-crosshair"
+                                ng-class="{ 'is-enabled': plot.crosshair }"
+                                ng-click="plot.toggleCrosshair($event)"
+                                title="Toggle Crosshair">
+                        </button>
+                    </div>
+                    <div class="c-button-set c-button-set--strip-h c-local-controls c-local-controls--show-on-hover">
+                        <button class="c-button icon-magnify-out"
+                                ng-click="plot.zoom('out', 0.2)"
+                                title="Zoom Out">
+                        </button>
+                        <button class="c-button icon-magnify-in"
+                                ng-click="plot.zoom('in', 0.2)"
+                                title="Zoom In">
+                        </button>
+                    </div>
+                    <div class="c-button-set c-button-set--strip-h"
+                        ng-show="plotHistory.length">
+                        <button class="c-button icon-arrow-left"
                            ng-click="plot.back()"
                            title="Restore previous pan/zoom">
-                        </a>
-                        <a class="s-button icon-reset"
-                           ng-show="plotHistory.length"
+                        </button>
+                        <button class="c-button icon-reset"
                            ng-click="plot.clear()"
                            title="Reset pan/zoom">
-                        </a>
-                        <a class="s-button"
-                           ng-class="{ 'icon-grid-snap-to': plot.crosshair, 'icon-grid-snap-no': !plot.crosshair }"
-                           ng-click="plot.toggleCrosshair($event)"
-                           title="Toggle Crosshair">
-                        </a>
-                        <a class="s-button icon-magnify-out"
-                           ng-click="plot.zoom('out', 0.2)"
-                           title="Zoom Out">
-                        </a>
-                        <a class="s-button icon-magnify-in"
-                           ng-click="plot.zoom('in', 0.2)"
-                           title="Zoom In">
-                        </a>
+                        </button>
                     </div>
                 </div>
 

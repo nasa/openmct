@@ -200,6 +200,11 @@ mct-plot {
             width: 100%;
         }
     }
+
+    &__local-controls {
+        display: flex;
+        align-items: center;
+    }
 }
 
 .gl-plot-display-area,
