@@ -33,14 +33,14 @@
 
         <div class="l-image-main-controlbar flex-elem l-flex-row">
             <div class="l-datetime-w flex-elem grows">
-                <a class="s-button show-thumbs sm hidden icon-thumbs-strip"
+                <a class="c-button show-thumbs sm hidden icon-thumbs-strip"
                     ng-click="showThumbsBubble = (showThumbsBubble) ? false:true"></a>
                 <span class="l-time">{{imagery.getTime()}}</span>
             </div>
             <div class="h-local-controls flex-elem">
-                <a class="s-button pause-play"
+                <a class="c-button icon-pause pause-play"
                     ng-click="imagery.paused(!imagery.paused())"
-                    ng-class="{ paused: imagery.paused() }"></a>
+                    ng-class="{ 'is-paused': imagery.paused() }"></a>
                 <a href=""
                     class="s-button l-mag s-mag vsm icon-reset"
                     ng-click="clipped = false"

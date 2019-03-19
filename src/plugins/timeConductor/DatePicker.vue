@@ -31,10 +31,10 @@
             </div>
             <div class="c-datetime-picker__pager c-pager l-month-year-pager">
                 <div class="c-pager__prev c-click-icon icon-arrow-left"
-                   @click="changeMonth(-1)"></div>
+                   @click.stop="changeMonth(-1)"></div>
                 <div class="c-pager__month-year">{{model.month}} {{model.year}}</div>
                 <div class="c-pager__next c-click-icon icon-arrow-right"
-                   @click="changeMonth(1)"></div>
+                   @click.stop="changeMonth(1)"></div>
             </div>
             <div class="c-datetime-picker__calendar c-calendar">
                 <ul class="c-calendar__row--header l-cal-row">
@@ -319,12 +319,6 @@ export default {
     mounted: function () {
         this.updateFromModel(this.defaultDateTime);
         this.updateViewForMonth();
-    },
-    destroyed: function () {
-        document.addEventListener('click', this.hidePicker, {
-            capture: true
-        });
     }
-
 }
 </script>

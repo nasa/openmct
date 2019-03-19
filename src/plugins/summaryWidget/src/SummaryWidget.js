@@ -22,8 +22,8 @@ define([
 
     //default css configuration for new rules
     var DEFAULT_PROPS = {
-        'color': '#ffffff',
-        'background-color': '#38761d',
+        'color': '#cccccc',
+        'background-color': '#666666',
         'border-color': 'rgba(0,0,0,0)'
     };
 
@@ -74,15 +74,12 @@ define([
         this.show = this.show.bind(this);
         this.destroy = this.destroy.bind(this);
         this.addRule = this.addRule.bind(this);
-        this.onEdit = this.onEdit.bind(this);
 
         this.addHyperlink(domainObject.url, domainObject.openNewTab);
         this.watchForChanges(openmct, domainObject);
 
         var id = objectUtils.makeKeyString(this.domainObject.identifier),
-            self = this,
-            oldDomainObject,
-            statusCapability;
+            self = this;
 
         /**
          * Toggles the configuration area for test data in the view
@@ -90,7 +87,7 @@ define([
          */
         function toggleTestData() {
             self.outerWrapper.toggleClass('expanded-widget-test-data');
-            self.toggleTestDataControl.toggleClass('expanded');
+            self.toggleTestDataControl.toggleClass('c-disclosure-triangle--expanded');
         }
         this.listenTo(this.toggleTestDataControl, 'click', toggleTestData);
 
@@ -100,22 +97,12 @@ define([
          */
         function toggleRules() {
             self.outerWrapper.toggleClass('expanded-widget-rules');
-            self.toggleRulesControl.toggleClass('expanded');
+            self.toggleRulesControl.toggleClass('c-disclosure-triangle--expanded');
         }
         this.listenTo(this.toggleRulesControl, 'click', toggleRules);
 
         openmct.$injector.get('objectService')
-            .getObjects([id])
-            .then(function (objs) {
-                oldDomainObject = objs[id];
-                statusCapability = oldDomainObject.getCapability('status');
-                self.editListenerUnsubscribe = statusCapability.listen(self.onEdit);
-                if (statusCapability.get('editing')) {
-                    self.onEdit(['editing']);
-                } else {
-                    self.onEdit([]);
-                }
-            });
+            .getObjects([id]);
     }
 
     /**
@@ -172,7 +159,6 @@ define([
         });
         this.refreshRules();
         this.updateWidget();
-        this.updateView();
 
         this.listenTo(this.addRuleButton, 'click', this.addRule);
         this.conditionManager.on('receiveTelemetry', this.executeRules, this);
@@ -194,37 +180,6 @@ define([
         });
 
         this.stopListening();
-    };
-
-    /**
-     * A callback function for the Open MCT status capability listener. If the
-     * view representing the domain object is in edit mode, update the internal
-     * state and widget view accordingly.
-     * @param {string[]} status an array containing the domain object's current status
-     */
-    SummaryWidget.prototype.onEdit = function (status) {
-        if (status && status.includes('editing')) {
-            this.editing = true;
-        } else {
-            this.editing = false;
-        }
-        this.updateView();
-    };
-
-    /**
-     * If this view is currently in edit mode, show all rule configuration interfaces.
-     * Otherwise, hide them.
-     */
-    SummaryWidget.prototype.updateView = function () {
-        if (this.editing) {
-            this.ruleArea.show();
-            this.testDataArea.show();
-            this.addRuleButton.show();
-        } else {
-            this.ruleArea.hide();
-            this.testDataArea.hide();
-            this.addRuleButton.hide();
-        }
     };
 
     /**
@@ -260,11 +215,14 @@ define([
      * Update the widget's appearance from the configuration of the active rule
      */
     SummaryWidget.prototype.updateWidget = function () {
+        const WIDGET_CLASS = 'c-sw js-sw',
+            WIDGET_LABEL_CLASS = 'c-sw__label js-sw__label',
+            WIDGET_ICON_CLASS = 'c-sw__icon js-sw__icon';
         var activeRule = this.rulesById[this.activeId];
         this.applyStyle($('#widget', this.domElement), activeRule.getProperty('style'));
         $('#widget', this.domElement).prop('title', activeRule.getProperty('message'));
         $('#widgetLabel', this.domElement).html(activeRule.getProperty('label'));
-        $('#widgetLabel', this.domElement).removeClass().addClass('label widget-label c-summary-widget__label ' + activeRule.getProperty('icon'));
+        $('#widgetIcon', this.domElement).removeClass().addClass(WIDGET_ICON_CLASS + ' ' + activeRule.getProperty('icon'));
     };
 
     /**

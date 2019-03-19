@@ -42,9 +42,12 @@
                 </div>
             </div>
         </div>
-        <object-view class="c-so-view__object-view"
-                     ref="objectView"
-                     :object="domainObject"></object-view>
+        <object-view 
+            class="c-so-view__object-view"
+            ref="objectView"
+            :object="domainObject"
+            :show-edit-view="showEditView">
+        </object-view>
     </div>
 </template>
 
@@ -128,6 +131,10 @@
             domainObject: Object,
             objectPath: Array,
             hasFrame: Boolean,
+            showEditView: {
+                type: Boolean,
+                default: () => true
+            }
         },
         components: {
             ObjectView,

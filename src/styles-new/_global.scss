@@ -102,20 +102,6 @@ em {
     font-style: normal;
 }
 
-h1, h2, h3 {
-    letter-spacing: 0.04em;
-    margin: 0;
-}
-
-h1 {
-    font-size: 1em;
-    font-weight: normal !important;
-    letter-spacing: 0.04em;
-    line-height: 120%;
-    margin-bottom: 20px;
-    margin-top: 0;
-}
-
 p {
     margin-bottom: $interiorMarginLg;
 }
@@ -301,6 +287,7 @@ a.disabled {
             $c $e,
             transparent $e + 5%
     );
+    box-shadow:inset rgba(black, 0.3) 0 0 0 1px;
     background-repeat: no-repeat;
     background-size: contain;
 }
