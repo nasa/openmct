@@ -650,12 +650,8 @@ input[type="range"] {
 }
 
 /***************************************************** LOCAL CONTROLS */
-// TODO: fix imagery controls
 .h-local-controls {
     // Holder for local controls
-    $o: 0.8;
-    $b: $colorBodyBg;
-
     &--horz {
         // Horizontal layout be
         display: inline-flex;
@@ -668,23 +664,19 @@ input[type="range"] {
         right: $interiorMargin; top: $interiorMargin;
         z-index: 2;
 
-        > * {
-            background: rgba($b, $o);
+        > .c-button {
+            background: $colorLocalControlOvrBg;
             border-radius: $controlCr;
-            box-shadow: rgba($b, $o) 0 0 0 2px;
+            box-shadow: $colorLocalControlOvrBg 0 0 0 2px;
         }
     }
 }
-
 
 .c-local-controls {
     // Controls that are in close proximity to an element they effect
     &--show-on-hover {
         // Hidden by default; requires a hover 1 - 3 levels above to display
         transition: $transOut;
-        min-width: 0;
-        width: 0;
-        overflow: hidden;
         opacity: 0;
         pointer-events: none;
     }
@@ -699,7 +691,6 @@ input[type="range"] {
         transition: $transIn;
         opacity: 1;
         pointer-events: inherit;
-        width: min-content;
     }
 }
 

@@ -654,7 +654,6 @@ mct-plot {
 }
 
 /*************************************** THUMBS */
-
 .l-image-thumbs-wrapper {
     overflow-x: hidden;
     overflow-y: auto;
@@ -709,9 +708,11 @@ mct-plot {
 }
 
 /*************************************** LOCAL CONTROLS */
-.t-imagery {
+.c-imagery {
     display: contents;
-    .h-local-controls.h-local-controls-overlay-content {
+    .h-local-controls--overlay-content {
+        background: $colorLocalControlOvrBg;
+        border-radius: $basicCr;
         max-width: 200px;
         min-width: 100px;
         width: 35%;
@@ -729,27 +730,27 @@ mct-plot {
                 margin-right: $interiorMarginSm;
             }
         }
+    }
 
-        .t-reset-btn-holder {
-            $bc: $scrollbarTrackColorBg;
-            &:before,
-            &:after {
-                border-right: 1px solid $bc;
-                content:'';
-                display: block;
-                width: 5px;
-                height: 4px;
-            }
+    &__lc__reset-btn {
+        $bc: $scrollbarTrackColorBg;
+        &:before,
+        &:after {
+            border-right: 1px solid $bc;
+            content:'';
+            display: block;
+            width: 5px;
+            height: 4px;
+        }
 
-            &:before {
-                border-top: 1px solid $bc;
-                margin-bottom: 2px;
-            }
+        &:before {
+            border-top: 1px solid $bc;
+            margin-bottom: 2px;
+        }
 
-            &:after {
-                border-bottom: 1px solid $bc;
-                margin-top: 2px;
-            }
+        &:after {
+            border-bottom: 1px solid $bc;
+            margin-top: 2px;
         }
     }
 }
