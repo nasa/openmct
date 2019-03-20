@@ -55,9 +55,14 @@ button {
 }
 
 /********* Icon Buttons */
+.c-click-icon-basic {
+    @include cClickIcon();
+}
+
+
 .c-click-icon,
 .c-click-swatch {
-    @include cClickIcon();
+    @include cClickIconButton();
 
     &--menu {
         &:after {
@@ -103,7 +108,7 @@ button {
 // Provides a downward arrow icon that when clicked displays a context menu
 // Always placed AFTER an element
 .c-disclosure-button {
-    @include cClickIcon();
+    @include cClickIconButton();
     margin-left: $interiorMarginSm;
 
     &:before {

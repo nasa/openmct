@@ -1278,6 +1278,7 @@ mct-indicators mct-include {
     display: inline-block;
     position: relative;
     padding: 1px $interiorMarginSm; // Use padding instead of margin to keep hover chatter to a minimum
+    text-transform: uppercase;
 
     &:before {
         display: inline-block;
@@ -1287,7 +1288,8 @@ mct-indicators mct-include {
         display: inline-block;
         a,
         button,
-        .s-button {
+        s-button,
+        .c-button {
             // Make <a> in label look like buttons
             transition: $transIn;
             background: transparent;
@@ -1312,8 +1314,6 @@ mct-indicators mct-include {
                 margin-right: $interiorMarginSm;
             }
         }
-
-        button { text-transform: uppercase !important; }
     }
 
     &.no-collapse {

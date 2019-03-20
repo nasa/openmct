@@ -151,6 +151,7 @@
             }
         }
 
+        .t-dialog-sm .l-overlay-small, // Legacy dialog support
         .l-overlay-fit {
             .c-overlay__outer {
                 @include overlaySizing(auto);

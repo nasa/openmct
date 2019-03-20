@@ -17,7 +17,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="c-message-banner s-message-banner"
+<div class="c-message-banner"
     :class="[
         activeModel.severity,
         {
@@ -31,7 +31,7 @@
             class="c-message-banner__progress-bar"
             v-if="activeModel.progressPerc !== undefined" :model="activeModel">
     </progress-bar>
-    <button class="c-message-banner__close-btn c-click-icon icon-x"
+    <button class="c-message-banner__close-btn icon-x-in-circle"
             @click="dismiss()"></button>
 </div>
 </template>
@@ -39,26 +39,58 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
+    @mixin statusBannerColors($bg, $fg: $colorStatusFg) {
+        $bgPb: 10%;
+        $bgPbD: 10%;
+        background-color: darken($bg, $bgPb);
+        color: $fg;
+        &:hover {
+            background-color: darken($bg, $bgPb - $bgPbD);
+        }
+        .s-action {
+            background-color: darken($bg, $bgPb + $bgPbD);
+            &:hover {
+                background-color: darken($bg, $bgPb);
+            }
+        }
+    }
+
     .c-message-banner {
         $closeBtnSize: 7px;
         $m: 1px;
+
+        border-radius: $controlCr;
+        @include statusBannerColors($colorStatusDefault, $colorStatusFg);
+        cursor: pointer;
 
         display: flex;
         align-items: center;
         left: 50%;
         max-width: 50%;
-        padding: $interiorMargin $interiorMarginLg;
+        padding: $interiorMargin $interiorMargin $interiorMargin $interiorMarginLg;
         position: absolute;
         transform: translateX(-50%);
         bottom: $m;
         z-index: 2;
 
-        // TODOs:
-        // - Styling for message types, add color values to theme scss files
-        // - Factor out s-message-banner
-
         > * + * {
             margin-left: $interiorMargin;
+        }
+
+        &.ok {
+            @include statusBannerColors($colorOk, $colorOkFg);
+        }
+
+        &.info {
+            @include statusBannerColors($colorInfo, $colorInfoFg);
+        }
+        &.caution,
+        &.warning,
+        &.alert {
+            @include statusBannerColors($colorWarningLo,$colorWarningLoFg);
+        }
+        &.error {
+            @include statusBannerColors($colorWarningHi, $colorWarningHiFg);
         }
 
         &__message {
@@ -79,28 +111,9 @@
         }
 
         &__close-btn {
-            font-size: $closeBtnSize;
+            @include cClickIcon();
         }
-
     }
-
-
-
-
-
-
-
-
-   /*
-
-    .l-message-banner {
-        display: flex;
-        left: 50%;
-        position: absolute;
-    }
-    .banner-elem {
-        display: inline;
-    }*/
 </style>
 
 <script>

@@ -74,7 +74,7 @@
             [class*="collapse-button"] {
                 // For mobile, collapse button becomes menu icon
                 body.mobile & {
-                    @include cClickIcon();
+                    @include cClickIconButton();
                     position: absolute;
                     right: -2 * nth($shellPanePad, 2); // Needs to be -1 * when pane is collapsed
                     top: 0;
