@@ -206,8 +206,32 @@ define([
 
     DefaultCompositionProvider.prototype.reorder = function (domainObject, oldIndex, newIndex) {
         let newComposition = domainObject.composition.slice();
-        newComposition[newIndex] = domainObject.composition[oldIndex];
-        newComposition[oldIndex] = domainObject.composition[newIndex];
+        let removeId = oldIndex > newIndex ? oldIndex + 1 : oldIndex;
+        let insertPosition = oldIndex < newIndex ? newIndex + 1 : newIndex;
+        //Insert object in new position
+        newComposition.splice(insertPosition, 0, domainObject.composition[oldIndex]);
+        newComposition.splice(removeId, 1);
+
+        let reorderPlan = [{
+            oldIndex,
+            newIndex
+        }];
+
+        if (oldIndex > newIndex) {
+            for (let i = newIndex; i < oldIndex; i++) {
+                reorderPlan.push({
+                    oldIndex: i,
+                    newIndex: i + 1
+                });
+            }
+        } else {
+            for (let i = oldIndex + 1; i <= newIndex; i++) {
+                reorderPlan.push({
+                    oldIndex: i,
+                    newIndex: i - 1
+                });
+            }
+        }
         this.publicAPI.objects.mutate(domainObject, 'composition', newComposition);
 
         let id = objectUtils.makeKeyString(domainObject.identifier);
@@ -221,9 +245,9 @@ define([
 
         function notify(listener) {
             if (listener.context) {
-                listener.callback.call(listener.context, oldIndex, newIndex);
+                listener.callback.call(listener.context, reorderPlan);
             } else {
-                listener.callback(oldIndex, newIndex);
+                listener.callback(reorderPlan);
             }
         }
     };

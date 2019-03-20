@@ -66,10 +66,11 @@ export default {
 
             this.items.splice(index, 1);
         },
-        reorder(oldIndex, newIndex) {
-            let objectAtOldIndex = this.items[oldIndex];
-            this.$set(this.items, oldIndex, this.items[newIndex]);
-            this.$set(this.items, newIndex, objectAtOldIndex);
+        reorder(reorderPlan) {
+            let oldItems = this.items.slice();
+            reorderPlan.forEach((reorderEvent) => {
+                this.$set(this.items, reorderEvent.newIndex, oldItems[reorderEvent.oldIndex]);
+            });
         }
     },
     mounted() {
