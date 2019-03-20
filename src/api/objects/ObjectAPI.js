@@ -228,24 +228,16 @@ define([
             });
     };
 
-    ObjectAPI.prototype.getOriginalPath = function (identifier) {
+    ObjectAPI.prototype.getOriginalPath = function (identifier, path = []) {
+        return this.get(identifier).then((domainObject) => {
+            path.push(domainObject);
+            let location = domainObject.location;
 
-        var buildPath = function (domainObject, pathArray) {
-            if (!domainObject.location) {
-                return Promise.resolve(pathArray);
+            if (location) {
+                return this.getOriginalPath(utils.parseKeyString(location), path);
+            } else {
+                return path;
             }
-
-            let parentId = domainObject.location;
-
-            return this.get(parentId).then((parentObject) => {
-                pathArray.unshift(parentObject);
-                return buildPath(parentObject, pathArray);
-            });
-        }.bind(this);
-
-        return this.get(identifier).then((d) => {
-            let array = [d];
-            return buildPath(d, array);
         });
     };
 
