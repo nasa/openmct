@@ -149,7 +149,7 @@ define([
 
     StackedPlotController.prototype.toggleCursorGuide = function ($event) {
         this.cursorGuide = !this.cursorGuide;
-        this.$scope.$broadcast('crosshair', $event);
+        this.$scope.$broadcast('cursorguide', $event);
     };
 
     return StackedPlotController;

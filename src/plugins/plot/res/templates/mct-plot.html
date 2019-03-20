@@ -177,13 +177,6 @@
                 </div>
                 <div class="gl-plot__local-controls gl-plot__local-controls__zoom-and-guides h-local-controls h-local-controls--overlay-content">
                     <div class="c-button-set c-button-set--strip-h c-local-controls c-local-controls--show-on-hover">
-                        <button class="c-button icon-crosshair"
-                                ng-class="{ 'is-enabled': plot.crosshair }"
-                                ng-click="plot.toggleCrosshair($event)"
-                                title="Toggle cursor guides">
-                        </button>
-                    </div>
-                    <div class="c-button-set c-button-set--strip-h c-local-controls c-local-controls--show-on-hover">
                         <button class="c-button icon-magnify-out"
                                 ng-click="plot.zoom('out', 0.2)"
                                 title="Zoom out">
@@ -197,10 +190,10 @@
 
                 <!--Cursor guides-->
                 <div class="c-cursor-guide--v js-cursor-guide--v"
-                    ng-show="plot.crosshair">
+                    ng-show="plot.cursorGuide">
                 </div>
                 <div class="c-cursor-guide--h js-cursor-guide--h"
-                    ng-show="plot.crosshair">
+                    ng-show="plot.cursorGuide">
                 </div>
             </div>
 

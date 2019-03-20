@@ -93,11 +93,11 @@ define([
         this.$scope.series = this.config.series.models;
         this.$scope.legend = this.config.legend;
 
-        this.crosshairVertical = this.$element[0].querySelector('.js-cursor-guide--v');
-        this.crosshairHorizontal = this.$element[0].querySelector('.js-cursor-guide--h');
-        this.crosshair = false;
+        this.cursorGuideVertical = this.$element[0].querySelector('.js-cursor-guide--v');
+        this.cursorGuideHorizontal = this.$element[0].querySelector('.js-cursor-guide--h');
+        this.cursorGuide = false;
 
-        this.listenTo(this.$scope, 'crosshair', this.toggleCrosshair, this);
+        this.listenTo(this.$scope, 'cursorguide', this.toggleCursorGuide, this);
 
         this.listenTo(this.$scope, '$destroy', this.destroy, this);
         this.listenTo(this.$scope, 'plot:tickWidth', this.onTickWidthChange, this);
@@ -159,12 +159,12 @@ define([
     };
 
     MCTPlotController.prototype.updateCrosshairs = function ($event) {
-        if (!this.crosshairHorizontal || !this.crosshairVertical) {
+        if (!this.cursorGuideHorizontal || !this.cursorGuideVertical) {
             return;
         }
 
-        this.crosshairVertical.style.left = ($event.clientX - this.chartElementBounds.x) + 'px';
-        this.crosshairHorizontal.style.top = ($event.clientY - this.chartElementBounds.y) + 'px';
+        this.cursorGuideVertical.style.left = ($event.clientX - this.chartElementBounds.x) + 'px';
+        this.cursorGuideHorizontal.style.top = ($event.clientY - this.chartElementBounds.y) + 'px';
     };
 
     MCTPlotController.prototype.trackChartElementBounds = function ($event) {
@@ -475,8 +475,8 @@ define([
         this.stopListening();
     };
 
-    MCTPlotController.prototype.toggleCrosshair = function ($event) {
-        this.crosshair = !this.crosshair;
+    MCTPlotController.prototype.toggleCursorGuide = function ($event) {
+        this.cursorGuide = !this.cursorGuide;
     };
 
     return MCTPlotController;

@@ -34,6 +34,11 @@
                  <span class="c-button__label">JPG</span>
             </button>
         </span>
+        <button class="c-button icon-crosshair"
+                ng-class="{ 'is-enabled': controller.cursorGuide }"
+                ng-click="controller.toggleCursorGuide($event)"
+                title="Toggle cursor guides">
+        </button>
     </div>
 
     <div class="l-view-section">
