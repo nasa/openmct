@@ -97,7 +97,7 @@ define([
         this.crosshairHorizontal = this.$element[0].querySelector('.js-cursor-guide--h');
         this.crosshair = false;
 
-        this.ZOOM_FACTOR = 0.01; //zoom percentage
+        this.listenTo(this.$scope, 'crosshair', this.toggleCrosshair, this);
 
         this.listenTo(this.$scope, '$destroy', this.destroy, this);
         this.listenTo(this.$scope, 'plot:tickWidth', this.onTickWidthChange, this);
@@ -476,9 +476,6 @@ define([
     };
 
     MCTPlotController.prototype.toggleCrosshair = function ($event) {
-        $event.stopPropagation();
-        $event.preventDefault();
-
         this.crosshair = !this.crosshair;
     };
 

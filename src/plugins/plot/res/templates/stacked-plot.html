@@ -35,8 +35,8 @@
           </button>
         </span>
         <button class="c-button icon-crosshair"
-                ng-class="{ 'is-enabled': controller.showCursorGuides }"
-                ng-click="controller.toggleCursorGuide($event)"
+                ng-class="{ 'is-enabled': stackedPlot.cursorGuide }"
+                ng-click="stackedPlot.toggleCursorGuide($event)"
                 title="Toggle cursor guides">
         </button>
     </div>
