@@ -226,7 +226,28 @@ define([
                     (identifier.namespace === identifiers[0].namespace &&
                         identifier.key === identifiers[0].key);
             });
-    }
+    };
+
+    ObjectAPI.prototype.getOriginalPath = function (identifier) {
+
+        var buildPath = function (domainObject, pathArray) {
+            if (!domainObject.location) {
+                return Promise.resolve(pathArray);
+            }
+
+            let parentId = domainObject.location;
+
+            return this.get(parentId).then((parentObject) => {
+                pathArray.unshift(parentObject);
+                return buildPath(parentObject, pathArray);
+            });
+        }.bind(this);
+
+        return this.get(identifier).then((d) => {
+            let array = [d];
+            return buildPath(d, array);
+        });
+    };
 
     /**
      * Uniquely identifies a domain object.

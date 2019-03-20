@@ -2,14 +2,15 @@
 <div class="c-properties c-properties--location">
     <div class="c-properties__header" title="The location of this linked object.">Location</div>
     <ul class="c-properties__section">
-        <li class="c-properties__row" v-if="originalLocation.length">
+        <li class="c-properties__row" v-if="originalPath.length">
             <div class="c-properties__label">Original</div>
             <ul class="c-properties__value">
-                <li v-for="item in originalLocation"
-                    :key="item.key">
-                    <object-label 
-                        :domainObject="item.domainObject"
-                        :objectPath="item.objectPath">
+                <li v-for="pathObject in originalPath"
+                    :key="pathObject.key">
+                    <object-label
+                        v-if="parentObjects[pathObject.key]"
+                        :domainObject="parentObjects[pathObject.key].domainObject"
+                        :objectPath="parentObjects[pathObject.key].objectPath">
                     </object-label>
                     <span class="c-disclosure-triangle"></span>
                 </li>
@@ -31,7 +32,8 @@ export default {
     data() {
         return {
             domainObject: {},
-            originalLocation: [],
+            originalPath: [],
+            parentObjects: {},
             keyString: ''
         }
     },
@@ -44,45 +46,31 @@ export default {
         this.openmct.selection.off('change', this.updateSelection);
     },
     methods: {
-        getObjectPath(domainObject) {
-            let objectPath = [],
-                context = domainObject.getCapability('context');
-
-            if (context) {
-                objectPath = context.getPath();
-            }
-
-            return objectPath;
+        makeParentObjects() {
+            this.originalPath.forEach((pathObject) => {
+                this.openmct.objects.getOriginalPath(pathObject.key)
+                    .then(path => {
+                        this.$set(
+                            this.parentObjects,
+                            pathObject.key,
+                            {
+                                domainObject: pathObject.domainObject,
+                                key: pathObject.key,
+                                objectPath: path.slice(1).reverse()
+                            }
+                        );
+                    })
+            });
         },
-        itemDecorator(d) {
-            let domainObject = d.useCapability('adapter'),
-                key = this.openmct.objects.makeKeyString(domainObject.identifier),
-                childObjectPath = this.getObjectPath(d)
-                    .slice(1)
-                    .reverse()
-                    .map((dd) => dd.useCapability('adapter'));
-
-            return {
-                domainObject,
-                key,
-                objectPath: childObjectPath 
-            }
-        },
-        setLinkAndOriginalLocation(domainObjects) {
-            let oldStyleDomainObject = domainObjects[this.keyString],
-                objectPath = this.getObjectPath(oldStyleDomainObject)
-                    .slice(1,-1)
-                    .map((d) => {
-                        let newStyleDomainObject = d.useCapability('adapter');
-                        return this.openmct.objects.makeKeyString(newStyleDomainObject.identifier);
-                    });
-
-            this.objectService.getObjects(objectPath)
-                .then((object) => {
-                    let objectArray = Object.values(object);
-
-                    this.originalLocation = objectArray.map(this.itemDecorator);
-                });
+        setOriginalPath(path) {
+            this.originalPath = path.slice(1,-1).map(domainObject => {
+                let key = this.openmct.objects.makeKeyString(domainObject.identifier);
+                return {
+                    domainObject,
+                    key
+                }
+            });
+            this.makeParentObjects();
         },
         updateSelection(selection) {
             if (selection.length === 0) {
@@ -97,10 +85,11 @@ export default {
 
             if (this.keyString !== keyString) {
                 this.keyString = keyString;
+                this.originalPath = [];
+                this.parentObjects = {};
 
-                this.objectService
-                    .getObjects([keyString])
-                    .then(this.setLinkAndOriginalLocation);
+                this.openmct.objects.getOriginalPath(this.keyString)
+                    .then(this.setOriginalPath);
             }
         }
     }
