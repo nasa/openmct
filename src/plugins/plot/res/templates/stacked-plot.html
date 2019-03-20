@@ -33,7 +33,12 @@
              title="Export This View's Data as JPG">
               <span class="c-button__label">JPG</span>
           </button>
-      </span>
+        </span>
+        <button class="c-button icon-crosshair"
+                ng-class="{ 'is-enabled': controller.showCursorGuides }"
+                ng-click="controller.toggleCursorGuide($event)"
+                title="Toggle cursor guides">
+        </button>
     </div>
     <div class="l-view-section">
         <div class="c-loading--overlay loading"
