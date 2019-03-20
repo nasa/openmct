@@ -5,7 +5,8 @@ import Vue from 'vue';
 const cssClasses = {
     large: 'l-overlay-large',
     small: 'l-overlay-small',
-    fit: 'l-overlay-fit'
+    fit: 'l-overlay-fit',
+    fullscreen: 'l-overlay-fullscreen'
 };
 
 class Overlay extends EventEmitter {

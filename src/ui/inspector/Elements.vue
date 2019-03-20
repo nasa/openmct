@@ -1,8 +1,12 @@
 <template>
 <div class="c-elements-pool">
-    <Search class="c-elements-pool__search" @input="applySearch"></Search>
+    <Search class="c-elements-pool__search"
+        :value="currentSearch"
+        @input="applySearch" 
+        @clear="applySearch">
+    </Search>
     <div class="c-elements-pool__elements">
-        <ul class="tree c-tree c-elements-pool__tree" id="inspector-elements-tree"
+        <ul class="c-tree c-elements-pool__tree" id="inspector-elements-tree"
             v-if="elements.length > 0">
             <li :key="element.identifier.key" v-for="(element, index) in elements" @drop="moveTo(index)" @dragover="allowDrop">
                 <div class="c-tree__item c-elements-pool__item">
@@ -69,7 +73,8 @@ export default {
         return {
             elements: [],
             isEditing: this.openmct.editor.isEditing(),
-            parentObject: undefined
+            parentObject: undefined,
+            currentSearch: ''
         }
     },
     mounted() {
@@ -78,85 +83,89 @@ export default {
             this.showSelection(selection);
         }
         this.openmct.selection.on('change', this.showSelection);
-        this.openmct.editor.on('isEditing', (isEditing)=>{
-            this.isEditing = isEditing;
-            this.showSelection(this.openmct.selection.get());
-        });
+        this.openmct.editor.on('isEditing', this.setEditState);
     },
     methods: {
+        setEditState(isEditing) {
+            this.isEditing = isEditing;
+            this.showSelection(this.openmct.selection.get());
+        },
         showSelection(selection) {
             this.elements = [];
-            this.elementsCache = [];
+            this.elementsCache = {};
+            this.listeners = [];
             this.parentObject = selection[0].context.item;
             if (this.mutationUnobserver) {
                 this.mutationUnobserver();
+            }
+            if (this.compositionUnlistener) {
+                this.compositionUnlistener();
             }
 
             if (this.parentObject) {
                 this.mutationUnobserver = this.openmct.objects.observe(this.parentObject, '*', (updatedModel) => {
                     this.parentObject = updatedModel;
-                    this.refreshComposition();
                 });
-                this.refreshComposition();
+                this.composition = this.openmct.composition.get(this.parentObject);
+
+                if (this.composition) {
+                    this.composition.load();
+
+                    this.composition.on('add', this.addElement);
+                    this.composition.on('remove', this.removeElement);
+                    this.composition.on('reorder', this.reorderElements);
+
+                    this.compositionUnlistener = () => {
+                        this.composition.off('add', this.addElement);
+                        this.composition.off('remove', this.removeElement);
+                        this.composition.off('reorder', this.reorderElements);
+                        delete this.compositionUnlistener;
+                    }
+                }
             }
         },
-        refreshComposition() {
-            let composition = this.openmct.composition.get(this.parentObject);
-
-            if (composition){
-                composition.load().then(this.setElements);
-            }
-
+        addElement(element) {
+            let keyString = this.openmct.objects.makeKeyString(element.identifier);
+            this.elementsCache[keyString] = 
+                JSON.parse(JSON.stringify(element));
+            this.applySearch(this.currentSearch);
         },
-        setElements(elements) {
-            this.elementsCache = elements.map((element)=>JSON.parse(JSON.stringify(element)))
+        reorderElements() {
+            this.applySearch(this.currentSearch);
+        },
+        removeElement(identifier) {
+            let keyString = this.openmct.objects.makeKeyString(element.identifier);
+            delete this.elementsCache[keyString];
             this.applySearch(this.currentSearch);
         },
         applySearch(input) {
             this.currentSearch = input;
-            this.elements = this.elementsCache.filter((element) => {
-                return element.name.toLowerCase().search(
-                    this.currentSearch) !== -1;
+            this.elements = this.parentObject.composition.map((id) =>
+                this.elementsCache[this.openmct.objects.makeKeyString(id)]
+            ).filter((element) => {
+                return element !== undefined &&
+                    element.name.toLowerCase().search(this.currentSearch) !== -1;
             });
-        },
-        addObject(child){
-            this.elementsCache.push(child);
-            this.applySearch(this.currentSearch);
-        },
-        removeObject(childId){
-            this.elementsCache = this.elementsCache.filter((element) => !matches(element, childId));
-            this.applySearch(this.currentSearch);
-
-            function matches(elementA, elementBId) {
-                return elementA.identifier.namespace === elementBId.namespace &&
-                    elementA.identifier.key === elementBId.key;
-            }
-
         },
         allowDrop(event) {
             event.preventDefault();
         },
         moveTo(moveToIndex) {
-            console.log('dropped');
-            let composition = this.parentObject.composition;
-            let moveFromId = composition[this.moveFromIndex];
-            let deleteIndex = this.moveFromIndex;
-            if (moveToIndex < this.moveFromIndex) {
-                composition.splice(deleteIndex, 1);
-                composition.splice(moveToIndex, 0, moveFromId);
-            } else {
-                composition.splice(deleteIndex, 1);
-                composition.splice(moveToIndex, 0, moveFromId);
-            }
-
-            this.openmct.objects.mutate(this.parentObject, 'composition', composition);
+            this.composition.reorder(this.moveFromIndex, moveToIndex);
         },
         moveFrom(index){
             this.moveFromIndex = index;
         }
     },
     destroyed() {
+        this.openmct.editor.off('isEditing', this.setEditState);
         this.openmct.selection.off('change', this.showSelection);
+        if (this.mutationUnobserver) {
+            this.mutationUnobserver();
+        }
+        if (this.compositionUnlistener) {
+            this.compositionUnlistener();
+        }
     }
 }
 </script>

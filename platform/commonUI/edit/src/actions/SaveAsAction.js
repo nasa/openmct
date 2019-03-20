@@ -92,16 +92,7 @@ function (
          * @memberof platform/commonUI/edit.SaveAction#
          */
     SaveAsAction.prototype.perform = function () {
-        // Discard the current root view (which will be the editing
-        // UI, which will have been pushed atop the Browse UI.)
-        function returnToBrowse(object) {
-            if (object) {
-                object.getCapability("action").perform("navigate");
-            }
-            return object;
-        }
-
-        return this.save().then(returnToBrowse);
+        return this.save();
     };
 
     /**
@@ -192,7 +183,7 @@ function (
             if (reason !== "user canceled") {
                 self.notificationService.error("Save Failed");
             }
-            return false;
+            throw reason;
         }
 
         return getParent(domainObject)

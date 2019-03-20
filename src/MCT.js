@@ -44,6 +44,9 @@ define([
     '../platform/core/src/objects/DomainObjectImpl',
     '../platform/core/src/capabilities/ContextualDomainObject',
     './ui/preview/plugin',
+    './api/Branding',
+    './plugins/licenses/plugin',
+    './plugins/remove/plugin',
     'vue'
 ], function (
     EventEmitter,
@@ -69,6 +72,9 @@ define([
     DomainObjectImpl,
     ContextualDomainObject,
     PreviewPlugin,
+    BrandingAPI,
+    LicensesPlugin,
+    RemoveActionPlugin,
     Vue
 ) {
     /**
@@ -89,6 +95,13 @@ define([
      */
     function MCT() {
         EventEmitter.call(this);
+        this.buildInfo = {
+            version: __OPENMCT_VERSION__,
+            buildDate: __OPENMCT_BUILD_DATE__,
+            revision: __OPENMCT_REVISION__,
+            branch: __OPENMCT_BUILD_BRANCH__
+        };
+
         this.legacyBundle = { extensions: {
             services: [
                 {
@@ -228,11 +241,18 @@ define([
 
         this.contextMenu = new api.ContextMenuRegistry();
 
+        this.router = new ApplicationRouter();
+
+        this.branding = BrandingAPI.default;
+
         this.legacyRegistry = defaultRegistry;
         this.install(this.plugins.Plot());
         this.install(this.plugins.TelemetryTable());
         this.install(this.plugins.DisplayLayout());
         this.install(PreviewPlugin.default());
+        this.install(LegacyIndicatorsPlugin());
+        this.install(LicensesPlugin.default());
+        this.install(RemoveActionPlugin.default());
 
         if (typeof BUILD_CONSTANTS !== 'undefined') {
             this.install(buildInfoPlugin(BUILD_CONSTANTS));
@@ -330,10 +350,6 @@ define([
 
         legacyRegistry.register('adapter', this.legacyBundle);
         legacyRegistry.enable('adapter');
-
-        this.install(LegacyIndicatorsPlugin());
-
-        this.router = new ApplicationRouter();
 
         this.router.route(/^\/$/, () => {
             this.router.setPath('/browse/mine');

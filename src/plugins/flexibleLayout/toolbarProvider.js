@@ -29,7 +29,7 @@ function ToolbarProvider(openmct) {
         forSelection: function (selection) {
             let context = selection[0].context;
 
-            return (openmct.editor.isEditing() && context && context.type &&
+            return (context && context.type &&
                 (context.type === 'flexible-layout' || context.type === 'container' || context.type === 'frame'));
         },
         toolbar: function (selection) {
@@ -204,7 +204,7 @@ function ToolbarProvider(openmct) {
                 addContainer,
                 toggleFrame ? separator: undefined,
                 toggleFrame,
-                deleteFrame || deleteContainer ? separator: undefined,
+                deleteFrame || deleteContainer ? separator : undefined,
                 deleteFrame,
                 deleteContainer
             ];

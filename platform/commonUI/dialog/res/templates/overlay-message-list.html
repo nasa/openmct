@@ -9,7 +9,7 @@
         <div class="w-messages">
             <mct-include
                 ng-repeat="msg in ngModel.dialog.messages | orderBy: '-'"
-                key="'message'" ng-model="msg.model"></mct-include>
+                key="'notification-message'" ng-model="msg.model"></mct-include>
         </div>
         <div class="bottom-bar">
             <a ng-repeat="dialogAction in ngModel.dialog.actions"
