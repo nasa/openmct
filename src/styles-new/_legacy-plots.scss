@@ -206,14 +206,18 @@ mct-plot {
         display: flex;
         align-items: center;
         position: absolute;
+        top: $m;
+        right: $m;
+        z-index: 9;
 
         &__reset {
+            transition: right 100ms;
             top: $m;
-            left: $m;
+            right: $m;
         }
 
         &__zoom-and-guides {
-            top: $interiorMargin;
+            top: $m;
             right: $m;
         }
     }

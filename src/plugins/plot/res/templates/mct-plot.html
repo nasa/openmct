@@ -162,9 +162,19 @@
                            the-y-axis="yAxis">
                 </mct-chart>
 
-                <div class="gl-plot__local-controls gl-plot__local-controls__reset h-local-controls h-local-controls--overlay-content">
-                    <div class="c-button-set c-button-set--strip-h c-local-controls"
-                         ng-show="plotHistory.length">
+                <div class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover">
+                    <div class="c-button-set c-button-set--strip-h">
+                        <button class="c-button icon-minus"
+                                ng-click="plot.zoom('out', 0.2)"
+                                title="Zoom out">
+                        </button>
+                        <button class="c-button icon-plus"
+                                ng-click="plot.zoom('in', 0.2)"
+                                title="Zoom in">
+                        </button>
+                    </div>
+                    <div class="c-button-set c-button-set--strip-h"
+                         ng-disabled="!plotHistory.length">
                         <button class="c-button icon-arrow-left"
                                 ng-click="plot.back()"
                                 title="Restore previous pan/zoom">
@@ -172,18 +182,6 @@
                         <button class="c-button icon-reset"
                                 ng-click="plot.clear()"
                                 title="Reset pan/zoom">
-                        </button>
-                    </div>
-                </div>
-                <div class="gl-plot__local-controls gl-plot__local-controls__zoom-and-guides h-local-controls h-local-controls--overlay-content">
-                    <div class="c-button-set c-button-set--strip-h c-local-controls c-local-controls--show-on-hover">
-                        <button class="c-button icon-magnify-out"
-                                ng-click="plot.zoom('out', 0.2)"
-                                title="Zoom out">
-                        </button>
-                        <button class="c-button icon-magnify-in"
-                                ng-click="plot.zoom('in', 0.2)"
-                                title="Zoom in">
                         </button>
                     </div>
                 </div>
