@@ -249,7 +249,8 @@ select {
 
     *,
     option {
-        color: #000 !important; // Fix fg color of option elements for Windows
+        background: $colorBtnBg;
+        color: $colorBtnFg;
     }
 }
 
