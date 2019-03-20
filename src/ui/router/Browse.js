@@ -7,6 +7,7 @@ define([
     return function install(openmct) {
         let navigateCall = 0;
         let browseObject;
+        let unobserve = undefined;
 
         function viewObject(object, viewProvider) {
             openmct.layout.$refs.browseObject.show(object, viewProvider.key, true);
@@ -17,6 +18,11 @@ define([
         function navigateToPath(path, currentViewKey) {
             navigateCall++;
             let currentNavigation = navigateCall;
+
+            if (unobserve) {
+                unobserve();
+                unobserve = undefined;
+            }
 
             if (!Array.isArray(path)) {
                 path = path.split('/');
@@ -36,6 +42,10 @@ define([
                 // navigation service and router to expose a clear and minimal
                 // API for this.
                 openmct.router.path = objects.reverse();
+                
+                unobserve = this.openmct.objects.observe(openmct.router.path[0], '*', (newObject) => {
+                    openmct.router.path[0] = newObject;
+                });
 
                 openmct.layout.$refs.browseBar.domainObject = navigatedObject;
                 browseObject = navigatedObject;
