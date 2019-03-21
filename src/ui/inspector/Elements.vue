@@ -5,7 +5,8 @@
         @input="applySearch" 
         @clear="applySearch">
     </Search>
-    <div class="c-elements-pool__elements">
+    <div class="c-elements-pool__elements"
+        :class="{'is-dragging': isDragging}">
         <ul class="c-tree c-elements-pool__tree" id="inspector-elements-tree"
             v-if="elements.length > 0">
             <li :key="element.identifier.key" v-for="(element, index) in elements" @drop="moveTo(index)" @dragover="allowDrop">
@@ -74,7 +75,8 @@ export default {
             elements: [],
             isEditing: this.openmct.editor.isEditing(),
             parentObject: undefined,
-            currentSearch: ''
+            currentSearch: '',
+            isDragging: false
         }
     },
     mounted() {
@@ -84,6 +86,8 @@ export default {
         }
         this.openmct.selection.on('change', this.showSelection);
         this.openmct.editor.on('isEditing', this.setEditState);
+
+        document.addEventListener('dragend', this.notDragging);
     },
     methods: {
         setEditState(isEditing) {
@@ -154,12 +158,19 @@ export default {
             this.composition.reorder(this.moveFromIndex, moveToIndex);
         },
         moveFrom(index){
+            this.isDragging = true;
             this.moveFromIndex = index;
+        },
+        notDragging() {
+            this.isDragging = false;
         }
     },
     destroyed() {
         this.openmct.editor.off('isEditing', this.setEditState);
         this.openmct.selection.off('change', this.showSelection);
+
+        document.removeEventListener('dragend', this.notDragging);
+
         if (this.mutationUnobserver) {
             this.mutationUnobserver();
         }
