@@ -56,7 +56,7 @@
         }
 
         &__close-button {
-            $p: $interiorMarginLg;
+            $p: $interiorMargin;
             border-radius: 100% !important;
             display: inline-block;
             font-size: 1.25em;
