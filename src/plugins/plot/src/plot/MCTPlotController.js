@@ -150,7 +150,9 @@ define([
             y: this.yScale.invert(this.positionOverElement.y)
         };
 
-        this.updateCrosshairs($event);
+        if (this.cursorGuide) {
+            this.updateCrosshairs($event);
+        }
         this.highlightValues(this.positionOverPlot.x);
         this.updateMarquee();
         this.updatePan();
@@ -159,10 +161,6 @@ define([
     };
 
     MCTPlotController.prototype.updateCrosshairs = function ($event) {
-        if (!this.cursorGuideHorizontal || !this.cursorGuideVertical) {
-            return;
-        }
-
         this.cursorGuideVertical.style.left = ($event.clientX - this.chartElementBounds.x) + 'px';
         this.cursorGuideHorizontal.style.top = ($event.clientY - this.chartElementBounds.y) + 'px';
     };
