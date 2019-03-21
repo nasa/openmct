@@ -21,7 +21,7 @@
  *****************************************************************************/
 <template>
     <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up c-datetime-picker__wrapper" ref="calendarHolder">
-        <a class="c-click-icon icon-calendar"
+        <a class="c-icon-button icon-calendar"
            @click="toggle"></a>
         <div class="c-menu c-menu--mobile-modal c-datetime-picker"
              v-if="open">
@@ -30,10 +30,10 @@
                         @click="toggle"></button>
             </div>
             <div class="c-datetime-picker__pager c-pager l-month-year-pager">
-                <div class="c-pager__prev c-click-icon icon-arrow-left"
+                <div class="c-pager__prev c-icon-button icon-arrow-left"
                    @click.stop="changeMonth(-1)"></div>
                 <div class="c-pager__month-year">{{model.month}} {{model.year}}</div>
-                <div class="c-pager__next c-click-icon icon-arrow-right"
+                <div class="c-pager__next c-icon-button icon-arrow-right"
                    @click.stop="changeMonth(1)"></div>
             </div>
             <div class="c-datetime-picker__calendar c-calendar">
@@ -91,7 +91,7 @@
         grid-template-columns: auto 1fr auto;
         align-items: center;
 
-        .c-click-icon {
+        .c-icon-button {
             font-size: 0.8em;
         }
 

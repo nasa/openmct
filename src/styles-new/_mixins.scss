@@ -51,33 +51,15 @@
 
 /************************** EFFECTS */
 @mixin pulse($animName: pulse, $dur: 500ms, $iteration: infinite, $opacity0: 0.5, $opacity100: 1) {
-    @include keyframes($animName) {
+    @keyframes pulse {
         0%   { opacity: $opacity0; }
         100% { opacity: $opacity100; }
     }
-    @include animation-name($animName);
-    @include animation-duration($dur);
-    @include animation-direction(alternate);
-    @include animation-iteration-count($iteration);
-    @include animation-timing-function(ease-in-out);
-}
-
-@mixin animTo($animName, $propName, $propValStart, $propValEnd, $dur: 500ms, $delay: 0, $dir: normal, $count: 1) {
-    @include keyframes($animName) {
-        from { #{propName}: $propValStart; }
-        to { #{$propName}: $propValEnd; }
-    }
-    @include animToParams($animName, $dur: $dur, $delay: $delay, $dir: $dir, $count: $count)
-}
-
-@mixin animToParams($animName, $dur: 500ms, $delay: 0, $dir: normal, $count: 1) {
-    @include animation-name($animName);
-    @include animation-duration($dur);
-    @include animation-delay($delay);
-    @include animation-fill-mode(both);
-    @include animation-direction($dir);
-    @include animation-iteration-count($count);
-    @include animation-timing-function(ease-in-out);
+    animation-name: $animName;
+    animation-duration: $dur;
+    animation-direction: alternate;
+    animation-iteration-count: $iteration;
+    animation-timing-function: ease-in-out;
 }
 
 /************************** VISUALS */
@@ -412,29 +394,48 @@
     }
 }
 
+
 @mixin cClickIcon() {
-    // A clickable element that just includes the icon, no background
+    @include cControl();
+    cursor: pointer;
+    padding: 4px; // Bigger hit area
+    opacity: 0.6;
+    transition: $transOut;
+    transform-origin: center;
+
+    @include hover() {
+        transform: scale(1.1);
+        transition: $transIn;
+        opacity: 1;
+    }
+}
+
+@mixin cClickIconButton() {
+    // A clickable element that just includes the icon
+    // Background is displayed on hover
     // Padding is included to facilitate a bigger hit area
     // Make the icon bigger relative to its container
     @include cControl();
-    $pLR: 4px;
-    $pTB: 4px;
     background: none;
     box-shadow: none;
-    border-radius: $controlCr;
     cursor: pointer;
+    $pLR: 4px;
+    $pTB: 4px;
+    transition: $transOut;
+    border-radius: $controlCr;
     padding: $pTB $pLR;
-
-    @include hover() {
-        background: $colorClickIconBgHov;
-        color: $colorClickIconFgHov;
-    }
 
     &:before,
     *:before {
         // *:before handles any nested containers that may contain glyph elements
         // Needed for c-togglebutton.
         font-size: 1.25em;
+    }
+
+    @include hover() {
+        transition: $transIn;
+        background: $colorClickIconButtonBgHov;
+        color: $colorClickIconButtonFgHov;
     }
 
     &[class*="--major"] {

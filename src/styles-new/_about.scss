@@ -21,6 +21,46 @@
  *****************************************************************************/
 
 // Used by About screen, licenses, etc.
+.c-splash-image {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url('../ui/layout/assets/images/bg-splash.jpg');
+
+    &:before,
+    &:after {
+        background-position: center;
+        background-repeat: no-repeat;
+        position: absolute;
+        background-image: url('../ui/layout/assets/images/logo-app-shdw.svg');
+        background-size: contain;
+        content: '';
+    }
+
+    &:before {
+        // NASA logo, dude
+        $w: 5%;
+        $m: 10px;
+        background-image: url('../ui/layout/assets/images/logo-nasa.svg');
+        top: $m;
+        right: auto;
+        bottom: auto;
+        left: $m;
+        height: auto;
+        width: $w * 2;
+        padding-bottom: $w;
+        padding-top: $w;
+    }
+
+    &:after {
+        // App logo
+        top: 0;
+        right: 15%;
+        bottom: 0;
+        left: 15%;
+    }
+}
+
 .c-about {
     &--splash {
         // Large initial image after click on app logo with text beneath
@@ -37,48 +77,6 @@
     &__text {
         height: 50%;
         flex: 1 1 0;
-        position: relative;
-    }
-
-    &__image {
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: cover;
-        background-image: url('../ui/layout/assets/images/bg-splash.jpg');
-        position: relative;
-
-        &:before,
-        &:after {
-            background-position: center;
-            background-repeat: no-repeat;
-            position: absolute;
-            background-image: url('../ui/layout/assets/images/logo-app-shdw.svg');
-            background-size: contain;
-            content: '';
-        }
-
-        &:before {
-            // NASA logo, dude
-            $w: 5%;
-            $m: 10px;
-            background-image: url('../ui/layout/assets/images/logo-nasa.svg');
-            top: $m;
-            right: auto;
-            bottom: auto;
-            left: $m;
-            height: auto;
-            width: $w * 2;
-            padding-bottom: $w;
-            padding-top: $w;
-        }
-
-        &:after {
-            // App logo
-            top: 0;
-            right: 15%;
-            bottom: 0;
-            left: 15%;
-        }
     }
 
     &__text {
