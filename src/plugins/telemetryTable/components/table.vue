@@ -142,6 +142,7 @@
             // Wraps __headers table
             flex: 0 0 auto;
             overflow: hidden;
+            background: $colorTabHeaderBg;
         }
 
         /******************************* TABLES */
