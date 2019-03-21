@@ -245,7 +245,13 @@ select {
     background-position: right .4em top 80%, 0 0;
     border: none;
     border-radius: $controlCr;
-    padding: 4px 20px 4px $interiorMargin;
+    padding: 1px 20px 1px $interiorMargin;
+
+    *,
+    option {
+        background: $colorBtnBg;
+        color: $colorBtnFg;
+    }
 }
 
 // CHECKBOX LISTS
