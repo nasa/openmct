@@ -58,6 +58,7 @@
         &__close-button {
             $p: $interiorMargin;
             border-radius: 100% !important;
+            color: $overlayColorFg;
             display: inline-block;
             font-size: 1.25em;
             position: absolute;

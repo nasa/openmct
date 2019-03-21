@@ -31,7 +31,7 @@
             class="c-message-banner__progress-bar"
             v-if="activeModel.progressPerc !== undefined" :model="activeModel">
     </progress-bar>
-    <button class="c-message-banner__close-btn c-click-icon icon-x-in-circle"
+    <button class="c-message-banner__close-button c-click-icon icon-x-in-circle"
             @click="dismiss()"></button>
 </div>
 </template>
@@ -110,7 +110,7 @@
             }
         }
 
-        &__close-btn {
+        &__close-button {
             font-size: 1.25em;
         }
     }
