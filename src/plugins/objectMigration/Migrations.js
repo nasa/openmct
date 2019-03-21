@@ -26,6 +26,22 @@ define([
     uuid
 ) {
     return function Migrations(openmct) {
+        function getColumnNameKeyMap(domainObject) {
+            let composition = openmct.composition.get(domainObject);
+            if (composition) {
+                return composition.load().then(composees => {
+                    return composees.reduce((nameKeyMap, composee) => {
+                        openmct.telemetry.getMetadata(composee).values().forEach(value => {
+                            nameKeyMap[value.name] = value.key;
+                        });
+                        return nameKeyMap;
+                    }, {});
+                })
+            } else {
+                return Promise.resolve([]);
+            }
+        }
+
         function isTelemetry(domainObject) {
             if (openmct.telemetry.isTelemetryObject(domainObject)
                 && domainObject.type !== 'summary-widget'
@@ -205,17 +221,19 @@ define([
                 migrate(domainObject) {
                     let currentTableConfiguration = domainObject.configuration.table || {};
                     let currentColumnConfiguration = currentTableConfiguration.columns || {};
-                    let allPossibleColumns = openmct.telemetry.getMetadata().values();
-                    let visibleColumns = allPossibleColumns.filter((column) => {
-                        return currentColumnConfiguration[column.name] !== false;
-                    });
+                    return getColumnNameKeyMap(domainObject).then(nameKeyMap => {
+                        let hiddenColumns = Object.keys(currentColumnConfiguration).filter(columnName => {
+                            return currentColumnConfiguration[columnName] === false;
+                        }).reduce((hiddenColumnsMap, hiddenColumnName) => {
+                            let key = nameKeyMap[hiddenColumnName];
+                            hiddenColumnsMap[key] = true;
+                            return hiddenColumnsMap;
+                        }, {});
 
-                    domainObject.configuration.visibleColumns = visibleColumns.map(column => {
-                        return column.key;
+                        domainObject.configuration.hiddenColumns = hiddenColumns;
+                        delete domainObject.configuration.table;
+                        return domainObject;
                     });
-                    delete domainObject.configuration.table;
-
-                    return Promise.resolve(domainObject);
                 }
             }
         ];
