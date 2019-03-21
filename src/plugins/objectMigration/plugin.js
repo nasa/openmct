@@ -20,19 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import migrations from './Migrations.js'
+import Migrations from './Migrations.js'
 
 export default function () {
-    function needsMigration(domainObject) {        
-        return migrations.some(m => m.check(domainObject));
-    }
-
-    function migrateObject(domainObject) {
-        return migrations.filter(m => m.check(domainObject))[0]
-            .migrate(domainObject);
-    }
-
     return function (openmct) {
+        let migrations = Migrations(openmct);
+
+        function needsMigration(domainObject) {
+            return migrations.some(m => m.check(domainObject));
+        }
+
+        function migrateObject(domainObject) {
+            return migrations.filter(m => m.check(domainObject))[0]
+                .migrate(domainObject);
+        }
+
         let wrappedFunction = openmct.objects.get;
         openmct.objects.get = function migrate(identifier) {
             return wrappedFunction.apply(openmct.objects, [identifier])
@@ -46,6 +48,6 @@ export default function () {
                     }
                     return object;
                 });
-        }        
+        }
     };
- }
+}
