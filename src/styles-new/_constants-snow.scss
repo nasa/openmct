@@ -183,6 +183,9 @@ $colorDropHintFg: pushBack($colorDropHint, 0);
 $colorDisclosureCtrl: rgba($colorBodyFg, 0.5);
 $colorDisclosureCtrlHov: rgba($colorBodyFg, 0.7);
 $btnStdH: 24px;
+$colorCursorGuide: rgba(black, 0.6);
+$shdwCursorGuide: rgba(white, 0.4) 0 0 2px;
+$colorLocalControlOvrBg: rgba($colorBodyBg, 0.8);
 
 // Menus
 $colorMenuBg: pushBack($colorBodyBg, 10%);
