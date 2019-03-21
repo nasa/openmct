@@ -2,7 +2,7 @@
     <div class="l-browse-bar">
         <div class="l-browse-bar__start">
             <button v-if="hasParent"
-                class="l-browse-bar__nav-to-parent-button c-click-icon c-click-icon--major icon-pointer-left" 
+                class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-pointer-left"
                 @click="goToParent"></button>
             <div class="l-browse-bar__object-name--w"
                  :class="type.cssClass">

@@ -1,10 +1,10 @@
 <div class="c-message"
      ng-class="'message-severity-' + ngModel.severity">
     <div class="w-message-contents">
-        <div class="top-bar">
-            <div class="title">{{ngModel.title}}</div>
+        <div class="c-message__top-bar">
+            <div class="c-message__title">{{ngModel.title}}</div>
         </div>
-        <div class="hint" ng-hide="ngModel.hint === undefined">
+        <div class="c-message__hint" ng-hide="ngModel.hint === undefined">
             {{ngModel.hint}}
             <span ng-if="ngModel.timestamp !== undefined">[{{ngModel.timestamp}}]</span>
         </div>

@@ -55,12 +55,11 @@ button {
 }
 
 /********* Icon Buttons */
-.c-click-icon-basic {
+.c-click-icon {
     @include cClickIcon();
 }
 
-
-.c-click-icon,
+.c-icon-button,
 .c-click-swatch {
     @include cClickIconButton();
 
@@ -75,8 +74,8 @@ button {
     }
 }
 
-.c-click-icon {
-    .c-click-icon__label {
+.c-icon-button {
+    .c-icon-button__label {
         margin-left: $interiorMargin;
     }
 
@@ -108,7 +107,7 @@ button {
 // Provides a downward arrow icon that when clicked displays a context menu
 // Always placed AFTER an element
 .c-disclosure-button {
-    @include cClickIconButton();
+    @include cClickIcon();
     margin-left: $interiorMarginSm;
 
     &:before {
@@ -507,12 +506,12 @@ select {
         @include cToolbarSeparator();
     }
 
-    .c-click-icon,
+    .c-icon-button,
     .c-labeled-input {
         color: $editUIBaseColorFg;
     }
 
-    .c-click-icon {
+    .c-icon-button {
         @include cControl();
         $pLR: $interiorMargin - 1;
         $pTB: 2px;
@@ -576,7 +575,7 @@ select {
     &[class*='--strip'] {
         // Buttons are smashed together with minimal margin
         // c-buttons don't have border-radius between buttons, creates a tool-button-strip look
-        // c-click-icons get grouped more closely together
+        // c-icon-buttons get grouped more closely together
         [class^="c-button"] {
             // Only apply the following to buttons that have background, eg. c-button
             border-radius: 0;

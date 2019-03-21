@@ -19,67 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/******************************************************************* MESSAGE BANNERS */
-.message {
-    &.block {
-        border-radius: $basicCr;
-        padding: $interiorMarginLg;
-    }
-    &.error {
-        background-color: rgba($colorAlert,0.3);
-        color: lighten($colorAlert, 20%);
-    }
-}
-
 /******************************************************************* MESSAGES */
-
-/* Contexts:
-    In .t-message-list
-    In .overlay as a singleton
-    Inline in the view area
- */
-
-// Archetypal message
-.l-message {
-    $iconW: 32px;
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    padding: $interiorMarginLg;
-
-    &:before {
-        // Icon
-        flex: 0 1 auto;
-        //@include txtShdw($shdwStatusIc);
-        @extend .icon-bell;
-        color: $colorStatusDefault;
-        font-size: $iconW;
-        width: $iconW + 2;
-        margin-right: $interiorMarginLg;
-    }
-
-    &.message-severity-info:before {
-        @extend .icon-info;
-        color: $colorInfo;
-    }
-
-    &.message-severity-alert:before {
-        color: $colorWarningLo;
-    }
-
-    &.message-severity-error:before {
-        @extend .icon-alert-rect;
-        color: $colorWarningLo;
-    }
-}
-
 .w-message-contents {
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
 
-    > div,
-    > span {
+    > * + * {
         margin-bottom: $interiorMargin;
     }
 
@@ -91,7 +37,7 @@
 // Singleton in an overlay dialog
 .t-message-single .l-message,
 .t-message-single.l-message {
-    $iconW: 80px;
+    $iconW: $messageListIconD;
     &:before {
         font-size: $iconW;
         width: $iconW + 2;
@@ -117,10 +63,12 @@
 }
 
 // In a list
-.t-message-list {
-    @include abs();
+.c-overlay__messages {
+    //@include abs();
     display: flex;
     flex-direction: column;
+    overflow: auto;
+    padding-right: $interiorMargin;
 
     > div,
     > span {
@@ -135,6 +83,7 @@
     // Each message
     .c-message {
         @include discreteItem();
+        flex: 0 0 auto;
         margin-bottom: $interiorMarginSm;
 
         .hint,

@@ -1,6 +1,6 @@
 <template>
     <div class="c-ctrl-wrapper">
-        <div class="c-click-icon"
+        <div class="c-icon-button"
              :title="nextValue.title"
              :class="nextValue.icon"
              @click="cycle">
