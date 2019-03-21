@@ -557,8 +557,6 @@ select {
 
 /********* Button Sets */
 .c-button-set {
-    // When one set is adjacent to another, provides a divider between
-
     display: inline-flex;
     flex: 0 0 auto;
 
@@ -567,21 +565,25 @@ select {
         flex: 0 0 auto;
     }
 
-    + .c-button-set {
-        &:before {
-            @include cToolbarSeparator();
-            content: '';
-        }
-    }
-
     &[class*='--strip'] {
         // Buttons are smashed together with minimal margin
-        // c-buttons don't have border-radius between buttons, creates a tool-button-strip look
+        // c-buttons don't have border-radius between buttons, creates a horizontal tool-button-strip look
         // c-click-icons get grouped more closely together
+
         [class^="c-button"] {
             // Only apply the following to buttons that have background, eg. c-button
             border-radius: 0;
+        }
+    }
 
+    &[class*='--strip-h'] {
+        // Horizontal strip
+
+        + .c-button-set {
+            margin-left: $interiorMargin;
+        }
+
+        [class^="c-button"] {
             + * {
                 margin-left: 1px;
             }
@@ -653,6 +655,46 @@ input[type="range"] {
     }
 }
 
+/***************************************************** LOCAL CONTROLS */
+.h-local-controls {
+    // Holder for local controls
+    &--horz {
+        // Horizontal layout be
+        display: inline-flex;
+        align-items: center;
+    }
+
+    &--overlay-content {
+        > .c-button {
+            background: $colorLocalControlOvrBg;
+            border-radius: $controlCr;
+            box-shadow: $colorLocalControlOvrBg 0 0 0 2px;
+        }
+    }
+}
+
+.c-local-controls {
+    // Controls that are in close proximity to an element they effect
+    &--show-on-hover {
+        // Hidden by default; requires a hover 1 - 3 levels above to display
+        transition: $transOut;
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+.has-local-controls:hover {
+    > .c-local-controls--show-on-hover,
+    > * > .c-local-controls--show-on-hover,
+    > * > * > .c-local-controls--show-on-hover,
+    > * > * > * > .c-local-controls--show-on-hover
+    {
+        transition: $transIn;
+        opacity: 1;
+        pointer-events: inherit;
+    }
+}
+
 /***************************************************** DRAG AND DROP */
 .c-drop-hint {
     // Used in Tabs View, Flexible Grid Layouts
@@ -706,20 +748,4 @@ input[type="range"] {
 .l-btn-set {
     display: flex;
     align-items: center;
-}
-
-.h-local-controls {
-    &-overlay-content {
-        box-shadow: $colorBodyBg 0 0 0 2px;
-        display: inline-block;
-        position: absolute;
-        right: $interiorMargin; top: $interiorMargin;
-        z-index: 2;
-    }
-
-    &-trans {
-        // Has a translucent background plate
-        background: rgba($colorBodyBg, 0.8);
-        border-radius: $controlCr;
-    }
 }

@@ -391,7 +391,8 @@
         color: $colorBtnFgHov;
     }
 
-    &[class*="--major"] {
+    &[class*="--major"],
+    &[class*='is-active']{
         background: $colorBtnMajorBg;
         color: $colorBtnMajorFg;
 
