@@ -32,7 +32,7 @@
             v-if="activeModel.progressPerc !== undefined" :model="activeModel">
     </progress-bar>
     <button class="c-message-banner__close-button c-click-icon icon-x-in-circle"
-            @click="dismiss()"></button>
+            @click.stop="dismiss()"></button>
 </div>
 </template>
 
@@ -189,6 +189,7 @@
             },
             destroyActiveNotification() {
                 this.clearModel();
+                activeNotification.off('destroy', this.destroyActiveNotification);
                 activeNotification = undefined;
             },
             dismiss() {
@@ -202,7 +203,6 @@
                 this.activeModel.minimized = true;
                 activeNotification.off('progress', this.updateProgress);
                 activeNotification.off('minimized', this.minimized);
-                activeNotification.off('destroy', this.destroyActiveNotification);
 
                 activeNotification.off('progress', updateMaxProgressBar);
                 activeNotification.off('minimized', dismissMaximizedDialog);
