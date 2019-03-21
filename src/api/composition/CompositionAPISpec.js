@@ -98,18 +98,24 @@ define([
                     composition.reorder(1, 0);
                     let newComposition =
                         publicAPI.objects.mutate.calls.mostRecent().args[2];
+                    let reorderPlan = listener.calls.mostRecent().args[0][0];
 
-                    expect(listener).toHaveBeenCalledWith(1, 0);
+                    expect(reorderPlan.oldIndex).toBe(1);
+                    expect(reorderPlan.newIndex).toBe(0);
                     expect(newComposition[0].key).toEqual('b');
                     expect(newComposition[1].key).toEqual('a');
+                    expect(newComposition[2].key).toEqual('c');
                 });
                 it('', function () {
                     composition.reorder(0, 2);
                     let newComposition =
                         publicAPI.objects.mutate.calls.mostRecent().args[2];
+                    let reorderPlan = listener.calls.mostRecent().args[0][0];
 
-                    expect(listener).toHaveBeenCalledWith(0, 2);
-                    expect(newComposition[0].key).toEqual('c');
+                    expect(reorderPlan.oldIndex).toBe(0);
+                    expect(reorderPlan.newIndex).toBe(2);
+                    expect(newComposition[0].key).toEqual('b');
+                    expect(newComposition[1].key).toEqual('c');
                     expect(newComposition[2].key).toEqual('a');
                 })
             });

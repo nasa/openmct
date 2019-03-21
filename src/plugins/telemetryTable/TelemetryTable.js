@@ -60,6 +60,7 @@ define([
 
             this.createTableRowCollections();
             openmct.time.on('bounds', this.refreshData);
+            openmct.time.on('timeSystem', this.refreshData);
         }
 
         initialize() {
@@ -166,6 +167,7 @@ define([
             if (!isTick) {
                 this.filteredRows.clear();
                 this.boundedRows.clear();
+                this.boundedRows.sortByTimeSystem(this.openmct.time.timeSystem());
                 this.telemetryObjects.forEach(this.requestDataFor);
             }
         }
@@ -213,6 +215,7 @@ define([
             this.filteredRows.destroy();
             Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
             this.openmct.time.off('bounds', this.refreshData);
+            this.openmct.time.on('timeSystem', this.refreshData);
             if (this.filterObserver) {
                 this.filterObserver();
             }
