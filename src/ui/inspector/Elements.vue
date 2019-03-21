@@ -9,11 +9,11 @@
         <ul class="c-tree c-elements-pool__tree" id="inspector-elements-tree"
             v-if="elements.length > 0">
             <li :key="element.identifier.key" v-for="(element, index) in elements" @drop="moveTo(index)" @dragover="allowDrop">
-                <div class="c-tree__item c-elements-pool__item">
+                <div class="c-tree__item c-elements-pool__item"
+                     draggable="true"
+                     @dragstart="moveFrom(index)">
                     <span class="c-elements-pool__grippy"
-                          v-if="elements.length > 1 && isEditing"
-                          draggable="true"
-                          @dragstart="moveFrom(index)">
+                          v-if="elements.length > 1 && isEditing">
                     </span>
                     <object-label :domainObject="element" :objectPath="[element, parentObject]"></object-label>
                 </div>
