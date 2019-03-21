@@ -55,9 +55,13 @@ button {
 }
 
 /********* Icon Buttons */
-.c-click-icon,
-.c-click-swatch {
+.c-click-icon {
     @include cClickIcon();
+}
+
+.c-icon-button,
+.c-click-swatch {
+    @include cClickIconButton();
 
     &--menu {
         &:after {
@@ -70,8 +74,8 @@ button {
     }
 }
 
-.c-click-icon {
-    .c-click-icon__label {
+.c-icon-button {
+    .c-icon-button__label {
         margin-left: $interiorMargin;
     }
 
@@ -508,12 +512,12 @@ select {
         @include cToolbarSeparator();
     }
 
-    .c-click-icon,
+    .c-icon-button,
     .c-labeled-input {
         color: $editUIBaseColorFg;
     }
 
-    .c-click-icon {
+    .c-icon-button {
         @include cControl();
         $pLR: $interiorMargin - 1;
         $pTB: 2px;
@@ -567,9 +571,8 @@ select {
 
     &[class*='--strip'] {
         // Buttons are smashed together with minimal margin
-        // c-buttons don't have border-radius between buttons, creates a horizontal tool-button-strip look
-        // c-click-icons get grouped more closely together
-
+        // c-buttons don't have border-radius between buttons, creates a tool-button-strip look
+        // c-icon-buttons get grouped more closely together
         [class^="c-button"] {
             // Only apply the following to buttons that have background, eg. c-button
             border-radius: 0;

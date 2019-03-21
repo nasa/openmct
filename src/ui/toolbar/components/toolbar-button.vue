@@ -1,13 +1,13 @@
 <template>
     <div class="c-ctrl-wrapper">
-        <div class="c-click-icon"
+        <div class="c-icon-button"
             :title="options.title"
             :class="{
                 [options.icon]: true,
-                'c-click-icon--caution': options.modifier === 'caution'
+                'c-icon-button--caution': options.modifier === 'caution'
             }"
             @click="onClick">
-            <div class="c-click-icon__label"
+            <div class="c-icon-button__label"
                  v-if="options.label">
                 {{ options.label }}
             </div>

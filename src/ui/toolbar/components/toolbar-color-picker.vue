@@ -1,6 +1,6 @@
 <template>
     <div class="c-ctrl-wrapper">
-        <div class="c-click-icon c-click-icon--swatched"
+        <div class="c-icon-button c-icon-button--swatched"
              :class="options.icon"
              :title="options.title"
              @click="toggle">

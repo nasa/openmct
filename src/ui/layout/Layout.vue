@@ -5,11 +5,11 @@
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
             <div class="l-shell__controls">
-                <button class="c-click-icon c-click-icon--major icon-new-window" title="Open in a new browser tab"
+                <button class="c-icon-button c-icon-button--major icon-new-window" title="Open in a new browser tab"
                     @click="openInNewTab"
                     target="_blank">
                 </button>
-                <button v-bind:class="['c-click-icon c-click-icon--major', fullScreen ? 'icon-fullscreen-collapse' : 'icon-fullscreen-expand']"
+                <button v-bind:class="['c-icon-button c-icon-button--major', fullScreen ? 'icon-fullscreen-collapse' : 'icon-fullscreen-expand']"
                     v-bind:title="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
                     @click="fullScreenToggle">
                 </button>
@@ -74,7 +74,7 @@
             [class*="collapse-button"] {
                 // For mobile, collapse button becomes menu icon
                 body.mobile & {
-                    @include cClickIcon();
+                    @include cClickIconButton();
                     position: absolute;
                     right: -2 * nth($shellPanePad, 2); // Needs to be -1 * when pane is collapsed
                     top: 0;
