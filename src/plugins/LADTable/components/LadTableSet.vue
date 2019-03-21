@@ -93,11 +93,11 @@
             this.primaryTelemetryObjects.splice(index,1);
             primary = undefined;
         },
-        reorderPrimary(oldIndex, newIndex) {
-            let objectAtOldIndex = this.primaryTelemetryObjects[oldIndex];
-            this.$set(this.primaryTelemetryObjects, oldIndex, this.primaryTelemetryObjects[newIndex]);
-            this.$set(this.primaryTelemetryObjects, newIndex, objectAtOldIndex);
-
+        reorderPrimary(reorderPlan) {
+            let oldComposition = this.primaryTelemetryObjects.slice();
+            reorderPlan.forEach(reorderEvent => {
+                this.$set(this.primaryTelemetryObjects, reorderEvent.newIndex, oldComposition[reorderEvent.oldIndex]);
+            });
         },
         addSecondary(primary) {
             return (domainObject) => {

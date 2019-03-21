@@ -236,19 +236,15 @@ define([
      * @name remove
      */
     CompositionCollection.prototype.reorder = function (oldIndex, newIndex, skipMutate) {
-        if (!skipMutate) {
-            this.provider.reorder(this.domainObject, oldIndex, newIndex);
-        } else {
-            this.emit('reorder', oldIndex, newIndex);
-        }
+        this.provider.reorder(this.domainObject, oldIndex, newIndex);
     };
 
     /**
      * Handle reorder from provider.
      * @private
      */
-    CompositionCollection.prototype.onProviderReorder = function (oldIndex, newIndex) {
-        this.reorder(oldIndex, newIndex, true);
+    CompositionCollection.prototype.onProviderReorder = function (reorderMap) {
+        this.emit('reorder', reorderMap);
     };
 
     /**
