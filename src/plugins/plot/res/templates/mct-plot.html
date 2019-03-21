@@ -136,7 +136,7 @@
             <span class="t-object-alert t-alert-unsynced"
                   title="This plot is not currently displaying the latest data.
                 Reset Pan/zoom to return to view latest data."></span>
-            <div class="gl-plot-display-area">
+            <div class="gl-plot-display-area has-local-controls has-cursor-guides">
                 <mct-ticks axis="xAxis">
                     <div class="gl-plot-hash hash-v"
                          ng-repeat="tick in ticks track by tick.value"
@@ -147,14 +147,12 @@
                      </div>
                 </mct-ticks>
 
-
                 <mct-ticks axis="yAxis">
                      <div class="gl-plot-hash hash-h"
                           ng-repeat="tick in ticks track by tick.value"
                           ng-style="{ bottom: (100 * (tick.value - min) / interval) + '%', width: '100%' }">
                      </div>
                 </mct-ticks>
-
 
                 <mct-chart config="config"
                            series="series"
@@ -164,23 +162,37 @@
                            the-y-axis="yAxis">
                 </mct-chart>
 
-                <div class="h-local-controls h-local-controls-overlay-content"
-                     ng-show="plotHistory.length">
-                    <div class="l-btn-set">
-                        <a class="s-button icon-arrow-left"
-                           ng-click="plot.back()"
-                           title="Restore previous pan/zoom">
-                        </a>
-                        <a class="s-button icon-reset"
-                           ng-click="plot.clear()"
-                           title="Reset pan/zoom">
-                        </a>
+                <div class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover">
+                    <div class="c-button-set c-button-set--strip-h">
+                        <button class="c-button icon-minus"
+                                ng-click="plot.zoom('out', 0.2)"
+                                title="Zoom out">
+                        </button>
+                        <button class="c-button icon-plus"
+                                ng-click="plot.zoom('in', 0.2)"
+                                title="Zoom in">
+                        </button>
+                    </div>
+                    <div class="c-button-set c-button-set--strip-h"
+                         ng-disabled="!plotHistory.length">
+                        <button class="c-button icon-arrow-left"
+                                ng-click="plot.back()"
+                                title="Restore previous pan/zoom">
+                        </button>
+                        <button class="c-button icon-reset"
+                                ng-click="plot.clear()"
+                                title="Reset pan/zoom">
+                        </button>
                     </div>
                 </div>
 
-                <span class="t-wait-spinner loading" ng-show="plot.isRequestPending()">
-                </span>
-
+                <!--Cursor guides-->
+                <div class="c-cursor-guide--v js-cursor-guide--v"
+                    ng-show="plot.cursorGuide">
+                </div>
+                <div class="c-cursor-guide--h js-cursor-guide--h"
+                    ng-show="plot.cursorGuide">
+                </div>
             </div>
 
             <div class="gl-plot-axis-area gl-plot-x"

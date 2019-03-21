@@ -1,7 +1,7 @@
 <template>
 <div class="c-about c-about--splash">
     <div v-if="branding.aboutHtml" class="s-text l-content" v-html="branding.aboutHtml"></div>
-    <div v-else class="c-about__image"></div>
+    <div v-else class="c-about__image c-splash-image"></div>
 
     <div class="c-about__text s-text">
         <h1 class="l-title s-title">Open MCT</h1>

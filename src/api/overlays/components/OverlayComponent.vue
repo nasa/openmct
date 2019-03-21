@@ -56,9 +56,11 @@
         }
 
         &__close-button {
-            $p: $interiorMarginSm;
+            $p: $interiorMargin;
             border-radius: 100% !important;
+            color: $overlayColorFg;
             display: inline-block;
+            font-size: 1.25em;
             position: absolute;
             top: $p; right: $p;
         }
@@ -151,6 +153,7 @@
             }
         }
 
+        .t-dialog-sm .l-overlay-small, // Legacy dialog support
         .l-overlay-fit {
             .c-overlay__outer {
                 @include overlaySizing(auto);

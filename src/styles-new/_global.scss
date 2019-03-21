@@ -233,6 +233,7 @@ mct-container {
     padding: 1em;
 }
 
+*[disabled],
 .disabled,
 a.disabled {
     opacity: $controlDisabledOpacity;

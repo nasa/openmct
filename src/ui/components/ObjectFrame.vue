@@ -113,6 +113,12 @@
                 }
             }
         }
+
+        .c-click-icon,
+        .c-button {
+            // Shrink buttons a bit when they appear in a frame
+            font-size: 0.8em;
+        }
     }
 </style>
 

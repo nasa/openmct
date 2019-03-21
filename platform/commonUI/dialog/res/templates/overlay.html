@@ -22,9 +22,9 @@
 <div class="c-overlay l-overlay-small" ng-class="{'delayEntry100ms' : ngModel.delay}">
     <div class="c-overlay__blocker"></div>
     <div class="c-overlay__outer">
-        <a ng-click="ngModel.cancel()"
+        <button ng-click="ngModel.cancel()"
            ng-if="ngModel.cancel"
-           class="c-click-icon c-overlay__close-button icon-x-in-circle"></a>
+           class="c-click-icon c-overlay__close-button icon-x-in-circle"></button>
         <div class="c-overlay__contents" ng-transclude></div>
     </div>
 </div>
