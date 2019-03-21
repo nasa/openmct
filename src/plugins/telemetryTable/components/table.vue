@@ -23,11 +23,11 @@
 <div class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
      :class="{'loading': loading}">
     <div class="c-table__control-bar c-control-bar">
-        <a class="c-button icon-download labeled"
+        <button class="c-button icon-download labeled"
            v-on:click="exportAsCSV()"
            title="Export This View's Data">
             <span class="c-button__label">Export As CSV</span>
-        </a>
+        </button>
     </div>
     <div v-if="isDropTargetActive" class="c-telemetry-table__drop-target" :style="dropTargetStyle"></div>
     <!-- Headers table -->

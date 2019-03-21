@@ -59,6 +59,7 @@ define([
         this.openmct = openmct;
         this.objectService = objectService;
         this.exportImageService = exportImageService;
+        this.cursorGuide = false;
 
         $scope.pending = 0;
 
@@ -258,8 +259,8 @@ define([
     PlotController.prototype.updateFiltersAndResubscribe = function (updatedFilters) {
         this.config.series.forEach(function (series) {
             series.updateFiltersAndRefresh(updatedFilters[series.keyString]);
-        })
-    }
+        });
+    };
 
     /**
      * Export view as JPG.
@@ -281,6 +282,11 @@ define([
             .finally(function () {
                 this.hideExportButtons = false;
             }.bind(this));
+    };
+
+    PlotController.prototype.toggleCursorGuide = function ($event) {
+        this.cursorGuide = !this.cursorGuide;
+        this.$scope.$broadcast('cursorguide', $event);
     };
 
     return PlotController;
