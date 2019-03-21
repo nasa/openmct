@@ -244,7 +244,7 @@ $overlayColorFg: $colorMenuFg;
 $colorOvrBtnBg: pullForward($overlayColorBg, 40%);
 $colorOvrBtnFg: #fff;
 $overlayCr: $interiorMarginLg;
-$overlayBrightnessAdjust: brightness(1.3);
+$overlayBrightnessAdjust: brightness(1); // Applied in a filter: property
 
 // Indicator colors
 $colorIndicatorAvailable: $colorKey;
