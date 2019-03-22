@@ -31,12 +31,15 @@ define([
             if (composition) {
                 return composition.load().then(composees => {
                     return composees.reduce((nameKeyMap, composee) => {
-                        openmct.telemetry.getMetadata(composee).values().forEach(value => {
-                            nameKeyMap[value.name] = value.key;
-                        });
+                        let metadata = openmct.telemetry.getMetadata(composee);
+                        if (metadata !== undefined) {
+                            metadata.values().forEach(value => {
+                                nameKeyMap[value.name] = value.key;
+                            });
+                        }
                         return nameKeyMap;
                     }, {});
-                })
+                });
             } else {
                 return Promise.resolve([]);
             }
