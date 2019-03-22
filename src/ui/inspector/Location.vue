@@ -4,14 +4,14 @@
     <ul class="c-properties__section">
         <li class="c-properties__row" v-if="originalPath.length">
             <div class="c-properties__label">Original</div>
-            <ul class="c-properties__value">
+            <ul class="c-properties__value c-location">
                 <li v-for="pathObject in orderedOriginalPath"
+                    class="c-location__item"
                     :key="pathObject.key">
                     <object-label
                         :domainObject="pathObject.domainObject"
                         :objectPath="pathObject.objectPath">
                     </object-label>
-                    <span class="c-disclosure-triangle"></span>
                 </li>
             </ul>
         </li>
@@ -19,8 +19,50 @@
 </div>
 </template>
 
-<script>
+<style lang="scss">
+    @import "~styles/sass-base";
 
+    .c-location {
+        display: flex;
+        flex-wrap: wrap;
+
+        &__item {
+            $m: $interiorMarginSm;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            margin: 0 $m $m 0;
+
+            &:not(:last-child) {
+                &:after {
+                    color: $colorInspectorPropName;
+                    content: $glyph-icon-arrow-right;
+                    font-family: symbolsfont;
+                    font-size: 0.7em;
+                    margin-left: $m;
+                    opacity: 0.8;
+                }
+            }
+
+            .c-object-label {
+                padding: 0;
+                transition: $transOut;
+
+                &__type-icon {
+                    width: auto;
+                    font-size: 1em;
+                }
+
+                &:hover {
+                    transition: $transIn;
+                    filter: $filterHov;
+                }
+            }
+        }
+    }
+</style>
+
+<script>
 import ObjectLabel from '../components/ObjectLabel.vue';
 
 export default {

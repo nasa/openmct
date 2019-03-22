@@ -22,7 +22,6 @@
             min-height: 50px;
 
             + [class*="__"] {
-                // Margin between elements
                 margin-top: $interiorMargin;
             }
 
@@ -37,9 +36,7 @@
         }
 
         &__elements {
-            // LEGACY TODO: Refactor when markup is updated, fix scrolling
-            // so that only tree holder handles overflow
-            height: 200px;
+            height: 200px; // Initial height
 
             .tree-item {
                 .t-object-label {
@@ -64,48 +61,6 @@
         }
 
         /************************************************************** LEGACY */
-        // TODO: refactor when legacy properties markup can be converted
-        .inspector-location {
-            display: inline-block;
-
-            .location-item {
-                $h: 1.2em;
-                box-sizing: border-box;
-                cursor: pointer;
-                display: inline-block;
-                line-height: $h;
-                position: relative;
-                padding: 2px 4px;
-
-                .t-object-label {
-                    .t-item-icon {
-                        height: $h;
-                        margin-right: $interiorMarginSm;
-                    }
-                }
-
-                &:hover {
-                    background: $colorItemTreeHoverBg;
-                    color: $colorItemTreeHoverFg;
-                    .icon {
-                        color: $colorItemTreeIconHover;
-                    }
-                }
-            }
-
-            &:not(.last) .t-object-label .t-title-label:after {
-                color: pushBack($colorInspectorFg, 15%);
-                content: '\e904';
-                display: inline-block;
-                font-family: symbolsfont;
-                font-size: 8px;
-                font-style: normal !important;
-                line-height: inherit;
-                margin-left: $interiorMarginSm;
-                width: 4px;
-            }
-        }
-
         .l-inspector-part {
             display: contents;
         }
@@ -116,8 +71,8 @@
             grid-column: 1 / 3;
         }
 
-        .tree .grid-properties {
-            margin-left: $treeItemIndent + $interiorMarginLg;
+        .c-tree .grid-properties {
+            margin-left: $treeItemIndent;
         }
     }
 
@@ -143,7 +98,6 @@
         }
 
         + .c-properties {
-            // Margin between components
             margin-top: $interiorMarginLg;
         }
 
