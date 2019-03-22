@@ -71,6 +71,12 @@ define(
                 openmct.editor.cancel();
             }
 
+            function isFirstViewEditable(domainObject) {
+                let firstView = openmct.objectViews.get(domainObject)[0];
+
+                return firstView && firstView.canEdit && firstView.canEdit(domainObject);
+            }
+
             function navigateAndEdit(object) {
                 let objectPath = object.getCapability('context').getPath(),
                     url = '#/browse/' + objectPath
@@ -82,7 +88,9 @@ define(
 
                 window.location.href = url;
 
-                openmct.editor.edit();
+                if (isFirstViewEditable(object.useCapability('adapter'))) {
+                    openmct.editor.edit();
+                }
             }
 
             newModel.type = this.type.getKey();
