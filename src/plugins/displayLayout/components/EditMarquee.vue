@@ -22,8 +22,7 @@
 
 <template>
         <!-- Drag handles -->
-        <div class="c-frame-edit"
-             :style="style" style="display: flex; pointer-events: none;">
+        <div class="c-frame-edit" :style="style">
             <div class="c-frame-edit__move"
                  @mousedown="startDrag([1,1], [0,0], $event, 'move')"></div>
             <div class="c-frame-edit__handle c-frame-edit__handle--nw"
@@ -40,29 +39,10 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
-    /******************************* FRAME */
-    .c-frame {
-        display: flex;
-        flex-direction: column;
-
-        // Whatever is placed into the slot, make it fill the entirety of the space, obeying padding
-        > *:first-child {
-            flex: 1 1 auto;
-        }
-
-        &:not(.no-frame) {
-            background: $colorBodyBg;
-            border: $browseFrameBorder;
-            padding: $interiorMargin;
-        }
-
-    }
-
     .c-frame-edit {
         // In Layouts, this is the editing rect and handles
-        // In Fixed Position, this is a wrapper element
-        @include abs();
-        display: none;
+        pointer-events: none;
+        position: absolute;
         border: $editFrameSelectedBorder;
         box-shadow: $editFrameSelectedShdw;
 
@@ -76,7 +56,8 @@
             $o: floor($d * -0.5);
             background: $editFrameColorHandleFg;
             box-shadow: $editFrameColorHandleBg 0 0 0 2px;
-            display: none; // Set to block via s-selected selector
+            //display: none; // Set to block via s-selected selector
+            pointer-events: all;
             position: absolute;
             width: $d; height: $d;
             top: auto; right: auto; bottom: auto; left: auto;
@@ -159,9 +140,9 @@
                 border: $editFrameBorder; // Base border style for a frame element while editing.
             }
 
-            &-edit {
-                display: contents;
-            }
+            //&-edit {
+            //    display: contents;
+            //}
 
             &-edit__move,
             .c-so-view {
@@ -262,9 +243,7 @@
                     left: (this.gridSize[0] * x) + 'px',
                     top: (this.gridSize[1] * y) + 'px',
                     width: (this.gridSize[0] * width) + 'px',
-                    height: (this.gridSize[1] * height) + 'px',
-                    minWidth: (this.gridSize[0] * width) + 'px',
-                    minHeight: (this.gridSize[1] * height) + 'px'
+                    height: (this.gridSize[1] * height) + 'px'
                 };
             },
             updatePosition(event) {

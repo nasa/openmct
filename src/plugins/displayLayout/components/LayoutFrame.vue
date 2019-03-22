@@ -60,9 +60,9 @@
                 border: $editFrameBorder; // Base border style for a frame element while editing.
             }
 
-            &-edit {
+         /*   &-edit {
                 display: contents;
-            }
+            }*/
 
             &-edit__move,
             .c-so-view {
@@ -81,11 +81,13 @@
                 // border: $editFrameSelectedBorder;
                 // box-shadow: $editFrameSelectedShdw;
 
-                > .c-frame-edit {
+             cursor: move;
+
+            /* > .c-frame-edit {
                     [class*='__handle'] {
                         display: block;
                     }
-                }
+                }*/
             }
         }
 
