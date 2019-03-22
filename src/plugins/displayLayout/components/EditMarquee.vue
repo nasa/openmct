@@ -22,7 +22,8 @@
 
 <template>
         <!-- Drag handles -->
-        <div class="c-frame-edit" :style="style" style="display: flex">
+        <div class="c-frame-edit"
+             :style="style" style="display: flex; pointer-events: none;">
             <div class="c-frame-edit__move"
                  @mousedown="startDrag([1,1], [0,0], $event, 'move')"></div>
             <div class="c-frame-edit__handle c-frame-edit__handle--nw"
@@ -222,8 +223,7 @@
         data() {
             return {
                 dragPosition: undefined,
-                isResizing: undefined,
-                // selection: []
+                isResizing: undefined
             }
         },
         computed: {
