@@ -41,11 +41,9 @@
                    :key="item.id"
                    :gridSize="item.useGrid ? gridSize : [1, 1]"
                    :initSelect="initSelectIndex === index"
-                   :index="index"
-                   @endDrag="endDrag"
-        >
+                   :index="index">
         </component>
-        <edit-marquee v-if='showEditMarquee'
+        <edit-marquee v-if='showMarquee'
                       :gridSize="gridSize"
                       :selection="selection"
                       @endDrag="endDrag">
@@ -121,8 +119,7 @@
         'box-view': BoxView,
         'line-view': LineView,
         'text-view': TextView,
-        'image-view': ImageView,
-        'edit-marquee': EditMarquee
+        'image-view': ImageView
     };
     const ORDERS = {
         top: Number.POSITIVE_INFINITY,
@@ -132,6 +129,9 @@
     };
 
     const DRAG_OBJECT_TRANSFER_PREFIX = 'openmct/domain-object/';
+
+    let components = ITEM_TYPE_VIEW_MAP;
+    components['edit-marquee'] = EditMarquee;
 
     function getItemDefinition(itemType, ...options) {
         let itemView = ITEM_TYPE_VIEW_MAP[itemType];
@@ -159,13 +159,13 @@
             layoutItems() {
                 return this.internalDomainObject.configuration.items;
             },
-            showEditMarquee() {
+            showMarquee() {
                 return this.selection.length > 0 && this.selection[0].length > 1;
             }
         },
         inject: ['openmct'],
         props: ['domainObject'],
-        components: ITEM_TYPE_VIEW_MAP,
+        components: components,
         methods: {
             addElement(itemType, element) {
                 this.addItem(itemType + '-view', element);
