@@ -9,7 +9,9 @@
         :class="{'is-dragging': isDragging}">
         <ul class="c-tree c-elements-pool__tree" id="inspector-elements-tree"
             v-if="elements.length > 0">
-            <li :key="element.identifier.key" v-for="(element, index) in elements" @drop="moveTo(index)" @dragover="allowDrop">
+            <li :key="element.identifier.key" v-for="(element, index) in elements"
+                @drop="moveTo(index)"
+                @dragover="allowDrop">
                 <div class="c-tree__item c-elements-pool__item"
                      draggable="true"
                      @dragstart="moveFrom(index)">
@@ -45,6 +47,9 @@
         &__elements {
             flex: 1 1 auto;
             overflow: auto;
+            &.is-dragging {
+                li { opacity: 0.2; }
+            }
         }
 
         &__grippy {
@@ -56,7 +61,7 @@
         }
     }
 
-    .js-last-place{
+    .js-last-place {
         height: 10px;
     }
 </style>
