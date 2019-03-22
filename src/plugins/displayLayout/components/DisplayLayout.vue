@@ -45,6 +45,11 @@
                    @endDrag="endDrag"
         >
         </component>
+        <edit-marquee v-if='showEditMarquee'
+                      :gridSize="gridSize"
+                      :selection="selection"
+                      @endDrag="endDrag">
+        </edit-marquee>
     </div>
 </template>
 
@@ -108,6 +113,7 @@
     import TextView from './TextView.vue'
     import LineView from './LineView.vue'
     import ImageView from './ImageView.vue'
+    import EditMarquee from './EditMarquee.vue'
 
     const ITEM_TYPE_VIEW_MAP = {
         'subobject-view': SubobjectView,
@@ -115,7 +121,8 @@
         'box-view': BoxView,
         'line-view': LineView,
         'text-view': TextView,
-        'image-view': ImageView
+        'image-view': ImageView,
+        'edit-marquee': EditMarquee
     };
     const ORDERS = {
         top: Number.POSITIVE_INFINITY,
@@ -141,7 +148,8 @@
             let domainObject = JSON.parse(JSON.stringify(this.domainObject));
             return {
                 internalDomainObject: domainObject,
-                initSelectIndex: undefined
+                initSelectIndex: undefined,
+                selection: []
             };
         },
         computed: {
@@ -150,6 +158,9 @@
             },
             layoutItems() {
                 return this.internalDomainObject.configuration.items;
+            },
+            showEditMarquee() {
+                return this.selection.length > 0 && this.selection[0].length > 1;
             }
         },
         inject: ['openmct'],
@@ -160,6 +171,8 @@
                 this.addItem(itemType + '-view', element);
             },
             setSelection(selection) {
+                this.selection = selection;
+
                 if (selection.length === 0) {
                     return;
                 }

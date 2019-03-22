@@ -21,9 +21,9 @@
  *****************************************************************************/
 
 <template>
+    <!-- <div class="l-layout__frame c-frame no-frame" :style="position"> -->
     <layout-frame :item="item"
-                  :grid-size="gridSize"
-                  @endDrag="(item, updates) => $emit('endDrag', item, updates)">
+                  :grid-size="gridSize">
         <div class="c-box-view"
              :style="style">
         </div>

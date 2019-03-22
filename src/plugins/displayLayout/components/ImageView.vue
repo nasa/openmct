@@ -22,8 +22,7 @@
 
 <template>
     <layout-frame :item="item"
-                  :grid-size="gridSize"
-                  @endDrag="(item, updates) => $emit('endDrag', item, updates)">
+                  :grid-size="gridSize">
         <div class="c-image-view"
              :style="style">
         </div>

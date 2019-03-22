@@ -22,8 +22,7 @@
 
  <template>
     <layout-frame :item="item"
-                  :grid-size="gridSize"
-                  @endDrag="(item, updates) => $emit('endDrag', item, updates)">
+                  :grid-size="gridSize">
         <div class="c-text-view"
              :style="style">
             {{ item.text }}
@@ -55,8 +54,8 @@
                 stroke: 'transparent',
                 size: '13px',
                 color: '',
-                x: 1,
-                y: 1,
+                x: 10,
+                y: 10,
                 width: 10,
                 height: 5,
                 text: element.text,
