@@ -45,7 +45,7 @@
         </component>
         <edit-marquee v-if='showMarquee'
                       :gridSize="gridSize"
-                      :selection="selection"
+                      :selectedLayoutItems="selectedLayoutItems"
                       @endDrag="endDrag">
         </edit-marquee>
     </div>
@@ -159,6 +159,11 @@
             layoutItems() {
                 return this.internalDomainObject.configuration.items;
             },
+            selectedLayoutItems() {
+                return this.layoutItems.filter(item => {
+                    return this.itemIsInCurrentSelection(item);
+                });
+            },
             showMarquee() {
                 return this.selection.length > 0 && this.selection[0].length > 1;
             }
@@ -185,6 +190,9 @@
                         this.attachSelectionListener(itemIndex);
                     }
                 });
+            },
+            itemIsInCurrentSelection(item) {
+                return this.selection.some(selectionPath => selectionPath[0].context.layoutItem.id === item.id);
             },
             attachSelectionListener(index) {
                 if (!this.removeSelectionListeners) {

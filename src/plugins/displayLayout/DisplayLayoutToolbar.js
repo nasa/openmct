@@ -306,10 +306,10 @@ define([], function () {
                             domainObject: selectedParent,
                             applicableSelectedItems: getAllTypes(selection),
                             property: function (selectionPath) {
-                                return getPath(selectionPath) + ".width";
+                                return getPath(selectionPath) + ".height";
                             },
-                            label: 'W:',
-                            title: 'Resize object width'
+                            label: 'H:',
+                            title: 'Resize object height'
                         };
                     }
                 }

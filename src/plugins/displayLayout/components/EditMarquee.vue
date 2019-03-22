@@ -217,7 +217,7 @@
     export default {
         inject: ['openmct'],
         props: {
-            selection: Array,
+            selectedLayoutItems: Array,
             gridSize: Array
         },        
         data() {
@@ -228,15 +228,13 @@
         },
         computed: {
             style() {
-                console.log('selection', this.selection);
                 let minX = Number.POSITIVE_INFINITY;
                 let minY = Number.POSITIVE_INFINITY;
                 let maxWidth = Number.NEGATIVE_INFINITY;
                 let maxHeight = Number.NEGATIVE_INFINITY;
                 let positions = [];
 
-                this.selection.forEach(selectionPath => {
-                    let item = selectionPath[0].context.layoutItem;
+                this.selectedLayoutItems.forEach(item => {
                     positions.push({
                         'x' :item.x,
                         'y': item.y,
@@ -244,13 +242,11 @@
                         'height': item.height
                     });
                 });
-
                 positions.forEach(position => {
                     minY = Math.min(position.y, minY);
                     minX = Math.min(position.x, minX);
                     maxWidth = Math.max(position.width + position.x, maxWidth);
                     maxHeight = Math.max(position.height + position.y, maxHeight);
-                    console.log('minx', minX, "minY", minY, "maxWidth", maxWidth, "maxHeight", maxHeight);
                 });
 
                 // if (this.dragPosition) {
